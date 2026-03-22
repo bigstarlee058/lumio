@@ -1,14 +1,10 @@
 'use client';
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/app/components/ui/dropdown-menu';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useNotifications } from '@/app/hooks/useNotifications';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { cn } from '@/app/lib/utils';
+import { Divider, Menu } from '@mui/material';
 import { NotificationsNone } from '@mui/icons-material';
 import { AlertTriangle, CircleAlert, Info } from 'lucide-react';
 import Link from 'next/link';
@@ -56,7 +52,8 @@ export function NotificationDropdown({
   const { notifications, unreadCount, loading, refresh, markAsRead, markAllAsRead } =
     useNotifications();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const getNotificationHref = (notification: {
     type: string;
@@ -115,37 +112,63 @@ export function NotificationDropdown({
     }
   }, [open, refresh]);
 
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const unreadLabel = useMemo(() => {
     if (unreadCount > 99) return '99+';
     return String(unreadCount);
   }, [unreadCount]);
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <button
-          className={cn(
-            'relative h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors',
-            triggerClassName,
-          )}
-          title={t.aria.notifications.value}
-          aria-label={t.aria.notifications.value}
-        >
-          <NotificationsNone sx={{ fontSize: iconSize }} />
-          {loading ? (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
-              <Spinner className="size-3 text-white" />
-            </span>
-          ) : unreadCount > 0 ? (
-            <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
-              {unreadLabel}
-            </span>
-          ) : null}
-        </button>
-      </DropdownMenuTrigger>
+    <>
+      <button
+        type="button"
+        onClick={handleOpen}
+        className={cn(
+          'relative h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors',
+          triggerClassName,
+        )}
+        title={t.aria.notifications.value}
+        aria-label={t.aria.notifications.value}
+      >
+        <NotificationsNone sx={{ fontSize: iconSize }} />
+        {loading ? (
+          <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
+            <Spinner className="size-3 text-white" />
+          </span>
+        ) : unreadCount > 0 ? (
+          <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
+            {unreadLabel}
+          </span>
+        ) : null}
+      </button>
 
-      <DropdownMenuContent align={align} className="w-[360px] p-0">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: align === 'start' ? 'left' : 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: align === 'start' ? 'left' : 'right' }}
+        PaperProps={{
+          sx: {
+            width: 360,
+            mt: 1,
+            p: 0,
+            overflow: 'hidden',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 12px 32px rgba(15, 23, 42, 0.12)',
+          },
+        }}
+        MenuListProps={{ disablePadding: true }}
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-white">
           <div className="text-sm font-semibold text-foreground">{t.title.value}</div>
           <button
             type="button"
@@ -157,7 +180,7 @@ export function NotificationDropdown({
           </button>
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto">
+        <div className="max-h-[420px] overflow-y-auto bg-white">
           {loading && notifications.length === 0 ? (
             <div className="px-4 py-8 text-sm text-muted-foreground text-center">
               {t.loading.value}
@@ -191,7 +214,7 @@ export function NotificationDropdown({
                   }
 
                   if (href) {
-                    setOpen(false);
+                    handleClose();
                     router.push(href);
                   }
                 }}
@@ -225,16 +248,17 @@ export function NotificationDropdown({
           })}
         </div>
 
-        <div className="px-4 py-2 border-t border-border bg-muted/30">
+        <Divider />
+        <div className="px-4 py-2 bg-muted/30">
           <Link
             href="/settings/notifications"
             className="text-xs text-primary hover:opacity-80"
-            onClick={() => setOpen(false)}
+            onClick={() => handleClose()}
           >
             {t.settingsLink.value}
           </Link>
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </Menu>
+    </>
   );
 }

@@ -173,6 +173,24 @@ export class ReportsController {
     return this.reportsService.getReportHistory(user.id);
   }
 
+  @Get('history/:reportId/download')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission(Permission.REPORT_EXPORT)
+  async downloadHistoryReport(
+    @CurrentUser() user: User,
+    @Param('reportId') reportId: string,
+    @Res() res: Response,
+  ) {
+    const { filePath, fileName, contentType } = await this.reportsService.downloadHistoryReport(
+      user.id,
+      reportId,
+    );
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  }
+
   @Get('latest')
   @UseGuards(PermissionsGuard)
   @RequirePermission(Permission.REPORT_VIEW)

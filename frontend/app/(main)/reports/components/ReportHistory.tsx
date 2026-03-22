@@ -15,6 +15,7 @@ export interface ReportHistoryItem {
   generatedBy: string;
   generatedAt: string;
   downloadUrl: string;
+  fileName?: string;
   fileSize: number;
 }
 
@@ -49,6 +50,20 @@ const FORMAT_BADGE_CLASSES: Record<string, string> = {
 export function ReportHistory() {
   const [history, setHistory] = useState<ReportHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleDownload = async (item: ReportHistoryItem) => {
+    const response = await apiClient.get(`/reports/history/${item.id}/download`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([response.data]);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const extension = item.format === 'excel' ? 'xlsx' : item.format;
+    link.download = item.fileName || `${item.templateId}-${item.dateFrom}-${item.dateTo}.${extension}`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     apiClient
@@ -124,18 +139,15 @@ export function ReportHistory() {
                 {formatFileSize(item.fileSize)}
               </td>
               <td className="px-5 py-3.5 text-right">
-                {item.downloadUrl ? (
-                  <a
-                    href={item.downloadUrl}
-                    download
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0a66c2] hover:text-[#004182] transition-colors"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    Download
-                  </a>
-                ) : (
-                  <span className="text-xs text-slate-300">—</span>
-                )}
+                <button
+                  type="button"
+                  onClick={() => void handleDownload(item)}
+                  aria-label={`Re-download ${item.templateName}`}
+                  title={`Re-download ${item.templateName}`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#0a66c2] transition-colors hover:bg-[#eaf4ff] hover:text-[#004182]"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
               </td>
             </tr>
           ))}

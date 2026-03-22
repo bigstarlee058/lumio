@@ -68,6 +68,43 @@ describe('ReportsController', () => {
     expect(fs.unlinkSync as any).toHaveBeenCalledWith('/tmp/report.csv');
   });
 
+  it('downloadHistoryReport streams stored report file', async () => {
+    const fs = await import('fs');
+    const stream = new PassThrough();
+    (fs.createReadStream as any).mockReturnValue(stream);
+
+    const reportsService = {
+      getStatementsSummary: jest.fn(),
+      getCustomTablesSummary: jest.fn(),
+      getLatestTransactionDate: jest.fn(),
+      generateDailyReport: jest.fn(),
+      getLatestTransactionPeriod: jest.fn(),
+      generateMonthlyReport: jest.fn(),
+      generateCustomReport: jest.fn(),
+      exportReport: jest.fn(),
+      downloadHistoryReport: jest.fn(async () => ({
+        filePath: '/tmp/history.xlsx',
+        fileName: 'history.xlsx',
+        contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })),
+    };
+    const res = new PassThrough() as any;
+    res.setHeader = jest.fn();
+    const controller = new ReportsController(reportsService as any);
+
+    await (controller as any).downloadHistoryReport({ id: 'u1' } as any, 'report-1', res);
+
+    expect(reportsService.downloadHistoryReport).toHaveBeenCalledWith('u1', 'report-1');
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    expect(fs.createReadStream).toHaveBeenCalledWith('/tmp/history.xlsx');
+
+    stream.emit('end');
+    expect(fs.unlinkSync as any).not.toHaveBeenCalledWith('/tmp/history.xlsx');
+  });
+
   it('getTopCategories delegates to reports service', async () => {
     const reportsService = {
       getStatementsSummary: jest.fn(),

@@ -11,13 +11,18 @@ const routerMocks = vi.hoisted(() => ({
 
 const notificationMocks = vi.hoisted(() => ({
   markAsRead: vi.fn(),
+  refresh: vi.fn(),
+}));
+
+const menuMocks = vi.hoisted(() => ({
+  lastOpen: false,
 }));
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerMocks.push }),
 }));
 
-vi.mock('next-intlayer', () => ({
+vi.mock('@/app/i18n', () => ({
   useIntlayer: () => ({
     aria: { notifications: { value: 'Notifications' } },
     title: { value: 'Notifications' },
@@ -30,11 +35,17 @@ vi.mock('next-intlayer', () => ({
   useLocale: () => ({ locale: 'en' }),
 }));
 
-vi.mock('@/app/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
+vi.mock('@mui/material', async () => {
+  const actual = await vi.importActual<typeof import('@mui/material')>('@mui/material');
+  return {
+    ...actual,
+    Menu: ({ open, children }: { open: boolean; children: React.ReactNode }) => {
+      menuMocks.lastOpen = open;
+      if (!open) return null;
+      return <div data-testid="notification-menu">{children}</div>;
+    },
+  };
+});
 
 vi.mock('@/app/hooks/useNotifications', () => ({
   useNotifications: () => ({
@@ -66,7 +77,7 @@ vi.mock('@/app/hooks/useNotifications', () => ({
     ],
     unreadCount: 2,
     loading: false,
-    refresh: vi.fn(),
+    refresh: notificationMocks.refresh,
     markAsRead: notificationMocks.markAsRead,
     markAllAsRead: vi.fn(),
   }),
@@ -85,6 +96,28 @@ describe('NotificationDropdown', () => {
     container.remove();
     routerMocks.push.mockReset();
     notificationMocks.markAsRead.mockReset();
+    notificationMocks.refresh.mockReset();
+    menuMocks.lastOpen = false;
+  });
+
+  it('opens notifications in MUI menu on bell click', async () => {
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<NotificationDropdown />);
+    });
+
+    const trigger = container.querySelector('button[aria-label="Notifications"]');
+    expect(trigger).toBeTruthy();
+    expect(menuMocks.lastOpen).toBe(false);
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(menuMocks.lastOpen).toBe(true);
+    expect(document.querySelector('[data-testid="notification-menu"]')).toBeTruthy();
+    expect(notificationMocks.refresh).toHaveBeenCalled();
   });
 
   it('routes to receipt details for uncategorized receipts', async () => {

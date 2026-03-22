@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as os from 'node:os';
 import * as path from 'path';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Between, In, LessThanOrEqual, MoreThanOrEqual, type Repository } from 'typeorm';
@@ -2051,5 +2051,41 @@ export class ReportsService {
       take: 50,
       relations: ['user'],
     });
+  }
+
+  async downloadHistoryReport(
+    userId: string,
+    reportId: string,
+  ): Promise<{ filePath: string; fileName: string; contentType: string }> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'workspaceId'],
+    });
+
+    if (!user?.workspaceId) {
+      throw new NotFoundException('Report not found');
+    }
+
+    const report = await this.reportHistoryRepo.findOne({
+      where: { id: reportId, workspaceId: user.workspaceId },
+    });
+
+    if (!report?.filePath || !report.fileName || !fs.existsSync(report.filePath)) {
+      throw new NotFoundException('Report file not found');
+    }
+
+    const format = String(report.format || '').toLowerCase();
+    const contentType =
+      format === 'excel'
+        ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        : format === 'csv'
+          ? 'text/csv'
+          : 'application/pdf';
+
+    return {
+      filePath: report.filePath,
+      fileName: report.fileName,
+      contentType,
+    };
   }
 }

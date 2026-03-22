@@ -401,4 +401,26 @@ describe('generateFromTemplate', () => {
       require('fs').unlinkSync(result.filePath);
     }
   });
+
+  it('should return stored history report download metadata', async () => {
+    mockUserRepository.findOne.mockResolvedValue({ id: 'user1', workspaceId: 'ws1' });
+    mockReportHistoryRepo.findOne = jest.fn().mockResolvedValue({
+      id: 'report-1',
+      workspaceId: 'ws1',
+      filePath: __filename,
+      fileName: 'history-report.xlsx',
+      format: 'excel',
+    });
+
+    const result = await service.downloadHistoryReport('user1', 'report-1');
+
+    expect(mockReportHistoryRepo.findOne).toHaveBeenCalledWith({
+      where: { id: 'report-1', workspaceId: 'ws1' },
+    });
+    expect(result).toEqual({
+      filePath: __filename,
+      fileName: 'history-report.xlsx',
+      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+  });
 });
