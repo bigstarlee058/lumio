@@ -144,11 +144,11 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
         })}
       </div>
 
-      <div className="grid grid-cols-1 gap-[36px] lg:grid-cols-[217px_1fr]">
-        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none h-[188px]">
-          <CardContent className="p-3 flex flex-col h-full overflow-hidden">
+      <div className="grid grid-cols-1 gap-5 items-stretch lg:grid-cols-12 mt-4">
+        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none min-h-[320px] lg:col-span-4">
+          <CardContent className="p-6 flex flex-col h-full overflow-hidden gap-3">
             <h2
-              className="text-[10px] font-semibold text-[#7A869B] uppercase tracking-[1px] mb-2"
+              className="text-[18px] font-bold text-[#1a1a1a] uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               ACTION REQUIRED
@@ -164,18 +164,17 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           </CardContent>
         </Card>
 
-        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none h-[188px]">
-          <CardContent className="p-3 h-full flex flex-col overflow-hidden">
+        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none min-h-[320px] lg:col-span-8">
+          <CardContent className="p-6 h-full flex flex-col overflow-hidden gap-3">
             <h2
-              className="text-[10px] font-semibold text-[#7A869B] uppercase tracking-[1px] mb-2"
+              className="text-[18px] font-bold text-[#1a1a1a] uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               CASH FLOW ({rangeLabel.toUpperCase()})
             </h2>
-            <div className="bg-[#E9E4DC] flex-1 flex flex-col relative px-4 py-3 h-[146px]">
+            <div className="bg-[#E9E4DC] flex-1 flex flex-col relative px-6 py-5 min-h-[240px]">
               <CashFlowMini
                 data={data.cashFlow}
-                title={`Cash Flow (${rangeLabel})`}
                 emptyLabel="No cash flow data yet"
               />
             </div>

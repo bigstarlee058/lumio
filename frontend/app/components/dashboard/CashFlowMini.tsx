@@ -8,12 +8,11 @@ const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 interface CashFlowMiniProps {
   data: DashboardCashFlowPoint[];
-  title: string;
   emptyLabel: string;
   onUploadClick?: () => void;
 }
 
-export function CashFlowMini({ data, title, emptyLabel, onUploadClick }: CashFlowMiniProps) {
+export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniProps) {
   const option = useMemo(() => {
     if (!data || data.length === 0) return null;
 
@@ -54,7 +53,12 @@ export function CashFlowMini({ data, title, emptyLabel, onUploadClick }: CashFlo
       },
       yAxis: {
         type: 'value',
-        axisLabel: { fontSize: 10, color: '#7A869B', fontFamily: 'var(--font-dashboard-sans)' },
+        axisLabel: {
+          show: false,
+          fontSize: 10,
+          color: '#7A869B',
+          fontFamily: 'var(--font-dashboard-sans)',
+        },
         splitLine: { lineStyle: { color: '#E8E4DC' } },
       },
       series: [
@@ -84,13 +88,6 @@ export function CashFlowMini({ data, title, emptyLabel, onUploadClick }: CashFlo
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      <h3
-        className="text-[28px] font-semibold text-[#2A364E] absolute top-[-6px] left-0 z-10"
-        style={{ fontFamily: 'var(--font-dashboard-mono)' }}
-      >
-        {title}
-      </h3>
-
       {!option ? (
         <div className="flex-1 flex items-center justify-center">
           <span
@@ -101,7 +98,7 @@ export function CashFlowMini({ data, title, emptyLabel, onUploadClick }: CashFlo
           </span>
         </div>
       ) : (
-        <div className="flex-1 w-full mt-8">
+        <div className="flex-1 w-full">
           <ReactECharts
             style={{ height: '100%', width: '100%' }}
             option={option}

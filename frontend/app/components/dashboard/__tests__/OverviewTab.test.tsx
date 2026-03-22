@@ -139,11 +139,43 @@ describe('OverviewTab', () => {
       />,
     );
 
-    const cashFlowTitle = screen.getByText('Cash Flow (30d)');
-    const cashFlowPanel = cashFlowTitle.closest('div[class*="bg-"]');
+    const cashFlowTitle = screen.getByText('CASH FLOW (30D)');
+    const cashFlowCard = cashFlowTitle.closest('div[class*="bg-"]');
+    const cashFlowPanel = Array.from(cashFlowCard?.querySelectorAll('div') ?? []).find(node =>
+      node.className.includes('bg-[#E9E4DC]'),
+    );
 
     expect(cashFlowPanel?.className).toContain('bg-[#E9E4DC]');
     expect(cashFlowPanel?.className).not.toContain('bg-[#F5F3EF]');
     expect(cashFlowPanel?.className).not.toContain('border');
+  });
+
+  it('renders enlarged lower analytics panels like trends layout', () => {
+    render(
+      <OverviewTab
+        data={{
+          ...emptyDashboardData,
+          snapshot: {
+            ...emptyDashboardData.snapshot,
+            totalBalance: 100,
+          },
+        }}
+        formatAmount={value => String(value)}
+        range="30d"
+        isLoading={false}
+      />,
+    );
+
+    const actionRequiredTitle = screen.getByText('ACTION REQUIRED');
+    const actionRequiredPanel = actionRequiredTitle.closest('div[class*="bg-"]');
+    const cashFlowTitle = screen.getByText('CASH FLOW (30D)');
+    const cashFlowPanel = cashFlowTitle.closest('div[class*="bg-"]');
+    const analyticsGrid = actionRequiredPanel?.parentElement;
+
+    expect(analyticsGrid?.className).toContain('lg:grid-cols-12');
+    expect(actionRequiredPanel?.className).toContain('lg:col-span-4');
+    expect(actionRequiredPanel?.className).toContain('min-h-[320px]');
+    expect(cashFlowPanel?.className).toContain('lg:col-span-8');
+    expect(cashFlowPanel?.className).toContain('min-h-[320px]');
   });
 });
