@@ -27,7 +27,7 @@ export function RollbackConfirmModal({
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
         <h3 className="text-lg font-bold text-gray-900">Confirm rollback</h3>
         <p className="mt-2 text-sm text-gray-600">
-          This will attempt to rollback the change for {event.entityType} {event.entityId}.
+          This will attempt to rollback: {event.description || `${event.entityType} ${event.entityId}`}.
         </p>
         {event.diff && (
           <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">

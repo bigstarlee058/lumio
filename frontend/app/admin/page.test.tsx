@@ -96,6 +96,7 @@ const auditEvent: AuditEvent = {
   entityType: 'transaction',
   entityId: 'txn-123',
   action: 'update',
+  description: 'Изменена сумма транзакции',
   diff: {
     before: { amount: 10 },
     after: { amount: 20 },

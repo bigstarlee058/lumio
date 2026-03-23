@@ -1,9 +1,9 @@
+import { In, IsNull } from 'typeorm';
 import { ActorType, AuditAction, EntityType } from '../../../../src/entities/audit-event.entity';
 import { StatementStatus } from '../../../../src/entities/statement.entity';
 import { TransactionType } from '../../../../src/entities/transaction.entity';
 import { WorkspaceRole } from '../../../../src/entities/workspace-member.entity';
 import { DashboardService } from '../../../../src/modules/dashboard/dashboard.service';
-import { In, IsNull } from 'typeorm';
 
 const createRepoMock = () =>
   ({
@@ -223,7 +223,10 @@ describe('DashboardService', () => {
       parsingWarnings: 0,
     };
 
-    jest.spyOn(service as any, 'getSnapshot').mockResolvedValueOnce(emptySnapshot).mockResolvedValueOnce(shiftedSnapshot);
+    jest
+      .spyOn(service as any, 'getSnapshot')
+      .mockResolvedValueOnce(emptySnapshot)
+      .mockResolvedValueOnce(shiftedSnapshot);
     jest.spyOn(service as any, 'getLatestTransactionDate').mockResolvedValue(latestTransactionDate);
     jest.spyOn(service as any, 'getActions').mockResolvedValue([]);
     jest.spyOn(service as any, 'getCashFlow').mockResolvedValue(cashFlow);
@@ -292,7 +295,9 @@ describe('DashboardService', () => {
     };
 
     jest.spyOn(service as any, 'getSnapshot').mockResolvedValue(emptySnapshot);
-    jest.spyOn(service as any, 'getLatestTransactionDate').mockResolvedValue(new Date('2026-02-10T08:30:00Z'));
+    jest
+      .spyOn(service as any, 'getLatestTransactionDate')
+      .mockResolvedValue(new Date('2026-02-10T08:30:00Z'));
     jest.spyOn(service as any, 'getActions').mockResolvedValue([]);
     jest.spyOn(service as any, 'getCashFlow').mockResolvedValue([]);
     jest.spyOn(service as any, 'getTopMerchants').mockResolvedValue([]);
@@ -315,13 +320,15 @@ describe('DashboardService', () => {
     const balanceQb = createQueryBuilderMock({ totalBalance: '1500.5' });
     const payableQb = createQueryBuilderMock({ totalPayable: '300', totalOverdue: '50' });
 
-    transactionRepo.createQueryBuilder
-      .mockReturnValueOnce(txQb)
-      .mockReturnValueOnce(balanceQb);
+    transactionRepo.createQueryBuilder.mockReturnValueOnce(txQb).mockReturnValueOnce(balanceQb);
     payableRepo.createQueryBuilder.mockReturnValue(payableQb);
     workspaceRepo.findOne.mockResolvedValue({ currency: 'USD' });
 
-    const result = await (service as any).getSnapshot('ws-1', new Date('2026-02-01'), new Date('2026-03-01'));
+    const result = await (service as any).getSnapshot(
+      'ws-1',
+      new Date('2026-02-01'),
+      new Date('2026-03-01'),
+    );
 
     expect(result).toEqual({
       totalBalance: 1500.5,
@@ -386,6 +393,23 @@ describe('DashboardService', () => {
     expect(result).toHaveLength(3);
   });
 
+  it('getActions links overdue payments to the overdue payables filter', async () => {
+    statementRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
+    payableRepo.count.mockResolvedValueOnce(2);
+    const uncategorizedQb = createQueryBuilderMock(0);
+    transactionRepo.createQueryBuilder.mockReturnValue(uncategorizedQb);
+    receiptRepo.count.mockResolvedValueOnce(0);
+
+    const result = await (service as any).getActions('user-1', 'ws-1');
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        type: 'payments_overdue',
+        href: '/statements/pay?status=overdue',
+      }),
+    ]);
+  });
+
   it('getCashFlow groups by date for 30d range', async () => {
     const rows = [
       { date: '2026-02-01', income: '100', expense: '50' },
@@ -427,10 +451,7 @@ describe('DashboardService', () => {
     );
 
     // Verify the query builder was called (weekly grouping used IYYY-IW format)
-    expect(cashFlowQb.select).toHaveBeenCalledWith(
-      "TO_CHAR(t.transactionDate, 'IYYY-IW')",
-      'date',
-    );
+    expect(cashFlowQb.select).toHaveBeenCalledWith("TO_CHAR(t.transactionDate, 'IYYY-IW')", 'date');
     expect(result).toHaveLength(2);
   });
 
@@ -589,16 +610,24 @@ describe('DashboardService', () => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2026-03-19T12:00:00Z'));
 
-    jest.spyOn(service as any, 'getLatestTransactionDate').mockResolvedValue(new Date('2026-02-10T08:30:00Z'));
+    jest
+      .spyOn(service as any, 'getLatestTransactionDate')
+      .mockResolvedValue(new Date('2026-02-10T08:30:00Z'));
 
     transactionRepo.createQueryBuilder
       .mockReturnValueOnce(createQueryBuilderMock([]))
       .mockReturnValueOnce(createQueryBuilderMock([]))
       .mockReturnValueOnce(createQueryBuilderMock([]))
       .mockReturnValueOnce(createQueryBuilderMock({ income: '0', expense: '0', rows: '0' }))
-      .mockReturnValueOnce(createQueryBuilderMock([{ date: '2026-02-10', income: '100', expense: '40' }]))
-      .mockReturnValueOnce(createQueryBuilderMock([{ name: 'Utilities', amount: '40', count: '1' }]))
-      .mockReturnValueOnce(createQueryBuilderMock([{ name: 'Client A', amount: '100', count: '1' }]))
+      .mockReturnValueOnce(
+        createQueryBuilderMock([{ date: '2026-02-10', income: '100', expense: '40' }]),
+      )
+      .mockReturnValueOnce(
+        createQueryBuilderMock([{ name: 'Utilities', amount: '40', count: '1' }]),
+      )
+      .mockReturnValueOnce(
+        createQueryBuilderMock([{ name: 'Client A', amount: '100', count: '1' }]),
+      )
       .mockReturnValueOnce(createQueryBuilderMock({ income: '100', expense: '40', rows: '2' }));
 
     const result = await service.getTrends('ws-1', 30);

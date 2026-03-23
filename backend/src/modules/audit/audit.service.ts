@@ -17,6 +17,7 @@ import type {
   CreateAuditEventDto,
   RollbackResult,
 } from './interfaces/audit-event.interface';
+import { AuditDescriptionService } from './description/audit-description.service';
 import { RollbackService } from './rollback/rollback.service';
 
 @Injectable()
@@ -31,6 +32,7 @@ export class AuditService {
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly rollbackService: RollbackService,
+    private readonly descriptionService: AuditDescriptionService,
   ) {}
 
   async createEvent(dto: CreateAuditEventDto): Promise<AuditEvent> {
@@ -50,6 +52,7 @@ export class AuditService {
 
     const actorLabel = await this.resolveActorLabel(dto);
     const isUndoable = dto.isUndoable ?? this.isUndoable(dto.action, dto.entityType);
+    const description = dto.description?.trim() || this.descriptionService.generate(dto);
 
     const event = this.auditEventRepository.create({
       workspaceId: dto.workspaceId ?? null,
@@ -59,6 +62,7 @@ export class AuditService {
       entityType: dto.entityType,
       entityId: dto.entityId,
       action: dto.action,
+      description,
       diff: dto.diff ?? null,
       meta: dto.meta ?? null,
       batchId: dto.batchId ?? null,
@@ -282,7 +286,12 @@ export class AuditService {
     if (action === AuditAction.ROLLBACK) return false;
     if (action === AuditAction.UPDATE || action === AuditAction.DELETE) return true;
     if (action === AuditAction.CREATE) {
-      return [EntityType.TABLE_ROW, EntityType.TABLE_CELL].includes(entityType);
+      return [
+        EntityType.TABLE_ROW,
+        EntityType.TABLE_CELL,
+        EntityType.CUSTOM_TABLE,
+        EntityType.CUSTOM_TABLE_COLUMN,
+      ].includes(entityType);
     }
     return false;
   }

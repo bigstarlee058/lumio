@@ -4,6 +4,7 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useAutoSave } from '@/app/hooks/useAutoSave';
 import apiClient from '@/app/lib/api';
+import { payablesApi } from '@/app/lib/payables-api';
 import {
   flattenStatementCategories,
   getCategoryDisplayName,
@@ -75,6 +76,7 @@ import {
   isStageActionBlocked,
   setStatementStage,
 } from '@/app/lib/statement-workflow';
+import { buildPayableFromStatement } from './payable-from-statement';
 import { type ParsingDroppedSample, ParsingWarningsPanel } from './ParsingWarningsPanel';
 import StatementCategoryDrawer from './StatementCategoryDrawer';
 
@@ -457,7 +459,9 @@ export default function EditStatementPage() {
 
     if (target) {
       window.setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof target.scrollIntoView === 'function') {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         target.focus();
       }, 0);
     }
@@ -723,21 +727,37 @@ export default function EditStatementPage() {
 
   const stageActions = getStatementStageActions(currentStage);
 
-  const handleStageAction = (action: StatementStageAction) => {
+  const handleStageAction = async (action: StatementStageAction) => {
     if (!statement?.id) return;
     if (isStageActionBlocked(action.id, missingCategoryCount)) {
       return;
     }
 
     setStageActionLoadingId(action.id);
-    setStatementStage(statement.id, action.nextStage);
-    setCurrentStage(action.nextStage);
-    toast.success(stageActionToasts[action.id]);
 
-    setTimeout(() => {
+    try {
+      if (action.id === 'pay') {
+        const payableDraft = buildPayableFromStatement({ statement, transactions });
+
+        if (!payableDraft) {
+          toast.error('No expense amount available to create payable');
+          setStageActionLoadingId(null);
+          return;
+        }
+
+        await payablesApi.create(payableDraft);
+      }
+
+      setStatementStage(statement.id, action.nextStage);
+      setCurrentStage(action.nextStage);
       setStageActionLoadingId(null);
+      toast.success(stageActionToasts[action.id]);
       router.push(action.redirectPath);
-    }, 200);
+    } catch (error) {
+      console.error('Failed to process stage action:', error);
+      setStageActionLoadingId(null);
+      toast.error(action.id === 'pay' ? 'Failed to create payable' : 'Failed to update stage');
+    }
   };
 
   const handleStatementCategorySelect = async (categoryId: string) => {

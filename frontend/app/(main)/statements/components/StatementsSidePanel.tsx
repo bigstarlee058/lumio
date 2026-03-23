@@ -1,9 +1,11 @@
 'use client';
 
 import { type SidePanelPageConfig, useSidePanelConfig } from '@/app/components/side-panel';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { payablesApi } from '@/app/lib/payables-api';
 import {
   type OpenExpenseDrawerEventDetail,
   STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT,
@@ -81,13 +83,15 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   const router = useRouter();
   const t = useIntlayer('statementsPage');
   const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
   const [counts, setCounts] = useState({
     submit: 0,
     approve: 0,
-    pay: 0,
     unapprovedCash: 0,
   });
   const [countsLoading, setCountsLoading] = useState(true);
+  const [payCount, setPayCount] = useState(0);
+  const [payCountLoading, setPayCountLoading] = useState(true);
   const [topSenders, setTopSenders] = useState<TopBankSender[]>([]);
   const [topMerchantsCount, setTopMerchantsCount] = useState(0);
   const [topCategoriesCount, setTopCategoriesCount] = useState(0);
@@ -220,7 +224,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
         }
       } catch {
         if (isMounted) {
-          setCounts({ submit: 0, approve: 0, pay: 0, unapprovedCash: 0 });
+          setCounts({ submit: 0, approve: 0, unapprovedCash: 0 });
           setTopSenders([]);
           setTopMerchantsCount(0);
           setTopCategoriesCount(0);
@@ -236,6 +240,39 @@ export default function StatementsSidePanel({ activeItem }: Props) {
       isMounted = false;
     };
   }, [user, activeItem]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPayCount = async () => {
+      if (!user) {
+        setPayCount(0);
+        setPayCountLoading(false);
+        return;
+      }
+
+      setPayCountLoading(true);
+
+      try {
+        const summary = await payablesApi.getSummary();
+
+        if (isMounted) {
+          setPayCount((summary.toPayCount || 0) + (summary.overdueCount || 0));
+          setPayCountLoading(false);
+        }
+      } catch {
+        if (isMounted) {
+          setPayCountLoading(false);
+        }
+      }
+    };
+
+    void loadPayCount();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user, currentWorkspace?.id]);
 
   useEffect(() => {
     let isMounted = true;
@@ -419,9 +456,9 @@ export default function StatementsSidePanel({ activeItem }: Props) {
               id: 'pay',
               label: (t as any)?.sidePanel?.pay?.value ?? 'Pay',
               icon: Banknote,
-              badge: counts.pay,
-              badgeLoading: countsLoading,
-              badgeVariant: getQueueBadgeVariant(counts.pay),
+              badge: payCount,
+              badgeLoading: payCountLoading,
+              badgeVariant: getQueueBadgeVariant(payCount),
               emphasis: 'high',
               active: activeItem === 'pay',
               href: '/statements/pay',
@@ -513,6 +550,8 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     t,
     activeItem,
     counts,
+    payCount,
+    payCountLoading,
     topSenders,
     topMerchantsCount,
     topCategoriesCount,

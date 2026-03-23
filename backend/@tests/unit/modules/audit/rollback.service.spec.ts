@@ -1,8 +1,11 @@
 import { AuditAction, type AuditEvent, EntityType } from '@/entities/audit-event.entity';
 import { Category } from '@/entities/category.entity';
+import { CustomTableColumn } from '@/entities/custom-table-column.entity';
+import { CustomTable } from '@/entities/custom-table.entity';
 import { CustomTableRow } from '@/entities/custom-table-row.entity';
 import { Statement } from '@/entities/statement.entity';
 import { Transaction } from '@/entities/transaction.entity';
+import { Workspace } from '@/entities/workspace.entity';
 import { RollbackService } from '@/modules/audit/rollback/rollback.service';
 import type { Repository } from 'typeorm';
 
@@ -21,6 +24,9 @@ describe('RollbackService', () => {
   const statementRepository = createRepoMock<Statement>();
   const categoryRepository = createRepoMock<Category>();
   const customTableRowRepository = createRepoMock<CustomTableRow>();
+  const customTableRepository = createRepoMock<CustomTable>();
+  const customTableColumnRepository = createRepoMock<CustomTableColumn>();
+  const workspaceRepository = createRepoMock<Workspace>();
 
   let service: RollbackService;
 
@@ -31,6 +37,9 @@ describe('RollbackService', () => {
       statementRepository as any,
       categoryRepository as any,
       customTableRowRepository as any,
+      customTableRepository as any,
+      customTableColumnRepository as any,
+      workspaceRepository as any,
     );
   });
 
@@ -99,6 +108,60 @@ describe('RollbackService', () => {
 
     expect(customTableRowRepository.update).toHaveBeenCalledWith('row-1', {
       data: { amount: 'old', other: 1 },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rolls back custom table delete by recreating entity', async () => {
+    const event: AuditEvent = {
+      id: 'evt-5',
+      entityId: 'table-1',
+      entityType: EntityType.CUSTOM_TABLE,
+      action: AuditAction.DELETE,
+      diff: { before: { id: 'table-1', name: 'Products' }, after: null },
+    } as AuditEvent;
+
+    const result = await service.rollback(event);
+
+    expect(customTableRepository.create).toHaveBeenCalledWith({ id: 'table-1', name: 'Products' });
+    expect(customTableRepository.save).toHaveBeenCalled();
+    expect(result.success).toBe(true);
+  });
+
+  it('rolls back custom table column update with before snapshot', async () => {
+    const event: AuditEvent = {
+      id: 'evt-6',
+      entityId: 'column-1',
+      entityType: EntityType.CUSTOM_TABLE_COLUMN,
+      action: AuditAction.UPDATE,
+      diff: { before: { title: 'Old title' }, after: { title: 'New title' } },
+    } as AuditEvent;
+
+    const result = await service.rollback(event);
+
+    expect(customTableColumnRepository.update).toHaveBeenCalledWith('column-1', {
+      title: 'Old title',
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rolls back workspace update with before snapshot', async () => {
+    const event: AuditEvent = {
+      id: 'evt-7',
+      entityId: 'workspace-1',
+      entityType: EntityType.WORKSPACE,
+      action: AuditAction.UPDATE,
+      diff: {
+        before: { name: 'Old workspace', color: '#000000' },
+        after: { name: 'New workspace', color: '#ffffff' },
+      },
+    } as AuditEvent;
+
+    const result = await service.rollback(event);
+
+    expect(workspaceRepository.update).toHaveBeenCalledWith('workspace-1', {
+      name: 'Old workspace',
+      color: '#000000',
     });
     expect(result.success).toBe(true);
   });

@@ -47,7 +47,10 @@ export class DashboardService {
   ): Promise<DashboardResponse> {
     const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
 
-    const requestedWindow = this.getWindowBounds(days, endDateParam ? new Date(endDateParam) : new Date());
+    const requestedWindow = this.getWindowBounds(
+      days,
+      endDateParam ? new Date(endDateParam) : new Date(),
+    );
 
     const [initialSnapshot, actions, recentActivity, memberRole, dataHealth] = await Promise.all([
       this.getSnapshot(workspaceId, requestedWindow.since, requestedWindow.endDate),
@@ -66,7 +69,11 @@ export class DashboardService {
 
       if (latestTransactionDate) {
         effectiveWindow = this.getWindowBounds(days, latestTransactionDate);
-        snapshot = await this.getSnapshot(workspaceId, effectiveWindow.since, effectiveWindow.endDate);
+        snapshot = await this.getSnapshot(
+          workspaceId,
+          effectiveWindow.since,
+          effectiveWindow.endDate,
+        );
         autoShifted = true;
       }
     }
@@ -228,7 +235,7 @@ export class DashboardService {
         type: 'payments_overdue',
         count: overduePayments,
         label: `${overduePayments} payment${overduePayments > 1 ? 's' : ''} overdue`,
-        href: '/statements/pay',
+        href: '/statements/pay?status=overdue',
       });
     }
 
@@ -559,7 +566,11 @@ export class DashboardService {
         )
         .where('s.workspaceId = :workspaceId', { workspaceId })
         .andWhere('s.status IN (:...unapprovedStatuses)', {
-          unapprovedStatuses: [StatementStatus.UPLOADED, StatementStatus.PARSED, StatementStatus.VALIDATED],
+          unapprovedStatuses: [
+            StatementStatus.UPLOADED,
+            StatementStatus.PARSED,
+            StatementStatus.VALIDATED,
+          ],
         })
         .andWhere('s.deletedAt IS NULL')
         .setParameter('income', TransactionType.INCOME)
@@ -579,7 +590,12 @@ export class DashboardService {
   async getTrends(workspaceId: string, days = 30): Promise<DashboardTrendsResponse> {
     const requestedWindow = this.getWindowBounds(days, new Date());
     let effectiveWindow = requestedWindow;
-    let trendData = await this.getTrendData(workspaceId, requestedWindow.since, requestedWindow.endDate, days);
+    let trendData = await this.getTrendData(
+      workspaceId,
+      requestedWindow.since,
+      requestedWindow.endDate,
+      days,
+    );
     let autoShifted = false;
 
     if (trendData.dailyRows.length === 0) {
@@ -587,7 +603,12 @@ export class DashboardService {
 
       if (latestTransactionDate) {
         effectiveWindow = this.getWindowBounds(days, latestTransactionDate);
-        trendData = await this.getTrendData(workspaceId, effectiveWindow.since, effectiveWindow.endDate, days);
+        trendData = await this.getTrendData(
+          workspaceId,
+          effectiveWindow.since,
+          effectiveWindow.endDate,
+          days,
+        );
         autoShifted = true;
       }
     }

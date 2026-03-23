@@ -12,6 +12,7 @@ export interface CreateAuditEventDto {
   actorType: ActorType;
   actorId?: string | null;
   actorLabel?: string | null;
+  description?: string | null;
   entityType: EntityType;
   entityId: string;
   action: AuditAction;

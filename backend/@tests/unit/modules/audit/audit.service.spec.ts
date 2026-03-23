@@ -7,6 +7,7 @@ import {
 } from '@/entities/audit-event.entity';
 import { User } from '@/entities/user.entity';
 import { Workspace } from '@/entities/workspace.entity';
+import { AuditDescriptionService } from '@/modules/audit/description/audit-description.service';
 import { AuditService } from '@/modules/audit/audit.service';
 import type { RollbackService } from '@/modules/audit/rollback/rollback.service';
 import { BadRequestException } from '@nestjs/common';
@@ -27,6 +28,7 @@ describe('AuditService', () => {
   const userRepository = createRepoMock<User>();
   const workspaceRepository = createRepoMock<Workspace>();
   const rollbackService = { rollback: jest.fn() } as unknown as RollbackService;
+  const descriptionService = new AuditDescriptionService();
 
   let service: AuditService;
 
@@ -37,6 +39,7 @@ describe('AuditService', () => {
       userRepository as any,
       workspaceRepository as any,
       rollbackService as any,
+      descriptionService,
     );
   });
 
@@ -74,6 +77,57 @@ describe('AuditService', () => {
       }),
     );
     expect(event).toBeDefined();
+  });
+
+  it('createEvent generates a human-readable description when missing', async () => {
+    userRepository.findOne = jest.fn(async () => ({
+      id: 'u1',
+      email: 'user@example.com',
+    }));
+
+    await service.createEvent({
+      actorType: ActorType.USER,
+      actorId: 'u1',
+      entityType: EntityType.CUSTOM_TABLE,
+      entityId: 'table-1',
+      action: AuditAction.CREATE,
+      diff: {
+        before: null,
+        after: { id: 'table-1', name: 'Таблица продукции Fish Dream' },
+      },
+    });
+
+    expect(auditEventRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: 'Создана таблица "Таблица продукции Fish Dream"',
+      }),
+    );
+  });
+
+  it('createEvent preserves explicit description', async () => {
+    userRepository.findOne = jest.fn(async () => ({
+      id: 'u1',
+      email: 'user@example.com',
+    }));
+
+    await service.createEvent({
+      actorType: ActorType.USER,
+      actorId: 'u1',
+      entityType: EntityType.WORKSPACE,
+      entityId: 'workspace-1',
+      action: AuditAction.UPDATE,
+      description: 'Переименован рабочий стол команды',
+      diff: {
+        before: { name: 'Old' },
+        after: { name: 'New' },
+      },
+    });
+
+    expect(auditEventRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: 'Переименован рабочий стол команды',
+      }),
+    );
   });
 
   it('createBatchEvents assigns batchId to all events', async () => {

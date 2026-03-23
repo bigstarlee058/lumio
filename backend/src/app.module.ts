@@ -37,9 +37,10 @@ import {
   Insight,
   Integration,
   IntegrationToken,
-  Notification,
-  NotificationPreference,
-  ParsingRule,
+    Notification,
+    NotificationPreference,
+    Payable,
+    ParsingRule,
   Receipt,
   ReceiptProcessingJob,
   SharedLink,
@@ -72,6 +73,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { HttpMetricsInterceptor } from './modules/observability/http-metrics.interceptor';
 import { ObservabilityModule } from './modules/observability/observability.module';
 import { ParsingModule } from './modules/parsing/parsing.module';
+import { PayablesModule } from './modules/payables/payables.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { StatementsModule } from './modules/statements/statements.module';
 import { StorageModule } from './modules/storage/storage.module';
@@ -125,6 +127,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       ParsingRule,
       Notification,
       NotificationPreference,
+      Payable,
       AuthSession,
       AuditEvent,
       BalanceAccount,
@@ -176,6 +179,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     InsightsModule,
     ObservabilityModule,
     DashboardModule,
+    PayablesModule,
   ],
   controllers: [AppController],
   providers: [

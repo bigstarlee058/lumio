@@ -21,6 +21,7 @@ const events: AuditEvent[] = [
       before: { amount: 10 },
       after: { amount: 20 },
     },
+    description: 'Изменена сумма транзакции',
     meta: null,
     batchId: null,
     severity: 'warn',
@@ -53,8 +54,7 @@ describe('AuditEventTable', () => {
     expect(headers).toEqual(['Action', 'Object', 'Description', 'User', 'Date', 'Severity']);
     expect(container.textContent).toContain('Change');
     expect(container.textContent).toContain('Transaction');
-    expect(container.textContent).toContain('From: 10');
-    expect(container.textContent).toContain('To: 20');
+    expect(container.textContent).toContain('Изменена сумма транзакции');
     expect(container.textContent).toContain('Sam C');
     expect(container.textContent).toContain('warn');
   });

@@ -90,6 +90,12 @@ export class Payable {
   @Column({ name: 'statement_id', type: 'uuid', nullable: true })
   statementId: string | null;
 
+  @Column({ name: 'paid_at', type: 'timestamptz', nullable: true })
+  paidAt: Date | null;
+
+  @Column({ name: 'due_soon_notified_at', type: 'timestamptz', nullable: true })
+  dueSoonNotifiedAt: Date | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 

@@ -8,9 +8,12 @@ import {
   EntityType,
 } from '../../../entities/audit-event.entity';
 import { Category } from '../../../entities/category.entity';
+import { CustomTableColumn } from '../../../entities/custom-table-column.entity';
+import { CustomTable } from '../../../entities/custom-table.entity';
 import { CustomTableRow } from '../../../entities/custom-table-row.entity';
 import { Statement } from '../../../entities/statement.entity';
 import { Transaction } from '../../../entities/transaction.entity';
+import { Workspace } from '../../../entities/workspace.entity';
 import type { RollbackResult } from '../interfaces/audit-event.interface';
 
 @Injectable()
@@ -26,6 +29,12 @@ export class RollbackService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(CustomTableRow)
     private readonly customTableRowRepository: Repository<CustomTableRow>,
+    @InjectRepository(CustomTable)
+    private readonly customTableRepository: Repository<CustomTable>,
+    @InjectRepository(CustomTableColumn)
+    private readonly customTableColumnRepository: Repository<CustomTableColumn>,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   async rollback(event: AuditEvent): Promise<RollbackResult> {
@@ -40,6 +49,12 @@ export class RollbackService {
         return this.rollbackCustomTableRow(event);
       case EntityType.TABLE_CELL:
         return this.rollbackCustomTableCell(event);
+      case EntityType.CUSTOM_TABLE:
+        return this.rollbackCustomTable(event);
+      case EntityType.CUSTOM_TABLE_COLUMN:
+        return this.rollbackCustomTableColumn(event);
+      case EntityType.WORKSPACE:
+        return this.rollbackWorkspace(event);
       default:
         return {
           success: false,
@@ -62,6 +77,18 @@ export class RollbackService {
 
   async rollbackCustomTableRow(event: AuditEvent): Promise<RollbackResult> {
     return this.applyRollback(event, this.customTableRowRepository);
+  }
+
+  async rollbackCustomTable(event: AuditEvent): Promise<RollbackResult> {
+    return this.applyRollback(event, this.customTableRepository);
+  }
+
+  async rollbackCustomTableColumn(event: AuditEvent): Promise<RollbackResult> {
+    return this.applyRollback(event, this.customTableColumnRepository);
+  }
+
+  async rollbackWorkspace(event: AuditEvent): Promise<RollbackResult> {
+    return this.applyRollback(event, this.workspaceRepository);
   }
 
   async rollbackCustomTableCell(event: AuditEvent): Promise<RollbackResult> {

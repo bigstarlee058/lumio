@@ -3,6 +3,7 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { AuditEvent } from '@/lib/api/audit';
 import React from 'react';
+import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { DiffViewer } from './DiffViewer';
 
 interface AuditEventDrawerProps {
@@ -15,10 +16,16 @@ interface AuditEventDrawerProps {
 export function AuditEventDrawer({ event, open, onClose, onRollback }: AuditEventDrawerProps) {
   if (!event) return null;
 
+  const formatted = formatAuditEvent(event);
+
   return (
     <DrawerShell isOpen={open} onClose={onClose} title="Audit Event" position="right" width="lg">
       <div data-testid="audit-event-drawer-scroll" className="min-h-0 flex-1 overflow-y-auto pr-1">
         <div className="space-y-6 pb-6">
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
+            <div className="text-sm font-semibold text-blue-900">{formatted.description}</div>
+          </div>
+
           <div className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Timestamp</span>
@@ -32,11 +39,11 @@ export function AuditEventDrawer({ event, open, onClose, onRollback }: AuditEven
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Action</span>
-              <span className="font-semibold text-gray-900">{event.action}</span>
+              <span className="font-semibold text-gray-900">{formatted.actionLabel}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Entity</span>
-              <span className="font-semibold text-gray-900">{event.entityType}</span>
+              <span className="font-semibold text-gray-900">{formatted.objectLabel}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-600">Entity ID</span>
@@ -85,7 +92,7 @@ export function AuditEventDrawer({ event, open, onClose, onRollback }: AuditEven
               onClick={() => onRollback?.(event)}
               className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
             >
-              Rollback
+              Откатить изменение
             </button>
           )}
         </div>

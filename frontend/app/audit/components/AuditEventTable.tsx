@@ -164,12 +164,7 @@ export function AuditEventTable({
             return <span className="text-sm text-gray-500">{data.count} events</span>;
           }
           const formatted = formatAuditEvent(data.event);
-          return (
-            <div className="text-sm text-gray-800">
-              {formatted.objectLabel}
-              <div className="text-xs text-gray-500">{data.event.entityId}</div>
-            </div>
-          );
+          return <div className="text-sm text-gray-800">{formatted.objectLabel}</div>;
         },
       },
       {
@@ -179,13 +174,7 @@ export function AuditEventTable({
           const data = row.original;
           if (data.type === 'group') return <span className="text-sm text-gray-500">—</span>;
           const formatted = formatAuditEvent(data.event);
-          return (
-            <div className="space-y-1 text-sm text-gray-700">
-              {formatted.descriptionLines.map((line, index) => (
-                <div key={`${data.event.id}-description-${index}`}>{line}</div>
-              ))}
-            </div>
-          );
+          return <div className="text-sm text-gray-700">{formatted.description}</div>;
         },
       },
       {

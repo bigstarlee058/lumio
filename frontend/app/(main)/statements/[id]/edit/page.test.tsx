@@ -170,6 +170,7 @@ describe('EditStatementPage locale', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
+    window.localStorage.clear();
 
     apiGet.mockReset();
     apiPatch.mockReset();
@@ -338,5 +339,53 @@ describe('EditStatementPage locale', () => {
     expect(endDateWrapper?.className).toContain('min-h-[40px]');
     expect(endDateWrapper?.className).not.toContain('h-14');
     expect(startDateLabel).toBeNull();
+  });
+
+  it('creates a payable draft when moving a statement to pay', async () => {
+    const { default: EditStatementPage } = await import('./page');
+
+    window.localStorage.setItem(
+      'lumio-statement-stage',
+      JSON.stringify({ 'statement-1': 'approve' }),
+    );
+
+    apiPost.mockResolvedValue({
+      data: {
+        id: 'payable-1',
+        vendor: 'Test counterparty',
+        amount: 125,
+        currency: 'KZT',
+      },
+    });
+
+    await act(async () => {
+      root.render(<EditStatementPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const payButton = Array.from(container.querySelectorAll('button')).find(button =>
+      button.textContent?.trim() === 'Pay',
+    );
+
+    expect(payButton).toBeTruthy();
+
+    await act(async () => {
+      payButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await flushPromises();
+    });
+
+    expect(apiPost).toHaveBeenCalledWith('/payables', {
+      vendor: 'Test counterparty',
+      amount: 125,
+      currency: 'KZT',
+      dueDate: '2026-03-17',
+      source: 'statement',
+      statementId: 'statement-1',
+      comment: 'Created from statement statement.pdf',
+    });
+    expect(push).toHaveBeenCalledWith('/statements/pay');
   });
 });

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { formatAuditEvent } from './formatAuditEvent';
 
 describe('formatAuditEvent', () => {
-  it('formats action, entity, and description lines', () => {
+  it('prefers backend description over technical diff formatting', () => {
     const mockEvent: AuditEvent = {
       id: 'evt-1',
       workspaceId: 'workspace-1',
@@ -18,6 +18,7 @@ describe('formatAuditEvent', () => {
         before: { category: 'Marketing' },
         after: { category: 'Sales' },
       },
+      description: 'Изменена категория транзакции',
       meta: null,
       batchId: null,
       severity: 'info',
@@ -26,7 +27,7 @@ describe('formatAuditEvent', () => {
 
     const result = formatAuditEvent(mockEvent);
 
-    expect(result.descriptionLines).toContain('From: Marketing');
+    expect(result.description).toBe('Изменена категория транзакции');
     expect(result.actionLabel).toBe('Change');
     expect(result.objectLabel).toBe('Transaction');
   });
@@ -46,6 +47,7 @@ describe('formatAuditEvent', () => {
         before: { category: 'Marketing', amount: 10, note: 'Old' },
         after: { category: 'Sales', amount: 12, note: 'New' },
       },
+      description: null,
       meta: null,
       batchId: null,
       severity: 'info',
@@ -54,13 +56,7 @@ describe('formatAuditEvent', () => {
 
     const result = formatAuditEvent(mockEvent);
 
-    expect(result.descriptionLines[0]).toBe('Fields: amount, category, note');
-    expect(result.descriptionLines).toContain('Field: amount');
-    expect(result.descriptionLines).toContain('From: 10');
-    expect(result.descriptionLines).toContain('To: 12');
-    expect(result.descriptionLines).toContain('Field: category');
-    expect(result.descriptionLines).toContain('From: Marketing');
-    expect(result.descriptionLines).toContain('To: Sales');
+    expect(result.description).toBe('Fields: amount, category, note');
   });
 
   it('uses action + object fallback when diff is missing', () => {
@@ -75,6 +71,7 @@ describe('formatAuditEvent', () => {
       entityId: '',
       action: 'create',
       diff: null,
+      description: null,
       meta: null,
       batchId: null,
       severity: 'info',
@@ -83,7 +80,7 @@ describe('formatAuditEvent', () => {
 
     const result = formatAuditEvent(mockEvent);
 
-    expect(result.descriptionLines).toEqual(['Create Rule']);
+    expect(result.description).toBe('Create Rule');
   });
 
   it('uses action tone when severity is info', () => {
@@ -98,6 +95,7 @@ describe('formatAuditEvent', () => {
       entityId: 'txn-789',
       action: 'create',
       diff: null,
+      description: null,
       meta: null,
       batchId: null,
       severity: 'info',
@@ -121,6 +119,7 @@ describe('formatAuditEvent', () => {
       entityId: 'txn-789',
       action: 'create',
       diff: null,
+      description: null,
       meta: null,
       batchId: null,
       severity: 'warn',

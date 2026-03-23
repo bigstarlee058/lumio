@@ -1,6 +1,7 @@
 'use client';
 
 import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/StatementCategoryDrawer';
+import CreatePayableDrawer from '@/app/(main)/statements/components/payables/CreatePayableDrawer';
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
 import { Checkbox } from '@/app/components/ui/checkbox';
@@ -58,6 +59,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { ReceiptPreviewModal } from '../components/ReceiptPreviewModal';
+import { buildPayablePrefillFromReceipt } from './payable-prefill';
 
 interface GmailReceipt {
   id: string;
@@ -163,6 +165,7 @@ export default function GmailReceiptDocumentPage() {
   const [bulkCategoryId, setBulkCategoryId] = useState('');
   const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
   const [categorySaving, setCategorySaving] = useState(false);
+  const [payableDrawerOpen, setPayableDrawerOpen] = useState(false);
 
   const categoryFieldRef = useRef<HTMLSelectElement | null>(null);
 
@@ -332,6 +335,27 @@ export default function GmailReceiptDocumentPage() {
     } finally {
       setExporting(false);
     }
+  };
+
+  const payablePrefill = receipt
+    ? buildPayablePrefillFromReceipt({
+        receipt,
+        editedData,
+      })
+    : null;
+
+  const handleOpenPayableDrawer = () => {
+    if (!payablePrefill) {
+      toast.error('Only expense receipts with an amount can be added to Pay');
+      return;
+    }
+
+    setPayableDrawerOpen(true);
+  };
+
+  const handleCreatePayable = async () => {
+    toast.success('Payable draft is ready to save');
+    router.push('/statements/pay');
   };
 
   const handleMarkDuplicate = async (originalId: string) => {
@@ -717,28 +741,25 @@ export default function GmailReceiptDocumentPage() {
               </span>
             </Tooltip>
 
-            {/* Pay — disabled, payable pipeline not yet integrated */}
-            <Tooltip
-              title="Pay workflow will be enabled after payable pipeline integration"
-              placement="top"
+            <Button
+              variant="outlined"
+              startIcon={<Payment />}
+              onClick={handleOpenPayableDrawer}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                borderRadius: 2,
+                borderColor: 'grey.300',
+                color: 'text.secondary',
+                '&:hover': {
+                  borderColor: 'primary.300',
+                  color: 'primary.700',
+                  bgcolor: 'primary.50',
+                },
+              }}
             >
-              <span style={{ display: 'inline-flex' }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<Payment />}
-                  disabled
-                  sx={{
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    borderRadius: 2,
-                    borderColor: 'grey.200',
-                    color: 'text.disabled',
-                  }}
-                >
-                  Pay
-                </Button>
-              </span>
-            </Tooltip>
+              Pay
+            </Button>
 
             {/* Export */}
             <Button
@@ -1712,6 +1733,41 @@ export default function GmailReceiptDocumentPage() {
         }}
         width="sm"
         showAllOption
+      />
+
+      <CreatePayableDrawer
+        open={payableDrawerOpen}
+        payable={null}
+        initialValues={payablePrefill}
+        saving={false}
+        onClose={() => setPayableDrawerOpen(false)}
+        onSubmit={handleCreatePayable}
+        labels={{
+          createTitle: 'Create payable',
+          editTitle: 'Edit payable',
+          vendor: 'Vendor',
+          amount: 'Amount',
+          currency: 'Currency',
+          dueDate: 'Due date',
+          source: 'Source',
+          status: 'Status',
+          comment: 'Comment',
+          save: 'Continue',
+          saving: 'Saving...',
+          cancel: 'Cancel',
+          sourceOptions: {
+            manual: 'Manual',
+            invoice: 'Invoice',
+            statement: 'Statement',
+          },
+          statusOptions: {
+            to_pay: 'To pay',
+            scheduled: 'Scheduled',
+            paid: 'Paid',
+            overdue: 'Overdue',
+            archived: 'Archived',
+          },
+        }}
       />
 
       {/* Receipt preview modal */}

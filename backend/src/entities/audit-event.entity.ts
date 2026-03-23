@@ -128,6 +128,9 @@ export class AuditEvent {
   @Column({ name: 'action', type: 'enum', enum: AuditAction })
   action: AuditAction;
 
+  @Column({ name: 'description', type: 'text', nullable: true })
+  description: string | null;
+
   @Column({ name: 'diff', type: 'jsonb', nullable: true })
   diff: AuditEventDiff | null;
 

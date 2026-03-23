@@ -73,6 +73,7 @@ export interface AuditEvent {
   entityType: EntityType;
   entityId: string;
   action: AuditAction;
+  description: string | null;
   diff: AuditEventDiff | null;
   meta: AuditEventMeta | null;
   batchId: string | null;

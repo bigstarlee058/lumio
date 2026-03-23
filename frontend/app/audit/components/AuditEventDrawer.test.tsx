@@ -21,8 +21,9 @@ const sampleEvent: AuditEvent = {
   action: 'create',
   diff: {
     before: null,
-    after: { id: 'entity-1' },
+    after: { id: 'entity-1', createdAt: '2026-03-12T19:06:44.950Z', name: 'Office' },
   },
+  description: 'Создана категория "Office"',
   meta: null,
   batchId: null,
   severity: 'info',
@@ -41,5 +42,18 @@ describe('AuditEventDrawer', () => {
     const scrollContainer = container.querySelector('[data-testid="audit-event-drawer-scroll"]');
     expect(scrollContainer).toBeTruthy();
     expect(scrollContainer?.className).toContain('overflow-y-auto');
+  });
+
+  it('shows human-readable description and hides technical diff rows by default', async () => {
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<AuditEventDrawer event={sampleEvent} open={true} onClose={() => undefined} />);
+    });
+
+    expect(container.textContent).toContain('Создана категория "Office"');
+    expect(container.textContent).not.toContain('createdAt');
+    expect(container.textContent).not.toContain('id');
   });
 });

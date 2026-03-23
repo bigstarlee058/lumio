@@ -67,18 +67,22 @@ const buildFallbackDescription = (
   actionLabel: string,
   objectLabel: string,
   entityId?: string | null,
-): string[] => {
+): string => {
   const baseLabel = `${actionLabel} ${objectLabel}`;
   const trimmedId = typeof entityId === 'string' ? entityId.trim() : '';
-  if (!trimmedId) return [baseLabel];
-  return [`${baseLabel} ${trimmedId}`];
+  if (!trimmedId) return baseLabel;
+  return `${baseLabel} ${trimmedId}`;
 };
 
-const extractDescriptionLines = (
+const extractDescription = (
   event: AuditEvent,
   actionLabel: string,
   objectLabel: string,
-): string[] => {
+): string => {
+  if (event.description?.trim()) {
+    return event.description.trim();
+  }
+
   const diff = event.diff;
   if (!diff || Array.isArray(diff)) {
     return buildFallbackDescription(actionLabel, objectLabel, event.entityId);
@@ -93,33 +97,20 @@ const extractDescriptionLines = (
   }
 
   if (keys.length === 1) {
-    const key = keys[0];
-    const beforeValue = formatValue((before as Record<string, unknown>)[key]);
-    const afterValue = formatValue((after as Record<string, unknown>)[key]);
-
-    return [`From: ${beforeValue}`, `To: ${afterValue}`];
+    return `Field: ${keys[0]}`;
   }
 
   const displayedKeys = keys.slice(0, 3);
   const remainingCount = keys.length - displayedKeys.length;
-  const fieldsLabel = remainingCount
+  return remainingCount
     ? `Fields: ${displayedKeys.join(', ')} +${remainingCount} more`
     : `Fields: ${displayedKeys.join(', ')}`;
-  const lines: string[] = [fieldsLabel];
-
-  displayedKeys.forEach(key => {
-    const beforeValue = formatValue((before as Record<string, unknown>)[key]);
-    const afterValue = formatValue((after as Record<string, unknown>)[key]);
-    lines.push(`Field: ${key}`, `From: ${beforeValue}`, `To: ${afterValue}`);
-  });
-
-  return lines;
 };
 
 export const formatAuditEvent = (event: AuditEvent) => {
   const actionLabel = ACTION_LABELS[event.action] ?? event.action;
   const objectLabel = ENTITY_LABELS[event.entityType] ?? event.entityType;
-  const descriptionLines = extractDescriptionLines(event, actionLabel, objectLabel);
+  const description = extractDescription(event, actionLabel, objectLabel);
   const actionTone =
     event.severity === 'warn' || event.severity === 'critical'
       ? SEVERITY_TONES[event.severity]
@@ -128,7 +119,7 @@ export const formatAuditEvent = (event: AuditEvent) => {
   return {
     actionLabel,
     objectLabel,
-    descriptionLines,
+    description,
     severity: event.severity,
     actionTone,
   };

@@ -3,6 +3,17 @@
 import type { AuditEventDiff } from '@/lib/api/audit';
 import React from 'react';
 
+const TECHNICAL_FIELDS = new Set(['id', 'createdAt', 'updatedAt', 'workspaceId', 'userId']);
+
+const FIELD_LABELS: Record<string, string> = {
+  backgroundImage: 'Background image',
+  color: 'Color',
+  name: 'Name',
+  description: 'Description',
+  title: 'Title',
+  position: 'Position',
+};
+
 const formatValue = (value: any) => {
   if (value === null || value === undefined) return '—';
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
@@ -45,7 +56,13 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
 
   const before = diff.before || {};
   const after = diff.after || {};
-  const keys = Array.from(new Set([...Object.keys(before || {}), ...Object.keys(after || {})]));
+  const keys = Array.from(new Set([...Object.keys(before || {}), ...Object.keys(after || {})])).filter(
+    key => !TECHNICAL_FIELDS.has(key),
+  );
+
+  if (keys.length === 0) {
+    return <div className="text-sm text-gray-500">No user-facing changes available.</div>;
+  }
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -71,7 +88,7 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
                   : '';
           return (
             <div key={key} className={`grid grid-cols-3 gap-0 text-sm ${rowClass}`}>
-              <div className="px-3 py-2 font-medium text-gray-700">{key}</div>
+              <div className="px-3 py-2 font-medium text-gray-700">{FIELD_LABELS[key] ?? key}</div>
               <div className="px-3 py-2 text-gray-600">
                 <pre className="whitespace-pre-wrap text-xs">{formatValue(beforeValue)}</pre>
               </div>
