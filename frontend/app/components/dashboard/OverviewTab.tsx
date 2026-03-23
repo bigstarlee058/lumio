@@ -70,7 +70,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
   if (hasNoData) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-none bg-[#E8E4DC] border border-[#D1CCC4] mb-6">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] mb-6">
           <FileUp className="h-10 w-10 text-[#7A869B]" />
         </div>
         <h2
@@ -102,7 +102,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     <div className="flex flex-col gap-[30px] w-full pb-10">
       {effectivePeriod ? (
         <div
-          className="border border-[#D1CCC4] bg-[#F5F3EF] px-4 py-3 text-[12px] text-[#555555]"
+          className="border border-[#D1CCC4]/50 bg-[#F5F3EF]/50 backdrop-blur-md rounded-xl px-4 py-3 text-[12px] text-[#555555]"
           style={{ fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
@@ -116,7 +116,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           return (
             <Card
               key={key}
-              className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none h-[72px]"
+              className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl h-[72px]"
             >
               <CardContent className="px-3 py-2 flex flex-col justify-between h-full">
                 <span
@@ -145,7 +145,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
       </div>
 
       <div className="grid grid-cols-1 gap-5 items-stretch lg:grid-cols-12 mt-4">
-        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none min-h-[320px] lg:col-span-4">
+        <Card className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl min-h-[320px] lg:col-span-4">
           <CardContent className="p-6 flex flex-col h-full overflow-hidden gap-3">
             <h2
               className="text-[18px] font-bold text-[#1a1a1a] uppercase"
@@ -164,7 +164,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           </CardContent>
         </Card>
 
-        <Card className="border border-[#D1CCC4] bg-[#E8E4DC] shadow-none rounded-none min-h-[320px] lg:col-span-8">
+        <Card className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl min-h-[320px] lg:col-span-8">
           <CardContent className="p-6 h-full flex flex-col overflow-hidden gap-3">
             <h2
               className="text-[18px] font-bold text-[#1a1a1a] uppercase"
@@ -172,7 +172,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
             >
               CASH FLOW ({rangeLabel.toUpperCase()})
             </h2>
-            <div className="bg-[#E9E4DC] flex-1 flex flex-col relative px-6 py-5 min-h-[240px]">
+            <div className="bg-transparent flex-1 flex flex-col relative px-6 py-5 min-h-[240px]">
               <CashFlowMini
                 data={data.cashFlow}
                 emptyLabel="No cash flow data yet"

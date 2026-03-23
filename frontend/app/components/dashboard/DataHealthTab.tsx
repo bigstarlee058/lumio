@@ -121,7 +121,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
               <div
                 key={key}
                 className={cn(
-                  'bg-[#E8E4DC] border border-[#D1CCC4] rounded-none flex flex-col p-[14px] h-[120px] transition-all duration-200 hover:-translate-y-0.5',
+                  'bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl flex flex-col p-[14px] h-[120px] transition-all duration-200 hover:-translate-y-0.5',
                 )}
               >
                 <span className="text-[#555555] ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
@@ -146,7 +146,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       {/* 2. Last upload + Unapproved cash row */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Last upload card */}
-        <div className="bg-[#E8E4DC] border border-[#D1CCC4] rounded-none p-[16px] h-[340px] flex flex-col relative">
+        <div className="bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl p-[16px] h-[340px] flex flex-col relative">
           <span className="text-[#555555] ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
             LAST UPLOAD
           </span>
@@ -178,8 +178,8 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
         </div>
 
         {/* Unapproved cash card */}
-        <div className="bg-[#1a1a1a] border border-[#3a3a3a] rounded-none p-[16px] h-[340px] flex flex-col relative">
-          <span className="text-[#888888] ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
+        <div className="bg-black/40 border border-white/10 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.2)] rounded-2xl p-[16px] h-[340px] flex flex-col relative">
+          <span className="text-white/75 ff-dashboard-mono text-[11px] font-semibold tracking-[1.4px] uppercase leading-none">
             UNAPPROVED CASH
           </span>
 
@@ -215,7 +215,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
           <h2 className="mb-4 text-[#1a1a1a] ff-dashboard-mono text-[16px] font-bold uppercase tracking-wide">
             ACTION REQUIRED
           </h2>
-          <div className="flex flex-col border border-[#D1CCC4] bg-[#E8E4DC] divide-y divide-[#D1CCC4] rounded-none">
+          <div className="flex flex-col border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] divide-y divide-white/40 rounded-2xl overflow-hidden">
             {quickLinks.map(({ label, href }) => (
               <Link
                 key={href}

@@ -190,26 +190,26 @@ export default function WorkspaceOverviewView() {
 
   return (
     <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-      <div className="container max-w-4xl px-6 py-8 space-y-6">
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <div className="flex items-start gap-4">
-            <div className="h-14 w-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-2xl font-semibold">
+      <div className="container max-w-5xl px-5 py-4 space-y-3">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-lg font-semibold text-primary">
               {getInitials(currentWorkspace.name) || <Building2 size={24} />}
             </div>
             <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground">Overview</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-xl font-semibold text-foreground">Overview</h1>
+              <p className="text-xs text-muted-foreground">
                 Manage workspace profile, defaults, and billing details.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
-              <h2 className="text-sm font-medium text-foreground flex items-center gap-2">
-                <ImageIcon size={16} className="text-muted-foreground" />
+              <h2 className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <ImageIcon size={15} className="text-muted-foreground" />
                 Workspace background
               </h2>
               <p className="text-xs text-muted-foreground">
@@ -218,132 +218,160 @@ export default function WorkspaceOverviewView() {
             </div>
             <button
               type="button"
-              onClick={() => setShowBackgroundPicker(!showBackgroundPicker)}
+              data-testid="workspace-background-trigger"
+              onClick={() => setShowBackgroundPicker(true)}
               disabled={savingBackground}
-              className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-1 self-start rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-60"
             >
               Change
-              <ChevronDown
-                size={14}
-                className={`transition-transform ${showBackgroundPicker ? 'rotate-180' : ''}`}
-              />
+              <ChevronDown size={14} />
             </button>
           </div>
 
-          <div className="relative aspect-video max-w-xs rounded-lg overflow-hidden border border-border">
+          <div className="relative aspect-[2.8/1] w-full overflow-hidden rounded-lg border border-border sm:max-w-[320px]">
             {resolveBackgroundSrc(currentWorkspace.backgroundImage) ? (
               <img
                 src={resolveBackgroundSrc(currentWorkspace.backgroundImage) || ''}
                 alt="Current workspace background"
-                className="w-full h-full object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-muted flex items-center justify-center">
-                <p className="text-sm text-muted-foreground">No background selected</p>
+              <div className="flex h-full w-full items-center justify-center bg-muted px-4 text-center">
+                <p className="text-xs text-muted-foreground">No background selected</p>
               </div>
             )}
           </div>
+        </div>
 
-          {showBackgroundPicker && (
-            <div className="pt-2">
-              {savingBackground && <p className="text-xs text-muted-foreground mb-2">Saving...</p>}
-              <BackgroundSelector
-                selectedBackground={currentWorkspace.backgroundImage}
-                onSelect={handleBackgroundChange}
-                backgrounds={AVAILABLE_BACKGROUNDS}
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+            <div className="space-y-1.5">
+              <label htmlFor="workspace-name" className="text-sm font-medium text-foreground">
+                Workspace name
+              </label>
+              <input
+                id="workspace-name"
+                type="text"
+                value={name}
+                onChange={event => setName(event.target.value)}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="workspace-description"
+                className="text-sm font-medium text-foreground"
+              >
+                Description
+              </label>
+              <textarea
+                id="workspace-description"
+                value={description}
+                onChange={event => setDescription(event.target.value)}
+                rows={2}
+                className="min-h-20 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label
+                htmlFor="workspace-currency-trigger"
+                className="text-sm font-medium text-foreground"
+              >
+                Default currency
+              </label>
+              <button
+                id="workspace-currency-trigger"
+                data-testid="workspace-currency-trigger"
+                type="button"
+                onClick={() => setCurrencyDrawerOpen(true)}
+                className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+              >
+                <span className="truncate">{selectedCurrencyItem?.label || notSelectedLabel}</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={!isDirty || saving}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Save size={16} />
+                {saving ? 'Saving...' : 'Save changes'}
+              </button>
+
+              {isDirty && (
+                <span className="text-sm font-medium text-amber-600 transition-opacity dark:text-amber-500">
+                  Unsaved changes
+                </span>
+              )}
+            </div>
+          </div>
+
+          {currentWorkspace.memberRole === 'owner' && (
+            <div className="rounded-2xl border border-red-200 bg-red-50/50 p-4 space-y-3 dark:border-red-900/50 dark:bg-red-950/20">
+              <div className="space-y-1">
+                <h2 className="flex items-center gap-2 text-sm font-medium text-red-900 dark:text-red-200">
+                  Danger Zone
+                </h2>
+                <p className="text-xs text-red-700 dark:text-red-300/80">
+                  This will permanently delete the workspace and all related data. This action
+                  cannot be undone.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900"
+              >
+                <Trash2 size={16} />
+                {deleting ? 'Deleting...' : 'Delete workspace'}
+              </button>
             </div>
           )}
         </div>
+      </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
-          <div className="space-y-2">
-            <label htmlFor="workspace-name" className="text-sm font-medium text-foreground">
-              Workspace name
-            </label>
-            <input
-              id="workspace-name"
-              type="text"
-              value={name}
-              onChange={event => setName(event.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="workspace-description" className="text-sm font-medium text-foreground">
-              Description
-            </label>
-            <textarea
-              id="workspace-description"
-              value={description}
-              onChange={event => setDescription(event.target.value)}
-              rows={3}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label
-              htmlFor="workspace-currency-trigger"
-              className="text-sm font-medium text-foreground"
-            >
-              Default currency
-            </label>
-            <button
-              id="workspace-currency-trigger"
-              data-testid="workspace-currency-trigger"
-              type="button"
-              onClick={() => setCurrencyDrawerOpen(true)}
-              className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
-            >
-              <span className="truncate">{selectedCurrencyItem?.label || notSelectedLabel}</span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+      <DrawerShell
+        isOpen={showBackgroundPicker}
+        onClose={() => setShowBackgroundPicker(false)}
+        position="right"
+        width="lg"
+        showCloseButton={false}
+        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        title={
+          <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={handleSave}
-              disabled={!isDirty || saving}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => setShowBackgroundPicker(false)}
+              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              aria-label="Close background drawer"
             >
-              <Save size={16} />
-              {saving ? 'Saving...' : 'Save changes'}
+              <ChevronLeft className="h-5 w-5" />
             </button>
-
-            {isDirty && (
-              <span className="text-sm font-medium text-amber-600 dark:text-amber-500 transition-opacity">
-                Unsaved changes
-              </span>
-            )}
+            <span className="text-lg font-semibold text-[#0f3428]">
+              Select workspace background
+            </span>
+          </div>
+        }
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex-1 space-y-3 overflow-y-auto pb-4">
+            <p className="text-sm text-gray-500">Choose the image shown on your workspace card.</p>
+            {savingBackground && <p className="text-xs text-muted-foreground">Saving...</p>}
+            <BackgroundSelector
+              selectedBackground={currentWorkspace.backgroundImage}
+              onSelect={handleBackgroundChange}
+              backgrounds={AVAILABLE_BACKGROUNDS}
+            />
           </div>
         </div>
-
-        {currentWorkspace.memberRole === 'owner' && (
-          <div className="rounded-2xl border border-red-200 bg-red-50/50 dark:border-red-900/50 dark:bg-red-950/20 p-6 space-y-4">
-            <div className="space-y-1">
-              <h2 className="text-sm font-medium text-red-900 dark:text-red-200 flex items-center gap-2">
-                Danger Zone
-              </h2>
-              <p className="text-sm text-red-700 dark:text-red-300/80">
-                This will permanently delete the workspace and all related data. This action cannot
-                be undone.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleting}
-              className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white dark:bg-red-950 dark:border-red-900 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-200 hover:bg-red-50 dark:hover:bg-red-900 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <Trash2 size={16} />
-              {deleting ? 'Deleting...' : 'Delete workspace'}
-            </button>
-          </div>
-        )}
-      </div>
+      </DrawerShell>
 
       <DrawerShell
         isOpen={currencyDrawerOpen}

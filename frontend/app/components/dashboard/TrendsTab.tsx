@@ -120,7 +120,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
     <div className="flex flex-col gap-6 w-full pb-10">
       {effectivePeriod ? (
         <div
-          className="border border-[#D1CCC4] bg-[#F5F3EF] px-4 py-3 text-[12px] text-[#555555]"
+          className="border border-[#D1CCC4]/50 bg-[#F5F3EF]/50 backdrop-blur-md rounded-xl px-4 py-3 text-[12px] text-[#555555]"
           style={{ fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
@@ -142,10 +142,10 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
             key={opt.value}
             type="button"
             onClick={() => setDays(opt.value)}
-            className={`px-3 py-1.5 rounded-none text-[11px] font-semibold tracking-[1px] transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-[1px] transition-colors ${
               days === opt.value
                 ? 'bg-[#1a1a1a] text-[#F5F3EF]'
-                : 'bg-[#E8E4DC] text-[#555555] hover:bg-[#D1CCC4]'
+                : 'bg-white/40 border border-white/60 backdrop-blur-md text-[#555555] hover:bg-white/60'
             }`}
             style={{ fontFamily: 'var(--font-dashboard-mono)' }}
           >
@@ -192,7 +192,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               DATA SOURCES
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              <div className="bg-[#E8E4DC] p-6 flex flex-col gap-3 rounded-none">
+              <div className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] p-6 flex flex-col gap-3 rounded-2xl">
                 <h3
                   className="text-[18px] font-bold text-[#1a1a1a]"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
@@ -239,7 +239,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 </div>
               </div>
 
-              <div className="bg-[#E8E4DC] p-6 flex flex-col gap-3 rounded-none">
+              <div className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] p-6 flex flex-col gap-3 rounded-2xl">
                 <h3
                   className="text-[18px] font-bold text-[#1a1a1a]"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
@@ -291,7 +291,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 </div>
               </div>
 
-              <div className="bg-[#E8E4DC] p-6 flex flex-col gap-3 rounded-none">
+              <div className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] p-6 flex flex-col gap-3 rounded-2xl">
                 <h3
                   className="text-[18px] font-bold text-[#1a1a1a]"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
@@ -327,7 +327,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
           </section>
 
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mt-4">
-            <div className="lg:col-span-8 bg-[#E8E4DC] p-6 flex flex-col gap-3 rounded-none h-full">
+            <div className="lg:col-span-8 border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] p-6 flex flex-col gap-3 rounded-2xl h-full">
               <h3
                 className="text-[18px] font-bold text-[#1a1a1a] uppercase"
                 style={{ fontFamily: 'var(--font-dashboard-mono)' }}
@@ -353,7 +353,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               )}
             </div>
 
-            <div className="lg:col-span-4 bg-[#E8E4DC] p-6 flex flex-col gap-3 rounded-none h-full">
+            <div className="lg:col-span-4 border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] p-6 flex flex-col gap-3 rounded-2xl h-full">
               <h3
                 className="text-[18px] font-bold text-[#1a1a1a] uppercase"
                 style={{ fontFamily: 'var(--font-dashboard-mono)' }}
