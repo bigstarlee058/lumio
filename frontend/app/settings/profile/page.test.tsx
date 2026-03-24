@@ -55,7 +55,7 @@ vi.mock('@/app/contexts/WorkspaceContext', () => ({
   }),
 }));
 
-vi.mock('next-intlayer', () => ({
+vi.mock('@/app/i18n', () => ({
   useIntlayer: () => i18nContent,
   useLocale: () => ({ locale: 'ru', setLocale: vi.fn() }),
 }));
@@ -65,7 +65,14 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('@/components/mode-toggle', () => ({
-  ModeToggle: () => null,
+  ModeToggle: (props: {
+    onThemeChange?: (theme: 'light' | 'dark' | 'auto') => void;
+    labels?: { auto?: string };
+  }) => (
+    <button type="button" onClick={() => props.onThemeChange?.('auto')}>
+      {props.labels?.auto ?? 'Auto'}
+    </button>
+  ),
 }));
 
 const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
@@ -186,5 +193,71 @@ describe('ProfileSettingsPage', () => {
 
     expect(window.confirm).toHaveBeenCalled();
     expect(apiPatch).not.toHaveBeenCalledWith('/users/me/password', expect.anything());
+  });
+
+  it('renders appearance settings and saves auto theme preference', async () => {
+    window.history.replaceState(null, '', '#appearance');
+    apiPatch.mockResolvedValue({
+      data: {
+        user: { ...authUser, themePreference: 'auto' },
+        message: 'Theme updated',
+      },
+    });
+
+    const { default: ProfileSettingsPage } = await import('./page');
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<ProfileSettingsPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    expect(container.textContent).toContain('appearanceCard.title');
+
+    const autoButton = Array.from(container.querySelectorAll('button')).find(
+      button =>
+        button.textContent?.includes('appearanceCard.auto') || button.textContent?.includes('Auto'),
+    ) as HTMLButtonElement;
+
+    expect(autoButton).toBeTruthy();
+
+    await act(async () => {
+      autoButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await flushPromises();
+    });
+
+    expect(apiPatch).toHaveBeenCalledWith('/users/me/preferences', {
+      themePreference: 'auto',
+    });
+    expect(setUser).toHaveBeenCalledWith(expect.objectContaining({ themePreference: 'auto' }));
+  });
+
+  it('uses dark-safe cards and drawer surfaces for profile settings', async () => {
+    const { default: ProfileSettingsPage } = await import('./page');
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<ProfileSettingsPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const cards = Array.from(container.querySelectorAll('[class]')).filter(
+      node => typeof node.className === 'string' && node.className.includes('bg-card'),
+    );
+    const activeHeader = Array.from(container.querySelectorAll('[class]')).find(
+      node => typeof node.className === 'string' && node.className.includes('bg-muted/60'),
+    );
+
+    expect(cards.length).toBeGreaterThan(0);
+    expect(activeHeader).toBeTruthy();
+    expect(container.textContent).not.toContain('bg-white');
   });
 });

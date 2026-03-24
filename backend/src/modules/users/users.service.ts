@@ -11,12 +11,12 @@ import type { Repository } from 'typeorm';
 import { Permission } from '../../common/enums/permissions.enum';
 import { User, UserRole } from '../../entities/user.entity';
 import { Workspace } from '../../entities/workspace.entity';
+import { WorkspacesService } from '../workspaces/workspaces.service';
 import type { ChangeEmailDto } from './dto/change-email.dto';
 import type { ChangePasswordDto } from './dto/change-password.dto';
 import type { CompleteOnboardingDto } from './dto/complete-onboarding.dto';
 import type { UpdateMyPreferencesDto } from './dto/update-my-preferences.dto';
 import type { UpdateUserDto } from './dto/update-user.dto';
-import { WorkspacesService } from '../workspaces/workspaces.service';
 
 @Injectable()
 export class UsersService {
@@ -49,6 +49,7 @@ export class UsersService {
         'permissions',
         'locale',
         'timeZone',
+        'themePreference',
         'onboardingCompletedAt',
         'tokenVersion',
       ],
@@ -94,6 +95,7 @@ export class UsersService {
         'permissions',
         'locale',
         'timeZone',
+        'themePreference',
         'onboardingCompletedAt',
       ],
     });
@@ -217,6 +219,9 @@ export class UsersService {
     if (dto.timeZone !== undefined) {
       const tz = dto.timeZone;
       user.timeZone = tz === null ? null : String(tz).trim() || null;
+    }
+    if (dto.themePreference !== undefined) {
+      user.themePreference = dto.themePreference;
     }
 
     return this.userRepository.save(user);

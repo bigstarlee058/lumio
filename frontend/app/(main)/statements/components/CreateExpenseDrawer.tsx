@@ -337,18 +337,18 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleBackClick}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close create expense drawer"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold text-[#0f3428]">
+            <span className="text-lg font-semibold text-foreground">
               {currencyPickerOpen
                 ? 'Select a currency'
                 : mode === 'manual' && manualStep === 'details'
@@ -360,7 +360,7 @@ export default function CreateExpenseDrawer({
       >
         <div className="flex h-full flex-col">
           {!currencyPickerOpen ? (
-            <div className="mb-5 grid grid-cols-2 gap-3 rounded-full bg-white p-1.5">
+            <div className="mb-5 grid grid-cols-2 gap-3 rounded-full border border-border bg-muted/60 p-1.5">
               <button
                 type="button"
                 onClick={() => {
@@ -371,8 +371,8 @@ export default function CreateExpenseDrawer({
                 className={cn(
                   'inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors',
                   mode === 'manual'
-                    ? 'bg-[#ebe8e2] text-[#0f3428]'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-[#0f3428]',
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}
               >
                 <PencilLine className="h-4 w-4" />
@@ -387,8 +387,8 @@ export default function CreateExpenseDrawer({
                 className={cn(
                   'inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors',
                   mode === 'scan'
-                    ? 'bg-[#ebe8e2] text-[#0f3428]'
-                    : 'text-gray-500 hover:bg-gray-100 hover:text-[#0f3428]',
+                    ? 'bg-card text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}
               >
                 <ScanLine className="h-4 w-4" />
@@ -401,13 +401,13 @@ export default function CreateExpenseDrawer({
             {currencyPickerOpen ? (
               <>
                 <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
                     value={currencySearch}
                     onChange={event => setCurrencySearch(event.target.value)}
                     placeholder="Search"
-                    className="w-full rounded-2xl border border-primary bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none"
+                    className="w-full rounded-2xl border border-border bg-card py-3 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary"
                   />
                 </div>
 
@@ -415,9 +415,9 @@ export default function CreateExpenseDrawer({
                   <button
                     type="button"
                     onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                    className="flex w-full items-center justify-between rounded-2xl bg-[#ebe8e2] px-4 py-4 text-left"
+                    className="flex w-full items-center justify-between rounded-2xl border border-border bg-muted px-4 py-4 text-left"
                   >
-                    <span className="text-base font-semibold text-[#0f3428]">
+                    <span className="text-base font-semibold text-foreground">
                       {selectedCurrencyItem.label}
                     </span>
                     <Check className="h-5 w-5 text-primary" />
@@ -426,16 +426,16 @@ export default function CreateExpenseDrawer({
 
                 {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
                   <div>
-                    <p className="px-1 text-sm text-gray-500">Recents</p>
+                    <p className="px-1 text-sm text-muted-foreground">Recents</p>
                     <div className="mt-2 space-y-2">
                       {recentCurrencyItems.map(item => (
                         <button
                           key={`recent-${item.code}`}
                           type="button"
                           onClick={() => handleSelectCurrency(item.code)}
-                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
                         >
-                          <span className="text-base font-semibold text-[#0f3428]">
+                          <span className="text-base font-semibold text-foreground">
                             {item.label}
                           </span>
                         </button>
@@ -445,7 +445,7 @@ export default function CreateExpenseDrawer({
                 ) : null}
 
                 <div>
-                  <p className="px-1 text-sm text-gray-500">All</p>
+                  <p className="px-1 text-sm text-muted-foreground">All</p>
                   <div className="mt-2 space-y-1">
                     {allCurrencyItems.length > 0 ? (
                       allCurrencyItems.map(item => (
@@ -453,15 +453,15 @@ export default function CreateExpenseDrawer({
                           key={item.code}
                           type="button"
                           onClick={() => handleSelectCurrency(item.code)}
-                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
                         >
-                          <span className="text-base font-semibold text-[#0f3428]">
+                          <span className="text-base font-semibold text-foreground">
                             {item.label}
                           </span>
                         </button>
                       ))
                     ) : (
-                      <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500">
+                      <p className="rounded-xl border border-border bg-card px-3 py-3 text-sm text-muted-foreground">
                         No currencies found
                       </p>
                     )}
@@ -470,12 +470,12 @@ export default function CreateExpenseDrawer({
               </>
             ) : mode === 'scan' ? (
               <>
-                <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-[#f8f7f4] px-6 py-12 text-center">
-                  <ReceiptLongIcon className="text-[#9ea6a0]" sx={{ fontSize: 56 }} />
-                  <p className="mt-6 text-[30px] font-semibold leading-none text-[#0f3428]">
+                <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-muted/60 px-6 py-12 text-center">
+                  <ReceiptLongIcon className="text-muted-foreground" sx={{ fontSize: 56 }} />
+                  <p className="mt-6 text-[30px] font-semibold leading-none text-foreground">
                     Upload receipts
                   </p>
-                  <p className="mt-2 text-sm text-gray-500">or drag and drop them here</p>
+                  <p className="mt-2 text-sm text-muted-foreground">or drag and drop them here</p>
                   <span className="mt-6 inline-flex rounded-full bg-primary px-7 py-2.5 text-sm font-semibold text-white">
                     Choose files
                   </span>
@@ -499,7 +499,7 @@ export default function CreateExpenseDrawer({
                   <div className="mx-auto w-[290px] max-w-full">
                     <div className="flex h-24 w-full items-end justify-center gap-2">
                       <span
-                        className="shrink-0 leading-none font-semibold text-[#0f3428]"
+                        className="shrink-0 leading-none font-semibold text-foreground"
                         style={{ fontSize: manualAmountFontSize }}
                       >
                         {selectedCurrencySymbol}
@@ -516,7 +516,7 @@ export default function CreateExpenseDrawer({
                           }))
                         }
                         placeholder="0"
-                        className="min-w-0 flex-1 border-0 bg-transparent p-0 leading-none font-semibold text-[#0f3428] placeholder:text-[#9ea6a0] focus:outline-none"
+                        className="min-w-0 flex-1 border-0 bg-transparent p-0 leading-none font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none"
                         style={{ fontSize: manualAmountFontSize }}
                       />
                     </div>
@@ -524,18 +524,18 @@ export default function CreateExpenseDrawer({
                     <button
                       type="button"
                       onClick={() => setCurrencyPickerOpen(true)}
-                      className="mt-12 inline-flex h-16 w-full items-center justify-center gap-2 rounded-full bg-[#ebe8e2] px-6 text-lg font-semibold text-[#0f3428]"
+                      className="mt-12 inline-flex h-16 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted px-6 text-lg font-semibold text-foreground"
                     >
                       {manualDraft.currency}
-                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
               <>
-                <label className="relative flex cursor-pointer items-center justify-center rounded-3xl border border-gray-200 bg-[#f8f7f4] px-6 py-8 text-center">
-                  <FileText className="h-14 w-14 text-[#d8d4ce]" />
+                <label className="relative flex cursor-pointer items-center justify-center rounded-3xl border border-border bg-muted/60 px-6 py-8 text-center">
+                  <FileText className="h-14 w-14 text-muted-foreground/60" />
                   <span className="absolute left-1/2 top-1/2 flex h-10 w-10 translate-x-2 translate-y-1 items-center justify-center rounded-full bg-primary text-white">
                     <Plus className="h-5 w-5" />
                   </span>
@@ -549,33 +549,33 @@ export default function CreateExpenseDrawer({
                   />
                 </label>
 
-                <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white">
+                <div className="overflow-hidden rounded-3xl border border-border bg-card">
                   <button
                     type="button"
                     onClick={() => setManualStep('amount')}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#f8f7f4]"
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
                   >
                     <div>
-                      <p className="text-sm text-[#70817b]">Amount</p>
-                      <p className="mt-1 text-[30px] leading-none font-semibold text-[#0f3428]">
+                      <p className="text-sm text-muted-foreground">Amount</p>
+                      <p className="mt-1 text-[30px] leading-none font-semibold text-foreground">
                         {selectedCurrencySymbol}
                         {manualDraft.amount || '0.00'}
                       </p>
                     </div>
-                    <ChevronRight className="h-6 w-6 text-[#9ea6a0]" />
+                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
                   </button>
 
-                  <div className="h-px bg-gray-100" />
+                  <div className="h-px bg-border" />
 
                   <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
                       <label
                         htmlFor="expense-manual-description"
-                        className="text-sm text-[#70817b]"
+                        className="text-sm text-muted-foreground"
                       >
                         Description
                       </label>
-                      <ChevronRight className="h-6 w-6 text-[#9ea6a0]" />
+                      <ChevronRight className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <input
                       id="expense-manual-description"
@@ -587,18 +587,18 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Optional"
-                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-[#0f3428] placeholder:text-[#9ea6a0] focus:outline-none"
+                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-foreground placeholder:text-muted-foreground focus:outline-none"
                     />
                   </div>
 
-                  <div className="h-px bg-gray-100" />
+                  <div className="h-px bg-border" />
 
                   <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
-                      <label htmlFor="expense-manual-merchant" className="text-sm text-[#70817b]">
+                      <label htmlFor="expense-manual-merchant" className="text-sm text-muted-foreground">
                         Merchant
                       </label>
-                      <ChevronRight className="h-6 w-6 text-[#9ea6a0]" />
+                      <ChevronRight className="h-6 w-6 text-muted-foreground" />
                     </div>
                     <input
                       id="expense-manual-merchant"
@@ -610,36 +610,36 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Required"
-                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-[#0f3428] placeholder:text-[#9ea6a0] focus:outline-none"
+                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-foreground placeholder:text-muted-foreground focus:outline-none"
                     />
                     {!manualValidation.merchant ? (
                       <p className="mt-1 text-xs text-red-500">This field is required</p>
                     ) : null}
                   </div>
 
-                  <div className="h-px bg-gray-100" />
+                  <div className="h-px bg-border" />
 
                   <button
                     type="button"
                     onClick={() => setCategoryDrawerOpen(true)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#f8f7f4]"
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm text-[#70817b]">Category</p>
-                      <p className="mt-1.5 truncate text-[24px] leading-none text-[#0f3428]">
+                      <p className="text-sm text-muted-foreground">Category</p>
+                      <p className="mt-1.5 truncate text-[24px] leading-none text-foreground">
                         {selectedCategoryName || 'Required'}
                       </p>
                       {!manualValidation.category ? (
                         <p className="mt-1 text-xs text-red-500">This field is required</p>
                       ) : null}
                     </div>
-                    <ChevronRight className="h-6 w-6 text-[#9ea6a0]" />
+                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
                   </button>
 
-                  <div className="h-px bg-gray-100" />
+                  <div className="h-px bg-border" />
 
                   <div className="px-4 py-3">
-                    <label htmlFor="expense-manual-date" className="text-sm text-[#70817b]">
+                    <label htmlFor="expense-manual-date" className="text-sm text-muted-foreground">
                       Date
                     </label>
                     <div className="mt-1.5 flex items-center justify-between">
@@ -648,46 +648,46 @@ export default function CreateExpenseDrawer({
                         type="date"
                         value={manualDate}
                         onChange={event => setManualDate(event.target.value)}
-                        className="border-0 bg-transparent p-0 text-[24px] leading-none text-[#0f3428] focus:outline-none"
+                        className="border-0 bg-transparent p-0 text-[24px] leading-none text-foreground focus:outline-none"
                       />
-                      <Calendar className="h-5 w-5 text-[#9ea6a0]" />
+                      <Calendar className="h-5 w-5 text-muted-foreground" />
                     </div>
                   </div>
 
-                  <div className="h-px bg-gray-100" />
+                  <div className="h-px bg-border" />
 
                   <button
                     type="button"
                     onClick={() => setTaxRateDrawerOpen(true)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-[#f8f7f4]"
+                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm text-[#70817b]">Tax</p>
-                      <p className="mt-1.5 truncate text-[24px] leading-none text-[#0f3428]">
+                      <p className="text-sm text-muted-foreground">Tax</p>
+                      <p className="mt-1.5 truncate text-[24px] leading-none text-foreground">
                         {selectedTaxRate
                           ? `${selectedTaxRate.name} (${Number(selectedTaxRate.rate || 0).toFixed(0)}%)${selectedTaxRate.isDefault ? ' - Default' : ''}`
                           : 'Optional'}
                       </p>
                     </div>
-                    <ChevronRight className="h-6 w-6 text-[#9ea6a0]" />
+                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
                   </button>
                 </div>
               </>
             )}
 
             {files.length > 0 && !currencyPickerOpen ? (
-              <div className="rounded-2xl border border-gray-200 bg-white px-3 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <div className="rounded-2xl border border-border bg-card px-3 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Selected files
                 </p>
                 <div className="mt-2 space-y-2">
                   {files.map(file => (
                     <div
                       key={`${file.name}-${file.size}`}
-                      className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm"
                     >
-                      <span className="truncate text-gray-800">{file.name}</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="truncate text-foreground">{file.name}</span>
+                      <span className="text-xs text-muted-foreground">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </span>
                     </div>
@@ -759,7 +759,7 @@ export default function CreateExpenseDrawer({
           noResults: 'No categories found',
         }}
         width="lg"
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         showAllOption={false}
       />
 
@@ -769,18 +769,18 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setTaxRateDrawerOpen(false)}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close tax rate drawer"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold text-[#0f3428]">Tax rate</span>
+            <span className="text-lg font-semibold text-foreground">Tax rate</span>
           </div>
         }
       >
@@ -804,19 +804,19 @@ export default function CreateExpenseDrawer({
                       setTaxRateDrawerOpen(false);
                     }}
                     className={`flex w-full items-center justify-between px-4 py-5 text-left text-base font-semibold transition-colors ${
-                      isSelected ? 'bg-[#ede8e1] text-[#073b32]' : 'text-[#073b32] hover:bg-gray-50'
+                      isSelected ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
                     }`}
                   >
                     <span>
                       {taxRate.name} ({Number(taxRate.rate || 0).toFixed(0)}%)
                       {taxRate.isDefault ? ' - Default' : ''}
                     </span>
-                    {isSelected ? <Check className="h-6 w-6 text-emerald-500" /> : null}
+                    {isSelected ? <Check className="h-6 w-6 text-primary" /> : null}
                   </button>
                 );
               })}
               {enabledTaxRates.length === 0 ? (
-                <div className="px-4 py-8 text-base text-gray-500">No tax rates found</div>
+                <div className="px-4 py-8 text-base text-muted-foreground">No tax rates found</div>
               ) : null}
             </div>
           </div>

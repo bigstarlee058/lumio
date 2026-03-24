@@ -183,4 +183,40 @@ describe('StatementsCircularUploadMenu', () => {
 
     expect(onScan).toHaveBeenCalledTimes(1);
   });
+
+  it('uses dark-safe floating action button surfaces instead of white pills', () => {
+    act(() => {
+      root.render(
+        <StatementsCircularUploadMenu
+          providers={{
+            gmailConnected: false,
+            googleDriveConnected: false,
+            dropboxConnected: false,
+          }}
+          onScan={vi.fn()}
+          onCloudImport={vi.fn()}
+          onGmail={vi.fn()}
+          onLocalUpload={vi.fn()}
+        />,
+      );
+    });
+
+    const toggleButton = container.querySelector(
+      'button[aria-label="Open upload actions"]',
+    ) as HTMLButtonElement;
+
+    act(() => {
+      toggleButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const whiteAction = Array.from(container.querySelectorAll('button')).find(button =>
+      button.className.includes('bg-white'),
+    );
+    const mutedAction = Array.from(container.querySelectorAll('button')).find(button =>
+      button.className.includes('bg-card') || button.className.includes('bg-muted'),
+    );
+
+    expect(whiteAction).toBeUndefined();
+    expect(mutedAction).toBeTruthy();
+  });
 });

@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  DEFAULT_THEME_PREFERENCE,
+  THEME_STORAGE_EVENT,
+  getStoredThemePreference,
+  resolveThemePreference,
+} from '@/app/lib/theme-preference';
 import { HeroUIProvider } from '@heroui/react';
 import { MantineProvider } from '@mantine/core';
 import { ThemeProvider } from '@mui/material/styles';
@@ -10,6 +16,7 @@ import { IntlayerProviderContent } from 'react-intlayer';
 import { SidePanelProvider } from './components/side-panel';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { WorkspaceProvider } from './contexts/WorkspaceContext';
+import { useAutoTheme } from './hooks/useAutoTheme';
 import { useHTMLLanguage } from './hooks/useHTMLLanguage';
 import { mantineCssVariablesResolver, mantineTheme } from './mantine-theme';
 import { createAppTheme } from './theme';
@@ -19,6 +26,31 @@ type AppLocale = 'en' | 'ru' | 'kk';
 
 function HTMLLanguageSync() {
   useHTMLLanguage();
+  return null;
+}
+
+function ThemePreferenceSync() {
+  const [themePreference, setThemePreference] = useState(getStoredThemePreference);
+
+  useEffect(() => {
+    const syncThemePreference = () => {
+      setThemePreference(resolveThemePreference(getStoredThemePreference()));
+    };
+
+    const handleThemePreferenceEvent = () => {
+      syncThemePreference();
+    };
+
+    window.addEventListener('storage', syncThemePreference);
+    window.addEventListener(THEME_STORAGE_EVENT, handleThemePreferenceEvent);
+
+    return () => {
+      window.removeEventListener('storage', syncThemePreference);
+      window.removeEventListener(THEME_STORAGE_EVENT, handleThemePreferenceEvent);
+    };
+  }, []);
+
+  useAutoTheme(themePreference);
   return null;
 }
 
@@ -51,6 +83,7 @@ export function Providers({
         setLocale={nextLocale => setLocale(nextLocale as AppLocale)}
       >
         <HTMLLanguageSync />
+        <ThemePreferenceSync />
         <TourAutoStarter />
         <MantineProvider
           theme={mantineTheme}

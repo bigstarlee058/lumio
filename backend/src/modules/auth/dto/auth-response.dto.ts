@@ -7,6 +7,7 @@ export class AuthResponseDto {
     workspaceId?: string | null;
     locale?: string;
     timeZone?: string | null;
+    themePreference?: string;
     avatarUrl?: string | null;
     onboardingCompletedAt?: string | null;
   };

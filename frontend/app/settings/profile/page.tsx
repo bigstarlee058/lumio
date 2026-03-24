@@ -23,7 +23,13 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { MAX_AVATAR_SIZE_BYTES } from '@/app/lib/constants';
+import {
+  THEME_STORAGE_EVENT,
+  type ThemePreference,
+  resolveThemePreference,
+} from '@/app/lib/theme-preference';
 import { cn } from '@/app/lib/utils';
+import { ModeToggle } from '@/components/mode-toggle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DesktopWindowsOutlinedIcon from '@mui/icons-material/DesktopWindowsOutlined';
 import EditIcon from '@mui/icons-material/Edit';
@@ -38,7 +44,7 @@ import TabletMacOutlinedIcon from '@mui/icons-material/TabletMacOutlined';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import type { AxiosError } from 'axios';
-import { CalendarDays, Check, Clock3, FileText, Search } from 'lucide-react';
+import { CalendarDays, Check, Clock3, FileText, Palette, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type ComponentType, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -104,6 +110,7 @@ const systemNotificationSettings: Array<{
 
 const sections = [
   'profile',
+  'appearance',
   'sessions',
   'email',
   'password',
@@ -181,9 +188,13 @@ export default function ProfileSettingsPage() {
   const [activeSection, setActiveSection] = useState<SectionId>('profile');
   const [profileName, setProfileName] = useState('');
   const [profileTimeZone, setProfileTimeZone] = useState<string>('');
+  const [themePreference, setThemePreference] = useState<ThemePreference>('auto');
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+  const [appearanceMessage, setAppearanceMessage] = useState<string | null>(null);
+  const [appearanceError, setAppearanceError] = useState<string | null>(null);
+  const [appearanceLoading, setAppearanceLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [emailPassword, setEmailPassword] = useState('');
   const [emailMessage, setEmailMessage] = useState<string | null>(null);
@@ -274,6 +285,7 @@ export default function ProfileSettingsPage() {
       setProfileName(user.name);
     }
     setProfileTimeZone(user?.timeZone || '');
+    setThemePreference(resolveThemePreference(user?.themePreference));
   }, [user]);
 
   useEffect(() => {
@@ -379,6 +391,43 @@ export default function ProfileSettingsPage() {
       if (avatarInputRef.current) {
         avatarInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleThemePreferenceChange = async (nextThemePreference: ThemePreference) => {
+    setAppearanceMessage(null);
+    setAppearanceError(null);
+
+    try {
+      setAppearanceLoading(true);
+      const response = await apiClient.patch('/users/me/preferences', {
+        themePreference: nextThemePreference,
+      });
+
+      const responseUser = response.data?.user;
+      const nextUser = responseUser
+        ? { ...(user || {}), ...responseUser, themePreference: nextThemePreference }
+        : user
+          ? { ...user, themePreference: nextThemePreference }
+          : null;
+
+      setThemePreference(nextThemePreference);
+
+      if (nextUser) {
+        setUser(nextUser);
+        localStorage.setItem('user', JSON.stringify(nextUser));
+        window.dispatchEvent(
+          new CustomEvent(THEME_STORAGE_EVENT, {
+            detail: { themePreference: nextThemePreference },
+          }),
+        );
+      }
+
+      setAppearanceMessage(response.data?.message || t.appearanceCard.title.value);
+    } catch (error: unknown) {
+      setAppearanceError(getApiErrorMessage(error, t.profileCard.errorFallback.value));
+    } finally {
+      setAppearanceLoading(false);
     }
   };
 
@@ -654,6 +703,11 @@ export default function ProfileSettingsPage() {
     }
   > = {
     profile: { title: t.profileCard.title.value, icon: AccountCircleIcon },
+    appearance: {
+      title: t.appearanceCard.title.value,
+      description: t.appearanceCard.description.value,
+      icon: Palette,
+    },
     sessions: {
       title: t.sessionsCard.title.value,
       description: t.sessionsCard.logoutAllHelp.value,
@@ -758,9 +812,9 @@ export default function ProfileSettingsPage() {
               aria-expanded={isTimeZoneModalOpen}
             >
               <span>{selectedTimeZoneOption.label}</span>
-              <span className="text-gray-500">v</span>
+              <span className="text-muted-foreground">v</span>
             </button>
-            <p className="text-xs text-gray-500">{t.profileCard.timeZoneHelp.value}</p>
+            <p className="text-xs text-muted-foreground">{t.profileCard.timeZoneHelp.value}</p>
           </div>
 
           {hasProfileChanges && (
@@ -779,6 +833,44 @@ export default function ProfileSettingsPage() {
       );
     }
 
+    if (activeSection === 'appearance') {
+      return (
+        <div className="space-y-5">
+          {appearanceMessage ? <Alert variant="success">{appearanceMessage}</Alert> : null}
+          {appearanceError ? <Alert variant="error">{appearanceError}</Alert> : null}
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{t.appearanceCard.themeLabel.value}</CardTitle>
+              <CardDescription>{t.appearanceCard.themeHelp.value}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ModeToggle
+                value={themePreference}
+                onThemeChange={handleThemePreferenceChange}
+                labels={{
+                  light: t.appearanceCard.light.value,
+                  dark: t.appearanceCard.dark.value,
+                  auto: (t as any).appearanceCard?.auto?.value || 'Auto',
+                  active: t.appearanceCard.active.value,
+                  followsSystem: t.appearanceCard.followsSystem.value,
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t.appearanceCard.followsSystem.value}
+              </p>
+              {appearanceLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <CircularProgress size={16} color="inherit" />
+                  <span>{t.appearanceCard.active.value}</span>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
     if (activeSection === 'sessions') {
       return (
         <div className="space-y-5">
@@ -789,20 +881,20 @@ export default function ProfileSettingsPage() {
               'Only sign out devices you recognize. Signing out current device ends this session immediately.'}
           </Alert>
 
-          <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-            <span className="font-medium text-gray-900">
+          <div className="rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
               {t.sessionsCard.lastLoginLabel.value}:
             </span>{' '}
             {user?.lastLogin ? new Date(user.lastLogin).toLocaleString() : '—'}
           </div>
 
           <div className="space-y-3">
-            <div className="text-sm font-semibold text-gray-900">
+            <div className="text-sm font-semibold text-foreground">
               {(t as any).sessionsCard?.activeSessionsLabel?.value || 'Active devices'}
             </div>
 
             {sessionsLoading ? (
-              <div className="flex items-center gap-2 rounded-xl border border-gray-100 px-4 py-5 text-sm text-gray-600">
+              <div className="flex items-center gap-2 rounded-xl border border-border px-4 py-5 text-sm text-muted-foreground">
                 <CircularProgress size={18} color="inherit" />
                 {(t as any).sessionsCard?.loadingLabel?.value || 'Loading sessions...'}
               </div>
@@ -815,14 +907,14 @@ export default function ProfileSettingsPage() {
                   return (
                     <div
                       key={session.id}
-                      className="flex flex-col gap-4 rounded-xl border border-gray-200/80 px-4 py-4 md:flex-row md:items-start md:justify-between"
+                      className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 px-4 py-4 md:flex-row md:items-start md:justify-between"
                     >
                       <div className="flex items-start gap-3">
                         <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                           <SessionIcon className="text-[20px]" />
                         </div>
                         <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-gray-900">
+                          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
                             <span>{`${session.device} · ${session.browser}`}</span>
                             {session.isCurrent && (
                               <Badge variant="info">
@@ -831,13 +923,13 @@ export default function ProfileSettingsPage() {
                               </Badge>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-muted-foreground">
                             {session.os}
                             {session.ipAddress
                               ? ` · ${(t as any).sessionsCard?.ipLabel?.value || 'IP'}: ${session.ipAddress}`
                               : ''}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-muted-foreground">
                             {(t as any).sessionsCard?.lastActiveLabel?.value || 'Last active'}:{' '}
                             {new Date(session.lastUsedAt).toLocaleString()}
                           </div>
@@ -861,7 +953,7 @@ export default function ProfileSettingsPage() {
                 })}
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/70 px-4 py-6 text-sm text-gray-600">
+              <div className="rounded-xl border border-dashed border-border bg-muted/60 px-4 py-6 text-sm text-muted-foreground">
                 {(t as any).sessionsCard?.emptySessionsLabel?.value || 'No active sessions found.'}
               </div>
             )}
@@ -903,7 +995,7 @@ export default function ProfileSettingsPage() {
               onChange={e => setEmailPassword(e.target.value)}
               required
             />
-            <p className="text-xs text-gray-500">{t.emailCard.currentPasswordHelp.value}</p>
+            <p className="text-xs text-muted-foreground">{t.emailCard.currentPasswordHelp.value}</p>
           </div>
 
           <div className="flex justify-end">
@@ -923,7 +1015,7 @@ export default function ProfileSettingsPage() {
           {notificationMessage ? <Alert variant="success">{notificationMessage}</Alert> : null}
 
           {notificationsLoading ? (
-            <div className="rounded-xl border border-gray-200 px-4 py-5 text-sm text-gray-600">
+            <div className="rounded-xl border border-border bg-card/60 px-4 py-5 text-sm text-muted-foreground">
               {notificationLabels.loading}
             </div>
           ) : (
@@ -1035,13 +1127,13 @@ export default function ProfileSettingsPage() {
       return (
         <div className="space-y-4">
           {changelogLoading ? (
-            <div className="rounded-2xl border border-[#d8e4d9] bg-white px-5 py-8 text-sm text-[#5a7164]">
+            <div className="rounded-2xl border border-border bg-card px-5 py-8 text-sm text-muted-foreground">
               {loadingText}
             </div>
           ) : formattedEntries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#cddbcf] bg-white px-5 py-14 text-center">
-              <FileText className="mb-3 h-8 w-8 text-[#89a093]" />
-              <p className="text-sm font-medium text-[#314c3f]">{emptyText}</p>
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card px-5 py-14 text-center">
+              <FileText className="mb-3 h-8 w-8 text-muted-foreground" />
+              <p className="text-sm font-medium text-foreground">{emptyText}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -1050,26 +1142,26 @@ export default function ProfileSettingsPage() {
                   key={entry.id}
                   type="button"
                   onClick={() => setChangelogSelectedEntry(entry)}
-                  className="w-full rounded-2xl border border-[#d8e4d9] bg-white px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-[#bdd2c1] hover:bg-[#fdfefd]"
+                  className="w-full rounded-2xl border border-border bg-card px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/50"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <h2 className="line-clamp-2 text-lg font-semibold leading-snug text-[#123528]">
+                      <h2 className="line-clamp-2 text-lg font-semibold leading-snug text-foreground">
                         {entry.title}
                       </h2>
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#5a7064]">
+                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
                         {entry.summary}
                       </p>
                     </div>
 
                     {entry.version ? (
-                      <span className="shrink-0 rounded-full border border-[#d3e1d5] bg-[#f3f9f4] px-3 py-1 text-xs font-semibold text-[#365848]">
+                      <span className="shrink-0 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-foreground">
                         {entry.version}
                       </span>
                     ) : null}
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-[#607266]">
+                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5" />
                       {entry.dateLabel}
@@ -1126,7 +1218,7 @@ export default function ProfileSettingsPage() {
             onChange={e => setPasswords({ ...passwords, next: e.target.value })}
             required
           />
-          <p className="text-xs text-gray-500">{t.passwordCard.newPasswordHelp.value}</p>
+            <p className="text-xs text-muted-foreground">{t.passwordCard.newPasswordHelp.value}</p>
         </div>
 
         <div className="space-y-2">
@@ -1161,7 +1253,7 @@ export default function ProfileSettingsPage() {
       <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
         <aside className="hidden lg:block">
           <div className="sticky top-24">
-            <Card className="border-gray-200/80 bg-white shadow-sm">
+            <Card className="border-border bg-card shadow-sm dark:bg-card">
               <CardHeader className="pb-3">
                 <div className="flex flex-col items-center gap-2 pb-3">
                   <div className="group relative">
@@ -1185,8 +1277,8 @@ export default function ProfileSettingsPage() {
                     <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-xs font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
                       {(t as any).profileCard?.editPhotoLabel?.value || 'Edit photo'}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-white shadow">
-                      <EditIcon className="text-gray-500" fontSize="small" />
+                    <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card shadow">
+                      <EditIcon className="text-muted-foreground" fontSize="small" />
                     </div>
                     <input
                       ref={avatarInputRef}
@@ -1210,14 +1302,14 @@ export default function ProfileSettingsPage() {
                       type="button"
                       onClick={() => setActiveSection(id)}
                       className={cn(
-                        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-gray-700 transition-all hover:bg-gray-100',
+                        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-foreground transition-all hover:bg-muted',
                         isActive && 'font-semibold',
                       )}
                     >
                       <span
                         className={cn(
                           'flex h-8 w-8 items-center justify-center rounded-lg text-[18px]',
-                          isActive ? 'text-primary' : 'text-gray-400',
+                          isActive ? 'text-primary' : 'text-muted-foreground',
                         )}
                       >
                         <Icon className="text-[18px]" />
@@ -1233,7 +1325,7 @@ export default function ProfileSettingsPage() {
 
         <main className="space-y-4">
           <div className="lg:hidden">
-            <Card className="border-gray-200/80 bg-white shadow-sm">
+            <Card className="border-border bg-card shadow-sm dark:bg-card">
               <CardContent className="space-y-2">
                 <div className="flex justify-center pb-2">
                   <div className="group relative">
@@ -1257,8 +1349,8 @@ export default function ProfileSettingsPage() {
                     <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
                       {(t as any).profileCard?.editPhotoLabel?.value || 'Edit photo'}
                     </div>
-                    <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow">
-                      <EditIcon className="text-gray-500" fontSize="small" />
+                    <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow">
+                      <EditIcon className="text-muted-foreground" fontSize="small" />
                     </div>
                   </div>
                 </div>
@@ -1278,18 +1370,18 @@ export default function ProfileSettingsPage() {
             </Card>
           </div>
 
-          <Card className="border-gray-200/80 bg-white shadow-sm">
-            <CardHeader className="border-b border-gray-100 bg-gray-50/70">
+          <Card className="border-border bg-card shadow-sm dark:bg-card">
+            <CardHeader className="border-b border-border bg-muted/60 dark:bg-muted/60">
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <ActiveIcon className="text-[20px]" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-gray-900">
+                  <CardTitle className="text-lg font-semibold text-foreground">
                     {activeMeta.title}
                   </CardTitle>
                   {activeMeta.description && (
-                    <CardDescription className="mt-1 text-sm text-gray-600">
+                    <CardDescription className="mt-1 text-sm text-muted-foreground">
                       {activeMeta.description}
                     </CardDescription>
                   )}
@@ -1311,19 +1403,19 @@ export default function ProfileSettingsPage() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
       >
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-4 overflow-y-auto">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 id="profile-timezone"
                 type="text"
                 value={timeZoneSearch}
                 onChange={event => setTimeZoneSearch(event.target.value)}
                 placeholder={t.profileCard.timeZones.auto.value}
-                className="w-full rounded-xl border border-border bg-white py-3 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary"
+                className="w-full rounded-xl border border-border bg-card py-3 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary"
               />
             </div>
 
@@ -1346,14 +1438,14 @@ export default function ProfileSettingsPage() {
                   );
                 })
               ) : (
-                <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500">
+                <p className="rounded-xl bg-card px-3 py-3 text-sm text-muted-foreground">
                   No time zones found
                 </p>
               )}
             </div>
           </div>
 
-          <p className="mt-4 border-t border-border pt-4 text-xs text-gray-500">
+          <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
             {t.profileCard.timeZoneHelp.value}
           </p>
         </div>

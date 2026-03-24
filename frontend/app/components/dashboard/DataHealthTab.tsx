@@ -91,19 +91,19 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       <div className="flex items-center gap-6 pb-2">
         <Link
           href="/upload"
-          className="text-[#666666] ff-dashboard-sans text-[12px] font-medium hover:text-[#1a1a1a] transition-colors"
+          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           Upload / Parse
         </Link>
         <Link
           href="/statements/approve"
-          className="text-[#666666] ff-dashboard-sans text-[12px] font-medium hover:text-[#1a1a1a] transition-colors"
+          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           Review Queue ({dataHealth.statementsPendingReview})
         </Link>
         <button
           type="button"
-          className="text-[#666666] ff-dashboard-sans text-[12px] font-medium hover:text-[#1a1a1a] transition-colors"
+          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           Export
         </button>
@@ -111,7 +111,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
 
       {/* 1. Summary metric strip */}
       <section>
-        <h2 className="mb-4 text-[#1a1a1a] ff-dashboard-mono text-[24px] font-bold">
+        <h2 className="mb-4 text-foreground ff-dashboard-mono text-[24px] font-bold">
           DATA QUALITY METRICS
         </h2>
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
@@ -121,14 +121,14 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
               <div
                 key={key}
                 className={cn(
-                  'bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl flex flex-col p-[14px] h-[120px] transition-all duration-200 hover:-translate-y-0.5',
+                  'flex h-[120px] flex-col rounded-2xl border border-border bg-card/90 p-[14px] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 dark:border-border dark:bg-card',
                 )}
               >
-                <span className="text-[#555555] ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
+                <span className="text-muted-foreground ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
                   {label}
                 </span>
 
-                <div className="text-[#1a1a1a] ff-dashboard-mono text-[40px] font-bold leading-none mt-[20px]">
+                <div className="text-foreground ff-dashboard-mono text-[40px] font-bold leading-none mt-[20px]">
                   {isLoading ? '—' : value}
                 </div>
 
@@ -146,17 +146,17 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       {/* 2. Last upload + Unapproved cash row */}
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Last upload card */}
-        <div className="bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl p-[16px] h-[340px] flex flex-col relative">
-          <span className="text-[#555555] ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
+        <div className="relative flex h-[340px] flex-col rounded-2xl border border-border bg-card/90 p-[16px] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
+          <span className="text-muted-foreground ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
             LAST UPLOAD
           </span>
 
           {dataHealth.lastUploadDate ? (
             <>
-              <div className="text-[#1a1a1a] ff-dashboard-mono text-[56px] font-bold leading-[1.1] mt-[90px] tracking-tight">
+              <div className="text-foreground ff-dashboard-mono text-[56px] font-bold leading-[1.1] mt-[90px] tracking-tight">
                 {getRelativeTime(dataHealth.lastUploadDate)}
               </div>
-              <div className="text-[#666666] ff-dashboard-sans text-[13px] font-medium mt-auto pb-[20px]">
+              <div className="text-muted-foreground ff-dashboard-sans text-[13px] font-medium mt-auto pb-[20px]">
                 {new Date(dataHealth.lastUploadDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
@@ -166,7 +166,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
             </>
           ) : (
             <div className="mt-[90px] flex flex-col gap-2">
-              <p className="text-[#1a1a1a] ff-dashboard-mono text-[32px] font-bold">No data yet</p>
+              <p className="text-foreground ff-dashboard-mono text-[32px] font-bold">No data yet</p>
               <Link
                 href="/statements/submit"
                 className="text-[#C05A3C] hover:text-[#A0452C] ff-dashboard-sans text-[13px] font-medium transition-colors"
@@ -212,15 +212,15 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       {/* 3. Quick links (only if there are issues) */}
       {quickLinks.length > 0 && (
         <section className="mt-4">
-          <h2 className="mb-4 text-[#1a1a1a] ff-dashboard-mono text-[16px] font-bold uppercase tracking-wide">
+          <h2 className="mb-4 text-foreground ff-dashboard-mono text-[16px] font-bold uppercase tracking-wide">
             ACTION REQUIRED
           </h2>
-          <div className="flex flex-col border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] divide-y divide-white/40 rounded-2xl overflow-hidden">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] divide-y divide-border dark:border-border dark:bg-card">
             {quickLinks.map(({ label, href }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex items-center justify-between p-4 text-[#1a1a1a] hover:bg-[#D1CCC4]/30 ff-dashboard-sans text-[14px] font-medium transition-colors"
+                className="ff-dashboard-sans flex items-center justify-between p-4 text-[14px] font-medium text-foreground transition-colors hover:bg-muted"
               >
                 <span>{label}</span>
                 <span className="text-[#C05A3C]">→</span>

@@ -1,10 +1,16 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
+import {
+  DEFAULT_THEME_PREFERENCE,
+  THEME_STORAGE_EVENT,
+  type ThemePreference,
+  resolveThemePreference,
+} from '@/app/lib/theme-preference';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;
@@ -15,10 +21,16 @@ interface User {
   telegramChatId?: string | null;
   locale?: string;
   timeZone?: string | null;
+  themePreference?: ThemePreference;
   lastLogin?: string | null;
   avatarUrl?: string | null;
   onboardingCompletedAt?: string | null;
 }
+
+const normalizeUser = (user: User): User => ({
+  ...user,
+  themePreference: resolveThemePreference(user.themePreference ?? DEFAULT_THEME_PREFERENCE),
+});
 
 export function useAuth() {
   const router = useRouter();
@@ -32,8 +44,10 @@ export function useAuth() {
       apiClient
         .get('/auth/me')
         .then(response => {
-          const nextUser = response.data as User;
+          const nextUser = normalizeUser(response.data as User);
           setUser(nextUser);
+          localStorage.setItem('user', JSON.stringify(nextUser));
+          window.dispatchEvent(new CustomEvent(THEME_STORAGE_EVENT));
 
           const currentPath = window.location.pathname;
           const isOnboardingRoute = currentPath.startsWith('/onboarding');

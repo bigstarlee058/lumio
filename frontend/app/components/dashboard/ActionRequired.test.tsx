@@ -32,6 +32,33 @@ describe('ActionRequired', () => {
     );
 
     expect(screen.getByText('Transactions uncategorized')).toBeInTheDocument();
-    expect(screen.getByText('info')).toBeInTheDocument();
+    const marker = Array.from(document.querySelectorAll('span')).find(node =>
+      typeof node.className === 'string' && node.className.includes('bg-[#0584C7]'),
+    );
+
+    expect(marker).toBeTruthy();
+  });
+
+  it('uses readable foreground colors in dark mode action rows', () => {
+    render(
+      <ActionRequired
+        actions={[{ ...baseAction, label: 'Parsing issues found', priority: 'warning' }]}
+        title="Action required"
+        emptyLabel="All clear"
+      />,
+    );
+
+    const actionText = Array.from(document.querySelectorAll('span')).find(
+      node => typeof node.className === 'string' && node.className.includes('text-foreground'),
+    );
+    const icon = Array.from(document.querySelectorAll('svg')).find(node =>
+      typeof node.className.baseVal === 'string'
+        ? node.className.baseVal.includes('text-muted-foreground')
+        : String(node.getAttribute('class') || '').includes('text-muted-foreground'),
+    );
+
+    expect(actionText?.className).toContain('text-foreground');
+    expect(actionText?.className).not.toContain('text-[#2A364E]');
+    expect(icon).toBeTruthy();
   });
 });

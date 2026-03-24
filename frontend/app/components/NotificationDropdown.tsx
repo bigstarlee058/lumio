@@ -162,13 +162,15 @@ export function NotificationDropdown({
             p: 0,
             overflow: 'hidden',
             borderRadius: '16px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 12px 32px rgba(15, 23, 42, 0.12)',
+            border: '1px solid var(--border-color)',
+            backgroundColor: 'var(--card-bg)',
+            color: 'var(--card-foreground)',
+            boxShadow: '0 12px 32px rgba(15, 23, 42, 0.22)',
           },
         }}
         MenuListProps={{ disablePadding: true }}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-white">
+        <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
           <div className="text-sm font-semibold text-foreground">{t.title.value}</div>
           <button
             type="button"
@@ -180,7 +182,7 @@ export function NotificationDropdown({
           </button>
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto bg-white">
+        <div className="max-h-[420px] overflow-y-auto bg-card">
           {loading && notifications.length === 0 ? (
             <div className="px-4 py-8 text-sm text-muted-foreground text-center">
               {t.loading.value}

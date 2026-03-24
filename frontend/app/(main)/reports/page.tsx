@@ -75,16 +75,16 @@ export default function ReportsPage() {
 
   if (showBalanceSheet) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-background text-foreground">
         <div className="px-8 pt-8 pb-6">
           <button
             type="button"
             onClick={() => setShowBalanceSheet(false)}
-            className="mb-4 text-sm font-medium text-[#0a66c2] hover:text-[#004182] transition-colors"
+            className="mb-4 text-sm font-medium text-primary transition-colors hover:opacity-80"
           >
             ← Back to templates
           </button>
-          <h1 className="text-2xl font-bold text-slate-900">Balance Sheet</h1>
+          <h1 className="text-2xl font-bold text-foreground">Balance Sheet</h1>
         </div>
         <div className="px-8 pb-8">
           <BalanceSheet />
@@ -94,15 +94,15 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="px-8 pt-8 pb-0">
-        <h1 className="text-2xl font-bold text-slate-900">Reports</h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <h1 className="text-2xl font-bold text-foreground">Reports</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Generate financial reports and export documents
         </p>
       </div>
 
-      <div className="px-8 border-b border-slate-200 mt-4">
+      <div className="mt-4 border-b border-border px-8">
         <Tabs
           value={tab}
           onChange={(_e, v: 'templates' | 'history') => {
@@ -114,11 +114,11 @@ export default function ReportsPage() {
               textTransform: 'none',
               fontWeight: 600,
               fontSize: '0.875rem',
-              color: '#64748b',
+              color: 'var(--muted-foreground)',
               minHeight: 48,
-              '&.Mui-selected': { color: '#0a66c2' },
+              '&.Mui-selected': { color: 'var(--primary)' },
             },
-            '& .MuiTabs-indicator': { backgroundColor: '#0a66c2' },
+            '& .MuiTabs-indicator': { backgroundColor: 'var(--primary)' },
           }}
         >
           <Tab value="templates" label="Templates" />

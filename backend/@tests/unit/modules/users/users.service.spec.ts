@@ -1,7 +1,7 @@
 import { User, UserRole } from '@/entities/user.entity';
 import { Workspace } from '@/entities/workspace.entity';
-import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
 import { UsersService } from '@/modules/users/users.service';
+import { WorkspacesService } from '@/modules/workspaces/workspaces.service';
 import {
   ConflictException,
   ForbiddenException,
@@ -352,6 +352,38 @@ describe('UsersService', () => {
         expect.objectContaining({ avatarUrl: '/uploads/user-avatars/avatar.png' }),
       );
       expect(result.avatarUrl).toBe('/uploads/user-avatars/avatar.png');
+    });
+  });
+
+  describe('updateMyPreferences', () => {
+    it('stores themePreference on the user profile', async () => {
+      const userWithPassword = {
+        ...mockUser,
+        timeZone: 'Asia/Almaty',
+        locale: 'ru',
+        themePreference: 'light',
+      } as User;
+
+      jest
+        .spyOn<any, any>(service as any, 'findOneWithPassword')
+        .mockResolvedValue(userWithPassword);
+      const saveSpy = jest.spyOn(repository, 'save').mockResolvedValue({
+        ...userWithPassword,
+        themePreference: 'auto',
+      } as User);
+
+      const result = await service.updateMyPreferences('1', {
+        themePreference: 'auto',
+      } as any);
+
+      expect(saveSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          themePreference: 'auto',
+          timeZone: 'Asia/Almaty',
+          locale: 'ru',
+        }),
+      );
+      expect(result.themePreference).toBe('auto');
     });
   });
 

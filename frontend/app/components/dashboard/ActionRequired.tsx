@@ -31,7 +31,7 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
   if (!isLoading && actions.length === 0) {
     return (
       <p
-        className="text-[13px] font-medium text-[#1CA06C]"
+        className="text-[13px] font-medium text-emerald-400"
         style={{ fontFamily: 'var(--font-dashboard-sans)' }}
       >
         {emptyLabel}
@@ -54,7 +54,7 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
             <div className="flex items-center gap-2 min-w-0">
               <span className={`h-1.5 w-1.5 rounded-none shrink-0 ${dot}`} />
               <span
-                className="text-[13px] text-[#2A364E] font-medium truncate"
+                className="text-[13px] text-foreground font-medium truncate"
                 style={{ fontFamily: 'var(--font-dashboard-sans)' }}
               >
                 {isLoading ? (
@@ -67,7 +67,7 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
                 )}
               </span>
             </div>
-            <ArrowUpRight className="h-3 w-3 text-[#7A869B] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity ml-2" />
+            <ArrowUpRight className="ml-2 h-3 w-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </Link>
         );
       })}

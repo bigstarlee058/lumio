@@ -1,3 +1,4 @@
+import { ThemePreference } from '@/entities/user.entity';
 import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export enum AppLocale {
@@ -20,4 +21,8 @@ export class UpdateMyPreferencesDto {
   @IsString()
   @MaxLength(64)
   timeZone?: string | null;
+
+  @IsOptional()
+  @IsEnum(ThemePreference)
+  themePreference?: ThemePreference;
 }

@@ -21,10 +21,10 @@ interface ReportTemplateCardProps {
 export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps) {
   return (
     <Card
-      className={`group cursor-pointer border bg-white shadow-sm rounded-[20px] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${
+      className={`group cursor-pointer rounded-[20px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-card ${
         isSelected
           ? 'border-primary/40 ring-2 ring-primary/20 shadow-md'
-          : 'border-slate-100 hover:border-primary/20'
+          : 'hover:border-primary/20'
       }`}
       onClick={() => onSelect(template)}
     >
@@ -34,15 +34,15 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
             <template.icon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-slate-900 leading-tight">{template.name}</h3>
-            <p className="text-xs text-slate-500 mt-0.5 leading-snug">{template.description}</p>
+            <h3 className="text-sm font-semibold text-foreground leading-tight">{template.name}</h3>
+            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{template.description}</p>
           </div>
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {template.formats.map(f => (
             <span
               key={f}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 uppercase font-medium"
+              className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground"
             >
               {f}
             </span>

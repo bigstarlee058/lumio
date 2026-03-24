@@ -25,6 +25,12 @@ export enum UserRole {
   VIEWER = 'viewer',
 }
 
+export enum ThemePreference {
+  LIGHT = 'light',
+  DARK = 'dark',
+  AUTO = 'auto',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -44,6 +50,14 @@ export class User {
 
   @Column({ name: 'time_zone', type: 'varchar', length: 64, nullable: true })
   timeZone: string | null;
+
+  @Column({
+    name: 'theme_preference',
+    type: 'varchar',
+    length: 16,
+    default: ThemePreference.AUTO,
+  })
+  themePreference: ThemePreference;
 
   @Column({ name: 'onboarding_completed_at', type: 'timestamptz', nullable: true, default: null })
   onboardingCompletedAt: Date | null;

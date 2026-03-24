@@ -139,15 +139,18 @@ describe('OverviewTab', () => {
       />,
     );
 
-    const cashFlowTitle = screen.getByText('CASH FLOW (30D)');
-    const cashFlowCard = cashFlowTitle.closest('div[class*="bg-"]');
-    const cashFlowPanel = Array.from(cashFlowCard?.querySelectorAll('div') ?? []).find(node =>
-      node.className.includes('bg-[#E9E4DC]'),
-    );
+    const root = document.documentElement;
+    root.classList.add('dark');
 
-    expect(cashFlowPanel?.className).toContain('bg-[#E9E4DC]');
-    expect(cashFlowPanel?.className).not.toContain('bg-[#F5F3EF]');
-    expect(cashFlowPanel?.className).not.toContain('border');
+    const cashFlowTitle = screen.getByText('CASH FLOW (30D)');
+    const cashFlowCard = cashFlowTitle.closest('[class*="dark:bg-card"]');
+
+    expect(cashFlowCard?.className).toContain('dark:bg-card');
+    expect(cashFlowCard?.className).toContain('dark:border-border');
+    expect(cashFlowCard?.className).not.toContain('bg-white/40');
+    expect(cashFlowCard?.className).not.toContain('border-white/60');
+
+    root.classList.remove('dark');
   });
 
   it('renders enlarged lower analytics panels like trends layout', () => {

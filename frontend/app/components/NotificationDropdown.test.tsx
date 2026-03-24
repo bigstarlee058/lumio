@@ -173,4 +173,31 @@ describe('NotificationDropdown', () => {
 
     expect(routerMocks.push).toHaveBeenCalledWith('/statements/statement-1/edit');
   });
+
+  it('uses theme-aware menu surfaces instead of hardcoded white backgrounds', async () => {
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<NotificationDropdown />);
+    });
+
+    const trigger = container.querySelector('button[aria-label="Notifications"]');
+    expect(trigger).toBeTruthy();
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const title = document.querySelector('[data-testid="notification-menu"]')?.textContent;
+    expect(title).toContain('Notifications');
+
+    const whiteSurface = Array.from(document.querySelectorAll('div')).find(node =>
+      node.className.includes('bg-white'),
+    );
+
+    expect(whiteSurface).toBeUndefined();
+    expect(document.querySelector('[data-testid="notification-menu"]')?.textContent).toContain(
+      'Notification settings',
+    );
+  });
 });

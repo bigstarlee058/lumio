@@ -238,9 +238,9 @@ export function DrawerShell({
       {/* Drawer container */}
       <div
         className={cn(
-          'fixed w-full h-full overflow-hidden bg-white shadow-2xl flex flex-col',
+          'fixed flex h-full w-full flex-col overflow-hidden bg-card text-foreground shadow-2xl',
           dragOffset !== 0 ? 'transition-none' : 'transition-transform duration-500 ease-out',
-          'border-gray-200',
+          'border-border',
           positionConfig.container,
           isVisible ? positionConfig.open : positionConfig.closed,
           widthClasses[width],
@@ -263,9 +263,9 @@ export function DrawerShell({
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
+          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card px-6 py-4">
             {title && (
-              <h2 id="drawer-title" className="text-lg font-bold text-gray-900">
+              <h2 id="drawer-title" className="text-lg font-bold text-foreground">
                 {title}
               </h2>
             )}
@@ -274,9 +274,9 @@ export function DrawerShell({
                 type="button"
                 onClick={onClose}
                 className={cn(
-                  'rounded-lg p-2 text-gray-400 transition',
-                  'hover:bg-gray-100 hover:text-gray-600',
-                  'focus:outline-none focus:ring-2 focus:ring-gray-200',
+                  'rounded-lg p-2 text-muted-foreground transition',
+                  'hover:bg-muted hover:text-foreground',
+                  'focus:outline-none focus:ring-2 focus:ring-border',
                   !title && 'ml-auto',
                 )}
                 aria-label="Close drawer"

@@ -142,7 +142,7 @@ export default function StatementsCircularUploadMenu({
       return <Image src="/icons/gmail.png" alt="Gmail" width={18} height={18} />;
     }
 
-    return <Receipt size={18} className="text-[#9ea6a0]" />;
+    return <Receipt size={18} className="text-muted-foreground" />;
   };
 
   const styles = ARC_SIZES[placement];
@@ -204,7 +204,7 @@ export default function StatementsCircularUploadMenu({
               onClick={() => handleActionClick(item.id, item.provider)}
               title={item.label}
               className={cn(
-                'pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white transition-all duration-300 ease-out',
+                'pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-all duration-300 ease-out',
                 item.disabled ? 'cursor-not-allowed opacity-45' : 'hover:scale-105 active:scale-95',
               )}
             >
@@ -213,8 +213,8 @@ export default function StatementsCircularUploadMenu({
             </button>
             <span
               className={cn(
-                'absolute left-[48px] top-1/2 z-50 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold',
-                item.id === 'local-upload' ? 'text-[#0f3428]' : 'text-primary',
+                'absolute left-[48px] top-1/2 z-50 -translate-y-1/2 whitespace-nowrap rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold shadow-sm',
+                item.id === 'local-upload' ? 'text-foreground' : 'text-primary',
               )}
             >
               {item.label}
@@ -246,7 +246,7 @@ export default function StatementsCircularUploadMenu({
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
         className={cn(
-          'pointer-events-auto absolute z-60 flex h-14 w-14 items-center justify-center rounded-full bg-[#d9d6cf] text-[#9aa6a0] transition hover:bg-[#cfcbc4]',
+          'pointer-events-auto absolute z-60 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition hover:bg-muted hover:text-foreground',
           styles.buttonLeft,
           styles.bottom,
         )}

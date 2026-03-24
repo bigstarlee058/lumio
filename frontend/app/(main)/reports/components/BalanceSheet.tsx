@@ -261,7 +261,7 @@ export function BalanceSheet() {
       const isSection = level === 0;
 
       return (
-        <div key={account.id} className="border-b border-gray-100 last:border-b-0">
+        <div key={account.id} className="border-b border-border last:border-b-0">
           <div className="flex items-center justify-between gap-3 py-3">
             <div
               className="flex min-w-0 items-center gap-2"
@@ -270,7 +270,7 @@ export function BalanceSheet() {
               {canToggle ? (
                 <button
                   type="button"
-                  className="flex h-5 w-5 items-center justify-center rounded text-gray-500 hover:bg-gray-100"
+                  className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted"
                   onClick={() => toggleExpanded(account.id)}
                 >
                   {isExpanded ? (
@@ -285,7 +285,7 @@ export function BalanceSheet() {
 
               <span
                 className={`truncate ${
-                  isSection ? 'text-base font-semibold text-gray-900' : 'text-sm text-gray-700'
+                  isSection ? 'text-base font-semibold text-foreground' : 'text-sm text-muted-foreground'
                 }`}
               >
                 {account.name}
@@ -298,7 +298,7 @@ export function BalanceSheet() {
                   <input
                     type="number"
                     step="0.01"
-                    className="w-28 rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-right text-sm text-gray-900 outline-none focus:border-primary"
+                    className="w-28 rounded-md border border-border bg-muted/60 px-2 py-1 text-right text-sm text-foreground outline-none focus:border-primary"
                     value={editableValues[account.id] ?? '0.00'}
                     onChange={event =>
                       setEditableValues(prev => ({
@@ -315,7 +315,7 @@ export function BalanceSheet() {
                     disabled={savingAccountId === account.id}
                     aria-label={account.name}
                   />
-                  <span className="text-sm font-medium text-gray-700">₸</span>
+                  <span className="text-sm font-medium text-muted-foreground">₸</span>
                   {savingAccountId === account.id && (
                     <Loader2 className="h-4 w-4 animate-spin text-primary" />
                   )}
@@ -323,7 +323,7 @@ export function BalanceSheet() {
               ) : (
                 <span
                   className={`text-sm ${
-                    isSection ? 'font-semibold text-gray-900' : 'font-medium text-gray-800'
+                    isSection ? 'font-semibold text-foreground' : 'font-medium text-foreground'
                   }`}
                 >
                   {formatCurrency(account.amount)}
@@ -352,13 +352,13 @@ export function BalanceSheet() {
 
   return (
     <div className="space-y-4" data-tour-id="reports-balance">
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700">
-              <CalendarDays className="h-4 w-4 text-gray-500" />
+            <div className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground dark:bg-card">
+              <CalendarDays className="h-4 w-4 text-muted-foreground" />
               <select
-                className="border-none bg-transparent text-sm text-gray-700 outline-none"
+                className="border-none bg-transparent text-sm text-foreground outline-none"
                 value={filterMode}
                 onChange={event => setFilterMode(event.target.value as 'now' | 'date')}
               >
@@ -372,14 +372,14 @@ export function BalanceSheet() {
                 type="date"
                 value={selectedDate}
                 onChange={event => setSelectedDate(event.target.value)}
-                className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-primary"
+                className="rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-primary dark:bg-card"
               />
             )}
 
             <button
               type="button"
               onClick={() => loadSheet(effectiveDate)}
-              className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 hover:border-primary"
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground hover:border-primary dark:bg-card"
             >
               <RefreshCcw className="h-4 w-4" />
               {text('refresh', 'Refresh')}
@@ -390,7 +390,7 @@ export function BalanceSheet() {
             <button
               type="button"
               onClick={() => setExportMenuOpen(open => !open)}
-              className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 hover:border-primary"
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground hover:border-primary dark:bg-card"
               disabled={!!exportingFormat}
             >
               {exportingFormat ? (
@@ -402,17 +402,17 @@ export function BalanceSheet() {
             </button>
 
             {exportMenuOpen && (
-              <div className="absolute right-0 z-10 mt-2 w-36 rounded-md border border-gray-200 bg-white p-1 shadow-sm">
+              <div className="absolute right-0 z-10 mt-2 w-36 rounded-md border border-border bg-card p-1 shadow-sm dark:bg-card">
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  className="block w-full rounded px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
                   onClick={() => downloadExport('excel')}
                 >
                   {text('exportExcel', 'Excel')}
                 </button>
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  className="block w-full rounded px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
                   onClick={() => downloadExport('pdf')}
                 >
                   {text('exportPdf', 'PDF')}
@@ -422,7 +422,7 @@ export function BalanceSheet() {
           </div>
         </div>
 
-        {saveHint && <p className="mt-2 text-xs text-gray-500">{saveHint}</p>}
+        {saveHint && <p className="mt-2 text-xs text-muted-foreground">{saveHint}</p>}
       </div>
 
       {error && (
@@ -438,14 +438,14 @@ export function BalanceSheet() {
       )}
 
       {loading ? (
-        <div className="rounded-lg border border-gray-200 bg-white px-4 py-10 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground dark:bg-card">
           {text('loadingEllipsis', 'Loading...')}
         </div>
       ) : sheet ? (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-2xl font-semibold text-gray-900">
+              <h3 className="text-2xl font-semibold text-foreground">
                 {text('assets', 'Assets')} {formatCurrency(sheet.assets.total)}
               </h3>
             </div>
@@ -456,9 +456,9 @@ export function BalanceSheet() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-white p-4">
+          <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-2xl font-semibold text-gray-900">
+              <h3 className="text-2xl font-semibold text-foreground">
                 {text('liabilities', 'Liabilities')} {formatCurrency(sheet.liabilities.total)}
               </h3>
             </div>
@@ -470,7 +470,7 @@ export function BalanceSheet() {
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white px-4 py-10 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground dark:bg-card">
           {text('noData', 'No data')}
         </div>
       )}

@@ -1,18 +1,24 @@
 'use client';
 
+import {
+  type ThemePreference,
+  getScheduledTheme,
+  getStoredThemePreference,
+  getStoredThemeTimeZone,
+} from '@/app/lib/theme-preference';
 import { cn } from '@/app/lib/utils';
-import { Check, Laptop, MoonStar, Sparkles, Sun } from 'lucide-react';
+import { Check, Clock3, MoonStar, Sparkles, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 
-type ThemeOption = 'light' | 'dark' | 'system';
-
 type ModeToggleProps = {
   className?: string;
+  value?: ThemePreference;
+  onThemeChange?: (theme: ThemePreference) => void;
   labels?: {
     light: string;
     dark: string;
-    system: string;
+    auto: string;
     active: string;
     followsSystem: string;
   };
@@ -21,12 +27,12 @@ type ModeToggleProps = {
 const DEFAULT_LABELS = {
   light: 'Light',
   dark: 'Dark',
-  system: 'System',
+  auto: 'Auto',
   active: 'Active theme',
-  followsSystem: 'Follows your system settings',
+  followsSystem: 'Light theme turns on at 07:00, dark theme at 19:00',
 } as const;
 
-export function ModeToggle({ className, labels }: ModeToggleProps) {
+export function ModeToggle({ className, labels, onThemeChange, value }: ModeToggleProps) {
   const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -35,9 +41,15 @@ export function ModeToggle({ className, labels }: ModeToggleProps) {
   }, []);
 
   const copy = labels ?? DEFAULT_LABELS;
-  const selectedTheme = (theme as ThemeOption) || 'system';
-  const currentTheme: Exclude<ThemeOption, 'system'> =
+  const selectedTheme =
+    value ?? getStoredThemePreference() ?? ((theme as ThemePreference) || 'auto');
+  const currentTheme: Exclude<ThemePreference, 'auto'> =
     mounted && resolvedTheme === 'dark' ? 'dark' : 'light';
+
+  const handleChange = (nextTheme: ThemePreference) => {
+    onThemeChange?.(nextTheme);
+    setTheme(nextTheme === 'auto' ? getScheduledTheme(getStoredThemeTimeZone()) : nextTheme);
+  };
 
   const options = useMemo(
     () => [
@@ -52,12 +64,12 @@ export function ModeToggle({ className, labels }: ModeToggleProps) {
         icon: MoonStar,
       },
       {
-        key: 'system' as const,
-        label: copy.system,
-        icon: Laptop,
+        key: 'auto' as const,
+        label: copy.auto,
+        icon: Clock3,
       },
     ],
-    [copy.dark, copy.light, copy.system],
+    [copy.auto, copy.dark, copy.light],
   );
 
   return (
@@ -73,7 +85,7 @@ export function ModeToggle({ className, labels }: ModeToggleProps) {
             <button
               key={option.key}
               type="button"
-              onClick={() => setTheme(option.key)}
+              onClick={() => handleChange(option.key)}
               aria-pressed={active}
               className={cn(
                 'flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 text-sm font-medium transition-all duration-200',
@@ -97,8 +109,8 @@ export function ModeToggle({ className, labels }: ModeToggleProps) {
           <div className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
             <Sparkles className="h-3.5 w-3.5" />
             <span>
-              {selectedTheme === 'system'
-                ? `${copy.system} · ${currentTheme === 'dark' ? copy.dark : copy.light}`
+              {selectedTheme === 'auto'
+                ? `${copy.auto} · ${currentTheme === 'dark' ? copy.dark : copy.light}`
                 : selectedTheme === 'dark'
                   ? copy.dark
                   : copy.light}
@@ -140,7 +152,7 @@ export function ModeToggle({ className, labels }: ModeToggleProps) {
           </div>
         </div>
 
-        {selectedTheme === 'system' && (
+        {selectedTheme === 'auto' && (
           <p className="mt-2 text-xs text-muted-foreground">{copy.followsSystem}</p>
         )}
       </div>

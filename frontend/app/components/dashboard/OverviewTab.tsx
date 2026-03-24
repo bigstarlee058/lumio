@@ -48,12 +48,13 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     {
       key: 'totalBalance' as const,
       label: 'TOTAL BALANCE',
-      colorClass: (v: number) => (v >= 0 ? 'text-[#2A364E]' : 'text-[#D13D56]'),
+      colorClass: (v: number) =>
+        v >= 0 ? 'text-slate-700 dark:text-slate-300' : 'text-[#D13D56]',
     },
     {
       key: 'income30d' as const,
       label: `INCOME (${rangeLabel})`.toUpperCase(),
-      colorClass: () => 'text-[#0D9568]',
+      colorClass: () => 'text-emerald-600 dark:text-emerald-400',
     },
     {
       key: 'expense30d' as const,
@@ -63,24 +64,25 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     {
       key: 'netFlow30d' as const,
       label: `NET FLOW (${rangeLabel})`.toUpperCase(),
-      colorClass: (v: number) => (v >= 0 ? 'text-[#0D9568]' : 'text-[#D13D56]'),
+      colorClass: (v: number) =>
+        v >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#D13D56]',
     },
   ];
 
   if (hasNoData) {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/40 border border-white/60 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] mb-6">
-          <FileUp className="h-10 w-10 text-[#7A869B]" />
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:bg-card">
+          <FileUp className="h-10 w-10 text-muted-foreground" />
         </div>
         <h2
-          className="text-xl font-bold text-[#2A364E] mb-2"
+          className="mb-2 text-xl font-bold text-foreground"
           style={{ fontFamily: 'var(--font-dashboard-mono)' }}
         >
           Upload your first statement
         </h2>
         <p
-          className="text-sm text-[#7A869B] max-w-md mb-8"
+          className="mb-8 max-w-md text-sm text-muted-foreground"
           style={{ fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Start tracking your finances by uploading a bank statement. We&apos;ll parse it
@@ -88,7 +90,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
         </p>
         <Link
           href="/statements?openExpenseDrawer=scan"
-          className="inline-flex items-center gap-2 rounded-none bg-[#1a1a1a] px-6 py-3 text-sm font-semibold text-[#F5F3EF] transition-colors hover:bg-black"
+          className="inline-flex items-center gap-2 rounded-none bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
           style={{ fontFamily: 'var(--font-dashboard-sans)' }}
         >
           <FileUp className="h-4 w-4" />
@@ -102,7 +104,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     <div className="flex flex-col gap-[30px] w-full pb-10">
       {effectivePeriod ? (
         <div
-          className="border border-[#D1CCC4]/50 bg-[#F5F3EF]/50 backdrop-blur-md rounded-xl px-4 py-3 text-[12px] text-[#555555]"
+          className="rounded-xl border border-border bg-muted/70 px-4 py-3 text-[12px] text-muted-foreground backdrop-blur-md"
           style={{ fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
@@ -116,11 +118,11 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           return (
             <Card
               key={key}
-              className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl h-[72px]"
+              className="h-[72px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card"
             >
               <CardContent className="px-3 py-2 flex flex-col justify-between h-full">
                 <span
-                  className="text-[10px] font-semibold text-[#7A869B] uppercase tracking-[1px]"
+                  className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[1px]"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
                 >
                   {label}
@@ -145,10 +147,10 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
       </div>
 
       <div className="grid grid-cols-1 gap-5 items-stretch lg:grid-cols-12 mt-4">
-        <Card className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl min-h-[320px] lg:col-span-4">
+        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] lg:col-span-4 dark:border-border dark:bg-card">
           <CardContent className="p-6 flex flex-col h-full overflow-hidden gap-3">
             <h2
-              className="text-[18px] font-bold text-[#1a1a1a] uppercase"
+              className="text-[18px] font-bold text-foreground uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               ACTION REQUIRED
@@ -164,10 +166,10 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           </CardContent>
         </Card>
 
-        <Card className="border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] rounded-2xl min-h-[320px] lg:col-span-8">
+        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] lg:col-span-8 dark:border-border dark:bg-card">
           <CardContent className="p-6 h-full flex flex-col overflow-hidden gap-3">
             <h2
-              className="text-[18px] font-bold text-[#1a1a1a] uppercase"
+              className="text-[18px] font-bold text-foreground uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               CASH FLOW ({rangeLabel.toUpperCase()})

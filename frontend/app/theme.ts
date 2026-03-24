@@ -71,26 +71,26 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
   dark: {
     mode: 'dark',
     primary: {
-      main: '#38bdf8',
-      light: '#7dd3fc',
-      dark: '#0ea5e9',
-      contrastText: '#041019',
+      main: '#5B9BD5',
+      light: '#7AAFE0',
+      dark: '#4A8BC5',
+      contrastText: '#0F1419',
     },
     secondary: {
-      main: '#93a4bf',
-      light: '#c2cfdf',
-      dark: '#6b7f9b',
-      contrastText: '#081221',
+      main: '#1A2332',
+      light: '#243247',
+      dark: '#121A26',
+      contrastText: '#E2E8F0',
     },
     background: {
-      default: '#020617',
-      paper: '#0b1220',
+      default: '#0F1419',
+      paper: '#151C24',
     },
     text: {
       primary: '#e2e8f0',
-      secondary: '#94a3b8',
+      secondary: '#8899AA',
     },
-    divider: '#1d2b43',
+    divider: '#1E2A3A',
   },
 };
 

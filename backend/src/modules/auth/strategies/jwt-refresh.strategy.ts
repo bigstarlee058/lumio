@@ -47,7 +47,16 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
 
     const user = await this.userRepository.findOne({
       where: { id: payload.sub, isActive: true },
-      select: ['id', 'email', 'name', 'role', 'workspaceId', 'tokenVersion', 'isActive'],
+      select: [
+        'id',
+        'email',
+        'name',
+        'role',
+        'workspaceId',
+        'themePreference',
+        'tokenVersion',
+        'isActive',
+      ],
     });
 
     if (!user) {

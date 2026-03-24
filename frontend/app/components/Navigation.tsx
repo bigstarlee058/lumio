@@ -4,7 +4,16 @@ import { NotificationDropdown } from '@/app/components/NotificationDropdown';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
+import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
+import {
+  THEME_STORAGE_EVENT,
+  type ThemePreference,
+  getScheduledTheme,
+  getStoredThemePreference,
+  getStoredThemeTimeZone,
+  resolveThemePreference,
+} from '@/app/lib/theme-preference';
 import { TourMenu } from '@/app/tours/components/TourMenu';
 import { type DriveStep, driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
@@ -29,10 +38,10 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {
   Check,
   ChevronLeft,
+  Clock3,
   Database,
   Edit3,
   FileText,
-  Laptop,
   LogOut,
   Menu,
   Moon,
@@ -69,12 +78,12 @@ type AppLanguage = 'ru' | 'en' | 'kk';
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const normalizedAvatarUrl = normalizeAvatarUrl(user?.avatarUrl);
   const { isAdmin, hasPermission } = usePermissions();
   const { currentWorkspace } = useWorkspace();
   const { locale, availableLocales, setLocale } = useLocale();
-  const { setTheme, theme: selectedTheme } = useTheme();
+  const { setTheme } = useTheme();
   const {
     nav,
     userMenu,
@@ -91,6 +100,9 @@ export default function Navigation() {
   const [languageSearch, setLanguageSearch] = useState('');
   const [portalReady, setPortalReady] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState<ThemePreference>(() =>
+    getStoredThemePreference(),
+  );
   const isMobile = useIsMobile();
 
   useLockBodyScroll(languageModalOpen || mobileMenuOpen);
@@ -247,6 +259,74 @@ export default function Navigation() {
     setAvatarError(false);
   }, [user?.avatarUrl]);
 
+  useEffect(() => {
+    setSelectedTheme(resolveThemePreference(user?.themePreference ?? getStoredThemePreference()));
+  }, [user?.themePreference]);
+
+  const handleThemePreferenceChange = useCallback(
+    async (nextThemePreference: ThemePreference) => {
+      const previousThemePreference = selectedTheme;
+      const previousUser = user;
+      const nextResolvedTheme =
+        nextThemePreference === 'auto'
+          ? getScheduledTheme(getStoredThemeTimeZone())
+          : nextThemePreference;
+
+      setSelectedTheme(nextThemePreference);
+      setTheme(nextResolvedTheme);
+
+      if (previousUser) {
+        const optimisticUser = { ...previousUser, themePreference: nextThemePreference };
+        setUser(optimisticUser);
+        localStorage.setItem('user', JSON.stringify(optimisticUser));
+      }
+
+      window.dispatchEvent(
+        new CustomEvent(THEME_STORAGE_EVENT, {
+          detail: { themePreference: nextThemePreference },
+        }),
+      );
+
+      try {
+        const response = await apiClient.patch('/users/me/preferences', {
+          themePreference: nextThemePreference,
+        });
+
+        if (previousUser) {
+          const mergedUser = {
+            ...previousUser,
+            ...(response.data?.user || {}),
+            themePreference: nextThemePreference,
+          };
+          setUser(mergedUser);
+          localStorage.setItem('user', JSON.stringify(mergedUser));
+        }
+      } catch {
+        setSelectedTheme(previousThemePreference);
+        setTheme(
+          previousThemePreference === 'auto'
+            ? getScheduledTheme(getStoredThemeTimeZone())
+            : previousThemePreference,
+        );
+
+        if (previousUser) {
+          setUser(previousUser);
+          localStorage.setItem('user', JSON.stringify(previousUser));
+        }
+
+        window.dispatchEvent(
+          new CustomEvent(THEME_STORAGE_EVENT, {
+            detail: { themePreference: previousThemePreference },
+          }),
+        );
+        toast.error(
+          getText((nav as Record<string, any>)?.theme?.description) || 'Failed to update theme',
+        );
+      }
+    },
+    [getText, nav, selectedTheme, setTheme, setUser, user],
+  );
+
   const languages = useMemo(
     () =>
       [
@@ -396,11 +476,11 @@ export default function Navigation() {
         <Button
           radius="full"
           size="md"
-          className="min-w-[100px] h-[40px] px-5 !bg-white !text-[#0a66c2] font-semibold text-[15px] hover:scale-105 active:scale-95 transition-transform"
+          className="min-w-[100px] h-[40px] px-5 !bg-card !text-primary border border-border font-semibold text-[15px] hover:scale-105 active:scale-95 transition-transform"
           data-tour-id={mobile ? undefined : 'user-menu-trigger'}
         >
           <span className="inline-flex items-center gap-2.5 tracking-wide">
-            <Menu size={18} color="#0a66c2" strokeWidth={2.25} />
+            <Menu size={18} color="currentColor" strokeWidth={2.25} />
             {((userMenu as any).moreActions?.value as string) || 'Menu'}
           </span>
         </Button>
@@ -546,8 +626,8 @@ export default function Navigation() {
                         group inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-200
                         ${
                           isActive
-                            ? 'bg-white/10 text-white'
-                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-primary/15 text-white'
+                            : 'text-slate-400 hover:text-white hover:bg-primary/10'
                         }
                       `}
                   >
@@ -568,7 +648,7 @@ export default function Navigation() {
                 <TourMenu
                   trigger={
                     <button
-                      className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                      className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/10 transition-colors"
                       title="Help"
                     >
                       <QuestionMarkIcon sx={{ fontSize: 20 }} />
@@ -585,7 +665,7 @@ export default function Navigation() {
             <div className="flex items-center md:hidden">
               <button
                 onClick={() => setMobileMenuOpen(prev => !prev)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-white/10 focus:outline-none"
+                className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-primary/10 focus:outline-none"
                 data-tour-id="mobile-menu-toggle"
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
@@ -693,13 +773,13 @@ export default function Navigation() {
                       icon: <Moon size={18} />,
                     },
                     {
-                      key: 'system' as const,
-                      label: 'System',
-                      icon: <Laptop size={18} />,
+                      key: 'auto' as const,
+                      label: 'Auto',
+                      icon: <Clock3 size={18} />,
                     },
                   ] as const
                 ).map(opt => {
-                  const active = (selectedTheme || 'system') === opt.key;
+                  const active = selectedTheme === opt.key;
                   return (
                     <button
                       key={opt.key}
@@ -707,7 +787,7 @@ export default function Navigation() {
                       className={`w-full flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium transition-colors ${
                         active ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
                       }`}
-                      onClick={() => setTheme(opt.key)}
+                      onClick={() => void handleThemePreferenceChange(opt.key)}
                     >
                       <span className={active ? 'text-primary' : 'text-muted-foreground'}>
                         {opt.icon}
@@ -748,16 +828,16 @@ export default function Navigation() {
           }}
           title={
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setLanguageModalOpen(false);
-                  setLanguageSearch('');
-                }}
-                className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
-                aria-label="Close language drawer"
-              >
-                <ChevronLeft className="h-5 w-5" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLanguageModalOpen(false);
+                    setLanguageSearch('');
+                  }}
+                  className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                  aria-label="Close language drawer"
+                >
+                  <ChevronLeft className="h-5 w-5" />
               </button>
               <span>{languageModal.title}</span>
             </div>
@@ -765,18 +845,18 @@ export default function Navigation() {
           position="right"
           width="lg"
           showCloseButton={false}
-          className="max-w-full border-l-0 bg-white sm:max-w-lg"
+          className="max-w-full border-l-0 bg-card sm:max-w-lg"
         >
           <div className="flex h-full flex-col">
             <div className="flex-1 space-y-4 overflow-y-auto pb-4">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   value={languageSearch}
                   onChange={event => setLanguageSearch(event.target.value)}
                   placeholder="Search"
-                  className="w-full rounded-2xl border border-primary bg-white py-3 pl-11 pr-4 text-base text-gray-900 outline-none"
+                  className="w-full rounded-2xl border border-primary bg-card py-3 pl-11 pr-4 text-base text-foreground outline-none"
                 />
               </div>
 
@@ -791,8 +871,8 @@ export default function Navigation() {
                         onClick={() => handleLanguageSelect(lang.code)}
                         className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
                           selected
-                            ? 'bg-[#ebe8e2] text-foreground'
-                            : 'text-foreground hover:bg-[#f1efea]'
+                            ? 'bg-muted text-foreground'
+                            : 'text-foreground hover:bg-muted'
                         }`}
                       >
                         <span className="font-medium">{lang.label}</span>
@@ -801,7 +881,7 @@ export default function Navigation() {
                     );
                   })
                 ) : (
-                  <p className="rounded-xl bg-white px-4 py-3 text-sm text-gray-500">
+                  <p className="rounded-xl bg-card px-4 py-3 text-sm text-muted-foreground">
                     No languages found
                   </p>
                 )}

@@ -84,45 +84,45 @@ export function ReportHistory() {
   if (!history.length) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
-        <FileText className="h-10 w-10 text-slate-200" />
-        <p className="text-sm font-semibold text-slate-500">No reports generated yet</p>
-        <p className="text-xs text-slate-400">Select a template and generate your first report.</p>
+        <FileText className="h-10 w-10 text-muted-foreground/40" />
+        <p className="text-sm font-semibold text-muted-foreground">No reports generated yet</p>
+        <p className="text-xs text-muted-foreground/80">Select a template and generate your first report.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm dark:bg-card">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 bg-slate-50">
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+          <tr className="border-b border-border bg-muted/60">
+            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Report
             </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Period
             </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Format
             </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Generated
             </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Size
             </th>
-            <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-500">
+            <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Download
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50">
+        <tbody className="divide-y divide-border">
           {history.map(item => (
-            <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
+            <tr key={item.id} className="transition-colors hover:bg-muted/50">
               <td className="px-5 py-3.5">
-                <span className="font-medium text-slate-900">{item.templateName}</span>
+                <span className="font-medium text-foreground">{item.templateName}</span>
               </td>
-              <td className="px-5 py-3.5 text-slate-500 text-xs">
+              <td className="px-5 py-3.5 text-xs text-muted-foreground">
                 {item.dateFrom} – {item.dateTo}
               </td>
               <td className="px-5 py-3.5">
@@ -132,10 +132,10 @@ export function ReportHistory() {
                   {item.format}
                 </Badge>
               </td>
-              <td className="px-5 py-3.5 text-slate-500 text-xs whitespace-nowrap">
+              <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground">
                 {getRelativeTime(item.generatedAt)}
               </td>
-              <td className="px-5 py-3.5 text-slate-400 text-xs">
+              <td className="px-5 py-3.5 text-xs text-muted-foreground/80">
                 {formatFileSize(item.fileSize)}
               </td>
               <td className="px-5 py-3.5 text-right">
@@ -144,7 +144,7 @@ export function ReportHistory() {
                   onClick={() => void handleDownload(item)}
                   aria-label={`Re-download ${item.templateName}`}
                   title={`Re-download ${item.templateName}`}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#0a66c2] transition-colors hover:bg-[#eaf4ff] hover:text-[#004182]"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/10 hover:text-primary"
                 >
                   <Download className="h-4 w-4" />
                 </button>

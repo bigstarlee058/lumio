@@ -132,7 +132,7 @@ export default function DashboardPage() {
 
   return (
     <main
-      className="min-h-[calc(100vh-var(--global-nav-height,0px))] bg-white flex flex-col font-sans"
+      className="min-h-[calc(100vh-var(--global-nav-height,0px))] bg-background text-foreground flex flex-col font-sans"
       {...pullToRefreshHandlers}
     >
       <div className="w-full flex-1 flex flex-col">
@@ -142,8 +142,8 @@ export default function DashboardPage() {
             <div
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium shadow-sm transition-colors ${
                 isReadyToRefresh || pullRefreshing
-                  ? 'border-primary/40 text-primary bg-white'
-                  : 'border-gray-200 text-gray-500 bg-white'
+                  ? 'border-primary/40 text-primary bg-card'
+                  : 'border-border text-muted-foreground bg-card'
               }`}
             >
               <RefreshCcw className={`h-3.5 w-3.5 ${pullRefreshing ? 'animate-spin' : ''}`} />
@@ -189,18 +189,18 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h1
-                  className="text-[32px] md:text-[40px] font-medium text-[#0D0D0D] tracking-tight"
+                  className="text-[32px] md:text-[40px] font-medium text-foreground tracking-tight"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
                 >
                   {statusHeading}
                 </h1>
-                <p className="mt-1 text-[14px] text-[#7A7A7A]">{greetingSubtitle}</p>
+                <p className="mt-1 text-[14px] text-muted-foreground">{greetingSubtitle}</p>
               </div>
 
               <div className="flex items-center gap-3">
                 <Link
                   href="/reports"
-                  className="flex items-center gap-2 px-5 py-2.5 border border-[#E8E8E8] text-[#0D0D0D] hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-5 py-2.5 border border-border text-foreground hover:bg-muted transition-colors"
                 >
                   <svg
                     width="14"
@@ -252,7 +252,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-end justify-between border-b border-[#E8E8E8] pb-0 w-full mt-2">
+            <div className="flex items-end justify-between border-b border-border pb-0 w-full mt-2">
               <div className="flex px-2">
                 <Tabs
                   value={activeTab}
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                     },
                     '& .MuiTab-root:hover': {
                       backgroundColor: 'transparent !important',
-                      color: '#0D0D0D',
+                      color: 'var(--foreground)',
                     },
                   }}
                 >
@@ -282,10 +282,10 @@ export default function DashboardPage() {
                       fontWeight: 600,
                       fontFamily: 'var(--font-dashboard-mono)',
                       textTransform: 'uppercase',
-                      color: '#7A7A7A',
+                      color: 'var(--muted-foreground)',
                       minWidth: 'auto',
                       padding: '0 0 16px 0',
-                      '&.Mui-selected': { color: '#0D0D0D' },
+                      '&.Mui-selected': { color: 'var(--foreground)' },
                     }}
                   />
                   <Tab
@@ -298,10 +298,10 @@ export default function DashboardPage() {
                       fontWeight: 600,
                       fontFamily: 'var(--font-dashboard-mono)',
                       textTransform: 'uppercase',
-                      color: '#7A7A7A',
+                      color: 'var(--muted-foreground)',
                       minWidth: 'auto',
                       padding: '0 0 16px 0',
-                      '&.Mui-selected': { color: '#0D0D0D' },
+                      '&.Mui-selected': { color: 'var(--foreground)' },
                     }}
                   />
                   <Tab
@@ -314,10 +314,10 @@ export default function DashboardPage() {
                       fontWeight: 600,
                       fontFamily: 'var(--font-dashboard-mono)',
                       textTransform: 'uppercase',
-                      color: '#7A7A7A',
+                      color: 'var(--muted-foreground)',
                       minWidth: 'auto',
                       padding: '0 0 16px 0',
-                      '&.Mui-selected': { color: '#0D0D0D' },
+                      '&.Mui-selected': { color: 'var(--foreground)' },
                     }}
                   />
                 </Tabs>
@@ -328,7 +328,7 @@ export default function DashboardPage() {
 
         {/* Content Body */}
         {data ? (
-          <div className="bg-white w-full px-10 py-8 flex-1 pb-12">
+          <div className="bg-background w-full px-10 py-8 flex-1 pb-12">
             {activeTab === 'overview' && (
               <OverviewTab
                 data={data}

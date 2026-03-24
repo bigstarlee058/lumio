@@ -1,6 +1,7 @@
 'use client';
 
 import type { DashboardCashFlowPoint } from '@/app/hooks/useDashboard';
+import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 
@@ -13,8 +14,18 @@ interface CashFlowMiniProps {
 }
 
 export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniProps) {
+  const { resolvedTheme } = useTheme();
   const option = useMemo(() => {
     if (!data || data.length === 0) return null;
+
+    const isDark = resolvedTheme === 'dark';
+    const tooltipBackground = isDark ? '#151C24' : '#1a1a1a';
+    const tooltipText = isDark ? '#E2E8F0' : '#F5F3EF';
+    const mutedText = isDark ? '#8899AA' : '#7A869B';
+    const gridLine = isDark ? '#2A3442' : '#E8E4DC';
+    const axisLine = isDark ? '#2A3442' : '#D1CCC4';
+    const incomeLine = isDark ? '#34D399' : '#0D9568';
+    const expenseLine = '#D13D56';
 
     const fmt = (v: number) =>
       new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(v);
@@ -23,9 +34,9 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
       backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
-        backgroundColor: '#1a1a1a',
+        backgroundColor: tooltipBackground,
         borderColor: 'transparent',
-        textStyle: { color: '#F5F3EF', fontSize: 12 },
+        textStyle: { color: tooltipText, fontSize: 12 },
         formatter: (params: Array<{ seriesName: string; value: number }>) =>
           params.map(p => `${p.seriesName}: ${fmt(p.value)}`).join('<br/>'),
       },
@@ -33,7 +44,7 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
         data: ['Income', 'Expense'],
         top: 0,
         right: 0,
-        textStyle: { color: '#7A869B', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
+        textStyle: { color: mutedText, fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
         icon: 'rect',
         itemWidth: 12,
         itemHeight: 6,
@@ -44,11 +55,11 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
         data: data.map(point => point.date),
         axisLabel: {
           fontSize: 10,
-          color: '#7A869B',
+          color: mutedText,
           fontFamily: 'var(--font-dashboard-sans)',
           rotate: data.length > 15 ? 45 : 0,
         },
-        axisLine: { lineStyle: { color: '#D1CCC4' } },
+        axisLine: { lineStyle: { color: axisLine } },
         axisTick: { show: false },
       },
       yAxis: {
@@ -56,10 +67,10 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
         axisLabel: {
           show: false,
           fontSize: 10,
-          color: '#7A869B',
+          color: mutedText,
           fontFamily: 'var(--font-dashboard-sans)',
         },
-        splitLine: { lineStyle: { color: '#E8E4DC' } },
+        splitLine: { lineStyle: { color: gridLine } },
       },
       series: [
         {
@@ -68,9 +79,9 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
           smooth: true,
           symbol: 'none',
           data: data.map(point => point.income),
-          areaStyle: { color: 'rgba(13,149,104,0.08)' },
-          lineStyle: { color: '#0D9568', width: 2 },
-          itemStyle: { color: '#0D9568' },
+          areaStyle: { color: isDark ? 'rgba(52,211,153,0.12)' : 'rgba(13,149,104,0.08)' },
+          lineStyle: { color: incomeLine, width: 2 },
+          itemStyle: { color: incomeLine },
         },
         {
           name: 'Expense',
@@ -79,19 +90,19 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
           symbol: 'none',
           data: data.map(point => point.expense),
           areaStyle: { color: 'rgba(209,61,86,0.08)' },
-          lineStyle: { color: '#D13D56', width: 2 },
-          itemStyle: { color: '#D13D56' },
+          lineStyle: { color: expenseLine, width: 2 },
+          itemStyle: { color: expenseLine },
         },
       ],
     };
-  }, [data]);
+  }, [data, resolvedTheme]);
 
   return (
     <div className="flex flex-col w-full h-full relative">
       {!option ? (
         <div className="flex-1 flex items-center justify-center">
           <span
-            className="text-[18px] text-[#B0B7C5]"
+            className="text-[18px] text-muted-foreground"
             style={{ fontFamily: 'var(--font-dashboard-sans)' }}
           >
             {emptyLabel}

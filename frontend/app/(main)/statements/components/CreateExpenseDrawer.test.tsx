@@ -85,4 +85,41 @@ describe('CreateExpenseDrawer mobile uploads', () => {
       root.unmount();
     });
   });
+
+  it('uses dark-safe drawer surfaces for scan and manual modes', async () => {
+    const container = document.createElement('div');
+    document.body.innerHTML = '';
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <CreateExpenseDrawer
+          open
+          initialMode="scan"
+          categories={[]}
+          taxRates={[]}
+          onClose={() => undefined}
+          onSubmitScan={async () => undefined}
+          onSubmitManual={async () => undefined}
+        />,
+      );
+    });
+
+    const drawerSurface = Array.from(document.querySelectorAll('[class]')).find(
+      node => typeof node.className === 'string' && node.className.includes('bg-card'),
+    );
+    const lightSurface = Array.from(document.querySelectorAll('[class]')).find(
+      node =>
+        typeof node.className === 'string' &&
+        (node.className.includes('bg-white') || node.className.includes('bg-[#ebe8e2]')),
+    );
+
+    expect(drawerSurface).toBeTruthy();
+    expect(lightSurface).toBeUndefined();
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
 });

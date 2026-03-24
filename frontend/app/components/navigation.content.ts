@@ -240,14 +240,14 @@ const content = {
         },
         theme: {
           title: t({
-            ru: 'Темная и светлая темы',
-            en: 'Light and dark themes',
-            kk: 'Жарық және қараңғы тақырыптар',
+            ru: 'Светлая, темная и авто тема',
+            en: 'Light, dark, and auto themes',
+            kk: 'Жарық, қараңғы және авто тақырыптар',
           }),
           description: t({
-            ru: 'Переключайте тему интерфейса и следуйте системным настройкам.',
-            en: 'Switch the interface theme or follow your system preference.',
-            kk: 'Интерфейс тақырыбын ауыстырыңыз немесе жүйелік баптауды пайдаланыңыз.',
+            ru: 'Переключайте тему интерфейса вручную или по расписанию 07:00/19:00.',
+            en: 'Switch the interface theme manually or on the 07:00/19:00 schedule.',
+            kk: 'Интерфейс тақырыбын қолмен немесе 07:00/19:00 кестесімен ауыстырыңыз.',
           }),
         },
         userMenu: {

@@ -15,6 +15,14 @@ vi.mock('next/dynamic', () => ({
   },
 }));
 
+const themeMock = vi.hoisted(() => ({
+  resolvedTheme: 'dark',
+}));
+
+vi.mock('next-themes', () => ({
+  useTheme: () => themeMock,
+}));
+
 describe('CashFlowMini', () => {
   beforeEach(() => {
     chartPropsSpy.mockClear();
@@ -54,5 +62,35 @@ describe('CashFlowMini', () => {
     );
 
     expect(container.textContent).not.toContain('Cash Flow (30d)');
+  });
+
+  it('uses dark-theme chart colors with muted labels and non-white grid lines', async () => {
+    const { CashFlowMini } = await import('./CashFlowMini');
+
+    render(
+      <CashFlowMini
+        emptyLabel="No data"
+        data={[
+          { date: '2025-12-08', income: 500000, expense: 300000 },
+          { date: '2025-12-09', income: 320000, expense: 180000 },
+        ]}
+      />,
+    );
+
+    const [props] = chartPropsSpy.mock.calls.at(-1) ?? [];
+    const option = props?.option as
+      | {
+          legend?: { textStyle?: { color?: string } };
+          xAxis?: { axisLabel?: { color?: string }; axisLine?: { lineStyle?: { color?: string } } };
+          yAxis?: { splitLine?: { lineStyle?: { color?: string } } };
+          series?: Array<{ lineStyle?: { color?: string } }>;
+        }
+      | undefined;
+
+    expect(option?.legend?.textStyle?.color).toBe('#8899AA');
+    expect(option?.xAxis?.axisLabel?.color).toBe('#8899AA');
+    expect(option?.xAxis?.axisLine?.lineStyle?.color).toBe('#2A3442');
+    expect(option?.yAxis?.splitLine?.lineStyle?.color).toBe('#2A3442');
+    expect(option?.series?.[0]?.lineStyle?.color).toBe('#34D399');
   });
 });

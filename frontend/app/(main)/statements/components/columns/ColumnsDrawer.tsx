@@ -62,15 +62,15 @@ function SortableColumnItem({ column, onToggle }: SortableColumnItemProps) {
         transition,
       }}
       className={cn(
-        'flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-gray-50/70 border-b border-gray-100/70 last:border-b-0',
-        isDragging && 'z-10 bg-white/95 shadow-sm',
+        'flex items-center justify-between gap-3 border-b border-border px-4 py-4 transition-colors hover:bg-muted/60 last:border-b-0',
+        isDragging && 'z-10 bg-card shadow-sm',
       )}
     >
       <div className="flex items-center gap-3">
         <button
           type="button"
           ref={setActivatorNodeRef}
-          className="-ml-1 rounded p-1 text-gray-300 transition-colors hover:text-gray-500 cursor-grab active:cursor-grabbing touch-none"
+          className="-ml-1 cursor-grab touch-none rounded p-1 text-muted-foreground/70 transition-colors hover:text-foreground active:cursor-grabbing"
           aria-label={`Reorder ${column.label}`}
           {...attributes}
           {...listeners}
@@ -80,13 +80,16 @@ function SortableColumnItem({ column, onToggle }: SortableColumnItemProps) {
         <span
           className={cn(
             'text-base font-semibold',
-            column.visible ? 'text-gray-900' : 'text-gray-400',
+            column.visible ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
           {column.label}
         </span>
       </div>
-      <Checkbox checked={column.visible} onCheckedChange={value => onToggle(column.id, value)} />
+      <Checkbox
+        checked={column.visible}
+        onCheckedChange={(value: boolean) => onToggle(column.id, value)}
+      />
     </div>
   );
 }
@@ -123,18 +126,18 @@ export function ColumnsDrawer({
       position="right"
       width="sm"
       showCloseButton={false}
-      className="bg-white border-l-0"
+      className="border-l-0 bg-card"
       title={
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+            className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
             aria-label={labels.title}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <span className="text-lg font-semibold text-gray-900">{labels.title}</span>
+          <span className="text-lg font-semibold text-foreground">{labels.title}</span>
         </div>
       }
     >
@@ -157,7 +160,7 @@ export function ColumnsDrawer({
             </SortableContext>
           </DndContext>
         </div>
-        <div className="sticky bottom-0 pt-4 pb-2 bg-white">
+        <div className="sticky bottom-0 bg-card pb-2 pt-4">
           <Button className="w-full rounded-full" size="lg" onClick={onSave}>
             {labels.save}
           </Button>

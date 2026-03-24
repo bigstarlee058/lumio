@@ -51,4 +51,39 @@ describe('TrendsTab', () => {
       screen.getByText('Showing latest available period: 2025-05-01 - 2025-05-31'),
     ).toBeInTheDocument();
   });
+
+  it('uses dark-safe surface classes instead of translucent white cards', () => {
+    hooksMock.useDashboardTrends.mockReturnValue({
+      data: {
+        dailyTrend: [{ date: '2025-05-10', income: 100, expense: 40 }],
+        categories: [{ name: 'Office', amount: 40, count: 1 }],
+        counterparties: [{ name: 'Client', amount: 100, count: 1 }],
+        sources: {
+          statements: { income: 100, expense: 40, rows: 2 },
+        },
+        effectiveSince: '2025-05-01',
+        effectiveEndDate: '2025-05-31',
+      },
+      loading: false,
+      error: null,
+      refresh: vi.fn(),
+    });
+
+    render(
+      <TrendsTab
+        data={{} as any}
+        formatAmount={value => String(value)}
+        range="30d"
+        isLoading={false}
+      />,
+    );
+
+    const spendTrendHeading = screen.getByText('SPEND TREND');
+    const spendTrendCard = spendTrendHeading.closest('[class*="dark:bg-card"]');
+
+    expect(spendTrendCard?.className).toContain('dark:bg-card');
+    expect(spendTrendCard?.className).toContain('dark:border-border');
+    expect(spendTrendCard?.className).not.toContain('bg-white/40');
+    expect(spendTrendCard?.className).not.toContain('border-white/60');
+  });
 });
