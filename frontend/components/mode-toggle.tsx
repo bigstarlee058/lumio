@@ -15,6 +15,7 @@ type ModeToggleProps = {
   className?: string;
   value?: ThemePreference;
   onThemeChange?: (theme: ThemePreference) => void;
+  showPreview?: boolean;
   labels?: {
     light: string;
     dark: string;
@@ -32,7 +33,13 @@ const DEFAULT_LABELS = {
   followsSystem: 'Light theme turns on at 07:00, dark theme at 19:00',
 } as const;
 
-export function ModeToggle({ className, labels, onThemeChange, value }: ModeToggleProps) {
+export function ModeToggle({
+  className,
+  labels,
+  onThemeChange,
+  showPreview = true,
+  value,
+}: ModeToggleProps) {
   const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -101,61 +108,63 @@ export function ModeToggle({ className, labels, onThemeChange, value }: ModeTogg
         })}
       </div>
 
-      <div className="rounded-2xl border border-border bg-card p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            {copy.active}
-          </p>
-          <div className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>
-              {selectedTheme === 'auto'
-                ? `${copy.auto} · ${currentTheme === 'dark' ? copy.dark : copy.light}`
-                : selectedTheme === 'dark'
-                  ? copy.dark
-                  : copy.light}
-            </span>
+      {showPreview ? (
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              {copy.active}
+            </p>
+            <div className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>
+                {selectedTheme === 'auto'
+                  ? `${copy.auto} · ${currentTheme === 'dark' ? copy.dark : copy.light}`
+                  : selectedTheme === 'dark'
+                    ? copy.dark
+                    : copy.light}
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div
-          className={cn(
-            'rounded-xl border p-3 transition-all duration-200',
-            currentTheme === 'dark'
-              ? 'border-sky-400/25 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900'
-              : 'border-slate-300/80 bg-gradient-to-br from-slate-100 via-white to-sky-50',
-          )}
-        >
           <div
             className={cn(
-              'mb-2 h-2.5 w-24 rounded-full',
-              currentTheme === 'dark' ? 'bg-slate-700' : 'bg-slate-300',
+              'rounded-xl border p-3 transition-all duration-200',
+              currentTheme === 'dark'
+                ? 'border-sky-400/25 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900'
+                : 'border-slate-300/80 bg-gradient-to-br from-slate-100 via-white to-sky-50',
             )}
-          />
-          <div className="grid grid-cols-2 gap-2">
+          >
             <div
               className={cn(
-                'h-10 rounded-md border',
-                currentTheme === 'dark'
-                  ? 'border-sky-300/20 bg-slate-800'
-                  : 'border-slate-200 bg-white',
+                'mb-2 h-2.5 w-24 rounded-full',
+                currentTheme === 'dark' ? 'bg-slate-700' : 'bg-slate-300',
               )}
             />
-            <div
-              className={cn(
-                'h-10 rounded-md border',
-                currentTheme === 'dark'
-                  ? 'border-emerald-300/20 bg-slate-800'
-                  : 'border-slate-200 bg-white',
-              )}
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <div
+                className={cn(
+                  'h-10 rounded-md border',
+                  currentTheme === 'dark'
+                    ? 'border-sky-300/20 bg-slate-800'
+                    : 'border-slate-200 bg-white',
+                )}
+              />
+              <div
+                className={cn(
+                  'h-10 rounded-md border',
+                  currentTheme === 'dark'
+                    ? 'border-emerald-300/20 bg-slate-800'
+                    : 'border-slate-200 bg-white',
+                )}
+              />
+            </div>
           </div>
-        </div>
 
-        {selectedTheme === 'auto' && (
-          <p className="mt-2 text-xs text-muted-foreground">{copy.followsSystem}</p>
-        )}
-      </div>
+          {selectedTheme === 'auto' && (
+            <p className="mt-2 text-xs text-muted-foreground">{copy.followsSystem}</p>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -17,6 +17,7 @@ interface CurrencySelectorProps {
   showTrigger?: boolean;
   title?: string;
   minimal?: boolean;
+  showPanelHeader?: boolean;
 }
 
 const DEFAULT_RECENT_CURRENCIES = ['USD', 'EUR', 'KZT', 'RUB'] as const;
@@ -31,6 +32,7 @@ export function CurrencySelector({
   showTrigger = true,
   title = 'Select a currency',
   minimal = false,
+  showPanelHeader = true,
 }: CurrencySelectorProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -97,7 +99,7 @@ export function CurrencySelector({
     <div
       className={`w-full ${minimal ? 'bg-transparent p-0 shadow-none' : 'rounded-2xl border border-border bg-card p-5 shadow-xl'}`}
     >
-      {!minimal ? (
+      {!minimal && showPanelHeader ? (
         <div className="mb-3 flex items-center justify-between gap-3">
           <h3 className="text-lg font-semibold text-foreground">{title}</h3>
           <button

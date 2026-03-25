@@ -7,6 +7,7 @@ import { Button, Input, Textarea } from '@heroui/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useId, useState } from 'react';
 import toast from 'react-hot-toast';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { AVAILABLE_BACKGROUNDS } from '../constants';
 import { BackgroundSelector } from './BackgroundSelector';
 import { CurrencySelector } from './CurrencySelector';
@@ -31,6 +32,7 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
   const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [createdWorkspaceId, setCreatedWorkspaceId] = useState<string | null>(null);
+  const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState(false);
 
   const handleNext = () => {
     if (step === 1 && !name.trim()) {
@@ -72,7 +74,7 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
     }
   };
 
-  const handleFinishFromStep2 = async () => {
+  const finalizeWorkspaceCreation = async () => {
     try {
       const workspaceId = await handleCreateWorkspace();
       if (workspaceId) {
@@ -87,23 +89,16 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
     }
   };
 
-  const handleProceedToStep3 = async () => {
-    try {
-      const workspaceId = await handleCreateWorkspace();
-      if (workspaceId) {
-        await switchWorkspace(workspaceId);
-        await refreshWorkspaces();
-        setStep(3);
-      }
-    } catch (error) {
-      // Error already handled in handleCreateWorkspace
-    }
+  const handleFinishFromStep2 = async () => {
+    await finalizeWorkspaceCreation();
+  };
+
+  const handleProceedToStep3 = () => {
+    setStep(3);
   };
 
   const handleSkipIntegrations = async () => {
-    resetForm();
-    onSuccess();
-    onClose();
+    await finalizeWorkspaceCreation();
   };
 
   const resetForm = () => {
@@ -114,6 +109,7 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
     setSelectedBackground(AVAILABLE_BACKGROUNDS[0]);
     setSelectedCurrency(null);
     setCreatedWorkspaceId(null);
+    setCurrencyDrawerOpen(false);
   };
 
   const handleClose = () => {
@@ -132,9 +128,10 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
   }, [isOpen]);
 
   return (
-    <Modal
+    <>
+      <Modal
       isOpen={isOpen}
-      onOpenChange={next => {
+      onOpenChange={(next: boolean) => {
         if (!next) {
           handleClose();
         }
@@ -229,6 +226,13 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
                   <CurrencySelector
                     selectedCurrency={selectedCurrency}
                     onSelect={setSelectedCurrency}
+                    mode="inline"
+                    open={false}
+                    onOpenChange={nextOpen => {
+                      if (nextOpen) {
+                        setCurrencyDrawerOpen(true);
+                      }
+                    }}
                   />
 
                   <div>
@@ -242,9 +246,9 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
                 </div>
               )}
 
-              {step === 3 && createdWorkspaceId && (
+              {step === 3 && (
                 <ServiceIntegrationSuggestions
-                  workspaceId={createdWorkspaceId}
+                  workspaceId={createdWorkspaceId ?? ''}
                   onSkip={handleSkipIntegrations}
                 />
               )}
@@ -292,6 +296,47 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
           </>
         )}
       </ModalContent>
-    </Modal>
+      </Modal>
+      <DrawerShell
+        isOpen={isOpen && step === 2 && currencyDrawerOpen}
+        onClose={() => setCurrencyDrawerOpen(false)}
+        position="right"
+        width="lg"
+        showCloseButton={false}
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
+        title={
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setCurrencyDrawerOpen(false)}
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              aria-label="Close currency drawer"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <span className="text-lg font-semibold text-foreground">Select a currency</span>
+          </div>
+        }
+      >
+        <div className="flex h-full flex-col">
+          <div className="flex-1 overflow-y-auto pb-4">
+            <CurrencySelector
+              selectedCurrency={selectedCurrency}
+              onSelect={currency => {
+                setSelectedCurrency(currency);
+                setCurrencyDrawerOpen(false);
+              }}
+              mode="inline"
+              open
+              showLabel={false}
+              showTrigger={false}
+              title="Select a currency"
+              minimal={false}
+              showPanelHeader={false}
+            />
+          </div>
+        </div>
+      </DrawerShell>
+    </>
   );
 }

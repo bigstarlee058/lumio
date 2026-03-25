@@ -236,6 +236,24 @@ describe('ProfileSettingsPage', () => {
     expect(setUser).toHaveBeenCalledWith(expect.objectContaining({ themePreference: 'auto' }));
   });
 
+  it('does not render the active theme block in appearance settings', async () => {
+    window.history.replaceState(null, '', '#appearance');
+
+    const { default: ProfileSettingsPage } = await import('./page');
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<ProfileSettingsPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    expect(container.textContent).not.toContain('appearanceCard.active');
+  });
+
   it('uses dark-safe cards and drawer surfaces for profile settings', async () => {
     const { default: ProfileSettingsPage } = await import('./page');
     const container = document.createElement('div');

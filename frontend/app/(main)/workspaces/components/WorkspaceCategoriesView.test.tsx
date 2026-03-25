@@ -160,4 +160,28 @@ describe('WorkspaceCategoriesView', () => {
     expect(screen.queryByText('Аренда')).not.toBeInTheDocument();
     expect(screen.queryByText('Payroll expenses')).not.toBeInTheDocument();
   });
+
+  it('uses dark-safe surfaces instead of white category rows', async () => {
+    const { default: WorkspaceCategoriesView } = await import('./WorkspaceCategoriesView');
+
+    const { container } = render(<WorkspaceCategoriesView />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Kaspi Delivery')).toBeInTheDocument();
+    });
+
+    const darkSurface = Array.from(container.querySelectorAll('[class]')).find(
+      node =>
+        typeof node.className === 'string' &&
+        (node.className.includes('bg-card') || node.className.includes('bg-muted')),
+    );
+    const whiteSurface = Array.from(container.querySelectorAll('[class]')).find(
+      node =>
+        typeof node.className === 'string' &&
+        (node.className.includes('bg-white') || node.className.includes('bg-slate-50')),
+    );
+
+    expect(darkSurface).toBeTruthy();
+    expect(whiteSurface).toBeUndefined();
+  });
 });

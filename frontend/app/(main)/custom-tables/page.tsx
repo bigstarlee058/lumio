@@ -1023,11 +1023,11 @@ export default function CustomTablesPage() {
       />
       <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-6 space-y-4">
-          <div className="rounded-2xl border border-gray-200 bg-white px-5 py-5 sm:px-6">
+          <div className="rounded-2xl border border-border bg-card px-5 py-5 sm:px-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
-                <h1 className="text-2xl font-semibold text-gray-900">{headerTitle}</h1>
-                <p className="mt-2 max-w-3xl text-sm text-gray-600">{headerSubtitle}</p>
+                <h1 className="text-2xl font-semibold text-foreground">{headerTitle}</h1>
+                <p className="mt-2 max-w-3xl text-sm text-muted-foreground">{headerSubtitle}</p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2">
                 <button
@@ -1042,7 +1042,7 @@ export default function CustomTablesPage() {
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:border-primary hover:text-primary"
+                      className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
                     >
                       <TableIcon className="h-4 w-4" />
                       {createLabel}
@@ -1068,18 +1068,18 @@ export default function CustomTablesPage() {
                 </DropdownMenu>
               </div>
             </div>
-            <p className="mt-3 text-xs text-gray-500">{ctaDescriptionLabel}</p>
+            <p className="mt-3 text-xs text-muted-foreground">{ctaDescriptionLabel}</p>
           </div>
 
           <div className="relative" data-tour-id="search-bar">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              className="w-full rounded-md border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="w-full rounded-md border border-border bg-card py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -1162,16 +1162,18 @@ export default function CustomTablesPage() {
               <LoadingAnimation size="lg" />
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="rounded-2xl border border-gray-200 bg-white px-6 py-10 sm:px-10 sm:py-12">
-              <div className="mx-auto h-16 w-16 text-gray-300 mb-4 bg-gray-50 rounded-full flex items-center justify-center">
+            <div className="rounded-2xl border border-border bg-card px-6 py-10 sm:px-10 sm:py-12">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <TableIcon className="h-8 w-8" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-center">
+              <h3 className="text-center text-lg font-semibold text-foreground">
                 {emptyLabels.title}
               </h3>
-              <p className="mt-2 text-sm text-gray-500 text-center">{emptyLabels.description}</p>
-              <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-gray-200 bg-gray-50/70 p-4 text-left">
-                <ol className="space-y-2 text-sm text-gray-700">
+              <p className="mt-2 text-center text-sm text-muted-foreground">
+                {emptyLabels.description}
+              </p>
+              <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-border bg-muted/60 p-4 text-left">
+                <ol className="space-y-2 text-sm text-foreground">
                   <li>{emptyLabels.step1}</li>
                   <li>{emptyLabels.step2}</li>
                   <li>{emptyLabels.step3}</li>

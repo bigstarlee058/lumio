@@ -393,7 +393,7 @@ export default function WorkspaceCategoriesView() {
   };
 
   return (
-    <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
+    <div className="container-shared px-4 py-12 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-3">
@@ -401,8 +401,8 @@ export default function WorkspaceCategoriesView() {
               <FolderOutlined className="text-[22px]" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">{t.title}</h1>
-              <p className="text-sm text-gray-600 mt-1 max-w-2xl">{t.subtitle}</p>
+              <h1 className="text-2xl font-semibold text-foreground">{t.title}</h1>
+              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t.subtitle}</p>
             </div>
           </div>
 
@@ -420,7 +420,7 @@ export default function WorkspaceCategoriesView() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full max-w-md">
             <SearchIcon
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               fontSize="small"
             />
             <input
@@ -428,23 +428,23 @@ export default function WorkspaceCategoriesView() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={(t as any).searchPlaceholder?.value || 'Find category'}
-              className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
+              className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             />
           </div>
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-600 mr-2">
+              <span className="mr-2 text-sm font-medium text-muted-foreground">
                 {selectedIds.size} selected
               </span>
               <button
                 onClick={() => handleBulkEnable(true)}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
                 Enable
               </button>
               <button
                 onClick={() => handleBulkEnable(false)}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
               >
                 Disable
               </button>
@@ -458,16 +458,16 @@ export default function WorkspaceCategoriesView() {
           )}
         </div>
 
-        <div className="text-sm text-gray-500 flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-2 rounded-lg">
+        <div className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm text-primary">
           Disabling a category will hide it from statements and reports.
         </div>
 
-        <div className="rounded-3xl border border-gray-100 bg-white p-2 shadow-sm">
-          <div className="flex items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+        <div className="rounded-3xl border border-border bg-card p-2 shadow-sm">
+          <div className="flex items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div className="flex items-center gap-3">
               <Checkbox
                 aria-label="Select all categories"
-                className="h-4 w-4 rounded border-gray-300"
+                className="h-4 w-4 rounded border-border"
                 checked={
                   selectedIds.size === filteredCategories.length && filteredCategories.length > 0
                 }
@@ -484,16 +484,16 @@ export default function WorkspaceCategoriesView() {
             </div>
           ) : filteredCategories.length === 0 ? (
             <div className="text-center py-16 px-4">
-              <div className="mx-auto h-16 w-16 text-gray-300 mb-4 bg-gray-50 rounded-full flex items-center justify-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <SearchIcon className="text-[32px]" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-foreground">
                 {(t as any).noData?.value || 'No categories'}
               </h3>
               <div className="mt-6">
                 <button
                   onClick={() => handleOpenDialog()}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:border-primary hover:text-primary"
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
                 >
                   <Add fontSize="small" />
                   {t.add}
@@ -514,15 +514,15 @@ export default function WorkspaceCategoriesView() {
                   <div
                     key={category.id}
                     className={cn(
-                      'flex items-center justify-between rounded-2xl px-4 py-4 transition-colors',
-                      index % 2 === 0 ? 'bg-white' : 'bg-slate-50/80',
+                      'flex items-center justify-between rounded-2xl border border-border px-4 py-4 transition-colors',
+                      index % 2 === 0 ? 'bg-card' : 'bg-muted/40',
                     )}
                     style={{ borderLeft: `3px solid ${categoryColor}` }}
                   >
                     <div className="flex items-center gap-3">
                       <Checkbox
                         aria-label={category.name}
-                        className="h-4 w-4 rounded border-gray-300"
+                        className="h-4 w-4 rounded border-border"
                         checked={selectedIds.has(category.id)}
                         onCheckedChange={() => handleToggleSelect(category.id)}
                       />
@@ -545,7 +545,7 @@ export default function WorkspaceCategoriesView() {
                       ) : null}
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold text-slate-900">
+                          <span className="text-lg font-semibold text-foreground">
                             {getCategoryDisplayName(category, locale)}
                           </span>
                           {badgeLabel && badgeClassName && (
@@ -559,7 +559,7 @@ export default function WorkspaceCategoriesView() {
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 mt-0.5">
+                        <div className="mt-0.5 text-sm text-muted-foreground">
                           {usageCounts[category.id]?.total ? (
                             <span>Used in {usageCounts[category.id].total} transactions</span>
                           ) : (
@@ -579,26 +579,26 @@ export default function WorkspaceCategoriesView() {
                         disabled={togglingIds.has(category.id)}
                         className={cn(
                           'relative inline-flex h-8 w-[54px] items-center rounded-full transition-colors',
-                          category.isEnabled === false ? 'bg-gray-300' : 'bg-primary',
+                          category.isEnabled === false ? 'bg-muted-foreground/40' : 'bg-primary',
                           togglingIds.has(category.id) ? 'opacity-60' : 'opacity-100',
                         )}
                       >
                         <span
                           className={cn(
-                            'inline-block h-6 w-6 transform rounded-full bg-white shadow transition-transform',
+                            'inline-block h-6 w-6 transform rounded-full bg-card shadow transition-transform',
                             category.isEnabled === false ? 'translate-x-1' : 'translate-x-7',
                           )}
                         />
                       </button>
                       {category.isSystem ? (
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-300">
+                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60">
                           <LockOutlined fontSize="small" />
                         </div>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleOpenDialog(category)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                         >
                           <ChevronRight fontSize="small" />
                         </button>
@@ -700,7 +700,7 @@ export default function WorkspaceCategoriesView() {
                 ))}
               </Box>
               <Box sx={{ mt: 1.5 }}>
-                <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-gray-700">
+                <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-foreground">
                   <input
                     type="checkbox"
                     checked={formData.withoutIcon}

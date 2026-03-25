@@ -1,6 +1,7 @@
 'use client';
 
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import apiClient from '@/app/lib/api';
 import {
@@ -63,6 +64,8 @@ export default function WorkspaceOverviewView() {
   const [savingBackground, setSavingBackground] = useState(false);
   const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState(false);
   const [currencySearch, setCurrencySearch] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteConfirmationName, setDeleteConfirmationName] = useState('');
   const [recentCurrencies, setRecentCurrencies] = useState<string[]>([
     ...DEFAULT_RECENT_CURRENCIES,
   ]);
@@ -118,6 +121,9 @@ export default function WorkspaceOverviewView() {
       description !== (currentWorkspace?.description ?? '') ||
       currency !== (currentWorkspace?.currency ?? ''));
 
+  const isDeleteConfirmationMatched =
+    deleteConfirmationName.trim() === (currentWorkspace?.name ?? '');
+
   const handleSave = async () => {
     if (!currentWorkspace || !name.trim()) return;
 
@@ -140,9 +146,7 @@ export default function WorkspaceOverviewView() {
 
   const handleDelete = async () => {
     if (!currentWorkspace) return;
-
-    const confirmed = window.confirm('Delete this workspace? This action cannot be undone.');
-    if (!confirmed) return;
+    if (!isDeleteConfirmationMatched) return;
 
     setDeleting(true);
     try {
@@ -150,6 +154,8 @@ export default function WorkspaceOverviewView() {
       clearWorkspace();
       await refreshWorkspaces();
       toast.success('Workspace deleted');
+      setDeleteModalOpen(false);
+      setDeleteConfirmationName('');
       router.replace('/workspaces/list');
     } catch (error) {
       console.error('Failed to delete workspace:', error);
@@ -157,6 +163,17 @@ export default function WorkspaceOverviewView() {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const openDeleteModal = () => {
+    setDeleteConfirmationName('');
+    setDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    if (deleting) return;
+    setDeleteModalOpen(false);
+    setDeleteConfirmationName('');
   };
 
   const pushRecentCurrency = (currencyCode: string) => {
@@ -325,7 +342,7 @@ export default function WorkspaceOverviewView() {
               </div>
               <button
                 type="button"
-                onClick={handleDelete}
+                onClick={openDeleteModal}
                 disabled={deleting}
                 className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900"
               >
@@ -343,18 +360,18 @@ export default function WorkspaceOverviewView() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setShowBackgroundPicker(false)}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close background drawer"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold text-[#0f3428]">
+            <span className="text-lg font-semibold text-foreground">
               Select workspace background
             </span>
           </div>
@@ -362,7 +379,9 @@ export default function WorkspaceOverviewView() {
       >
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-3 overflow-y-auto pb-4">
-            <p className="text-sm text-gray-500">Choose the image shown on your workspace card.</p>
+            <p className="text-sm text-muted-foreground">
+              Choose the image shown on your workspace card.
+            </p>
             {savingBackground && <p className="text-xs text-muted-foreground">Saving...</p>}
             <BackgroundSelector
               selectedBackground={currentWorkspace.backgroundImage}
@@ -382,7 +401,7 @@ export default function WorkspaceOverviewView() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <div className="flex items-center gap-3">
             <button
@@ -391,25 +410,25 @@ export default function WorkspaceOverviewView() {
                 setCurrencyDrawerOpen(false);
                 setCurrencySearch('');
               }}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close currency drawer"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold text-[#0f3428]">Select a currency</span>
+            <span className="text-lg font-semibold text-foreground">Select a currency</span>
           </div>
         }
       >
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-3 overflow-y-auto pb-4">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={currencySearch}
                 onChange={event => setCurrencySearch(event.target.value)}
                 placeholder="Search"
-                className="w-full rounded-2xl border border-primary bg-white py-3 pl-10 pr-4 text-sm text-gray-900 outline-none"
+                className="w-full rounded-2xl border border-border bg-background py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
@@ -417,9 +436,9 @@ export default function WorkspaceOverviewView() {
               <button
                 type="button"
                 onClick={() => handleSelectCurrency('')}
-                className="flex w-full items-center justify-between rounded-2xl bg-[#ebe8e2] px-4 py-4 text-left"
+                className="flex w-full items-center justify-between rounded-2xl bg-muted px-4 py-4 text-left"
               >
-                <span className="text-base font-semibold text-[#0f3428]">{notSelectedLabel}</span>
+                <span className="text-base font-semibold text-foreground">{notSelectedLabel}</span>
                 <Check className="h-5 w-5 text-primary" />
               </button>
             ) : null}
@@ -428,9 +447,9 @@ export default function WorkspaceOverviewView() {
               <button
                 type="button"
                 onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                className="flex w-full items-center justify-between rounded-2xl bg-[#ebe8e2] px-4 py-4 text-left"
+                className="flex w-full items-center justify-between rounded-2xl bg-muted px-4 py-4 text-left"
               >
-                <span className="text-base font-semibold text-[#0f3428]">
+                <span className="text-base font-semibold text-foreground">
                   {selectedCurrencyItem.label}
                 </span>
                 <Check className="h-5 w-5 text-primary" />
@@ -439,16 +458,16 @@ export default function WorkspaceOverviewView() {
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
               <div>
-                <p className="px-1 text-sm text-gray-500">Recents</p>
+                <p className="px-1 text-sm text-muted-foreground">Recents</p>
                 <div className="mt-2 space-y-2">
                   {recentCurrencyItems.map(item => (
                     <button
                       key={`recent-${item.code}`}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
                     >
-                      <span className="text-base font-semibold text-[#0f3428]">{item.label}</span>
+                      <span className="text-base font-semibold text-foreground">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -456,15 +475,15 @@ export default function WorkspaceOverviewView() {
             ) : null}
 
             <div>
-              <p className="px-1 text-sm text-gray-500">All</p>
+              <p className="px-1 text-sm text-muted-foreground">All</p>
               <div className="mt-2 space-y-1">
                 {notSelectedMatchesSearch && currency ? (
                   <button
                     type="button"
                     onClick={() => handleSelectCurrency('')}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
                   >
-                    <span className="text-base font-semibold text-[#0f3428]">
+                    <span className="text-base font-semibold text-foreground">
                       {notSelectedLabel}
                     </span>
                   </button>
@@ -476,13 +495,13 @@ export default function WorkspaceOverviewView() {
                       key={item.code}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
                     >
-                      <span className="text-base font-semibold text-[#0f3428]">{item.label}</span>
+                      <span className="text-base font-semibold text-foreground">{item.label}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500">
+                  <p className="rounded-xl bg-muted px-3 py-3 text-sm text-muted-foreground">
                     No currencies found
                   </p>
                 )}
@@ -491,6 +510,52 @@ export default function WorkspaceOverviewView() {
           </div>
         </div>
       </DrawerShell>
+
+      <ModalShell
+        isOpen={deleteModalOpen}
+        onClose={closeDeleteModal}
+        size="sm"
+        closeOnBackdropClick={!deleting}
+        closeOnEscape={!deleting}
+        title="Delete workspace?"
+        className="rounded-3xl border border-border bg-card shadow-2xl"
+        contentClassName="space-y-4"
+        footer={
+          <ModalFooter
+            onCancel={closeDeleteModal}
+            onConfirm={handleDelete}
+            cancelText="Cancel"
+            confirmText={deleting ? 'Deleting...' : 'Delete'}
+            confirmVariant="destructive"
+            isConfirmLoading={deleting}
+            isConfirmDisabled={!isDeleteConfirmationMatched || deleting}
+          />
+        }
+      >
+        <div className="space-y-4">
+          <p className="text-sm leading-6 text-muted-foreground">
+            This will permanently delete the workspace and all related data. Type the
+            workspace name to confirm deletion.
+          </p>
+          <div className="space-y-2">
+            <label
+              htmlFor="delete-workspace-name"
+              className="text-sm font-medium text-foreground"
+            >
+              Workspace name
+            </label>
+            <input
+              id="delete-workspace-name"
+              type="text"
+              value={deleteConfirmationName}
+              onChange={event => setDeleteConfirmationName(event.target.value)}
+              placeholder={currentWorkspace.name}
+              autoComplete="off"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+        </div>
+      </ModalShell>
     </div>
   );
 }

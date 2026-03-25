@@ -201,6 +201,31 @@ vi.mock('@heroui/modal', () => ({
 }));
 
 describe('CustomTablesPage', () => {
+  it('uses dark-safe empty-state surfaces instead of light-only cards', async () => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    apiGet.mockImplementation(() => Promise.resolve({ data: { data: [] } }));
+
+    const { default: CustomTablesPage } = await import('./page');
+
+    act(() => {
+      render(<CustomTablesPage />);
+    });
+
+    const emptyTitle = await screen.findByText('No export tables yet');
+    const emptyCard = emptyTitle.closest('div[class*="rounded-2xl"]');
+    const stepsCard = screen.getByText('Step 1').closest('div');
+
+    expect(emptyCard?.className).toContain('border-border');
+    expect(emptyCard?.className).toContain('bg-card');
+    expect(emptyCard?.className).not.toContain('bg-white');
+    expect(emptyCard?.className).not.toContain('border-gray-200');
+
+    expect(stepsCard?.className).toContain('bg-muted');
+    expect(stepsCard?.className).toContain('border-border');
+    expect(stepsCard?.className).not.toContain('bg-gray-50/70');
+    expect(stepsCard?.className).not.toContain('border-gray-200');
+  });
+
   it('opens create menu with blank table and Google Sheets import actions', async () => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     apiGet.mockImplementation(() => Promise.resolve({ data: { data: [] } }));

@@ -92,4 +92,15 @@ describe('WorkspacesListContent', () => {
     expect(container.textContent).not.toContain('workspace-card');
     expect(container.textContent).toContain('Main Workspace');
   });
+
+  it('renders a more visible create workspace tile in grid view', async () => {
+    const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
+    const html = renderToStaticMarkup(<WorkspacesListContent />);
+
+    expect(html).toContain('Create Workspace');
+    expect(html).toContain('border-primary/30');
+    expect(html).toContain('bg-gradient-to-br');
+    expect(html).toContain('shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)]');
+    expect(html).not.toContain('border-dashed border-gray-300');
+  });
 });

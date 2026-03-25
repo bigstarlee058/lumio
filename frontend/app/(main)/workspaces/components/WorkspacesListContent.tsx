@@ -261,12 +261,12 @@ export default function WorkspacesListContent({
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-6 hover:border-primary hover:shadow-lg transition-all duration-200 flex flex-col items-center justify-center aspect-video"
+                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/6 to-card p-6 shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)] transition-all duration-200 hover:border-primary hover:from-primary/18 hover:via-primary/10 hover:to-card hover:shadow-[0_28px_60px_-30px_rgba(30,136,229,0.7)]"
                 >
-                  <div className="text-5xl mb-4">
-                    <Plus size={36} />
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-primary/35 bg-card/90 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_30px_-18px_rgba(30,136,229,0.9)]">
+                    <Plus size={40} strokeWidth={2.6} />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center">
+                  <h3 className="text-center text-lg font-semibold text-foreground">
                     {content.createWorkspace}
                   </h3>
                 </button>

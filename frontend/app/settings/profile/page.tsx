@@ -848,6 +848,7 @@ export default function ProfileSettingsPage() {
               <ModeToggle
                 value={themePreference}
                 onThemeChange={handleThemePreferenceChange}
+                showPreview={false}
                 labels={{
                   light: t.appearanceCard.light.value,
                   dark: t.appearanceCard.dark.value,
