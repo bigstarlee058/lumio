@@ -54,6 +54,21 @@ describe('PDFThumbnail', () => {
     expect(fallbackIcon?.className.baseVal).not.toContain('text-red-500');
   });
 
+  it('renders the shared spinner while the thumbnail is loading', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => undefined)));
+
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<PDFThumbnail fileId="statement-loading" size={36} />);
+      await Promise.resolve();
+    });
+
+    const spinner = container.querySelector('[aria-label="Loading"]');
+    expect(spinner).toBeTruthy();
+    expect(spinner?.getAttribute('role')).toBe('status');
+  });
+
   it('shows error icon and message in preview mode when thumbnail fails', async () => {
     vi.stubGlobal(
       'fetch',

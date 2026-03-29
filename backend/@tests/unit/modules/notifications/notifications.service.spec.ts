@@ -20,6 +20,22 @@ function createRepoMock<T>() {
   } as any;
 }
 
+function createQueryBuilderMock() {
+  const qb: any = {
+    where: jest.fn(() => qb),
+    andWhere: jest.fn(() => qb),
+    orderBy: jest.fn(() => qb),
+    take: jest.fn(() => qb),
+    skip: jest.fn(() => qb),
+    getManyAndCount: jest.fn(async () => [[], 0]),
+    getCount: jest.fn(async () => 0),
+    update: jest.fn(() => qb),
+    set: jest.fn(() => qb),
+    execute: jest.fn(async () => ({ affected: 0 })),
+  };
+  return qb;
+}
+
 describe('NotificationsService', () => {
   const notificationRepository = createRepoMock<Notification>();
   const preferenceRepository = createRepoMock<NotificationPreference>();
@@ -139,5 +155,25 @@ describe('NotificationsService', () => {
       2,
       expect.objectContaining({ recipientId: 'user-3' }),
     );
+  });
+
+  it('requires workspaceId when listing and counting notifications', async () => {
+    const listQb = createQueryBuilderMock();
+    const countQb = createQueryBuilderMock();
+    notificationRepository.createQueryBuilder
+      .mockReturnValueOnce(listQb)
+      .mockReturnValueOnce(countQb)
+      .mockReturnValueOnce(createQueryBuilderMock());
+
+    await service.findByRecipient('user-1', 'workspace-1', 30, 0);
+    await service.getUnreadCount('user-1', 'workspace-1');
+    await service.markAllAsRead('user-1', 'workspace-1');
+
+    expect(listQb.andWhere).toHaveBeenCalledWith('notification.workspaceId = :workspaceId', {
+      workspaceId: 'workspace-1',
+    });
+    expect(countQb.andWhere).toHaveBeenCalledWith('notification.workspaceId = :workspaceId', {
+      workspaceId: 'workspace-1',
+    });
   });
 });

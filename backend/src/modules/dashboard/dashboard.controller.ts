@@ -1,4 +1,5 @@
 import { Controller, DefaultValuePipe, Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import type { User } from '../../entities/user.entity';
@@ -13,18 +14,20 @@ export class DashboardController {
   @Get()
   async getDashboard(
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
     @Query('range') range: '7d' | '30d' | '90d' = '30d',
     @Query('date') date?: string,
   ) {
     const validRange: '7d' | '30d' | '90d' = ['7d', '30d', '90d'].includes(range) ? range : '30d';
-    return this.dashboardService.getDashboard(user.id, user.workspaceId, validRange, date);
+    return this.dashboardService.getDashboard(user.id, workspaceId, validRange, date);
   }
 
   @Get('trends')
   async getTrends(
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
     @Query('days', new DefaultValuePipe(30), ParseIntPipe) days: number,
   ) {
-    return this.dashboardService.getTrends(user.workspaceId, days);
+    return this.dashboardService.getTrends(workspaceId, days);
   }
 }

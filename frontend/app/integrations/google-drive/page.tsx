@@ -1,11 +1,12 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getPickerDocName, pickDriveFolder } from '@/app/lib/googleDrivePicker';
-import { AlertCircle, CheckCircle2, Link2Off, Loader2, RefreshCcw, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -162,7 +163,7 @@ export default function GoogleDriveIntegrationPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Spinner className="h-6 w-6" />
       </div>
     );
   }
@@ -192,7 +193,7 @@ export default function GoogleDriveIntegrationPage() {
 
       {loading && (
         <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Spinner className="h-4 w-4" />
           {t.loading}
         </div>
       )}
@@ -223,7 +224,7 @@ export default function GoogleDriveIntegrationPage() {
                         className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
                       >
                         {syncing ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Spinner className="h-4 w-4" />
                         ) : (
                           <RefreshCcw className="h-4 w-4" />
                         )}

@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -617,7 +617,7 @@ export default function UnapprovedCashView() {
             className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={refreshing || loading}
           >
-            <RefreshCcw className={`h-4 w-4 ${refreshing || loading ? 'animate-spin' : ''}`} />
+            {refreshing || loading ? <Spinner className="h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
             {labels.actions.refresh}
           </button>
         </div>
@@ -812,7 +812,7 @@ export default function UnapprovedCashView() {
       <div className="min-h-0 flex-1 overflow-y-auto rounded-lg border border-gray-200 bg-white">
         {loading ? (
           <div className="flex h-full min-h-[280px] items-center justify-center">
-            <LoadingAnimation size="lg" />
+            <Spinner size={80} className="text-primary" />
           </div>
         ) : filteredQueue.length === 0 ? (
           <div className="flex h-full min-h-[280px] flex-col items-center justify-center px-6 text-center">

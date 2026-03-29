@@ -3,6 +3,7 @@
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { cn } from '@/app/lib/utils';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { Check, User } from 'lucide-react';
 
 type FilterAvatarRowProps = {
@@ -29,6 +30,7 @@ export function FilterAvatarRow({
   const fallbackLetter = label.trim().charAt(0).toUpperCase() || 'U';
 
   const resolvedAvatarUrl = normalizeAvatarUrl(avatarUrl);
+  const normalizedBankName = bankName?.trim().toLowerCase() || null;
 
   return (
     <button
@@ -42,6 +44,14 @@ export function FilterAvatarRow({
       <div className="flex items-center gap-3">
         {iconUrl ? (
           <img src={iconUrl} alt={label} className="h-8 w-8 rounded-full object-contain" />
+        ) : normalizedBankName === 'receipt' ? (
+          <span
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500"
+            aria-label={label}
+            title={label}
+          >
+            <ReceiptIcon data-testid="receipt-filter-icon" sx={{ fontSize: 24 }} />
+          </span>
         ) : bankName ? (
           <BankLogoAvatar bankName={bankName} size={32} />
         ) : resolvedAvatarUrl ? (

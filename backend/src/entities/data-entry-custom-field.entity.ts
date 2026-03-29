@@ -9,9 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
+import { Workspace } from './workspace.entity';
 
 @Entity('data_entry_custom_fields')
-@Index('IDX_data_entry_custom_fields_user_name_unique', ['userId', 'name'], { unique: true })
+@Index('IDX_data_entry_custom_fields_workspace_name_unique', ['workspaceId', 'name'], {
+  unique: true,
+})
 export class DataEntryCustomField {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -22,6 +25,13 @@ export class DataEntryCustomField {
 
   @Column({ name: 'user_id' })
   userId: string;
+
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column({ name: 'name', type: 'varchar', length: 120 })
   name: string;

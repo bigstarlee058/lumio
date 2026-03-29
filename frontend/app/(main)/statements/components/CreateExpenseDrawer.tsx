@@ -482,7 +482,7 @@ export default function CreateExpenseDrawer({
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*,.pdf,.csv,.xlsx,.xls"
+                    accept="image/*,.pdf"
                     capture="environment"
                     className="hidden"
                     multiple
@@ -595,7 +595,10 @@ export default function CreateExpenseDrawer({
 
                   <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
-                      <label htmlFor="expense-manual-merchant" className="text-sm text-muted-foreground">
+                      <label
+                        htmlFor="expense-manual-merchant"
+                        className="text-sm text-muted-foreground"
+                      >
                         Merchant
                       </label>
                       <ChevronRight className="h-6 w-6 text-muted-foreground" />

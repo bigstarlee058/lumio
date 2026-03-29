@@ -10,7 +10,6 @@ import {
   ChevronDown,
   ChevronRight,
   Info,
-  Loader2,
   Minus,
   X,
 } from 'lucide-react';
@@ -507,7 +506,7 @@ function ActionItemComponent({ item }: { item: ActionItem }) {
       )}
     >
       {item.loading ? (
-        <Loader2 size={16} className="animate-spin" />
+        <Spinner className="h-4 w-4" />
       ) : (
         item.icon && <RenderIcon icon={item.icon} size={16} />
       )}

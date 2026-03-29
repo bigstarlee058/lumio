@@ -1,7 +1,7 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
-import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 export interface OnboardingIntegrationCard {
@@ -73,7 +73,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                   : 'bg-primary text-primary-foreground hover:bg-primary-hover'
               }`}
             >
-              {card.loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              {card.loading ? <Spinner className="h-3.5 w-3.5" /> : null}
               {card.actionLabel}
             </button>
           </article>

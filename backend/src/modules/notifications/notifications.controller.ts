@@ -9,7 +9,9 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { MarkReadDto } from './dto/mark-read.dto';
@@ -17,14 +19,14 @@ import { UpdateNotificationPreferencesDto } from './dto/update-notification-pref
 import { NotificationsService } from './notifications.service';
 
 @Controller('notifications')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceContextGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Get()
   async list(
     @CurrentUser() user: User,
-    @Query('workspaceId') workspaceId?: string,
+    @WorkspaceId() workspaceId: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
@@ -37,7 +39,7 @@ export class NotificationsController {
   }
 
   @Get('unread-count')
-  async getUnreadCount(@CurrentUser() user: User, @Query('workspaceId') workspaceId?: string) {
+  async getUnreadCount(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
     const count = await this.notificationsService.getUnreadCount(user.id, workspaceId);
     return { count };
   }
@@ -51,7 +53,7 @@ export class NotificationsController {
 
   @Post('mark-all-read')
   @HttpCode(HttpStatus.OK)
-  async markAllAsRead(@CurrentUser() user: User, @Query('workspaceId') workspaceId?: string) {
+  async markAllAsRead(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
     const updated = await this.notificationsService.markAllAsRead(user.id, workspaceId);
     return { updated };
   }

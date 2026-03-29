@@ -2,7 +2,7 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { ModalShell } from './modal-shell';
+import { ModalFooter, ModalShell } from './modal-shell';
 
 describe('ModalShell', () => {
   let container: HTMLDivElement;
@@ -41,5 +41,17 @@ describe('ModalShell', () => {
     const dialog = document.body.querySelector('[role="dialog"]') as HTMLDivElement | null;
     expect(dialog).toBeTruthy();
     expect(dialog?.className).toContain('z-[400]');
+  });
+
+  it('uses the shared spinner in a loading confirm action', async () => {
+    await act(async () => {
+      root.render(<ModalFooter onConfirm={() => undefined} isConfirmLoading confirmText="Saving" />);
+      await Promise.resolve();
+    });
+
+    const spinner = container.querySelector('[aria-label="Loading"]');
+    expect(spinner).toBeTruthy();
+    expect(spinner?.getAttribute('role')).toBe('status');
+    expect(container.textContent).toContain('Saving');
   });
 });

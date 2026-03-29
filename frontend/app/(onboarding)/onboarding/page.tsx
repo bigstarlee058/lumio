@@ -1,6 +1,7 @@
 'use client';
 
 import { DEFAULT_BACKGROUND } from '@/app/(main)/workspaces/constants';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -568,7 +569,7 @@ export default function OnboardingPage() {
   if (authLoading || isInitializing || !user || user.onboardingCompletedAt) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-border border-t-primary" />
+        <Spinner className="h-10 w-10 text-primary" />
       </div>
     );
   }

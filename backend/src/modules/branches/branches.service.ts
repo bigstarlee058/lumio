@@ -12,9 +12,9 @@ export class BranchesService {
     private branchRepository: Repository<Branch>,
   ) {}
 
-  async create(userId: string, createDto: CreateBranchDto): Promise<Branch> {
+  async create(workspaceId: string, createDto: CreateBranchDto): Promise<Branch> {
     const branch = this.branchRepository.create({
-      userId,
+      workspaceId,
       ...createDto,
       isActive: true,
     });
@@ -22,16 +22,16 @@ export class BranchesService {
     return this.branchRepository.save(branch);
   }
 
-  async findAll(userId: string): Promise<Branch[]> {
+  async findAll(workspaceId: string): Promise<Branch[]> {
     return this.branchRepository.find({
-      where: { userId },
+      where: { workspaceId },
       order: { name: 'ASC' },
     });
   }
 
-  async findOne(id: string, userId: string): Promise<Branch> {
+  async findOne(id: string, workspaceId: string): Promise<Branch> {
     const branch = await this.branchRepository.findOne({
-      where: { id, userId },
+      where: { id, workspaceId },
     });
 
     if (!branch) {
@@ -41,14 +41,14 @@ export class BranchesService {
     return branch;
   }
 
-  async update(id: string, userId: string, updateDto: UpdateBranchDto): Promise<Branch> {
-    const branch = await this.findOne(id, userId);
+  async update(id: string, workspaceId: string, updateDto: UpdateBranchDto): Promise<Branch> {
+    const branch = await this.findOne(id, workspaceId);
     Object.assign(branch, updateDto);
     return this.branchRepository.save(branch);
   }
 
-  async remove(id: string, userId: string): Promise<void> {
-    const branch = await this.findOne(id, userId);
+  async remove(id: string, workspaceId: string): Promise<void> {
+    const branch = await this.findOne(id, workspaceId);
     await this.branchRepository.remove(branch);
   }
 }

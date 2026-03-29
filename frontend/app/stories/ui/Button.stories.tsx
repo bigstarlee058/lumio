@@ -105,11 +105,11 @@ export const Loading: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
       <Button disabled>
-        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+        <Spinner className="h-4 w-4" />
         Загрузка...
       </Button>
       <Button variant="outline" disabled>
-        <span className="animate-spin h-4 w-4 border-2 border-gray-600 border-t-transparent rounded-full" />
+        <Spinner className="h-4 w-4 text-gray-600" />
         Сохранение...
       </Button>
     </div>
@@ -142,3 +142,4 @@ export const LongContent: Story = {
     children: 'Очень длинный текст кнопки который может не поместиться',
   },
 };
+import { Spinner } from '@/app/components/ui/spinner';

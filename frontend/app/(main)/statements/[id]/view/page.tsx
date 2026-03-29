@@ -1,11 +1,11 @@
 'use client';
 
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import TransactionsPageView from '@/app/components/transactions/TransactionsPageView';
 import type { Category, StatementDetails, Transaction } from '@/app/components/transactions/types';
 import { useIntlayer } from '@/app/i18n';
 import api from '@/app/lib/api';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -146,7 +146,7 @@ export default function ViewStatementPage({
     return (
       <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex h-full min-h-[320px] items-center justify-center">
-          <LoadingAnimation size="lg" />
+          <Spinner size={80} className="text-primary" />
         </div>
       </div>
     );

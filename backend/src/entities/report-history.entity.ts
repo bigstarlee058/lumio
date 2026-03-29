@@ -47,7 +47,7 @@ export class ReportHistory {
   @CreateDateColumn({ name: 'generated_at' })
   generatedAt: Date;
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace;
 

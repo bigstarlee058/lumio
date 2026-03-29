@@ -8,6 +8,8 @@ import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { AuditModule } from '../audit/audit.module';
 import { ParsingModule } from '../parsing/parsing.module';
+import { ReceiptsModule } from '../receipts/receipts.module';
+import { ReceiptStatementService } from './services/receipt-statement.service';
 import { StatementsController } from './statements.controller';
 import { StatementsService } from './statements.service';
 
@@ -24,9 +26,10 @@ import { StatementsService } from './statements.service';
     ]),
     AuditModule,
     ParsingModule,
+    ReceiptsModule,
   ],
   controllers: [StatementsController],
-  providers: [StatementsService, FileStorageService, IdempotencyService],
-  exports: [StatementsService],
+  providers: [StatementsService, ReceiptStatementService, FileStorageService, IdempotencyService],
+  exports: [StatementsService, ReceiptStatementService],
 })
 export class StatementsModule {}

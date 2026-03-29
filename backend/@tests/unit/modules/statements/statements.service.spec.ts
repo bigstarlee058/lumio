@@ -1,23 +1,25 @@
-import { FilterStatementsDto } from '@/modules/statements/dto/filter-statements.dto';
 import * as fs from 'fs';
 import { FileStorageService } from '@/common/services/file-storage.service';
-import { BankName, FileType, Statement, StatementStatus } from '@/entities/statement.entity';
 import { Category } from '@/entities/category.entity';
+import { ReceiptStatus } from '@/entities/receipt.entity';
+import { BankName, FileType, Statement, StatementStatus } from '@/entities/statement.entity';
 import { TaxRate } from '@/entities/tax-rate.entity';
 import { Transaction } from '@/entities/transaction.entity';
 import { User, UserRole } from '@/entities/user.entity';
 import { WorkspaceMember, WorkspaceRole } from '@/entities/workspace-member.entity';
 import { AuditService } from '@/modules/audit/audit.service';
 import { StatementProcessingService } from '@/modules/parsing/services/statement-processing.service';
+import { FilterStatementsDto } from '@/modules/statements/dto/filter-statements.dto';
+import { ReceiptStatementService } from '@/modules/statements/services/receipt-statement.service';
 import { StatementsService } from '@/modules/statements/statements.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
@@ -35,6 +37,9 @@ describe('StatementsService', () => {
   let workspaceMemberRepository: Repository<WorkspaceMember>;
   let fileStorageService: FileStorageService;
   let statementProcessingService: StatementProcessingService;
+  let categoryRepository: Repository<Category>;
+  let taxRateRepository: Repository<TaxRate>;
+  let receiptStatementService: ReceiptStatementService;
 
   const mockUser: Partial<User> = {
     id: '1',
@@ -98,7 +103,9 @@ describe('StatementsService', () => {
               select: jest.fn().mockReturnThis(),
               where: jest.fn().mockReturnThis(),
               andWhere: jest.fn().mockReturnThis(),
-              getQuery: jest.fn().mockReturnValue('SELECT transaction.statementId FROM transactions'),
+              getQuery: jest
+                .fn()
+                .mockReturnValue('SELECT transaction.statementId FROM transactions'),
               getParameters: jest.fn().mockReturnValue({}),
             })),
             find: jest.fn(),
@@ -159,6 +166,12 @@ describe('StatementsService', () => {
           },
         },
         {
+          provide: ReceiptStatementService,
+          useValue: {
+            createFromReceiptScan: jest.fn(),
+          },
+        },
+        {
           provide: CACHE_MANAGER,
           useValue: {
             get: jest.fn(),
@@ -182,6 +195,8 @@ describe('StatementsService', () => {
     );
     auditService = testingModule.get<AuditService>(AuditService);
     userRepository = testingModule.get<Repository<User>>(getRepositoryToken(User));
+    categoryRepository = testingModule.get<Repository<Category>>(getRepositoryToken(Category));
+    taxRateRepository = testingModule.get<Repository<TaxRate>>(getRepositoryToken(TaxRate));
     workspaceMemberRepository = testingModule.get<Repository<WorkspaceMember>>(
       getRepositoryToken(WorkspaceMember),
     );
@@ -189,6 +204,7 @@ describe('StatementsService', () => {
     statementProcessingService = testingModule.get<StatementProcessingService>(
       StatementProcessingService,
     );
+    receiptStatementService = testingModule.get<ReceiptStatementService>(ReceiptStatementService);
 
     // Setup fs.promises mocks
     jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('test'));
@@ -226,7 +242,11 @@ describe('StatementsService', () => {
       jest.spyOn(statementRepository, 'create').mockReturnValue(mockStatement as Statement);
       jest.spyOn(statementRepository, 'save').mockResolvedValue(mockStatement as Statement);
 
-      const result = await service.create(mockUser as User, mockUser.workspaceId as string, mockFile);
+      const result = await service.create(
+        mockUser as User,
+        mockUser.workspaceId as string,
+        mockFile,
+      );
 
       expect(result).toEqual(mockStatement);
       expect(statementRepository.save).toHaveBeenCalled();
@@ -359,7 +379,9 @@ describe('StatementsService', () => {
         select: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
-        getQuery: jest.fn().mockReturnValue('SELECT DISTINCT transaction.statementId FROM transaction'),
+        getQuery: jest
+          .fn()
+          .mockReturnValue('SELECT DISTINCT transaction.statementId FROM transaction'),
         getParameters: jest.fn().mockReturnValue(params),
         ...qbOverrides,
       };
@@ -453,7 +475,9 @@ describe('StatementsService', () => {
         expect.objectContaining({ toBankNames: ['bereke_new'] }),
       );
       expect(qb.andWhere).toHaveBeenCalledWith(
-        expect.stringContaining('GREATEST(COALESCE(statement.totalDebit, 0), COALESCE(statement.totalCredit, 0)) >= :amountMin'),
+        expect.stringContaining(
+          'GREATEST(COALESCE(statement.totalDebit, 0), COALESCE(statement.totalCredit, 0)) >= :amountMin',
+        ),
         expect.objectContaining({ amountMin: 100, amountMax: 500 }),
       );
       expect(qb.andWhere).toHaveBeenCalledWith('statement.status IN (:...approvedStatuses)', {
@@ -468,7 +492,9 @@ describe('StatementsService', () => {
       expect(qb.andWhere).toHaveBeenCalledWith('statement.processedAt IS NOT NULL');
       expect(qb.andWhere).toHaveBeenCalledWith('statement.statementDateTo IS NULL');
       expect(qb.andWhere).toHaveBeenCalledWith(
-        expect.stringContaining('statement.id IN (SELECT DISTINCT transaction.statementId FROM transaction)'),
+        expect.stringContaining(
+          'statement.id IN (SELECT DISTINCT transaction.statementId FROM transaction)',
+        ),
       );
       expect(qb.setParameters).toHaveBeenCalledWith({ workspaceId: 'ws-1', categoryId: 'cat-1' });
       expect(subQuery.andWhere).toHaveBeenCalledWith('transaction.categoryId = :categoryId', {
@@ -494,6 +520,60 @@ describe('StatementsService', () => {
         expect.objectContaining({ dateFrom: expect.any(String), dateTo: expect.any(String) }),
       );
       expect(subQuery.andWhere).toHaveBeenCalledWith('transaction.categoryId IS NULL');
+    });
+
+    it('ignores ui-only receipt and gmail bank reference filters', async () => {
+      const qb = createQueryBuilderMock([mockStatement as Statement], 1);
+
+      await service.findAll('ws-1', {
+        from: ['bank:receipt', 'bank:gmail', 'bank:kaspi'],
+        to: ['bank:receipt', 'bank:other'],
+      } satisfies FilterStatementsDto);
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('statement.bankName IN (:...fromBankNames)'),
+        expect.objectContaining({ fromBankNames: ['kaspi'] }),
+      );
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        expect.stringContaining('statement.bankName IN (:...toBankNames)'),
+        expect.objectContaining({ toBankNames: ['other'] }),
+      );
+      expect(qb.andWhere).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ fromBankNames: expect.arrayContaining(['receipt', 'gmail']) }),
+      );
+      expect(qb.andWhere).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ toBankNames: expect.arrayContaining(['receipt']) }),
+      );
+    });
+  });
+
+  describe('createFromReceiptScan', () => {
+    it('delegates receipt statement creation to the dedicated receipt statement service', async () => {
+      const params = {
+        user: mockUser as User,
+        workspaceId: 'ws-1',
+        files: [
+          {
+            path: '/tmp/receipt.jpg',
+            originalname: 'receipt.jpg',
+            mimetype: 'image/jpeg',
+            size: 1024,
+          } as Express.Multer.File,
+        ],
+        language: 'ru',
+      };
+
+      const expectedResult = [{ id: 'stmt-ocr-1' } as Statement];
+      (receiptStatementService.createFromReceiptScan as jest.Mock).mockResolvedValue(
+        expectedResult,
+      );
+
+      const result = await service.createFromReceiptScan(params);
+
+      expect(receiptStatementService.createFromReceiptScan).toHaveBeenCalledWith(params);
+      expect(result).toEqual(expectedResult);
     });
   });
 
@@ -552,7 +632,9 @@ describe('StatementsService', () => {
         andWhere: jest.fn().mockReturnThis(),
         getOne: jest.fn().mockResolvedValue(mockStatement as Statement),
       };
-      const qbSpy = jest.spyOn(statementRepository, 'createQueryBuilder').mockReturnValue(qb as any);
+      const qbSpy = jest
+        .spyOn(statementRepository, 'createQueryBuilder')
+        .mockReturnValue(qb as any);
 
       await service.findOne('1', '1');
 
@@ -700,10 +782,7 @@ describe('StatementsService', () => {
         totalCredit: 50,
         currency: 'KZT',
         parsingDetails: {
-          warnings: [
-            'tx#207: skipped (no debit/credit amount)',
-            'tx#208: skipped (invalid date)',
-          ],
+          warnings: ['tx#207: skipped (no debit/credit amount)', 'tx#208: skipped (invalid date)'],
           droppedSamples: [
             {
               reason: 'tx#207: skipped (no debit/credit amount)',
@@ -767,9 +846,7 @@ describe('StatementsService', () => {
           totalCredit: 50,
           parsingDetails: expect.objectContaining({
             warnings: ['tx#208: skipped (invalid date)'],
-            droppedSamples: [
-              expect.objectContaining({ reason: 'tx#208: skipped (invalid date)' }),
-            ],
+            droppedSamples: [expect.objectContaining({ reason: 'tx#208: skipped (invalid date)' })],
           }),
         }),
       );

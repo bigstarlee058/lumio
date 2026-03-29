@@ -1,7 +1,7 @@
 'use client';
 
 import ConfirmModal from '@/app/components/ConfirmModal';
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { AppPagination } from '@/app/components/ui/pagination';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -486,7 +486,7 @@ export default function TrashListView({ onCountChange }: Props) {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <LoadingAnimation size="lg" />
+            <Spinner size={80} className="text-primary" />
           </div>
         ) : filteredFiles.length === 0 ? (
           <div className="px-4 py-20 text-center">

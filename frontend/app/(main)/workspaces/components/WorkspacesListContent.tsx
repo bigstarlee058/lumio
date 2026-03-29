@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useIntlayer } from '@/app/i18n';
 import {
@@ -97,7 +97,7 @@ export default function WorkspacesListContent({
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <LoadingAnimation size="xl" />
+          <Spinner className="h-[100px] w-[100px] text-primary" />
           <p className="text-gray-600 dark:text-gray-400 mt-4">{content.loading}</p>
         </div>
       </div>
@@ -261,7 +261,7 @@ export default function WorkspacesListContent({
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="flex aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/6 to-card p-6 shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)] transition-all duration-200 hover:border-primary hover:from-primary/18 hover:via-primary/10 hover:to-card hover:shadow-[0_28px_60px_-30px_rgba(30,136,229,0.7)]"
+                  className="flex h-full w-full aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/6 to-card p-6 shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)] transition-all duration-200 hover:border-primary hover:from-primary/18 hover:via-primary/10 hover:to-card hover:shadow-[0_28px_60px_-30px_rgba(30,136,229,0.7)]"
                 >
                   <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-primary/35 bg-card/90 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_30px_-18px_rgba(30,136,229,0.9)]">
                     <Plus size={40} strokeWidth={2.6} />

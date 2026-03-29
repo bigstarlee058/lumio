@@ -118,7 +118,7 @@ export class UniversalAmountParser {
         symbol: 'CHF',
         symbolPosition: 'before',
         decimalSeparator: '.',
-        thousandsSeparator: ',',
+        thousandsSeparator: "'",
       },
     ],
     [
@@ -445,9 +445,9 @@ export class UniversalAmountParser {
       'SAR',
       {
         code: 'SAR',
-        symbol: '﷼',
+        symbol: 'ر.س',
         symbolPosition: 'before',
-        decimalSeparator: '.',
+        decimalSeparator: '٫',
         thousandsSeparator: ',',
       },
     ],
@@ -495,10 +495,10 @@ export class UniversalAmountParser {
   private parseWithCurrency(amountString: string): AmountParseResult | null {
     for (const [currencyCode, currencyInfo] of this.currencies.entries()) {
       const patterns = [
-        new RegExp(`^${this.escapeRegex(currencyInfo.symbol)}\\s*([0-9\\s.,-]+)$`, 'i'),
-        new RegExp(`^([0-9\\s.,-]+)\\s*${this.escapeRegex(currencyInfo.symbol)}$`, 'i'),
-        new RegExp(`^${currencyCode}\\s*([0-9\\s.,-]+)$`, 'i'),
-        new RegExp(`^([0-9\\s.,-]+)\\s*${currencyCode}$`, 'i'),
+        new RegExp(`^${this.escapeRegex(currencyInfo.symbol)}\\s*([0-9٠-٩۰-۹\\s.,٬٫'’-]+)$`, 'i'),
+        new RegExp(`^([0-9٠-٩۰-۹\\s.,٬٫'’-]+)\\s*${this.escapeRegex(currencyInfo.symbol)}$`, 'i'),
+        new RegExp(`^${currencyCode}\\s*([0-9٠-٩۰-۹\\s.,٬٫'’-]+)$`, 'i'),
+        new RegExp(`^([0-9٠-٩۰-۹\\s.,٬٫'’-]+)\\s*${currencyCode}$`, 'i'),
       ];
 
       for (const pattern of patterns) {
@@ -594,7 +594,7 @@ export class UniversalAmountParser {
 
   private parseNumberString(numberString: string, currencyInfo?: CurrencyInfo): number | null {
     try {
-      let cleanString = numberString.replace(/\s/g, '');
+      let cleanString = this.normalizeDigits(numberString).replace(/[\s\u00A0\u202F]/g, '');
 
       let decimalSeparator = '.';
       let thousandsSeparator = ',';
@@ -603,9 +603,20 @@ export class UniversalAmountParser {
         decimalSeparator = currencyInfo.decimalSeparator;
         thousandsSeparator = currencyInfo.thousandsSeparator;
       } else {
+        cleanString = cleanString.replace(/[’']/g, "'");
+
         const lastCommaIndex = cleanString.lastIndexOf(',');
         const lastDotIndex = cleanString.lastIndexOf('.');
-        if (lastCommaIndex > lastDotIndex && lastCommaIndex !== -1) {
+        const lastArabicDecimalIndex = cleanString.lastIndexOf('٫');
+
+        if (cleanString.includes("'")) {
+          thousandsSeparator = "'";
+        }
+
+        if (lastArabicDecimalIndex !== -1) {
+          decimalSeparator = '٫';
+          thousandsSeparator = ',';
+        } else if (lastCommaIndex > lastDotIndex && lastCommaIndex !== -1) {
           decimalSeparator = ',';
           thousandsSeparator = '.';
         } else if (lastDotIndex > lastCommaIndex && lastDotIndex !== -1) {
@@ -644,6 +655,17 @@ export class UniversalAmountParser {
 
   private escapeRegex(value: string): string {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  private normalizeDigits(value: string): string {
+    const arabicIndicDigits = '٠١٢٣٤٥٦٧٨٩';
+    const easternArabicIndicDigits = '۰۱۲۳۴۵۶۷۸۹';
+
+    return value
+      .replace(/[٠-٩]/g, digit => String(arabicIndicDigits.indexOf(digit)))
+      .replace(/[۰-۹]/g, digit => String(easternArabicIndicDigits.indexOf(digit)))
+      .replace(/٬/g, ',')
+      .replace(/٫/g, '٫');
   }
 
   detectCurrencyFromContext(text: string): string | null {

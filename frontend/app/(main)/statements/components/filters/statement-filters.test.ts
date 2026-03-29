@@ -258,6 +258,97 @@ describe('applyStatementsFilters', () => {
     expect(result.map(item => item.id)).toEqual(['gmail-1']);
   });
 
+  it('matches only scanned and uploaded store receipts when type is receipt', () => {
+    const statements: StatementFilterItem[] = [
+      {
+        ...baseStatement,
+        id: 'scan-1',
+        source: 'scan',
+        receiptSource: 'scan',
+        fileType: 'image',
+        bankName: 'receipt-scan',
+        sender: 'camera-scan',
+        subject: 'Store receipt',
+      },
+      {
+        ...baseStatement,
+        id: 'upload-1',
+        source: 'scan',
+        receiptSource: 'upload',
+        fileType: 'pdf',
+        bankName: 'receipt-upload',
+        sender: 'manual-upload',
+        subject: 'Uploaded store receipt',
+      },
+      {
+        ...baseStatement,
+        id: 'gmail-1',
+        source: 'gmail',
+        receiptSource: 'gmail',
+        fileType: 'gmail',
+        bankName: 'gmail',
+        sender: 'billing@example.com',
+        subject: 'Receipt email',
+      },
+      {
+        ...baseStatement,
+        id: 'statement-1',
+        source: 'statement',
+        fileType: 'pdf',
+        bankName: 'kaspi',
+      },
+    ];
+
+    const result = applyStatementsFilters(statements, {
+      ...defaultFilters,
+      type: 'receipt',
+    });
+
+    expect(result.map(item => item.id)).toEqual(['scan-1', 'upload-1']);
+  });
+
+  it('does not match scanned or uploaded receipts when type is gmail', () => {
+    const statements: StatementFilterItem[] = [
+      {
+        ...baseStatement,
+        id: 'scan-1',
+        source: 'scan',
+        receiptSource: 'scan',
+        fileType: 'image',
+        bankName: 'receipt-scan',
+        sender: 'camera-scan',
+        subject: 'Store receipt',
+      },
+      {
+        ...baseStatement,
+        id: 'upload-1',
+        source: 'scan',
+        receiptSource: 'upload',
+        fileType: 'pdf',
+        bankName: 'receipt-upload',
+        sender: 'manual-upload',
+        subject: 'Uploaded store receipt',
+      },
+      {
+        ...baseStatement,
+        id: 'gmail-1',
+        source: 'gmail',
+        receiptSource: 'gmail',
+        fileType: 'gmail',
+        bankName: 'gmail',
+        sender: 'billing@example.com',
+        subject: 'Receipt email',
+      },
+    ];
+
+    const result = applyStatementsFilters(statements, {
+      ...defaultFilters,
+      type: 'gmail',
+    });
+
+    expect(result.map(item => item.id)).toEqual(['gmail-1']);
+  });
+
   it('uses receivedAt as fallback date for gmail receipts', () => {
     const statements: StatementFilterItem[] = [
       {

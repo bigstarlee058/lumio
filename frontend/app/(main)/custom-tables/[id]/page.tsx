@@ -3,6 +3,7 @@
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
@@ -11,7 +12,6 @@ import { format } from 'date-fns';
 import { enUS, kk, ru } from 'date-fns/locale';
 import {
   CheckCircle,
-  Loader2,
   Plus,
   Printer,
   Save,
@@ -2754,7 +2754,7 @@ export default function CustomTableDetailPage() {
       >
         {pasteParsing && (
           <div className="flex flex-1 items-center justify-center gap-3 text-sm text-gray-500">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <Spinner className="h-6 w-6 text-primary" />
             <span>{(t as any).paste.parsing.value}</span>
           </div>
         )}

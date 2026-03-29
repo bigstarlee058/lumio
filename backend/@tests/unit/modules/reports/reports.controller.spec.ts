@@ -27,11 +27,12 @@ describe('ReportsController', () => {
       exportReport: jest.fn(),
     };
     const controller = new ReportsController(reportsService as any);
+    const workspaceId = 'ws-1';
 
-    const result = await controller.getDailyReport({ id: 'u1' } as any, 'latest');
+    const result = await controller.getDailyReport({ id: 'u1' } as any, workspaceId, 'latest');
 
     expect(result).toEqual({ day: 'ok' });
-    expect(reportsService.generateDailyReport).toHaveBeenCalledWith('u1', '2025-01-02');
+    expect(reportsService.generateDailyReport).toHaveBeenCalledWith(workspaceId, '2025-01-02');
   });
 
   it('exportReport sets headers and schedules cleanup', async () => {
@@ -58,8 +59,14 @@ describe('ReportsController', () => {
     const res = new PassThrough() as any;
     res.setHeader = jest.fn();
     const controller = new ReportsController(reportsService as any);
+    const workspaceId = 'ws-1';
 
-    await controller.exportReport({ id: 'u1' } as any, { format: ExportFormat.CSV } as any, res);
+    await controller.exportReport(
+      { id: 'u1' } as any,
+      workspaceId,
+      { format: ExportFormat.CSV } as any,
+      res,
+    );
 
     expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'text/csv');
     expect(fs.createReadStream).toHaveBeenCalledWith('/tmp/report.csv');
@@ -91,10 +98,16 @@ describe('ReportsController', () => {
     const res = new PassThrough() as any;
     res.setHeader = jest.fn();
     const controller = new ReportsController(reportsService as any);
+    const workspaceId = 'ws-1';
 
-    await (controller as any).downloadHistoryReport({ id: 'u1' } as any, 'report-1', res);
+    await (controller as any).downloadHistoryReport(
+      { id: 'u1' } as any,
+      workspaceId,
+      'report-1',
+      res,
+    );
 
-    expect(reportsService.downloadHistoryReport).toHaveBeenCalledWith('u1', 'report-1');
+    expect(reportsService.downloadHistoryReport).toHaveBeenCalledWith(workspaceId, 'report-1');
     expect(res.setHeader).toHaveBeenCalledWith(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -118,17 +131,15 @@ describe('ReportsController', () => {
       getTopCategoriesReport: jest.fn(async () => ({ categories: [] })),
     };
     const controller = new ReportsController(reportsService as any);
+    const workspaceId = 'ws-1';
 
-    const result = await controller.getTopCategories(
-      { id: 'u-1' } as any,
-      {
-        limit: 5,
-        type: 'expense',
-      } as any,
-    );
+    const result = await controller.getTopCategories({ id: 'u-1' } as any, workspaceId, {
+      limit: 5,
+      type: 'expense',
+    } as any);
 
     expect(result).toEqual({ categories: [] });
-    expect(reportsService.getTopCategoriesReport).toHaveBeenCalledWith('u-1', {
+    expect(reportsService.getTopCategoriesReport).toHaveBeenCalledWith(workspaceId, {
       limit: 5,
       type: 'expense',
     });
@@ -148,15 +159,20 @@ describe('ReportsController', () => {
       getSpendOverTimeReport: jest.fn(async () => ({ points: [] })),
     };
     const controller = new ReportsController(reportsService as any);
+    const workspaceId = 'ws-1';
 
-    const result = await (controller as any).getSpendOverTimeReport({ id: 'u-9' } as any, {
-      groupBy: 'day',
-      dateFrom: '2025-01-01',
-      dateTo: '2025-01-03',
-    });
+    const result = await (controller as any).getSpendOverTimeReport(
+      { id: 'u-9' } as any,
+      workspaceId,
+      {
+        groupBy: 'day',
+        dateFrom: '2025-01-01',
+        dateTo: '2025-01-03',
+      },
+    );
 
     expect(result).toEqual({ points: [] });
-    expect(reportsService.getSpendOverTimeReport).toHaveBeenCalledWith('u-9', {
+    expect(reportsService.getSpendOverTimeReport).toHaveBeenCalledWith(workspaceId, {
       groupBy: 'day',
       dateFrom: '2025-01-01',
       dateTo: '2025-01-03',

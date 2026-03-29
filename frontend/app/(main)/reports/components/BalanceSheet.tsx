@@ -1,12 +1,12 @@
 'use client';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { Spinner } from '@/app/components/ui/spinner';
 import {
   CalendarDays,
   ChevronDown,
   ChevronRight,
   Download,
-  Loader2,
   RefreshCcw,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -317,7 +317,7 @@ export function BalanceSheet() {
                   />
                   <span className="text-sm font-medium text-muted-foreground">₸</span>
                   {savingAccountId === account.id && (
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <Spinner className="h-4 w-4 text-primary" />
                   )}
                 </div>
               ) : (
@@ -394,7 +394,7 @@ export function BalanceSheet() {
               disabled={!!exportingFormat}
             >
               {exportingFormat ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="h-4 w-4" />
               ) : (
                 <Download className="h-4 w-4" />
               )}

@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Statement } from './statement.entity';
+import { Workspace } from './workspace.entity';
 
 @Entity('tags')
 export class Tag {
@@ -21,6 +24,13 @@ export class Tag {
 
   @Column({ name: 'user_id', nullable: true })
   userId: string | null;
+
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

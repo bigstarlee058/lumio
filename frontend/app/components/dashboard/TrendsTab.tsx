@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { useDashboardTrends } from '@/app/hooks/useDashboard';
 import { resolveDashboardEffectivePeriod } from '@/app/lib/dashboard-effective-window';
@@ -160,7 +161,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
 
       {loading && (
         <div className="flex items-center justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1a1a1a] border-t-transparent" />
+          <Spinner className="h-8 w-8 text-[#1a1a1a]" />
         </div>
       )}
 

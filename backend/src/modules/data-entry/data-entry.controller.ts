@@ -19,7 +19,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { DataEntryType } from '../../entities/data-entry.entity';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -29,19 +31,24 @@ import { CreateDataEntryDto } from './dto/create-data-entry.dto';
 import { UpdateDataEntryCustomFieldDto } from './dto/update-data-entry-custom-field.dto';
 
 @Controller('data-entry')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceContextGuard)
 export class DataEntryController {
   constructor(private readonly dataEntryService: DataEntryService) {}
 
   @Post()
-  async create(@CurrentUser() user: User, @Body() dto: CreateDataEntryDto) {
-    const entry = await this.dataEntryService.create(user.id, dto);
+  async create(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Body() dto: CreateDataEntryDto,
+  ) {
+    const entry = await this.dataEntryService.create(workspaceId, user.id, dto);
     return entry;
   }
 
   @Get()
   async list(
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
     @Query('type') type?: DataEntryType,
     @Query('customTabId') customTabId?: string,
     @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit?: number,
@@ -52,7 +59,7 @@ export class DataEntryController {
     const safeLimit = Math.min(Math.max(limit || 50, 1), 200);
     const safePage = Math.max(page || 1, 1);
     const { items, total } = await this.dataEntryService.list({
-      userId: user.id,
+      workspaceId,
       type,
       customTabId,
       limit: safeLimit,
@@ -64,15 +71,19 @@ export class DataEntryController {
   }
 
   @Delete(':id')
-  async remove(@CurrentUser() user: User, @Param('id') id: string) {
-    await this.dataEntryService.remove(user.id, id);
+  async remove(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Param('id') id: string,
+  ) {
+    await this.dataEntryService.remove(workspaceId, user.id, id);
     return { ok: true };
   }
 
   @Get('custom-fields')
-  async listCustomFields(@CurrentUser() user: User) {
+  async listCustomFields(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
     const [items, hiddenBaseTabs] = await Promise.all([
-      this.dataEntryService.listCustomFields(user.id),
+      this.dataEntryService.listCustomFields(workspaceId),
       this.dataEntryService.getHiddenBaseTabs(user.id),
     ]);
     return { items, hiddenBaseTabs };
@@ -81,15 +92,20 @@ export class DataEntryController {
   @Delete('base-tabs/:type')
   async removeBaseTab(
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
     @Param('type', new ParseEnumPipe(DataEntryType)) type: DataEntryType,
   ) {
-    await this.dataEntryService.removeBaseTab(user.id, type);
+    await this.dataEntryService.removeBaseTab(workspaceId, user.id, type);
     return { ok: true };
   }
 
   @Post('custom-fields')
-  async createCustomField(@CurrentUser() user: User, @Body() dto: CreateDataEntryCustomFieldDto) {
-    return this.dataEntryService.createCustomField(user.id, dto);
+  async createCustomField(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Body() dto: CreateDataEntryCustomFieldDto,
+  ) {
+    return this.dataEntryService.createCustomField(workspaceId, user.id, dto);
   }
 
   @Post('custom-fields/icon')
@@ -129,15 +145,20 @@ export class DataEntryController {
   @Patch('custom-fields/:id')
   async updateCustomField(
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
     @Param('id') id: string,
     @Body() dto: UpdateDataEntryCustomFieldDto,
   ) {
-    return this.dataEntryService.updateCustomField(user.id, id, dto);
+    return this.dataEntryService.updateCustomField(workspaceId, user.id, id, dto);
   }
 
   @Delete('custom-fields/:id')
-  async removeCustomField(@CurrentUser() user: User, @Param('id') id: string) {
-    await this.dataEntryService.removeCustomField(user.id, id);
+  async removeCustomField(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Param('id') id: string,
+  ) {
+    await this.dataEntryService.removeCustomField(workspaceId, user.id, id);
     return { ok: true };
   }
 }

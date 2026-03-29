@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import {
@@ -8,7 +9,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Container,
   Stack,
   Typography,
@@ -186,7 +186,7 @@ export default function AcceptInvitePage() {
 
             {invitationLoading && (
               <Box display="flex" justifyContent="center" py={2}>
-                <CircularProgress />
+                <Spinner className="h-10 w-10 text-primary" />
               </Box>
             )}
 
@@ -219,7 +219,7 @@ export default function AcceptInvitePage() {
 
             <Stack direction="row" spacing={1} justifyContent="flex-end">
               {authLoading ? (
-                <CircularProgress size={20} />
+                <Spinner className="h-5 w-5 text-primary" />
               ) : !user ? (
                 <>
                   <Button variant="outlined" onClick={() => router.push(loginHref)}>
@@ -243,7 +243,7 @@ export default function AcceptInvitePage() {
                   variant="contained"
                   onClick={handleAccept}
                   disabled={accepting}
-                  startIcon={accepting ? <CircularProgress size={16} color="inherit" /> : null}
+                  startIcon={accepting ? <Spinner className="h-4 w-4 text-inherit" /> : null}
                 >
                   {t.actions.accept}
                 </Button>

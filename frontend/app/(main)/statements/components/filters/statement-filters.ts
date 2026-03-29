@@ -35,7 +35,8 @@ export type StatementFilterUser = {
 
 export type StatementFilterItem = {
   id: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'scan';
+  receiptSource?: string | null;
   fileName: string;
   subject?: string | null;
   sender?: string | null;
@@ -78,6 +79,13 @@ const parseNumber = (value?: number | string | null) => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
+const isGmailReceipt = (statement: StatementFilterItem) => statement.source === 'gmail';
+
+const isStoreReceipt = (statement: StatementFilterItem) => {
+  if (statement.source !== 'scan') return false;
+  return statement.receiptSource !== 'gmail';
+};
+
 const resolveStatementAmount = (statement: StatementFilterItem) => {
   const debit = parseNumber(statement.totalDebit);
   const credit = parseNumber(statement.totalCredit);
@@ -86,7 +94,7 @@ const resolveStatementAmount = (statement: StatementFilterItem) => {
 };
 
 const resolveStatementDateValue = (statement: StatementFilterItem) => {
-  if (statement.source === 'gmail') {
+  if (statement.source === 'gmail' || statement.source === 'scan') {
     return statement.parsedData?.date || statement.receivedAt || statement.createdAt || '';
   }
 
@@ -282,7 +290,17 @@ export const applyStatementsFilters = <T extends StatementFilterItem>(
 
   if (filters.type) {
     const typeValue = filters.type.toLowerCase();
-    result = result.filter(statement => (statement.fileType || '').toLowerCase() === typeValue);
+    result = result.filter(statement => {
+      if (typeValue === 'gmail') {
+        return isGmailReceipt(statement);
+      }
+
+      if (typeValue === 'receipt') {
+        return isStoreReceipt(statement);
+      }
+
+      return (statement.fileType || '').toLowerCase() === typeValue;
+    });
   }
 
   if (filters.statuses.length > 0) {

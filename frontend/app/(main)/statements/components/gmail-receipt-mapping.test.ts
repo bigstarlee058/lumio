@@ -31,4 +31,67 @@ describe('mapGmailReceiptsToStatements', () => {
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('r-2');
   });
+
+  it('preserves original receipt source so UI can avoid gmail branding for scanned receipts', () => {
+    const result = mapGmailReceiptsToStatements([
+      {
+        id: 'scan-1',
+        source: 'scan',
+        statementId: 'statement-scan-1',
+        subject: 'Scanned receipt',
+        sender: 'camera-scan',
+        receivedAt: '2026-03-27T00:00:00.000Z',
+        status: 'draft',
+        parsedData: {
+          amount: 90.32,
+          currency: 'KZT',
+          vendor: 'Walmart',
+        },
+      },
+      {
+        id: 'gmail-1',
+        source: 'gmail',
+        subject: 'Receipt email',
+        sender: 'billing@example.com',
+        receivedAt: '2026-03-27T00:00:00.000Z',
+        status: 'draft',
+        parsedData: {
+          amount: 90.32,
+          currency: 'KZT',
+          vendor: 'Walmart',
+        },
+      },
+    ]);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe('scan-1');
+    expect(result[0].source).toBe('scan');
+    expect(result[0].receiptSource).toBe('scan');
+    expect(result[0].statementId).toBe('statement-scan-1');
+    expect(result[1].source).toBe('gmail');
+    expect(result[1].receiptSource).toBe('gmail');
+  });
+
+  it('treats uploaded store receipts as local receipts instead of gmail', () => {
+    const result = mapGmailReceiptsToStatements([
+      {
+        id: 'upload-1',
+        source: 'upload',
+        subject: 'Uploaded receipt',
+        sender: 'manual-upload',
+        receivedAt: '2026-03-27T00:00:00.000Z',
+        status: 'draft',
+        parsedData: {
+          amount: 24.12,
+          currency: 'KZT',
+          vendor: 'Magnum',
+        },
+      },
+    ]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('upload-1');
+    expect(result[0].source).toBe('scan');
+    expect(result[0].receiptSource).toBe('upload');
+  });
 });

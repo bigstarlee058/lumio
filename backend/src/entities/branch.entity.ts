@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { User } from './user.entity';
+import { Workspace } from './workspace.entity';
 
 @Entity('branches')
 export class Branch {
@@ -25,6 +26,13 @@ export class Branch {
 
   @Column({ name: 'user_id' })
   userId: string;
+
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column()
   name: string;

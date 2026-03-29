@@ -75,6 +75,7 @@ import { ObservabilityModule } from './modules/observability/observability.modul
 import { ParsingModule } from './modules/parsing/parsing.module';
 import { PayablesModule } from './modules/payables/payables.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { ReceiptsModule } from './modules/receipts/receipts.module';
 import { StatementsModule } from './modules/statements/statements.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { TaxRatesModule } from './modules/tax-rates/tax-rates.module';
@@ -164,6 +165,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     DropboxModule,
     ParsingModule,
     ClassificationModule,
+    ReceiptsModule,
     CategoriesModule,
     BranchesModule,
     WalletsModule,

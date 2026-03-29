@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -9,7 +10,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -222,7 +222,7 @@ export default function UsersManagementPage() {
 
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
+              <Spinner className="h-10 w-10 text-primary" />
             </Box>
           ) : (
             <TableContainer>
@@ -342,7 +342,7 @@ export default function UsersManagementPage() {
             {t.dialog.cancel}
           </Button>
           <Button onClick={handleSavePermissions} variant="contained" disabled={saving}>
-            {saving ? <CircularProgress size={20} /> : t.dialog.save}
+            {saving ? <Spinner className="h-5 w-5 text-inherit" /> : t.dialog.save}
           </Button>
         </DialogActions>
       </Dialog>

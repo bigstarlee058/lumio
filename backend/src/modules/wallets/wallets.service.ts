@@ -12,9 +12,9 @@ export class WalletsService {
     private walletRepository: Repository<Wallet>,
   ) {}
 
-  async create(userId: string, createDto: CreateWalletDto): Promise<Wallet> {
+  async create(workspaceId: string, createDto: CreateWalletDto): Promise<Wallet> {
     const wallet = this.walletRepository.create({
-      userId,
+      workspaceId,
       ...createDto,
       currency: createDto.currency || 'KZT',
       initialBalance: createDto.initialBalance || 0,
@@ -24,16 +24,16 @@ export class WalletsService {
     return this.walletRepository.save(wallet);
   }
 
-  async findAll(userId: string): Promise<Wallet[]> {
+  async findAll(workspaceId: string): Promise<Wallet[]> {
     return this.walletRepository.find({
-      where: { userId },
+      where: { workspaceId },
       order: { name: 'ASC' },
     });
   }
 
-  async findOne(id: string, userId: string): Promise<Wallet> {
+  async findOne(id: string, workspaceId: string): Promise<Wallet> {
     const wallet = await this.walletRepository.findOne({
-      where: { id, userId },
+      where: { id, workspaceId },
     });
 
     if (!wallet) {
@@ -43,14 +43,14 @@ export class WalletsService {
     return wallet;
   }
 
-  async update(id: string, userId: string, updateDto: UpdateWalletDto): Promise<Wallet> {
-    const wallet = await this.findOne(id, userId);
+  async update(id: string, workspaceId: string, updateDto: UpdateWalletDto): Promise<Wallet> {
+    const wallet = await this.findOne(id, workspaceId);
     Object.assign(wallet, updateDto);
     return this.walletRepository.save(wallet);
   }
 
-  async remove(id: string, userId: string): Promise<void> {
-    const wallet = await this.findOne(id, userId);
+  async remove(id: string, workspaceId: string): Promise<void> {
+    const wallet = await this.findOne(id, workspaceId);
     await this.walletRepository.remove(wallet);
   }
 }

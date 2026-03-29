@@ -124,5 +124,95 @@ export const gmailReceiptsApi = {
   getStatus: () => apiClient.get('/integrations/gmail/status'),
 };
 
+export interface ReceiptRecord {
+  id: string;
+  statementId?: string | null;
+  subject: string;
+  sender: string;
+  source: string;
+  status: string;
+  receivedAt: string;
+  language?: string | null;
+  metadata?: {
+    attachments?: Array<{
+      id?: string;
+      filename?: string;
+      mimeType?: string;
+      size?: number;
+    }>;
+  };
+  parsedData?: {
+    amount?: number;
+    currency?: string;
+    vendor?: string;
+    date?: string;
+    tax?: number;
+    paymentMethod?: string;
+    category?: string;
+    categoryId?: string;
+    lineItems?: Array<{ description: string; amount: number }>;
+    transactionType?: 'income' | 'expense' | 'transfer' | 'unknown';
+    confidence?: number;
+    validationIssues?: string[];
+  };
+}
+
+export interface ReceiptListFilters {
+  page?: number;
+  limit?: number;
+  status?: string;
+  source?: string;
+}
+
+export interface ReceiptListResponse {
+  data: ReceiptRecord[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export const receiptsApi = {
+  listReceipts: async (params?: ReceiptListFilters) => {
+    const response = await apiClient.get('/receipts', { params });
+    return response.data as ReceiptListResponse;
+  },
+
+  getReceipt: async (id: string) => {
+    const response = await apiClient.get(`/receipts/${id}`);
+    return response.data as ReceiptRecord;
+  },
+
+  updateReceipt: async (id: string, data: Partial<ReceiptRecord>) => {
+    const response = await apiClient.patch(`/receipts/${id}`, data);
+    return response.data as ReceiptRecord;
+  },
+
+  approveReceipt: async (id: string) => {
+    const response = await apiClient.post(`/receipts/${id}/approve`);
+    return response.data as { receipt: ReceiptRecord; transaction: { id: string } };
+  },
+
+  uploadReceipts: async (formData: FormData) => {
+    const response = await apiClient.post('/receipts/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data as { receipts: ReceiptRecord[] };
+  },
+
+  scanReceipt: async (file: File, language?: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (language && language !== 'auto') {
+      formData.append('language', language);
+    }
+
+    const response = await apiClient.post('/receipts/scan', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data as ReceiptRecord;
+  },
+};
+
 export const api = apiClient;
 export default apiClient;

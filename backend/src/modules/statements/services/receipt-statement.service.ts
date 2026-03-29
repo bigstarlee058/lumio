@@ -1,0 +1,291 @@
+import * as fs from 'fs';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import type { Repository } from 'typeorm';
+import { calculateFileHash } from '../../../common/utils/file-hash.util';
+import { getFileTypeFromMime } from '../../../common/utils/file-validator.util';
+import { normalizeFilename } from '../../../common/utils/filename.util';
+import { Category, WorkspaceMember, WorkspaceRole } from '../../../entities';
+import { ActorType, AuditAction, EntityType, Severity } from '../../../entities/audit-event.entity';
+import { CategoryType } from '../../../entities/category.entity';
+import { ReceiptStatus } from '../../../entities/receipt.entity';
+import { BankName, FileType, Statement, StatementStatus } from '../../../entities/statement.entity';
+import { TaxRate } from '../../../entities/tax-rate.entity';
+import { Transaction, TransactionType } from '../../../entities/transaction.entity';
+import { User } from '../../../entities/user.entity';
+import { AuditService } from '../../audit/audit.service';
+import { ReceiptsService } from '../../receipts/receipts.service';
+
+@Injectable()
+export class ReceiptStatementService {
+  constructor(
+    @InjectRepository(Statement)
+    private readonly statementRepository: Repository<Statement>,
+    @InjectRepository(Transaction)
+    private readonly transactionRepository: Repository<Transaction>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(TaxRate)
+    private readonly taxRateRepository: Repository<TaxRate>,
+    @InjectRepository(WorkspaceMember)
+    private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
+    private readonly receiptsService: ReceiptsService,
+    private readonly auditService: AuditService,
+  ) {}
+
+  async createFromReceiptScan(params: {
+    user: User;
+    workspaceId: string;
+    files: Express.Multer.File[];
+    language?: string;
+  }): Promise<Statement[]> {
+    const { user, workspaceId, files, language } = params;
+    await this.ensureCanEditStatements(user.id, workspaceId);
+
+    if (!files?.length) {
+      throw new BadRequestException('No receipt files provided');
+    }
+
+    const results: Statement[] = [];
+
+    for (const file of files) {
+      const statement = await this.createStatementFromReceiptFile({
+        user,
+        workspaceId,
+        file,
+        language,
+      });
+      results.push(statement);
+    }
+
+    return results;
+  }
+
+  private async ensureCanEditStatements(userId: string, workspaceId: string): Promise<void> {
+    if (!workspaceId) {
+      return;
+    }
+
+    const membership = await this.workspaceMemberRepository.findOne({
+      where: { workspaceId, userId },
+      select: ['role', 'permissions'],
+    });
+
+    if (!membership) {
+      return;
+    }
+
+    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) {
+      return;
+    }
+
+    if (membership.permissions?.canEditStatements === false) {
+      throw new ForbiddenException('Недостаточно прав для редактирования выписок');
+    }
+  }
+
+  private normalizePositiveAmount(value: number | string | null | undefined): number | null {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
+
+  private resolveReceiptFailureMessage(receipt: {
+    metadata?: Record<string, unknown> | null;
+    parsedData?: Record<string, unknown> | null;
+  }) {
+    const metadataError = receipt.metadata?.processingError;
+    if (typeof metadataError === 'string' && metadataError.trim()) {
+      return metadataError;
+    }
+
+    const parsedIssues = receipt.parsedData?.validationIssues;
+    if (Array.isArray(parsedIssues)) {
+      const [firstIssue] = parsedIssues;
+      if (typeof firstIssue === 'string' && firstIssue.trim()) {
+        return firstIssue;
+      }
+    }
+
+    return 'Receipt scan could not be processed';
+  }
+
+  private async createStatementFromReceiptFile(params: {
+    user: User;
+    workspaceId: string;
+    file: Express.Multer.File;
+    language?: string;
+  }): Promise<Statement> {
+    const { user, workspaceId, file, language } = params;
+    const fileName = normalizeFilename(file.originalname);
+    const fileType = getFileTypeFromMime(file.mimetype) as FileType;
+    const fileHash = await calculateFileHash(file.path);
+    const fileData = await fs.promises.readFile(file.path);
+    const receipt = await this.receiptsService.createFromScan({
+      userId: user.id,
+      workspaceId,
+      file,
+      language,
+    });
+
+    if (receipt.status === ReceiptStatus.FAILED) {
+      throw new BadRequestException(this.resolveReceiptFailureMessage(receipt));
+    }
+
+    const parsed = receipt.parsedData ?? {};
+    const amountValue = this.normalizePositiveAmount(parsed.amount);
+    if (!amountValue) {
+      throw new BadRequestException('Receipt amount could not be determined');
+    }
+
+    const merchant =
+      String(parsed.vendor || receipt.subject || fileName).trim() || 'Unknown merchant';
+    const currency = String(parsed.currency || 'KZT')
+      .trim()
+      .toUpperCase();
+    const parsedDate = parsed.date ? new Date(parsed.date) : new Date();
+    const transactionDate = new Date(parsedDate.toISOString().slice(0, 10));
+
+    const category = parsed.categoryId
+      ? await this.categoryRepository.findOne({
+          where: {
+            workspaceId,
+            id: parsed.categoryId,
+          },
+        })
+      : null;
+
+    const fallbackCategory =
+      category ??
+      (await this.categoryRepository.findOne({
+        where: {
+          workspaceId,
+          type: CategoryType.EXPENSE,
+          isEnabled: true,
+        },
+      }));
+
+    if (!fallbackCategory) {
+      throw new BadRequestException('No enabled expense category available for receipt scan');
+    }
+
+    const taxRate = await this.taxRateRepository.findOne({
+      where: {
+        workspaceId,
+        isDefault: true,
+        isEnabled: true,
+      },
+    });
+
+    const statement = this.statementRepository.create({
+      userId: user.id,
+      workspaceId,
+      fileName,
+      filePath: file.path,
+      fileType,
+      fileSize: file.size,
+      fileHash,
+      bankName: BankName.OTHER,
+      status: StatementStatus.COMPLETED,
+      processedAt: new Date(),
+      statementDateFrom: transactionDate,
+      statementDateTo: transactionDate,
+      totalTransactions: 1,
+      totalDebit: amountValue,
+      totalCredit: 0,
+      currency,
+      categoryId: fallbackCategory.id,
+      parsingDetails: {
+        detectedBy: 'receipt-scan',
+        parserUsed: 'receipt-scan',
+        parserVersion: '1',
+        transactionsFound: 1,
+        transactionsCreated: 1,
+        metadataExtracted: {
+          dateFrom: transactionDate.toISOString().slice(0, 10),
+          dateTo: transactionDate.toISOString().slice(0, 10),
+          currency,
+        },
+        validation: {
+          passed: (parsed.validationIssues ?? []).length === 0,
+          warnings: parsed.validationIssues ?? [],
+        },
+        importPreview: {
+          source: 'receipt-scan',
+          merchant,
+          description: merchant,
+          attachments: 1,
+          categoryId: fallbackCategory.id,
+          taxRateId: taxRate?.id || null,
+          taxRateLabel: taxRate
+            ? `${taxRate.name} (${Number(taxRate.rate || 0).toFixed(0)}%)`
+            : null,
+          confidence: parsed.confidence ?? receipt.confidence,
+          extractionMethod: receipt.extractionMethod,
+        },
+      },
+    });
+
+    const savedStatement = (await this.statementRepository.save(statement)) as Statement;
+
+    await this.receiptsService.update(receipt.id, workspaceId, {
+      statementId: savedStatement.id,
+    });
+
+    try {
+      await this.statementRepository.update(savedStatement.id, { fileData });
+    } catch (error) {
+      console.warn(
+        `[Statements] Failed to persist receipt scan file in DB: ${(error as Error)?.message}`,
+      );
+    }
+
+    const transactionType =
+      parsed.transactionType === 'income' ? TransactionType.INCOME : TransactionType.EXPENSE;
+    const isExpense = transactionType === TransactionType.EXPENSE;
+
+    const transaction = this.transactionRepository.create({
+      workspaceId,
+      statementId: savedStatement.id,
+      transactionDate,
+      counterpartyName: merchant,
+      paymentPurpose: merchant,
+      debit: isExpense ? amountValue : null,
+      credit: isExpense ? null : amountValue,
+      amount: amountValue,
+      currency,
+      transactionType,
+      categoryId: fallbackCategory.id,
+      taxRateId: taxRate?.id || null,
+      isVerified: true,
+    });
+
+    await this.transactionRepository.save(transaction);
+
+    await this.auditService.createEvent({
+      workspaceId,
+      actorType: ActorType.USER,
+      actorId: user.id,
+      actorLabel: user.email || user.name || 'User',
+      entityType: EntityType.STATEMENT,
+      entityId: savedStatement.id,
+      action: AuditAction.IMPORT,
+      diff: { before: null, after: savedStatement },
+      meta: {
+        source: 'receipt-scan',
+        amount: amountValue,
+        currency,
+        merchant,
+        categoryId: fallbackCategory.id,
+        taxRateId: taxRate?.id || null,
+      },
+      severity: Severity.INFO,
+      isUndoable: false,
+    });
+
+    return savedStatement;
+  }
+}

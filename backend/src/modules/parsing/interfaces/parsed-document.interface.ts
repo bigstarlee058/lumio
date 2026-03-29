@@ -39,4 +39,5 @@ export interface ParsedDocument {
     lineItems?: number;
   };
   validationIssues: string[];
+  language?: string;
 }

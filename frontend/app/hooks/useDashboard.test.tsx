@@ -8,21 +8,40 @@ const apiMocks = vi.hoisted(() => ({
   get: vi.fn(),
 }));
 
+const workspaceMocks = vi.hoisted(() => ({
+  currentWorkspaceId: 'workspace-1',
+}));
+
 vi.mock('@/app/lib/api', () => ({
   default: {
     get: apiMocks.get,
   },
 }));
 
-import { useDashboard } from './useDashboard';
+vi.mock('@/app/contexts/WorkspaceContext', () => ({
+  useWorkspace: () => ({
+    currentWorkspace: workspaceMocks.currentWorkspaceId
+      ? { id: workspaceMocks.currentWorkspaceId }
+      : null,
+  }),
+}));
+
+import { useDashboard, useDashboardTrends } from './useDashboard';
 
 type HookSnapshot = ReturnType<typeof useDashboard>;
+type TrendsHookSnapshot = ReturnType<typeof useDashboardTrends>;
 
 let latestHook: HookSnapshot | null = null;
+let latestTrendsHook: TrendsHookSnapshot | null = null;
 
 function HookProbe() {
   latestHook = useDashboard('30d');
   return <div data-testid="dashboard-hook-probe" />;
+}
+
+function TrendsHookProbe() {
+  latestTrendsHook = useDashboardTrends(30);
+  return <div data-testid="dashboard-trends-hook-probe" />;
 }
 
 function createDashboardPayload(balance: number) {
@@ -65,6 +84,21 @@ function createDeferred<T>() {
   return { promise, resolve, reject };
 }
 
+function createTrendsPayload(rows: number) {
+  return {
+    dailyTrend: [],
+    categories: [],
+    counterparties: [],
+    sources: {
+      statements: {
+        income: 0,
+        expense: 0,
+        rows,
+      },
+    },
+  };
+}
+
 async function flushPromises() {
   await Promise.resolve();
   await Promise.resolve();
@@ -74,7 +108,9 @@ describe('useDashboard', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     latestHook = null;
+    latestTrendsHook = null;
     apiMocks.get.mockReset();
+    workspaceMocks.currentWorkspaceId = 'workspace-1';
   });
 
   it('loads dashboard once when backend returns effective window metadata', async () => {
@@ -129,7 +165,9 @@ describe('useDashboard', () => {
     const first = createDeferred<{ data: ReturnType<typeof createDashboardPayload> }>();
     const second = createDeferred<{ data: ReturnType<typeof createDashboardPayload> }>();
 
-    apiMocks.get.mockImplementationOnce(() => first.promise).mockImplementationOnce(() => second.promise);
+    apiMocks.get
+      .mockImplementationOnce(() => first.promise)
+      .mockImplementationOnce(() => second.promise);
 
     const container = document.createElement('div');
     const root = createRoot(container);
@@ -155,5 +193,129 @@ describe('useDashboard', () => {
     });
 
     expect(latestHook?.data?.snapshot.totalBalance).toBe(200);
+  });
+
+  it('refetches dashboard data when the active workspace changes', async () => {
+    apiMocks.get
+      .mockResolvedValueOnce({ data: createDashboardPayload(100) })
+      .mockResolvedValueOnce({ data: createDashboardPayload(200) });
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<HookProbe />);
+      await flushPromises();
+    });
+
+    expect(apiMocks.get).toHaveBeenCalledTimes(1);
+    expect(latestHook?.data?.snapshot.totalBalance).toBe(100);
+
+    await act(async () => {
+      workspaceMocks.currentWorkspaceId = 'workspace-2';
+      root.render(<HookProbe />);
+      await flushPromises();
+    });
+
+    expect(apiMocks.get).toHaveBeenCalledTimes(2);
+    expect(latestHook?.data?.snapshot.totalBalance).toBe(200);
+  });
+
+  it('clears previous dashboard data while loading the next workspace', async () => {
+    const nextWorkspaceResponse = createDeferred<{
+      data: ReturnType<typeof createDashboardPayload>;
+    }>();
+
+    apiMocks.get
+      .mockResolvedValueOnce({ data: createDashboardPayload(100) })
+      .mockImplementationOnce(() => nextWorkspaceResponse.promise);
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<HookProbe />);
+      await flushPromises();
+    });
+
+    expect(latestHook?.data?.snapshot.totalBalance).toBe(100);
+
+    await act(async () => {
+      workspaceMocks.currentWorkspaceId = 'workspace-2';
+      root.render(<HookProbe />);
+      await Promise.resolve();
+    });
+
+    expect(latestHook?.loading).toBe(true);
+    expect(latestHook?.data).toBeNull();
+
+    await act(async () => {
+      nextWorkspaceResponse.resolve({ data: createDashboardPayload(200) });
+      await flushPromises();
+    });
+
+    expect(latestHook?.data?.snapshot.totalBalance).toBe(200);
+  });
+
+  it('refetches trends data when the active workspace changes', async () => {
+    apiMocks.get
+      .mockResolvedValueOnce({ data: createTrendsPayload(10) })
+      .mockResolvedValueOnce({ data: createTrendsPayload(20) });
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<TrendsHookProbe />);
+      await flushPromises();
+    });
+
+    expect(apiMocks.get).toHaveBeenCalledTimes(1);
+    expect(latestTrendsHook?.data?.sources.statements.rows).toBe(10);
+
+    await act(async () => {
+      workspaceMocks.currentWorkspaceId = 'workspace-2';
+      root.render(<TrendsHookProbe />);
+      await flushPromises();
+    });
+
+    expect(apiMocks.get).toHaveBeenCalledTimes(2);
+    expect(latestTrendsHook?.data?.sources.statements.rows).toBe(20);
+  });
+
+  it('clears previous trends data while loading the next workspace', async () => {
+    const nextWorkspaceResponse = createDeferred<{
+      data: ReturnType<typeof createTrendsPayload>;
+    }>();
+
+    apiMocks.get
+      .mockResolvedValueOnce({ data: createTrendsPayload(10) })
+      .mockImplementationOnce(() => nextWorkspaceResponse.promise);
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<TrendsHookProbe />);
+      await flushPromises();
+    });
+
+    expect(latestTrendsHook?.data?.sources.statements.rows).toBe(10);
+
+    await act(async () => {
+      workspaceMocks.currentWorkspaceId = 'workspace-2';
+      root.render(<TrendsHookProbe />);
+      await Promise.resolve();
+    });
+
+    expect(latestTrendsHook?.loading).toBe(true);
+    expect(latestTrendsHook?.data).toBeNull();
+
+    await act(async () => {
+      nextWorkspaceResponse.resolve({ data: createTrendsPayload(20) });
+      await flushPromises();
+    });
+
+    expect(latestTrendsHook?.data?.sources.statements.rows).toBe(20);
   });
 });

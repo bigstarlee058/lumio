@@ -1,6 +1,13 @@
 /* eslint-disable no-console */
 
-const { AppDataSource } = require('../dist/data-source');
+const { existsSync } = require('fs');
+const path = require('path');
+
+const compiledDataSourcePath = existsSync(path.join(__dirname, '../dist/src/data-source.js'))
+  ? '../dist/src/data-source'
+  : '../dist/data-source';
+
+const { AppDataSource } = require(compiledDataSourcePath);
 const { MigrationExecutor } = require('typeorm');
 
 const LOCK_KEY_1 = Number.parseInt(process.env.MIGRATIONS_LOCK_KEY_1 || '240517', 10);

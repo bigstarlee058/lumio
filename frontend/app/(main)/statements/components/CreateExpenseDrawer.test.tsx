@@ -33,6 +33,9 @@ describe('CreateExpenseDrawer mobile uploads', () => {
     const uploadInput = document.querySelector('input[type="file"]') as HTMLInputElement | null;
     expect(uploadInput).toBeTruthy();
     expect(uploadInput?.getAttribute('accept')).toContain('image/*');
+    expect(uploadInput?.getAttribute('accept')).not.toContain('.csv');
+    expect(uploadInput?.getAttribute('accept')).not.toContain('.xlsx');
+    expect(uploadInput?.getAttribute('accept')).not.toContain('.xls');
     expect(uploadInput?.getAttribute('capture')).toBe('environment');
 
     await act(async () => {

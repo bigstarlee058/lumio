@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { Button } from '@/app/components/ui/button';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -441,7 +441,7 @@ export function PayablesView() {
   if (authLoading || workspaceLoading || loading) {
     return (
       <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
-        <LoadingAnimation size="lg" />
+        <Spinner size={80} className="text-primary" />
       </div>
     );
   }

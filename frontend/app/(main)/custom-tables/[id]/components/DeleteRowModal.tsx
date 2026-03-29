@@ -1,3 +1,4 @@
+import { Spinner } from '@/app/components/ui/spinner';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { cn } from '@/app/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -115,7 +116,7 @@ export function DeleteRowModal({
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <Spinner className="h-4 w-4" />
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">{confirmText}</span>

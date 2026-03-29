@@ -2,11 +2,29 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const documentTypeIconSpy = vi.hoisted(() => vi.fn());
+const pdfThumbnailSpy = vi.hoisted(() => vi.fn());
+
+vi.mock('@/app/components/DocumentTypeIcon', () => ({
+  DocumentTypeIcon: (props: any) => {
+    documentTypeIconSpy(props);
+    return <div data-testid={`document-type-icon-${props.fileId || 'static'}`} />;
+  },
+}));
+
+vi.mock('@/app/components/PDFThumbnail', () => ({
+  PDFThumbnail: (props: any) => {
+    pdfThumbnailSpy(props);
+    return <div data-testid={`pdf-thumbnail-${props.fileId || 'static'}`} />;
+  },
+}));
+
 import { StatementsListItem } from './StatementsListItem';
 
 type Statement = {
   id: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'scan';
   fileName: string;
   subject?: string;
   sender?: string;
@@ -35,6 +53,8 @@ describe('StatementsListItem', () => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
+    documentTypeIconSpy.mockReset();
+    pdfThumbnailSpy.mockReset();
   });
 
   afterEach(() => {
@@ -76,7 +96,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail
+          isReceipt
           isProcessing={false}
           merchantLabel="Shop"
           amountLabel="1,200KZT"
@@ -118,7 +138,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail={false}
+          isReceipt={false}
           isProcessing={false}
           merchantLabel="Kaspi"
           amountLabel="1,200 KZT"
@@ -137,6 +157,75 @@ describe('StatementsListItem', () => {
     expect(
       container.querySelector('[data-testid="statement-item-desktop-statement-1"]'),
     ).toBeTruthy();
+  });
+
+  it('uses receipt thumbnail source for local receipts', async () => {
+    const root = createRoot(container);
+
+    const statement: Statement = {
+      id: 'receipt-local-1',
+      source: 'scan',
+      fileName: 'receipt.jpg',
+      subject: 'Store receipt',
+      sender: 'camera-scan',
+      status: 'parsed',
+      totalDebit: null,
+      totalCredit: null,
+      createdAt: '2026-03-27T00:00:00Z',
+      statementDateFrom: null,
+      statementDateTo: null,
+      bankName: 'receipt',
+      fileType: 'receipt',
+      currency: 'KZT',
+      receivedAt: '2026-03-27T00:00:00Z',
+      parsedData: {
+        amount: 90.32,
+        currency: 'KZT',
+        vendor: 'Walmart',
+        date: '2026-03-27',
+      },
+    };
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt
+          isProcessing={false}
+          merchantLabel="Walmart"
+          amountLabel="90.32KZT"
+          dateLabel="03/27/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          typeLabel="Receipt"
+        />,
+      );
+    });
+
+    expect(documentTypeIconSpy).toHaveBeenCalled();
+    expect(
+      documentTypeIconSpy.mock.calls.every(([props]) => props.source === 'receipt'),
+    ).toBe(true);
+
+    const previewTrigger = container.querySelector(
+      '[data-testid="statement-thumbnail-trigger-receipt-local-1"]',
+    ) as HTMLButtonElement | null;
+    expect(previewTrigger).toBeTruthy();
+
+    await act(async () => {
+      previewTrigger?.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+      await Promise.resolve();
+    });
+
+    expect(pdfThumbnailSpy).toHaveBeenCalled();
+    expect(pdfThumbnailSpy.mock.calls[0]?.[0]).toEqual(
+      expect.objectContaining({
+        fileId: 'receipt-local-1',
+        source: 'receipt',
+      }),
+    );
   });
 
   it('renders hover preview in portal without clipping', async () => {
@@ -162,7 +251,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail={false}
+          isReceipt={false}
           isProcessing={false}
           merchantLabel="Kaspi"
           amountLabel="1,200 KZT"
@@ -212,7 +301,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail={false}
+          isReceipt={false}
           isProcessing={false}
           merchantLabel="Kaspi"
           amountLabel="1,200 KZT"
@@ -270,7 +359,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail={false}
+          isReceipt={false}
           isProcessing={false}
           isManualExpense
           merchantLabel="adad"
@@ -291,6 +380,62 @@ describe('StatementsListItem', () => {
     expect(paymentsIcon).toBeTruthy();
     expect(paymentsIcon?.className.baseVal).toContain('text-gray-500');
     expect(container.textContent).not.toContain('FILE');
+  });
+
+  it('renders receipt icon for receipt-scan statement instead of gmail icon', () => {
+    const root = createRoot(container);
+
+    const statement: Statement = {
+      id: 'receipt-scan-1',
+      source: 'scan',
+      fileName: 'receipt.jpg',
+      status: 'completed',
+      totalDebit: 90.32,
+      totalCredit: 0,
+      createdAt: '2026-03-27T00:00:00Z',
+      statementDateFrom: '2026-03-27',
+      statementDateTo: '2026-03-27',
+      bankName: 'other',
+      fileType: 'image',
+      currency: 'KZT',
+      parsingDetails: {
+        detectedBy: 'receipt-scan',
+        importPreview: {
+          source: 'receipt-scan',
+          merchant: 'Walmart',
+        },
+      },
+    } as Statement & {
+      parsingDetails: {
+        detectedBy: string;
+        importPreview: { source: string; merchant: string };
+      };
+    };
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement as any}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Walmart"
+          amountLabel="90.32KZT"
+          dateLabel="03/27/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          typeLabel="IMAGE"
+        />,
+      );
+    });
+
+    expect(container.querySelector('img[alt="Gmail"]')).toBeNull();
+    const receiptIcons = container.querySelectorAll('[data-testid="receipt-statement-type-icon"]');
+    expect(receiptIcons.length).toBe(1);
+    expect(
+      container.querySelector('[data-testid="statement-thumbnail-trigger-receipt-scan-1"]'),
+    ).toBeTruthy();
   });
 
   it('does not call onView when view is disabled', () => {
@@ -317,7 +462,7 @@ describe('StatementsListItem', () => {
         <StatementsListItem
           statement={statement}
           viewLabel="View"
-          isGmail={false}
+          isReceipt={false}
           isProcessing
           merchantLabel="Kaspi"
           amountLabel="0 KZT"
@@ -352,6 +497,47 @@ describe('StatementsListItem', () => {
     expect(onView).not.toHaveBeenCalled();
   });
 
+  it('renders amount loader instead of zero while statement parsing is in progress', () => {
+    const root = createRoot(container);
+
+    const statement: Statement = {
+      id: 'statement-loading-amount',
+      source: 'statement',
+      fileName: 'Scanning.pdf',
+      status: 'uploaded',
+      totalDebit: 0,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      statementDateFrom: '2026-01-01',
+      statementDateTo: '2026-01-31',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'KZT',
+    };
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Scanning..."
+          amountLabel="0 KZT"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          typeLabel="PDF"
+          viewDisabled
+        />,
+      );
+    });
+
+    expect(container.textContent).not.toContain('0 KZT');
+    expect(container.querySelectorAll('[aria-label="Loading"]')).toHaveLength(2);
+  });
+
   it('renders primary duplicate badge and review action for duplicate item', () => {
     const root = createRoot(container);
 
@@ -376,7 +562,7 @@ describe('StatementsListItem', () => {
           statement={statement}
           viewLabel="View"
           duplicateActionLabel="Review"
-          isGmail={false}
+          isReceipt={false}
           isProcessing={false}
           merchantLabel="Kaspi"
           amountLabel="1,200 KZT"

@@ -96,12 +96,12 @@ export class AuditEvent {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Workspace, { nullable: true })
+  @ManyToOne(() => Workspace)
   @JoinColumn({ name: 'workspace_id' })
-  workspace: Workspace | null;
+  workspace: Workspace;
 
-  @Column({ name: 'workspace_id', type: 'uuid', nullable: true })
-  workspaceId: string | null;
+  @Column({ name: 'workspace_id', type: 'uuid' })
+  workspaceId: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

@@ -33,12 +33,12 @@ export class Integration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Workspace, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
-  workspace: Workspace | null;
+  workspace: Workspace;
 
-  @Column({ name: 'workspace_id', nullable: true })
-  workspaceId: string | null;
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column({ type: 'varchar' })
   provider: IntegrationProvider;

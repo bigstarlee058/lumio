@@ -39,9 +39,14 @@ import type { ConvertDroppedSampleDto } from './dto/convert-dropped-sample.dto';
 import type { CreateManualExpenseDto } from './dto/create-manual-expense.dto';
 import type { FilterStatementsDto } from './dto/filter-statements.dto';
 import type { UpdateStatementDto } from './dto/update-statement.dto';
+import { ReceiptStatementService } from './services/receipt-statement.service';
 
 const execAsync = promisify(exec);
-const APPROVED_STATUSES = [StatementStatus.VALIDATED, StatementStatus.COMPLETED, StatementStatus.PARSED];
+const APPROVED_STATUSES = [
+  StatementStatus.VALIDATED,
+  StatementStatus.COMPLETED,
+  StatementStatus.PARSED,
+];
 const NOT_APPROVED_STATUSES = [
   StatementStatus.UPLOADED,
   StatementStatus.PROCESSING,
@@ -80,6 +85,7 @@ const getDatePresetRange = (preset: 'thisMonth' | 'lastMonth' | 'yearToDate', no
 
 const splitReferenceTokens = (tokens?: string[]) => {
   const normalizedTokens = tokens || [];
+  const allowedBankNames = new Set(Object.values(BankName));
 
   return normalizedTokens.reduce(
     (acc, token) => {
@@ -92,7 +98,7 @@ const splitReferenceTokens = (tokens?: string[]) => {
 
       if (token.startsWith('bank:')) {
         const bankName = token.replace('bank:', '').trim().toLowerCase();
-        if (bankName) {
+        if (bankName && allowedBankNames.has(bankName as BankName)) {
           acc.bankNames.push(bankName);
         }
       }
@@ -120,6 +126,7 @@ export class StatementsService {
     private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
     private readonly fileStorageService: FileStorageService,
     private statementProcessingService: StatementProcessingService,
+    private readonly receiptStatementService: ReceiptStatementService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly auditService: AuditService,
     private readonly eventEmitter?: EventEmitter2,
@@ -434,6 +441,15 @@ export class StatementsService {
     return savedStatement;
   }
 
+  async createFromReceiptScan(params: {
+    user: User;
+    workspaceId: string;
+    files: Express.Multer.File[];
+    language?: string;
+  }): Promise<Statement[]> {
+    return this.receiptStatementService.createFromReceiptScan(params);
+  }
+
   async convertDroppedSampleToTransaction(
     id: string,
     userId: string,
@@ -477,19 +493,24 @@ export class StatementsService {
       workspaceId,
       statementId: statement.id,
       transactionDate: new Date(transactionDate.toISOString().slice(0, 10)),
-      documentNumber: payload.transaction.documentNumber || originalTransaction?.documentNumber || null,
+      documentNumber:
+        payload.transaction.documentNumber || originalTransaction?.documentNumber || null,
       counterpartyName:
         payload.transaction.counterpartyName?.trim() ||
         String(originalTransaction?.counterpartyName || '').trim() ||
         'Неизвестный контрагент',
       counterpartyBin:
-        payload.transaction.counterpartyBin || (originalTransaction?.counterpartyBin as string) || null,
+        payload.transaction.counterpartyBin ||
+        (originalTransaction?.counterpartyBin as string) ||
+        null,
       counterpartyAccount:
         payload.transaction.counterpartyAccount ||
         (originalTransaction?.counterpartyAccount as string) ||
         null,
       counterpartyBank:
-        payload.transaction.counterpartyBank || (originalTransaction?.counterpartyBank as string) || null,
+        payload.transaction.counterpartyBank ||
+        (originalTransaction?.counterpartyBank as string) ||
+        null,
       debit: debit ?? null,
       credit: credit ?? null,
       amount,
@@ -502,7 +523,8 @@ export class StatementsService {
         payload.transaction.paymentPurpose?.trim() ||
         String(originalTransaction?.paymentPurpose || '').trim() ||
         'Не указано',
-      categoryId: payload.transaction.categoryId || (originalTransaction?.categoryId as string) || null,
+      categoryId:
+        payload.transaction.categoryId || (originalTransaction?.categoryId as string) || null,
       branchId: payload.transaction.branchId || (originalTransaction?.branchId as string) || null,
       walletId: payload.transaction.walletId || (originalTransaction?.walletId as string) || null,
       article: payload.transaction.article || (originalTransaction?.article as string) || null,
@@ -514,7 +536,9 @@ export class StatementsService {
     const savedTransaction = await this.transactionRepository.save(transaction);
 
     const nextDroppedSamples =
-      sampleIndex >= 0 ? droppedSamples.filter((_, index) => index !== sampleIndex) : droppedSamples;
+      sampleIndex >= 0
+        ? droppedSamples.filter((_, index) => index !== sampleIndex)
+        : droppedSamples;
     const warningToRemove = warning || sample?.reason || null;
     const nextWarnings = warnings.filter(currentWarning => currentWarning !== warningToRemove);
 
@@ -849,11 +873,17 @@ export class StatementsService {
     }
 
     if (typeof filters.exported === 'boolean') {
-      qb.andWhere(filters.exported ? 'statement.processedAt IS NOT NULL' : 'statement.processedAt IS NULL');
+      qb.andWhere(
+        filters.exported ? 'statement.processedAt IS NOT NULL' : 'statement.processedAt IS NULL',
+      );
     }
 
     if (typeof filters.paid === 'boolean') {
-      qb.andWhere(filters.paid ? 'statement.statementDateTo IS NOT NULL' : 'statement.statementDateTo IS NULL');
+      qb.andWhere(
+        filters.paid
+          ? 'statement.statementDateTo IS NOT NULL'
+          : 'statement.statementDateTo IS NULL',
+      );
     }
 
     if (filters.has?.includes('errors')) {
@@ -878,7 +908,9 @@ export class StatementsService {
     }
 
     if (filters.has?.includes('dateRange')) {
-      qb.andWhere('(statement.statementDateFrom IS NOT NULL OR statement.statementDateTo IS NOT NULL)');
+      qb.andWhere(
+        '(statement.statementDateFrom IS NOT NULL OR statement.statementDateTo IS NOT NULL)',
+      );
     }
 
     if (filters.has?.includes('currency')) {

@@ -1,0 +1,73 @@
+'use client';
+
+import {
+  receiptsApi,
+  type ReceiptListFilters,
+  type ReceiptListResponse,
+  type ReceiptRecord,
+} from '@/app/lib/api';
+import { useCallback, useEffect, useState } from 'react';
+
+export interface ReceiptsFilterState {
+  page: number;
+  limit: number;
+  status: string;
+  source: string;
+  search: string;
+}
+
+const DEFAULT_FILTERS: ReceiptsFilterState = {
+  page: 1,
+  limit: 20,
+  status: 'all',
+  source: 'all',
+  search: '',
+};
+
+export function useReceipts(initialFilters?: Partial<ReceiptsFilterState>) {
+  const [filters, setFilters] = useState<ReceiptsFilterState>({
+    ...DEFAULT_FILTERS,
+    ...initialFilters,
+  });
+  const [data, setData] = useState<ReceiptListResponse>({ data: [], total: 0, page: 1, limit: 20 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadReceipts = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const params: ReceiptListFilters = {
+        page: filters.page,
+        limit: filters.limit,
+      };
+
+      if (filters.status !== 'all') {
+        params.status = filters.status;
+      }
+
+      if (filters.source !== 'all') {
+        params.source = filters.source;
+      }
+
+      const response = await receiptsApi.listReceipts(params);
+      setData(response);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    void loadReceipts();
+  }, [loadReceipts]);
+
+  return {
+    receipts: data.data as ReceiptRecord[],
+    total: data.total,
+    page: data.page,
+    limit: data.limit,
+    isLoading,
+    filters,
+    setFilters,
+    refresh: loadReceipts,
+  };
+}

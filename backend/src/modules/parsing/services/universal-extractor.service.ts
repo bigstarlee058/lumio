@@ -18,6 +18,7 @@ export interface ExtractorContext {
   subject?: string;
   fileNameHint?: string;
   emailBody?: string;
+  ocrLanguages?: string[];
 }
 
 type AmountCandidate = {
@@ -116,12 +117,14 @@ export class UniversalExtractorService {
     context: ExtractorContext = {},
   ): Promise<ParsedDocument> {
     const ocrResult = await this.ocrService.extractTextFromImage(imageBuffer, {
+      languages: context.ocrLanguages,
       preprocess: true,
     });
 
     const fromText = await this.extractFromText(ocrResult.text, context);
     fromText.extractionMethod = 'ocr_regex';
     fromText.confidence = Math.round(fromText.confidence * ocrResult.confidence * 100) / 100;
+    fromText.language = ocrResult.language;
 
     if (!this.aiExtractor?.isAvailable()) {
       return fromText;
@@ -130,6 +133,7 @@ export class UniversalExtractorService {
     const aiFromImage = await this.aiExtractor.extractFromImage(imageBuffer, mimeType);
     const merged = this.mergeResults(fromText, aiFromImage);
     merged.extractionMethod = 'ocr_hybrid';
+    merged.language = ocrResult.language;
     return this.validate(merged);
   }
 
@@ -147,6 +151,7 @@ export class UniversalExtractorService {
     }
 
     const ocrResult = await this.ocrService.extractTextFromScannedPdf(pdfBuffer, {
+      languages: context.ocrLanguages,
       preprocess: true,
     });
 
@@ -154,6 +159,7 @@ export class UniversalExtractorService {
       const parsed = await this.extractFromText(ocrResult.text, context);
       parsed.extractionMethod = 'ocr_regex';
       parsed.confidence = Math.round(parsed.confidence * ocrResult.confidence * 100) / 100;
+      parsed.language = ocrResult.language;
       return parsed;
     }
 
@@ -217,6 +223,7 @@ export class UniversalExtractorService {
       rawText: text,
       fieldConfidence,
       validationIssues: [],
+      language: undefined,
     };
   }
 
@@ -588,6 +595,7 @@ export class UniversalExtractorService {
     return {
       ...doc,
       validationIssues,
+      language: doc.language,
     };
   }
 
@@ -674,6 +682,7 @@ export class UniversalExtractorService {
       extractionMethod: 'regex',
       fieldConfidence: {},
       validationIssues: [],
+      language: undefined,
     };
   }
 

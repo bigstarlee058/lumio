@@ -1,29 +1,29 @@
 import { FileStorageService } from '@/common/services/file-storage.service';
 import {
+  Category,
   FilePermission,
   FilePermissionType,
+  FileVersion,
+  Folder,
   ShareLinkStatus,
   SharePermissionLevel,
   SharedLink,
   Statement,
+  StorageView,
+  Tag,
+  Transaction,
   User,
   WorkspaceMember,
   WorkspaceRole,
-  FileVersion,
-  StorageView,
-  Folder,
-  Tag,
-  Transaction,
-  Category,
 } from '@/entities';
+import { MetricsService } from '@/modules/observability/metrics.service';
+import { StatementsService } from '@/modules/statements/statements.service';
 import type { CreateSharedLinkDto } from '@/modules/storage/dto/create-shared-link.dto';
 import { StorageService } from '@/modules/storage/storage.service';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { StatementsService } from '@/modules/statements/statements.service';
-import { MetricsService } from '@/modules/observability/metrics.service';
 
 describe('StorageService', () => {
   let testingModule: TestingModule;
@@ -411,6 +411,45 @@ describe('StorageService', () => {
       jest.spyOn(filePermissionRepository, 'findOne').mockResolvedValue(null);
 
       await expect(service.revokePermission('invalid', '1')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('workspace-scoped tags and views', () => {
+    it('lists tags only for current workspace', async () => {
+      const tagRepository = testingModule.get(getRepositoryToken(Tag));
+      jest.spyOn(tagRepository, 'find').mockResolvedValue([{ id: 'tag-1' }] as Tag[]);
+
+      const result = await service.listTags('ws-1');
+
+      expect(result).toEqual([{ id: 'tag-1' }]);
+      expect(tagRepository.find).toHaveBeenCalledWith({
+        where: { workspaceId: 'ws-1' },
+        order: { name: 'ASC' },
+      });
+    });
+
+    it('creates tags and views inside current workspace', async () => {
+      const tagRepository = testingModule.get(getRepositoryToken(Tag));
+      const viewRepository = testingModule.get(getRepositoryToken(StorageView));
+      jest.spyOn(tagRepository, 'create').mockImplementation(data => data as Tag);
+      jest
+        .spyOn(tagRepository, 'save')
+        .mockResolvedValue({ id: 'tag-1', workspaceId: 'ws-1' } as Tag);
+      jest.spyOn(viewRepository, 'create').mockImplementation(data => data as StorageView);
+      jest.spyOn(viewRepository, 'save').mockResolvedValue({
+        id: 'view-1',
+        workspaceId: 'ws-1',
+      } as StorageView);
+
+      await service.createTag({ name: 'A' } as any, 'ws-1');
+      await service.createView({ name: 'View', filters: {} } as any, 'ws-1');
+
+      expect(tagRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ workspaceId: 'ws-1' }),
+      );
+      expect(viewRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ workspaceId: 'ws-1' }),
+      );
     });
   });
 });

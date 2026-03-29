@@ -4,7 +4,7 @@ import { FilterActions } from '@/app/(main)/statements/components/filters/Filter
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
 import ConfirmModal from '@/app/components/ConfirmModal';
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -1159,7 +1159,7 @@ export default function CustomTablesPage() {
         <div data-tour-id="tables-list">
           {loading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingAnimation size="lg" />
+              <Spinner className="h-20 w-20 text-primary" />
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="rounded-2xl border border-border bg-card px-6 py-10 sm:px-10 sm:py-12">

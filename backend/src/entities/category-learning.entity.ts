@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Workspace } from './workspace.entity';
 
 /**
  * Stores learned patterns from user corrections for ML-based auto-categorization.
@@ -13,34 +22,39 @@ export class CategoryLearning {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ name: 'user_id', type: 'uuid' })
   @Index()
   userId: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  @Index()
-  workspaceId: string | null;
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
 
-  @Column({ type: 'uuid' })
+  @Column({ name: 'workspace_id', type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @Column({ name: 'category_id', type: 'uuid' })
   @Index()
   categoryId: string;
 
   /**
    * The payment purpose text that was categorized
    */
-  @Column({ type: 'text' })
+  @Column({ name: 'payment_purpose', type: 'text' })
   paymentPurpose: string;
 
   /**
    * The counterparty name that was categorized (optional)
    */
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'counterparty_name', type: 'text', nullable: true })
   counterpartyName: string | null;
 
   /**
    * How this pattern was learned
    */
   @Column({
+    name: 'learned_from',
     type: 'enum',
     enum: ['manual_correction', 'bulk_assignment', 'auto_confirmed', 'ai_classification'],
     default: 'manual_correction',

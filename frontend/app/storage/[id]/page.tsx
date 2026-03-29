@@ -1,12 +1,12 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
 import {
   ArrowLeft,
   Download,
   ExternalLink,
-  Loader2,
   RefreshCcw,
   Share2,
   Shield,
@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
-import LoadingAnimation from '../../components/LoadingAnimation';
 import PermissionsPanel from '../../components/PermissionsPanel';
 import ShareDialog from '../../components/ShareDialog';
 import TransactionsView from '../../components/TransactionsView';
@@ -306,7 +305,7 @@ export default function FileDetailsPage() {
     return (
       <div className="container-shared px-4 py-16">
         <div className="flex flex-col items-center gap-3 text-gray-600">
-          <LoadingAnimation size="lg" />
+          <Spinner className="h-20 w-20 text-primary" />
           <span>{t.loading}</span>
         </div>
       </div>
@@ -455,7 +454,7 @@ export default function FileDetailsPage() {
                 disabled={previewLoading}
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                {previewLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {previewLoading && <Spinner className="h-4 w-4" />}
                 {!previewLoading && <RefreshCcw className="h-4 w-4" />}
                 {t.preview.refresh}
               </button>
@@ -475,7 +474,7 @@ export default function FileDetailsPage() {
           <div className="mt-3 overflow-hidden rounded-lg border border-dashed border-gray-200 bg-gray-50/60">
             {previewLoading && (
               <div className="flex min-h-[360px] items-center justify-center text-gray-500">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                <Spinner className="h-6 w-6" />
               </div>
             )}
 

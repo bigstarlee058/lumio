@@ -2,14 +2,16 @@ import { Body, Controller, HttpCode, HttpStatus, Param, Post, UseGuards } from '
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { Transaction } from '../../entities/transaction.entity';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ClassificationService } from './services/classification.service';
 
 @Controller('classification')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceContextGuard)
 export class ClassificationController {
   constructor(
     private classificationService: ClassificationService,
@@ -19,9 +21,13 @@ export class ClassificationController {
 
   @Post('transaction/:id')
   @HttpCode(HttpStatus.OK)
-  async classifyTransaction(@Param('id') id: string, @CurrentUser() user: User) {
+  async classifyTransaction(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+  ) {
     const transaction = await this.transactionRepository.findOne({
-      where: { id },
+      where: { id, workspaceId },
     });
 
     if (!transaction) {
@@ -41,7 +47,11 @@ export class ClassificationController {
 
   @Post('bulk')
   @HttpCode(HttpStatus.OK)
-  async classifyBulk(@Body() body: { transactionIds: string[] }, @CurrentUser() user: User) {
+  async classifyBulk(
+    @Body() body: { transactionIds: string[] },
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+  ) {
     const { transactionIds } = body;
     const batchId = transactionIds.length > 1 ? uuidv4() : null;
     const results = {
@@ -55,7 +65,7 @@ export class ClassificationController {
     for (const transactionId of transactionIds) {
       try {
         const transaction = await this.transactionRepository.findOne({
-          where: { id: transactionId },
+          where: { id: transactionId, workspaceId },
         });
 
         if (!transaction) {
@@ -103,9 +113,10 @@ export class ClassificationController {
   async recordLearning(
     @Body() body: { transactionId: string; categoryId: string },
     @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
   ) {
     const transaction = await this.transactionRepository.findOne({
-      where: { id: body.transactionId },
+      where: { id: body.transactionId, workspaceId },
     });
 
     if (!transaction) {

@@ -1,11 +1,11 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { cn } from '@/app/lib/utils';
 import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   PanelLeftClose,
   PanelLeftOpen,
   RefreshCw,
@@ -198,7 +198,7 @@ export function SidePanel({
                     )}
                   >
                     {action.loading ? (
-                      <Loader2 size={16} className="animate-spin" />
+                      <Spinner className="h-4 w-4" />
                     ) : (
                       <RenderIcon icon={action.icon} size={16} />
                     )}
@@ -232,7 +232,7 @@ export function SidePanel({
           <div className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {loading ? (
               <div className="flex flex-col items-center justify-center h-full py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
+                <Spinner className="mb-3 h-8 w-8 text-primary" />
                 <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
               </div>
             ) : error ? (
@@ -292,7 +292,7 @@ export function SidePanel({
                       )}
                     >
                       {action.loading ? (
-                        <Loader2 size={14} className="animate-spin" />
+                        <Spinner className="h-[14px] w-[14px]" />
                       ) : (
                         action.icon && <RenderIcon icon={action.icon} size={14} />
                       )}

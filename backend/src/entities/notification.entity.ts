@@ -54,12 +54,12 @@ export class Notification {
   @Column({ name: 'recipient_id', type: 'uuid' })
   recipientId: string;
 
-  @ManyToOne(() => Workspace, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
-  workspace: Workspace | null;
+  workspace: Workspace;
 
-  @Column({ name: 'workspace_id', type: 'uuid', nullable: true })
-  workspaceId: string | null;
+  @Column({ name: 'workspace_id', type: 'uuid' })
+  workspaceId: string;
 
   @Column({ type: 'varchar', length: 64 })
   type: NotificationType;

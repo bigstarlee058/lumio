@@ -1,6 +1,7 @@
 'use client';
 
 import { GoogleSheetsPickerButton } from '@/app/components/GoogleSheetsPickerButton';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
@@ -18,7 +19,6 @@ import {
   ChevronUp,
   ExternalLink,
   FileSpreadsheet,
-  Loader2,
   Plug,
   RefreshCcw,
   Trash2,
@@ -239,7 +239,7 @@ export default function GoogleSheetsIntegrationPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Spinner className="h-6 w-6" />
       </div>
     );
   }
@@ -321,9 +321,9 @@ export default function GoogleSheetsIntegrationPage() {
                     onClick={startOauth}
                     disabled={connectingAccount}
                     data-tour-id="gs-integration-connect-account"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {connectingAccount ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {connectingAccount ? <Spinner className="h-4 w-4" /> : null}
                     {authStatus.connected
                       ? copy.step1.reconnectButton
                       : copy.step1.connectAccountButton}
@@ -419,7 +419,7 @@ export default function GoogleSheetsIntegrationPage() {
                 data-tour-id="gs-integration-connect"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70 w-fit"
               >
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {submitting ? <Spinner className="h-4 w-4" /> : null}
                 {t.step1.connectButton}
               </button>
 
@@ -571,10 +571,10 @@ export default function GoogleSheetsIntegrationPage() {
                           onClick={() => handleSync(item.id)}
                           disabled={syncingId === item.id || item.oauthConnected === false}
                           data-tour-id={index === 0 ? 'gs-integration-sync' : undefined}
-                          className="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 disabled:opacity-60"
                         >
                           {syncingId === item.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Spinner className="h-4 w-4" />
                           ) : (
                             <RefreshCcw className="h-4 w-4" />
                           )}
@@ -585,10 +585,10 @@ export default function GoogleSheetsIntegrationPage() {
                           onClick={() => handleRemove(item.id)}
                           disabled={removingId === item.id}
                           data-tour-id={index === 0 ? 'gs-integration-disconnect' : undefined}
-                          className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60"
                         >
                           {removingId === item.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <Spinner className="h-4 w-4" />
                           ) : (
                             <Trash2 className="h-4 w-4" />
                           )}

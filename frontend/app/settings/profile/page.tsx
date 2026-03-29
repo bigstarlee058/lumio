@@ -17,6 +17,7 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Select as UiSelect } from '@/app/components/ui/select';
 import { Separator } from '@/app/components/ui/separator';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -42,7 +43,6 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import TabletMacOutlinedIcon from '@mui/icons-material/TabletMacOutlined';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
-import CircularProgress from '@mui/material/CircularProgress';
 import type { AxiosError } from 'axios';
 import { CalendarDays, Check, Clock3, FileText, Palette, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -679,7 +679,7 @@ export default function ProfileSettingsPage() {
   if (loading) {
     return (
       <div className="container-shared flex justify-center px-4 py-16">
-        <CircularProgress size={32} color="inherit" className="text-primary" />
+        <Spinner className="h-8 w-8 text-primary" />
       </div>
     );
   }
@@ -825,7 +825,7 @@ export default function ProfileSettingsPage() {
 
           <div className="flex justify-end">
             <Button type="submit" disabled={profileLoading || !hasProfileChanges} className="gap-2">
-              {profileLoading && <CircularProgress size={16} color="inherit" />}
+              {profileLoading && <Spinner className="h-4 w-4 text-inherit" />}
               {t.profileCard.submit.value}
             </Button>
           </div>
@@ -862,7 +862,7 @@ export default function ProfileSettingsPage() {
               </p>
               {appearanceLoading ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CircularProgress size={16} color="inherit" />
+                  <Spinner className="h-4 w-4 text-inherit" />
                   <span>{t.appearanceCard.active.value}</span>
                 </div>
               ) : null}
@@ -896,7 +896,7 @@ export default function ProfileSettingsPage() {
 
             {sessionsLoading ? (
               <div className="flex items-center gap-2 rounded-xl border border-border px-4 py-5 text-sm text-muted-foreground">
-                <CircularProgress size={18} color="inherit" />
+                <Spinner className="h-[18px] w-[18px] text-inherit" />
                 {(t as any).sessionsCard?.loadingLabel?.value || 'Loading sessions...'}
               </div>
             ) : sessions.length ? (
@@ -944,7 +944,7 @@ export default function ProfileSettingsPage() {
                           disabled={isLogoutLoading}
                           className="gap-2"
                         >
-                          {isLogoutLoading && <CircularProgress size={14} color="inherit" />}
+                          {isLogoutLoading && <Spinner className="h-[14px] w-[14px] text-inherit" />}
                           <LogoutIcon className="text-[18px]" />
                           {(t as any).sessionsCard?.logoutSessionButton?.value || 'Log out'}
                         </Button>
@@ -1001,7 +1001,7 @@ export default function ProfileSettingsPage() {
 
           <div className="flex justify-end">
             <Button type="submit" disabled={emailLoading} className="gap-2">
-              {emailLoading && <CircularProgress size={16} color="inherit" />}
+              {emailLoading && <Spinner className="h-4 w-4 text-inherit" />}
               {t.emailCard.submit.value}
             </Button>
           </div>
@@ -1235,7 +1235,7 @@ export default function ProfileSettingsPage() {
 
         <div className="flex justify-end">
           <Button type="submit" variant="secondary" disabled={passwordLoading} className="gap-2">
-            {passwordLoading && <CircularProgress size={16} color="inherit" />}
+            {passwordLoading && <Spinner className="h-4 w-4 text-inherit" />}
             {t.passwordCard.submit.value}
           </Button>
         </div>

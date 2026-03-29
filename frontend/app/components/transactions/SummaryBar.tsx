@@ -1,10 +1,10 @@
 'use client';
 
 import { Button } from '@/app/components/ui/button';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
 import { Download, FileText, FileUp, TrendingDown, TrendingUp } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
 import React, { useMemo } from 'react';
 import type { StatementDetails, Transaction } from './types';
 
@@ -176,7 +176,7 @@ export default function SummaryBar({
               >
                 {fixing ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Spinner className="mr-2 h-4 w-4" />
                     {t.fixIssues.value}
                   </>
                 ) : stats.totalErrors > 0 ? (

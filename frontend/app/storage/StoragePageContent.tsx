@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
 import {
@@ -26,7 +27,6 @@ import {
   Filter,
   Folder,
   GripVertical,
-  Loader2,
   MoreVertical,
   PencilLine,
   Plus,
@@ -2156,7 +2156,7 @@ export function StoragePageContent({
 
             {loading ? (
               <div className="flex justify-center items-center h-64">
-                <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                <Spinner className="h-8 w-8 text-primary" />
               </div>
             ) : filteredFiles.length === 0 ? (
               <div className="text-center py-16 px-6">
@@ -3070,7 +3070,7 @@ export function StoragePageContent({
 
                         {viewsLoading ? (
                           <div className="flex justify-center py-4">
-                            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                            <Spinner className="h-5 w-5 text-gray-400" />
                           </div>
                         ) : views.length === 0 ? (
                           <p className="text-sm text-gray-400 italic text-center py-4">

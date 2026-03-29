@@ -1,4 +1,4 @@
-import { OcrService } from '@/modules/parsing/services/ocr.service';
+import { OcrService } from '../../../../../src/modules/parsing/services/ocr.service';
 
 const mockRecognize = jest.fn().mockResolvedValue({
   data: {
@@ -87,6 +87,75 @@ describe('OcrService', () => {
 
       expect(result.preprocessed).toBe(false);
       expect(mockSharpChain.grayscale).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getSupportedLanguages', () => {
+    it('returns at least 15 supported languages', () => {
+      const languages = service.getSupportedLanguages();
+
+      expect(languages.length).toBeGreaterThanOrEqual(15);
+      expect(languages).toContainEqual(expect.objectContaining({ code: 'eng', name: 'English' }));
+      expect(languages).toContainEqual(expect.objectContaining({ code: 'rus', name: 'Russian' }));
+      expect(languages).toContainEqual(expect.objectContaining({ code: 'deu', name: 'German' }));
+      expect(languages).toContainEqual(expect.objectContaining({ code: 'ara', name: 'Arabic' }));
+      expect(languages).toContainEqual(expect.objectContaining({ code: 'jpn', name: 'Japanese' }));
+    });
+  });
+
+  describe('resolveLanguages', () => {
+    it('returns default languages when none specified', () => {
+      expect(service.resolveLanguages(undefined)).toEqual(['eng']);
+    });
+
+    it('validates and returns requested languages', () => {
+      expect(service.resolveLanguages(['deu', 'fra'])).toEqual(['deu', 'fra']);
+    });
+
+    it('filters out unsupported language codes', () => {
+      expect(service.resolveLanguages(['eng', 'xxx_invalid'])).toEqual(['eng']);
+    });
+
+    it('falls back to eng if all requested languages are invalid', () => {
+      expect(service.resolveLanguages(['xxx', 'yyy'])).toEqual(['eng']);
+    });
+  });
+
+  describe('detectScriptFromText', () => {
+    it('detects Cyrillic script from Russian text', () => {
+      expect(service.detectScriptFromText('Магазин Пятёрочка Итого: 1500.00')).toBe('Cyrillic');
+    });
+
+    it('detects CJK script from Chinese text', () => {
+      expect(service.detectScriptFromText('超市购物 总计：¥150.00')).toBe('CJK');
+    });
+
+    it('detects Arabic script', () => {
+      expect(service.detectScriptFromText('المجموع الكلي ١٥٠٫٠٠ ريال')).toBe('Arabic');
+    });
+
+    it('detects Latin as default', () => {
+      expect(service.detectScriptFromText('Total: $15.00 Thank you')).toBe('Latin');
+    });
+
+    it('handles mixed scripts by choosing the dominant one', () => {
+      expect(['Latin', 'Cyrillic']).toContain(service.detectScriptFromText('Store ABC Магазин 15.00'));
+    });
+  });
+
+  describe('getLanguagesForScript', () => {
+    it('returns Cyrillic OCR languages', () => {
+      expect(service.getLanguagesForScript('Cyrillic')).toContain('rus');
+    });
+
+    it('returns all CJK OCR languages', () => {
+      expect(service.getLanguagesForScript('CJK')).toEqual(
+        expect.arrayContaining(['chi_sim', 'jpn', 'kor']),
+      );
+    });
+
+    it('returns eng for Latin script', () => {
+      expect(service.getLanguagesForScript('Latin')).toContain('eng');
     });
   });
 

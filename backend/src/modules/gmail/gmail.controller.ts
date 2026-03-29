@@ -56,6 +56,28 @@ const execAsync = promisify(exec);
 const AMOUNT_PRESENT_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NOT NULL";
 const AMOUNT_MISSING_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NULL";
 
+const inferMimeTypeFromPath = (filePath: string): string => {
+  const extension = path.extname(filePath).toLowerCase();
+  switch (extension) {
+    case '.pdf':
+      return 'application/pdf';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.png':
+      return 'image/png';
+    case '.webp':
+      return 'image/webp';
+    case '.bmp':
+      return 'image/bmp';
+    case '.tif':
+    case '.tiff':
+      return 'image/tiff';
+    default:
+      return 'application/octet-stream';
+  }
+};
+
 @ApiTags('Gmail Integration')
 @Controller('integrations/gmail')
 @UseGuards(JwtAuthGuard)
@@ -593,9 +615,38 @@ export class GmailController {
       return res.send(Buffer.from(cached, 'base64'));
     }
 
-    const pdfPath = (receipt.attachmentPaths || []).find(
-      filePath => filePath.toLowerCase().endsWith('.pdf') && fs.existsSync(filePath),
+    const attachmentPath = (receipt.attachmentPaths || []).find(Boolean);
+
+    if (!attachmentPath) {
+      res.setHeader('Cache-Control', 'public, max-age=60');
+      return res.status(HttpStatus.NOT_FOUND).json({ error: 'No attachment found' });
+    }
+
+    const attachmentFileName = path.basename(attachmentPath);
+    const attachmentMeta = receipt.metadata?.attachments?.find(
+      attachment => attachment.filename === attachmentFileName,
     );
+    const mimeType = attachmentMeta?.mimeType || inferMimeTypeFromPath(attachmentPath);
+
+    if (mimeType.startsWith('image/')) {
+      try {
+        const imageData = await fs.promises.readFile(attachmentPath);
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Cache-Control', 'public, max-age=604800');
+        return res.send(imageData);
+      } catch (error) {
+        this.logger.error(`Failed to read receipt image thumbnail for ${id}:`, error);
+        res.setHeader('Cache-Control', 'public, max-age=60');
+        return res.status(HttpStatus.SERVICE_UNAVAILABLE).json({
+          error: {
+            code: 'THUMBNAIL_GENERATION_FAILED',
+            message: 'Failed to generate thumbnail',
+          },
+        });
+      }
+    }
+
+    const pdfPath = attachmentPath.toLowerCase().endsWith('.pdf') ? attachmentPath : null;
 
     if (!pdfPath) {
       res.setHeader('Cache-Control', 'public, max-age=60');
@@ -647,22 +698,24 @@ export class GmailController {
       return res.status(HttpStatus.NOT_FOUND).json({ error: 'Receipt not found' });
     }
 
-    const pdfPath = (receipt.attachmentPaths || []).find(
-      filePath => filePath.toLowerCase().endsWith('.pdf') && fs.existsSync(filePath),
-    );
+    const attachmentPath = (receipt.attachmentPaths || []).find(Boolean);
 
-    if (!pdfPath) {
-      return res.status(HttpStatus.NOT_FOUND).json({ error: 'No PDF attachment found' });
+    if (!attachmentPath) {
+      return res.status(HttpStatus.NOT_FOUND).json({ error: 'No attachment found' });
     }
 
     try {
-      const pdfBuffer = await fs.promises.readFile(pdfPath);
-      const fileName = path.basename(pdfPath);
+      const fileBuffer = await fs.promises.readFile(attachmentPath);
+      const fileName = path.basename(attachmentPath);
+      const attachmentMeta = receipt.metadata?.attachments?.find(
+        attachment => attachment.filename === fileName,
+      );
+      const mimeType = attachmentMeta?.mimeType || inferMimeTypeFromPath(attachmentPath);
 
-      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Type', mimeType);
       res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(fileName)}"`);
       res.setHeader('Cache-Control', 'private, max-age=600');
-      return res.send(pdfBuffer);
+      return res.send(fileBuffer);
     } catch (error) {
       this.logger.error(`Failed to read receipt PDF for ${id}:`, error);
       return res.status(HttpStatus.SERVICE_UNAVAILABLE).json({

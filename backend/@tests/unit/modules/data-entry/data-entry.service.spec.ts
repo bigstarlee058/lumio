@@ -63,7 +63,7 @@ describe('DataEntryService', () => {
     }));
 
     await expect(
-      service.create('u1', {
+      service.create('ws-1', 'u1', {
         type: DataEntryType.CREDIT,
         date: '2025-01-01',
         amount: 1,
@@ -80,7 +80,7 @@ describe('DataEntryService', () => {
     dataEntryCustomFieldRepository.findOne = jest.fn(async () => null);
 
     await expect(
-      service.create('u1', {
+      service.create('ws-1', 'u1', {
         type: DataEntryType.DEBIT,
         date: '2025-01-01',
         amount: 1,
@@ -95,7 +95,7 @@ describe('DataEntryService', () => {
     qb.getManyAndCount = jest.fn(async () => [[{ id: 'e1' }], 1]);
 
     const result = await service.list({
-      userId: 'u1',
+      workspaceId: 'ws-1',
       type: DataEntryType.CREDIT,
       query: 'a%b_c',
       date: '2025-01-02',
@@ -103,6 +103,9 @@ describe('DataEntryService', () => {
       limit: 10,
     });
 
+    expect(qb.where).toHaveBeenCalledWith('"e"."workspace_id" = :workspaceId', {
+      workspaceId: 'ws-1',
+    });
     expect(qb.andWhere).toHaveBeenCalledWith('"e"."custom_tab_id" IS NULL');
     expect(qb.andWhere).toHaveBeenCalledWith('"e"."type" = :type', {
       type: DataEntryType.CREDIT,
@@ -126,7 +129,7 @@ describe('DataEntryService', () => {
     }));
     userRepository.save = jest.fn(async (u: any) => u);
 
-    await service.removeBaseTab('u1', DataEntryType.CASH);
+    await service.removeBaseTab('ws-1', 'u1', DataEntryType.CASH);
 
     expect(userRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -134,7 +137,7 @@ describe('DataEntryService', () => {
       }),
     );
     expect(dataEntryRepository.delete).toHaveBeenCalledWith({
-      userId: 'u1',
+      workspaceId: 'ws-1',
       type: DataEntryType.CASH,
       customTabId: IsNull(),
     });
@@ -149,7 +152,7 @@ describe('DataEntryService', () => {
       throw new QueryFailedError('query', [], { code: '23505' } as any);
     });
 
-    await expect(service.createCustomField('u1', { name: 'Name' } as any)).rejects.toThrow(
+    await expect(service.createCustomField('ws-1', 'u1', { name: 'Name' } as any)).rejects.toThrow(
       BadRequestException,
     );
   });
@@ -169,9 +172,12 @@ describe('DataEntryService', () => {
     dataEntryCustomFieldRepository.createQueryBuilder = jest.fn(() => qb);
     qb.getRawMany = jest.fn(async () => [{ id: 'f1', name: 'Tab', icon: null, entriesCount: '3' }]);
 
-    const rows = await service.listCustomFields('u1');
+    const rows = await service.listCustomFields('ws-1');
 
     expect(rows).toHaveLength(1);
     expect(rows[0].entriesCount).toBe(3);
+    expect(qb.where).toHaveBeenCalledWith('"f"."workspace_id" = :workspaceId', {
+      workspaceId: 'ws-1',
+    });
   });
 });

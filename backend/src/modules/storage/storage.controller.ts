@@ -13,7 +13,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -160,8 +162,13 @@ export class StorageController {
    * POST /api/v1/storage/tags
    */
   @Post('tags')
-  async createTag(@Body() dto: CreateTagDto, @CurrentUser() user: any) {
-    return await this.storageService.createTag(dto, user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async createTag(
+    @Body() dto: CreateTagDto,
+    @CurrentUser() user: any,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    return await this.storageService.createTag(dto, workspaceId);
   }
 
   /**
@@ -169,8 +176,9 @@ export class StorageController {
    * GET /api/v1/storage/tags
    */
   @Get('tags')
-  async listTags(@CurrentUser() user: any) {
-    return await this.storageService.listTags(user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async listTags(@CurrentUser() user: any, @WorkspaceId() workspaceId: string) {
+    return await this.storageService.listTags(workspaceId);
   }
 
   /**
@@ -178,8 +186,14 @@ export class StorageController {
    * PATCH /api/v1/storage/tags/:id
    */
   @Patch('tags/:id')
-  async updateTag(@Param('id') tagId: string, @Body() dto: UpdateTagDto, @CurrentUser() user: any) {
-    return await this.storageService.updateTag(tagId, dto, user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async updateTag(
+    @Param('id') tagId: string,
+    @Body() dto: UpdateTagDto,
+    @CurrentUser() user: any,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    return await this.storageService.updateTag(tagId, dto, workspaceId);
   }
 
   /**
@@ -187,8 +201,13 @@ export class StorageController {
    * DELETE /api/v1/storage/tags/:id
    */
   @Delete('tags/:id')
-  async deleteTag(@Param('id') tagId: string, @CurrentUser() user: any) {
-    await this.storageService.deleteTag(tagId, user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async deleteTag(
+    @Param('id') tagId: string,
+    @CurrentUser() user: any,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    await this.storageService.deleteTag(tagId, workspaceId);
     return { message: 'Tag deleted successfully' };
   }
 
@@ -263,8 +282,13 @@ export class StorageController {
    * POST /api/v1/storage/views
    */
   @Post('views')
-  async createView(@Body() dto: StorageViewDto, @CurrentUser() user: any) {
-    return await this.storageService.createView(dto, user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async createView(
+    @Body() dto: StorageViewDto,
+    @CurrentUser() user: any,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    return await this.storageService.createView(dto, workspaceId);
   }
 
   /**
@@ -272,8 +296,9 @@ export class StorageController {
    * GET /api/v1/storage/views
    */
   @Get('views')
-  async listViews(@CurrentUser() user: any) {
-    return await this.storageService.listViews(user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async listViews(@CurrentUser() user: any, @WorkspaceId() workspaceId: string) {
+    return await this.storageService.listViews(workspaceId);
   }
 
   /**
@@ -281,8 +306,13 @@ export class StorageController {
    * DELETE /api/v1/storage/views/:id
    */
   @Delete('views/:id')
-  async deleteView(@Param('id') id: string, @CurrentUser() user: any) {
-    return await this.storageService.deleteView(id, user.id);
+  @UseGuards(WorkspaceContextGuard)
+  async deleteView(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    return await this.storageService.deleteView(id, workspaceId);
   }
 
   /**

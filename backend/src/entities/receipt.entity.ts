@@ -51,7 +51,7 @@ export class Receipt {
   @Column({ name: 'workspace_id', type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace)
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace;
 
@@ -118,6 +118,15 @@ export class Receipt {
     validationIssues?: string[];
   };
 
+  @Column({ type: 'varchar', length: 32, nullable: true, name: 'language' })
+  language: string | null;
+
+  @Column({ type: 'varchar', length: 32, nullable: true, name: 'extraction_method' })
+  extractionMethod: string | null;
+
+  @Column({ type: 'numeric', precision: 3, scale: 2, nullable: true, name: 'confidence' })
+  confidence: number | null;
+
   @Column({ type: 'text', array: true, nullable: true, name: 'attachment_paths' })
   attachmentPaths: string[];
 
@@ -127,6 +136,9 @@ export class Receipt {
   @ManyToOne(() => Transaction, { nullable: true })
   @JoinColumn({ name: 'transaction_id' })
   transaction: Transaction | null;
+
+  @Column({ name: 'statement_id', type: 'uuid', nullable: true })
+  statementId: string | null;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, name: 'tax_amount' })
   taxAmount: number | null;

@@ -37,14 +37,26 @@ import { ConvertDroppedSampleDto } from './dto/convert-dropped-sample.dto';
 import { CreateManualExpenseDto } from './dto/create-manual-expense.dto';
 import { FilterStatementsDto } from './dto/filter-statements.dto';
 import { UpdateStatementDto } from './dto/update-statement.dto';
+import { UploadReceiptScanDto } from './dto/upload-receipt-scan.dto';
 import { UploadStatementDto } from './dto/upload-statement.dto';
+import { ReceiptStatementService } from './services/receipt-statement.service';
 import { StatementsService } from './statements.service';
+
+const SUPPORTED_RECEIPT_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/bmp',
+  'image/tiff',
+  'application/pdf',
+]);
 
 @Controller('statements')
 @UseGuards(JwtAuthGuard)
 export class StatementsController {
   constructor(
     private readonly statementsService: StatementsService,
+    private readonly receiptStatementService: ReceiptStatementService,
     private readonly idempotencyService: IdempotencyService,
   ) {}
 
@@ -99,6 +111,37 @@ export class StatementsController {
       files: files || [],
       payload,
     });
+  }
+
+  @Post('upload-receipt')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
+  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
+  @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
+  async uploadReceipt(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() body: UploadReceiptScanDto,
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    if (!files?.length) {
+      throw new BadRequestException('No files provided');
+    }
+
+    files.forEach(file => {
+      validateFile(file);
+      this.assertReceiptFileSupported(file);
+    });
+
+    const data = await this.receiptStatementService.createFromReceiptScan({
+      user,
+      workspaceId,
+      files,
+      language: body?.language,
+    });
+
+    return { data };
   }
 
   @Post(':id/attach-file')
@@ -254,6 +297,12 @@ export class StatementsController {
       }
     });
     stream.pipe(res);
+  }
+
+  private assertReceiptFileSupported(file: Express.Multer.File): void {
+    if (!SUPPORTED_RECEIPT_MIME_TYPES.has(file.mimetype)) {
+      throw new BadRequestException('Only image and PDF receipt files are supported');
+    }
   }
 
   @Get(':id/view')

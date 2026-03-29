@@ -67,7 +67,11 @@ const baseProps = {
   onUpdateFilters: () => undefined,
   onResetAll: () => undefined,
   onViewResults: () => undefined,
-  typeOptions: [{ value: 'pdf', label: 'PDF' }],
+  typeOptions: [
+    { value: 'receipt', label: 'Receipt' },
+    { value: 'gmail', label: 'Gmail' },
+    { value: 'pdf', label: 'PDF' },
+  ],
   statusOptions: [{ value: 'processing', label: 'Processing' }],
   datePresets: [{ value: 'thisMonth' as const, label: 'This month' }],
   dateModes: [{ value: 'on' as const, label: 'On' }],
@@ -145,5 +149,15 @@ describe('FiltersDrawer', () => {
     expect(container.textContent).not.toContain('Billable');
     expect(container.textContent).not.toContain('Currency');
     expect(container.textContent).not.toContain('Exported');
+  });
+
+  it('renders receipt and gmail as separate type options', async () => {
+    await act(async () => {
+      root.render(<FiltersDrawer {...baseProps} screen="type" />);
+    });
+
+    expect(container.textContent).toContain('Receipt');
+    expect(container.textContent).toContain('Gmail');
+    expect(container.textContent).toContain('PDF');
   });
 });

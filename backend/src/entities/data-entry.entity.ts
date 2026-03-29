@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { DataEntryCustomField } from './data-entry-custom-field.entity';
 import { User } from './user.entity';
+import { Workspace } from './workspace.entity';
 
 export enum DataEntryType {
   CASH = 'cash',
@@ -19,8 +20,8 @@ export enum DataEntryType {
 }
 
 @Entity('data_entries')
-@Index('IDX_data_entries_user_type_date', ['userId', 'type', 'date'])
-@Index('IDX_data_entries_user_custom_tab_date', ['userId', 'customTabId', 'date'])
+@Index('IDX_data_entries_workspace_type_date', ['workspaceId', 'type', 'date'])
+@Index('IDX_data_entries_workspace_custom_tab_date', ['workspaceId', 'customTabId', 'date'])
 export class DataEntry {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,6 +32,13 @@ export class DataEntry {
 
   @Column({ name: 'user_id' })
   userId: string;
+
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column({
     type: 'enum',

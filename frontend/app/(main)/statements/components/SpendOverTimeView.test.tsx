@@ -168,8 +168,8 @@ vi.mock('@/app/(main)/statements/components/filters/FiltersDrawer', () => ({
   FiltersDrawer: () => null,
 }));
 
-vi.mock('@/app/components/LoadingAnimation', () => ({
-  default: () => <div data-testid="loading-animation" />,
+vi.mock('@/app/components/ui/spinner', () => ({
+  Spinner: () => <div data-testid="loading-animation" />,
 }));
 
 vi.mock('@/app/components/ui/filter-chip-button', () => ({

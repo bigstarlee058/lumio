@@ -5,6 +5,7 @@ import CreatePayableDrawer from '@/app/(main)/statements/components/payables/Cre
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
 import {
   getFinancialDocumentStatusLabel,
@@ -35,7 +36,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -549,7 +549,7 @@ export default function GmailReceiptDocumentPage() {
   if (loading) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, textAlign: 'center' }}>
-        <CircularProgress />
+        <Spinner className="h-10 w-10 text-primary" />
       </Container>
     );
   }
@@ -720,7 +720,7 @@ export default function GmailReceiptDocumentPage() {
               <span style={{ display: 'inline-flex' }}>
                 <Button
                   variant="outlined"
-                  startIcon={submitting ? <CircularProgress size={18} /> : <Send />}
+                  startIcon={submitting ? <Spinner className="h-[18px] w-[18px]" /> : <Send />}
                   onClick={handleSubmitDocument}
                   disabled={!canSubmit || submitting}
                   sx={{
@@ -764,7 +764,7 @@ export default function GmailReceiptDocumentPage() {
             {/* Export */}
             <Button
               variant="outlined"
-              startIcon={exporting ? <CircularProgress size={18} /> : <IosShare />}
+              startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <IosShare />}
               onClick={handleExport}
               disabled={exporting}
               sx={{
@@ -1210,7 +1210,7 @@ export default function GmailReceiptDocumentPage() {
             </Typography>
             {historyLoading ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
-                <CircularProgress size={16} />
+                <Spinner className="h-4 w-4 text-inherit" />
                 <Typography variant="body2">Loading history...</Typography>
               </Box>
             ) : (
@@ -1325,7 +1325,7 @@ export default function GmailReceiptDocumentPage() {
               variant="contained"
               onClick={handleSaveChanges}
               disabled={saving}
-              startIcon={saving ? <CircularProgress size={16} /> : undefined}
+              startIcon={saving ? <Spinner className="h-4 w-4" /> : undefined}
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,

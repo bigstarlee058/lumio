@@ -1,8 +1,8 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { pickSpreadsheet } from '@/app/lib/googleSheetsPicker';
 import type { SpreadsheetSelection } from '@/app/lib/googleSheetsSelection';
-import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 type Props = {
@@ -48,7 +48,7 @@ export function GoogleSheetsPickerButton({
       disabled={disabled || loading || !accessToken || !apiKey}
       className="inline-flex items-center justify-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+      {loading ? <Spinner className="h-4 w-4" /> : null}
       {loading ? loadingLabel : label}
     </button>
   );

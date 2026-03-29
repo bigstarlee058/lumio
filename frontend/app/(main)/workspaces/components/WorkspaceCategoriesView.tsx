@@ -32,7 +32,7 @@ import {
   alpha,
   useTheme,
 } from '@mui/material';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@/app/components/ui/spinner';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -480,7 +480,7 @@ export default function WorkspaceCategoriesView() {
 
           {loading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Spinner className="h-8 w-8 text-primary" />
             </div>
           ) : filteredCategories.length === 0 ? (
             <div className="text-center py-16 px-4">

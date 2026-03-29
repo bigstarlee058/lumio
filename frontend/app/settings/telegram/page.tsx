@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -16,7 +17,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   Container,
   Divider,
   Paper,
@@ -134,7 +134,7 @@ export default function TelegramSettingsPage() {
         className="container-shared"
         sx={{ mt: 8, display: 'flex', justifyContent: 'center' }}
       >
-        <CircularProgress />
+        <Spinner className="h-10 w-10 text-primary" />
       </Container>
     );
   }

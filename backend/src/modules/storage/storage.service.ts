@@ -399,25 +399,25 @@ export class StorageService {
     return { ...saved, tags };
   }
 
-  async createTag(dto: CreateTagDto, userId: string) {
+  async createTag(dto: CreateTagDto, workspaceId: string) {
     const tag = this.tagRepository.create({
       name: dto.name,
       color: dto.color ?? null,
-      userId,
+      workspaceId,
     });
     return await this.tagRepository.save(tag);
   }
 
-  async listTags(userId: string) {
+  async listTags(workspaceId: string) {
     return await this.tagRepository.find({
-      where: [{ userId }, { userId: null }],
+      where: { workspaceId },
       order: { name: 'ASC' },
     });
   }
 
-  async updateTag(tagId: string, dto: UpdateTagDto, userId: string) {
+  async updateTag(tagId: string, dto: UpdateTagDto, workspaceId: string) {
     const tag = await this.tagRepository.findOne({
-      where: { id: tagId, userId },
+      where: { id: tagId, workspaceId },
     });
     if (!tag) {
       throw new NotFoundException('Tag not found');
@@ -433,9 +433,9 @@ export class StorageService {
     return await this.tagRepository.save(tag);
   }
 
-  async deleteTag(tagId: string, userId: string) {
+  async deleteTag(tagId: string, workspaceId: string) {
     const tag = await this.tagRepository.findOne({
-      where: { id: tagId, userId },
+      where: { id: tagId, workspaceId },
     });
     if (!tag) {
       throw new NotFoundException('Tag not found');
@@ -613,25 +613,25 @@ export class StorageService {
     return { status: 'deleted' };
   }
 
-  async createView(dto: StorageViewDto, userId: string) {
+  async createView(dto: StorageViewDto, workspaceId: string) {
     const view = this.storageViewRepository.create({
       name: dto.name,
-      userId,
+      workspaceId,
       filters: dto.filters || {},
     });
     return await this.storageViewRepository.save(view);
   }
 
-  async listViews(userId: string) {
+  async listViews(workspaceId: string) {
     return await this.storageViewRepository.find({
-      where: { userId },
+      where: { workspaceId },
       order: { createdAt: 'DESC' },
     });
   }
 
-  async deleteView(id: string, userId: string) {
+  async deleteView(id: string, workspaceId: string) {
     const view = await this.storageViewRepository.findOne({
-      where: { id, userId },
+      where: { id, workspaceId },
     });
     if (!view) {
       throw new NotFoundException('View not found');

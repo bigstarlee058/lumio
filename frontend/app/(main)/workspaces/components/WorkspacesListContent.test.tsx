@@ -5,6 +5,21 @@ import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+const workspaceState = {
+  workspaces: [
+    {
+      id: 'ws-1',
+      name: 'Main Workspace',
+      description: 'Workspace description',
+      isFavorite: false,
+      createdAt: '2026-01-01T00:00:00.000Z',
+    },
+  ],
+  loading: false,
+  switchWorkspace: vi.fn(),
+  refreshWorkspaces: vi.fn(),
+};
+
 vi.mock('@/app/i18n', () => ({
   useIntlayer: () => ({
     loading: 'Loading...',
@@ -19,20 +34,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('@/app/contexts/WorkspaceContext', () => ({
-  useWorkspace: () => ({
-    workspaces: [
-      {
-        id: 'ws-1',
-        name: 'Main Workspace',
-        description: 'Workspace description',
-        isFavorite: false,
-        createdAt: '2026-01-01T00:00:00.000Z',
-      },
-    ],
-    loading: false,
-    switchWorkspace: vi.fn(),
-    refreshWorkspaces: vi.fn(),
-  }),
+  useWorkspace: () => workspaceState,
 }));
 
 vi.mock('./WorkspaceCard', () => ({
@@ -44,6 +46,20 @@ vi.mock('./CreateWorkspaceModal', () => ({
 }));
 
 describe('WorkspacesListContent', () => {
+  it('renders the shared spinner while loading', async () => {
+    workspaceState.loading = true;
+
+    try {
+      const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
+      const html = renderToStaticMarkup(<WorkspacesListContent />);
+
+      expect(html).toContain('aria-label="Loading"');
+      expect(html).toContain('role="status"');
+    } finally {
+      workspaceState.loading = false;
+    }
+  });
+
   it('does not render embedded workspace switch header', async () => {
     const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
     const html = renderToStaticMarkup(<WorkspacesListContent embedded onCloseEmbedded={vi.fn()} />);
@@ -102,5 +118,14 @@ describe('WorkspacesListContent', () => {
     expect(html).toContain('bg-gradient-to-br');
     expect(html).toContain('shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)]');
     expect(html).not.toContain('border-dashed border-gray-300');
+  });
+
+  it('keeps the create workspace tile at the same height as workspace cards', async () => {
+    const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
+    const html = renderToStaticMarkup(<WorkspacesListContent />);
+
+    expect(html).toContain('h-full');
+    expect(html).toContain('w-full');
+    expect(html).toContain('aspect-video');
   });
 });

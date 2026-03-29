@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import ErrorIcon from '@mui/icons-material/Error';
 import { FileText } from 'lucide-react';
@@ -8,7 +9,7 @@ import { useEffect, useState } from 'react';
 interface PDFThumbnailProps {
   fileId: string;
   fileName?: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'receipt';
   size?: number;
   width?: number;
   height?: number;
@@ -111,6 +112,8 @@ export function PDFThumbnail({
         const thumbnailUrl =
           source === 'gmail'
             ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/thumbnail?width=${requestedWidth}`
+            : source === 'receipt'
+              ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/thumbnail?width=${requestedWidth}`
             : `${apiBaseUrl}/statements/${fileId}/thumbnail?width=${requestedWidth}`;
 
         const response = await fetch(thumbnailUrl, {
@@ -193,9 +196,9 @@ export function PDFThumbnail({
       className="relative shadow-sm rounded-xl overflow-hidden"
       style={{ width: frameWidth, height: resolvedFrameHeight }}
     >
-      {loading && (
+        {loading && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600" />
+          <Spinner className="h-4 w-4 text-gray-600" />
         </div>
       )}
       {thumbnailDataUrl && (

@@ -77,7 +77,7 @@ function PDFPreviewContent({
         {isLoading && (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-600 mx-auto mb-4" />
+              <Spinner className="mx-auto mb-4 h-12 w-12 text-blue-600" />
               <p className="text-gray-600">Загрузка документа...</p>
             </div>
           </div>
@@ -305,3 +305,4 @@ export const Mobile: Story = {
     </ModalWrapper>
   ),
 };
+import { Spinner } from '@/app/components/ui/spinner';

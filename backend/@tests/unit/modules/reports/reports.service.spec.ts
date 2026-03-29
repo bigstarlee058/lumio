@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import type { CustomTableColumn } from '@/entities';
 import { CustomTableColumnType } from '@/entities/custom-table-column.entity';
 import { AuditService } from '@/modules/audit/audit.service';
-import { BadRequestException } from '@nestjs/common';
 import { ReportsService } from '@/modules/reports/reports.service';
+import { BadRequestException } from '@nestjs/common';
 
 function createRepoMock() {
   return {} as any;
@@ -99,10 +99,14 @@ describe('ReportsService (helpers)', () => {
       createRepoMock() as any,
     );
 
-    const result = await (localService as any).getSpendOverTimeReport('u1', {
+    const result = await (localService as any).getSpendOverTimeReport('ws-1', {
       groupBy: 'day',
       dateFrom: '2025-01-01',
       dateTo: '2025-01-03',
+    });
+
+    expect(qb.where).toHaveBeenCalledWith('transaction.workspaceId = :workspaceId', {
+      workspaceId: 'ws-1',
     });
 
     expect(result.points).toHaveLength(3);
@@ -153,7 +157,7 @@ describe('ReportsService (helpers)', () => {
       createRepoMock() as any,
     );
 
-    const result = await (localService as any).getSpendOverTimeReport('u1', {
+    const result = await (localService as any).getSpendOverTimeReport('ws-1', {
       groupBy: 'quarter',
       dateFrom: '2025-01-01',
       dateTo: '2025-06-30',
@@ -210,7 +214,7 @@ describe('ReportsService (helpers)', () => {
       createRepoMock() as any,
     );
 
-    const result = await (localService as any).getSpendOverTimeReport('u1', {
+    const result = await (localService as any).getSpendOverTimeReport('ws-1', {
       groupBy: 'year',
       dateFrom: '2025-01-01',
       dateTo: '2026-12-31',
@@ -280,6 +284,34 @@ describe('generateFromTemplate', () => {
         format: 'excel',
       }),
     ).rejects.toThrow(BadRequestException);
+  });
+
+  it('getCustomTablesSummary scopes tables by workspaceId', async () => {
+    const customTableRepository = {
+      find: jest.fn(async () => []),
+    };
+
+    const localService = new ReportsService(
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      customTableRepository as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      { get: jest.fn(), set: jest.fn() } as any,
+      { createEvent: jest.fn() } as AuditService,
+      createRepoMock() as any,
+    );
+
+    await localService.getCustomTablesSummary('ws-1', { days: 30, tableIds: [] } as any);
+
+    expect(customTableRepository.find).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ workspaceId: 'ws-1' }),
+      }),
+    );
   });
 
   it('should generate P&L as excel', async () => {
@@ -367,8 +399,22 @@ describe('generateFromTemplate', () => {
   it('should generate Cash Flow as excel', async () => {
     mockUserRepository.findOne.mockResolvedValue({ id: 'user1', workspaceId: 'ws1' });
     mockTransactionRepository.find.mockResolvedValue([
-      { amount: 5000, transactionType: 'income', transactionDate: new Date('2024-01-15'), isDuplicate: false, category: null, categoryId: null },
-      { amount: 2000, transactionType: 'expense', transactionDate: new Date('2024-01-15'), isDuplicate: false, category: null, categoryId: null },
+      {
+        amount: 5000,
+        transactionType: 'income',
+        transactionDate: new Date('2024-01-15'),
+        isDuplicate: false,
+        category: null,
+        categoryId: null,
+      },
+      {
+        amount: 2000,
+        transactionType: 'expense',
+        transactionDate: new Date('2024-01-15'),
+        isDuplicate: false,
+        category: null,
+        categoryId: null,
+      },
     ]);
     const result = await service.generateFromTemplate('user1', {
       templateId: 'cash-flow',
@@ -386,8 +432,22 @@ describe('generateFromTemplate', () => {
   it('should generate Expense by Category as excel', async () => {
     mockUserRepository.findOne.mockResolvedValue({ id: 'user1', workspaceId: 'ws1' });
     mockTransactionRepository.find.mockResolvedValue([
-      { amount: 3000, transactionType: 'expense', transactionDate: new Date('2024-01-15'), isDuplicate: false, category: { name: 'Marketing' }, categoryId: 'cat1' },
-      { amount: 1500, transactionType: 'expense', transactionDate: new Date('2024-01-20'), isDuplicate: false, category: { name: 'Rent' }, categoryId: 'cat2' },
+      {
+        amount: 3000,
+        transactionType: 'expense',
+        transactionDate: new Date('2024-01-15'),
+        isDuplicate: false,
+        category: { name: 'Marketing' },
+        categoryId: 'cat1',
+      },
+      {
+        amount: 1500,
+        transactionType: 'expense',
+        transactionDate: new Date('2024-01-20'),
+        isDuplicate: false,
+        category: { name: 'Rent' },
+        categoryId: 'cat2',
+      },
     ]);
     const result = await service.generateFromTemplate('user1', {
       templateId: 'expense-by-category',

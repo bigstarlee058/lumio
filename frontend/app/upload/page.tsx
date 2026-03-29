@@ -1,6 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
@@ -9,7 +10,6 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   Container,
   FormControl,
   FormControlLabel,
@@ -300,7 +300,7 @@ export default function UploadPage() {
           fullWidth
           onClick={handleUpload}
           disabled={uploading || files.length === 0}
-          startIcon={uploading ? <CircularProgress size={20} /> : <CloudUpload />}
+          startIcon={uploading ? <Spinner className="h-5 w-5" /> : <CloudUpload />}
           sx={{ mt: 2 }}
           data-tour-id="upload-button"
         >

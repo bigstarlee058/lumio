@@ -156,7 +156,7 @@ export class NotificationsService {
 
   async findByRecipient(
     recipientId: string,
-    workspaceId?: string,
+    workspaceId: string,
     limit = 30,
     offset = 0,
   ): Promise<{ items: Notification[]; total: number; limit: number; offset: number }> {
@@ -170,27 +170,19 @@ export class NotificationsService {
       .take(normalizedLimit)
       .skip(normalizedOffset);
 
-    if (workspaceId) {
-      qb.andWhere('(notification.workspaceId = :workspaceId OR notification.workspaceId IS NULL)', {
-        workspaceId,
-      });
-    }
+    qb.andWhere('notification.workspaceId = :workspaceId', { workspaceId });
 
     const [items, total] = await qb.getManyAndCount();
     return { items, total, limit: normalizedLimit, offset: normalizedOffset };
   }
 
-  async getUnreadCount(recipientId: string, workspaceId?: string): Promise<number> {
+  async getUnreadCount(recipientId: string, workspaceId: string): Promise<number> {
     const qb = this.notificationRepository
       .createQueryBuilder('notification')
       .where('notification.recipientId = :recipientId', { recipientId })
       .andWhere('notification.isRead = false');
 
-    if (workspaceId) {
-      qb.andWhere('(notification.workspaceId = :workspaceId OR notification.workspaceId IS NULL)', {
-        workspaceId,
-      });
-    }
+    qb.andWhere('notification.workspaceId = :workspaceId', { workspaceId });
 
     return qb.getCount();
   }
@@ -214,7 +206,7 @@ export class NotificationsService {
     return result.affected ?? 0;
   }
 
-  async markAllAsRead(recipientId: string, workspaceId?: string): Promise<number> {
+  async markAllAsRead(recipientId: string, workspaceId: string): Promise<number> {
     const qb = this.notificationRepository
       .createQueryBuilder()
       .update(Notification)
@@ -222,11 +214,7 @@ export class NotificationsService {
       .where('recipient_id = :recipientId', { recipientId })
       .andWhere('is_read = false');
 
-    if (workspaceId) {
-      qb.andWhere('(workspace_id = :workspaceId OR workspace_id IS NULL)', {
-        workspaceId,
-      });
-    }
+    qb.andWhere('workspace_id = :workspaceId', { workspaceId });
 
     const result = await qb.execute();
     return result.affected ?? 0;

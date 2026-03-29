@@ -1,3 +1,4 @@
+import * as fs from 'node:fs';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -108,7 +109,7 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'Receipt not found' });
   });
 
-  it('returns 404 from file endpoint when no PDF path exists', async () => {
+  it('returns 503 from file endpoint when attachment path is unavailable', async () => {
     receiptRepository.findOne.mockResolvedValue({
       id: 'receipt-1',
       userId: 'user-123',
@@ -118,7 +119,78 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
 
     await (controller as any).getReceiptFile(mockUser as User, 'receipt-1', res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ error: 'No PDF attachment found' });
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: 'RECEIPT_FILE_UNAVAILABLE',
+        message: 'Failed to load receipt file',
+      },
+    });
+  });
+
+  it('serves image attachments from file endpoint for scanned receipts', async () => {
+    receiptRepository.findOne.mockResolvedValue({
+      id: 'receipt-image-1',
+      userId: 'user-123',
+      attachmentPaths: ['/tmp/receipt.jpg'],
+      metadata: {
+        attachments: [
+          {
+            filename: 'receipt.jpg',
+            mimeType: 'image/jpeg',
+            size: 5,
+            id: 'att-1',
+          },
+        ],
+      },
+    } as Receipt);
+    const readFileSpy = jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('image'));
+    const existsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+    const res = createMockResponse();
+
+    await (controller as any).getReceiptFile(mockUser as User, 'receipt-image-1', res);
+
+    expect(res.status).not.toHaveBeenCalledWith(404);
+    expect(res.json).not.toHaveBeenCalled();
+    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'image/jpeg');
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Content-Disposition',
+      'inline; filename="receipt.jpg"',
+    );
+    expect(res.send).toHaveBeenCalledWith(Buffer.from('image'));
+
+    readFileSpy.mockRestore();
+    existsSpy.mockRestore();
+  });
+
+  it('serves image attachments from thumbnail endpoint for scanned receipts', async () => {
+    receiptRepository.findOne.mockResolvedValue({
+      id: 'receipt-thumb-1',
+      userId: 'user-123',
+      attachmentPaths: ['/tmp/receipt-thumb.jpg'],
+      metadata: {
+        attachments: [
+          {
+            filename: 'receipt-thumb.jpg',
+            mimeType: 'image/jpeg',
+            size: 5,
+            id: 'att-thumb-1',
+          },
+        ],
+      },
+    } as Receipt);
+    const readFileSpy = jest
+      .spyOn(fs.promises, 'readFile')
+      .mockResolvedValue(Buffer.from('thumbnail-image'));
+    const existsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
+    const res = createMockResponse();
+
+    await (controller as any).getReceiptThumbnail(mockUser as User, 'receipt-thumb-1', '240', res);
+
+    expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'image/jpeg');
+    expect(res.send).toHaveBeenCalledWith(Buffer.from('thumbnail-image'));
+
+    readFileSpy.mockRestore();
+    existsSpy.mockRestore();
   });
 });

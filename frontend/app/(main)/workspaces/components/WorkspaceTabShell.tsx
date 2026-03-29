@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import type { WorkspaceTabId } from '@/app/lib/workspace-tabs';
 import { useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ export default function WorkspaceTabShell({ activeItem, children }: Props) {
   if (loading || !currentWorkspace) {
     return (
       <div className="min-h-[calc(100vh-var(--global-nav-height,0px))] flex items-center justify-center">
-        <LoadingAnimation size="lg" />
+        <Spinner className="h-20 w-20 text-primary" />
       </div>
     );
   }

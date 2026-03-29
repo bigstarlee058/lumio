@@ -14,7 +14,7 @@ import type { CreateDataEntryDto } from './dto/create-data-entry.dto';
 import type { UpdateDataEntryCustomFieldDto } from './dto/update-data-entry-custom-field.dto';
 
 interface ListParams {
-  userId: string;
+  workspaceId: string;
   type?: DataEntryType;
   customTabId?: string;
   limit?: number;
@@ -41,14 +41,7 @@ export class DataEntryService {
     private readonly workspaceMemberRepository: Repository<WorkspaceMember>,
   ) {}
 
-  private async ensureCanEditDataEntry(userId: string): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-    const workspaceId = user?.workspaceId ?? null;
-    if (!workspaceId) return;
-
+  private async ensureCanEditDataEntry(workspaceId: string, userId: string): Promise<void> {
     const membership = await this.workspaceMemberRepository.findOne({
       where: { workspaceId, userId },
       select: ['role', 'permissions'],
@@ -61,8 +54,8 @@ export class DataEntryService {
     }
   }
 
-  async create(userId: string, dto: CreateDataEntryDto): Promise<DataEntry> {
-    await this.ensureCanEditDataEntry(userId);
+  async create(workspaceId: string, userId: string, dto: CreateDataEntryDto): Promise<DataEntry> {
+    await this.ensureCanEditDataEntry(workspaceId, userId);
     const customFieldName = dto.customFieldName?.trim() || null;
     const customFieldValue = dto.customFieldValue?.trim() || null;
     const customFieldIconRaw = dto.customFieldIcon?.trim() || null;
@@ -74,7 +67,7 @@ export class DataEntryService {
     let customTabId: string | null = null;
     if (dto.customTabId) {
       const customTab = await this.dataEntryCustomFieldRepository.findOne({
-        where: { id: dto.customTabId, userId },
+        where: { id: dto.customTabId, workspaceId },
       });
       if (!customTab) {
         throw new BadRequestException('Пользовательская вкладка не найдена');
@@ -84,6 +77,7 @@ export class DataEntryService {
 
     const entry = this.dataEntryRepository.create({
       userId,
+      workspaceId,
       type: dto.type,
       date: dto.date,
       amount: dto.amount,
@@ -106,7 +100,7 @@ export class DataEntryService {
 
     const qb = this.dataEntryRepository
       .createQueryBuilder('e')
-      .where('"e"."user_id" = :userId', { userId: params.userId });
+      .where('"e"."workspace_id" = :workspaceId', { workspaceId: params.workspaceId });
 
     if (params.customTabId) {
       qb.andWhere('"e"."custom_tab_id" = :customTabId', { customTabId: params.customTabId });
@@ -136,9 +130,9 @@ export class DataEntryService {
     return { items, total };
   }
 
-  async remove(userId: string, id: string): Promise<void> {
-    await this.ensureCanEditDataEntry(userId);
-    const entry = await this.dataEntryRepository.findOne({ where: { id, userId } });
+  async remove(workspaceId: string, userId: string, id: string): Promise<void> {
+    await this.ensureCanEditDataEntry(workspaceId, userId);
+    const entry = await this.dataEntryRepository.findOne({ where: { id, workspaceId } });
     if (!entry) {
       throw new NotFoundException('Запись не найдена');
     }
@@ -146,12 +140,16 @@ export class DataEntryService {
   }
 
   async listCustomFields(
-    userId: string,
+    workspaceId: string,
   ): Promise<Array<DataEntryCustomField & { entriesCount: number }>> {
     const rows = await this.dataEntryCustomFieldRepository
       .createQueryBuilder('f')
-      .leftJoin(DataEntry, 'e', '"e"."custom_tab_id" = "f"."id" AND "e"."user_id" = "f"."user_id"')
-      .where('"f"."user_id" = :userId', { userId })
+      .leftJoin(
+        DataEntry,
+        'e',
+        '"e"."custom_tab_id" = "f"."id" AND "e"."workspace_id" = "f"."workspace_id"',
+      )
+      .where('"f"."workspace_id" = :workspaceId', { workspaceId })
       .select(['f.id AS id', 'f.name AS name', 'f.icon AS icon'])
       .addSelect('COUNT("e"."id")', 'entriesCount')
       .groupBy('"f"."id"')
@@ -161,7 +159,7 @@ export class DataEntryService {
     return rows.map(row => ({
       ...(this.dataEntryCustomFieldRepository.create({
         id: row.id,
-        userId,
+        workspaceId,
         name: row.name,
         icon: row.icon,
       }) as any),
@@ -178,8 +176,8 @@ export class DataEntryService {
     return Array.isArray(hidden) ? (hidden as DataEntryType[]) : [];
   }
 
-  async removeBaseTab(userId: string, type: DataEntryType): Promise<void> {
-    await this.ensureCanEditDataEntry(userId);
+  async removeBaseTab(workspaceId: string, userId: string, type: DataEntryType): Promise<void> {
+    await this.ensureCanEditDataEntry(workspaceId, userId);
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -196,14 +194,15 @@ export class DataEntryService {
       await this.userRepository.save(user);
     }
 
-    await this.dataEntryRepository.delete({ userId, type, customTabId: IsNull() });
+    await this.dataEntryRepository.delete({ workspaceId, type, customTabId: IsNull() });
   }
 
   async createCustomField(
+    workspaceId: string,
     userId: string,
     dto: CreateDataEntryCustomFieldDto,
   ): Promise<DataEntryCustomField> {
-    await this.ensureCanEditDataEntry(userId);
+    await this.ensureCanEditDataEntry(workspaceId, userId);
     const name = dto.name.trim();
     if (!name.length) {
       throw new BadRequestException('Укажите название колонки');
@@ -213,6 +212,7 @@ export class DataEntryService {
       return await this.dataEntryCustomFieldRepository.save(
         this.dataEntryCustomFieldRepository.create({
           userId,
+          workspaceId,
           name,
           icon,
         }),
@@ -229,12 +229,13 @@ export class DataEntryService {
   }
 
   async updateCustomField(
+    workspaceId: string,
     userId: string,
     id: string,
     dto: UpdateDataEntryCustomFieldDto,
   ): Promise<DataEntryCustomField> {
-    await this.ensureCanEditDataEntry(userId);
-    const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, userId } });
+    await this.ensureCanEditDataEntry(workspaceId, userId);
+    const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, workspaceId } });
     if (!item) throw new NotFoundException('Колонка не найдена');
     if (dto.name !== undefined) {
       const name = dto.name.trim();
@@ -257,11 +258,11 @@ export class DataEntryService {
     }
   }
 
-  async removeCustomField(userId: string, id: string): Promise<void> {
-    await this.ensureCanEditDataEntry(userId);
-    const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, userId } });
+  async removeCustomField(workspaceId: string, userId: string, id: string): Promise<void> {
+    await this.ensureCanEditDataEntry(workspaceId, userId);
+    const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, workspaceId } });
     if (!item) throw new NotFoundException('Колонка не найдена');
-    await this.dataEntryRepository.delete({ userId, customTabId: id });
+    await this.dataEntryRepository.delete({ workspaceId, customTabId: id });
     await this.dataEntryCustomFieldRepository.delete(id);
   }
 }

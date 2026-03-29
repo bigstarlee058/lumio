@@ -394,6 +394,7 @@ export class CustomTablesService {
 
     const table = this.customTableRepository.create({
       userId,
+      workspaceId,
       name: dto.name,
       description: dto.description ?? null,
       source: CustomTableSource.MANUAL,
@@ -624,6 +625,7 @@ export class CustomTablesService {
       table = await this.customTableRepository.save(
         this.customTableRepository.create({
           userId,
+          workspaceId,
           name: tableName,
           description,
           source: CustomTableSource.MANUAL,
@@ -806,6 +808,7 @@ export class CustomTablesService {
       table = await this.customTableRepository.save(
         this.customTableRepository.create({
           userId,
+          workspaceId,
           name: tableName,
           description,
           source: CustomTableSource.MANUAL,
@@ -1201,6 +1204,7 @@ export class CustomTablesService {
       table = await this.customTableRepository.save(
         this.customTableRepository.create({
           userId,
+          workspaceId,
           name: tableName,
           description,
           source: CustomTableSource.MANUAL,

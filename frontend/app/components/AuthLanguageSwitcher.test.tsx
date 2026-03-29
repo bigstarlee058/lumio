@@ -1,0 +1,99 @@
+// @vitest-environment jsdom
+import React from 'react';
+import { act } from 'react';
+import { createRoot } from 'react-dom/client';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuthLanguageSwitcher } from './AuthLanguageSwitcher';
+
+const localeMocks = vi.hoisted(() => ({
+  setLocale: vi.fn(),
+}));
+
+const toastMocks = vi.hoisted(() => ({
+  success: vi.fn(),
+}));
+
+vi.mock('@/app/i18n', () => ({
+  useLocale: () => ({
+    locale: 'en',
+    setLocale: localeMocks.setLocale,
+    availableLocales: ['ru', 'en', 'kk'],
+  }),
+  useIntlayer: () => ({
+    languages: {
+      ru: { value: 'Русский' },
+      en: { value: 'English' },
+      kk: { value: 'Қазақша' },
+    },
+    languageModal: {
+      title: 'Choose language',
+      defaultLanguageNote: { value: 'Default' },
+      savedToastPrefix: { value: 'Saved' },
+    },
+  }),
+}));
+
+vi.mock('react-hot-toast', () => ({
+  default: {
+    success: toastMocks.success,
+  },
+}));
+
+describe('AuthLanguageSwitcher', () => {
+  let container: HTMLDivElement;
+  let root: ReturnType<typeof createRoot>;
+
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation(() => ({
+        matches: false,
+        media: '',
+        onchange: null,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  });
+
+  afterEach(() => {
+    act(() => {
+      root.unmount();
+    });
+    container.remove();
+    localeMocks.setLocale.mockReset();
+    toastMocks.success.mockReset();
+  });
+
+  it('uses theme-aware selected row styles in the language drawer', async () => {
+    await act(async () => {
+      root.render(<AuthLanguageSwitcher />);
+      await Promise.resolve();
+    });
+
+    const trigger = container.querySelector('button[aria-label="English"]');
+    expect(trigger).toBeTruthy();
+
+    await act(async () => {
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await Promise.resolve();
+    });
+
+    const selectedLanguage = Array.from(document.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('English'),
+    );
+
+    expect(selectedLanguage).toBeTruthy();
+    expect(selectedLanguage?.className).toContain('bg-muted');
+    expect(selectedLanguage?.className).not.toContain('bg-[#ebe8e2]');
+  });
+});

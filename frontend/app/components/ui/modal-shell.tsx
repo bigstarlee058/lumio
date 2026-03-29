@@ -2,6 +2,7 @@
 
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { cn } from '@/app/lib/utils';
+import { Spinner } from '@/app/components/ui/spinner';
 import { X } from 'lucide-react';
 import * as React from 'react';
 import { useCallback, useEffect } from 'react';
@@ -238,7 +239,7 @@ export function ModalFooter({
         >
           {isConfirmLoading ? (
             <span className="flex items-center gap-2">
-              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+              <Spinner className="h-4 w-4" />
               {confirmText}
             </span>
           ) : (

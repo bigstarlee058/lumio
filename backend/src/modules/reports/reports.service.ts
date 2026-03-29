@@ -309,11 +309,11 @@ export class ReportsService {
   }
 
   async getCustomTablesSummary(
-    userId: string,
+    workspaceId: string,
     dto: CustomTablesSummaryDto,
   ): Promise<CustomTablesSummaryResponse> {
-    const version = await this.getReportsVersion(userId);
-    const cacheKey = `reports:custom-tables:${userId}:${version}:${JSON.stringify(dto)}`;
+    const version = await this.getReportsVersion(workspaceId);
+    const cacheKey = `reports:custom-tables:${workspaceId}:${version}:${JSON.stringify(dto)}`;
     const cached = await this.cacheManager.get<CustomTablesSummaryResponse>(cacheKey);
     if (cached) return cached;
 
@@ -329,7 +329,7 @@ export class ReportsService {
 
     const tables = await this.customTableRepository.find({
       where: {
-        userId,
+        workspaceId,
         ...(requestedIds.length ? { id: In(requestedIds) } : {}),
       },
       relations: { category: true },
@@ -507,13 +507,13 @@ export class ReportsService {
 
   /**
    */
-  async generateDailyReport(userId: string, date: string): Promise<DailyReport> {
-    const version = await this.getReportsVersion(userId);
-    const cacheKey = `reports:daily:${userId}:${version}:${date || 'latest'}`;
+  async generateDailyReport(workspaceId: string, date: string): Promise<DailyReport> {
+    const version = await this.getReportsVersion(workspaceId);
+    const cacheKey = `reports:daily:${workspaceId}:${version}:${date || 'latest'}`;
     const cached = await this.cacheManager.get<DailyReport>(cacheKey);
     if (cached) return cached;
 
-    const resolvedDate = date || (await this.getLatestTransactionDate(userId));
+    const resolvedDate = date || (await this.getLatestTransactionDate(workspaceId));
     const reportDate = resolvedDate ? new Date(resolvedDate) : new Date();
     const startOfDay = new Date(reportDate);
     startOfDay.setHours(0, 0, 0, 0);
@@ -523,9 +523,8 @@ export class ReportsService {
     // Get income transactions
     const incomeTransactions = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
       .leftJoinAndSelect('transaction.category', 'category')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionType = :type', { type: TransactionType.INCOME })
       .andWhere('transaction.transactionDate >= :start', { start: startOfDay })
       .andWhere('transaction.transactionDate <= :end', { end: endOfDay })
@@ -534,9 +533,8 @@ export class ReportsService {
     // Get expense transactions
     const expenseTransactions = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
       .leftJoinAndSelect('transaction.category', 'category')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionType = :type', { type: TransactionType.EXPENSE })
       .andWhere('transaction.transactionDate >= :start', { start: startOfDay })
       .andWhere('transaction.transactionDate <= :end', { end: endOfDay })
@@ -602,7 +600,7 @@ export class ReportsService {
     };
 
     // Log to audit
-    await this.logReportGeneration(userId, 'daily', date);
+    await this.logReportGeneration(workspaceId, 'daily', date);
 
     return report;
   }
@@ -610,9 +608,13 @@ export class ReportsService {
   /**
    * Generate monthly report
    */
-  async generateMonthlyReport(userId: string, year: number, month: number): Promise<MonthlyReport> {
-    const version = await this.getReportsVersion(userId);
-    const cacheKey = `reports:monthly:${userId}:${version}:${year}:${month}`;
+  async generateMonthlyReport(
+    workspaceId: string,
+    year: number,
+    month: number,
+  ): Promise<MonthlyReport> {
+    const version = await this.getReportsVersion(workspaceId);
+    const cacheKey = `reports:monthly:${workspaceId}:${version}:${year}:${month}`;
     const cached = await this.cacheManager.get<MonthlyReport>(cacheKey);
     if (cached) return cached;
 
@@ -622,11 +624,10 @@ export class ReportsService {
     // Get all transactions for the month
     const transactions = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
       .leftJoinAndSelect('transaction.category', 'category')
       .leftJoinAndSelect('transaction.branch', 'branch')
       .leftJoinAndSelect('transaction.wallet', 'wallet')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :start', { start: startDate })
       .andWhere('transaction.transactionDate <= :end', { end: endDate })
       .getMany();
@@ -701,8 +702,7 @@ export class ReportsService {
 
     const previousTransactions = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :start', { start: previousStartDate })
       .andWhere('transaction.transactionDate <= :end', { end: previousEndDate })
       .getMany();
@@ -764,7 +764,7 @@ export class ReportsService {
 
     // Log to audit
     await this.logReportGeneration(
-      userId,
+      workspaceId,
       'monthly',
       `${year}-${month.toString().padStart(2, '0')}`,
     );
@@ -776,9 +776,9 @@ export class ReportsService {
    * Returns latest transaction date for user (YYYY-MM-DD) and month/year pair
    */
   async getLatestTransactionPeriod(
-    userId: string,
+    workspaceId: string,
   ): Promise<{ date: string | null; year: number | null; month: number | null }> {
-    const latest = await this.getLatestTransactionDate(userId);
+    const latest = await this.getLatestTransactionDate(workspaceId);
     if (!latest) {
       return { date: null, year: null, month: null };
     }
@@ -793,11 +793,10 @@ export class ReportsService {
   /**
    * Latest transaction date in ISO (YYYY-MM-DD) or null
    */
-  async getLatestTransactionDate(userId: string): Promise<string | null> {
+  async getLatestTransactionDate(workspaceId: string): Promise<string | null> {
     const latest = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .orderBy('transaction.transactionDate', 'DESC')
       .select('transaction.transactionDate', 'transactionDate')
       .getRawOne<{ transactionDate: Date }>();
@@ -811,18 +810,17 @@ export class ReportsService {
   /**
    * Generate custom report
    */
-  async generateCustomReport(userId: string, dto: CustomReportDto): Promise<CustomReport> {
+  async generateCustomReport(workspaceId: string, dto: CustomReportDto): Promise<CustomReport> {
     const dateFrom = new Date(dto.dateFrom);
     const dateTo = new Date(dto.dateTo);
 
     // Build query
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
       .leftJoinAndSelect('transaction.category', 'category')
       .leftJoinAndSelect('transaction.branch', 'branch')
       .leftJoinAndSelect('transaction.wallet', 'wallet')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :dateFrom', { dateFrom })
       .andWhere('transaction.transactionDate <= :dateTo', { dateTo });
 
@@ -926,7 +924,7 @@ export class ReportsService {
     };
 
     // Log to audit
-    await this.logReportGeneration(userId, 'custom', `${dto.dateFrom}_${dto.dateTo}`);
+    await this.logReportGeneration(workspaceId, 'custom', `${dto.dateFrom}_${dto.dateTo}`);
 
     return report;
   }
@@ -935,7 +933,7 @@ export class ReportsService {
    * Export report to Excel or CSV
    */
   async exportReport(
-    userId: string,
+    workspaceId: string,
     dto: ExportReportDto,
     reportData: DailyReport | MonthlyReport | CustomReport,
   ): Promise<{ filePath: string; fileName: string }> {
@@ -1049,22 +1047,17 @@ export class ReportsService {
    * Log report generation to audit log
    */
   private async logReportGeneration(
-    userId: string,
+    workspaceId: string,
     reportType: string,
     reportDate: string,
   ): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-
     // Audit: record report exports for traceability.
     await this.auditService.createEvent({
-      workspaceId: user?.workspaceId ?? null,
-      actorType: user ? ActorType.USER : ActorType.SYSTEM,
-      actorId: user?.id ?? null,
+      workspaceId,
+      actorType: ActorType.SYSTEM,
+      actorId: null,
       entityType: EntityType.WORKSPACE,
-      entityId: user?.workspaceId ?? userId,
+      entityId: workspaceId,
       action: AuditAction.EXPORT,
       meta: {
         reportType,
@@ -1073,7 +1066,7 @@ export class ReportsService {
     });
   }
 
-  async getStatementsSummary(userId: string, days = 30): Promise<StatementsSummaryResponse> {
+  async getStatementsSummary(workspaceId: string, days = 30): Promise<StatementsSummaryResponse> {
     const safeDays = Number.isFinite(days) && days > 0 ? Math.min(days, 3650) : 30;
     const since = new Date();
     since.setDate(since.getDate() - safeDays);
@@ -1081,9 +1074,8 @@ export class ReportsService {
 
     const transactions = await this.transactionRepository
       .createQueryBuilder('transaction')
-      .innerJoin('transaction.statement', 'statement')
       .leftJoinAndSelect('transaction.category', 'category')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :since', { since })
       .orderBy('transaction.updatedAt', 'DESC')
       .take(2000)
@@ -1156,7 +1148,7 @@ export class ReportsService {
   }
 
   async getTopCategoriesReport(
-    userId: string,
+    workspaceId: string,
     query: TopCategoriesQueryDto,
   ): Promise<TopCategoriesReport> {
     const safeLimit = Number.isFinite(query.limit)
@@ -1172,7 +1164,7 @@ export class ReportsService {
       .createQueryBuilder('transaction')
       .leftJoinAndSelect('transaction.category', 'category')
       .leftJoinAndSelect('transaction.statement', 'statement')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :from', { from })
       .andWhere('transaction.transactionDate <= :to', { to });
 
@@ -1406,7 +1398,7 @@ export class ReportsService {
   }
 
   async getSpendOverTimeReport(
-    userId: string,
+    workspaceId: string,
     query: SpendOverTimeQueryDto,
   ): Promise<{
     groupBy: string;
@@ -1442,7 +1434,7 @@ export class ReportsService {
       .createQueryBuilder('transaction')
       .innerJoin('transaction.statement', 'statement')
       .leftJoin('transaction.category', 'category')
-      .where('statement.userId = :userId', { userId })
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
       .andWhere('transaction.transactionDate >= :from', { from })
       .andWhere('transaction.transactionDate <= :to', { to });
 
@@ -1782,8 +1774,7 @@ export class ReportsService {
       fileName = `pnl-${dto.dateFrom}-${dto.dateTo}.xlsx`;
       filePath = path.join(os.tmpdir(), fileName);
       XLSX.writeFile(wb, filePath);
-      contentType =
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+      contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     } else {
       // csv
       const csvRows: (string | number)[][] = [
@@ -2009,7 +2000,12 @@ export class ReportsService {
       // csv
       const csvRows: (string | number)[][] = [
         ['Category', 'Total Amount', 'Transaction Count', '% of Total'],
-        ...categoryRows.map(r => [r.categoryName, r.total, r.count, Number(r.percentage.toFixed(2))]),
+        ...categoryRows.map(r => [
+          r.categoryName,
+          r.total,
+          r.count,
+          Number(r.percentage.toFixed(2)),
+        ]),
         ['TOTAL', totalExpenses, categoryRows.reduce((s, r) => s + r.count, 0), 100],
       ];
       const csvContent = csvRows.map(r => r.join(',')).join('\n');

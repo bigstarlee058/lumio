@@ -7,7 +7,7 @@ import { OperationalAnalyzer } from './analyzers/operational.analyzer';
 
 type ListInsightsParams = {
   userId: string;
-  workspaceId?: string;
+  workspaceId: string;
   category?: string;
   limit?: number;
   offset?: number;
@@ -21,7 +21,7 @@ export class InsightsService {
     private readonly operationalAnalyzer: OperationalAnalyzer,
   ) {}
 
-  async refreshOperational(userId: string, workspaceId: string | null = null) {
+  async refreshOperational(userId: string, workspaceId: string) {
     const candidates = await this.operationalAnalyzer.analyze({
       userId,
       workspaceId,
@@ -62,11 +62,9 @@ export class InsightsService {
       .take(normalizedLimit)
       .skip(normalizedOffset);
 
-    if (params.workspaceId) {
-      queryBuilder.andWhere('(insight.workspaceId = :workspaceId OR insight.workspaceId IS NULL)', {
-        workspaceId: params.workspaceId,
-      });
-    }
+    queryBuilder.andWhere('insight.workspaceId = :workspaceId', {
+      workspaceId: params.workspaceId,
+    });
 
     if (params.category) {
       queryBuilder.andWhere('insight.category = :category', {
@@ -84,7 +82,7 @@ export class InsightsService {
     };
   }
 
-  async getSummary(userId: string, workspaceId?: string) {
+  async getSummary(userId: string, workspaceId: string) {
     const now = new Date();
     const queryBuilder = this.insightRepository
       .createQueryBuilder('insight')
@@ -95,11 +93,7 @@ export class InsightsService {
       .andWhere('(insight.expiresAt IS NULL OR insight.expiresAt > :now)', { now })
       .groupBy('insight.category');
 
-    if (workspaceId) {
-      queryBuilder.andWhere('(insight.workspaceId = :workspaceId OR insight.workspaceId IS NULL)', {
-        workspaceId,
-      });
-    }
+    queryBuilder.andWhere('insight.workspaceId = :workspaceId', { workspaceId });
 
     const rows = await queryBuilder.getRawMany<{ category: string; count: string }>();
     const byCategory = rows.reduce<Record<string, number>>((acc, row) => {
@@ -114,11 +108,12 @@ export class InsightsService {
     };
   }
 
-  async dismiss(userId: string, id: string) {
+  async dismiss(userId: string, workspaceId: string, id: string) {
     const result = await this.insightRepository.update(
       {
         id,
         userId,
+        workspaceId,
         isDismissed: false,
       },
       {
@@ -131,12 +126,13 @@ export class InsightsService {
     };
   }
 
-  async dismissAll(userId: string, category?: string) {
+  async dismissAll(userId: string, workspaceId: string, category?: string) {
     const updateQuery = this.insightRepository
       .createQueryBuilder()
       .update(Insight)
       .set({ isDismissed: true })
       .where('user_id = :userId', { userId })
+      .andWhere('workspace_id = :workspaceId', { workspaceId })
       .andWhere('is_dismissed = false');
 
     if (category) {

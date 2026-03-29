@@ -1,12 +1,13 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
 import { Icon } from '@iconify/react';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -285,7 +286,7 @@ export default function GoogleSheetsImportPage() {
   if (authLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
-        <Loader2 className="h-6 w-6 animate-spin" />
+        <Spinner className="h-6 w-6" />
       </div>
     );
   }
@@ -435,7 +436,7 @@ export default function GoogleSheetsImportPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {(loadingPreview || loadingConnections) && (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="h-4 w-4" />
               )}
               {loadingConnections ? t.source.previewButtonLoading : t.source.previewButton}
             </button>
@@ -527,7 +528,7 @@ export default function GoogleSheetsImportPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {committing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Spinner className="h-4 w-4" />
               ) : (
                 <Sparkles className="h-4 w-4" />
               )}

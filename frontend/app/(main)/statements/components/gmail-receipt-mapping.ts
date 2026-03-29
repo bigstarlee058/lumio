@@ -2,6 +2,8 @@ import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 
 export interface GmailReceipt {
   id: string;
+  source?: string;
+  statementId?: string | null;
   subject: string;
   sender: string;
   receivedAt: string;
@@ -24,7 +26,9 @@ interface GmailMappedParsedData {
 
 export interface GmailMappedStatement {
   id: string;
-  source: 'gmail';
+  statementId?: string | null;
+  source: 'gmail' | 'scan';
+  receiptSource?: string;
   fileName: string;
   subject: string;
   sender: string;
@@ -38,8 +42,8 @@ export interface GmailMappedStatement {
   processedAt: undefined;
   statementDateFrom: string;
   statementDateTo: null;
-  bankName: 'gmail';
-  fileType: 'gmail';
+  bankName: string;
+  fileType: string;
   currency: string;
   user: null;
   errorMessage: string | null;
@@ -67,9 +71,14 @@ export const mapGmailReceiptToStatement = (receipt: GmailReceipt): GmailMappedSt
     return null;
   }
 
+  const receiptSource = receipt.source || 'gmail';
+  const isLocalReceipt = receiptSource !== 'gmail';
+
   return {
     id: receipt.id,
-    source: 'gmail',
+    statementId: receipt.statementId ?? null,
+    source: isLocalReceipt ? 'scan' : 'gmail',
+    receiptSource,
     fileName: resolveGmailMerchantLabel({
       vendor: receipt.parsedData?.vendor,
       sender: receipt.sender,
@@ -88,8 +97,8 @@ export const mapGmailReceiptToStatement = (receipt: GmailReceipt): GmailMappedSt
     processedAt: undefined,
     statementDateFrom: receipt.parsedData?.date || receipt.receivedAt,
     statementDateTo: null,
-    bankName: 'gmail',
-    fileType: 'gmail',
+    bankName: isLocalReceipt ? 'receipt' : 'gmail',
+    fileType: isLocalReceipt ? 'receipt' : 'gmail',
     currency: receipt.parsedData?.currency || 'KZT',
     user: null,
     errorMessage: receipt.status === 'failed' ? 'Failed to parse' : null,

@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/app/components/ui/badge';
+import { Spinner } from '@/app/components/ui/spinner';
 import apiClient from '@/app/lib/api';
 import { Download, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -76,7 +77,7 @@ export function ReportHistory() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <Spinner className="h-8 w-8 text-primary" />
       </div>
     );
   }

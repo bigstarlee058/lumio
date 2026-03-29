@@ -23,7 +23,7 @@ import {
   resolveSourceChannel,
   sortAggregateRows,
 } from '@/app/(main)/statements/components/top-merchants.utils';
-import LoadingAnimation from '@/app/components/LoadingAnimation';
+import { Spinner } from '@/app/components/ui/spinner';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -1399,7 +1399,7 @@ export default function TopMerchantsView() {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <LoadingAnimation size="lg" />
+            <Spinner size={80} className="text-primary" />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
           <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center text-sm text-gray-500">

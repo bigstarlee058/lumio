@@ -65,7 +65,7 @@ describe('ReportsService top categories report', () => {
       { createEvent: jest.fn() } as AuditService,
     );
 
-    const result = await service.getTopCategoriesReport('user-1', {
+    const result = await service.getTopCategoriesReport('ws-1', {
       limit: 10,
       type: 'all',
     } as any);
@@ -88,6 +88,9 @@ describe('ReportsService top categories report', () => {
       income: 500,
       expense: 2000,
       transactions: 3,
+    });
+    expect(queryBuilder.where).toHaveBeenCalledWith('transaction.workspaceId = :workspaceId', {
+      workspaceId: 'ws-1',
     });
   });
 });

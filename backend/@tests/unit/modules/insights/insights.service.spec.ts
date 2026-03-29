@@ -12,7 +12,28 @@ function createRepoMock<T>() {
     findOne: jest.fn(),
     create: jest.fn((data: Partial<T>) => data as T),
     save: jest.fn(async (data: Partial<T>) => data as T),
+    createQueryBuilder: jest.fn(),
+    update: jest.fn(async () => ({ affected: 1 })),
   } as any;
+}
+
+function createQueryBuilderMock() {
+  const qb: any = {
+    where: jest.fn(() => qb),
+    andWhere: jest.fn(() => qb),
+    orderBy: jest.fn(() => qb),
+    take: jest.fn(() => qb),
+    skip: jest.fn(() => qb),
+    select: jest.fn(() => qb),
+    addSelect: jest.fn(() => qb),
+    groupBy: jest.fn(() => qb),
+    update: jest.fn(() => qb),
+    set: jest.fn(() => qb),
+    execute: jest.fn(async () => ({ affected: 1 })),
+    getManyAndCount: jest.fn(async () => [[], 0]),
+    getRawMany: jest.fn(async () => []),
+  };
+  return qb;
 }
 
 describe('InsightsService', () => {
@@ -80,5 +101,21 @@ describe('InsightsService', () => {
         message: 'Есть 12 транзакций без категории',
       }),
     );
+  });
+
+  it('requires workspaceId in list and summary filtering', async () => {
+    const listQb = createQueryBuilderMock();
+    const summaryQb = createQueryBuilderMock();
+    insightRepository.createQueryBuilder.mockReturnValueOnce(listQb).mockReturnValueOnce(summaryQb);
+
+    await service.list({ userId: 'user-1', workspaceId: 'workspace-1' });
+    await service.getSummary('user-1', 'workspace-1');
+
+    expect(listQb.andWhere).toHaveBeenCalledWith('insight.workspaceId = :workspaceId', {
+      workspaceId: 'workspace-1',
+    });
+    expect(summaryQb.andWhere).toHaveBeenCalledWith('insight.workspaceId = :workspaceId', {
+      workspaceId: 'workspace-1',
+    });
   });
 });

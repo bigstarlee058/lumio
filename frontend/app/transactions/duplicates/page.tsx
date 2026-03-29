@@ -5,7 +5,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { Spinner } from '@/app/components/ui/spinner';
 import apiClient from '@/app/lib/api';
-import { AlertTriangle, CheckCircle2, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import DuplicateGroupCard from './components/DuplicateGroupCard';
 
@@ -132,7 +132,7 @@ export default function TransactionDuplicatesPage() {
             <Button variant="outline" onClick={handleDetect} disabled={detecting}>
               {detecting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner className="mr-2 h-4 w-4" />
                   Detecting...
                 </>
               ) : (
@@ -197,7 +197,7 @@ export default function TransactionDuplicatesPage() {
               >
                 {marking ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Spinner className="mr-2 h-4 w-4" />
                     Marking...
                   </>
                 ) : (

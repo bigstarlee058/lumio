@@ -15,7 +15,7 @@ import { Toaster } from 'react-hot-toast';
 import { IntlayerProviderContent } from 'react-intlayer';
 import { SidePanelProvider } from './components/side-panel';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { WorkspaceProvider } from './contexts/WorkspaceContext';
+import { WorkspaceProvider, useWorkspace } from './contexts/WorkspaceContext';
 import { useAutoTheme } from './hooks/useAutoTheme';
 import { useHTMLLanguage } from './hooks/useHTMLLanguage';
 import { mantineCssVariablesResolver, mantineTheme } from './mantine-theme';
@@ -52,6 +52,46 @@ function ThemePreferenceSync() {
 
   useAutoTheme(themePreference);
   return null;
+}
+
+function WorkspaceScopedProviders({
+  children,
+  mounted,
+}: {
+  children: React.ReactNode;
+  mounted: boolean;
+}) {
+  const { currentWorkspace } = useWorkspace();
+
+  return (
+    <React.Fragment key={currentWorkspace?.id ?? 'no-workspace'}>
+      <NotificationProvider>
+        <SidePanelProvider
+          defaultWidth="md"
+          defaultPosition="left"
+          defaultCollapsed={false}
+          persistState={true}
+          storageKey="lumio-side-panel"
+        >
+          {mounted ? (
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  fontSize: '14px',
+                  background: 'var(--card-bg)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border-color)',
+                },
+              }}
+            />
+          ) : null}
+          {children}
+        </SidePanelProvider>
+      </NotificationProvider>
+    </React.Fragment>
+  );
 }
 
 export function Providers({
@@ -93,31 +133,7 @@ export function Providers({
         >
           <ThemeProvider theme={muiTheme}>
             <WorkspaceProvider>
-              <NotificationProvider>
-                <SidePanelProvider
-                  defaultWidth="md"
-                  defaultPosition="left"
-                  defaultCollapsed={false}
-                  persistState={true}
-                  storageKey="lumio-side-panel"
-                >
-                  {mounted ? (
-                    <Toaster
-                      position="top-center"
-                      toastOptions={{
-                        duration: 3000,
-                        style: {
-                          fontSize: '14px',
-                          background: 'var(--card-bg)',
-                          color: 'var(--foreground)',
-                          border: '1px solid var(--border-color)',
-                        },
-                      }}
-                    />
-                  ) : null}
-                  {children}
-                </SidePanelProvider>
-              </NotificationProvider>
+              <WorkspaceScopedProviders mounted={mounted}>{children}</WorkspaceScopedProviders>
             </WorkspaceProvider>
           </ThemeProvider>
         </MantineProvider>

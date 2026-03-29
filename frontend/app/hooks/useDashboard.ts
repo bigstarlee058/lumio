@@ -2,6 +2,7 @@
 
 import apiClient from '@/app/lib/api';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useWorkspace } from '../contexts/WorkspaceContext';
 
 export type DashboardRange = '7d' | '30d' | '90d';
 
@@ -109,13 +110,16 @@ export interface DashboardTrends {
 }
 
 export function useDashboardTrends(days = 30) {
+  const { currentWorkspace } = useWorkspace();
   const [data, setData] = useState<DashboardTrends | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const workspaceId = currentWorkspace?.id;
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setData(null);
     try {
       const res = await apiClient.get('/dashboard/trends', { params: { days } });
       setData(res.data?.data || res.data);
@@ -125,7 +129,7 @@ export function useDashboardTrends(days = 30) {
     } finally {
       setLoading(false);
     }
-  }, [days]);
+  }, [days, workspaceId]);
 
   useEffect(() => {
     void load();
@@ -135,18 +139,21 @@ export function useDashboardTrends(days = 30) {
 }
 
 export function useDashboard(controlledRange: DashboardRange = '30d', controlledDate?: string) {
+  const { currentWorkspace } = useWorkspace();
   const [range, setRange] = useState<DashboardRange>(controlledRange);
   const [targetDate, setTargetDate] = useState<string | null>(controlledDate ?? null);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const requestIdRef = useRef(0);
+  const workspaceId = currentWorkspace?.id;
 
   const load = useCallback(
     async (r: DashboardRange = range, date: string | null = targetDate) => {
       const requestId = ++requestIdRef.current;
       setLoading(true);
       setError(null);
+      setData(null);
 
       try {
         const params: Record<string, string> = { range: r };
@@ -174,7 +181,7 @@ export function useDashboard(controlledRange: DashboardRange = '30d', controlled
         }
       }
     },
-    [range, targetDate],
+    [range, targetDate, workspaceId],
   );
 
   useEffect(() => {
@@ -189,19 +196,13 @@ export function useDashboard(controlledRange: DashboardRange = '30d', controlled
     load(range, targetDate);
   }, [load, range, targetDate]);
 
-  const changeRange = useCallback(
-    (newRange: DashboardRange) => {
-      setRange(newRange);
-    },
-    [],
-  );
+  const changeRange = useCallback((newRange: DashboardRange) => {
+    setRange(newRange);
+  }, []);
 
-  const changeTargetDate = useCallback(
-    (newDate: string | null) => {
-      setTargetDate(newDate);
-    },
-    [],
-  );
+  const changeTargetDate = useCallback((newDate: string | null) => {
+    setTargetDate(newDate);
+  }, []);
 
   return {
     data,

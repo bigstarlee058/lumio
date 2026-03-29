@@ -38,7 +38,6 @@ import {
   Box,
   Button,
   Chip,
-  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -67,6 +66,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import { Spinner } from '@/app/components/ui/spinner';
 import {
   type StatementStage,
   type StatementStageAction,
@@ -799,7 +799,7 @@ export default function EditStatementPage() {
   if (loading) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, textAlign: 'center' }}>
-        <CircularProgress />
+        <Spinner size={40} className="text-primary" />
       </Container>
     );
   }
@@ -996,7 +996,7 @@ export default function EditStatementPage() {
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
             <Button
               variant="outlined"
-              startIcon={statementCategorySaving ? <CircularProgress size={18} /> : <Category />}
+              startIcon={statementCategorySaving ? <Spinner size={18} /> : <Category />}
               onClick={() => setStatementCategoryDrawerOpen(true)}
               disabled={statementCategorySaving || optionsLoading}
               title={selectedStatementCategoryName}
@@ -1047,7 +1047,7 @@ export default function EditStatementPage() {
             </Button>
             <Button
               variant="outlined"
-              startIcon={exportingToTable ? <CircularProgress size={18} /> : <TableChart />}
+              startIcon={exportingToTable ? <Spinner size={18} /> : <TableChart />}
               onClick={() => setExportConfirmOpen(true)}
               disabled={exportingToTable || !transactions.length}
               sx={{
@@ -1082,7 +1082,7 @@ export default function EditStatementPage() {
                       variant={isPrimary ? 'contained' : 'outlined'}
                       startIcon={
                         isLoading ? (
-                          <CircularProgress size={18} />
+                          <Spinner size={18} />
                         ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
                           <ArrowBack />
                         ) : (
@@ -1508,7 +1508,7 @@ export default function EditStatementPage() {
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {exportingToTable ? (
-                    <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                    <Spinner className="h-4 w-4 text-white" />
                   ) : null}
                   {t.labels.exportConfirmConfirm.value}
                 </button>
@@ -1589,7 +1589,7 @@ export default function EditStatementPage() {
                 variant="contained"
                 onClick={handleBulkUpdate}
                 disabled={saving}
-                startIcon={saving ? <CircularProgress size={20} /> : <Save />}
+                startIcon={saving ? <Spinner size={20} /> : <Save />}
                 size="small"
                 sx={{
                   textTransform: 'none',
@@ -2003,7 +2003,7 @@ export default function EditStatementPage() {
           </Button>
           <Button
             variant="contained"
-            startIcon={saving ? <CircularProgress size={18} /> : <CheckCircle />}
+            startIcon={saving ? <Spinner size={18} /> : <CheckCircle />}
             onClick={handleApplyBulkCategory}
             disabled={saving || !bulkCategoryId}
             sx={{

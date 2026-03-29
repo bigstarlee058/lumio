@@ -1,0 +1,48 @@
+'use client';
+
+import apiClient from '@/app/lib/api';
+import { useState } from 'react';
+
+export function useReceiptUpload() {
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  const uploadReceipts = async (files: File[], language?: string) => {
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    files.forEach(file => formData.append('files', file));
+
+    if (language && language !== 'auto') {
+      formData.append('language', language);
+    }
+
+    try {
+      const response = await apiClient.post('/receipts/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: event => {
+          const total = event.total ?? 1;
+          setProgress(Math.round((event.loaded * 100) / total));
+        },
+      });
+
+      return response.data;
+    } catch (uploadError: any) {
+      const message = uploadError?.response?.data?.message ?? 'Upload failed';
+      setError(message);
+      throw uploadError;
+    } finally {
+      setUploading(false);
+      setProgress(0);
+    }
+  };
+
+  return {
+    uploadReceipts,
+    uploading,
+    progress,
+    error,
+  };
+}

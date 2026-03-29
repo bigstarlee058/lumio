@@ -86,7 +86,7 @@ export function AuthLanguageSwitcher() {
                 setLanguageModalOpen(false);
                 setLanguageSearch('');
               }}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close language drawer"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -97,18 +97,18 @@ export function AuthLanguageSwitcher() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-white sm:max-w-lg"
+        className="max-w-full border-l-0 bg-card sm:max-w-lg"
       >
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-4 overflow-y-auto pb-4">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={languageSearch}
                 onChange={event => setLanguageSearch(event.target.value)}
                 placeholder="Search"
-                className="w-full rounded-2xl border border-primary bg-white py-3 pl-11 pr-4 text-base text-gray-900 outline-none"
+                className="w-full rounded-2xl border border-primary bg-card py-3 pl-11 pr-4 text-base text-foreground outline-none"
               />
             </div>
 
@@ -123,8 +123,8 @@ export function AuthLanguageSwitcher() {
                       onClick={() => handleLanguageSelect(lang.code)}
                       className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
                         selected
-                          ? 'bg-[#ebe8e2] text-foreground'
-                          : 'text-foreground hover:bg-[#f1efea]'
+                          ? 'bg-muted text-foreground'
+                          : 'text-foreground hover:bg-muted'
                       }`}
                     >
                       <span className="font-medium">{lang.label}</span>
@@ -133,7 +133,7 @@ export function AuthLanguageSwitcher() {
                   );
                 })
               ) : (
-                <p className="rounded-xl bg-white px-4 py-3 text-sm text-gray-500">
+                <p className="rounded-xl bg-card px-4 py-3 text-sm text-muted-foreground">
                   No languages found
                 </p>
               )}

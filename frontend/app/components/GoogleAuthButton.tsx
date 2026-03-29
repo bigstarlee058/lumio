@@ -1,7 +1,8 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
-import { Box, CircularProgress } from '@mui/material';
+import { Spinner } from '@/app/components/ui/spinner';
+import { Box } from '@mui/material';
 import Script from 'next/script';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -147,7 +148,7 @@ export function GoogleAuthButton({
             mt: 1,
           }}
         >
-          <CircularProgress size={16} />
+          <Spinner className="h-4 w-4 text-primary" />
         </Box>
       )}
     </Box>

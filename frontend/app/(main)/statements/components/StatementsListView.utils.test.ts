@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   buildStatementRequestParams,
   deriveVisibleFilterScreens,
+  isReceiptDerivedStatement,
   paginateStatements,
+  resolveStatementViewAction,
   reconcileFiltersWithColumns,
 } from './StatementsListView.utils';
 import { DEFAULT_STATEMENT_FILTERS } from './filters/statement-filters';
@@ -40,6 +42,105 @@ describe('StatementsListView utils', () => {
       has: ['errors'],
       currencies: ['KZT'],
       exported: false,
+    });
+  });
+
+  it('omits ui-only receipt source types from server request params', () => {
+    const result = buildStatementRequestParams({
+      appliedFilters: {
+        ...DEFAULT_STATEMENT_FILTERS,
+        type: 'receipt',
+        statuses: ['processing'],
+      },
+      search: '',
+    });
+
+    expect(result).toEqual({
+      statuses: ['processing'],
+    });
+  });
+
+  it('omits gmail from server request params because gmail receipts are loaded separately', () => {
+    const result = buildStatementRequestParams({
+      appliedFilters: {
+        ...DEFAULT_STATEMENT_FILTERS,
+        type: 'gmail',
+        statuses: ['processing'],
+      },
+      search: '',
+    });
+
+    expect(result).toEqual({
+      statuses: ['processing'],
+    });
+  });
+
+  it('omits ui-only receipt and gmail bank filters from server request params', () => {
+    const result = buildStatementRequestParams({
+      appliedFilters: {
+        ...DEFAULT_STATEMENT_FILTERS,
+        from: ['bank:receipt', 'bank:gmail', 'bank:kaspi', 'user:user-1'],
+        to: ['bank:receipt', 'user:user-2'],
+      },
+      search: '',
+    });
+
+    expect(result).toEqual({
+      from: ['bank:kaspi', 'user:user-1'],
+      to: ['user:user-2'],
+    });
+  });
+
+  it('treats receipt-scan statement rows as derived even when source is missing', () => {
+    expect(
+      isReceiptDerivedStatement({
+        parsingDetails: {
+          detectedBy: 'receipt-scan',
+          importPreview: {
+            source: 'receipt-scan',
+          },
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('does not treat regular statement rows as derived receipt scans', () => {
+    expect(
+      isReceiptDerivedStatement({
+        parsingDetails: {
+          detectedBy: 'bank-statement',
+          importPreview: {
+            source: 'statement-upload',
+          },
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('routes local store receipts to the dedicated receipt details page', () => {
+    expect(
+      resolveStatementViewAction({
+        id: 'receipt-1',
+        statementId: 'statement-1',
+        source: 'scan',
+        status: 'draft',
+      }),
+    ).toEqual({
+      type: 'route',
+      href: '/storage/receipts/receipt-1',
+    });
+  });
+
+  it('keeps gmail receipts routed to gmail receipt details', () => {
+    expect(
+      resolveStatementViewAction({
+        id: 'gmail-1',
+        source: 'gmail',
+        status: 'draft',
+      }),
+    ).toEqual({
+      type: 'route',
+      href: '/storage/gmail-receipts/gmail-1',
     });
   });
 

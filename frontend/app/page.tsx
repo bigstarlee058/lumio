@@ -1,5 +1,6 @@
 'use client';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { Tab, Tabs } from '@mui/material';
 import { RefreshCcw } from 'lucide-react';
@@ -125,7 +126,7 @@ export default function DashboardPage() {
   if (isRedirecting) {
     return (
       <div className="flex min-h-[calc(100vh-var(--global-nav-height,0px))] items-center justify-center bg-background">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-gray-200 border-t-primary" />
+        <Spinner className="h-10 w-10 text-primary" />
       </div>
     );
   }
@@ -179,7 +180,7 @@ export default function DashboardPage() {
         {/* Skeleton loading */}
         {loading && !data ? (
           <div className="px-8 pt-8 flex items-center justify-center min-h-[50vh]">
-            <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+            <Spinner className="h-10 w-10 text-white" />
           </div>
         ) : null}
 

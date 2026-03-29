@@ -2,21 +2,37 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PDFPreviewModal } from './PDFPreviewModal';
 
 vi.mock('@/app/lib/workspace-headers', () => ({
   getWorkspaceHeaders: () => ({ Authorization: 'Bearer test-token' }),
 }));
 
-vi.mock('react-pdf', () => ({
-  pdfjs: {
-    version: '1.0.0',
-    GlobalWorkerOptions: {
-      workerSrc: '',
+vi.mock('@/app/i18n', () => ({
+  useIntlayer: () => ({
+    errors: {
+      authRequired: { value: 'Auth required' },
+      fileLoadError: { value: 'File load error' },
+      fileLoadFailed: { value: 'Failed to load file' },
+      pdfRendererFailed: { value: 'Renderer failed' },
+      downloadFailed: { value: 'Download failed' },
+      downloadAlertFailed: { value: 'Download alert failed' },
+      uploadFailed: { value: 'Upload failed' },
+      parsingFailed: { value: 'Parsing failed' },
+      displayFailed: { value: 'Display failed' },
     },
-  },
-  Document: () => null,
-  Page: () => null,
+    loading: { value: 'Loading' },
+    fileNotAttached: { value: 'Файл не прикреплен' },
+    loadError: { value: 'Ошибка загрузки' },
+    uploadFileHint: { value: 'Загрузите файл, чтобы продолжить' },
+    uploading: { value: 'Загрузка...' },
+    uploadFile: { value: 'Загрузить файл' },
+    close: { value: 'Закрыть' },
+    startParsing: { value: 'Запустить парсинг' },
+    startParsingDescription: { value: 'Начать повторный парсинг файла?' },
+    decline: { value: 'Позже' },
+    startingParsing: { value: 'Запуск...' },
+    startParsingButton: { value: 'Запустить парсинг' },
+  }),
 }));
 
 vi.mock('./ui/modal-shell', () => ({
@@ -27,19 +43,29 @@ vi.mock('./ui/modal-shell', () => ({
 describe('PDFPreviewModal manual attach flow', () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
+  let originalCreateObjectURL: typeof URL.createObjectURL;
+  let originalRevokeObjectURL: typeof URL.revokeObjectURL;
+  let PDFPreviewModal: typeof import('./PDFPreviewModal').PDFPreviewModal;
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
+    originalCreateObjectURL = URL.createObjectURL;
+    originalRevokeObjectURL = URL.revokeObjectURL;
 
     vi.stubGlobal('alert', vi.fn());
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
-    vi.stubGlobal('URL', {
-      ...URL,
-      createObjectURL: vi.fn().mockReturnValue('blob://preview'),
-      revokeObjectURL: vi.fn(),
+    Object.defineProperty(URL, 'createObjectURL', {
+      configurable: true,
+      writable: true,
+      value: vi.fn().mockReturnValue('blob://preview'),
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
     });
   });
 
@@ -48,11 +74,27 @@ describe('PDFPreviewModal manual attach flow', () => {
       root.unmount();
     });
     container.remove();
+    Object.defineProperty(URL, 'createObjectURL', {
+      configurable: true,
+      writable: true,
+      value: originalCreateObjectURL,
+    });
+    Object.defineProperty(URL, 'revokeObjectURL', {
+      configurable: true,
+      writable: true,
+      value: originalRevokeObjectURL,
+    });
     vi.unstubAllGlobals();
   });
 
+  async function loadComponent() {
+    const module = await import('./PDFPreviewModal');
+    PDFPreviewModal = module.PDFPreviewModal;
+  }
+
   it('shows upload CTA in error state for manual statement placeholder', async () => {
     await act(async () => {
+      await loadComponent();
       root.render(
         <PDFPreviewModal
           isOpen
@@ -81,6 +123,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await act(async () => {
+      await loadComponent();
       root.render(
         <PDFPreviewModal
           isOpen
@@ -123,5 +166,114 @@ describe('PDFPreviewModal manual attach flow', () => {
         method: 'POST',
       }),
     );
+  });
+
+  it('loads receipt pdf files from the receipts endpoint', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      blob: async () => new Blob(['%PDF-1.4'], { type: 'application/pdf' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await act(async () => {
+      await loadComponent();
+      root.render(
+        <PDFPreviewModal
+          isOpen
+          onClose={vi.fn()}
+          fileId="receipt-1"
+          fileName="receipt.pdf"
+          source="receipt"
+        />,
+      );
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/receipts/receipt-1/file',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
+  it('renders image preview for receipt images while preserving file endpoint loading', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'image/jpeg' : null),
+      },
+      blob: async () => new Blob(['image-bytes'], { type: 'image/jpeg' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await act(async () => {
+      await loadComponent();
+      root.render(
+        <PDFPreviewModal
+          isOpen
+          onClose={vi.fn()}
+          fileId="receipt-image-1"
+          fileName="receipt.jpg"
+          source="gmail"
+        />,
+      );
+      await Promise.resolve();
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/v1/integrations/gmail/receipts/receipt-image-1/file',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(container.querySelector('img[alt="receipt.jpg"]')).toBeTruthy();
+  });
+
+  it('uses enlarged image preview sizing only for store receipt images', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'image/jpeg' : null),
+      },
+      blob: async () => new Blob(['image-bytes'], { type: 'image/jpeg' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await act(async () => {
+      await loadComponent();
+      root.render(
+        <PDFPreviewModal
+          isOpen
+          onClose={vi.fn()}
+          fileId="receipt-image-2"
+          fileName="store-receipt.jpg"
+          source="receipt"
+        />,
+      );
+      await Promise.resolve();
+    });
+
+    const storeReceiptImage = container.querySelector('img[alt="store-receipt.jpg"]') as HTMLImageElement;
+
+    expect(storeReceiptImage).toBeTruthy();
+    expect(storeReceiptImage.className).toContain('max-h-none');
+    expect(storeReceiptImage.className).toContain('w-[min(92vw,960px)]');
+    expect(storeReceiptImage.className).not.toContain('max-h-[78vh]');
+
+    await act(async () => {
+      root.render(
+        <PDFPreviewModal
+          isOpen
+          onClose={vi.fn()}
+          fileId="receipt-image-3"
+          fileName="gmail-receipt.jpg"
+          source="gmail"
+        />,
+      );
+      await Promise.resolve();
+    });
+
+    const gmailReceiptImage = container.querySelector('img[alt="gmail-receipt.jpg"]') as HTMLImageElement;
+
+    expect(gmailReceiptImage).toBeTruthy();
+    expect(gmailReceiptImage.className).toContain('max-h-[78vh]');
+    expect(gmailReceiptImage.className).not.toContain('w-[min(92vw,960px)]');
   });
 });

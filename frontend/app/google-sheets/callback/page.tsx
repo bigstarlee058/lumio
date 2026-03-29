@@ -2,9 +2,10 @@
 
 export const dynamic = 'force-dynamic';
 
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
-import { Alert, CircularProgress, Container, Paper, Typography } from '@mui/material';
+import { Alert, Container, Paper, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
@@ -65,7 +66,7 @@ function CallbackContent() {
           </Alert>
         ) : null}
 
-        {!error && !success ? <CircularProgress size={20} /> : null}
+        {!error && !success ? <Spinner className="h-5 w-5 text-primary" /> : null}
       </Paper>
     </Container>
   );
@@ -76,7 +77,7 @@ export default function GoogleSheetsCallbackPage() {
     <Suspense
       fallback={
         <Container maxWidth="sm" sx={{ mt: 6, textAlign: 'center' }}>
-          <CircularProgress />
+          <Spinner className="h-10 w-10 text-primary" />
         </Container>
       }
     >

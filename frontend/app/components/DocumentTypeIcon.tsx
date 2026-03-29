@@ -20,7 +20,7 @@ export function DocumentTypeIcon(props: {
   fileType?: string;
   fileName?: string;
   fileId?: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'receipt';
   size?: number;
   className?: string;
 }) {

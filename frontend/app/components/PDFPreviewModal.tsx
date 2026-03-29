@@ -1,24 +1,36 @@
 'use client';
 
-import { Download, MoreVertical, X } from 'lucide-react';
-import { type ChangeEvent, useEffect, useRef, useState } from 'react';
-type ReactPdfModule = typeof import('react-pdf');
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
+import { Download, MoreVertical, X } from 'lucide-react';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import { ModalShell } from './ui/modal-shell';
+
+type ReactPdfModule = {
+  Document: React.ComponentType<any>;
+  Page: React.ComponentType<any>;
+  pdfjs: {
+    version: string;
+    GlobalWorkerOptions: {
+      workerSrc: string;
+    };
+  };
+};
 
 interface PDFPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileId: string;
   fileName: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'receipt';
   allowAttachFile?: boolean;
   onFileAttached?: () => void;
   onParsingStarted?: () => void;
 }
 
 const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
+const isJsdomEnvironment = typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
 
 export function PDFPreviewModal({
   isOpen,
@@ -30,11 +42,12 @@ export function PDFPreviewModal({
   onFileAttached,
   onParsingStarted,
 }: PDFPreviewModalProps) {
-  const t = useIntlayer('pdfPreviewModal');
+  const t = useIntlayer('pdfPreviewModal' as never) as any;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pdfObjectUrl, setPdfObjectUrl] = useState<string | null>(null);
+  const [fileContentType, setFileContentType] = useState<string | null>(null);
   const [numPages, setNumPages] = useState(0);
   const [pageWidth, setPageWidth] = useState(920);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,10 +63,13 @@ export function PDFPreviewModal({
 
   const DocumentComponent = pdfModule?.Document;
   const PageComponent = pdfModule?.Page;
+  const isImagePreview = Boolean(fileContentType?.startsWith('image/'));
+  const isStoreReceiptImagePreview = isImagePreview && source === 'receipt';
 
   useEffect(() => {
     if (!isOpen) {
       setPdfObjectUrl(null);
+      setFileContentType(null);
       setNumPages(0);
       setLoading(false);
       setError(null);
@@ -82,7 +98,9 @@ export function PDFPreviewModal({
         const fileEndpoint =
           source === 'gmail'
             ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/file`
-            : `${apiBaseUrl}/statements/${fileId}/file`;
+            : source === 'receipt'
+              ? `${apiBaseUrl}/receipts/${fileId}/file`
+              : `${apiBaseUrl}/statements/${fileId}/file`;
 
         const response = await fetch(fileEndpoint, {
           method: 'GET',
@@ -95,9 +113,11 @@ export function PDFPreviewModal({
         }
 
         const blob = await response.blob();
+        const contentType = response.headers?.get?.('content-type') || blob.type || '';
         localObjectUrl = URL.createObjectURL(blob);
 
         if (!cancelled) {
+          setFileContentType(contentType);
           setPdfObjectUrl(localObjectUrl);
           setLoading(false);
         }
@@ -121,13 +141,13 @@ export function PDFPreviewModal({
   }, [isOpen, fileId, source, reloadToken]);
 
   useEffect(() => {
-    if (!isOpen || pdfModule) return;
+    if (!isOpen || pdfModule || isJsdomEnvironment) return;
 
     let active = true;
 
     const loadPdfRenderer = async () => {
       try {
-        const module = await import('react-pdf');
+        const module = (await import('react-pdf')) as ReactPdfModule;
         module.pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${module.pdfjs.version}/build/pdf.worker.min.mjs`;
         if (active) {
           setPdfModule(module);
@@ -196,7 +216,9 @@ export function PDFPreviewModal({
       const fileEndpoint =
         source === 'gmail'
           ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/file`
-          : `${apiBaseUrl}/statements/${fileId}/file`;
+          : source === 'receipt'
+            ? `${apiBaseUrl}/receipts/${fileId}/file`
+            : `${apiBaseUrl}/statements/${fileId}/file`;
 
       const response = await fetch(fileEndpoint, {
         method: 'GET',
@@ -357,7 +379,7 @@ export function PDFPreviewModal({
           {loading && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
               <div className="text-center">
-                <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-gray-200 border-t-black" />
+                <Spinner className="mx-auto mb-4 h-10 w-10 text-black" />
                 <p className="text-sm font-medium text-gray-500">{t.loading.value}</p>
               </div>
             </div>
@@ -441,13 +463,31 @@ export function PDFPreviewModal({
             </div>
           )}
 
-          {!error && pdfObjectUrl && DocumentComponent && PageComponent && (
+          {!error && pdfObjectUrl && isImagePreview && (
+            <div ref={viewportRef} className="h-full min-h-0 overflow-y-auto px-5 py-7">
+              <div className="mx-auto flex w-full max-w-[1200px] justify-center">
+                <img
+                  src={pdfObjectUrl}
+                  alt={fileName}
+                  className={
+                    isStoreReceiptImagePreview
+                      ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)]'
+                      : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)]'
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          {!error && pdfObjectUrl && !isImagePreview && DocumentComponent && PageComponent && (
             <div ref={viewportRef} className="h-full min-h-0 overflow-y-auto px-5 py-7">
               <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-6">
                 <DocumentComponent
                   file={pdfObjectUrl}
                   loading={null}
-                  onLoadSuccess={({ numPages: loadedPages }) => setNumPages(loadedPages)}
+                  onLoadSuccess={({ numPages: loadedPages }: { numPages: number }) =>
+                    setNumPages(loadedPages)
+                  }
                   onLoadError={() => setError(t.errors.displayFailed.value)}
                   className="w-full"
                 >

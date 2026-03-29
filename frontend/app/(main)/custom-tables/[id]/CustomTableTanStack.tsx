@@ -1,6 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { useIntlayer } from '@/app/i18n';
 import { Popover } from '@mui/material';
@@ -13,7 +14,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { GripVertical, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { GripVertical, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
@@ -686,7 +687,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
 
           {props.loadingRows && (
             <div className="flex items-center justify-center py-8 text-gray-500">
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              <Spinner className="mr-2 h-5 w-5" />
               <span>{t.grid.loadingMore.value}</span>
             </div>
           )}
@@ -941,7 +942,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
         {/* Loading indicator */}
         {props.loadingRows && !props.isPrintMode && (
           <div className="flex items-center justify-center py-8 text-gray-500">
-            <Loader2 className="h-5 w-5 animate-spin mr-2" />
+            <Spinner className="mr-2 h-5 w-5" />
             <span>{t.grid.loadingMore.value}</span>
           </div>
         )}

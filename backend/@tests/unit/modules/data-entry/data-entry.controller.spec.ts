@@ -16,9 +16,11 @@ describe('DataEntryController', () => {
       removeCustomField: jest.fn(),
     };
     const controller = new DataEntryController(dataEntryService as any);
+    const workspaceId = 'ws-1';
 
     const result = await controller.list(
       { id: 'u1' } as any,
+      workspaceId,
       DataEntryType.CREDIT,
       undefined,
       9999,
@@ -35,12 +37,55 @@ describe('DataEntryController', () => {
     });
     expect(dataEntryService.list).toHaveBeenCalledWith(
       expect.objectContaining({
-        userId: 'u1',
+        workspaceId: 'ws-1',
         limit: 200,
         page: 1,
         type: DataEntryType.CREDIT,
       }),
     );
+  });
+
+  it('forwards workspaceId to mutating actions', async () => {
+    const dataEntryService = {
+      create: jest.fn(async () => ({ id: 'e1' })),
+      remove: jest.fn(async () => undefined),
+      listCustomFields: jest.fn(async () => []),
+      getHiddenBaseTabs: jest.fn(async () => []),
+      removeBaseTab: jest.fn(async () => undefined),
+      createCustomField: jest.fn(async () => ({ id: 'f1' })),
+      updateCustomField: jest.fn(async () => ({ id: 'f1' })),
+      removeCustomField: jest.fn(async () => undefined),
+    };
+    const controller = new DataEntryController(dataEntryService as any);
+    const user = { id: 'u1' } as any;
+    const workspaceId = 'ws-1';
+
+    await controller.create(user, workspaceId, { type: DataEntryType.CASH } as any);
+    await controller.remove(user, workspaceId, 'e1');
+    await controller.listCustomFields(user, workspaceId);
+    await controller.removeBaseTab(user, workspaceId, DataEntryType.CASH);
+    await controller.createCustomField(user, workspaceId, { name: 'Field' } as any);
+    await controller.updateCustomField(user, workspaceId, 'f1', { name: 'Renamed' } as any);
+    await controller.removeCustomField(user, workspaceId, 'f1');
+
+    expect(dataEntryService.create).toHaveBeenCalledWith(workspaceId, user.id, {
+      type: DataEntryType.CASH,
+    });
+    expect(dataEntryService.remove).toHaveBeenCalledWith(workspaceId, user.id, 'e1');
+    expect(dataEntryService.listCustomFields).toHaveBeenCalledWith(workspaceId);
+    expect(dataEntryService.getHiddenBaseTabs).toHaveBeenCalledWith(user.id);
+    expect(dataEntryService.removeBaseTab).toHaveBeenCalledWith(
+      workspaceId,
+      user.id,
+      DataEntryType.CASH,
+    );
+    expect(dataEntryService.createCustomField).toHaveBeenCalledWith(workspaceId, user.id, {
+      name: 'Field',
+    });
+    expect(dataEntryService.updateCustomField).toHaveBeenCalledWith(workspaceId, user.id, 'f1', {
+      name: 'Renamed',
+    });
+    expect(dataEntryService.removeCustomField).toHaveBeenCalledWith(workspaceId, user.id, 'f1');
   });
 
   it('uploadCustomIcon throws when file is missing', async () => {

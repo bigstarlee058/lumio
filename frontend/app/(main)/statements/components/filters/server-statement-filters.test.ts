@@ -84,4 +84,11 @@ describe('server statement filters', () => {
       'type',
     ]);
   });
+
+  it('keeps receipt type filters visible when the receipt column is enabled', () => {
+    const result = getVisibleFilterScreens(['receipt']);
+
+    expect(result).toContain('type');
+    expect(result).toContain('status');
+  });
 });

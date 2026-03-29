@@ -4,11 +4,13 @@ jest.mock('franc', () => ({
 
 import { StatementStatus } from '@/entities/statement.entity';
 import { FilterStatementsDto } from '@/modules/statements/dto/filter-statements.dto';
+import { ReceiptStatementService } from '@/modules/statements/services/receipt-statement.service';
 import { StatementsController } from '@/modules/statements/statements.controller';
 
 describe('StatementsController', () => {
   const statementsService = {
     create: jest.fn(),
+    createFromReceiptScan: jest.fn(),
     findAll: jest.fn(),
     convertDroppedSampleToTransaction: jest.fn(),
   };
@@ -18,14 +20,14 @@ describe('StatementsController', () => {
     storeKey: jest.fn(),
   };
 
-  const statementProcessingService = {
-    processStatement: jest.fn(),
+  const receiptStatementService = {
+    createFromReceiptScan: jest.fn(),
   };
 
   const controller = new StatementsController(
     statementsService as any,
+    receiptStatementService as ReceiptStatementService,
     idempotencyService as any,
-    statementProcessingService as any,
   );
 
   beforeEach(() => {
@@ -42,11 +44,6 @@ describe('StatementsController', () => {
     };
 
     statementsService.create.mockResolvedValue(createdStatement);
-    statementProcessingService.processStatement.mockResolvedValue({
-      ...createdStatement,
-      status: StatementStatus.COMPLETED,
-    });
-
     const file = {
       originalname: 'test.pdf',
       mimetype: 'application/pdf',
@@ -62,7 +59,7 @@ describe('StatementsController', () => {
     );
 
     expect(statementsService.create).toHaveBeenCalledTimes(1);
-    expect(statementProcessingService.processStatement).not.toHaveBeenCalled();
+    expect(receiptStatementService.createFromReceiptScan).not.toHaveBeenCalled();
     expect(result).toMatchObject({
       cached: false,
       data: [
@@ -91,11 +88,7 @@ describe('StatementsController', () => {
       statuses: ['processing', 'error'],
     } as FilterStatementsDto;
 
-    const result = await controller.findAll(
-      { id: 'user-1' } as any,
-      'ws-1',
-      filters,
-    );
+    const result = await controller.findAll({ id: 'user-1' } as any, 'ws-1', filters);
 
     expect(statementsService.findAll).toHaveBeenCalledWith('ws-1', filters);
     expect(result).toEqual({
@@ -138,5 +131,59 @@ describe('StatementsController', () => {
       }),
     );
     expect(result).toEqual(response);
+  });
+
+  it('delegates receipt scan uploads to the receipt scan statement flow', async () => {
+    const createdStatement = { id: 'stmt-receipt-1', status: StatementStatus.COMPLETED };
+    receiptStatementService.createFromReceiptScan.mockResolvedValue([createdStatement]);
+
+    const file = {
+      originalname: 'receipt.jpg',
+      mimetype: 'image/jpeg',
+      size: 1024,
+      path: '/tmp/receipt.jpg',
+    };
+
+    const result = await (controller as any).uploadReceipt(
+      [file as Express.Multer.File],
+      { language: 'ru' },
+      { id: 'user-1' } as any,
+      'ws-1',
+    );
+
+    expect(receiptStatementService.createFromReceiptScan).toHaveBeenCalledWith({
+      user: { id: 'user-1' },
+      workspaceId: 'ws-1',
+      files: [file],
+      language: 'ru',
+    });
+    expect(result).toEqual({ data: [createdStatement] });
+  });
+
+  it('allows receipt scan uploads without optional language', async () => {
+    const createdStatement = { id: 'stmt-receipt-2', status: StatementStatus.COMPLETED };
+    receiptStatementService.createFromReceiptScan.mockResolvedValue([createdStatement]);
+
+    const file = {
+      originalname: 'receipt.pdf',
+      mimetype: 'application/pdf',
+      size: 1024,
+      path: '/tmp/receipt.pdf',
+    };
+
+    const result = await (controller as any).uploadReceipt(
+      [file as Express.Multer.File],
+      {},
+      { id: 'user-1' } as any,
+      'ws-1',
+    );
+
+    expect(receiptStatementService.createFromReceiptScan).toHaveBeenCalledWith({
+      user: { id: 'user-1' },
+      workspaceId: 'ws-1',
+      files: [file],
+      language: undefined,
+    });
+    expect(result).toEqual({ data: [createdStatement] });
   });
 });

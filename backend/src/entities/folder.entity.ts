@@ -23,12 +23,12 @@ export class Folder {
   @Column({ name: 'user_id', nullable: true })
   userId: string | null;
 
-  @ManyToOne(() => Workspace, { nullable: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspace_id' })
-  workspace: Workspace | null;
+  workspace: Workspace;
 
-  @Column({ name: 'workspace_id', nullable: true })
-  workspaceId: string | null;
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column({ name: 'tag_id', nullable: true })
   tagId: string | null;

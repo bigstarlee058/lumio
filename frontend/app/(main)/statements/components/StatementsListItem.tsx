@@ -4,15 +4,18 @@ import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { PDFThumbnail } from '@/app/components/PDFThumbnail';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { Tooltip } from '@heroui/tooltip';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 export type StatementListItem = {
   id: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'scan';
+  receiptSource?: string;
   fileName: string;
   subject?: string;
   sender?: string;
@@ -39,6 +42,12 @@ export type StatementListItem = {
     avatarUrl?: string | null;
   } | null;
   errorMessage?: string | null;
+  parsingDetails?: {
+    detectedBy?: string;
+    importPreview?: {
+      source?: string;
+    };
+  };
 };
 
 type DuplicateRole = 'primary' | 'suspected';
@@ -101,7 +110,7 @@ type Props = {
   statement: StatementListItem;
   viewLabel: string;
   duplicateActionLabel?: string;
-  isGmail: boolean;
+  isReceipt: boolean;
   isProcessing: boolean;
   merchantLabel: string;
   amountLabel: string;
@@ -154,7 +163,7 @@ export function StatementsListItem({
   statement,
   viewLabel,
   duplicateActionLabel,
-  isGmail,
+  isReceipt,
   isProcessing,
   merchantLabel,
   amountLabel,
@@ -184,7 +193,10 @@ export function StatementsListItem({
   );
 
   const resolvedTypeLabel = typeLabel || statement.fileType;
-  const normalizedPreviewType = (isGmail ? 'pdf' : statement.fileType || statement.fileName || '')
+  const isGmailReceipt = statement.source === 'gmail';
+  const isLocalReceipt = statement.source === 'scan';
+  const previewSource = isGmailReceipt ? 'gmail' : isLocalReceipt ? 'receipt' : 'statement';
+  const normalizedPreviewType = (isReceipt ? 'pdf' : statement.fileType || statement.fileName || '')
     .trim()
     .toLowerCase();
   const hasHoverPreview =
@@ -231,8 +243,12 @@ export function StatementsListItem({
   }, [previewVisible, updatePreviewPosition]);
 
   const hasError = !!statement.errorMessage || statement.status === 'error';
+  const isPendingStatement = statement.status === 'uploaded' || statement.status === 'processing';
+  const compactAmountLabel = amountLabel.replace(/\s+/g, '');
+  const isZeroAmountLabel = /^0(?:[.,]0+)?\D*$/.test(compactAmountLabel);
   const isNegativeAmount = amountLabel.startsWith('-') && amountLabel !== '-';
   const isMissingAmount = amountLabel === '-';
+  const showAmountLoader = !isReceipt && isPendingStatement && (isZeroAmountLabel || isMissingAmount);
   const resolvedDuplicateRole: DuplicateRole = duplicateRole || 'suspected';
   const resolvedDuplicateGroupLabel = duplicateGroupLabel || 'Group';
   const resolvedDuplicateGroupTone: DuplicateGroupTone = duplicateGroupTone || 'stone';
@@ -298,10 +314,10 @@ export function StatementsListItem({
             <div className="flex items-center gap-3">
               <div className="w-10 shrink-0">
                 <DocumentTypeIcon
-                  fileType={isGmail ? 'pdf' : statement.fileType}
+                  fileType={isReceipt ? 'pdf' : statement.fileType}
                   fileName={statement.fileName}
                   fileId={statement.id}
-                  source={isGmail ? 'gmail' : 'statement'}
+                  source={previewSource}
                   size={34}
                   className="text-red-500"
                 />
@@ -331,7 +347,7 @@ export function StatementsListItem({
                   <p
                     className={`shrink-0 text-right text-[15px] font-black tabular-nums tracking-tight ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950'}`}
                   >
-                    {amountLabel}
+                    {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
                   </p>
                 </div>
                 <div className="flex items-center justify-between mt-0.5">
@@ -393,10 +409,10 @@ export function StatementsListItem({
                 aria-label={statement.fileName}
               >
                 <DocumentTypeIcon
-                  fileType={isGmail ? 'pdf' : statement.fileType}
+                  fileType={isReceipt ? 'pdf' : statement.fileType}
                   fileName={statement.fileName}
                   fileId={statement.id}
-                  source={isGmail ? 'gmail' : 'statement'}
+                  source={previewSource}
                   size={28}
                   className="text-gray-400 opacity-60 group-hover/statement:opacity-100 transition-opacity"
                 />
@@ -417,7 +433,7 @@ export function StatementsListItem({
                       <PDFThumbnail
                         fileId={statement.id}
                         fileName={statement.fileName}
-                        source={isGmail ? 'gmail' : 'statement'}
+                        source={previewSource}
                         width={PREVIEW_WIDTH - 16}
                         height={PREVIEW_HEIGHT}
                         preservePageAspect
@@ -435,13 +451,19 @@ export function StatementsListItem({
             <div className="flex items-center gap-2">
               {/* Weakened Merchant Icon */}
               <div className="shrink-0 opacity-60">
-                {isGmail ? (
+                {isGmailReceipt ? (
                   <img
                     src="/icons/gmail.png"
                     alt="Gmail"
                     width={16}
                     height={16}
                     className="rounded-full object-contain"
+                  />
+                ) : isLocalReceipt ? (
+                  <ReceiptIcon
+                    data-testid="receipt-statement-type-icon"
+                    sx={{ fontSize: 16 }}
+                    className="text-gray-500"
                   />
                 ) : (
                   <BankLogoAvatar bankName={statement.bankName} size={16} />
@@ -493,7 +515,7 @@ export function StatementsListItem({
             <span
               className={`block truncate text-[19px] leading-none font-black tracking-tight tabular-nums ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950'}`}
             >
-              {amountLabel}
+              {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
             </span>
             <div className="mt-0.5 flex items-center justify-end">
               <StatusBadge

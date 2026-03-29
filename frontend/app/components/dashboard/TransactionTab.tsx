@@ -7,8 +7,8 @@ import toast from 'react-hot-toast';
 import DetailsDrawer from '@/app/components/transactions/DetailsDrawer';
 import TransactionsTable from '@/app/components/transactions/TransactionsTable';
 import type { Category, FilterState, Transaction } from '@/app/components/transactions/types';
+import { Spinner } from '@/app/components/ui/spinner';
 import api from '@/app/lib/api';
-import { Loader2 } from 'lucide-react';
 
 export function TransactionTab() {
   const t = useIntlayer('transactionsPageView');
@@ -123,7 +123,7 @@ export function TransactionTab() {
   if (loading && transactions.length === 0) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Spinner className="h-8 w-8 text-primary" />
       </div>
     );
   }

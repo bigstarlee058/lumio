@@ -17,13 +17,13 @@ import { StatusFilterDropdown } from '@/app/(main)/statements/components/filters
 import { TypeFilterDropdown } from '@/app/(main)/statements/components/filters/TypeFilterDropdown';
 import {
   DEFAULT_STATEMENT_FILTERS,
+  applyStatementsFilters,
   type StatementFilters,
   loadStatementFilters,
   resetSingleStatementFilter,
   saveStatementFilters,
 } from '@/app/(main)/statements/components/filters/statement-filters';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
-import LoadingAnimation from '@/app/components/LoadingAnimation';
 import { PDFPreviewModal } from '@/app/components/PDFPreviewModal';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
@@ -87,7 +87,9 @@ import { StatementsListItem } from './StatementsListItem';
 import {
   buildStatementRequestParams,
   deriveVisibleFilterScreens,
+  isReceiptDerivedStatement,
   paginateStatements,
+  resolveStatementViewAction,
   reconcileFiltersWithColumns,
 } from './StatementsListView.utils';
 import {
@@ -95,10 +97,16 @@ import {
   hasGmailReceiptAmount,
   mapGmailReceiptsToStatements,
 } from './gmail-receipt-mapping';
+import {
+  uploadReceiptScanFiles as runUploadReceiptScanFiles,
+  uploadScanDrawerFiles as runUploadScanDrawerFiles,
+  uploadStatementFiles as runUploadStatementFiles,
+} from './statement-upload';
 
 interface Statement {
   id: string;
-  source?: 'statement' | 'gmail';
+  source?: 'statement' | 'gmail' | 'scan';
+  receiptSource?: string;
   fileName: string;
   subject?: string;
   sender?: string;
@@ -167,6 +175,16 @@ type DuplicateMeta = {
 
 type DuplicateOverrideState = 'duplicate' | 'not_duplicate';
 
+type DuplicateOverride = {
+  state: DuplicateOverrideState;
+  groupKey?: string;
+  groupLabel?: string;
+  groupTone?: DuplicateGroupTone;
+  primaryId?: string;
+  position?: number;
+  total?: number;
+};
+
 type StatementCategoryWithEnabled = StatementCategoryNode & {
   isEnabled?: boolean;
   children?: StatementCategoryWithEnabled[];
@@ -206,7 +224,7 @@ const parseAmountValue = (value?: number | string | null) => {
 };
 
 const formatStatementAmount = (statement: Statement) => {
-  if (statement.source === 'gmail') {
+  if (statement.source === 'gmail' || statement.source === 'scan') {
     const amount = parseAmountValue(statement.parsedData?.amount ?? null);
     if (amount === null) {
       return '-';
@@ -217,6 +235,16 @@ const formatStatementAmount = (statement: Statement) => {
       maximumFractionDigits: 2,
     }).format(amount);
     return `${formatted}${currency || ''}`;
+  }
+
+  if (isStatementParsingInProgress(statement)) {
+    const debit = parseAmountValue(statement.totalDebit);
+    const credit = parseAmountValue(statement.totalCredit);
+    const hasResolvedAmount = (debit !== null && debit > 0) || (credit !== null && credit > 0);
+
+    if (!hasResolvedAmount) {
+      return '-';
+    }
   }
 
   const debit = parseAmountValue(statement.totalDebit);
@@ -235,7 +263,7 @@ const formatStatementAmount = (statement: Statement) => {
 
 const formatStatementDate = (statement: Statement) => {
   const dateValue =
-    statement.source === 'gmail'
+    statement.source === 'gmail' || statement.source === 'scan'
       ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
       : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
   if (!dateValue) return '—';
@@ -246,7 +274,7 @@ const formatStatementDate = (statement: Statement) => {
 
 const resolveStatementSortDate = (statement: Statement) => {
   const dateValue =
-    statement.source === 'gmail'
+    statement.source === 'gmail' || statement.source === 'scan'
       ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
       : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
   const date = dateValue ? new Date(dateValue) : null;
@@ -276,11 +304,26 @@ const DUPLICATE_GROUP_TONES: DuplicateGroupTone[] = [
   'stone',
 ];
 
-const isGmailReceiptProcessing = (statement: Statement) => {
-  if (statement.source !== 'gmail') return false;
+const isReceiptProcessing = (statement: Statement) => {
+  if (statement.source !== 'gmail' && statement.source !== 'scan') return false;
   const status = (statement.status || '').toLowerCase();
   return status === 'new' || status === 'processing';
 };
+
+const isGmailStatement = (statement: Statement) => statement.source === 'gmail';
+
+const isScanReceiptStatement = (statement: Statement) => statement.source === 'scan';
+
+const isStoreReceiptStatement = (statement: Statement) =>
+  statement.source === 'scan' && statement.receiptSource !== 'gmail';
+
+const getBulkActionErrorOptions = (id: string) => ({ id });
+
+const getExportEndpoint = (statement: Statement) =>
+  isScanReceiptStatement(statement) ? `/receipts/${statement.id}/file` : `/statements/${statement.id}/file`;
+
+const getDeleteEndpoint = (statement: Statement) =>
+  isScanReceiptStatement(statement) ? `/receipts/${statement.id}` : `/statements/${statement.id}`;
 
 const isStatementParsingInProgress = (statement: Statement) => {
   const status = (statement.status || '').toLowerCase();
@@ -378,12 +421,12 @@ export default function StatementsListView({ stage }: Props) {
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewFileId, setPreviewFileId] = useState<string | null>(null);
   const [previewFileName, setPreviewFileName] = useState<string>('');
-  const [previewSource, setPreviewSource] = useState<'statement' | 'gmail'>('statement');
+  const [previewSource, setPreviewSource] = useState<'statement' | 'gmail' | 'receipt'>('statement');
   const [previewAllowAttachFile, setPreviewAllowAttachFile] = useState(false);
   const [selectedStatementIds, setSelectedStatementIds] = useState<string[]>([]);
-  const [duplicateOverrides, setDuplicateOverrides] = useState<
-    Record<string, DuplicateOverrideState>
-  >({});
+  const [duplicateOverrides, setDuplicateOverrides] = useState<Record<string, DuplicateOverride>>(
+    {},
+  );
   const [selectedActionsOpen, setSelectedActionsOpen] = useState(false);
   const selectedActionsRef = useRef<HTMLDivElement | null>(null);
   const listScrollRef = useRef<HTMLDivElement | null>(null);
@@ -472,6 +515,7 @@ export default function StatementsListView({ stage }: Props) {
   };
 
   const typeOptions = [
+    { value: 'receipt', label: 'Receipt' },
     { value: 'expense', label: filterOptionLabels.typeExpense },
     { value: 'expense_report', label: filterOptionLabels.typeReport },
     { value: 'chat', label: filterOptionLabels.typeChat },
@@ -603,7 +647,7 @@ export default function StatementsListView({ stage }: Props) {
     setDraftColumns(storedColumns);
   }, []);
 
-  const gmailStatements = useMemo<UnifiedStatement[]>(() => {
+  const receiptStatements = useMemo<UnifiedStatement[]>(() => {
     if (stage !== 'submit') return [];
     return mapGmailReceiptsToStatements(gmailReceipts);
   }, [gmailReceipts, stage]);
@@ -611,15 +655,15 @@ export default function StatementsListView({ stage }: Props) {
   const stagedStatements = useMemo(() => {
     const baseStatements = statements.filter(statement => {
       const currentStage = getStatementStage(statement.id);
-      return currentStage === stage;
+      return currentStage === stage && !isReceiptDerivedStatement(statement);
     });
 
     if (stage !== 'submit') {
       return baseStatements;
     }
 
-    const gmailFiltered = search.trim()
-      ? gmailStatements.filter(statement => {
+    const receiptFiltered = search.trim()
+      ? receiptStatements.filter(statement => {
           const query = search.trim().toLowerCase();
           return (
             statement.fileName.toLowerCase().includes(query) ||
@@ -628,14 +672,17 @@ export default function StatementsListView({ stage }: Props) {
             (statement.parsedData?.vendor || '').toLowerCase().includes(query)
           );
         })
-      : gmailStatements;
+      : receiptStatements;
 
-    return [...gmailFiltered, ...baseStatements].sort(
+    return [...receiptFiltered, ...baseStatements].sort(
       (a, b) => resolveStatementSortDate(b) - resolveStatementSortDate(a),
     );
-  }, [statements, stage, search, gmailStatements]);
+  }, [statements, stage, search, receiptStatements]);
 
-  const displayStatements = useMemo(() => stagedStatements, [stagedStatements]);
+  const displayStatements = useMemo(
+    () => applyStatementsFilters(stagedStatements, appliedFilters),
+    [stagedStatements, appliedFilters],
+  );
 
   const sortedDisplayStatements = useMemo(() => {
     const directionFactor = dateSortDirection === 'asc' ? 1 : -1;
@@ -674,10 +721,10 @@ export default function StatementsListView({ stage }: Props) {
     const isKnownStatement = new Set(displayStatements.map(statement => statement.id));
 
     displayStatements.forEach(statement => {
-      const isGmail = statement.source === 'gmail';
-      const isProcessingGmail = isGmailReceiptProcessing(statement);
+      const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
+      const isProcessingReceipt = isReceiptProcessing(statement);
       const amountLabel = formatStatementAmount(statement);
-      const override = duplicateOverrides[statement.id];
+      const override = duplicateOverrides[statement.id]?.state;
 
       if (override === 'not_duplicate') {
         return;
@@ -687,21 +734,21 @@ export default function StatementsListView({ stage }: Props) {
         amountLabel === '-' ||
         amountLabel === '0' ||
         amountLabel === '0.00' ||
-        isProcessingGmail ||
+        isProcessingReceipt ||
         statement.status === 'processing'
       ) {
         return;
       }
 
-      const resolvedName = isGmail
+      const resolvedName = isReceipt
         ? resolveGmailMerchantLabel({
             vendor: statement.parsedData?.vendor,
-            sender: statement.sender,
+            sender: isGmailStatement(statement) ? statement.sender : undefined,
             subject: statement.subject,
             fallback: statement.fileName,
           })
         : getStatementDisplayMerchant(statement, getBankDisplayName(statement.bankName));
-      const merchantLabel = isGmail
+      const merchantLabel = isReceipt
         ? resolvedName
         : getStatementMerchantLabel(statement.status, resolvedName, listHeaderLabels.scanning);
       const dateLabel = formatStatementDate(statement);
@@ -754,7 +801,7 @@ export default function StatementsListView({ stage }: Props) {
     });
 
     Object.entries(duplicateOverrides).forEach(([statementId, override]) => {
-      if (override !== 'duplicate') {
+      if (override?.state !== 'duplicate') {
         return;
       }
 
@@ -762,15 +809,20 @@ export default function StatementsListView({ stage }: Props) {
         return;
       }
 
+      const manualGroupKey = override.groupKey || `manual:${statementId}`;
+      const manualGroupLabel = override.groupLabel || 'Group Manual';
+      const manualGroupTone = override.groupTone || 'stone';
+      const manualPrimaryId = override.primaryId || statementId;
+
       metaById.set(statementId, {
-        position: 1,
-        total: 1,
-        role: 'suspected',
+        position: override.position || 1,
+        total: override.total || 1,
+        role: override.primaryId === statementId ? 'primary' : 'suspected',
         reason: 'Marked manually as duplicate',
-        groupKey: `manual:${statementId}`,
-        groupLabel: 'Group Manual',
-        groupTone: 'stone',
-        primaryId: statementId,
+        groupKey: manualGroupKey,
+        groupLabel: manualGroupLabel,
+        groupTone: manualGroupTone,
+        primaryId: manualPrimaryId,
       });
     });
 
@@ -1070,37 +1122,49 @@ export default function StatementsListView({ stage }: Props) {
     });
   };
 
+  const uploadLabels = {
+    pickAtLeastOne: resolveLabel(t.uploadModal?.pickAtLeastOne, 'Select at least one file'),
+    uploadedProcessing: resolveLabel(t.uploadModal?.uploadedProcessing, 'Files uploaded'),
+    uploadFailed: resolveLabel(t.uploadModal?.uploadFailed, 'Failed to upload files'),
+  };
+
+  const handleUploadSuccess = (message: string) => {
+    toast.success(message);
+  };
+
   const uploadStatementFiles = async (
     files: File[],
     allowDuplicates: boolean,
     requireManualCategorySelection = false,
-  ) => {
-    if (files.length === 0) {
-      throw new Error(resolveLabel(t.uploadModal?.pickAtLeastOne, 'Select at least one file'));
-    }
-
-    const formData = new FormData();
-    files.forEach(file => {
-      formData.append('files', file);
+  ) =>
+    runUploadStatementFiles({
+      files,
+      allowDuplicates,
+      requireManualCategorySelection,
+      labels: uploadLabels,
+      onUploadSuccess: handleUploadSuccess,
+      refreshAfterCreate: refreshStatementsAfterCreate,
     });
-    formData.append('allowDuplicates', allowDuplicates ? 'true' : 'false');
-    formData.append(
-      'requireManualCategorySelection',
-      requireManualCategorySelection ? 'true' : 'false',
-    );
 
-    try {
-      await apiClient.post('/statements/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+  const uploadReceiptScanFiles = async (files: File[]) =>
+    runUploadReceiptScanFiles({
+      files,
+      labels: uploadLabels,
+      onUploadSuccess: handleUploadSuccess,
+      refreshAfterCreate: refreshStatementsAfterCreate,
+    });
 
-      toast.success(resolveLabel(t.uploadModal?.uploadedProcessing, 'Files uploaded'));
-      await refreshStatementsAfterCreate();
-    } catch (error) {
-      console.error('Failed to upload statements:', error);
-      throw new Error(resolveLabel(t.uploadModal?.uploadFailed, 'Failed to upload files'));
-    }
-  };
+  const uploadScanDrawerFiles = async (payload: {
+    files: File[];
+    allowDuplicates: boolean;
+    requireManualCategorySelection: boolean;
+  }) =>
+    runUploadScanDrawerFiles({
+      payload,
+      labels: uploadLabels,
+      onUploadSuccess: handleUploadSuccess,
+      refreshAfterCreate: refreshStatementsAfterCreate,
+    });
 
   const handleCreateManualExpense = async (payload: {
     draft: ManualExpenseDraft;
@@ -1155,20 +1219,9 @@ export default function StatementsListView({ stage }: Props) {
   };
 
   const handleView = (statement: Statement) => {
-    if (statement.source === 'gmail') {
-      router.push(`/storage/gmail-receipts/${statement.id}`);
-      return;
-    }
+    const action = resolveStatementViewAction(statement);
 
-    if (
-      statement.status === 'completed' ||
-      statement.status === 'parsed' ||
-      statement.status === 'validated'
-    ) {
-      router.push(`/statements/${statement.id}/edit`);
-    } else {
-      router.push(`/storage/${statement.id}`);
-    }
+    router.push(action.href);
   };
 
   const handleToggleStatement = (statementId: string) => {
@@ -1186,31 +1239,51 @@ export default function StatementsListView({ stage }: Props) {
       const selectedStatements = displayStatements.filter(statement =>
         selectedStatementIds.includes(statement.id),
       );
-      const exportableStatements = selectedStatements.filter(
-        statement => statement.source !== 'gmail',
-      );
+      const exportableStatements = selectedStatements.filter(statement => !isGmailStatement(statement));
 
       if (exportableStatements.length === 0) {
-        toast.error('Selected receipts cannot be exported from this menu');
+        setSelectedActionsOpen(false);
+        toast.error(
+          'Selected receipts cannot be exported from this menu',
+          getBulkActionErrorOptions('statements-bulk-export-unsupported'),
+        );
         return;
       }
 
+      let exportedCount = 0;
+      let failedCount = 0;
+
       for (const statement of exportableStatements) {
-        const response = await apiClient.get(`/statements/${statement.id}/file`, {
-          responseType: 'blob',
-        });
-        const blob = response.data as Blob;
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = statement.fileName || `${statement.id}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        try {
+          const response = await apiClient.get(getExportEndpoint(statement), {
+            responseType: 'blob',
+          });
+          const blob = response.data as Blob;
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = statement.fileName || `${statement.id}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          exportedCount += 1;
+        } catch (error) {
+          failedCount += 1;
+          console.error(`Failed to export statement ${statement.id}:`, error);
+        }
       }
 
-      toast.success(`Exported ${exportableStatements.length} statement(s)`);
+      if (exportedCount === 0) {
+        toast.error('Failed to export selected statements');
+        return;
+      }
+
+      if (failedCount > 0) {
+        toast.success(`Exported ${exportedCount} statement(s), ${failedCount} failed`);
+      } else {
+        toast.success(`Exported ${exportedCount} statement(s)`);
+      }
       setSelectedActionsOpen(false);
     } catch (error) {
       console.error('Failed to export selected statements:', error);
@@ -1224,12 +1297,14 @@ export default function StatementsListView({ stage }: Props) {
     const selectedStatements = displayStatements.filter(statement =>
       selectedStatementIds.includes(statement.id),
     );
-    const deletableStatements = selectedStatements.filter(
-      statement => statement.source !== 'gmail',
-    );
+    const deletableStatements = selectedStatements.filter(statement => !isGmailStatement(statement));
 
     if (deletableStatements.length === 0) {
-      toast.error('Selected receipts cannot be deleted from this menu');
+      setSelectedActionsOpen(false);
+      toast.error(
+        'Selected receipts cannot be deleted from this menu',
+        getBulkActionErrorOptions('statements-bulk-delete-unsupported'),
+      );
       return;
     }
 
@@ -1239,15 +1314,43 @@ export default function StatementsListView({ stage }: Props) {
     if (!confirmed) return;
 
     try {
-      await Promise.all(
-        deletableStatements.map(statement => apiClient.delete(`/statements/${statement.id}`)),
+      const results = await Promise.allSettled(
+        deletableStatements.map(statement => apiClient.delete(getDeleteEndpoint(statement))),
       );
-      setSelectedStatementIds(prev =>
-        prev.filter(id => !deletableStatements.some(statement => statement.id === id)),
-      );
+      const deletedIds: string[] = [];
+      const failedIds: string[] = [];
+
+      results.forEach((result, index) => {
+        const statementId = deletableStatements[index]?.id;
+        if (!statementId) return;
+        if (result.status === 'fulfilled') {
+          deletedIds.push(statementId);
+          return;
+        }
+        const status = (result.reason as any)?.response?.status;
+        if (status === 404 || status === 410) {
+          deletedIds.push(statementId);
+          return;
+        }
+        failedIds.push(statementId);
+      });
+
+      if (deletedIds.length === 0) {
+        toast.error('Failed to delete selected statements');
+        return;
+      }
+
+        setSelectedStatementIds(prev => prev.filter(id => !deletedIds.includes(id)));
       setSelectedActionsOpen(false);
       await loadStatements({ search, showErrorToast: false });
-      toast.success('Selected statements moved to trash');
+
+      if (failedIds.length > 0) {
+        toast.success(
+          `Moved ${deletedIds.length} statement(s) to trash, ${failedIds.length} failed`,
+        );
+      } else {
+        toast.success('Selected statements moved to trash');
+      }
     } catch (error) {
       console.error('Failed to delete selected statements:', error);
       toast.error('Failed to delete selected statements');
@@ -1259,8 +1362,25 @@ export default function StatementsListView({ stage }: Props) {
 
     setDuplicateOverrides(prev => {
       const next = { ...prev };
-      selectedStatementIds.forEach(statementId => {
-        next[statementId] = 'duplicate';
+        const manualGroupIndex = Object.values(prev).filter(override =>
+          override.groupKey?.startsWith('manual-group:'),
+        ).length;
+      const groupKey = `manual-group:${Date.now()}:${manualGroupIndex}`;
+      const groupLabel = `Group Manual ${manualGroupIndex + 1}`;
+      const groupTone = DUPLICATE_GROUP_TONES[manualGroupIndex % DUPLICATE_GROUP_TONES.length];
+      const primaryId = selectedStatementIds[0];
+      const total = selectedStatementIds.length;
+
+      selectedStatementIds.forEach((statementId, index) => {
+        next[statementId] = {
+          state: 'duplicate',
+          groupKey,
+          groupLabel,
+          groupTone,
+          primaryId,
+          position: index + 1,
+          total,
+        };
       });
       return next;
     });
@@ -1275,7 +1395,7 @@ export default function StatementsListView({ stage }: Props) {
     setDuplicateOverrides(prev => {
       const next = { ...prev };
       selectedStatementIds.forEach(statementId => {
-        next[statementId] = 'not_duplicate';
+        next[statementId] = { state: 'not_duplicate' };
       });
       return next;
     });
@@ -1323,9 +1443,9 @@ export default function StatementsListView({ stage }: Props) {
         return;
       }
 
-      if (statement.source === 'gmail') {
+      if (isGmailStatement(statement)) {
         const primaryStatement = statementById.get(meta.primaryId);
-        if (primaryStatement?.source === 'gmail') {
+        if (primaryStatement && isGmailStatement(primaryStatement)) {
           gmailToMark.set(statement.id, primaryStatement.id);
         } else {
           skippedGmailCount += 1;
@@ -1347,27 +1467,61 @@ export default function StatementsListView({ stage }: Props) {
     }
 
     try {
-      await Promise.all([
-        ...Array.from(statementsToDelete).map(statementId =>
-          apiClient.delete(`/statements/${statementId}`),
-        ),
-        ...Array.from(gmailToMark.entries()).map(([receiptId, originalReceiptId]) =>
+      const statementIdsToDelete = Array.from(statementsToDelete);
+      const gmailEntriesToMark = Array.from(gmailToMark.entries());
+      const statementDeleteResults = await Promise.allSettled(
+        statementIdsToDelete.map(statementId => apiClient.delete(`/statements/${statementId}`)),
+      );
+      const gmailMarkResults = await Promise.allSettled(
+        gmailEntriesToMark.map(([receiptId, originalReceiptId]) =>
           gmailReceiptsApi.markDuplicate(receiptId, originalReceiptId),
         ),
-      ]);
+      );
+
+      const deletedStatementIds: string[] = [];
+      const markedGmailIds: string[] = [];
+      let failedStatements = 0;
+      let failedGmail = 0;
+
+      statementDeleteResults.forEach((result, index) => {
+        const statementId = statementIdsToDelete[index];
+        if (!statementId) return;
+        if (result.status === 'fulfilled') {
+          deletedStatementIds.push(statementId);
+          return;
+        }
+        const status = (result.reason as any)?.response?.status;
+        if (status === 404 || status === 410) {
+          deletedStatementIds.push(statementId);
+          return;
+        }
+        failedStatements += 1;
+      });
+
+      gmailMarkResults.forEach((result, index) => {
+        const receiptId = gmailEntriesToMark[index]?.[0];
+        if (!receiptId) return;
+        if (result.status === 'fulfilled') {
+          markedGmailIds.push(receiptId);
+          return;
+        }
+        failedGmail += 1;
+      });
+
+      if (deletedStatementIds.length === 0 && markedGmailIds.length === 0) {
+        toast.error('Failed to merge selected duplicates');
+        return;
+      }
 
       setDuplicateOverrides(prev => {
         const next = { ...prev };
-        Array.from(gmailToMark.keys()).forEach(receiptId => {
-          next[receiptId] = 'duplicate';
+        markedGmailIds.forEach(receiptId => {
+          next[receiptId] = { state: 'duplicate' };
         });
         return next;
       });
 
-      const processedIds = new Set([
-        ...Array.from(statementsToDelete),
-        ...Array.from(gmailToMark.keys()),
-      ]);
+      const processedIds = new Set([...deletedStatementIds, ...markedGmailIds]);
       setSelectedStatementIds(prev => prev.filter(id => !processedIds.has(id)));
       setSelectedActionsOpen(false);
 
@@ -1379,8 +1533,12 @@ export default function StatementsListView({ stage }: Props) {
       const skipHint = skippedGmailCount
         ? ` ${skippedGmailCount} Gmail item(s) skipped because primary record is not Gmail.`
         : '';
+      const failureHint =
+        failedStatements || failedGmail
+          ? ` ${failedGmail} receipt(s) and ${failedStatements} statement(s) failed.`
+          : '';
       toast.success(
-        `Merged duplicates: ${gmailToMark.size} receipt(s), ${statementsToDelete.size} statement(s).${skipHint}`,
+        `Merged duplicates: ${markedGmailIds.length} receipt(s), ${deletedStatementIds.length} statement(s).${skipHint}${failureHint}`,
       );
     } catch (error) {
       console.error('Failed to merge selected duplicates:', error);
@@ -1518,9 +1676,13 @@ export default function StatementsListView({ stage }: Props) {
       if (statement.bankName) {
         addOption(`bank:${statement.bankName}`, {
           id: `bank:${statement.bankName}`,
-          label: statement.bankName === 'gmail' ? 'Gmail' : getBankDisplayName(statement.bankName),
+          label: isGmailStatement(statement)
+            ? 'Gmail'
+            : isStoreReceiptStatement(statement)
+              ? 'Receipt'
+              : getBankDisplayName(statement.bankName),
           description: null,
-          iconUrl: statement.bankName === 'gmail' ? '/icons/gmail.png' : null,
+          iconUrl: isGmailStatement(statement) ? '/icons/gmail.png' : null,
           bankName: statement.bankName,
         });
       }
@@ -1629,20 +1791,6 @@ export default function StatementsListView({ stage }: Props) {
 
                       <button
                         type="button"
-                        onClick={handleMarkSelectedAsDuplicate}
-                        className="mt-1 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#f8fbff]"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <Copy className="h-4 w-4 text-primary" />
-                          <span className="text-[16px] font-semibold leading-none text-primary">
-                            {markDuplicateLabel}
-                          </span>
-                        </span>
-                        <ChevronRight className="h-4 w-4 text-[#c4cac4]" />
-                      </button>
-
-                      <button
-                        type="button"
                         onClick={handleDismissSelectedDuplicates}
                         className="mt-1 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#f7f7f4]"
                       >
@@ -1654,38 +1802,54 @@ export default function StatementsListView({ stage }: Props) {
                         </span>
                         <ChevronRight className="h-4 w-4 text-[#c4cac4]" />
                       </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleExportSelected}
-                        className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#f7f7f4]"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <Download className="h-4 w-4 text-[#99a39d]" />
-                          <span className="text-[16px] font-semibold leading-none text-[#0f3428]">
-                            Export
-                          </span>
-                        </span>
-                        <ChevronRight className="h-4 w-4 text-[#c4cac4]" />
-                      </button>
 
-                      <button
-                        type="button"
-                        onClick={handleDeleteSelected}
-                        className="mt-1 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#fff5f4]"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <Trash2 className="h-4 w-4 text-[#dc2626]" />
-                          <span className="text-[16px] font-semibold leading-none text-[#991b1b]">
-                            Delete
-                          </span>
-                        </span>
-                        <ChevronRight className="h-4 w-4 text-[#f0b5b5]" />
-                      </button>
+                      <div className="my-1 h-px bg-[#ece9e2]" />
                     </>
-                  )}
+                  ) : null}
+
+                  <button
+                    type="button"
+                    onClick={handleMarkSelectedAsDuplicate}
+                    className={`${hasSelectedDuplicates ? '' : 'mb-1'} flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#f8fbff]`}
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <Copy className="h-4 w-4 text-primary" />
+                      <span className="text-[16px] font-semibold leading-none text-primary">
+                        {markDuplicateLabel}
+                      </span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-[#c4cac4]" />
+                  </button>
+
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleExportSelected}
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#f7f7f4]"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Download className="h-4 w-4 text-[#99a39d]" />
+                        <span className="text-[16px] font-semibold leading-none text-[#0f3428]">
+                          Export
+                        </span>
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#c4cac4]" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDeleteSelected}
+                      className="mt-1 flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-[#fff5f4]"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Trash2 className="h-4 w-4 text-[#dc2626]" />
+                        <span className="text-[16px] font-semibold leading-none text-[#991b1b]">
+                          Delete
+                        </span>
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#f0b5b5]" />
+                    </button>
+                  </>
                 </div>
               )}
             </div>
@@ -1705,14 +1869,6 @@ export default function StatementsListView({ stage }: Props) {
                     </button>
                     <button
                       type="button"
-                      onClick={handleMarkSelectedAsDuplicate}
-                      className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-primary/20 px-2.5 py-1 text-xs font-medium text-primary transition hover:border-primary hover:bg-primary/5"
-                    >
-                      <Copy className="h-3.5 w-3.5" />
-                      {markDuplicateLabel}
-                    </button>
-                    <button
-                      type="button"
                       onClick={handleDismissSelectedDuplicates}
                       className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:border-primary hover:text-primary"
                     >
@@ -1720,26 +1876,31 @@ export default function StatementsListView({ stage }: Props) {
                       {dismissDuplicateLabel}
                     </button>
                   </>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handleExportSelected}
-                      className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:border-primary hover:text-primary"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      Export
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleDeleteSelected}
-                      className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 transition hover:border-red-400 hover:text-red-700"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Delete
-                    </button>
-                  </>
-                )}
+                ) : null}
+                <button
+                  type="button"
+                  onClick={handleMarkSelectedAsDuplicate}
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-primary/20 px-2.5 py-1 text-xs font-medium text-primary transition hover:border-primary hover:bg-primary/5"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {markDuplicateLabel}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportSelected}
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:border-primary hover:text-primary"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Export
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteSelected}
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-red-200 px-2.5 py-1 text-xs font-medium text-red-600 transition hover:border-red-400 hover:text-red-700"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete
+                </button>
               </div>
             </div>
           </>
@@ -1832,13 +1993,13 @@ export default function StatementsListView({ stage }: Props) {
             {loading || duplicateStatementIds.length > 0 ? (
               <button
                 type="button"
-                className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-orange-200 bg-orange-50 px-2.5 py-1.5 text-[13px] font-medium text-orange-700 transition-colors hover:border-orange-300 hover:bg-orange-100"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[13px] font-medium text-amber-800 transition-colors hover:border-amber-300 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100 dark:hover:border-amber-500/40 dark:hover:bg-amber-500/15"
                 onClick={handleSelectDetectedDuplicates}
                 disabled={loading || duplicateStatementIds.length === 0}
               >
                 <Copy className="h-3.5 w-3.5" />
                 {selectDuplicatesLabel}
-                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-semibold text-orange-700">
+                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-semibold text-amber-800 dark:bg-slate-950/60 dark:text-amber-100">
                   {loading ? <Spinner className="size-3" /> : duplicateStatementIds.length}
                 </span>
               </button>
@@ -1876,7 +2037,7 @@ export default function StatementsListView({ stage }: Props) {
       >
         {loading && gmailSyncSkeletonKeys.length === 0 ? (
           <div className="flex justify-center items-center h-64">
-            <LoadingAnimation size="lg" />
+            <Spinner size={80} className="text-primary" />
           </div>
         ) : displayStatements.length === 0 && gmailSyncSkeletonKeys.length === 0 ? (
           <div className="text-center py-20 px-4">
@@ -2004,32 +2165,32 @@ export default function StatementsListView({ stage }: Props) {
                   ))
                 : null}
               {paginatedDisplayStatements.map(statement => {
-                const isGmail = statement.source === 'gmail';
-                const resolvedName = isGmail
+                const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
+                const resolvedName = isReceipt
                   ? resolveGmailMerchantLabel({
                       vendor: statement.parsedData?.vendor,
-                      sender: statement.sender,
+                      sender: isGmailStatement(statement) ? statement.sender : undefined,
                       subject: statement.subject,
                       fallback: statement.fileName,
                     })
                   : getStatementDisplayMerchant(statement, getBankDisplayName(statement.bankName));
-                const merchantLabel = isGmail
+                const merchantLabel = isReceipt
                   ? resolvedName
                   : getStatementMerchantLabel(
                       statement.status,
                       resolvedName,
                       listHeaderLabels.scanning,
                     );
-                const isManualExpense = !isGmail && isManualExpenseStatement(statement);
+                const isManualExpense = !isReceipt && isManualExpenseStatement(statement);
                 const manualAttachmentCount = Number(
                   statement.parsingDetails?.importPreview?.attachments ?? 0,
                 );
                 const allowAttachFallback =
                   isManualExpense &&
-                  !isGmail &&
+                  !isReceipt &&
                   (manualAttachmentCount === 0 ||
                     statement.fileName.toLowerCase().startsWith('manual-expense-'));
-                const isProcessingGmail = isGmailReceiptProcessing(statement);
+                const isProcessingReceipt = isReceiptProcessing(statement);
                 const isProcessingStatement = isStatementParsingInProgress(statement);
                 const amountLabel = formatStatementAmount(statement);
                 const dateLabel = formatStatementDate(statement);
@@ -2041,8 +2202,8 @@ export default function StatementsListView({ stage }: Props) {
                     key={statement.id}
                     statement={statement}
                     viewLabel={viewLabel}
-                    isGmail={isGmail}
-                    isProcessing={isProcessingGmail}
+                    isReceipt={isReceipt}
+                    isProcessing={isProcessingReceipt}
                     merchantLabel={merchantLabel}
                     amountLabel={amountLabel}
                     dateLabel={dateLabel}
@@ -2054,14 +2215,14 @@ export default function StatementsListView({ stage }: Props) {
                     duplicateGroupTone={duplicateMeta?.groupTone}
                     duplicateReason={duplicateMeta?.reason}
                     duplicateActionLabel={reviewDuplicateLabel}
-                    typeLabel={isGmail ? 'PDF' : statement.fileType}
+                    typeLabel={isReceipt ? 'Receipt' : statement.fileType}
                     isManualExpense={isManualExpense}
                     viewDisabled={isProcessingStatement}
                     onView={() => handleView(statement)}
                     onIconClick={() => {
-                      if (isGmail) {
+                      if (isReceipt) {
                         setPreviewAllowAttachFile(false);
-                        setPreviewSource('gmail');
+                        setPreviewSource(isGmailStatement(statement) ? 'gmail' : 'receipt');
                         setPreviewFileId(statement.id);
                         setPreviewFileName(statement.fileName || 'receipt.pdf');
                         setPreviewModalOpen(true);
@@ -2116,7 +2277,6 @@ export default function StatementsListView({ stage }: Props) {
           onParsingStarted={refreshStatementsAfterAttach}
         />
       )}
-
       <FiltersDrawer
         open={filtersDrawerOpen}
         onClose={() => setFiltersDrawerOpen(false)}
@@ -2190,13 +2350,7 @@ export default function StatementsListView({ stage }: Props) {
         categories={manualExpenseCategories}
         taxRates={manualExpenseTaxRates}
         onClose={() => setExpenseDrawerOpen(false)}
-        onSubmitScan={payload =>
-          uploadStatementFiles(
-            payload.files,
-            payload.allowDuplicates,
-            payload.requireManualCategorySelection,
-          )
-        }
+        onSubmitScan={uploadScanDrawerFiles}
         onSubmitManual={handleCreateManualExpense}
       />
     </div>

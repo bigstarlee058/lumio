@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Workspace } from './workspace.entity';
 
 @Entity('storage_views')
 export class StorageView {
@@ -13,6 +16,13 @@ export class StorageView {
 
   @Column({ name: 'user_id' })
   userId: string;
+
+  @ManyToOne(() => Workspace, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column({ name: 'workspace_id' })
+  workspaceId: string;
 
   @Column()
   name: string;
