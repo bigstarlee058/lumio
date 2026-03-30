@@ -1,7 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
-import { Button } from '@/app/components/ui/button';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
 import { ReceiptParsedDataForm } from '@/app/components/receipts/ReceiptParsedDataForm';
 import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
@@ -450,10 +450,10 @@ export default function ReceiptDocumentPage() {
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
           {error || 'Receipt not found'}
         </div>
-        <Button type="button" onClick={() => router.push('/statements')}>
+        <DetailActionButton type="button" onClick={() => router.push('/statements')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to statements
-        </Button>
+        </DetailActionButton>
       </div>
     );
   }
@@ -467,10 +467,10 @@ export default function ReceiptDocumentPage() {
       <div className="flex w-full flex-col gap-6">
         <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
-            <Button type="button" variant="outline" onClick={() => router.push('/statements')}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
+            <DetailActionButton type="button" onClick={() => router.push('/statements')}>
+              <ArrowLeft className="h-4 w-4" />
               Back to statements
-            </Button>
+            </DetailActionButton>
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
                 Receipt details
@@ -485,22 +485,22 @@ export default function ReceiptDocumentPage() {
           </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="button" variant="outline" onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" />
+          <DetailActionButton type="button" onClick={handleDownload}>
+            <Download className="h-4 w-4" />
             Download
-          </Button>
-          <Button
+          </DetailActionButton>
+          <DetailActionButton
             type="button"
-            variant="outline"
             onClick={() => setExportConfirmOpen(true)}
             disabled={exportingToTable || !canExportToTable}
           >
-            <Table className="mr-2 h-4 w-4" />
+            <Table className="h-4 w-4" />
             Export to table
-          </Button>
-          <Button type="button" onClick={handleApprove} disabled={saving}>
+          </DetailActionButton>
+          <DetailActionButton type="button" onClick={handleApprove} disabled={saving}>
+            {saving ? <Spinner className="size-[18px]" /> : null}
             Approve receipt
-          </Button>
+          </DetailActionButton>
           </div>
         </div>
 

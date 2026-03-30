@@ -1,6 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useAutoSave } from '@/app/hooks/useAutoSave';
 import apiClient from '@/app/lib/api';
@@ -799,7 +800,7 @@ export default function EditStatementPage() {
   if (loading) {
     return (
       <Container maxWidth="xl" sx={{ mt: 4, textAlign: 'center' }}>
-        <Spinner size={40} className="text-primary" />
+        <Spinner className="size-10 text-primary" />
       </Container>
     );
   }
@@ -996,7 +997,7 @@ export default function EditStatementPage() {
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
             <Button
               variant="outlined"
-              startIcon={statementCategorySaving ? <Spinner size={18} /> : <Category />}
+              startIcon={statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />}
               onClick={() => setStatementCategoryDrawerOpen(true)}
               disabled={statementCategorySaving || optionsLoading}
               title={selectedStatementCategoryName}
@@ -1045,26 +1046,13 @@ export default function EditStatementPage() {
                   : selectedStatementCategoryName}
               </Box>
             </Button>
-            <Button
-              variant="outlined"
-              startIcon={exportingToTable ? <Spinner size={18} /> : <TableChart />}
+            <DetailActionButton
               onClick={() => setExportConfirmOpen(true)}
               disabled={exportingToTable || !transactions.length}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 600,
-                borderColor: 'grey.300',
-                color: 'text.secondary',
-                borderRadius: 2,
-                '&:hover': {
-                  borderColor: 'primary.300',
-                  color: 'primary.700',
-                  bgcolor: 'primary.50',
-                },
-              }}
             >
+              {exportingToTable ? <Spinner className="size-[18px]" /> : <TableChart sx={{ fontSize: 18 }} />}
               {t.labels.exportButton.value}
-            </Button>
+            </DetailActionButton>
             {stageActions.map(action => {
               const isLoading = stageActionLoadingId === action.id;
               const isPrimary = action.id === 'pay';
@@ -1075,43 +1063,43 @@ export default function EditStatementPage() {
                   'Assign categories to all transactions before submitting'
                 : '';
 
-              return (
-                <Tooltip key={action.id} title={tooltipTitle} placement="top">
-                  <span style={{ display: 'inline-flex' }}>
-                    <Button
-                      variant={isPrimary ? 'contained' : 'outlined'}
-                      startIcon={
-                        isLoading ? (
-                          <Spinner size={18} />
-                        ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
-                          <ArrowBack />
-                        ) : (
-                          <Check />
-                        )
-                      }
-                      onClick={() => handleStageAction(action)}
-                      disabled={isDisabled}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 600,
-                        borderRadius: 2,
-                        boxShadow: isPrimary ? 'none' : undefined,
-                        borderColor: isPrimary ? undefined : 'grey.300',
-                        color: isPrimary ? undefined : 'text.secondary',
-                        '&:hover': isPrimary
-                          ? { boxShadow: 'none' }
-                          : {
-                              borderColor: 'primary.300',
-                              color: 'primary.700',
-                              bgcolor: 'primary.50',
-                            },
-                      }}
-                    >
-                      {stageActionLabels[action.id]}
-                    </Button>
-                  </span>
-                </Tooltip>
-              );
+                return (
+                  <Tooltip key={action.id} title={tooltipTitle} placement="top">
+                    <span style={{ display: 'inline-flex' }}>
+                      {isPrimary ? (
+                        <Button
+                          variant="contained"
+                          startIcon={isLoading ? <Spinner className="size-[18px]" /> : <Check />}
+                          onClick={() => handleStageAction(action)}
+                          disabled={isDisabled}
+                          sx={{
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            borderRadius: 2,
+                            boxShadow: 'none',
+                            '&:hover': { boxShadow: 'none' },
+                          }}
+                        >
+                          {stageActionLabels[action.id]}
+                        </Button>
+                      ) : (
+                        <DetailActionButton
+                          onClick={() => handleStageAction(action)}
+                          disabled={isDisabled}
+                        >
+                          {isLoading ? (
+                            <Spinner className="size-[18px]" />
+                          ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
+                            <ArrowBack sx={{ fontSize: 18 }} />
+                          ) : (
+                            <Check sx={{ fontSize: 18 }} />
+                          )}
+                          {stageActionLabels[action.id]}
+                        </DetailActionButton>
+                      )}
+                    </span>
+                  </Tooltip>
+                );
             })}
           </Box>
         </Box>
@@ -1589,7 +1577,7 @@ export default function EditStatementPage() {
                 variant="contained"
                 onClick={handleBulkUpdate}
                 disabled={saving}
-                startIcon={saving ? <Spinner size={20} /> : <Save />}
+                startIcon={saving ? <Spinner className="size-5" /> : <Save />}
                 size="small"
                 sx={{
                   textTransform: 'none',
@@ -2003,7 +1991,7 @@ export default function EditStatementPage() {
           </Button>
           <Button
             variant="contained"
-            startIcon={saving ? <Spinner size={18} /> : <CheckCircle />}
+            startIcon={saving ? <Spinner className="size-[18px]" /> : <CheckCircle />}
             onClick={handleApplyBulkCategory}
             disabled={saving || !bulkCategoryId}
             sx={{

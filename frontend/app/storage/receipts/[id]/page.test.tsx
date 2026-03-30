@@ -258,6 +258,76 @@ describe('ReceiptDocumentPage', () => {
     expect(routerMocks.push).toHaveBeenCalledWith('/statements');
   });
 
+  it('uses shared detail action buttons in the receipt header', async () => {
+    apiMocks.mockApiGet.mockImplementation((url: string) => {
+      if (url === '/receipts/receipt-1') {
+        return Promise.resolve({
+          data: {
+            id: 'receipt-1',
+            subject: 'Receipt',
+            sender: 'camera-scan',
+            source: 'scan',
+            status: 'draft',
+            receivedAt: '2026-03-29T10:30:00.000Z',
+            metadata: {
+              attachments: [{ filename: 'receipt.jpg', mimeType: 'image/jpeg' }],
+            },
+            parsedData: {
+              vendor: 'Store',
+              amount: 500,
+              currency: 'KZT',
+              date: '2026-03-29',
+              lineItems: [],
+            },
+          },
+        });
+      }
+
+      if (url === '/categories') {
+        return Promise.resolve({ data: [] });
+      }
+
+      return Promise.resolve({ data: [] });
+    });
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'image/jpeg' : null),
+      },
+      blob: async () => new Blob(['image'], { type: 'image/jpeg' }),
+    } as Response);
+
+    await act(async () => {
+      root.render(<ReceiptDocumentPage />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const actionLabels = [
+      'Back to statements',
+      'Download',
+      'Export to table',
+      'Approve receipt',
+    ];
+
+    for (const label of actionLabels) {
+      const actionButton = Array.from(container.querySelectorAll('button')).find(button =>
+        button.textContent?.includes(label),
+      ) as HTMLButtonElement | undefined;
+
+      expect(actionButton).toBeTruthy();
+      expect(actionButton?.className).toContain('detail-action-button');
+      expect(actionButton?.className).toContain('rounded-lg');
+      expect(actionButton?.className).not.toContain('rounded-full');
+      expect(actionButton?.className).not.toContain('border-primary');
+      expect(actionButton?.className).not.toContain('bg-primary');
+    }
+  });
+
   it('renders store receipt image previews much larger on the receipt details page', async () => {
     apiMocks.mockApiGet.mockImplementation((url: string) => {
       if (url === '/receipts/receipt-1') {

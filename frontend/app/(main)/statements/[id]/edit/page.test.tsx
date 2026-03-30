@@ -388,4 +388,29 @@ describe('EditStatementPage locale', () => {
     });
     expect(push).toHaveBeenCalledWith('/statements/pay');
   });
+
+  it('uses shared detail action buttons for statement header actions', async () => {
+    const { default: EditStatementPage } = await import('./page');
+
+    await act(async () => {
+      root.render(<EditStatementPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const actionLabels = ['Export to table', 'Submit'];
+
+    for (const label of actionLabels) {
+      const actionButton = Array.from(container.querySelectorAll('button')).find(button =>
+        button.textContent?.includes(label),
+      ) as HTMLButtonElement | undefined;
+
+      expect(actionButton).toBeTruthy();
+      expect(actionButton?.className).toContain('detail-action-button');
+      expect(actionButton?.className).toContain('rounded-lg');
+      expect(actionButton?.className).not.toContain('rounded-full');
+    }
+  });
 });
