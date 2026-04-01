@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import type { CustomTableColumn } from '@/entities';
 import { CustomTableColumnType } from '@/entities/custom-table-column.entity';
+import { WorkspaceExportFormat } from '@/modules/reports/dto/workspace-export.dto';
 import { AuditService } from '@/modules/audit/audit.service';
 import { ReportsService } from '@/modules/reports/reports.service';
 import { BadRequestException } from '@nestjs/common';
@@ -482,5 +483,59 @@ describe('generateFromTemplate', () => {
       fileName: 'history-report.xlsx',
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
+  });
+});
+
+describe('exportWorkspaceTransactions', () => {
+  it('queries all workspace transactions and delegates excel export', async () => {
+    const getMany = jest.fn(async () => [{ id: 'tx-1' }]);
+    const qb = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      leftJoin: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      addOrderBy: jest.fn().mockReturnThis(),
+      getMany,
+    };
+    const transactionRepository = {
+      createQueryBuilder: jest.fn(() => qb),
+    };
+    const service = new ReportsService(
+      transactionRepository as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      createRepoMock() as any,
+      { get: jest.fn(), set: jest.fn() } as any,
+      { createEvent: jest.fn() } as AuditService,
+      createRepoMock() as any,
+    );
+    const excelSpy = jest
+      .spyOn(service as any, 'generateWorkspaceExcel')
+      .mockResolvedValue(undefined);
+
+    const result = await (service as any).exportWorkspaceTransactions(
+      'ws-42',
+      WorkspaceExportFormat.EXCEL,
+    );
+
+    expect(transactionRepository.createQueryBuilder).toHaveBeenCalledWith('transaction');
+    expect(qb.where).toHaveBeenCalledWith('transaction.workspaceId = :workspaceId', {
+      workspaceId: 'ws-42',
+    });
+    expect(qb.andWhere).toHaveBeenNthCalledWith(1, 'transaction.isDuplicate = false');
+    expect(qb.andWhere).toHaveBeenNthCalledWith(
+      2,
+      '(transaction.statementId IS NULL OR statement.deletedAt IS NULL)',
+    );
+    expect(excelSpy).toHaveBeenCalledWith([{ id: 'tx-1' }], expect.stringContaining('workspace-transactions-'));
+    expect(result.fileName).toMatch(/^workspace-transactions-.*\.xlsx$/);
+    expect(result.mimeType).toBe(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
   });
 });

@@ -1,5 +1,6 @@
 import { PassThrough } from 'stream';
 import { ExportFormat } from '@/modules/reports/dto/export-report.dto';
+import { WorkspaceExportFormat } from '@/modules/reports/dto/workspace-export.dto';
 import { ReportsController } from '@/modules/reports/reports.controller';
 
 jest.mock('fs', () => {
@@ -118,6 +119,77 @@ describe('ReportsController', () => {
     expect(fs.unlinkSync as any).not.toHaveBeenCalledWith('/tmp/history.xlsx');
   });
 
+  it('exportWorkspaceTransactions streams generated workspace export file', async () => {
+    const fs = await import('fs');
+    const stream = new PassThrough();
+    (fs.createReadStream as any).mockReturnValue(stream);
+
+    const reportsService = {
+      getStatementsSummary: jest.fn(),
+      getCustomTablesSummary: jest.fn(),
+      getLatestTransactionDate: jest.fn(),
+      generateDailyReport: jest.fn(),
+      getLatestTransactionPeriod: jest.fn(),
+      generateMonthlyReport: jest.fn(),
+      generateCustomReport: jest.fn(),
+      exportReport: jest.fn(),
+      exportWorkspaceTransactions: jest.fn(async () => ({
+        filePath: '/tmp/workspace.docx',
+        fileName: 'workspace.docx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      })),
+    };
+    const res = new PassThrough() as any;
+    res.setHeader = jest.fn();
+    const controller = new ReportsController(reportsService as any);
+
+    await (controller as any).exportWorkspaceTransactions(
+      'ws-1',
+      { format: WorkspaceExportFormat.DOCX },
+      res,
+    );
+
+    expect(reportsService.exportWorkspaceTransactions).toHaveBeenCalledWith(
+      'ws-1',
+      WorkspaceExportFormat.DOCX,
+    );
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    );
+    expect(fs.createReadStream).toHaveBeenCalledWith('/tmp/workspace.docx');
+
+    stream.emit('end');
+    expect(fs.unlinkSync as any).toHaveBeenCalledWith('/tmp/workspace.docx');
+  });
+
+  it('exportWorkspaceTransactions cleans up temp file on stream error', async () => {
+    const fs = await import('fs');
+    const stream = new PassThrough();
+    (fs.createReadStream as any).mockReturnValue(stream);
+
+    const reportsService = {
+      exportWorkspaceTransactions: jest.fn(async () => ({
+        filePath: '/tmp/workspace.xlsx',
+        fileName: 'workspace.xlsx',
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })),
+    };
+    const res = new PassThrough() as any;
+    res.setHeader = jest.fn();
+    const controller = new ReportsController(reportsService as any);
+
+    await (controller as any).exportWorkspaceTransactions(
+      'ws-1',
+      { format: WorkspaceExportFormat.EXCEL },
+      res,
+    );
+
+    stream.emit('error', new Error('stream failed'));
+
+    expect(fs.unlinkSync as any).toHaveBeenCalledWith('/tmp/workspace.xlsx');
+  });
+
   it('getTopCategories delegates to reports service', async () => {
     const reportsService = {
       getStatementsSummary: jest.fn(),
@@ -177,5 +249,57 @@ describe('ReportsController', () => {
       dateFrom: '2025-01-01',
       dateTo: '2025-01-03',
     });
+  });
+
+  it('getCustomTablesReport delegates to reports service', async () => {
+    const reportsService = {
+      getCustomTablesReport: jest.fn(async () => ({ aggregatedRows: [] })),
+    };
+    const controller = new ReportsController(reportsService as any);
+
+    const result = await (controller as any).getCustomTablesReport(
+      { id: 'u-1' } as any,
+      'ws-1',
+      { days: 30, flowType: 'expense' },
+    );
+
+    expect(result).toEqual({ aggregatedRows: [] });
+    expect(reportsService.getCustomTablesReport).toHaveBeenCalledWith('ws-1', {
+      days: 30,
+      flowType: 'expense',
+    });
+  });
+
+  it('getCustomTablesReportDrillDown delegates to reports service', async () => {
+    const reportsService = {
+      getCustomTablesReportDrillDown: jest.fn(async () => ({ items: [] })),
+    };
+    const controller = new ReportsController(reportsService as any);
+
+    const result = await (controller as any).getCustomTablesReportDrillDown(
+      { id: 'u-1' } as any,
+      'ws-1',
+      { counterparty: 'Vendor A' },
+    );
+
+    expect(result).toEqual({ items: [] });
+    expect(reportsService.getCustomTablesReportDrillDown).toHaveBeenCalledWith('ws-1', {
+      counterparty: 'Vendor A',
+    });
+  });
+
+  it('getAvailableCustomTables delegates to reports service', async () => {
+    const reportsService = {
+      getAvailableCustomTables: jest.fn(async () => [{ id: 'table-1' }]),
+    };
+    const controller = new ReportsController(reportsService as any);
+
+    const result = await (controller as any).getAvailableCustomTables(
+      { id: 'u-1' } as any,
+      'ws-1',
+    );
+
+    expect(result).toEqual([{ id: 'table-1' }]);
+    expect(reportsService.getAvailableCustomTables).toHaveBeenCalledWith('ws-1');
   });
 });

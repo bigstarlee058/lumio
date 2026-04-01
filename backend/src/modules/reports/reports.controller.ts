@@ -23,17 +23,35 @@ import { buildContentDisposition } from '../../common/utils/http-file.util';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { type CustomReportDto, ReportFormat } from './dto/custom-report.dto';
+import {
+  CustomTablesReportDrillDownDto,
+  CustomTablesReportDto,
+} from './dto/custom-tables-report.dto';
 import { CustomTablesSummaryDto } from './dto/custom-tables-summary.dto';
 import { ExportFormat, type ExportReportDto } from './dto/export-report.dto';
 import { GenerateReportDto } from './dto/generate-report.dto';
 import { SpendOverTimeQueryDto } from './dto/spend-over-time-query.dto';
 import { TopCategoriesQueryDto } from './dto/top-categories-query.dto';
+import { type WorkspaceExportDto, WorkspaceExportFormat } from './dto/workspace-export.dto';
 import { ReportsService } from './reports.service';
 
 @Controller('reports')
 @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
+
+  private scheduleTempFileCleanup(fileStream: fs.ReadStream, filePath: string) {
+    const cleanup = () => {
+      try {
+        fs.unlinkSync(filePath);
+      } catch {
+        // noop cleanup safeguard
+      }
+    };
+
+    fileStream.on('end', cleanup);
+    fileStream.on('error', cleanup);
+  }
 
   @Get('statements/summary')
   @UseGuards(PermissionsGuard)
@@ -77,6 +95,38 @@ export class ReportsController {
     @Body() dto: CustomTablesSummaryDto,
   ) {
     return this.reportsService.getCustomTablesSummary(workspaceId, dto);
+  }
+
+  @Post('custom-tables/report')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission(Permission.REPORT_VIEW)
+  async getCustomTablesReport(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Body() dto: CustomTablesReportDto,
+  ) {
+    return this.reportsService.getCustomTablesReport(workspaceId, dto);
+  }
+
+  @Post('custom-tables/report/drill-down')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission(Permission.REPORT_VIEW)
+  async getCustomTablesReportDrillDown(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+    @Body() dto: CustomTablesReportDrillDownDto,
+  ) {
+    return this.reportsService.getCustomTablesReportDrillDown(workspaceId, dto);
+  }
+
+  @Get('custom-tables/available')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission(Permission.REPORT_VIEW)
+  async getAvailableCustomTables(
+    @CurrentUser() user: User,
+    @WorkspaceId() workspaceId: string,
+  ) {
+    return this.reportsService.getAvailableCustomTables(workspaceId);
   }
 
   @Get('daily')
@@ -171,9 +221,7 @@ export class ReportsController {
     fileStream.pipe(res);
 
     // Clean up file after sending
-    fileStream.on('end', () => {
-      fs.unlinkSync(filePath);
-    });
+    this.scheduleTempFileCleanup(fileStream, filePath);
   }
 
   @Post('generate')
@@ -193,7 +241,28 @@ export class ReportsController {
     res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
     const fileStream = fs.createReadStream(filePath);
     fileStream.pipe(res);
-    fileStream.on('end', () => fs.unlinkSync(filePath));
+    this.scheduleTempFileCleanup(fileStream, filePath);
+  }
+
+  @Post('workspace-export')
+  @UseGuards(PermissionsGuard)
+  @RequirePermission(Permission.REPORT_EXPORT)
+  async exportWorkspaceTransactions(
+    @WorkspaceId() workspaceId: string,
+    @Body() dto: WorkspaceExportDto,
+    @Res() res: Response,
+  ) {
+    const { filePath, fileName, mimeType } = await this.reportsService.exportWorkspaceTransactions(
+      workspaceId,
+      dto.format || WorkspaceExportFormat.EXCEL,
+    );
+
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
+
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+    this.scheduleTempFileCleanup(fileStream, filePath);
   }
 
   @Get('history')

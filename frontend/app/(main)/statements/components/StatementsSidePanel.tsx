@@ -22,6 +22,7 @@ import {
 } from '@/app/lib/statement-upload-actions';
 import { countStatementStages, getStatementStageMap } from '@/app/lib/statement-workflow';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import { Banknote, CalendarRange, Folder, Pencil, Send, ThumbsUp, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -39,6 +40,7 @@ type ActiveItem =
   | 'top-spenders'
   | 'top-merchants'
   | 'top-categories'
+  | 'tables-reports'
   | 'transactions';
 
 type Props = {
@@ -95,6 +97,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   const [topSenders, setTopSenders] = useState<TopBankSender[]>([]);
   const [topMerchantsCount, setTopMerchantsCount] = useState(0);
   const [topCategoriesCount, setTopCategoriesCount] = useState(0);
+  const [tablesReportsCount, setTablesReportsCount] = useState(0);
   const [connectedCloudProviders, setConnectedCloudProviders] = useState<ConnectedCloudProviders>({
     googleDriveConnected: false,
     dropboxConnected: false,
@@ -211,6 +214,8 @@ export default function StatementsSidePanel({ activeItem }: Props) {
         const topCategories = Array.isArray(topCategoriesResponse.data?.categories)
           ? topCategoriesResponse.data.categories
           : [];
+        const customTablesResponse = await apiClient.get('/custom-tables');
+        const customTables = Array.isArray(customTablesResponse.data) ? customTablesResponse.data : [];
 
         if (isMounted) {
           setCounts({
@@ -220,6 +225,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           setTopSenders(topBankSenders);
           setTopMerchantsCount(uniqueMerchants.size);
           setTopCategoriesCount(topCategories.length);
+          setTablesReportsCount(customTables.length);
           setCountsLoading(false);
         }
       } catch {
@@ -228,6 +234,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           setTopSenders([]);
           setTopMerchantsCount(0);
           setTopCategoriesCount(0);
+          setTablesReportsCount(0);
           setCountsLoading(false);
         }
       }
@@ -531,6 +538,17 @@ export default function StatementsSidePanel({ activeItem }: Props) {
               href: '/statements/top-categories',
               active: activeItem === 'top-categories',
             },
+            {
+              id: 'tables-reports',
+              label: (t as any)?.sidePanel?.tablesReports?.value ?? 'Tables reports',
+              icon: <TableChartOutlinedIcon sx={{ fontSize: 20 }} />,
+              badge: tablesReportsCount,
+              badgeLoading: countsLoading,
+              badgeVariant: 'default',
+              emphasis: 'low',
+              href: '/statements/tables-reports',
+              active: activeItem === 'tables-reports',
+            },
           ],
         },
       ],
@@ -555,6 +573,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     topSenders,
     topMerchantsCount,
     topCategoriesCount,
+    tablesReportsCount,
     connectedCloudProviders,
     handleCloudImport,
     handleGmailClick,

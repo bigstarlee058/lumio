@@ -8,6 +8,12 @@ interface OnboardingProgressProps {
 export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgressProps) {
   const totalSteps = stepLabels.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
+  const columnsClass =
+    totalSteps === 3
+      ? 'grid-cols-3'
+      : totalSteps === 4
+        ? 'grid-cols-4'
+        : 'grid-cols-5';
 
   return (
     <div className="space-y-4">
@@ -18,7 +24,7 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
         />
       </div>
 
-      <div className="grid grid-cols-5 gap-2">
+      <div className={`grid gap-2 ${columnsClass}`}>
         {stepLabels.map((label, index) => {
           const isActive = index === currentStep;
           const isPassed = index < currentStep;

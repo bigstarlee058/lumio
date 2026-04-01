@@ -54,6 +54,8 @@ export interface DashboardDataHealth {
   uncategorizedTransactions: number;
   statementsWithErrors: number;
   statementsPendingReview: number;
+  statementsPendingSubmit: number;
+  receiptsPendingReview: number;
   unapprovedCash: number;
   lastUploadDate: string | null;
   parsingWarnings: number;

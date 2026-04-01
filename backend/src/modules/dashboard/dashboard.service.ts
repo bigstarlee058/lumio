@@ -518,6 +518,8 @@ export class DashboardService {
       uncategorizedTransactions,
       statementsWithErrors,
       statementsPendingReview,
+      statementsPendingSubmit,
+      receiptsPendingReview,
       parsingWarnings,
       latestStatement,
       unapprovedCashResult,
@@ -539,8 +541,23 @@ export class DashboardService {
       this.statementRepo.count({
         where: {
           workspaceId,
-          status: In([StatementStatus.UPLOADED, StatementStatus.PROCESSING, StatementStatus.ERROR]),
+          status: In([StatementStatus.PARSED, StatementStatus.VALIDATED]),
           deletedAt: IsNull(),
+        },
+      }),
+      // statements pending submit: uploaded but not submitted yet
+      this.statementRepo.count({
+        where: {
+          workspaceId,
+          status: StatementStatus.UPLOADED,
+          deletedAt: IsNull(),
+        },
+      }),
+      // receipts pending review
+      this.receiptRepo.count({
+        where: {
+          workspaceId,
+          status: In([ReceiptStatus.NEW, ReceiptStatus.NEEDS_REVIEW]),
         },
       }),
       // parsing warnings: actual warnings captured in parsing details
@@ -581,6 +598,8 @@ export class DashboardService {
       uncategorizedTransactions,
       statementsWithErrors,
       statementsPendingReview,
+      statementsPendingSubmit,
+      receiptsPendingReview,
       unapprovedCash: Number.parseFloat(unapprovedCashResult?.unapprovedCash ?? '') || 0,
       lastUploadDate: latestStatement?.createdAt?.toISOString() ?? null,
       parsingWarnings,

@@ -5,6 +5,7 @@ interface OnboardingNavigationProps {
   totalSteps: number;
   isSubmitting: boolean;
   showSkip: boolean;
+  canExitOnBack?: boolean;
   onBack: () => void;
   onNext: () => void;
   onSkip: () => void;
@@ -24,6 +25,7 @@ export function OnboardingNavigation({
   totalSteps,
   isSubmitting,
   showSkip,
+  canExitOnBack = false,
   onBack,
   onNext,
   onSkip,
@@ -31,6 +33,7 @@ export function OnboardingNavigation({
   labels,
 }: OnboardingNavigationProps) {
   const isFirstStep = currentStep === 0;
+  const disableBack = (isFirstStep && !canExitOnBack) || isSubmitting;
   const isLastStep = currentStep === totalSteps - 1;
 
   return (
@@ -39,7 +42,7 @@ export function OnboardingNavigation({
         <button
           type="button"
           onClick={onBack}
-          disabled={isFirstStep || isSubmitting}
+          disabled={disableBack}
           className="rounded-full border border-border bg-card px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           {labels.back}

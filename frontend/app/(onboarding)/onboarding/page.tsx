@@ -5,11 +5,13 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import apiClient from '@/app/lib/api';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
 import { OnboardingProgress } from './components/OnboardingProgress';
+import { resolveOnboardingFlow } from './lib/onboarding-flow';
 import { resolveOnboardingText } from './lib/resolveOnboardingText';
 import { CompletionStep } from './steps/CompletionStep';
 import { IntegrationsStep } from './steps/IntegrationsStep';
@@ -98,10 +100,13 @@ function normalizeLocale(locale: string | null | undefined): SupportedLocale {
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setLocale, locale } = useLocale();
   const t = useIntlayer('onboardingPage' as any) as any;
   const { user, loading: authLoading, setUser } = useAuth();
   const { refreshWorkspaces } = useWorkspace();
+  const flow = resolveOnboardingFlow(searchParams.get('mode'), user?.onboardingCompletedAt);
+  const isCreateWorkspaceFlow = flow.mode === 'create-workspace';
 
   const { currentStep, data, updateData, goBack, goNext, skipAll, totalSteps, isLastStep } =
     useOnboardingWizard({
@@ -111,7 +116,7 @@ export default function OnboardingPage() {
       workspaceCurrency: DEFAULT_CURRENCY,
       workspaceBackgroundImage: DEFAULT_BACKGROUND,
       integrationsToSetup: [],
-    });
+    }, flow.stepKeys.length);
 
   const [isInitializing, setIsInitializing] = useState(true);
   const [bootstrapComplete, setBootstrapComplete] = useState(false);
@@ -193,10 +198,10 @@ export default function OnboardingPage() {
       return;
     }
 
-    if (user.onboardingCompletedAt) {
-      router.replace('/');
+    if (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser) {
+      router.replace(DEFAULT_APP_ROUTE);
     }
-  }, [authLoading, router, user]);
+  }, [authLoading, flow.shouldRedirectCompletedUser, router, user]);
 
   useEffect(() => {
     if (!user?.workspaceId) {
@@ -218,7 +223,7 @@ export default function OnboardingPage() {
       return;
     }
 
-    if (user.onboardingCompletedAt) {
+    if (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser) {
       return;
     }
 
@@ -236,6 +241,17 @@ export default function OnboardingPage() {
         workspaceCurrency: DEFAULT_CURRENCY,
         workspaceBackgroundImage: DEFAULT_BACKGROUND,
       };
+
+      if (isCreateWorkspaceFlow) {
+        if (!cancelled) {
+          updateData(initialData);
+          setLocale(defaultLocale);
+          await refreshIntegrationStatuses();
+          setBootstrapComplete(true);
+          setIsInitializing(false);
+        }
+        return;
+      }
 
       try {
         const response = await apiClient.get('/workspaces');
@@ -286,10 +302,21 @@ export default function OnboardingPage() {
     return () => {
       cancelled = true;
     };
-  }, [authLoading, bootstrapComplete, locale, setLocale, t, updateData, user]);
+  }, [
+    authLoading,
+    bootstrapComplete,
+    flow.shouldRedirectCompletedUser,
+    isCreateWorkspaceFlow,
+    locale,
+    setLocale,
+    t,
+    updateData,
+    user,
+  ]);
 
   useEffect(() => {
-    if (currentStep !== 3) {
+    const integrationsStepIndex = flow.stepKeys.indexOf('integrations');
+    if (currentStep !== integrationsStepIndex) {
       return;
     }
 
@@ -302,7 +329,7 @@ export default function OnboardingPage() {
     return () => {
       window.clearInterval(timer);
     };
-  }, [currentStep]);
+  }, [currentStep, flow.stepKeys]);
 
   const stepLabels = useMemo(() => {
     const resolveLabel = (token: unknown, fallback: string) => {
@@ -314,15 +341,18 @@ export default function OnboardingPage() {
       return resolveOnboardingText(tokenValue, fallback, data.locale);
     };
 
-    return [
-      resolveLabel(t.steps.welcome, 'Welcome'),
-      resolveLabel(t.steps.language, 'Language'),
-      resolveLabel(t.steps.workspace, 'Workspace'),
-      resolveLabel(t.steps.integrations, 'Integrations'),
-      resolveLabel(t.steps.completion, 'Done'),
-    ];
+    const stepLabelMap = {
+      welcome: resolveLabel(t.steps.welcome, 'Welcome'),
+      language: resolveLabel(t.steps.language, 'Language'),
+      workspace: resolveLabel(t.steps.workspace, 'Workspace'),
+      integrations: resolveLabel(t.steps.integrations, 'Integrations'),
+      completion: resolveLabel(t.steps.completion, 'Done'),
+    } as const;
+
+    return flow.stepKeys.map(stepKey => stepLabelMap[stepKey]);
   }, [
     data.locale,
+    flow.stepKeys,
     t.steps.completion,
     t.steps.integrations,
     t.steps.language,
@@ -330,8 +360,14 @@ export default function OnboardingPage() {
     t.steps.workspace,
   ]);
 
+  const workspaceStepIndex = flow.stepKeys.indexOf('workspace');
+  const welcomeStepIndex = flow.stepKeys.indexOf('welcome');
+  const languageStepIndex = flow.stepKeys.indexOf('language');
+  const integrationsStepIndex = flow.stepKeys.indexOf('integrations');
+  const completionStepIndex = flow.stepKeys.indexOf('completion');
   const showSkipButton = currentStep > 0 && !isLastStep;
-  const isWorkspaceLayoutStep = currentStep === 2;
+  const canExitOnBack = isCreateWorkspaceFlow && currentStep === 0;
+  const isWorkspaceLayoutStep = currentStep === workspaceStepIndex;
   const wizardTargetMaxWidth = isWorkspaceLayoutStep && !workspaceCurrencyPickerOpen ? 1520 : 1160;
   const isWorkspaceCurrencyPickerView = isWorkspaceLayoutStep && workspaceCurrencyPickerOpen;
   const hideMainNavigation = isWorkspaceLayoutStep && workspaceCurrencyPickerOpen;
@@ -486,6 +522,40 @@ export default function OnboardingPage() {
       const workspaceCurrency = data.workspaceCurrency.trim().toUpperCase();
       const workspaceBackgroundImage = (data.workspaceBackgroundImage || '').trim();
 
+       if (isCreateWorkspaceFlow) {
+        const preferencesResponse = await apiClient.patch('/users/me/preferences', {
+          locale: data.locale,
+          timeZone: data.timeZone || null,
+        });
+
+        const updatedPreferencesUser = preferencesResponse.data?.user;
+        if (updatedPreferencesUser) {
+          localStorage.setItem('user', JSON.stringify(updatedPreferencesUser));
+          setUser(updatedPreferencesUser);
+        }
+
+        const createWorkspaceResponse = await apiClient.post('/workspaces', {
+          name: workspaceName || 'New Workspace',
+          currency: workspaceCurrency || undefined,
+          backgroundImage: workspaceBackgroundImage || undefined,
+        });
+
+        const createdWorkspaceId = createWorkspaceResponse.data?.id;
+        if (createdWorkspaceId) {
+          await apiClient.post(`/workspaces/${createdWorkspaceId}/switch`);
+          localStorage.setItem('currentWorkspaceId', createdWorkspaceId);
+        }
+
+        try {
+          await refreshWorkspaces();
+        } catch {
+          // Do not block workspace creation if refresh fails.
+        }
+
+        router.replace('/workspaces');
+        return;
+      }
+
       const response = await apiClient.patch('/users/me/onboarding', {
         locale: data.locale,
         timeZone: data.timeZone || null,
@@ -506,7 +576,7 @@ export default function OnboardingPage() {
         // Do not block onboarding completion if workspace refresh fails.
       }
 
-      router.replace('/');
+      router.replace(DEFAULT_APP_ROUTE);
     } catch {
       setError(
         resolveOnboardingText(
@@ -531,6 +601,11 @@ export default function OnboardingPage() {
   };
 
   const handleBack = () => {
+    if (canExitOnBack) {
+      router.back();
+      return;
+    }
+
     setIsStepTransitioning(true);
     goBack();
   };
@@ -566,7 +641,7 @@ export default function OnboardingPage() {
     [updateData],
   );
 
-  if (authLoading || isInitializing || !user || user.onboardingCompletedAt) {
+  if (authLoading || isInitializing || !user || (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner className="h-10 w-10 text-primary" />
@@ -628,10 +703,10 @@ export default function OnboardingPage() {
                   : 'flex flex-col gap-6 pt-5'
               }
             >
-              <div className="relative">
-                <div style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
-                  {currentStep === 0 ? <WelcomeStep /> : null}
-                  {currentStep === 1 ? (
+                <div className="relative">
+                  <div style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
+                  {currentStep === welcomeStepIndex ? <WelcomeStep /> : null}
+                  {currentStep === languageStepIndex ? (
                     <LanguageStep
                       locale={data.locale}
                       timeZone={data.timeZone}
@@ -642,8 +717,9 @@ export default function OnboardingPage() {
                       onTimeZoneChange={nextTimeZone => updateData({ timeZone: nextTimeZone })}
                     />
                   ) : null}
-                  {currentStep === 2 ? (
+                  {currentStep === workspaceStepIndex ? (
                     <WorkspaceStep
+                      locale={data.locale}
                       workspaceName={data.workspaceName}
                       workspaceCurrency={data.workspaceCurrency}
                       workspaceBackgroundImage={data.workspaceBackgroundImage}
@@ -653,13 +729,13 @@ export default function OnboardingPage() {
                       onCurrencyPickerOpenChange={setWorkspaceCurrencyPickerOpen}
                     />
                   ) : null}
-                  {currentStep === 3 ? (
+                  {currentStep === integrationsStepIndex ? (
                     <IntegrationsStep
                       cards={integrationCards}
                       onConnect={handleConnectIntegration}
                     />
                   ) : null}
-                  {currentStep === 4 ? (
+                  {currentStep === completionStepIndex ? (
                     <CompletionStep
                       locale={data.locale}
                       timeZone={data.timeZone}
@@ -678,14 +754,15 @@ export default function OnboardingPage() {
 
               {!hideMainNavigation ? (
                 <div>
-                  <OnboardingNavigation
-                    currentStep={currentStep}
-                    totalSteps={totalSteps}
-                    isSubmitting={isSubmitting || isStepTransitioning}
-                    showSkip={showSkipButton}
-                    onBack={handleBack}
-                    onNext={handleNext}
-                    onSkip={handleSkip}
+                    <OnboardingNavigation
+                      currentStep={currentStep}
+                      totalSteps={totalSteps}
+                      isSubmitting={isSubmitting || isStepTransitioning}
+                      showSkip={showSkipButton}
+                      canExitOnBack={canExitOnBack}
+                      onBack={handleBack}
+                      onNext={handleNext}
+                      onSkip={handleSkip}
                     onSkipAll={handleSkipAll}
                     labels={{
                       back: resolveOnboardingText(t.navigation.back, 'Back', data.locale),

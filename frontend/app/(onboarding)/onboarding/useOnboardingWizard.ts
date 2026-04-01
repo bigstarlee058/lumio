@@ -13,30 +13,28 @@ export interface OnboardingData {
   integrationsToSetup: string[];
 }
 
-const TOTAL_STEPS = 5;
-const LAST_STEP_INDEX = TOTAL_STEPS - 1;
-
-export function useOnboardingWizard(initialData: OnboardingData) {
-  const [currentStep, setCurrentStep] = useState(0);
+export function useOnboardingWizard(initialData: OnboardingData, totalSteps = 5, initialStep = 0) {
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [data, setData] = useState<OnboardingData>(initialData);
+  const lastStepIndex = totalSteps - 1;
 
   const goNext = useCallback(() => {
-    setCurrentStep(prev => Math.min(prev + 1, LAST_STEP_INDEX));
-  }, []);
+    setCurrentStep(prev => Math.min(prev + 1, lastStepIndex));
+  }, [lastStepIndex]);
 
   const goBack = useCallback(() => {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   }, []);
 
   const skipAll = useCallback(() => {
-    setCurrentStep(LAST_STEP_INDEX);
-  }, []);
+    setCurrentStep(lastStepIndex);
+  }, [lastStepIndex]);
 
   const updateData = useCallback((patch: Partial<OnboardingData>) => {
     setData(prev => ({ ...prev, ...patch }));
   }, []);
 
-  const isLastStep = currentStep === LAST_STEP_INDEX;
+  const isLastStep = currentStep === lastStepIndex;
 
   return useMemo(
     () => ({
@@ -48,9 +46,9 @@ export function useOnboardingWizard(initialData: OnboardingData) {
       goNext,
       goBack,
       skipAll,
-      totalSteps: TOTAL_STEPS,
+      totalSteps,
       isLastStep,
     }),
-    [currentStep, data, goBack, goNext, isLastStep, skipAll, updateData],
+    [currentStep, data, goBack, goNext, isLastStep, skipAll, totalSteps, updateData],
   );
 }

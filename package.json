@@ -4,6 +4,7 @@
   "description": "Lumio - Bank statements processing system",
   "main": "backend/dist/main.js",
   "scripts": {
+    "prepare": "husky",
     "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install",
     "build": "npm --prefix frontend run build && npm --prefix backend run build",
     "start": "node backend/dist/main.js",
@@ -22,7 +23,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "concurrently": "^8.2.2",
+    "husky": "^9.1.7",
     "ts-loader": "^9.5.4"
   },
   "dependencies": {

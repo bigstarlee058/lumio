@@ -1,5 +1,6 @@
 import { In, IsNull } from 'typeorm';
 import { ActorType, AuditAction, EntityType } from '../../../../src/entities/audit-event.entity';
+import { ReceiptStatus } from '../../../../src/entities/receipt.entity';
 import { StatementStatus } from '../../../../src/entities/statement.entity';
 import { TransactionType } from '../../../../src/entities/transaction.entity';
 import { WorkspaceRole } from '../../../../src/entities/workspace-member.entity';
@@ -99,6 +100,8 @@ describe('DashboardService', () => {
       uncategorizedTransactions: 0,
       statementsWithErrors: 0,
       statementsPendingReview: 0,
+      statementsPendingSubmit: 0,
+      receiptsPendingReview: 0,
       unapprovedCash: 0,
       lastUploadDate: null,
       parsingWarnings: 0,
@@ -678,7 +681,8 @@ describe('DashboardService', () => {
     transactionRepo.createQueryBuilder
       .mockReturnValueOnce(createQueryBuilderMock(2))
       .mockReturnValueOnce(createQueryBuilderMock({ unapprovedCash: '0' }));
-    statementRepo.count.mockResolvedValueOnce(1).mockResolvedValueOnce(3);
+    statementRepo.count.mockResolvedValueOnce(1).mockResolvedValueOnce(3).mockResolvedValueOnce(2);
+    receiptRepo.count.mockResolvedValueOnce(5);
     statementRepo.findOne.mockResolvedValue({ createdAt: new Date('2026-03-17T00:00:00Z') });
     statementRepo.createQueryBuilder.mockReturnValue(warningsQb);
 
@@ -688,13 +692,28 @@ describe('DashboardService', () => {
       uncategorizedTransactions: 2,
       statementsWithErrors: 1,
       statementsPendingReview: 3,
+      statementsPendingSubmit: 2,
+      receiptsPendingReview: 5,
       parsingWarnings: 4,
     });
     expect(statementRepo.count).toHaveBeenNthCalledWith(2, {
       where: {
         workspaceId: 'ws-1',
-        status: In([StatementStatus.UPLOADED, StatementStatus.PROCESSING, StatementStatus.ERROR]),
+        status: In([StatementStatus.PARSED, StatementStatus.VALIDATED]),
         deletedAt: IsNull(),
+      },
+    });
+    expect(statementRepo.count).toHaveBeenNthCalledWith(3, {
+      where: {
+        workspaceId: 'ws-1',
+        status: StatementStatus.UPLOADED,
+        deletedAt: IsNull(),
+      },
+    });
+    expect(receiptRepo.count).toHaveBeenCalledWith({
+      where: {
+        workspaceId: 'ws-1',
+        status: In([ReceiptStatus.NEW, ReceiptStatus.NEEDS_REVIEW]),
       },
     });
     expect(warningsQb.andWhere).toHaveBeenCalledWith(

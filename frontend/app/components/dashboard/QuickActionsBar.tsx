@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/app/components/ui/button';
-import { Download, FileUp, ListChecks } from 'lucide-react';
+import { FileUp, ListChecks } from 'lucide-react';
 import Link from 'next/link';
 
 const staticActions = [
@@ -12,7 +12,6 @@ const staticActions = [
     href: '/statements?filter=needs_review',
     icon: ListChecks,
   },
-  { key: 'export' as const, label: 'Export', href: '/reports', icon: Download },
 ];
 
 interface QuickActionsBarProps {

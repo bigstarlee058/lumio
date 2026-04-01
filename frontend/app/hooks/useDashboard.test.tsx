@@ -67,6 +67,8 @@ function createDashboardPayload(balance: number) {
       uncategorizedTransactions: 0,
       statementsWithErrors: 0,
       statementsPendingReview: 0,
+      statementsPendingSubmit: 0,
+      receiptsPendingReview: 0,
       unapprovedCash: 0,
       lastUploadDate: null,
       parsingWarnings: 0,

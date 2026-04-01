@@ -1,0 +1,116 @@
+// @vitest-environment jsdom
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { describe, expect, it, vi } from 'vitest';
+
+import { WorkspaceStep } from './WorkspaceStep';
+
+vi.mock('@/app/i18n', () => ({
+  useIntlayer: () => ({
+    navigation: {
+      back: {
+        value: {
+          ru: 'Назад',
+          en: 'Back',
+          kk: 'Артқа',
+        },
+      },
+    },
+    workspace: {
+      title: {
+        value: {
+          ru: 'Настройка первого воркспейса',
+          en: 'Set up your first workspace',
+          kk: 'Алғашқы жұмыс кеңістігін баптау',
+        },
+      },
+      subtitle: {
+        value: {
+          ru: 'RU subtitle',
+          en: 'EN subtitle',
+          kk: 'KK subtitle',
+        },
+      },
+      nameLabel: {
+        value: {
+          ru: 'Название воркспейса',
+          en: 'Workspace name',
+          kk: 'Жұмыс кеңістігінің атауы',
+        },
+      },
+      namePlaceholder: {
+        value: {
+          ru: 'Например: My Company workspace',
+          en: 'For example: My Company workspace',
+          kk: 'Мысалы: My Company workspace',
+        },
+      },
+      currencyHint: {
+        value: {
+          ru: 'RU currency hint',
+          en: 'EN currency hint',
+          kk: 'KK currency hint',
+        },
+      },
+      backgroundLabel: {
+        value: {
+          ru: 'Фон воркспейса',
+          en: 'Workspace background',
+          kk: 'Жұмыс кеңістігінің фоны',
+        },
+      },
+      customBackgroundLabel: {
+        value: {
+          ru: 'Своя картинка (URL)',
+          en: 'Custom image (URL)',
+          kk: 'Жеке сурет (URL)',
+        },
+      },
+      customBackgroundPlaceholder: {
+        value: {
+          ru: 'https://example.com/ru.jpg',
+          en: 'https://example.com/en.jpg',
+          kk: 'https://example.com/kk.jpg',
+        },
+      },
+      customBackgroundHint: {
+        value: {
+          ru: 'RU background hint',
+          en: 'EN background hint',
+          kk: 'KK background hint',
+        },
+      },
+    },
+  }),
+}));
+
+vi.mock('@/app/(main)/workspaces/components/CurrencySelector', () => ({
+  CurrencySelector: () => <div>Currency selector</div>,
+}));
+
+vi.mock('@/app/(main)/workspaces/components/BackgroundSelector', () => ({
+  BackgroundSelector: () => <div>Background selector</div>,
+}));
+
+describe('WorkspaceStep localization', () => {
+  it('renders labels using the selected onboarding locale instead of the active app locale', () => {
+    render(
+      <WorkspaceStep
+        locale="en"
+        workspaceName=""
+        workspaceCurrency="USD"
+        workspaceBackgroundImage={null}
+        onWorkspaceNameChange={vi.fn()}
+        onWorkspaceCurrencyChange={vi.fn()}
+        onWorkspaceBackgroundImageChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Set up your first workspace')).toBeTruthy();
+    expect(screen.getByText('EN currency hint')).toBeTruthy();
+    expect(screen.getByText('Workspace background')).toBeTruthy();
+    expect(screen.getByText('Custom image (URL)')).toBeTruthy();
+    expect(screen.getByPlaceholderText('https://example.com/en.jpg')).toBeTruthy();
+    expect(screen.queryByText('Настройка первого воркспейса')).toBeNull();
+  });
+});

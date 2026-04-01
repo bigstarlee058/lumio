@@ -6,6 +6,8 @@ export type DashboardStatusHeadingKey =
   | 'empty'
   | 'overdue'
   | 'needsReview'
+  | 'pendingSubmit'
+  | 'receiptsNeedReview'
   | 'parsingIssues'
   | 'uncategorized'
   | 'stale'
@@ -50,13 +52,22 @@ export const resolveDashboardStatusHeading = ({
   const daysSinceUpload = Math.floor(
     (now - new Date(lastUploadDate).getTime()) / (1000 * 60 * 60 * 24),
   );
+  const hasAction = (type: string) => data.actions.some(action => action.type === type && action.count > 0);
 
   if (data.snapshot.totalOverdue > 0) {
     return 'overdue';
   }
 
-  if (data.dataHealth.statementsPendingReview > 0) {
+  if (data.dataHealth.statementsPendingReview > 0 || hasAction('statements_pending_review')) {
     return 'needsReview';
+  }
+
+  if (data.dataHealth.statementsPendingSubmit > 0 || hasAction('statements_pending_submit')) {
+    return 'pendingSubmit';
+  }
+
+  if (data.dataHealth.receiptsPendingReview > 0 || hasAction('receipts_pending_review')) {
+    return 'receiptsNeedReview';
   }
 
   if (data.dataHealth.parsingWarnings > 0) {

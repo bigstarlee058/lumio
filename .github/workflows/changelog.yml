@@ -35,8 +35,7 @@ jobs:
 
       - name: Generate changelog data
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CHANGELOG_MIN_COMMITS: "10"
+          CHANGELOG_MIN_COMMITS: "5"
         run: node scripts/generate-changelog.mjs
 
       - name: Detect generated changes

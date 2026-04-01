@@ -22,11 +22,18 @@ import { User } from '../../entities/user.entity';
 import { Wallet } from '../../entities/wallet.entity';
 import { AuditService } from '../audit/audit.service';
 import { type CustomReportDto, ReportGroupBy } from './dto/custom-report.dto';
+import {
+  CustomTableReportFlowType,
+  CustomTableReportSortKey,
+  type CustomTablesReportDrillDownDto,
+  type CustomTablesReportDto,
+} from './dto/custom-tables-report.dto';
 import type { CustomTablesSummaryDto } from './dto/custom-tables-summary.dto';
 import { ExportFormat, type ExportReportDto } from './dto/export-report.dto';
 import type { GenerateReportDto } from './dto/generate-report.dto';
 import type { SpendOverTimeQueryDto } from './dto/spend-over-time-query.dto';
 import type { TopCategoriesQueryDto } from './dto/top-categories-query.dto';
+import { WorkspaceExportFormat } from './dto/workspace-export.dto';
 import type { CustomReport, CustomReportGroup } from './interfaces/custom-report.interface';
 import type { DailyReport } from './interfaces/daily-report.interface';
 import type { MonthlyReport } from './interfaces/monthly-report.interface';
@@ -81,9 +88,110 @@ export interface CustomTablesSummaryResponse {
   }>;
 }
 
+interface WorkspaceTransactionExportRow {
+  index: number;
+  transactionDate: string;
+  transactionType: string;
+  counterpartyName: string;
+  counterpartyBin: string;
+  paymentPurpose: string;
+  debit: number | null;
+  credit: number | null;
+  amount: number | null;
+  currency: string;
+  category: string;
+  branch: string;
+  wallet: string;
+  documentNumber: string;
+  comments: string;
+}
+
+export interface CustomTablesReportRow {
+  counterparty: string;
+  source: 'manual' | 'google_sheets_import';
+  tableId: string;
+  tableName: string;
+  count: number;
+  total: number;
+  average: number;
+  lastDate: string | null;
+  currency: string | null;
+}
+
+export interface CustomTablesReportResponse {
+  totals: {
+    total: number;
+    manualTotal: number;
+    googleSheetsTotal: number;
+    operations: number;
+  };
+  comparison: {
+    totalDelta: number;
+    totalPercentage: number;
+    totalTrend: 'up' | 'down' | 'flat';
+    manualDelta: number;
+    manualPercentage: number;
+    manualTrend: 'up' | 'down' | 'flat';
+    googleSheetsDelta: number;
+    googleSheetsPercentage: number;
+    googleSheetsTrend: 'up' | 'down' | 'flat';
+    operationsDelta: number;
+    operationsPercentage: number;
+    operationsTrend: 'up' | 'down' | 'flat';
+  };
+  timeseries: Array<{ date: string; amount: number }>;
+  sourceSplit: { manual: number; googleSheets: number };
+  aggregatedRows: CustomTablesReportRow[];
+  tables: Array<{
+    id: string;
+    name: string;
+    source: 'manual' | 'google_sheets_import';
+    total: number;
+    rows: number;
+  }>;
+}
+
+export interface CustomTablesReportDrillDownResponse {
+  counterparty: string;
+  items: Array<{
+    rowId: string;
+    tableId: string;
+    tableName: string;
+    source: 'manual' | 'google_sheets_import';
+    date: string | null;
+    amount: number;
+    category: string | null;
+    currency: string | null;
+  }>;
+}
+
 @Injectable()
 export class ReportsService {
   private readonly logger = new Logger(ReportsService.name);
+
+  private emptyCustomTablesReportResponse(): CustomTablesReportResponse {
+    return {
+      totals: { total: 0, manualTotal: 0, googleSheetsTotal: 0, operations: 0 },
+      comparison: {
+        totalDelta: 0,
+        totalPercentage: 0,
+        totalTrend: 'flat',
+        manualDelta: 0,
+        manualPercentage: 0,
+        manualTrend: 'flat',
+        googleSheetsDelta: 0,
+        googleSheetsPercentage: 0,
+        googleSheetsTrend: 'flat',
+        operationsDelta: 0,
+        operationsPercentage: 0,
+        operationsTrend: 'flat',
+      },
+      timeseries: [],
+      sourceSplit: { manual: 0, googleSheets: 0 },
+      aggregatedRows: [],
+      tables: [],
+    };
+  }
 
   private toStartOfUtcDay(date: Date): Date {
     const copy = new Date(date);
@@ -503,6 +611,476 @@ export class ReportsService {
 
     await this.cacheManager.set(cacheKey, response, 300000); // 5 minutes
     return response;
+  }
+
+  async getCustomTablesReport(
+    workspaceId: string,
+    dto: CustomTablesReportDto,
+  ): Promise<CustomTablesReportResponse> {
+    const version = await this.getReportsVersion(workspaceId);
+    const cacheKey = `reports:custom-tables-report:${workspaceId}:${version}:${JSON.stringify(dto)}`;
+    const cached = await this.cacheManager.get<CustomTablesReportResponse>(cacheKey);
+    if (cached) return cached;
+
+    const safeDays =
+      Number.isFinite(dto.days) && (dto.days as number) > 0
+        ? Math.min(dto.days as number, 3650)
+        : 30;
+    const flowType = dto.flowType || CustomTableReportFlowType.ALL;
+    const sortBy = dto.sortBy || CustomTableReportSortKey.AMOUNT;
+    const limit =
+      Number.isFinite(dto.limit) && (dto.limit as number) > 0
+        ? Math.min(dto.limit as number, 500)
+        : 60;
+    const search = this.normalizeText(dto.search)?.toLowerCase() || null;
+
+    const since = new Date();
+    since.setDate(since.getDate() - safeDays);
+    since.setHours(0, 0, 0, 0);
+
+    const previousSince = new Date(since);
+    previousSince.setDate(previousSince.getDate() - safeDays);
+
+    const requestedIds = (dto.tableIds || []).filter(id => typeof id === 'string' && id.length);
+    const tables = await this.customTableRepository.find({
+      where: {
+        workspaceId,
+        ...(requestedIds.length ? { id: In(requestedIds) } : {}),
+      },
+      relations: { category: true },
+      order: { updatedAt: 'DESC' },
+    });
+
+    if (requestedIds.length && tables.length !== requestedIds.length) {
+      throw new BadRequestException('Одна или несколько таблиц не найдены');
+    }
+
+    if (!tables.length) {
+      return this.emptyCustomTablesReportResponse();
+    }
+
+    const tableById = new Map<string, CustomTable>();
+    tables.forEach(table => tableById.set(table.id, table));
+    const tableIds = tables.map(table => table.id);
+
+    const columns = await this.customTableColumnRepository.find({
+      where: { tableId: In(tableIds) },
+      order: { tableId: 'ASC', position: 'ASC' },
+    });
+
+    const columnsByTableId = new Map<string, CustomTableColumn[]>();
+    for (const col of columns) {
+      const list = columnsByTableId.get(col.tableId) || [];
+      list.push(col);
+      columnsByTableId.set(col.tableId, list);
+    }
+
+    const mappingByTableId = new Map<
+      string,
+      {
+        dateKey: string | null;
+        amountKey: string | null;
+        categoryKey: string | null;
+        counterpartyKey: string | null;
+      }
+    >();
+
+    for (const tableId of tableIds) {
+      const cols = columnsByTableId.get(tableId) || [];
+      mappingByTableId.set(tableId, {
+        dateKey: this.pickBestColumnKey(cols, c => this.scoreDateColumn(c)),
+        amountKey: this.pickBestColumnKey(cols, c => this.scoreAmountColumn(c)),
+        categoryKey: this.pickBestColumnKey(cols, c => this.scoreCategoryColumn(c)),
+        counterpartyKey: this.pickBestColumnKey(cols, c => this.scoreCounterpartyColumn(c)),
+      });
+    }
+
+    const currentRows = await this.customTableRowRepository
+      .createQueryBuilder('row')
+      .where('row.tableId IN (:...tableIds)', { tableIds })
+      .andWhere('row.updatedAt >= :since', { since })
+      .getMany();
+
+    const previousRows = await this.customTableRowRepository
+      .createQueryBuilder('row')
+      .where('row.tableId IN (:...tableIds)', { tableIds })
+      .andWhere('row.updatedAt >= :previousSince', { previousSince })
+      .andWhere('row.updatedAt < :since', { since })
+      .getMany();
+
+    type ReportRecord = {
+      rowId: string;
+      tableId: string;
+      tableName: string;
+      source: 'manual' | 'google_sheets_import';
+      counterparty: string;
+      amount: number;
+      date: string | null;
+      category: string | null;
+      currency: string | null;
+      flow: 'expense' | 'income';
+    };
+
+    const resolveCurrency = (tableId: string, row: CustomTableRow): string | null => {
+      const cols = columnsByTableId.get(tableId) || [];
+      for (const col of cols) {
+        const title = (col.title || '').toLowerCase();
+        if (title.includes('валют') || title.includes('currency')) {
+          return this.normalizeText(row.data?.[col.key]);
+        }
+      }
+      return null;
+    };
+
+    const toRecord = (row: CustomTableRow): ReportRecord | null => {
+      const table = tableById.get(row.tableId);
+      const mapping = mappingByTableId.get(row.tableId);
+      if (!table || !mapping?.amountKey) return null;
+
+      const rawAmount = this.parseNumber(row.data?.[mapping.amountKey]);
+      if (rawAmount === null) return null;
+
+      const flow: 'expense' | 'income' = rawAmount < 0 ? 'expense' : 'income';
+      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') return null;
+      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') return null;
+
+      const counterparty =
+        this.normalizeText(mapping.counterpartyKey ? row.data?.[mapping.counterpartyKey] : null) ||
+        'Unknown';
+      const category = this.normalizeText(mapping.categoryKey ? row.data?.[mapping.categoryKey] : null);
+      const parsedDate = mapping.dateKey
+        ? this.parseDate(row.data?.[mapping.dateKey]) || row.updatedAt || row.createdAt
+        : row.updatedAt || row.createdAt;
+      const date = parsedDate ? this.toDateKey(parsedDate) : null;
+      const currency = resolveCurrency(row.tableId, row);
+
+      if (
+        search &&
+        !counterparty.toLowerCase().includes(search) &&
+        !(category || '').toLowerCase().includes(search) &&
+        !table.name.toLowerCase().includes(search)
+      ) {
+        return null;
+      }
+
+      return {
+        rowId: row.id,
+        tableId: row.tableId,
+        tableName: table.name,
+        source: table.source,
+        counterparty,
+        amount: Math.abs(rawAmount),
+        date,
+        category,
+        currency,
+        flow,
+      };
+    };
+
+    const records = currentRows.map(toRecord).filter(Boolean) as ReportRecord[];
+    const previousRecords = previousRows.map(toRecord).filter(Boolean) as ReportRecord[];
+
+    const totals = { total: 0, manualTotal: 0, googleSheetsTotal: 0, operations: 0 };
+    const previousTotals = { total: 0, manualTotal: 0, googleSheetsTotal: 0, operations: 0 };
+    const timeseriesMap = new Map<string, number>();
+    const aggregateMap = new Map<
+      string,
+      {
+        counterparty: string;
+        source: 'manual' | 'google_sheets_import';
+        tableId: string;
+        tableName: string;
+        count: number;
+        total: number;
+        lastDate: string | null;
+        currency: string | null;
+      }
+    >();
+    const tableTotalsMap = new Map<string, { total: number; rows: number }>();
+
+    for (const record of records) {
+      totals.total += record.amount;
+      totals.operations += 1;
+      if (record.source === 'google_sheets_import') totals.googleSheetsTotal += record.amount;
+      else totals.manualTotal += record.amount;
+
+      if (record.date) {
+        timeseriesMap.set(record.date, (timeseriesMap.get(record.date) || 0) + record.amount);
+      }
+
+      const aggregateKey = `${record.source}:${record.counterparty.toLowerCase()}`;
+      const current = aggregateMap.get(aggregateKey);
+      if (current) {
+        current.count += 1;
+        current.total += record.amount;
+        if (record.date && (!current.lastDate || record.date > current.lastDate)) {
+          current.lastDate = record.date;
+        }
+      } else {
+        aggregateMap.set(aggregateKey, {
+          counterparty: record.counterparty,
+          source: record.source,
+          tableId: record.tableId,
+          tableName: record.tableName,
+          count: 1,
+          total: record.amount,
+          lastDate: record.date,
+          currency: record.currency,
+        });
+      }
+
+      const tableMetrics = tableTotalsMap.get(record.tableId) || { total: 0, rows: 0 };
+      tableMetrics.total += record.amount;
+      tableMetrics.rows += 1;
+      tableTotalsMap.set(record.tableId, tableMetrics);
+    }
+
+    for (const record of previousRecords) {
+      previousTotals.total += record.amount;
+      previousTotals.operations += 1;
+      if (record.source === 'google_sheets_import') previousTotals.googleSheetsTotal += record.amount;
+      else previousTotals.manualTotal += record.amount;
+    }
+
+    const toComparison = (current: number, previous: number) => {
+      const delta = current - previous;
+      const percentage = previous === 0 ? (current > 0 ? 100 : 0) : Math.round((delta / previous) * 100);
+      const trend: 'up' | 'down' | 'flat' = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+      return { delta, percentage, trend };
+    };
+
+    const totalCmp = toComparison(totals.total, previousTotals.total);
+    const manualCmp = toComparison(totals.manualTotal, previousTotals.manualTotal);
+    const googleCmp = toComparison(totals.googleSheetsTotal, previousTotals.googleSheetsTotal);
+    const operationsCmp = toComparison(totals.operations, previousTotals.operations);
+
+    let aggregatedRows: CustomTablesReportRow[] = Array.from(aggregateMap.values()).map(item => ({
+      counterparty: item.counterparty,
+      source: item.source,
+      tableId: item.tableId,
+      tableName: item.tableName,
+      count: item.count,
+      total: item.total,
+      average: item.count > 0 ? item.total / item.count : 0,
+      lastDate: item.lastDate,
+      currency: item.currency,
+    }));
+
+    if (sortBy === CustomTableReportSortKey.AVERAGE) {
+      aggregatedRows.sort((a, b) => b.average - a.average);
+    } else if (sortBy === CustomTableReportSortKey.OPERATIONS) {
+      aggregatedRows.sort((a, b) => b.count - a.count);
+    } else {
+      aggregatedRows.sort((a, b) => b.total - a.total);
+    }
+    aggregatedRows = aggregatedRows.slice(0, limit);
+
+    const timeseries = Array.from(timeseriesMap.entries())
+      .map(([date, amount]) => ({ date, amount }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const response: CustomTablesReportResponse = {
+      totals,
+      comparison: {
+        totalDelta: totalCmp.delta,
+        totalPercentage: totalCmp.percentage,
+        totalTrend: totalCmp.trend,
+        manualDelta: manualCmp.delta,
+        manualPercentage: manualCmp.percentage,
+        manualTrend: manualCmp.trend,
+        googleSheetsDelta: googleCmp.delta,
+        googleSheetsPercentage: googleCmp.percentage,
+        googleSheetsTrend: googleCmp.trend,
+        operationsDelta: operationsCmp.delta,
+        operationsPercentage: operationsCmp.percentage,
+        operationsTrend: operationsCmp.trend,
+      },
+      timeseries,
+      sourceSplit: {
+        manual: totals.manualTotal,
+        googleSheets: totals.googleSheetsTotal,
+      },
+      aggregatedRows,
+      tables: tables
+        .map(table => {
+          const metrics = tableTotalsMap.get(table.id) || { total: 0, rows: 0 };
+          return {
+            id: table.id,
+            name: table.name,
+            source: table.source,
+            total: metrics.total,
+            rows: metrics.rows,
+          };
+        })
+        .filter(table => table.rows > 0)
+        .sort((a, b) => b.total - a.total),
+    };
+
+    await this.cacheManager.set(cacheKey, response, 300000);
+    return response;
+  }
+
+  async getCustomTablesReportDrillDown(
+    workspaceId: string,
+    dto: CustomTablesReportDrillDownDto,
+  ): Promise<CustomTablesReportDrillDownResponse> {
+    const safeDays =
+      Number.isFinite(dto.days) && (dto.days as number) > 0
+        ? Math.min(dto.days as number, 3650)
+        : 30;
+    const flowType = dto.flowType || CustomTableReportFlowType.ALL;
+    const limit =
+      Number.isFinite(dto.limit) && (dto.limit as number) > 0
+        ? Math.min(dto.limit as number, 200)
+        : 120;
+
+    const since = new Date();
+    since.setDate(since.getDate() - safeDays);
+    since.setHours(0, 0, 0, 0);
+
+    const requestedIds = (dto.tableIds || []).filter(id => typeof id === 'string' && id.length);
+    const tables = await this.customTableRepository.find({
+      where: {
+        workspaceId,
+        ...(requestedIds.length ? { id: In(requestedIds) } : {}),
+      },
+      order: { updatedAt: 'DESC' },
+    });
+
+    if (!tables.length) {
+      return { counterparty: dto.counterparty, items: [] };
+    }
+
+    const tableIds = tables.map(table => table.id);
+    const tableById = new Map(tables.map(table => [table.id, table]));
+    const columns = await this.customTableColumnRepository.find({
+      where: { tableId: In(tableIds) },
+      order: { tableId: 'ASC', position: 'ASC' },
+    });
+
+    const columnsByTableId = new Map<string, CustomTableColumn[]>();
+    for (const col of columns) {
+      const list = columnsByTableId.get(col.tableId) || [];
+      list.push(col);
+      columnsByTableId.set(col.tableId, list);
+    }
+
+    const mappingByTableId = new Map<
+      string,
+      {
+        dateKey: string | null;
+        amountKey: string | null;
+        categoryKey: string | null;
+        counterpartyKey: string | null;
+      }
+    >();
+
+    for (const tableId of tableIds) {
+      const cols = columnsByTableId.get(tableId) || [];
+      mappingByTableId.set(tableId, {
+        dateKey: this.pickBestColumnKey(cols, c => this.scoreDateColumn(c)),
+        amountKey: this.pickBestColumnKey(cols, c => this.scoreAmountColumn(c)),
+        categoryKey: this.pickBestColumnKey(cols, c => this.scoreCategoryColumn(c)),
+        counterpartyKey: this.pickBestColumnKey(cols, c => this.scoreCounterpartyColumn(c)),
+      });
+    }
+
+    const rows = await this.customTableRowRepository
+      .createQueryBuilder('row')
+      .where('row.tableId IN (:...tableIds)', { tableIds })
+      .andWhere('row.updatedAt >= :since', { since })
+      .getMany();
+
+    const items: CustomTablesReportDrillDownResponse['items'] = [];
+    const needle = dto.counterparty.trim().toLowerCase();
+
+    for (const row of rows) {
+      const table = tableById.get(row.tableId);
+      const mapping = mappingByTableId.get(row.tableId);
+      if (!table || !mapping?.amountKey) continue;
+
+      const rawAmount = this.parseNumber(row.data?.[mapping.amountKey]);
+      if (rawAmount === null) continue;
+
+      const flow: 'expense' | 'income' = rawAmount < 0 ? 'expense' : 'income';
+      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') continue;
+      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') continue;
+
+      const counterparty =
+        this.normalizeText(mapping.counterpartyKey ? row.data?.[mapping.counterpartyKey] : null) ||
+        'Unknown';
+      if (counterparty.toLowerCase() !== needle) continue;
+
+      const category = this.normalizeText(mapping.categoryKey ? row.data?.[mapping.categoryKey] : null);
+      const parsedDate = mapping.dateKey
+        ? this.parseDate(row.data?.[mapping.dateKey]) || row.updatedAt || row.createdAt
+        : row.updatedAt || row.createdAt;
+
+      let currency: string | null = null;
+      const cols = columnsByTableId.get(row.tableId) || [];
+      for (const col of cols) {
+        const title = (col.title || '').toLowerCase();
+        if (title.includes('валют') || title.includes('currency')) {
+          currency = this.normalizeText(row.data?.[col.key]);
+          break;
+        }
+      }
+
+      items.push({
+        rowId: row.id,
+        tableId: row.tableId,
+        tableName: table.name,
+        source: table.source,
+        date: parsedDate ? this.toDateKey(parsedDate) : null,
+        amount: Math.abs(rawAmount),
+        category,
+        currency,
+      });
+    }
+
+    items.sort((a, b) => {
+      const left = a.date || '';
+      const right = b.date || '';
+      return right.localeCompare(left);
+    });
+
+    return {
+      counterparty: dto.counterparty,
+      items: items.slice(0, limit),
+    };
+  }
+
+  async getAvailableCustomTables(workspaceId: string): Promise<
+    Array<{
+      id: string;
+      name: string;
+      source: 'manual' | 'google_sheets_import';
+      rowCount: number;
+    }>
+  > {
+    const tables = await this.customTableRepository.find({
+      where: { workspaceId },
+      order: { updatedAt: 'DESC' },
+    });
+
+    const results = [] as Array<{
+      id: string;
+      name: string;
+      source: 'manual' | 'google_sheets_import';
+      rowCount: number;
+    }>;
+
+    for (const table of tables) {
+      const rowCount = await this.customTableRowRepository.count({ where: { tableId: table.id } });
+      results.push({
+        id: table.id,
+        name: table.name,
+        source: table.source,
+        rowCount,
+      });
+    }
+
+    return results;
   }
 
   /**
@@ -955,6 +1533,403 @@ export class ReportsService {
     }
 
     return { filePath, fileName };
+  }
+
+  async exportWorkspaceTransactions(
+    workspaceId: string,
+    format: WorkspaceExportFormat,
+  ): Promise<{ filePath: string; fileName: string; mimeType: string }> {
+    const transactions = await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.category', 'category')
+      .leftJoinAndSelect('transaction.branch', 'branch')
+      .leftJoinAndSelect('transaction.wallet', 'wallet')
+      .leftJoin('transaction.statement', 'statement')
+      .where('transaction.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('transaction.isDuplicate = false')
+      .andWhere('(transaction.statementId IS NULL OR statement.deletedAt IS NULL)')
+      .orderBy('transaction.transactionDate', 'DESC')
+      .addOrderBy('transaction.createdAt', 'DESC')
+      .getMany();
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const extensionMap: Record<WorkspaceExportFormat, string> = {
+      [WorkspaceExportFormat.EXCEL]: 'xlsx',
+      [WorkspaceExportFormat.PDF]: 'pdf',
+      [WorkspaceExportFormat.CSV]: 'csv',
+      [WorkspaceExportFormat.DOCX]: 'docx',
+    };
+    const mimeTypeMap: Record<WorkspaceExportFormat, string> = {
+      [WorkspaceExportFormat.EXCEL]:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      [WorkspaceExportFormat.PDF]: 'application/pdf',
+      [WorkspaceExportFormat.CSV]: 'text/csv',
+      [WorkspaceExportFormat.DOCX]:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    };
+    const normalizedFormat = format || WorkspaceExportFormat.EXCEL;
+    const fileName = `workspace-transactions-${timestamp}.${extensionMap[normalizedFormat]}`;
+    const uploadsBaseDir = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
+    const filePath = path.join(uploadsBaseDir, 'reports', fileName);
+    const dir = path.dirname(filePath);
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    if (normalizedFormat === WorkspaceExportFormat.EXCEL) {
+      await this.generateWorkspaceExcel(transactions, filePath);
+    } else if (normalizedFormat === WorkspaceExportFormat.CSV) {
+      await this.generateWorkspaceCsv(transactions, filePath);
+    } else if (normalizedFormat === WorkspaceExportFormat.PDF) {
+      await this.generateWorkspacePdf(transactions, filePath);
+    } else {
+      await this.generateWorkspaceDocx(transactions, filePath);
+    }
+
+    await this.logReportGeneration(workspaceId, 'workspace-transactions', 'all-time');
+
+    return {
+      filePath,
+      fileName,
+      mimeType: mimeTypeMap[normalizedFormat],
+    };
+  }
+
+  private mapWorkspaceTransactionRows(
+    transactions: Transaction[],
+  ): WorkspaceTransactionExportRow[] {
+    return transactions.map((transaction, index) => ({
+      index: index + 1,
+      transactionDate: transaction.transactionDate
+        ? this.toDateKey(transaction.transactionDate as unknown as Date)
+        : '',
+      transactionType:
+        transaction.transactionType === TransactionType.INCOME ? 'Приход' : 'Расход',
+      counterpartyName: transaction.counterpartyName || '',
+      counterpartyBin: transaction.counterpartyBin || '',
+      paymentPurpose: transaction.paymentPurpose || '',
+      debit: transaction.debit != null ? Number(transaction.debit) : null,
+      credit: transaction.credit != null ? Number(transaction.credit) : null,
+      amount: transaction.amount != null ? Number(transaction.amount) : null,
+      currency: transaction.currency || 'KZT',
+      category: transaction.category?.name || 'Без категории',
+      branch: transaction.branch?.name || '',
+      wallet: transaction.wallet?.name || '',
+      documentNumber: transaction.documentNumber || '',
+      comments: transaction.comments || '',
+    }));
+  }
+
+  private buildWorkspaceSummaryRows(rows: WorkspaceTransactionExportRow[]) {
+    const totalIncome = rows.reduce((sum, row) => sum + (row.credit || 0), 0);
+    const totalExpense = rows.reduce((sum, row) => sum + (row.debit || 0), 0);
+    const incomeCount = rows.filter(row => row.transactionType === 'Приход').length;
+    const expenseCount = rows.filter(row => row.transactionType === 'Расход').length;
+
+    return [
+      { Показатель: 'Всего транзакций', Значение: rows.length },
+      { Показатель: 'Приходы', Значение: incomeCount },
+      { Показатель: 'Расходы', Значение: expenseCount },
+      { Показатель: 'Сумма приходов', Значение: totalIncome },
+      { Показатель: 'Сумма расходов', Значение: totalExpense },
+      { Показатель: 'Баланс', Значение: totalIncome - totalExpense },
+    ];
+  }
+
+  private formatWorkspaceAmount(value: number | null): string {
+    if (value == null) {
+      return '';
+    }
+
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
+
+  private escapeCsvValue(value: string): string {
+    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+
+    return value;
+  }
+
+  private async generateWorkspaceExcel(
+    transactions: Transaction[],
+    filePath: string,
+  ): Promise<void> {
+    const workbook = XLSX.utils.book_new();
+    const rows = this.mapWorkspaceTransactionRows(transactions);
+    const transactionSheet = XLSX.utils.json_to_sheet(
+      rows.map(row => ({
+        '№': row.index,
+        Дата: row.transactionDate,
+        Тип: row.transactionType,
+        Контрагент: row.counterpartyName,
+        'БИН/ИИН': row.counterpartyBin,
+        'Назначение платежа': row.paymentPurpose,
+        Дебет: row.debit,
+        Кредит: row.credit,
+        Сумма: row.amount,
+        Валюта: row.currency,
+        Категория: row.category,
+        Филиал: row.branch,
+        Кошелек: row.wallet,
+        '№ документа': row.documentNumber,
+        Комментарий: row.comments,
+      })),
+    );
+
+    transactionSheet['!cols'] = [
+      { wch: 5 },
+      { wch: 12 },
+      { wch: 10 },
+      { wch: 28 },
+      { wch: 16 },
+      { wch: 48 },
+      { wch: 14 },
+      { wch: 14 },
+      { wch: 14 },
+      { wch: 10 },
+      { wch: 20 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 28 },
+    ];
+
+    const summarySheet = XLSX.utils.json_to_sheet(this.buildWorkspaceSummaryRows(rows));
+    summarySheet['!cols'] = [{ wch: 24 }, { wch: 18 }];
+
+    XLSX.utils.book_append_sheet(workbook, transactionSheet, 'Транзакции');
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Сводка');
+
+    XLSX.writeFile(workbook, filePath);
+  }
+
+  private async generateWorkspaceCsv(
+    transactions: Transaction[],
+    filePath: string,
+  ): Promise<void> {
+    const rows = this.mapWorkspaceTransactionRows(transactions);
+    const headers = [
+      '№',
+      'Дата',
+      'Тип',
+      'Контрагент',
+      'БИН/ИИН',
+      'Назначение платежа',
+      'Дебет',
+      'Кредит',
+      'Сумма',
+      'Валюта',
+      'Категория',
+      'Филиал',
+      'Кошелек',
+      '№ документа',
+      'Комментарий',
+    ];
+
+    const csvLines = [
+      headers.join(','),
+      ...rows.map(row =>
+        [
+          String(row.index),
+          row.transactionDate,
+          row.transactionType,
+          row.counterpartyName,
+          row.counterpartyBin,
+          row.paymentPurpose,
+          row.debit == null ? '' : String(row.debit),
+          row.credit == null ? '' : String(row.credit),
+          row.amount == null ? '' : String(row.amount),
+          row.currency,
+          row.category,
+          row.branch,
+          row.wallet,
+          row.documentNumber,
+          row.comments,
+        ]
+          .map(value => this.escapeCsvValue(value))
+          .join(','),
+      ),
+    ];
+
+    fs.writeFileSync(filePath, `\uFEFF${csvLines.join('\n')}`, 'utf-8');
+  }
+
+  private async generateWorkspacePdf(
+    transactions: Transaction[],
+    filePath: string,
+  ): Promise<void> {
+    const rows = this.mapWorkspaceTransactionRows(transactions);
+    const summaryRows = this.buildWorkspaceSummaryRows(rows);
+    const pdfMakeModule = await import('pdfmake/build/pdfmake');
+    const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
+    const pdfMake = (pdfMakeModule as any).default || pdfMakeModule;
+    const pdfFonts = (pdfFontsModule as any).default || pdfFontsModule;
+
+    pdfMake.vfs = pdfFonts.pdfMake?.vfs || pdfFonts.vfs;
+
+    const docDefinition = {
+      pageSize: 'A4',
+      pageOrientation: 'landscape',
+      pageMargins: [20, 24, 20, 24],
+      content: [
+        { text: 'Отчет по транзакциям workspace', style: 'title' },
+        {
+          columns: summaryRows.map(row => ({
+            stack: [
+              { text: String(row.Показатель), style: 'summaryLabel' },
+              { text: String(row.Значение), style: 'summaryValue' },
+            ],
+          })),
+          columnGap: 12,
+          margin: [0, 0, 0, 16],
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: [24, 56, 50, '*', 64, 80],
+            body: [
+              ['№', 'Дата', 'Тип', 'Контрагент', 'Сумма', 'Категория'],
+              ...rows.map(row => [
+                String(row.index),
+                row.transactionDate,
+                row.transactionType,
+                row.counterpartyName,
+                this.formatWorkspaceAmount(row.amount),
+                row.category,
+              ]),
+            ],
+          },
+          layout: 'lightHorizontalLines',
+        },
+      ],
+      styles: {
+        title: { bold: true, fontSize: 16, margin: [0, 0, 0, 12] },
+        summaryLabel: { fontSize: 9, color: '#6b7280' },
+        summaryValue: { fontSize: 11, bold: true },
+      },
+      defaultStyle: {
+        font: 'Roboto',
+        fontSize: 8,
+      },
+    };
+
+    await new Promise<void>(resolve => {
+      pdfMake.createPdf(docDefinition).getBuffer((buffer: Uint8Array) => {
+        fs.writeFileSync(filePath, Buffer.from(buffer));
+        resolve();
+      });
+    });
+  }
+
+  private async generateWorkspaceDocx(
+    transactions: Transaction[],
+    filePath: string,
+  ): Promise<void> {
+    const rows = this.mapWorkspaceTransactionRows(transactions);
+    const summaryRows = this.buildWorkspaceSummaryRows(rows);
+    const docxModule = await import('docx');
+    const {
+      Document,
+      HeadingLevel,
+      Packer,
+      Paragraph,
+      Table,
+      TableCell,
+      TableRow,
+      TextRun,
+      WidthType,
+    } = docxModule;
+
+    const createCell = (text: string, bold = false) =>
+      new TableCell({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text,
+                bold,
+                size: 18,
+              }),
+            ],
+          }),
+        ],
+      });
+
+    const summaryParagraph = new Paragraph({
+      children: summaryRows.flatMap((row, index) => {
+        const parts = [
+          new TextRun({ text: `${row.Показатель}: `, bold: true, size: 20 }),
+          new TextRun({ text: String(row.Значение), size: 20 }),
+        ];
+
+        if (index < summaryRows.length - 1) {
+          parts.push(new TextRun({ text: '   ', size: 20 }));
+        }
+
+        return parts;
+      }),
+      spacing: { after: 240 },
+    });
+
+    const table = new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          children: [
+            createCell('№', true),
+            createCell('Дата', true),
+            createCell('Тип', true),
+            createCell('Контрагент', true),
+            createCell('Сумма', true),
+            createCell('Категория', true),
+          ],
+        }),
+        ...rows.map(row =>
+          new TableRow({
+            children: [
+              createCell(String(row.index)),
+              createCell(row.transactionDate),
+              createCell(row.transactionType),
+              createCell(row.counterpartyName),
+              createCell(this.formatWorkspaceAmount(row.amount)),
+              createCell(row.category),
+            ],
+          }),
+        ),
+      ],
+    });
+
+    const document = new Document({
+      sections: [
+        {
+          properties: {
+            page: {
+              size: {
+                orientation: 'landscape',
+              },
+            },
+          },
+          children: [
+            new Paragraph({
+              text: 'Отчет по транзакциям workspace',
+              heading: HeadingLevel.HEADING_1,
+            }),
+            summaryParagraph,
+            table,
+          ],
+        },
+      ],
+    });
+
+    const buffer = await Packer.toBuffer(document);
+    fs.writeFileSync(filePath, buffer);
   }
 
   private async exportToExcel(

@@ -1,6 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box } from '@mui/material';
 import Script from 'next/script';
@@ -89,7 +90,7 @@ export function GoogleAuthButton({
           return;
         }
 
-        window.location.href = nextPath || '/';
+        window.location.href = nextPath || DEFAULT_APP_ROUTE;
       } catch (err: any) {
         onError(err.response?.data?.message || err.response?.data?.error?.message || errorFallback);
       } finally {

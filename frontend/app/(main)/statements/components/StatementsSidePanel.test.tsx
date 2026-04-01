@@ -248,4 +248,76 @@ describe('StatementsSidePanel FAB navigation', () => {
       root.unmount();
     });
   });
+
+  it('shows tables reports navigation item with custom tables count', async () => {
+    const { default: apiClient } = await import('@/app/lib/api');
+    const { payablesApi } = await import('@/app/lib/payables-api');
+    const { default: StatementsSidePanel } = await import('./StatementsSidePanel');
+    authState.user = { id: 'user-1' };
+
+    vi.mocked(payablesApi.getSummary).mockResolvedValue({
+      toPay: 0,
+      overdue: 0,
+      dueThisWeek: 0,
+      paidThisMonth: 0,
+      toPayCount: 0,
+      overdueCount: 0,
+    });
+
+    vi.mocked(apiClient.get).mockImplementation((url: string) => {
+      if (url === '/statements') {
+        return Promise.resolve({ data: { data: [], total: 0 } });
+      }
+
+      if (url === '/transactions') {
+        return Promise.resolve({ data: { data: [], total: 0 } });
+      }
+
+      if (url === '/reports/top-categories') {
+        return Promise.resolve({ data: { categories: [] } });
+      }
+
+      if (url === '/custom-tables') {
+        return Promise.resolve({
+          data: [
+            { id: 'table-1', name: 'Ops', source: 'manual' },
+            { id: 'table-2', name: 'GS', source: 'google_sheets_import' },
+          ],
+        });
+      }
+
+      if (
+        url === '/integrations/dropbox/status' ||
+        url === '/integrations/google-drive/status' ||
+        url === '/integrations/gmail/status'
+      ) {
+        return Promise.resolve({ data: { connected: false } });
+      }
+
+      return Promise.reject(new Error(`Unhandled GET ${url}`));
+    });
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<StatementsSidePanel activeItem="top-merchants" />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const tablesReportsItem = capturedConfigRef.current?.sections
+      ?.flatMap(section => section.items ?? [])
+      .find(item => item.id === 'tables-reports');
+
+    expect(tablesReportsItem).toBeDefined();
+    expect(tablesReportsItem?.badge).toBe(2);
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
 });

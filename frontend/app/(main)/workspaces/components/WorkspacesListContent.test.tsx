@@ -5,6 +5,8 @@ import { createRoot } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+const pushMock = vi.hoisted(() => vi.fn());
+
 const workspaceState = {
   workspaces: [
     {
@@ -30,7 +32,7 @@ vi.mock('@/app/i18n', () => ({
 }));
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: pushMock }),
 }));
 
 vi.mock('@/app/contexts/WorkspaceContext', () => ({
@@ -41,11 +43,31 @@ vi.mock('./WorkspaceCard', () => ({
   WorkspaceCard: () => <div>workspace-card</div>,
 }));
 
-vi.mock('./CreateWorkspaceModal', () => ({
-  CreateWorkspaceModal: () => null,
-}));
-
 describe('WorkspacesListContent', () => {
+  it('routes create workspace actions to onboarding create-workspace mode', async () => {
+    const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    pushMock.mockReset();
+
+    await act(async () => {
+      root.render(<WorkspacesListContent />);
+    });
+
+    const createWorkspaceButton = Array.from(container.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('Create Workspace'),
+    ) as HTMLButtonElement | undefined;
+
+    expect(createWorkspaceButton).toBeTruthy();
+
+    await act(async () => {
+      createWorkspaceButton?.click();
+    });
+
+    expect(pushMock).toHaveBeenCalledWith('/onboarding?mode=create-workspace');
+  });
+
   it('renders the shared spinner while loading', async () => {
     workspaceState.loading = true;
 
@@ -114,10 +136,14 @@ describe('WorkspacesListContent', () => {
     const html = renderToStaticMarkup(<WorkspacesListContent />);
 
     expect(html).toContain('Create Workspace');
-    expect(html).toContain('border-primary/30');
-    expect(html).toContain('bg-gradient-to-br');
-    expect(html).toContain('shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)]');
-    expect(html).not.toContain('border-dashed border-gray-300');
+    expect(html).toContain('border-gray-200');
+    expect(html).toContain('bg-white');
+    expect(html).toContain('shadow-sm');
+    expect(html).toContain('hover:bg-gray-50');
+    expect(html).toContain('mb-3 text-primary');
+    expect(html).not.toContain('bg-gradient-to-br');
+    expect(html).not.toContain('shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)]');
+    expect(html).not.toContain('rounded-full');
   });
 
   it('keeps the create workspace tile at the same height as workspace cards', async () => {

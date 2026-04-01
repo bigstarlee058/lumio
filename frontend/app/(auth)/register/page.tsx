@@ -5,6 +5,7 @@ import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import {
   Alert,
   Box,
@@ -95,7 +96,7 @@ function RegisterPageContent() {
       }
 
       if (inviteToken) {
-        window.location.href = nextPath || '/';
+        window.location.href = nextPath || DEFAULT_APP_ROUTE;
         return;
       }
 

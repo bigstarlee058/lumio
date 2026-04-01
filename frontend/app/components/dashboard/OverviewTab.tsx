@@ -29,6 +29,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     return { ...a, priority };
   });
 
+  // TODO: move parsing warnings into backend getActions() to avoid client-side injection.
   if (data.dataHealth?.parsingWarnings > 0) {
     mappedActions.push({
       type: 'parsing_warnings',

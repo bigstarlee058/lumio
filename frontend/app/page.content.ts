@@ -134,6 +134,17 @@ const content = {
       review: t({ ru: 'Очередь на проверку', en: 'Review queue', kk: 'Тексеру кезегі' }),
       export: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт' }),
     },
+    exportMenu: {
+      button: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт' }),
+      title: t({ ru: 'Экспорт данных', en: 'Export data', kk: 'Деректерді экспорттау' }),
+      excel: t({ ru: 'Excel (.xlsx)', en: 'Excel (.xlsx)', kk: 'Excel (.xlsx)' }),
+      pdf: t({ ru: 'PDF', en: 'PDF', kk: 'PDF' }),
+      csv: t({ ru: 'CSV', en: 'CSV', kk: 'CSV' }),
+      docx: t({ ru: 'Word (.docx)', en: 'Word (.docx)', kk: 'Word (.docx)' }),
+      downloading: t({ ru: 'Скачивание...', en: 'Downloading...', kk: 'Жүктелуде...' }),
+      success: t({ ru: 'Файл успешно скачан', en: 'File downloaded successfully', kk: 'Файл сәтті жүктелді' }),
+      error: t({ ru: 'Ошибка при скачивании', en: 'Download failed', kk: 'Жүктеу қатесі' }),
+    },
     greeting: {
       fallbackName: t({ ru: 'Пользователь', en: 'User', kk: 'Қолданушы' }),
       empty: {
@@ -191,6 +202,16 @@ const content = {
       empty: t({ ru: 'Данных пока нет', en: 'No data yet', kk: 'Деректер әлі жоқ' }),
       overdue: t({ ru: 'Просрочки', en: 'Overdue payments', kk: 'Мерзімі өткен' }),
       needsReview: t({ ru: 'Ждёт проверки', en: 'Needs review', kk: 'Тексеру керек' }),
+      pendingSubmit: t({
+        ru: 'Ожидает отправки',
+        en: 'Pending submit',
+        kk: 'Жіберуді күтуде',
+      }),
+      receiptsNeedReview: t({
+        ru: 'Чеки на проверке',
+        en: 'Receipts need review',
+        kk: 'Чектерді тексеру керек',
+      }),
       parsingIssues: t({
         ru: 'Ошибки парсинга',
         en: 'Parsing issues',

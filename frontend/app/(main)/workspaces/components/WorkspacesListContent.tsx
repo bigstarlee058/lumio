@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
-import { CreateWorkspaceModal } from './CreateWorkspaceModal';
 import { WorkspaceCard } from './WorkspaceCard';
 
 type ViewMode = 'grid' | 'list';
@@ -38,12 +37,15 @@ export default function WorkspacesListContent({
     useWorkspace();
   const router = useRouter();
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortOption, setSortOption] = useState<SortOption>('favorites');
   const [showSortMenu, setShowSortMenu] = useState(false);
   const searchPlaceholder = content.searchPlaceholder?.value || 'Search workspaces...';
+
+  const handleCreateWorkspace = () => {
+    router.push('/onboarding?mode=create-workspace');
+  };
 
   const handleWorkspaceClick = async (workspaceId: string) => {
     try {
@@ -56,10 +58,6 @@ export default function WorkspacesListContent({
     } catch (error) {
       console.error('Failed to switch workspace:', error);
     }
-  };
-
-  const handleCreateSuccess = async () => {
-    await refreshWorkspaces();
   };
 
   const filteredAndSortedWorkspaces = useMemo(() => {
@@ -230,7 +228,7 @@ export default function WorkspacesListContent({
             </p>
             <button
               type="button"
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={handleCreateWorkspace}
               className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
             >
               {content.createWorkspace}
@@ -260,13 +258,11 @@ export default function WorkspacesListContent({
                 ))}
                 <button
                   type="button"
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="flex h-full w-full aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/12 via-primary/6 to-card p-6 shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)] transition-all duration-200 hover:border-primary hover:from-primary/18 hover:via-primary/10 hover:to-card hover:shadow-[0_28px_60px_-30px_rgba(30,136,229,0.7)]"
+                  onClick={handleCreateWorkspace}
+                  className="flex h-full w-full aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-colors duration-200 hover:border-primary/40 hover:bg-gray-50"
                 >
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full border border-primary/35 bg-card/90 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_30px_-18px_rgba(30,136,229,0.9)]">
-                    <Plus size={40} strokeWidth={2.6} />
-                  </div>
-                  <h3 className="text-center text-lg font-semibold text-foreground">
+                  <Plus className="mb-3 text-primary" size={30} strokeWidth={2.25} />
+                  <h3 className="text-center text-lg font-semibold text-gray-900">
                     {content.createWorkspace}
                   </h3>
                 </button>
@@ -323,7 +319,7 @@ export default function WorkspacesListContent({
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    onClick={() => setIsCreateModalOpen(true)}
+                    onClick={handleCreateWorkspace}
                     className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors flex items-center gap-2"
                   >
                     <Plus size={14} />
@@ -335,12 +331,6 @@ export default function WorkspacesListContent({
           </>
         )}
       </div>
-
-      <CreateWorkspaceModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={handleCreateSuccess}
-      />
     </div>
   );
 }

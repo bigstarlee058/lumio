@@ -1,6 +1,7 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import Breadcrumbs from './Breadcrumbs';
@@ -62,7 +63,7 @@ export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcru
       return { label, href };
     });
 
-    return [{ label: resolveLabel(labels?.[''], 'Home'), href: '/' }, ...crumbs];
+    return [{ label: resolveLabel(labels?.[''], 'Home'), href: DEFAULT_APP_ROUTE }, ...crumbs];
   }, [labels, pathname]);
 
   if (!items.length) return null;

@@ -13,6 +13,8 @@ describe('DataHealthTab', () => {
             uncategorizedTransactions: 2,
             statementsWithErrors: 1,
             statementsPendingReview: 3,
+            statementsPendingSubmit: 2,
+            receiptsPendingReview: 4,
             unapprovedCash: 0,
             lastUploadDate: '2025-05-31T00:00:00.000Z',
             parsingWarnings: 1,
@@ -32,5 +34,30 @@ describe('DataHealthTab', () => {
     expect(metricCard?.className).toContain('dark:border-border');
     expect(metricCard?.className).not.toContain('bg-white/40');
     expect(metricCard?.className).not.toContain('border-white/60');
+  });
+
+  it('renders receipts pending metric and action link', () => {
+    render(
+      <DataHealthTab
+        data={{
+          dataHealth: {
+            uncategorizedTransactions: 0,
+            statementsWithErrors: 0,
+            statementsPendingReview: 0,
+            statementsPendingSubmit: 0,
+            receiptsPendingReview: 2,
+            unapprovedCash: 0,
+            lastUploadDate: '2025-05-31T00:00:00.000Z',
+            parsingWarnings: 0,
+          },
+        } as any}
+        formatAmount={value => String(value)}
+        range="30d"
+        isLoading={false}
+      />,
+    );
+
+    expect(screen.getByText('RECEIPTS PENDING')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Review 2 receipts/i })).toBeInTheDocument();
   });
 });

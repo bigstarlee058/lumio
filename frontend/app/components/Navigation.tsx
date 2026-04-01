@@ -68,6 +68,7 @@ import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useAuth } from '../hooks/useAuth';
 import { usePermissions } from '../hooks/usePermissions';
 import { canAccessWorkspaceActivity } from '../lib/workspace-activity-access';
+import { DEFAULT_APP_ROUTE } from '../lib/default-app-route';
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['800', '900'] });
 
@@ -378,7 +379,7 @@ export default function Navigation() {
   const navItems = [
     {
       label: (nav as any).dashboard,
-      path: '/',
+      path: DEFAULT_APP_ROUTE,
       icon: <DashboardIcon sx={{ fontSize: 18 }} />,
       permission: 'statement.view',
     },
@@ -588,7 +589,7 @@ export default function Navigation() {
       <div className="container-shared px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-14">
           <div className="flex items-center">
-            <Link href="/" className="shrink-0 flex items-center gap-3" data-tour-id="brand">
+            <Link href={DEFAULT_APP_ROUTE} className="shrink-0 flex items-center gap-3" data-tour-id="brand">
               <div className="flex items-center justify-center w-8 h-8 bg-[#0a66c2] rounded-[10px] border-[2px] border-white shrink-0">
                 <svg
                   width="14"

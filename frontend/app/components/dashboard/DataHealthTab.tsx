@@ -58,6 +58,12 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       severity: (dataHealth.statementsPendingReview > 0 ? 'blue' : 'green') as SeverityKey,
     },
     {
+      key: 'receiptsPendingReview',
+      label: 'RECEIPTS PENDING',
+      value: dataHealth.receiptsPendingReview,
+      severity: (dataHealth.receiptsPendingReview > 0 ? 'amber' : 'green') as SeverityKey,
+    },
+    {
       key: 'parsingWarnings',
       label: 'PARSING WARNINGS',
       value: dataHealth.parsingWarnings,
@@ -82,6 +88,12 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
     quickLinks.push({
       label: `Review ${dataHealth.statementsPendingReview} pending statement${dataHealth.statementsPendingReview !== 1 ? 's' : ''}`,
       href: '/statements/approve',
+    });
+  }
+  if (dataHealth.receiptsPendingReview > 0) {
+    quickLinks.push({
+      label: `Review ${dataHealth.receiptsPendingReview} receipt${dataHealth.receiptsPendingReview !== 1 ? 's' : ''}`,
+      href: '/statements?missingCategory=true',
     });
   }
 
