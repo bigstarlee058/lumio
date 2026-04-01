@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -28,7 +28,23 @@ vi.mock('react-hot-toast', () => ({
 }));
 
 vi.mock('react-intlayer', () => ({
-  IntlayerProviderContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  IntlayerProviderContent: ({
+    children,
+    locale,
+    setLocale,
+  }: {
+    children: React.ReactNode;
+    locale: string;
+    setLocale: (locale: string) => void;
+  }) => (
+    <>
+      <div data-testid="intlayer-locale">{locale}</div>
+      <button type="button" data-testid="set-locale-kk" onClick={() => setLocale('kk')}>
+        set locale
+      </button>
+      {children}
+    </>
+  ),
 }));
 
 vi.mock('@/app/lib/theme-preference', () => ({
@@ -78,6 +94,31 @@ vi.mock('./tours/components/TourAutoStarter', () => ({
 }));
 
 describe('Providers', () => {
+  it('prefers locale from cookie over server fallback locale', async () => {
+    document.cookie = 'intlayer-locale=kk; path=/';
+
+    const { Providers } = await import('./providers');
+
+    render(<Providers initialLocale="ru">test</Providers>);
+
+    expect(screen.getByTestId('intlayer-locale').textContent).toBe('kk');
+  });
+
+  it('stores selected locale in cookie when locale changes client-side', async () => {
+    document.cookie = 'intlayer-locale=; Max-Age=0; path=/';
+
+    const { Providers } = await import('./providers');
+
+    render(<Providers initialLocale="en">test</Providers>);
+
+    await act(async () => {
+      screen.getByTestId('set-locale-kk').click();
+    });
+
+    expect(document.cookie).toContain('intlayer-locale=kk');
+    expect(screen.getByTestId('intlayer-locale').textContent).toBe('kk');
+  });
+
   it('remounts workspace-scoped children when the active workspace changes', async () => {
     const { Providers } = await import('./providers');
 

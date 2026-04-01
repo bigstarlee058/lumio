@@ -23,6 +23,33 @@ import { createAppTheme } from './theme';
 import { TourAutoStarter } from './tours/components/TourAutoStarter';
 
 type AppLocale = 'en' | 'ru' | 'kk';
+const LOCALE_COOKIE_NAME = 'intlayer-locale';
+
+function isSupportedLocale(value: string | null | undefined): value is AppLocale {
+  return value === 'en' || value === 'ru' || value === 'kk';
+}
+
+function readLocaleFromCookie(): AppLocale | null {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  const cookieValue = document.cookie
+    .split(';')
+    .map(cookie => cookie.trim())
+    .find(cookie => cookie.startsWith(`${LOCALE_COOKIE_NAME}=`))
+    ?.split('=')[1];
+
+  return isSupportedLocale(cookieValue) ? cookieValue : null;
+}
+
+function persistLocaleToCookie(locale: AppLocale) {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
 
 function HTMLLanguageSync() {
   useHTMLLanguage();
@@ -103,7 +130,7 @@ export function Providers({
 }) {
   const { resolvedTheme } = useNextTheme();
   const [mounted, setMounted] = useState(false);
-  const [locale, setLocale] = useState<AppLocale>(initialLocale);
+  const [locale, setLocale] = useState<AppLocale>(() => readLocaleFromCookie() ?? initialLocale);
   const paletteMode = mounted && resolvedTheme === 'dark' ? 'dark' : 'light';
   const colorScheme = paletteMode === 'dark' ? 'dark' : 'light';
   const muiTheme = useMemo(() => createAppTheme(paletteMode), [paletteMode]);
@@ -113,14 +140,28 @@ export function Providers({
   }, []);
 
   useEffect(() => {
-    setLocale(initialLocale);
+    const cookieLocale = readLocaleFromCookie();
+    setLocale(cookieLocale ?? initialLocale);
   }, [initialLocale]);
+
+  useEffect(() => {
+    persistLocaleToCookie(locale);
+  }, [locale]);
+
+  const handleLocaleChange = (nextLocale: string) => {
+    if (!isSupportedLocale(nextLocale)) {
+      return;
+    }
+
+    persistLocaleToCookie(nextLocale);
+    setLocale(nextLocale);
+  };
 
   return (
     <HeroUIProvider>
       <IntlayerProviderContent
         locale={locale}
-        setLocale={nextLocale => setLocale(nextLocale as AppLocale)}
+        setLocale={handleLocaleChange}
       >
         <HTMLLanguageSync />
         <ThemePreferenceSync />
