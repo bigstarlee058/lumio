@@ -611,31 +611,31 @@ export function ParsingWarningsPanel({
         position="right"
         width="sm"
         showCloseButton={false}
-        className="border-l-0 bg-white"
+        className="border-l-0 bg-white dark:bg-[#111827]"
         title={
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleCloseCurrencyPicker}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
               aria-label="Select a currency"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold text-gray-900">Select a currency</span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-white">Select a currency</span>
           </div>
         }
       >
         <div className="flex h-full flex-col">
-          <div className="border-b border-gray-100 pb-4">
+          <div className="border-b border-gray-100 pb-4 dark:border-white/10">
             <label className="relative block">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
                 value={currencySearch}
                 onChange={event => setCurrencySearch(event.target.value)}
                 placeholder="Search"
-                className="h-14 w-full rounded-2xl border border-primary bg-white pl-12 pr-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="h-14 w-full rounded-2xl border border-primary bg-white pl-12 pr-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-[#0f172a] dark:text-white dark:placeholder:text-gray-500"
               />
             </label>
           </div>
@@ -656,16 +656,16 @@ export function ParsingWarningsPanel({
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
               <div className="mt-6">
-                <p className="px-1 text-sm text-gray-500">Recents</p>
+                <p className="px-1 text-sm text-gray-500 dark:text-gray-400">Recents</p>
                 <div className="mt-2 space-y-2">
                   {recentCurrencyItems.map(item => (
                     <button
                       key={`recent-${item.code}`}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea] dark:hover:bg-white/5"
                     >
-                      <span className="text-base font-semibold text-[#0f3428]">{item.label}</span>
+                      <span className="text-base font-semibold text-[#0f3428] dark:text-white">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -673,7 +673,7 @@ export function ParsingWarningsPanel({
             ) : null}
 
             <div className="mt-6">
-              <p className="px-1 text-sm text-gray-500">All</p>
+              <p className="px-1 text-sm text-gray-500 dark:text-gray-400">All</p>
               <div className="mt-2 space-y-1">
                 {allCurrencyItems.length > 0 ? (
                   allCurrencyItems.map(item => (
@@ -681,13 +681,13 @@ export function ParsingWarningsPanel({
                       key={item.code}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea]"
+                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea] dark:hover:bg-white/5"
                     >
-                      <span className="text-base font-semibold text-[#0f3428]">{item.label}</span>
+                      <span className="text-base font-semibold text-[#0f3428] dark:text-white">{item.label}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500">
+                  <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500 dark:bg-[#0f172a] dark:text-gray-400">
                     No currencies found
                   </p>
                 )}

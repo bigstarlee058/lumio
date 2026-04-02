@@ -151,4 +151,12 @@ describe('DashboardPage', () => {
 
     expect(link.getAttribute('href')).toBe('/statements?openExpenseDrawer=scan');
   });
+
+  it('renders the New Record action with rounded corners', () => {
+    render(<DashboardPage />);
+
+    const link = screen.getByRole('link', { name: /new record/i });
+
+    expect(link.className).toContain('rounded-lg');
+  });
 });

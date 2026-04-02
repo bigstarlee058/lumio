@@ -2,6 +2,7 @@
 
 import apiClient from '@/app/lib/api';
 import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   type AvailableTable,
@@ -22,6 +23,7 @@ import {
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 export default function TablesReportsView() {
+  const { resolvedTheme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState<TablesReportResponse | null>(null);
   const [availableTables, setAvailableTables] = useState<AvailableTable[]>([]);
@@ -234,6 +236,11 @@ export default function TablesReportsView() {
   }, [report?.aggregatedRows]);
 
   const selectedTablesCount = selectedTableIds.length;
+  const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
+  const panelClass =
+    'rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/70 dark:bg-slate-900/60';
+  const subtlePanelClass =
+    'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition-colors dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200';
 
   return (
     <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
@@ -245,11 +252,15 @@ export default function TablesReportsView() {
               Aggregated insights from your custom tables
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100/80 p-1 dark:border-slate-700 dark:bg-slate-900/70">
             <button
               type="button"
               onClick={() => setActiveFlowType('all')}
-              className={activeFlowType === 'all' ? 'font-semibold text-sky-600' : 'text-slate-500'}
+              className={
+                activeFlowType === 'all'
+                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
+                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
+              }
             >
               All
             </button>
@@ -257,7 +268,9 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('expense')}
               className={
-                activeFlowType === 'expense' ? 'font-semibold text-sky-600' : 'text-slate-500'
+                activeFlowType === 'expense'
+                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
+                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
               }
             >
               Expenses
@@ -266,7 +279,9 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('income')}
               className={
-                activeFlowType === 'income' ? 'font-semibold text-sky-600' : 'text-slate-500'
+                activeFlowType === 'income'
+                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
+                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
               }
             >
               Income
@@ -280,24 +295,24 @@ export default function TablesReportsView() {
             value={searchInput}
             onChange={event => setSearchInput(event.target.value)}
             placeholder="Search counterparties, categories, tables..."
-            className="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm outline-none"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder:text-slate-500"
           />
           <div className="relative" ref={tableDropdownRef}>
             <button
               type="button"
               onClick={() => setTableDropdownOpen(open => !open)}
-              className="rounded-xl border border-slate-200 px-4 py-2 text-sm"
+              className={subtlePanelClass}
             >
               Tables
               {selectedTablesCount > 0 ? ` (${selectedTablesCount})` : ''}
             </button>
 
             {tableDropdownOpen ? (
-              <div className="absolute right-0 z-20 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
+              <div className="absolute right-0 z-20 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg shadow-slate-200/60 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/30">
                 <button
                   type="button"
                   onClick={() => setSelectedTableIds([])}
-                  className="mb-1 w-full rounded-xl px-3 py-2 text-left text-sm text-sky-700"
+                  className="mb-1 w-full rounded-xl px-3 py-2 text-left text-sm text-sky-700 transition-colors hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-slate-800"
                 >
                   All tables
                 </button>
@@ -306,7 +321,7 @@ export default function TablesReportsView() {
                   return (
                     <label
                       key={table.id}
-                      className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm"
+                      className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                     >
                       <input
                         type="checkbox"
@@ -321,18 +336,20 @@ export default function TablesReportsView() {
                         }
                       />
                       <span className="flex-1 truncate">{table.name}</span>
-                      <span className="text-xs text-slate-400">{getSourceLabel(table.source)}</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">
+                        {getSourceLabel(table.source)}
+                      </span>
                     </label>
                   );
                 })}
               </div>
             ) : null}
           </div>
-          <select
-            value={selectedDays}
-            onChange={event => setSelectedDays(Number(event.target.value))}
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm"
-          >
+            <select
+              value={selectedDays}
+              onChange={event => setSelectedDays(Number(event.target.value))}
+              className={`${subtlePanelClass} appearance-none pr-9`}
+            >
             <option value={7}>Last 7 days</option>
             <option value={30}>Last 30 days</option>
             <option value={90}>Last 90 days</option>
@@ -341,7 +358,7 @@ export default function TablesReportsView() {
           </select>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
           {availableTables.map(table => (
             <button
               key={table.id}
@@ -355,8 +372,8 @@ export default function TablesReportsView() {
               }
               className={
                 selectedTableIds.includes(table.id)
-                  ? 'rounded-full bg-sky-100 px-3 py-1 text-sky-700'
-                  : 'rounded-full bg-slate-100 px-3 py-1'
+                  ? 'rounded-full bg-sky-100 px-3 py-1 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300'
+                  : 'rounded-full bg-slate-100 px-3 py-1 dark:bg-slate-800 dark:text-slate-300'
               }
             >
               {table.name} · {getSourceLabel(table.source)}
@@ -367,54 +384,66 @@ export default function TablesReportsView() {
 
       <div className="flex-1 overflow-y-auto">
         {loading ? (
-          <div className="py-10 text-sm text-slate-500">Loading...</div>
+          <div className="py-10 text-sm text-slate-500 dark:text-slate-400">Loading...</div>
         ) : !report || report.totals.operations === 0 ? (
-          <div className="py-10 text-sm text-slate-500">No data found for the selected period.</div>
+          <div className="py-10 text-sm text-slate-500 dark:text-slate-400">
+            No data found for the selected period.
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="text-xs text-slate-500">Total</div>
-                <div className="mt-1 text-xl font-semibold">{formatAmount(report.totals.total)}</div>
+              <div className={panelClass}>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Total</div>
+                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {formatAmount(report.totals.total)}
+                </div>
                 <div className={`mt-1 text-xs ${getComparisonColor(report.comparison.totalTrend)}`}>
                   {getComparisonArrow(report.comparison.totalTrend)} {report.comparison.totalPercentage}%
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="text-xs text-slate-500">Manual tables</div>
-                <div className="mt-1 text-xl font-semibold">
+              <div className={panelClass}>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Manual tables</div>
+                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
                   {formatAmount(report.totals.manualTotal)}
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="text-xs text-slate-500">Google Sheets</div>
-                <div className="mt-1 text-xl font-semibold">
+              <div className={panelClass}>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Google Sheets</div>
+                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
                   {formatAmount(report.totals.googleSheetsTotal)}
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="text-xs text-slate-500">Operations</div>
-                <div className="mt-1 text-xl font-semibold">{report.totals.operations}</div>
+              <div className={panelClass}>
+                <div className="text-xs text-slate-500 dark:text-slate-400">Operations</div>
+                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+                  {report.totals.operations}
+                </div>
               </div>
             </div>
 
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 p-4 lg:col-span-2">
-                <div className="mb-3 text-sm font-medium text-slate-700">Trend</div>
-                {trendChartOption ? <ReactECharts option={trendChartOption} style={{ height: 220 }} /> : null}
+              <div className={`${panelClass} lg:col-span-2`}>
+                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">Trend</div>
+                {trendChartOption ? (
+                  <ReactECharts option={trendChartOption} style={{ height: 220 }} theme={chartTheme} />
+                ) : null}
               </div>
-              <div className="rounded-2xl border border-slate-200 p-4">
-                <div className="mb-3 text-sm font-medium text-slate-700">Source split</div>
+              <div className={panelClass}>
+                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Source split
+                </div>
                 {sourceSplitOption ? (
-                  <ReactECharts option={sourceSplitOption} style={{ height: 220 }} />
+                  <ReactECharts option={sourceSplitOption} style={{ height: 220 }} theme={chartTheme} />
                 ) : null}
               </div>
             </div>
 
             {topRowsBarOption ? (
-              <div className="mt-6 rounded-2xl border border-slate-200 p-4">
-                <div className="mb-3 text-sm font-medium text-slate-700">Top counterparties</div>
-                <ReactECharts option={topRowsBarOption} style={{ height: 320 }} />
+              <div className={`mt-6 ${panelClass}`}>
+                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Top counterparties
+                </div>
+                <ReactECharts option={topRowsBarOption} style={{ height: 320 }} theme={chartTheme} />
               </div>
             ) : null}
 
@@ -426,8 +455,8 @@ export default function TablesReportsView() {
                   onClick={() => setSortKey(key)}
                   className={
                     sortKey === key
-                      ? 'rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700'
-                      : 'rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500'
+                      ? 'rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-300'
+                      : 'rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400'
                   }
                 >
                   {key === 'amount' ? 'Amount' : key === 'average' ? 'Average' : 'Operations'}
@@ -435,10 +464,10 @@ export default function TablesReportsView() {
               ))}
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700/70 dark:bg-slate-900/60">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-xs text-slate-500">
+                  <tr className="border-b border-slate-200 text-left text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
                     <th className="px-4 py-3">Counterparty</th>
                     <th className="px-4 py-3">Source</th>
                     <th className="px-4 py-3">Table</th>
@@ -452,7 +481,7 @@ export default function TablesReportsView() {
                   {report.aggregatedRows.map((row, index) => (
                     <tr
                       key={`${row.counterparty}-${row.source}-${index}`}
-                      className="cursor-pointer border-b border-slate-100"
+                      className="cursor-pointer border-b border-slate-100 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800/70"
                       tabIndex={0}
                       onClick={() => void handleDrillDown(row.counterparty)}
                       onKeyDown={event => {
@@ -462,23 +491,29 @@ export default function TablesReportsView() {
                         }
                       }}
                     >
-                      <td className="px-4 py-3 font-medium text-slate-900">{row.counterparty}</td>
-                      <td className="px-4 py-3 text-slate-500">
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                        {row.counterparty}
+                      </td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
                         <span
                           className={
                             row.source === 'google_sheets_import'
-                              ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700'
-                              : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600'
+                              ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+                              : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                           }
                         >
                           {getSourceLabel(row.source)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-500">{row.tableName}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{row.tableName}</td>
                       <td className="px-4 py-3 text-right">{row.count}</td>
                       <td className="px-4 py-3 text-right">{formatAmount(row.average)}</td>
-                      <td className="px-4 py-3 text-right font-medium">{formatAmount(row.total)}</td>
-                      <td className="px-4 py-3 text-right text-slate-500">{row.lastDate || '-'}</td>
+                      <td className="px-4 py-3 text-right font-medium text-slate-900 dark:text-slate-100">
+                        {formatAmount(row.total)}
+                      </td>
+                      <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">
+                        {row.lastDate || '-'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -491,13 +526,13 @@ export default function TablesReportsView() {
                 aria-hidden="true"
               >
                 <div
-                  className="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+                  className="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
                   aria-modal="true"
                   onClick={event => event.stopPropagation()}
                   onKeyDown={event => event.stopPropagation()}
                 >
-                  <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                    <h2 className="text-lg font-semibold text-slate-900">
+                  <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700/70">
+                    <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                       {`${drillDown?.counterparty || selectedCounterparty} — Drill-down`}
                     </h2>
                     <button
@@ -506,7 +541,7 @@ export default function TablesReportsView() {
                         setSelectedCounterparty(null);
                         setDrillDown(null);
                       }}
-                      className="text-slate-500"
+                      className="text-slate-500 dark:text-slate-400"
                     >
                       Close
                     </button>
@@ -516,7 +551,7 @@ export default function TablesReportsView() {
                     {drillDown?.items?.length ? (
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="border-b border-slate-200 text-left text-xs text-slate-500">
+                          <tr className="border-b border-slate-200 text-left text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
                             <th className="px-4 py-3">Date</th>
                             <th className="px-4 py-3">Source</th>
                             <th className="px-4 py-3">Table</th>
@@ -526,14 +561,17 @@ export default function TablesReportsView() {
                         </thead>
                         <tbody>
                           {drillDown.items.map(item => (
-                            <tr key={item.rowId} className="border-b border-slate-100">
+                            <tr
+                              key={item.rowId}
+                              className="border-b border-slate-100 text-slate-700 dark:border-slate-800 dark:text-slate-300"
+                            >
                               <td className="px-4 py-3">{item.date || '-'}</td>
                               <td className="px-4 py-3">
                                 <span
                                   className={
                                     item.source === 'google_sheets_import'
-                                      ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700'
-                                      : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600'
+                                      ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+                                      : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300'
                                   }
                                 >
                                   {getSourceLabel(item.source)}
@@ -549,7 +587,9 @@ export default function TablesReportsView() {
                         </tbody>
                       </table>
                     ) : (
-                      <div className="px-6 py-8 text-sm text-slate-500">No records found</div>
+                      <div className="px-6 py-8 text-sm text-slate-500 dark:text-slate-400">
+                        No records found
+                      </div>
                     )}
                   </div>
                 </div>

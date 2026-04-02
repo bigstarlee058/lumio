@@ -207,7 +207,10 @@ export default function WorkspaceOverviewView() {
 
   return (
     <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-      <div className="container max-w-5xl px-5 py-4 space-y-3">
+      <div
+        className="container max-w-5xl px-5 py-4 space-y-3"
+        data-tour-id="workspace-side-panel"
+      >
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-start gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-lg font-semibold text-primary">
@@ -222,7 +225,10 @@ export default function WorkspaceOverviewView() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
+        <div
+          className="rounded-2xl border border-border bg-card p-4 space-y-3"
+          data-tour-id="workspace-background"
+        >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
               <h2 className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -268,6 +274,7 @@ export default function WorkspaceOverviewView() {
               </label>
               <input
                 id="workspace-name"
+                data-tour-id="workspace-name"
                 type="text"
                 value={name}
                 onChange={event => setName(event.target.value)}
@@ -301,6 +308,7 @@ export default function WorkspaceOverviewView() {
               <button
                 id="workspace-currency-trigger"
                 data-testid="workspace-currency-trigger"
+                data-tour-id="workspace-currency"
                 type="button"
                 onClick={() => setCurrencyDrawerOpen(true)}
                 className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"

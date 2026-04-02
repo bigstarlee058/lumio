@@ -1598,7 +1598,7 @@ export default function SpendOverTimeView() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100 text-sm">
+                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
                       <th className="py-2 pr-4">{labels.period}</th>
@@ -1608,7 +1608,7 @@ export default function SpendOverTimeView() {
                       <th className="py-2 text-right">{labels.lastOperation}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
                     {rows.slice(0, 60).map(row => {
                       const total = activeFlowType === 'income' ? row.income : row.expense;
                       const average = row.count > 0 ? total / row.count : 0;
@@ -1724,7 +1724,7 @@ export default function SpendOverTimeView() {
                   {labels.noOperations}
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-gray-100 text-sm">
+                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
                       <th className="py-2 pr-4">{labels.lastOperation}</th>
@@ -1734,7 +1734,7 @@ export default function SpendOverTimeView() {
                       <th className="py-2 text-right">{labels.amount}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
                     {drillDownRecords.slice(0, 120).map(record => (
                       <tr key={record.id} className="text-gray-700">
                         <td className="py-2 pr-4 text-gray-600">

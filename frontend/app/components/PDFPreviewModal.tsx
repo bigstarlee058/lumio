@@ -333,18 +333,18 @@ export function PDFPreviewModal({
       className="h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-none overflow-hidden rounded-[22px] border border-[#d4e3d6] shadow-[0_24px_80px_rgba(16,24,40,0.16)]"
       contentClassName="!h-full !p-0"
     >
-      <div className="flex h-full min-h-0 flex-col bg-white">
+      <div className="flex h-full min-h-0 flex-col bg-white dark:bg-[#111827]">
         <div
-          className="relative flex items-center justify-between border-b border-[#e4e6e3] px-5 py-4"
+          className="relative flex items-center justify-between border-b border-[#e4e6e3] px-5 py-4 dark:border-white/10 dark:bg-[#111827]"
           ref={menuRef}
         >
-          <h2 className="text-[22px] font-semibold leading-none text-[#0f3428]">Receipt</h2>
+          <h2 className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">Receipt</h2>
 
           <div className="absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-1">
             <button
               type="button"
               onClick={() => setMenuOpen(prev => !prev)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-[#eaf5ee]"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-[#eaf5ee] dark:text-slate-300 dark:hover:bg-white/10"
               aria-label="Open file menu"
             >
               <MoreVertical size={24} strokeWidth={2.4} />
@@ -352,7 +352,7 @@ export function PDFPreviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[#9aa39e] transition-colors hover:bg-[#eef2ee] hover:text-[#6f7773]"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[#9aa39e] transition-colors hover:bg-[#eef2ee] hover:text-[#6f7773] dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
               aria-label="Close preview"
             >
               <X size={33} strokeWidth={2.4} />
@@ -360,41 +360,41 @@ export function PDFPreviewModal({
           </div>
 
           {menuOpen && (
-            <div className="absolute right-5 top-[calc(100%+12px)] z-40 w-[360px] max-w-[calc(100vw-90px)] rounded-[24px] border border-[#d8ddd8] bg-white p-2 shadow-[0_14px_28px_rgba(17,24,39,0.14)]">
-              <button
-                type="button"
-                onClick={handleDownloadFromMenu}
-                className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left transition-colors hover:bg-[#f5f8f5]"
-              >
-                <Download className="h-7 w-7 text-[#99a39d]" strokeWidth={2.3} />
-                <span className="text-[22px] font-semibold leading-none text-[#0f3428]">
-                  Download
-                </span>
-              </button>
-            </div>
+              <div className="absolute right-5 top-[calc(100%+12px)] z-40 w-[360px] max-w-[calc(100vw-90px)] rounded-[24px] border border-[#d8ddd8] bg-white p-2 shadow-[0_14px_28px_rgba(17,24,39,0.14)] dark:border-slate-700/60 dark:bg-[#111827]">
+                <button
+                  type="button"
+                  onClick={handleDownloadFromMenu}
+                  className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left transition-colors hover:bg-[#f5f8f5] dark:hover:bg-white/5"
+                >
+                  <Download className="h-7 w-7 text-[#99a39d] dark:text-slate-400" strokeWidth={2.3} />
+                  <span className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
+                    Download
+                  </span>
+                </button>
+              </div>
           )}
         </div>
 
-        <div className="relative min-h-0 flex-1 bg-[#f3f4f2]">
+        <div className="relative min-h-0 flex-1 bg-[#f3f4f2] dark:bg-[#0b1220]">
           {loading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-[#0b1220]/80">
               <div className="text-center">
-                <Spinner className="mx-auto mb-4 h-10 w-10 text-black" />
-                <p className="text-sm font-medium text-gray-500">{t.loading.value}</p>
+                <Spinner className="mx-auto mb-4 h-10 w-10 text-black dark:text-white" />
+                <p className="text-sm font-medium text-gray-500 dark:text-slate-400">{t.loading.value}</p>
               </div>
             </div>
           )}
 
           {error && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white dark:bg-[#111827]">
               <div className="max-w-md p-6 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-red-100 bg-red-50">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-red-100 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10">
                   <X size={24} className="text-red-500" strokeWidth={1.5} />
                 </div>
-                <h3 className="mb-2 text-sm font-semibold text-gray-900">
+                <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-slate-100">
                   {showAttachFallback ? t.fileNotAttached.value : t.loadError.value}
                 </h3>
-                <p className="mb-4 text-sm text-gray-500">
+                <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
                   {showAttachFallback ? t.uploadFileHint.value : error}
                 </p>
 
@@ -418,7 +418,7 @@ export function PDFPreviewModal({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                      className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-700/60 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                     >
                       {t.close.value}
                     </button>
@@ -438,15 +438,15 @@ export function PDFPreviewModal({
 
           {showParsePrompt && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/25 px-4">
-              <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-[0_20px_36px_rgba(15,23,42,0.2)]">
-                <h3 className="text-base font-semibold text-[#0f3428]">{t.startParsing.value}</h3>
-                <p className="mt-2 text-sm text-gray-600">{t.startParsingDescription.value}</p>
+              <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-[0_20px_36px_rgba(15,23,42,0.2)] dark:bg-[#111827]">
+                <h3 className="text-base font-semibold text-[#0f3428] dark:text-slate-100">{t.startParsing.value}</h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">{t.startParsingDescription.value}</p>
                 <div className="mt-5 flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setShowParsePrompt(false)}
                     disabled={startingParsing}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50"
+                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-slate-700/60 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     {t.decline.value}
                   </button>
@@ -471,8 +471,8 @@ export function PDFPreviewModal({
                   alt={fileName}
                   className={
                     isStoreReceiptImagePreview
-                      ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)]'
-                      : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)]'
+                       ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
+                       : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
                   }
                 />
               </div>
@@ -498,7 +498,7 @@ export function PDFPreviewModal({
                         width={pageWidth}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
-                        className="overflow-hidden rounded-[2px] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.08)]"
+                        className="overflow-hidden rounded-[2px] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900"
                       />
                     </div>
                   ))}

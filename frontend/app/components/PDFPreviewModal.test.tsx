@@ -276,4 +276,36 @@ describe('PDFPreviewModal manual attach flow', () => {
     expect(gmailReceiptImage.className).toContain('max-h-[78vh]');
     expect(gmailReceiptImage.className).not.toContain('w-[min(92vw,960px)]');
   });
+
+  it('uses dark surface classes for the preview shell and canvas', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      blob: async () => new Blob(['%PDF-1.4'], { type: 'application/pdf' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await act(async () => {
+      await loadComponent();
+      root.render(
+        <PDFPreviewModal
+          isOpen
+          onClose={vi.fn()}
+          fileId="receipt-1"
+          fileName="receipt.pdf"
+          source="receipt"
+        />,
+      );
+      await Promise.resolve();
+    });
+
+    const previewShell = Array.from(container.querySelectorAll('div')).find(node =>
+      node.className.includes('flex h-full min-h-0 flex-col'),
+    );
+    const previewCanvas = Array.from(container.querySelectorAll('div')).find(node =>
+      node.className.includes('relative min-h-0 flex-1'),
+    );
+
+    expect(previewShell?.className).toContain('dark:bg-[#111827]');
+    expect(previewCanvas?.className).toContain('dark:bg-[#0b1220]');
+  });
 });

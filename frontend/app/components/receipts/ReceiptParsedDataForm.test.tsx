@@ -51,4 +51,24 @@ describe('ReceiptParsedDataForm', () => {
       date: '2024-07-29',
     });
   });
+
+  it('uses dark surface classes for the line items container', () => {
+    render(
+      <ReceiptParsedDataForm
+        value={{
+          ...baseValue,
+          lineItems: [{ id: 'line-1', description: 'Milk', amount: 12.5 }],
+        }}
+        categories={[]}
+        onChange={vi.fn()}
+      />,
+    );
+
+    const lineItemsShell = Array.from(document.querySelectorAll('div')).find(node =>
+      node.className.includes('rounded-2xl') && node.className.includes('border-slate-200'),
+    );
+
+    expect(lineItemsShell?.className).toContain('dark:border-slate-700/60');
+    expect(lineItemsShell?.className).toContain('dark:bg-slate-900/60');
+  });
 });

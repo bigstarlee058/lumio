@@ -1544,7 +1544,7 @@ export default function TopMerchantsView() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100 text-sm">
+                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
                       <th className="py-2 pr-4">{labels.merchant}</th>
@@ -1555,7 +1555,7 @@ export default function TopMerchantsView() {
                       <th className="py-2 text-right">{labels.lastOperation}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
                     {sortedAggregatedRows.slice(0, 60).map(row => (
                       <tr key={row.id} className="text-gray-700">
                         <td className="py-2 pr-4 font-medium text-gray-900">
@@ -1674,7 +1674,7 @@ export default function TopMerchantsView() {
                   {labels.noOperations}
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-gray-100 text-sm">
+                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
                   <thead>
                     <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
                       <th className="py-2 pr-4">{labels.lastOperation}</th>
@@ -1683,7 +1683,7 @@ export default function TopMerchantsView() {
                       <th className="py-2 text-right">{labels.amount}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
                     {drillDownRecords.slice(0, 120).map(record => (
                       <tr key={record.id} className="text-gray-700">
                         <td className="py-2 pr-4 text-gray-600">

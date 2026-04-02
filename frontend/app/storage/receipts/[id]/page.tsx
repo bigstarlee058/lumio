@@ -475,7 +475,7 @@ export default function ReceiptDocumentPage() {
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
                 Receipt details
               </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 dark:text-white">
                 {receipt.subject}
               </h1>
               <p className="mt-2 text-sm text-slate-600">
@@ -506,17 +506,17 @@ export default function ReceiptDocumentPage() {
 
         <div className="grid items-stretch gap-6 xl:grid-cols-[minmax(360px,0.95fr)_minmax(0,1.05fr)]">
           <section className="flex h-full min-h-0 flex-col">
-            <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white">
-              <div className="border-b border-slate-200 px-5 py-4">
-                <h2 className="text-sm font-semibold text-slate-900">Original document</h2>
+            <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-700/60 dark:bg-slate-900">
+              <div className="border-b border-slate-200 px-5 py-4 dark:border-slate-700/60">
+                <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Original document</h2>
               </div>
-              <div className="flex-1 overflow-auto bg-slate-50 p-4">
+              <div className="flex-1 overflow-auto bg-slate-50 p-4 dark:bg-slate-950">
                 {previewLoading ? (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500">
+                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
                     Preparing preview...
                   </div>
                 ) : previewError ? (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500">
+                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
                     {previewError}
                   </div>
                 ) : previewUrl ? (
@@ -524,7 +524,7 @@ export default function ReceiptDocumentPage() {
                     <iframe
                       src={previewUrl}
                       title={receipt.subject}
-                      className="h-full min-h-[760px] w-full rounded-2xl border border-slate-200 bg-white"
+                      className="h-full min-h-[760px] w-full rounded-2xl border border-slate-200 bg-white dark:border-slate-700/60 dark:bg-slate-900"
                     />
                   ) : (
                     <div className="flex min-h-full min-w-full justify-center">
@@ -536,7 +536,7 @@ export default function ReceiptDocumentPage() {
                     </div>
                   )
                 ) : (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500">
+                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
                     Preview unavailable
                   </div>
                 )}
@@ -544,11 +544,11 @@ export default function ReceiptDocumentPage() {
             </div>
           </section>
 
-          <section className="h-full rounded-3xl border border-slate-200 bg-white p-6">
-            <div className="mb-5 flex items-center justify-between gap-4 border-b border-slate-200 pb-4">
+          <section className="h-full rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-700/60 dark:bg-slate-900">
+            <div className="mb-5 flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-700/60">
               <div>
-                <h2 className="text-lg font-semibold text-slate-950">Parsed fields</h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <h2 className="text-lg font-semibold text-slate-950 dark:text-slate-100">Parsed fields</h2>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   Review and correct the extracted receipt data before approval.
                 </p>
               </div>

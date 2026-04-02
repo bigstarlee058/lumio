@@ -538,6 +538,52 @@ describe('StatementsListItem', () => {
     expect(container.querySelectorAll('[aria-label="Loading"]')).toHaveLength(2);
   });
 
+  it('uses the primary color for amounts in dark mode', () => {
+    const root = createRoot(container);
+
+    const statement: Statement = {
+      id: 'statement-dark-amount',
+      source: 'statement',
+      fileName: 'Readable.pdf',
+      status: 'completed',
+      totalDebit: 702799.13,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      statementDateFrom: '2026-01-01',
+      statementDateTo: '2026-01-31',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'KZT',
+    };
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Kaspi"
+          amountLabel="702,799.13KZT"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          typeLabel="PDF"
+        />,
+      );
+    });
+
+    const amountNodes = Array.from(container.querySelectorAll('p, span')).filter(node =>
+      node.textContent?.includes('702,799.13KZT'),
+    );
+
+    expect(amountNodes).toHaveLength(2);
+    amountNodes.forEach(node => {
+      expect(node.className).toContain('dark:text-primary');
+    });
+  });
+
   it('renders primary duplicate badge and review action for duplicate item', () => {
     const root = createRoot(container);
 

@@ -61,10 +61,40 @@ export default function StatementsCircularUploadMenu({
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return true;
+    }
+
+    return window.matchMedia('(min-width: 1024px)').matches;
+  });
   const menuItems = useMemo(() => buildStatementUploadMenuModel(providers), [providers]);
+
+  const uploadTriggerTourId =
+    (placement === 'panel' && isDesktopViewport) || (placement === 'floating' && !isDesktopViewport)
+      ? 'statements-upload-trigger'
+      : undefined;
 
   useEffect(() => {
     setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsDesktopViewport(event.matches);
+    };
+
+    setIsDesktopViewport(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -243,6 +273,7 @@ export default function StatementsCircularUploadMenu({
 
       <button
         data-statements-fab-interactive="true"
+        data-tour-id={uploadTriggerTourId}
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
         className={cn(

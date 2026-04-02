@@ -1238,7 +1238,13 @@ export default function EditStatementPage() {
           overflow: 'hidden',
         }}
       >
-        <AccordionSummary expandIcon={<ExpandMore />} sx={{ bgcolor: 'grey.50' }}>
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          className="bg-[#f8fafc] dark:bg-[#18222d]"
+          sx={{
+            bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
+          }}
+        >
           <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary' }}>
             {t.labels.parsingDetails?.value || 'Parsing details'}
           </Typography>
@@ -1622,8 +1628,9 @@ export default function EditStatementPage() {
         <Table size="small">
           <TableHead>
             <TableRow
+              className="bg-[#f8fafc] dark:bg-[#18222d]"
               sx={{
-                bgcolor: 'grey.50',
+                bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
                 borderBottom: '1px solid',
                 borderBottomColor: 'divider',
               }}

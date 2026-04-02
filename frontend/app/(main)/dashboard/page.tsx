@@ -215,7 +215,7 @@ export default function DashboardPage() {
                 <ExportDropdown t={t.exportMenu} />
                 <Link
                   href="/statements?openExpenseDrawer=scan"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)] transition-colors"
+                  className="flex items-center gap-2 rounded-lg bg-[var(--primary)] px-5 py-2.5 text-white transition-colors hover:bg-[var(--primary-hover)]"
                 >
                   <svg
                     width="14"

@@ -264,6 +264,46 @@ describe('EditStatementPage locale', () => {
     expect(container.textContent).not.toContain('НАЗНАЧЕНИЕ ПЛАТЕЖА');
   });
 
+  it('uses dark surfaces for parsing details and transactions headers', async () => {
+    const { default: EditStatementPage } = await import('./page');
+
+    await act(async () => {
+      root.render(<EditStatementPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const parsingSummary = container.querySelector('.MuiAccordionSummary-root');
+    const tableHeaderRow = container.querySelector('.MuiTableHead-root tr');
+
+    expect(parsingSummary?.className).toContain('dark:bg-[#18222d]');
+    expect(tableHeaderRow?.className).toContain('dark:bg-[#18222d]');
+  });
+
+  it('uses dark theme styling for the transactions chip and statement category button', async () => {
+    const { default: EditStatementPage } = await import('./page');
+
+    await act(async () => {
+      root.render(<EditStatementPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const transactionsChip = container.querySelector('.MuiChip-root');
+    const categoryButton = Array.from(container.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('Services'),
+    ) as HTMLButtonElement | undefined;
+
+    expect(transactionsChip?.className).toContain('dark:bg-[#111827]');
+    expect(categoryButton?.className).toContain('dark:border-slate-700/60');
+    expect(categoryButton?.className).toContain('dark:text-slate-200');
+    expect(categoryButton?.className).toContain('dark:hover:bg-slate-800');
+  });
+
   it('focuses closing balance input when resolving balance mismatch warning', async () => {
     const { default: EditStatementPage } = await import('./page');
 

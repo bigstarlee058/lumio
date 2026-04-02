@@ -227,6 +227,14 @@ describe('ParsingWarningsPanel', () => {
     expect(document.body.textContent).toContain('Select a currency');
     expect(document.body.textContent).toContain('Recents');
     expect(document.body.textContent).toContain('All');
+
+    const drawer = document.body.querySelector('.bg-white');
+    const searchInput = Array.from(document.body.querySelectorAll('input')).find(input =>
+      input.getAttribute('placeholder') === 'Search',
+    );
+
+    expect(drawer?.className).toContain('dark:bg-[#111827]');
+    expect(searchInput?.className).toContain('dark:bg-[#0f172a]');
   });
 
   it('matches editable warning rows by transaction number, not only full reason text', async () => {

@@ -194,4 +194,19 @@ describe('ExportDropdown', () => {
 
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
   });
+
+  it('renders the trigger button with rounded corners', async () => {
+    const { ExportDropdown } = await import('./ExportDropdown');
+
+    render(
+      <ExportDropdown
+        t={{
+          button: { value: 'Export' },
+          title: { value: 'Export data' },
+        }}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Export' }).className).toContain('rounded-lg');
+  });
 });

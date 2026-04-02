@@ -1905,7 +1905,10 @@ export default function StatementsListView({ stage }: Props) {
             </div>
           </>
         ) : (
-          <div className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+          <div
+            className="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0"
+            data-tour-id="statements-filters"
+          >
             <TypeFilterDropdown
               open={typeDropdownOpen}
               onOpenChange={setTypeDropdownOpen}
@@ -2164,7 +2167,7 @@ export default function StatementsListView({ stage }: Props) {
                     </div>
                   ))
                 : null}
-              {paginatedDisplayStatements.map(statement => {
+              {paginatedDisplayStatements.map((statement, index) => {
                 const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
                 const resolvedName = isReceipt
                   ? resolveGmailMerchantLabel({
@@ -2200,6 +2203,7 @@ export default function StatementsListView({ stage }: Props) {
                 return (
                   <StatementsListItem
                     key={statement.id}
+                    dataTourId={index === 0 ? 'statement-row-primary' : undefined}
                     statement={statement}
                     viewLabel={viewLabel}
                     isReceipt={isReceipt}

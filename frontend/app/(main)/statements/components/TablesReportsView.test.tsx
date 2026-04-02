@@ -11,6 +11,10 @@ const apiMocks = vi.hoisted(() => ({
   post: vi.fn(),
 }));
 
+const themeMock = vi.hoisted(() => ({
+  resolvedTheme: 'light' as 'light' | 'dark',
+}));
+
 vi.mock('next/dynamic', () => ({
   default: () => () => <div data-testid="mock-echarts" />,
 }));
@@ -50,7 +54,7 @@ vi.mock('@/app/contexts/WorkspaceContext', () => ({
 }));
 
 vi.mock('next-themes', () => ({
-  useTheme: () => ({ resolvedTheme: 'light' }),
+  useTheme: () => themeMock,
 }));
 
 vi.mock('@/app/i18n', () => ({
@@ -71,6 +75,7 @@ describe('TablesReportsView', () => {
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    themeMock.resolvedTheme = 'light';
     localStorage.clear();
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -281,5 +286,29 @@ describe('TablesReportsView', () => {
     expect(screen.queryByText('No records found')).not.toBeInTheDocument();
     expect(screen.getByText('100 USD')).toBeInTheDocument();
     expect(screen.getAllByText('Manual')).toHaveLength(2);
+  });
+
+  it('includes dark theme surface classes for the main controls and cards', async () => {
+    themeMock.resolvedTheme = 'dark';
+
+    await act(async () => {
+      root.render(<TablesReportsView />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByPlaceholderText('Search counterparties, categories, tables...').className).toContain(
+      'dark:bg-slate-900/60',
+    );
+    expect(screen.getByRole('button', { name: /^Tables$/i }).className).toContain(
+      'dark:border-slate-700',
+    );
+    expect(screen.getByText('Total').parentElement?.className).toContain('dark:bg-slate-900/60');
+    expect(screen.getByText('Top counterparties').parentElement?.className).toContain(
+      'dark:border-slate-700/70',
+    );
   });
 });

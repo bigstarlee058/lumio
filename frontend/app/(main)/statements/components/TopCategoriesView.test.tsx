@@ -306,4 +306,38 @@ describe('TopCategoriesView', () => {
     expect(document.body.textContent).toContain('Software - Drill-down');
     expect(document.body.textContent).toContain('Main workspace');
   });
+
+  it('uses dark divider classes for leaderboard and drilldown tables', async () => {
+    await act(async () => {
+      root.render(<TopCategoriesView />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const leaderboardTable = container.querySelector('table');
+    const leaderboardBody = leaderboardTable?.querySelector('tbody');
+
+    expect(leaderboardTable).toBeTruthy();
+    expect(leaderboardTable?.className).toContain('dark:divide-slate-700/60');
+    expect(leaderboardBody?.className).toContain('dark:divide-slate-700/60');
+
+    const rowButton = Array.from(container.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('Software'),
+    );
+
+    await act(async () => {
+      rowButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    const tables = Array.from(document.body.querySelectorAll('table'));
+    const drilldownTable = tables.at(-1);
+    const drilldownBody = drilldownTable?.querySelector('tbody');
+
+    expect(drilldownTable).toBeTruthy();
+    expect(drilldownTable?.className).toContain('dark:divide-slate-700/60');
+    expect(drilldownBody?.className).toContain('dark:divide-slate-700/60');
+  });
 });

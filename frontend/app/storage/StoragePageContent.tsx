@@ -260,6 +260,7 @@ const DraggableModalFileItem = React.memo(
 );
 
 interface DraggableFileRowProps {
+  dataTourId?: string;
   file: StorageFile;
   isTrashView: boolean;
   selectedTrashIds: string[];
@@ -291,6 +292,7 @@ interface DraggableFileRowProps {
 
 const DraggableFileRow = React.memo(
   ({
+    dataTourId,
     file,
     isTrashView,
     selectedTrashIds,
@@ -332,6 +334,7 @@ const DraggableFileRow = React.memo(
     return (
       <tr
         ref={setNodeRef}
+        data-tour-id={dataTourId}
         style={style}
         className={`transition-all duration-150 hover:bg-gray-50 dark:hover:bg-slate-700/40 ${isDragging ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
       >
@@ -2169,7 +2172,7 @@ export function StoragePageContent({
                 <p className="mt-1 text-gray-600 dark:text-gray-300">{emptyStateSubtitle}</p>
               </div>
             ) : (
-              <div className="overflow-x-auto overflow-y-visible">
+              <div className="overflow-x-auto overflow-y-visible" data-tour-id="storage-table">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700/60">
                   <thead className="bg-gray-50 dark:bg-slate-800/40">
                     <tr>
@@ -2217,9 +2220,10 @@ export function StoragePageContent({
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700/60">
-                    {paginatedFiles.map(file => (
+                    {paginatedFiles.map((file, index) => (
                       <DraggableFileRow
                         key={file.id}
+                        dataTourId={!isTrashView && index === 0 ? 'storage-file-row' : undefined}
                         file={file}
                         isTrashView={isTrashView}
                         selectedTrashIds={selectedTrashIds}

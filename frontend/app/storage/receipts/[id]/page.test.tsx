@@ -196,6 +196,127 @@ describe('ReceiptDocumentPage', () => {
     expect(columnsLayout).toBeTruthy();
   });
 
+  it('uses dark surface classes for receipt preview and parsed fields shells', async () => {
+    apiMocks.mockApiGet.mockImplementation((url: string) => {
+      if (url === '/receipts/receipt-1') {
+        return Promise.resolve({
+          data: {
+            id: 'receipt-1',
+            subject: 'Dark mode receipt',
+            sender: 'camera-scan',
+            source: 'scan',
+            status: 'draft',
+            receivedAt: '2026-03-29T10:30:00.000Z',
+            metadata: {
+              attachments: [{ filename: 'receipt.jpg', mimeType: 'image/jpeg' }],
+            },
+            parsedData: {
+              vendor: 'Store',
+              amount: 500,
+              currency: 'USD',
+              date: '2026-03-29',
+              lineItems: [{ description: 'Item', amount: 500 }],
+            },
+          },
+        });
+      }
+
+      if (url === '/categories') {
+        return Promise.resolve({ data: [] });
+      }
+
+      return Promise.resolve({ data: [] });
+    });
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'image/jpeg' : null),
+      },
+      blob: async () => new Blob(['image'], { type: 'image/jpeg' }),
+    } as Response);
+
+    await act(async () => {
+      root.render(<ReceiptDocumentPage />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const previewShell = Array.from(container.querySelectorAll('div')).find(element =>
+      element.className.includes('min-h-[420px]') && element.className.includes('rounded-3xl'),
+    );
+    const previewCanvas = Array.from(container.querySelectorAll('div')).find(element =>
+      element.className.includes('overflow-auto') && element.className.includes('p-4'),
+    );
+    const parsedFieldsShell = Array.from(container.querySelectorAll('section')).find(element =>
+      element.className.includes('p-6') && element.textContent?.includes('Parsed fields'),
+    );
+
+    expect(previewShell?.className).toContain('dark:bg-slate-900');
+    expect(previewCanvas?.className).toContain('dark:bg-slate-950');
+    expect(parsedFieldsShell?.className).toContain('dark:bg-slate-900');
+  });
+
+  it('uses a white title for the receipt document name in dark mode', async () => {
+    apiMocks.mockApiGet.mockImplementation((url: string) => {
+      if (url === '/receipts/receipt-1') {
+        return Promise.resolve({
+          data: {
+            id: 'receipt-1',
+            subject: 'Document title receipt',
+            sender: 'camera-scan',
+            source: 'scan',
+            status: 'draft',
+            receivedAt: '2026-03-29T10:30:00.000Z',
+            metadata: {
+              attachments: [{ filename: 'receipt.jpg', mimeType: 'image/jpeg' }],
+            },
+            parsedData: {
+              vendor: 'Store',
+              amount: 500,
+              currency: 'USD',
+              date: '2026-03-29',
+              lineItems: [],
+            },
+          },
+        });
+      }
+
+      if (url === '/categories') {
+        return Promise.resolve({ data: [] });
+      }
+
+      return Promise.resolve({ data: [] });
+    });
+
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      headers: {
+        get: (name: string) => (name.toLowerCase() === 'content-type' ? 'image/jpeg' : null),
+      },
+      blob: async () => new Blob(['image'], { type: 'image/jpeg' }),
+    } as Response);
+
+    await act(async () => {
+      root.render(<ReceiptDocumentPage />);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const title = Array.from(container.querySelectorAll('h1')).find(element =>
+      element.textContent?.includes('Document title receipt'),
+    );
+
+    expect(title).toBeTruthy();
+    expect(title?.className).toContain('dark:text-white');
+  });
+
   it('navigates back to statements from the receipt page', async () => {
     apiMocks.mockApiGet.mockImplementation((url: string) => {
       if (url === '/receipts/receipt-1') {

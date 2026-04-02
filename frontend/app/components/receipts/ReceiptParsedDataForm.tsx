@@ -86,7 +86,7 @@ export function ReceiptParsedDataForm({
       <div className="space-y-5">
         <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <label htmlFor="receipt-vendor" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-vendor" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Vendor
           </label>
           <Input
@@ -107,7 +107,7 @@ export function ReceiptParsedDataForm({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="receipt-amount" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-amount" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Amount
           </label>
           <Input
@@ -125,7 +125,7 @@ export function ReceiptParsedDataForm({
         </div>
 
           <div className="space-y-2">
-            <label htmlFor="receipt-currency-trigger" className="text-sm font-medium text-slate-700">
+            <label htmlFor="receipt-currency-trigger" className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Currency
             </label>
             <button
@@ -141,7 +141,7 @@ export function ReceiptParsedDataForm({
           </div>
 
         <div className="space-y-2">
-          <label htmlFor="receipt-tax" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-tax" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Tax
           </label>
           <Input
@@ -159,7 +159,7 @@ export function ReceiptParsedDataForm({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="receipt-payment-method" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-payment-method" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Payment method
           </label>
           <Select
@@ -177,7 +177,7 @@ export function ReceiptParsedDataForm({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="receipt-transaction-type" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-transaction-type" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Transaction type
           </label>
           <Select
@@ -199,7 +199,7 @@ export function ReceiptParsedDataForm({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="receipt-category" className="text-sm font-medium text-slate-700">
+          <label htmlFor="receipt-category" className="text-sm font-medium text-slate-700 dark:text-slate-300">
             Category
           </label>
           <Select
@@ -220,7 +220,7 @@ export function ReceiptParsedDataForm({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">Line items</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Line items</h3>
             <Button
               variant="ghost"
               size="sm"
@@ -243,7 +243,7 @@ export function ReceiptParsedDataForm({
             </Button>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-700/60 dark:bg-slate-900/60">
             {value.lineItems.map((lineItem, index) => (
               <div key={lineItem.id} className="grid gap-3 md:grid-cols-[minmax(0,1fr)_120px_44px]">
                 <Input

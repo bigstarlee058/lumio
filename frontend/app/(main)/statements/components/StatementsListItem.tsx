@@ -107,6 +107,7 @@ const DUPLICATE_GROUP_STYLES: Record<
 };
 
 type Props = {
+  dataTourId?: string;
   statement: StatementListItem;
   viewLabel: string;
   duplicateActionLabel?: string;
@@ -160,6 +161,7 @@ function StatusBadge({
 }
 
 export function StatementsListItem({
+  dataTourId,
   statement,
   viewLabel,
   duplicateActionLabel,
@@ -277,6 +279,7 @@ export function StatementsListItem({
 
   return (
     <div
+      data-tour-id={dataTourId}
       className={`group/statement relative overflow-hidden rounded-lg border bg-white p-3 transition hover:border-primary/30 md:py-2.5 md:px-4 md:hover:z-40 ${
         selected ? 'border-primary/60 bg-primary/5' : 'border-gray-200'
       } ${hasError ? 'border-red-200 bg-red-50/40' : ''} ${isPossibleDuplicate ? duplicateStyle.row : ''}`}
@@ -345,7 +348,7 @@ export function StatementsListItem({
                     )}
                   </p>
                   <p
-                    className={`shrink-0 text-right text-[15px] font-black tabular-nums tracking-tight ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950'}`}
+                    className={`shrink-0 text-right text-[15px] font-black tabular-nums tracking-tight ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950 dark:text-primary'}`}
                   >
                     {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
                   </p>
@@ -513,7 +516,7 @@ export function StatementsListItem({
           {/* Amount as the main visual anchor, strict right alignment */}
           <div className="w-36 flex flex-col items-end justify-center h-full">
             <span
-              className={`block truncate text-[19px] leading-none font-black tracking-tight tabular-nums ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950'}`}
+              className={`block truncate text-[19px] leading-none font-black tracking-tight tabular-nums ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950 dark:text-primary'}`}
             >
               {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
             </span>
