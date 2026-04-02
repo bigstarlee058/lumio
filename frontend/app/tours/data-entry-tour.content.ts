@@ -161,18 +161,6 @@ export const dataEntryTourContent = {
           kk: 'Жазба үшін валютаны ашылмалы тізімнен таңдаңыз: KZT (теңге), USD (доллар), EUR (евро) немесе RUB (рубль). Әрбір жазба өз валютасында сақталады, бұл көпвалюталық есепке алуға мүмкіндік береді.',
         }),
       },
-      currencyButtons: {
-        title: t({
-          ru: 'Быстрый выбор валюты',
-          en: 'Quick Currency Selection',
-          kk: 'Валютаны жылдам таңдау',
-        }),
-        description: t({
-          ru: 'Для удобства под выпадающим списком расположены кнопки всех доступных валют. Кликните по кнопке, чтобы мгновенно выбрать нужную валюту без открытия списка. Выбранная валюта подсвечивается синим цветом.',
-          en: 'For convenience, all available currency buttons are located below the dropdown. Click a button to instantly select the desired currency without opening the list. The selected currency is highlighted in blue.',
-          kk: 'Ыңғайлылық үшін ашылмалы тізімнің астында барлық қолжетімді валюта батырмалары орналасқан. Тізімді ашпай керек валютаны лезде таңдау үшін батырманы басыңыз. Таңдалған валюта көк түспен ерекшеленеді.',
-        }),
-      },
       saveButton: {
         title: t({
           ru: 'Сохранение записи',

@@ -1,8 +1,5 @@
 import { type DeclarationContent, t } from 'intlayer';
 
-/**
- * Контент для тура по интеграциям
- */
 export const integrationsTourContent = {
   key: 'integrations-tour-content',
   content: {
@@ -12,9 +9,9 @@ export const integrationsTourContent = {
       kk: 'Интеграциялар туры',
     }),
     description: t({
-      ru: 'Подключение внешних сервисов',
-      en: 'Connect external services',
-      kk: 'Сыртқы сервистерді қосу',
+      ru: 'Подключение внешних сервисов к Lumio',
+      en: 'Connect external services to Lumio',
+      kk: 'Lumio-ға сыртқы сервистерді қосу',
     }),
     steps: {
       welcome: {
@@ -24,69 +21,57 @@ export const integrationsTourContent = {
           kk: 'Интеграцияларға қош келдіңіз',
         }),
         description: t({
-          ru: 'Интеграции позволяют подключить Lumio к внешним сервисам: Google Sheets для синхронизации данных, API для автоматизации и другие инструменты. Давайте настроим подключения!',
-          en: "Integrations allow you to connect Lumio to external services: Google Sheets for data sync, API for automation and other tools. Let's set up connections!",
-          kk: 'Интеграциялар Lumio-ды сыртқы қызметтерге қосуға мүмкіндік береді: деректерді синхрондау үшін Google Sheets, автоматтандыру үшін API және басқа құралдар. Қосылымдарды орнатайық!',
+          ru: 'На этой странице собраны доступные подключения к внешним сервисам. Здесь вы выбираете нужный инструмент и переходите к его настройке.',
+          en: 'This page lists the external services that can connect to Lumio. It is the starting point for choosing a tool and opening its setup flow.',
+          kk: 'Бұл бетте Lumio-ға қосыла алатын сыртқы сервистер жиналған. Қажетті құралды таңдап, оны баптау ағынына өтетін негізгі орын осы.',
+        }),
+      },
+      search: {
+        title: t({
+          ru: 'Поиск интеграций',
+          en: 'Search integrations',
+          kk: 'Интеграцияларды іздеу',
+        }),
+        description: t({
+          ru: 'Поиск помогает быстро найти нужную интеграцию по названию или описанию, особенно когда список подключений становится длиннее.',
+          en: 'Search helps you quickly find an integration by name or description, especially as the catalog grows.',
+          kk: 'Іздеу атауы немесе сипаттамасы бойынша қажетті интеграцияны тез табуға көмектеседі, әсіресе каталог үлкейген кезде.',
+        }),
+      },
+      available: {
+        title: t({
+          ru: 'Доступные интеграции',
+          en: 'Available integrations',
+          kk: 'Қолжетімді интеграциялар',
+        }),
+        description: t({
+          ru: 'В этом разделе показаны сервисы, которые можно подключить. Карточки сгруппированы по типу, чтобы проще ориентироваться среди хранилищ, почты, таблиц и мессенджеров.',
+          en: 'This section lists services that are ready to be connected. Cards are grouped by category so it is easier to browse storage, email, spreadsheets, and messaging tools.',
+          kk: 'Бұл бөлімде қосуға болатын сервистер көрсетіледі. Карточкалар түрі бойынша топталған, сондықтан сақтау, пошта, кестелер және мессенджерлер арасында жүру оңайырақ.',
         }),
       },
       googleSheets: {
         title: t({
-          ru: 'Google Sheets интеграция',
-          en: 'Google Sheets Integration',
-          kk: 'Google Sheets интеграциясы',
+          ru: 'Google Sheets',
+          en: 'Google Sheets',
+          kk: 'Google Sheets',
         }),
         description: t({
-          ru: 'Подключите Google Sheets для автоматической выгрузки транзакций в таблицы. Настройте формат данных, выберите листы и частоту синхронизации. Все данные обновляются в реальном времени.',
-          en: 'Connect Google Sheets to automatically export transactions to spreadsheets. Configure data format, select sheets and sync frequency. All data updates in real-time.',
-          kk: 'Транзакцияларды кестелерге автоматты түрде экспорттау үшін Google Sheets-ті қосыңыз. Деректер форматын теңшеңіз, парақтар мен синхрондау жиілігін таңдаңыз. Барлық деректер нақты уақытта жаңартылады.',
-        }),
-      },
-      apiKeys: {
-        title: t({
-          ru: 'API ключи',
-          en: 'API Keys',
-          kk: 'API кілттері',
-        }),
-        description: t({
-          ru: 'Создайте API ключи для интеграции с внешними системами. Управляйте правами доступа, отслеживайте использование и отзывайте ключи при необходимости.',
-          en: 'Create API keys to integrate with external systems. Manage access rights, track usage and revoke keys when needed.',
-          kk: 'Сыртқы жүйелермен біріктіру үшін API кілттерін жасаңыз. Қол жеткізу құқықтарын басқарыңыз, пайдалануды бақылаңыз және қажет болса кілттерді қайтарып алыңыз.',
-        }),
-      },
-      webhooks: {
-        title: t({
-          ru: 'Вебхуки',
-          en: 'Webhooks',
-          kk: 'Вебхуктар',
-        }),
-        description: t({
-          ru: 'Настройте вебхуки для получения уведомлений о событиях: новая транзакция, загружен файл, изменён статус. Используйте их для автоматизации бизнес-процессов.',
-          en: 'Configure webhooks to receive notifications about events: new transaction, file uploaded, status changed. Use them to automate business processes.',
-          kk: 'Оқиғалар туралы хабарламаларды алу үшін вебхуктарды теңшеңіз: жаңа транзакция, жүктелген файл, өзгерген күй. Іскерлік процестерді автоматтандыру үшін оларды пайдаланыңыз.',
-        }),
-      },
-      connectionStatus: {
-        title: t({
-          ru: 'Статус подключений',
-          en: 'Connection Status',
-          kk: 'Қосылым күйі',
-        }),
-        description: t({
-          ru: 'Отслеживайте статус всех интеграций: активные, с ошибками или отключённые. Проверяйте логи для диагностики проблем и настройки подключений.',
-          en: 'Track the status of all integrations: active, with errors or disconnected. Check logs to diagnose issues and configure connections.',
-          kk: 'Барлық интеграциялардың күйін бақылаңыз: белсенді, қателері бар немесе ажыратылған. Мәселелерді диагностикалау және қосылымдарды теңшеу үшін журналдарды тексеріңіз.',
+          ru: 'Карточка Google Sheets ведет в отдельный сценарий настройки интеграции. Отсюда начинается подключение таблиц для импорта, экспорта и синхронизации данных.',
+          en: 'The Google Sheets card opens the dedicated setup flow. Use it to start connecting spreadsheets for import, export, and data sync.',
+          kk: 'Google Sheets картасы бөлек баптау ағынын ашады. Оны кестелерді импорт, экспорт және деректерді синхрондау үшін қосуды бастауға пайдаланыңыз.',
         }),
       },
       completed: {
         title: t({
-          ru: 'Отлично!',
-          en: 'Great!',
-          kk: 'Тамаша!',
+          ru: 'Готово',
+          en: 'All set',
+          kk: 'Дайын',
         }),
         description: t({
-          ru: 'Теперь вы знаете, как настраивать интеграции. Подключайте внешние сервисы и автоматизируйте работу с данными!',
-          en: 'Now you know how to configure integrations. Connect external services and automate your data workflows!',
-          kk: 'Енді сіз интеграцияларды қалай теңшеуді білесіз. Сыртқы қызметтерді қосыңыз және деректермен жұмысты автоматтандырыңыз!',
+          ru: 'Теперь вы знаете, где искать и открывать интеграции. Следующий шаг - перейти в нужную карточку и закончить настройку конкретного сервиса.',
+          en: 'You now know where to search and open integrations. The next step is to enter the right card and complete setup for the specific service.',
+          kk: 'Енді интеграцияларды қайдан іздеп, қалай ашу керегін білесіз. Келесі қадам - қажетті картаны ашып, нақты сервисті толық баптау.',
         }),
       },
     },

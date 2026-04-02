@@ -409,6 +409,7 @@ export default function WorkspaceCategoriesView() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => handleOpenDialog()}
+              data-tour-id="categories-add-button"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <Add fontSize="small" />
@@ -427,6 +428,7 @@ export default function WorkspaceCategoriesView() {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
+              data-tour-id="categories-search"
               placeholder={(t as any).searchPlaceholder?.value || 'Find category'}
               className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             />
@@ -462,7 +464,7 @@ export default function WorkspaceCategoriesView() {
           Disabling a category will hide it from statements and reports.
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-2 shadow-sm">
+        <div className="rounded-3xl border border-border bg-card p-2 shadow-sm" data-tour-id="categories-list">
           <div className="flex items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div className="flex items-center gap-3">
               <Checkbox
@@ -572,6 +574,7 @@ export default function WorkspaceCategoriesView() {
                     <div className="flex items-center gap-3">
                       <button
                         type="button"
+                        data-tour-id={index === 0 ? 'category-toggle' : undefined}
                         onClick={event => {
                           event.stopPropagation();
                           handleToggleEnabled(category);

@@ -1,8 +1,5 @@
 import { type DeclarationContent, t } from 'intlayer';
 
-/**
- * Контент для тура по категориям
- */
 export const categoriesTourContent = {
   key: 'categories-tour-content',
   content: {
@@ -12,9 +9,9 @@ export const categoriesTourContent = {
       kk: 'Санаттар туры',
     }),
     description: t({
-      ru: 'Организация транзакций и файлов',
-      en: 'Organize transactions and files',
-      kk: 'Транзакциялар мен файлдарды ұйымдастыру',
+      ru: 'Управление рабочими категориями',
+      en: 'Manage workspace categories',
+      kk: 'Жұмыс кеңістігі санаттарын басқару',
     }),
     steps: {
       welcome: {
@@ -24,69 +21,69 @@ export const categoriesTourContent = {
           kk: 'Санаттарға қош келдіңіз',
         }),
         description: t({
-          ru: 'Категории помогают организовать ваши транзакции и файлы. Создавайте собственные категории, назначайте им цвета и иконки для быстрой идентификации. Давайте разберемся, как это работает!',
-          en: "Categories help organize your transactions and files. Create your own categories, assign colors and icons for quick identification. Let's see how it works!",
-          kk: 'Санаттар транзакцияларыңыз бен файлдарыңызды ұйымдастыруға көмектеседі. Өз санаттарыңызды жасаңыз, жылдам анықтау үшін түстер мен белгішелерді тағайындаңыз. Бұл қалай жұмыс істейтінін көрейік!',
+          ru: 'На этой странице вы управляете категориями рабочего пространства: создаете новые, ищете существующие и включаете или отключаете их для использования в системе.',
+          en: 'This page is where you manage workspace categories: create new ones, search existing ones, and enable or disable them for use across the product.',
+          kk: 'Бұл бетте жұмыс кеңістігі санаттарын басқарасыз: жаңаларын жасайсыз, барларын іздейсіз және жүйеде қолдану үшін қосып не өшіресіз.',
         }),
       },
-      createButton: {
+      addButton: {
         title: t({
-          ru: 'Создание категории',
-          en: 'Create Category',
-          kk: 'Санат жасау',
+          ru: 'Добавить категорию',
+          en: 'Add category',
+          kk: 'Санат қосу',
         }),
         description: t({
-          ru: 'Нажмите эту кнопку, чтобы создать новую категорию. Укажите название, выберите цвет и иконку. Категории можно использовать для группировки транзакций и файлов.',
-          en: 'Click this button to create a new category. Specify a name, choose a color and icon. Categories can be used to group transactions and files.',
-          kk: 'Жаңа санат жасау үшін осы батырманы басыңыз. Атауын көрсетіңіз, түс пен белгішені таңдаңыз. Санаттарды транзакциялар мен файлдарды топтастыру үшін пайдалануға болады.',
+          ru: 'Эта кнопка открывает форму создания категории. Используйте ее, когда нужно добавить новый способ группировки транзакций, файлов или данных.',
+          en: 'This button opens the category creation form. Use it when you need a new way to group transactions, files, or related data.',
+          kk: 'Бұл батырма санат жасау формасын ашады. Оны транзакцияларды, файлдарды немесе байланысты деректерді жаңа түрде топтау қажет болғанда пайдаланыңыз.',
+        }),
+      },
+      search: {
+        title: t({
+          ru: 'Поиск категории',
+          en: 'Search categories',
+          kk: 'Санаттарды іздеу',
+        }),
+        description: t({
+          ru: 'Поиск помогает быстро находить нужные категории по названию, особенно если список уже большой и включает системные и пользовательские элементы.',
+          en: 'Search helps you quickly locate a category by name, especially once the list grows to include both system and custom entries.',
+          kk: 'Іздеу санатты атауы бойынша тез табуға көмектеседі, әсіресе тізімде жүйелік те, қолданушы жасаған элементтер де көп болғанда.',
         }),
       },
       categoriesList: {
         title: t({
           ru: 'Список категорий',
-          en: 'Categories List',
+          en: 'Categories list',
           kk: 'Санаттар тізімі',
         }),
         description: t({
-          ru: 'Все ваши категории отображаются здесь. Для каждой категории показан цвет, иконка и количество связанных элементов. Нажмите на категорию для редактирования или удаления.',
-          en: 'All your categories are displayed here. Each category shows color, icon and number of related items. Click on a category to edit or delete.',
-          kk: 'Барлық санаттарыңыз мұнда көрсетіледі. Әрбір санат үшін түс, белгіше және байланысты элементтер саны көрсетіледі. Өңдеу немесе жою үшін санатқа басыңыз.',
+          ru: 'Здесь показаны все категории с их названием, статусом использования и служебными метками. Это основная область для обзора и управления списком.',
+          en: 'This list shows every category with its name, usage state, and system badges. It is the main area for reviewing and managing the full set.',
+          kk: 'Мұнда әр санат атауымен, қолданылу күйімен және жүйелік белгілерімен бірге көрсетіледі. Бұл толық тізімді қарап, басқаруға арналған негізгі аймақ.',
         }),
       },
-      colorPicker: {
+      categoryToggle: {
         title: t({
-          ru: 'Выбор цвета',
-          en: 'Color Picker',
-          kk: 'Түс таңдау',
+          ru: 'Включение и отключение',
+          en: 'Enable or disable',
+          kk: 'Қосу немесе өшіру',
         }),
         description: t({
-          ru: 'Назначьте уникальный цвет каждой категории для лучшей визуальной идентификации. Цвета отображаются в графиках, таблицах и списках транзакций.',
-          en: 'Assign a unique color to each category for better visual identification. Colors are displayed in charts, tables and transaction lists.',
-          kk: 'Жақсы визуалды анықтау үшін әрбір санатқа бірегей түс тағайындаңыз. Түстер кестелерде, кестелерде және транзакциялар тізімінде көрсетіледі.',
-        }),
-      },
-      iconPicker: {
-        title: t({
-          ru: 'Выбор иконки',
-          en: 'Icon Picker',
-          kk: 'Белгіше таңдау',
-        }),
-        description: t({
-          ru: 'Выберите подходящую иконку для категории из большой коллекции. Иконки помогают быстро находить нужные категории в списках и фильтрах.',
-          en: 'Choose a suitable icon for the category from a large collection. Icons help quickly find the right categories in lists and filters.',
-          kk: 'Үлкен коллекциядан санат үшін қолайлы белгішені таңдаңыз. Белгішелер тізімдер мен сүзгілерде қажетті санаттарды жылдам табуға көмектеседі.',
+          ru: 'Переключатель управляет доступностью категории в интерфейсах выписок и отчетов. Если конкретной строки нет, тур пропустит этот шаг без ошибки.',
+          en: 'This toggle controls whether a category stays available in statements and reporting flows. If no category row is currently visible, the tour skips this step safely.',
+          kk: 'Бұл ауыстырғыш санаттың үзінділер мен есептер интерфейсінде қолжетімді болуын басқарады. Егер тиісті жол қазір көрінбесе, тур бұл қадамды қате шығармай өткізіп жібереді.',
         }),
       },
       completed: {
         title: t({
-          ru: 'Отлично!',
-          en: 'Great!',
-          kk: 'Тамаша!',
+          ru: 'Готово',
+          en: 'All set',
+          kk: 'Дайын',
         }),
         description: t({
-          ru: 'Теперь вы знаете, как управлять категориями. Создавайте свою систему организации данных и легко находите нужную информацию!',
-          en: 'Now you know how to manage categories. Create your own data organization system and easily find the information you need!',
-          kk: 'Енді сіз санаттарды қалай басқаруды білесіз. Өз деректерді ұйымдастыру жүйеңізді жасаңыз және қажетті ақпаратты оңай табыңыз!',
+          ru: 'Теперь вы знаете, где создавать, искать и переключать категории рабочего пространства. Дальше можно открыть нужную категорию и настроить ее подробнее.',
+          en: 'You now know where to create, find, and toggle workspace categories. From here you can open the right category and refine it further.',
+          kk: 'Енді жұмыс кеңістігі санаттарын қайдан жасау, табу және ауыстыру керегін білесіз. Келесі қадамда қажетті санатты ашып, оны тереңірек баптай аласыз.',
         }),
       },
     },

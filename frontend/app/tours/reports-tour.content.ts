@@ -1,110 +1,101 @@
 import { type DeclarationContent, t } from 'intlayer';
 
-/**
- * Content for the Reports (Report Builder) tour
- */
 export const reportsTourContent = {
   key: 'reports-tour-content',
   content: {
     name: t({
-      ru: 'Тур по конструктору отчётов',
-      en: 'Report Builder Tour',
-      kk: 'Есеп конструкторы туры',
+      ru: 'Тур по отчетам',
+      en: 'Reports Tour',
+      kk: 'Есептер туры',
     }),
     description: t({
-      ru: 'Создание и экспорт финансовых отчётов',
-      en: 'Generate and export financial reports',
-      kk: 'Қаржылық есептерді жасаңыз және экспорттаңыз',
+      ru: 'Создание финансовых отчетов из готовых шаблонов',
+      en: 'Create financial reports from ready-made templates',
+      kk: 'Дайын үлгілерден қаржылық есептер жасау',
     }),
     steps: {
       welcome: {
         title: t({
-          ru: 'Добро пожаловать в конструктор отчётов',
-          en: 'Welcome to Report Builder',
-          kk: 'Есеп конструкторына қош келдіңіз',
+          ru: 'Добро пожаловать в отчеты',
+          en: 'Welcome to Reports',
+          kk: 'Есептерге қош келдіңіз',
         }),
         description: t({
-          ru: 'Здесь вы можете создавать финансовые отчёты из готовых шаблонов и экспортировать их в Excel, CSV или PDF.',
-          en: 'Here you can generate financial reports from templates and export them as Excel, CSV, or PDF.',
-          kk: 'Мұнда дайын үлгілерден қаржылық есептер жасап, Excel, CSV немесе PDF форматында экспорттауға болады.',
+          ru: 'На этой странице вы выбираете шаблон отчета, задаете период и выгружаете результат в нужном формате. Тур покажет текущий рабочий сценарий.',
+          en: 'This page lets you choose a report template, set the period, and export the result in the format you need. This tour walks through the current workflow.',
+          kk: 'Бұл бетте есеп үлгісін таңдап, кезеңді орнатып, нәтижені керек форматта жүктейсіз. Тур ағымдағы жұмыс ағынын көрсетеді.',
         }),
       },
-
+      tabs: {
+        title: t({
+          ru: 'Разделы страницы',
+          en: 'Page sections',
+          kk: 'Бет бөлімдері',
+        }),
+        description: t({
+          ru: 'Верхние вкладки переключают между шаблонами и историей уже созданных отчетов. Это основная навигация внутри страницы.',
+          en: 'These tabs switch between available templates and the history of generated reports. They are the main navigation inside this page.',
+          kk: 'Жоғарғы қойындылар қолжетімді үлгілер мен бұрын жасалған есептер тарихы арасында ауыстырады. Бұл осы беттің негізгі навигациясы.',
+        }),
+      },
       templates: {
         title: t({
-          ru: 'Шаблоны отчётов',
-          en: 'Report Templates',
+          ru: 'Шаблоны отчетов',
+          en: 'Report templates',
           kk: 'Есеп үлгілері',
         }),
         description: t({
-          ru: 'Выберите один из шаблонов: P&L, Баланс, Движение денежных средств или Расходы по категориям.',
-          en: 'Choose from P&L, Balance Sheet, Cash Flow, or Expense by Category templates.',
-          kk: 'P&L, Баланс парағы, Ақша ағыны немесе Санаттар бойынша шығыстар үлгісін таңдаңыз.',
+          ru: 'Здесь собраны доступные типы отчетов. Выбирайте шаблон в зависимости от того, хотите ли вы посмотреть прибыль и убытки, баланс, движение денег или расходы по категориям.',
+          en: 'This grid contains the available report types. Pick a template based on whether you want profit and loss, balance, cash flow, or category spending.',
+          kk: 'Мұнда қолжетімді есеп түрлері жиналған. Пайда мен шығынды, балансты, ақша ағынын немесе санаттар бойынша шығыстарды көру үшін сәйкес үлгіні таңдаңыз.',
         }),
       },
-
       selectTemplate: {
         title: t({
-          ru: 'Выберите шаблон P&L',
-          en: 'Select the P&L template',
-          kk: 'P&L үлгісін таңдаңыз',
+          ru: 'Выбор шаблона',
+          en: 'Select a template',
+          kk: 'Үлгіні таңдау',
         }),
         description: t({
-          ru: 'Нажмите на карточку P&L, чтобы открыть панель настройки отчёта.',
-          en: 'Click the P&L card to open the report configuration panel.',
-          kk: 'Есеп параметрлерін ашу үшін P&L карточкасын басыңыз.',
+          ru: 'Карточка P&L открывает панель настройки отчета. После выбора можно задать период и формат перед генерацией файла.',
+          en: 'The P&L card opens the report setup panel. After selecting it, you can configure the period and export format before generating the file.',
+          kk: 'P&L картасы есепті баптау панелін ашады. Таңдағаннан кейін файлды жасамас бұрын кезең мен экспорт форматын орната аласыз.',
         }),
       },
-
       generator: {
         title: t({
-          ru: 'Настройте параметры',
-          en: 'Configure parameters',
-          kk: 'Параметрлерді баптаңыз',
+          ru: 'Панель генерации',
+          en: 'Generation panel',
+          kk: 'Жасау панелі',
         }),
         description: t({
-          ru: 'Укажите период — дату начала и окончания. Отчёт будет включать транзакции только за этот диапазон.',
-          en: 'Set the date range. The report will include transactions only within this period.',
-          kk: 'Күн аралығын орнатыңыз. Есеп тек осы кезеңдегі транзакцияларды қамтиды.',
+          ru: 'В этой панели вы задаете период отчета и проверяете, какой шаблон сейчас активен. Это центральная точка перед выгрузкой документа.',
+          en: 'This panel is where you set the reporting period and confirm which template is active. It is the main control area before export.',
+          kk: 'Осы панельде есеп кезеңін орнатып, қай үлгінің белсенді екенін тексересіз. Бұл экспорт алдында қолданылатын негізгі басқару аймағы.',
         }),
       },
-
-      formatSelector: {
+      format: {
         title: t({
-          ru: 'Выберите формат экспорта',
-          en: 'Choose export format',
-          kk: 'Экспорт форматын таңдаңыз',
+          ru: 'Формат выгрузки',
+          en: 'Export format',
+          kk: 'Экспорт форматы',
         }),
         description: t({
-          ru: 'Выберите Excel (.xlsx) для редактируемой таблицы, CSV для обработки данных или PDF для отправки.',
-          en: 'Choose Excel (.xlsx) for an editable spreadsheet, CSV for data processing, or PDF for sharing.',
-          kk: 'Редактерлеуге болатын кесте үшін Excel, деректерді өңдеу үшін CSV немесе жіберу үшін PDF таңдаңыз.',
+          ru: 'Выберите формат под задачу: Excel для дальнейшей работы, PDF для отправки или CSV для обработки данных в других системах.',
+          en: 'Choose the output format that fits the job: Excel for further editing, PDF for sharing, or CSV for downstream processing.',
+          kk: 'Мақсатқа сай форматты таңдаңыз: әрі қарай өңдеу үшін Excel, жіберу үшін PDF немесе басқа жүйелерде өңдеу үшін CSV.',
         }),
       },
-
-      tabHistory: {
-        title: t({
-          ru: 'История отчётов',
-          en: 'Report History',
-          kk: 'Есептер тарихы',
-        }),
-        description: t({
-          ru: 'Во вкладке «История» хранятся все ранее созданные отчёты с возможностью повторной загрузки.',
-          en: 'The History tab stores all previously generated reports, ready to re-download.',
-          kk: 'Тарих қойындысында бұрын жасалған барлық есептер сақталады, оларды қайта жүктеуге болады.',
-        }),
-      },
-
       completed: {
         title: t({
-          ru: 'Готово!',
-          en: 'All set!',
-          kk: 'Дайын!',
+          ru: 'Готово',
+          en: 'All set',
+          kk: 'Дайын',
         }),
         description: t({
-          ru: 'Теперь вы знаете, как создавать и экспортировать отчёты. Выберите шаблон и нажмите «Сформировать отчёт».',
-          en: 'You now know how to generate and export reports. Pick a template and click "Generate report".',
-          kk: 'Есептерді қалай жасау керектігін білдіңіз. Үлгіні таңдап, "Есеп жасау" батырмасын басыңыз.',
+          ru: 'Теперь вы знаете, где выбрать шаблон и как подготовить отчет к выгрузке. Следующий шаг - сгенерировать нужный документ и скачать его.',
+          en: 'You now know where to choose a template and how to prepare a report for export. The next step is to generate the document you need and download it.',
+          kk: 'Енді сіз үлгіні қайдан таңдап, есепті экспортқа қалай дайындау керегін білесіз. Келесі қадам - қажет құжатты жасап, жүктеп алу.',
         }),
       },
     },

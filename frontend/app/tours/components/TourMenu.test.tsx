@@ -1,0 +1,121 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { TourMenu } from './TourMenu';
+
+const pushMock = vi.fn();
+const startTourMock = vi.fn();
+const resetTourMock = vi.fn();
+
+const registeredTours = new Map<string, any>();
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: pushMock,
+  }),
+}));
+
+vi.mock('@/app/i18n', () => ({
+  useIntlayer: (key: string) => {
+    if (key === 'navigation') {
+      return {
+        tour: {
+          buttons: {
+            next: { value: 'Next' },
+            prev: { value: 'Previous' },
+            done: { value: 'Done' },
+          },
+          progressText: { value: '{{current}} / {{total}}' },
+          menuLabel: { value: 'Tours' },
+        },
+      };
+    }
+
+    return {};
+  },
+}));
+
+vi.mock('../TourManager', () => ({
+  getTourManager: () => ({
+    registerTour: (tour: any) => registeredTours.set(tour.id, tour),
+    getAllTours: () => Array.from(registeredTours.values()),
+    isTourCompleted: () => false,
+    resetTour: resetTourMock,
+    startTour: startTourMock,
+  }),
+}));
+
+const createTour = (id: string, name: string, page: string) => ({
+  id,
+  name,
+  description: `${name} description`,
+  page,
+  autoStart: false,
+  steps: [{ title: 'Welcome', description: 'Welcome', selector: 'body' }],
+});
+
+vi.mock('../statements-tour', () => ({
+  createStatementsTour: () => createTour('statements-tour', 'Statements Tour', '/statements/submit'),
+}));
+vi.mock('../upload-tour', () => ({
+  createUploadTour: () => createTour('upload-tour', 'Upload Tour', '/upload'),
+}));
+vi.mock('../storage-tour', () => ({
+  createStorageTour: () => createTour('storage-tour', 'Storage Tour', '/storage'),
+}));
+vi.mock('../custom-tables-tour', () => ({
+  createCustomTablesTour: () =>
+    createTour('custom-tables-tour', 'Custom Tables Tour', '/custom-tables'),
+}));
+vi.mock('../reports-tour', () => ({
+  createReportsTour: () => createTour('reports-tour', 'Reports Tour', '/reports'),
+}));
+vi.mock('../categories-tour', () => ({
+  createCategoriesTour: () => createTour('categories-tour', 'Categories Tour', '/workspaces/categories'),
+}));
+vi.mock('../data-entry-tour', () => ({
+  createDataEntryTour: () => createTour('data-entry-tour', 'Data Entry Tour', '/data-entry'),
+}));
+vi.mock('../integrations-tour', () => ({
+  createIntegrationsTour: () => createTour('integrations-tour', 'Integrations Tour', '/integrations'),
+}));
+vi.mock('../google-sheets-import-tour', () => ({
+  createGoogleSheetsImportTour: () =>
+    createTour('google-sheets-import-tour', 'Google Sheets Import Tour', '/custom-tables/import/google-sheets'),
+}));
+vi.mock('../google-sheets-integration-tour', () => ({
+  createGoogleSheetsIntegrationTour: () =>
+    createTour('google-sheets-integration-tour', 'Google Sheets Integration Tour', '/integrations/google-sheets'),
+}));
+vi.mock('../settings-tour', () => ({
+  createSettingsTour: () => createTour('settings-tour', 'Workspace Tour', '/workspaces/overview'),
+}));
+vi.mock('../admin-tour', () => ({
+  createAdminTour: () => createTour('admin-tour', 'Admin Tour', '/admin'),
+}));
+
+describe('TourMenu', () => {
+  beforeEach(() => {
+    registeredTours.clear();
+    pushMock.mockReset();
+    startTourMock.mockReset();
+    resetTourMock.mockReset();
+  });
+
+  it('navigates to workspace overview before starting workspace tour', async () => {
+    render(<TourMenu />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tours' }));
+    fireEvent.click(await screen.findByText('Workspace Tour'));
+
+    expect(pushMock).toHaveBeenCalledWith('/workspaces/overview');
+
+    await waitFor(() => {
+      expect(startTourMock).toHaveBeenCalledWith('settings-tour', 0, {
+        nextBtnText: 'Next',
+        prevBtnText: 'Previous',
+        doneBtnText: 'Done',
+        progressText: '{{current}} / {{total}}',
+      });
+    }, { timeout: 2000 });
+  });
+});

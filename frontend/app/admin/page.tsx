@@ -206,7 +206,7 @@ export default function AdminPage() {
       </Typography>
 
       <Paper sx={{ mt: 3 }}>
-        <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)}>
+        <Tabs value={tab} onChange={(_, newValue) => setTab(newValue)} data-tour-id="admin-tabs">
           <Tab label={t.tabs.statementsLog.value} />
           <Tab label={t.tabs.users.value} />
           <Tab label={t.tabs.audit.value} />
@@ -234,6 +234,7 @@ export default function AdminPage() {
                   label={t.search.value}
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
+                  inputProps={{ 'data-tour-id': 'admin-statements-search' }}
                   sx={{ flexGrow: 1 }}
                 />
                 <Button variant="outlined" startIcon={<Refresh />} onClick={loadStatements}>
@@ -318,9 +319,14 @@ export default function AdminPage() {
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                 {t.usersTab.hint}
               </Typography>
-              <Button variant="contained" component={Link} href="/admin/users">
-                {t.usersTab.button}
-              </Button>
+               <Button
+                 variant="contained"
+                 component={Link}
+                 href="/admin/users"
+                 data-tour-id="admin-users-link"
+               >
+                 {t.usersTab.button}
+               </Button>
             </Box>
           )}
 
@@ -333,7 +339,10 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-                  <div className="h-fit rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                   <div
+                     className="h-fit rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                     data-tour-id="admin-audit-filters"
+                   >
                     <h3 className="text-sm font-semibold text-gray-700">
                       {t.auditTab.filters.title}
                     </h3>

@@ -20,122 +20,86 @@ const content = {
     steps: {
       welcome: {
         title: t({
-          ru: 'Добро пожаловать в Выписки! 📄',
-          en: 'Welcome to Statements! 📄',
-          kk: 'Үзінділерге қош келдіңіз! 📄',
+          ru: 'Добро пожаловать в Выписки',
+          en: 'Welcome to Statements',
+          kk: 'Үзінділерге қош келдіңіз',
         }),
         description: t({
-          ru: 'Здесь вы можете загружать банковские выписки, просматривать их статус и управлять финансовыми данными. Давайте познакомимся с основными функциями!',
-          en: "Here you can upload bank statements, view their status, and manage financial data. Let's explore the main features!",
-          kk: 'Мұнда банк үзінділерін жүктей аласыз, олардың күйін қарай аласыз және қаржылық деректерді басқара аласыз. Негізгі функцияларды зерттейік!',
+          ru: 'На этой странице вы загружаете документы, находите нужные выписки и переходите к их разбору. Коротко пройдемся по текущему интерфейсу.',
+          en: 'This page is where you upload documents, find the right statements, and jump into review. Let\'s walk through the current workflow.',
+          kk: 'Бұл бетте құжаттарды жүктеп, керек үзінділерді тауып, оларды тексеруге өте аласыз. Қазіргі жұмыс ағынын қысқаша қарап шығайық.',
         }),
       },
-      uploadButton: {
+      uploadTrigger: {
         title: t({
-          ru: 'Загрузка выписок',
-          en: 'Upload Statements',
-          kk: 'Үзінділерді жүктеу',
+          ru: 'Загрузка и сканирование',
+          en: 'Upload and Scan',
+          kk: 'Жүктеу және сканерлеу',
         }),
         description: t({
-          ru: 'Нажмите эту кнопку, чтобы загрузить банковские выписки в форматах PDF или CSV. Система автоматически распознает банк и извлечет транзакции.',
-          en: 'Click this button to upload bank statements in PDF or CSV format. The system will automatically recognize the bank and extract transactions.',
-          kk: 'Банк үзінділерін PDF немесе CSV форматында жүктеу үшін бұл батырманы басыңыз. Жүйе банкті автоматты түрде танып, транзакцияларды алады.',
+          ru: 'Эта кнопка запускает самый быстрый путь добавления новых документов: скан, локальная загрузка, Gmail и облачные источники.',
+          en: 'This trigger opens the fastest path for adding new documents: scan, local upload, Gmail, and connected cloud sources.',
+          kk: 'Бұл батырма жаңа құжаттарды қосудың ең жылдам жолын ашады: скан, жергілікті жүктеу, Gmail және бұлттық көздер.',
         }),
       },
       searchBar: {
         title: t({
-          ru: 'Поиск выписок',
-          en: 'Search Statements',
-          kk: 'Үзінділерді іздеу',
+          ru: 'Поиск по списку',
+          en: 'Search the List',
+          kk: 'Тізімнен іздеу',
         }),
         description: t({
-          ru: 'Используйте поиск для быстрого нахождения нужной выписки по названию файла или банку.',
-          en: 'Use search to quickly find the needed statement by file name or bank.',
-          kk: 'Файл атауы немесе банк бойынша қажетті үзіндіні тез табу үшін іздеуді пайдаланыңыз.',
+          ru: 'Поиск помогает быстро сузить список по названию файла, теме письма, отправителю или продавцу.',
+          en: 'Search quickly narrows the list by file name, email subject, sender, or merchant.',
+          kk: 'Іздеу тізімді файл атауы, хат тақырыбы, жіберуші немесе сатушы бойынша тез тарылтады.',
         }),
       },
-      statusFilter: {
+      filters: {
         title: t({
-          ru: 'Фильтр по статусу',
-          en: 'Status Filter',
-          kk: 'Күй бойынша сүзгі',
+          ru: 'Фильтры',
+          en: 'Filters',
+          kk: 'Сүзгілер',
         }),
         description: t({
-          ru: 'Фильтруйте выписки по их статусу: обработка, успешно обработано или ошибка.',
-          en: 'Filter statements by their status: processing, successfully processed, or error.',
-          kk: 'Үзінділерді күй бойынша сүзіңіз: өңдеу, сәтті өңделген немесе қате.',
+          ru: 'Здесь собраны быстрые фильтры и доступ к расширенной панели, чтобы оставить в списке только нужные документы.',
+          en: 'This area groups the quick filters and the advanced panel so you can keep only the documents you need in view.',
+          kk: 'Бұл аймақта жылдам сүзгілер мен кеңейтілген панель бар, сондықтан тізімде тек керек құжаттарды қалдыра аласыз.',
         }),
       },
-      statementsTable: {
+      statementsList: {
         title: t({
-          ru: 'Таблица выписок',
-          en: 'Statements Table',
-          kk: 'Үзінділер кестесі',
+          ru: 'Список выписок',
+          en: 'Statements List',
+          kk: 'Үзінділер тізімі',
         }),
         description: t({
-          ru: 'Все ваши выписки отображаются здесь. Вы можете видеть название файла, банк, количество транзакций и статус обработки. Кликните на строку для детальной информации.',
-          en: 'All your statements are displayed here. You can see the file name, bank, number of transactions, and processing status. Click on a row for detailed information.',
-          kk: 'Барлық үзінділеріңіз мұнда көрсетіледі. Файл атауын, банкті, транзакциялар санын және өңдеу күйін көре аласыз. Егжей-тегжейлі ақпарат алу үшін жолды басыңыз.',
+          ru: 'Основная область показывает найденные документы, их даты, суммы и доступные действия без перехода в другие разделы.',
+          en: 'The main list shows the matched documents, their dates, amounts, and the actions available without leaving the page.',
+          kk: 'Негізгі тізімде табылған құжаттар, олардың күндері, сомалары және беттен шықпай қолжетімді әрекеттер көрсетіледі.',
         }),
       },
-      statusBadges: {
+      statementRow: {
         title: t({
-          ru: 'Статусы выписок',
-          en: 'Statement Statuses',
-          kk: 'Үзінділер күйлері',
+          ru: 'Карточка выписки',
+          en: 'Statement Row',
+          kk: 'Үзінді жолы',
         }),
         description: t({
-          ru: '• **Обработка** - выписка загружена и обрабатывается\n• **Успешно** - выписка полностью обработана\n• **Ошибка** - возникла проблема при обработке',
-          en: '• **Processing** - statement is uploaded and being processed\n• **Success** - statement is fully processed\n• **Error** - a problem occurred during processing',
-          kk: '• **Өңдеу** - үзінді жүктелді және өңделуде\n• **Сәтті** - үзінді толық өңделді\n• **Қате** - өңдеу кезінде проблема туындады',
-        }),
-      },
-      actions: {
-        title: t({
-          ru: 'Действия с выписками',
-          en: 'Statement Actions',
-          kk: 'Үзінділермен әрекеттер',
-        }),
-        description: t({
-          ru: 'Используйте кнопки действий для:\n• **Просмотра** деталей выписки\n• **Скачивания** исходного файла\n• **Просмотра логов** обработки\n• **Удаления** выписки',
-          en: 'Use action buttons to:\n• **View** statement details\n• **Download** the original file\n• **View logs** of processing\n• **Delete** the statement',
-          kk: 'Әрекет батырмаларын пайдаланыңыз:\n• Үзінді **мәліметтерін көру**\n• Бастапқы файлды **жүктеп алу**\n• Өңдеу **логтарын көру**\n• Үзіндіні **жою**',
-        }),
-      },
-      pagination: {
-        title: t({
-          ru: 'Навигация по страницам',
-          en: 'Page Navigation',
-          kk: 'Беттер бойынша навигация',
-        }),
-        description: t({
-          ru: 'Используйте кнопки навигации для перемещения между страницами. Вы также можете изменить количество элементов на странице.',
-          en: 'Use navigation buttons to move between pages. You can also change the number of items per page.',
-          kk: 'Беттер арасында жүру үшін навигация батырмаларын пайдаланыңыз. Бір беттегі элементтер санын да өзгерте аласыз.',
-        }),
-      },
-      viewDetails: {
-        title: t({
-          ru: 'Просмотр деталей',
-          en: 'View Details',
-          kk: 'Мәліметтерді көру',
-        }),
-        description: t({
-          ru: 'Нажмите на значок глаза, чтобы открыть детальную информацию о выписке и увидеть все транзакции.',
-          en: 'Click the eye icon to open detailed information about the statement and see all transactions.',
-          kk: 'Үзінді туралы толық ақпаратты ашу және барлық транзакцияларды көру үшін көз белгішесін басыңыз.',
+          ru: 'Каждая строка показывает ключевые данные по документу: источник, дату, сумму и текущее состояние обработки. Это хороший ориентир для проверки списка перед следующими действиями.',
+          en: 'Each row surfaces the key document details: source, date, amount, and current processing state. It is the best place to quickly validate what is in the list before moving on.',
+          kk: 'Әр жол құжаттың негізгі деректерін көрсетеді: көзі, күні, сомасы және өңдеу күйі. Бұл келесі әрекетке өтпес бұрын тізімді жылдам тексерудің ең ыңғайлы жері.',
         }),
       },
       completed: {
         title: t({
-          ru: 'Отлично! 🎉',
-          en: 'Excellent! 🎉',
-          kk: 'Керемет! 🎉',
+          ru: 'Готово',
+          en: 'All Set',
+          kk: 'Дайын',
         }),
         description: t({
-          ru: 'Теперь вы знаете, как работать с банковскими выписками в Lumio. Попробуйте загрузить свою первую выписку!',
-          en: 'Now you know how to work with bank statements in Lumio. Try uploading your first statement!',
-          kk: 'Енді сіз Lumio-да банк үзінділерімен қалай жұмыс істейтінін білесіз. Бірінші үзіндіңізді жүктеп көріңіз!',
+          ru: 'Теперь тур отражает текущую страницу выписок. Можно загрузить новый документ или открыть любую строку для продолжения.',
+          en: 'The tour now matches the current Statements page. You can upload a new document or open any row to continue.',
+          kk: 'Бұл тур енді қазіргі Үзінділер бетіне сай келеді. Енді жаңа құжат жүктеп немесе кез келген жолды ашып жалғастыра аласыз.',
         }),
       },
     },

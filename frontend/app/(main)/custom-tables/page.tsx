@@ -1033,6 +1033,7 @@ export default function CustomTablesPage() {
                 <button
                   type="button"
                   onClick={() => void openCreateFromStatements()}
+                  data-tour-id="custom-tables-create-export"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
                 >
                   <FileSpreadsheet className="h-4 w-4" />
@@ -1042,6 +1043,7 @@ export default function CustomTablesPage() {
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
+                      data-tour-id="custom-tables-create-dropdown"
                       className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
                     >
                       <TableIcon className="h-4 w-4" />
@@ -1087,7 +1089,10 @@ export default function CustomTablesPage() {
               open={sourceDropdownOpen}
               onOpenChange={setSourceDropdownOpen}
               trigger={
-                <FilterChipButton active={filterSource !== 'all'}>
+                <FilterChipButton
+                  active={filterSource !== 'all'}
+                  data-tour-id="custom-tables-source-filter"
+                >
                   {filterSource !== 'all'
                     ? sourceOptions.find(option => option.value === filterSource)?.label ||
                       filterLabels.all

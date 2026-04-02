@@ -8,14 +8,18 @@ export function createReportsTour(texts: {
   description?: string;
   steps: {
     welcome: { title: string; description: string };
+    tabs?: { title: string; description: string };
     templates: { title: string; description: string };
     selectTemplate: { title: string; description: string };
     generator: { title: string; description: string };
-    formatSelector: { title: string; description: string };
-    tabHistory: { title: string; description: string };
+    format?: { title: string; description: string };
+    formatSelector?: { title: string; description: string };
     completed: { title: string; description: string };
   };
 }): TourConfig {
+  const tabsStep = texts.steps.tabs;
+  const formatStep = texts.steps.format ?? texts.steps.formatSelector;
+
   return {
     id: 'reports-tour',
     name: texts.name ?? 'Reports Tour',
@@ -31,11 +35,20 @@ export function createReportsTour(texts: {
         align: 'center',
       },
       {
+        title: tabsStep?.title ?? 'Report Tabs',
+        description:
+          tabsStep?.description ??
+          'Use the report tabs to switch between available report workflows and views.',
+        selector: '[data-tour-id="reports-tabs"]',
+        side: 'bottom',
+        align: 'center',
+      },
+      {
         title: texts.steps.templates.title,
         description: texts.steps.templates.description,
         selector: '[data-tour-id="reports-templates-grid"]',
         side: 'bottom',
-        align: 'start',
+        align: 'center',
       },
       {
         title: texts.steps.selectTemplate.title,
@@ -58,17 +71,12 @@ export function createReportsTour(texts: {
         align: 'center',
       },
       {
-        title: texts.steps.formatSelector.title,
-        description: texts.steps.formatSelector.description,
-        selector: '[data-tour-id="reports-generator-format"]',
+        title: formatStep?.title ?? 'Format',
+        description:
+          formatStep?.description ??
+          'Choose the output format before generating or exporting the report.',
+        selector: '[data-tour-id="reports-format"]',
         side: 'top',
-        align: 'start',
-      },
-      {
-        title: texts.steps.tabHistory.title,
-        description: texts.steps.tabHistory.description,
-        selector: '[data-tour-id="reports-tab-history"]',
-        side: 'bottom',
         align: 'start',
       },
       {

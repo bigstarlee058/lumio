@@ -33,21 +33,21 @@ const content = {
           kk: '1-қадам: Кесте қосу',
         }),
         description: t({
-          ru: 'Введите ссылку или ID таблицы, задайте имя и лист при необходимости.',
-          en: 'Enter the sheet URL/ID, set a name and worksheet if needed.',
-          kk: 'Кесте сілтемесін/ID енгізіп, атауы мен парағын көрсетіңіз.',
+          ru: 'Выберите таблицу через Google picker, затем при необходимости задайте имя подключения и конкретный лист.',
+          en: 'Choose a spreadsheet through the Google picker, then set a connection name and worksheet if needed.',
+          kk: 'Кестені Google picker арқылы таңдаңыз, содан кейін қажет болса қосылым атауы мен нақты парақты орнатыңыз.',
         }),
       },
       sheetUrl: {
         title: t({
-          ru: 'Ссылка или ID',
-          en: 'URL or ID',
-          kk: 'Сілтеме немесе ID',
+          ru: 'Выбор таблицы',
+          en: 'Spreadsheet picker',
+          kk: 'Кестені таңдау',
         }),
         description: t({
-          ru: 'Поддерживается полная ссылка Google Sheets или чистый ID.',
-          en: 'You can paste the full Google Sheets URL or just the ID.',
-          kk: 'Толық Google Sheets сілтемесін немесе тек ID енгізе аласыз.',
+          ru: 'Здесь открывается Google picker для выбора нужной таблицы из вашего аккаунта и перехода к следующему шагу подключения.',
+          en: 'This control opens the Google picker so you can choose the right spreadsheet from your account and continue setup.',
+          kk: 'Бұл басқару элементі Google picker-ді ашып, аккаунтыңыздан қажетті кестені таңдап, баптауды жалғастыруға мүмкіндік береді.',
         }),
       },
       sheetName: {

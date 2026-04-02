@@ -53,52 +53,28 @@ export const storageTourContent = {
           kk: 'Файлдарды күй, банк немесе санат бойынша таңдау үшін сүзгілерді пайдаланыңыз. Қажетті құжаттарды дәл іздеу үшін бірнеше сүзгіні біріктіріңіз.',
         }),
       },
-      fileList: {
+      storageTable: {
         title: t({
-          ru: 'Таблица файлов',
-          en: 'File Table',
+          ru: 'Список файлов',
+          en: 'Files Table',
           kk: 'Файлдар кестесі',
         }),
         description: t({
-          ru: 'Таблица отображает все ваши файлы с подробной информацией: название, банк, размер, статус обработки, категория и права доступа. Файлы также показывают, находятся ли они на диске, в базе данных или в обоих местах.',
-          en: 'The table displays all your files with detailed information: name, bank, size, processing status, category, and access rights. Files also show whether they are on disk, in database, or in both locations.',
-          kk: 'Кесте барлық файлдарыңызды толық ақпаратпен көрсетеді: атауы, банкі, өлшемі, өңдеу күйі, санаты және қол жеткізу құқықтары. Файлдар сонымен қатар дискіде, дерекқорда немесе екі жерде де екенін көрсетеді.',
+          ru: 'Главная таблица показывает все найденные документы: название, банк, размер, статус, категорию, доступ и дату. Это основная рабочая область страницы.',
+          en: 'The main table shows every matching document with its name, bank, size, status, category, access, and date. This is the page’s primary working area.',
+          kk: 'Негізгі кесте сәйкес келген барлық құжаттарды көрсетеді: атауы, банкі, өлшемі, күйі, санаты, қолжетімділігі және күні. Бұл беттің негізгі жұмыс аймағы.',
         }),
       },
-      actions: {
+      fileRow: {
         title: t({
-          ru: 'Действия с файлами',
-          en: 'File Actions',
-          kk: 'Файлдармен әрекеттер',
+          ru: 'Строка файла',
+          en: 'File Row',
+          kk: 'Файл жолы',
         }),
         description: t({
-          ru: 'Для каждого файла доступны быстрые действия: просмотр, скачивание и дополнительное меню. Если вы владелец файла, то можете делиться им и управлять правами доступа.',
-          en: "Each file has quick actions: view, download, and additional menu. If you're the file owner, you can share it and manage access permissions.",
-          kk: 'Әрбір файл үшін жылдам әрекеттер қолжетімді: қарау, жүктеп алу және қосымша мәзір. Егер сіз файлдың иесі болсаңыз, онымен бөлісе аласыз және қол жеткізу құқықтарын басқара аласыз.',
-        }),
-      },
-      categories: {
-        title: t({
-          ru: 'Категории файлов',
-          en: 'File Categories',
-          kk: 'Файл санаттары',
-        }),
-        description: t({
-          ru: 'Назначайте категории файлам для лучшей организации. Выберите категорию из выпадающего списка для каждого файла. Вы можете создавать и управлять категориями в разделе настроек.',
-          en: 'Assign categories to files for better organization. Select a category from the dropdown for each file. You can create and manage categories in settings.',
-          kk: 'Жақсы ұйымдастыру үшін файлдарға санаттарды тағайындаңыз. Әрбір файл үшін ашылмалы тізімнен санатты таңдаңыз. Баптауларда санаттарды жасай және басқара аласыз.',
-        }),
-      },
-      permissions: {
-        title: t({
-          ru: 'Права доступа',
-          en: 'Access Permissions',
-          kk: 'Қол жеткізу құқықтары',
-        }),
-        description: t({
-          ru: 'Столбец показывает ваши права на файл: владелец, редактор, наблюдатель или загрузчик. Файлы с общим доступом отмечены значком и количеством ссылок для общего доступа.',
-          en: 'The column shows your file permissions: owner, editor, viewer, or downloader. Shared files are marked with an icon and the number of shared links.',
-          kk: 'Баған файлға құқықтарыңызды көрсетеді: иесі, редактор, бақылаушы немесе жүктеуші. Ортақ файлдар белгішемен және ортақ сілтемелер санымен белгіленген.',
+          ru: 'Одна строка объединяет ключевые детали и быстрые действия: просмотр, скачивание, категорию и работу с файлом без перехода в другие разделы.',
+          en: 'A single row combines the key details and the quick actions: preview, download, category assignment, and file work without leaving the page.',
+          kk: 'Бір жолда негізгі деректер мен жылдам әрекеттер біріктірілген: алдын ала қарау, жүктеп алу, санат беру және беттен шықпай файлмен жұмыс істеу.',
         }),
       },
       completed: {

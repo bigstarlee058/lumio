@@ -19,7 +19,6 @@ export function createDataEntryTour(texts: {
     amountField: { title: string; description: string };
     noteField: { title: string; description: string };
     currencyField: { title: string; description: string };
-    currencyButtons: { title: string; description: string };
     saveButton: { title: string; description: string };
     entriesList: { title: string; description: string };
     searchEntries: { title: string; description: string };
@@ -123,13 +122,6 @@ export function createDataEntryTour(texts: {
         title: texts.steps.currencyField.title,
         description: texts.steps.currencyField.description,
         selector: '[data-tour-id="currency-field"]',
-        side: 'bottom',
-        align: 'start',
-      },
-      {
-        title: texts.steps.currencyButtons.title,
-        description: texts.steps.currencyButtons.description,
-        selector: '[data-tour-id="currency-buttons"]',
         side: 'bottom',
         align: 'start',
       },

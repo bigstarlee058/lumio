@@ -8,10 +8,9 @@ export function createIntegrationsTour(texts: {
   description?: string;
   steps: {
     welcome: { title: string; description: string };
+    search?: { title: string; description: string };
+    available?: { title: string; description: string };
     googleSheets: { title: string; description: string };
-    apiKeys: { title: string; description: string };
-    webhooks: { title: string; description: string };
-    connectionStatus: { title: string; description: string };
     completed: { title: string; description: string };
   };
 }): TourConfig {
@@ -30,32 +29,29 @@ export function createIntegrationsTour(texts: {
         align: 'center',
       },
       {
-        title: texts.steps.googleSheets.title,
-        description: texts.steps.googleSheets.description,
-        selector: '[data-tour-id="google-sheets-integration"]',
-        side: 'right',
+        title: texts.steps.search?.title ?? 'Search Integrations',
+        description:
+          texts.steps.search?.description ??
+          'Search integrations by name to quickly find the service you want to connect.',
+        selector: '[data-tour-id="integrations-search"]',
+        side: 'bottom',
         align: 'start',
       },
       {
-        title: texts.steps.apiKeys.title,
-        description: texts.steps.apiKeys.description,
-        selector: '[data-tour-id="api-keys"]',
-        side: 'right',
-        align: 'center',
-      },
-      {
-        title: texts.steps.webhooks.title,
-        description: texts.steps.webhooks.description,
-        selector: '[data-tour-id="webhooks"]',
-        side: 'right',
-        align: 'center',
-      },
-      {
-        title: texts.steps.connectionStatus.title,
-        description: texts.steps.connectionStatus.description,
-        selector: '[data-tour-id="connection-status"]',
+        title: texts.steps.available?.title ?? 'Available Integrations',
+        description:
+          texts.steps.available?.description ??
+          'Browse the available integration cards and compare the services you can connect.',
+        selector: '[data-tour-id="integrations-available"]',
         side: 'top',
         align: 'center',
+      },
+      {
+        title: texts.steps.googleSheets.title,
+        description: texts.steps.googleSheets.description,
+        selector: '[data-tour-id="integration-card-google-sheets"]',
+        side: 'right',
+        align: 'start',
       },
       {
         title: texts.steps.completed.title,

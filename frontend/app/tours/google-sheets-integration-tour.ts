@@ -44,7 +44,7 @@ export function createGoogleSheetsIntegrationTour(texts: {
         align: 'start',
       },
       {
-        selector: '[data-tour-id="gs-integration-sheet-url"]',
+        selector: '[data-tour-id="gs-integration-picker"]',
         title: texts.steps.sheetUrl.title,
         description: texts.steps.sheetUrl.description,
         side: 'right',

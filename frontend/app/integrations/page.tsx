@@ -275,6 +275,7 @@ export default function IntegrationsPage() {
           </div>
           <input
             type="text"
+            data-tour-id="integrations-search"
             className="block w-full rounded-full border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             placeholder={t.searchPlaceholder.value}
             value={searchQuery}
@@ -294,7 +295,7 @@ export default function IntegrationsPage() {
 
       <div className="space-y-8">
         {active.length > 0 || !searchQuery ? (
-          <div>
+          <div data-tour-id="integrations-connected">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.sections.connected}</h3>
             {active.length === 0 && !searchQuery ? (
               <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
@@ -431,7 +432,7 @@ export default function IntegrationsPage() {
         ) : null}
 
         {available.length > 0 || !searchQuery ? (
-          <div>
+          <div data-tour-id="integrations-available">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.sections.available}</h3>
             {available.length === 0 && !searchQuery ? (
               <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
@@ -456,6 +457,11 @@ export default function IntegrationsPage() {
                           <div
                             key={item.key}
                             data-integration-card={item.key}
+                            data-tour-id={
+                              item.key === 'google-sheets'
+                                ? 'integration-card-google-sheets'
+                                : undefined
+                            }
                             role={
                               item.primaryAction?.href && !item.primaryAction.external
                                 ? 'button'

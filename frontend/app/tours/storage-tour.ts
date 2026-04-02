@@ -10,13 +10,16 @@ export function createStorageTour(texts: {
     welcome: { title: string; description: string };
     search: { title: string; description: string };
     filters: { title: string; description: string };
-    fileList: { title: string; description: string };
-    actions: { title: string; description: string };
-    categories: { title: string; description: string };
-    permissions: { title: string; description: string };
+    storageTable?: { title: string; description: string };
+    fileList?: { title: string; description: string };
+    fileRow?: { title: string; description: string };
+    actions?: { title: string; description: string };
     completed: { title: string; description: string };
   };
 }): TourConfig {
+  const storageTableStep = texts.steps.storageTable ?? texts.steps.fileList;
+  const fileRowStep = texts.steps.fileRow ?? texts.steps.actions;
+
   return {
     id: 'storage-tour',
     name: texts.name ?? 'Storage Tour',
@@ -35,6 +38,7 @@ export function createStorageTour(texts: {
         title: texts.steps.search.title,
         description: texts.steps.search.description,
         selector: '[data-tour-id="file-search"]',
+        optional: true,
         side: 'bottom',
         align: 'end',
       },
@@ -42,34 +46,27 @@ export function createStorageTour(texts: {
         title: texts.steps.filters.title,
         description: texts.steps.filters.description,
         selector: '[data-tour-id="filters-button"]',
+        optional: true,
         side: 'bottom',
         align: 'end',
       },
       {
-        title: texts.steps.fileList.title,
-        description: texts.steps.fileList.description,
-        selector: '[data-tour-id="file-list"]',
+        title: storageTableStep?.title ?? 'Files Table',
+        description:
+          storageTableStep?.description ??
+          'Review the full list of matching files and their key metadata in one place.',
+        selector: '[data-tour-id="storage-table"]',
+        optional: true,
         side: 'top',
         align: 'center',
       },
       {
-        title: texts.steps.actions.title,
-        description: texts.steps.actions.description,
-        selector: '[data-tour-id="file-actions"]',
-        side: 'left',
-        align: 'center',
-      },
-      {
-        title: texts.steps.categories.title,
-        description: texts.steps.categories.description,
-        selector: '[data-tour-id="category-select"]',
-        side: 'left',
-        align: 'center',
-      },
-      {
-        title: texts.steps.permissions.title,
-        description: texts.steps.permissions.description,
-        selector: '[data-tour-id="permission-badge"]',
+        title: fileRowStep?.title ?? 'File Row',
+        description:
+          fileRowStep?.description ??
+          'Each row surfaces the main file details and the quick actions you can take.',
+        selector: '[data-tour-id="storage-file-row"]',
+        optional: true,
         side: 'left',
         align: 'center',
       },
