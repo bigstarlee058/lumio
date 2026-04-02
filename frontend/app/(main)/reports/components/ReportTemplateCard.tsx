@@ -21,6 +21,7 @@ interface ReportTemplateCardProps {
 export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps) {
   return (
     <Card
+      data-tour-id={template.id === 'pnl' ? 'reports-template-pnl' : undefined}
       className={`group cursor-pointer rounded-[20px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-card ${
         isSelected
           ? 'border-primary/40 ring-2 ring-primary/20 shadow-md'

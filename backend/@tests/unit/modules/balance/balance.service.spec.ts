@@ -136,6 +136,80 @@ describe('BalanceService', () => {
     expect(result.difference).toBe(0);
   });
 
+  it('returns localized account names for requested locale', async () => {
+    balanceAccountRepository.count.mockResolvedValue(1);
+    balanceAccountRepository.find.mockResolvedValue([
+      {
+        id: 'asset-cash',
+        code: 'ASSET_CASH',
+        name: 'III. Деньги',
+        nameEn: 'III. Cash',
+        nameKk: 'III. Ақша',
+        accountType: BalanceAccountType.ASSET,
+        subType: BalanceAccountSubType.CASH,
+        isEditable: false,
+        isAutoComputed: true,
+        isExpandable: false,
+        position: 0,
+        parentId: null,
+        createdAt: new Date(),
+      },
+    ]);
+
+    jest.spyOn(service as any, 'getLatestSnapshotMap').mockResolvedValue(new Map());
+    jest.spyOn(service as any, 'getAutoComputedCashBalance').mockResolvedValue(1000);
+    jest.spyOn(service as any, 'getRetainedEarnings').mockResolvedValue(0);
+
+    const resultEn = await service.getBalanceSheet('ws-1', '2026-04-02', 'en');
+    expect(resultEn.assets.sections[0].name).toBe('III. Cash');
+
+    const resultKk = await service.getBalanceSheet('ws-1', '2026-04-02', 'kk');
+    expect(resultKk.assets.sections[0].name).toBe('III. Ақша');
+
+    const resultRu = await service.getBalanceSheet('ws-1', '2026-04-02', 'ru');
+    expect(resultRu.assets.sections[0].name).toBe('III. Деньги');
+  });
+
+  it('uses localized labels in excel export', async () => {
+    balanceAccountRepository.count.mockResolvedValue(1);
+    balanceAccountRepository.find.mockResolvedValue([
+      {
+        id: 'asset-cash',
+        code: 'ASSET_CASH',
+        name: 'III. Деньги',
+        nameEn: 'III. Cash',
+        nameKk: 'III. Ақша',
+        accountType: BalanceAccountType.ASSET,
+        subType: BalanceAccountSubType.CASH,
+        isEditable: false,
+        isAutoComputed: true,
+        isExpandable: false,
+        position: 0,
+        parentId: null,
+        createdAt: new Date(),
+      },
+    ]);
+
+    jest.spyOn(service as any, 'getLatestSnapshotMap').mockResolvedValue(new Map());
+    jest.spyOn(service as any, 'getAutoComputedCashBalance').mockResolvedValue(1000);
+    jest.spyOn(service as any, 'getRetainedEarnings').mockResolvedValue(0);
+
+    const payload = await service.exportBalanceSheet(
+      'ws-1',
+      { format: 'excel', date: '2026-04-02', locale: 'en' } as any,
+      'en',
+    );
+
+    const workbook = require('xlsx').read(payload.buffer, { type: 'buffer' });
+    const rows = require('xlsx').utils.sheet_to_json(workbook.Sheets.Balance, { header: 1 });
+
+    expect(rows[0][0]).toBe('Balance sheet as of 2026-04-02');
+    expect(rows[2][0]).toContain('Assets');
+    expect(rows[2][2]).toContain('Liabilities');
+    expect(rows[rows.length - 2][0]).toBe('Total');
+    expect(rows[rows.length - 1][0]).toBe('Difference');
+  });
+
   it('rejects updates for non-editable accounts', async () => {
     balanceAccountRepository.findOne.mockResolvedValue({
       id: 'account-id',

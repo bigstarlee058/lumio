@@ -22,19 +22,29 @@ export class BalanceController {
   @Get('sheet')
   @RequirePermission(Permission.REPORT_VIEW)
   async getSheet(
+    @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
     @Query() query: BalanceQueryDto,
   ): Promise<unknown> {
-    return this.balanceService.getBalanceSheet(workspaceId, query.date);
+    return this.balanceService.getBalanceSheet(
+      workspaceId,
+      query.date,
+      query.locale || user.locale,
+    );
   }
 
   @Get('accounts')
   @RequirePermission(Permission.REPORT_VIEW)
   async getAccounts(
+    @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
     @Query() query: BalanceQueryDto,
   ): Promise<unknown> {
-    return this.balanceService.getAccountsTree(workspaceId, query.date);
+    return this.balanceService.getAccountsTree(
+      workspaceId,
+      query.date,
+      query.locale || user.locale,
+    );
   }
 
   @Put('snapshot')
@@ -50,11 +60,16 @@ export class BalanceController {
   @Get('export')
   @RequirePermission(Permission.REPORT_EXPORT)
   async exportBalance(
+    @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
     @Query() dto: ExportBalanceDto,
     @Res() res: Response,
   ) {
-    const payload = await this.balanceService.exportBalanceSheet(workspaceId, dto);
+    const payload = await this.balanceService.exportBalanceSheet(
+      workspaceId,
+      dto,
+      dto.locale || user.locale,
+    );
 
     res.setHeader('Content-Type', payload.contentType);
     res.setHeader('Content-Disposition', buildContentDisposition('attachment', payload.fileName));

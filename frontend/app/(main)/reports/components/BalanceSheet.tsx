@@ -1,14 +1,8 @@
 'use client';
 
-import { useIntlayer, useLocale } from '@/app/i18n';
 import { Spinner } from '@/app/components/ui/spinner';
-import {
-  CalendarDays,
-  ChevronDown,
-  ChevronRight,
-  Download,
-  RefreshCcw,
-} from 'lucide-react';
+import { useIntlayer, useLocale } from '@/app/i18n';
+import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
 
@@ -18,6 +12,8 @@ type BalanceAccountNode = {
   id: string;
   code: string;
   name: string;
+  nameEn: string | null;
+  nameKk: string | null;
   accountType: 'asset' | 'liability' | 'equity';
   isEditable: boolean;
   isAutoComputed: boolean;
@@ -133,7 +129,10 @@ export function BalanceSheet() {
 
       try {
         const response = await apiClient.get('/reports/balance/sheet', {
-          params: date ? { date } : undefined,
+          params: {
+            ...(date ? { date } : {}),
+            locale,
+          },
         });
         const payload: BalanceSheetResponse = response.data?.data || response.data;
         setSheet(payload);
@@ -162,7 +161,7 @@ export function BalanceSheet() {
         setLoading(false);
       }
     },
-    [t.errors.loadReport.value],
+    [locale, t.errors.loadReport.value],
   );
 
   useEffect(() => {
@@ -216,6 +215,7 @@ export function BalanceSheet() {
           params: {
             format,
             ...(effectiveDate ? { date: effectiveDate } : {}),
+            locale,
           },
           responseType: 'blob',
         });
@@ -243,7 +243,7 @@ export function BalanceSheet() {
         setExportingFormat(null);
       }
     },
-    [effectiveDate, sheet?.date, t.errors.loadReport.value],
+    [effectiveDate, locale, sheet?.date, t.errors.loadReport.value],
   );
 
   const toggleExpanded = useCallback((id: string) => {
@@ -285,7 +285,9 @@ export function BalanceSheet() {
 
               <span
                 className={`truncate ${
-                  isSection ? 'text-base font-semibold text-foreground' : 'text-sm text-muted-foreground'
+                  isSection
+                    ? 'text-base font-semibold text-foreground'
+                    : 'text-sm text-muted-foreground'
                 }`}
               >
                 {account.name}
@@ -316,9 +318,7 @@ export function BalanceSheet() {
                     aria-label={account.name}
                   />
                   <span className="text-sm font-medium text-muted-foreground">₸</span>
-                  {savingAccountId === account.id && (
-                    <Spinner className="h-4 w-4 text-primary" />
-                  )}
+                  {savingAccountId === account.id && <Spinner className="h-4 w-4 text-primary" />}
                 </div>
               ) : (
                 <span
@@ -393,11 +393,7 @@ export function BalanceSheet() {
               className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground hover:border-primary dark:bg-card"
               disabled={!!exportingFormat}
             >
-              {exportingFormat ? (
-                <Spinner className="h-4 w-4" />
-              ) : (
-                <Download className="h-4 w-4" />
-              )}
+              {exportingFormat ? <Spinner className="h-4 w-4" /> : <Download className="h-4 w-4" />}
               {text('exportBalance', 'Export balance')}
             </button>
 

@@ -82,8 +82,21 @@ const content = {
         en: 'No reports generated yet',
         kk: 'Есептер тарихы бос',
       }),
+      historyReport: t({ ru: 'Отчёт', en: 'Report', kk: 'Есеп' }),
+      historyGenerated: t({ ru: 'Создан', en: 'Generated', kk: 'Жасалған' }),
+      historyEmptyHint: t({
+        ru: 'Выберите шаблон и создайте первый отчёт.',
+        en: 'Select a template and generate your first report.',
+        kk: 'Үлгіні таңдап, бірінші есепті жасаңыз.',
+      }),
+      justNow: t({ ru: 'Только что', en: 'Just now', kk: 'Жаңа ғана' }),
+      minutesAgo: t({ ru: 'м назад', en: 'm ago', kk: 'мин бұрын' }),
+      hoursAgo: t({ ru: 'ч назад', en: 'h ago', kk: 'сағ бұрын' }),
+      yesterday: t({ ru: 'Вчера', en: 'Yesterday', kk: 'Кеше' }),
+      daysAgo: t({ ru: 'дн. назад', en: 'days ago', kk: 'күн бұрын' }),
 
       // Balance Sheet labels (kept for BalanceSheet.tsx compatibility)
+      balanceSheetTitle: t({ ru: 'Баланс', en: 'Balance Sheet', kk: 'Баланс парағы' }),
       assets: t({ ru: 'Активы', en: 'Assets', kk: 'Активтер' }),
       liabilities: t({ ru: 'Пассивы', en: 'Liabilities', kk: 'Пассивтер' }),
       asOfNow: t({ ru: 'На данный момент', en: 'As of now', kk: 'Қазіргі уақытта' }),
@@ -101,6 +114,12 @@ const content = {
       loadingEllipsis: t({ ru: 'Загрузка…', en: 'Loading…', kk: 'Жүктелуде…' }),
       noData: t({ ru: 'Нет данных', en: 'No data', kk: 'Деректер жоқ' }),
       refresh: t({ ru: 'Обновить', en: 'Refresh', kk: 'Жаңарту' }),
+      generateAndDownload: t({
+        ru: 'Сформировать и скачать',
+        en: 'Generate & Download',
+        kk: 'Жасау және жүктеу',
+      }),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау' }),
     },
   },
 } satisfies Dictionary;

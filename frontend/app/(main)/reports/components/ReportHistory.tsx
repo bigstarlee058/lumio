@@ -2,6 +2,7 @@
 
 import { Badge } from '@/app/components/ui/badge';
 import { Spinner } from '@/app/components/ui/spinner';
+import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { Download, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -20,22 +21,6 @@ export interface ReportHistoryItem {
   fileSize: number;
 }
 
-function getRelativeTime(isoDate: string): string {
-  const date = new Date(isoDate);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -49,8 +34,30 @@ const FORMAT_BADGE_CLASSES: Record<string, string> = {
 };
 
 export function ReportHistory() {
+  const t = useIntlayer('reportsPage');
+  const { locale } = useLocale();
+  const labels = t.labels as Record<string, { value?: string } | undefined>;
+  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
   const [history, setHistory] = useState<ReportHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const getRelativeTime = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+
+    if (diffMins < 1) return text('justNow', 'Just now');
+    if (diffMins < 60) return `${diffMins}${text('minutesAgo', 'm ago')}`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}${text('hoursAgo', 'h ago')}`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return text('yesterday', 'Yesterday');
+    if (diffDays < 7) return `${diffDays} ${text('daysAgo', 'days ago')}`;
+
+    const resolvedLocale = locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US';
+    return date.toLocaleDateString(resolvedLocale, { month: 'short', day: 'numeric' });
+  };
 
   const handleDownload = async (item: ReportHistoryItem) => {
     const response = await apiClient.get(`/reports/history/${item.id}/download`, {
@@ -61,7 +68,8 @@ export function ReportHistory() {
     const link = document.createElement('a');
     link.href = url;
     const extension = item.format === 'excel' ? 'xlsx' : item.format;
-    link.download = item.fileName || `${item.templateId}-${item.dateFrom}-${item.dateTo}.${extension}`;
+    link.download =
+      item.fileName || `${item.templateId}-${item.dateFrom}-${item.dateTo}.${extension}`;
     link.click();
     window.URL.revokeObjectURL(url);
   };
@@ -86,8 +94,12 @@ export function ReportHistory() {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <FileText className="h-10 w-10 text-muted-foreground/40" />
-        <p className="text-sm font-semibold text-muted-foreground">No reports generated yet</p>
-        <p className="text-xs text-muted-foreground/80">Select a template and generate your first report.</p>
+        <p className="text-sm font-semibold text-muted-foreground">
+          {text('historyEmpty', 'No reports generated yet')}
+        </p>
+        <p className="text-xs text-muted-foreground/80">
+          {text('historyEmptyHint', 'Select a template and generate your first report.')}
+        </p>
       </div>
     );
   }
@@ -98,22 +110,22 @@ export function ReportHistory() {
         <thead>
           <tr className="border-b border-border bg-muted/60">
             <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Report
+              {text('historyReport', 'Report')}
             </th>
             <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Period
+              {text('historyPeriod', 'Period')}
             </th>
             <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Format
+              {text('historyFormat', 'Format')}
             </th>
             <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Generated
+              {text('historyGenerated', 'Generated')}
             </th>
             <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Size
+              {text('historySize', 'Size')}
             </th>
             <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              Download
+              {text('historyDownload', 'Download')}
             </th>
           </tr>
         </thead>

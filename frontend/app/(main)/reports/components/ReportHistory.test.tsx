@@ -14,6 +14,27 @@ vi.mock('@/app/lib/api', () => ({
   },
 }));
 
+vi.mock('@/app/i18n', () => ({
+  useIntlayer: () => ({
+    labels: {
+      historyEmpty: { value: 'Aucun rapport pour le moment' },
+      historyEmptyHint: { value: 'Choisissez un modele et generez votre premier rapport.' },
+      historyReport: { value: 'Rapport' },
+      historyPeriod: { value: 'Periode' },
+      historyFormat: { value: 'Format localise' },
+      historyGenerated: { value: 'Genere' },
+      historySize: { value: 'Taille' },
+      historyDownload: { value: 'Telecharger' },
+      justNow: { value: "A l'instant" },
+      minutesAgo: { value: ' min' },
+      hoursAgo: { value: ' h' },
+      yesterday: { value: 'Hier' },
+      daysAgo: { value: ' jours' },
+    },
+  }),
+  useLocale: () => ({ locale: 'fr' }),
+}));
+
 vi.mock('@/app/components/ui/badge', () => ({
   Badge: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <span className={className}>{children}</span>
@@ -84,5 +105,56 @@ describe('ReportHistory', () => {
       });
     });
     expect(clickSpy).toHaveBeenCalled();
+  });
+
+  it('renders localized headers and empty state copy from i18n', async () => {
+    apiGet.mockResolvedValueOnce({ data: { data: [] } });
+
+    const { ReportHistory } = await import('./ReportHistory');
+    render(<ReportHistory />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Aucun rapport pour le moment')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText('Choisissez un modele et generez votre premier rapport.'),
+    ).toBeInTheDocument();
+  });
+
+  it('renders localized table headers and relative time labels', async () => {
+    apiGet.mockResolvedValueOnce({
+      data: {
+        data: [
+          {
+            id: 'report-2',
+            templateId: 'balance-sheet',
+            templateName: 'Balance locale',
+            dateFrom: '2026-03-01',
+            dateTo: '2026-03-31',
+            format: 'pdf',
+            generatedBy: 'user@example.com',
+            generatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+            fileName: 'balance.pdf',
+            fileSize: 4096,
+          },
+        ],
+      },
+    });
+
+    const { ReportHistory } = await import('./ReportHistory');
+    render(<ReportHistory />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Balance locale')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Rapport')).toBeInTheDocument();
+    expect(screen.getByText('Periode')).toBeInTheDocument();
+    expect(screen.getByText('Format localise')).toBeInTheDocument();
+    expect(screen.getByText('Genere')).toBeInTheDocument();
+    expect(screen.getByText('Taille')).toBeInTheDocument();
+    expect(screen.getByText('Telecharger')).toBeInTheDocument();
+    expect(screen.getByText('2 h')).toBeInTheDocument();
   });
 });

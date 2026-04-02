@@ -26,6 +26,8 @@ type BalanceAccountNode = {
   id: string;
   code: string;
   name: string;
+  nameEn: string | null;
+  nameKk: string | null;
   accountType: BalanceAccountType;
   isEditable: boolean;
   isAutoComputed: boolean;
@@ -98,6 +100,68 @@ export class BalanceService {
 
   private formatAmount(value: number): string {
     return `${this.round(value).toFixed(2)} ₸`;
+  }
+
+  private resolveAccountName(node: BalanceAccountNode, locale?: string): string {
+    if (locale === 'en' && node.nameEn) {
+      return node.nameEn;
+    }
+
+    if (locale === 'kk' && node.nameKk) {
+      return node.nameKk;
+    }
+
+    return node.name;
+  }
+
+  private localizeTree(nodes: BalanceAccountNode[], locale?: string): void {
+    for (const node of nodes) {
+      node.name = this.resolveAccountName(node, locale);
+      if (node.children.length > 0) {
+        this.localizeTree(node.children, locale);
+      }
+    }
+  }
+
+  private getExportLabels(locale?: string): Record<string, string> {
+    const resolvedLocale = locale === 'en' || locale === 'kk' ? locale : 'ru';
+    const labels = {
+      ru: {
+        balanceAsOf: 'Баланс на',
+        assets: 'Активы',
+        liabilities: 'Пассивы',
+        total: 'Итого',
+        difference: 'Разница',
+        balanced: 'Сходится',
+        yes: 'Да',
+        no: 'Нет',
+        notBalanced: 'не сходится',
+      },
+      en: {
+        balanceAsOf: 'Balance sheet as of',
+        assets: 'Assets',
+        liabilities: 'Liabilities',
+        total: 'Total',
+        difference: 'Difference',
+        balanced: 'Balanced',
+        yes: 'Yes',
+        no: 'No',
+        notBalanced: 'not balanced',
+      },
+      kk: {
+        balanceAsOf: 'Баланс',
+        assets: 'Активтер',
+        liabilities: 'Пассивтер',
+        total: 'Барлығы',
+        difference: 'Айырма',
+        balanced: 'Сәйкес',
+        yes: 'Иә',
+        no: 'Жоқ',
+        notBalanced: 'сәйкес емес',
+      },
+    };
+
+    return labels[resolvedLocale];
   }
 
   private flattenForExport(
@@ -269,7 +333,11 @@ export class BalanceService {
     }
   }
 
-  async getBalanceSheet(workspaceId: string, date?: string): Promise<BalanceSheetResponse> {
+  async getBalanceSheet(
+    workspaceId: string,
+    date?: string,
+    locale?: string,
+  ): Promise<BalanceSheetResponse> {
     await this.ensureSeeded(workspaceId);
 
     const snapshotDate = this.resolveDate(date);
@@ -298,6 +366,8 @@ export class BalanceService {
         id: account.id,
         code: account.code,
         name: account.name,
+        nameEn: account.nameEn,
+        nameKk: account.nameKk,
         accountType: account.accountType,
         isEditable: account.isEditable,
         isAutoComputed: account.isAutoComputed,
@@ -354,6 +424,9 @@ export class BalanceService {
         section.accountType === BalanceAccountType.EQUITY,
     );
 
+    this.localizeTree(assets, locale);
+    this.localizeTree(liabilities, locale);
+
     const assetsTotal = this.round(assets.reduce((acc, section) => acc + section.amount, 0));
     const liabilitiesTotal = this.round(
       liabilities.reduce((acc, section) => acc + section.amount, 0),
@@ -376,8 +449,8 @@ export class BalanceService {
     };
   }
 
-  async getAccountsTree(workspaceId: string, date?: string) {
-    const sheet = await this.getBalanceSheet(workspaceId, date);
+  async getAccountsTree(workspaceId: string, date?: string, locale?: string) {
+    const sheet = await this.getBalanceSheet(workspaceId, date, locale);
 
     return {
       assets: sheet.assets.sections,
@@ -460,18 +533,19 @@ export class BalanceService {
     };
   }
 
-  private async exportAsExcel(data: BalanceSheetResponse): Promise<Buffer> {
+  private async exportAsExcel(data: BalanceSheetResponse, locale?: string): Promise<Buffer> {
+    const labels = this.getExportLabels(locale);
     const leftRows = this.flattenForExport(data.assets.sections);
     const rightRows = this.flattenForExport(data.liabilities.sections);
     const maxRows = Math.max(leftRows.length, rightRows.length);
 
     const rows: Array<Array<string | number>> = [
-      [`Баланс на ${data.date}`, '', '', ''],
+      [`${labels.balanceAsOf} ${data.date}`, '', '', ''],
       ['', '', '', ''],
       [
-        `Активы (${this.formatAmount(data.assets.total)})`,
+        `${labels.assets} (${this.formatAmount(data.assets.total)})`,
         '',
-        `Пассивы (${this.formatAmount(data.liabilities.total)})`,
+        `${labels.liabilities} (${this.formatAmount(data.liabilities.total)})`,
         '',
       ],
       ['', '', '', ''],
@@ -490,12 +564,17 @@ export class BalanceService {
 
     rows.push(['', '', '', '']);
     rows.push([
-      'Итого',
+      labels.total,
       this.round(data.assets.total),
-      'Итого',
+      labels.total,
       this.round(data.liabilities.total),
     ]);
-    rows.push(['Разница', this.round(data.difference), 'Сходится', data.isBalanced ? 'Да' : 'Нет']);
+    rows.push([
+      labels.difference,
+      this.round(data.difference),
+      labels.balanced,
+      data.isBalanced ? labels.yes : labels.no,
+    ]);
 
     const worksheet = XLSX.utils.aoa_to_sheet(rows);
     worksheet['!cols'] = [{ wch: 46 }, { wch: 16 }, { wch: 46 }, { wch: 16 }];
@@ -506,11 +585,12 @@ export class BalanceService {
     return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
   }
 
-  private async exportAsPdf(data: BalanceSheetResponse): Promise<Buffer> {
+  private async exportAsPdf(data: BalanceSheetResponse, locale?: string): Promise<Buffer> {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([842, 595]);
     const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const labels = this.getExportLabels(locale);
 
     const leftRows = this.flattenForExport(data.assets.sections);
     const rightRows = this.flattenForExport(data.liabilities.sections);
@@ -521,7 +601,7 @@ export class BalanceService {
     const mid = page.getWidth() / 2;
     const lineHeight = 16;
 
-    page.drawText(`Balance sheet as of ${data.date}`, {
+    page.drawText(`${labels.balanceAsOf} ${data.date}`, {
       x: margin,
       y: top,
       size: 16,
@@ -529,7 +609,7 @@ export class BalanceService {
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    page.drawText(`Assets: ${this.formatAmount(data.assets.total)}`, {
+    page.drawText(`${labels.assets}: ${this.formatAmount(data.assets.total)}`, {
       x: margin,
       y: top - 32,
       size: 12,
@@ -537,7 +617,7 @@ export class BalanceService {
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    page.drawText(`Liabilities: ${this.formatAmount(data.liabilities.total)}`, {
+    page.drawText(`${labels.liabilities}: ${this.formatAmount(data.liabilities.total)}`, {
       x: mid + 10,
       y: top - 32,
       size: 12,
@@ -591,7 +671,7 @@ export class BalanceService {
     }
 
     page.drawText(
-      `Difference: ${this.formatAmount(data.difference)} (${data.isBalanced ? 'balanced' : 'not balanced'})`,
+      `${labels.difference}: ${this.formatAmount(data.difference)} (${data.isBalanced ? labels.balanced : labels.notBalanced})`,
       {
         x: margin,
         y: margin,
@@ -608,16 +688,18 @@ export class BalanceService {
   async exportBalanceSheet(
     workspaceId: string,
     dto: ExportBalanceDto,
+    locale?: string,
   ): Promise<{
     fileName: string;
     contentType: string;
     buffer: Buffer;
   }> {
-    const balanceSheet = await this.getBalanceSheet(workspaceId, dto.date);
+    const effectiveLocale = dto.locale || locale;
+    const balanceSheet = await this.getBalanceSheet(workspaceId, dto.date, effectiveLocale);
     const dateKey = balanceSheet.date;
 
     if (dto.format === BalanceExportFormat.PDF) {
-      const buffer = await this.exportAsPdf(balanceSheet);
+      const buffer = await this.exportAsPdf(balanceSheet, effectiveLocale);
       return {
         fileName: `balance-sheet-${dateKey}.pdf`,
         contentType: 'application/pdf',
@@ -625,7 +707,7 @@ export class BalanceService {
       };
     }
 
-    const buffer = await this.exportAsExcel(balanceSheet);
+    const buffer = await this.exportAsExcel(balanceSheet, effectiveLocale);
     return {
       fileName: `balance-sheet-${dateKey}.xlsx`,
       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

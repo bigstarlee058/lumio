@@ -3,6 +3,7 @@
 import { Button } from '@/app/components/ui/button';
 import { Card, CardContent } from '@/app/components/ui/card';
 import { Spinner } from '@/app/components/ui/spinner';
+import { useIntlayer } from '@/app/i18n';
 import { Download, X } from 'lucide-react';
 import { useState } from 'react';
 import type { ReportTemplate } from './ReportTemplateCard';
@@ -27,6 +28,10 @@ const FORMAT_OPTIONS: Array<{ value: 'pdf' | 'excel' | 'csv'; label: string }> =
 ];
 
 export function ReportGenerator({ template, onClose, onGenerate }: ReportGeneratorProps) {
+  const t = useIntlayer('reportsPage');
+  const labels = t.labels as Record<string, { value?: string } | undefined>;
+  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
+
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -50,7 +55,10 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
   };
 
   return (
-    <Card className="mt-6 rounded-[20px] border border-primary/20 bg-card shadow-md dark:bg-card">
+    <Card
+      className="mt-6 rounded-[20px] border border-primary/20 bg-card shadow-md dark:bg-card"
+      data-tour-id="reports-generator"
+    >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-5">
           <div>
@@ -73,7 +81,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
               htmlFor="date-from"
               className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]"
             >
-              Date from
+              {text('dateFrom', 'Date from')}
             </label>
             <input
               id="date-from"
@@ -90,7 +98,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
               htmlFor="date-to"
               className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]"
             >
-              Date to
+              {text('dateTo', 'Date to')}
             </label>
             <input
               id="date-to"
@@ -104,9 +112,9 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
           {/* Format */}
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]">
-              Format
+              {text('format', 'Format')}
             </span>
-            <div className="flex gap-2">
+            <div className="flex gap-2" data-tour-id="reports-format">
               {availableFormats.map(opt => (
                 <button
                   key={opt.value}
@@ -116,7 +124,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
                     format === opt.value
                       ? 'bg-primary text-white border-primary'
                       : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary'
-                   }`}
+                  }`}
                 >
                   {opt.value.toUpperCase()}
                 </button>
@@ -126,21 +134,26 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
         </div>
 
         <div className="flex items-center gap-3">
-          <Button onClick={handleGenerate} disabled={generating} className="gap-2">
+          <Button
+            onClick={handleGenerate}
+            disabled={generating}
+            className="gap-2"
+            data-tour-id="reports-generate-button"
+          >
             {generating ? (
               <>
                 <Spinner className="h-4 w-4" />
-                Generating...
+                {text('generating', 'Generating…')}
               </>
             ) : (
               <>
                 <Download className="h-4 w-4" />
-                Generate &amp; Download
+                {text('generateAndDownload', 'Generate & Download')}
               </>
             )}
           </Button>
           <Button variant="ghost" onClick={onClose} disabled={generating}>
-            Cancel
+            {text('cancel', 'Cancel')}
           </Button>
         </div>
       </CardContent>

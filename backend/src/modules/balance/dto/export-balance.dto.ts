@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional } from 'class-validator';
+import { IsDateString, IsEnum, IsIn, IsOptional, IsString } from 'class-validator';
 
 export enum BalanceExportFormat {
   EXCEL = 'excel',
@@ -12,4 +12,9 @@ export class ExportBalanceDto {
 
   @IsEnum(BalanceExportFormat)
   format: BalanceExportFormat = BalanceExportFormat.EXCEL;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['ru', 'en', 'kk'])
+  locale?: string;
 }

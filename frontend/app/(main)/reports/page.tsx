@@ -1,5 +1,6 @@
 'use client';
 
+import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -10,42 +11,52 @@ import { type ReportGenerateParams, ReportGenerator } from './components/ReportG
 import { ReportHistory } from './components/ReportHistory';
 import { type ReportTemplate, ReportTemplateCard } from './components/ReportTemplateCard';
 
-const TEMPLATES: ReportTemplate[] = [
-  {
-    id: 'pnl',
-    name: 'Profit & Loss (P&L)',
-    description: 'Income and expenses summary with net profit for a period',
-    icon: DollarSign,
-    category: 'financial',
-    formats: ['pdf', 'excel', 'csv'],
-  },
-  {
-    id: 'balance-sheet',
-    name: 'Balance Sheet',
-    description: 'Assets, liabilities and equity snapshot',
-    icon: Scale,
-    category: 'financial',
-    formats: ['pdf', 'excel'],
-  },
-  {
-    id: 'cash-flow',
-    name: 'Cash Flow Statement',
-    description: 'Cash inflows and outflows over a period',
-    icon: BarChart3,
-    category: 'financial',
-    formats: ['pdf', 'excel', 'csv'],
-  },
-  {
-    id: 'expense-by-category',
-    name: 'Expense by Category',
-    description: 'Breakdown of expenses by category with totals',
-    icon: PieChart,
-    category: 'operational',
-    formats: ['pdf', 'excel', 'csv'],
-  },
-];
-
 export default function ReportsPage() {
+  const t = useIntlayer('reportsPage');
+  const labels = t.labels as Record<string, { value?: string } | undefined>;
+  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
+
+  const templates: ReportTemplate[] = [
+    {
+      id: 'pnl',
+      name: text('templatePnlName', 'Profit & Loss (P&L)'),
+      description: text(
+        'templatePnlDescription',
+        'Income and expenses summary with net profit for a period',
+      ),
+      icon: DollarSign,
+      category: 'financial',
+      formats: ['pdf', 'excel', 'csv'],
+    },
+    {
+      id: 'balance-sheet',
+      name: text('templateBalanceName', 'Balance Sheet'),
+      description: text('templateBalanceDescription', 'Assets, liabilities and equity snapshot'),
+      icon: Scale,
+      category: 'financial',
+      formats: ['pdf', 'excel'],
+    },
+    {
+      id: 'cash-flow',
+      name: text('templateCashFlowName', 'Cash Flow Statement'),
+      description: text('templateCashFlowDescription', 'Cash inflows and outflows over a period'),
+      icon: BarChart3,
+      category: 'financial',
+      formats: ['pdf', 'excel', 'csv'],
+    },
+    {
+      id: 'expense-by-category',
+      name: text('templateExpenseByCategoryName', 'Expense by Category'),
+      description: text(
+        'templateExpenseByCategoryDescription',
+        'Breakdown of expenses by category with totals',
+      ),
+      icon: PieChart,
+      category: 'operational',
+      formats: ['pdf', 'excel', 'csv'],
+    },
+  ];
+
   const [tab, setTab] = useState<'templates' | 'history'>('templates');
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [showBalanceSheet, setShowBalanceSheet] = useState(false);
@@ -82,9 +93,11 @@ export default function ReportsPage() {
             onClick={() => setShowBalanceSheet(false)}
             className="mb-4 text-sm font-medium text-primary transition-colors hover:opacity-80"
           >
-            ← Back to templates
+            ← {text('backToTemplates', 'Back to templates')}
           </button>
-          <h1 className="text-2xl font-bold text-foreground">Balance Sheet</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {text('balanceSheetTitle', 'Balance Sheet')}
+          </h1>
         </div>
         <div className="px-8 pb-8">
           <BalanceSheet />
@@ -96,14 +109,15 @@ export default function ReportsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="px-8 pt-8 pb-0">
-        <h1 className="text-2xl font-bold text-foreground">Reports</h1>
+        <h1 className="text-2xl font-bold text-foreground">{text('title', 'Reports')}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Generate financial reports and export documents
+          {text('subtitle', 'Generate financial reports and export documents')}
         </p>
       </div>
 
       <div className="mt-4 border-b border-border px-8">
         <Tabs
+          data-tour-id="reports-tabs"
           value={tab}
           onChange={(_e, v: 'templates' | 'history') => {
             setTab(v);
@@ -121,16 +135,23 @@ export default function ReportsPage() {
             '& .MuiTabs-indicator': { backgroundColor: 'var(--primary)' },
           }}
         >
-          <Tab value="templates" label="Templates" />
-          <Tab value="history" label="History" />
+          <Tab value="templates" label={text('tabTemplates', 'Templates')} />
+          <Tab
+            value="history"
+            label={text('tabHistory', 'History')}
+            data-tour-id="reports-history-tab"
+          />
         </Tabs>
       </div>
 
       <div className="px-8 py-6">
         {tab === 'templates' && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {TEMPLATES.map(tmpl => (
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+              data-tour-id="reports-templates-grid"
+            >
+              {templates.map(tmpl => (
                 <ReportTemplateCard
                   key={tmpl.id}
                   template={tmpl}
