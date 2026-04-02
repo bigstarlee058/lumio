@@ -5,12 +5,14 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import apiClient from '@/app/lib/api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
 import { OnboardingProgress } from './components/OnboardingProgress';
+import { resolveOnboardingBootstrapLocale } from './lib/locale-bootstrap';
 import { resolveOnboardingFlow } from './lib/onboarding-flow';
 import { resolveOnboardingText } from './lib/resolveOnboardingText';
 import { CompletionStep } from './steps/CompletionStep';
@@ -90,18 +92,10 @@ function detectTimeZone(): string | null {
   }
 }
 
-function normalizeLocale(locale: string | null | undefined): SupportedLocale {
-  if (locale === 'en' || locale === 'kk' || locale === 'ru') {
-    return locale;
-  }
-
-  return 'ru';
-}
-
 export default function OnboardingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setLocale, locale } = useLocale();
+  const { setLocale, locale: appLocale } = useLocale();
   const t = useIntlayer('onboardingPage' as any) as any;
   const { user, loading: authLoading, setUser } = useAuth();
   const { refreshWorkspaces } = useWorkspace();
@@ -110,7 +104,7 @@ export default function OnboardingPage() {
 
   const { currentStep, data, updateData, goBack, goNext, skipAll, totalSteps, isLastStep } =
     useOnboardingWizard({
-      locale: 'ru',
+      locale: normalizeLocale(appLocale),
       timeZone: detectTimeZone(),
       workspaceName: '',
       workspaceCurrency: DEFAULT_CURRENCY,
@@ -233,9 +227,9 @@ export default function OnboardingPage() {
       setIsInitializing(true);
       setError('');
 
-      const defaultLocale = normalizeLocale(user.locale || locale);
+      const resolvedAppLocale = resolveOnboardingBootstrapLocale(appLocale);
       const initialData: Partial<OnboardingData> = {
-        locale: defaultLocale,
+        locale: resolvedAppLocale,
         timeZone: user.timeZone || detectTimeZone(),
         workspaceName: `${user.name || user.email} workspace`,
         workspaceCurrency: DEFAULT_CURRENCY,
@@ -245,7 +239,7 @@ export default function OnboardingPage() {
       if (isCreateWorkspaceFlow) {
         if (!cancelled) {
           updateData(initialData);
-          setLocale(defaultLocale);
+          setLocale(resolvedAppLocale);
           await refreshIntegrationStatuses();
           setBootstrapComplete(true);
           setIsInitializing(false);
@@ -289,7 +283,7 @@ export default function OnboardingPage() {
       } finally {
         if (!cancelled) {
           updateData(initialData);
-          setLocale(defaultLocale);
+          setLocale(resolvedAppLocale);
           await refreshIntegrationStatuses();
           setBootstrapComplete(true);
           setIsInitializing(false);
@@ -307,7 +301,7 @@ export default function OnboardingPage() {
     bootstrapComplete,
     flow.shouldRedirectCompletedUser,
     isCreateWorkspaceFlow,
-    locale,
+    appLocale,
     setLocale,
     t,
     updateData,
@@ -531,6 +525,7 @@ export default function OnboardingPage() {
         const updatedPreferencesUser = preferencesResponse.data?.user;
         if (updatedPreferencesUser) {
           localStorage.setItem('user', JSON.stringify(updatedPreferencesUser));
+          syncLocaleFromUser(updatedPreferencesUser);
           setUser(updatedPreferencesUser);
         }
 
@@ -567,6 +562,7 @@ export default function OnboardingPage() {
       const updatedUser = response.data?.user;
       if (updatedUser) {
         localStorage.setItem('user', JSON.stringify(updatedUser));
+        syncLocaleFromUser(updatedUser);
         setUser(updatedUser);
       }
 

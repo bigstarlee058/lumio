@@ -1,6 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
+import { readLocaleFromCookie, syncLocaleFromUser } from '@/app/lib/locale';
 import {
   DEFAULT_THEME_PREFERENCE,
   THEME_STORAGE_EVENT,
@@ -47,6 +48,9 @@ export function useAuth() {
           const nextUser = normalizeUser(response.data as User);
           setUser(nextUser);
           localStorage.setItem('user', JSON.stringify(nextUser));
+          if (readLocaleFromCookie() == null) {
+            syncLocaleFromUser(nextUser);
+          }
           window.dispatchEvent(new CustomEvent(THEME_STORAGE_EVENT));
 
           const currentPath = window.location.pathname;

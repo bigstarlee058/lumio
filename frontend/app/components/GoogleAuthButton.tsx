@@ -1,6 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
+import { syncLocaleFromUser } from '@/app/lib/locale';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box } from '@mui/material';
@@ -81,6 +82,7 @@ export function GoogleAuthButton({
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
         localStorage.setItem('user', JSON.stringify(user));
+        syncLocaleFromUser(user);
         if (user.workspaceId) {
           localStorage.setItem('currentWorkspaceId', user.workspaceId);
         }

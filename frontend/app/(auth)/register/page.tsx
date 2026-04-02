@@ -5,6 +5,7 @@ import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { syncLocaleFromUser } from '@/app/lib/locale';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import {
   Alert,
@@ -91,6 +92,7 @@ function RegisterPageContent() {
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
       localStorage.setItem('user', JSON.stringify(user));
+      syncLocaleFromUser(user);
       if (user.workspaceId) {
         localStorage.setItem('currentWorkspaceId', user.workspaceId);
       }

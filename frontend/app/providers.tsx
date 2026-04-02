@@ -13,6 +13,7 @@ import { useTheme as useNextTheme } from 'next-themes';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { IntlayerProviderContent } from 'react-intlayer';
+import { type AppLocale, isSupportedLocale, persistLocaleToCookie, readLocaleFromCookie } from '@/app/lib/locale';
 import { SidePanelProvider } from './components/side-panel';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { WorkspaceProvider, useWorkspace } from './contexts/WorkspaceContext';
@@ -21,35 +22,6 @@ import { useHTMLLanguage } from './hooks/useHTMLLanguage';
 import { mantineCssVariablesResolver, mantineTheme } from './mantine-theme';
 import { createAppTheme } from './theme';
 import { TourAutoStarter } from './tours/components/TourAutoStarter';
-
-type AppLocale = 'en' | 'ru' | 'kk';
-const LOCALE_COOKIE_NAME = 'intlayer-locale';
-
-function isSupportedLocale(value: string | null | undefined): value is AppLocale {
-  return value === 'en' || value === 'ru' || value === 'kk';
-}
-
-function readLocaleFromCookie(): AppLocale | null {
-  if (typeof document === 'undefined') {
-    return null;
-  }
-
-  const cookieValue = document.cookie
-    .split(';')
-    .map(cookie => cookie.trim())
-    .find(cookie => cookie.startsWith(`${LOCALE_COOKIE_NAME}=`))
-    ?.split('=')[1];
-
-  return isSupportedLocale(cookieValue) ? cookieValue : null;
-}
-
-function persistLocaleToCookie(locale: AppLocale) {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
-}
 
 function HTMLLanguageSync() {
   useHTMLLanguage();

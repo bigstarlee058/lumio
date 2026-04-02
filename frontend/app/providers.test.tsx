@@ -94,7 +94,17 @@ vi.mock('./tours/components/TourAutoStarter', () => ({
 }));
 
 describe('Providers', () => {
-  it('prefers locale from cookie over server fallback locale', async () => {
+  it('prefers locale from the intlayer cookie over server fallback locale', async () => {
+    document.cookie = 'INTLAYER_LOCALE=kk; path=/';
+
+    const { Providers } = await import('./providers');
+
+    render(<Providers initialLocale="ru">test</Providers>);
+
+    expect(screen.getByTestId('intlayer-locale').textContent).toBe('kk');
+  });
+
+  it('falls back to the legacy locale cookie while older sessions still exist', async () => {
     document.cookie = 'intlayer-locale=kk; path=/';
 
     const { Providers } = await import('./providers');
@@ -105,6 +115,7 @@ describe('Providers', () => {
   });
 
   it('stores selected locale in cookie when locale changes client-side', async () => {
+    document.cookie = 'INTLAYER_LOCALE=; Max-Age=0; path=/';
     document.cookie = 'intlayer-locale=; Max-Age=0; path=/';
 
     const { Providers } = await import('./providers');
@@ -115,7 +126,7 @@ describe('Providers', () => {
       screen.getByTestId('set-locale-kk').click();
     });
 
-    expect(document.cookie).toContain('intlayer-locale=kk');
+    expect(document.cookie).toContain('INTLAYER_LOCALE=kk');
     expect(screen.getByTestId('intlayer-locale').textContent).toBe('kk');
   });
 

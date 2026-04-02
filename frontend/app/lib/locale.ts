@@ -1,0 +1,62 @@
+'use client';
+
+export type AppLocale = 'en' | 'ru' | 'kk';
+
+export const DEFAULT_LOCALE: AppLocale = 'ru';
+export const LOCALE_COOKIE_NAME = 'INTLAYER_LOCALE';
+const LEGACY_LOCALE_COOKIE_NAME = 'intlayer-locale';
+const LOCALE_COOKIE_ATTRIBUTES = 'path=/; max-age=31536000; samesite=lax';
+const EXPIRED_COOKIE_ATTRIBUTES = 'path=/; max-age=0; samesite=lax';
+
+export function isSupportedLocale(value: string | null | undefined): value is AppLocale {
+  return value === 'en' || value === 'ru' || value === 'kk';
+}
+
+function readCookie(name: string): string | null {
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return (
+    document.cookie
+      .split(';')
+      .map(cookie => cookie.trim())
+      .find(cookie => cookie.startsWith(`${name}=`))
+      ?.split('=')[1] ?? null
+  );
+}
+
+export function normalizeLocale(
+  value: string | null | undefined,
+  fallback: AppLocale = DEFAULT_LOCALE,
+): AppLocale {
+  return isSupportedLocale(value) ? value : fallback;
+}
+
+export function readLocaleFromCookie(): AppLocale | null {
+  const primaryCookieLocale = readCookie(LOCALE_COOKIE_NAME);
+  if (isSupportedLocale(primaryCookieLocale)) {
+    return primaryCookieLocale;
+  }
+
+  const legacyCookieLocale = readCookie(LEGACY_LOCALE_COOKIE_NAME);
+  return isSupportedLocale(legacyCookieLocale) ? legacyCookieLocale : null;
+}
+
+export function persistLocaleToCookie(locale: AppLocale) {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; ${LOCALE_COOKIE_ATTRIBUTES}`;
+  // Keep next-intlayer server reads and existing client helpers aligned across reloads.
+  document.cookie = `${LEGACY_LOCALE_COOKIE_NAME}=${locale}; ${LOCALE_COOKIE_ATTRIBUTES}`;
+}
+
+export function syncLocaleFromUser(user: { locale?: string | null } | null | undefined) {
+  if (!isSupportedLocale(user?.locale)) {
+    return;
+  }
+
+  persistLocaleToCookie(user.locale);
+}
