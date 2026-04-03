@@ -56,12 +56,6 @@ const createTour = (id: string, name: string, page: string) => ({
 vi.mock('../statements-tour', () => ({
   createStatementsTour: () => createTour('statements-tour', 'Statements Tour', '/statements/submit'),
 }));
-vi.mock('../upload-tour', () => ({
-  createUploadTour: () => createTour('upload-tour', 'Upload Tour', '/upload'),
-}));
-vi.mock('../storage-tour', () => ({
-  createStorageTour: () => createTour('storage-tour', 'Storage Tour', '/storage'),
-}));
 vi.mock('../custom-tables-tour', () => ({
   createCustomTablesTour: () =>
     createTour('custom-tables-tour', 'Custom Tables Tour', '/custom-tables'),
@@ -71,9 +65,6 @@ vi.mock('../reports-tour', () => ({
 }));
 vi.mock('../categories-tour', () => ({
   createCategoriesTour: () => createTour('categories-tour', 'Categories Tour', '/workspaces/categories'),
-}));
-vi.mock('../data-entry-tour', () => ({
-  createDataEntryTour: () => createTour('data-entry-tour', 'Data Entry Tour', '/data-entry'),
 }));
 vi.mock('../integrations-tour', () => ({
   createIntegrationsTour: () => createTour('integrations-tour', 'Integrations Tour', '/integrations'),
@@ -117,5 +108,15 @@ describe('TourMenu', () => {
         progressText: '{{current}} / {{total}}',
       });
     }, { timeout: 2000 });
+  });
+
+  it('does not show upload and storage tours in the menu', async () => {
+    render(<TourMenu />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tours' }));
+
+    expect(screen.queryByText('Upload Tour')).toBeNull();
+    expect(screen.queryByText('Storage Tour')).toBeNull();
+    expect(screen.queryByText('Data Entry Tour')).toBeNull();
   });
 });

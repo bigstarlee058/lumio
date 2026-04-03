@@ -102,7 +102,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
       {/* Tab Actions Header */}
       <div className="flex items-center gap-6 pb-2">
         <Link
-          href="/upload"
+          href="/statements"
           className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           Upload / Parse

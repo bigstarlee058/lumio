@@ -319,7 +319,7 @@ export default function FileDetailsPage() {
           <p className="text-gray-900 font-semibold mb-2">{t.notFound}</p>
           <button
             type="button"
-            onClick={() => router.push('/storage')}
+            onClick={() => router.push('/statements')}
             className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -362,7 +362,7 @@ export default function FileDetailsPage() {
         <div className="flex items-start gap-3">
           <button
             type="button"
-            onClick={() => router.push('/storage')}
+            onClick={() => router.push('/statements')}
             className="rounded-full border border-gray-200 bg-white p-2 text-gray-600 shadow-sm transition hover:bg-gray-50"
             aria-label="Back to storage"
           >

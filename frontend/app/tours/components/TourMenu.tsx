@@ -13,16 +13,13 @@ import { getTourManager } from '../TourManager';
 import { createAdminTour } from '../admin-tour';
 import { createCategoriesTour } from '../categories-tour';
 import { createCustomTablesTour } from '../custom-tables-tour';
-import { createDataEntryTour } from '../data-entry-tour';
 import { createGoogleSheetsImportTour } from '../google-sheets-import-tour';
 import { createGoogleSheetsIntegrationTour } from '../google-sheets-integration-tour';
 import { createIntegrationsTour } from '../integrations-tour';
 import { createReportsTour } from '../reports-tour';
 import { createSettingsTour } from '../settings-tour';
 import { createStatementsTour } from '../statements-tour';
-import { createStorageTour } from '../storage-tour';
 import type { TourConfig } from '../types';
-import { createUploadTour } from '../upload-tour';
 
 function getPreferredLang(): string {
   if (typeof document !== 'undefined') {
@@ -90,12 +87,9 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps) {
   // Get translations for all tours
   const navigationTexts = useIntlayer('navigation') as any;
   const statementsTexts = useIntlayer('statements-tour');
-  const uploadTexts = useIntlayer('upload-tour');
-  const storageTexts = useIntlayer('storage-tour-content');
   const customTablesTexts = useIntlayer('custom-tables-tour-content');
   const reportsTexts = useIntlayer('reports-tour-content');
   const categoriesTexts = useIntlayer('categories-tour-content');
-  const dataEntryTexts = useIntlayer('data-entry-tour-content');
   const integrationsTexts = useIntlayer('integrations-tour-content');
   const settingsTexts = useIntlayer('settings-tour-content');
   const adminTexts = useIntlayer('admin-tour-content');
@@ -121,11 +115,6 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps) {
     // Create and register all tours
     const allTours = [
       createStatementsTour(statementsTexts),
-      createUploadTour(uploadTexts),
-      createStorageTour({
-        ...getTourMeta(storageTexts),
-        steps: extractStepsValues(storageTexts?.steps ?? (storageTexts as any)?.content?.steps),
-      }),
       createCustomTablesTour({
         ...getTourMeta(customTablesTexts),
         steps: extractStepsValues(
@@ -141,10 +130,6 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps) {
         steps: extractStepsValues(
           categoriesTexts?.steps ?? (categoriesTexts as any)?.content?.steps,
         ),
-      }),
-      createDataEntryTour({
-        ...getTourMeta(dataEntryTexts),
-        steps: extractStepsValues(dataEntryTexts?.steps ?? (dataEntryTexts as any)?.content?.steps),
       }),
       createIntegrationsTour({
         ...getTourMeta(integrationsTexts),
@@ -182,12 +167,9 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps) {
     allTours.forEach(tour => tourManager.registerTour(tour));
   }, [
     statementsTexts,
-    uploadTexts,
-    storageTexts,
     customTablesTexts,
     reportsTexts,
     categoriesTexts,
-    dataEntryTexts,
     integrationsTexts,
     settingsTexts,
     adminTexts,

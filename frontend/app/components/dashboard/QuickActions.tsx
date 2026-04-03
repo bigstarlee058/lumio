@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/app/components/ui/button';
-import { FileUp, PenLine, Plus } from 'lucide-react';
+import { FileUp, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 const actions = [
@@ -16,12 +16,6 @@ const actions = [
     label: 'Create payment',
     href: '/statements/pay',
     icon: Plus,
-  },
-  {
-    key: 'expense',
-    label: 'Add manual expense',
-    href: '/data-entry',
-    icon: PenLine,
   },
 ] as const;
 
