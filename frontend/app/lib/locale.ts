@@ -53,8 +53,15 @@ export function persistLocaleToCookie(locale: AppLocale) {
   document.cookie = `${LEGACY_LOCALE_COOKIE_NAME}=${locale}; ${LOCALE_COOKIE_ATTRIBUTES}`;
 }
 
-export function syncLocaleFromUser(user: { locale?: string | null } | null | undefined) {
+export function syncLocaleFromUser(
+  user: { locale?: string | null } | null | undefined,
+  options?: { overwrite?: boolean },
+) {
   if (!isSupportedLocale(user?.locale)) {
+    return;
+  }
+
+  if (!options?.overwrite && readLocaleFromCookie() != null) {
     return;
   }
 

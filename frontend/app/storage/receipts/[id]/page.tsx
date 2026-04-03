@@ -465,7 +465,7 @@ export default function ReceiptDocumentPage() {
   return (
     <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 dark:border-slate-700/60 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-3">
             <DetailActionButton type="button" onClick={() => router.push('/statements')}>
               <ArrowLeft className="h-4 w-4" />

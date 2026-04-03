@@ -97,8 +97,10 @@ function LoginPageContent() {
         return;
       }
 
-      if (user.lastWorkspaceId) {
-        localStorage.setItem('currentWorkspaceId', user.lastWorkspaceId);
+      const activeWorkspaceId = user.lastWorkspaceId || user.workspaceId;
+
+      if (activeWorkspaceId) {
+        localStorage.setItem('currentWorkspaceId', activeWorkspaceId);
         window.location.href = nextPath || DEFAULT_APP_ROUTE;
       } else {
         window.location.href = '/workspaces';

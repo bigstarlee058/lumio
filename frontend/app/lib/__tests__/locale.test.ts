@@ -36,4 +36,15 @@ describe('locale helpers', () => {
     syncLocaleFromUser({ locale: 'de' });
     expect(readLocaleFromCookie()).toBe('en');
   });
+
+  it('does not overwrite an explicitly selected locale cookie by default', async () => {
+    const { readLocaleFromCookie, syncLocaleFromUser } = await import('../locale');
+
+    document.cookie = 'INTLAYER_LOCALE=en; path=/';
+    document.cookie = 'intlayer-locale=en; path=/';
+
+    syncLocaleFromUser({ locale: 'ru' });
+
+    expect(readLocaleFromCookie()).toBe('en');
+  });
 });

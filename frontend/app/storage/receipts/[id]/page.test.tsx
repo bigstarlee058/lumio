@@ -254,7 +254,13 @@ describe('ReceiptDocumentPage', () => {
     const parsedFieldsShell = Array.from(container.querySelectorAll('section')).find(element =>
       element.className.includes('p-6') && element.textContent?.includes('Parsed fields'),
     );
+    const headerSection = Array.from(container.querySelectorAll('div')).find(element =>
+      element.className.includes('border-b') &&
+      element.className.includes('pb-6') &&
+      element.textContent?.includes('Back to statements'),
+    );
 
+    expect(headerSection?.className).toContain('dark:border-slate-700/60');
     expect(previewShell?.className).toContain('dark:bg-slate-900');
     expect(previewCanvas?.className).toContain('dark:bg-slate-950');
     expect(parsedFieldsShell?.className).toContain('dark:bg-slate-900');

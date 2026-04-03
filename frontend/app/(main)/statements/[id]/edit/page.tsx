@@ -799,7 +799,11 @@ export default function EditStatementPage() {
 
   if (loading) {
     return (
-      <Container maxWidth="xl" sx={{ mt: 4, textAlign: 'center' }}>
+      <Container
+        maxWidth="xl"
+        data-testid="statement-edit-loading"
+        className="flex min-h-[60vh] items-center justify-center"
+      >
         <Spinner className="size-10 text-primary" />
       </Container>
     );
@@ -959,11 +963,9 @@ export default function EditStatementPage() {
                 icon={<Receipt />}
                 label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`}
                 size="small"
+                data-testid="statement-transactions-chip"
+                className="border border-gray-200 bg-gray-50 text-gray-500 dark:border-slate-700/60 dark:bg-[#111827] dark:text-slate-300"
                 sx={{
-                  bgcolor: 'grey.50',
-                  color: 'text.secondary',
-                  border: '1px solid',
-                  borderColor: 'grey.200',
                   fontWeight: 500,
                   borderRadius: 1.5,
                   '& .MuiChip-icon': { color: 'text.secondary' },
@@ -995,57 +997,60 @@ export default function EditStatementPage() {
             ) : null}
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant="outlined"
-              startIcon={statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />}
-              onClick={() => setStatementCategoryDrawerOpen(true)}
-              disabled={statementCategorySaving || optionsLoading}
-              title={selectedStatementCategoryName}
-              sx={{
-                textTransform: 'none',
-                fontWeight: 700,
-                borderRadius: 2,
-                minWidth: 0,
-                maxWidth: { xs: '100%', md: 280 },
-                overflow: 'hidden',
-                ...(hasDisabledStatementCategory ||
-                (isIdEmpty(statement?.categoryId) && isIdEmpty(statement?.category?.id))
-                  ? {
-                      borderColor: '#ef4444 !important',
-                      color: '#b91c1c !important',
-                      bgcolor: '#fef2f2 !important',
-                      borderWidth: '2px !important',
-                      '& .MuiButton-startIcon': {
-                        color: '#dc2626 !important',
-                      },
-                      '&:hover': {
-                        bgcolor: '#fee2e2 !important',
-                        borderColor: '#dc2626 !important',
-                      },
-                    }
-                  : {
-                      borderColor: '#e5e7eb',
-                      color: '#4b5563',
-                      '&:hover': {
-                        borderColor: 'primary.main',
-                        bgcolor: 'rgba(25, 118, 210, 0.04)',
-                      },
-                    }),
-              }}
-            >
-              <Box
-                component="span"
+            {hasDisabledStatementCategory ||
+            (isIdEmpty(statement?.categoryId) && isIdEmpty(statement?.category?.id)) ? (
+              <Button
+                variant="outlined"
+                startIcon={statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />}
+                onClick={() => setStatementCategoryDrawerOpen(true)}
+                disabled={statementCategorySaving || optionsLoading}
+                title={selectedStatementCategoryName}
                 sx={{
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  borderRadius: 2,
+                  minWidth: 0,
+                  maxWidth: { xs: '100%', md: 280 },
                   overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
+                  borderColor: '#ef4444 !important',
+                  color: '#b91c1c !important',
+                  bgcolor: '#fef2f2 !important',
+                  borderWidth: '2px !important',
+                  '& .MuiButton-startIcon': {
+                    color: '#dc2626 !important',
+                  },
+                  '&:hover': {
+                    bgcolor: '#fee2e2 !important',
+                    borderColor: '#dc2626 !important',
+                  },
                 }}
               >
-                {hasDisabledStatementCategory
-                  ? `${selectedStatementCategoryName}${t.labels.disabledSuffix.value}`
-                  : selectedStatementCategoryName}
-              </Box>
-            </Button>
+                <Box
+                  component="span"
+                  sx={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {hasDisabledStatementCategory
+                    ? `${selectedStatementCategoryName}${t.labels.disabledSuffix.value}`
+                    : selectedStatementCategoryName}
+                </Box>
+              </Button>
+            ) : (
+              <DetailActionButton
+                onClick={() => setStatementCategoryDrawerOpen(true)}
+                disabled={statementCategorySaving || optionsLoading}
+                title={selectedStatementCategoryName}
+                className="min-w-0 max-w-full md:max-w-[280px] justify-start px-4 py-2 font-bold"
+              >
+                {statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />}
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {selectedStatementCategoryName}
+                </span>
+              </DetailActionButton>
+            )}
             <DetailActionButton
               onClick={() => setExportConfirmOpen(true)}
               disabled={exportingToTable || !transactions.length}

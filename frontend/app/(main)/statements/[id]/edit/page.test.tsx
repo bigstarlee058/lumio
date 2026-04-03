@@ -264,6 +264,31 @@ describe('EditStatementPage locale', () => {
     expect(container.textContent).not.toContain('НАЗНАЧЕНИЕ ПЛАТЕЖА');
   });
 
+  it('centers the loading spinner while statement details are loading', async () => {
+    const { default: EditStatementPage } = await import('./page');
+
+    apiGet.mockImplementation(
+      () => new Promise(() => {
+        // Keep the page in loading state for this test.
+      }),
+    );
+
+    await act(async () => {
+      root.render(<EditStatementPage />);
+      await Promise.resolve();
+    });
+
+    const loadingContainer = container.querySelector('[data-testid="statement-edit-loading"]');
+    const spinner = container.querySelector('[role="status"]');
+
+    expect(spinner).toBeTruthy();
+    expect(loadingContainer).toBeTruthy();
+    expect(loadingContainer?.className).toContain('flex');
+    expect(loadingContainer?.className).toContain('items-center');
+    expect(loadingContainer?.className).toContain('justify-center');
+    expect(loadingContainer?.className).toContain('min-h-[60vh]');
+  });
+
   it('uses dark surfaces for parsing details and transactions headers', async () => {
     const { default: EditStatementPage } = await import('./page');
 
@@ -293,13 +318,17 @@ describe('EditStatementPage locale', () => {
       await flushPromises();
     });
 
-    const transactionsChip = container.querySelector('.MuiChip-root');
+    const transactionsChip = container.querySelector('[data-testid="statement-transactions-chip"]');
     const categoryButton = Array.from(container.querySelectorAll('button')).find(button =>
       button.textContent?.includes('Services'),
     ) as HTMLButtonElement | undefined;
 
+    expect(transactionsChip?.className).toContain('dark:border-slate-700/60');
     expect(transactionsChip?.className).toContain('dark:bg-[#111827]');
+    expect(transactionsChip?.className).toContain('dark:text-slate-300');
+    expect(categoryButton?.className).toContain('detail-action-button');
     expect(categoryButton?.className).toContain('dark:border-slate-700/60');
+    expect(categoryButton?.className).toContain('dark:bg-slate-900');
     expect(categoryButton?.className).toContain('dark:text-slate-200');
     expect(categoryButton?.className).toContain('dark:hover:bg-slate-800');
   });

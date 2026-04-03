@@ -525,7 +525,7 @@ export default function OnboardingPage() {
         const updatedPreferencesUser = preferencesResponse.data?.user;
         if (updatedPreferencesUser) {
           localStorage.setItem('user', JSON.stringify(updatedPreferencesUser));
-          syncLocaleFromUser(updatedPreferencesUser);
+          syncLocaleFromUser(updatedPreferencesUser, { overwrite: true });
           setUser(updatedPreferencesUser);
         }
 
@@ -562,7 +562,7 @@ export default function OnboardingPage() {
       const updatedUser = response.data?.user;
       if (updatedUser) {
         localStorage.setItem('user', JSON.stringify(updatedUser));
-        syncLocaleFromUser(updatedUser);
+        syncLocaleFromUser(updatedUser, { overwrite: true });
         setUser(updatedUser);
       }
 

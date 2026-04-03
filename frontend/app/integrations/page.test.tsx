@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const push = vi.hoisted(() => vi.fn());
 const apiGet = vi.hoisted(() => vi.fn());
+const token = vi.hoisted(() => (value: string) => ({ value }));
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push }),
@@ -46,6 +47,10 @@ const integrationsTexts = vi.hoisted(() => ({
     spreadsheets: 'Spreadsheets',
     messaging: 'Messaging',
   },
+  searchPlaceholder: token('Search integrations...'),
+  noResults: token('Nothing found'),
+  noResultsDescription: token('No matching integrations found for "{{query}}".'),
+  resetSearch: token('Reset search'),
   cards: {
     dropbox: {
       description: 'Dropbox integration',
@@ -70,7 +75,7 @@ const integrationsTexts = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('next-intlayer', () => ({
+vi.mock('@/app/i18n', () => ({
   useIntlayer: () => integrationsTexts,
 }));
 
@@ -134,5 +139,27 @@ describe('IntegrationsPage', () => {
 
     expect(connectButton).toBeTruthy();
     expect(connectButton?.disabled).toBe(true);
+  });
+
+  it('uses a readable subtitle color in dark mode', async () => {
+    apiGet.mockResolvedValue({ data: { connected: false } });
+
+    const { default: IntegrationsPage } = await import('./page');
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<IntegrationsPage />);
+    });
+
+    await act(async () => {
+      await flushPromises();
+    });
+
+    const subtitle = Array.from(container.querySelectorAll('p')).find(element =>
+      element.textContent?.includes('Connect external services'),
+    );
+
+    expect(subtitle?.className).toContain('dark:text-slate-400');
   });
 });
