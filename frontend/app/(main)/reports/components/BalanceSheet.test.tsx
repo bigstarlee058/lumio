@@ -76,7 +76,7 @@ describe('BalanceSheet', () => {
       return element;
     }) as typeof document.createElement);
 
-    const { BalanceSheet } = await import('./BalanceSheet');
+    const { default: BalanceSheet } = await import('./BalanceSheet');
     render(<BalanceSheet />);
 
     await waitFor(() => {

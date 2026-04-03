@@ -25,7 +25,7 @@ const cardIcons = {
   paidThisMonth: CheckCircle2,
 } as const;
 
-export function PayableSummaryCards({
+function PayableSummaryCards({
   summary,
   locale = 'en',
   currency = 'KZT',

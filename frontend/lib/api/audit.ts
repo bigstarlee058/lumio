@@ -97,7 +97,7 @@ export interface AuditEventFilter {
   limit?: number;
 }
 
-export interface AuditEventResponse {
+interface AuditEventResponse {
   data: AuditEvent[];
   total: number;
   page: number;
@@ -132,11 +132,6 @@ export const fetchEntityHistory = async (
     }
     throw error;
   }
-};
-
-export const fetchBatchEvents = async (batchId: string): Promise<AuditEvent[]> => {
-  const response = await apiClient.get<AuditEvent[]>(`/audit-events/batch/${batchId}`);
-  return response.data;
 };
 
 export const rollbackEvent = async (eventId: string): Promise<RollbackResponse> => {

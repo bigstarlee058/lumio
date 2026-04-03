@@ -468,14 +468,14 @@ export interface ScoringWeights {
 }
 
 // Constants for scoring
-export const QUALITY_THRESHOLDS: QualityThresholds = {
+const QUALITY_THRESHOLDS: QualityThresholds = {
   excellent: 95,
   good: 85,
   fair: 70,
   poor: 0,
 };
 
-export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
+const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
   completeness: 0.3,
   accuracy: 0.3,
   consistency: 0.2,
@@ -489,7 +489,7 @@ export type QualityCategory = 'completeness' | 'accuracy' | 'consistency' | 'val
 export type ProcessingPhase = 'parsing' | 'extraction' | 'normalization' | 'validation' | 'export';
 
 // Utility functions for DTO validation
-export function isValidParsedStatement(obj: any): obj is EnhancedParsedStatement {
+function isValidParsedStatement(obj: any): obj is EnhancedParsedStatement {
   return (
     obj &&
     typeof obj === 'object' &&
@@ -499,11 +499,11 @@ export function isValidParsedStatement(obj: any): obj is EnhancedParsedStatement
   );
 }
 
-export function isValidProcessingRequest(obj: any): obj is ParsingRequest {
+function isValidProcessingRequest(obj: any): obj is ParsingRequest {
   return obj && typeof obj === 'object' && (obj.file || obj.content);
 }
 
-export function calculateOverallQuality(
+function calculateOverallQuality(
   completeness: number,
   accuracy: number,
   consistency: number,
@@ -518,7 +518,7 @@ export function calculateOverallQuality(
   );
 }
 
-export function getQualityCategory(
+function getQualityCategory(
   score: number,
   thresholds: QualityThresholds = QUALITY_THRESHOLDS,
 ): 'excellent' | 'good' | 'fair' | 'poor' {
@@ -528,7 +528,7 @@ export function getQualityCategory(
   return 'poor';
 }
 
-export function formatAmountForDisplay(
+function formatAmountForDisplay(
   amount: number,
   currency?: string,
   locale = 'en-US',
@@ -541,7 +541,7 @@ export function formatAmountForDisplay(
   }).format(amount);
 }
 
-export function formatDateForDisplay(
+function formatDateForDisplay(
   date: Date,
   locale = 'en-US',
   options?: Intl.DateTimeFormatOptions,

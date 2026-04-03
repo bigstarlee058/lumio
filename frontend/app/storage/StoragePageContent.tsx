@@ -632,7 +632,7 @@ const getStatusTone = (status: string) => {
 /**
  * Storage page - displays all files with sharing and permissions
  */
-export function StoragePageContent({
+function StoragePageContent({
   initialList = 'active',
 }: {
   initialList?: 'active' | 'trash';

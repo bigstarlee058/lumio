@@ -63,7 +63,7 @@ const fillTemplate = (template: string, values: Record<string, string | number>)
     template,
   );
 
-export function PayablesList({
+function PayablesList({
   items,
   locale = 'en',
   emptyTitle,

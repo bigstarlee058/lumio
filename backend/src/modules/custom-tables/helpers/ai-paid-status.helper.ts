@@ -15,7 +15,7 @@ export type PaidStatusInput = {
   comment?: string | null;
 };
 
-export type PaidStatusResult = {
+type PaidStatusResult = {
   id: string;
   paid: boolean | null;
 };
@@ -47,7 +47,7 @@ const UNPAID_PATTERNS = [
   /сч[её]т\s*на\s*оплат/i,
 ];
 
-export const heuristicPaidStatus = (input: PaidStatusInput): boolean | null => {
+const heuristicPaidStatus = (input: PaidStatusInput): boolean | null => {
   const combined = `${input.counterparty || ''} ${input.comment || ''}`.trim();
   if (!combined) return null;
   const normalized = combined.toLowerCase();

@@ -3,7 +3,7 @@
  * Supports multi-language statement parsing with unified field mapping
  */
 
-export interface FieldSynonyms {
+interface FieldSynonyms {
   date: string[];
   amount: string[];
   debit: string[];
@@ -36,7 +36,7 @@ export interface LanguagePatterns {
 /**
  * Comprehensive synonym tables for 10+ languages
  */
-export const LANGUAGE_PATTERNS: Record<string, LanguagePatterns> = {
+const LANGUAGE_PATTERNS: Record<string, LanguagePatterns> = {
   // Russian
   ru: {
     fieldSynonyms: {
@@ -363,7 +363,7 @@ export const LANGUAGE_PATTERNS: Record<string, LanguagePatterns> = {
 /**
  * Field type mapping for universal processing
  */
-export const FIELD_TYPE_MAPPING = {
+const FIELD_TYPE_MAPPING = {
   DATE: 'date',
   AMOUNT: 'amount',
   DEBIT: 'debit',
@@ -380,7 +380,7 @@ export const FIELD_TYPE_MAPPING = {
   TYPE: 'type',
 } as const;
 
-export type FieldType = keyof typeof FIELD_TYPE_MAPPING;
+type FieldType = keyof typeof FIELD_TYPE_MAPPING;
 
 /**
  * Get field synonyms for a specific language
@@ -429,7 +429,7 @@ export function getLanguagePatterns(language: string): LanguagePatterns {
 /**
  * Check if a value is considered empty in a specific language
  */
-export function isEmptyValue(value: string, language: string): boolean {
+function isEmptyValue(value: string, language: string): boolean {
   const normalizedValue = value.toLowerCase().trim();
   const patterns = getLanguagePatterns(language);
 
@@ -443,7 +443,7 @@ export function isEmptyValue(value: string, language: string): boolean {
 /**
  * Remove stop words from text based on language
  */
-export function removeStopWords(text: string, language: string): string {
+function removeStopWords(text: string, language: string): string {
   const patterns = getLanguagePatterns(language);
   const stopWords = patterns.stopWords;
 

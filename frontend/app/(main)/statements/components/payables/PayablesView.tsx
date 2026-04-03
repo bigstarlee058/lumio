@@ -5,18 +5,19 @@ import { Button } from '@/app/components/ui/button';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import payablesApi, {
+import {
   type CreatePayableInput,
   type Payable,
   type PayablesExportFormat,
   type PayablesSummary,
   type UpdatePayableInput,
+  payablesApi,
 } from '@/app/lib/payables-api';
 import { Download, Plus, RefreshCcw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import CreatePayableDrawer from './CreatePayableDrawer';
+import { CreatePayableDrawer } from './CreatePayableDrawer';
 import PayableFiltersBar from './PayableFiltersBar';
 import PayableSummaryCards from './PayableSummaryCards';
 import PayablesList from './PayablesList';
@@ -560,5 +561,3 @@ export function PayablesView() {
     </>
   );
 }
-
-export default PayablesView;

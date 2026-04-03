@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-export interface FingerprintInput {
+interface FingerprintInput {
   workspaceId: string;
   accountNumber: string;
   date: Date | string;

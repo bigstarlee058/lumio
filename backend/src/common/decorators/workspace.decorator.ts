@@ -1,7 +1,7 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
 import type { Request } from 'express';
 
-export const CurrentWorkspace = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+const CurrentWorkspace = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest<Request & { workspace?: any }>();
   return request.workspace;
 });

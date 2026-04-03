@@ -3,7 +3,7 @@
  * Supports comprehensive Unicode character sets for international parsing
  */
 
-export interface UnicodePatterns {
+interface UnicodePatterns {
   // Text patterns
   letters: RegExp;
   numbers: RegExp;
@@ -41,7 +41,7 @@ export interface UnicodePatterns {
 /**
  * Unicode character ranges for different scripts
  */
-export const UNICODE_RANGES = {
+const UNICODE_RANGES = {
   // Latin scripts
   latinBasic: '\\u0000-\\u007F', // Basic Latin
   latin1: '\\u0080-\\u00FF', // Latin-1 Supplement
@@ -88,7 +88,7 @@ export const UNICODE_RANGES = {
 /**
  * Unicode-aware regex patterns for comprehensive international text processing
  */
-export const UNICODE_PATTERNS: UnicodePatterns = {
+const UNICODE_PATTERNS: UnicodePatterns = {
   // Basic text patterns (Unicode-aware)
   letters: new RegExp(
     `[${UNICODE_RANGES.latinBasic}${UNICODE_RANGES.latin1}${UNICODE_RANGES.latinExtendedA}${UNICODE_RANGES.latinExtendedB}${UNICODE_RANGES.cyrillic}${UNICODE_RANGES.arabic}${UNICODE_RANGES.hebrew}${UNICODE_RANGES.thai}${UNICODE_RANGES.devanagari}${UNICODE_RANGES.chinese}${UNICODE_RANGES.hiragana}${UNICODE_RANGES.katakana}${UNICODE_RANGES.hangul}]+`,

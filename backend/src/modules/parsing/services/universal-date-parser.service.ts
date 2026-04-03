@@ -6,7 +6,7 @@ export interface DateParseResult {
   confidence: number;
 }
 
-export interface MonthNames {
+interface MonthNames {
   [key: string]: { [key: string]: number };
 }
 

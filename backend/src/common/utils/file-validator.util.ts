@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-export enum AllowedFileType {
+enum AllowedFileType {
   PDF = 'application/pdf',
   XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   XLS = 'application/vnd.ms-excel',
@@ -13,7 +13,7 @@ export enum AllowedFileType {
   WEBP = 'image/webp',
 }
 
-export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function validateFile(file: Express.Multer.File): void {
   if (!file) {

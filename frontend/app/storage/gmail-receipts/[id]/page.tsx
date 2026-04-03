@@ -1,7 +1,7 @@
 'use client';
 
 import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/StatementCategoryDrawer';
-import CreatePayableDrawer from '@/app/(main)/statements/components/payables/CreatePayableDrawer';
+import { CreatePayableDrawer } from '@/app/(main)/statements/components/payables/CreatePayableDrawer';
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
 import { Checkbox } from '@/app/components/ui/checkbox';

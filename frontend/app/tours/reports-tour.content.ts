@@ -1,6 +1,6 @@
 import { type DeclarationContent, t } from 'intlayer';
 
-export const reportsTourContent = {
+const reportsTourContent = {
   key: 'reports-tour-content',
   content: {
     name: t({

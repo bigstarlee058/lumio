@@ -46,7 +46,7 @@ vi.mock('../components/ReceiptPreviewModal', () => ({
 
 vi.mock('@/app/(main)/statements/components/payables/CreatePayableDrawer', () => ({
   __esModule: true,
-  default: ({
+  CreatePayableDrawer: ({
     open,
     payable,
     initialValues,

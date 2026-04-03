@@ -327,5 +327,3 @@ export function SidePanel({
     </aside>
   );
 }
-
-export default SidePanel;

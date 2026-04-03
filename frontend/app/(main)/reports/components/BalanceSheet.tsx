@@ -92,7 +92,7 @@ const parseContentDispositionFileName = (contentDisposition?: string): string | 
   return null;
 };
 
-export function BalanceSheet() {
+function BalanceSheet() {
   const t = useIntlayer('reportsPage');
   const { locale } = useLocale();
   const labels = t.labels as Record<string, { value?: string } | undefined>;

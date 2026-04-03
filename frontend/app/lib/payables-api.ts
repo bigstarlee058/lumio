@@ -164,5 +164,3 @@ export const payablesApi = {
     };
   },
 };
-
-export default payablesApi;

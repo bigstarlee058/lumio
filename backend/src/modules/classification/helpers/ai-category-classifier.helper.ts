@@ -33,7 +33,7 @@ export type AiCategoryBatchResult = {
 };
 
 export const AI_CATEGORY_BATCH_SIZE = 20;
-export const AI_CATEGORY_CONFIDENCE_THRESHOLD = 0.9;
+const AI_CATEGORY_CONFIDENCE_THRESHOLD = 0.9;
 
 export class AiCategoryClassifier {
   private geminiModel: GenerativeModel | null = null;

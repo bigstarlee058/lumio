@@ -344,7 +344,7 @@ class NgramLanguageDetector {
   }
 }
 
-export class AdvancedLanguageDetector {
+class AdvancedLanguageDetector {
   private cache = new LanguageDetectionCache();
   private ngramDetector = new NgramLanguageDetector();
   private francFn: FrancFn | null = null;

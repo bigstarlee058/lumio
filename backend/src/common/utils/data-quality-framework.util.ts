@@ -8,7 +8,7 @@ import { Injectable, Logger } from '@nestjs/common';
 /**
  * Minimal feature flag interface (replace with actual implementation if available).
  */
-export interface FeatureFlagService {
+interface FeatureFlagService {
   isEnabled(flag: string): boolean;
 }
 

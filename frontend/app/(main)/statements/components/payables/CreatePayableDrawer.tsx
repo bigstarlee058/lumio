@@ -270,5 +270,3 @@ export function CreatePayableDrawer({
     </DrawerShell>
   );
 }
-
-export default CreatePayableDrawer;

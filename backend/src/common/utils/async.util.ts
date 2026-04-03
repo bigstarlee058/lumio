@@ -32,7 +32,7 @@ export async function withTimeout<T>(
   }
 }
 
-export type RetryOptions = {
+type RetryOptions = {
   retries: number;
   baseDelayMs?: number;
   maxDelayMs?: number;

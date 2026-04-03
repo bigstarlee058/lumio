@@ -29,7 +29,7 @@ interface PayableFiltersBarProps {
 const selectClassName =
   'h-10 rounded-lg border border-border bg-white px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30';
 
-export function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps) {
+function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps) {
   const update = <K extends keyof PayablesFiltersState>(
     key: K,
     nextValue: PayablesFiltersState[K],

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThan, Repository } from 'typeorm';
 import { IdempotencyKey } from '../../entities/idempotency-key.entity';
 
-export interface IdempotencyResponse {
+interface IdempotencyResponse {
   data: any;
   cached: boolean;
 }

@@ -1,0 +1,283 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreFiles": [
+    "backend/src/migrations/*.ts",
+    "backend/src/modules/**/__tests__/**/*.{spec,test}.ts",
+    "frontend/intlayer.config.ts"
+  ],
+  "ignoreIssues": {
+    "backend/src/modules/custom-tables/dto/google-sheets-import-commit.dto.ts": [
+      "exports"
+    ],
+    "backend/src/modules/google-sheets/dto/sheets-update.dto.ts": [
+      "exports"
+    ],
+    "backend/src/modules/import/errors/import-errors.ts": [
+      "exports"
+    ],
+    "backend/src/modules/statements/dto/convert-dropped-sample.dto.ts": [
+      "exports"
+    ],
+    "backend/src/entities/receipt.entity.ts": [
+      "enumMembers"
+    ],
+    "backend/src/entities/shared-link.entity.ts": [
+      "enumMembers"
+    ],
+    "backend/src/common/utils/bank-profiles.util.ts": [
+      "types"
+    ],
+    "backend/src/common/utils/data-quality-framework.util.ts": [
+      "types"
+    ],
+    "backend/src/common/utils/feature-flags.util.ts": [
+      "types"
+    ],
+    "backend/src/common/utils/language-patterns.util.ts": [
+      "types"
+    ],
+    "backend/src/common/services/file-storage.service.ts": [
+      "types"
+    ],
+    "backend/src/common/utils/pdf-parser.util.ts": [
+      "types"
+    ],
+    "backend/src/modules/audit/decorators/audit.decorator.ts": [
+      "types"
+    ],
+    "backend/src/modules/audit/interfaces/audit-event.interface.ts": [
+      "types"
+    ],
+    "backend/src/modules/auth/auth.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/auth/strategies/jwt.strategy.ts": [
+      "types"
+    ],
+    "backend/src/modules/balance/balance-default-accounts.ts": [
+      "types"
+    ],
+    "backend/src/modules/classification/helpers/ai-category-classifier.helper.ts": [
+      "types"
+    ],
+    "backend/src/modules/custom-tables/custom-tables-import.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/insights/analyzers/analyzer.interface.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/helpers/pdf-table.helper.ts": [
+      "types"
+    ],
+    "backend/src/emails/workspace-invitation.email.tsx": [
+      "types"
+    ],
+    "backend/src/modules/parsing/interfaces/enhanced-parsed-statement.interface.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/checksum-auto-fix.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/checksum-validation.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/column-auto-fix.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/column-validation.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/document-classifier.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/feature-flag.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/intelligent-deduplication.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/metadata-extraction.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/ocr.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/profile-config.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/quality-logging.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/quality-metrics.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/text-cleaning.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/transaction-normalizer.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/transaction-type-detector.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/universal-amount-parser.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/parsing/services/universal-extractor.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/gmail/helpers/ai-merchant-extractor.helper.ts": [
+      "types"
+    ],
+    "backend/src/modules/gmail/services/gmail-merchant-reparse.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/gmail/services/gmail-sync.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/google-sheets/services/google-sheets-updates.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/import/services/import-session.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/notifications/events/notification-events.ts": [
+      "types"
+    ],
+    "backend/src/modules/notifications/notifications.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/reports/reports.service.ts": [
+      "types"
+    ],
+    "backend/src/modules/transactions/services/cross-statement-deduplication.service.ts": [
+      "types"
+    ]
+  },
+  "workspaces": {
+    ".": {
+      "entry": [
+        "package.json"
+      ],
+      "project": [
+        "*.{js,ts,json}"
+      ]
+    },
+    "backend": {
+      "entry": [
+        "src/main.ts",
+        "src/data-source.ts",
+        "scripts/**/*.{ts,js}",
+        "@tests/**/*.ts",
+        "jest*.{js,ts}",
+        "babel.config.js"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}",
+        "scripts/**/*.{ts,js}",
+        "@tests/**/*.{ts,tsx}",
+        "*.{js,ts}"
+      ],
+      "ignoreDependencies": [
+        "swagger-ui-express"
+      ]
+    },
+    "frontend": {
+      "entry": [
+        "app/**/*.{ts,tsx}",
+        "app/**/*.css",
+        ".storybook/**/*.{js,ts,tsx}",
+        "next.config.*",
+        "middleware.ts",
+        "types/**/*.d.ts"
+      ],
+      "project": [
+        "app/**/*.{ts,tsx}",
+        "components/**/*.{ts,tsx}",
+        "hooks/**/*.{ts,tsx}",
+        "lib/**/*.{ts,tsx}",
+        "shared/**/*.{ts,tsx}",
+        "contexts/**/*.{ts,tsx}",
+        "providers/**/*.{ts,tsx}",
+        "services/**/*.{ts,tsx}",
+        "types/**/*.{ts,tsx,d.ts}",
+        "app/**/*.css",
+        ".storybook/**/*.{js,ts,tsx}",
+        "*.{js,ts,mjs}"
+      ],
+      "storybook": {
+        "config": [
+          ".storybook/main.ts"
+        ]
+      },
+      "webpack": {
+        "config": [
+          ".storybook/main.ts"
+        ]
+      },
+      "babel": {
+        "config": [
+          ".storybook/main.ts"
+        ]
+      },
+      "postcss": {
+        "config": [
+          "postcss.config.mjs"
+        ]
+      },
+      "tailwind": {
+        "entry": [
+          "app/**/*.css"
+        ]
+      },
+      "ignoreDependencies": [
+        "@babel/plugin-transform-runtime",
+        "@babel/preset-react",
+        "@babel/preset-typescript",
+        "babel-loader",
+        "ts-loader"
+      ]
+    },
+    "website": {
+      "entry": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "docusaurus.config.*",
+        "sidebars.*"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "*.{js,ts,mjs,cjs}"
+      ],
+      "docusaurus": {
+        "config": [
+          "docusaurus.config.*",
+          "sidebars.*"
+        ]
+      }
+    },
+    "react-email-starter": {
+      "entry": [
+        "emails/**/*.{ts,tsx}",
+        "components/**/*.{ts,tsx}",
+        "package.json"
+      ],
+      "project": [
+        "**/*.{ts,tsx,js,jsx}"
+      ],
+      "ignoreBinaries": [
+        "email"
+      ],
+      "ignoreDependencies": [
+        "react",
+        "react-dom",
+        "react-email",
+        "@react-email/preview-server",
+        "@types/react",
+        "@types/react-dom"
+      ]
+    }
+  },
+  "tags": [
+    "-lintignore"
+  ]
+}

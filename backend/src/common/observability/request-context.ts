@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-export type RequestContextStore = {
+type RequestContextStore = {
   requestId: string;
   traceId: string;
 };

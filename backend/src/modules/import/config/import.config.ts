@@ -7,7 +7,7 @@ import { IsBoolean, IsInt, IsNumber, Max, Min, validateSync } from 'class-valida
  * Import configuration class with validation
  * Provides centralized settings management for the import session system
  */
-export class ImportConfig {
+class ImportConfig {
   /**
    * Number of days tolerance for date matching during deduplication
    * Default: 3 days

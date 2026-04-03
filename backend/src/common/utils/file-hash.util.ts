@@ -12,6 +12,6 @@ export function calculateFileHash(filePath: string): Promise<string> {
   });
 }
 
-export function calculateFileHashFromBuffer(buffer: Buffer): string {
+function calculateFileHashFromBuffer(buffer: Buffer): string {
   return createHash('sha256').update(buffer).digest('hex');
 }

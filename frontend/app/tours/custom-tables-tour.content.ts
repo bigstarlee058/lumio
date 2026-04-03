@@ -1,6 +1,6 @@
 import { type DeclarationContent, t } from 'intlayer';
 
-export const customTablesTourContent = {
+const customTablesTourContent = {
   key: 'custom-tables-tour-content',
   content: {
     name: t({
