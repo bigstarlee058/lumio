@@ -1,11 +1,11 @@
-import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { google } from 'googleapis';
 import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
+import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import { validateFile } from '../../common/utils/file-validator.util';
@@ -42,24 +42,31 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 @Injectable()
-export class GoogleDriveService {
-  private readonly logger = new Logger(GoogleDriveService.name);
+export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
+  protected readonly logger = new Logger(GoogleDriveService.name);
 
   constructor(
     @InjectRepository(Integration)
-    private readonly integrationRepository: Repository<Integration>,
+    integrationRepository: Repository<Integration>,
     @InjectRepository(IntegrationToken)
-    private readonly integrationTokenRepository: Repository<IntegrationToken>,
+    integrationTokenRepository: Repository<IntegrationToken>,
     @InjectRepository(DriveSettings)
     private readonly driveSettingsRepository: Repository<DriveSettings>,
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    userRepository: Repository<User>,
     private readonly statementsService: StatementsService,
     private readonly fileStorageService: FileStorageService,
     private readonly auditService: AuditService,
-  ) {}
+  ) {
+    super(
+      integrationRepository,
+      integrationTokenRepository,
+      driveSettingsRepository,
+      userRepository,
+    );
+  }
 
   private getClientId() {
     return process.env.GOOGLE_DRIVE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || '';
@@ -73,12 +80,63 @@ export class GoogleDriveService {
     return process.env.GOOGLE_DRIVE_REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || '';
   }
 
-  private getFrontendBaseUrl() {
+  protected getFrontendBaseUrl() {
     return process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
   }
 
-  private getStateSecret() {
+  protected getStateSecret() {
     return process.env.GOOGLE_DRIVE_STATE_SECRET || process.env.JWT_SECRET || 'lumio-state';
+  }
+
+  protected getProvider(): IntegrationProvider {
+    return IntegrationProvider.GOOGLE_DRIVE;
+  }
+
+  protected getProviderName(): string {
+    return 'Google Drive';
+  }
+
+  protected getProviderRouteSegment(): string {
+    return 'google-drive';
+  }
+
+  protected getSettingsRelationName(): keyof Integration {
+    return 'driveSettings';
+  }
+
+  protected createSettingsRecord(integrationId: string): DriveSettings {
+    return this.driveSettingsRepository.create({
+      integrationId,
+      folderId: null,
+      folderName: null,
+      syncEnabled: true,
+      syncTime: DEFAULT_SYNC_TIME,
+      timeZone: null,
+      lastSyncAt: null,
+    });
+  }
+
+  protected async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; expiresAt?: Date }> {
+    const client = this.getOAuthClient();
+    client.setCredentials({ refresh_token: refreshToken });
+    const { token } = await client.getAccessToken();
+    const accessToken = token || client.credentials.access_token;
+    if (!accessToken) {
+      throw new Error('Missing access token');
+    }
+
+    return {
+      accessToken,
+      expiresAt: client.credentials.expiry_date
+        ? new Date(client.credentials.expiry_date)
+        : undefined,
+    };
+  }
+
+  protected getAuthorizationExpiredMessage(): string {
+    return 'Google Drive authorization expired';
   }
 
   private getOAuthClient() {
@@ -89,78 +147,6 @@ export class GoogleDriveService {
       throw new BadRequestException('Google Drive OAuth is not configured');
     }
     return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
-  }
-
-  private base64UrlEncode(value: string): string {
-    return Buffer.from(value)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
-  }
-
-  private base64UrlDecode(value: string): string {
-    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-    return Buffer.from(padded, 'base64').toString('utf8');
-  }
-
-  private signState(payload: string): string {
-    const hmac = crypto.createHmac('sha256', this.getStateSecret());
-    hmac.update(payload);
-    return hmac.digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-  }
-
-  private buildState(payload: Record<string, unknown>): string {
-    const encoded = this.base64UrlEncode(JSON.stringify(payload));
-    const signature = this.signState(encoded);
-    return `${encoded}.${signature}`;
-  }
-
-  private parseState(state: string): Record<string, unknown> {
-    const [encoded, signature] = (state || '').split('.');
-    if (!encoded || !signature) {
-      throw new BadRequestException('Invalid OAuth state');
-    }
-    const expected = this.signState(encoded);
-    if (expected !== signature) {
-      throw new BadRequestException('Invalid OAuth state signature');
-    }
-    const json = this.base64UrlDecode(encoded);
-    return JSON.parse(json);
-  }
-
-  private async getWorkspaceId(userId: string): Promise<string | null> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-    return user?.workspaceId ?? null;
-  }
-
-  private async findIntegrationForUser(userId: string) {
-    const workspaceId = await this.getWorkspaceId(userId);
-    const where = workspaceId
-      ? { workspaceId, provider: IntegrationProvider.GOOGLE_DRIVE }
-      : {
-          connectedByUserId: userId,
-          provider: IntegrationProvider.GOOGLE_DRIVE,
-        };
-
-    const integration = await this.integrationRepository.findOne({
-      where,
-      relations: ['token', 'driveSettings'],
-    });
-
-    return { integration, workspaceId };
-  }
-
-  private async ensureIntegration(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      throw new NotFoundException('Google Drive integration not found');
-    }
-    return integration;
   }
 
   getAuthUrl(user: User): string {
@@ -223,16 +209,7 @@ export class GoogleDriveService {
     }
 
     const workspaceId = user.workspaceId || null;
-    const existing =
-      (await this.integrationRepository.findOne({
-        where: workspaceId
-          ? { workspaceId, provider: IntegrationProvider.GOOGLE_DRIVE }
-          : {
-              connectedByUserId: user.id,
-              provider: IntegrationProvider.GOOGLE_DRIVE,
-            },
-        relations: ['token', 'driveSettings'],
-      })) || null;
+    const { integration: existing } = await this.findIntegrationForUser(user.id);
 
     const integration =
       existing ||
@@ -272,18 +249,9 @@ export class GoogleDriveService {
       await this.integrationTokenRepository.save(tokenRecord);
     }
 
-    let settings =
-      existing?.driveSettings ||
-      this.driveSettingsRepository.create({
-        integrationId: savedIntegration.id,
-      });
-
-    if (!settings.syncTime) {
-      settings.syncTime = DEFAULT_SYNC_TIME;
-    }
-    if (!settings.timeZone) {
-      settings.timeZone = user.timeZone || 'UTC';
-    }
+    let settings = existing?.driveSettings || this.createSettingsRecord(savedIntegration.id);
+    settings.syncTime = settings.syncTime || DEFAULT_SYNC_TIME;
+    settings.timeZone = settings.timeZone || user.timeZone || 'UTC';
     settings.syncEnabled = settings.syncEnabled ?? true;
 
     settings = await this.driveSettingsRepository.save(settings);
@@ -297,112 +265,8 @@ export class GoogleDriveService {
     return `${redirectBase}?status=connected`;
   }
 
-  async getStatus(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      return { connected: false, status: IntegrationStatus.DISCONNECTED };
-    }
-
-    let status = integration.status;
-    if (
-      status === IntegrationStatus.CONNECTED &&
-      (!integration.token?.refreshToken || !integration.token?.accessToken)
-    ) {
-      status = IntegrationStatus.NEEDS_REAUTH;
-    }
-
-    return {
-      connected: status === IntegrationStatus.CONNECTED,
-      status,
-      settings: integration.driveSettings
-        ? {
-            folderId: integration.driveSettings.folderId,
-            folderName: integration.driveSettings.folderName,
-            syncEnabled: integration.driveSettings.syncEnabled,
-            syncTime: integration.driveSettings.syncTime,
-            timeZone: integration.driveSettings.timeZone,
-            lastSyncAt: integration.driveSettings.lastSyncAt,
-          }
-        : null,
-      scopes: integration.scopes || [],
-    };
-  }
-
-  async disconnect(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    if (integration.token) {
-      await this.integrationTokenRepository.delete({
-        integrationId: integration.id,
-      });
-    }
-    integration.status = IntegrationStatus.DISCONNECTED;
-    await this.integrationRepository.save(integration);
-    return { ok: true };
-  }
-
   async updateSettings(userId: string, dto: UpdateDriveSettingsDto) {
-    const integration = await this.ensureIntegration(userId);
-    let settings =
-      integration.driveSettings ||
-      this.driveSettingsRepository.create({ integrationId: integration.id });
-
-    if (dto.folderId !== undefined) {
-      settings.folderId = dto.folderId || null;
-    }
-    if (dto.folderName !== undefined) {
-      settings.folderName = dto.folderName || null;
-    }
-    if (dto.syncEnabled !== undefined) {
-      settings.syncEnabled = dto.syncEnabled;
-    }
-    if (dto.syncTime !== undefined) {
-      settings.syncTime = dto.syncTime;
-    }
-    if (dto.timeZone !== undefined) {
-      settings.timeZone = dto.timeZone || null;
-    }
-
-    settings = await this.driveSettingsRepository.save(settings);
-    return {
-      ok: true,
-      settings,
-    };
-  }
-
-  private async ensureValidAccessToken(integration: Integration): Promise<string> {
-    if (!integration.token) {
-      throw new BadRequestException('Integration token missing');
-    }
-    const refreshToken = decryptText(integration.token.refreshToken);
-    let accessToken = decryptText(integration.token.accessToken);
-    const expiresAt = integration.token.expiresAt?.getTime() || 0;
-
-    const shouldRefresh = !accessToken || (expiresAt && expiresAt <= Date.now() + 60 * 1000);
-    if (!shouldRefresh) {
-      return accessToken;
-    }
-
-    try {
-      const client = this.getOAuthClient();
-      client.setCredentials({ refresh_token: refreshToken });
-      const { token } = await client.getAccessToken();
-      const newAccessToken = token || client.credentials.access_token;
-      if (!newAccessToken) {
-        throw new Error('Missing access token');
-      }
-      accessToken = newAccessToken;
-
-      integration.token.accessToken = encryptText(accessToken);
-      if (client.credentials.expiry_date) {
-        integration.token.expiresAt = new Date(client.credentials.expiry_date);
-      }
-      await this.integrationTokenRepository.save(integration.token);
-      return accessToken;
-    } catch (error) {
-      integration.status = IntegrationStatus.NEEDS_REAUTH;
-      await this.integrationRepository.save(integration);
-      throw new BadRequestException('Google Drive authorization expired');
-    }
+    return super.updateSettings(userId, dto);
   }
 
   private async getDriveClient(integration: Integration) {
@@ -451,9 +315,12 @@ export class GoogleDriveService {
     const integration = await this.ensureIntegration(userId);
     const drive = await this.getDriveClient(integration);
     const uploadsDir = resolveUploadsDir();
-    const user = await this.userRepository.findOneOrFail({
+    const user = await this.userRepository.findOne({
       where: { id: userId },
     });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
 
     const results: Array<{
       fileId: string;
@@ -547,83 +414,6 @@ export class GoogleDriveService {
     return result;
   }
 
-  async syncDueIntegrations() {
-    const integrations = await this.integrationRepository.find({
-      where: {
-        provider: IntegrationProvider.GOOGLE_DRIVE,
-        status: IntegrationStatus.CONNECTED,
-      },
-      relations: ['token', 'driveSettings'],
-    });
-
-    const now = new Date();
-    for (const integration of integrations) {
-      if (!integration.driveSettings?.syncEnabled) {
-        continue;
-      }
-      const timeZone = integration.driveSettings.timeZone || 'UTC';
-      if (!this.shouldSyncNow(now, integration.driveSettings, timeZone)) {
-        continue;
-      }
-      try {
-        await this.syncIntegration(integration);
-      } catch (error) {
-        this.logger.error(`Drive sync failed for integration ${integration.id}: ${error}`);
-      }
-    }
-  }
-
-  private shouldSyncNow(now: Date, settings: DriveSettings, timeZone: string): boolean {
-    const [hourStr, minuteStr] = (settings.syncTime || DEFAULT_SYNC_TIME).split(':');
-    const syncHour = Number.parseInt(hourStr || '0', 10);
-    const syncMinute = Number.parseInt(minuteStr || '0', 10);
-
-    const nowParts = this.getTimeParts(now, timeZone);
-    const lastSyncParts = settings.lastSyncAt
-      ? this.getTimeParts(settings.lastSyncAt, timeZone)
-      : null;
-
-    if (lastSyncParts?.dateKey === nowParts.dateKey) {
-      return false;
-    }
-
-    const nowTotal = nowParts.hour * 60 + nowParts.minute;
-    const syncTotal = syncHour * 60 + syncMinute;
-    const withinWindow = nowTotal >= syncTotal && nowTotal < syncTotal + 15;
-
-    return withinWindow;
-  }
-
-  private getTimeParts(date: Date, timeZone: string) {
-    let tz = timeZone;
-    try {
-      Intl.DateTimeFormat('en-US', { timeZone }).format(date);
-    } catch {
-      tz = 'UTC';
-    }
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-    const parts = formatter.formatToParts(date);
-    const lookup = (type: string) => parts.find(p => p.type === type)?.value || '00';
-    const year = lookup('year');
-    const month = lookup('month');
-    const day = lookup('day');
-    const hour = Number.parseInt(lookup('hour'), 10);
-    const minute = Number.parseInt(lookup('minute'), 10);
-    return {
-      dateKey: `${year}-${month}-${day}`,
-      hour,
-      minute,
-    };
-  }
-
   private async resolveDriveFilename(
     drive: ReturnType<typeof google.drive>,
     folderId: string | null,
@@ -651,7 +441,7 @@ export class GoogleDriveService {
     return fileName;
   }
 
-  private async syncIntegration(integration: Integration) {
+  protected async syncIntegration(integration: Integration) {
     if (!integration.driveSettings) {
       throw new BadRequestException('Drive settings missing');
     }

@@ -1,12 +1,12 @@
-import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dropbox } from 'dropbox';
 import * as fetch from 'isomorphic-fetch';
 import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
+import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import { validateFile } from '../../common/utils/file-validator.util';
@@ -38,24 +38,31 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 @Injectable()
-export class DropboxService {
-  private readonly logger = new Logger(DropboxService.name);
+export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
+  protected readonly logger = new Logger(DropboxService.name);
 
   constructor(
     @InjectRepository(Integration)
-    private readonly integrationRepository: Repository<Integration>,
+    integrationRepository: Repository<Integration>,
     @InjectRepository(IntegrationToken)
-    private readonly integrationTokenRepository: Repository<IntegrationToken>,
+    integrationTokenRepository: Repository<IntegrationToken>,
     @InjectRepository(DropboxSettings)
     private readonly dropboxSettingsRepository: Repository<DropboxSettings>,
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    userRepository: Repository<User>,
     private readonly statementsService: StatementsService,
     private readonly fileStorageService: FileStorageService,
     private readonly auditService: AuditService,
-  ) {}
+  ) {
+    super(
+      integrationRepository,
+      integrationTokenRepository,
+      dropboxSettingsRepository,
+      userRepository,
+    );
+  }
 
   private getClientId() {
     return process.env.DROPBOX_CLIENT_ID || '';
@@ -69,12 +76,65 @@ export class DropboxService {
     return process.env.DROPBOX_REDIRECT_URI || '';
   }
 
-  private getFrontendBaseUrl() {
+  protected getFrontendBaseUrl() {
     return process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
   }
 
-  private getStateSecret() {
+  protected getStateSecret() {
     return process.env.DROPBOX_STATE_SECRET || process.env.JWT_SECRET || 'lumio-state';
+  }
+
+  protected getProvider(): IntegrationProvider {
+    return IntegrationProvider.DROPBOX;
+  }
+
+  protected getProviderName(): string {
+    return 'Dropbox';
+  }
+
+  protected getProviderRouteSegment(): string {
+    return 'dropbox';
+  }
+
+  protected getSettingsRelationName(): keyof Integration {
+    return 'dropboxSettings';
+  }
+
+  protected createSettingsRecord(integrationId: string): DropboxSettings {
+    return this.dropboxSettingsRepository.create({
+      integrationId,
+      folderId: null,
+      folderName: null,
+      syncEnabled: true,
+      syncTime: DEFAULT_SYNC_TIME,
+      timeZone: null,
+      lastSyncAt: null,
+    });
+  }
+
+  protected async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; expiresAt?: Date }> {
+    const dbx = this.getDropboxClient();
+    (dbx as any).auth.setRefreshToken(refreshToken);
+    const response = await (dbx as any).auth.refreshAccessToken();
+
+    const accessToken = response.result.access_token;
+    if (!accessToken) {
+      throw new Error('Missing access token');
+    }
+
+    let expiresAt: Date | undefined;
+    if (response.result.expires_in) {
+      expiresAt = new Date();
+      expiresAt.setSeconds(expiresAt.getSeconds() + response.result.expires_in);
+    }
+
+    return { accessToken, expiresAt };
+  }
+
+  protected getAuthorizationExpiredMessage(): string {
+    return 'Dropbox authorization expired';
   }
 
   private getDropboxClient(accessToken?: string) {
@@ -89,78 +149,6 @@ export class DropboxService {
       accessToken,
       fetch,
     });
-  }
-
-  private base64UrlEncode(value: string): string {
-    return Buffer.from(value)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
-  }
-
-  private base64UrlDecode(value: string): string {
-    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-    return Buffer.from(padded, 'base64').toString('utf8');
-  }
-
-  private signState(payload: string): string {
-    const hmac = crypto.createHmac('sha256', this.getStateSecret());
-    hmac.update(payload);
-    return hmac.digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-  }
-
-  private buildState(payload: Record<string, unknown>): string {
-    const encoded = this.base64UrlEncode(JSON.stringify(payload));
-    const signature = this.signState(encoded);
-    return `${encoded}.${signature}`;
-  }
-
-  private parseState(state: string): Record<string, unknown> {
-    const [encoded, signature] = (state || '').split('.');
-    if (!encoded || !signature) {
-      throw new BadRequestException('Invalid OAuth state');
-    }
-    const expected = this.signState(encoded);
-    if (expected !== signature) {
-      throw new BadRequestException('Invalid OAuth state signature');
-    }
-    const json = this.base64UrlDecode(encoded);
-    return JSON.parse(json);
-  }
-
-  private async getWorkspaceId(userId: string): Promise<string | null> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-    return user?.workspaceId ?? null;
-  }
-
-  private async findIntegrationForUser(userId: string) {
-    const workspaceId = await this.getWorkspaceId(userId);
-    const where = workspaceId
-      ? { workspaceId, provider: IntegrationProvider.DROPBOX }
-      : {
-          connectedByUserId: userId,
-          provider: IntegrationProvider.DROPBOX,
-        };
-
-    const integration = await this.integrationRepository.findOne({
-      where,
-      relations: ['token', 'dropboxSettings'],
-    });
-
-    return { integration, workspaceId };
-  }
-
-  private async ensureIntegration(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      throw new NotFoundException('Dropbox integration not found');
-    }
-    return integration;
   }
 
   getAuthUrl(user: User): string {
@@ -241,16 +229,7 @@ export class DropboxService {
     }
 
     const workspaceId = user.workspaceId || null;
-    const existing =
-      (await this.integrationRepository.findOne({
-        where: workspaceId
-          ? { workspaceId, provider: IntegrationProvider.DROPBOX }
-          : {
-              connectedByUserId: user.id,
-              provider: IntegrationProvider.DROPBOX,
-            },
-        relations: ['token', 'dropboxSettings'],
-      })) || null;
+    const { integration: existing } = await this.findIntegrationForUser(user.id);
 
     const integration =
       existing ||
@@ -290,18 +269,9 @@ export class DropboxService {
       await this.integrationTokenRepository.save(tokenRecord);
     }
 
-    let settings =
-      existing?.dropboxSettings ||
-      this.dropboxSettingsRepository.create({
-        integrationId: savedIntegration.id,
-      });
-
-    if (!settings.syncTime) {
-      settings.syncTime = DEFAULT_SYNC_TIME;
-    }
-    if (!settings.timeZone) {
-      settings.timeZone = user.timeZone || 'UTC';
-    }
+    let settings = existing?.dropboxSettings || this.createSettingsRecord(savedIntegration.id);
+    settings.syncTime = settings.syncTime || DEFAULT_SYNC_TIME;
+    settings.timeZone = settings.timeZone || user.timeZone || 'UTC';
     settings.syncEnabled = settings.syncEnabled ?? true;
 
     settings = await this.dropboxSettingsRepository.save(settings);
@@ -315,115 +285,8 @@ export class DropboxService {
     return `${redirectBase}?status=connected`;
   }
 
-  async getStatus(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      return { connected: false, status: IntegrationStatus.DISCONNECTED };
-    }
-
-    let status = integration.status;
-    if (
-      status === IntegrationStatus.CONNECTED &&
-      (!integration.token?.refreshToken || !integration.token?.accessToken)
-    ) {
-      status = IntegrationStatus.NEEDS_REAUTH;
-    }
-
-    return {
-      connected: status === IntegrationStatus.CONNECTED,
-      status,
-      settings: integration.dropboxSettings
-        ? {
-            folderId: integration.dropboxSettings.folderId,
-            folderName: integration.dropboxSettings.folderName,
-            syncEnabled: integration.dropboxSettings.syncEnabled,
-            syncTime: integration.dropboxSettings.syncTime,
-            timeZone: integration.dropboxSettings.timeZone,
-            lastSyncAt: integration.dropboxSettings.lastSyncAt,
-          }
-        : null,
-      scopes: integration.scopes || [],
-    };
-  }
-
-  async disconnect(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    if (integration.token) {
-      await this.integrationTokenRepository.delete({
-        integrationId: integration.id,
-      });
-    }
-    integration.status = IntegrationStatus.DISCONNECTED;
-    await this.integrationRepository.save(integration);
-    return { ok: true };
-  }
-
   async updateSettings(userId: string, dto: UpdateDropboxSettingsDto) {
-    const integration = await this.ensureIntegration(userId);
-    let settings =
-      integration.dropboxSettings ||
-      this.dropboxSettingsRepository.create({ integrationId: integration.id });
-
-    if (dto.folderId !== undefined) {
-      settings.folderId = dto.folderId || null;
-    }
-    if (dto.folderName !== undefined) {
-      settings.folderName = dto.folderName || null;
-    }
-    if (dto.syncEnabled !== undefined) {
-      settings.syncEnabled = dto.syncEnabled;
-    }
-    if (dto.syncTime !== undefined) {
-      settings.syncTime = dto.syncTime;
-    }
-    if (dto.timeZone !== undefined) {
-      settings.timeZone = dto.timeZone || null;
-    }
-
-    settings = await this.dropboxSettingsRepository.save(settings);
-    return {
-      ok: true,
-      settings,
-    };
-  }
-
-  private async ensureValidAccessToken(integration: Integration): Promise<string> {
-    if (!integration.token) {
-      throw new BadRequestException('Integration token missing');
-    }
-    const refreshToken = decryptText(integration.token.refreshToken);
-    let accessToken = decryptText(integration.token.accessToken);
-    const expiresAt = integration.token.expiresAt?.getTime() || 0;
-
-    const shouldRefresh = !accessToken || (expiresAt && expiresAt <= Date.now() + 60 * 1000);
-    if (!shouldRefresh) {
-      return accessToken;
-    }
-
-    try {
-      const dbx = this.getDropboxClient();
-      (dbx as any).auth.setRefreshToken(refreshToken);
-      const response = await (dbx as any).auth.refreshAccessToken();
-
-      const newAccessToken = response.result.access_token;
-      if (!newAccessToken) {
-        throw new Error('Missing access token');
-      }
-      accessToken = newAccessToken;
-
-      integration.token.accessToken = encryptText(accessToken);
-      if (response.result.expires_in) {
-        const expiresAt = new Date();
-        expiresAt.setSeconds(expiresAt.getSeconds() + response.result.expires_in);
-        integration.token.expiresAt = expiresAt;
-      }
-      await this.integrationTokenRepository.save(integration.token);
-      return accessToken;
-    } catch (error) {
-      integration.status = IntegrationStatus.NEEDS_REAUTH;
-      await this.integrationRepository.save(integration);
-      throw new BadRequestException('Dropbox authorization expired');
-    }
+    return super.updateSettings(userId, dto);
   }
 
   private async getDropboxClientWithAuth(integration: Integration) {
@@ -472,9 +335,12 @@ export class DropboxService {
     const integration = await this.ensureIntegration(userId);
     const dbx = await this.getDropboxClientWithAuth(integration);
     const uploadsDir = resolveUploadsDir();
-    const user = await this.userRepository.findOneOrFail({
+    const user = await this.userRepository.findOne({
       where: { id: userId },
     });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
 
     const results: Array<{
       fileId: string;
@@ -528,7 +394,7 @@ export class DropboxService {
           continue;
         }
 
-        const fileName = `${Date.now()}-${crypto.randomBytes(8).toString('hex')}-${safeBaseName}`;
+        const fileName = `${Date.now()}-${Math.random().toString(16).slice(2, 18)}-${safeBaseName}`;
         const filePath = path.join(uploadsDir, fileName);
 
         const download = await dbx.filesDownload({ path: fileId });
@@ -586,83 +452,6 @@ export class DropboxService {
     return result;
   }
 
-  async syncDueIntegrations() {
-    const integrations = await this.integrationRepository.find({
-      where: {
-        provider: IntegrationProvider.DROPBOX,
-        status: IntegrationStatus.CONNECTED,
-      },
-      relations: ['token', 'dropboxSettings'],
-    });
-
-    const now = new Date();
-    for (const integration of integrations) {
-      if (!integration.dropboxSettings?.syncEnabled) {
-        continue;
-      }
-      const timeZone = integration.dropboxSettings.timeZone || 'UTC';
-      if (!this.shouldSyncNow(now, integration.dropboxSettings, timeZone)) {
-        continue;
-      }
-      try {
-        await this.syncIntegration(integration);
-      } catch (error) {
-        this.logger.error(`Dropbox sync failed for integration ${integration.id}: ${error}`);
-      }
-    }
-  }
-
-  private shouldSyncNow(now: Date, settings: DropboxSettings, timeZone: string): boolean {
-    const [hourStr, minuteStr] = (settings.syncTime || DEFAULT_SYNC_TIME).split(':');
-    const syncHour = Number.parseInt(hourStr || '0', 10);
-    const syncMinute = Number.parseInt(minuteStr || '0', 10);
-
-    const nowParts = this.getTimeParts(now, timeZone);
-    const lastSyncParts = settings.lastSyncAt
-      ? this.getTimeParts(settings.lastSyncAt, timeZone)
-      : null;
-
-    if (lastSyncParts?.dateKey === nowParts.dateKey) {
-      return false;
-    }
-
-    const nowTotal = nowParts.hour * 60 + nowParts.minute;
-    const syncTotal = syncHour * 60 + syncMinute;
-    const withinWindow = nowTotal >= syncTotal && nowTotal < syncTotal + 15;
-
-    return withinWindow;
-  }
-
-  private getTimeParts(date: Date, timeZone: string) {
-    let tz = timeZone;
-    try {
-      Intl.DateTimeFormat('en-US', { timeZone }).format(date);
-    } catch {
-      tz = 'UTC';
-    }
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    });
-    const parts = formatter.formatToParts(date);
-    const lookup = (type: string) => parts.find(p => p.type === type)?.value || '00';
-    const year = lookup('year');
-    const month = lookup('month');
-    const day = lookup('day');
-    const hour = Number.parseInt(lookup('hour'), 10);
-    const minute = Number.parseInt(lookup('minute'), 10);
-    return {
-      dateKey: `${year}-${month}-${day}`,
-      hour,
-      minute,
-    };
-  }
-
   private async resolveDropboxFilename(
     dbx: Dropbox,
     folderId: string | null,
@@ -688,7 +477,7 @@ export class DropboxService {
     }
   }
 
-  private async syncIntegration(integration: Integration) {
+  protected async syncIntegration(integration: Integration) {
     if (!integration.dropboxSettings) {
       throw new BadRequestException('Dropbox settings missing');
     }

@@ -1,0 +1,131 @@
+export type ComparisonTrend = 'up' | 'down' | 'flat';
+export type SourceType = 'statement' | 'gmail';
+export type SourceChannel = 'bank' | 'receipt' | 'gmail';
+export type AggregateSortKey = 'amount' | 'average' | 'operations';
+
+type AggregateRow = {
+  count: number;
+  total: number;
+  average: number;
+};
+
+type ResolveSourceChannelInput = {
+  sourceType: SourceType;
+  fileType?: string | null;
+};
+
+type ResolveAmountFlowInput<TExpenseFlowType extends string> = {
+  sourceType: SourceType;
+  debit?: number | string | null;
+  credit?: number | string | null;
+  amount?: number | string | null;
+  transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
+  expenseFlowType: TExpenseFlowType;
+  gmailUsesTransactionType?: boolean;
+};
+
+const RECEIPT_FILE_TYPES = new Set(['pdf', 'image', 'jpg', 'jpeg', 'png', 'csv', 'xlsx']);
+
+export const parseAmount = (value?: number | string | null) => {
+  if (value === null || value === undefined || value === '') return 0;
+  const parsed = typeof value === 'string' ? Number(value) : value;
+  if (!Number.isFinite(parsed)) return 0;
+  return Math.abs(parsed);
+};
+
+export const resolveSourceChannel = (input: ResolveSourceChannelInput): SourceChannel => {
+  if (input.sourceType === 'gmail') return 'gmail';
+  const normalizedType = String(input.fileType || '').toLowerCase();
+  if (RECEIPT_FILE_TYPES.has(normalizedType)) return 'receipt';
+  return 'bank';
+};
+
+export const sortAggregateRows = <TRow extends AggregateRow>(rows: TRow[], key: AggregateSortKey) => {
+  return [...rows].sort((a, b) => {
+    if (key === 'average') return b.average - a.average;
+    if (key === 'operations') return b.count - a.count;
+    return b.total - a.total;
+  });
+};
+
+export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date) => {
+  if (Number.isNaN(currentStart.getTime()) || Number.isNaN(currentEnd.getTime())) return null;
+  const startTime = currentStart.getTime();
+  const endTime = currentEnd.getTime();
+  if (endTime < startTime) return null;
+
+  const dayMs = 24 * 60 * 60 * 1000;
+  const periodDays = Math.floor((endTime - startTime) / dayMs) + 1;
+  const previousEnd = new Date(startTime - dayMs);
+  const previousStart = new Date(previousEnd.getTime() - dayMs * (periodDays - 1));
+
+  return {
+    start: previousStart,
+    end: previousEnd,
+  };
+};
+
+export const getComparisonDelta = (current: number, previous: number) => {
+  const delta = current - previous;
+  const trend: ComparisonTrend = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+
+  if (previous === 0) {
+    return {
+      delta,
+      percentage: current === 0 ? 0 : 100,
+      trend,
+    };
+  }
+
+  return {
+    delta,
+    percentage: Number(((delta / previous) * 100).toFixed(1)),
+    trend,
+  };
+};
+
+export const resolveAmountFlow = <TExpenseFlowType extends string>(
+  input: ResolveAmountFlowInput<TExpenseFlowType>,
+): { flowType: 'income' | TExpenseFlowType; amount: number } => {
+  if (input.sourceType === 'gmail') {
+    const gmailFlowType =
+      input.gmailUsesTransactionType === false
+        ? input.expenseFlowType
+        : input.transactionType === 'income'
+          ? 'income'
+          : input.expenseFlowType;
+
+    return {
+      flowType: gmailFlowType,
+      amount: parseAmount(input.amount),
+    };
+  }
+
+  const debit = parseAmount(input.debit);
+  if (debit > 0) {
+    return {
+      flowType: input.expenseFlowType,
+      amount: debit,
+    };
+  }
+
+  const credit = parseAmount(input.credit);
+  if (credit > 0) {
+    return {
+      flowType: 'income',
+      amount: credit,
+    };
+  }
+
+  return {
+    flowType: input.transactionType === 'income' ? 'income' : input.expenseFlowType,
+    amount: parseAmount(input.amount),
+  };
+};
+
+export const formatDateISO = (date: Date) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};

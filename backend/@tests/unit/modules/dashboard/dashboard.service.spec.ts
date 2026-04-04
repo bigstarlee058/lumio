@@ -378,6 +378,25 @@ describe('DashboardService', () => {
     expect(balanceQb.andWhere).toHaveBeenCalledWith('t.isDuplicate = false');
   });
 
+  it('applyActiveStatementTransactionFilters applies the shared workspace and date filters', () => {
+    const qb = createQueryBuilderMock([]);
+    const since = new Date('2026-02-01T00:00:00Z');
+    const endDate = new Date('2026-03-01T23:59:59Z');
+
+    (service as any).applyActiveStatementTransactionFilters(qb, 'ws-1', since, endDate);
+
+    expect(qb.where).toHaveBeenCalledWith('s.workspaceId = :workspaceId', { workspaceId: 'ws-1' });
+    expect(qb.andWhere).toHaveBeenCalledWith('t.transactionDate BETWEEN :since AND :endDate', {
+      since,
+      endDate,
+    });
+    expect(qb.andWhere).toHaveBeenCalledWith('s.deletedAt IS NULL');
+    expect(qb.andWhere).toHaveBeenCalledWith('t.isDuplicate = false');
+    expect(qb.andWhere).toHaveBeenCalledWith('s.status NOT IN (:...excludedStatuses)', {
+      excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
+    });
+  });
+
   it('getActions returns only non-zero action items', async () => {
     statementRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(2);
     payableRepo.count.mockResolvedValueOnce(0);
@@ -456,6 +475,23 @@ describe('DashboardService', () => {
     // Verify the query builder was called (weekly grouping used IYYY-IW format)
     expect(cashFlowQb.select).toHaveBeenCalledWith("TO_CHAR(t.transactionDate, 'IYYY-IW')", 'date');
     expect(result).toHaveLength(2);
+  });
+
+  it('getTransactionGroupFormat switches to weekly buckets for 90-day ranges', () => {
+    expect((service as any).getTransactionGroupFormat(30)).toBe("'YYYY-MM-DD'");
+    expect((service as any).getTransactionGroupFormat(90)).toBe("'IYYY-IW'");
+  });
+
+  it('mapNamedAmountCountRows converts raw query rows into numeric summaries', () => {
+    expect(
+      (service as any).mapNamedAmountCountRows([
+        { name: 'Kaspi', amount: '50000.5', count: '10' },
+        { name: 'Halyk', amount: '', count: 'invalid' },
+      ]),
+    ).toEqual([
+      { name: 'Kaspi', amount: 50000.5, count: 10 },
+      { name: 'Halyk', amount: 0, count: 0 },
+    ]);
   });
 
   it('getTopMerchants returns top 5 expense merchants sorted by amount', async () => {

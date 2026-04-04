@@ -3,11 +3,16 @@ import type {
   StatementFilters,
 } from '@/app/(main)/statements/components/filters/statement-filters';
 import { DEFAULT_STATEMENT_FILTERS } from '@/app/(main)/statements/components/filters/statement-filters';
-import { resolveSourceChannel } from '@/app/(main)/statements/components/top-merchants.utils';
+import {
+  resolveAmountFlow,
+  resolveSourceChannel as resolveSourceChannelBase,
+  sortAggregateRows,
+} from '@/app/(main)/statements/components/shared-analytics.utils';
+import type { SourceChannel, SourceType } from '@/app/(main)/statements/components/shared-analytics.utils';
 
 export type TopCategoryFlowType = 'spend' | 'income';
-export type TopCategorySourceType = 'statement' | 'gmail';
-export type TopCategorySourceChannel = 'bank' | 'receipt' | 'gmail';
+export type TopCategorySourceType = SourceType;
+export type TopCategorySourceChannel = SourceChannel;
 export type CategorySortKey = 'amount' | 'average' | 'operations';
 
 export type TopCategoryRecord = StatementFilterItem & {
@@ -52,13 +57,6 @@ type ResolveCategoryFlowInput = {
 
 const STORAGE_KEY = 'lumio-top-categories-filters';
 
-const parseAmount = (value?: number | string | null) => {
-  if (value === null || value === undefined || value === '') return 0;
-  const parsed = typeof value === 'string' ? Number(value) : value;
-  if (!Number.isFinite(parsed)) return 0;
-  return Math.abs(parsed);
-};
-
 export const loadTopCategoriesFilters = (): StatementFilters => {
   if (typeof window === 'undefined') return DEFAULT_STATEMENT_FILTERS;
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -81,33 +79,14 @@ export const saveTopCategoriesFilters = (filters: StatementFilters) => {
 };
 
 export const resolveCategoryFlow = (input: ResolveCategoryFlowInput) => {
-  if (input.sourceType === 'gmail') {
-    return {
-      flowType: input.transactionType === 'income' ? ('income' as const) : ('spend' as const),
-      amount: parseAmount(input.amount),
-    };
-  }
-
-  const debit = parseAmount(input.debit);
-  if (debit > 0) {
-    return {
-      flowType: 'spend' as const,
-      amount: debit,
-    };
-  }
-
-  const credit = parseAmount(input.credit);
-  if (credit > 0) {
-    return {
-      flowType: 'income' as const,
-      amount: credit,
-    };
-  }
-
-  return {
-    flowType: input.transactionType === 'income' ? ('income' as const) : ('spend' as const),
-    amount: parseAmount(input.amount),
-  };
+  return resolveAmountFlow({
+    sourceType: input.sourceType,
+    debit: input.debit,
+    credit: input.credit,
+    amount: input.amount,
+    transactionType: input.transactionType,
+    expenseFlowType: 'spend',
+  });
 };
 
 export const resolveCategoryName = (name?: string | null) => {
@@ -175,16 +154,12 @@ export const createCategoryAggregateRows = (
 };
 
 export const sortCategoryRows = (rows: TopCategoryAggregateRow[], key: CategorySortKey) => {
-  return [...rows].sort((a, b) => {
-    if (key === 'average') return b.average - a.average;
-    if (key === 'operations') return b.count - a.count;
-    return b.total - a.total;
-  });
+  return sortAggregateRows(rows, key);
 };
 
 export const resolveCategorySourceChannel = (input: {
   sourceType: TopCategorySourceType;
   fileType?: string | null;
 }): TopCategorySourceChannel => {
-  return resolveSourceChannel(input);
+  return resolveSourceChannelBase(input);
 };

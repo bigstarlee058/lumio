@@ -1,4 +1,5 @@
 import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
+import { formatDateISO, resolveAmountFlow } from './shared-analytics.utils';
 
 export type SpendOverTimeFlowType = 'expense' | 'income';
 export type SpendOverTimeSourceType = 'statement' | 'gmail';
@@ -53,25 +54,11 @@ type ResolveSpendOverTimeFlowInput = {
   transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
 };
 
-const parseAmount = (value?: number | string | null) => {
-  if (value === null || value === undefined || value === '') return 0;
-  const parsed = typeof value === 'string' ? Number(value) : value;
-  if (!Number.isFinite(parsed)) return 0;
-  return Math.abs(parsed);
-};
-
 const toDateOnly = (value?: string | null) => {
   if (!value) return null;
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return null;
   return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
-};
-
-const formatDateOnly = (date: Date) => {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${year}-${month}-${day}`;
 };
 
 const getWeekStart = (date: Date) => {
@@ -90,13 +77,13 @@ const monthFormatter = new Intl.DateTimeFormat('en-US', {
 
 const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy) => {
   if (groupBy === 'day') {
-    const period = formatDateOnly(date);
+    const period = formatDateISO(date);
     return { period, label: period };
   }
 
   if (groupBy === 'week') {
     const weekStart = getWeekStart(date);
-    const period = formatDateOnly(weekStart);
+    const period = formatDateISO(weekStart);
     return { period, label: period };
   }
 
@@ -120,33 +107,14 @@ const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy) => {
 };
 
 export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput) => {
-  if (input.sourceType === 'gmail') {
-    return {
-      flowType: input.transactionType === 'income' ? ('income' as const) : ('expense' as const),
-      amount: parseAmount(input.amount),
-    };
-  }
-
-  const debit = parseAmount(input.debit);
-  if (debit > 0) {
-    return {
-      flowType: 'expense' as const,
-      amount: debit,
-    };
-  }
-
-  const credit = parseAmount(input.credit);
-  if (credit > 0) {
-    return {
-      flowType: 'income' as const,
-      amount: credit,
-    };
-  }
-
-  return {
-    flowType: input.transactionType === 'income' ? ('income' as const) : ('expense' as const),
-    amount: parseAmount(input.amount),
-  };
+  return resolveAmountFlow({
+    sourceType: input.sourceType,
+    debit: input.debit,
+    credit: input.credit,
+    amount: input.amount,
+    transactionType: input.transactionType,
+    expenseFlowType: 'expense',
+  });
 };
 
 export const dedupeSpendOverTimeReceiptRecords = (

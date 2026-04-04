@@ -134,19 +134,14 @@ export class DashboardService {
       .getRawOne<{ income: string; expense: string; unapprovedCash: string }>();
 
     // All-time balance: income credits minus expense debits, no date range
-    const balanceResult = await this.transactionRepo
-      .createQueryBuilder('t')
-      .innerJoin('t.statement', 's')
+    const balanceQuery = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
+    this.applyWorkspaceStatementFilters(balanceQuery, workspaceId, true);
+
+    const balanceResult = await balanceQuery
       .select(
         `COALESCE(SUM(CASE WHEN t.transactionType = :balIncome THEN t.credit WHEN t.transactionType = :balExpense THEN -t.debit ELSE 0 END), 0)`,
         'totalBalance',
       )
-      .where('s.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('s.deletedAt IS NULL')
-      .andWhere('t.isDuplicate = false')
-      .andWhere('s.status NOT IN (:...excludedStatuses)', {
-        excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-      })
       .setParameter('balIncome', TransactionType.INCOME)
       .setParameter('balExpense', TransactionType.EXPENSE)
       .getRawOne<{ totalBalance: string }>();
@@ -282,12 +277,13 @@ export class DashboardService {
     endDate: Date,
     days: number,
   ): Promise<DashboardCashFlowPoint[]> {
-    // For 90d range, group by week; otherwise group by day
-    const groupFormat = days >= 90 ? "'IYYY-IW'" : "'YYYY-MM-DD'";
+    const groupFormat = this.getTransactionGroupFormat(days);
 
-    const result = await this.transactionRepo
-      .createQueryBuilder('t')
-      .innerJoin('t.statement', 's')
+    const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
+
+    this.applyActiveStatementTransactionFilters(query, workspaceId, since, endDate);
+
+    const result = await query
       .select(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'date')
       .addSelect(
         'COALESCE(SUM(CASE WHEN t.transactionType = :income THEN t.credit ELSE 0 END), 0)',
@@ -297,13 +293,6 @@ export class DashboardService {
         'COALESCE(SUM(CASE WHEN t.transactionType = :expense THEN t.debit ELSE 0 END), 0)',
         'expense',
       )
-      .where('s.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-      .andWhere('s.deletedAt IS NULL')
-      .andWhere('t.isDuplicate = false')
-      .andWhere('s.status NOT IN (:...excludedStatuses)', {
-        excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-      })
       .groupBy(`TO_CHAR(t.transactionDate, ${groupFormat})`)
       .orderBy(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'ASC')
       .setParameter('income', TransactionType.INCOME)
@@ -322,19 +311,14 @@ export class DashboardService {
     since: Date,
     endDate: Date,
   ): Promise<DashboardTopMerchant[]> {
-    const result = await this.transactionRepo
-      .createQueryBuilder('t')
-      .innerJoin('t.statement', 's')
+    const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
+
+    this.applyActiveStatementTransactionFilters(query, workspaceId, since, endDate);
+
+    const result = await query
       .select('t.counterpartyName', 'name')
       .addSelect('COALESCE(SUM(t.debit), 0)', 'amount')
       .addSelect('COUNT(t.id)', 'count')
-      .where('s.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-      .andWhere('s.deletedAt IS NULL')
-      .andWhere('t.isDuplicate = false')
-      .andWhere('s.status NOT IN (:...excludedStatuses)', {
-        excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-      })
       .andWhere('t.transactionType = :expense', { expense: TransactionType.EXPENSE })
       .andWhere('t.counterpartyName IS NOT NULL')
       .andWhere("t.counterpartyName != ''")
@@ -343,11 +327,7 @@ export class DashboardService {
       .limit(5)
       .getRawMany<{ name: string; amount: string; count: string }>();
 
-    return result.map(row => ({
-      name: row.name,
-      amount: Number.parseFloat(row.amount) || 0,
-      count: Number.parseInt(row.count, 10) || 0,
-    }));
+    return this.mapNamedAmountCountRows(result);
   }
 
   private async getTopCategories(
@@ -355,21 +335,18 @@ export class DashboardService {
     since: Date,
     endDate: Date,
   ): Promise<DashboardTopCategory[]> {
-    const result = await this.transactionRepo
+    const query = this.transactionRepo
       .createQueryBuilder('t')
       .innerJoin('t.statement', 's')
-      .leftJoin('t.category', 'c')
+      .leftJoin('t.category', 'c');
+
+    this.applyActiveStatementTransactionFilters(query, workspaceId, since, endDate);
+
+    const result = await query
       .select('c.id', 'id')
       .addSelect("COALESCE(c.name, 'Uncategorized')", 'name')
       .addSelect('COALESCE(SUM(t.debit), 0)', 'amount')
       .addSelect('COUNT(t.id)', 'count')
-      .where('s.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-      .andWhere('s.deletedAt IS NULL')
-      .andWhere('t.isDuplicate = false')
-      .andWhere('s.status NOT IN (:...excludedStatuses)', {
-        excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-      })
       .andWhere('t.transactionType = :expense', { expense: TransactionType.EXPENSE })
       .groupBy('c.id')
       .addGroupBy('c.name')
@@ -677,15 +654,11 @@ export class DashboardService {
   }
 
   private async getLatestTransactionDate(workspaceId: string): Promise<Date | null> {
-    const result = await this.transactionRepo
-      .createQueryBuilder('t')
-      .innerJoin('t.statement', 's')
+    const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
+    this.applyWorkspaceStatementFilters(query, workspaceId, true);
+
+    const result = await query
       .select('MAX(t.transactionDate)', 'latestTransactionDate')
-      .where('s.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('s.deletedAt IS NULL')
-      .andWhere('s.status NOT IN (:...excludedStatuses)', {
-        excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-      })
       .getRawOne<{ latestTransactionDate: Date | string | null }>();
 
     return result?.latestTransactionDate ? new Date(result.latestTransactionDate) : null;
@@ -696,12 +669,10 @@ export class DashboardService {
   }
 
   private async getTrendData(workspaceId: string, since: Date, endDate: Date, days: number) {
-    const groupFormat = days >= 90 ? "'IYYY-IW'" : "'YYYY-MM-DD'";
+    const groupFormat = this.getTransactionGroupFormat(days);
 
     const [dailyRows, categoryRows, counterpartyRows, sourceRows] = await Promise.all([
-      this.transactionRepo
-        .createQueryBuilder('t')
-        .innerJoin('t.statement', 's')
+      this.createTrendBaseQuery(workspaceId, since, endDate)
         .select(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'date')
         .addSelect(
           'COALESCE(SUM(CASE WHEN t.transactionType = :income THEN t.credit ELSE 0 END), 0)',
@@ -711,50 +682,25 @@ export class DashboardService {
           'COALESCE(SUM(CASE WHEN t.transactionType = :expense THEN t.debit ELSE 0 END), 0)',
           'expense',
         )
-        .where('s.workspaceId = :workspaceId', { workspaceId })
-        .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-        .andWhere('s.deletedAt IS NULL')
-        .andWhere('t.isDuplicate = false')
-        .andWhere('s.status NOT IN (:...excludedStatuses)', {
-          excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-        })
         .groupBy(`TO_CHAR(t.transactionDate, ${groupFormat})`)
         .orderBy(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'ASC')
         .setParameter('income', TransactionType.INCOME)
         .setParameter('expense', TransactionType.EXPENSE)
         .getRawMany<{ date: string; income: string; expense: string }>(),
-      this.transactionRepo
-        .createQueryBuilder('t')
-        .innerJoin('t.statement', 's')
+      this.createTrendBaseQuery(workspaceId, since, endDate)
         .leftJoin('t.category', 'c')
         .select("COALESCE(c.name, 'Uncategorized')", 'name')
         .addSelect('COALESCE(SUM(t.debit), 0)', 'amount')
         .addSelect('COUNT(t.id)', 'count')
-        .where('s.workspaceId = :workspaceId', { workspaceId })
-        .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-        .andWhere('s.deletedAt IS NULL')
-        .andWhere('t.isDuplicate = false')
-        .andWhere('s.status NOT IN (:...excludedStatuses)', {
-          excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-        })
         .andWhere('t.transactionType = :expense', { expense: TransactionType.EXPENSE })
         .groupBy('c.name')
         .orderBy('amount', 'DESC')
         .limit(10)
         .getRawMany<{ name: string; amount: string; count: string }>(),
-      this.transactionRepo
-        .createQueryBuilder('t')
-        .innerJoin('t.statement', 's')
+      this.createTrendBaseQuery(workspaceId, since, endDate)
         .select('t.counterpartyName', 'name')
         .addSelect('COALESCE(SUM(t.credit), 0)', 'amount')
         .addSelect('COUNT(t.id)', 'count')
-        .where('s.workspaceId = :workspaceId', { workspaceId })
-        .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-        .andWhere('s.deletedAt IS NULL')
-        .andWhere('t.isDuplicate = false')
-        .andWhere('s.status NOT IN (:...excludedStatuses)', {
-          excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-        })
         .andWhere('t.transactionType = :income', { income: TransactionType.INCOME })
         .andWhere('t.counterpartyName IS NOT NULL')
         .andWhere("t.counterpartyName != ''")
@@ -762,9 +708,7 @@ export class DashboardService {
         .orderBy('amount', 'DESC')
         .limit(10)
         .getRawMany<{ name: string; amount: string; count: string }>(),
-      this.transactionRepo
-        .createQueryBuilder('t')
-        .innerJoin('t.statement', 's')
+      this.createTrendBaseQuery(workspaceId, since, endDate)
         .select(
           'COALESCE(SUM(CASE WHEN t.transactionType = :income THEN t.credit ELSE 0 END), 0)',
           'income',
@@ -774,18 +718,60 @@ export class DashboardService {
           'expense',
         )
         .addSelect('COUNT(DISTINCT t.id)', 'rows')
-        .where('s.workspaceId = :workspaceId', { workspaceId })
-        .andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate })
-        .andWhere('s.deletedAt IS NULL')
-        .andWhere('t.isDuplicate = false')
-        .andWhere('s.status NOT IN (:...excludedStatuses)', {
-          excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
-        })
         .setParameter('income', TransactionType.INCOME)
         .setParameter('expense', TransactionType.EXPENSE)
         .getRawOne<{ income: string; expense: string; rows: string }>(),
     ]);
 
     return { dailyRows, categoryRows, counterpartyRows, sourceRows };
+  }
+
+  private createTrendBaseQuery(workspaceId: string, since: Date, endDate: Date) {
+    const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
+    this.applyActiveStatementTransactionFilters(query, workspaceId, since, endDate);
+    return query;
+  }
+
+  private getTransactionGroupFormat(days: number): string {
+    return days >= 90 ? "'IYYY-IW'" : "'YYYY-MM-DD'";
+  }
+
+  private applyActiveStatementTransactionFilters(
+    query: {
+      where: (sql: string, params?: object) => unknown;
+      andWhere: (sql: string, params?: object) => unknown;
+    },
+    workspaceId: string,
+    since: Date,
+    endDate: Date,
+  ) {
+    this.applyWorkspaceStatementFilters(query, workspaceId, true);
+    query.andWhere('t.transactionDate BETWEEN :since AND :endDate', { since, endDate });
+  }
+
+  private applyWorkspaceStatementFilters(
+    query: {
+      where: (sql: string, params?: object) => unknown;
+      andWhere: (sql: string, params?: object) => unknown;
+    },
+    workspaceId: string,
+    excludeDuplicates: boolean,
+  ) {
+    query.where('s.workspaceId = :workspaceId', { workspaceId });
+    query.andWhere('s.deletedAt IS NULL');
+    if (excludeDuplicates) {
+      query.andWhere('t.isDuplicate = false');
+    }
+    query.andWhere('s.status NOT IN (:...excludedStatuses)', {
+      excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
+    });
+  }
+
+  private mapNamedAmountCountRows<T extends { name: string; amount: string; count: string }>(rows: T[]) {
+    return rows.map(row => ({
+      name: row.name,
+      amount: Number.parseFloat(row.amount) || 0,
+      count: Number.parseInt(row.count, 10) || 0,
+    }));
   }
 }

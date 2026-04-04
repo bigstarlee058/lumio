@@ -1,6 +1,21 @@
 import * as fs from 'fs';
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import * as pdfParse from 'pdf-parse';
+import {
+  extractBestNumberPart as selectBestNumberPart,
+  extractCurrency as detectCurrency,
+  parseAmountFragment as parseSharedAmountFragment,
+} from '../../../common/utils/receipt-amount.util';
+import { stripHtmlForAi } from '../../../common/utils/ai-response.util';
+import {
+  extractAmountFragments as extractSharedAmountFragments,
+  isAddressLike as isSharedAddressLike,
+  isDateRangeLike as isSharedDateRangeLike,
+  isLikelySentence as isSharedLikelySentence,
+  isYearLikeAmount as isSharedYearLikeAmount,
+  scoreAmountCandidate as scoreSharedAmountCandidate,
+} from '../../../common/utils/receipt-extraction.util';
+import { extractBrandFromSender } from '../../../common/utils/sender-brand.util';
 import { UniversalAmountParser } from '../../parsing/services/universal-amount-parser.service';
 import { UniversalExtractorService } from '../../parsing/services/universal-extractor.service';
 import { AiMerchantExtractor } from '../helpers/ai-merchant-extractor.helper';
@@ -96,7 +111,6 @@ export class GmailReceiptParserService {
         return await this.parsePdfReceipt(fileBuffer, parseContext);
       }
 
-      // For now, return basic metadata for non-PDF files
       return {
         confidence: 0.5,
         extracted: false,
@@ -128,10 +142,10 @@ export class GmailReceiptParserService {
     }
 
     if (!vendor) {
-      vendor = this.extractBrandFromSender(context.sender);
+      vendor = extractBrandFromSender(context.sender);
     }
 
-    const bodyText = context.emailBody ? this.stripHtmlBasic(context.emailBody) : '';
+    const bodyText = context.emailBody ? stripHtmlForAi(context.emailBody) : '';
     const amountWithCurrency = bodyText
       ? await this.extractAmountWithCurrency(bodyText)
       : undefined;
@@ -196,7 +210,6 @@ export class GmailReceiptParserService {
         }
       }
 
-      // Enhanced extraction logic
       const amountWithCurrency = await this.extractAmountWithCurrency(text);
       const amount = amountWithCurrency?.amount;
       const currency = amountWithCurrency?.currency || this.extractCurrency(text) || 'KZT';
@@ -212,7 +225,6 @@ export class GmailReceiptParserService {
         }
       }
 
-      // Calculate subtotal if tax is found
       let subtotal: number | undefined;
       let taxRate: number | undefined;
       if (amount && tax) {
@@ -220,7 +232,6 @@ export class GmailReceiptParserService {
         taxRate = (tax / subtotal) * 100;
       }
 
-      // Calculate confidence score
       const confidence = this.calculateConfidence({
         amount,
         date,
@@ -255,7 +266,6 @@ export class GmailReceiptParserService {
       .map(line => line.replace(/\u00a0/g, ' ').trim())
       .filter(Boolean);
     const documentCurrency = this.extractCurrency(text);
-
     const candidates: AmountCandidate[] = [];
 
     for (let index = 0; index < lines.length; index++) {
@@ -312,7 +322,6 @@ export class GmailReceiptParserService {
   }
 
   private extractDate(text: string): string | undefined {
-    // Look for date patterns
     const patterns = [/\d{2}[-/.]\d{2}[-/.]\d{4}/, /\d{4}[-/.]\d{2}[-/.]\d{2}/];
 
     for (const pattern of patterns) {
@@ -354,7 +363,7 @@ export class GmailReceiptParserService {
   }
 
   private extractVendor(text: string, senderName?: string): string | undefined {
-    const senderBrand = this.extractBrandFromSender(senderName);
+    const senderBrand = extractBrandFromSender(senderName);
     const lines = text
       .split('\n')
       .map(line => line.trim())
@@ -403,118 +412,23 @@ export class GmailReceiptParserService {
     return undefined;
   }
 
-  private stripHtmlBasic(html: string): string {
-    return html
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  private extractBrandFromSender(sender?: string): string | undefined {
-    if (!sender) {
-      return undefined;
-    }
-
-    const displayName = sender.split('<')[0]?.trim().replace(/^"|"$/g, '');
-    if (displayName && !displayName.includes('@')) {
-      const cleanedDisplayName = displayName
-        .replace(/\s+(support|billing|payments?|service|team|notifications?)$/i, '')
-        .trim();
-
-      if (cleanedDisplayName && !this.isLikelySentence(cleanedDisplayName)) {
-        return cleanedDisplayName.slice(0, 100);
-      }
-
-      return displayName.slice(0, 100);
-    }
-
-    const emailMatch = sender.match(/[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,})/i);
-    const domain = emailMatch?.[1];
-    if (!domain) {
-      return undefined;
-    }
-
-    const rootDomain = domain.split('.')[0] || '';
-    if (!rootDomain) {
-      return undefined;
-    }
-
-    return `${rootDomain.charAt(0).toUpperCase()}${rootDomain.slice(1).toLowerCase()}`;
-  }
-
   private isLikelySentence(value: string): boolean {
-    const lower = value.toLowerCase();
-    const words = lower.split(/\s+/).filter(Boolean);
-
-    if (words.length >= 6) {
-      return true;
-    }
-
-    if (/^(we|your|thanks?|dear|hello|hi)\b/.test(lower)) {
-      return true;
-    }
-
-    if (/[.!?]/.test(value) && words.length >= 4) {
-      return true;
-    }
-
-    return false;
+    return isSharedLikelySentence(value);
   }
 
   private isDateRangeLike(value: string): boolean {
-    if (
-      /\d{4}[-/.]\d{2}[-/.]\d{2}\s*[-–]\s*\d{4}[-/.]\d{2}[-/.]\d{2}/.test(value)
-    ) {
-      return true;
-    }
-
-    if (
-      /\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\s*[-–]\s*\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}/.test(
-        value,
-      )
-    ) {
-      return true;
-    }
-
-    if (
-      /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},?\s*\d{4}\s*[-–]\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2}(?:,?\s*\d{4})?\b/i.test(
-        value,
-      )
-    ) {
-      return true;
-    }
-
-    return false;
+    return isSharedDateRangeLike(value);
   }
 
   private isAddressLike(value: string): boolean {
-    if (/\b[A-Z]{2}\s*\d{5}(?:-\d{4})?\b/.test(value)) {
-      return true;
-    }
-
-    if (/,\s*[A-Z]{2}\b/.test(value) && /\b\d{5}(?:-\d{4})?\b/.test(value)) {
-      return true;
-    }
-
-    return false;
+    return isSharedAddressLike(value);
   }
 
   private isYearLikeAmount(amount: number, hasExplicitCurrency: boolean): boolean {
-    if (hasExplicitCurrency) {
-      return false;
-    }
-
-    return amount >= 1900 && amount <= 2099 && Number.isInteger(Math.round(amount));
+    return isSharedYearLikeAmount(amount, hasExplicitCurrency);
   }
 
   private extractTax(text: string): number | undefined {
-    // Look for tax patterns
     const patterns = [
       /tax[:\s]+(\d+[\s,.]?\d*)/i,
       /vat[:\s]+(\d+[\s,.]?\d*)/i,
@@ -618,117 +532,29 @@ export class GmailReceiptParserService {
   }
 
   private extractAmountFragments(line: string, includeNumbersWithoutCurrency: boolean): string[] {
-    const withCurrencyPattern = new RegExp(
-      `${this.getCurrencyTokenPattern()}\\s*(?:${NUMBER_PATTERN})|(?:${NUMBER_PATTERN})\\s*${this.getCurrencyTokenPattern()}`,
-      'gi',
+    return extractSharedAmountFragments(
+      line,
+      includeNumbersWithoutCurrency,
+      this.getCurrencyTokenPattern(),
     );
-    const fragments = new Set<string>();
-
-    for (const match of line.matchAll(withCurrencyPattern)) {
-      const value = match[0]?.trim();
-      if (value) {
-        fragments.add(value);
-      }
-    }
-
-    if (includeNumbersWithoutCurrency) {
-      const numberRegex = new RegExp(NUMBER_PATTERN, 'g');
-      for (const match of line.matchAll(numberRegex)) {
-        const value = match[0]?.trim();
-        if (value && /\d/.test(value)) {
-          fragments.add(value);
-        }
-      }
-    }
-
-    return Array.from(fragments);
   }
 
   private async parseAmountFragment(
     fragment: string,
   ): Promise<{ amount: number; currency?: string } | null> {
-    const normalized = fragment.replace(/\u00a0/g, ' ').trim();
-    if (!normalized) {
-      return null;
-    }
-
-    const currency = this.extractCurrency(normalized);
-
-    const numberPart = this.extractBestNumberPart(normalized);
-    if (!numberPart) {
-      return null;
-    }
-
-    const parsedNumber = await this.amountParser.parseAmount(numberPart);
-    if (parsedNumber && this.amountParser.isValidAmount(parsedNumber.amount)) {
-      return {
-        amount: Math.abs(parsedNumber.amount),
-        currency,
-      };
-    }
-
-    const direct = await this.amountParser.parseAmount(normalized);
-    if (direct && this.amountParser.isValidAmount(direct.amount)) {
-      return {
-        amount: Math.abs(direct.amount),
-        currency: direct.currency || currency,
-      };
-    }
-
-    return null;
+    return parseSharedAmountFragment(fragment, {
+      amountParser: this.amountParser,
+      extractCurrency: text => this.extractCurrency(text),
+      numberPattern: NUMBER_PATTERN,
+    });
   }
 
   private extractBestNumberPart(text: string): string | undefined {
-    const numberRegex = new RegExp(NUMBER_PATTERN, 'g');
-    const matches = text.match(numberRegex);
-    if (!matches || matches.length === 0) {
-      return undefined;
-    }
-
-    return matches.sort((left, right) => right.length - left.length)[0];
+    return selectBestNumberPart(text, NUMBER_PATTERN);
   }
 
   private extractCurrency(text: string): string | undefined {
-    if (!text) {
-      return undefined;
-    }
-
-    const normalized = text.replace(/\u00a0/g, ' ');
-    const supportedCurrencies = new Set(this.amountParser.getSupportedCurrencies());
-
-    const codeMatches = normalized.toUpperCase().match(/\b[A-Z]{3}\b/g) || [];
-    for (const code of codeMatches) {
-      if (supportedCurrencies.has(code)) {
-        return code;
-      }
-    }
-
-    for (const [symbol, code] of Object.entries(SYMBOL_TO_CURRENCY)) {
-      if (normalized.includes(symbol)) {
-        return code;
-      }
-    }
-
-    const contextualCurrency = this.amountParser.detectCurrencyFromContext(normalized);
-    if (contextualCurrency) {
-      return contextualCurrency;
-    }
-
-    const lowerText = normalized.toLowerCase();
-    if (/\b(тенге|тг)\b/.test(lowerText)) {
-      return 'KZT';
-    }
-    if (/\b(dollars?|доллар)\b/.test(lowerText)) {
-      return 'USD';
-    }
-    if (/\b(euros?|евро)\b/.test(lowerText)) {
-      return 'EUR';
-    }
-    if (/\b(rubles?|руб(ль|лей|ля|.)?)\b/.test(lowerText)) {
-      return 'RUB';
-    }
-
-    return undefined;
+    return detectCurrency(text, this.amountParser, SYMBOL_TO_CURRENCY);
   }
 
   private scoreAmountCandidate(
@@ -738,21 +564,13 @@ export class GmailReceiptParserService {
     lineIndex: number,
     totalLines: number,
   ): number {
-    let score = 0;
-
-    if (hasTotalKeyword) {
-      score += 100;
-    }
-
-    if (explicitCurrency) {
-      score += 30;
-    }
-
-    const lineWeight = totalLines > 1 ? lineIndex / (totalLines - 1) : 1;
-    score += lineWeight * 20;
-    score += Math.min(Math.log10(amount + 1) * 5, 20);
-
-    return score;
+    return scoreSharedAmountCandidate(
+      amount,
+      hasTotalKeyword,
+      explicitCurrency,
+      lineIndex,
+      totalLines,
+    );
   }
 
   private getCurrencyTokenPattern(): string {

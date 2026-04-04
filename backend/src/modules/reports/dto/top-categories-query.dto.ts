@@ -1,27 +1,8 @@
 import { Transform } from 'class-transformer';
-import {
-  IsBoolean,
-  IsDateString,
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
+import { BaseReportQueryDto } from './base-report-query.dto';
 
-export class TopCategoriesQueryDto {
-  @IsOptional()
-  @IsDateString()
-  dateFrom?: string;
-
-  @IsOptional()
-  @IsDateString()
-  dateTo?: string;
-
-  @IsOptional()
-  @IsIn(['income', 'expense', 'all'])
-  type?: 'income' | 'expense' | 'all';
+export class TopCategoriesQueryDto extends BaseReportQueryDto {
 
   @IsOptional()
   @Transform(({ value }) => (value === undefined ? undefined : Number(value)))
@@ -40,51 +21,9 @@ export class TopCategoriesQueryDto {
 
   @IsOptional()
   @IsString()
-  statuses?: string;
-
-  @IsOptional()
-  @IsString()
-  keywords?: string;
-
-  @IsOptional()
-  @Transform(({ value }) => (value === undefined ? undefined : Number(value)))
-  @Min(0)
-  amountMin?: number;
-
-  @IsOptional()
-  @Transform(({ value }) => (value === undefined ? undefined : Number(value)))
-  @Min(0)
-  amountMax?: number;
-
-  @IsOptional()
-  @IsString()
-  currencies?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === true || value === 'true')
-  approved?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === true || value === 'true')
-  billable?: boolean;
-
-  @IsOptional()
-  @IsString()
   has?: string;
 
   @IsOptional()
   @IsString()
   groupBy?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === true || value === 'true')
-  exported?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  @Transform(({ value }) => value === true || value === 'true')
-  paid?: boolean;
 }

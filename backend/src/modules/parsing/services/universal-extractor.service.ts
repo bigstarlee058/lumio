@@ -1,5 +1,18 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import {
+  extractBestNumberPart as selectBestNumberPart,
+  extractCurrency as detectCurrency,
+  parseAmountFragment as parseSharedAmountFragment,
+} from '../../../common/utils/receipt-amount.util';
+import {
+  extractAmountFragments as extractSharedAmountFragments,
+  isAddressLike as isSharedAddressLike,
+  isDateRangeLike as isSharedDateRangeLike,
+  isLikelySentence as isSharedLikelySentence,
+  isYearLikeAmount as isSharedYearLikeAmount,
+  scoreAmountCandidate as scoreSharedAmountCandidate,
+} from '../../../common/utils/receipt-extraction.util';
+import {
   AiDocumentExtractor,
   type AiExtractionResult,
 } from '../helpers/ai-document-extractor.helper';
@@ -68,14 +81,6 @@ const SUBTOTAL_PATTERNS = [
   /подитог[:\s]+(\d+[\s,.]?\d*)/i,
   /промежуточный\s*итог[:\s]+(\d+[\s,.]?\d*)/i,
 ];
-
-const MONTH_DATE_RANGE_REGEX =
-  /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2},?\s*\d{4}\s*[-–]\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\s+\d{1,2}(?:,?\s*\d{4})?\b/i;
-
-const DATE_RANGE_REGEX =
-  /\d{4}[-/.]\d{2}[-/.]\d{2}\s*[-–]\s*\d{4}[-/.]\d{2}[-/.]\d{2}|\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}\s*[-–]\s*\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}/;
-
-const ADDRESS_LIKE_REGEX = /\b[A-Z]{2}\s*\d{5}(?:-\d{4})?\b/;
 
 @Injectable()
 export class UniversalExtractorService {
@@ -245,8 +250,10 @@ export class UniversalExtractorService {
           continue;
         }
 
-        const currency = parsed.currency || this.extractCurrency(line) || documentCurrency;
-        const explicitCurrency = Boolean(parsed.currency || this.extractCurrency(fragment));
+        const fragmentCurrency = this.extractCurrency(fragment);
+        const lineCurrency = this.extractCurrency(line);
+        const currency = parsed.currency || fragmentCurrency || lineCurrency || documentCurrency;
+        const explicitCurrency = Boolean(parsed.currency || fragmentCurrency);
         const score = this.scoreAmountCandidate(
           parsed.amount,
           hasTotalKeyword,
@@ -281,116 +288,29 @@ export class UniversalExtractorService {
   }
 
   private extractAmountFragments(line: string, includeNumbersWithoutCurrency: boolean): string[] {
-    const withCurrencyPattern = new RegExp(
-      `${this.getCurrencyTokenPattern()}\\s*(?:${NUMBER_PATTERN})|(?:${NUMBER_PATTERN})\\s*${this.getCurrencyTokenPattern()}`,
-      'gi',
+    return extractSharedAmountFragments(
+      line,
+      includeNumbersWithoutCurrency,
+      this.getCurrencyTokenPattern(),
     );
-
-    const fragments = new Set<string>();
-    for (const match of line.matchAll(withCurrencyPattern)) {
-      const value = match[0]?.trim();
-      if (value) {
-        fragments.add(value);
-      }
-    }
-
-    if (includeNumbersWithoutCurrency) {
-      const numberRegex = new RegExp(NUMBER_PATTERN, 'g');
-      for (const match of line.matchAll(numberRegex)) {
-        const value = match[0]?.trim();
-        if (value && /\d/.test(value)) {
-          fragments.add(value);
-        }
-      }
-    }
-
-    return Array.from(fragments);
   }
 
   private async parseAmountFragment(
     fragment: string,
   ): Promise<{ amount: number; currency?: string } | null> {
-    const normalized = fragment.replace(/\u00a0/g, ' ').trim();
-    if (!normalized) {
-      return null;
-    }
-
-    const currency = this.extractCurrency(normalized);
-    const numberPart = this.extractBestNumberPart(normalized);
-    if (!numberPart) {
-      return null;
-    }
-
-    const parsedNumber = await this.amountParser.parseAmount(numberPart);
-    if (parsedNumber && this.amountParser.isValidAmount(parsedNumber.amount)) {
-      return {
-        amount: Math.abs(parsedNumber.amount),
-        currency,
-      };
-    }
-
-    const direct = await this.amountParser.parseAmount(normalized);
-    if (direct && this.amountParser.isValidAmount(direct.amount)) {
-      return {
-        amount: Math.abs(direct.amount),
-        currency: direct.currency || currency,
-      };
-    }
-
-    return null;
+    return parseSharedAmountFragment(fragment, {
+      amountParser: this.amountParser,
+      extractCurrency: text => this.extractCurrency(text),
+      numberPattern: NUMBER_PATTERN,
+    });
   }
 
   private extractBestNumberPart(value: string): string | undefined {
-    const numberRegex = new RegExp(NUMBER_PATTERN, 'g');
-    const matches = value.match(numberRegex);
-    if (!matches?.length) {
-      return undefined;
-    }
-
-    return matches.sort((left, right) => right.length - left.length)[0];
+    return selectBestNumberPart(value, NUMBER_PATTERN);
   }
 
   private extractCurrency(text: string): string | undefined {
-    if (!text) {
-      return undefined;
-    }
-
-    const normalized = text.replace(/\u00a0/g, ' ');
-
-    const supportedCurrencies = new Set(this.amountParser.getSupportedCurrencies());
-    const codeMatches = normalized.toUpperCase().match(/\b[A-Z]{3}\b/g) || [];
-    for (const code of codeMatches) {
-      if (supportedCurrencies.has(code)) {
-        return code;
-      }
-    }
-
-    for (const [symbol, code] of Object.entries(SYMBOL_TO_CURRENCY)) {
-      if (normalized.includes(symbol)) {
-        return code;
-      }
-    }
-
-    const contextual = this.amountParser.detectCurrencyFromContext(normalized);
-    if (contextual) {
-      return contextual;
-    }
-
-    const lower = normalized.toLowerCase();
-    if (/\b(тенге|тг)\b/.test(lower)) {
-      return 'KZT';
-    }
-    if (/\b(dollars?|доллар)\b/.test(lower)) {
-      return 'USD';
-    }
-    if (/\b(euros?|евро)\b/.test(lower)) {
-      return 'EUR';
-    }
-    if (/\b(rubles?|руб(ль|лей|ля|.)?)\b/.test(lower)) {
-      return 'RUB';
-    }
-
-    return undefined;
+    return detectCurrency(text, this.amountParser, SYMBOL_TO_CURRENCY);
   }
 
   private extractDate(text: string): Date | undefined {
@@ -639,21 +559,13 @@ export class UniversalExtractorService {
     lineIndex: number,
     totalLines: number,
   ): number {
-    let score = 0;
-
-    if (hasTotalKeyword) {
-      score += 100;
-    }
-
-    if (explicitCurrency) {
-      score += 30;
-    }
-
-    const lineWeight = totalLines > 1 ? lineIndex / (totalLines - 1) : 1;
-    score += lineWeight * 20;
-    score += Math.min(Math.log10(amount + 1) * 5, 20);
-
-    return score;
+    return scoreSharedAmountCandidate(
+      amount,
+      hasTotalKeyword,
+      explicitCurrency,
+      lineIndex,
+      totalLines,
+    );
   }
 
   private getCurrencyTokenPattern(): string {
@@ -687,53 +599,18 @@ export class UniversalExtractorService {
   }
 
   private isLikelySentence(value: string): boolean {
-    const lower = value.toLowerCase();
-    const words = lower.split(/\s+/).filter(Boolean);
-
-    if (words.length >= 6) {
-      return true;
-    }
-
-    if (/^(we|your|thanks?|dear|hello|hi)\b/.test(lower)) {
-      return true;
-    }
-
-    if (/[.!?]/.test(value) && words.length >= 4) {
-      return true;
-    }
-
-    return false;
+    return isSharedLikelySentence(value);
   }
 
   private isDateRangeLike(value: string): boolean {
-    if (DATE_RANGE_REGEX.test(value)) {
-      return true;
-    }
-
-    if (MONTH_DATE_RANGE_REGEX.test(value)) {
-      return true;
-    }
-
-    return false;
+    return isSharedDateRangeLike(value);
   }
 
   private isAddressLike(value: string): boolean {
-    if (ADDRESS_LIKE_REGEX.test(value)) {
-      return true;
-    }
-
-    if (/,\s*[A-Z]{2}\b/.test(value) && /\b\d{5}(?:-\d{4})?\b/.test(value)) {
-      return true;
-    }
-
-    return false;
+    return isSharedAddressLike(value);
   }
 
   private isYearLikeAmount(amount: number, hasExplicitCurrency: boolean): boolean {
-    if (hasExplicitCurrency) {
-      return false;
-    }
-
-    return amount >= 1900 && amount <= 2099 && Number.isInteger(Math.round(amount));
+    return isSharedYearLikeAmount(amount, hasExplicitCurrency);
   }
 }

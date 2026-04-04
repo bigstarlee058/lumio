@@ -50,6 +50,15 @@ describe('GmailReceiptParserService', () => {
     expect(vendor).toBe('Bitwage');
   });
 
+  it('normalizes sender no-reply suffix into brand', () => {
+    const vendor = (service as any).extractVendor(
+      'Receipt\nInvoice',
+      'Stripe No Reply <no-reply@stripe.com>',
+    );
+
+    expect(vendor).toBe('Stripe');
+  });
+
   it('extracts brand from sender email domain when display name is absent', () => {
     const vendor = (service as any).extractVendor('Invoice', '<billing@lidl.com>');
 
