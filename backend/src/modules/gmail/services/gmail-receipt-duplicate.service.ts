@@ -1,153 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 import { Receipt } from '../../../entities';
+import { ReceiptDuplicateService } from '../../receipts/services/receipt-duplicate.service';
 
 @Injectable()
 export class GmailReceiptDuplicateService {
-  private readonly logger = new Logger(GmailReceiptDuplicateService.name);
+  constructor(private readonly receiptDuplicateService: ReceiptDuplicateService) {}
 
-  constructor(
-    @InjectRepository(Receipt)
-    private readonly receiptRepository: Repository<Receipt>,
-  ) {}
-
-  async findPotentialDuplicates(receipt: Receipt): Promise<Receipt[]> {
-    try {
-      if (!receipt.parsedData?.amount || !receipt.parsedData?.date) {
-        return [];
-      }
-
-      const amount = receipt.parsedData.amount;
-      const dateStr = receipt.parsedData.date;
-      const vendor = receipt.parsedData.vendor;
-
-      // Parse date and calculate date range (±2 days)
-      const receiptDate = new Date(dateStr);
-      if (Number.isNaN(receiptDate.getTime())) {
-        return [];
-      }
-
-      const dateFrom = new Date(receiptDate);
-      dateFrom.setDate(dateFrom.getDate() - 2);
-      const dateTo = new Date(receiptDate);
-      dateTo.setDate(dateTo.getDate() + 2);
-
-      // Calculate amount range (±1%)
-      const amountMin = amount * 0.99;
-      const amountMax = amount * 1.01;
-
-      // Find potential duplicates
-      const queryBuilder = this.receiptRepository
-        .createQueryBuilder('receipt')
-        .where('receipt.userId = :userId', { userId: receipt.userId })
-        .andWhere('receipt.workspaceId = :workspaceId', { workspaceId: receipt.workspaceId })
-        .andWhere('receipt.id != :id', { id: receipt.id })
-        .andWhere('receipt.isDuplicate = :isDuplicate', { isDuplicate: false })
-        .andWhere('receipt.receivedAt BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
-
-      const candidates = await queryBuilder.getMany();
-
-      // Filter by amount and vendor similarity
-      const duplicates: Receipt[] = [];
-      for (const candidate of candidates) {
-        if (!candidate.parsedData?.amount) continue;
-
-        const candidateAmount = candidate.parsedData.amount;
-        if (candidateAmount < amountMin || candidateAmount > amountMax) continue;
-
-        // Check vendor similarity if both have vendor names
-        if (vendor && candidate.parsedData.vendor) {
-          const similarity = this.calculateStringSimilarity(
-            vendor.toLowerCase(),
-            candidate.parsedData.vendor.toLowerCase(),
-          );
-          if (similarity > 0.8) {
-            duplicates.push(candidate);
-          }
-        } else if (!vendor && !candidate.parsedData.vendor) {
-          // Both have no vendor, consider as potential duplicate
-          duplicates.push(candidate);
-        }
-      }
-
-      return duplicates;
-    } catch (error) {
-      this.logger.error('Failed to find potential duplicates', error);
-      return [];
-    }
+  findPotentialDuplicates(receipt: Receipt): Promise<Receipt[]> {
+    return this.receiptDuplicateService.findPotentialDuplicates(receipt);
   }
 
-  async markAsDuplicate(receiptId: string, originalId: string): Promise<void> {
-    const receipt = await this.receiptRepository.findOne({
-      where: { id: receiptId },
-    });
-
-    if (!receipt) {
-      throw new Error('Receipt not found');
-    }
-
-    const original = await this.receiptRepository.findOne({
-      where: { id: originalId },
-    });
-
-    if (!original) {
-      throw new Error('Original receipt not found');
-    }
-
-    receipt.duplicateOfId = originalId;
-    receipt.isDuplicate = true;
-    await this.receiptRepository.save(receipt);
+  markAsDuplicate(receiptId: string, originalId: string): Promise<void> {
+    return this.receiptDuplicateService.markAsDuplicate(receiptId, originalId);
   }
 
-  async unmarkDuplicate(receiptId: string): Promise<void> {
-    const receipt = await this.receiptRepository.findOne({
-      where: { id: receiptId },
-    });
-
-    if (!receipt) {
-      throw new Error('Receipt not found');
-    }
-
-    receipt.duplicateOfId = null;
-    receipt.isDuplicate = false;
-    await this.receiptRepository.save(receipt);
-  }
-
-  private calculateStringSimilarity(str1: string, str2: string): number {
-    // Levenshtein distance algorithm
-    const len1 = str1.length;
-    const len2 = str2.length;
-
-    if (len1 === 0) return len2 === 0 ? 1 : 0;
-    if (len2 === 0) return 0;
-
-    const matrix: number[][] = [];
-
-    for (let i = 0; i <= len2; i++) {
-      matrix[i] = [i];
-    }
-
-    for (let j = 0; j <= len1; j++) {
-      matrix[0][j] = j;
-    }
-
-    for (let i = 1; i <= len2; i++) {
-      for (let j = 1; j <= len1; j++) {
-        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1,
-            matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1,
-          );
-        }
-      }
-    }
-
-    const maxLen = Math.max(len1, len2);
-    const distance = matrix[len2][len1];
-    return 1 - distance / maxLen;
+  unmarkDuplicate(receiptId: string): Promise<void> {
+    return this.receiptDuplicateService.unmarkDuplicate(receiptId);
   }
 }

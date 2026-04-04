@@ -1,51 +1,18 @@
+import { PartialType } from '@nestjs/swagger';
 import {
-  IsBoolean,
   IsDateString,
   IsEnum,
-  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
-  MaxLength,
-  Min,
 } from 'class-validator';
 import { PayableSource, PayableStatus } from '../../../entities/payable.entity';
+import { CreatePayableDto } from './create-payable.dto';
 
-export class UpdatePayableDto {
-  @IsOptional()
-  @IsString()
-  @MaxLength(255)
-  vendor?: string;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  amount?: number;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(3)
-  currency?: string;
-
-  @IsOptional()
-  @IsDateString()
-  dueDate?: string;
-
-  @IsOptional()
-  @IsEnum(PayableStatus)
-  status?: PayableStatus;
-
+export class UpdatePayableDto extends PartialType(CreatePayableDto) {
   @IsOptional()
   @IsUUID()
   linkedTransactionId?: string | null;
-
-  @IsOptional()
-  @IsEnum(PayableSource)
-  source?: PayableSource;
-
-  @IsOptional()
-  @IsBoolean()
-  isRecurring?: boolean;
 
   @IsOptional()
   @IsString()

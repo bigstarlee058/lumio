@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Repository } from 'typeorm';
 import { Receipt } from '../../../entities';
 
@@ -56,10 +57,7 @@ export class ReceiptDuplicateService {
         }
 
         if (vendor && candidate.parsedData.vendor) {
-          const similarity = this.calculateStringSimilarity(
-            vendor.toLowerCase(),
-            candidate.parsedData.vendor.toLowerCase(),
-          );
+          const similarity = calculateStringSimilarity(vendor.toLowerCase(), candidate.parsedData.vendor.toLowerCase());
           if (similarity > 0.8) {
             duplicates.push(candidate);
           }
@@ -100,45 +98,5 @@ export class ReceiptDuplicateService {
     receipt.duplicateOfId = null;
     receipt.isDuplicate = false;
     await this.receiptRepository.save(receipt);
-  }
-
-  private calculateStringSimilarity(str1: string, str2: string): number {
-    const len1 = str1.length;
-    const len2 = str2.length;
-
-    if (len1 === 0) {
-      return len2 === 0 ? 1 : 0;
-    }
-    if (len2 === 0) {
-      return 0;
-    }
-
-    const matrix: number[][] = [];
-
-    for (let i = 0; i <= len2; i++) {
-      matrix[i] = [i];
-    }
-
-    for (let j = 0; j <= len1; j++) {
-      matrix[0][j] = j;
-    }
-
-    for (let i = 1; i <= len2; i++) {
-      for (let j = 1; j <= len1; j++) {
-        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1,
-            matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1,
-          );
-        }
-      }
-    }
-
-    const maxLen = Math.max(len1, len2);
-    const distance = matrix[len2][len1];
-    return 1 - distance / maxLen;
   }
 }

@@ -17,6 +17,7 @@ import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
+import { pipeFileStreamResponse } from '../../common/utils/stream-response.util';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { AccessSharedLinkDto } from './dto/access-shared-link.dto';
@@ -326,27 +327,12 @@ export class StorageController {
       user.id,
     );
 
-    res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', buildContentDisposition('inline', fileName));
-
-    stream.on('error', (err: any) => {
-      const status =
-        err?.code === 'ENOENT' || err?.code === 'EISDIR'
-          ? HttpStatus.NOT_FOUND
-          : HttpStatus.INTERNAL_SERVER_ERROR;
-      if (!res.headersSent) {
-        res.status(status).json({
-          error: {
-            code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-            message:
-              status === HttpStatus.NOT_FOUND ? 'File not found on disk' : 'Failed to read file',
-          },
-        });
-      } else {
-        res.destroy(err);
-      }
+    pipeFileStreamResponse(res, stream, {
+      disposition: 'inline',
+      fileName,
+      mimeType,
+      errorMessage: 'Failed to read file',
     });
-    stream.pipe(res);
   }
 
   /**
@@ -364,29 +350,12 @@ export class StorageController {
       user.id,
     );
 
-    res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
-
-    stream.on('error', (err: any) => {
-      const status =
-        err?.code === 'ENOENT' || err?.code === 'EISDIR'
-          ? HttpStatus.NOT_FOUND
-          : HttpStatus.INTERNAL_SERVER_ERROR;
-      if (!res.headersSent) {
-        res.status(status).json({
-          error: {
-            code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-            message:
-              status === HttpStatus.NOT_FOUND
-                ? 'File not found on disk'
-                : 'Failed to download file',
-          },
-        });
-      } else {
-        res.destroy(err);
-      }
+    pipeFileStreamResponse(res, stream, {
+      disposition: 'attachment',
+      fileName,
+      mimeType,
+      errorMessage: 'Failed to download file',
     });
-    stream.pipe(res);
   }
 
   /**
@@ -545,30 +514,12 @@ export class StorageController {
       statement.id,
     );
 
-    res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
-
-    stream.on('error', (err: any) => {
-      const status =
-        err?.code === 'ENOENT' || err?.code === 'EISDIR'
-          ? HttpStatus.NOT_FOUND
-          : HttpStatus.INTERNAL_SERVER_ERROR;
-      if (!res.headersSent) {
-        res.status(status).json({
-          error: {
-            code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-            message:
-              status === HttpStatus.NOT_FOUND
-                ? 'File not found on disk'
-                : 'Failed to download file',
-          },
-        });
-      } else {
-        res.destroy(err);
-      }
+    pipeFileStreamResponse(res, stream, {
+      disposition: 'attachment',
+      fileName,
+      mimeType,
+      errorMessage: 'Failed to download file',
     });
-
-    stream.pipe(res);
   }
 
   /**

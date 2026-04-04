@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { BaseAiHelper } from '@/common/helpers/base-ai.helper';
 import {
   AI_CATEGORY_BATCH_SIZE,
   AiCategoryClassifier,
@@ -41,6 +42,12 @@ describe('AiCategoryClassifier', () => {
     const classifier = new AiCategoryClassifier(undefined);
     expect(classifier.isAvailable()).toBe(false);
     expect(GoogleGenerativeAI).not.toHaveBeenCalled();
+  });
+
+  it('extends BaseAiHelper', () => {
+    const classifier = new AiCategoryClassifier('test-key');
+
+    expect(classifier).toBeInstanceOf(BaseAiHelper);
   });
 
   it('returns empty result for empty transaction list', async () => {

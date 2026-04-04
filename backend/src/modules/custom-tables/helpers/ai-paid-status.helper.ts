@@ -1,13 +1,5 @@
-import { type GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
-import { TimeoutError, retry, withTimeout } from '../../../common/utils/async.util';
-import {
-  isAiCircuitOpen,
-  isAiEnabled,
-  recordAiFailure,
-  recordAiSuccess,
-  redactSensitive,
-  withAiConcurrency,
-} from '../../parsing/helpers/ai-runtime.util';
+import { BaseAiHelper } from '../../../common/helpers/base-ai.helper';
+import { redactSensitive } from '../../parsing/helpers/ai-runtime.util';
 
 export type PaidStatusInput = {
   id: string;
@@ -56,29 +48,13 @@ const heuristicPaidStatus = (input: PaidStatusInput): boolean | null => {
   return null;
 };
 
-export class AiPaidStatusClassifier {
-  private geminiModel: GenerativeModel | null = null;
-
-  constructor(apiKey: string | undefined = process.env.GEMINI_API_KEY) {
-    if (apiKey && isAiEnabled()) {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this.geminiModel = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-      });
-    }
-  }
-
-  isAvailable(): boolean {
-    return !!this.geminiModel && isAiEnabled();
-  }
-
+export class AiPaidStatusClassifier extends BaseAiHelper {
   async classify(inputs: PaidStatusInput[]): Promise<PaidStatusResult[]> {
     if (!inputs.length) return [];
 
-    const fallback = () =>
-      inputs.map(input => ({ id: input.id, paid: heuristicPaidStatus(input) }));
+    const fallback = () => inputs.map(input => ({ id: input.id, paid: heuristicPaidStatus(input) }));
 
-    if (!this.geminiModel || isAiCircuitOpen()) {
+    if (!this.isAvailable()) {
       return fallback();
     }
 
@@ -90,17 +66,13 @@ export class AiPaidStatusClassifier {
 
     try {
       const timeoutMs = Number.parseInt(process.env.AI_TIMEOUT_MS || '20000', 10);
-      const completion = await retry(
-        () =>
-          withTimeout(
-            withAiConcurrency(() =>
-              this.geminiModel?.generateContent({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [
-                      {
-                        text: `You classify whether a transaction is paid (settled) or unpaid (pending).
+      const content = await this.generateJsonContent(
+        [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: `You classify whether a transaction is paid (settled) or unpaid (pending).
 Return ONLY JSON with shape {"results":[{"id":"...","paid":true|false|null}]}. Use null when unclear.
 Rules:
 - paid=true if text indicates payment completed/settled.
@@ -108,37 +80,26 @@ Rules:
 
 Items:
 ${JSON.stringify({ items: sanitized })}`,
-                      },
-                    ],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0,
-                  responseMimeType: 'application/json',
-                },
-              }),
-            ),
-            Number.isFinite(timeoutMs) ? timeoutMs : 20000,
-            'AI request timed out',
-          ),
+              },
+            ],
+          },
+        ],
         {
+          timeoutMs: Number.isFinite(timeoutMs) ? timeoutMs : 20000,
+          timeoutMessage: 'AI request timed out',
           retries: 1,
           baseDelayMs: 500,
           maxDelayMs: 2000,
-          isRetryable: error => error instanceof TimeoutError,
         },
       );
 
-      const content = completion.response?.text();
       if (!content) {
-        recordAiFailure();
         return fallback();
       }
 
       const parsed = JSON.parse(content);
       const rawResults = parsed?.results || parsed?.items || parsed?.data || [];
       if (!Array.isArray(rawResults)) {
-        recordAiFailure();
         return fallback();
       }
 
@@ -159,15 +120,11 @@ ${JSON.stringify({ items: sanitized })}`,
         byId.set(id, paid);
       }
 
-      recordAiSuccess();
       return inputs.map(input => ({
         id: input.id,
-        paid: byId.has(input.id)
-          ? (byId.get(input.id) as boolean | null)
-          : heuristicPaidStatus(input),
+        paid: byId.has(input.id) ? (byId.get(input.id) as boolean | null) : heuristicPaidStatus(input),
       }));
     } catch (error) {
-      recordAiFailure();
       console.error('[AiPaidStatusClassifier] Failed to classify paid status:', error);
       return fallback();
     }

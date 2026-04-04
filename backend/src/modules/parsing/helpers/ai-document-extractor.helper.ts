@@ -1,18 +1,11 @@
-import { type GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
-import { TimeoutError, retry, withTimeout } from '../../../common/utils/async.util';
+import { BaseAiHelper } from '../../../common/helpers/base-ai.helper';
+import { unwrapAiJson } from '../../../common/utils/ai-response.util';
 import type {
   DocumentType,
   LineItem,
   TransactionDirection,
 } from '../interfaces/parsed-document.interface';
-import {
-  isAiCircuitOpen,
-  isAiEnabled,
-  recordAiFailure,
-  recordAiSuccess,
-  redactSensitive,
-  withAiConcurrency,
-} from './ai-runtime.util';
+import { redactSensitive } from './ai-runtime.util';
 
 export interface AiExtractionResult {
   documentType?: DocumentType;
@@ -56,24 +49,10 @@ Rules:
 - Preserve vendor name exactly as in source.
 `;
 
-export class AiDocumentExtractor {
-  private geminiModel: GenerativeModel | null = null;
-
-  constructor(apiKey: string | undefined = process.env.GEMINI_API_KEY) {
-    if (apiKey && isAiEnabled()) {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this.geminiModel = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-      });
-    }
-  }
-
-  isAvailable(): boolean {
-    return Boolean(this.geminiModel) && isAiEnabled() && !isAiCircuitOpen();
-  }
+export class AiDocumentExtractor extends BaseAiHelper {
 
   async extractFromText(text: string): Promise<AiExtractionResult | null> {
-    if (!this.geminiModel || !this.isAvailable()) {
+    if (!this.isAvailable()) {
       return null;
     }
 
@@ -90,7 +69,7 @@ export class AiDocumentExtractor {
     imageBuffer: Buffer,
     mimeType: string,
   ): Promise<AiExtractionResult | null> {
-    if (!this.geminiModel || !this.isAvailable()) {
+    if (!this.isAvailable()) {
       return null;
     }
 
@@ -115,42 +94,21 @@ export class AiDocumentExtractor {
   private async callModel(contents: any[]): Promise<AiExtractionResult | null> {
     try {
       const timeoutMs = Number.parseInt(process.env.AI_TIMEOUT_MS || '20000', 10);
-
-      const completion = await retry(
-        () =>
-          withTimeout(
-            withAiConcurrency(() =>
-              this.geminiModel?.generateContent({
-                contents,
-                generationConfig: {
-                  temperature: 0,
-                  responseMimeType: 'application/json',
-                },
-              }),
-            ),
-            Number.isFinite(timeoutMs) ? timeoutMs : 20000,
-            'AI document extraction timed out',
-          ),
-        {
-          retries: 1,
-          baseDelayMs: 500,
-          maxDelayMs: 5000,
-          isRetryable: error => error instanceof TimeoutError,
-        },
-      );
-
-      const content = completion?.response?.text();
+      const content = await this.generateJsonContent(contents, {
+        timeoutMs: Number.isFinite(timeoutMs) ? timeoutMs : 20000,
+        timeoutMessage: 'AI document extraction timed out',
+        retries: 1,
+        baseDelayMs: 500,
+        maxDelayMs: 5000,
+      });
       if (!content) {
-        recordAiFailure();
         return null;
       }
 
-      const parsed = JSON.parse(this.unwrapJson(content));
+      const parsed = JSON.parse(unwrapAiJson(content));
       const normalized = this.normalizeResult(parsed);
-      recordAiSuccess();
       return normalized;
     } catch (error) {
-      recordAiFailure();
       console.error('[AiDocumentExtractor] Failed:', error);
       return null;
     }
@@ -195,12 +153,4 @@ export class AiDocumentExtractor {
     return undefined;
   }
 
-  private unwrapJson(content: string): string {
-    const trimmed = content.trim();
-    if (!trimmed.startsWith('```')) {
-      return trimmed;
-    }
-
-    return trimmed.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-  }
 }

@@ -28,6 +28,7 @@ import { WorkspaceContextGuard } from '../../common/guards/workspace-context.gua
 import { IdempotencyService } from '../../common/services/idempotency.service';
 import { validateFile } from '../../common/utils/file-validator.util';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
+import { pipeFileStreamResponse } from '../../common/utils/stream-response.util';
 import { multerConfig } from '../../config/multer.config';
 import { EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
@@ -275,28 +276,13 @@ export class StatementsController {
       id,
       workspaceId,
     );
-    res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
-    stream.on('error', (err: any) => {
-      const status =
-        err?.code === 'ENOENT' || err?.code === 'EISDIR'
-          ? HttpStatus.NOT_FOUND
-          : HttpStatus.INTERNAL_SERVER_ERROR;
-      if (!res.headersSent) {
-        res.status(status).json({
-          error: {
-            code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-            message:
-              status === HttpStatus.NOT_FOUND
-                ? 'File not found on disk'
-                : 'Failed to download file',
-          },
-        });
-      } else {
-        res.destroy(err);
-      }
+
+    pipeFileStreamResponse(res, stream, {
+      disposition: 'attachment',
+      fileName,
+      mimeType,
+      errorMessage: 'Failed to download file',
     });
-    stream.pipe(res);
   }
 
   private assertReceiptFileSupported(file: Express.Multer.File): void {
@@ -318,26 +304,13 @@ export class StatementsController {
       id,
       workspaceId,
     );
-    res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Disposition', buildContentDisposition('inline', fileName));
-    stream.on('error', (err: any) => {
-      const status =
-        err?.code === 'ENOENT' || err?.code === 'EISDIR'
-          ? HttpStatus.NOT_FOUND
-          : HttpStatus.INTERNAL_SERVER_ERROR;
-      if (!res.headersSent) {
-        res.status(status).json({
-          error: {
-            code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-            message:
-              status === HttpStatus.NOT_FOUND ? 'File not found on disk' : 'Failed to read file',
-          },
-        });
-      } else {
-        res.destroy(err);
-      }
+
+    pipeFileStreamResponse(res, stream, {
+      disposition: 'inline',
+      fileName,
+      mimeType,
+      errorMessage: 'Failed to read file',
     });
-    stream.pipe(res);
   }
 
   @Get(':id/thumbnail')

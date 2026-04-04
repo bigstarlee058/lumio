@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { extractBrandFromSender } from '../../../common/utils/sender-brand.util';
 import { Receipt } from '../../../entities';
 import { GmailReceiptParserService } from './gmail-receipt-parser.service';
 
@@ -146,7 +147,7 @@ export class GmailMerchantReparseService {
       return normalizedFromEmail;
     }
 
-    return this.extractBrandFromSender(receipt.sender);
+    return extractBrandFromSender(receipt.sender);
   }
 
   private selectAttachmentPath(receipt: Receipt): string | undefined {
@@ -200,31 +201,4 @@ export class GmailMerchantReparseService {
     return false;
   }
 
-  private extractBrandFromSender(sender?: string): string | undefined {
-    if (!sender) {
-      return undefined;
-    }
-
-    const displayName = sender.split('<')[0]?.trim().replace(/^"|"$/g, '');
-    if (displayName && !displayName.includes('@')) {
-      const cleaned = displayName
-        .replace(/\s+(support|billing|payments?|service|team|notifications?|no[-\s]?reply)$/i, '')
-        .trim();
-
-      if (cleaned) {
-        return cleaned.slice(0, 100);
-      }
-
-      return displayName.slice(0, 100);
-    }
-
-    const emailMatch = sender.match(/[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,})/i);
-    const rootDomain = emailMatch?.[1]?.split('.')[0] || '';
-
-    if (!rootDomain) {
-      return undefined;
-    }
-
-    return `${rootDomain.charAt(0).toUpperCase()}${rootDomain.slice(1).toLowerCase()}`;
-  }
 }

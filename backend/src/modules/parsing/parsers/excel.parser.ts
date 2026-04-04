@@ -1,9 +1,9 @@
 import * as XLSX from 'xlsx';
 import { type BankName, FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-statement.interface';
-import { BaseParser } from './base.parser';
+import { BaseTabularParser } from './base-tabular.parser';
 
-export class ExcelParser extends BaseParser {
+export class ExcelParser extends BaseTabularParser {
   async canParse(
     bankName: BankName,
     fileType: FileType,
@@ -41,7 +41,7 @@ export class ExcelParser extends BaseParser {
         continue;
       }
 
-      const transaction = this.parseRow(row, columnMapping);
+      const transaction = this.parseRow(row, columnMapping, index => row[index], 'Excel');
       if (transaction) {
         transactions.push(transaction);
       }
@@ -52,88 +52,6 @@ export class ExcelParser extends BaseParser {
       transactions,
     };
   }
-
-  private mapColumns(headers: string[]): Record<string, number> {
-    const mapping: Record<string, number> = {};
-
-    headers.forEach((header, index) => {
-      const lowerHeader = header.toLowerCase();
-      if (
-        lowerHeader.includes('дата') ||
-        lowerHeader.includes('date') ||
-        lowerHeader.includes('fecha') ||
-        lowerHeader.includes('data')
-      ) {
-        mapping.date = index;
-      }
-      if (
-        lowerHeader.includes('номер') ||
-        lowerHeader.includes('документ') ||
-        lowerHeader.includes('document') ||
-        lowerHeader.includes('номерок') ||
-        lowerHeader.includes('doc')
-      ) {
-        mapping.document = index;
-      }
-      if (
-        lowerHeader.includes('контрагент') ||
-        lowerHeader.includes('counterparty') ||
-        lowerHeader.includes('beneficiary') ||
-        lowerHeader.includes('cliente') ||
-        lowerHeader.includes('payer') ||
-        lowerHeader.includes('payee')
-      ) {
-        mapping.counterparty = index;
-      }
-      if (
-        lowerHeader.includes('бин') ||
-        lowerHeader.includes('bin') ||
-        lowerHeader.includes('inn') ||
-        lowerHeader.includes('tax')
-      ) {
-        mapping.bin = index;
-      }
-      if (
-        lowerHeader.includes('счёт') ||
-        lowerHeader.includes('счет') ||
-        lowerHeader.includes('account') ||
-        lowerHeader.includes('iban')
-      ) {
-        mapping.account = index;
-      }
-      if (lowerHeader.includes('банк') || lowerHeader.includes('bank')) {
-        mapping.bank = index;
-      }
-      if (
-        lowerHeader.includes('дебет') ||
-        lowerHeader.includes('debit') ||
-        lowerHeader.includes('debe')
-      ) {
-        mapping.debit = index;
-      }
-      if (
-        lowerHeader.includes('кредит') ||
-        lowerHeader.includes('credit') ||
-        lowerHeader.includes('haber')
-      ) {
-        mapping.credit = index;
-      }
-      if (
-        lowerHeader.includes('назначение') ||
-        lowerHeader.includes('цель') ||
-        lowerHeader.includes('purpose') ||
-        lowerHeader.includes('описание') ||
-        lowerHeader.includes('description') ||
-        lowerHeader.includes('descr') ||
-        lowerHeader.includes('concepto')
-      ) {
-        mapping.purpose = index;
-      }
-    });
-
-    return mapping;
-  }
-
   private extractMetadata(filePath: string, data: any[][]): ParsedStatement['metadata'] {
     // Try to extract from first rows or use defaults
     const accountNumber = this.extractAccountNumberFromData(data) || 'Unknown';
@@ -187,52 +105,5 @@ export class ExcelParser extends BaseParser {
       }
     }
     return { from: null, to: null };
-  }
-
-  private parseRow(row: any[], columnMapping: Record<string, number>): ParsedTransaction | null {
-    try {
-      const dateIndex = columnMapping.date;
-      if (dateIndex === undefined) {
-        return null;
-      }
-
-      const transactionDate = this.normalizeDate(String(row[dateIndex] || ''));
-      if (!transactionDate) {
-        return null;
-      }
-
-      const documentIndex = columnMapping.document;
-      const counterpartyIndex = columnMapping.counterparty;
-      const binIndex = columnMapping.bin;
-      const accountIndex = columnMapping.account;
-      const bankIndex = columnMapping.bank;
-      const debitIndex = columnMapping.debit;
-      const creditIndex = columnMapping.credit;
-      const purposeIndex = columnMapping.purpose;
-
-      return {
-        transactionDate,
-        documentNumber: documentIndex !== undefined ? String(row[documentIndex] || '') : undefined,
-        counterpartyName:
-          counterpartyIndex !== undefined ? String(row[counterpartyIndex] || '') : 'Unknown',
-        counterpartyBin: binIndex !== undefined ? String(row[binIndex] || '') : undefined,
-        counterpartyAccount:
-          accountIndex !== undefined ? String(row[accountIndex] || '') : undefined,
-        counterpartyBank: bankIndex !== undefined ? String(row[bankIndex] || '') : undefined,
-        debit:
-          debitIndex !== undefined
-            ? this.normalizeNumberValue(row[debitIndex]) || undefined
-            : undefined,
-        credit:
-          creditIndex !== undefined
-            ? this.normalizeNumberValue(row[creditIndex]) || undefined
-            : undefined,
-        paymentPurpose: purposeIndex !== undefined ? String(row[purposeIndex] || '') : 'Не указано',
-        currency: 'KZT',
-      };
-    } catch (error) {
-      console.error('Error parsing Excel row:', error);
-      return null;
-    }
   }
 }

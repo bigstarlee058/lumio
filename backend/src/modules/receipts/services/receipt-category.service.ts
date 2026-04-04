@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Repository } from 'typeorm';
 import { Category, Receipt, Transaction } from '../../../entities';
+
+type CategoryQueryMode = 'direct' | 'via-statement';
 
 @Injectable()
 export class ReceiptCategoryService {
@@ -14,16 +17,17 @@ export class ReceiptCategoryService {
     private readonly transactionRepository: Repository<Transaction>,
   ) {}
 
-  async suggestCategory(receipt: Receipt): Promise<Category | null> {
+  async suggestCategory(
+    receipt: Receipt,
+    queryMode: CategoryQueryMode = 'direct',
+  ): Promise<Category | null> {
     try {
       const vendor = receipt.parsedData?.vendor;
       if (!vendor) {
         return null;
       }
 
-      const categories = await this.categoryRepository.find({
-        where: { workspaceId: receipt.workspaceId, isEnabled: true },
-      });
+      const categories = await this.getCategories(receipt.workspaceId, queryMode);
 
       if (categories.length === 0) {
         return null;
@@ -44,6 +48,23 @@ export class ReceiptCategoryService {
       this.logger.error('Failed to suggest category', error);
       return null;
     }
+  }
+
+  private getCategories(
+    workspaceId: string,
+    queryMode: CategoryQueryMode,
+  ): Promise<Category[]> {
+    if (queryMode === 'via-statement') {
+      return this.categoryRepository
+        .createQueryBuilder('category')
+        .leftJoin('category.user', 'user')
+        .where('user.workspace_id = :workspaceId', { workspaceId })
+        .getMany();
+    }
+
+    return this.categoryRepository.find({
+      where: { workspaceId, isEnabled: true },
+    });
   }
 
   private async matchByHistoricalData(
@@ -139,7 +160,7 @@ export class ReceiptCategoryService {
 
     for (const category of categories) {
       const categoryLower = category.name.toLowerCase();
-      const similarity = this.calculateStringSimilarity(vendorLower, categoryLower);
+      const similarity = calculateStringSimilarity(vendorLower, categoryLower);
 
       if (similarity > bestSimilarity && similarity > 0.7) {
         bestSimilarity = similarity;
@@ -148,49 +169,5 @@ export class ReceiptCategoryService {
     }
 
     return bestMatch;
-  }
-
-  private calculateStringSimilarity(str1: string, str2: string): number {
-    if (str1.includes(str2) || str2.includes(str1)) {
-      return 0.8;
-    }
-
-    const len1 = str1.length;
-    const len2 = str2.length;
-
-    if (len1 === 0) {
-      return len2 === 0 ? 1 : 0;
-    }
-    if (len2 === 0) {
-      return 0;
-    }
-
-    const matrix: number[][] = [];
-
-    for (let i = 0; i <= len2; i++) {
-      matrix[i] = [i];
-    }
-
-    for (let j = 0; j <= len1; j++) {
-      matrix[0][j] = j;
-    }
-
-    for (let i = 1; i <= len2; i++) {
-      for (let j = 1; j <= len1; j++) {
-        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1,
-            matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1,
-          );
-        }
-      }
-    }
-
-    const maxLen = Math.max(len1, len2);
-    const distance = matrix[len2][len1];
-    return 1 - distance / maxLen;
   }
 }

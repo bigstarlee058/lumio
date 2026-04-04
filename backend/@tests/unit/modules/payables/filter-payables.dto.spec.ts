@@ -32,4 +32,18 @@ describe('Payables DTO validation', () => {
     expect(await validate(filterDto as object)).not.toHaveLength(0);
     expect(await validate(markPaidDto as object)).not.toHaveLength(0);
   });
+
+  it('allows clearing nullable update fields while keeping other inherited validation rules', async () => {
+    const updateDto = plainToInstance(UpdatePayableDto, {
+      vendor: 'Acme',
+      amount: 10,
+      linkedTransactionId: null,
+      comment: null,
+      statementId: null,
+    });
+
+    const errors = await validate(updateDto as object);
+
+    expect(errors).toHaveLength(0);
+  });
 });

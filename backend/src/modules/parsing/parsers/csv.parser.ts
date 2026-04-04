@@ -1,10 +1,10 @@
 import * as fs from 'fs';
-import * as csv from 'csv-parser';
+import csv from 'csv-parser';
 import { type BankName, FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-statement.interface';
-import { BaseParser } from './base.parser';
+import { BaseTabularParser } from './base-tabular.parser';
 
-export class CsvParser extends BaseParser {
+export class CsvParser extends BaseTabularParser {
   async canParse(
     bankName: BankName,
     fileType: FileType,
@@ -44,7 +44,8 @@ export class CsvParser extends BaseParser {
             }
           }
 
-          const transaction = this.parseRow(row, columnMapping);
+          const rowValues = Object.values(row);
+          const transaction = this.parseRow(row, columnMapping, index => rowValues[index], 'CSV');
           if (transaction) {
             transactions.push(transaction);
           }
@@ -88,136 +89,5 @@ export class CsvParser extends BaseParser {
     }
 
     return ',';
-  }
-
-  private mapColumns(headers: string[]): Record<string, number> {
-    const mapping: Record<string, number> = {};
-
-    headers.forEach((header, index) => {
-      const lowerHeader = header.toLowerCase();
-      if (
-        lowerHeader.includes('дата') ||
-        lowerHeader.includes('date') ||
-        lowerHeader.includes('fecha') ||
-        lowerHeader.includes('data')
-      ) {
-        mapping.date = index;
-      }
-      if (
-        lowerHeader.includes('номер') ||
-        lowerHeader.includes('документ') ||
-        lowerHeader.includes('document') ||
-        lowerHeader.includes('номерок') ||
-        lowerHeader.includes('doc')
-      ) {
-        mapping.document = index;
-      }
-      if (
-        lowerHeader.includes('контрагент') ||
-        lowerHeader.includes('counterparty') ||
-        lowerHeader.includes('beneficiary') ||
-        lowerHeader.includes('cliente') ||
-        lowerHeader.includes('payer') ||
-        lowerHeader.includes('payee')
-      ) {
-        mapping.counterparty = index;
-      }
-      if (
-        lowerHeader.includes('бин') ||
-        lowerHeader.includes('bin') ||
-        lowerHeader.includes('inn') ||
-        lowerHeader.includes('tax')
-      ) {
-        mapping.bin = index;
-      }
-      if (
-        lowerHeader.includes('счёт') ||
-        lowerHeader.includes('счет') ||
-        lowerHeader.includes('account') ||
-        lowerHeader.includes('iban')
-      ) {
-        mapping.account = index;
-      }
-      if (lowerHeader.includes('банк') || lowerHeader.includes('bank')) {
-        mapping.bank = index;
-      }
-      if (
-        lowerHeader.includes('дебет') ||
-        lowerHeader.includes('debit') ||
-        lowerHeader.includes('debe')
-      ) {
-        mapping.debit = index;
-      }
-      if (
-        lowerHeader.includes('кредит') ||
-        lowerHeader.includes('credit') ||
-        lowerHeader.includes('haber')
-      ) {
-        mapping.credit = index;
-      }
-      if (
-        lowerHeader.includes('назначение') ||
-        lowerHeader.includes('цель') ||
-        lowerHeader.includes('purpose') ||
-        lowerHeader.includes('описание') ||
-        lowerHeader.includes('description') ||
-        lowerHeader.includes('descr') ||
-        lowerHeader.includes('concepto')
-      ) {
-        mapping.purpose = index;
-      }
-    });
-
-    return mapping;
-  }
-
-  private parseRow(row: any, columnMapping: Record<string, number>): ParsedTransaction | null {
-    try {
-      const dateIndex = columnMapping.date;
-      if (dateIndex === undefined) {
-        return null;
-      }
-
-      const rowValues = Object.values(row);
-      const transactionDate = this.normalizeDate(String(rowValues[dateIndex] || ''));
-      if (!transactionDate) {
-        return null;
-      }
-
-      const documentIndex = columnMapping.document;
-      const counterpartyIndex = columnMapping.counterparty;
-      const binIndex = columnMapping.bin;
-      const accountIndex = columnMapping.account;
-      const bankIndex = columnMapping.bank;
-      const debitIndex = columnMapping.debit;
-      const creditIndex = columnMapping.credit;
-      const purposeIndex = columnMapping.purpose;
-
-      return {
-        transactionDate,
-        documentNumber:
-          documentIndex !== undefined ? String(rowValues[documentIndex] || '') : undefined,
-        counterpartyName:
-          counterpartyIndex !== undefined ? String(rowValues[counterpartyIndex] || '') : 'Unknown',
-        counterpartyBin: binIndex !== undefined ? String(rowValues[binIndex] || '') : undefined,
-        counterpartyAccount:
-          accountIndex !== undefined ? String(rowValues[accountIndex] || '') : undefined,
-        counterpartyBank: bankIndex !== undefined ? String(rowValues[bankIndex] || '') : undefined,
-        debit:
-          debitIndex !== undefined
-            ? this.normalizeNumberValue(String(rowValues[debitIndex] || '')) || undefined
-            : undefined,
-        credit:
-          creditIndex !== undefined
-            ? this.normalizeNumberValue(String(rowValues[creditIndex] || '')) || undefined
-            : undefined,
-        paymentPurpose:
-          purposeIndex !== undefined ? String(rowValues[purposeIndex] || '') : 'Не указано',
-        currency: 'KZT',
-      };
-    } catch (error) {
-      console.error('Error parsing CSV row:', error);
-      return null;
-    }
   }
 }

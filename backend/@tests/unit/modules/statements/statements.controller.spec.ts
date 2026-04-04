@@ -6,6 +6,7 @@ import { StatementStatus } from '@/entities/statement.entity';
 import { FilterStatementsDto } from '@/modules/statements/dto/filter-statements.dto';
 import { ReceiptStatementService } from '@/modules/statements/services/receipt-statement.service';
 import { StatementsController } from '@/modules/statements/statements.controller';
+import { buildContentDisposition } from '@/common/utils/http-file.util';
 
 describe('StatementsController', () => {
   const statementsService = {
@@ -13,6 +14,7 @@ describe('StatementsController', () => {
     createFromReceiptScan: jest.fn(),
     findAll: jest.fn(),
     convertDroppedSampleToTransaction: jest.fn(),
+    getFileStream: jest.fn(),
   };
 
   const idempotencyService = {
@@ -185,5 +187,48 @@ describe('StatementsController', () => {
       language: undefined,
     });
     expect(result).toEqual({ data: [createdStatement] });
+  });
+
+  it('streams statement downloads with shared file response handling', async () => {
+    const handlers: Record<string, (error: NodeJS.ErrnoException) => void> = {};
+    const stream = {
+      on: jest.fn((event: string, handler: (error: NodeJS.ErrnoException) => void) => {
+        handlers[event] = handler;
+      }),
+      pipe: jest.fn(),
+    };
+    const response = {
+      headersSent: false,
+      setHeader: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+      destroy: jest.fn(),
+    } as any;
+
+    statementsService.getFileStream.mockResolvedValue({
+      stream,
+      fileName: 'statement.pdf',
+      mimeType: 'application/pdf',
+    });
+
+    await controller.getFile('stmt-1', { id: 'user-1' } as any, 'ws-1', response);
+
+    expect(statementsService.getFileStream).toHaveBeenCalledWith('stmt-1', 'ws-1');
+    expect(response.setHeader).toHaveBeenCalledWith('Content-Type', 'application/pdf');
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Content-Disposition',
+      buildContentDisposition('attachment', 'statement.pdf'),
+    );
+    expect(stream.pipe).toHaveBeenCalledWith(response);
+
+    handlers.error?.({ code: 'ENOENT' } as NodeJS.ErrnoException);
+
+    expect(response.status).toHaveBeenCalledWith(404);
+    expect(response.json).toHaveBeenCalledWith({
+      error: {
+        code: 'NOT_FOUND',
+        message: 'File not found on disk',
+      },
+    });
   });
 });

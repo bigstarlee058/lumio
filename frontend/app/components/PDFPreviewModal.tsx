@@ -32,6 +32,18 @@ interface PDFPreviewModalProps {
 const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
 const isJsdomEnvironment = typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
 
+export function getFileEndpoint(source: 'statement' | 'gmail' | 'receipt', fileId: string): string {
+  if (source === 'gmail') {
+    return `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/file`;
+  }
+
+  if (source === 'receipt') {
+    return `${apiBaseUrl}/receipts/${fileId}/file`;
+  }
+
+  return `${apiBaseUrl}/statements/${fileId}/file`;
+}
+
 export function PDFPreviewModal({
   isOpen,
   onClose,
@@ -95,12 +107,7 @@ export function PDFPreviewModal({
           return;
         }
 
-        const fileEndpoint =
-          source === 'gmail'
-            ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/file`
-            : source === 'receipt'
-              ? `${apiBaseUrl}/receipts/${fileId}/file`
-              : `${apiBaseUrl}/statements/${fileId}/file`;
+        const fileEndpoint = getFileEndpoint(source, fileId);
 
         const response = await fetch(fileEndpoint, {
           method: 'GET',
@@ -213,12 +220,7 @@ export function PDFPreviewModal({
         return;
       }
 
-      const fileEndpoint =
-        source === 'gmail'
-          ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/file`
-          : source === 'receipt'
-            ? `${apiBaseUrl}/receipts/${fileId}/file`
-            : `${apiBaseUrl}/statements/${fileId}/file`;
+      const fileEndpoint = getFileEndpoint(source, fileId);
 
       const response = await fetch(fileEndpoint, {
         method: 'GET',

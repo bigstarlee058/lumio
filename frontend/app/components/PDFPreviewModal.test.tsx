@@ -92,6 +92,20 @@ describe('PDFPreviewModal manual attach flow', () => {
     PDFPreviewModal = module.PDFPreviewModal;
   }
 
+  it('builds source-specific file endpoints', async () => {
+    const module = (await import('./PDFPreviewModal')) as {
+      getFileEndpoint?: (source: 'statement' | 'gmail' | 'receipt', fileId: string) => string;
+    };
+
+    expect(module.getFileEndpoint?.('statement', 'statement-1')).toBe(
+      '/api/v1/statements/statement-1/file',
+    );
+    expect(module.getFileEndpoint?.('receipt', 'receipt-1')).toBe('/api/v1/receipts/receipt-1/file');
+    expect(module.getFileEndpoint?.('gmail', 'gmail-1')).toBe(
+      '/api/v1/integrations/gmail/receipts/gmail-1/file',
+    );
+  });
+
   it('shows upload CTA in error state for manual statement placeholder', async () => {
     await act(async () => {
       await loadComponent();

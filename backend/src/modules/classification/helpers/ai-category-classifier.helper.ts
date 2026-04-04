@@ -1,13 +1,5 @@
-import { type GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
-import { TimeoutError, retry, withTimeout } from '../../../common/utils/async.util';
-import {
-  isAiCircuitOpen,
-  isAiEnabled,
-  recordAiFailure,
-  recordAiSuccess,
-  redactSensitive,
-  withAiConcurrency,
-} from '../../parsing/helpers/ai-runtime.util';
+import { BaseAiHelper } from '../../../common/helpers/base-ai.helper';
+import { redactSensitive } from '../../parsing/helpers/ai-runtime.util';
 
 export type TransactionCategoryInput = {
   index: number;
@@ -35,22 +27,7 @@ export type AiCategoryBatchResult = {
 export const AI_CATEGORY_BATCH_SIZE = 20;
 const AI_CATEGORY_CONFIDENCE_THRESHOLD = 0.9;
 
-export class AiCategoryClassifier {
-  private geminiModel: GenerativeModel | null = null;
-
-  constructor(apiKey: string | undefined = process.env.GEMINI_API_KEY) {
-    if (apiKey && isAiEnabled()) {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this.geminiModel = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-      });
-    }
-  }
-
-  isAvailable(): boolean {
-    return !!this.geminiModel && isAiEnabled() && !isAiCircuitOpen();
-  }
-
+export class AiCategoryClassifier extends BaseAiHelper {
   async classifyBatch(
     transactions: TransactionCategoryInput[],
     categories: CategoryOption[],
@@ -80,7 +57,7 @@ export class AiCategoryClassifier {
     transactions: TransactionCategoryInput[],
     categories: CategoryOption[],
   ): Promise<AiCategoryBatchResult> {
-    if (!this.geminiModel || isAiCircuitOpen()) {
+    if (!this.isAvailable()) {
       return { matches: [], failedCount: transactions.length };
     }
 
@@ -91,45 +68,29 @@ export class AiCategoryClassifier {
 
     try {
       const timeoutMs = Number.parseInt(process.env.AI_TIMEOUT_MS || '20000', 10);
-
-      const completion = await retry(
-        () =>
-          withTimeout(
-            withAiConcurrency(() =>
-              this.geminiModel?.generateContent({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: prompt }],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0,
-                  responseMimeType: 'application/json',
-                },
-              }),
-            ),
-            Number.isFinite(timeoutMs) ? timeoutMs : 20000,
-            'AI category classification request timed out',
-          ),
+      const content = await this.generateJsonContent(
+        [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
         {
+          timeoutMs: Number.isFinite(timeoutMs) ? timeoutMs : 20000,
+          timeoutMessage: 'AI category classification request timed out',
           retries: 1,
           baseDelayMs: 500,
           maxDelayMs: 2000,
-          isRetryable: error => error instanceof TimeoutError,
         },
       );
 
-      const content = completion?.response?.text();
       if (!content) {
-        recordAiFailure();
         return { matches: [], failedCount: transactions.length };
       }
 
       const parsed = JSON.parse(content);
       const rawClassifications = parsed?.classifications || parsed?.results || [];
       if (!Array.isArray(rawClassifications)) {
-        recordAiFailure();
         return { matches: [], failedCount: transactions.length };
       }
 
@@ -167,14 +128,11 @@ export class AiCategoryClassifier {
         });
       }
 
-      recordAiSuccess();
-
       return {
         matches,
         failedCount: transactions.length - matchedIndexes.size,
       };
     } catch (error) {
-      recordAiFailure();
       console.error('[AiCategoryClassifier] Failed to classify transactions:', error);
       return { matches: [], failedCount: transactions.length };
     }
