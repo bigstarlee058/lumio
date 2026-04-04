@@ -1,8 +1,1 @@
-import { ArrayNotEmpty, IsArray, IsString } from 'class-validator';
-
-export class ImportDriveFilesDto {
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  fileIds: string[];
-}
+export { ImportCloudFilesDto as ImportDriveFilesDto } from '@/common/dto/import-cloud-files.dto';

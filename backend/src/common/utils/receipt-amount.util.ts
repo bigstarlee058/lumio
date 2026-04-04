@@ -1,3 +1,5 @@
+import { extractAmountFragments as extractSharedAmountFragments } from './receipt-extraction.util';
+
 export interface ReceiptAmountParserLike {
   parseAmount(amountString: string): Promise<{ amount: number; currency?: string } | null>;
   isValidAmount(amount: number): boolean;
@@ -11,29 +13,37 @@ type AmountCandidate = {
   score: number;
 };
 
-function scoreAmountCandidate(
-  amount: number,
-  hasTotalKeyword: boolean,
-  explicitCurrency: boolean,
-  lineIndex: number,
-  totalLines: number,
-): number {
-  let score = 0;
-
-  if (hasTotalKeyword) {
-    score += 100;
-  }
-
-  if (explicitCurrency) {
-    score += 30;
-  }
-
-  const lineWeight = totalLines > 1 ? lineIndex / (totalLines - 1) : 1;
-  score += lineWeight * 20;
-  score += Math.min(Math.log10(amount + 1) * 5, 20);
-
-  return score;
+export interface ReceiptAmountHelperFields {
+  extractCurrencyValue?: (text: string) => string | undefined;
+  parseAmountFragmentValue?: (
+    fragment: string,
+  ) => Promise<{ amount: number; currency?: string } | null>;
 }
+
+export const DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY: Record<string, string> = {
+  $: 'USD',
+  '€': 'EUR',
+  '£': 'GBP',
+  '¥': 'JPY',
+  '₽': 'RUB',
+  '₸': 'KZT',
+  '₴': 'UAH',
+  '₺': 'TRY',
+  '₹': 'INR',
+  '₩': 'KRW',
+  '฿': 'THB',
+  '₱': 'PHP',
+  '₫': 'VND',
+  '₪': 'ILS',
+  Kč: 'CZK',
+  Ft: 'HUF',
+  zł: 'PLN',
+  lei: 'RON',
+  kn: 'HRK',
+  Br: 'BYN',
+  kr: 'SEK',
+  лв: 'BGN',
+};
 
 export function extractCurrency(
   text: string,
@@ -82,36 +92,27 @@ export function extractCurrency(
   return undefined;
 }
 
+export function createCurrencyExtractor(
+  amountParser: ReceiptAmountParserLike,
+  symbolToCurrency: Record<string, string>,
+) {
+  return (text: string): string | undefined => {
+    return extractCurrency(text, amountParser, symbolToCurrency);
+  };
+}
+
 export function extractAmountFragments(
   line: string,
   includeNumbersWithoutCurrency: boolean,
   numberPattern: string,
   currencyTokenPattern: string,
 ): string[] {
-  const withCurrencyPattern = new RegExp(
-    `${currencyTokenPattern}\\s*(?:${numberPattern})|(?:${numberPattern})\\s*${currencyTokenPattern}`,
-    'gi',
+  return extractSharedAmountFragments(
+    line,
+    includeNumbersWithoutCurrency,
+    currencyTokenPattern,
+    numberPattern,
   );
-  const fragments = new Set<string>();
-
-  for (const match of line.matchAll(withCurrencyPattern)) {
-    const value = match[0]?.trim();
-    if (value) {
-      fragments.add(value);
-    }
-  }
-
-  if (includeNumbersWithoutCurrency) {
-    const numberRegex = new RegExp(numberPattern, 'g');
-    for (const match of line.matchAll(numberRegex)) {
-      const value = match[0]?.trim();
-      if (value && /\d/.test(value)) {
-        fragments.add(value);
-      }
-    }
-  }
-
-  return Array.from(fragments);
 }
 
 export function extractBestNumberPart(text: string, numberPattern: string): string | undefined {
@@ -162,6 +163,60 @@ export async function parseAmountFragment(
   return null;
 }
 
+export function createAmountFragmentParser(options: {
+  amountParser: ReceiptAmountParserLike;
+  extractCurrency: (text: string) => string | undefined;
+  numberPattern: string;
+}) {
+  return (fragment: string) => parseAmountFragment(fragment, options);
+}
+
+export function createReceiptAmountHelpers(
+  amountParser: ReceiptAmountParserLike,
+  numberPattern: string,
+  symbolToCurrency: Record<string, string> = DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
+) {
+  const extractCurrency = createCurrencyExtractor(amountParser, symbolToCurrency);
+  const parseAmountFragment = createAmountFragmentParser({
+    amountParser,
+    extractCurrency,
+    numberPattern,
+  });
+
+  return {
+    extractCurrency,
+    parseAmountFragment,
+    symbolToCurrency,
+  };
+}
+
+export function assignReceiptAmountHelpers(
+  target: ReceiptAmountHelperFields,
+  amountParser: ReceiptAmountParserLike,
+  numberPattern: string,
+  symbolToCurrency: Record<string, string> = DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
+): void {
+  const helpers = createReceiptAmountHelpers(amountParser, numberPattern, symbolToCurrency);
+  target.extractCurrencyValue = helpers.extractCurrency;
+  target.parseAmountFragmentValue = helpers.parseAmountFragment;
+}
+
+export function selectTopAmountCandidate<T extends AmountCandidate>(
+  candidates: T[],
+): T | undefined {
+  if (candidates.length === 0) {
+    return undefined;
+  }
+
+  return [...candidates].sort((left, right) => {
+    if (right.score !== left.score) {
+      return right.score - left.score;
+    }
+
+    return right.amount - left.amount;
+  })[0];
+}
+
 export async function extractAmountWithCurrency(
   lines: string[],
   fullText: string,
@@ -199,13 +254,11 @@ export async function extractAmountWithCurrency(
 
       const currency = parsed.currency || options.extractCurrency(line) || documentCurrency;
       const explicitCurrency = Boolean(parsed.currency || options.extractCurrency(fragment));
-      const score = scoreAmountCandidate(
-        parsed.amount,
-        hasTotalKeyword,
-        explicitCurrency,
-        index,
-        lines.length,
-      );
+      const score =
+        (hasTotalKeyword ? 100 : 0) +
+        (explicitCurrency ? 30 : 0) +
+        (lines.length > 1 ? index / (lines.length - 1) : 1) * 20 +
+        Math.min(Math.log10(parsed.amount + 1) * 5, 20);
 
       candidates.push({
         amount: parsed.amount,
@@ -219,16 +272,13 @@ export async function extractAmountWithCurrency(
     return undefined;
   }
 
-  candidates.sort((left, right) => {
-    if (right.score !== left.score) {
-      return right.score - left.score;
-    }
-
-    return right.amount - left.amount;
-  });
+  const bestCandidate = selectTopAmountCandidate(candidates);
+  if (!bestCandidate) {
+    return undefined;
+  }
 
   return {
-    amount: candidates[0].amount,
-    currency: candidates[0].currency,
+    amount: bestCandidate.amount,
+    currency: bestCandidate.currency,
   };
 }

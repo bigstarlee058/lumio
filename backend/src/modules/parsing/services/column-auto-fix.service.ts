@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
+import { forEachIssueRowWithSchema } from './column-auto-fix.util';
 
 export interface ColumnInconsistencyResult {
   isConsistent: boolean;
@@ -52,6 +53,10 @@ export interface ColumnSchema {
 @Injectable()
 export class ColumnAutoFixService {
   private readonly logger = new Logger(ColumnAutoFixService.name);
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
 
   // Default schema for transaction data
   private readonly defaultSchema: ColumnSchema[] = [
@@ -248,7 +253,7 @@ export class ColumnAutoFixService {
           break;
       }
     } catch (error) {
-      this.logger.warn(`Auto-fix failed for ${issue.type}: ${error.message}`);
+      this.logger.warn(`Auto-fix failed for ${issue.type}: ${this.getErrorMessage(error)}`);
       success = false;
     }
 
@@ -268,13 +273,7 @@ export class ColumnAutoFixService {
     issue: ColumnIssue,
     schema: ColumnSchema[],
   ): Promise<boolean> {
-    const columnSchema = schema.find(col => col.name === issue.field);
-    if (!columnSchema) return false;
-
-    for (const rowIndex of issue.rowIndices) {
-      const transaction = transactions[rowIndex];
-
-      // Try to infer missing value from other fields
+    return forEachIssueRowWithSchema(transactions, issue, schema, ({ columnSchema, transaction }) => {
       const inferredValue = this.inferMissingValue(transaction, issue.field, schema);
 
       if (inferredValue !== null) {
@@ -282,12 +281,9 @@ export class ColumnAutoFixService {
       } else if (columnSchema.defaultValue !== undefined) {
         (transaction as any)[issue.field] = columnSchema.defaultValue;
       } else {
-        // Use intelligent default
         (transaction as any)[issue.field] = this.getIntelligentDefault(issue.field, transaction);
       }
-    }
-
-    return true;
+    });
   }
 
   private async fixDataTypeMismatch(
@@ -295,20 +291,14 @@ export class ColumnAutoFixService {
     issue: ColumnIssue,
     schema: ColumnSchema[],
   ): Promise<boolean> {
-    const columnSchema = schema.find(col => col.name === issue.field);
-    if (!columnSchema) return false;
-
-    for (const rowIndex of issue.rowIndices) {
-      const transaction = transactions[rowIndex];
+    return forEachIssueRowWithSchema(transactions, issue, schema, ({ columnSchema, transaction }) => {
       const currentValue = (transaction as any)[issue.field];
       const convertedValue = this.convertDataType(currentValue, columnSchema.dataType);
 
       if (convertedValue !== null) {
         (transaction as any)[issue.field] = convertedValue;
       }
-    }
-
-    return true;
+    });
   }
 
   private async fixMisalignedColumn(

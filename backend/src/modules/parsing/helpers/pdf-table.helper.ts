@@ -22,6 +22,21 @@ export interface TableParsingOptions {
 const DATE_REGEX = /\d{2}\.\d{2}\.\d{4}(?:\s+\d{2}:\d{2}:\d{2})?/;
 const DEFAULT_STOP_WORDS = ['итого', 'оборот', 'остаток'];
 
+export function getExcludedColumnIndexes(
+  columnMap: Partial<Record<TableColumnKey, number>>,
+  keys: TableColumnKey[],
+): Set<number> {
+  const excludedIndexes = new Set<number>();
+  keys.forEach(key => {
+    const idx = columnMap[key];
+    if (idx !== undefined) {
+      excludedIndexes.add(idx);
+    }
+  });
+
+  return excludedIndexes;
+}
+
 export function mapPdfTableRowsToTransactions(
   tableRows: string[][],
   options?: TableParsingOptions,
@@ -455,14 +470,13 @@ function collectContinuation(
   row: string[],
   columnMap: Partial<Record<TableColumnKey, number>>,
 ): string {
-  const excludedIndexes = new Set<number>();
-  ['date', 'document', 'debit', 'credit', 'purpose'].forEach(key => {
-    const columnKey = key as TableColumnKey;
-    const idx = columnMap[columnKey];
-    if (idx !== undefined) {
-      excludedIndexes.add(idx);
-    }
-  });
+  const excludedIndexes = getExcludedColumnIndexes(columnMap, [
+    'date',
+    'document',
+    'debit',
+    'credit',
+    'purpose',
+  ]);
 
   const parts = row
     .map((cell, idx) => ({ cell, idx }))
@@ -496,14 +510,13 @@ function collectName(
   row: string[],
   columnMap: Partial<Record<TableColumnKey, number>>,
 ): string | null {
-  const excludedIndexes = new Set<number>();
-  ['date', 'document', 'debit', 'credit', 'purpose'].forEach(key => {
-    const columnKey = key as TableColumnKey;
-    const idx = columnMap[columnKey];
-    if (idx !== undefined) {
-      excludedIndexes.add(idx);
-    }
-  });
+  const excludedIndexes = getExcludedColumnIndexes(columnMap, [
+    'date',
+    'document',
+    'debit',
+    'credit',
+    'purpose',
+  ]);
 
   for (let i = 0; i < row.length; i++) {
     if (excludedIndexes.has(i)) continue;

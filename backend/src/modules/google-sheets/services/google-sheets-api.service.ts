@@ -6,6 +6,11 @@ import type { Branch } from '../../../entities/branch.entity';
 import type { Category } from '../../../entities/category.entity';
 import type { Transaction } from '../../../entities/transaction.entity';
 import type { Wallet } from '../../../entities/wallet.entity';
+import {
+  createSheetWriteContext,
+  isRetryableCredentialError,
+  mapTransactionsToValues,
+} from './google-sheets-api.util';
 
 interface SheetRow {
   monthText: string; // Month (text representation)
@@ -27,6 +32,15 @@ interface SheetRow {
   usdRate: number | null; // USD Rate
   rubRate: number | null; // RUB Rate
 }
+
+type RefreshTokenError = {
+  response?: {
+    data?: {
+      error_description?: string;
+    };
+  };
+  message?: string;
+};
 
 @Injectable()
 export class GoogleSheetsApiService {
@@ -68,10 +82,11 @@ export class GoogleSheetsApiService {
       }
       return accessToken;
     } catch (error) {
+      const refreshError = error as RefreshTokenError;
       this.logger.error('Error refreshing access token:', error);
       throw new BadRequestException(
-        error?.response?.data?.error_description ||
-          error?.message ||
+        refreshError.response?.data?.error_description ||
+          refreshError.message ||
           'Failed to refresh Google access token',
       );
     }
@@ -258,6 +273,90 @@ export class GoogleSheetsApiService {
     ];
   }
 
+  private buildSheetValues(
+    transactions: Transaction[],
+    categories: Map<string, Category>,
+    branches: Map<string, Branch>,
+    wallets: Map<string, Wallet>,
+  ): any[][] {
+    return mapTransactionsToValues(
+      transactions,
+      categories,
+      branches,
+      wallets,
+      (transaction, category, branch, wallet) =>
+        this.mapTransactionToRow(transaction, category, branch, wallet),
+      row => this.rowToValues(row),
+    );
+  }
+
+  private getSheetContext(accessToken: string, worksheetName: string | null) {
+    return createSheetWriteContext(accessToken, worksheetName, token => this.getSheetsClient(token));
+  }
+
+  private async handleSheetWriteError(
+    error: { code?: number; message?: string },
+    refreshToken: string,
+    retry: (accessToken: string) => Promise<void>,
+    action: 'write' | 'append',
+  ): Promise<void> {
+    if (isRetryableCredentialError(error)) {
+      this.logger.log('Access token expired, refreshing...');
+      const newAccessToken = await this.refreshAccessToken(refreshToken);
+      return retry(newAccessToken);
+    }
+
+    this.logger.error(`Error ${action}ing to Google Sheet:`, error);
+    throw new BadRequestException(`Failed to ${action} to Google Sheet: ${error.message}`);
+  }
+
+  private async runTransactionWrite(
+    accessToken: string,
+    refreshToken: string,
+    spreadsheetId: string,
+    worksheetName: string | null,
+    transactions: Transaction[],
+    categories: Map<string, Category>,
+    branches: Map<string, Branch>,
+    wallets: Map<string, Wallet>,
+    action: 'write' | 'append',
+    perform: (context: {
+      sheets: ReturnType<GoogleSheetsApiService['getSheetsClient']>;
+      sheetName: string;
+      range: string;
+      values: any[][];
+    }) => Promise<void>,
+  ): Promise<void> {
+    const { sheets, sheetName, range } = this.getSheetContext(accessToken, worksheetName);
+
+    try {
+      const values = this.buildSheetValues(transactions, categories, branches, wallets);
+      await perform({ sheets, sheetName, range, values });
+      this.logger.log(
+        `Successfully ${action === 'write' ? 'wrote' : 'appended'} ${transactions.length} transactions to Google Sheet ${spreadsheetId}`,
+      );
+    } catch (error: any) {
+      return this.handleSheetWriteError(
+        error,
+        refreshToken,
+        newAccessToken =>
+          this.runTransactionWrite(
+            newAccessToken,
+            refreshToken,
+            spreadsheetId,
+            worksheetName,
+            transactions,
+            categories,
+            branches,
+            wallets,
+            action,
+            perform,
+          ),
+        action,
+      );
+    }
+  }
+
   /**
    * Find the first empty row in the sheet
    */
@@ -293,58 +392,27 @@ export class GoogleSheetsApiService {
     branches: Map<string, Branch>,
     wallets: Map<string, Wallet>,
   ): Promise<void> {
-    const sheets = this.getSheetsClient(accessToken);
-    const sheetName = worksheetName || 'Sheet1';
-    const range = `${sheetName}!A:S`; // Columns A to S
-
-    try {
-      // Find first empty row
-      const startRow = await this.findFirstEmptyRow(sheets, spreadsheetId, range);
-
-      // Map transactions to rows
-      const values = transactions.map(transaction => {
-        const category = transaction.categoryId ? categories.get(transaction.categoryId) : null;
-        const branch = transaction.branchId ? branches.get(transaction.branchId) : null;
-        const wallet = transaction.walletId ? wallets.get(transaction.walletId) : null;
-
-        return this.rowToValues(this.mapTransactionToRow(transaction, category, branch, wallet));
-      });
-
-      // Write data to sheet
-      const writeRange = `${sheetName}!A${startRow}:S${startRow + values.length - 1}`;
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: writeRange,
-        valueInputOption: 'USER_ENTERED', // Preserves formatting and formulas
-        requestBody: {
-          values,
-        },
-      });
-
-      this.logger.log(
-        `Successfully wrote ${transactions.length} transactions to Google Sheet ${spreadsheetId}`,
-      );
-    } catch (error: any) {
-      // Check if error is due to expired token
-      if (error.code === 401 || error.message?.includes('Invalid Credentials')) {
-        this.logger.log('Access token expired, refreshing...');
-        const newAccessToken = await this.refreshAccessToken(refreshToken);
-        // Retry with new token
-        return this.writeTransactions(
-          newAccessToken,
-          refreshToken,
+    return this.runTransactionWrite(
+      accessToken,
+      refreshToken,
+      spreadsheetId,
+      worksheetName,
+      transactions,
+      categories,
+      branches,
+      wallets,
+      'write',
+      async ({ sheets, sheetName, range, values }) => {
+        const startRow = await this.findFirstEmptyRow(sheets, spreadsheetId, range);
+        const writeRange = `${sheetName}!A${startRow}:S${startRow + values.length - 1}`;
+        await sheets.spreadsheets.values.update({
           spreadsheetId,
-          worksheetName,
-          transactions,
-          categories,
-          branches,
-          wallets,
-        );
-      }
-
-      this.logger.error('Error writing to Google Sheet:', error);
-      throw new BadRequestException(`Failed to write to Google Sheet: ${error.message}`);
-    }
+          range: writeRange,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values },
+        });
+      },
+    );
   }
 
   /**
@@ -360,55 +428,26 @@ export class GoogleSheetsApiService {
     branches: Map<string, Branch>,
     wallets: Map<string, Wallet>,
   ): Promise<void> {
-    const sheets = this.getSheetsClient(accessToken);
-    const sheetName = worksheetName || 'Sheet1';
-    const range = `${sheetName}!A:S`;
-
-    try {
-      // Map transactions to rows
-      const values = transactions.map(transaction => {
-        const category = transaction.categoryId ? categories.get(transaction.categoryId) : null;
-        const branch = transaction.branchId ? branches.get(transaction.branchId) : null;
-        const wallet = transaction.walletId ? wallets.get(transaction.walletId) : null;
-
-        return this.rowToValues(this.mapTransactionToRow(transaction, category, branch, wallet));
-      });
-
-      // Append data to sheet
-      await sheets.spreadsheets.values.append({
-        spreadsheetId,
-        range,
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS', // Insert new rows instead of overwriting
-        requestBody: {
-          values,
-        },
-      });
-
-      this.logger.log(
-        `Successfully appended ${transactions.length} transactions to Google Sheet ${spreadsheetId}`,
-      );
-    } catch (error: any) {
-      // Check if error is due to expired token
-      if (error.code === 401 || error.message?.includes('Invalid Credentials')) {
-        this.logger.log('Access token expired, refreshing...');
-        const newAccessToken = await this.refreshAccessToken(refreshToken);
-        // Retry with new token
-        return this.appendTransactions(
-          newAccessToken,
-          refreshToken,
+    return this.runTransactionWrite(
+      accessToken,
+      refreshToken,
+      spreadsheetId,
+      worksheetName,
+      transactions,
+      categories,
+      branches,
+      wallets,
+      'append',
+      async ({ sheets, range, values }) => {
+        await sheets.spreadsheets.values.append({
           spreadsheetId,
-          worksheetName,
-          transactions,
-          categories,
-          branches,
-          wallets,
-        );
-      }
-
-      this.logger.error('Error appending to Google Sheet:', error);
-      throw new BadRequestException(`Failed to append to Google Sheet: ${error.message}`);
-    }
+          range,
+          valueInputOption: 'USER_ENTERED',
+          insertDataOption: 'INSERT_ROWS',
+          requestBody: { values },
+        });
+      },
+    );
   }
 
   /**

@@ -10,6 +10,21 @@ interface MonthNames {
   [key: string]: { [key: string]: number };
 }
 
+const CJK_MONTH_NAMES = {
+  一月: 1,
+  二月: 2,
+  三月: 3,
+  四月: 4,
+  五月: 5,
+  六月: 6,
+  七月: 7,
+  八月: 8,
+  九月: 9,
+  十月: 10,
+  十一月: 11,
+  十二月: 12,
+};
+
 @Injectable()
 export class UniversalDateParser {
   private readonly logger = new Logger(UniversalDateParser.name);
@@ -234,35 +249,9 @@ export class UniversalDateParser {
       снежань: 12,
     },
     // Chinese
-    zh: {
-      一月: 1,
-      二月: 2,
-      三月: 3,
-      四月: 4,
-      五月: 5,
-      六月: 6,
-      七月: 7,
-      八月: 8,
-      九月: 9,
-      十月: 10,
-      十一月: 11,
-      十二月: 12,
-    },
+    zh: CJK_MONTH_NAMES,
     // Japanese
-    ja: {
-      一月: 1,
-      二月: 2,
-      三月: 3,
-      四月: 4,
-      五月: 5,
-      六月: 6,
-      七月: 7,
-      八月: 8,
-      九月: 9,
-      十月: 10,
-      十一月: 11,
-      十二月: 12,
-    },
+    ja: CJK_MONTH_NAMES,
     // Korean
     ko: {
       일월: 1,
@@ -327,6 +316,18 @@ export class UniversalDateParser {
     return null;
   }
 
+  private buildParsedDateResult(date: Date, format: string, confidence: number): DateParseResult {
+    return {
+      date,
+      format,
+      confidence,
+    };
+  }
+
+  private createDate(year: string | number, month: string | number, day: string | number): Date {
+    return new Date(Number.parseInt(String(year), 10), Number.parseInt(String(month), 10) - 1, Number.parseInt(String(day), 10));
+  }
+
   private parseISO8601(dateString: string): DateParseResult | null {
     // ISO 8601 formats: YYYY-MM-DD, YYYY-MM-DDTHH:mm:ss, etc.
     const isoRegex = /^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/;
@@ -334,17 +335,7 @@ export class UniversalDateParser {
 
     if (match) {
       const [, year, month, day] = match;
-      const date = new Date(
-        Number.parseInt(year),
-        Number.parseInt(month) - 1,
-        Number.parseInt(day),
-      );
-
-      return {
-        date,
-        format: 'ISO8601',
-        confidence: 0.95,
-      };
+      return this.buildParsedDateResult(this.createDate(year, month, day), 'ISO8601', 0.95);
     }
 
     return null;
@@ -357,17 +348,7 @@ export class UniversalDateParser {
 
     if (match) {
       const [, year, month, day] = match;
-      const date = new Date(
-        Number.parseInt(year),
-        Number.parseInt(month) - 1,
-        Number.parseInt(day),
-      );
-
-      return {
-        date,
-        format: 'NUMERIC',
-        confidence: 0.9,
-      };
+      return this.buildParsedDateResult(this.createDate(year, month, day), 'NUMERIC', 0.9);
     }
 
     return null;
@@ -408,17 +389,10 @@ export class UniversalDateParser {
               dayStr = second;
             }
 
-            const dayNum = Number.parseInt(dayStr, 10);
-            const yearNum = Number.parseInt(yearStr, 10);
-
-            const date = new Date(yearNum, monthNumber - 1, dayNum);
+            const date = this.createDate(yearStr, monthNumber, dayStr);
 
             if (this.isValidDate(date)) {
-              return {
-                date,
-                format: 'TEXTUAL_MONTH',
-                confidence: 0.85,
-              };
+              return this.buildParsedDateResult(date, 'TEXTUAL_MONTH', 0.85);
             }
           }
         }
@@ -451,18 +425,10 @@ export class UniversalDateParser {
         yearStr = third;
       }
 
-      const dayNum = Number.parseInt(dayStr, 10);
-      const monthNum = Number.parseInt(monthStr, 10);
-      const yearNum = Number.parseInt(yearStr, 10);
-
-      const date = new Date(yearNum, monthNum - 1, dayNum);
+      const date = this.createDate(yearStr, monthStr, dayStr);
 
       if (this.isValidDate(date)) {
-        return {
-          date,
-          format: 'SLASHED',
-          confidence: 0.8,
-        };
+        return this.buildParsedDateResult(date, 'SLASHED', 0.8);
       }
     }
 
@@ -494,18 +460,10 @@ export class UniversalDateParser {
         }
       }
 
-      const dayNum = Number.parseInt(dayStr, 10);
-      const monthNum = Number.parseInt(monthStr, 10);
-      const yearNum = Number.parseInt(yearStr, 10);
-
-      const date = new Date(yearNum, monthNum - 1, dayNum);
+      const date = this.createDate(yearStr, monthStr, dayStr);
 
       if (this.isValidDate(date)) {
-        return {
-          date,
-          format: 'DOTTED',
-          confidence: 0.8,
-        };
+        return this.buildParsedDateResult(date, 'DOTTED', 0.8);
       }
     }
 
@@ -526,14 +484,10 @@ export class UniversalDateParser {
 
       // Validate ranges
       if (day >= 1 && day <= 31 && month >= 1 && month <= 12) {
-        const date = new Date(Number.parseInt(year), month - 1, day);
+        const date = this.createDate(year, month, day);
 
         if (this.isValidDate(date)) {
-          return {
-            date,
-            format: 'SPACED',
-            confidence: 0.7,
-          };
+          return this.buildParsedDateResult(date, 'SPACED', 0.7);
         }
       }
     }

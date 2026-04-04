@@ -1,16 +1,22 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import {
+  DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
+  createReceiptAmountHelpers,
+  extractAmountWithCurrency as extractSharedAmountWithCurrency,
   extractBestNumberPart as selectBestNumberPart,
   extractCurrency as detectCurrency,
   parseAmountFragment as parseSharedAmountFragment,
 } from '../../../common/utils/receipt-amount.util';
 import {
+  buildCurrencyTokenPattern,
+  extractLineItemsFromLines,
   extractAmountFragments as extractSharedAmountFragments,
   isAddressLike as isSharedAddressLike,
   isDateRangeLike as isSharedDateRangeLike,
   isLikelySentence as isSharedLikelySentence,
   isYearLikeAmount as isSharedYearLikeAmount,
   scoreAmountCandidate as scoreSharedAmountCandidate,
+  shouldSkipLineItem,
 } from '../../../common/utils/receipt-extraction.util';
 import {
   AiDocumentExtractor,
@@ -45,27 +51,6 @@ const TOTAL_KEYWORD_REGEX =
 
 const NUMBER_PATTERN = '-?\\d{1,3}(?:[\\s.,]\\d{3})*(?:[.,]\\d{1,2})?|-?\\d+(?:[.,]\\d{1,2})?';
 
-const SYMBOL_TO_CURRENCY: Record<string, string> = {
-  $: 'USD',
-  '€': 'EUR',
-  '£': 'GBP',
-  '¥': 'JPY',
-  '₽': 'RUB',
-  '₸': 'KZT',
-  '₴': 'UAH',
-  '₺': 'TRY',
-  '₹': 'INR',
-  '₩': 'KRW',
-  Kč: 'CZK',
-  Ft: 'HUF',
-  zł: 'PLN',
-  lei: 'RON',
-  kn: 'HRK',
-  Br: 'BYN',
-  kr: 'SEK',
-  лв: 'BGN',
-};
-
 const DATE_PATTERNS = [/\d{2}[-/.]\d{2}[-/.]\d{4}/, /\d{4}[-/.]\d{2}[-/.]\d{2}/];
 
 const TAX_PATTERNS = [
@@ -85,6 +70,7 @@ const SUBTOTAL_PATTERNS = [
 @Injectable()
 export class UniversalExtractorService {
   private readonly logger = new Logger(UniversalExtractorService.name);
+  private readonly amountHelpers = createReceiptAmountHelpers(this.amountParser, NUMBER_PATTERN);
 
   constructor(
     private readonly amountParser: UniversalAmountParser,
@@ -236,81 +222,20 @@ export class UniversalExtractorService {
     lines: string[],
     fullText: string,
   ): Promise<{ amount: number; currency?: string } | undefined> {
-    const documentCurrency = this.extractCurrency(fullText);
-    const candidates: AmountCandidate[] = [];
-
-    for (let index = 0; index < lines.length; index++) {
-      const line = lines[index];
-      const hasTotalKeyword = TOTAL_KEYWORD_REGEX.test(line);
-      const fragments = this.extractAmountFragments(line, hasTotalKeyword);
-
-      for (const fragment of fragments) {
-        const parsed = await this.parseAmountFragment(fragment);
-        if (!parsed || parsed.amount <= 0) {
-          continue;
-        }
-
-        const fragmentCurrency = this.extractCurrency(fragment);
-        const lineCurrency = this.extractCurrency(line);
-        const currency = parsed.currency || fragmentCurrency || lineCurrency || documentCurrency;
-        const explicitCurrency = Boolean(parsed.currency || fragmentCurrency);
-        const score = this.scoreAmountCandidate(
-          parsed.amount,
-          hasTotalKeyword,
-          explicitCurrency,
-          index,
-          lines.length,
-        );
-
-        candidates.push({
-          amount: parsed.amount,
-          currency,
-          score,
-        });
-      }
-    }
-
-    if (!candidates.length) {
-      return undefined;
-    }
-
-    candidates.sort((left, right) => {
-      if (right.score !== left.score) {
-        return right.score - left.score;
-      }
-      return right.amount - left.amount;
-    });
-
-    return {
-      amount: candidates[0].amount,
-      currency: candidates[0].currency,
-    };
-  }
-
-  private extractAmountFragments(line: string, includeNumbersWithoutCurrency: boolean): string[] {
-    return extractSharedAmountFragments(
-      line,
-      includeNumbersWithoutCurrency,
-      this.getCurrencyTokenPattern(),
-    );
-  }
-
-  private async parseAmountFragment(
-    fragment: string,
-  ): Promise<{ amount: number; currency?: string } | null> {
-    return parseSharedAmountFragment(fragment, {
+    return extractSharedAmountWithCurrency(lines, fullText, {
       amountParser: this.amountParser,
-      extractCurrency: text => this.extractCurrency(text),
       numberPattern: NUMBER_PATTERN,
+      extractCurrency: text => this.amountHelpers.extractCurrency(text),
+      extractAmountFragments: (line, includeNumbersWithoutCurrency, currencyTokenPattern) =>
+        extractSharedAmountFragments(line, includeNumbersWithoutCurrency, currencyTokenPattern),
+      parseAmountFragment: fragment => this.amountHelpers.parseAmountFragment(fragment),
+      getCurrencyTokenPattern: () => this.getCurrencyTokenPattern(),
+      hasTotalKeyword: line => TOTAL_KEYWORD_REGEX.test(line),
     });
-  }
-
-  private extractBestNumberPart(value: string): string | undefined {
-    return selectBestNumberPart(value, NUMBER_PATTERN);
   }
 
   private extractCurrency(text: string): string | undefined {
-    return detectCurrency(text, this.amountParser, SYMBOL_TO_CURRENCY);
+    return detectCurrency(text, this.amountParser, DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY);
   }
 
   private extractDate(text: string): Date | undefined {
@@ -395,56 +320,16 @@ export class UniversalExtractorService {
   }
 
   private async extractLineItems(lines: string[]): Promise<LineItem[]> {
-    const lineItems: LineItem[] = [];
-    const itemPattern = new RegExp(
-      `^(.+?)\\s+((?:${this.getCurrencyTokenPattern()}\\s*)?(?:${NUMBER_PATTERN})(?:\\s*(?:${this.getCurrencyTokenPattern()}))?)$`,
-      'i',
-    );
-
-    for (const line of lines) {
-      if (TOTAL_KEYWORD_REGEX.test(line) || TAX_PATTERNS.some(pattern => pattern.test(line))) {
-        continue;
-      }
-
-      const match = line.match(itemPattern);
-      if (!match) {
-        continue;
-      }
-
-      const description = match[1].trim();
-      const amount = await this.parseAmountFragment(match[2]);
-      const hasExplicitCurrency = Boolean(this.extractCurrency(match[2]));
-      if (
-        amount?.amount !== undefined &&
-        Number.isFinite(amount.amount) &&
-        amount.amount > 0 &&
-        description.length > 0 &&
-        description.length < 200
-      ) {
-        if (this.isLikelySentence(description)) {
-          continue;
-        }
-
-        if (this.isDateRangeLike(description)) {
-          continue;
-        }
-
-        if (this.isAddressLike(description)) {
-          continue;
-        }
-
-        if (this.isYearLikeAmount(amount.amount, hasExplicitCurrency)) {
-          continue;
-        }
-
-        lineItems.push({
-          description,
-          amount: amount.amount,
-        });
-      }
-    }
-
-    return lineItems;
+    return extractLineItemsFromLines({
+      lines,
+      currencyTokenPattern: this.getCurrencyTokenPattern(),
+      numberPattern: NUMBER_PATTERN,
+      hasTotalKeyword: line => TOTAL_KEYWORD_REGEX.test(line),
+      isTaxLine: line => TAX_PATTERNS.some(pattern => pattern.test(line)),
+      parseAmountFragment: fragment => this.amountHelpers.parseAmountFragment(fragment),
+      extractCurrency: text => this.amountHelpers.extractCurrency(text),
+      skipTaxLines: true,
+    });
   }
 
   private mergeResults(
@@ -552,37 +437,11 @@ export class UniversalExtractorService {
     return Math.round((weightedSum / totalWeight) * 100) / 100;
   }
 
-  private scoreAmountCandidate(
-    amount: number,
-    hasTotalKeyword: boolean,
-    explicitCurrency: boolean,
-    lineIndex: number,
-    totalLines: number,
-  ): number {
-    return scoreSharedAmountCandidate(
-      amount,
-      hasTotalKeyword,
-      explicitCurrency,
-      lineIndex,
-      totalLines,
-    );
-  }
-
   private getCurrencyTokenPattern(): string {
-    const symbols = Object.keys(SYMBOL_TO_CURRENCY)
-      .sort((left, right) => right.length - left.length)
-      .map(symbol => this.escapeRegex(symbol));
-
-    const currencyCodes = this.amountParser
-      .getSupportedCurrencies()
-      .sort((left, right) => right.length - left.length)
-      .map(code => this.escapeRegex(code));
-
-    return `(?:${symbols.join('|')}|${currencyCodes.join('|')})`;
-  }
-
-  private escapeRegex(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return buildCurrencyTokenPattern(
+      Object.keys(DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY),
+      this.amountParser.getSupportedCurrencies(),
+    );
   }
 
   private emptyResult(): ParsedDocument {

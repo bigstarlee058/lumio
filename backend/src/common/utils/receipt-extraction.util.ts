@@ -47,6 +47,34 @@ export const isYearLikeAmount = (amount: number, hasExplicitCurrency: boolean): 
   return amount >= 1900 && amount <= 2099 && Number.isInteger(Math.round(amount));
 };
 
+export const shouldSkipLineItem = (
+  description: string,
+  amount: number,
+  hasExplicitCurrency: boolean,
+): boolean => {
+  return (
+    isLikelySentence(description) ||
+    isDateRangeLike(description) ||
+    isAddressLike(description) ||
+    isYearLikeAmount(amount, hasExplicitCurrency)
+  );
+};
+
+export const escapeRegex = (value: string): string => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+export const buildCurrencyTokenPattern = (symbols: string[], currencyCodes: string[]): string => {
+  const sortedSymbols = [...symbols]
+    .sort((left, right) => right.length - left.length)
+    .map(symbol => escapeRegex(symbol));
+  const sortedCodes = [...currencyCodes]
+    .sort((left, right) => right.length - left.length)
+    .map(code => escapeRegex(code));
+
+  return `(?:${[...sortedSymbols, ...sortedCodes].join('|')})`;
+};
+
 export const scoreAmountCandidate = (
   amount: number,
   hasTotalKeyword: boolean,
@@ -75,6 +103,7 @@ export const extractAmountFragments = (
   line: string,
   includeNumbersWithoutCurrency: boolean,
   currencyTokenPattern: string,
+  numberPattern = NUMBER_PATTERN,
 ): string[] => {
   const withCurrencyPattern = new RegExp(
     `${currencyTokenPattern}\\s*(?:${NUMBER_PATTERN})|(?:${NUMBER_PATTERN})\\s*${currencyTokenPattern}`,
@@ -100,4 +129,64 @@ export const extractAmountFragments = (
   }
 
   return Array.from(fragments);
+};
+
+export const extractLineItemsFromLines = async (args: {
+  lines: string[];
+  currencyTokenPattern: string;
+  numberPattern: string;
+  hasTotalKeyword: (line: string) => boolean;
+  isTaxLine?: (line: string) => boolean;
+  parseAmountFragment: (
+    fragment: string,
+  ) => Promise<{ amount: number; currency?: string } | null>;
+  extractCurrency: (text: string) => string | undefined;
+  skipTaxLines?: boolean;
+}): Promise<Array<{ description: string; amount: number }>> => {
+  const lineItems: Array<{ description: string; amount: number }> = [];
+  const itemPattern = new RegExp(
+    `^(.+?)\\s+((?:${args.currencyTokenPattern}\\s*)?(?:${args.numberPattern})(?:\\s*(?:${args.currencyTokenPattern}))?)$`,
+    'i',
+  );
+
+  for (const line of args.lines) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) {
+      continue;
+    }
+
+    if (args.hasTotalKeyword(trimmedLine)) {
+      continue;
+    }
+
+    if (args.skipTaxLines && args.isTaxLine?.(trimmedLine)) {
+      continue;
+    }
+
+    const match = trimmedLine.match(itemPattern);
+    if (!match) {
+      continue;
+    }
+
+    const description = match[1].trim();
+    const parsedAmount = await args.parseAmountFragment(match[2]);
+    const amount = parsedAmount?.amount;
+    const hasExplicitCurrency = Boolean(args.extractCurrency(match[2]));
+
+    if (
+      amount !== undefined &&
+      Number.isFinite(amount) &&
+      amount > 0 &&
+      description.length > 0 &&
+      description.length < 200
+    ) {
+      if (shouldSkipLineItem(description, amount, hasExplicitCurrency)) {
+        continue;
+      }
+
+      lineItems.push({ description, amount });
+    }
+  }
+
+  return lineItems;
 };

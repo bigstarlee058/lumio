@@ -1,9 +1,14 @@
 import { UniversalAmountParser } from '@/modules/parsing/services/universal-amount-parser.service';
 import {
+  DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
+  createAmountFragmentParser,
+  createReceiptAmountHelpers,
+  createCurrencyExtractor,
   extractAmountWithCurrency,
   extractAmountFragments,
   extractCurrency,
   parseAmountFragment,
+  selectTopAmountCandidate,
 } from '@/common/utils/receipt-amount.util';
 
 const NUMBER_PATTERN = '-?\\d{1,3}(?:[\\s.,]\\d{3})*(?:[.,]\\d{1,2})?|-?\\d+(?:[.,]\\d{1,2})?';
@@ -41,6 +46,51 @@ describe('receipt amount utilities', () => {
     });
 
     expect(parsed).toEqual({ amount: 1234.56, currency: 'USD' });
+  });
+
+  it('builds reusable currency and amount fragment helpers', async () => {
+    const extractCurrencyHelper = createCurrencyExtractor(amountParser, SYMBOL_TO_CURRENCY);
+    const parseAmountFragmentHelper = createAmountFragmentParser({
+      amountParser,
+      numberPattern: NUMBER_PATTERN,
+      extractCurrency: extractCurrencyHelper,
+    });
+
+    expect(extractCurrencyHelper('Total: 700 KZT')).toBe('KZT');
+    await expect(parseAmountFragmentHelper('$12.50')).resolves.toEqual({
+      amount: 12.5,
+      currency: 'USD',
+    });
+  });
+
+  it('builds shared receipt amount helpers from default currency symbols', async () => {
+    const helpers = createReceiptAmountHelpers(amountParser, NUMBER_PATTERN);
+
+    expect(DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY['₸']).toBe('KZT');
+    expect(helpers.extractCurrency('Total: 700 KZT')).toBe('KZT');
+    await expect(helpers.parseAmountFragment('$12.50')).resolves.toEqual({
+      amount: 12.5,
+      currency: 'USD',
+    });
+  });
+
+  it('selects the top scored amount candidate with amount tie-breaker', () => {
+    expect(
+      selectTopAmountCandidate([
+        { amount: 10, score: 50, currency: 'USD' },
+        { amount: 20, score: 50, currency: 'EUR' },
+        { amount: 5, score: 70, currency: 'KZT' },
+      ]),
+    ).toEqual({ amount: 5, score: 70, currency: 'KZT' });
+
+    expect(
+      selectTopAmountCandidate([
+        { amount: 10, score: 50, currency: 'USD' },
+        { amount: 20, score: 50, currency: 'EUR' },
+      ]),
+    ).toEqual({ amount: 20, score: 50, currency: 'EUR' });
+
+    expect(selectTopAmountCandidate([])).toBeUndefined();
   });
 
   it('returns null for empty amount fragments', async () => {

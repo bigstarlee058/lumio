@@ -1,6 +1,12 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join, resolve } from 'path';
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  createAmountFormat,
+  createSharedProfileSections,
+  createStatementColumns,
+  createStatementParsing,
+} from './bank-profile-defaults';
 
 export interface BankProfile {
   id: string;
@@ -133,6 +139,10 @@ export class BankProfileService {
     this.loadProfiles();
   }
 
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   private async loadProfiles(): Promise<void> {
     try {
       const profilePath = resolve(process.cwd(), this.profileDirectory);
@@ -179,7 +189,7 @@ export class BankProfileService {
 
       return null;
     } catch (error) {
-      this.logger.error(`Failed to load profile from ${filePath}: ${error.message}`);
+      this.logger.error(`Failed to load profile from ${filePath}: ${this.getErrorMessage(error)}`);
       return null;
     }
   }
@@ -198,16 +208,24 @@ export class BankProfileService {
     });
   }
 
-  private createKazkomertsbankProfile(): BankProfile {
+  private createBaseProfile(
+    profile: Omit<BankProfile, 'country' | 'locale' | 'currency' | 'version' | 'lastUpdated'>,
+  ): BankProfile {
     return {
-      id: 'kazkomertsbank',
-      name: 'Kazkommertsbank',
-      displayName: 'АО "Казкоммерцбанк"',
       country: 'KZ',
       locale: 'ru',
       currency: 'KZT',
       version: '1.0.0',
       lastUpdated: new Date().toISOString(),
+      ...profile,
+    };
+  }
+
+  private createKazkomertsbankProfile(): BankProfile {
+    return this.createBaseProfile({
+      id: 'kazkomertsbank',
+      name: 'Kazkommertsbank',
+      displayName: 'АО "Казкоммерцбанк"',
 
       identification: {
         documentPatterns: ['казкоммерцбанк', 'kazkomertsbank', 'kkb', 'АО "Казкоммерцбанк"'],
@@ -215,38 +233,18 @@ export class BankProfileService {
         textPatterns: ['АО "Казкоммерцбанк"', 'Казкоммерцбанк', 'KAZKOMERTSBANK'],
       },
 
-      parsing: {
+      parsing: createStatementParsing({
         format: 'pdf',
-        columns: [
-          { name: 'transactionDate', type: 'date', required: true, index: 0 },
-          { name: 'documentNumber', type: 'string', required: false, index: 1 },
-          {
-            name: 'counterpartyName',
-            type: 'string',
-            required: true,
-            index: 2,
-          },
-          {
-            name: 'counterpartyBin',
-            type: 'string',
-            required: false,
-            index: 3,
-          },
-          { name: 'debit', type: 'amount', required: false, index: 4 },
-          { name: 'credit', type: 'amount', required: false, index: 5 },
-          { name: 'paymentPurpose', type: 'string', required: true, index: 6 },
-          { name: 'currency', type: 'currency', required: false, index: 7 },
-        ],
+        columns: createStatementColumns({
+          includeDocumentNumber: true,
+          includeCounterpartyBin: true,
+          includeCurrency: true,
+        }),
         dateFormat: 'DD.MM.YYYY',
-        amountFormat: {
-          decimalSeparator: ',',
-          thousandsSeparator: ' ',
-          currencyPosition: 'after',
-          currencySymbol: '₸',
-        },
+        amountFormat: createAmountFormat(',', ' ', '₸'),
         reverseDebitCredit: false,
         negativeInParentheses: false,
-      },
+      }),
 
       metadata: {
         headerPatterns: ['ВЫПИСКА ИЗ СЧЕТА', 'ПО СЧЕТУ', 'АО "Казкоммерцбанк"'],
@@ -275,37 +273,19 @@ export class BankProfileService {
         ],
       },
 
-      quality: {
+      ...createSharedProfileSections({
         expectedColumns: 8,
-        toleranceLevels: {
-          amount: 0.01, // 1%
-          date: 1, // 1 day
-          balance: 0.02, // 2%
-        },
-        checksumValidation: true,
-        duplicateDetection: true,
-      },
-
-      features: {
         useMLClassification: true,
-        useAdvancedExtraction: true,
-        useAutoFix: true,
-        useChecksumValidation: true,
         fallbackMode: 'regex',
-      },
-    };
+      }),
+    });
   }
 
   private createHalykBankProfile(): BankProfile {
-    return {
+    return this.createBaseProfile({
       id: 'halykbank',
       name: 'Halyk Bank',
       displayName: 'АО "Народный банк Казахстана"',
-      country: 'KZ',
-      locale: 'ru',
-      currency: 'KZT',
-      version: '1.0.0',
-      lastUpdated: new Date().toISOString(),
 
       identification: {
         documentPatterns: ['народный банк', 'halyk bank', 'халык банк', 'народный'],
@@ -313,32 +293,15 @@ export class BankProfileService {
         textPatterns: ['АО "Народный банк Казахстана"', 'Halyk Bank', 'Халык Банк'],
       },
 
-      parsing: {
+      parsing: createStatementParsing({
         format: 'excel',
         delimiter: ',',
         hasHeader: true,
         skipRows: 1,
-        columns: [
-          { name: 'transactionDate', type: 'date', required: true, index: 0 },
-          {
-            name: 'counterpartyName',
-            type: 'string',
-            required: true,
-            index: 1,
-          },
-          { name: 'paymentPurpose', type: 'string', required: true, index: 2 },
-          { name: 'debit', type: 'amount', required: false, index: 3 },
-          { name: 'credit', type: 'amount', required: false, index: 4 },
-          { name: 'currency', type: 'currency', required: false, index: 5 },
-        ],
+        columns: createStatementColumns({ includeCurrency: true }),
         dateFormat: 'DD.MM.YYYY',
-        amountFormat: {
-          decimalSeparator: '.',
-          thousandsSeparator: ',',
-          currencyPosition: 'after',
-          currencySymbol: '₸',
-        },
-      },
+        amountFormat: createAmountFormat('.', ',', '₸'),
+      }),
 
       metadata: {
         headerPatterns: ['Народный банк', 'Halyk Bank', 'Выписка по счету'],
@@ -361,37 +324,19 @@ export class BankProfileService {
         ],
       },
 
-      quality: {
+      ...createSharedProfileSections({
         expectedColumns: 6,
-        toleranceLevels: {
-          amount: 0.01,
-          date: 1,
-          balance: 0.02,
-        },
-        checksumValidation: true,
-        duplicateDetection: true,
-      },
-
-      features: {
         useMLClassification: true,
-        useAdvancedExtraction: true,
-        useAutoFix: true,
-        useChecksumValidation: true,
         fallbackMode: 'heuristic',
-      },
-    };
+      }),
+    });
   }
 
   private createKaspiBankProfile(): BankProfile {
-    return {
+    return this.createBaseProfile({
       id: 'kaspibank',
       name: 'Kaspi Bank',
       displayName: 'АО "Kaspi Bank"',
-      country: 'KZ',
-      locale: 'ru',
-      currency: 'KZT',
-      version: '1.0.0',
-      lastUpdated: new Date().toISOString(),
 
       identification: {
         documentPatterns: ['каспи банк', 'kaspi bank', 'каспи', 'kaspi'],
@@ -399,71 +344,33 @@ export class BankProfileService {
         textPatterns: ['АО Kaspi Bank', 'Kaspi Bank', 'Каспи Банк'],
       },
 
-      parsing: {
+      parsing: createStatementParsing({
         format: 'csv',
         delimiter: ';',
         hasHeader: true,
-        columns: [
-          { name: 'transactionDate', type: 'date', required: true, index: 0 },
-          { name: 'documentNumber', type: 'string', required: false, index: 1 },
-          {
-            name: 'counterpartyName',
-            type: 'string',
-            required: true,
-            index: 2,
-          },
-          { name: 'debit', type: 'amount', required: false, index: 3 },
-          { name: 'credit', type: 'amount', required: false, index: 4 },
-          { name: 'paymentPurpose', type: 'string', required: true, index: 5 },
-        ],
+        columns: createStatementColumns({ includeDocumentNumber: true }),
         dateFormat: 'DD.MM.YYYY HH:mm:ss',
-        amountFormat: {
-          decimalSeparator: '.',
-          thousandsSeparator: ' ',
-          currencyPosition: 'after',
-        },
+        amountFormat: createAmountFormat('.', ' '),
         reverseDebitCredit: false,
-      },
+      }),
 
       metadata: {
         headerPatterns: ['Kaspi Bank', 'АО Kaspi Bank', 'Выписка по счету'],
       },
 
-      validation: {
-        requiredFields: ['transactionDate', 'counterpartyName', 'paymentPurpose'],
-      },
-
-      quality: {
+      ...createSharedProfileSections({
         expectedColumns: 6,
-        toleranceLevels: {
-          amount: 0.01,
-          date: 1,
-          balance: 0.02,
-        },
-        checksumValidation: true,
-        duplicateDetection: true,
-      },
-
-      features: {
         useMLClassification: false,
-        useAdvancedExtraction: true,
-        useAutoFix: true,
-        useChecksumValidation: true,
         fallbackMode: 'regex',
-      },
-    };
+      }),
+    });
   }
 
   private createBerekeBankProfile(): BankProfile {
-    return {
+    return this.createBaseProfile({
       id: 'berekebank',
       name: 'Bereke Bank',
       displayName: 'АО "Bereke Bank"',
-      country: 'KZ',
-      locale: 'ru',
-      currency: 'KZT',
-      version: '1.0.0',
-      lastUpdated: new Date().toISOString(),
 
       identification: {
         documentPatterns: ['береке банк', 'bereke bank', 'береке', 'bereke'],
@@ -471,57 +378,23 @@ export class BankProfileService {
         textPatterns: ['АО Bereke Bank', 'Bereke Bank', 'Береке Банк'],
       },
 
-      parsing: {
+      parsing: createStatementParsing({
         format: 'pdf',
-        columns: [
-          { name: 'transactionDate', type: 'date', required: true, index: 0 },
-          {
-            name: 'counterpartyName',
-            type: 'string',
-            required: true,
-            index: 1,
-          },
-          { name: 'paymentPurpose', type: 'string', required: true, index: 2 },
-          { name: 'debit', type: 'amount', required: false, index: 3 },
-          { name: 'credit', type: 'amount', required: false, index: 4 },
-          { name: 'currency', type: 'currency', required: false, index: 5 },
-        ],
+        columns: createStatementColumns({ includeCurrency: true }),
         dateFormat: 'DD.MM.YYYY',
-        amountFormat: {
-          decimalSeparator: ',',
-          thousandsSeparator: ' ',
-          currencyPosition: 'after',
-          currencySymbol: '₸',
-        },
-      },
+        amountFormat: createAmountFormat(',', ' ', '₸'),
+      }),
 
       metadata: {
         headerPatterns: ['Bereke Bank', 'АО Bereke Bank', 'Выписка по счету'],
       },
 
-      validation: {
-        requiredFields: ['transactionDate', 'counterpartyName', 'paymentPurpose'],
-      },
-
-      quality: {
+      ...createSharedProfileSections({
         expectedColumns: 6,
-        toleranceLevels: {
-          amount: 0.01,
-          date: 1,
-          balance: 0.02,
-        },
-        checksumValidation: true,
-        duplicateDetection: true,
-      },
-
-      features: {
         useMLClassification: false,
-        useAdvancedExtraction: true,
-        useAutoFix: true,
-        useChecksumValidation: true,
         fallbackMode: 'heuristic',
-      },
-    };
+      }),
+    });
   }
 
   // Public methods
@@ -692,7 +565,7 @@ export class BankProfileService {
       this.addProfile(profile);
       return { success: true, profile };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: this.getErrorMessage(error) };
     }
   }
 }

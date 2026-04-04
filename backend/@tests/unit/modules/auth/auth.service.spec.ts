@@ -238,6 +238,23 @@ describe('AuthService', () => {
       const savedUser = saveSpy.mock.calls[0][0];
       expect(savedUser.passwordHash).not.toBe(registerDto.password);
     });
+
+    it('should reject registration when invitation email does not match', async () => {
+      jest.spyOn(workspaceInvitationRepository, 'findOne').mockResolvedValue({
+        token: 'invite-1',
+        status: 'pending',
+        email: 'other@example.com',
+      } as WorkspaceInvitation);
+
+      await expect(
+        service.register({
+          email: 'new@example.com',
+          password: 'password123',
+          name: 'New User',
+          invitationToken: 'invite-1',
+        }),
+      ).rejects.toThrow('Email does not match invitation');
+    });
   });
 
   describe('login', () => {

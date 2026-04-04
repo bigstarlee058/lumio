@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import * as fs from 'fs';
 import { encryptText } from '@/common/utils/encryption.util';
 import type { DropboxSettings } from '@/entities/dropbox-settings.entity';
 import { IntegrationProvider, IntegrationStatus, type Integration } from '@/entities/integration.entity';
@@ -24,6 +25,7 @@ type TestSettings = CloudStorageSettingsLike & Partial<DropboxSettings>;
 class TestCloudStorageService extends CloudStorageBaseService<TestSettings> {
   public readonly refreshAccessTokenMock = jest.fn();
   public readonly syncIntegrationMock = jest.fn();
+  public readonly runSharedSyncWithClientMock = jest.fn();
   protected readonly logger = {
     error: jest.fn(),
     warn: jest.fn(),
@@ -88,12 +90,88 @@ class TestCloudStorageService extends CloudStorageBaseService<TestSettings> {
     return this.syncIntegrationMock(integration);
   }
 
+  exposeRunSyncWithClient<TClient>(args: {
+    integration: Integration;
+    settings: TestSettings;
+    statementRepository: any;
+    getClient: (integration: Integration) => Promise<TClient>;
+    getStatementStream: (statement: Statement) => Promise<{
+      stream: NodeJS.ReadableStream;
+      fileName: string;
+      mimeType: string;
+    }>;
+    uploadStatement: (args: {
+      client: TClient;
+      statement: Statement;
+      stream: NodeJS.ReadableStream;
+      fileName: string;
+      mimeType: string;
+      settings: TestSettings;
+    }) => Promise<void>;
+    saveSettings: (settings: TestSettings) => Promise<TestSettings>;
+    createAuditEvent: (uploaded: number) => Promise<void>;
+    getWarningMessage: (statementId: string, error: unknown) => string;
+  }) {
+    return this.runSyncWithClient(args);
+  }
+
   exposeBuildState(payload: Record<string, unknown>) {
     return this.buildState(payload);
   }
 
   exposeParseState(state: string) {
     return this.parseState(state);
+  }
+
+  exposeBuildSyncQuery(statementRepository: any, integration: Partial<Integration>, lastSyncAt?: Date | null) {
+    return this.buildSyncStatementQuery(statementRepository, integration as Integration, lastSyncAt ?? null);
+  }
+
+  exposeBuildSyncResult(uploaded: number, lastSyncAt: Date) {
+    return this.buildSyncResult(uploaded, lastSyncAt);
+  }
+
+  exposePersistImportedFile(args: {
+    uploadsDir: string;
+    safeBaseName: string;
+    mimeType: string;
+    contents: Buffer;
+    importFile: (file: Express.Multer.File) => Promise<void>;
+  }) {
+    return this.persistImportedFile(args);
+  }
+
+  exposeValidateImportCandidate(args: {
+    fileId: string;
+    originalName: string;
+    mimeType: string;
+    size: number;
+  }) {
+    return this.validateImportCandidate(args);
+  }
+
+  exposeImportFilesWithClient<TClient>(args: {
+    userId: string;
+    fileIds: string[];
+    getClient: (integration: Integration) => Promise<TClient>;
+    loadFile: (
+      client: TClient,
+      fileId: string,
+    ) => Promise<
+      | {
+          originalName: string;
+          mimeType: string;
+          size: number;
+          contents: Buffer;
+        }
+      | {
+          result: { fileId: string; status: 'ok' | 'error'; message?: string };
+        }
+    >;
+    importFile: (user: User, file: Express.Multer.File) => Promise<unknown>;
+    getErrorMessage: (error: unknown) => string;
+  }) {
+    return this.importFilesWithClient(args);
   }
 }
 
@@ -260,5 +338,250 @@ describe('CloudStorageBaseService', () => {
     );
 
     jest.useRealTimers();
+  });
+
+  it('builds a shared sync query scoped to workspace and last sync time', () => {
+    const qb = {
+      leftJoin: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+    };
+    const statementRepository = {
+      createQueryBuilder: jest.fn().mockReturnValue(qb),
+    };
+    const lastSyncAt = new Date('2026-04-03T00:00:00.000Z');
+
+    const result = service.exposeBuildSyncQuery(
+      statementRepository,
+      { workspaceId: 'ws-1', connectedByUserId: 'user-1' },
+      lastSyncAt,
+    );
+
+    expect(statementRepository.createQueryBuilder).toHaveBeenCalledWith('statement');
+    expect(qb.leftJoin).toHaveBeenCalledWith('statement.user', 'user');
+    expect(qb.where).toHaveBeenCalledWith('statement.deletedAt IS NULL');
+    expect(qb.andWhere).toHaveBeenCalledWith('user.workspaceId = :workspaceId', {
+      workspaceId: 'ws-1',
+    });
+    expect(qb.andWhere).toHaveBeenCalledWith('statement.createdAt > :lastSyncAt', { lastSyncAt });
+    expect(result).toBe(qb);
+  });
+
+  it('builds a shared sync result payload', () => {
+    const lastSyncAt = new Date('2026-04-04T03:05:00.000Z');
+
+    expect(service.exposeBuildSyncResult(3, lastSyncAt)).toEqual({
+      ok: true,
+      uploaded: 3,
+      lastSyncAt,
+    });
+  });
+
+  it('runs manual sync through the shared base method', async () => {
+    userRepository.findOne.mockResolvedValue({ id: 'user-1', workspaceId: 'ws-1' });
+    integrationRepository.findOne.mockResolvedValue({
+      id: 'integration-1',
+      provider: IntegrationProvider.DROPBOX,
+      status: IntegrationStatus.CONNECTED,
+      token: { integrationId: 'integration-1' },
+      dropboxSettings: null,
+    });
+    service.syncIntegrationMock.mockResolvedValue({ ok: true, uploaded: 2 });
+
+    await expect(service.syncNow('user-1')).resolves.toEqual({ ok: true, uploaded: 2 });
+    expect(service.syncIntegrationMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'integration-1' }),
+    );
+  });
+
+  it('persists an imported file through the shared helper', async () => {
+    const importFile = jest.fn().mockResolvedValue(undefined);
+    const uploadsDir = `/tmp/lumio-test-${Date.now()}`;
+    fs.mkdirSync(uploadsDir, { recursive: true });
+
+    await service.exposePersistImportedFile({
+      uploadsDir,
+      safeBaseName: 'statement.pdf',
+      mimeType: 'application/pdf',
+      contents: Buffer.from('pdf-data'),
+      importFile,
+    });
+
+    expect(importFile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        originalname: 'statement.pdf',
+        mimetype: 'application/pdf',
+        size: Buffer.byteLength('pdf-data'),
+      }),
+    );
+  });
+
+  it('rejects unsupported import mime types through the shared validator', () => {
+    expect(
+      service.exposeValidateImportCandidate({
+        fileId: 'file-1',
+        originalName: 'notes.txt',
+        mimeType: 'text/plain',
+        size: 128,
+      }),
+    ).toEqual({
+      ok: false,
+      result: {
+        fileId: 'file-1',
+        status: 'error',
+        message: 'Unsupported file type: text/plain',
+      },
+    });
+  });
+
+  it('normalizes import names and enforces shared size limit', () => {
+    expect(
+      service.exposeValidateImportCandidate({
+        fileId: 'file-1',
+        originalName: '../statement.pdf',
+        mimeType: 'application/pdf',
+        size: 11 * 1024 * 1024,
+      }),
+    ).toEqual({
+      ok: false,
+      result: {
+        fileId: 'file-1',
+        status: 'error',
+        message: 'File size exceeds limit',
+      },
+    });
+
+    expect(
+      service.exposeValidateImportCandidate({
+        fileId: 'file-2',
+        originalName: '../statement.pdf',
+        mimeType: 'application/pdf',
+        size: 128,
+      }),
+    ).toEqual({
+      ok: true,
+      safeBaseName: 'statement.pdf',
+    });
+  });
+
+  it('runs shared import orchestration with provider hooks', async () => {
+    userRepository.findOne
+      .mockResolvedValueOnce({ id: 'user-1', workspaceId: 'ws-1' })
+      .mockResolvedValueOnce({ id: 'user-1', workspaceId: 'ws-1' });
+    integrationRepository.findOne.mockResolvedValue({
+      id: 'integration-1',
+      provider: IntegrationProvider.DROPBOX,
+      status: IntegrationStatus.CONNECTED,
+      token: { integrationId: 'integration-1' },
+      dropboxSettings: null,
+    });
+
+    const getClient = jest.fn().mockResolvedValue({ provider: 'client' });
+    const importFile = jest.fn().mockResolvedValue(undefined);
+    const loadFile = jest
+      .fn()
+      .mockResolvedValueOnce({
+        originalName: 'statement.pdf',
+        mimeType: 'application/pdf',
+        size: 128,
+        getContents: async () => Buffer.from('pdf-data'),
+      })
+      .mockResolvedValueOnce({
+        result: {
+          fileId: 'file-2',
+          status: 'error',
+          message: 'Not a file',
+        },
+      });
+
+    await expect(
+      service.exposeImportFilesWithClient({
+        userId: 'user-1',
+        fileIds: ['file-1', 'file-2'],
+        getClient,
+        loadFile,
+        importFile: (user, file) => importFile(user, file),
+        getErrorMessage: error => String(error),
+      }),
+    ).resolves.toEqual({
+      ok: true,
+      results: [
+        { fileId: 'file-1', status: 'ok' },
+        { fileId: 'file-2', status: 'error', message: 'Not a file' },
+      ],
+    });
+
+    expect(getClient).toHaveBeenCalledWith(expect.objectContaining({ id: 'integration-1' }));
+    expect(importFile).toHaveBeenCalledTimes(1);
+    expect(loadFile).toHaveBeenCalledTimes(2);
+  });
+
+  it('runs shared sync orchestration with provider hooks', async () => {
+    const statement = { id: 'statement-1' } as Statement;
+    const qb = {
+      leftJoin: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([statement]),
+    };
+    const statementRepository = {
+      createQueryBuilder: jest.fn().mockReturnValue(qb),
+    };
+    const stream = { [Symbol.asyncIterator]: async function* () {} } as NodeJS.ReadableStream;
+    const getClient = jest.fn().mockResolvedValue({ provider: 'client' });
+    const getStatementStream = jest.fn().mockResolvedValue({
+      stream,
+      fileName: 'statement.pdf',
+      mimeType: 'application/pdf',
+    });
+    const uploadStatement = jest.fn().mockResolvedValue(undefined);
+    const saveSettings = jest.fn(async settings => settings);
+    const createAuditEvent = jest.fn().mockResolvedValue(undefined);
+    const settings = {
+      integrationId: 'integration-1',
+      folderId: '/lumio',
+      folderName: 'Lumio',
+      syncEnabled: true,
+      syncTime: '03:00',
+      timeZone: 'UTC',
+      lastSyncAt: new Date('2026-04-03T00:00:00.000Z'),
+    } as TestSettings;
+    const integration = {
+      id: 'integration-1',
+      workspaceId: 'ws-1',
+      connectedByUserId: 'user-1',
+    } as Integration;
+
+    const result = await service.exposeRunSyncWithClient({
+      integration,
+      settings,
+      statementRepository,
+      getClient,
+      getStatementStream,
+      uploadStatement,
+      saveSettings,
+      createAuditEvent,
+      getWarningMessage: (statementId, error) => `failed ${statementId}: ${String(error)}`,
+    });
+
+    expect(getClient).toHaveBeenCalledWith(integration);
+    expect(getStatementStream).toHaveBeenCalledWith(statement);
+    expect(uploadStatement).toHaveBeenCalledWith({
+      client: { provider: 'client' },
+      statement,
+      stream,
+      fileName: 'statement.pdf',
+      mimeType: 'application/pdf',
+      settings,
+    });
+    expect(saveSettings).toHaveBeenCalledWith(expect.objectContaining({ lastSyncAt: expect.any(Date) }));
+    expect(createAuditEvent).toHaveBeenCalledWith(1);
+    expect(result).toEqual({
+      ok: true,
+      uploaded: 1,
+      lastSyncAt: expect.any(Date),
+    });
   });
 });

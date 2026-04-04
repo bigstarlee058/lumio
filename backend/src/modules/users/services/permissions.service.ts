@@ -4,6 +4,7 @@ import type { Repository } from 'typeorm';
 import { Permission, ROLE_PERMISSIONS } from '../../../common/enums/permissions.enum';
 import { User } from '../../../entities/user.entity';
 import { UserRole } from '../../../entities/user.entity';
+import { findUserOrThrow, getCurrentPermissions, withCurrentPermissions } from './permissions.util';
 
 @Injectable()
 export class PermissionsService {
@@ -23,7 +24,7 @@ export class PermissionsService {
 
     // If user has custom permissions, merge with role-based
     const rolePermissions = ROLE_PERMISSIONS[user.role] || [];
-    const customPermissions = (user.permissions || []) as Permission[];
+    const customPermissions = getCurrentPermissions(user);
 
     // Merge and deduplicate
     return [...new Set([...rolePermissions, ...customPermissions])];
@@ -56,10 +57,7 @@ export class PermissionsService {
    * Update user permissions
    */
   async updateUserPermissions(userId: string, permissions: Permission[]): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const user = await findUserOrThrow(this.userRepository.findOne({ where: { id: userId } }));
 
     user.permissions = permissions;
     return this.userRepository.save(user);
@@ -69,42 +67,35 @@ export class PermissionsService {
    * Add permission to user
    */
   async addPermission(userId: string, permission: Permission): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const user = await findUserOrThrow(this.userRepository.findOne({ where: { id: userId } }));
 
-    const currentPermissions = (user.permissions || []) as Permission[];
-    if (!currentPermissions.includes(permission)) {
-      user.permissions = [...currentPermissions, permission];
-      return this.userRepository.save(user);
-    }
+    return withCurrentPermissions(user, async (loadedUser, currentPermissions) => {
+      if (!currentPermissions.includes(permission)) {
+        loadedUser.permissions = [...currentPermissions, permission];
+        return this.userRepository.save(loadedUser);
+      }
 
-    return user;
+      return loadedUser;
+    });
   }
 
   /**
    * Remove permission from user
    */
   async removePermission(userId: string, permission: Permission): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const user = await findUserOrThrow(this.userRepository.findOne({ where: { id: userId } }));
 
-    const currentPermissions = (user.permissions || []) as Permission[];
-    user.permissions = currentPermissions.filter(p => p !== permission);
-    return this.userRepository.save(user);
+    return withCurrentPermissions(user, (loadedUser, currentPermissions) => {
+      loadedUser.permissions = currentPermissions.filter(p => p !== permission);
+      return this.userRepository.save(loadedUser);
+    });
   }
 
   /**
    * Reset user permissions to role defaults
    */
   async resetPermissions(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new Error('User not found');
-    }
+    const user = await findUserOrThrow(this.userRepository.findOne({ where: { id: userId } }));
 
     user.permissions = null;
     return this.userRepository.save(user);

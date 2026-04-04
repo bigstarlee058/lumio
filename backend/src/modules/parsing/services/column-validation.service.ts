@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
+import { createFieldValidationState } from './column-validation.util';
 
 export interface ColumnValidationResult {
   isValid: boolean;
@@ -197,16 +198,14 @@ export class ColumnValidationService {
     inconsistencies: ColumnInconsistency[];
     correctedValue?: any;
   }> {
-    const inconsistencies: ColumnInconsistency[] = [];
-    let isValid = true;
-    let correctedValue = value;
+    const state = createFieldValidationState(value);
 
     switch (schema.type) {
       case 'string':
         if (typeof value !== 'string') {
-          isValid = false;
+          state.isValid = false;
           const stringValue = String(value).trim();
-          inconsistencies.push({
+          state.inconsistencies.push({
             type: 'type_mismatch',
             field: schema.field,
             rowNumber,
@@ -215,7 +214,7 @@ export class ColumnValidationService {
             severity: 'medium',
             autoFixable: true,
           });
-          correctedValue = stringValue;
+          state.correctedValue = stringValue;
         }
         break;
 
@@ -223,8 +222,8 @@ export class ColumnValidationService {
         if (typeof value !== 'number') {
           const numValue = Number(value);
           if (Number.isNaN(numValue)) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -234,8 +233,8 @@ export class ColumnValidationService {
               autoFixable: false,
             });
           } else {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -244,7 +243,7 @@ export class ColumnValidationService {
               severity: 'medium',
               autoFixable: true,
             });
-            correctedValue = numValue;
+            state.correctedValue = numValue;
           }
         }
         break;
@@ -253,8 +252,8 @@ export class ColumnValidationService {
         if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
           const dateValue = new Date(value);
           if (Number.isNaN(dateValue.getTime())) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -264,8 +263,8 @@ export class ColumnValidationService {
               autoFixable: false,
             });
           } else {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -274,7 +273,7 @@ export class ColumnValidationService {
               severity: 'medium',
               autoFixable: true,
             });
-            correctedValue = dateValue;
+            state.correctedValue = dateValue;
           }
         }
         break;
@@ -283,8 +282,8 @@ export class ColumnValidationService {
         if (typeof value !== 'boolean') {
           const boolValue = this.parseBoolean(value);
           if (boolValue === undefined) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -294,8 +293,8 @@ export class ColumnValidationService {
               autoFixable: false,
             });
           } else {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'type_mismatch',
               field: schema.field,
               rowNumber,
@@ -304,13 +303,13 @@ export class ColumnValidationService {
               severity: 'medium',
               autoFixable: true,
             });
-            correctedValue = boolValue;
+            state.correctedValue = boolValue;
           }
         }
         break;
     }
 
-    return { isValid, inconsistencies, correctedValue };
+    return state;
   }
 
   private async validateFieldFormat(
@@ -322,16 +321,14 @@ export class ColumnValidationService {
     inconsistencies: ColumnInconsistency[];
     correctedValue?: any;
   }> {
-    const inconsistencies: ColumnInconsistency[] = [];
-    let isValid = true;
-    let correctedValue = value;
+    const state = createFieldValidationState(value);
 
     // Check patterns if defined
     if (schema.patterns && Array.isArray(schema.patterns)) {
       for (const pattern of schema.patterns) {
         if (!pattern.test(String(value))) {
-          isValid = false;
-          inconsistencies.push({
+          state.isValid = false;
+          state.inconsistencies.push({
             type: 'format_inconsistency',
             field: schema.field,
             rowNumber,
@@ -349,8 +346,8 @@ export class ColumnValidationService {
       switch (schema.format) {
         case 'currency_code': {
           if (!/^[A-Z]{3}$/.test(String(value))) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'format_inconsistency',
               field: schema.field,
               rowNumber,
@@ -359,7 +356,7 @@ export class ColumnValidationService {
               severity: 'medium',
               autoFixable: true,
             });
-            correctedValue = String(value).toUpperCase().substring(0, 3);
+            state.correctedValue = String(value).toUpperCase().substring(0, 3);
           }
           break;
         }
@@ -367,8 +364,8 @@ export class ColumnValidationService {
         case 'account_number': {
           const accountStr = String(value).replace(/\s/g, '');
           if (!/^\d{10,30}$/.test(accountStr)) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'format_inconsistency',
               field: schema.field,
               rowNumber,
@@ -384,8 +381,8 @@ export class ColumnValidationService {
         case 'bin_iin': {
           const binStr = String(value).replace(/\s/g, '');
           if (!/^\d{12}$/.test(binStr)) {
-            isValid = false;
-            inconsistencies.push({
+            state.isValid = false;
+            state.inconsistencies.push({
               type: 'format_inconsistency',
               field: schema.field,
               rowNumber,
@@ -400,7 +397,7 @@ export class ColumnValidationService {
       }
     }
 
-    return { isValid, inconsistencies, correctedValue };
+    return state;
   }
 
   private async validateFinancialLogic(

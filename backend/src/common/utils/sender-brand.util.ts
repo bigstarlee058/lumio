@@ -1,4 +1,4 @@
-import { isLikelySentence } from './receipt-text.util';
+import { isLikelySentence } from './receipt-extraction.util';
 
 const SENDER_SUFFIX_PATTERN =
   /\s+(support|billing|payments?|service|team|notifications?|no[-\s]?reply)$/i;

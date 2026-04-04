@@ -9,8 +9,6 @@ import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
-import { validateFile } from '../../common/utils/file-validator.util';
-import { normalizeFilename } from '../../common/utils/filename.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   ActorType,
@@ -30,12 +28,6 @@ import type { ImportDropboxFilesDto } from './dto/import-dropbox-files.dto';
 import type { UpdateDropboxSettingsDto } from './dto/update-dropbox-settings.dto';
 
 const DEFAULT_SYNC_TIME = '03:00';
-
-const ALLOWED_MIME_TYPES = new Set([
-  'application/pdf',
-  'text/csv',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-]);
 
 @Injectable()
 export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
@@ -157,22 +149,18 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     if (!clientId || !redirectUri) {
       throw new BadRequestException('Dropbox OAuth is not configured');
     }
-
-    const state = this.buildState({
-      userId: user.id,
-      workspaceId: user.workspaceId || null,
-      redirect: `${this.getFrontendBaseUrl()}/integrations/dropbox`,
-    });
-
     const dbx = this.getDropboxClient();
-    return (dbx as any).auth.getAuthenticationUrl(
-      redirectUri,
-      state,
-      'code',
-      'offline',
-      undefined,
-      undefined,
-      true,
+
+    return this.buildProviderAuthUrl(user, state =>
+      (dbx as any).auth.getAuthenticationUrl(
+        redirectUri,
+        state,
+        'code',
+        'offline',
+        undefined,
+        undefined,
+        true,
+      ),
     );
   }
 
@@ -181,34 +169,14 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     state?: string;
     error?: string;
   }): Promise<string> {
-    const redirectBase = `${this.getFrontendBaseUrl()}/integrations/dropbox`;
-    if (params.error) {
-      return `${redirectBase}?status=error&reason=${encodeURIComponent(params.error)}`;
-    }
-    if (!params.code || !params.state) {
-      return `${redirectBase}?status=error&reason=missing_code`;
-    }
-
-    let state: Record<string, unknown>;
-    try {
-      state = this.parseState(params.state);
-    } catch (error) {
-      return `${redirectBase}?status=error&reason=bad_state`;
+    const callbackContext = await this.resolveOAuthCallbackUser<
+      Pick<User, 'id' | 'workspaceId' | 'timeZone'>
+    >(params, ['id', 'workspaceId', 'timeZone']);
+    if ('redirectUrl' in callbackContext) {
+      return callbackContext.redirectUrl;
     }
 
-    const userId = typeof state.userId === 'string' ? state.userId : null;
-    if (!userId) {
-      return `${redirectBase}?status=error&reason=missing_user`;
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId', 'timeZone'],
-    });
-
-    if (!user) {
-      return `${redirectBase}?status=error&reason=user_not_found`;
-    }
+    const { redirectBase, user } = callbackContext;
 
     const dbx = this.getDropboxClient();
     const redirectUri = this.getRedirectUri();
@@ -230,43 +198,24 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
 
     const workspaceId = user.workspaceId || null;
     const { integration: existing } = await this.findIntegrationForUser(user.id);
+    const savedIntegration = await this.upsertConnectedIntegration(existing, user, [
+      'files.content.read',
+      'files.content.write',
+    ]);
 
-    const integration =
-      existing ||
-      this.integrationRepository.create({
-        provider: IntegrationProvider.DROPBOX,
-        workspaceId,
-        connectedByUserId: user.id,
-      });
-
-    integration.status = IntegrationStatus.CONNECTED;
-    integration.scopes = ['files.content.read', 'files.content.write'];
-    integration.connectedByUserId = user.id;
-
-    const savedIntegration = await this.integrationRepository.save(integration);
-
-    const tokenRecord =
-      existing?.token ||
-      this.integrationTokenRepository.create({
-        integrationId: savedIntegration.id,
-        accessToken: '',
-        refreshToken: '',
-      });
-
-    if (accessToken) {
-      tokenRecord.accessToken = encryptText(accessToken);
-    }
-    if (refreshToken) {
-      tokenRecord.refreshToken = encryptText(refreshToken);
-    }
     if (tokenResponse.result.expires_in) {
       const expiresAt = new Date();
       expiresAt.setSeconds(expiresAt.getSeconds() + tokenResponse.result.expires_in);
-      tokenRecord.expiresAt = expiresAt;
-    }
-
-    if (tokenRecord.accessToken && tokenRecord.refreshToken) {
-      await this.integrationTokenRepository.save(tokenRecord);
+      await this.saveEncryptedTokenRecord(existing?.token, savedIntegration.id, {
+        accessToken,
+        refreshToken,
+        expiresAt,
+      });
+    } else if (accessToken || refreshToken) {
+      await this.saveEncryptedTokenRecord(existing?.token, savedIntegration.id, {
+        accessToken,
+        refreshToken,
+      });
     }
 
     let settings = existing?.dropboxSettings || this.createSettingsRecord(savedIntegration.id);
@@ -282,11 +231,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
       this.logger.warn(`Failed to create default Dropbox folder: ${error}`);
     }
 
-    return `${redirectBase}?status=connected`;
-  }
-
-  async updateSettings(userId: string, dto: UpdateDropboxSettingsDto) {
-    return super.updateSettings(userId, dto);
+    return this.buildIntegrationRedirect('connected');
   }
 
   private async getDropboxClientWithAuth(integration: Integration) {
@@ -295,12 +240,6 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     }
     const accessToken = await this.ensureValidAccessToken(integration);
     return this.getDropboxClient(accessToken);
-  }
-
-  async getPickerToken(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    const accessToken = await this.ensureValidAccessToken(integration);
-    return { accessToken };
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DropboxSettings) {
@@ -332,49 +271,24 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   }
 
   async importFiles(userId: string, dto: ImportDropboxFilesDto) {
-    const integration = await this.ensureIntegration(userId);
-    const dbx = await this.getDropboxClientWithAuth(integration);
     const uploadsDir = resolveUploadsDir();
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    const results: Array<{
-      fileId: string;
-      status: 'ok' | 'error';
-      message?: string;
-    }> = [];
-
-    for (const fileId of dto.fileIds) {
-      try {
+    return this.importFilesWithClient({
+      userId,
+      fileIds: dto.fileIds,
+      uploadsDir,
+      getClient: integration => this.getDropboxClientWithAuth(integration),
+      loadFile: async (dbx, fileId) => {
         const meta = await dbx.filesGetMetadata({ path: fileId });
 
         if (meta.result['.tag'] !== 'file') {
-          results.push({
-            fileId,
-            status: 'error',
-            message: 'Not a file',
-          });
-          continue;
+          return {
+            result: this.buildImportResult(fileId, 'error', 'Not a file'),
+          };
         }
 
         const fileMetadata = meta.result as any;
-        const size = fileMetadata.size || 0;
-        if (size && Number.isFinite(size) && size > 10 * 1024 * 1024) {
-          results.push({
-            fileId,
-            status: 'error',
-            message: 'File size exceeds limit',
-          });
-          continue;
-        }
-
-        const originalName = normalizeFilename(fileMetadata.name || `dropbox-file-${fileId}`);
-        const safeBaseName = path.basename(originalName);
-        const ext = path.extname(safeBaseName).toLowerCase();
+        const originalName = fileMetadata.name || `dropbox-file-${fileId}`;
+        const ext = path.extname(path.basename(originalName)).toLowerCase();
 
         let mimeType = 'application/octet-stream';
         if (ext === '.pdf') {
@@ -385,42 +299,22 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         }
 
-        if (!ALLOWED_MIME_TYPES.has(mimeType)) {
-          results.push({
-            fileId,
-            status: 'error',
-            message: `Unsupported file type: ${mimeType}`,
-          });
-          continue;
-        }
+        return {
+          originalName,
+          mimeType,
+          size: fileMetadata.size || 0,
+          getContents: async () => {
+            const download = await dbx.filesDownload({ path: fileId });
+            const binary =
+              (download.result as any).fileBinary ||
+              (await (download.result as any).fileBlob?.arrayBuffer());
 
-        const fileName = `${Date.now()}-${Math.random().toString(16).slice(2, 18)}-${safeBaseName}`;
-        const filePath = path.join(uploadsDir, fileName);
-
-        const download = await dbx.filesDownload({ path: fileId });
-        const binary =
-          (download.result as any).fileBinary ||
-          (await (download.result as any).fileBlob?.arrayBuffer());
-
-        const buffer = Buffer.isBuffer(binary) ? binary : Buffer.from(binary);
-        await fs.promises.writeFile(filePath, buffer);
-
-        const fileStats = await fs.promises.stat(filePath);
-        const file: Express.Multer.File = {
-          fieldname: 'file',
-          originalname: safeBaseName,
-          encoding: '7bit',
-          mimetype: mimeType,
-          size: fileStats.size,
-          destination: uploadsDir,
-          filename: fileName,
-          path: filePath,
-          buffer: Buffer.alloc(0),
-        } as Express.Multer.File;
-
-        validateFile(file);
-
-        await this.statementsService.create(
+            return Buffer.isBuffer(binary) ? binary : Buffer.from(binary);
+          },
+        };
+      },
+      importFile: (user, file) =>
+        this.statementsService.create(
           user,
           user.workspaceId,
           file,
@@ -428,28 +322,10 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           undefined,
           undefined,
           false,
-        );
-
-        results.push({ fileId, status: 'ok' });
-      } catch (error: any) {
-        results.push({
-          fileId,
-          status: 'error',
-          message: error?.error?.error_summary || error?.message || 'Import failed',
-        });
-      }
-    }
-
-    return {
-      ok: true,
-      results,
-    };
-  }
-
-  async syncNow(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    const result = await this.syncIntegration(integration);
-    return result;
+        ),
+      getErrorMessage: error =>
+        (error as any)?.error?.error_summary || (error as any)?.message || 'Import failed',
+    });
   }
 
   private async resolveDropboxFilename(
@@ -481,94 +357,50 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     if (!integration.dropboxSettings) {
       throw new BadRequestException('Dropbox settings missing');
     }
-    const dbx = await this.getDropboxClientWithAuth(integration);
-    const lastSyncAt = integration.dropboxSettings.lastSyncAt;
 
-    const qb = this.statementRepository
-      .createQueryBuilder('statement')
-      .leftJoin('statement.user', 'user')
-      .where('statement.deletedAt IS NULL')
-      .orderBy('statement.createdAt', 'ASC');
-
-    if (integration.workspaceId) {
-      qb.andWhere('user.workspaceId = :workspaceId', {
-        workspaceId: integration.workspaceId,
-      });
-    } else if (integration.connectedByUserId) {
-      qb.andWhere('statement.userId = :userId', {
-        userId: integration.connectedByUserId,
-      });
-    }
-
-    if (lastSyncAt) {
-      qb.andWhere('statement.createdAt > :lastSyncAt', { lastSyncAt });
-    }
-
-    const statements = await qb.getMany();
-    let uploaded = 0;
-
-    for (const statement of statements) {
-      try {
-        const { stream, fileName, mimeType } =
-          await this.fileStorageService.getStatementFileStream(statement);
-
+    return this.runSyncWithClient({
+      integration,
+      settings: integration.dropboxSettings,
+      statementRepository: this.statementRepository,
+      getClient: currentIntegration => this.getDropboxClientWithAuth(currentIntegration),
+      getStatementStream: statement => this.fileStorageService.getStatementFileStream(statement),
+      uploadStatement: async ({ client, stream, fileName, settings }) => {
         const dropboxName = await this.resolveDropboxFilename(
-          dbx,
-          integration.dropboxSettings.folderId || null,
+          client,
+          settings.folderId || null,
           fileName,
         );
 
-        const uploadPath = integration.dropboxSettings.folderId
-          ? `${integration.dropboxSettings.folderId}/${dropboxName}`
-          : `/${dropboxName}`;
-
+        const uploadPath = settings.folderId ? `${settings.folderId}/${dropboxName}` : `/${dropboxName}`;
         const chunks: Buffer[] = [];
         for await (const chunk of stream) {
           chunks.push(Buffer.from(chunk));
         }
-        const contents = Buffer.concat(chunks);
 
-        await dbx.filesUpload({
+        await client.filesUpload({
           path: uploadPath,
-          contents,
+          contents: Buffer.concat(chunks),
           mode: { '.tag': 'add' },
           autorename: true,
         });
-
-        uploaded += 1;
-      } catch (error) {
-        this.logger.warn(`Failed to sync statement ${statement.id} to Dropbox: ${error}`);
-      }
-    }
-
-    integration.dropboxSettings.lastSyncAt = new Date();
-    await this.dropboxSettingsRepository.save(integration.dropboxSettings);
-
-    try {
-      // Audit: record Dropbox sync/export activity.
-      await this.auditService.createEvent({
-        workspaceId: integration.workspaceId ?? null,
-        actorType: ActorType.INTEGRATION,
-        actorId: integration.connectedByUserId ?? null,
-        actorLabel: 'Dropbox Sync',
-        entityType: EntityType.INTEGRATION,
-        entityId: integration.id,
-        action: AuditAction.EXPORT,
-        meta: {
-          provider: IntegrationProvider.DROPBOX,
-          uploaded,
-        },
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Audit event failed for Dropbox sync: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-
-    return {
-      ok: true,
-      uploaded,
-      lastSyncAt: integration.dropboxSettings.lastSyncAt,
-    };
+      },
+      saveSettings: settings => this.dropboxSettingsRepository.save(settings),
+      createAuditEvent: uploaded =>
+        this.auditService.createEvent({
+          workspaceId: integration.workspaceId ?? null,
+          actorType: ActorType.INTEGRATION,
+          actorId: integration.connectedByUserId ?? null,
+          actorLabel: 'Dropbox Sync',
+          entityType: EntityType.INTEGRATION,
+          entityId: integration.id,
+          action: AuditAction.EXPORT,
+          meta: {
+            provider: IntegrationProvider.DROPBOX,
+            uploaded,
+          },
+        }),
+      getWarningMessage: (statementId, error) =>
+        `Failed to sync statement ${statementId} to Dropbox: ${String(error)}`,
+    });
   }
 }

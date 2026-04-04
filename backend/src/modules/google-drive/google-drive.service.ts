@@ -8,8 +8,6 @@ import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
-import { validateFile } from '../../common/utils/file-validator.util';
-import { normalizeFilename } from '../../common/utils/filename.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   ActorType,
@@ -34,12 +32,6 @@ const DRIVE_SCOPES = [
 ];
 
 const DEFAULT_SYNC_TIME = '03:00';
-
-const ALLOWED_MIME_TYPES = new Set([
-  'application/pdf',
-  'text/csv',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-]);
 
 @Injectable()
 export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
@@ -151,18 +143,15 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
 
   getAuthUrl(user: User): string {
     const client = this.getOAuthClient();
-    const state = this.buildState({
-      userId: user.id,
-      workspaceId: user.workspaceId || null,
-      redirect: `${this.getFrontendBaseUrl()}/integrations/google-drive`,
-    });
 
-    return client.generateAuthUrl({
-      access_type: 'offline',
-      prompt: 'consent',
-      scope: DRIVE_SCOPES,
-      state,
-    });
+    return this.buildProviderAuthUrl(user, state =>
+      client.generateAuthUrl({
+        access_type: 'offline',
+        prompt: 'consent',
+        scope: DRIVE_SCOPES,
+        state,
+      }),
+    );
   }
 
   async handleOAuthCallback(params: {
@@ -170,34 +159,14 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     state?: string;
     error?: string;
   }): Promise<string> {
-    const redirectBase = `${this.getFrontendBaseUrl()}/integrations/google-drive`;
-    if (params.error) {
-      return `${redirectBase}?status=error&reason=${encodeURIComponent(params.error)}`;
-    }
-    if (!params.code || !params.state) {
-      return `${redirectBase}?status=error&reason=missing_code`;
-    }
-
-    let state: Record<string, unknown>;
-    try {
-      state = this.parseState(params.state);
-    } catch (error) {
-      return `${redirectBase}?status=error&reason=bad_state`;
+    const callbackContext = await this.resolveOAuthCallbackUser<
+      Pick<User, 'id' | 'workspaceId' | 'timeZone'>
+    >(params, ['id', 'workspaceId', 'timeZone']);
+    if ('redirectUrl' in callbackContext) {
+      return callbackContext.redirectUrl;
     }
 
-    const userId = typeof state.userId === 'string' ? state.userId : null;
-    if (!userId) {
-      return `${redirectBase}?status=error&reason=missing_user`;
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId', 'timeZone'],
-    });
-
-    if (!user) {
-      return `${redirectBase}?status=error&reason=user_not_found`;
-    }
+    const { redirectBase, user } = callbackContext;
 
     const client = this.getOAuthClient();
     const { tokens } = await client.getToken(params.code);
@@ -210,44 +179,17 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
 
     const workspaceId = user.workspaceId || null;
     const { integration: existing } = await this.findIntegrationForUser(user.id);
+    const savedIntegration = await this.upsertConnectedIntegration(
+      existing,
+      user,
+      tokens.scope ? tokens.scope.split(' ') : existing?.scopes || DRIVE_SCOPES,
+    );
 
-    const integration =
-      existing ||
-      this.integrationRepository.create({
-        provider: IntegrationProvider.GOOGLE_DRIVE,
-        workspaceId,
-        connectedByUserId: user.id,
-      });
-
-    integration.status = IntegrationStatus.CONNECTED;
-    integration.scopes = tokens.scope
-      ? tokens.scope.split(' ')
-      : integration.scopes || DRIVE_SCOPES;
-    integration.connectedByUserId = user.id;
-
-    const savedIntegration = await this.integrationRepository.save(integration);
-
-    const tokenRecord =
-      existing?.token ||
-      this.integrationTokenRepository.create({
-        integrationId: savedIntegration.id,
-        accessToken: '',
-        refreshToken: '',
-      });
-
-    if (accessToken) {
-      tokenRecord.accessToken = encryptText(accessToken);
-    }
-    if (refreshToken) {
-      tokenRecord.refreshToken = encryptText(refreshToken);
-    }
-    if (tokens.expiry_date) {
-      tokenRecord.expiresAt = new Date(tokens.expiry_date);
-    }
-
-    if (tokenRecord.accessToken && tokenRecord.refreshToken) {
-      await this.integrationTokenRepository.save(tokenRecord);
-    }
+    await this.saveEncryptedTokenRecord(existing?.token, savedIntegration.id, {
+      accessToken,
+      refreshToken,
+      expiresAt: tokens.expiry_date ? new Date(tokens.expiry_date) : undefined,
+    });
 
     let settings = existing?.driveSettings || this.createSettingsRecord(savedIntegration.id);
     settings.syncTime = settings.syncTime || DEFAULT_SYNC_TIME;
@@ -262,11 +204,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       this.logger.warn(`Failed to create default Drive folder: ${error}`);
     }
 
-    return `${redirectBase}?status=connected`;
-  }
-
-  async updateSettings(userId: string, dto: UpdateDriveSettingsDto) {
-    return super.updateSettings(userId, dto);
+    return this.buildIntegrationRedirect('connected');
   }
 
   private async getDriveClient(integration: Integration) {
@@ -281,12 +219,6 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       refresh_token: refreshToken,
     });
     return google.drive({ version: 'v3', auth: client });
-  }
-
-  async getPickerToken(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    const accessToken = await this.ensureValidAccessToken(integration);
-    return { accessToken };
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DriveSettings) {
@@ -312,77 +244,41 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   }
 
   async importFiles(userId: string, dto: ImportDriveFilesDto) {
-    const integration = await this.ensureIntegration(userId);
-    const drive = await this.getDriveClient(integration);
     const uploadsDir = resolveUploadsDir();
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    const results: Array<{
-      fileId: string;
-      status: 'ok' | 'error';
-      message?: string;
-    }> = [];
-
-    for (const fileId of dto.fileIds) {
-      try {
+    return this.importFilesWithClient({
+      userId,
+      fileIds: dto.fileIds,
+      uploadsDir,
+      getClient: integration => this.getDriveClient(integration),
+      loadFile: async (drive, fileId) => {
         const meta = await drive.files.get({
           fileId,
           fields: 'id,name,mimeType,size',
         });
 
-        const mimeType = meta.data.mimeType || '';
-        if (!ALLOWED_MIME_TYPES.has(mimeType)) {
-          results.push({
-            fileId,
-            status: 'error',
-            message: `Unsupported file type: ${mimeType}`,
-          });
-          continue;
-        }
+        return {
+          originalName: meta.data.name || `drive-file-${fileId}`,
+          mimeType: meta.data.mimeType || '',
+          size: meta.data.size ? Number.parseInt(meta.data.size, 10) : 0,
+          getContents: async () => {
+            const tempName = `${Date.now()}-${fileId}`;
+            const tempPath = path.join(uploadsDir, tempName);
+            const download = await drive.files.get(
+              { fileId, alt: 'media' },
+              { responseType: 'stream' },
+            );
 
-        const size = meta.data.size ? Number.parseInt(meta.data.size, 10) : 0;
-        if (size && Number.isFinite(size) && size > 10 * 1024 * 1024) {
-          results.push({
-            fileId,
-            status: 'error',
-            message: 'File size exceeds limit',
-          });
-          continue;
-        }
-
-        const originalName = normalizeFilename(meta.data.name || `drive-file-${fileId}`);
-        const safeBaseName = path.basename(originalName);
-        const fileName = `${Date.now()}-${fileId}-${safeBaseName}`;
-        const filePath = path.join(uploadsDir, fileName);
-
-        const download = await drive.files.get(
-          { fileId, alt: 'media' },
-          { responseType: 'stream' },
-        );
-
-        await pipeline(download.data as NodeJS.ReadableStream, fs.createWriteStream(filePath));
-
-        const fileStats = await fs.promises.stat(filePath);
-        const file: Express.Multer.File = {
-          fieldname: 'file',
-          originalname: safeBaseName,
-          encoding: '7bit',
-          mimetype: mimeType,
-          size: fileStats.size,
-          destination: uploadsDir,
-          filename: fileName,
-          path: filePath,
-          buffer: Buffer.alloc(0),
-        } as Express.Multer.File;
-
-        validateFile(file);
-
-        await this.statementsService.create(
+            await pipeline(download.data as NodeJS.ReadableStream, fs.createWriteStream(tempPath));
+            try {
+              return await fs.promises.readFile(tempPath);
+            } finally {
+              await fs.promises.unlink(tempPath).catch(() => undefined);
+            }
+          },
+        };
+      },
+      importFile: (user, file) =>
+        this.statementsService.create(
           user,
           user.workspaceId,
           file,
@@ -390,28 +286,10 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
           undefined,
           undefined,
           false,
-        );
-
-        results.push({ fileId, status: 'ok' });
-      } catch (error: any) {
-        results.push({
-          fileId,
-          status: 'error',
-          message: error?.response?.data?.message || error?.message || 'Import failed',
-        });
-      }
-    }
-
-    return {
-      ok: true,
-      results,
-    };
-  }
-
-  async syncNow(userId: string) {
-    const integration = await this.ensureIntegration(userId);
-    const result = await this.syncIntegration(integration);
-    return result;
+        ),
+      getErrorMessage: error =>
+        (error as any)?.response?.data?.message || (error as any)?.message || 'Import failed',
+    });
   }
 
   private async resolveDriveFilename(
@@ -445,47 +323,19 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     if (!integration.driveSettings) {
       throw new BadRequestException('Drive settings missing');
     }
-    const drive = await this.getDriveClient(integration);
-    const lastSyncAt = integration.driveSettings.lastSyncAt;
 
-    const qb = this.statementRepository
-      .createQueryBuilder('statement')
-      .leftJoin('statement.user', 'user')
-      .where('statement.deletedAt IS NULL')
-      .orderBy('statement.createdAt', 'ASC');
-
-    if (integration.workspaceId) {
-      qb.andWhere('user.workspaceId = :workspaceId', {
-        workspaceId: integration.workspaceId,
-      });
-    } else if (integration.connectedByUserId) {
-      qb.andWhere('statement.userId = :userId', {
-        userId: integration.connectedByUserId,
-      });
-    }
-
-    if (lastSyncAt) {
-      qb.andWhere('statement.createdAt > :lastSyncAt', { lastSyncAt });
-    }
-
-    const statements = await qb.getMany();
-    let uploaded = 0;
-
-    for (const statement of statements) {
-      try {
-        const { stream, fileName, mimeType } =
-          await this.fileStorageService.getStatementFileStream(statement);
-        const driveName = await this.resolveDriveFilename(
-          drive,
-          integration.driveSettings.folderId || null,
-          fileName,
-        );
-        await drive.files.create({
+    return this.runSyncWithClient({
+      integration,
+      settings: integration.driveSettings,
+      statementRepository: this.statementRepository,
+      getClient: currentIntegration => this.getDriveClient(currentIntegration),
+      getStatementStream: statement => this.fileStorageService.getStatementFileStream(statement),
+      uploadStatement: async ({ client, stream, fileName, mimeType, settings }) => {
+        const driveName = await this.resolveDriveFilename(client, settings.folderId || null, fileName);
+        await client.files.create({
           requestBody: {
             name: driveName,
-            parents: integration.driveSettings.folderId
-              ? [integration.driveSettings.folderId]
-              : undefined,
+            parents: settings.folderId ? [settings.folderId] : undefined,
           },
           media: {
             mimeType,
@@ -493,40 +343,24 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
           },
           fields: 'id',
         });
-        uploaded += 1;
-      } catch (error) {
-        this.logger.warn(`Failed to sync statement ${statement.id} to Google Drive: ${error}`);
-      }
-    }
-
-    integration.driveSettings.lastSyncAt = new Date();
-    await this.driveSettingsRepository.save(integration.driveSettings);
-
-    try {
-      // Audit: record Google Drive sync/export activity.
-      await this.auditService.createEvent({
-        workspaceId: integration.workspaceId ?? null,
-        actorType: ActorType.INTEGRATION,
-        actorId: integration.connectedByUserId ?? null,
-        actorLabel: 'Google Drive Sync',
-        entityType: EntityType.INTEGRATION,
-        entityId: integration.id,
-        action: AuditAction.EXPORT,
-        meta: {
-          provider: IntegrationProvider.GOOGLE_DRIVE,
-          uploaded,
-        },
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Audit event failed for Google Drive sync: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-
-    return {
-      ok: true,
-      uploaded,
-      lastSyncAt: integration.driveSettings.lastSyncAt,
-    };
+      },
+      saveSettings: settings => this.driveSettingsRepository.save(settings),
+      createAuditEvent: uploaded =>
+        this.auditService.createEvent({
+          workspaceId: integration.workspaceId ?? null,
+          actorType: ActorType.INTEGRATION,
+          actorId: integration.connectedByUserId ?? null,
+          actorLabel: 'Google Drive Sync',
+          entityType: EntityType.INTEGRATION,
+          entityId: integration.id,
+          action: AuditAction.EXPORT,
+          meta: {
+            provider: IntegrationProvider.GOOGLE_DRIVE,
+            uploaded,
+          },
+        }),
+      getWarningMessage: (statementId, error) =>
+        `Failed to sync statement ${statementId} to Google Drive: ${String(error)}`,
+    });
   }
 }

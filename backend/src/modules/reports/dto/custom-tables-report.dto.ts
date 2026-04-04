@@ -1,15 +1,13 @@
 import { Type } from 'class-transformer';
 import {
-  ArrayUnique,
-  IsArray,
   IsEnum,
   IsInt,
   IsOptional,
   IsString,
-  IsUUID,
   Max,
   Min,
 } from 'class-validator';
+import { CustomTablesBaseQueryDto } from './custom-tables-base-query.dto';
 
 export enum CustomTableReportFlowType {
   ALL = 'all',
@@ -23,20 +21,7 @@ export enum CustomTableReportSortKey {
   OPERATIONS = 'operations',
 }
 
-export class CustomTablesReportDto {
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(3650)
-  days?: number;
-
-  @IsOptional()
-  @IsArray()
-  @ArrayUnique()
-  @IsUUID('4', { each: true })
-  tableIds?: string[];
-
+export class CustomTablesReportDto extends CustomTablesBaseQueryDto {
   @IsOptional()
   @IsEnum(CustomTableReportFlowType)
   flowType?: CustomTableReportFlowType;
@@ -57,20 +42,7 @@ export class CustomTablesReportDto {
   limit?: number;
 }
 
-export class CustomTablesReportDrillDownDto {
-  @IsOptional()
-  @IsArray()
-  @ArrayUnique()
-  @IsUUID('4', { each: true })
-  tableIds?: string[];
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @Max(3650)
-  days?: number;
-
+export class CustomTablesReportDrillDownDto extends CustomTablesBaseQueryDto {
   @IsString()
   counterparty: string;
 

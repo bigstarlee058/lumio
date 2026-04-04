@@ -1,10 +1,14 @@
 import {
+  buildCurrencyTokenPattern,
+  extractLineItemsFromLines,
   extractAmountFragments,
+  escapeRegex,
   isAddressLike,
   isDateRangeLike,
   isLikelySentence,
   isYearLikeAmount,
   scoreAmountCandidate,
+  shouldSkipLineItem,
 } from '@/common/utils/receipt-extraction.util';
 
 describe('receipt-extraction util', () => {
@@ -36,5 +40,37 @@ describe('receipt-extraction util', () => {
     const total = scoreAmountCandidate(100, true, true, 4, 5);
 
     expect(total).toBeGreaterThan(neutral);
+  });
+
+  it('combines the guards for line-item filtering', () => {
+    expect(shouldSkipLineItem('Thanks for your purchase!', 202.0, false)).toBe(true);
+    expect(shouldSkipLineItem('GitHub Actions', 10.0, false)).toBe(false);
+  });
+
+  it('escapes regex special characters for currency symbols', () => {
+    expect(escapeRegex('A+B?')).toBe('A\\+B\\?');
+  });
+
+  it('builds a currency token pattern from symbols and codes', () => {
+    expect(buildCurrencyTokenPattern(['$', 'A+B'], ['USD', 'KZT'])).toBe(
+      '(?:A\\+B|\\$|USD|KZT)',
+    );
+  });
+
+  it('extracts line items with configurable tax-line skipping', async () => {
+    const result = await extractLineItemsFromLines({
+      lines: ['Service Fee 10.00', 'Tax 1.00', 'Total 11.00'],
+      currencyTokenPattern: '(?:USD|\\$)',
+      numberPattern: '-?\\d+(?:[.,]\\d{1,2})?',
+      hasTotalKeyword: line => /total/i.test(line),
+      isTaxLine: line => /tax/i.test(line),
+      parseAmountFragment: async fragment => ({
+        amount: Number(fragment.replace(/[^\d.]/g, '')),
+      }),
+      extractCurrency: () => undefined,
+      skipTaxLines: true,
+    });
+
+    expect(result).toEqual([{ description: 'Service Fee', amount: 10 }]);
   });
 });

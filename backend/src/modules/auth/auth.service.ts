@@ -174,30 +174,7 @@ export class AuthService {
     const normalizedEmail = registerDto.email.trim().toLowerCase();
     const invitationToken = registerDto.invitationToken?.trim() || null;
 
-    if (invitationToken) {
-      const invitation = await this.workspaceInvitationRepository.findOne({
-        where: { token: invitationToken },
-      });
-
-      if (!invitation) {
-        throw new BadRequestException('Invitation not found or already used');
-      }
-
-      if (invitation.status !== WorkspaceInvitationStatus.PENDING) {
-        throw new BadRequestException('Invitation is not pending');
-      }
-
-      if (invitation.expiresAt && invitation.expiresAt.getTime() < Date.now()) {
-        invitation.status = WorkspaceInvitationStatus.EXPIRED;
-        await this.workspaceInvitationRepository.save(invitation);
-        throw new BadRequestException('Invitation has expired');
-      }
-
-      const invitationEmail = invitation.email.trim().toLowerCase();
-      if (invitationEmail !== normalizedEmail) {
-        throw new BadRequestException('Email does not match invitation');
-      }
-    }
+    await this.validateInvitationForEmail(invitationToken, normalizedEmail);
 
     const existingUser = await this.userRepository.findOne({
       where: { email: normalizedEmail },
@@ -226,28 +203,12 @@ export class AuthService {
       return this.generateTokens(savedUser, sessionContext);
     }
 
-    const workspaceName = registerDto.company?.trim()
-      ? `${registerDto.company.trim()} workspace`
-      : `${registerDto.name || registerDto.email} workspace`;
-
-    const workspace = this.workspaceRepository.create({
-      name: workspaceName,
-      ownerId: savedUser.id,
-    });
-
-    const savedWorkspace = await this.workspaceRepository.save(workspace);
-
-    savedUser.workspaceId = savedWorkspace.id;
-    await this.userRepository.save(savedUser);
-
-    await this.workspaceMemberRepository.save({
-      workspaceId: savedWorkspace.id,
-      userId: savedUser.id,
-      role: WorkspaceRole.OWNER,
-      invitedById: savedUser.id,
-    });
-
-    await this.categoriesService.createSystemCategories(savedWorkspace.id, savedUser.id);
+    await this.createOwnedWorkspaceForUser(
+      savedUser,
+      registerDto.company?.trim()
+        ? `${registerDto.company.trim()} workspace`
+        : `${registerDto.name || registerDto.email} workspace`,
+    );
 
     return this.generateTokens(savedUser, sessionContext);
   }
@@ -323,30 +284,7 @@ export class AuthService {
 
     const invitationToken = dto.invitationToken?.trim() || null;
 
-    if (invitationToken) {
-      const invitation = await this.workspaceInvitationRepository.findOne({
-        where: { token: invitationToken },
-      });
-
-      if (!invitation) {
-        throw new BadRequestException('Invitation not found or already used');
-      }
-
-      if (invitation.status !== WorkspaceInvitationStatus.PENDING) {
-        throw new BadRequestException('Invitation is not pending');
-      }
-
-      if (invitation.expiresAt && invitation.expiresAt.getTime() < Date.now()) {
-        invitation.status = WorkspaceInvitationStatus.EXPIRED;
-        await this.workspaceInvitationRepository.save(invitation);
-        throw new BadRequestException('Invitation has expired');
-      }
-
-      const invitationEmail = invitation.email.trim().toLowerCase();
-      if (invitationEmail !== email) {
-        throw new BadRequestException('Email does not match invitation');
-      }
-    }
+    await this.validateInvitationForEmail(invitationToken, email);
 
     let user = await this.userRepository.findOne({
       where: [{ email }, { googleId }],
@@ -381,26 +319,7 @@ export class AuthService {
         return this.generateTokens(savedUser, sessionContext);
       }
 
-      const workspaceName = `${displayName || email} workspace`;
-
-      const workspace = this.workspaceRepository.create({
-        name: workspaceName,
-        ownerId: savedUser.id,
-      });
-
-      const savedWorkspace = await this.workspaceRepository.save(workspace);
-
-      savedUser.workspaceId = savedWorkspace.id;
-      await this.userRepository.save(savedUser);
-
-      await this.workspaceMemberRepository.save({
-        workspaceId: savedWorkspace.id,
-        userId: savedUser.id,
-        role: WorkspaceRole.OWNER,
-        invitedById: savedUser.id,
-      });
-
-      await this.categoriesService.createSystemCategories(savedWorkspace.id, savedUser.id);
+      await this.createOwnedWorkspaceForUser(savedUser, `${displayName || email} workspace`);
 
       user = savedUser;
     } else {
@@ -419,6 +338,59 @@ export class AuthService {
     }
 
     return this.generateTokens(user, sessionContext);
+  }
+
+  private async validateInvitationForEmail(invitationToken: string | null, email: string) {
+    if (!invitationToken) {
+      return null;
+    }
+
+    const invitation = await this.workspaceInvitationRepository.findOne({
+      where: { token: invitationToken },
+    });
+
+    if (!invitation) {
+      throw new BadRequestException('Invitation not found or already used');
+    }
+
+    if (invitation.status !== WorkspaceInvitationStatus.PENDING) {
+      throw new BadRequestException('Invitation is not pending');
+    }
+
+    if (invitation.expiresAt && invitation.expiresAt.getTime() < Date.now()) {
+      invitation.status = WorkspaceInvitationStatus.EXPIRED;
+      await this.workspaceInvitationRepository.save(invitation);
+      throw new BadRequestException('Invitation has expired');
+    }
+
+    if (invitation.email.trim().toLowerCase() !== email) {
+      throw new BadRequestException('Email does not match invitation');
+    }
+
+    return invitation;
+  }
+
+  private async createOwnedWorkspaceForUser(user: User, workspaceName: string) {
+    const workspace = this.workspaceRepository.create({
+      name: workspaceName,
+      ownerId: user.id,
+    });
+
+    const savedWorkspace = await this.workspaceRepository.save(workspace);
+
+    user.workspaceId = savedWorkspace.id;
+    await this.userRepository.save(user);
+
+    await this.workspaceMemberRepository.save({
+      workspaceId: savedWorkspace.id,
+      userId: user.id,
+      role: WorkspaceRole.OWNER,
+      invitedById: user.id,
+    });
+
+    await this.categoriesService.createSystemCategories(savedWorkspace.id, user.id);
+
+    return savedWorkspace;
   }
 
   async refreshToken(

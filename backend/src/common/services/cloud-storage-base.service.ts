@@ -1,9 +1,21 @@
-import * as crypto from 'crypto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { decryptText, encryptText } from '../utils/encryption.util';
-import { Integration, IntegrationProvider, IntegrationStatus, IntegrationToken, User } from '../../entities';
+import * as fs from 'fs';
+import * as path from 'path';
+import { BadRequestException } from '@nestjs/common';
+import { Integration, IntegrationProvider, IntegrationStatus, IntegrationToken, Statement, User } from '../../entities';
+import {
+  OAuthIntegrationBaseService,
+  type OAuthRepositoryLike,
+} from './oauth-integration-base.service';
+import { validateFile } from '../utils/file-validator.util';
+import { normalizeFilename } from '../utils/filename.util';
 
 const DEFAULT_SYNC_TIME = '03:00';
+const DEFAULT_IMPORT_ALLOWED_MIME_TYPES = new Set([
+  'application/pdf',
+  'text/csv',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+]);
+const MAX_IMPORT_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 export interface CloudStorageSettingsLike {
   integrationId: string;
@@ -15,7 +27,15 @@ export interface CloudStorageSettingsLike {
   lastSyncAt: Date | null;
 }
 
-type RepositoryLike<T> = {
+type SyncQueryBuilderLike<T> = {
+  leftJoin(relation: string, alias: string): SyncQueryBuilderLike<T>;
+  where(condition: string): SyncQueryBuilderLike<T>;
+  orderBy(sort: string, order: 'ASC' | 'DESC'): SyncQueryBuilderLike<T>;
+  andWhere(condition: string, params: Record<string, unknown>): SyncQueryBuilderLike<T>;
+  getMany(): Promise<T[]>;
+};
+
+type RepositoryLike<T> = OAuthRepositoryLike<T> & {
   findOne: (args: unknown) => Promise<T | null>;
   find?: (args: unknown) => Promise<T[]>;
   save: (entity: T) => Promise<T>;
@@ -23,9 +43,19 @@ type RepositoryLike<T> = {
   delete: (criteria: unknown) => Promise<unknown>;
 };
 
+type CloudImportResult = {
+  fileId: string;
+  status: 'ok' | 'error';
+  message?: string;
+};
+
+type ImportCandidateValidationResult =
+  | { ok: true; safeBaseName: string }
+  | { ok: false; result: CloudImportResult };
+
 export abstract class CloudStorageBaseService<
   TSettings extends CloudStorageSettingsLike,
-> {
+> extends OAuthIntegrationBaseService {
   protected abstract readonly logger: {
     error(message: string, error?: unknown): void;
     warn(message: string): void;
@@ -36,7 +66,9 @@ export abstract class CloudStorageBaseService<
     protected readonly integrationTokenRepository: RepositoryLike<IntegrationToken>,
     protected readonly settingsRepository: RepositoryLike<TSettings>,
     protected readonly userRepository: RepositoryLike<User>,
-  ) {}
+  ) {
+    super(integrationRepository, integrationTokenRepository, userRepository);
+  }
 
   protected abstract getProvider(): IntegrationProvider;
 
@@ -45,8 +77,6 @@ export abstract class CloudStorageBaseService<
   protected abstract getProviderRouteSegment(): string;
 
   protected abstract getSettingsRelationName(): keyof Integration;
-
-  protected abstract getStateSecret(): string;
 
   protected abstract getFrontendBaseUrl(): string;
 
@@ -59,58 +89,6 @@ export abstract class CloudStorageBaseService<
   protected abstract getAuthorizationExpiredMessage(): string;
 
   protected abstract syncIntegration(integration: Integration): Promise<unknown>;
-
-  protected buildState(payload: Record<string, unknown>): string {
-    const encoded = this.base64UrlEncode(JSON.stringify(payload));
-    const signature = this.signState(encoded);
-    return `${encoded}.${signature}`;
-  }
-
-  protected parseState(state: string): Record<string, unknown> {
-    const [encoded, signature] = (state || '').split('.');
-    if (!encoded || !signature) {
-      throw new BadRequestException('Invalid OAuth state');
-    }
-
-    const expected = this.signState(encoded);
-    if (expected !== signature) {
-      throw new BadRequestException('Invalid OAuth state signature');
-    }
-
-    return JSON.parse(this.base64UrlDecode(encoded));
-  }
-
-  protected async getWorkspaceId(userId: string): Promise<string | null> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-
-    return user?.workspaceId ?? null;
-  }
-
-  protected async findIntegrationForUser(userId: string) {
-    const workspaceId = await this.getWorkspaceId(userId);
-    const where = workspaceId
-      ? { workspaceId, provider: this.getProvider() }
-      : { connectedByUserId: userId, provider: this.getProvider() };
-
-    const integration = await this.integrationRepository.findOne({
-      where,
-      relations: ['token', this.getSettingsRelationName()],
-    });
-
-    return { integration, workspaceId };
-  }
-
-  protected async ensureIntegration(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      throw new NotFoundException(`${this.getProviderName()} integration not found`);
-    }
-
-    return integration;
-  }
 
   protected getConnectedSettings(integration: Integration): TSettings | null {
     return (integration[this.getSettingsRelationName()] as unknown as TSettings | null) || null;
@@ -227,33 +205,277 @@ export abstract class CloudStorageBaseService<
     }
   }
 
-  protected async ensureValidAccessToken(integration: Integration): Promise<string> {
-    if (!integration.token) {
-      throw new BadRequestException('Integration token missing');
+  async syncNow(userId: string) {
+    const integration = await this.ensureIntegration(userId);
+    return this.syncIntegration(integration);
+  }
+
+  protected buildSyncStatementQuery(
+    statementRepository: {
+      createQueryBuilder(alias: string): SyncQueryBuilderLike<Statement>;
+    },
+    integration: Integration,
+    lastSyncAt: Date | null,
+  ) {
+    const qb = statementRepository
+      .createQueryBuilder('statement')
+      .leftJoin('statement.user', 'user')
+      .where('statement.deletedAt IS NULL')
+      .orderBy('statement.createdAt', 'ASC');
+
+    if (integration.workspaceId) {
+      qb.andWhere('user.workspaceId = :workspaceId', {
+        workspaceId: integration.workspaceId,
+      });
+    } else if (integration.connectedByUserId) {
+      qb.andWhere('statement.userId = :userId', {
+        userId: integration.connectedByUserId,
+      });
     }
 
-    const refreshToken = decryptText(integration.token.refreshToken || '');
-    let accessToken = decryptText(integration.token.accessToken || '');
-    const expiresAt = integration.token.expiresAt?.getTime() || 0;
-    const shouldRefresh = !accessToken || (expiresAt && expiresAt <= Date.now() + 60 * 1000);
-    if (!shouldRefresh) {
-      return accessToken;
+    if (lastSyncAt) {
+      qb.andWhere('statement.createdAt > :lastSyncAt', { lastSyncAt });
     }
+
+    return qb;
+  }
+
+  protected buildSyncResult(uploaded: number, lastSyncAt: Date) {
+    return {
+      ok: true,
+      uploaded,
+      lastSyncAt,
+    };
+  }
+
+  protected getAllowedImportMimeTypes(): ReadonlySet<string> {
+    return DEFAULT_IMPORT_ALLOWED_MIME_TYPES;
+  }
+
+  protected getMaxImportFileSizeBytes(): number {
+    return MAX_IMPORT_FILE_SIZE_BYTES;
+  }
+
+  protected buildImportResult(
+    fileId: string,
+    status: 'ok' | 'error',
+    message?: string,
+  ): CloudImportResult {
+    return message ? { fileId, status, message } : { fileId, status };
+  }
+
+  protected buildImportResponse(results: CloudImportResult[]) {
+    return {
+      ok: true,
+      results,
+    };
+  }
+
+  protected validateImportCandidate(args: {
+    fileId: string;
+    originalName: string;
+    mimeType: string;
+    size: number;
+  }): ImportCandidateValidationResult {
+    const safeBaseName = path.basename(normalizeFilename(args.originalName));
+
+    if (!this.getAllowedImportMimeTypes().has(args.mimeType)) {
+      return {
+        ok: false,
+        result: this.buildImportResult(
+          args.fileId,
+          'error',
+          `Unsupported file type: ${args.mimeType}`,
+        ),
+      };
+    }
+
+    if (
+      args.size &&
+      Number.isFinite(args.size) &&
+      args.size > this.getMaxImportFileSizeBytes()
+    ) {
+      return {
+        ok: false,
+        result: this.buildImportResult(args.fileId, 'error', 'File size exceeds limit'),
+      };
+    }
+
+    return {
+      ok: true,
+      safeBaseName,
+    };
+  }
+
+  protected isInvalidImportCandidate(
+    validation: ImportCandidateValidationResult,
+  ): validation is { ok: false; result: CloudImportResult } {
+    return validation.ok === false;
+  }
+
+  protected async importFilesWithClient<TClient>(args: {
+    userId: string;
+    fileIds: string[];
+    getClient: (integration: Integration) => Promise<TClient>;
+    loadFile: (
+      client: TClient,
+      fileId: string,
+    ) => Promise<
+      | {
+          originalName: string;
+          mimeType: string;
+          size: number;
+          getContents: () => Promise<Buffer>;
+        }
+      | {
+          result: CloudImportResult;
+        }
+    >;
+    importFile: (user: User, file: Express.Multer.File) => Promise<unknown>;
+    getErrorMessage: (error: unknown) => string;
+    uploadsDir?: string;
+  }) {
+    const integration = await this.ensureIntegration(args.userId);
+    const client = await args.getClient(integration);
+    const uploadsDir = args.uploadsDir || process.cwd();
+    const user = await this.userRepository.findOne({
+      where: { id: args.userId },
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const results: CloudImportResult[] = [];
+
+    for (const fileId of args.fileIds) {
+      try {
+        const loaded = await args.loadFile(client, fileId);
+        if ('result' in loaded) {
+          results.push(loaded.result);
+          continue;
+        }
+
+        const validation = this.validateImportCandidate({
+          fileId,
+          originalName: loaded.originalName,
+          mimeType: loaded.mimeType,
+          size: loaded.size,
+        });
+        if (this.isInvalidImportCandidate(validation)) {
+          results.push(validation.result);
+          continue;
+        }
+
+        await this.persistImportedFile({
+          uploadsDir,
+          safeBaseName: validation.safeBaseName,
+          mimeType: loaded.mimeType,
+          contents: await loaded.getContents(),
+          importFile: file => args.importFile(user, file),
+        });
+
+        results.push(this.buildImportResult(fileId, 'ok'));
+      } catch (error) {
+        results.push(this.buildImportResult(fileId, 'error', args.getErrorMessage(error)));
+      }
+    }
+
+    return this.buildImportResponse(results);
+  }
+
+  protected async runSyncWithClient<TClient>(args: {
+    integration: Integration;
+    settings: TSettings;
+    statementRepository: {
+      createQueryBuilder(alias: string): SyncQueryBuilderLike<Statement>;
+    };
+    getClient: (integration: Integration) => Promise<TClient>;
+    getStatementStream: (statement: Statement) => Promise<{
+      stream: NodeJS.ReadableStream;
+      fileName: string;
+      mimeType: string;
+    }>;
+    uploadStatement: (args: {
+      client: TClient;
+      statement: Statement;
+      stream: NodeJS.ReadableStream;
+      fileName: string;
+      mimeType: string;
+      settings: TSettings;
+    }) => Promise<void>;
+    saveSettings: (settings: TSettings) => Promise<TSettings>;
+    createAuditEvent: (uploaded: number) => Promise<unknown>;
+    getWarningMessage: (statementId: string, error: unknown) => string;
+  }) {
+    const client = await args.getClient(args.integration);
+    const qb = this.buildSyncStatementQuery(
+      args.statementRepository,
+      args.integration,
+      args.settings.lastSyncAt,
+    );
+
+    const statements = await qb.getMany();
+    let uploaded = 0;
+
+    for (const statement of statements) {
+      try {
+        const { stream, fileName, mimeType } = await args.getStatementStream(statement);
+        await args.uploadStatement({
+          client,
+          statement,
+          stream,
+          fileName,
+          mimeType,
+          settings: args.settings,
+        });
+        uploaded += 1;
+      } catch (error) {
+        this.logger.warn(args.getWarningMessage(statement.id, error));
+      }
+    }
+
+    args.settings.lastSyncAt = new Date();
+    await args.saveSettings(args.settings);
 
     try {
-      const refreshed = await this.refreshAccessToken(refreshToken);
-      accessToken = refreshed.accessToken;
-      integration.token.accessToken = encryptText(accessToken);
-      if (refreshed.expiresAt) {
-        integration.token.expiresAt = refreshed.expiresAt;
-      }
-      await this.integrationTokenRepository.save(integration.token);
-      return accessToken;
-    } catch {
-      integration.status = IntegrationStatus.NEEDS_REAUTH;
-      await this.integrationRepository.save(integration);
-      throw new BadRequestException(this.getAuthorizationExpiredMessage());
+      await args.createAuditEvent(uploaded);
+    } catch (error) {
+      this.logger.warn(
+        `Audit event failed for ${this.getProviderName()} sync: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
+
+    return this.buildSyncResult(uploaded, args.settings.lastSyncAt);
+  }
+
+  protected async persistImportedFile(args: {
+    uploadsDir: string;
+    safeBaseName: string;
+    mimeType: string;
+    contents: Buffer;
+    importFile: (file: Express.Multer.File) => Promise<unknown>;
+  }) {
+    const fileName = `${Date.now()}-${Math.random().toString(16).slice(2, 18)}-${args.safeBaseName}`;
+    const filePath = path.join(args.uploadsDir, fileName);
+
+    await fs.promises.writeFile(filePath, args.contents);
+
+    const fileStats = await fs.promises.stat(filePath);
+    const file: Express.Multer.File = {
+      fieldname: 'file',
+      originalname: args.safeBaseName,
+      encoding: '7bit',
+      mimetype: args.mimeType,
+      size: fileStats.size,
+      destination: args.uploadsDir,
+      filename: fileName,
+      path: filePath,
+      buffer: Buffer.alloc(0),
+    } as Express.Multer.File;
+
+    validateFile(file);
+    await args.importFile(file);
+    return file;
   }
 
   protected shouldSyncNow(now: Date, settings: CloudStorageSettingsLike, timeZone: string): boolean {
@@ -297,25 +519,5 @@ export abstract class CloudStorageBaseService<
       hour: Number.parseInt(lookup('hour'), 10),
       minute: Number.parseInt(lookup('minute'), 10),
     };
-  }
-
-  private base64UrlEncode(value: string): string {
-    return Buffer.from(value)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
-  }
-
-  private base64UrlDecode(value: string): string {
-    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-    return Buffer.from(padded, 'base64').toString('utf8');
-  }
-
-  private signState(payload: string): string {
-    const hmac = crypto.createHmac('sha256', this.getStateSecret());
-    hmac.update(payload);
-    return hmac.digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
 }

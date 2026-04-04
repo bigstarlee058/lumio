@@ -1,9 +1,12 @@
-import * as crypto from 'crypto';
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { google } from 'googleapis';
 import type { Repository } from 'typeorm';
 import { decryptText, encryptText } from '../../../common/utils/encryption.util';
+import {
+  OAuthIntegrationBaseService,
+  type OAuthIntegrationSettingsRelationName,
+} from '../../../common/services/oauth-integration-base.service';
 import {
   GmailSettings,
   Integration,
@@ -21,19 +24,37 @@ const GMAIL_SCOPES = [
 ];
 
 @Injectable()
-export class GmailOAuthService {
-  private readonly logger = new Logger(GmailOAuthService.name);
+export class GmailOAuthService extends OAuthIntegrationBaseService {
+  protected readonly logger = new Logger(GmailOAuthService.name);
 
   constructor(
     @InjectRepository(Integration)
-    private readonly integrationRepository: Repository<Integration>,
+    integrationRepository: Repository<Integration>,
     @InjectRepository(IntegrationToken)
-    private readonly integrationTokenRepository: Repository<IntegrationToken>,
+    integrationTokenRepository: Repository<IntegrationToken>,
     @InjectRepository(GmailSettings)
     private readonly gmailSettingsRepository: Repository<GmailSettings>,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+    userRepository: Repository<User>,
+  ) {
+    super(integrationRepository, integrationTokenRepository, userRepository);
+  }
+
+  protected getProvider(): IntegrationProvider {
+    return IntegrationProvider.GMAIL;
+  }
+
+  protected getProviderName(): string {
+    return 'Gmail';
+  }
+
+  protected getProviderRouteSegment(): string {
+    return 'gmail';
+  }
+
+  protected getSettingsRelationName(): OAuthIntegrationSettingsRelationName {
+    return 'gmailSettings';
+  }
 
   private getClientId() {
     return process.env.GMAIL_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || '';
@@ -47,11 +68,11 @@ export class GmailOAuthService {
     return process.env.GMAIL_REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || '';
   }
 
-  private getFrontendBaseUrl() {
+  protected getFrontendBaseUrl() {
     return process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
   }
 
-  private getStateSecret() {
+  protected getStateSecret() {
     return process.env.GMAIL_STATE_SECRET || process.env.JWT_SECRET || 'lumio-state';
   }
 
@@ -65,76 +86,12 @@ export class GmailOAuthService {
     return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
   }
 
-  private base64UrlEncode(value: string): string {
-    return Buffer.from(value)
-      .toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
+  override async findIntegrationForUser(userId: string) {
+    return super.findIntegrationForUser(userId);
   }
 
-  private base64UrlDecode(value: string): string {
-    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
-    return Buffer.from(padded, 'base64').toString('utf8');
-  }
-
-  private signState(payload: string): string {
-    const hmac = crypto.createHmac('sha256', this.getStateSecret());
-    hmac.update(payload);
-    return hmac.digest('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-  }
-
-  private buildState(payload: Record<string, unknown>): string {
-    const encoded = this.base64UrlEncode(JSON.stringify(payload));
-    const signature = this.signState(encoded);
-    return `${encoded}.${signature}`;
-  }
-
-  private parseState(state: string): Record<string, unknown> {
-    const [encoded, signature] = (state || '').split('.');
-    if (!encoded || !signature) {
-      throw new BadRequestException('Invalid OAuth state');
-    }
-    const expected = this.signState(encoded);
-    if (expected !== signature) {
-      throw new BadRequestException('Invalid OAuth state signature');
-    }
-    const json = this.base64UrlDecode(encoded);
-    return JSON.parse(json);
-  }
-
-  private async getWorkspaceId(userId: string): Promise<string | null> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['id', 'workspaceId'],
-    });
-    return user?.workspaceId ?? null;
-  }
-
-  async findIntegrationForUser(userId: string) {
-    const workspaceId = await this.getWorkspaceId(userId);
-    const where = workspaceId
-      ? { workspaceId, provider: IntegrationProvider.GMAIL }
-      : {
-          connectedByUserId: userId,
-          provider: IntegrationProvider.GMAIL,
-        };
-
-    const integration = await this.integrationRepository.findOne({
-      where,
-      relations: ['token', 'gmailSettings'],
-    });
-
-    return { integration, workspaceId };
-  }
-
-  async ensureIntegration(userId: string) {
-    const { integration } = await this.findIntegrationForUser(userId);
-    if (!integration) {
-      throw new NotFoundException('Gmail integration not found');
-    }
-    return integration;
+  override async ensureIntegration(userId: string) {
+    return super.ensureIntegration(userId);
   }
 
   getAuthUrl(user: User): string {
@@ -268,12 +225,29 @@ export class GmailOAuthService {
     };
   }
 
-  async refreshAccessToken(integration: Integration): Promise<string> {
+  protected async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; expiresAt?: Date }> {
+    const client = this.getOAuthClient();
+    client.setCredentials({ refresh_token: refreshToken });
+
+    const { credentials } = await client.refreshAccessToken();
+
+    return {
+      accessToken: credentials.access_token || '',
+      expiresAt: credentials.expiry_date ? new Date(credentials.expiry_date) : undefined,
+    };
+  }
+
+  protected getAuthorizationExpiredMessage(): string {
+    return 'Failed to refresh access token';
+  }
+
+  private async refreshAccessTokenForIntegration(integration: Integration): Promise<string> {
     const tokenRecord = await this.integrationTokenRepository.findOne({
       where: { integrationId: integration.id },
     });
 
-    // Fallback to plain refreshToken if encrypted version doesn't exist
     if (!tokenRecord?.encryptedRefreshToken && !tokenRecord?.refreshToken) {
       throw new BadRequestException('No refresh token available');
     }
@@ -282,36 +256,31 @@ export class GmailOAuthService {
     if (tokenRecord.encryptedRefreshToken) {
       refreshToken = decryptText(tokenRecord.encryptedRefreshToken);
     } else if (tokenRecord.refreshToken) {
-      // Migrate plain token to encrypted
       refreshToken = tokenRecord.refreshToken;
       tokenRecord.encryptedRefreshToken = encryptText(refreshToken);
     } else {
       throw new BadRequestException('No refresh token available');
     }
-    const client = this.getOAuthClient();
-    client.setCredentials({ refresh_token: refreshToken });
 
     try {
-      const { credentials } = await client.refreshAccessToken();
-      const accessToken = credentials.access_token || '';
+      const refreshed = await this.refreshAccessToken(refreshToken);
 
-      if (accessToken) {
-        tokenRecord.encryptedAccessToken = encryptText(accessToken);
-        tokenRecord.accessToken = accessToken;
+      if (refreshed.accessToken) {
+        tokenRecord.encryptedAccessToken = encryptText(refreshed.accessToken);
+        tokenRecord.accessToken = refreshed.accessToken;
       }
-      if (credentials.expiry_date) {
-        tokenRecord.expiresAt = new Date(credentials.expiry_date);
+      if (refreshed.expiresAt) {
+        tokenRecord.expiresAt = refreshed.expiresAt;
       }
 
       await this.integrationTokenRepository.save(tokenRecord);
 
-      // Update integration status to CONNECTED
       if (integration.status !== IntegrationStatus.CONNECTED) {
         integration.status = IntegrationStatus.CONNECTED;
         await this.integrationRepository.save(integration);
       }
 
-      return accessToken;
+      return refreshed.accessToken;
     } catch (error) {
       this.logger.error('Failed to refresh Gmail access token', error);
       integration.status = IntegrationStatus.NEEDS_REAUTH;
@@ -366,7 +335,7 @@ export class GmailOAuthService {
 
     // Check if token is expired
     if (tokenRecord.expiresAt && new Date() >= tokenRecord.expiresAt) {
-      accessToken = await this.refreshAccessToken(integration);
+      accessToken = await this.refreshAccessTokenForIntegration(integration);
     }
 
     const client = this.getOAuthClient();

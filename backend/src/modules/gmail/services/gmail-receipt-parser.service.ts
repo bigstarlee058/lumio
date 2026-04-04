@@ -2,18 +2,24 @@ import * as fs from 'fs';
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import * as pdfParse from 'pdf-parse';
 import {
+  DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
+  createReceiptAmountHelpers,
   extractBestNumberPart as selectBestNumberPart,
   extractCurrency as detectCurrency,
   parseAmountFragment as parseSharedAmountFragment,
+  selectTopAmountCandidate,
 } from '../../../common/utils/receipt-amount.util';
 import { stripHtmlForAi } from '../../../common/utils/ai-response.util';
 import {
+  buildCurrencyTokenPattern,
+  extractLineItemsFromLines,
   extractAmountFragments as extractSharedAmountFragments,
   isAddressLike as isSharedAddressLike,
   isDateRangeLike as isSharedDateRangeLike,
   isLikelySentence as isSharedLikelySentence,
   isYearLikeAmount as isSharedYearLikeAmount,
   scoreAmountCandidate as scoreSharedAmountCandidate,
+  shouldSkipLineItem,
 } from '../../../common/utils/receipt-extraction.util';
 import { extractBrandFromSender } from '../../../common/utils/sender-brand.util';
 import { UniversalAmountParser } from '../../parsing/services/universal-amount-parser.service';
@@ -60,34 +66,10 @@ const TOTAL_KEYWORD_REGEX =
 
 const NUMBER_PATTERN = '-?\\d{1,3}(?:[\\s.,]\\d{3})*(?:[.,]\\d{1,2})|-?\\d+(?:[.,]\\d{1,2})';
 
-const SYMBOL_TO_CURRENCY: Record<string, string> = {
-  $: 'USD',
-  '€': 'EUR',
-  '£': 'GBP',
-  '¥': 'JPY',
-  '₽': 'RUB',
-  '₸': 'KZT',
-  '₴': 'UAH',
-  '₺': 'TRY',
-  '₹': 'INR',
-  '₩': 'KRW',
-  '฿': 'THB',
-  '₱': 'PHP',
-  '₫': 'VND',
-  '₪': 'ILS',
-  Kč: 'CZK',
-  Ft: 'HUF',
-  zł: 'PLN',
-  lei: 'RON',
-  kn: 'HRK',
-  Br: 'BYN',
-  kr: 'SEK',
-  лв: 'BGN',
-};
-
 @Injectable()
 export class GmailReceiptParserService {
   private readonly logger = new Logger(GmailReceiptParserService.name);
+  private readonly amountHelpers = createReceiptAmountHelpers(this.amountParser, NUMBER_PATTERN);
 
   constructor(
     private readonly amountParser: UniversalAmountParser,
@@ -265,22 +247,26 @@ export class GmailReceiptParserService {
       .split('\n')
       .map(line => line.replace(/\u00a0/g, ' ').trim())
       .filter(Boolean);
-    const documentCurrency = this.extractCurrency(text);
+    const documentCurrency = this.amountHelpers.extractCurrency(text);
     const candidates: AmountCandidate[] = [];
 
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
       const hasTotalKeyword = this.hasTotalKeyword(line);
-      const fragments = this.extractAmountFragments(line, hasTotalKeyword);
+      const fragments = extractSharedAmountFragments(
+        line,
+        hasTotalKeyword,
+        this.getCurrencyTokenPattern(),
+      );
 
       for (const fragment of fragments) {
-        const parsed = await this.parseAmountFragment(fragment);
+        const parsed = await this.amountHelpers.parseAmountFragment(fragment);
         if (!parsed || parsed.amount <= 0) {
           continue;
         }
 
-        const fragmentCurrency = this.extractCurrency(fragment);
-        const lineCurrency = this.extractCurrency(line);
+        const fragmentCurrency = this.amountHelpers.extractCurrency(fragment);
+        const lineCurrency = this.amountHelpers.extractCurrency(line);
         const currency =
           parsed.currency || fragmentCurrency || lineCurrency || documentCurrency || 'KZT';
         const explicitCurrency = Boolean(parsed.currency || fragmentCurrency);
@@ -291,7 +277,7 @@ export class GmailReceiptParserService {
           hasTotalKeyword,
           explicitCurrency,
           lineIndex: index,
-          score: this.scoreAmountCandidate(
+          score: scoreSharedAmountCandidate(
             parsed.amount,
             hasTotalKeyword,
             explicitCurrency,
@@ -306,15 +292,11 @@ export class GmailReceiptParserService {
       return undefined;
     }
 
-    candidates.sort((left, right) => {
-      if (right.score !== left.score) {
-        return right.score - left.score;
-      }
+    const bestCandidate = selectTopAmountCandidate(candidates);
+    if (!bestCandidate) {
+      return undefined;
+    }
 
-      return right.amount - left.amount;
-    });
-
-    const bestCandidate = candidates[0];
     return {
       amount: bestCandidate.amount,
       currency: bestCandidate.currency,
@@ -398,7 +380,7 @@ export class GmailReceiptParserService {
         continue;
       }
 
-      if (this.isLikelySentence(line)) {
+      if (isSharedLikelySentence(line)) {
         continue;
       }
 
@@ -410,22 +392,6 @@ export class GmailReceiptParserService {
     }
 
     return undefined;
-  }
-
-  private isLikelySentence(value: string): boolean {
-    return isSharedLikelySentence(value);
-  }
-
-  private isDateRangeLike(value: string): boolean {
-    return isSharedDateRangeLike(value);
-  }
-
-  private isAddressLike(value: string): boolean {
-    return isSharedAddressLike(value);
-  }
-
-  private isYearLikeAmount(amount: number, hasExplicitCurrency: boolean): boolean {
-    return isSharedYearLikeAmount(amount, hasExplicitCurrency);
   }
 
   private extractTax(text: string): number | undefined {
@@ -453,58 +419,14 @@ export class GmailReceiptParserService {
   private async extractLineItems(
     text: string,
   ): Promise<Array<{ description: string; amount: number }>> {
-    const lineItems: Array<{ description: string; amount: number }> = [];
-    const lines = text.split('\n').map(line => line.replace(/\u00a0/g, ' '));
-    const currencyTokenPattern = this.getCurrencyTokenPattern();
-    const itemPattern = new RegExp(
-      `^(.+?)\\s+((?:${currencyTokenPattern}\\s*)?(?:${NUMBER_PATTERN})(?:\\s*(?:${currencyTokenPattern}))?)$`,
-      'i',
-    );
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-      if (!trimmedLine) {
-        continue;
-      }
-
-      if (this.hasTotalKeyword(trimmedLine)) {
-        continue;
-      }
-
-      const match = trimmedLine.match(itemPattern);
-      if (match) {
-        const description = match[1].trim();
-        const parsedAmount = await this.parseAmountFragment(match[2]);
-        const amount = parsedAmount?.amount;
-        const hasExplicitCurrency = Boolean(this.extractCurrency(match[2]));
-
-        if (
-          amount !== undefined &&
-          Number.isFinite(amount) &&
-          amount > 0 &&
-          description.length > 0 &&
-          description.length < 200
-        ) {
-          if (this.isLikelySentence(description)) {
-            continue;
-          }
-
-          if (this.isDateRangeLike(description)) {
-            continue;
-          }
-
-          if (this.isAddressLike(description)) {
-            continue;
-          }
-
-          if (this.isYearLikeAmount(amount, hasExplicitCurrency)) {
-            continue;
-          }
-
-          lineItems.push({ description, amount });
-        }
-      }
-    }
+    const lineItems = await extractLineItemsFromLines({
+      lines: text.split('\n').map(line => line.replace(/\u00a0/g, ' ')),
+      currencyTokenPattern: this.getCurrencyTokenPattern(),
+      numberPattern: NUMBER_PATTERN,
+      hasTotalKeyword: line => this.hasTotalKeyword(line),
+      parseAmountFragment: fragment => this.amountHelpers.parseAmountFragment(fragment),
+      extractCurrency: value => this.amountHelpers.extractCurrency(value),
+    });
 
     return lineItems.length > 0 ? lineItems : [];
   }
@@ -531,62 +453,15 @@ export class GmailReceiptParserService {
     return TOTAL_KEYWORD_REGEX.test(line);
   }
 
-  private extractAmountFragments(line: string, includeNumbersWithoutCurrency: boolean): string[] {
-    return extractSharedAmountFragments(
-      line,
-      includeNumbersWithoutCurrency,
-      this.getCurrencyTokenPattern(),
-    );
-  }
-
-  private async parseAmountFragment(
-    fragment: string,
-  ): Promise<{ amount: number; currency?: string } | null> {
-    return parseSharedAmountFragment(fragment, {
-      amountParser: this.amountParser,
-      extractCurrency: text => this.extractCurrency(text),
-      numberPattern: NUMBER_PATTERN,
-    });
-  }
-
-  private extractBestNumberPart(text: string): string | undefined {
-    return selectBestNumberPart(text, NUMBER_PATTERN);
-  }
-
   private extractCurrency(text: string): string | undefined {
-    return detectCurrency(text, this.amountParser, SYMBOL_TO_CURRENCY);
-  }
-
-  private scoreAmountCandidate(
-    amount: number,
-    hasTotalKeyword: boolean,
-    explicitCurrency: boolean,
-    lineIndex: number,
-    totalLines: number,
-  ): number {
-    return scoreSharedAmountCandidate(
-      amount,
-      hasTotalKeyword,
-      explicitCurrency,
-      lineIndex,
-      totalLines,
-    );
+    return detectCurrency(text, this.amountParser, DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY);
   }
 
   private getCurrencyTokenPattern(): string {
-    const symbols = Object.keys(SYMBOL_TO_CURRENCY)
-      .sort((left, right) => right.length - left.length)
-      .map(symbol => this.escapeRegex(symbol));
-    const currencyCodes = this.amountParser
-      .getSupportedCurrencies()
-      .sort((left, right) => right.length - left.length)
-      .map(code => this.escapeRegex(code));
-
-    return `(?:${symbols.join('|')}|${currencyCodes.join('|')})`;
-  }
-
-  private escapeRegex(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return buildCurrencyTokenPattern(
+      Object.keys(DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY),
+      this.amountParser.getSupportedCurrencies(),
+    );
   }
 
   private detectTransactionType(text: string): 'income' | 'expense' | 'transfer' | 'unknown' {
