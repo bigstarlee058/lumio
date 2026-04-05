@@ -29,6 +29,7 @@ import {
   type ThemePreference,
   resolveThemePreference,
 } from '@/app/lib/theme-preference';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { cn } from '@/app/lib/utils';
 import { ModeToggle } from '@/components/mode-toggle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -65,24 +66,6 @@ type TimeZoneOption = {
   label: string;
 };
 
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') return value;
-  const record = getRecord(value);
-  return typeof record?.value === 'string' ? record.value : fallback;
-};
 
 type NotificationPreferences = {
   statementUploaded: boolean;

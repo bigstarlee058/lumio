@@ -38,6 +38,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { type StatementCategoryNode } from '@/app/lib/statement-categories';
 import {
   type ManualExpenseDraft,
@@ -333,20 +334,6 @@ const isStatementParsingInProgress = (statement: Statement) => {
   return status === 'uploaded' || status === 'processing';
 };
 
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-
-  return current;
-};
 
 type Props = {
   stage: StatementStage;
@@ -378,15 +365,6 @@ export default function StatementsListView({ stage }: Props) {
     [],
   );
   const [manualExpenseTaxRates, setManualExpenseTaxRates] = useState<TaxRateOption[]>([]);
-  const resolveLabel = (value: unknown, fallback: string) =>
-    typeof value === 'string'
-      ? value
-      : typeof value === 'object' &&
-          value !== null &&
-          'value' in value &&
-          typeof value.value === 'string'
-        ? value.value
-        : fallback;
   const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
   const searchPlaceholder = resolveLabel(t.searchPlaceholder, 'Search statements');
   const filterLabels = {
