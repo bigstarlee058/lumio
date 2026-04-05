@@ -65,7 +65,6 @@ import {
   STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
 } from '@/app/lib/statement-upload-actions';
 import { type StatementStage, getStatementStage } from '@/app/lib/statement-workflow';
-import { resolveBankLogo } from '@bank-logos';
 import Skeleton from '@mui/material/Skeleton';
 import {
   ArrowDown,
@@ -87,12 +86,31 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { StatementsListItem } from './StatementsListItem';
 import {
+  DUPLICATE_GROUP_TONES,
+  type DuplicateGroupTone,
+  type StatementCategoryWithEnabled,
+  type StatementLike,
   buildStatementRequestParams,
   deriveVisibleFilterScreens,
+  filterEnabledCategories,
+  formatStatementAmount,
+  formatStatementDate,
+  getBankDisplayName,
+  getBulkActionErrorOptions,
+  getDeleteEndpoint,
+  getExportEndpoint,
+  isGmailStatement,
   isReceiptDerivedStatement,
+  isReceiptProcessing,
+  isScanReceiptStatement,
+  isStatementParsingInProgress,
+  isStoreReceiptStatement,
   paginateStatements,
   reconcileFiltersWithColumns,
+  resolveStatementCurrency,
+  resolveStatementSortDate,
   resolveStatementViewAction,
+  toDuplicateGroupLabel,
 } from './StatementsListView.utils';
 import {
   type GmailReceipt,
@@ -162,7 +180,6 @@ type UnifiedStatement = Statement;
 
 type DuplicateRole = 'primary' | 'suspected';
 
-type DuplicateGroupTone = 'sky' | 'blue' | 'indigo' | 'slate' | 'zinc' | 'stone';
 
 type DuplicateMeta = {
   position: number;
@@ -187,152 +204,7 @@ type DuplicateOverride = {
   total?: number;
 };
 
-type StatementCategoryWithEnabled = StatementCategoryNode & {
-  isEnabled?: boolean;
-  children?: StatementCategoryWithEnabled[];
-};
 
-const filterEnabledCategories = (
-  categories: StatementCategoryWithEnabled[],
-): StatementCategoryNode[] => {
-  return categories
-    .filter(category => category.isEnabled !== false)
-    .map(category => ({
-      id: category.id,
-      name: category.name,
-      children: category.children ? filterEnabledCategories(category.children) : undefined,
-    }));
-};
-
-const getBankDisplayName = (bankName: string) => {
-  const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
-  return resolved.key !== 'other' ? resolved.displayName : bankName;
-};
-
-const resolveStatementCurrency = (statement: Statement) =>
-  (
-    statement.parsedData?.currency ||
-    statement.currency ||
-    statement.parsingDetails?.metadataExtracted?.currency ||
-    statement.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay ||
-    ''
-  ).toString();
-
-const parseAmountValue = (value?: number | string | null) => {
-  if (value === null || value === undefined || value === '') return null;
-  const parsed = typeof value === 'string' ? Number(value) : value;
-  return Number.isFinite(parsed) ? parsed : null;
-};
-
-const formatStatementAmount = (statement: Statement) => {
-  if (statement.source === 'gmail' || statement.source === 'scan') {
-    const amount = parseAmountValue(statement.parsedData?.amount ?? null);
-    if (amount === null) {
-      return '-';
-    }
-    const currency = resolveStatementCurrency(statement);
-    const formatted = new Intl.NumberFormat(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-    return `${formatted}${currency || ''}`;
-  }
-
-  if (isStatementParsingInProgress(statement)) {
-    const debit = parseAmountValue(statement.totalDebit);
-    const credit = parseAmountValue(statement.totalCredit);
-    const hasResolvedAmount = (debit !== null && debit > 0) || (credit !== null && credit > 0);
-
-    if (!hasResolvedAmount) {
-      return '-';
-    }
-  }
-
-  const debit = parseAmountValue(statement.totalDebit);
-  const credit = parseAmountValue(statement.totalCredit);
-  const rawAmount = (debit && debit > 0 ? debit : credit && credit > 0 ? credit : 0) || 0;
-  const currency = resolveStatementCurrency(statement);
-  const formatted =
-    rawAmount === 0
-      ? '0'
-      : new Intl.NumberFormat(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(rawAmount);
-  return `${formatted}${currency || ''}`;
-};
-
-const formatStatementDate = (statement: Statement) => {
-  const dateValue =
-    statement.source === 'gmail' || statement.source === 'scan'
-      ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
-      : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
-  if (!dateValue) return '—';
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return '—';
-  return date.toLocaleDateString();
-};
-
-const resolveStatementSortDate = (statement: Statement) => {
-  const dateValue =
-    statement.source === 'gmail' || statement.source === 'scan'
-      ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
-      : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
-  const date = dateValue ? new Date(dateValue) : null;
-  if (!date || Number.isNaN(date.getTime())) return 0;
-  return date.getTime();
-};
-
-const toDuplicateGroupLabel = (index: number) => {
-  let current = index + 1;
-  let label = '';
-
-  while (current > 0) {
-    const code = (current - 1) % 26;
-    label = String.fromCharCode(65 + code) + label;
-    current = Math.floor((current - 1) / 26);
-  }
-
-  return `Group ${label}`;
-};
-
-const DUPLICATE_GROUP_TONES: DuplicateGroupTone[] = [
-  'sky',
-  'blue',
-  'indigo',
-  'slate',
-  'zinc',
-  'stone',
-];
-
-const isReceiptProcessing = (statement: Statement) => {
-  if (statement.source !== 'gmail' && statement.source !== 'scan') return false;
-  const status = (statement.status || '').toLowerCase();
-  return status === 'new' || status === 'processing';
-};
-
-const isGmailStatement = (statement: Statement) => statement.source === 'gmail';
-
-const isScanReceiptStatement = (statement: Statement) => statement.source === 'scan';
-
-const isStoreReceiptStatement = (statement: Statement) =>
-  statement.source === 'scan' && statement.receiptSource !== 'gmail';
-
-const getBulkActionErrorOptions = (id: string) => ({ id });
-
-const getExportEndpoint = (statement: Statement) =>
-  isScanReceiptStatement(statement)
-    ? `/receipts/${statement.id}/file`
-    : `/statements/${statement.id}/file`;
-
-const getDeleteEndpoint = (statement: Statement) =>
-  isScanReceiptStatement(statement) ? `/receipts/${statement.id}` : `/statements/${statement.id}`;
-
-const isStatementParsingInProgress = (statement: Statement) => {
-  const status = (statement.status || '').toLowerCase();
-  return status === 'uploaded' || status === 'processing';
-};
 
 
 type Props = {
