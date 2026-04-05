@@ -4,7 +4,7 @@ import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { cn } from '@/app/lib/utils';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { Check, User } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 type FilterOptionRowProps = {
   label: string;
@@ -30,7 +30,7 @@ export function FilterOptionRow({
   iconUrl,
   bankName,
 }: FilterOptionRowProps) {
-  const hasAvatar = avatarUrl !== undefined || iconUrl !== undefined || bankName !== undefined;
+  const hasAvatar = avatarUrl != null || iconUrl != null || bankName != null;
 
   if (hasAvatar) {
     const fallbackLetter = label.trim().charAt(0).toUpperCase() || 'U';
@@ -67,7 +67,7 @@ export function FilterOptionRow({
             />
           ) : (
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-500">
-              {fallbackLetter || <User className="h-4 w-4" />}
+              {fallbackLetter}
             </div>
           )}
           <div>
@@ -77,8 +77,9 @@ export function FilterOptionRow({
         </div>
         <span
           className={cn(
-            'flex h-6 w-6 items-center justify-center rounded-md',
+            'flex h-6 w-6 items-center justify-center rounded-full',
             selected ? 'bg-primary text-white' : 'bg-gray-100 text-transparent',
+            variant === 'checkbox' && 'rounded-md',
           )}
         >
           {selected && <Check className="h-4 w-4" />}
