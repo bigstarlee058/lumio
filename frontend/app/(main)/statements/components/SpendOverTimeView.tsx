@@ -7,11 +7,9 @@ import { GroupByFilterDropdown } from '@/app/(main)/statements/components/filter
 import { StatusFilterDropdown } from '@/app/(main)/statements/components/filters/StatusFilterDropdown';
 import { ViewFilterDropdown } from '@/app/(main)/statements/components/filters/ViewFilterDropdown';
 import {
-  DEFAULT_STATEMENT_FILTERS,
   type StatementFilterItem,
   type StatementFilters,
   applyStatementsFilters,
-  resetSingleStatementFilter,
 } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
   type SpendOverTimeFlowType,
@@ -42,6 +40,11 @@ import {
   resolveLabel,
 } from '@/app/lib/analytics-common';
 
+import {
+  DEFAULT_SPEND_OVER_TIME_GROUP_BY,
+  DEFAULT_SPEND_OVER_TIME_VIEW,
+  useSpendOverTimeState,
+} from '@/app/(main)/statements/hooks/useSpendOverTimeState';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
   ArrowDown,
@@ -58,75 +61,13 @@ import {
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
-type ViewTypeValue = 'line' | 'bar' | 'stacked';
 type SortKey = 'amount' | 'average' | 'operations';
 
-type StoredState = {
-  filters: StatementFilters;
-  groupBy: SpendOverTimeGroupBy;
-  viewType: ViewTypeValue;
-  workspaceFilter: 'current' | 'all' | string;
-  activeFlowType: SpendOverTimeFlowType;
-};
-
 const STORAGE_KEY = 'lumio-spend-over-time-filters-v2';
-const DEFAULT_GROUP_BY: SpendOverTimeGroupBy = 'month';
-const DEFAULT_VIEW: ViewTypeValue = 'line';
-const DEFAULT_FLOW: SpendOverTimeFlowType = 'expense';
-
-const loadStoredState = (): StoredState => {
-  if (typeof window === 'undefined') {
-    return {
-      filters: DEFAULT_STATEMENT_FILTERS,
-      groupBy: DEFAULT_GROUP_BY,
-      viewType: DEFAULT_VIEW,
-      workspaceFilter: 'current',
-      activeFlowType: DEFAULT_FLOW,
-    };
-  }
-
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return {
-      filters: DEFAULT_STATEMENT_FILTERS,
-      groupBy: DEFAULT_GROUP_BY,
-      viewType: DEFAULT_VIEW,
-      workspaceFilter: 'current',
-      activeFlowType: DEFAULT_FLOW,
-    };
-  }
-
-  try {
-    const parsed = JSON.parse(raw) as Partial<StoredState>;
-    return {
-      filters: {
-        ...DEFAULT_STATEMENT_FILTERS,
-        ...parsed.filters,
-      },
-      groupBy: parsed.groupBy || DEFAULT_GROUP_BY,
-      viewType: parsed.viewType || DEFAULT_VIEW,
-      workspaceFilter: parsed.workspaceFilter || 'current',
-      activeFlowType: parsed.activeFlowType || DEFAULT_FLOW,
-    };
-  } catch {
-    return {
-      filters: DEFAULT_STATEMENT_FILTERS,
-      groupBy: DEFAULT_GROUP_BY,
-      viewType: DEFAULT_VIEW,
-      workspaceFilter: 'current',
-      activeFlowType: DEFAULT_FLOW,
-    };
-  }
-};
-
-const saveStoredState = (state: StoredState) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-};
 
 const getSourceLabel = (
   channel: SpendOverTimeRecord['sourceChannel'],
@@ -177,33 +118,49 @@ export default function SpendOverTimeView() {
   const { currentWorkspace, workspaces } = useWorkspace();
   const { resolvedTheme } = useTheme();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
-  const initial = useMemo(() => loadStoredState(), []);
+  const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
+
+  const {
+    workspaceFilter,
+    setWorkspaceFilter,
+    activeFlowType,
+    setActiveFlowType,
+    groupBy,
+    draftGroupBy,
+    setDraftGroupBy,
+    viewType,
+    draftViewType,
+    setDraftViewType,
+    groupByDropdownOpen,
+    setGroupByDropdownOpen,
+    viewDropdownOpen,
+    setViewDropdownOpen,
+    draftFilters,
+    appliedFilters,
+    setDraftFilters,
+    typeDropdownOpen,
+    statusDropdownOpen,
+    dateDropdownOpen,
+    fromDropdownOpen,
+    filtersDrawerOpen,
+    filtersDrawerScreen,
+    activeFilterCount,
+    setTypeDropdownOpen,
+    setStatusDropdownOpen,
+    setDateDropdownOpen,
+    setFromDropdownOpen,
+    setFiltersDrawerOpen,
+    setFiltersDrawerScreen,
+    updateFilter,
+    applyFilterChanges,
+    applyAndClose,
+    resetAndClose,
+    resetAllFilters,
+  } = useSpendOverTimeState(STORAGE_KEY);
 
   const [searchInput, setSearchInput] = useState('');
-  const [workspaceFilter, setWorkspaceFilter] = useState<'current' | 'all' | string>(
-    initial.workspaceFilter,
-  );
-  const [activeFlowType, setActiveFlowType] = useState<SpendOverTimeFlowType>(
-    initial.activeFlowType,
-  );
   const [sortKey, setSortKey] = useState<SortKey>('amount');
   const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
-
-  const [draftFilters, setDraftFilters] = useState<StatementFilters>(initial.filters);
-  const [appliedFilters, setAppliedFilters] = useState<StatementFilters>(initial.filters);
-  const [draftGroupBy, setDraftGroupBy] = useState<SpendOverTimeGroupBy>(initial.groupBy);
-  const [groupBy, setGroupBy] = useState<SpendOverTimeGroupBy>(initial.groupBy);
-  const [draftViewType, setDraftViewType] = useState<ViewTypeValue>(initial.viewType);
-  const [viewType, setViewType] = useState<ViewTypeValue>(initial.viewType);
-  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
-  const [groupByDropdownOpen, setGroupByDropdownOpen] = useState(false);
-  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
-  const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
-  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
-  const [filtersDrawerOpen, setFiltersDrawerOpen] = useState(false);
-  const [filtersDrawerScreen, setFiltersDrawerScreen] = useState('root');
-  const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
 
   const { statements, transactions, gmailReceipts, loading, workspaceTargets } = useAnalyticsData({
     user,
@@ -382,16 +339,6 @@ export default function SpendOverTimeView() {
     { value: 'dateRange', label: filterOptionLabels.hasDateRange },
     { value: 'currency', label: filterOptionLabels.hasCurrency },
   ];
-
-  useEffect(() => {
-    saveStoredState({
-      filters: appliedFilters,
-      groupBy,
-      viewType,
-      workspaceFilter,
-      activeFlowType,
-    });
-  }, [appliedFilters, groupBy, viewType, workspaceFilter, activeFlowType]);
 
   const allRecords = useMemo<SpendOverTimeRecord[]>(() => {
     const statementById = new Map(statements.map(statement => [statement.id, statement]));
@@ -835,57 +782,6 @@ export default function SpendOverTimeView() {
     };
   }, [rows, activeFlowType, resolvedTheme]);
 
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (appliedFilters.type) count += 1;
-    if (appliedFilters.statuses.length > 0) count += 1;
-    if (appliedFilters.date?.preset || appliedFilters.date?.mode) count += 1;
-    if (appliedFilters.from.length > 0) count += 1;
-    if (appliedFilters.to.length > 0) count += 1;
-    if (appliedFilters.keywords.trim()) count += 1;
-    if (appliedFilters.amountMin !== null || appliedFilters.amountMax !== null) count += 1;
-    if (appliedFilters.approved !== null) count += 1;
-    if (appliedFilters.billable !== null) count += 1;
-    if (appliedFilters.groupBy) count += 1;
-    if (appliedFilters.has.length > 0) count += 1;
-    if (appliedFilters.currencies.length > 0) count += 1;
-    if (appliedFilters.exported !== null) count += 1;
-    if (appliedFilters.paid !== null) count += 1;
-    if (appliedFilters.limit !== null) count += 1;
-    return count;
-  }, [appliedFilters]);
-
-  const updateFilter = (next: Partial<StatementFilters>) => {
-    setDraftFilters(prev => ({ ...prev, ...next }));
-  };
-
-  const applyFilterChanges = () => {
-    setAppliedFilters(draftFilters);
-    setGroupBy(draftGroupBy);
-    setViewType(draftViewType);
-  };
-
-  const applyAndClose = (close: () => void) => {
-    applyFilterChanges();
-    close();
-  };
-
-  const resetAndClose = (key: keyof StatementFilters, close: () => void) => {
-    const next = resetSingleStatementFilter(draftFilters, key);
-    setDraftFilters(next);
-    setAppliedFilters(next);
-    close();
-  };
-
-  const resetAllFilters = () => {
-    setDraftFilters(DEFAULT_STATEMENT_FILTERS);
-    setAppliedFilters(DEFAULT_STATEMENT_FILTERS);
-    setDraftGroupBy(DEFAULT_GROUP_BY);
-    setGroupBy(DEFAULT_GROUP_BY);
-    setDraftViewType(DEFAULT_VIEW);
-    setViewType(DEFAULT_VIEW);
-  };
-
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
 
   const formatPercentage = (value: number) => {
@@ -1030,7 +926,7 @@ export default function SpendOverTimeView() {
             onChange={value => setDraftGroupBy(value as SpendOverTimeGroupBy)}
             onApply={() => applyAndClose(() => setGroupByDropdownOpen(false))}
             onReset={() => {
-              setDraftGroupBy(DEFAULT_GROUP_BY);
+              setDraftGroupBy(DEFAULT_SPEND_OVER_TIME_GROUP_BY);
               setGroupByDropdownOpen(false);
             }}
             trigger={
@@ -1048,10 +944,10 @@ export default function SpendOverTimeView() {
             onOpenChange={setViewDropdownOpen}
             options={viewOptions}
             value={draftViewType}
-            onChange={value => setDraftViewType(value as ViewTypeValue)}
+            onChange={value => setDraftViewType(value as 'line' | 'bar' | 'stacked')}
             onApply={() => applyAndClose(() => setViewDropdownOpen(false))}
             onReset={() => {
-              setDraftViewType(DEFAULT_VIEW);
+              setDraftViewType(DEFAULT_SPEND_OVER_TIME_VIEW);
               setViewDropdownOpen(false);
             }}
             trigger={
