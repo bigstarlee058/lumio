@@ -1,3 +1,5 @@
+import type { StatementCategoryNode } from '@/app/lib/statement-categories';
+import { resolveBankLogo } from '@bank-logos';
 import {
   type StatementColumn,
   type StatementColumnId,
@@ -10,8 +12,6 @@ import {
   serializeStatementFiltersToQuery,
 } from './filters/server-statement-filters';
 import type { StatementFilters } from './filters/statement-filters';
-import type { StatementCategoryNode } from '@/app/lib/statement-categories';
-import { resolveBankLogo } from '@bank-logos';
 
 const UI_ONLY_BANK_FILTER_IDS = new Set(['bank:receipt', 'bank:gmail']);
 
@@ -211,12 +211,16 @@ export const DUPLICATE_GROUP_TONES: DuplicateGroupTone[] = [
 
 export const getBulkActionErrorOptions = (id: string): { id: string } => ({ id });
 
-export const getExportEndpoint = (statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>): string =>
+export const getExportEndpoint = (
+  statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>,
+): string =>
   isScanReceiptStatement(statement)
     ? `/receipts/${statement.id}/file`
     : `/statements/${statement.id}/file`;
 
-export const getDeleteEndpoint = (statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>): string =>
+export const getDeleteEndpoint = (
+  statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>,
+): string =>
   isScanReceiptStatement(statement) ? `/receipts/${statement.id}` : `/statements/${statement.id}`;
 
 // ---------------------------------------------------------------------------
@@ -303,6 +307,15 @@ export const deriveVisibleFilterScreens = (
   const visibleColumnIds = columns.filter(column => column.visible).map(column => column.id);
   return getVisibleFilterScreens(visibleColumnIds);
 };
+
+export const formatPaginationLabel = (
+  template: string,
+  values: Record<string, string | number>,
+): string =>
+  Object.entries(values).reduce(
+    (result, [key, value]) => result.replace(`{${key}}`, String(value)),
+    template,
+  );
 
 export const reconcileFiltersWithColumns = ({
   columns,

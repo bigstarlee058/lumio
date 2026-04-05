@@ -83,6 +83,7 @@ import {
   buildStatementRequestParams,
   deriveVisibleFilterScreens,
   filterEnabledCategories,
+  formatPaginationLabel,
   formatStatementAmount,
   formatStatementDate,
   getBankDisplayName,
@@ -240,12 +241,6 @@ export default function StatementsListView({ stage }: Props) {
   };
   const filterLinkClassName =
     'inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-medium text-primary';
-  const formatPaginationLabel = (template: string, values: Record<string, string | number>) =>
-    Object.entries(values).reduce(
-      (result, [key, value]) => result.replace(`{${key}}`, String(value)),
-      template,
-    );
-
   useLockBodyScroll(expenseDrawerOpen);
 
   const { preview, openPreview, closePreview } = useStatementPreview();
