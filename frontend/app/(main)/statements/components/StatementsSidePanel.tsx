@@ -12,6 +12,7 @@ import {
   type StatementExpenseMode,
   resolveExpenseDrawerMode,
 } from '@/app/lib/statement-expense-drawer';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import { type TopBankSender, getTopBankSenders } from '@/app/lib/statement-insights';
 import {
   type CloudImportProvider,
@@ -81,24 +82,6 @@ type TransactionListItem = {
   credit?: number | string | null;
 };
 
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') return value;
-  const record = getRecord(value);
-  return typeof record?.value === 'string' ? record.value : fallback;
-};
 
 export default function StatementsSidePanel({ activeItem }: Props) {
   const router = useRouter();

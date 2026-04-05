@@ -7,6 +7,7 @@ import {
   type CustomTableSourceFilter,
   dispatchCustomTableViewEvent,
 } from '@/app/lib/custom-table-actions';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   ArrowDown,
   ArrowUp,
@@ -22,28 +23,6 @@ type Props = {
   sortOrder: CustomTableSortOrder;
   sourceCounts: Record<CustomTableSourceFilter, number>;
 };
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string): string =>
-  typeof value === 'string'
-    ? value
-    : getRecord(value)?.value && typeof getRecord(value)?.value === 'string'
-      ? (getRecord(value)?.value as string)
-      : fallback;
 
 export default function CustomTablesSidePanel({ activeSource, sortOrder, sourceCounts }: Props) {
   const t = useIntlayer('customTablesPage');
