@@ -32,6 +32,16 @@ import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import {
+  formatMoney,
+  getNestedValue,
+  getRecordDate,
+  getTransactionCurrency,
+  getTransactionDate,
+  resolveCurrencyCode,
+  resolveLabel,
+} from '@/app/lib/analytics-common';
+
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
   ArrowDown,
@@ -127,103 +137,10 @@ type StoredState = {
   activeFlowType: SpendOverTimeFlowType;
 };
 
-const getRecord = (value: unknown): Record<string, unknown> | null => {
-  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-};
-
-const getNestedValue = (source: unknown, path: string[]): unknown => {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) {
-      return undefined;
-    }
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string): string => {
-  if (typeof value === 'string') {
-    return value;
-  }
-  if (value && typeof value === 'object' && 'value' in value) {
-    const tokenValue = (value as { value?: unknown }).value;
-    if (typeof tokenValue === 'string') {
-      return tokenValue;
-    }
-  }
-  return fallback;
-};
-
 const STORAGE_KEY = 'lumio-spend-over-time-filters-v2';
 const DEFAULT_GROUP_BY: SpendOverTimeGroupBy = 'month';
 const DEFAULT_VIEW: ViewTypeValue = 'line';
 const DEFAULT_FLOW: SpendOverTimeFlowType = 'expense';
-
-const resolveCurrencyCode = (currency: string | null | undefined, fallback = 'KZT') => {
-  const normalized = String(currency || '')
-    .trim()
-    .toUpperCase();
-
-  if (/^[A-Z]{3}$/.test(normalized)) {
-    return normalized;
-  }
-
-  return fallback;
-};
-
-const resolveLocale = (locale?: string) => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
-  return 'en-US';
-};
-
-const formatMoney = (value: number, currency: string, locale = 'ru') =>
-  new Intl.NumberFormat(resolveLocale(locale), {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-
-const toDateOnly = (value?: string | null) => {
-  if (!value) return null;
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
-};
-
-const getTransactionDate = (transaction: Transaction, statement?: StatementMeta) => {
-  return (
-    transaction.transactionDate ||
-    statement?.statementDateTo ||
-    statement?.statementDateFrom ||
-    statement?.createdAt ||
-    transaction.createdAt ||
-    ''
-  );
-};
-
-const getTransactionCurrency = (
-  transaction: Transaction,
-  statement: StatementMeta | undefined,
-  fallbackCurrency: string,
-) => {
-  return (
-    transaction.currency ||
-    statement?.currency ||
-    statement?.parsingDetails?.metadataExtracted?.currency ||
-    statement?.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay ||
-    fallbackCurrency
-  );
-};
-
-const getRecordDate = (record: { dateValue?: string; createdAt?: string | null }) => {
-  return toDateOnly(record.dateValue || record.createdAt || null);
-};
 
 const loadStoredState = (): StoredState => {
   if (typeof window === 'undefined') {

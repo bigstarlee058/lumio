@@ -40,6 +40,16 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
+  formatMoney,
+  getNestedValue,
+  getRecordDate,
+  getSourceLabel,
+  getTransactionCurrency,
+  getTransactionDate,
+  resolveCurrencyCode,
+  resolveLabel,
+} from '@/app/lib/analytics-common';
+import {
   ArrowDown,
   ArrowUp,
   ChartPie,
@@ -57,74 +67,6 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
-
-const getRecord = (value: unknown): Record<string, unknown> | null => {
-  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-};
-
-const getNestedValue = (source: unknown, path: string[]): unknown => {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) {
-      return undefined;
-    }
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string): string => {
-  if (typeof value === 'string') {
-    return value;
-  }
-  if (value && typeof value === 'object' && 'value' in value) {
-    const tokenValue = (value as { value?: unknown }).value;
-    if (typeof tokenValue === 'string') {
-      return tokenValue;
-    }
-  }
-  return fallback;
-};
-
-const getTransactionDate = (transaction: Transaction, statement?: StatementMeta) => {
-  return (
-    transaction.transactionDate ||
-    statement?.statementDateTo ||
-    statement?.statementDateFrom ||
-    statement?.createdAt ||
-    transaction.createdAt ||
-    ''
-  );
-};
-
-const resolveCurrencyCode = (currency: string | null | undefined, fallback = 'KZT') => {
-  const normalized = String(currency || '')
-    .trim()
-    .toUpperCase();
-
-  if (/^[A-Z]{3}$/.test(normalized)) {
-    return normalized;
-  }
-
-  return fallback;
-};
-
-const getTransactionCurrency = (
-  transaction: Transaction,
-  statement: StatementMeta | undefined,
-  fallbackCurrency: string,
-) => {
-  return (
-    transaction.currency ||
-    statement?.currency ||
-    statement?.parsingDetails?.metadataExtracted?.currency ||
-    statement?.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay ||
-    fallbackCurrency
-  );
-};
 
 const mapGmailReceiptToStatement = (
   receipt: GmailReceipt,
@@ -154,44 +96,6 @@ const mapGmailReceiptToStatement = (
     date: receipt.parsedData?.date,
   },
 });
-
-const resolveLocale = (locale?: string) => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
-  return 'en-US';
-};
-
-const formatMoney = (value: number, currency: string, locale = 'ru') =>
-  new Intl.NumberFormat(resolveLocale(locale), {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-
-const toDateOnly = (value?: string | null) => {
-  if (!value) return null;
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
-  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
-};
-
-const getRecordDate = (record: { dateValue?: string; createdAt?: string | null }) => {
-  return toDateOnly(record.dateValue || record.createdAt || null);
-};
-
-const getSourceLabel = (
-  channel: TopCategorySourceChannel,
-  labels: {
-    sourceBank: string;
-    sourceReceipt: string;
-    sourceGmailInbox: string;
-  },
-) => {
-  if (channel === 'gmail') return labels.sourceGmailInbox;
-  if (channel === 'receipt') return labels.sourceReceipt;
-  return labels.sourceBank;
-};
 
 export default function TopCategoriesView() {
   const t = useIntlayer('statementsPage');
