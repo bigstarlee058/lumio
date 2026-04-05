@@ -7,11 +7,12 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { getPickerDocName, pickDriveFolder } from '@/app/lib/googleDrivePicker';
-import { AlertCircle, CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
+import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
 
 type DriveSettings = {
   folderId?: string | null;
@@ -31,93 +32,45 @@ type DriveStatus = {
 export default function GoogleDriveIntegrationPage() {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('googleDriveIntegrationPage');
-  const searchParams = useSearchParams();
-  const [status, setStatus] = useState<DriveStatus | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_DRIVE_API_KEY || '';
 
-  const loadStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get('/integrations/google-drive/status');
-      setStatus(response.data);
-    } catch (error) {
-      toast.error(t.errors.loadStatus.value);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    syncing,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+    handleSync,
+  } = useIntegrationStatus({
+    apiPath: 'google-drive',
+    user,
+    messages: {
+      errors: {
+        loadStatus: t.errors.loadStatus.value,
+        connectFailed: t.errors.connectFailed.value,
+        disconnectFailed: t.errors.disconnectFailed.value,
+        syncFailed: t.errors.connectFailed.value,
+      },
+      toasts: {
+        connected: t.toasts.connected.value,
+        connecting: t.toasts.connecting.value,
+        disconnected: t.toasts.disconnected.value,
+        syncStarted: t.toasts.syncStarted.value,
+      },
+    },
+  });
 
-  useEffect(() => {
-    if (user) {
-      loadStatus();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam === 'connected') {
-      toast.success(t.toasts.connected.value);
-    }
-    if (statusParam === 'error') {
-      toast.error(t.errors.connectFailed.value);
-    }
-  }, [searchParams, t]);
-
-  const handleConnect = async () => {
-    try {
-      toast.success(t.toasts.connecting.value);
-      const response = await apiClient.get('/integrations/google-drive/connect');
-      const url = response.data?.url;
-      if (!url) {
-        toast.error(t.errors.connectFailed.value);
-        return;
-      }
-      window.location.href = url;
-    } catch (error) {
-      toast.error(t.errors.connectFailed.value);
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      setSaving(true);
-      await apiClient.post('/integrations/google-drive/disconnect');
-      toast.success(t.toasts.disconnected.value);
-      await loadStatus();
-    } catch (error) {
-      toast.error(t.errors.disconnectFailed.value);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleSyncNow = async () => {
-    try {
-      setSyncing(true);
-      await apiClient.post('/integrations/google-drive/sync');
-      toast.success(t.toasts.syncStarted.value);
-      await loadStatus();
-    } catch (error) {
-      toast.error(t.errors.connectFailed.value);
-    } finally {
-      setSyncing(false);
-    }
-  };
+  const status = baseStatus as DriveStatus | null;
 
   const updateSettings = async (payload: Partial<DriveSettings>) => {
     try {
-      setSaving(true);
       await apiClient.post('/integrations/google-drive/settings', payload);
       toast.success(t.toasts.settingsSaved.value);
       await loadStatus();
-    } catch (error) {
+    } catch {
       toast.error(t.errors.connectFailed.value);
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -128,7 +81,7 @@ export default function GoogleDriveIntegrationPage() {
     }
     try {
       const tokenResp = await apiClient.get('/integrations/google-drive/picker-token');
-      const accessToken = tokenResp.data?.accessToken;
+      const accessToken = tokenResp.data?.accessToken as string | undefined;
       if (!accessToken) {
         toast.error(t.errors.pickerUnavailable.value);
         return;
@@ -139,7 +92,7 @@ export default function GoogleDriveIntegrationPage() {
         folderId: folder.id,
         folderName: getPickerDocName(folder),
       });
-    } catch (error) {
+    } catch {
       toast.error(t.errors.pickerUnavailable.value);
     }
   };
@@ -191,66 +144,21 @@ export default function GoogleDriveIntegrationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                {status?.connected ? (
-                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-                ) : (
-                  <XCircle className="h-6 w-6 text-red-500" />
-                )}
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">{t.header.title}</h2>
-                  <p className="text-sm text-gray-500">{statusLabel}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {status?.connected ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleSyncNow}
-                        disabled={syncing || saving}
-                        className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
-                      >
-                        {syncing ? (
-                          <Spinner className="h-4 w-4" />
-                        ) : (
-                          <RefreshCcw className="h-4 w-4" />
-                        )}
-                        {t.actions.syncNow}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDisconnect}
-                        disabled={saving}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        <Link2Off className="h-4 w-4" />
-                        {t.actions.disconnect}
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleConnect}
-                      disabled={saving}
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
-                    >
-                      <RefreshCcw className="h-4 w-4" />
-                      {status?.status === 'needs_reauth' ? t.actions.reconnect : t.actions.connect}
-                    </button>
-                  )}
-                </div>
-                {!status?.connected && (
-                  <p className="text-xs text-gray-500 max-w-xs text-right mt-1">
-                    We’ll create a folder in your Google Drive and sync files daily.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+          <IntegrationStatusCard
+            status={status}
+            title={t.header.title}
+            statusLabel={statusLabel}
+            saving={saving}
+            syncing={syncing}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onSync={handleSync}
+            connectLabel={t.actions.connect}
+            reconnectLabel={t.actions.reconnect}
+            syncLabel={t.actions.syncNow}
+            disconnectLabel={t.actions.disconnect}
+            disconnectedHint="We'll create a folder in your Google Drive and sync files daily."
+          />
 
           {status?.connected && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">

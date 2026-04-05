@@ -6,11 +6,13 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
-import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
+import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
 
 type GmailSettings = {
   labelId?: string | null;
@@ -39,84 +41,67 @@ export default function GmailIntegrationPage() {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('gmailIntegrationPage');
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<GmailStatus | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
-  const loadStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get('/integrations/gmail/status');
-      setStatus(response.data);
-    } catch (error) {
-      toast.error(t.errors.loadStatus.value);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Gmail sync has a custom response format, so we manage syncing state locally
+  const [gmailSyncing, setGmailSyncing] = useState(false);
+  const [gmailSaving, setGmailSaving] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      loadStatus();
-    }
-  }, [user]);
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+  } = useIntegrationStatus({
+    apiPath: 'gmail',
+    user,
+    messages: {
+      errors: {
+        loadStatus: t.errors.loadStatus.value,
+        connectFailed: t.errors.connectFailed.value,
+        disconnectFailed: t.errors.disconnectFailed.value,
+        syncFailed: t.errors.syncFailed.value,
+      },
+      toasts: {
+        connected: t.toasts.connected.value,
+        connecting: t.toasts.connecting.value,
+        disconnected: t.toasts.disconnected.value,
+        syncStarted: t.toasts.syncStarted.value,
+      },
+      successCallbackParam: 'success',
+    },
+  });
 
+  // Cast to GmailStatus to access Gmail-specific settings
+  const status = baseStatus as GmailStatus | null;
+
+  // Gmail has a special OAuth error callback with a `reason` query param
   useEffect(() => {
     const statusParam = searchParams.get('status');
-    if (statusParam === 'success') {
-      toast.success(t.toasts.connected.value);
-    }
     if (statusParam === 'error') {
       const reason = searchParams.get('reason');
       toast.error(reason ? `${t.errors.authFailed.value}: ${reason}` : t.errors.authFailed.value);
     }
   }, [searchParams, t]);
 
-  const handleConnect = async () => {
-    try {
-      toast.success(t.toasts.connecting.value);
-      const response = await apiClient.get('/integrations/gmail/connect');
-      const url = response.data?.url;
-      if (!url) {
-        toast.error(t.errors.missingOauthUrl.value);
-        return;
-      }
-      window.location.href = url;
-    } catch (error) {
-      toast.error(t.errors.connectFailed.value);
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      setSaving(true);
-      await apiClient.post('/integrations/gmail/disconnect');
-      toast.success(t.toasts.disconnected.value);
-      await loadStatus();
-    } catch (error) {
-      toast.error(t.errors.disconnectFailed.value);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const updateSettings = async (payload: Partial<GmailSettings>) => {
     try {
-      setSaving(true);
+      setGmailSaving(true);
       await apiClient.post('/integrations/gmail/settings', payload);
       toast.success(t.toasts.settingsSaved.value);
       await loadStatus();
-    } catch (error) {
+    } catch {
       toast.error(t.errors.saveFailed.value);
     } finally {
-      setSaving(false);
+      setGmailSaving(false);
     }
   };
 
-  const handleSync = async () => {
+  // Gmail sync returns a custom response with messagesFound/jobsCreated/skipped
+  const handleGmailSync = async () => {
     try {
-      setSyncing(true);
+      setGmailSyncing(true);
       const response = await apiClient.post('/integrations/gmail/sync');
       const messagesFound = Number(response.data?.messagesFound ?? 0);
       const jobsCreated = Number(response.data?.jobsCreated ?? 0);
@@ -133,12 +118,15 @@ export default function GmailIntegrationPage() {
       }
 
       await loadStatus();
-    } catch (error) {
+    } catch {
       toast.error(t.errors.syncFailed.value);
     } finally {
-      setSyncing(false);
+      setGmailSyncing(false);
     }
   };
+
+  const isSaving = saving || gmailSaving;
+  const isSyncing = gmailSyncing;
 
   const statusLabel = useMemo(() => {
     if (!status) return '';
@@ -193,76 +181,21 @@ export default function GmailIntegrationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                {status?.connected ? (
-                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-                ) : (
-                  <XCircle className="h-6 w-6 text-red-500" />
-                )}
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">{t.header.title.value}</h2>
-                  <p className="text-sm text-gray-500">{statusLabel}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {status?.connected ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleSync}
-                        disabled={saving || syncing}
-                        className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
-                      >
-                        {syncing ? (
-                          <Spinner className="h-4 w-4" />
-                        ) : (
-                          <RefreshCcw className="h-4 w-4" />
-                        )}
-                        {t.actions.sync.value}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDisconnect}
-                        disabled={saving}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        {saving ? (
-                          <Spinner className="h-4 w-4" />
-                        ) : (
-                          <Link2Off className="h-4 w-4" />
-                        )}
-                        {t.actions.disconnect.value}
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleConnect}
-                      disabled={saving}
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
-                    >
-                      {saving ? (
-                        <Spinner className="h-4 w-4" />
-                      ) : (
-                        <RefreshCcw className="h-4 w-4" />
-                      )}
-                      {status?.status === 'needs_reauth'
-                        ? t.actions.reconnect.value
-                        : t.actions.connect.value}
-                    </button>
-                  )}
-                </div>
-                {!status?.connected && (
-                  <p className="text-xs text-gray-500 max-w-xs text-right mt-1">
-                    We’ll create a label in your Gmail and sync new receipts automatically.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+          <IntegrationStatusCard
+            status={status}
+            title={t.header.title.value}
+            statusLabel={statusLabel}
+            saving={isSaving}
+            syncing={isSyncing}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onSync={handleGmailSync}
+            connectLabel={t.actions.connect.value}
+            reconnectLabel={t.actions.reconnect.value}
+            syncLabel={t.actions.sync.value}
+            disconnectLabel={t.actions.disconnect.value}
+            disconnectedHint="We'll create a label in your Gmail and sync new receipts automatically."
+          />
 
           {status?.connected && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -292,7 +225,7 @@ export default function GmailIntegrationPage() {
                     <Checkbox
                       checked={status.settings?.filterEnabled ?? true}
                       onCheckedChange={checked => updateSettings({ filterEnabled: checked })}
-                      disabled={saving}
+                      disabled={isSaving}
                       className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-gray-700">{t.settings.filterEnabled.value}</span>
@@ -334,7 +267,7 @@ export default function GmailIntegrationPage() {
                         },
                       })
                     }
-                    disabled={saving}
+                    disabled={isSaving}
                     placeholder={t.settings.keywordsPlaceholder.value}
                     className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
@@ -354,7 +287,7 @@ export default function GmailIntegrationPage() {
                           },
                         })
                       }
-                      disabled={saving}
+                      disabled={isSaving}
                       className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-gray-700">{t.settings.hasAttachment.value}</span>

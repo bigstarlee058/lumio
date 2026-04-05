@@ -7,11 +7,12 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getChooserDocName, pickDropboxFolder } from '@/app/lib/dropboxChooser';
 import { formatDateTime } from '@/app/lib/format-datetime';
-import { AlertCircle, CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
+import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
 
 type DropboxSettings = {
   folderId?: string | null;
@@ -31,93 +32,45 @@ type DropboxStatus = {
 export default function DropboxIntegrationPage() {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('dropboxIntegrationPage');
-  const searchParams = useSearchParams();
-  const [status, setStatus] = useState<DropboxStatus | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [syncing, setSyncing] = useState(false);
-
   const appKey = process.env.NEXT_PUBLIC_DROPBOX_APP_KEY || '';
 
-  const loadStatus = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get('/integrations/dropbox/status');
-      setStatus(response.data);
-    } catch (error) {
-      toast.error(t.errors?.loadStatus?.value || 'Failed to load Dropbox status');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    syncing,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+    handleSync,
+  } = useIntegrationStatus({
+    apiPath: 'dropbox',
+    user,
+    messages: {
+      errors: {
+        loadStatus: t.errors?.loadStatus?.value || 'Failed to load Dropbox status',
+        connectFailed: t.errors?.connectFailed?.value || 'Failed to connect to Dropbox',
+        disconnectFailed: t.errors?.disconnectFailed?.value || 'Failed to disconnect',
+        syncFailed: t.errors?.connectFailed?.value || 'Sync failed',
+      },
+      toasts: {
+        connected: t.toasts?.connected?.value || 'Connected to Dropbox!',
+        connecting: t.toasts?.connecting?.value || 'Connecting to Dropbox...',
+        disconnected: t.toasts?.disconnected?.value || 'Disconnected from Dropbox',
+        syncStarted: t.toasts?.syncStarted?.value || 'Sync started',
+      },
+    },
+  });
 
-  useEffect(() => {
-    if (user) {
-      loadStatus();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam === 'connected') {
-      toast.success(t.toasts?.connected?.value || 'Connected to Dropbox!');
-    }
-    if (statusParam === 'error') {
-      toast.error(t.errors?.connectFailed?.value || 'Failed to connect to Dropbox');
-    }
-  }, [searchParams, t]);
-
-  const handleConnect = async () => {
-    try {
-      toast.success(t.toasts?.connecting?.value || 'Connecting to Dropbox...');
-      const response = await apiClient.get('/integrations/dropbox/connect');
-      const url = response.data?.url;
-      if (!url) {
-        toast.error(t.errors?.connectFailed?.value || 'Failed to connect');
-        return;
-      }
-      window.location.href = url;
-    } catch (error) {
-      toast.error(t.errors?.connectFailed?.value || 'Failed to connect');
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      setSaving(true);
-      await apiClient.post('/integrations/dropbox/disconnect');
-      toast.success(t.toasts?.disconnected?.value || 'Disconnected from Dropbox');
-      await loadStatus();
-    } catch (error) {
-      toast.error(t.errors?.disconnectFailed?.value || 'Failed to disconnect');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleSyncNow = async () => {
-    try {
-      setSyncing(true);
-      await apiClient.post('/integrations/dropbox/sync');
-      toast.success(t.toasts?.syncStarted?.value || 'Sync started');
-      await loadStatus();
-    } catch (error) {
-      toast.error(t.errors?.connectFailed?.value || 'Sync failed');
-    } finally {
-      setSyncing(false);
-    }
-  };
+  const status = baseStatus as DropboxStatus | null;
 
   const updateSettings = async (payload: Partial<DropboxSettings>) => {
     try {
-      setSaving(true);
       await apiClient.post('/integrations/dropbox/settings', payload);
       toast.success(t.toasts?.settingsSaved?.value || 'Settings saved');
       await loadStatus();
-    } catch (error) {
+    } catch {
       toast.error(t.errors?.connectFailed?.value || 'Failed to save settings');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -133,7 +86,7 @@ export default function DropboxIntegrationPage() {
         folderId: folder.id,
         folderName: getChooserDocName(folder),
       });
-    } catch (error) {
+    } catch {
       toast.error(t.errors?.pickerUnavailable?.value || 'Failed to pick folder');
     }
   };
@@ -194,70 +147,21 @@ export default function DropboxIntegrationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 space-y-4">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                {status?.connected ? (
-                  <CheckCircle2 className="h-6 w-6 text-emerald-500" />
-                ) : (
-                  <XCircle className="h-6 w-6 text-red-500" />
-                )}
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {t.header?.title || 'Dropbox'}
-                  </h2>
-                  <p className="text-sm text-gray-500">{statusLabel}</p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex flex-wrap gap-2">
-                  {status?.connected ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleSyncNow}
-                        disabled={syncing || saving}
-                        className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
-                      >
-                        {syncing ? (
-                          <Spinner className="h-4 w-4" />
-                        ) : (
-                          <RefreshCcw className="h-4 w-4" />
-                        )}
-                        {t.actions?.syncNow || 'Sync Now'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleDisconnect}
-                        disabled={saving}
-                        className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                      >
-                        <Link2Off className="h-4 w-4" />
-                        {t.actions?.disconnect || 'Disconnect'}
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleConnect}
-                      disabled={saving}
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
-                    >
-                      <RefreshCcw className="h-4 w-4" />
-                      {status?.status === 'needs_reauth'
-                        ? t.actions?.reconnect || 'Reconnect'
-                        : t.actions?.connect || 'Connect'}
-                    </button>
-                  )}
-                </div>
-                {!status?.connected && (
-                  <p className="text-xs text-gray-500 max-w-xs text-right mt-1">
-                    We’ll create a folder in your Dropbox and sync files daily.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+          <IntegrationStatusCard
+            status={status}
+            title={t.header?.title || 'Dropbox'}
+            statusLabel={statusLabel}
+            saving={saving}
+            syncing={syncing}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onSync={handleSync}
+            connectLabel={t.actions?.connect || 'Connect'}
+            reconnectLabel={t.actions?.reconnect || 'Reconnect'}
+            syncLabel={t.actions?.syncNow || 'Sync Now'}
+            disconnectLabel={t.actions?.disconnect || 'Disconnect'}
+            disconnectedHint="We'll create a folder in your Dropbox and sync files daily."
+          />
 
           {status?.connected && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
