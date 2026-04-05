@@ -19,9 +19,10 @@ describe('TransactionsController', () => {
       '2025-01-01',
       undefined,
       '2025-01-31',
-      'income',
       undefined,
+      'income',
       'cat1',
+      undefined,
       '2',
       '10',
     );

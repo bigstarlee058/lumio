@@ -5,6 +5,7 @@ import { DetailActionButton } from '@/app/components/ui/detail-action-button';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useAutoSave } from '@/app/hooks/useAutoSave';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { payablesApi } from '@/app/lib/payables-api';
 import {
   flattenStatementCategories,
@@ -77,9 +78,9 @@ import {
   isStageActionBlocked,
   setStatementStage,
 } from '@/app/lib/statement-workflow';
-import { buildPayableFromStatement } from './payable-from-statement';
 import { type ParsingDroppedSample, ParsingWarningsPanel } from './ParsingWarningsPanel';
 import StatementCategoryDrawer from './StatementCategoryDrawer';
+import { buildPayableFromStatement } from './payable-from-statement';
 
 interface CategoryOption {
   id: string;
@@ -318,8 +319,8 @@ export default function EditStatementPage() {
         ),
         statementDateTo: normalizeDateInput(statementData?.statementDateTo ?? extractedMeta.dateTo),
       });
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.loadData.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.loadData.value));
     } finally {
       setLoading(false);
       setOptionsLoading(false);
@@ -402,7 +403,11 @@ export default function EditStatementPage() {
     });
   };
 
-  const handleFieldChange = (transactionId: string, field: keyof Transaction, value: any) => {
+  const handleFieldChange = (
+    transactionId: string,
+    field: keyof Transaction,
+    value: Transaction[keyof Transaction],
+  ) => {
     setEditedData({
       ...editedData,
       [transactionId]: {
@@ -420,8 +425,8 @@ export default function EditStatementPage() {
       setEditingRow(null);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.saveTransaction.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.saveTransaction.value));
     }
   };
 
@@ -514,8 +519,8 @@ export default function EditStatementPage() {
       setTransactions(prev => prev.filter(t => t.id !== transactionId));
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.deleteTransaction.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.deleteTransaction.value));
     }
   };
 
@@ -534,8 +539,8 @@ export default function EditStatementPage() {
       setEditedData({});
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.updateTransactions.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.updateTransactions.value));
     } finally {
       setSaving(false);
     }
@@ -559,8 +564,8 @@ export default function EditStatementPage() {
       setSelectedRows(new Set());
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.deleteTransactions.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.deleteTransactions.value));
     } finally {
       setSaving(false);
     }
@@ -586,8 +591,8 @@ export default function EditStatementPage() {
       setBulkCategoryId('');
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.assignCategory.value);
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.errors.assignCategory.value));
     } finally {
       setSaving(false);
     }
@@ -786,9 +791,9 @@ export default function EditStatementPage() {
       );
 
       toast.success(labels.categoryUpdated?.value || 'Category updated');
-    } catch (err: any) {
+    } catch (error: unknown) {
       setError(
-        err.response?.data?.error?.message ||
+        getApiErrorMessage(error, '') ||
           labels.categoryUpdateFailed?.value ||
           'Failed to update category',
       );
@@ -1001,7 +1006,9 @@ export default function EditStatementPage() {
             (isIdEmpty(statement?.categoryId) && isIdEmpty(statement?.category?.id)) ? (
               <Button
                 variant="outlined"
-                startIcon={statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />}
+                startIcon={
+                  statementCategorySaving ? <Spinner className="size-[18px]" /> : <Category />
+                }
                 onClick={() => setStatementCategoryDrawerOpen(true)}
                 disabled={statementCategorySaving || optionsLoading}
                 title={selectedStatementCategoryName}
@@ -1055,7 +1062,11 @@ export default function EditStatementPage() {
               onClick={() => setExportConfirmOpen(true)}
               disabled={exportingToTable || !transactions.length}
             >
-              {exportingToTable ? <Spinner className="size-[18px]" /> : <TableChart sx={{ fontSize: 18 }} />}
+              {exportingToTable ? (
+                <Spinner className="size-[18px]" />
+              ) : (
+                <TableChart sx={{ fontSize: 18 }} />
+              )}
               {t.labels.exportButton.value}
             </DetailActionButton>
             {stageActions.map(action => {
@@ -1068,43 +1079,43 @@ export default function EditStatementPage() {
                   'Assign categories to all transactions before submitting'
                 : '';
 
-                return (
-                  <Tooltip key={action.id} title={tooltipTitle} placement="top">
-                    <span style={{ display: 'inline-flex' }}>
-                      {isPrimary ? (
-                        <Button
-                          variant="contained"
-                          startIcon={isLoading ? <Spinner className="size-[18px]" /> : <Check />}
-                          onClick={() => handleStageAction(action)}
-                          disabled={isDisabled}
-                          sx={{
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            borderRadius: 2,
-                            boxShadow: 'none',
-                            '&:hover': { boxShadow: 'none' },
-                          }}
-                        >
-                          {stageActionLabels[action.id]}
-                        </Button>
-                      ) : (
-                        <DetailActionButton
-                          onClick={() => handleStageAction(action)}
-                          disabled={isDisabled}
-                        >
-                          {isLoading ? (
-                            <Spinner className="size-[18px]" />
-                          ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
-                            <ArrowBack sx={{ fontSize: 18 }} />
-                          ) : (
-                            <Check sx={{ fontSize: 18 }} />
-                          )}
-                          {stageActionLabels[action.id]}
-                        </DetailActionButton>
-                      )}
-                    </span>
-                  </Tooltip>
-                );
+              return (
+                <Tooltip key={action.id} title={tooltipTitle} placement="top">
+                  <span style={{ display: 'inline-flex' }}>
+                    {isPrimary ? (
+                      <Button
+                        variant="contained"
+                        startIcon={isLoading ? <Spinner className="size-[18px]" /> : <Check />}
+                        onClick={() => handleStageAction(action)}
+                        disabled={isDisabled}
+                        sx={{
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          borderRadius: 2,
+                          boxShadow: 'none',
+                          '&:hover': { boxShadow: 'none' },
+                        }}
+                      >
+                        {stageActionLabels[action.id]}
+                      </Button>
+                    ) : (
+                      <DetailActionButton
+                        onClick={() => handleStageAction(action)}
+                        disabled={isDisabled}
+                      >
+                        {isLoading ? (
+                          <Spinner className="size-[18px]" />
+                        ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
+                          <ArrowBack sx={{ fontSize: 18 }} />
+                        ) : (
+                          <Check sx={{ fontSize: 18 }} />
+                        )}
+                        {stageActionLabels[action.id]}
+                      </DetailActionButton>
+                    )}
+                  </span>
+                </Tooltip>
+              );
             })}
           </Box>
         </Box>
@@ -1506,9 +1517,7 @@ export default function EditStatementPage() {
                   disabled={exportingToTable || !transactions.length}
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {exportingToTable ? (
-                    <Spinner className="h-4 w-4 text-white" />
-                  ) : null}
+                  {exportingToTable ? <Spinner className="h-4 w-4 text-white" /> : null}
                   {t.labels.exportConfirmConfirm.value}
                 </button>
               </ModalFooter>
@@ -1635,7 +1644,8 @@ export default function EditStatementPage() {
             <TableRow
               className="bg-[#f8fafc] dark:bg-[#18222d]"
               sx={{
-                bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
+                bgcolor: theme =>
+                  theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50],
                 borderBottom: '1px solid',
                 borderBottomColor: 'divider',
               }}

@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createIntegrationsTour } from './integrations-tour';
 
+type TourTextPayload = Parameters<typeof createIntegrationsTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -20,7 +22,7 @@ describe('createIntegrationsTour', () => {
   };
 
   it('uses the current integrations selector set', () => {
-    const tour = createIntegrationsTour(texts as any);
+    const tour = createIntegrationsTour(texts as TourTextPayload);
 
     expect(tour.page).toBe('/integrations');
     expect(tour.steps.map(step => step.selector)).toEqual([
@@ -43,7 +45,7 @@ describe('createIntegrationsTour', () => {
       },
     };
 
-    const tour = createIntegrationsTour(legacyTexts as any);
+    const tour = createIntegrationsTour(legacyTexts as TourTextPayload);
 
     expect(tour.steps[1]?.title).toBe('Search Integrations');
     expect(tour.steps[2]?.title).toBe('Available Integrations');

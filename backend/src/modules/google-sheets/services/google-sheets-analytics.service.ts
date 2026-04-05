@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, type Repository } from 'typeorm';
+import { type FindOptionsWhere, MoreThanOrEqual, type Repository } from 'typeorm';
 import { GoogleSheetRow } from '../../../entities/google-sheet-row.entity';
 
 interface SummaryParams {
@@ -48,7 +48,7 @@ export class GoogleSheetsAnalyticsService {
     const since = new Date();
     since.setDate(since.getDate() - days);
 
-    const where: any = {
+    const where: FindOptionsWhere<GoogleSheetRow> = {
       userId: params.userId,
       updatedAt: MoreThanOrEqual(since),
     };

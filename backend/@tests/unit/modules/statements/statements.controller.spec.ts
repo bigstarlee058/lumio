@@ -2,11 +2,26 @@ jest.mock('franc', () => ({
   franc: () => 'und',
 }));
 
+import type { IdempotencyService } from '@/common/services/idempotency.service';
+import { buildContentDisposition } from '@/common/utils/http-file.util';
 import { StatementStatus } from '@/entities/statement.entity';
+import type { User } from '@/entities/user.entity';
+import type { ConvertDroppedSampleDto } from '@/modules/statements/dto/convert-dropped-sample.dto';
 import { FilterStatementsDto } from '@/modules/statements/dto/filter-statements.dto';
+import type { UploadReceiptScanDto } from '@/modules/statements/dto/upload-receipt-scan.dto';
+import type { UploadStatementDto } from '@/modules/statements/dto/upload-statement.dto';
 import { ReceiptStatementService } from '@/modules/statements/services/receipt-statement.service';
 import { StatementsController } from '@/modules/statements/statements.controller';
-import { buildContentDisposition } from '@/common/utils/http-file.util';
+import type { StatementsService } from '@/modules/statements/statements.service';
+import type { Response } from 'express';
+
+type MockResponse = {
+  headersSent: boolean;
+  setHeader: jest.Mock;
+  status: jest.Mock;
+  json: jest.Mock;
+  destroy: jest.Mock;
+};
 
 describe('StatementsController', () => {
   const statementsService = {
@@ -27,9 +42,9 @@ describe('StatementsController', () => {
   };
 
   const controller = new StatementsController(
-    statementsService as any,
-    receiptStatementService as ReceiptStatementService,
-    idempotencyService as any,
+    statementsService as unknown as StatementsService,
+    receiptStatementService as unknown as ReceiptStatementService,
+    idempotencyService as unknown as IdempotencyService,
   );
 
   beforeEach(() => {
@@ -52,11 +67,12 @@ describe('StatementsController', () => {
       size: 1024,
       path: '/tmp/test.pdf',
     };
+    const currentUser = { id: 'user-1' } as User;
 
     const result = await controller.upload(
       [file as Express.Multer.File],
-      {} as any,
-      { id: 'user-1' } as any,
+      {} as UploadStatementDto,
+      currentUser,
       'ws-1',
     );
 
@@ -89,8 +105,9 @@ describe('StatementsController', () => {
       type: 'pdf',
       statuses: ['processing', 'error'],
     } as FilterStatementsDto;
+    const currentUser = { id: 'user-1' } as User;
 
-    const result = await controller.findAll({ id: 'user-1' } as any, 'ws-1', filters);
+    const result = await controller.findAll(currentUser, 'ws-1', filters);
 
     expect(statementsService.findAll).toHaveBeenCalledWith('ws-1', filters);
     expect(result).toEqual({
@@ -107,21 +124,18 @@ describe('StatementsController', () => {
       statement: { id: 'stmt-1' },
       transaction: { id: 'tx-1' },
     };
+    const payload: ConvertDroppedSampleDto = {
+      index: 0,
+      transaction: {
+        transactionDate: '2026-03-17',
+        debit: 1250,
+      },
+    };
+    const currentUser = { id: 'user-1' } as User;
 
     statementsService.convertDroppedSampleToTransaction.mockResolvedValue(response);
 
-    const result = await controller.convertDroppedSample(
-      'stmt-1',
-      {
-        index: 0,
-        transaction: {
-          transactionDate: '2026-03-17',
-          debit: 1250,
-        },
-      } as any,
-      { id: 'user-1' } as any,
-      'ws-1',
-    );
+    const result = await controller.convertDroppedSample('stmt-1', payload, currentUser, 'ws-1');
 
     expect(statementsService.convertDroppedSampleToTransaction).toHaveBeenCalledWith(
       'stmt-1',
@@ -145,11 +159,12 @@ describe('StatementsController', () => {
       size: 1024,
       path: '/tmp/receipt.jpg',
     };
+    const currentUser = { id: 'user-1' } as User;
 
-    const result = await (controller as any).uploadReceipt(
+    const result = await controller.uploadReceipt(
       [file as Express.Multer.File],
-      { language: 'ru' },
-      { id: 'user-1' } as any,
+      { language: 'ru' } as UploadReceiptScanDto,
+      currentUser,
       'ws-1',
     );
 
@@ -172,11 +187,12 @@ describe('StatementsController', () => {
       size: 1024,
       path: '/tmp/receipt.pdf',
     };
+    const currentUser = { id: 'user-1' } as User;
 
-    const result = await (controller as any).uploadReceipt(
+    const result = await controller.uploadReceipt(
       [file as Express.Multer.File],
-      {},
-      { id: 'user-1' } as any,
+      {} as UploadReceiptScanDto,
+      currentUser,
       'ws-1',
     );
 
@@ -197,13 +213,16 @@ describe('StatementsController', () => {
       }),
       pipe: jest.fn(),
     };
-    const response = {
+    const response: MockResponse = {
       headersSent: false,
       setHeader: jest.fn(),
-      status: jest.fn().mockReturnThis(),
+      status: jest.fn(),
       json: jest.fn(),
       destroy: jest.fn(),
-    } as any;
+    };
+    const currentUser = { id: 'user-1' } as User;
+
+    response.status.mockReturnValue(response);
 
     statementsService.getFileStream.mockResolvedValue({
       stream,
@@ -211,7 +230,7 @@ describe('StatementsController', () => {
       mimeType: 'application/pdf',
     });
 
-    await controller.getFile('stmt-1', { id: 'user-1' } as any, 'ws-1', response);
+    await controller.getFile('stmt-1', currentUser, 'ws-1', response as unknown as Response);
 
     expect(statementsService.getFileStream).toHaveBeenCalledWith('stmt-1', 'ws-1');
     expect(response.setHeader).toHaveBeenCalledWith('Content-Type', 'application/pdf');

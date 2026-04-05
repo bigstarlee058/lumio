@@ -26,8 +26,10 @@ export interface ExtractedMetadata {
   sequenceNumber?: number;
 
   // Additional extracted fields
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 }
+
+type TransformationValue = string | number | boolean | Date | null | undefined | Record<string, unknown>;
 
 export interface StatementPeriod {
   dateFrom: Date;
@@ -112,8 +114,8 @@ export interface NormalizationInfo {
 export interface Transformation {
   field: string;
   type: 'format' | 'type' | 'value' | 'extraction';
-  before: any;
-  after: any;
+  before: TransformationValue;
+  after: TransformationValue;
   confidence: number;
 }
 
@@ -250,9 +252,9 @@ export interface ParserStep {
   step: string;
   status: 'success' | 'warning' | 'error';
   duration: number;
-  input?: any;
-  output?: any;
-  details?: any;
+  input?: unknown;
+  output?: unknown;
+  details?: unknown;
 }
 
 export interface PerformanceInfo {
@@ -442,7 +444,7 @@ export interface ProcessingUpdate {
     | 'error';
   progress: number; // 0-100
   step?: string;
-  details?: any;
+  details?: unknown;
   timestamp: Date;
 }
 
@@ -489,18 +491,20 @@ export type QualityCategory = 'completeness' | 'accuracy' | 'consistency' | 'val
 export type ProcessingPhase = 'parsing' | 'extraction' | 'normalization' | 'validation' | 'export';
 
 // Utility functions for DTO validation
-function isValidParsedStatement(obj: any): obj is EnhancedParsedStatement {
+function isValidParsedStatement(obj: unknown): obj is EnhancedParsedStatement {
   return (
-    obj &&
+    !!obj &&
     typeof obj === 'object' &&
-    obj.metadata &&
+    'metadata' in obj &&
+    'transactions' in obj &&
+    'success' in obj &&
     Array.isArray(obj.transactions) &&
     typeof obj.success === 'boolean'
   );
 }
 
-function isValidProcessingRequest(obj: any): obj is ParsingRequest {
-  return obj && typeof obj === 'object' && (obj.file || obj.content);
+function isValidProcessingRequest(obj: unknown): obj is ParsingRequest {
+  return !!obj && typeof obj === 'object' && ('file' in obj || 'content' in obj);
 }
 
 function calculateOverallQuality(

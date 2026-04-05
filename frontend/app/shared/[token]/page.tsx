@@ -1,6 +1,7 @@
 'use client';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { Download as DownloadIcon, Lock as LockIcon } from '@mui/icons-material';
 import {
   Alert,
@@ -19,9 +20,18 @@ import React, { useEffect, useState } from 'react';
 import TransactionsView from '../../components/TransactionsView';
 import api from '../../lib/api';
 
+interface SharedStatement {
+  fileName: string;
+  bankName: string;
+  fileSize: number;
+  metadata?: {
+    accountNumber?: string;
+  } | null;
+}
+
 interface SharedFileAccess {
-  statement: any;
-  transactions: any[];
+  statement: SharedStatement;
+  transactions: React.ComponentProps<typeof TransactionsView>['transactions'];
   permission: string;
   canDownload: boolean;
 }
@@ -41,6 +51,19 @@ export default function SharedFilePage() {
   const [password, setPassword] = useState('');
   const [needsPassword, setNeedsPassword] = useState(false);
 
+  const getPermissionLabel = (permission: string) => {
+    switch (permission) {
+      case 'view':
+        return t.permission.view.value;
+      case 'download':
+        return t.permission.download.value;
+      case 'edit':
+        return t.permission.edit.value;
+      default:
+        return permission;
+    }
+  };
+
   useEffect(() => {
     loadSharedFile();
   }, [token]);
@@ -55,12 +78,17 @@ export default function SharedFilePage() {
 
       setAccess(response.data);
       setNeedsPassword(false);
-    } catch (err: any) {
-      if (err.response?.status === 401) {
+    } catch (err) {
+      const status =
+        typeof err === 'object' && err !== null && 'response' in err
+          ? (err as { response?: { status?: number } }).response?.status
+          : undefined;
+
+      if (status === 401) {
         setNeedsPassword(true);
         setError(t.errors.passwordRequired.value);
       } else {
-        setError(err.response?.data?.error?.message || t.errors.loadFailed.value);
+        setError(getApiErrorMessage(err, t.errors.loadFailed.value));
       }
     } finally {
       setLoading(false);
@@ -183,7 +211,7 @@ export default function SharedFilePage() {
           <Chip label={t.header.badge.value} size="small" color="info" />
           <Chip label={statement.bankName} size="small" variant="outlined" />
           <Chip
-            label={`${t.permission.prefix.value}: ${getPermissionLabel(permission, t)}`}
+            label={`${t.permission.prefix.value}: ${getPermissionLabel(permission)}`}
             size="small"
           />
           {canDownload && (
@@ -262,16 +290,3 @@ export default function SharedFilePage() {
     </Container>
   );
 }
-
-const getPermissionLabel = (permission: string, t: any) => {
-  switch (permission) {
-    case 'view':
-      return t.permission.view.value;
-    case 'download':
-      return t.permission.download.value;
-    case 'edit':
-      return t.permission.edit.value;
-    default:
-      return permission;
-  }
-};

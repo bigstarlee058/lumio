@@ -5,6 +5,8 @@ import type { Response } from 'express';
 import { AppService } from './app.service';
 import { Public } from './modules/auth/decorators/public.decorator';
 
+type ReadinessResponse = Awaited<ReturnType<AppService['getReadiness']>>;
+
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -17,7 +19,7 @@ export class AppController {
 
   @Public()
   @Get('health/ready')
-  async getReadiness(): Promise<any> {
+  async getReadiness(): Promise<ReadinessResponse> {
     const readiness = await this.appService.getReadiness();
     if (readiness.status !== 'ok') {
       throw new ServiceUnavailableException(readiness);

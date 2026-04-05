@@ -10,12 +10,22 @@ const MockLocaleContext = createContext({
 });
 
 // Mock translation helper - returns proxy that returns value with .value accessor
+type MockTranslationTree = {
+  value: string;
+  [key: string]: MockTranslationTree | string;
+};
+
 const createMockTranslations = (prefix: string) => {
-  return new Proxy({} as Record<string, any>, {
-    get(_target, prop: string) {
+  return new Proxy({ value: prefix } as MockTranslationTree, {
+    get(_target, prop: string | symbol) {
+      if (typeof prop !== 'string') {
+        return undefined;
+      }
+
       if (prop === 'value') {
         return prefix;
       }
+
       // Return another proxy for nested access
       return createMockTranslations(`${prefix}.${prop}`);
     },

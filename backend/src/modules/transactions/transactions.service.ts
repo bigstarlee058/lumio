@@ -15,6 +15,7 @@ import { ClassificationService } from '../classification/services/classification
 import type { DataDeletedEvent } from '../notifications/events/notification-events';
 import type { BulkUpdateItemDto } from './dto/bulk-update-transaction.dto';
 import type { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { TransactionType } from '../../entities/transaction.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -160,9 +161,9 @@ export class TransactionsService {
 
       // Update transaction type
       if (debit && debit > 0) {
-        updateDto.transactionType = 'expense' as any;
+        updateDto.transactionType = TransactionType.EXPENSE;
       } else if (credit && credit > 0) {
-        updateDto.transactionType = 'income' as any;
+        updateDto.transactionType = TransactionType.INCOME;
       }
     } else if (
       updateDto.amountForeign !== undefined &&

@@ -22,6 +22,7 @@ import {
   shouldSkipLineItem,
 } from '../../../common/utils/receipt-extraction.util';
 import { extractBrandFromSender } from '../../../common/utils/sender-brand.util';
+import type { Receipt } from '../../../entities';
 import { UniversalAmountParser } from '../../parsing/services/universal-amount-parser.service';
 import { UniversalExtractorService } from '../../parsing/services/universal-extractor.service';
 import { AiMerchantExtractor } from '../helpers/ai-merchant-extractor.helper';
@@ -46,6 +47,12 @@ type ReceiptParseContext = {
   dateHeader?: string;
   emailBody?: string | null;
 };
+
+type ParsedReceiptLineItem = NonNullable<NonNullable<Receipt['parsedData']>['lineItems']>[number];
+
+interface ParsedReceiptResult extends Partial<NonNullable<Receipt['parsedData']>> {
+  extracted?: boolean;
+}
 
 const GENERIC_VENDOR_PATTERN =
   /^(page\s+\d+(\s+of\s+\d+)?|receipt|invoice|order\s+confirmation|payment\s+receipt|tax\s+invoice|credit\s+note)$/i;
@@ -81,7 +88,10 @@ export class GmailReceiptParserService {
     private readonly universalExtractor?: UniversalExtractorService,
   ) {}
 
-  async parseReceipt(filePath: string, context?: ReceiptParseContext | string): Promise<any> {
+  async parseReceipt(
+    filePath: string,
+    context?: ReceiptParseContext | string,
+  ): Promise<ParsedReceiptResult | null> {
     const parseContext: ReceiptParseContext =
       typeof context === 'string' ? { sender: context } : context || {};
 
@@ -103,7 +113,7 @@ export class GmailReceiptParserService {
     }
   }
 
-  async parseFromEmailOnly(context: ReceiptParseContext): Promise<any> {
+  async parseFromEmailOnly(context: ReceiptParseContext): Promise<ParsedReceiptResult | null> {
     let vendor: string | undefined;
 
     if (this.aiMerchantExtractor?.isAvailable()) {
@@ -154,7 +164,10 @@ export class GmailReceiptParserService {
     return mimeTypes[ext || ''] || 'application/octet-stream';
   }
 
-  private async parsePdfReceipt(buffer: Buffer, context: ReceiptParseContext): Promise<any> {
+  private async parsePdfReceipt(
+    buffer: Buffer,
+    context: ReceiptParseContext,
+  ): Promise<ParsedReceiptResult | null> {
     try {
       const data = await pdfParse(buffer);
       const text = data.text;
@@ -436,7 +449,7 @@ export class GmailReceiptParserService {
     date?: string;
     vendor?: string;
     tax?: number;
-    lineItems?: Array<any>;
+    lineItems?: ParsedReceiptLineItem[];
   }): number {
     let confidence = 0;
 

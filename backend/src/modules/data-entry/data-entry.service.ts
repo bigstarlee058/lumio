@@ -13,6 +13,16 @@ import type { CreateDataEntryCustomFieldDto } from './dto/create-data-entry-cust
 import type { CreateDataEntryDto } from './dto/create-data-entry.dto';
 import type { UpdateDataEntryCustomFieldDto } from './dto/update-data-entry-custom-field.dto';
 
+type DriverErrorLike = { driverError?: { code?: string } };
+
+const getDriverErrorCode = (error: unknown): string | undefined => {
+  if (typeof error !== 'object' || error === null) {
+    return undefined;
+  }
+
+  return (error as DriverErrorLike).driverError?.code;
+};
+
 interface ListParams {
   workspaceId: string;
   type?: DataEntryType;
@@ -157,13 +167,15 @@ export class DataEntryService {
       .getRawMany<{ id: string; name: string; icon: string | null; entriesCount: string }>();
 
     return rows.map(row => ({
-      ...(this.dataEntryCustomFieldRepository.create({
-        id: row.id,
-        workspaceId,
-        name: row.name,
-        icon: row.icon,
-      }) as any),
-      entriesCount: Number(row.entriesCount || 0),
+      ...Object.assign(
+        this.dataEntryCustomFieldRepository.create({
+          id: row.id,
+          workspaceId,
+          name: row.name,
+          icon: row.icon,
+        }),
+        { entriesCount: Number(row.entriesCount || 0) },
+      ),
     }));
   }
 
@@ -172,8 +184,8 @@ export class DataEntryService {
       where: { id: userId },
       select: ['id', 'dataEntryHiddenBaseTabs'],
     });
-    const hidden = (user as any)?.dataEntryHiddenBaseTabs;
-    return Array.isArray(hidden) ? (hidden as DataEntryType[]) : [];
+    const hidden = user?.dataEntryHiddenBaseTabs;
+    return Array.isArray(hidden) ? hidden : [];
   }
 
   async removeBaseTab(workspaceId: string, userId: string, type: DataEntryType): Promise<void> {
@@ -185,12 +197,10 @@ export class DataEntryService {
     });
     if (!user) throw new NotFoundException('Пользователь не найден');
 
-    const current = Array.isArray((user as any).dataEntryHiddenBaseTabs)
-      ? ((user as any).dataEntryHiddenBaseTabs as DataEntryType[])
-      : [];
+    const current = Array.isArray(user.dataEntryHiddenBaseTabs) ? user.dataEntryHiddenBaseTabs : [];
 
     if (!current.includes(type)) {
-      (user as any).dataEntryHiddenBaseTabs = [...current, type];
+      user.dataEntryHiddenBaseTabs = [...current, type];
       await this.userRepository.save(user);
     }
 
@@ -219,7 +229,7 @@ export class DataEntryService {
       );
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        const code = (error as any)?.driverError?.code;
+        const code = getDriverErrorCode(error);
         if (code === '23505') {
           throw new BadRequestException('Колонка с таким названием уже существует');
         }
@@ -249,7 +259,7 @@ export class DataEntryService {
       return await this.dataEntryCustomFieldRepository.save(item);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        const code = (error as any)?.driverError?.code;
+        const code = getDriverErrorCode(error);
         if (code === '23505') {
           throw new BadRequestException('Колонка с таким названием уже существует');
         }

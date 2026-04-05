@@ -24,50 +24,77 @@ export function stripHtmlForAi(value: string): string {
 }
 
 export function mapParsedTransaction(
-  raw: any,
+  raw: Record<string, unknown>,
   normalizers: {
     normalizeDate: (value: string) => Date | null;
     normalizeNumber: (value: string | number | null | undefined) => number | null;
   },
 ): ParsedTransaction | null {
-  const transactionDate =
-    normalizers.normalizeDate(raw?.date || raw?.transactionDate || raw?.date_iso || '') || null;
+  const stringValue = (value: unknown): string => (typeof value === 'string' ? value : '');
+  const optionalStringValue = (value: unknown): string | undefined =>
+    typeof value === 'string' && value.trim() ? value : undefined;
+  const numberInput = (value: unknown): string | number | null | undefined => {
+    if (typeof value === 'string' || typeof value === 'number') {
+      return value;
+    }
+
+    if (value == null) {
+      return value as null | undefined;
+    }
+
+    return undefined;
+  };
+
+  const transactionDateCandidate = raw.date ?? raw.transactionDate ?? raw.date_iso;
+  const transactionDate = normalizers.normalizeDate(stringValue(transactionDateCandidate)) || null;
 
   if (!transactionDate) {
     return null;
   }
 
-  const debit = normalizers.normalizeNumber(raw?.debit ?? raw?.amount_debit ?? raw?.amount) || undefined;
+  const debit =
+    normalizers.normalizeNumber(numberInput(raw.debit ?? raw.amount_debit ?? raw.amount)) ||
+    undefined;
   const credit =
-    normalizers.normalizeNumber(raw?.credit ?? raw?.amount_credit ?? raw?.incoming) || undefined;
+    normalizers.normalizeNumber(numberInput(raw.credit ?? raw.amount_credit ?? raw.incoming)) ||
+    undefined;
 
   const counterpartyName =
-    raw?.counterparty_name ||
-    raw?.counterparty ||
-    raw?.beneficiary ||
-    raw?.receiver ||
-    raw?.payer ||
-    raw?.partner ||
-    raw?.beneficiary_name ||
+    optionalStringValue(raw.counterparty_name) ||
+    optionalStringValue(raw.counterparty) ||
+    optionalStringValue(raw.beneficiary) ||
+    optionalStringValue(raw.receiver) ||
+    optionalStringValue(raw.payer) ||
+    optionalStringValue(raw.partner) ||
+    optionalStringValue(raw.beneficiary_name) ||
     'Неизвестный контрагент';
 
   const counterpartyBank =
-    raw?.counterparty_bank ||
-    raw?.bank ||
-    raw?.bank_name ||
-    raw?.beneficiary_bank ||
-    raw?.receiver_bank ||
-    raw?.bank_bic ||
-    raw?.bic;
+    optionalStringValue(raw.counterparty_bank) ||
+    optionalStringValue(raw.bank) ||
+    optionalStringValue(raw.bank_name) ||
+    optionalStringValue(raw.beneficiary_bank) ||
+    optionalStringValue(raw.receiver_bank) ||
+    optionalStringValue(raw.bank_bic) ||
+    optionalStringValue(raw.bic);
 
-  const counterpartyBin = raw?.counterparty_bin || raw?.bin || raw?.iin || raw?.tax_id;
+  const counterpartyBin =
+    optionalStringValue(raw.counterparty_bin) ||
+    optionalStringValue(raw.bin) ||
+    optionalStringValue(raw.iin) ||
+    optionalStringValue(raw.tax_id);
 
   return {
     transactionDate,
-    documentNumber: raw?.document_number || raw?.document || raw?.doc || raw?.doc_number,
+    documentNumber:
+      optionalStringValue(raw.document_number) ||
+      optionalStringValue(raw.document) ||
+      optionalStringValue(raw.doc) ||
+      optionalStringValue(raw.doc_number),
     counterpartyName,
     counterpartyBin,
-    counterpartyAccount: raw?.counterparty_account || raw?.account,
+    counterpartyAccount:
+      optionalStringValue(raw.counterparty_account) || optionalStringValue(raw.account),
     counterpartyBank,
     debit,
     credit,
@@ -75,6 +102,6 @@ export function mapParsedTransaction(
       (raw?.purpose || raw?.payment_purpose || raw?.description || raw?.comment || '')
         .toString()
         .trim() || 'Не указано',
-    currency: raw?.currency || 'KZT',
+    currency: optionalStringValue(raw.currency) || 'KZT',
   };
 }

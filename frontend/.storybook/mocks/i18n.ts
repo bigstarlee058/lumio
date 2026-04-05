@@ -218,5 +218,6 @@ export const mockTranslations = {
 
 // Helper to get translations by namespace
 export const getMockTranslations = (namespace: string) => {
-  return (mockTranslations as any)[namespace] || {};
+  const translationsByNamespace = mockTranslations as Record<string, unknown>;
+  return translationsByNamespace[namespace] ?? {};
 };

@@ -3,6 +3,76 @@ import { Transaction } from '../../../entities/transaction.entity';
 import { ImportConfigService } from '../../import/config/import.config';
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 
+type DeduplicationAlgorithm = 'exact' | 'fuzzy' | 'semantic' | 'hybrid';
+type HybridSubAlgorithm = Exclude<DeduplicationAlgorithm, 'hybrid'>;
+type NormalizedFieldValue = string | number | Date;
+type NormalizedTransactionRecord = NormalizedTransaction &
+  Record<string, NormalizedFieldValue | undefined>;
+
+interface DeduplicationRuleOptions {
+  strictAmountComparison?: boolean;
+  ignoreCase?: boolean;
+  ignoreWhitespace?: boolean;
+  dateToleranceDays?: number;
+  amountTolerancePercent?: number;
+  nameSimilarityThreshold?: number;
+  useNgramSimilarity?: boolean;
+  useKeywordExtraction?: boolean;
+  ignoreStopWords?: boolean;
+  combineAlgorithms?: HybridSubAlgorithm[];
+  minAlgorithmMatches?: number;
+  weightDistribution?: Partial<Record<HybridSubAlgorithm, number>>;
+  [key: string]: unknown;
+}
+
+interface NormalizedTransaction {
+  transactionDate: Date;
+  dateString: string;
+  documentNumber: string;
+  counterpartyName: string;
+  counterpartyBin: string;
+  counterpartyAccount: string;
+  counterpartyBank: string;
+  debit: number;
+  credit: number;
+  amount: number;
+  paymentPurpose: string;
+  currency: string;
+  exchangeRate: number;
+  amountForeign: number;
+}
+
+interface TransactionFeatures {
+  amountBucket: string;
+  nameLength: number;
+  purposeLength: number;
+  hasDocument: boolean;
+  dayOfWeek: number;
+  month: number;
+  counterpartyType: string;
+  purposeKeywords: string[];
+}
+
+interface PreprocessedTransaction {
+  original: ParsedTransaction;
+  normalized: NormalizedTransaction;
+  hashes: Record<string, string>;
+  features: TransactionFeatures;
+}
+
+interface DeduplicationInfo {
+  groupId: string;
+  isDuplicate: boolean;
+  duplicateCount: number;
+  confidence: number;
+  matchType: DuplicateGroup['matchType'];
+  masterId?: string;
+}
+
+type DeduplicatedTransaction = ParsedTransaction & {
+  _deduplicationInfo?: DeduplicationInfo;
+};
+
 export interface DuplicationResult {
   originalCount: number;
   uniqueCount: number;
@@ -52,10 +122,10 @@ export interface DeduplicationRule {
   name: string;
   enabled: boolean;
   weight: number;
-  algorithm: 'exact' | 'fuzzy' | 'semantic' | 'hybrid';
+  algorithm: DeduplicationAlgorithm;
   threshold: number;
   fields: string[];
-  options: Record<string, any>;
+  options: DeduplicationRuleOptions;
 }
 
 export interface FuzzyMatch {
@@ -118,6 +188,29 @@ export class IntelligentDeduplicationService {
   private readonly logger = new Logger(IntelligentDeduplicationService.name);
 
   constructor(private readonly importConfigService: ImportConfigService) {}
+
+  private getParsedTransactionField(transaction: ParsedTransaction, field: string): unknown {
+    return (transaction as unknown as Record<string, unknown>)[field];
+  }
+
+  private toDuplicateGroupMatchType(matchType: FuzzyMatch['matchType']): DuplicateGroup['matchType'] {
+    switch (matchType) {
+      case 'exact':
+      case 'fuzzy':
+      case 'semantic':
+      case 'hybrid':
+        return matchType;
+      default:
+        return 'partial';
+    }
+  }
+
+  private getNormalizedField(
+    transaction: PreprocessedTransaction,
+    field: string,
+  ): NormalizedFieldValue | undefined {
+    return (transaction.normalized as NormalizedTransactionRecord)[field];
+  }
 
   // Default deduplication rules
   private readonly defaultRules: DeduplicationRule[] = [
@@ -246,7 +339,9 @@ export class IntelligentDeduplicationService {
     };
   }
 
-  private async preprocessTransactions(transactions: ParsedTransaction[]): Promise<any[]> {
+  private async preprocessTransactions(
+    transactions: ParsedTransaction[],
+  ): Promise<PreprocessedTransaction[]> {
     return transactions.map(tx => ({
       original: tx,
       normalized: this.normalizeTransaction(tx),
@@ -255,7 +350,7 @@ export class IntelligentDeduplicationService {
     }));
   }
 
-  private normalizeTransaction(transaction: ParsedTransaction): any {
+  private normalizeTransaction(transaction: ParsedTransaction): NormalizedTransaction {
     const normalizeString = (str: string): string => {
       return str
         .toLowerCase()
@@ -285,7 +380,7 @@ export class IntelligentDeduplicationService {
   private generateHashes(transaction: ParsedTransaction): Record<string, string> {
     const createKey = (fields: string[]): string => {
       const values = fields.map(field => {
-        const value = (transaction as any)[field];
+        const value = this.getParsedTransactionField(transaction, field);
         return value ? String(value).toLowerCase().trim() : '';
       });
       return values.join('|');
@@ -313,7 +408,7 @@ export class IntelligentDeduplicationService {
     };
   }
 
-  private extractFeatures(transaction: ParsedTransaction): any {
+  private extractFeatures(transaction: ParsedTransaction): TransactionFeatures {
     const extractKeywords = (text: string): string[] => {
       // Simple keyword extraction (in production, use NLP library)
       const words = text
@@ -396,7 +491,7 @@ export class IntelligentDeduplicationService {
   }
 
   private async findDuplicateGroups(
-    preprocessedTransactions: any[],
+    preprocessedTransactions: PreprocessedTransaction[],
     rules: DeduplicationRule[],
     threshold: number,
   ): Promise<DuplicateGroup[]> {
@@ -410,7 +505,7 @@ export class IntelligentDeduplicationService {
       const potentialDuplicates: Array<{
         index: number;
         score: number;
-        matchType: string;
+        matchType: DuplicateGroup['matchType'];
         fields: string[];
       }> = [];
 
@@ -427,7 +522,7 @@ export class IntelligentDeduplicationService {
             potentialDuplicates.push({
               index: j,
               score: matchResult.score,
-              matchType: matchResult.matchType,
+              matchType: this.toDuplicateGroupMatchType(matchResult.matchType),
               fields: matchResult.fields,
             });
             break; // Use first matching rule
@@ -454,7 +549,11 @@ export class IntelligentDeduplicationService {
     return duplicateGroups;
   }
 
-  private async applyRule(tx1: any, tx2: any, rule: DeduplicationRule): Promise<FuzzyMatch> {
+  private async applyRule(
+    tx1: PreprocessedTransaction,
+    tx2: PreprocessedTransaction,
+    rule: DeduplicationRule,
+  ): Promise<FuzzyMatch> {
     switch (rule.algorithm) {
       case 'exact':
         return this.exactMatch(tx1, tx2, rule);
@@ -474,15 +573,19 @@ export class IntelligentDeduplicationService {
     }
   }
 
-  private exactMatch(tx1: any, tx2: any, rule: DeduplicationRule): FuzzyMatch {
+  private exactMatch(
+    tx1: PreprocessedTransaction,
+    tx2: PreprocessedTransaction,
+    rule: DeduplicationRule,
+  ): FuzzyMatch {
     let matches = 0;
     let totalFields = 0;
     const fields: string[] = [];
 
     for (const field of rule.fields) {
       totalFields++;
-      const value1 = tx1.normalized[field];
-      const value2 = tx2.normalized[field];
+      const value1 = this.getNormalizedField(tx1, field);
+      const value2 = this.getNormalizedField(tx2, field);
 
       if (value1 && value2) {
         if (value1 === value2) {
@@ -490,6 +593,10 @@ export class IntelligentDeduplicationService {
           fields.push(field);
         } else if (field === 'debit' || field === 'credit' || field === 'amount') {
           // Special handling for amounts
+          if (typeof value1 !== 'number' || typeof value2 !== 'number') {
+            continue;
+          }
+
           const diff = Math.abs(value1 - value2);
           const tolerance = rule.options?.amountTolerancePercent
             ? value1 * rule.options.amountTolerancePercent
@@ -513,25 +620,34 @@ export class IntelligentDeduplicationService {
     };
   }
 
-  private fuzzyMatch(tx1: any, tx2: any, rule: DeduplicationRule): FuzzyMatch {
+  private fuzzyMatch(
+    tx1: PreprocessedTransaction,
+    tx2: PreprocessedTransaction,
+    rule: DeduplicationRule,
+  ): FuzzyMatch {
     let score = 0;
     let fieldMatches = 0;
     const fields: string[] = [];
 
     for (const field of rule.fields) {
-      const value1 = tx1.normalized[field];
-      const value2 = tx2.normalized[field];
+      const value1 = this.getNormalizedField(tx1, field);
+      const value2 = this.getNormalizedField(tx2, field);
 
       if (value1 && value2) {
         if (field === 'transactionDate') {
+          if (!(value1 instanceof Date) || !(value2 instanceof Date)) {
+            continue;
+          }
           const daysDiff =
-            Math.abs((value1 as Date).getTime() - (value2 as Date).getTime()) /
-            (1000 * 60 * 60 * 24);
+            Math.abs(value1.getTime() - value2.getTime()) / (1000 * 60 * 60 * 24);
           if (daysDiff <= (rule.options?.dateToleranceDays || 1)) {
             fieldMatches++;
             fields.push(field);
           }
         } else if (field === 'debit' || field === 'credit' || field === 'amount') {
+          if (typeof value1 !== 'number' || typeof value2 !== 'number') {
+            continue;
+          }
           const diff = Math.abs(value1 - value2);
           const tolerance = value1 * (rule.options?.amountTolerancePercent || 0.01);
           if (diff <= tolerance) {
@@ -539,6 +655,9 @@ export class IntelligentDeduplicationService {
             fields.push(field);
           }
         } else {
+          if (typeof value1 !== 'string' || typeof value2 !== 'string') {
+            continue;
+          }
           const similarity = this.calculateStringSimilarity(value1, value2);
           const threshold = rule.options?.nameSimilarityThreshold || 0.7;
           if (similarity >= threshold) {
@@ -559,7 +678,11 @@ export class IntelligentDeduplicationService {
     };
   }
 
-  private semanticMatch(tx1: any, tx2: any, rule: DeduplicationRule): FuzzyMatch {
+  private semanticMatch(
+    tx1: PreprocessedTransaction,
+    tx2: PreprocessedTransaction,
+    rule: DeduplicationRule,
+  ): FuzzyMatch {
     // Simplified semantic matching (in production, use ML/NLP libraries)
     const features1 = tx1.features;
     const features2 = tx2.features;
@@ -612,7 +735,11 @@ export class IntelligentDeduplicationService {
     };
   }
 
-  private async hybridMatch(tx1: any, tx2: any, rule: DeduplicationRule): Promise<FuzzyMatch> {
+  private async hybridMatch(
+    tx1: PreprocessedTransaction,
+    tx2: PreprocessedTransaction,
+    rule: DeduplicationRule,
+  ): Promise<FuzzyMatch> {
     const algorithms = rule.options?.combineAlgorithms || ['exact', 'fuzzy', 'semantic'];
     const weights = rule.options?.weightDistribution || {
       exact: 0.5,
@@ -628,10 +755,7 @@ export class IntelligentDeduplicationService {
     }> = [];
 
     for (const algorithm of algorithms) {
-      if (algorithm === 'hybrid') {
-        continue;
-      }
-      const tempRule = { ...rule, algorithm: algorithm as any };
+      const tempRule: DeduplicationRule = { ...rule, algorithm };
       const result = await this.applyRule(tx1, tx2, tempRule);
       algorithmResults.push({
         algorithm,
@@ -719,10 +843,10 @@ export class IntelligentDeduplicationService {
     duplicates: Array<{
       index: number;
       score: number;
-      matchType: string;
+      matchType: DuplicateGroup['matchType'];
       fields: string[];
     }>,
-    preprocessedTransactions: any[],
+    preprocessedTransactions: PreprocessedTransaction[],
     rules: DeduplicationRule[],
   ): DuplicateGroup {
     const master = preprocessedTransactions[masterIndex];
@@ -747,8 +871,8 @@ export class IntelligentDeduplicationService {
   }
 
   private calculateFieldScores(
-    master: any,
-    duplicates: any[],
+    master: PreprocessedTransaction,
+    duplicates: PreprocessedTransaction[],
     rules: DeduplicationRule[],
   ): FieldScores {
     const scores: FieldScores = {
@@ -771,21 +895,30 @@ export class IntelligentDeduplicationService {
       let count = 0;
 
       for (const duplicate of duplicates) {
-        const masterValue = master.normalized[field];
-        const duplicateValue = duplicate.normalized[field];
+        const masterValue = this.getNormalizedField(master, field);
+        const duplicateValue = this.getNormalizedField(duplicate, field);
 
         if (masterValue && duplicateValue) {
           count++;
           if (field === 'transactionDate') {
+            if (!(masterValue instanceof Date) || !(duplicateValue instanceof Date)) {
+              continue;
+            }
             const daysDiff =
-              Math.abs((masterValue as Date).getTime() - (duplicateValue as Date).getTime()) /
+              Math.abs(masterValue.getTime() - duplicateValue.getTime()) /
               (1000 * 60 * 60 * 24);
             fieldScore += Math.max(0, 1 - daysDiff); // Decay with time difference
           } else if (field === 'debit' || field === 'credit') {
+            if (typeof masterValue !== 'number' || typeof duplicateValue !== 'number') {
+              continue;
+            }
             const diff =
               Math.abs(masterValue - duplicateValue) / Math.max(masterValue, duplicateValue);
             fieldScore += Math.max(0, 1 - diff);
           } else {
+            if (typeof masterValue !== 'string' || typeof duplicateValue !== 'string') {
+              continue;
+            }
             const similarity = this.calculateStringSimilarity(masterValue, duplicateValue);
             fieldScore += similarity;
           }
@@ -809,7 +942,7 @@ export class IntelligentDeduplicationService {
   }
 
   private determineMatchType(
-    duplicates: Array<{ matchType: string }>,
+    duplicates: Array<{ matchType: DuplicateGroup['matchType'] }>,
   ): 'exact' | 'fuzzy' | 'partial' | 'semantic' | 'hybrid' {
     if (duplicates.some(dup => dup.matchType === 'exact')) return 'exact';
     if (duplicates.some(dup => dup.matchType === 'hybrid')) return 'hybrid';
@@ -887,7 +1020,7 @@ export class IntelligentDeduplicationService {
       uniqueTransactions.push(group.master);
 
       // Add metadata to track deduplication
-      (group.master as any)._deduplicationInfo = {
+      (group.master as DeduplicatedTransaction)._deduplicationInfo = {
         groupId: group.id,
         isDuplicate: false,
         duplicateCount: group.duplicateCount,
@@ -897,7 +1030,7 @@ export class IntelligentDeduplicationService {
 
       // Add metadata to duplicates
       group.duplicates.forEach(duplicate => {
-        (duplicate as any)._deduplicationInfo = {
+        (duplicate as DeduplicatedTransaction)._deduplicationInfo = {
           groupId: group.id,
           isDuplicate: true,
           masterId: group.master.documentNumber || 'unknown',

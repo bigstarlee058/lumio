@@ -41,6 +41,16 @@ import type { FilterStatementsDto } from './dto/filter-statements.dto';
 import type { UpdateStatementDto } from './dto/update-statement.dto';
 import { ReceiptStatementService } from './services/receipt-statement.service';
 
+type StatementFileAvailability = Awaited<ReturnType<FileStorageService['getFileAvailability']>>;
+type StatementWithFileAvailability = Statement & {
+  hasFileOnDisk?: boolean;
+  hasFileInDb?: boolean;
+  fileAvailability?: StatementFileAvailability;
+};
+type StatementRepositoryWithOptionalQueryBuilder = Repository<Statement> & {
+  createQueryBuilder?: Repository<Statement>['createQueryBuilder'];
+};
+
 const execAsync = promisify(exec);
 const APPROVED_STATUSES = [
   StatementStatus.VALIDATED,
@@ -131,6 +141,17 @@ export class StatementsService {
     private readonly auditService: AuditService,
     private readonly eventEmitter?: EventEmitter2,
   ) {}
+
+  private attachFileAvailability<T extends Statement>(
+    statement: T,
+    availability: StatementFileAvailability,
+  ): T & StatementWithFileAvailability {
+    const statementWithAvailability = statement as T & StatementWithFileAvailability;
+    statementWithAvailability.hasFileOnDisk = availability.onDisk;
+    statementWithAvailability.hasFileInDb = availability.inDb;
+    statementWithAvailability.fileAvailability = availability;
+    return statementWithAvailability;
+  }
 
   private async ensureCanEditStatements(userId: string, workspaceId: string): Promise<void> {
     if (!workspaceId) return;
@@ -487,14 +508,14 @@ export class StatementsService {
 
     const transactionType = debit ? TransactionType.EXPENSE : TransactionType.INCOME;
     const amount = debit || credit || 0;
-    const originalTransaction = sample?.transaction;
+    const originalTransaction = sample?.transaction as Record<string, string | number | null | undefined> | undefined;
 
     const transaction = this.transactionRepository.create({
       workspaceId,
       statementId: statement.id,
       transactionDate: new Date(transactionDate.toISOString().slice(0, 10)),
       documentNumber:
-        payload.transaction.documentNumber || originalTransaction?.documentNumber || null,
+        payload.transaction.documentNumber || (originalTransaction?.documentNumber as string) || null,
       counterpartyName:
         payload.transaction.counterpartyName?.trim() ||
         String(originalTransaction?.counterpartyName || '').trim() ||
@@ -961,10 +982,7 @@ export class StatementsService {
     const data = await Promise.all(
       dataRaw.map(async st => {
         const availability = await this.fileStorageService.getFileAvailability(st);
-        (st as any).hasFileOnDisk = availability.onDisk;
-        (st as any).hasFileInDb = availability.inDb;
-        (st as any).fileAvailability = availability;
-        return st;
+        return this.attachFileAvailability(st, availability);
       }),
     );
 
@@ -979,25 +997,25 @@ export class StatementsService {
   }
 
   async findOne(id: string, workspaceId: string): Promise<Statement> {
-    if (typeof (this.statementRepository as any).createQueryBuilder !== 'function') {
+    const statementRepository = this.statementRepository as StatementRepositoryWithOptionalQueryBuilder;
+
+    if (typeof statementRepository.createQueryBuilder !== 'function') {
       const statement = await this.statementRepository.findOne({
         where: { id, workspaceId },
         relations: ['transactions', 'googleSheet', 'user'],
-      } as any);
+      });
 
       if (!statement) {
         throw new NotFoundException('Statement not found');
       }
 
       const availability = await this.fileStorageService.getFileAvailability(statement);
-      (statement as any).hasFileOnDisk = availability.onDisk;
-      (statement as any).hasFileInDb = availability.inDb;
-      (statement as any).fileAvailability = availability;
+      this.attachFileAvailability(statement, availability);
 
-      return statement as Statement;
+      return statement;
     }
 
-    const qb = this.statementRepository
+    const qb = statementRepository
       .createQueryBuilder('statement')
       .leftJoinAndSelect('statement.transactions', 'transactions')
       .leftJoinAndSelect('statement.googleSheet', 'googleSheet')
@@ -1012,11 +1030,9 @@ export class StatementsService {
     }
 
     const availability = await this.fileStorageService.getFileAvailability(statement);
-    (statement as any).hasFileOnDisk = availability.onDisk;
-    (statement as any).hasFileInDb = availability.inDb;
-    (statement as any).fileAvailability = availability;
+    this.attachFileAvailability(statement, availability);
 
-    return statement as Statement;
+    return statement;
   }
 
   async updateMetadata(

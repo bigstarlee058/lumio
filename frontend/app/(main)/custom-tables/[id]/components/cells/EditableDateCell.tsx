@@ -2,17 +2,17 @@
 
 import { DatePicker } from '@heroui/date-picker';
 import { parseDate } from '@internationalized/date';
-import type { Column, Table } from '@tanstack/react-table';
+import type { Column, Row, Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { type CSSProperties, useState } from 'react';
-import type { CustomTableGridRow } from '../../utils/stylingUtils';
+import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
 interface EditableDateCellProps {
-  row: any;
+  row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
   table: Table<CustomTableGridRow>;
   cellType: string;
-  onUpdateCell: (rowId: string, columnKey: string, value: any) => Promise<void>;
+  onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   style?: CSSProperties;
 }
 

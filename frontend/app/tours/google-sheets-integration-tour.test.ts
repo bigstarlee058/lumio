@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createGoogleSheetsIntegrationTour } from './google-sheets-integration-tour';
 
+type TourTextPayload = Parameters<typeof createGoogleSheetsIntegrationTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -29,7 +31,7 @@ describe('createGoogleSheetsIntegrationTour', () => {
   };
 
   it('uses the spreadsheet picker selector for step 3', () => {
-    const tour = createGoogleSheetsIntegrationTour(texts as any);
+    const tour = createGoogleSheetsIntegrationTour(texts as TourTextPayload);
 
     expect(tour.steps[2]?.selector).toBe('[data-tour-id="gs-integration-picker"]');
   });

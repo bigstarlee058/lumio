@@ -40,7 +40,27 @@ import type { UpdateFolderDto } from './dto/update-folder.dto';
 import type { UpdatePermissionDto } from './dto/update-permission.dto';
 import type { UpdateSharedLinkDto } from './dto/update-shared-link.dto';
 import type { UpdateTagDto } from './dto/update-tag.dto';
+import type { StorageViewFilters } from './interfaces/storage-view-filters.interface';
 import { buildStorageCategoryWhere } from './storage-category-scope.util';
+
+type FileAvailability = {
+  onDisk: boolean;
+  inDb: boolean;
+  status: 'disk' | 'db' | 'both' | 'missing' | 'unknown';
+};
+
+type StorageStatement = Statement & {
+  isOwner: boolean;
+  permissionType: FilePermissionType | null | undefined;
+  canReshare: boolean;
+  sharedLinksCount: number;
+  fileAvailability: FileAvailability;
+  hasFileOnDisk: boolean;
+  hasFileInDb: boolean;
+};
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
 
 /**
  * Storage service for managing file storage, sharing, and permissions
@@ -93,15 +113,7 @@ export class StorageService {
    */
   async getStorageFiles(
     userId: string,
-    filters?: {
-      search?: string;
-      bankName?: string;
-      availability?: 'disk' | 'db' | 'both' | 'missing';
-      scope?: 'mine' | 'shared' | 'all';
-      folderId?: string | null;
-      tagIds?: string[];
-      deleted?: 'only' | 'include';
-    },
+    filters?: StorageViewFilters,
   ) {
     try {
       const { workspaceId } = await this.getUserContext(userId);
@@ -139,7 +151,7 @@ export class StorageService {
         });
       } catch (error) {
         // If permissions table doesn't exist yet, just use empty array
-        console.warn('File permissions table may not exist yet:', error.message);
+        console.warn('File permissions table may not exist yet:', getErrorMessage(error));
       }
 
       const sharedStatements = sharedPermissions
@@ -182,7 +194,7 @@ export class StorageService {
               where: { statementId: statement.id },
             });
           } catch (error) {
-            console.warn('Storage tables may not exist yet:', error.message);
+            console.warn('Storage tables may not exist yet:', getErrorMessage(error));
           }
 
           const permissionType = isOwner
@@ -209,7 +221,7 @@ export class StorageService {
                   id: statement.id,
                   filePath: statement.filePath,
                 })
-              : ({ onDisk: false, inDb: false, status: 'unknown' } as any);
+              : { onDisk: false, inDb: false, status: 'unknown' };
 
           return {
             ...statement,
@@ -227,9 +239,9 @@ export class StorageService {
       let filtered = enrichedStatements;
       const deletedFilter = filters?.deleted ?? 'exclude';
       if (deletedFilter === 'only') {
-        filtered = filtered.filter((s: any) => s.deletedAt);
+        filtered = filtered.filter(s => Boolean(s.deletedAt));
       } else if (deletedFilter !== 'include') {
-        filtered = filtered.filter((s: any) => !s.deletedAt);
+        filtered = filtered.filter(s => !s.deletedAt);
       }
 
       if (filters?.scope === 'mine') {
@@ -243,13 +255,11 @@ export class StorageService {
       }
 
       if (filters?.folderId !== undefined) {
-        filtered = filtered.filter(
-          s => ((s as any).folderId || null) === (filters.folderId || null),
-        );
+        filtered = filtered.filter(s => (s.folderId || null) === (filters.folderId || null));
       }
 
       if (filters?.availability) {
-        filtered = filtered.filter((s: any) => {
+        filtered = filtered.filter(s => {
           const status = s.fileAvailability?.status || s.fileAvailability;
           if (filters.availability === 'both') {
             return status === 'both';
@@ -270,7 +280,7 @@ export class StorageService {
       if (filters?.tagIds?.length) {
         const tagSet = new Set(filters.tagIds);
         filtered = filtered.filter(
-          (s: any) => Array.isArray(s.tags) && s.tags.some((t: Tag) => t && tagSet.has(t.id)),
+          s => Array.isArray(s.tags) && s.tags.some((t: Tag) => t && tagSet.has(t.id)),
         );
       }
 
@@ -653,7 +663,7 @@ export class StorageService {
       throw new NotFoundException('File not found');
     }
 
-    let fileData = ((statement as any)?.fileData as Buffer | null) ?? null;
+    let fileData = statement.fileData ?? null;
 
     if (!fileData) {
       const resolved = this.fileStorageService.resolveFilePath(statement.filePath);
@@ -679,7 +689,7 @@ export class StorageService {
         .orderBy('statement.createdAt', 'DESC')
         .getOne();
 
-      fileData = ((other as any)?.fileData as Buffer | null | undefined) ?? null;
+      fileData = other?.fileData ?? null;
     }
 
     if (!fileData) {

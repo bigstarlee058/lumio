@@ -190,6 +190,8 @@ describe('CategorizationRulesController', () => {
         isActive: true,
         matchCount: 0,
         lastMatchedAt: null,
+        createdAt: new Date('2025-01-01'),
+        updatedAt: new Date('2025-01-01'),
       };
 
       mockRuleRepository.create.mockReturnValue(createdRule);
@@ -215,6 +217,8 @@ describe('CategorizationRulesController', () => {
         workspaceId: mockWorkspaceId,
         name: 'Old Name',
         priority: 50,
+        createdAt: new Date('2025-01-01'),
+        updatedAt: new Date('2025-01-01'),
       };
 
       const updateDto = {
@@ -253,6 +257,8 @@ describe('CategorizationRulesController', () => {
         id: 'rule-1',
         userId: mockUser.id,
         workspaceId: mockWorkspaceId,
+        createdAt: new Date('2025-01-01'),
+        updatedAt: new Date('2025-01-01'),
       };
 
       mockRuleRepository.findOne.mockResolvedValue(rule);

@@ -26,6 +26,11 @@ import { StatementsService } from '../statements/statements.service';
 import type { ImportDriveFilesDto } from './dto/import-drive-files.dto';
 import type { UpdateDriveSettingsDto } from './dto/update-drive-settings.dto';
 
+type GoogleDriveImportError = {
+  response?: { data?: { message?: string } };
+  message?: string;
+};
+
 const DRIVE_SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/drive.readonly',
@@ -36,6 +41,11 @@ const DEFAULT_SYNC_TIME = '03:00';
 @Injectable()
 export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   protected readonly logger = new Logger(GoogleDriveService.name);
+
+  private getImportErrorMessage(error: unknown): string {
+    const importError = error as GoogleDriveImportError;
+    return importError.response?.data?.message || importError.message || 'Import failed';
+  }
 
   constructor(
     @InjectRepository(Integration)
@@ -287,8 +297,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
           undefined,
           false,
         ),
-      getErrorMessage: error =>
-        (error as any)?.response?.data?.message || (error as any)?.message || 'Import failed',
+      getErrorMessage: error => this.getImportErrorMessage(error),
     });
   }
 

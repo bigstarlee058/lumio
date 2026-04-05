@@ -1,5 +1,35 @@
 import axios from 'axios';
 
+type GmailReceiptParsedDataUpdate = {
+  amount?: number;
+  currency?: string;
+  vendor?: string;
+  date?: string;
+  tax?: number;
+  paymentMethod?: string;
+  category?: string | null;
+  categoryId?: string | null;
+  lineItems?: Array<{ description: string; amount: number }>;
+  transactionType?: 'income' | 'expense' | 'transfer' | 'unknown';
+  confidence?: number;
+  validationIssues?: string[];
+};
+
+type ApproveReceiptPayload = {
+  description?: string;
+  categoryId?: string;
+  category?: string;
+  amount?: number;
+  currency?: string;
+  vendor?: string | null;
+  date?: string | null;
+  tax?: number;
+  paymentMethod?: string;
+  lineItems?: Array<{ description: string; amount: number }>;
+};
+
+type UpdateReceiptPayload = Partial<ReceiptRecord>;
+
 const apiBaseUrl =
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api/v1' : '/api/v1');
@@ -87,7 +117,7 @@ apiClient.interceptors.response.use(
 export const gmailReceiptsApi = {
   getReceipt: (id: string) => apiClient.get(`/integrations/gmail/receipts/${id}`),
 
-  updateReceiptParsedData: (id: string, data: any) =>
+  updateReceiptParsedData: (id: string, data: GmailReceiptParsedDataUpdate) =>
     apiClient.patch(`/integrations/gmail/receipts/${id}/parsed-data`, data),
 
   markDuplicate: (id: string, originalId: string) =>
@@ -115,10 +145,10 @@ export const gmailReceiptsApi = {
     categoryId?: string;
   }) => apiClient.get('/integrations/gmail/receipts', { params }),
 
-  approveReceipt: (id: string, data: any) =>
+  approveReceipt: (id: string, data: ApproveReceiptPayload) =>
     apiClient.post(`/integrations/gmail/receipts/${id}/approve`, data),
 
-  updateReceipt: (id: string, data: any) =>
+  updateReceipt: (id: string, data: UpdateReceiptPayload) =>
     apiClient.patch(`/integrations/gmail/receipts/${id}`, data),
 
   getStatus: () => apiClient.get('/integrations/gmail/status'),

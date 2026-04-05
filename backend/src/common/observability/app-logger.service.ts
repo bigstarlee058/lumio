@@ -3,6 +3,7 @@ import type { LogLevel, LoggerService } from '@nestjs/common';
 import { RequestContext } from './request-context';
 
 type Level = 'error' | 'warn' | 'log' | 'debug' | 'verbose';
+type LoggerMessage = Parameters<LoggerService['log']>[0];
 
 const levelToSeverity: Record<Level, 'error' | 'warn' | 'info' | 'debug' | 'trace'> = {
   error: 'error',
@@ -36,23 +37,23 @@ export class AppLogger implements LoggerService {
     this.logLevels = levels;
   }
 
-  log(message: any, context?: string): void {
+  log(message: LoggerMessage, context?: string): void {
     this.write('log', message, context);
   }
 
-  error(message: any, trace?: string, context?: string): void {
+  error(message: LoggerMessage, trace?: string, context?: string): void {
     this.write('error', message, context, trace);
   }
 
-  warn(message: any, context?: string): void {
+  warn(message: LoggerMessage, context?: string): void {
     this.write('warn', message, context);
   }
 
-  debug(message: any, context?: string): void {
+  debug(message: LoggerMessage, context?: string): void {
     this.write('debug', message, context);
   }
 
-  verbose(message: any, context?: string): void {
+  verbose(message: LoggerMessage, context?: string): void {
     this.write('verbose', message, context);
   }
 
@@ -61,7 +62,7 @@ export class AppLogger implements LoggerService {
     return levelPriority[level] >= levelPriority[this.minLevel];
   }
 
-  private write(level: Level, message: any, context?: string, trace?: string): void {
+  private write(level: Level, message: LoggerMessage, context?: string, trace?: string): void {
     if (!this.shouldLog(level)) return;
 
     const store = RequestContext.get();
@@ -76,11 +77,11 @@ export class AppLogger implements LoggerService {
       context,
     };
 
-    const payload =
+    const payload: Record<string, unknown> =
       message && typeof message === 'object' ? { ...base, ...message } : { ...base, message };
 
     if (trace) {
-      (payload as any).trace = trace;
+      payload.trace = trace;
     }
 
     const line = JSON.stringify(payload);

@@ -23,8 +23,8 @@ import {
   resolveSourceChannel,
   sortAggregateRows,
 } from '@/app/(main)/statements/components/top-merchants.utils';
-import { Spinner } from '@/app/components/ui/spinner';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
@@ -122,6 +122,37 @@ type MerchantRecord = StatementFilterItem & {
   paymentPurpose?: string | null;
   workspaceId?: string;
   workspaceName?: string;
+};
+
+const getRecord = (value: unknown): Record<string, unknown> | null => {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+};
+
+const getNestedValue = (source: unknown, path: string[]): unknown => {
+  let current: unknown = source;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) {
+      return undefined;
+    }
+    current = record[segment];
+  }
+
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string): string => {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (value && typeof value === 'object' && 'value' in value) {
+    const tokenValue = (value as { value?: unknown }).value;
+    if (typeof tokenValue === 'string') {
+      return tokenValue;
+    }
+  }
+  return fallback;
 };
 
 const STORAGE_KEY = 'lumio-top-merchants-filters';
@@ -284,132 +315,113 @@ export default function TopMerchantsView() {
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
   const [filtersDrawerOpen, setFiltersDrawerOpen] = useState(false);
-
-  const resolveLabel = (value: any, fallback: string) => value?.value ?? value ?? fallback;
+  const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
 
   const labels = {
-    title: resolveLabel((t as any)?.topMerchants?.title, 'Top merchants'),
-    subtitle: resolveLabel(
-      (t as any)?.topMerchants?.subtitle,
+    title: tx(['topMerchants', 'title'], 'Top merchants'),
+    subtitle: tx(
+      ['topMerchants', 'subtitle'],
       'Spending analytics by merchants and counterparties with Submit filters.',
     ),
-    searchPlaceholder: resolveLabel(
-      (t as any)?.topMerchants?.searchPlaceholder,
+    searchPlaceholder: tx(
+      ['topMerchants', 'searchPlaceholder'],
       'Search by merchant, sender or subject',
     ),
-    totalSpend: resolveLabel((t as any)?.topMerchants?.totalSpend, 'Total spend'),
-    statementsSpend: resolveLabel((t as any)?.topMerchants?.statementsSpend, 'Statements'),
-    receiptsSpend: resolveLabel((t as any)?.topMerchants?.receiptsSpend, 'Receipts'),
-    totalOperations: resolveLabel((t as any)?.topMerchants?.totalOperations, 'Operations'),
-    topMerchants: resolveLabel((t as any)?.topMerchants?.topMerchants, 'Top merchants'),
-    topIncomeSenders: resolveLabel(
-      (t as any)?.topMerchants?.topIncomeSenders,
-      'Top income senders',
-    ),
-    sourceSplit: resolveLabel((t as any)?.topMerchants?.sourceSplit, 'Source split'),
-    spendTrend: resolveLabel((t as any)?.topMerchants?.spendTrend, 'Spending trend'),
-    incomeTrend: resolveLabel((t as any)?.topMerchants?.incomeTrend, 'Income trend'),
-    leaderboard: resolveLabel((t as any)?.topMerchants?.leaderboard, 'Top merchants list'),
-    incomeLeaderboard: resolveLabel(
-      (t as any)?.topMerchants?.incomeLeaderboard,
-      'Top income senders list',
-    ),
-    totalIncome: resolveLabel((t as any)?.topMerchants?.totalIncome, 'Total income'),
-    tabSpenders: resolveLabel((t as any)?.topMerchants?.tabSpenders, 'Top merchants'),
-    tabIncomeSenders: resolveLabel(
-      (t as any)?.topMerchants?.tabIncomeSenders,
-      'Top income senders',
-    ),
-    noData: resolveLabel((t as any)?.topMerchants?.noData, 'No data for selected filters'),
-    source: resolveLabel((t as any)?.topMerchants?.source, 'Source'),
-    merchant: resolveLabel((t as any)?.topMerchants?.merchant, 'Merchant'),
-    amount: resolveLabel((t as any)?.topMerchants?.amount, 'Amount'),
-    operations: resolveLabel((t as any)?.topMerchants?.operations, 'Operations'),
-    average: resolveLabel((t as any)?.topMerchants?.average, 'Average'),
-    lastOperation: resolveLabel((t as any)?.topMerchants?.lastOperation, 'Last operation'),
-    sourceStatement: resolveLabel((t as any)?.topMerchants?.sourceStatement, 'Statement'),
-    sourceGmail: resolveLabel((t as any)?.topMerchants?.sourceGmail, 'Receipt'),
-    sourceBank: resolveLabel((t as any)?.topMerchants?.sourceBank, 'Bank'),
-    sourceReceipt: resolveLabel((t as any)?.topMerchants?.sourceReceipt, 'Receipt'),
-    sourceGmailInbox: resolveLabel((t as any)?.topMerchants?.sourceGmailInbox, 'Gmail'),
-    workspace: resolveLabel((t as any)?.topMerchants?.workspace, 'Workspace'),
-    allWorkspaces: resolveLabel((t as any)?.topMerchants?.allWorkspaces, 'All workspaces'),
-    currentWorkspace: resolveLabel((t as any)?.topMerchants?.currentWorkspace, 'Current workspace'),
-    sortByAmount: resolveLabel((t as any)?.topMerchants?.sortByAmount, 'Sort by amount'),
-    sortByAverage: resolveLabel((t as any)?.topMerchants?.sortByAverage, 'Sort by average'),
-    sortByOperations: resolveLabel(
-      (t as any)?.topMerchants?.sortByOperations,
-      'Sort by operations',
-    ),
-    vsPreviousPeriod: resolveLabel(
-      (t as any)?.topMerchants?.vsPreviousPeriod,
-      'vs previous period',
-    ),
-    comparisonNoData: resolveLabel(
-      (t as any)?.topMerchants?.comparisonNoData,
-      'No previous period data',
-    ),
-    drillDown: resolveLabel((t as any)?.topMerchants?.drillDown, 'Drill-down'),
-    close: resolveLabel((t as any)?.common?.close, 'Close'),
-    noOperations: resolveLabel((t as any)?.topMerchants?.noOperations, 'No operations found'),
-    filters: resolveLabel((t as any)?.filters?.filters, 'Filters'),
-    type: resolveLabel((t as any)?.filters?.type, 'Type'),
-    status: resolveLabel((t as any)?.filters?.status, 'Status'),
-    date: resolveLabel((t as any)?.filters?.date, 'Date'),
-    from: resolveLabel((t as any)?.filters?.from, 'From'),
-    apply: resolveLabel((t as any)?.filters?.apply, 'Apply'),
-    reset: resolveLabel((t as any)?.filters?.reset, 'Reset'),
+    totalSpend: tx(['topMerchants', 'totalSpend'], 'Total spend'),
+    statementsSpend: tx(['topMerchants', 'statementsSpend'], 'Statements'),
+    receiptsSpend: tx(['topMerchants', 'receiptsSpend'], 'Receipts'),
+    totalOperations: tx(['topMerchants', 'totalOperations'], 'Operations'),
+    topMerchants: tx(['topMerchants', 'topMerchants'], 'Top merchants'),
+    topIncomeSenders: tx(['topMerchants', 'topIncomeSenders'], 'Top income senders'),
+    sourceSplit: tx(['topMerchants', 'sourceSplit'], 'Source split'),
+    spendTrend: tx(['topMerchants', 'spendTrend'], 'Spending trend'),
+    incomeTrend: tx(['topMerchants', 'incomeTrend'], 'Income trend'),
+    leaderboard: tx(['topMerchants', 'leaderboard'], 'Top merchants list'),
+    incomeLeaderboard: tx(['topMerchants', 'incomeLeaderboard'], 'Top income senders list'),
+    totalIncome: tx(['topMerchants', 'totalIncome'], 'Total income'),
+    tabSpenders: tx(['topMerchants', 'tabSpenders'], 'Top merchants'),
+    tabIncomeSenders: tx(['topMerchants', 'tabIncomeSenders'], 'Top income senders'),
+    noData: tx(['topMerchants', 'noData'], 'No data for selected filters'),
+    source: tx(['topMerchants', 'source'], 'Source'),
+    merchant: tx(['topMerchants', 'merchant'], 'Merchant'),
+    amount: tx(['topMerchants', 'amount'], 'Amount'),
+    operations: tx(['topMerchants', 'operations'], 'Operations'),
+    average: tx(['topMerchants', 'average'], 'Average'),
+    lastOperation: tx(['topMerchants', 'lastOperation'], 'Last operation'),
+    sourceStatement: tx(['topMerchants', 'sourceStatement'], 'Statement'),
+    sourceGmail: tx(['topMerchants', 'sourceGmail'], 'Receipt'),
+    sourceBank: tx(['topMerchants', 'sourceBank'], 'Bank'),
+    sourceReceipt: tx(['topMerchants', 'sourceReceipt'], 'Receipt'),
+    sourceGmailInbox: tx(['topMerchants', 'sourceGmailInbox'], 'Gmail'),
+    workspace: tx(['topMerchants', 'workspace'], 'Workspace'),
+    allWorkspaces: tx(['topMerchants', 'allWorkspaces'], 'All workspaces'),
+    currentWorkspace: tx(['topMerchants', 'currentWorkspace'], 'Current workspace'),
+    sortByAmount: tx(['topMerchants', 'sortByAmount'], 'Sort by amount'),
+    sortByAverage: tx(['topMerchants', 'sortByAverage'], 'Sort by average'),
+    sortByOperations: tx(['topMerchants', 'sortByOperations'], 'Sort by operations'),
+    vsPreviousPeriod: tx(['topMerchants', 'vsPreviousPeriod'], 'vs previous period'),
+    comparisonNoData: tx(['topMerchants', 'comparisonNoData'], 'No previous period data'),
+    drillDown: tx(['topMerchants', 'drillDown'], 'Drill-down'),
+    close: tx(['common', 'close'], 'Close'),
+    noOperations: tx(['topMerchants', 'noOperations'], 'No operations found'),
+    filters: tx(['filters', 'filters'], 'Filters'),
+    type: tx(['filters', 'type'], 'Type'),
+    status: tx(['filters', 'status'], 'Status'),
+    date: tx(['filters', 'date'], 'Date'),
+    from: tx(['filters', 'from'], 'From'),
+    apply: tx(['filters', 'apply'], 'Apply'),
+    reset: tx(['filters', 'reset'], 'Reset'),
   };
 
   const filterOptionLabels = {
-    apply: resolveLabel((t as any)?.filters?.apply, 'Apply'),
-    reset: resolveLabel((t as any)?.filters?.reset, 'Reset'),
-    resetFilters: resolveLabel((t as any)?.filters?.resetFilters, 'Reset filters'),
-    viewResults: resolveLabel((t as any)?.filters?.viewResults, 'View results'),
-    saveSearch: resolveLabel((t as any)?.filters?.saveSearch, 'Save search'),
-    any: resolveLabel((t as any)?.filters?.any, 'Any'),
-    yes: resolveLabel((t as any)?.filters?.yes, 'Yes'),
-    no: resolveLabel((t as any)?.filters?.no, 'No'),
-    typeExpense: resolveLabel((t as any)?.filters?.typeExpense, 'Expense'),
-    typeReport: resolveLabel((t as any)?.filters?.typeReport, 'Expense Report'),
-    typeChat: resolveLabel((t as any)?.filters?.typeChat, 'Chat'),
-    typeTrip: resolveLabel((t as any)?.filters?.typeTrip, 'Trip'),
-    typeTask: resolveLabel((t as any)?.filters?.typeTask, 'Task'),
-    statusUnreported: resolveLabel((t as any)?.filters?.statusUnreported, 'Unreported'),
-    statusDraft: resolveLabel((t as any)?.filters?.statusDraft, 'Draft'),
-    statusOutstanding: resolveLabel((t as any)?.filters?.statusOutstanding, 'Outstanding'),
-    statusApproved: resolveLabel((t as any)?.filters?.statusApproved, 'Approved'),
-    statusPaid: resolveLabel((t as any)?.filters?.statusPaid, 'Paid'),
-    statusDone: resolveLabel((t as any)?.filters?.statusDone, 'Done'),
-    dateThisMonth: resolveLabel((t as any)?.filters?.dateThisMonth, 'This month'),
-    dateLastMonth: resolveLabel((t as any)?.filters?.dateLastMonth, 'Last month'),
-    dateYearToDate: resolveLabel((t as any)?.filters?.dateYearToDate, 'Year to date'),
-    dateOn: resolveLabel((t as any)?.filters?.dateOn, 'On'),
-    dateAfter: resolveLabel((t as any)?.filters?.dateAfter, 'After'),
-    dateBefore: resolveLabel((t as any)?.filters?.dateBefore, 'Before'),
-    drawerTitle: resolveLabel((t as any)?.filters?.drawerTitle, 'Filters'),
-    drawerGeneral: resolveLabel((t as any)?.filters?.drawerGeneral, 'General'),
-    drawerExpenses: resolveLabel((t as any)?.filters?.drawerExpenses, 'Expenses'),
-    drawerReports: resolveLabel((t as any)?.filters?.drawerReports, 'Reports'),
-    drawerGroupBy: resolveLabel((t as any)?.filters?.drawerGroupBy, 'Group by'),
-    drawerHas: resolveLabel((t as any)?.filters?.drawerHas, 'Has'),
-    drawerKeywords: resolveLabel((t as any)?.filters?.drawerKeywords, 'Keywords'),
-    drawerLimit: resolveLabel((t as any)?.filters?.drawerLimit, 'Limit'),
-    drawerTo: resolveLabel((t as any)?.filters?.drawerTo, 'To'),
-    drawerAmount: resolveLabel((t as any)?.filters?.drawerAmount, 'Amount'),
-    drawerApproved: resolveLabel((t as any)?.filters?.drawerApproved, 'Approved'),
-    drawerBillable: resolveLabel((t as any)?.filters?.drawerBillable, 'Billable'),
-    groupByDate: resolveLabel((t as any)?.filters?.groupByDate, 'Date'),
-    groupByStatus: resolveLabel((t as any)?.filters?.groupByStatus, 'Status'),
-    groupByType: resolveLabel((t as any)?.filters?.groupByType, 'Type'),
-    groupByBank: resolveLabel((t as any)?.filters?.groupByBank, 'Bank'),
-    groupByUser: resolveLabel((t as any)?.filters?.groupByUser, 'User'),
-    groupByAmount: resolveLabel((t as any)?.filters?.groupByAmount, 'Amount'),
-    hasErrors: resolveLabel((t as any)?.filters?.hasErrors, 'Errors'),
-    hasLogs: resolveLabel((t as any)?.filters?.hasLogs, 'Logs'),
-    hasTransactions: resolveLabel((t as any)?.filters?.hasTransactions, 'Transactions'),
-    hasDateRange: resolveLabel((t as any)?.filters?.hasDateRange, 'Date range'),
-    hasCurrency: resolveLabel((t as any)?.filters?.hasCurrency, 'Currency'),
+    apply: tx(['filters', 'apply'], 'Apply'),
+    reset: tx(['filters', 'reset'], 'Reset'),
+    resetFilters: tx(['filters', 'resetFilters'], 'Reset filters'),
+    viewResults: tx(['filters', 'viewResults'], 'View results'),
+    saveSearch: tx(['filters', 'saveSearch'], 'Save search'),
+    any: tx(['filters', 'any'], 'Any'),
+    yes: tx(['filters', 'yes'], 'Yes'),
+    no: tx(['filters', 'no'], 'No'),
+    typeExpense: tx(['filters', 'typeExpense'], 'Expense'),
+    typeReport: tx(['filters', 'typeReport'], 'Expense Report'),
+    typeChat: tx(['filters', 'typeChat'], 'Chat'),
+    typeTrip: tx(['filters', 'typeTrip'], 'Trip'),
+    typeTask: tx(['filters', 'typeTask'], 'Task'),
+    statusUnreported: tx(['filters', 'statusUnreported'], 'Unreported'),
+    statusDraft: tx(['filters', 'statusDraft'], 'Draft'),
+    statusOutstanding: tx(['filters', 'statusOutstanding'], 'Outstanding'),
+    statusApproved: tx(['filters', 'statusApproved'], 'Approved'),
+    statusPaid: tx(['filters', 'statusPaid'], 'Paid'),
+    statusDone: tx(['filters', 'statusDone'], 'Done'),
+    dateThisMonth: tx(['filters', 'dateThisMonth'], 'This month'),
+    dateLastMonth: tx(['filters', 'dateLastMonth'], 'Last month'),
+    dateYearToDate: tx(['filters', 'dateYearToDate'], 'Year to date'),
+    dateOn: tx(['filters', 'dateOn'], 'On'),
+    dateAfter: tx(['filters', 'dateAfter'], 'After'),
+    dateBefore: tx(['filters', 'dateBefore'], 'Before'),
+    drawerTitle: tx(['filters', 'drawerTitle'], 'Filters'),
+    drawerGeneral: tx(['filters', 'drawerGeneral'], 'General'),
+    drawerExpenses: tx(['filters', 'drawerExpenses'], 'Expenses'),
+    drawerReports: tx(['filters', 'drawerReports'], 'Reports'),
+    drawerGroupBy: tx(['filters', 'drawerGroupBy'], 'Group by'),
+    drawerHas: tx(['filters', 'drawerHas'], 'Has'),
+    drawerKeywords: tx(['filters', 'drawerKeywords'], 'Keywords'),
+    drawerLimit: tx(['filters', 'drawerLimit'], 'Limit'),
+    drawerTo: tx(['filters', 'drawerTo'], 'To'),
+    drawerAmount: tx(['filters', 'drawerAmount'], 'Amount'),
+    drawerApproved: tx(['filters', 'drawerApproved'], 'Approved'),
+    drawerBillable: tx(['filters', 'drawerBillable'], 'Billable'),
+    groupByDate: tx(['filters', 'groupByDate'], 'Date'),
+    groupByStatus: tx(['filters', 'groupByStatus'], 'Status'),
+    groupByType: tx(['filters', 'groupByType'], 'Type'),
+    groupByBank: tx(['filters', 'groupByBank'], 'Bank'),
+    groupByUser: tx(['filters', 'groupByUser'], 'User'),
+    groupByAmount: tx(['filters', 'groupByAmount'], 'Amount'),
+    hasErrors: tx(['filters', 'hasErrors'], 'Errors'),
+    hasLogs: tx(['filters', 'hasLogs'], 'Logs'),
+    hasTransactions: tx(['filters', 'hasTransactions'], 'Transactions'),
+    hasDateRange: tx(['filters', 'hasDateRange'], 'Date range'),
+    hasCurrency: tx(['filters', 'hasCurrency'], 'Currency'),
   };
 
   const filterLinkClassName =
@@ -635,7 +647,7 @@ export default function TopMerchantsView() {
       } catch (error) {
         console.error('Failed to load top merchants data', error);
         if (isMounted) {
-          toast.error(resolveLabel((t as any)?.loadListError, 'Failed to load spending data'));
+          toast.error(tx(['loadListError'], 'Failed to load spending data'));
           setStatements([]);
           setTransactions([]);
           setGmailReceipts([]);
@@ -1399,7 +1411,7 @@ export default function TopMerchantsView() {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <Spinner size={80} className="text-primary" />
+            <Spinner className="h-20 w-20 text-primary" />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
           <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center text-sm text-gray-500">

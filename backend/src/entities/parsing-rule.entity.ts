@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { BankName } from './statement.entity';
 
+type JsonObject = Record<string, unknown>;
+
 @Entity('parsing_rules')
 export class ParsingRule {
   @PrimaryGeneratedColumn('uuid')
@@ -23,10 +25,10 @@ export class ParsingRule {
   formatVersion: string;
 
   @Column({ name: 'column_mappings', type: 'jsonb' })
-  columnMappings: Record<string, any>;
+  columnMappings: JsonObject;
 
   @Column({ name: 'validation_rules', type: 'jsonb' })
-  validationRules: Record<string, any>;
+  validationRules: JsonObject;
 
   @Column({ name: 'is_active', default: true })
   isActive: boolean;

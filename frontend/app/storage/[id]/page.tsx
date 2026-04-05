@@ -2,6 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { getApiErrorMessage, getApiErrorStatus } from '@/app/lib/api-error';
 import { resolveBankLogo } from '@bank-logos';
 import {
   ArrowLeft,
@@ -16,7 +17,9 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import PermissionsPanel from '../../components/PermissionsPanel';
 import ShareDialog from '../../components/ShareDialog';
-import TransactionsView from '../../components/TransactionsView';
+import TransactionsView, {
+  type Transaction as StatementTransaction,
+} from '../../components/TransactionsView';
 import api from '../../lib/api';
 
 type FileAvailabilityStatus = 'both' | 'disk' | 'db' | 'missing';
@@ -49,12 +52,41 @@ interface StatementDetails {
 
 interface FileDetails {
   statement: StatementDetails;
-  transactions: any[];
-  sharedLinks: any[];
-  permissions: any[];
+  transactions: StatementTransaction[];
+  sharedLinks: SharedLink[];
+  permissions: FilePermission[];
   isOwner: boolean;
   userPermission?: string;
   fileAvailability?: FileAvailability;
+}
+
+interface SharedLink {
+  id: string;
+  token: string;
+  permission: string;
+  expiresAt: string | null;
+  allowAnonymous: boolean;
+  description: string | null;
+  status: string;
+  accessCount: number;
+  createdAt: string;
+}
+
+interface FilePermission {
+  id: string;
+  user: {
+    id: string;
+    email: string;
+  };
+  grantedBy: {
+    id: string;
+    email: string;
+  };
+  permissionType: string;
+  canReshare: boolean;
+  expiresAt: string | null;
+  isActive: boolean;
+  createdAt: string;
 }
 
 const getBankDisplayName = (bankName: string) => {
@@ -168,14 +200,10 @@ export default function FileDetailsPage() {
       setPreviewUrl(url);
     } catch (error) {
       console.error('Failed to load file preview:', error);
-      const statusCode = (error as any)?.response?.status;
-      const backendMessage =
-        (error as any)?.response?.data?.error?.message || (error as any)?.response?.data?.message;
-
       const message =
-        statusCode === 404
+        getApiErrorStatus(error) === 404
           ? t.preview.unavailable.value
-          : backendMessage || t.toasts.previewFailed.value;
+          : getApiErrorMessage(error, t.toasts.previewFailed.value);
       setPreviewError(message);
       setPreviewUrl(null);
     } finally {

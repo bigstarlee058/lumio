@@ -12,17 +12,19 @@ import {
   ActorType,
   AuditAction,
   type AuditEventDiff,
+  type EntityType,
   Severity,
 } from '../../../entities/audit-event.entity';
+import type { AuthenticatedRequest } from '../../../common/interfaces/authenticated-request.interface';
 import { AuditService } from '../audit.service';
 import { AUDIT_METADATA_KEY, type AuditOptions } from '../decorators/audit.decorator';
 
 interface AuditMetadata extends AuditOptions {
-  entityType: string;
+  entityType: EntityType;
 }
 
 @Injectable()
-export class AuditInterceptor implements NestInterceptor {
+export class AuditInterceptor implements NestInterceptor<unknown, unknown> {
   private readonly logger = new Logger(AuditInterceptor.name);
 
   constructor(
@@ -30,7 +32,7 @@ export class AuditInterceptor implements NestInterceptor {
     private readonly auditService: AuditService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const metadata = this.reflector.getAllAndOverride<AuditMetadata>(AUDIT_METADATA_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -40,15 +42,7 @@ export class AuditInterceptor implements NestInterceptor {
       return next.handle();
     }
 
-    const request = context.switchToHttp().getRequest<{
-      method?: string;
-      params?: Record<string, string>;
-      body?: any;
-      user?: { id?: string };
-      workspace?: { id?: string };
-      headers?: Record<string, string | string[] | undefined>;
-      path?: string;
-    }>();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     const actorId = request.user?.id || null;
     const workspaceId = request.workspace?.id || (request.headers?.['x-workspace-id'] as string);
@@ -59,11 +53,14 @@ export class AuditInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap({
         next: response => {
+          const responseData =
+            typeof response === 'object' && response !== null && 'data' in response
+              ? response.data
+              : undefined;
+
           if (!action) return;
           const entityId =
-            entityIdFromParams ||
-            this.extractEntityId(response) ||
-            this.extractEntityId(response?.data);
+            entityIdFromParams || this.extractEntityId(response) || this.extractEntityId(responseData);
 
           if (!entityId) {
             this.logger.debug('Audit event skipped: entityId not resolved');
@@ -83,7 +80,7 @@ export class AuditInterceptor implements NestInterceptor {
               workspaceId: workspaceId || null,
               actorType: ActorType.USER,
               actorId,
-              entityType: metadata.entityType as any,
+              entityType: metadata.entityType,
               entityId,
               action,
               diff,
@@ -116,9 +113,9 @@ export class AuditInterceptor implements NestInterceptor {
     }
   }
 
-  private extractEntityId(payload: any): string | null {
+  private extractEntityId(payload: unknown): string | null {
     if (!payload || typeof payload !== 'object') return null;
-    if (typeof payload.id === 'string') return payload.id;
+    if ('id' in payload && typeof payload.id === 'string') return payload.id;
     return null;
   }
 }

@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+type ReceiptJobResult = Record<string, unknown> | null;
+
 export enum ReceiptJobStatus {
   PENDING = 'pending',
   PROCESSING = 'processing',
@@ -45,7 +47,7 @@ export class ReceiptProcessingJob {
   };
 
   @Column({ type: 'jsonb', nullable: true })
-  result: any;
+  result: ReceiptJobResult;
 
   @Column({ type: 'text', nullable: true })
   error: string | null;

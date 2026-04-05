@@ -25,6 +25,45 @@ export enum ImportSessionMode {
   COMMIT = 'commit',
 }
 
+export type ImportConflictMatchType =
+  | 'exact'
+  | 'fuzzy_date'
+  | 'fuzzy_amount'
+  | 'fuzzy_text'
+  | 'combined';
+
+export type ImportConflictRecommendedAction =
+  | 'keep_existing'
+  | 'replace'
+  | 'merge'
+  | 'manual_review';
+
+export type ImportConflictResolution = 'skip' | 'force_import' | 'mark_duplicate';
+
+export interface ImportSessionPreviewClassification {
+  index: number;
+  status: 'new' | 'matched' | 'conflicted' | 'skipped' | 'failed';
+  fingerprint?: string;
+  existingTransactionId?: string;
+  conflictConfidence?: number;
+  conflictMatchType?: ImportConflictMatchType;
+  conflictRecommendedAction?: ImportConflictRecommendedAction;
+  error?: string;
+  resolution?: ImportConflictResolution;
+}
+
+export interface ImportSessionRetryError {
+  message: string;
+  code: string;
+  timestamp: string;
+}
+
+export interface ImportSessionRetryHistoryItem {
+  attempt: number;
+  timestamp: string;
+  error: string;
+}
+
 export interface ImportSessionMetadata {
   totalTransactions: number;
   newCount: number;
@@ -39,6 +78,14 @@ export interface ImportSessionMetadata {
   }>;
   warnings: string[];
   errors: string[];
+  previewData?: {
+    classifications: ImportSessionPreviewClassification[];
+  };
+  retryCount?: number;
+  lastRetryAt?: string | null;
+  nextRetryAt?: string | null;
+  lastError?: ImportSessionRetryError | null;
+  retryHistory?: ImportSessionRetryHistoryItem[];
 }
 
 @Entity('import_sessions')

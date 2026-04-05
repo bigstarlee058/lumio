@@ -24,8 +24,41 @@ import { EditableNumberCell } from './components/cells/EditableNumberCell';
 import { EditableSelectCell } from './components/cells/EditableSelectCell';
 import { EditableTextCell } from './components/cells/EditableTextCell';
 import { EditableHeader } from './components/headers/EditableHeader';
-import type { CustomTableColumn, CustomTableGridRow } from './utils/stylingUtils';
+import type {
+  CustomTableCellValue,
+  CustomTableColumn,
+  CustomTableGridRow,
+  CustomTableRowStyles,
+} from './utils/stylingUtils';
 import { getCellStyle, getRowStyle } from './utils/stylingUtils';
+
+const getTranslationValue = (root: unknown, path: string[], fallback = ''): string => {
+  let current: unknown = root;
+
+  for (const segment of path) {
+    if (typeof current !== 'object' || current === null || !(segment in current)) {
+      return fallback;
+    }
+
+    current = (current as Record<string, unknown>)[segment];
+  }
+
+  if (typeof current === 'string') {
+    return current;
+  }
+
+  if (typeof current === 'object' && current !== null && 'value' in current) {
+    const value = (current as { value?: unknown }).value;
+    return typeof value === 'string' ? value : fallback;
+  }
+
+  return fallback;
+};
+
+const getBackgroundColor = (style: CSSProperties): string | undefined => {
+  const backgroundColor = style.backgroundColor;
+  return typeof backgroundColor === 'string' ? backgroundColor : undefined;
+};
 
 interface CustomTableTanStackProps {
   tableId: string;
@@ -41,8 +74,8 @@ interface CustomTableTanStackProps {
   showAddRow?: boolean;
   onLoadMore: (opts?: { reset?: boolean; filtersParam?: string }) => void;
   onFiltersParamChange: (filtersParam: string | undefined) => void;
-  onUpdateCell: (rowId: string, columnKey: string, value: any) => Promise<void>;
-  onUpdateRowStyle: (rowId: string, styles: Record<string, any>) => Promise<void>;
+  onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
+  onUpdateRowStyle: (rowId: string, styles: CustomTableRowStyles) => Promise<void>;
 
   onCreateRow?: () => Promise<CustomTableGridRow | null>;
   onViewRow?: (rowId: string) => void;
@@ -194,6 +227,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
     // Add data columns
     for (const col of orderedColumns) {
       const baseStyle = col.style?.cell || {};
+      const icon = typeof col.config?.icon === 'string' ? col.config.icon : null;
 
       cols.push({
         id: col.key,
@@ -202,7 +236,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
             column={column}
             table={table}
             title={col.title}
-            icon={col.config?.icon}
+            icon={icon}
             onRename={props.onRenameColumnTitle}
             onDelete={props.onDeleteColumn}
           />
@@ -215,7 +249,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           const cellProps = {
             row: row,
             column: column,
-            table: table as any,
+            table,
             cellType: col.type,
             onUpdateCell: props.onUpdateCell,
           };
@@ -259,7 +293,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       id: '__actions',
       header: () => (
         <div className="text-center font-semibold text-gray-600">
-          {(t as any).actions.actionsHeader.value}
+          {getTranslationValue(t, ['actions', 'actionsHeader'], 'Actions')}
         </div>
       ),
       size: 120,
@@ -280,7 +314,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
             onClick={() => props.onDeleteRow(row.original.id)}
             type="button"
             className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
-            title={(t as any).actions.delete.value}
+            title={getTranslationValue(t, ['actions', 'delete'], 'Delete')}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -390,6 +424,10 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       }
 
       if (column.type === 'date') {
+        if (typeof raw !== 'string' && typeof raw !== 'number') {
+          return String(raw);
+        }
+
         const date = new Date(raw);
         if (Number.isNaN(date.getTime())) {
           return String(raw);
@@ -548,9 +586,9 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
   }, [resizingColumnId, props.onPersistColumnWidth, table]);
 
   if (isMobile) {
-    const viewLabel = (t as any).actions.view?.value || 'View';
-    const editLabel = (t as any).actions.edit?.value || 'Edit';
-    const deleteLabel = (t as any).actions.delete?.value || 'Delete';
+    const viewLabel = getTranslationValue(t, ['actions', 'view'], 'View');
+    const editLabel = getTranslationValue(t, ['actions', 'edit'], 'Edit');
+    const deleteLabel = getTranslationValue(t, ['actions', 'delete'], 'Delete');
 
     return (
       <div className={`custom-table-container ${isDark ? 'dark' : ''}`}>
@@ -583,7 +621,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                 className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-primary hover:text-primary"
               >
                 <Plus className="h-3.5 w-3.5" />
-                {(t as any).grid.addRowLabel.value}
+                {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             ) : null}
           </div>
@@ -667,8 +705,10 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           {!props.loadingRows && props.rows.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-gray-500">
               <GripVertical className="mb-4 h-12 w-12 opacity-20" />
-              <p className="text-lg font-medium">{(t as any).grid.emptyTitle.value}</p>
-              <p className="text-sm">{(t as any).grid.emptySubtitle.value}</p>
+              <p className="text-lg font-medium">
+                {getTranslationValue(t, ['grid', 'emptyTitle'], 'No rows yet')}
+              </p>
+              <p className="text-sm">{getTranslationValue(t, ['grid', 'emptySubtitle'], '')}</p>
             </div>
           )}
 
@@ -680,7 +720,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                 className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-primary hover:text-primary"
               >
                 <Plus className="h-4 w-4" />
-                {(t as any).grid.addRowLabel.value}
+                {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             </div>
           )}
@@ -728,36 +768,34 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
             vertical: 'top',
             horizontal: 'right',
           }}
-          slotProps={
-            {
-              paper: {
-                sx: {
-                  p: 1.5,
-                  mt: 1,
-                  borderRadius: '16px',
-                  border: '1px solid',
+          slotProps={{
+            paper: {
+              sx: {
+                p: 1.5,
+                mt: 1,
+                borderRadius: '16px',
+                border: '1px solid',
+                borderColor: 'divider',
+                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+                overflow: 'visible',
+                '&::before': {
+                  content: '""',
+                  display: 'block',
+                  position: 'absolute',
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: 'background.paper',
+                  transform: 'translateY(-50%) rotate(45deg)',
+                  zIndex: 0,
+                  borderLeft: '1px solid',
+                  borderTop: '1px solid',
                   borderColor: 'divider',
-                  boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-                  overflow: 'visible',
-                  '&::before': {
-                    content: '""',
-                    display: 'block',
-                    position: 'absolute',
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: 'background.paper',
-                    transform: 'translateY(-50%) rotate(45deg)',
-                    zIndex: 0,
-                    borderLeft: '1px solid',
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                  },
                 },
               },
-            } as any
-          }
+            },
+          }}
         >
           <HexColorPicker
             color={colorPickerValue}
@@ -836,7 +874,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
             {props.isPrintMode
               ? table.getRowModel().rows.map(row => {
                   const rowStyle = getRowStyle(row.original);
-                  const rowBackground = (rowStyle as any).backgroundColor as string | undefined;
+                  const rowBackground = getBackgroundColor(rowStyle);
                   const hasRowFill = Boolean(rowBackground);
 
                   return (
@@ -871,7 +909,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   if (!row) return null;
 
                   const rowStyle = getRowStyle(row.original);
-                  const rowBackground = (rowStyle as any).backgroundColor as string | undefined;
+                  const rowBackground = getBackgroundColor(rowStyle);
                   const hasRowFill = Boolean(rowBackground);
 
                   return (
@@ -933,7 +971,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                 className="flex items-center gap-2 rounded-full border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary shadow-sm"
               >
                 <Plus className="h-4 w-4" />
-                {(t as any).grid.addRowLabel.value}
+                {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             </div>
           </div>
@@ -951,8 +989,10 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
         {!props.loadingRows && props.rows.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-gray-500">
             <GripVertical className="h-12 w-12 mb-4 opacity-20" />
-            <p className="text-lg font-medium">{(t as any).grid.emptyTitle.value}</p>
-            <p className="text-sm">{(t as any).grid.emptySubtitle.value}</p>
+            <p className="text-lg font-medium">
+              {getTranslationValue(t, ['grid', 'emptyTitle'], 'No rows yet')}
+            </p>
+            <p className="text-sm">{getTranslationValue(t, ['grid', 'emptySubtitle'], '')}</p>
           </div>
         )}
       </div>

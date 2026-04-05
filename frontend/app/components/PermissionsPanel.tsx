@@ -60,6 +60,12 @@ interface PermissionsPanelProps {
   onPermissionsUpdate: () => void;
 }
 
+const getApiMessage = (error: unknown, fallback: string) => {
+  if (!error || typeof error !== 'object') return fallback;
+  const response = (error as { response?: { data?: { error?: { message?: string } } } }).response;
+  return response?.data?.error?.message || fallback;
+};
+
 /**
  * Panel for managing file permissions and access control
  */
@@ -109,8 +115,8 @@ export default function PermissionsPanel({
 
       // Reload permissions
       onPermissionsUpdate();
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.grantFailed.value);
+    } catch (err: unknown) {
+      setError(getApiMessage(err, t.errors.grantFailed.value));
     } finally {
       setGranting(false);
     }
@@ -132,8 +138,8 @@ export default function PermissionsPanel({
       setEditDialogOpen(false);
       setSelectedPermission(null);
       onPermissionsUpdate();
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t.errors.updateFailed.value);
+    } catch (err: unknown) {
+      setError(getApiMessage(err, t.errors.updateFailed.value));
     } finally {
       setGranting(false);
     }

@@ -54,12 +54,33 @@ export interface ControlTotal {
   reliability: number;
 }
 
+interface ControlTotalPatternGroup {
+  type: ControlTotal['type'];
+  patterns: RegExp[];
+  priority: number;
+}
+
+interface CalculatedTotals {
+  totalDebit: number;
+  totalCredit: number;
+  transactionCount: number;
+  averageAmount: number;
+  maxAmount: number;
+  minAmount: number;
+  zeroAmountCount: number;
+  currencyDistribution: Map<string, number>;
+}
+
 @Injectable()
 export class ChecksumAutoFixService {
   private readonly logger = new Logger(ChecksumAutoFixService.name);
 
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
   // Patterns for extracting control totals from text
-  private readonly controlTotalPatterns = [
+  private readonly controlTotalPatterns: ControlTotalPatternGroup[] = [
     // Russian patterns
     {
       type: 'debit_total',
@@ -179,17 +200,8 @@ export class ChecksumAutoFixService {
     };
   }
 
-  private calculateTransactionTotals(transactions: ParsedTransaction[]): {
-    totalDebit: number;
-    totalCredit: number;
-    transactionCount: number;
-    averageAmount: number;
-    maxAmount: number;
-    minAmount: number;
-    zeroAmountCount: number;
-    currencyDistribution: Map<string, number>;
-  } {
-    const totals = {
+  private calculateTransactionTotals(transactions: ParsedTransaction[]): CalculatedTotals {
+    const totals: CalculatedTotals = {
       totalDebit: 0,
       totalCredit: 0,
       transactionCount: transactions.length,
@@ -286,7 +298,7 @@ export class ChecksumAutoFixService {
           if (amount && amount > 0) {
             controlTotals.push({
               label: match[0].trim(),
-              type: patternGroup.type as any,
+              type: patternGroup.type,
               expectedValue: amount,
               source: 'extracted',
               reliability: 0.8,
@@ -318,7 +330,7 @@ export class ChecksumAutoFixService {
   }
 
   private compareWithControlTotals(
-    calculatedTotals: any,
+    calculatedTotals: CalculatedTotals,
     controlTotals: ControlTotal[],
   ): { discrepancies: ChecksumDiscrepancy[] } {
     const discrepancies: ChecksumDiscrepancy[] = [];
@@ -423,7 +435,7 @@ export class ChecksumAutoFixService {
     transactions: ParsedTransaction[],
     metadata: ParsedStatementMetadata | undefined,
     discrepancy: ChecksumDiscrepancy,
-    calculatedTotals: any,
+    calculatedTotals: CalculatedTotals,
   ): Promise<{
     success: boolean;
     correctedData?: ParsedTransaction[];
@@ -468,8 +480,9 @@ export class ChecksumAutoFixService {
           break;
       }
     } catch (error) {
-      this.logger.warn(`Auto-fix failed for ${discrepancy.type}: ${error.message}`);
-      reasoning = `Auto-fix failed: ${error.message}`;
+      const message = this.getErrorMessage(error);
+      this.logger.warn(`Auto-fix failed for ${discrepancy.type}: ${message}`);
+      reasoning = `Auto-fix failed: ${message}`;
     }
 
     const autoFix: AutoFix = {
@@ -534,7 +547,7 @@ export class ChecksumAutoFixService {
   private async applyAdvancedFixes(
     transactions: ParsedTransaction[],
     metadata: ParsedStatementMetadata | undefined,
-    calculatedTotals: any,
+    calculatedTotals: CalculatedTotals,
   ): Promise<{ data: ParsedTransaction[]; fixes: AutoFix[] }> {
     const fixes: AutoFix[] = [];
     let correctedData = [...transactions];
@@ -821,9 +834,9 @@ export class ChecksumAutoFixService {
   }
 
   // Public method to add custom control total patterns
-  addControlTotalPattern(type: string, patterns: RegExp[], priority = 1): void {
+  addControlTotalPattern(type: ControlTotal['type'], patterns: RegExp[], priority = 1): void {
     this.controlTotalPatterns.push({
-      type: type as any,
+      type,
       patterns,
       priority,
     });
@@ -831,7 +844,7 @@ export class ChecksumAutoFixService {
   }
 
   // Public method to get current patterns
-  getControlTotalPatterns(): any[] {
+  getControlTotalPatterns(): ControlTotalPatternGroup[] {
     return [...this.controlTotalPatterns];
   }
 }

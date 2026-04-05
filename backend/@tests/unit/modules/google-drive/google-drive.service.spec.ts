@@ -1,11 +1,38 @@
+import type { FileStorageService } from '@/common/services/file-storage.service';
 import type { DriveSettings } from '@/entities/drive-settings.entity';
-import { IntegrationProvider, IntegrationStatus, type Integration } from '@/entities/integration.entity';
 import type { IntegrationToken } from '@/entities/integration-token.entity';
+import {
+  type Integration,
+  IntegrationProvider,
+  IntegrationStatus,
+} from '@/entities/integration.entity';
 import type { Statement } from '@/entities/statement.entity';
 import type { User } from '@/entities/user.entity';
+import type { AuditService } from '@/modules/audit/audit.service';
 import { GoogleDriveService } from '@/modules/google-drive/google-drive.service';
+import type { StatementsService } from '@/modules/statements/statements.service';
+import type { Repository } from 'typeorm';
 
-function createRepoMock<T>() {
+type RepoMock<T> = {
+  findOne: jest.Mock;
+  find: jest.Mock;
+  save: jest.Mock<Promise<T>, [Partial<T>]>;
+  create: jest.Mock<T, [Partial<T>]>;
+  delete: jest.Mock;
+  createQueryBuilder: jest.Mock;
+};
+
+type GoogleDriveClientMock = {
+  files: {
+    get: jest.Mock;
+  };
+};
+
+type GoogleDriveServicePrivate = {
+  getDriveClient: (integration: Integration) => Promise<GoogleDriveClientMock>;
+};
+
+function createRepoMock<T>(): RepoMock<T> {
   return {
     findOne: jest.fn(),
     find: jest.fn(),
@@ -13,7 +40,7 @@ function createRepoMock<T>() {
     create: jest.fn((data: Partial<T>) => data as T),
     delete: jest.fn(),
     createQueryBuilder: jest.fn(),
-  } as any;
+  };
 }
 
 describe('GoogleDriveService', () => {
@@ -22,9 +49,9 @@ describe('GoogleDriveService', () => {
   const driveSettingsRepository = createRepoMock<DriveSettings>();
   const statementRepository = createRepoMock<Statement>();
   const userRepository = createRepoMock<User>();
-  const statementsService = { create: jest.fn() } as any;
-  const fileStorageService = { getStatementFileStream: jest.fn() } as any;
-  const auditService = { createEvent: jest.fn() } as any;
+  const statementsService = { create: jest.fn() };
+  const fileStorageService = { getStatementFileStream: jest.fn() };
+  const auditService = { createEvent: jest.fn() };
 
   let service: GoogleDriveService;
 
@@ -35,14 +62,14 @@ describe('GoogleDriveService', () => {
     process.env.GOOGLE_DRIVE_REDIRECT_URI = 'https://app.example.com/api/google-drive/callback';
 
     service = new GoogleDriveService(
-      integrationRepository,
-      integrationTokenRepository,
-      driveSettingsRepository,
-      statementRepository,
-      userRepository,
-      statementsService,
-      fileStorageService,
-      auditService,
+      integrationRepository as unknown as Repository<Integration>,
+      integrationTokenRepository as unknown as Repository<IntegrationToken>,
+      driveSettingsRepository as unknown as Repository<DriveSettings>,
+      statementRepository as unknown as Repository<Statement>,
+      userRepository as unknown as Repository<User>,
+      statementsService as unknown as StatementsService,
+      fileStorageService as unknown as FileStorageService,
+      auditService as unknown as AuditService,
     );
   });
 
@@ -58,18 +85,20 @@ describe('GoogleDriveService', () => {
       driveSettings: null,
     });
 
-    jest.spyOn(service as any, 'getDriveClient').mockResolvedValue({
-      files: {
-        get: jest.fn().mockResolvedValue({
-          data: {
-            id: 'file-1',
-            name: 'notes.txt',
-            mimeType: 'text/plain',
-            size: '128',
-          },
-        }),
-      },
-    });
+    jest
+      .spyOn(service as unknown as GoogleDriveServicePrivate, 'getDriveClient')
+      .mockResolvedValue({
+        files: {
+          get: jest.fn().mockResolvedValue({
+            data: {
+              id: 'file-1',
+              name: 'notes.txt',
+              mimeType: 'text/plain',
+              size: '128',
+            },
+          }),
+        },
+      });
 
     await expect(service.importFiles('user-1', { fileIds: ['file-1'] })).resolves.toEqual({
       ok: true,
@@ -96,18 +125,20 @@ describe('GoogleDriveService', () => {
       driveSettings: null,
     });
 
-    jest.spyOn(service as any, 'getDriveClient').mockResolvedValue({
-      files: {
-        get: jest.fn().mockResolvedValue({
-          data: {
-            id: 'file-1',
-            name: 'statement.pdf',
-            mimeType: 'application/pdf',
-            size: String(11 * 1024 * 1024),
-          },
-        }),
-      },
-    });
+    jest
+      .spyOn(service as unknown as GoogleDriveServicePrivate, 'getDriveClient')
+      .mockResolvedValue({
+        files: {
+          get: jest.fn().mockResolvedValue({
+            data: {
+              id: 'file-1',
+              name: 'statement.pdf',
+              mimeType: 'application/pdf',
+              size: String(11 * 1024 * 1024),
+            },
+          }),
+        },
+      });
 
     await expect(service.importFiles('user-1', { fileIds: ['file-1'] })).resolves.toEqual({
       ok: true,
@@ -121,5 +152,4 @@ describe('GoogleDriveService', () => {
     });
     expect(statementsService.create).not.toHaveBeenCalled();
   });
-
 });

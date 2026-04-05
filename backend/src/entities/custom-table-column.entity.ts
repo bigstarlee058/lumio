@@ -10,6 +10,8 @@ import {
 } from 'typeorm';
 import { CustomTable } from './custom-table.entity';
 
+type JsonObject = Record<string, unknown>;
+
 export enum CustomTableColumnType {
   TEXT = 'text',
   NUMBER = 'number',
@@ -58,7 +60,7 @@ export class CustomTableColumn {
   position: number;
 
   @Column({ name: 'config', type: 'jsonb', nullable: true })
-  config: Record<string, any> | null;
+  config: JsonObject | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

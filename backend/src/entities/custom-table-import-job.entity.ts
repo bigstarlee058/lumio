@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+type JsonObject = Record<string, unknown>;
+
 export enum CustomTableImportJobType {
   GOOGLE_SHEETS = 'google_sheets',
 }
@@ -42,10 +44,10 @@ export class CustomTableImportJob {
   stage: string | null;
 
   @Column({ name: 'payload', type: 'jsonb', default: () => "'{}'::jsonb" })
-  payload: Record<string, any>;
+  payload: JsonObject;
 
   @Column({ name: 'result', type: 'jsonb', nullable: true })
-  result: Record<string, any> | null;
+  result: JsonObject | null;
 
   @Column({ name: 'error', type: 'text', nullable: true })
   error: string | null;

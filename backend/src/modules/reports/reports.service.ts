@@ -106,6 +106,26 @@ interface WorkspaceTransactionExportRow {
   comments: string;
 }
 
+interface CustomReportExportRow {
+  Группа: string;
+  Дата: string | null;
+  Контрагент: string;
+  Сумма: number;
+  Категория: string;
+  Филиал: string;
+  Кошелёк: string;
+}
+
+interface PdfMakeLike {
+  vfs?: unknown;
+  createPdf(docDefinition: unknown): { getBuffer(callback: (buffer: Uint8Array) => void): void };
+}
+
+interface PdfFontsLike {
+  pdfMake?: { vfs?: unknown };
+  vfs?: unknown;
+}
+
 export interface CustomTablesReportRow {
   counterparty: string;
   source: 'manual' | 'google_sheets_import';
@@ -168,6 +188,30 @@ export interface CustomTablesReportDrillDownResponse {
 @Injectable()
 export class ReportsService {
   private readonly logger = new Logger(ReportsService.name);
+
+  private toParsableDateInput(value: unknown): string | number | Date | null {
+    if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+      return value;
+    }
+
+    return null;
+  }
+
+  private toPdfMakeModule(module: unknown): PdfMakeLike {
+    const candidate =
+      typeof module === 'object' && module !== null && 'default' in module
+        ? (module as { default: unknown }).default
+        : module;
+    return candidate as PdfMakeLike;
+  }
+
+  private toPdfFontsModule(module: unknown): PdfFontsLike {
+    const candidate =
+      typeof module === 'object' && module !== null && 'default' in module
+        ? (module as { default: unknown }).default
+        : module;
+    return candidate as PdfFontsLike;
+  }
 
   private emptyCustomTablesReportResponse(): CustomTablesReportResponse {
     return {
@@ -289,7 +333,12 @@ export class ReportsService {
     }
 
     try {
-      const parsed = new Date(value as any);
+      const dateInput = this.toParsableDateInput(value);
+      if (dateInput === null) {
+        return null;
+      }
+
+      const parsed = new Date(dateInput);
       return Number.isNaN(parsed.getTime()) ? null : parsed;
     } catch {
       return null;
@@ -305,7 +354,12 @@ export class ReportsService {
       return value.toISOString().split('T')[0];
     }
     try {
-      const asDate = new Date(value as any);
+      const dateInput = this.toParsableDateInput(value);
+      if (dateInput === null) {
+        return new Date().toISOString().split('T')[0];
+      }
+
+      const asDate = new Date(dateInput);
       if (!Number.isNaN(asDate.getTime())) {
         return asDate.toISOString().split('T')[0];
       }
@@ -1768,8 +1822,8 @@ export class ReportsService {
     const summaryRows = this.buildWorkspaceSummaryRows(rows);
     const pdfMakeModule = await import('pdfmake/build/pdfmake');
     const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
-    const pdfMake = (pdfMakeModule as any).default || pdfMakeModule;
-    const pdfFonts = (pdfFontsModule as any).default || pdfFontsModule;
+    const pdfMake = this.toPdfMakeModule(pdfMakeModule);
+    const pdfFonts = this.toPdfFontsModule(pdfFontsModule);
 
     pdfMake.vfs = pdfFonts.pdfMake?.vfs || pdfFonts.vfs;
 
@@ -1963,7 +2017,7 @@ export class ReportsService {
     } else {
       // Custom report
       const customData = reportData as CustomReport;
-      const rows: any[] = [];
+      const rows: CustomReportExportRow[] = [];
       customData.groups.forEach(group => {
         group.transactions.forEach(t => {
           rows.push({
@@ -2080,7 +2134,7 @@ export class ReportsService {
     transactions.forEach(t => {
       const amount = Number(t.amount || 0);
       const abs = Math.abs(amount);
-      const dateKey = this.toDateKey(t.transactionDate as any);
+      const dateKey = this.toDateKey(t.transactionDate);
       const ts = timeseriesMap.get(dateKey) || { income: 0, expense: 0 };
 
       if (t.transactionType === TransactionType.INCOME) {

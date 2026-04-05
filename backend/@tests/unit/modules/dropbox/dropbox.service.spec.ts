@@ -1,11 +1,37 @@
+import type { FileStorageService } from '@/common/services/file-storage.service';
 import type { DropboxSettings } from '@/entities/dropbox-settings.entity';
-import { IntegrationProvider, IntegrationStatus, type Integration } from '@/entities/integration.entity';
 import type { IntegrationToken } from '@/entities/integration-token.entity';
+import {
+  type Integration,
+  IntegrationProvider,
+  IntegrationStatus,
+} from '@/entities/integration.entity';
 import type { Statement } from '@/entities/statement.entity';
 import type { User } from '@/entities/user.entity';
+import type { AuditService } from '@/modules/audit/audit.service';
 import { DropboxService } from '@/modules/dropbox/dropbox.service';
+import type { StatementsService } from '@/modules/statements/statements.service';
+import type { Repository } from 'typeorm';
 
-function createRepoMock<T>() {
+type RepoMock<T> = {
+  findOne: jest.Mock;
+  find: jest.Mock;
+  save: jest.Mock<Promise<T>, [Partial<T>]>;
+  create: jest.Mock<T, [Partial<T>]>;
+  delete: jest.Mock;
+  createQueryBuilder: jest.Mock;
+};
+
+type DropboxClientMock = {
+  filesGetMetadata: jest.Mock;
+  filesDownload?: jest.Mock;
+};
+
+type DropboxServicePrivate = {
+  getDropboxClientWithAuth: (integration: Integration) => Promise<DropboxClientMock>;
+};
+
+function createRepoMock<T>(): RepoMock<T> {
   return {
     findOne: jest.fn(),
     find: jest.fn(),
@@ -13,7 +39,7 @@ function createRepoMock<T>() {
     create: jest.fn((data: Partial<T>) => data as T),
     delete: jest.fn(),
     createQueryBuilder: jest.fn(),
-  } as any;
+  };
 }
 
 describe('DropboxService', () => {
@@ -22,9 +48,9 @@ describe('DropboxService', () => {
   const dropboxSettingsRepository = createRepoMock<DropboxSettings>();
   const statementRepository = createRepoMock<Statement>();
   const userRepository = createRepoMock<User>();
-  const statementsService = { create: jest.fn() } as any;
-  const fileStorageService = { getStatementFileStream: jest.fn() } as any;
-  const auditService = { createEvent: jest.fn() } as any;
+  const statementsService = { create: jest.fn() };
+  const fileStorageService = { getStatementFileStream: jest.fn() };
+  const auditService = { createEvent: jest.fn() };
 
   let service: DropboxService;
 
@@ -34,14 +60,14 @@ describe('DropboxService', () => {
     process.env.DROPBOX_CLIENT_SECRET = 'dropbox-client-secret';
 
     service = new DropboxService(
-      integrationRepository,
-      integrationTokenRepository,
-      dropboxSettingsRepository,
-      statementRepository,
-      userRepository,
-      statementsService,
-      fileStorageService,
-      auditService,
+      integrationRepository as unknown as Repository<Integration>,
+      integrationTokenRepository as unknown as Repository<IntegrationToken>,
+      dropboxSettingsRepository as unknown as Repository<DropboxSettings>,
+      statementRepository as unknown as Repository<Statement>,
+      userRepository as unknown as Repository<User>,
+      statementsService as unknown as StatementsService,
+      fileStorageService as unknown as FileStorageService,
+      auditService as unknown as AuditService,
     );
   });
 
@@ -57,15 +83,17 @@ describe('DropboxService', () => {
       dropboxSettings: null,
     });
 
-    jest.spyOn(service as any, 'getDropboxClientWithAuth').mockResolvedValue({
-      filesGetMetadata: jest.fn().mockResolvedValue({
-        result: {
-          '.tag': 'file',
-          name: 'notes.txt',
-          size: 128,
-        },
-      }),
-    });
+    jest
+      .spyOn(service as unknown as DropboxServicePrivate, 'getDropboxClientWithAuth')
+      .mockResolvedValue({
+        filesGetMetadata: jest.fn().mockResolvedValue({
+          result: {
+            '.tag': 'file',
+            name: 'notes.txt',
+            size: 128,
+          },
+        }),
+      });
 
     await expect(service.importFiles('user-1', { fileIds: ['file-1'] })).resolves.toEqual({
       ok: true,
@@ -92,15 +120,17 @@ describe('DropboxService', () => {
       dropboxSettings: null,
     });
 
-    jest.spyOn(service as any, 'getDropboxClientWithAuth').mockResolvedValue({
-      filesGetMetadata: jest.fn().mockResolvedValue({
-        result: {
-          '.tag': 'file',
-          name: 'statement.pdf',
-          size: 11 * 1024 * 1024,
-        },
-      }),
-    });
+    jest
+      .spyOn(service as unknown as DropboxServicePrivate, 'getDropboxClientWithAuth')
+      .mockResolvedValue({
+        filesGetMetadata: jest.fn().mockResolvedValue({
+          result: {
+            '.tag': 'file',
+            name: 'statement.pdf',
+            size: 11 * 1024 * 1024,
+          },
+        }),
+      });
 
     await expect(service.importFiles('user-1', { fileIds: ['file-1'] })).resolves.toEqual({
       ok: true,
@@ -139,10 +169,12 @@ describe('DropboxService', () => {
         fileBinary: Buffer.from('pdf-data'),
       },
     });
-    jest.spyOn(service as any, 'getDropboxClientWithAuth').mockResolvedValue({
-      filesGetMetadata,
-      filesDownload,
-    });
+    jest
+      .spyOn(service as unknown as DropboxServicePrivate, 'getDropboxClientWithAuth')
+      .mockResolvedValue({
+        filesGetMetadata,
+        filesDownload,
+      });
 
     await expect(service.importFiles('user-1', { fileIds: ['file-1'] })).resolves.toEqual({
       ok: true,

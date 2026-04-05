@@ -149,7 +149,7 @@ export class ClassificationService {
     return classification;
   }
 
-  private matchesRule(transaction: Transaction, conditions: ClassificationCondition[]): boolean {
+  matchesRule(transaction: Transaction, conditions: ClassificationCondition[]): boolean {
     return conditions.every(condition => {
       const fieldValue = this.getFieldValue(transaction, condition.field);
       return this.evaluateCondition(fieldValue, condition);
@@ -327,13 +327,16 @@ export class ClassificationService {
     userId: string,
     workspaceId: string | null = null,
   ): Promise<Category | null> {
-    if (typeof (this.categoryRepository as any).createQueryBuilder !== 'function') {
+    const categoryRepository = this.categoryRepository as Partial<
+      Pick<Repository<Category>, 'createQueryBuilder'>
+    >;
+    if (typeof categoryRepository.createQueryBuilder !== 'function') {
       // In unit tests repositories are shallow mocks without query builder; skip lookup.
       return null;
     }
     // Find most common category for this counterparty
     // Note: transactions don't have userId, they're linked via statement->user
-    const query = this.categoryRepository
+    const query = categoryRepository
       .createQueryBuilder('category')
       .innerJoin('category.transactions', 'transaction')
       .innerJoin('transaction.statement', 'statement')
@@ -942,16 +945,18 @@ export class ClassificationService {
       await this.categoryLearningRepository.save(existing);
     } else {
       // Create new learning entry
-      await this.categoryLearningRepository.save({
-        userId,
-        workspaceId,
-        categoryId: newCategoryId,
-        paymentPurpose: transaction.paymentPurpose || '',
-        counterpartyName: transaction.counterpartyName || null,
-        learnedFrom: 'manual_correction',
-        confidence: 1.0,
-        occurrences: 1,
-      } as any);
+      await this.categoryLearningRepository.save(
+        this.categoryLearningRepository.create({
+          userId,
+          workspaceId,
+          categoryId: newCategoryId,
+          paymentPurpose: transaction.paymentPurpose || '',
+          counterpartyName: transaction.counterpartyName || null,
+          learnedFrom: 'manual_correction',
+          confidence: 1.0,
+          occurrences: 1,
+        }),
+      );
     }
 
     // Invalidate learned patterns cache for this user
@@ -1038,16 +1043,18 @@ export class ClassificationService {
         existing.learnedFrom = 'ai_classification';
         await this.categoryLearningRepository.save(existing);
       } else {
-        await this.categoryLearningRepository.save({
-          userId,
-          workspaceId,
-          categoryId: match.categoryId,
-          paymentPurpose,
-          counterpartyName,
-          learnedFrom: 'ai_classification',
-          confidence: Number(match.confidence),
-          occurrences: 1,
-        } as CategoryLearning);
+        await this.categoryLearningRepository.save(
+          this.categoryLearningRepository.create({
+            userId,
+            workspaceId,
+            categoryId: match.categoryId,
+            paymentPurpose,
+            counterpartyName,
+            learnedFrom: 'ai_classification',
+            confidence: Number(match.confidence),
+            occurrences: 1,
+          }),
+        );
       }
 
       await this.cacheManager.del(this.getLearnedPatternsCacheKey(userId, workspaceId));

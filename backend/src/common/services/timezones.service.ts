@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
+type IntlWithSupportedValuesOf = typeof Intl & {
+  supportedValuesOf?: (key: 'timeZone') => string[];
+};
+
 @Injectable()
 export class TimezonesService {
   listTimeZones(): { value: string; label: string }[] {
     try {
+      const intlWithSupportedValuesOf = Intl as IntlWithSupportedValuesOf;
+
       // Check if supportedValuesOf is available (Node 18+)
-      if (typeof (Intl as any).supportedValuesOf !== 'function') {
+      if (typeof intlWithSupportedValuesOf.supportedValuesOf !== 'function') {
         return [{ value: 'UTC', label: '(GMT+00:00) UTC' }];
       }
 
-      return (Intl as any).supportedValuesOf('timeZone').map(tz => {
+      return intlWithSupportedValuesOf.supportedValuesOf('timeZone').map(tz => {
         const offset = new Intl.DateTimeFormat('en-US', {
           timeZone: tz,
           timeZoneName: 'longOffset',

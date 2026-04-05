@@ -51,6 +51,11 @@ export class UsersController {
     private readonly timezonesService: TimezonesService,
   ) {}
 
+  private toSafeUser(user: User): Omit<User, 'passwordHash'> {
+    const { passwordHash, ...safeUser } = user;
+    return safeUser;
+  }
+
   @Get()
   @UseGuards(PermissionsGuard)
   @RequirePermission(Permission.USER_VIEW_ALL)
@@ -74,7 +79,7 @@ export class UsersController {
   @Patch('me/onboarding')
   async completeOnboarding(@CurrentUser() currentUser: User, @Body() dto: CompleteOnboardingDto) {
     const updatedUser = await this.usersService.completeOnboarding(currentUser.id, dto);
-    const { passwordHash, ...safeUser } = updatedUser as any;
+    const safeUser = this.toSafeUser(updatedUser);
     return { user: safeUser, message: 'Onboarding completed successfully' };
   }
 
@@ -209,7 +214,7 @@ export class UsersController {
   @Patch('me/preferences')
   async updateMyPreferences(@CurrentUser() currentUser: User, @Body() dto: UpdateMyPreferencesDto) {
     const updatedUser = await this.usersService.updateMyPreferences(currentUser.id, dto);
-    const { passwordHash, ...safeUser } = updatedUser as any;
+    const safeUser = this.toSafeUser(updatedUser);
     return { user: safeUser, message: 'Profile updated successfully' };
   }
 
@@ -249,7 +254,7 @@ export class UsersController {
 
     const url = `/api/v1/users/avatars/${encodeURIComponent(file.filename)}`;
     const updatedUser = await this.usersService.updateMyAvatar(currentUser.id, url);
-    const { passwordHash, ...safeUser } = updatedUser as any;
+    const safeUser = this.toSafeUser(updatedUser);
     return { user: safeUser, avatarUrl: url };
   }
 }

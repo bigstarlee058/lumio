@@ -4,6 +4,7 @@ import * as path from 'path';
 import { FileStorageService } from '../src/common/services/file-storage.service';
 import { AppDataSource } from '../src/data-source';
 import { Statement } from '../src/entities/statement.entity';
+import type { Repository } from 'typeorm';
 
 interface VerifyResult {
   id: string;
@@ -22,7 +23,7 @@ async function run() {
 
   await AppDataSource.initialize();
   const statementRepo = AppDataSource.getRepository(Statement);
-  const storage = new FileStorageService(statementRepo as any);
+  const storage = new FileStorageService(statementRepo as unknown as Repository<Statement>);
 
   const qb = statementRepo.createQueryBuilder('statement').orderBy('statement.createdAt', 'DESC');
   if (limit && Number.isFinite(limit)) {

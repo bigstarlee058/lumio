@@ -81,9 +81,32 @@ type TransactionListItem = {
   credit?: number | string | null;
 };
 
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') return value;
+  const record = getRecord(value);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
+
 export default function StatementsSidePanel({ activeItem }: Props) {
   const router = useRouter();
   const t = useIntlayer('statementsPage');
+  const tx = useCallback(
+    (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
+    [t],
+  );
   const { user } = useAuth();
   const { currentWorkspace } = useWorkspace();
   const [counts, setCounts] = useState({
@@ -215,7 +238,9 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           ? topCategoriesResponse.data.categories
           : [];
         const customTablesResponse = await apiClient.get('/custom-tables');
-        const customTables = Array.isArray(customTablesResponse.data) ? customTablesResponse.data : [];
+        const customTables = Array.isArray(customTablesResponse.data)
+          ? customTablesResponse.data
+          : [];
 
         if (isMounted) {
           setCounts({
@@ -420,10 +445,10 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   }, [connectedCloudProviders.gmailConnected, navigateToSubmit, router]);
 
   const sidePanelConfig = useMemo<SidePanelPageConfig>(() => {
-    const workQueueTitle =
-      (t as any)?.sidePanel?.workQueueTitle?.value ??
-      (t as any)?.sidePanel?.todoTitle?.value ??
-      'Work queue';
+    const workQueueTitle = tx(
+      ['sidePanel', 'workQueueTitle'],
+      tx(['sidePanel', 'todoTitle'], 'Work queue'),
+    );
     const getQueueBadgeVariant = (count: number) => (count > 0 ? 'primary' : 'default');
 
     return {
@@ -439,7 +464,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           items: [
             {
               id: 'submit',
-              label: (t as any)?.sidePanel?.submit?.value ?? 'Submit',
+              label: tx(['sidePanel', 'submit'], 'Submit'),
               icon: Send,
               badge: counts.submit,
               badgeLoading: countsLoading,
@@ -450,7 +475,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'approve',
-              label: (t as any)?.sidePanel?.approve?.value ?? 'Approve',
+              label: tx(['sidePanel', 'approve'], 'Approve'),
               icon: ThumbsUp,
               badge: counts.approve,
               badgeLoading: countsLoading,
@@ -461,7 +486,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'pay',
-              label: (t as any)?.sidePanel?.pay?.value ?? 'Pay',
+              label: tx(['sidePanel', 'pay'], 'Pay'),
               icon: Banknote,
               badge: payCount,
               badgeLoading: payCountLoading,
@@ -475,12 +500,12 @@ export default function StatementsSidePanel({ activeItem }: Props) {
         {
           id: 'accounting',
           type: 'navigation',
-          title: (t as any)?.sidePanel?.accountingTitle?.value ?? 'Accounting',
+          title: tx(['sidePanel', 'accountingTitle'], 'Accounting'),
           titleClassName: 'text-[13px] font-medium text-gray-400 dark:text-gray-500',
           items: [
             {
               id: 'unapproved-cash',
-              label: (t as any)?.sidePanel?.unapprovedCash?.value ?? 'Unapproved cash',
+              label: tx(['sidePanel', 'unapprovedCash'], 'Unapproved cash'),
               icon: <UnpublishedIcon sx={{ fontSize: 20 }} />,
               badge: counts.unapprovedCash,
               badgeLoading: countsLoading,
@@ -494,12 +519,12 @@ export default function StatementsSidePanel({ activeItem }: Props) {
         {
           id: 'insights',
           type: 'navigation',
-          title: (t as any)?.sidePanel?.insightsTitle?.value ?? 'Insights',
+          title: tx(['sidePanel', 'insightsTitle'], 'Insights'),
           titleClassName: 'text-[13px] font-medium text-gray-400 dark:text-gray-500',
           items: [
             {
               id: 'spend-over-time',
-              label: (t as any)?.sidePanel?.spendOverTime?.value ?? 'Spend over time',
+              label: tx(['sidePanel', 'spendOverTime'], 'Spend over time'),
               icon: CalendarRange,
               emphasis: 'low',
               href: '/statements/spend-over-time',
@@ -507,7 +532,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'top-spenders',
-              label: (t as any)?.sidePanel?.topSpenders?.value ?? 'Top spenders',
+              label: tx(['sidePanel', 'topSpenders'], 'Top spenders'),
               icon: User,
               badge: topSenders.length,
               badgeLoading: countsLoading,
@@ -518,7 +543,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'top-merchants',
-              label: (t as any)?.sidePanel?.topMerchants?.value ?? 'Top merchants',
+              label: tx(['sidePanel', 'topMerchants'], 'Top merchants'),
               icon: <PointOfSaleIcon sx={{ fontSize: 20 }} />,
               badge: topMerchantsCount,
               badgeLoading: countsLoading,
@@ -529,7 +554,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'top-categories',
-              label: (t as any)?.sidePanel?.topCategories?.value ?? 'Top categories',
+              label: tx(['sidePanel', 'topCategories'], 'Top categories'),
               icon: Folder,
               badge: topCategoriesCount,
               badgeLoading: countsLoading,
@@ -540,7 +565,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             },
             {
               id: 'tables-reports',
-              label: (t as any)?.sidePanel?.tablesReports?.value ?? 'Tables reports',
+              label: tx(['sidePanel', 'tablesReports'], 'Tables reports'),
               icon: <TableChartOutlinedIcon sx={{ fontSize: 20 }} />,
               badge: tablesReportsCount,
               badgeLoading: countsLoading,
@@ -565,7 +590,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
       },
     };
   }, [
-    t,
+    tx,
     activeItem,
     counts,
     payCount,

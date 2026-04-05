@@ -1,10 +1,12 @@
 import { IsObject, IsOptional } from 'class-validator';
 
+type JsonObject = Record<string, unknown>;
+
 export class UpdateCustomTableRowDto {
   @IsObject()
-  data: Record<string, any>;
+  data: JsonObject;
 
   @IsOptional()
   @IsObject()
-  styles?: Record<string, any>;
+  styles?: JsonObject;
 }

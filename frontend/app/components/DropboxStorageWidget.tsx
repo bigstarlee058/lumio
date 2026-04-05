@@ -24,6 +24,11 @@ type DropboxStatus = {
   settings?: DropboxSettings | null;
 };
 
+type DropboxImportResult = {
+  status?: 'ok' | 'error';
+  fileId?: string;
+};
+
 const MIME_TYPES = [
   'application/pdf',
   'text/csv',
@@ -104,9 +109,11 @@ export function DropboxStorageWidget({ locale }: { locale?: string }) {
       if (!docs.length) return;
       const fileIds = docs.map(doc => doc.id);
       const importResp = await apiClient.post('/integrations/dropbox/import', { fileIds });
-      const results = importResp.data?.results || [];
-      const successCount = results.filter((item: any) => item.status === 'ok').length;
-      const failed = results.filter((item: any) => item.status === 'error');
+      const results: DropboxImportResult[] = Array.isArray(importResp.data?.results)
+        ? importResp.data.results
+        : [];
+      const successCount = results.filter(item => item.status === 'ok').length;
+      const failed = results.filter(item => item.status === 'error');
       if (successCount > 0) {
         toast.success(
           t.dropboxSync?.toasts?.imported?.value?.replace('{count}', String(successCount)) ||
@@ -115,7 +122,7 @@ export function DropboxStorageWidget({ locale }: { locale?: string }) {
       }
       if (failed.length > 0) {
         const names = docs
-          .filter(doc => failed.find((f: any) => f.fileId === doc.id))
+          .filter(doc => failed.some(failure => failure.fileId === doc.id))
           .map(doc => getChooserDocName(doc))
           .filter(Boolean)
           .join(', ');

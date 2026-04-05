@@ -1,5 +1,15 @@
 import apiClient from '@/app/lib/api';
 
+export type AuditJsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | AuditJsonObject
+  | AuditJsonValue[];
+
+export type AuditJsonObject = { [key: string]: AuditJsonValue };
+
 export type ActorType = 'user' | 'system' | 'integration';
 export type EntityType =
   | 'transaction'
@@ -32,14 +42,14 @@ export type AuditAction =
 export type Severity = 'info' | 'warn' | 'critical';
 
 export type BeforeAfterDiff = {
-  before: Record<string, any> | null;
-  after: Record<string, any> | null;
+  before: AuditJsonObject | null;
+  after: AuditJsonObject | null;
 };
 
 export type PatchOperation = {
   op: 'add' | 'remove' | 'replace' | 'move' | 'copy' | 'test';
   path: string;
-  value?: any;
+  value?: AuditJsonValue;
   from?: string;
 };
 
@@ -60,8 +70,19 @@ export interface AuditEventMeta {
   };
   rollbackOf?: string;
   originalAction?: AuditAction;
-  [key: string]: any;
+  [key: string]: AuditJsonValue | undefined;
 }
+
+type ApiErrorLike = {
+  response?: {
+    status?: number;
+  };
+};
+
+const isForbiddenApiError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  (error as ApiErrorLike).response?.status === 403;
 
 export interface AuditEvent {
   id: string;
@@ -126,8 +147,8 @@ export const fetchEntityHistory = async (
       `/audit-events/entity/${entityType}/${entityId}`,
     );
     return response.data;
-  } catch (error: any) {
-    if (error?.response?.status === 403) {
+  } catch (error: unknown) {
+    if (isForbiddenApiError(error)) {
       return [];
     }
     throw error;

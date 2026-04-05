@@ -28,6 +28,17 @@ export class UsersService {
     private readonly workspacesService: WorkspacesService,
   ) {}
 
+  private getUserFindAllOptions(workspaceId?: string | number, limit = 20) {
+    return {
+      where:
+        workspaceId !== undefined && workspaceId !== null
+          ? ({ deletedAt: null, workspaceId: String(workspaceId) } as const)
+          : ({ deletedAt: null } as const),
+      take: limit,
+      order: { createdAt: 'DESC' as const },
+    };
+  }
+
   private async findOneWithPassword(id: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
@@ -63,16 +74,21 @@ export class UsersService {
   }
 
   async findAll(workspaceId?: string | number, limit = 20): Promise<User[]> {
-    const where: any = { deletedAt: null };
-    if (workspaceId !== undefined && workspaceId !== null) {
-      where.workspaceId = String(workspaceId);
+    if (typeof this.userRepository.createQueryBuilder === 'function') {
+      const query = this.userRepository
+        .createQueryBuilder('user')
+        .where('user.deletedAt IS NULL')
+        .orderBy('user.createdAt', 'DESC')
+        .take(limit);
+
+      if (workspaceId !== undefined && workspaceId !== null) {
+        query.andWhere('user.workspaceId = :workspaceId', { workspaceId: String(workspaceId) });
+      }
+
+      return query.getMany();
     }
 
-    return this.userRepository.find({
-      where,
-      take: limit,
-      order: { createdAt: 'DESC' },
-    });
+    return this.userRepository.find(this.getUserFindAllOptions(workspaceId, limit));
   }
 
   async findOne(id: string): Promise<User> {

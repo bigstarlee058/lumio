@@ -58,6 +58,11 @@ export interface FeatureFlags {
   };
 }
 
+type MutableFlagGroup = Record<string, boolean>;
+
+const isMutableFlagGroup = (value: unknown): value is MutableFlagGroup =>
+  typeof value === 'object' && value !== null;
+
 @Injectable()
 export class FeatureFlagService {
   private readonly logger = new Logger(FeatureFlagService.name);
@@ -155,9 +160,10 @@ export class FeatureFlagService {
   /**
    * Update specific flag
    */
-  updateFlag(category: keyof FeatureFlags, flag: string, value: any): void {
-    if (this.flags[category] && typeof this.flags[category] === 'object') {
-      (this.flags[category] as any)[flag] = value;
+  updateFlag(category: keyof FeatureFlags, flag: string, value: boolean): void {
+    const group = this.flags[category];
+    if (isMutableFlagGroup(group)) {
+      group[flag] = value;
       this.logger.log(`Updated flag: ${category}.${flag} = ${value}`);
     }
   }
@@ -346,7 +352,7 @@ export class FeatureFlagService {
 
     // Check each feature category
     Object.entries(this.flags).forEach(([category, features]) => {
-      Object.entries(features as any).forEach(([feature, enabled]) => {
+      Object.entries(features).forEach(([feature, enabled]) => {
         const featureName = `${category}.${feature}`;
         if (enabled) {
           enabledFeatures.push(featureName);

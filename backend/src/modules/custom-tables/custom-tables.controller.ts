@@ -41,6 +41,8 @@ import { UpdateCustomTableRowDto } from './dto/update-custom-table-row.dto';
 import { UpdateCustomTableViewSettingsColumnDto } from './dto/update-custom-table-view-settings.dto';
 import { UpdateCustomTableDto } from './dto/update-custom-table.dto';
 
+type GoogleSheetsCommitJobPayload = GoogleSheetsImportCommitDto;
+
 @Controller('custom-tables')
 @UseGuards(JwtAuthGuard)
 export class CustomTablesController {
@@ -91,7 +93,10 @@ export class CustomTablesController {
     @WorkspaceId() workspaceId: string,
     @Body() dto: GoogleSheetsImportCommitDto,
   ) {
-    const job = await this.importJobsService.createGoogleSheetsJob(workspaceId, dto as any);
+    const job = await this.importJobsService.createGoogleSheetsJob(
+      workspaceId,
+      dto as GoogleSheetsCommitJobPayload,
+    );
     return { jobId: job.id };
   }
 

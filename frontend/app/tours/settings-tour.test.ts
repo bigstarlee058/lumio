@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createSettingsTour } from './settings-tour';
 
+type TourTextPayload = Parameters<typeof createSettingsTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -21,7 +23,7 @@ describe('createSettingsTour', () => {
   };
 
   it('uses the workspace overview route and current selector set', () => {
-    const tour = createSettingsTour(texts as any);
+    const tour = createSettingsTour(texts as TourTextPayload);
 
     expect(tour.page).toBe('/workspaces/overview');
     expect(tour.autoStart).toBe(false);
@@ -46,7 +48,7 @@ describe('createSettingsTour', () => {
       },
     };
 
-    const tour = createSettingsTour(legacyTexts as any);
+    const tour = createSettingsTour(legacyTexts as TourTextPayload);
 
     expect(tour.steps[1]?.title).toBe('Workspace Navigation');
     expect(tour.steps[2]?.title).toBe('Workspace Name');

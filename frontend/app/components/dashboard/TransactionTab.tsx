@@ -10,6 +10,15 @@ import type { Category, FilterState, Transaction } from '@/app/components/transa
 import { Spinner } from '@/app/components/ui/spinner';
 import api from '@/app/lib/api';
 
+type TransactionApiRecord = Partial<Transaction> & {
+  id: string;
+  transactionDate: string;
+  counterpartyName: string;
+  paymentPurpose: string;
+  debit?: number | null;
+  credit?: number | null;
+};
+
 export function TransactionTab() {
   const t = useIntlayer('transactionsPageView');
 
@@ -39,8 +48,11 @@ export function TransactionTab() {
         api.get('/categories'),
       ]);
 
-      const rawTransactions = txResponse.data.data || txResponse.data.items || [];
-      const transformedTransactions: Transaction[] = rawTransactions.map((tx: any) => ({
+      const rawTransactions =
+        (txResponse.data.data as TransactionApiRecord[] | undefined) ??
+        (txResponse.data.items as TransactionApiRecord[] | undefined) ??
+        [];
+      const transformedTransactions: Transaction[] = rawTransactions.map(tx => ({
         id: tx.id,
         transactionDate: tx.transactionDate,
         documentNumber: tx.documentNumber,

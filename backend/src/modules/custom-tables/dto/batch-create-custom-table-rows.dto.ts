@@ -9,9 +9,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+type JsonObject = Record<string, unknown>;
+
 class BatchRowItemDto {
   @IsObject()
-  data: Record<string, any>;
+  data: JsonObject;
 
   @IsOptional()
   @IsInt()

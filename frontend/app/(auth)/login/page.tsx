@@ -5,17 +5,10 @@ import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
-import { syncLocaleFromUser } from '@/app/lib/locale';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Link,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { syncLocaleFromUser } from '@/app/lib/locale';
+import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
@@ -105,10 +98,8 @@ function LoginPageContent() {
       } else {
         window.location.href = '/workspaces';
       }
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message || err.response?.data?.error?.message || t.loginFailed.value,
-      );
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.loginFailed.value));
     } finally {
       setLoading(false);
     }

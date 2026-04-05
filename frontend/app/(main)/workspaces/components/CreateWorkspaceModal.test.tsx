@@ -3,6 +3,18 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+type ButtonMockProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: React.ReactNode;
+  isDisabled?: boolean;
+};
+
+type FieldMockProps = {
+  label: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  placeholder?: string;
+};
+
 const postMock = vi.hoisted(() => vi.fn());
 const switchWorkspaceMock = vi.hoisted(() => vi.fn());
 const refreshWorkspacesMock = vi.hoisted(() => vi.fn());
@@ -47,18 +59,18 @@ vi.mock('@heroui/modal', () => ({
 }));
 
 vi.mock('@heroui/react', () => ({
-  Button: ({ children, onClick, isDisabled, type = 'button', ...props }: any) => (
+  Button: ({ children, onClick, isDisabled, type = 'button', ...props }: ButtonMockProps) => (
     <button type={type} onClick={onClick} disabled={isDisabled} {...props}>
       {children}
     </button>
   ),
-  Input: ({ label, value, onValueChange, placeholder }: any) => (
+  Input: ({ label, value, onValueChange, placeholder }: FieldMockProps) => (
     <label>
       <span>{label}</span>
       <input aria-label={label} value={value} placeholder={placeholder} onChange={e => onValueChange?.(e.target.value)} />
     </label>
   ),
-  Textarea: ({ label, value, onValueChange, placeholder }: any) => (
+  Textarea: ({ label, value, onValueChange, placeholder }: FieldMockProps) => (
     <label>
       <span>{label}</span>
       <textarea aria-label={label} value={value} placeholder={placeholder} onChange={e => onValueChange?.(e.target.value)} />

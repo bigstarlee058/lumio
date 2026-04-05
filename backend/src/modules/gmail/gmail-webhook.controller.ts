@@ -4,6 +4,15 @@ import { Public } from '../auth/decorators/public.decorator';
 import { GmailWebhookGuard } from './guards/gmail-webhook.guard';
 import { GmailWebhookService } from './services/gmail-webhook.service';
 
+interface GmailPubSubNotificationBody {
+  message: {
+    data: string;
+    messageId: string;
+    publishTime: string;
+  };
+  subscription: string;
+}
+
 @ApiTags('Gmail Webhook')
 @Controller('webhook/gmail')
 export class GmailWebhookController {
@@ -15,7 +24,7 @@ export class GmailWebhookController {
   @Post('pubsub')
   @UseGuards(GmailWebhookGuard)
   @ApiOperation({ summary: 'Receive Gmail Pub/Sub notifications' })
-  async handlePubSubNotification(@Body() body: any) {
+  async handlePubSubNotification(@Body() body: GmailPubSubNotificationBody) {
     try {
       this.logger.log('Received Pub/Sub notification');
 

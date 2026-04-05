@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { google } from 'googleapis';
+import type { gmail_v1 } from 'googleapis';
 import type { Repository } from 'typeorm';
 import {
   GmailSettings,
@@ -49,7 +50,7 @@ export class GmailWatchService {
       const topicName = this.getTopicName();
 
       // Set up watch request
-      const watchRequest: any = {
+      const watchRequest: gmail_v1.Params$Resource$Users$Watch = {
         userId: 'me',
         requestBody: {
           topicName,
@@ -165,9 +166,10 @@ export class GmailWatchService {
           for (const added of record.messagesAdded) {
             const message = added.message;
             const labelIds = message?.labelIds || [];
+            const messageId = message?.id;
 
             // Check if message has our receipt label
-            if (settings.labelId && labelIds.includes(settings.labelId)) {
+            if (settings.labelId && messageId && labelIds.includes(settings.labelId)) {
               // Create processing job
               await this.jobRepository.save(
                 this.jobRepository.create({
@@ -175,13 +177,13 @@ export class GmailWatchService {
                   status: ReceiptJobStatus.PENDING,
                   payload: {
                     integrationId: integration.id,
-                    gmailMessageId: message.id!,
+                    gmailMessageId: messageId,
                     historyId: newHistoryId,
                   },
                 }),
               );
 
-              this.logger.log(`Queued receipt processing for message ${message.id}`);
+              this.logger.log(`Queued receipt processing for message ${messageId}`);
             }
           }
         }

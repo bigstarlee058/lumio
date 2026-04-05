@@ -6,7 +6,16 @@ const pushMock = vi.fn();
 const startTourMock = vi.fn();
 const resetTourMock = vi.fn();
 
-const registeredTours = new Map<string, any>();
+type RegisteredTour = {
+  id: string;
+  name: string;
+  description: string;
+  page: string;
+  autoStart: boolean;
+  steps: Array<{ title: string; description: string; selector: string }>;
+};
+
+const registeredTours = new Map<string, RegisteredTour>();
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -36,7 +45,7 @@ vi.mock('@/app/i18n', () => ({
 
 vi.mock('../TourManager', () => ({
   getTourManager: () => ({
-    registerTour: (tour: any) => registeredTours.set(tour.id, tour),
+    registerTour: (tour: RegisteredTour) => registeredTours.set(tour.id, tour),
     getAllTours: () => Array.from(registeredTours.values()),
     isTourCompleted: () => false,
     resetTour: resetTourMock,

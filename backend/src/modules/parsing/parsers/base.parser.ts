@@ -8,6 +8,7 @@ import {
 } from '../../../common/utils/language-detector.util';
 import {
   detectFieldType,
+  type FieldType,
   getFieldSynonyms,
   getLanguagePatterns,
 } from '../../../common/utils/language-patterns.util';
@@ -224,8 +225,8 @@ export abstract class BaseParser implements IParser {
     return text;
   }
 
-  protected getSynonymsForField(language: string, fieldType: string): string[] {
-    return getFieldSynonyms(language, fieldType as any);
+  protected getSynonymsForField(language: string, fieldType: FieldType): string[] {
+    return getFieldSynonyms(language, fieldType);
   }
 
   protected getLanguagePatternsForProcessing(language: string) {

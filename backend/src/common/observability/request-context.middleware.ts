@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 import { RequestContext } from './request-context';
 
 const extractTraceIdFromTraceParent = (traceParent: string | undefined): string | null => {
@@ -21,8 +22,9 @@ export function requestContextMiddleware(req: Request, res: Response, next: Next
   res.setHeader('x-request-id', requestId);
   res.setHeader('x-trace-id', traceId);
 
-  (req as any).requestId = requestId;
-  (req as any).traceId = traceId;
+  const typedRequest = req as AuthenticatedRequest;
+  typedRequest.requestId = requestId;
+  typedRequest.traceId = traceId;
 
   return RequestContext.run({ requestId, traceId }, () => next());
 }

@@ -1,9 +1,23 @@
-import { pipeFileStreamResponse } from '@/common/utils/stream-response.util';
 import { buildContentDisposition } from '@/common/utils/http-file.util';
+import { pipeFileStreamResponse } from '@/common/utils/stream-response.util';
+
+type MockResponse = {
+  headersSent: boolean;
+  setHeader: jest.Mock;
+  status: jest.Mock;
+  json: jest.Mock;
+  destroy: jest.Mock;
+};
+
+type MockStream = {
+  on: jest.Mock;
+  pipe: jest.Mock;
+  emitError: (error: NodeJS.ErrnoException) => void;
+};
 
 describe('pipeFileStreamResponse', () => {
-  const createResponse = () => {
-    const response = {
+  const createResponse = (): MockResponse => {
+    const response: MockResponse = {
       headersSent: false,
       setHeader: jest.fn(),
       status: jest.fn(),
@@ -16,7 +30,7 @@ describe('pipeFileStreamResponse', () => {
     return response;
   };
 
-  const createStream = () => {
+  const createStream = (): MockStream => {
     const handlers: Record<string, (error: NodeJS.ErrnoException) => void> = {};
 
     return {
@@ -32,7 +46,7 @@ describe('pipeFileStreamResponse', () => {
     const response = createResponse();
     const stream = createStream();
 
-    pipeFileStreamResponse(response as any, stream as any, {
+    pipeFileStreamResponse(response as never, stream as never, {
       disposition: 'attachment',
       fileName: 'statement.pdf',
       mimeType: 'application/pdf',
@@ -51,7 +65,7 @@ describe('pipeFileStreamResponse', () => {
     const response = createResponse();
     const stream = createStream();
 
-    pipeFileStreamResponse(response as any, stream as any, {
+    pipeFileStreamResponse(response as never, stream as never, {
       disposition: 'inline',
       fileName: 'statement.pdf',
       mimeType: 'application/pdf',
@@ -75,7 +89,7 @@ describe('pipeFileStreamResponse', () => {
     const stream = createStream();
     const error = { code: 'EIO' } as NodeJS.ErrnoException;
 
-    pipeFileStreamResponse(response as any, stream as any, {
+    pipeFileStreamResponse(response as never, stream as never, {
       disposition: 'attachment',
       fileName: 'statement.pdf',
       mimeType: 'application/pdf',

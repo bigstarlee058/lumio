@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
+import type { sheets_v4 } from 'googleapis';
 import type { Branch } from '../../../entities/branch.entity';
 import type { Category } from '../../../entities/category.entity';
 import type { Transaction } from '../../../entities/transaction.entity';
@@ -42,10 +43,34 @@ type RefreshTokenError = {
   message?: string;
 };
 
+type GoogleSheetsError = { code?: number; message?: string };
+type SheetCellValue = string | number | boolean | null;
+type SheetValues = SheetCellValue[][];
+
+interface RefreshTokenResponse {
+  tokens?: { access_token?: string | null };
+  access_token?: string | null;
+}
+
+interface OAuth2ClientWithRefreshTokenMethod {
+  refreshToken(refreshToken?: string | null): Promise<RefreshTokenResponse>;
+}
+
 @Injectable()
 export class GoogleSheetsApiService {
   private readonly logger = new Logger(GoogleSheetsApiService.name);
   private readonly oauth2Client: OAuth2Client;
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
+  private getGoogleSheetsError(error: unknown): GoogleSheetsError {
+    if (typeof error === 'object' && error !== null) {
+      return error as GoogleSheetsError;
+    }
+    return { message: this.getErrorMessage(error) };
+  }
 
   constructor(private configService: ConfigService) {
     const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
@@ -74,9 +99,11 @@ export class GoogleSheetsApiService {
         refresh_token: refreshToken,
       });
 
-      const tokenResponse = await (this.oauth2Client as any).refreshToken(refreshToken);
+      const tokenResponse = await (
+        this.oauth2Client as unknown as OAuth2ClientWithRefreshTokenMethod
+      ).refreshToken(refreshToken);
       const accessToken =
-        (tokenResponse as any)?.tokens?.access_token || (tokenResponse as any)?.access_token;
+        tokenResponse.tokens?.access_token || tokenResponse.access_token;
       if (!accessToken) {
         throw new Error('Access token не получен при обновлении');
       }
@@ -250,7 +277,7 @@ export class GoogleSheetsApiService {
   /**
    * Convert SheetRow to array of values for Google Sheets
    */
-  private rowToValues(row: SheetRow): any[] {
+  private rowToValues(row: SheetRow): SheetCellValue[] {
     return [
       row.monthText,
       row.year,
@@ -278,7 +305,7 @@ export class GoogleSheetsApiService {
     categories: Map<string, Category>,
     branches: Map<string, Branch>,
     wallets: Map<string, Wallet>,
-  ): any[][] {
+  ): SheetValues {
     return mapTransactionsToValues(
       transactions,
       categories,
@@ -324,7 +351,7 @@ export class GoogleSheetsApiService {
       sheets: ReturnType<GoogleSheetsApiService['getSheetsClient']>;
       sheetName: string;
       range: string;
-      values: any[][];
+      values: SheetValues;
     }) => Promise<void>,
   ): Promise<void> {
     const { sheets, sheetName, range } = this.getSheetContext(accessToken, worksheetName);
@@ -335,9 +362,9 @@ export class GoogleSheetsApiService {
       this.logger.log(
         `Successfully ${action === 'write' ? 'wrote' : 'appended'} ${transactions.length} transactions to Google Sheet ${spreadsheetId}`,
       );
-    } catch (error: any) {
+    } catch (error) {
       return this.handleSheetWriteError(
-        error,
+        this.getGoogleSheetsError(error),
         refreshToken,
         newAccessToken =>
           this.runTransactionWrite(
@@ -361,7 +388,7 @@ export class GoogleSheetsApiService {
    * Find the first empty row in the sheet
    */
   private async findFirstEmptyRow(
-    sheets: any,
+    sheets: ReturnType<GoogleSheetsApiService['getSheetsClient']>,
     spreadsheetId: string,
     range: string,
   ): Promise<number> {
@@ -465,8 +492,9 @@ export class GoogleSheetsApiService {
         spreadsheetId,
       });
       return true;
-    } catch (error: any) {
-      if (error.code === 401 || error.message?.includes('Invalid Credentials')) {
+    } catch (error) {
+      const sheetsError = this.getGoogleSheetsError(error);
+      if (sheetsError.code === 401 || sheetsError.message?.includes('Invalid Credentials')) {
         try {
           const newAccessToken = await this.refreshAccessToken(refreshToken);
           const newSheets = this.getSheetsClient(newAccessToken);
@@ -493,7 +521,7 @@ export class GoogleSheetsApiService {
       valueRenderOption?: 'FORMATTED_VALUE' | 'UNFORMATTED_VALUE' | 'FORMULA';
       dateTimeRenderOption?: 'FORMATTED_STRING' | 'SERIAL_NUMBER';
     },
-  ): Promise<{ accessToken: string; range: string; values: any[][] }> {
+  ): Promise<{ accessToken: string; range: string; values: SheetValues }> {
     const sheets = this.getSheetsClient(accessToken);
 
     try {
@@ -509,14 +537,17 @@ export class GoogleSheetsApiService {
         range: response.data.range || range,
         values: response.data.values || [],
       };
-    } catch (error: any) {
-      if (error.code === 401 || error.message?.includes('Invalid Credentials')) {
+    } catch (error) {
+      const sheetsError = this.getGoogleSheetsError(error);
+      if (sheetsError.code === 401 || sheetsError.message?.includes('Invalid Credentials')) {
         const newAccessToken = await this.refreshAccessToken(refreshToken);
         return this.getValues(newAccessToken, refreshToken, spreadsheetId, range, options);
       }
 
       this.logger.error('Error reading values from Google Sheet:', error);
-      throw new BadRequestException(`Failed to read Google Sheet values: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to read Google Sheet values: ${sheetsError.message}`,
+      );
     }
   }
 
@@ -526,7 +557,7 @@ export class GoogleSheetsApiService {
     spreadsheetId: string,
     range: string,
     options?: { fields?: string },
-  ): Promise<{ accessToken: string; spreadsheet: any }> {
+  ): Promise<{ accessToken: string; spreadsheet: sheets_v4.Schema$Spreadsheet }> {
     const sheets = this.getSheetsClient(accessToken);
 
     try {
@@ -541,14 +572,17 @@ export class GoogleSheetsApiService {
         accessToken,
         spreadsheet: response.data,
       };
-    } catch (error: any) {
-      if (error.code === 401 || error.message?.includes('Invalid Credentials')) {
+    } catch (error) {
+      const sheetsError = this.getGoogleSheetsError(error);
+      if (sheetsError.code === 401 || sheetsError.message?.includes('Invalid Credentials')) {
         const newAccessToken = await this.refreshAccessToken(refreshToken);
         return this.getGridData(newAccessToken, refreshToken, spreadsheetId, range, options);
       }
 
       this.logger.error('Error reading grid data from Google Sheet:', error);
-      throw new BadRequestException(`Failed to read Google Sheet grid data: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to read Google Sheet grid data: ${sheetsError.message}`,
+      );
     }
   }
 }

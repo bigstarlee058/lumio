@@ -1,5 +1,6 @@
 'use client';
 
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { api } from '@/app/lib/api';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
@@ -7,11 +8,23 @@ import { Button, Input, Textarea } from '@heroui/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useId, useState } from 'react';
 import toast from 'react-hot-toast';
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { AVAILABLE_BACKGROUNDS } from '../constants';
 import { BackgroundSelector } from './BackgroundSelector';
 import { CurrencySelector } from './CurrencySelector';
 import { ServiceIntegrationSuggestions } from './ServiceIntegrationSuggestions';
+
+type WorkspaceCreatePayload = {
+  name: string;
+  description?: string;
+  backgroundImage: string | null;
+  currency: string | null;
+};
+
+const getApiMessage = (error: unknown, fallback: string) => {
+  if (!error || typeof error !== 'object') return fallback;
+  const response = (error as { response?: { data?: { message?: string } } }).response;
+  return response?.data?.message || fallback;
+};
 
 interface CreateWorkspaceModalProps {
   isOpen: boolean;
@@ -54,7 +67,7 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
 
     try {
       setLoading(true);
-      const payload: any = {
+      const payload: WorkspaceCreatePayload = {
         name: name.trim(),
         description: description.trim() || undefined,
         backgroundImage: selectedBackground,
@@ -66,8 +79,8 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
       setCreatedWorkspaceId(response.data.id);
       toast.success('Workspace created successfully');
       return response.data.id;
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to create workspace');
+    } catch (error: unknown) {
+      toast.error(getApiMessage(error, 'Failed to create workspace'));
       throw error;
     } finally {
       setLoading(false);
@@ -130,172 +143,172 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
   return (
     <>
       <Modal
-      isOpen={isOpen}
-      onOpenChange={(next: boolean) => {
-        if (!next) {
-          handleClose();
-        }
-      }}
-      size="5xl"
-      placement="center"
-      backdrop="opaque"
-      scrollBehavior="inside"
-      classNames={{
-        base: 'rounded-2xl border border-gray-200 shadow-xl',
-        backdrop: 'bg-gray-900/40 backdrop-blur-[1px]',
-        closeButton:
-          'text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors',
-      }}
-    >
-      <ModalContent>
-        {onClose => (
-          <>
-            <ModalHeader className="flex flex-col gap-3 border-b border-gray-200 px-8 py-6">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                Workspace setup
-              </div>
-              <div>
-                <h2 id={dialogTitleId} className="text-2xl font-semibold text-gray-900">
-                  Create New Workspace
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Create a dedicated space for your documents, receipts, and reports.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="text-sm text-gray-400">Step {step} of 3</div>
-                <nav aria-label="Workspace setup steps" className="flex flex-wrap gap-2">
-                  {[
-                    {
-                      id: 1,
-                      label: 'Basic Info',
-                      detail: 'Name, description, icon',
-                    },
-                    {
-                      id: 2,
-                      label: 'Customization',
-                      detail: 'Currency and background',
-                    },
-                    {
-                      id: 3,
-                      label: 'Integrations',
-                      detail: 'Connect services',
-                    },
-                  ].map(item => (
-                    <div
-                      key={item.id}
-                      className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                        item.id === step
-                          ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-gray-200 text-gray-500'
-                      }`}
-                      aria-current={item.id === step ? 'step' : undefined}
-                    >
-                      {item.label}
-                    </div>
-                  ))}
-                </nav>
-              </div>
-            </ModalHeader>
-
-            <ModalBody className="px-8 py-8">
-              {step === 1 && (
-                <div className="space-y-6">
-                  <Input
-                    label="Workspace Name"
-                    isRequired
-                    value={name}
-                    onValueChange={setName}
-                    placeholder="My Workspace"
-                    maxLength={255}
-                  />
-                  <Textarea
-                    label="Description (optional)"
-                    value={description}
-                    onValueChange={setDescription}
-                    placeholder="What is this workspace for?"
-                    maxLength={500}
-                    minRows={4}
-                  />
-                  {/* Icon selection removed — feature not used. */}
+        isOpen={isOpen}
+        onOpenChange={(next: boolean) => {
+          if (!next) {
+            handleClose();
+          }
+        }}
+        size="5xl"
+        placement="center"
+        backdrop="opaque"
+        scrollBehavior="inside"
+        classNames={{
+          base: 'rounded-2xl border border-gray-200 shadow-xl',
+          backdrop: 'bg-gray-900/40 backdrop-blur-[1px]',
+          closeButton:
+            'text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors',
+        }}
+      >
+        <ModalContent>
+          {onClose => (
+            <>
+              <ModalHeader className="flex flex-col gap-3 border-b border-gray-200 px-8 py-6">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+                  Workspace setup
                 </div>
-              )}
+                <div>
+                  <h2 id={dialogTitleId} className="text-2xl font-semibold text-gray-900">
+                    Create New Workspace
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Create a dedicated space for your documents, receipts, and reports.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="text-sm text-gray-400">Step {step} of 3</div>
+                  <nav aria-label="Workspace setup steps" className="flex flex-wrap gap-2">
+                    {[
+                      {
+                        id: 1,
+                        label: 'Basic Info',
+                        detail: 'Name, description, icon',
+                      },
+                      {
+                        id: 2,
+                        label: 'Customization',
+                        detail: 'Currency and background',
+                      },
+                      {
+                        id: 3,
+                        label: 'Integrations',
+                        detail: 'Connect services',
+                      },
+                    ].map(item => (
+                      <div
+                        key={item.id}
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                          item.id === step
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-200 text-gray-500'
+                        }`}
+                        aria-current={item.id === step ? 'step' : undefined}
+                      >
+                        {item.label}
+                      </div>
+                    ))}
+                  </nav>
+                </div>
+              </ModalHeader>
 
-              {step === 2 && (
-                <div className="space-y-8">
-                  <CurrencySelector
-                    selectedCurrency={selectedCurrency}
-                    onSelect={setSelectedCurrency}
-                    mode="inline"
-                    open={false}
-                    onOpenChange={nextOpen => {
-                      if (nextOpen) {
-                        setCurrencyDrawerOpen(true);
-                      }
-                    }}
-                  />
-
-                  <div>
-                    <p className="mb-3 text-sm font-medium text-gray-700">Background Image</p>
-                    <BackgroundSelector
-                      selectedBackground={selectedBackground}
-                      onSelect={setSelectedBackground}
-                      backgrounds={AVAILABLE_BACKGROUNDS}
+              <ModalBody className="px-8 py-8">
+                {step === 1 && (
+                  <div className="space-y-6">
+                    <Input
+                      label="Workspace Name"
+                      isRequired
+                      value={name}
+                      onValueChange={setName}
+                      placeholder="My Workspace"
+                      maxLength={255}
                     />
+                    <Textarea
+                      label="Description (optional)"
+                      value={description}
+                      onValueChange={setDescription}
+                      placeholder="What is this workspace for?"
+                      maxLength={500}
+                      minRows={4}
+                    />
+                    {/* Icon selection removed — feature not used. */}
                   </div>
-                </div>
-              )}
+                )}
 
-              {step === 3 && (
-                <ServiceIntegrationSuggestions
-                  workspaceId={createdWorkspaceId ?? ''}
-                  onSkip={handleSkipIntegrations}
-                />
-              )}
-            </ModalBody>
+                {step === 2 && (
+                  <div className="space-y-8">
+                    <CurrencySelector
+                      selectedCurrency={selectedCurrency}
+                      onSelect={setSelectedCurrency}
+                      mode="inline"
+                      open={false}
+                      onOpenChange={nextOpen => {
+                        if (nextOpen) {
+                          setCurrencyDrawerOpen(true);
+                        }
+                      }}
+                    />
 
-            <ModalFooter className="flex items-center justify-between gap-3 border-t border-gray-200 px-8 py-6">
-              {step > 1 ? (
-                <Button type="button" variant="bordered" onClick={handleBack}>
-                  <ChevronLeft size={16} />
-                  Back
-                </Button>
-              ) : (
-                <div />
-              )}
+                    <div>
+                      <p className="mb-3 text-sm font-medium text-gray-700">Background Image</p>
+                      <BackgroundSelector
+                        selectedBackground={selectedBackground}
+                        onSelect={setSelectedBackground}
+                        backgrounds={AVAILABLE_BACKGROUNDS}
+                      />
+                    </div>
+                  </div>
+                )}
 
-              {step === 1 && (
-                <Button type="button" color="primary" onClick={handleNext}>
-                  Next
-                  <ChevronRight size={16} />
-                </Button>
-              )}
+                {step === 3 && (
+                  <ServiceIntegrationSuggestions
+                    workspaceId={createdWorkspaceId ?? ''}
+                    onSkip={handleSkipIntegrations}
+                  />
+                )}
+              </ModalBody>
 
-              {step === 2 && (
-                <div className="flex items-center gap-3">
-                  <Button
-                    type="button"
-                    variant="bordered"
-                    onClick={handleFinishFromStep2}
-                    isDisabled={loading}
-                  >
-                    {loading ? 'Creating...' : 'Skip Integrations'}
+              <ModalFooter className="flex items-center justify-between gap-3 border-t border-gray-200 px-8 py-6">
+                {step > 1 ? (
+                  <Button type="button" variant="bordered" onClick={handleBack}>
+                    <ChevronLeft size={16} />
+                    Back
                   </Button>
-                  <Button
-                    type="button"
-                    color="primary"
-                    onClick={handleProceedToStep3}
-                    isDisabled={loading}
-                  >
-                    {loading ? 'Creating...' : 'Next'}
-                    {!loading && <ChevronRight size={16} />}
+                ) : (
+                  <div />
+                )}
+
+                {step === 1 && (
+                  <Button type="button" color="primary" onClick={handleNext}>
+                    Next
+                    <ChevronRight size={16} />
                   </Button>
-                </div>
-              )}
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
+                )}
+
+                {step === 2 && (
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="bordered"
+                      onClick={handleFinishFromStep2}
+                      isDisabled={loading}
+                    >
+                      {loading ? 'Creating...' : 'Skip Integrations'}
+                    </Button>
+                    <Button
+                      type="button"
+                      color="primary"
+                      onClick={handleProceedToStep3}
+                      isDisabled={loading}
+                    >
+                      {loading ? 'Creating...' : 'Next'}
+                      {!loading && <ChevronRight size={16} />}
+                    </Button>
+                  </div>
+                )}
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
       </Modal>
       <DrawerShell
         isOpen={isOpen && step === 2 && currencyDrawerOpen}

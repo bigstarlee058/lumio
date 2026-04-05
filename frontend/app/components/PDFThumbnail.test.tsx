@@ -5,8 +5,10 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PDFThumbnail } from './PDFThumbnail';
 
+type NextImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+
 vi.mock('next/image', () => ({
-  default: (props: any) => <img {...props} alt={props.alt || ''} />,
+  default: (props: NextImageProps) => <img {...props} alt={props.alt || ''} />,
 }));
 
 vi.mock('@/app/lib/workspace-headers', () => ({

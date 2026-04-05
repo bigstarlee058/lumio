@@ -22,6 +22,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
+import { google } from 'googleapis';
+import type { gmail_v1 } from 'googleapis';
 import { Repository } from 'typeorm';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import {
@@ -55,6 +57,20 @@ import { GmailService } from './services/gmail.service';
 const execAsync = promisify(exec);
 const AMOUNT_PRESENT_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NOT NULL";
 const AMOUNT_MISSING_SQL = "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NULL";
+
+type ReceiptAttachment = NonNullable<NonNullable<Receipt['metadata']>['attachments']>[number];
+
+interface ReceiptPreviewAttachmentData {
+  filename: string;
+  mimeType: string;
+  size: number;
+  data: string;
+}
+
+interface BulkApproveError {
+  receiptId: string;
+  error: string;
+}
 
 const inferMimeTypeFromPath = (filePath: string): string => {
   const extension = path.extname(filePath).toLowerCase();
@@ -105,6 +121,31 @@ export class GmailController {
     private readonly exportService: GmailReceiptExportService,
     private readonly merchantReparseService: GmailMerchantReparseService,
   ) {}
+
+  private getValidationIssues(parsedData: Receipt['parsedData'] | null | undefined): string[] {
+    return Array.isArray(parsedData?.validationIssues) ? parsedData.validationIssues : [];
+  }
+
+  private findMessageBody(part?: gmail_v1.Schema$MessagePart): string {
+    if (!part) {
+      return '';
+    }
+
+    if (part.mimeType === 'text/html' && part.body?.data) {
+      return Buffer.from(part.body.data, 'base64').toString('utf-8');
+    }
+
+    if (Array.isArray(part.parts)) {
+      for (const subPart of part.parts) {
+        const body = this.findMessageBody(subPart);
+        if (body) {
+          return body;
+        }
+      }
+    }
+
+    return '';
+  }
 
   @Get('status')
   @ApiOperation({ summary: 'Get Gmail integration status' })
@@ -429,9 +470,7 @@ export class GmailController {
       ...dto,
     };
 
-    const validationIssues = Array.isArray((receipt.parsedData as any)?.validationIssues)
-      ? ((receipt.parsedData as any).validationIssues as string[])
-      : [];
+    const validationIssues = this.getValidationIssues(receipt.parsedData);
     const hasAmount = this.hasReceiptAmount(receipt.parsedData?.amount);
 
     if (hasAmount && !hadAmountBeforeUpdate && receipt.status === ReceiptStatus.NEEDS_REVIEW) {
@@ -504,10 +543,14 @@ export class GmailController {
   @Post('receipts/bulk-approve')
   @ApiOperation({ summary: 'Approve multiple receipts at once' })
   async bulkApprove(@CurrentUser() user: User, @Body() dto: BulkApproveDto) {
-    const results = {
+    const results: {
+      approved: number;
+      failed: number;
+      errors: BulkApproveError[];
+    } = {
       approved: 0,
       failed: 0,
-      errors: [] as any[],
+      errors: [],
     };
 
     for (const receiptId of dto.receiptIds) {
@@ -742,32 +785,18 @@ export class GmailController {
     const message = await this.gmailService.getMessage(user.id, receipt.gmailMessageId);
 
     // Extract email body
-    let emailBody = '';
-    const findBody = (part: any): string => {
-      if (part.mimeType === 'text/html' && part.body?.data) {
-        return Buffer.from(part.body.data, 'base64').toString('utf-8');
-      }
-      if (part.parts) {
-        for (const subPart of part.parts) {
-          const body = findBody(subPart);
-          if (body) return body;
-        }
-      }
-      return '';
-    };
-
-    emailBody = findBody(message.payload);
+    const emailBody = this.findMessageBody(message.payload || undefined);
 
     // Fetch attachment data if available
-    const attachments = receipt.metadata?.attachments || [];
-    const attachmentData: any[] = [];
+    const attachments: ReceiptAttachment[] = receipt.metadata?.attachments || [];
+    const attachmentData: ReceiptPreviewAttachmentData[] = [];
 
     if (attachments.length > 0) {
       for (const attachment of attachments) {
         try {
           // Get attachment data from Gmail
           const { client } = await this.gmailOAuthService.getGmailClient(user.id);
-          const gmail = require('googleapis').google.gmail({
+          const gmail = google.gmail({
             version: 'v1',
             auth: client,
           });

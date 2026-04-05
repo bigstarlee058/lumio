@@ -1,8 +1,8 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import TransactionsPageView from '@/app/components/transactions/TransactionsPageView';
 import type { Category, StatementDetails, Transaction } from '@/app/components/transactions/types';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import api from '@/app/lib/api';
 import { ArrowLeft } from 'lucide-react';
@@ -11,6 +11,49 @@ import React, { use, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
+
+interface RawStatement {
+  id: string;
+  fileName: string;
+  bankName?: string | null;
+  parsingDetails?: {
+    detectedBank?: string;
+    metadataExtracted?: {
+      accountNumber?: string;
+    };
+  };
+  status: string;
+  fileSize?: number | null;
+  createdAt: string;
+  statementDateFrom?: string | null;
+  statementDateTo?: string | null;
+  category?: StatementDetails['category'];
+  categoryId?: string | null;
+}
+
+interface RawTransaction {
+  id: string;
+  transactionDate: string;
+  documentNumber?: string;
+  counterpartyName: string;
+  counterpartyBin?: string;
+  paymentPurpose: string;
+  debit?: number | null;
+  credit?: number | null;
+  transactionType?: string;
+  currency?: string;
+  exchangeRate?: number;
+  article?: string;
+  amountForeign?: number;
+  category?: Transaction['category'];
+  branch?: Transaction['branch'];
+  wallet?: Transaction['wallet'];
+}
+
+interface StatementViewResponse {
+  statement: RawStatement;
+  transactions: RawTransaction[];
+}
 
 export default function ViewStatementPage({
   params,
@@ -35,8 +78,8 @@ export default function ViewStatementPage({
 
       // Fetch statement and transactions
       const [stmtResponse, categoriesResponse] = await Promise.all([
-        api.get(`/storage/files/${statementId}`),
-        api.get('/categories'),
+        api.get<StatementViewResponse>(`/storage/files/${statementId}`),
+        api.get<Category[]>('/categories'),
       ]);
 
       const { statement: rawStatement, transactions: rawTransactions } = stmtResponse.data;
@@ -61,7 +104,7 @@ export default function ViewStatementPage({
       };
 
       // Transform transactions to match Transaction interface
-      const transformedTransactions: Transaction[] = rawTransactions.map((tx: any) => ({
+      const transformedTransactions: Transaction[] = rawTransactions.map(tx => ({
         id: tx.id,
         transactionDate: tx.transactionDate,
         documentNumber: tx.documentNumber,
@@ -146,7 +189,7 @@ export default function ViewStatementPage({
     return (
       <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex h-full min-h-[320px] items-center justify-center">
-          <Spinner size={80} className="text-primary" />
+          <Spinner className="h-20 w-20 text-primary" />
         </div>
       </div>
     );

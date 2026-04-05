@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import { forEachIssueRowWithSchema } from './column-auto-fix.util';
 
+type TransactionFieldValue = string | number | boolean | Date | null | undefined;
+type TransactionRecord = ParsedTransaction & Record<string, TransactionFieldValue>;
+
 export interface ColumnInconsistencyResult {
   isConsistent: boolean;
   inconsistencies: ColumnIssue[];
@@ -46,7 +49,7 @@ export interface ColumnSchema {
   required: boolean;
   dataType: 'string' | 'number' | 'date' | 'boolean';
   pattern?: RegExp;
-  defaultValue?: any;
+  defaultValue?: TransactionFieldValue;
   inferFrom?: string[];
 }
 
@@ -56,6 +59,21 @@ export class ColumnAutoFixService {
 
   private getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
+  }
+
+  private getTransactionField(
+    transaction: ParsedTransaction,
+    field: string,
+  ): TransactionFieldValue {
+    return (transaction as TransactionRecord)[field];
+  }
+
+  private setTransactionField(
+    transaction: ParsedTransaction,
+    field: string,
+    value: TransactionFieldValue,
+  ): void {
+    (transaction as TransactionRecord)[field] = value;
   }
 
   // Default schema for transaction data
@@ -142,7 +160,7 @@ export class ColumnAutoFixService {
       // Check for missing required fields
       schema.forEach(column => {
         if (column.required) {
-          const value = (transaction as any)[column.name];
+          const value = this.getTransactionField(transaction, column.name);
           if (value === undefined || value === null || value === '') {
             issues.push({
               type: column.dataType === 'string' ? 'empty_critical_field' : 'missing_column',
@@ -159,7 +177,7 @@ export class ColumnAutoFixService {
 
       // Check for data type mismatches
       schema.forEach(column => {
-        const value = (transaction as any)[column.name];
+        const value = this.getTransactionField(transaction, column.name);
         if (value !== undefined && value !== null && value !== '') {
           if (!this.isValidDataType(value, column.dataType, column.pattern)) {
             issues.push({
@@ -177,7 +195,7 @@ export class ColumnAutoFixService {
       // Check for empty critical fields that should have data
       const criticalFields = ['counterpartyName', 'paymentPurpose'];
       criticalFields.forEach(fieldName => {
-        const value = (transaction as any)[fieldName];
+        const value = this.getTransactionField(transaction, fieldName);
         if (!value || (typeof value === 'string' && value.trim().length < 2)) {
           issues.push({
             type: 'empty_critical_field',
@@ -277,11 +295,11 @@ export class ColumnAutoFixService {
       const inferredValue = this.inferMissingValue(transaction, issue.field, schema);
 
       if (inferredValue !== null) {
-        (transaction as any)[issue.field] = inferredValue;
+        this.setTransactionField(transaction, issue.field, inferredValue);
       } else if (columnSchema.defaultValue !== undefined) {
-        (transaction as any)[issue.field] = columnSchema.defaultValue;
+        this.setTransactionField(transaction, issue.field, columnSchema.defaultValue);
       } else {
-        (transaction as any)[issue.field] = this.getIntelligentDefault(issue.field, transaction);
+        this.setTransactionField(transaction, issue.field, this.getIntelligentDefault(issue.field, transaction));
       }
     });
   }
@@ -292,11 +310,11 @@ export class ColumnAutoFixService {
     schema: ColumnSchema[],
   ): Promise<boolean> {
     return forEachIssueRowWithSchema(transactions, issue, schema, ({ columnSchema, transaction }) => {
-      const currentValue = (transaction as any)[issue.field];
+      const currentValue = this.getTransactionField(transaction, issue.field);
       const convertedValue = this.convertDataType(currentValue, columnSchema.dataType);
 
       if (convertedValue !== null) {
-        (transaction as any)[issue.field] = convertedValue;
+        this.setTransactionField(transaction, issue.field, convertedValue);
       }
     });
   }
@@ -556,13 +574,13 @@ export class ColumnAutoFixService {
     transaction: ParsedTransaction,
     fieldName: string,
     schema: ColumnSchema[],
-  ): any {
+  ): TransactionFieldValue {
     const columnSchema = schema.find(col => col.name === fieldName);
     if (!columnSchema || !columnSchema.inferFrom) return null;
 
     // Try to infer from related fields
     for (const sourceField of columnSchema.inferFrom) {
-      const sourceValue = (transaction as any)[sourceField];
+      const sourceValue = this.getTransactionField(transaction, sourceField);
       if (sourceValue) {
         return this.inferFromSource(sourceValue, fieldName, sourceField);
       }
@@ -571,8 +589,16 @@ export class ColumnAutoFixService {
     return null;
   }
 
-  private inferFromSource(sourceValue: any, targetField: string, sourceField: string): any {
+  private inferFromSource(
+    sourceValue: TransactionFieldValue,
+    targetField: string,
+    sourceField: string,
+  ): TransactionFieldValue {
     // Implement specific inference logic based on field relationships
+    if (typeof sourceValue !== 'string') {
+      return null;
+    }
+
     switch (targetField) {
       case 'currency':
         return this.extractCurrencyFromText(sourceValue);
@@ -658,7 +684,10 @@ export class ColumnAutoFixService {
     }
   }
 
-  private getIntelligentDefault(fieldName: string, transaction: ParsedTransaction): any {
+  private getIntelligentDefault(
+    fieldName: string,
+    transaction: ParsedTransaction,
+  ): TransactionFieldValue {
     switch (fieldName) {
       case 'transactionDate':
         return new Date();
@@ -678,7 +707,11 @@ export class ColumnAutoFixService {
     }
   }
 
-  private isValidDataType(value: any, expectedType: string, pattern?: RegExp): boolean {
+  private isValidDataType(
+    value: TransactionFieldValue,
+    expectedType: ColumnSchema['dataType'],
+    pattern?: RegExp,
+  ): boolean {
     if (value === null || value === undefined) return true;
 
     switch (expectedType) {
@@ -695,7 +728,10 @@ export class ColumnAutoFixService {
     }
   }
 
-  private convertDataType(value: any, targetType: string): any {
+  private convertDataType(
+    value: TransactionFieldValue,
+    targetType: ColumnSchema['dataType'],
+  ): TransactionFieldValue {
     if (value === null || value === undefined) return value;
 
     try {
@@ -707,7 +743,10 @@ export class ColumnAutoFixService {
           return Number.isNaN(num) ? null : num;
         }
         case 'date':
-          return new Date(value);
+          if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+            return new Date(value);
+          }
+          return null;
         case 'boolean':
           if (typeof value === 'boolean') return value;
           {
@@ -765,7 +804,7 @@ export class ColumnAutoFixService {
       let hasData = false;
 
       transactions.forEach(transaction => {
-        const value = (transaction as any)[column.name];
+        const value = this.getTransactionField(transaction, column.name);
         totalFields++;
 
         if (value !== undefined && value !== null && value !== '') {

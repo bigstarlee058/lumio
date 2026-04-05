@@ -46,7 +46,7 @@ const formatDateTime = (value?: string | null, locale?: string) => {
 
 export default function GmailIntegrationPage() {
   const { user, loading: authLoading } = useAuth();
-  const t = useIntlayer('gmailIntegrationPage' as any) as any;
+  const t = useIntlayer('gmailIntegrationPage');
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<GmailStatus | null>(null);
   const [loading, setLoading] = useState(false);

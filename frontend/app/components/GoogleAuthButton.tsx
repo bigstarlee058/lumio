@@ -8,34 +8,6 @@ import { Box } from '@mui/material';
 import Script from 'next/script';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-declare global {
-  interface Window {
-    google?: {
-      accounts?: {
-        id?: {
-          initialize: (options: {
-            client_id: string;
-            callback: (response: { credential?: string }) => void;
-            auto_select?: boolean;
-            cancel_on_tap_outside?: boolean;
-          }) => void;
-          renderButton: (
-            parent: HTMLElement,
-            options?: {
-              theme?: 'outline' | 'filled_blue' | 'filled_black';
-              size?: 'large' | 'medium' | 'small';
-              text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin';
-              shape?: 'rectangular' | 'pill' | 'circle' | 'square';
-              width?: number;
-              logo_alignment?: 'left' | 'center';
-            },
-          ) => void;
-        };
-      };
-    };
-  }
-}
-
 type GoogleAuthButtonProps = {
   inviteToken?: string | null;
   nextPath?: string | null;
@@ -93,8 +65,21 @@ export function GoogleAuthButton({
         }
 
         window.location.href = nextPath || DEFAULT_APP_ROUTE;
-      } catch (err: any) {
-        onError(err.response?.data?.message || err.response?.data?.error?.message || errorFallback);
+      } catch (error) {
+        const message =
+          typeof error === 'object' &&
+          error !== null &&
+          'response' in error &&
+          typeof error.response === 'object' &&
+          error.response !== null &&
+          'data' in error.response &&
+          typeof error.response.data === 'object' &&
+          error.response.data !== null
+            ? (((error.response.data as { message?: string }).message ||
+                (error.response.data as { error?: { message?: string } }).error?.message) ??
+              errorFallback)
+            : errorFallback;
+        onError(message);
       } finally {
         setSigningIn(false);
       }

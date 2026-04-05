@@ -17,8 +17,8 @@ import { StatusFilterDropdown } from '@/app/(main)/statements/components/filters
 import { TypeFilterDropdown } from '@/app/(main)/statements/components/filters/TypeFilterDropdown';
 import {
   DEFAULT_STATEMENT_FILTERS,
-  applyStatementsFilters,
   type StatementFilters,
+  applyStatementsFilters,
   loadStatementFilters,
   resetSingleStatementFilter,
   saveStatementFilters,
@@ -36,6 +36,7 @@ import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
 import { useIntlayer } from '@/app/i18n';
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
+import { getApiErrorStatus } from '@/app/lib/api-error';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import { type StatementCategoryNode } from '@/app/lib/statement-categories';
 import {
@@ -89,8 +90,8 @@ import {
   deriveVisibleFilterScreens,
   isReceiptDerivedStatement,
   paginateStatements,
-  resolveStatementViewAction,
   reconcileFiltersWithColumns,
+  resolveStatementViewAction,
 } from './StatementsListView.utils';
 import {
   type GmailReceipt,
@@ -320,7 +321,9 @@ const isStoreReceiptStatement = (statement: Statement) =>
 const getBulkActionErrorOptions = (id: string) => ({ id });
 
 const getExportEndpoint = (statement: Statement) =>
-  isScanReceiptStatement(statement) ? `/receipts/${statement.id}/file` : `/statements/${statement.id}/file`;
+  isScanReceiptStatement(statement)
+    ? `/receipts/${statement.id}/file`
+    : `/statements/${statement.id}/file`;
 
 const getDeleteEndpoint = (statement: Statement) =>
   isScanReceiptStatement(statement) ? `/receipts/${statement.id}` : `/statements/${statement.id}`;
@@ -328,6 +331,21 @@ const getDeleteEndpoint = (statement: Statement) =>
 const isStatementParsingInProgress = (statement: Statement) => {
   const status = (statement.status || '').toLowerCase();
   return status === 'uploaded' || status === 'processing';
+};
+
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+
+  return current;
 };
 
 type Props = {
@@ -360,7 +378,16 @@ export default function StatementsListView({ stage }: Props) {
     [],
   );
   const [manualExpenseTaxRates, setManualExpenseTaxRates] = useState<TaxRateOption[]>([]);
-  const resolveLabel = (value: any, fallback: string) => value?.value ?? value ?? fallback;
+  const resolveLabel = (value: unknown, fallback: string) =>
+    typeof value === 'string'
+      ? value
+      : typeof value === 'object' &&
+          value !== null &&
+          'value' in value &&
+          typeof value.value === 'string'
+        ? value.value
+        : fallback;
+  const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
   const searchPlaceholder = resolveLabel(t.searchPlaceholder, 'Search statements');
   const filterLabels = {
     type: resolveLabel(t.filters?.type, 'Type'),
@@ -380,33 +407,24 @@ export default function StatementsListView({ stage }: Props) {
     scanning: resolveLabel(t.listHeader?.scanning, 'Scanning...'),
   };
   const viewLabel = resolveLabel(t.actions?.view, 'View');
-  const reviewDuplicateLabel = resolveLabel((t.actions as any)?.reviewDuplicate, 'Review');
-  const markDuplicateLabel = resolveLabel((t.actions as any)?.markDuplicate, 'Mark as duplicate');
-  const markNotDuplicateLabel = resolveLabel(
-    (t.actions as any)?.markNotDuplicate,
-    'Mark as not duplicate',
-  );
-  const dismissDuplicateLabel = resolveLabel(
-    (t.actions as any)?.dismissDuplicate,
+  const reviewDuplicateLabel = tx(['actions', 'reviewDuplicate'], 'Review');
+  const markDuplicateLabel = tx(['actions', 'markDuplicate'], 'Mark as duplicate');
+  const markNotDuplicateLabel = tx(['actions', 'markNotDuplicate'], 'Mark as not duplicate');
+  const dismissDuplicateLabel = tx(
+    ['actions', 'dismissDuplicate'],
     markNotDuplicateLabel || 'Dismiss',
   );
-  const mergeDuplicatesLabel = resolveLabel(
-    (t.actions as any)?.mergeDuplicates,
-    'Merge duplicates',
-  );
-  const selectDuplicatesLabel = resolveLabel(
-    (t.actions as any)?.selectDuplicates,
-    'Select duplicates',
-  );
+  const mergeDuplicatesLabel = tx(['actions', 'mergeDuplicates'], 'Merge duplicates');
+  const selectDuplicatesLabel = tx(['actions', 'selectDuplicates'], 'Select duplicates');
   const emptyLabels = {
     title: resolveLabel(t.empty?.title, 'No statements yet'),
     description: resolveLabel(t.empty?.description, 'Upload your first statement to get started'),
   };
   const paginationLabels = {
-    shown: resolveLabel((t as any)?.pagination?.shown, 'Showing {from}–{to} of {count}'),
-    previous: resolveLabel((t as any)?.pagination?.previous, 'Previous'),
-    next: resolveLabel((t as any)?.pagination?.next, 'Next'),
-    pageOf: resolveLabel((t as any)?.pagination?.pageOf, 'Page {page} of {count}'),
+    shown: tx(['pagination', 'shown'], 'Showing {from}–{to} of {count}'),
+    previous: tx(['pagination', 'previous'], 'Previous'),
+    next: tx(['pagination', 'next'], 'Next'),
+    pageOf: tx(['pagination', 'pageOf'], 'Page {page} of {count}'),
   };
   const filterLinkClassName =
     'inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-1.5 text-[13px] font-medium text-primary';
@@ -421,7 +439,9 @@ export default function StatementsListView({ stage }: Props) {
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [previewFileId, setPreviewFileId] = useState<string | null>(null);
   const [previewFileName, setPreviewFileName] = useState<string>('');
-  const [previewSource, setPreviewSource] = useState<'statement' | 'gmail' | 'receipt'>('statement');
+  const [previewSource, setPreviewSource] = useState<'statement' | 'gmail' | 'receipt'>(
+    'statement',
+  );
   const [previewAllowAttachFile, setPreviewAllowAttachFile] = useState(false);
   const [selectedStatementIds, setSelectedStatementIds] = useState<string[]>([]);
   const [duplicateOverrides, setDuplicateOverrides] = useState<Record<string, DuplicateOverride>>(
@@ -446,72 +466,72 @@ export default function StatementsListView({ stage }: Props) {
   const hasGmailReceipts = useMemo(() => gmailReceipts.length > 0, [gmailReceipts]);
 
   const filterOptionLabels = {
-    apply: resolveLabel((t.filters as any)?.apply, 'Apply'),
-    reset: resolveLabel((t.filters as any)?.reset, 'Reset'),
-    resetFilters: resolveLabel((t.filters as any)?.resetFilters, 'Reset filters'),
-    viewResults: resolveLabel((t.filters as any)?.viewResults, 'View results'),
-    save: resolveLabel((t.filters as any)?.save, 'Save'),
-    saveSearch: resolveLabel((t.filters as any)?.saveSearch, 'Save search'),
-    any: resolveLabel((t.filters as any)?.any, 'Any'),
-    yes: resolveLabel((t.filters as any)?.yes, 'Yes'),
-    no: resolveLabel((t.filters as any)?.no, 'No'),
-    typeExpense: resolveLabel((t.filters as any)?.typeExpense, 'Expense'),
-    typeReport: resolveLabel((t.filters as any)?.typeReport, 'Expense Report'),
-    typeChat: resolveLabel((t.filters as any)?.typeChat, 'Chat'),
-    typeTrip: resolveLabel((t.filters as any)?.typeTrip, 'Trip'),
-    typeTask: resolveLabel((t.filters as any)?.typeTask, 'Task'),
-    statusUploaded: resolveLabel((t.filters as any)?.statusUploaded, 'Uploaded'),
-    statusProcessing: resolveLabel((t.filters as any)?.statusProcessing, 'Processing'),
-    statusParsed: resolveLabel((t.filters as any)?.statusParsed, 'Parsed'),
-    statusValidated: resolveLabel((t.filters as any)?.statusValidated, 'Validated'),
-    statusCompleted: resolveLabel((t.filters as any)?.statusCompleted, 'Completed'),
-    statusError: resolveLabel((t.filters as any)?.statusError, 'Error'),
-    dateThisMonth: resolveLabel((t.filters as any)?.dateThisMonth, 'This month'),
-    dateLastMonth: resolveLabel((t.filters as any)?.dateLastMonth, 'Last month'),
-    dateYearToDate: resolveLabel((t.filters as any)?.dateYearToDate, 'Year to date'),
-    dateOn: resolveLabel((t.filters as any)?.dateOn, 'On'),
-    dateAfter: resolveLabel((t.filters as any)?.dateAfter, 'After'),
-    dateBefore: resolveLabel((t.filters as any)?.dateBefore, 'Before'),
-    drawerTitle: resolveLabel((t.filters as any)?.drawerTitle, 'Filters'),
-    drawerGeneral: resolveLabel((t.filters as any)?.drawerGeneral, 'General'),
-    drawerExpenses: resolveLabel((t.filters as any)?.drawerExpenses, 'Expenses'),
-    drawerReports: resolveLabel((t.filters as any)?.drawerReports, 'Reports'),
-    drawerGroupBy: resolveLabel((t.filters as any)?.drawerGroupBy, 'Group by'),
-    drawerHas: resolveLabel((t.filters as any)?.drawerHas, 'Has'),
-    drawerKeywords: resolveLabel((t.filters as any)?.drawerKeywords, 'Keywords'),
-    drawerLimit: resolveLabel((t.filters as any)?.drawerLimit, 'Limit'),
-    drawerTo: resolveLabel((t.filters as any)?.drawerTo, 'To'),
-    drawerAmount: resolveLabel((t.filters as any)?.drawerAmount, 'Amount'),
-    drawerApproved: resolveLabel((t.filters as any)?.drawerApproved, 'Approved'),
-    drawerBillable: resolveLabel((t.filters as any)?.drawerBillable, 'Billable'),
-    groupByDate: resolveLabel((t.filters as any)?.groupByDate, 'Date'),
-    groupByStatus: resolveLabel((t.filters as any)?.groupByStatus, 'Status'),
-    groupByType: resolveLabel((t.filters as any)?.groupByType, 'Type'),
-    groupByBank: resolveLabel((t.filters as any)?.groupByBank, 'Bank'),
-    groupByUser: resolveLabel((t.filters as any)?.groupByUser, 'User'),
-    groupByAmount: resolveLabel((t.filters as any)?.groupByAmount, 'Amount'),
-    hasErrors: resolveLabel((t.filters as any)?.hasErrors, 'Errors'),
-    hasLogs: resolveLabel((t.filters as any)?.hasLogs, 'Logs'),
-    hasTransactions: resolveLabel((t.filters as any)?.hasTransactions, 'Transactions'),
-    hasDateRange: resolveLabel((t.filters as any)?.hasDateRange, 'Date range'),
-    hasCurrency: resolveLabel((t.filters as any)?.hasCurrency, 'Currency'),
-    columnReceipt: resolveLabel((t.filters as any)?.columnReceipt, 'Receipt'),
-    columnDate: resolveLabel((t.filters as any)?.columnDate, 'Date'),
-    columnMerchant: resolveLabel((t.filters as any)?.columnMerchant, 'Merchant'),
-    columnFrom: resolveLabel((t.filters as any)?.columnFrom, 'From'),
-    columnTo: resolveLabel((t.filters as any)?.columnTo, 'To'),
-    columnCategory: resolveLabel((t.filters as any)?.columnCategory, 'Category'),
-    columnTag: resolveLabel((t.filters as any)?.columnTag, 'Tag'),
-    columnAmount: resolveLabel((t.filters as any)?.columnAmount, 'Amount'),
-    columnAction: resolveLabel((t.filters as any)?.columnAction, 'Action'),
-    columnApproved: resolveLabel((t.filters as any)?.columnApproved, 'Approved'),
-    columnBillable: resolveLabel((t.filters as any)?.columnBillable, 'Billable'),
-    columnCard: resolveLabel((t.filters as any)?.columnCard, 'Card'),
-    columnDescription: resolveLabel((t.filters as any)?.columnDescription, 'Description'),
-    columnExchangeRate: resolveLabel((t.filters as any)?.columnExchangeRate, 'Exchange rate'),
-    columnExported: resolveLabel((t.filters as any)?.columnExported, 'Exported'),
-    columnExportedTo: resolveLabel((t.filters as any)?.columnExportedTo, 'Exported to'),
-    columnsTitle: resolveLabel((t.filters as any)?.columnsTitle, 'Columns'),
+    apply: tx(['filters', 'apply'], 'Apply'),
+    reset: tx(['filters', 'reset'], 'Reset'),
+    resetFilters: tx(['filters', 'resetFilters'], 'Reset filters'),
+    viewResults: tx(['filters', 'viewResults'], 'View results'),
+    save: tx(['filters', 'save'], 'Save'),
+    saveSearch: tx(['filters', 'saveSearch'], 'Save search'),
+    any: tx(['filters', 'any'], 'Any'),
+    yes: tx(['filters', 'yes'], 'Yes'),
+    no: tx(['filters', 'no'], 'No'),
+    typeExpense: tx(['filters', 'typeExpense'], 'Expense'),
+    typeReport: tx(['filters', 'typeReport'], 'Expense Report'),
+    typeChat: tx(['filters', 'typeChat'], 'Chat'),
+    typeTrip: tx(['filters', 'typeTrip'], 'Trip'),
+    typeTask: tx(['filters', 'typeTask'], 'Task'),
+    statusUploaded: tx(['filters', 'statusUploaded'], 'Uploaded'),
+    statusProcessing: tx(['filters', 'statusProcessing'], 'Processing'),
+    statusParsed: tx(['filters', 'statusParsed'], 'Parsed'),
+    statusValidated: tx(['filters', 'statusValidated'], 'Validated'),
+    statusCompleted: tx(['filters', 'statusCompleted'], 'Completed'),
+    statusError: tx(['filters', 'statusError'], 'Error'),
+    dateThisMonth: tx(['filters', 'dateThisMonth'], 'This month'),
+    dateLastMonth: tx(['filters', 'dateLastMonth'], 'Last month'),
+    dateYearToDate: tx(['filters', 'dateYearToDate'], 'Year to date'),
+    dateOn: tx(['filters', 'dateOn'], 'On'),
+    dateAfter: tx(['filters', 'dateAfter'], 'After'),
+    dateBefore: tx(['filters', 'dateBefore'], 'Before'),
+    drawerTitle: tx(['filters', 'drawerTitle'], 'Filters'),
+    drawerGeneral: tx(['filters', 'drawerGeneral'], 'General'),
+    drawerExpenses: tx(['filters', 'drawerExpenses'], 'Expenses'),
+    drawerReports: tx(['filters', 'drawerReports'], 'Reports'),
+    drawerGroupBy: tx(['filters', 'drawerGroupBy'], 'Group by'),
+    drawerHas: tx(['filters', 'drawerHas'], 'Has'),
+    drawerKeywords: tx(['filters', 'drawerKeywords'], 'Keywords'),
+    drawerLimit: tx(['filters', 'drawerLimit'], 'Limit'),
+    drawerTo: tx(['filters', 'drawerTo'], 'To'),
+    drawerAmount: tx(['filters', 'drawerAmount'], 'Amount'),
+    drawerApproved: tx(['filters', 'drawerApproved'], 'Approved'),
+    drawerBillable: tx(['filters', 'drawerBillable'], 'Billable'),
+    groupByDate: tx(['filters', 'groupByDate'], 'Date'),
+    groupByStatus: tx(['filters', 'groupByStatus'], 'Status'),
+    groupByType: tx(['filters', 'groupByType'], 'Type'),
+    groupByBank: tx(['filters', 'groupByBank'], 'Bank'),
+    groupByUser: tx(['filters', 'groupByUser'], 'User'),
+    groupByAmount: tx(['filters', 'groupByAmount'], 'Amount'),
+    hasErrors: tx(['filters', 'hasErrors'], 'Errors'),
+    hasLogs: tx(['filters', 'hasLogs'], 'Logs'),
+    hasTransactions: tx(['filters', 'hasTransactions'], 'Transactions'),
+    hasDateRange: tx(['filters', 'hasDateRange'], 'Date range'),
+    hasCurrency: tx(['filters', 'hasCurrency'], 'Currency'),
+    columnReceipt: tx(['filters', 'columnReceipt'], 'Receipt'),
+    columnDate: tx(['filters', 'columnDate'], 'Date'),
+    columnMerchant: tx(['filters', 'columnMerchant'], 'Merchant'),
+    columnFrom: tx(['filters', 'columnFrom'], 'From'),
+    columnTo: tx(['filters', 'columnTo'], 'To'),
+    columnCategory: tx(['filters', 'columnCategory'], 'Category'),
+    columnTag: tx(['filters', 'columnTag'], 'Tag'),
+    columnAmount: tx(['filters', 'columnAmount'], 'Amount'),
+    columnAction: tx(['filters', 'columnAction'], 'Action'),
+    columnApproved: tx(['filters', 'columnApproved'], 'Approved'),
+    columnBillable: tx(['filters', 'columnBillable'], 'Billable'),
+    columnCard: tx(['filters', 'columnCard'], 'Card'),
+    columnDescription: tx(['filters', 'columnDescription'], 'Description'),
+    columnExchangeRate: tx(['filters', 'columnExchangeRate'], 'Exchange rate'),
+    columnExported: tx(['filters', 'columnExported'], 'Exported'),
+    columnExportedTo: tx(['filters', 'columnExportedTo'], 'Exported to'),
+    columnsTitle: tx(['filters', 'columnsTitle'], 'Columns'),
   };
 
   const typeOptions = [
@@ -1204,8 +1224,8 @@ export default function StatementsListView({ stage }: Props) {
         toast.success('Manual expense created');
         await refreshStatementsAfterCreate();
         return;
-      } catch (error: any) {
-        const status = error?.response?.status;
+      } catch (error: unknown) {
+        const status = getApiErrorStatus(error);
         if (status === 404 || status === 405) {
           continue;
         }
@@ -1239,7 +1259,9 @@ export default function StatementsListView({ stage }: Props) {
       const selectedStatements = displayStatements.filter(statement =>
         selectedStatementIds.includes(statement.id),
       );
-      const exportableStatements = selectedStatements.filter(statement => !isGmailStatement(statement));
+      const exportableStatements = selectedStatements.filter(
+        statement => !isGmailStatement(statement),
+      );
 
       if (exportableStatements.length === 0) {
         setSelectedActionsOpen(false);
@@ -1297,7 +1319,9 @@ export default function StatementsListView({ stage }: Props) {
     const selectedStatements = displayStatements.filter(statement =>
       selectedStatementIds.includes(statement.id),
     );
-    const deletableStatements = selectedStatements.filter(statement => !isGmailStatement(statement));
+    const deletableStatements = selectedStatements.filter(
+      statement => !isGmailStatement(statement),
+    );
 
     if (deletableStatements.length === 0) {
       setSelectedActionsOpen(false);
@@ -1327,7 +1351,7 @@ export default function StatementsListView({ stage }: Props) {
           deletedIds.push(statementId);
           return;
         }
-        const status = (result.reason as any)?.response?.status;
+        const status = getApiErrorStatus(result.reason);
         if (status === 404 || status === 410) {
           deletedIds.push(statementId);
           return;
@@ -1340,7 +1364,7 @@ export default function StatementsListView({ stage }: Props) {
         return;
       }
 
-        setSelectedStatementIds(prev => prev.filter(id => !deletedIds.includes(id)));
+      setSelectedStatementIds(prev => prev.filter(id => !deletedIds.includes(id)));
       setSelectedActionsOpen(false);
       await loadStatements({ search, showErrorToast: false });
 
@@ -1362,9 +1386,9 @@ export default function StatementsListView({ stage }: Props) {
 
     setDuplicateOverrides(prev => {
       const next = { ...prev };
-        const manualGroupIndex = Object.values(prev).filter(override =>
-          override.groupKey?.startsWith('manual-group:'),
-        ).length;
+      const manualGroupIndex = Object.values(prev).filter(override =>
+        override.groupKey?.startsWith('manual-group:'),
+      ).length;
       const groupKey = `manual-group:${Date.now()}:${manualGroupIndex}`;
       const groupLabel = `Group Manual ${manualGroupIndex + 1}`;
       const groupTone = DUPLICATE_GROUP_TONES[manualGroupIndex % DUPLICATE_GROUP_TONES.length];
@@ -1490,7 +1514,7 @@ export default function StatementsListView({ stage }: Props) {
           deletedStatementIds.push(statementId);
           return;
         }
-        const status = (result.reason as any)?.response?.status;
+        const status = getApiErrorStatus(result.reason);
         if (status === 404 || status === 410) {
           deletedStatementIds.push(statementId);
           return;
@@ -2040,7 +2064,7 @@ export default function StatementsListView({ stage }: Props) {
       >
         {loading && gmailSyncSkeletonKeys.length === 0 ? (
           <div className="flex justify-center items-center h-64">
-            <Spinner size={80} className="text-primary" />
+            <Spinner className="h-20 w-20 text-primary" />
           </div>
         ) : displayStatements.length === 0 && gmailSyncSkeletonKeys.length === 0 ? (
           <div className="text-center py-20 px-4">
@@ -2326,7 +2350,7 @@ export default function StatementsListView({ stage }: Props) {
           currency: filterOptionLabels.hasCurrency,
           date: filterLabels.date,
           exported: filterOptionLabels.columnExported,
-          paid: resolveLabel((t.filters as any)?.paid, 'Paid'),
+          paid: tx(['filters', 'paid'], 'Paid'),
           any: filterOptionLabels.any,
           yes: filterOptionLabels.yes,
           no: filterOptionLabels.no,

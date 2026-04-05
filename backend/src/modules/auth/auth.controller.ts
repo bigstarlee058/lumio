@@ -11,7 +11,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { Throttle } from '@nestjs/throttler';
+import type { AuthenticatedRequest } from '../../common/interfaces/authenticated-request.interface';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import type { User } from '../../entities/user.entity';
 import { AuthService, type SessionContext } from './auth.service';
@@ -31,7 +33,7 @@ export class AuthController {
     return process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
   }
 
-  private extractSessionContext(req: any): SessionContext {
+  private extractSessionContext(req: Request): SessionContext {
     const forwardedForHeader = req?.headers?.['x-forwarded-for'];
     const forwardedFor = Array.isArray(forwardedForHeader)
       ? forwardedForHeader[0]
@@ -46,7 +48,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() registerDto: RegisterDto, @Req() req: any): Promise<AuthResponseDto> {
+  async register(@Body() registerDto: RegisterDto, @Req() req: Request): Promise<AuthResponseDto> {
     return this.authService.register(registerDto, this.extractSessionContext(req));
   }
 
@@ -54,7 +56,7 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 attempts per minute
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto, @Req() req: any): Promise<AuthResponseDto> {
+  async login(@Body() loginDto: LoginDto, @Req() req: Request): Promise<AuthResponseDto> {
     return this.authService.login(loginDto, this.extractSessionContext(req));
   }
 
@@ -63,7 +65,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async loginWithGoogle(
     @Body() googleLoginDto: GoogleLoginDto,
-    @Req() req: any,
+    @Req() req: Request,
   ): Promise<AuthResponseDto> {
     return this.authService.loginWithGoogle(googleLoginDto, this.extractSessionContext(req));
   }
@@ -106,7 +108,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  async refresh(@Req() req: any): Promise<{ access_token: string }> {
+  async refresh(@Req() req: Request): Promise<{ access_token: string }> {
     const refreshToken = req.headers.authorization?.replace('Bearer ', '');
     return this.authService.refreshToken(refreshToken, this.extractSessionContext(req));
   }
@@ -114,7 +116,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  async logout(@CurrentUser() user: User, @Req() req: any): Promise<{ message: string }> {
+  async logout(
+    @CurrentUser() user: User,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<{ message: string }> {
     const currentSessionId = req?.user?.currentSessionId || null;
     return this.authService.logout(user.id, currentSessionId);
   }
@@ -128,7 +133,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('sessions')
-  async getSessions(@CurrentUser() user: User, @Req() req: any) {
+  async getSessions(@CurrentUser() user: User, @Req() req: AuthenticatedRequest) {
     const currentSessionId = req?.user?.currentSessionId || null;
     return this.authService.getSessions(user.id, currentSessionId);
   }

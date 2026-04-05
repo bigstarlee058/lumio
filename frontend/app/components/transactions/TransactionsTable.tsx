@@ -55,7 +55,7 @@ export default function TransactionsTable({
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  const toggleExpansion = (id: string, e: React.MouseEvent) => {
+  const toggleExpansion = (id: string, e: React.SyntheticEvent) => {
     e.stopPropagation();
     const next = new Set(expandedIds);
     if (next.has(id)) next.delete(id);
@@ -674,7 +674,7 @@ export default function TransactionsTable({
                             onKeyDown={e => {
                               if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
-                                toggleExpansion(tx.id, e as any);
+                                toggleExpansion(tx.id, e);
                               }
                             }}
                             aria-expanded={isExpanded}

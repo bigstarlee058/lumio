@@ -29,6 +29,15 @@ export interface ControlTotal {
   rowNumber?: number;
 }
 
+interface TransactionTotals {
+  totalDebit: number;
+  totalCredit: number;
+  transactionCount: number;
+  averageAmount: number;
+  minAmount: number;
+  maxAmount: number;
+}
+
 @Injectable()
 export class ChecksumValidationService {
   private readonly logger = new Logger(ChecksumValidationService.name);
@@ -94,15 +103,8 @@ export class ChecksumValidationService {
     };
   }
 
-  private calculateTransactionTotals(transactions: ParsedTransaction[]): {
-    totalDebit: number;
-    totalCredit: number;
-    transactionCount: number;
-    averageAmount: number;
-    minAmount: number;
-    maxAmount: number;
-  } {
-    const totals = {
+  private calculateTransactionTotals(transactions: ParsedTransaction[]): TransactionTotals {
+    const totals: TransactionTotals = {
       totalDebit: 0,
       totalCredit: 0,
       transactionCount: transactions.length,
@@ -143,7 +145,7 @@ export class ChecksumValidationService {
   }
 
   private async validateAgainstMetadata(
-    transactionTotals: any,
+    transactionTotals: TransactionTotals,
     metadata: ParsedStatementMetadata,
   ): Promise<{ discrepancies: TotalDiscrepancy[]; qualityScore: number }> {
     const discrepancies: TotalDiscrepancy[] = [];
@@ -198,7 +200,7 @@ export class ChecksumValidationService {
     return { discrepancies, qualityScore: score };
   }
 
-  private validateInternalConsistency(transactionTotals: any): {
+  private validateInternalConsistency(transactionTotals: TransactionTotals): {
     discrepancies: TotalDiscrepancy[];
     qualityScore: number;
   } {
@@ -290,7 +292,7 @@ export class ChecksumValidationService {
   }
 
   private validateAgainstControlTotals(
-    transactionTotals: any,
+    transactionTotals: TransactionTotals,
     controlTotals: ControlTotal[],
   ): { discrepancies: TotalDiscrepancy[]; qualityScore: number } {
     const discrepancies: TotalDiscrepancy[] = [];
@@ -346,7 +348,7 @@ export class ChecksumValidationService {
   }
 
   private calculateExpectedBalanceFromTotals(
-    transactionTotals: any,
+    transactionTotals: TransactionTotals,
     openingBalance?: number,
   ): number | null {
     if (openingBalance === undefined) return null;

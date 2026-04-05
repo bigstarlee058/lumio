@@ -7,19 +7,11 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorStatus } from '@/app/lib/api-error';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { format } from 'date-fns';
 import { enUS, kk, ru } from 'date-fns/locale';
-import {
-  CheckCircle,
-  Plus,
-  Printer,
-  Save,
-  Search,
-  Trash2,
-  X,
-  XCircle,
-} from 'lucide-react';
+import { CheckCircle, Plus, Printer, Save, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -34,24 +26,38 @@ import {
   getActiveTabFilter,
   normalizeActiveTabId,
 } from './utils/quickTabs';
-import type { CustomTableGridRow } from './utils/stylingUtils';
+import type {
+  CustomTableCellValue,
+  CustomTableColumn,
+  CustomTableColumnConfig,
+  CustomTableGridRow,
+  CustomTableRowPatch,
+  CustomTableRowStyles,
+  SheetStyle,
+} from './utils/stylingUtils';
 
 type ColumnType = 'text' | 'number' | 'date' | 'boolean' | 'select' | 'multi_select';
 type EditingScope = 'name' | 'description' | 'both';
 
-interface CustomTableColumn {
-  id: string;
-  key: string;
-  title: string;
-  type: ColumnType;
+type RowFilterValue = string | number | boolean | Array<string | number | boolean>;
+
+interface CustomTablePageColumn extends CustomTableColumn {
   isRequired: boolean;
   isUnique: boolean;
-  position: number;
-  config: Record<string, any> | null;
+  width?: number;
+  config: CustomTableColumnConfig | null;
   style?: {
-    header?: Record<string, any>;
-    cell?: Record<string, any>;
+    header?: SheetStyle;
+    cell?: SheetStyle;
   } | null;
+}
+
+interface CustomTableViewColumnSettings {
+  width?: number;
+}
+
+interface CustomTableViewSettings {
+  columns?: Record<string, CustomTableViewColumnSettings>;
 }
 
 interface CustomTable {
@@ -66,15 +72,8 @@ interface CustomTable {
     color?: string | null;
     icon?: string | null;
   } | null;
-  columns: CustomTableColumn[];
-  viewSettings?: Record<string, any> | null;
-}
-
-interface CustomTableRow {
-  id: string;
-  rowNumber: number;
-  data: Record<string, any>;
-  styles?: Record<string, any> | null;
+  columns: CustomTablePageColumn[];
+  viewSettings?: CustomTableViewSettings | null;
 }
 
 type RowFilterOp =
@@ -92,7 +91,7 @@ type RowFilterOp =
   | 'isNotEmpty'
   | 'search';
 
-type RowFilter = { col: string; op: RowFilterOp; value?: any };
+type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
 
 type PasteFieldKey = 'date' | 'type' | 'amount' | 'currency' | 'comment' | 'paid';
 
@@ -138,7 +137,7 @@ type PastePreviewRow = {
 type PastePreviewData = {
   totalRows: number;
   previewRows: PastePreviewRow[];
-  dataRows: Array<Record<string, any>>;
+  dataRows: CustomTableRowPatch[];
   columns: PasteColumnMapping[];
   errors: Record<PasteErrorKey, number>;
   hasErrors: boolean;
@@ -146,6 +145,126 @@ type PastePreviewData = {
   hasHeadersToggle: boolean;
   headersDetected: boolean;
 };
+
+type ColumnFilterState = {
+  min?: string;
+  max?: string;
+  from?: string;
+  to?: string;
+  op?: RowFilterOp;
+  value?: string;
+};
+
+type TranslationTree = {
+  value?: string;
+  [key: string]: unknown;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  isRecord(value) ? value : null;
+
+const getNestedRecord = (value: unknown, key: string): Record<string, unknown> | null => {
+  const record = getRecord(value);
+  return record ? getRecord(record[key]) : null;
+};
+
+const getNestedValue = (value: unknown, path: string[]): unknown => {
+  let current: unknown = value;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
+const getTranslationValue = (root: unknown, path: string[], fallback = ''): string => {
+  const candidate = getNestedValue(root, path);
+  if (typeof candidate === 'string') return candidate;
+  const record = getRecord(candidate);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
+
+const isContentEditableTarget = (value: unknown): value is { isContentEditable: boolean } =>
+  isRecord(value) && typeof value.isContentEditable === 'boolean';
+
+const getCreatedRowResponse = (value: unknown): CustomTableGridRow | null => {
+  const record = getRecord(value);
+  if (!record) return null;
+
+  const idCandidate = record.id ?? record.rowId ?? record.row_id;
+  const rowNumberCandidate = record.rowNumber ?? record.row_number;
+  const id = typeof idCandidate === 'string' ? idCandidate : null;
+  const rowNumber = typeof rowNumberCandidate === 'number' ? rowNumberCandidate : null;
+  const data = getRecord(record.data) as CustomTableRowPatch | null;
+  const styles = getRecord(record.styles) as CustomTableRowStyles | null;
+
+  return {
+    id: id ?? `temp-${Date.now()}`,
+    rowNumber: rowNumber ?? 1,
+    data: data ?? {},
+    styles: styles ?? null,
+  };
+};
+
+const getResponseItems = (value: unknown): CustomTableGridRow[] => {
+  if (!Array.isArray(value)) return [];
+  return value.filter(isRecord).map(item => ({
+    id: typeof item.id === 'string' ? item.id : String(item.rowNumber ?? ''),
+    rowNumber: typeof item.rowNumber === 'number' ? item.rowNumber : 0,
+    data: (getRecord(item.data) as CustomTableRowPatch | null) ?? {},
+    styles: (getRecord(item.styles) as CustomTableRowStyles | null) ?? null,
+  }));
+};
+
+const readRowsTotal = (response: unknown): number => {
+  const data = getNestedRecord(response, 'data');
+  const meta = data ? getNestedRecord(data, 'meta') : null;
+  const totalCandidate = meta?.total ?? data?.total ?? getNestedValue(data, ['items', 'length']);
+  return typeof totalCandidate === 'number' ? totalCandidate : 0;
+};
+
+const getViewColumns = (viewSettings: CustomTableViewSettings | null | undefined) =>
+  viewSettings?.columns ?? {};
+
+const getRowIdentity = (row: unknown): string => {
+  const record = getRecord(row);
+  if (!record) return '';
+  if (typeof record.id === 'string') return record.id;
+  if (typeof record.rowNumber === 'number') return String(record.rowNumber);
+  return '';
+};
+
+const getClassificationResults = (value: unknown): Map<string, boolean | null> => {
+  const payload =
+    getNestedValue(value, ['data', 'items']) ??
+    getNestedValue(value, ['items']) ??
+    getNestedValue(value, ['data']) ??
+    value;
+  const items = Array.isArray(payload) ? payload : [];
+  const result = new Map<string, boolean | null>();
+
+  for (const item of items) {
+    const record = getRecord(item);
+    if (!record) continue;
+    const id =
+      typeof record.rowId === 'string'
+        ? record.rowId
+        : typeof record.id === 'string'
+          ? record.id
+          : null;
+    if (!id) continue;
+    result.set(id, typeof record.paid === 'boolean' ? record.paid : null);
+  }
+
+  return result;
+};
+
+const tx = (root: unknown, path: string[], fallback = '') =>
+  getTranslationValue(root, path, fallback);
 
 const PASTE_FIELD_ALIASES: Record<PasteFieldKey, string[]> = {
   date: ['date', 'дата', 'день', 'day', 'dt', 'дт'],
@@ -390,7 +509,7 @@ const isEditableTarget = (target: EventTarget | null) => {
   return Boolean(element.getAttribute('contenteditable') === 'true');
 };
 
-const inferFieldFromColumn = (column: CustomTableColumn): PasteFieldKey | null => {
+const inferFieldFromColumn = (column: CustomTablePageColumn): PasteFieldKey | null => {
   const matched = matchFieldByName(`${column.title ?? ''} ${column.key ?? ''}`);
   if (matched) return matched;
   if (column.type === 'date') return 'date';
@@ -449,7 +568,7 @@ const buildSourceColumns = (rawRows: string[][], useHeaders: boolean) => {
 const buildPastePreview = (
   rawRows: string[][],
   useHeaders: boolean,
-  orderedColumns: CustomTableColumn[],
+  orderedColumns: CustomTablePageColumn[],
   mappingSelection: Record<number, PasteMappingSelection> | null,
   edits: Record<string, string>,
   defaults: Record<PasteFieldKey | 'columnPrefix', string>,
@@ -459,9 +578,9 @@ const buildPastePreview = (
   sourceColumns: PasteSourceColumn[];
 } => {
   const columnByKey = new Map(orderedColumns.map(col => [col.key, col]));
-  const columnNameMap = new Map<string, CustomTableColumn>();
+  const columnNameMap = new Map<string, CustomTablePageColumn>();
   const columnNameToField = new Map<string, PasteFieldKey>();
-  const fieldToColumn = new Map<PasteFieldKey, CustomTableColumn>();
+  const fieldToColumn = new Map<PasteFieldKey, CustomTablePageColumn>();
 
   for (const col of orderedColumns) {
     const inferredField = inferFieldFromColumn(col);
@@ -616,7 +735,7 @@ const buildPastePreview = (
     };
   }
 
-  const dataPayload: Array<Record<string, any>> = [];
+  const dataPayload: CustomTableRowPatch[] = [];
   const previewRows: PastePreviewRow[] = [];
   const errors: Record<PasteErrorKey, number> = {
     date: 0,
@@ -628,7 +747,7 @@ const buildPastePreview = (
 
   dataRows.forEach((row, rowIndex) => {
     if (!row || row.every(cell => !String(cell ?? '').trim())) return;
-    const rowData: Record<string, any> = {};
+    const rowData: CustomTableRowPatch = {};
     const cells: PastePreviewCell[] = [];
 
     for (const col of mappedColumns) {
@@ -638,7 +757,7 @@ const buildPastePreview = (
         sourceIndex !== null && row[sourceIndex] !== undefined ? String(row[sourceIndex]) : '';
       const editedValue = sourceIndex !== null && edits[key] !== undefined ? edits[key] : rawValue;
       const trimmed = editedValue.trim();
-      let parsedValue: any = trimmed || null;
+      let parsedValue: CustomTableCellValue = trimmed || null;
       let errorFlag = false;
 
       if (col.field === 'date') {
@@ -711,10 +830,6 @@ const isAbortError = (error: unknown): boolean => {
   );
 };
 
-const readRowsTotal = (response: any): number => {
-  return response?.data?.meta?.total ?? response?.data?.total ?? response?.data?.items?.length ?? 0;
-};
-
 export default function CustomTableDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -763,7 +878,7 @@ export default function CustomTableDetailPage() {
     }>
   >([]);
   const [categoryId, setCategoryId] = useState<string>('');
-  const [rows, setRows] = useState<CustomTableRow[]>([]);
+  const [rows, setRows] = useState<CustomTableGridRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingRows, setLoadingRows] = useState(false);
   const [savingCell, setSavingCell] = useState<string | null>(null);
@@ -786,7 +901,7 @@ export default function CustomTableDetailPage() {
     title: '',
     type: 'text',
   });
-  const [columnFilters, setColumnFilters] = useState<Record<string, any>>({});
+  const [columnFilters, setColumnFilters] = useState<Record<string, ColumnFilterState>>({});
 
   const [dateFrom, setDateFrom] = useState<string | null>(null);
   const [dateTo, setDateTo] = useState<string | null>(null);
@@ -808,13 +923,13 @@ export default function CustomTableDetailPage() {
 
   const pasteDefaults = useMemo(
     () => ({
-      date: (t as any).paste.defaults.date.value,
-      type: (t as any).paste.defaults.type.value,
-      amount: (t as any).paste.defaults.amount.value,
-      currency: (t as any).paste.defaults.currency.value,
-      comment: (t as any).paste.defaults.comment.value,
-      paid: (t as any).paste.defaults.paid.value,
-      columnPrefix: (t as any).paste.defaults.columnPrefix.value,
+      date: tx(t, ['paste', 'defaults', 'date'], 'Date'),
+      type: tx(t, ['paste', 'defaults', 'type'], 'Type'),
+      amount: tx(t, ['paste', 'defaults', 'amount'], 'Amount'),
+      currency: tx(t, ['paste', 'defaults', 'currency'], 'Currency'),
+      comment: tx(t, ['paste', 'defaults', 'comment'], 'Comment'),
+      paid: tx(t, ['paste', 'defaults', 'paid'], 'Paid'),
+      columnPrefix: tx(t, ['paste', 'defaults', 'columnPrefix'], 'Column'),
     }),
     [t],
   );
@@ -824,7 +939,7 @@ export default function CustomTableDetailPage() {
   const MAX_COLUMN_WIDTH = 1200;
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
   const columnWidthTimersRef = useRef<Record<string, number>>({});
-  const rowsRef = useRef<CustomTableRow[]>([]);
+  const rowsRef = useRef<CustomTableGridRow[]>([]);
   const rowsRequestSeqRef = useRef(0);
   const rowsAbortControllerRef = useRef<AbortController | null>(null);
   const loadingRowsRef = useRef(false);
@@ -833,9 +948,9 @@ export default function CustomTableDetailPage() {
   const statsAbortControllerRef = useRef<AbortController | null>(null);
 
   const [deleteColumnModalOpen, setDeleteColumnModalOpen] = useState(false);
-  const [deleteColumnTarget, setDeleteColumnTarget] = useState<CustomTableColumn | null>(null);
+  const [deleteColumnTarget, setDeleteColumnTarget] = useState<CustomTablePageColumn | null>(null);
   const [deleteRowModalOpen, setDeleteRowModalOpen] = useState(false);
-  const [deleteRowTarget, setDeleteRowTarget] = useState<CustomTableRow | null>(null);
+  const [deleteRowTarget, setDeleteRowTarget] = useState<CustomTableGridRow | null>(null);
   const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
   const [bulkDeleteRowIds, setBulkDeleteRowIds] = useState<string[]>([]);
   const [rowDrawerOpen, setRowDrawerOpen] = useState(false);
@@ -919,7 +1034,7 @@ export default function CustomTableDetailPage() {
     const hiddenSet = new Set(hiddenColumnKeys);
     const ordered = orderedKeys
       .map(key => columnsByKey.get(key))
-      .filter(Boolean) as CustomTableColumn[];
+      .filter(Boolean) as CustomTablePageColumn[];
     return ordered.filter(col => !hiddenSet.has(col.key));
   }, [orderedColumns, columnOrder, hiddenColumnKeys]);
 
@@ -936,7 +1051,7 @@ export default function CustomTableDetailPage() {
   const displayColumns = useMemo(() => {
     return orderedVisibleColumns.map(c => {
       if (c.key === paidColKey) {
-        return { ...c, title: (t as any).paidColumn.value };
+        return { ...c, title: tx(t, ['paidColumn'], c.title) };
       }
       return c;
     });
@@ -1044,9 +1159,9 @@ export default function CustomTableDetailPage() {
   const quickTabs = useMemo<QuickTab[]>(() => {
     return buildQuickTabs({
       labels: {
-        all: (t as any).tabs.all.value,
-        paid: (t as any).tabs.paid.value,
-        unpaid: (t as any).tabs.unpaid.value,
+        all: tx(t, ['tabs', 'all'], 'All'),
+        paid: tx(t, ['tabs', 'paid'], 'Paid'),
+        unpaid: tx(t, ['tabs', 'unpaid'], 'Unpaid'),
       },
       paidColKey,
       tabCounts: {
@@ -1128,12 +1243,9 @@ export default function CustomTableDetailPage() {
       console.warn('Failed to load column widths from storage:', error);
     }
 
-    const viewCols =
-      (table?.viewSettings && typeof table.viewSettings === 'object'
-        ? (table.viewSettings as any).columns
-        : null) || {};
+    const viewCols = getViewColumns(table?.viewSettings);
     const hasServerWidths = Object.values(viewCols).some(
-      (entry: any) => typeof entry?.width === 'number' && Number.isFinite(entry.width),
+      entry => typeof entry?.width === 'number' && Number.isFinite(entry.width),
     );
 
     const newWidths: Record<string, number> = {};
@@ -1151,7 +1263,7 @@ export default function CustomTableDetailPage() {
       }
 
       if (!(typeof width === 'number' && Number.isFinite(width))) {
-        width = (col as any).width;
+        width = col.width;
       }
       if (!(typeof width === 'number' && Number.isFinite(width))) {
         width = DEFAULT_COLUMN_WIDTH;
@@ -1289,7 +1401,7 @@ export default function CustomTableDetailPage() {
           const seen = new Set<string>();
           const deduped: typeof merged = [];
           for (const row of merged) {
-            const id = (row as any)?.id || String((row as any)?.rowNumber);
+            const id = getRowIdentity(row);
             if (!id || seen.has(id)) continue;
             seen.add(id);
             deduped.push(row);
@@ -1337,11 +1449,16 @@ export default function CustomTableDetailPage() {
       if (col.type === 'number') {
         const min = state?.min !== undefined && state?.min !== '' ? Number(state.min) : undefined;
         const max = state?.max !== undefined && state?.max !== '' ? Number(state.max) : undefined;
-        if (Number.isFinite(min) && Number.isFinite(max)) {
+        if (
+          min !== undefined &&
+          max !== undefined &&
+          Number.isFinite(min) &&
+          Number.isFinite(max)
+        ) {
           result.push({ col: col.key, op: 'between', value: [min, max] });
-        } else if (Number.isFinite(min)) {
+        } else if (min !== undefined && Number.isFinite(min)) {
           result.push({ col: col.key, op: 'gte', value: min });
-        } else if (Number.isFinite(max)) {
+        } else if (max !== undefined && Number.isFinite(max)) {
           result.push({ col: col.key, op: 'lte', value: max });
         }
         continue;
@@ -1538,7 +1655,7 @@ export default function CustomTableDetailPage() {
       const target = event.target as HTMLElement | null;
       const tag = target?.tagName?.toLowerCase();
       if (tag && ['input', 'textarea', 'select'].includes(tag)) return;
-      if (target && (target as any).isContentEditable) return;
+      if (target && isContentEditableTarget(target) && target.isContentEditable) return;
       handleFullscreenEscapeNavigation(event.key, handleBackNavigation);
     };
 
@@ -1631,23 +1748,11 @@ export default function CustomTableDetailPage() {
       });
       const payload = response.data?.data ?? response.data?.item ?? response.data;
       const createdRaw = Array.isArray(payload) ? payload[0] : payload;
-      if (!createdRaw || typeof createdRaw !== 'object') {
+      const created = getCreatedRowResponse(createdRaw);
+      if (!created) {
         throw new Error('Invalid create row response');
       }
-      const id =
-        (createdRaw as any)?.id ||
-        (createdRaw as any)?.rowId ||
-        (createdRaw as any)?.row_id ||
-        (createdRaw as any)?.rowNumber?.toString() ||
-        `temp-${Date.now()}`;
-      const rowNumber =
-        (createdRaw as any)?.rowNumber ?? (createdRaw as any)?.row_number ?? rows.length + 1;
-      const created: CustomTableGridRow = {
-        id: id as string,
-        rowNumber: typeof rowNumber === 'number' ? rowNumber : rows.length + 1,
-        data: (createdRaw as any)?.data ?? {},
-        styles: (createdRaw as any)?.styles ?? null,
-      };
+      created.rowNumber = created.rowNumber || rows.length + 1;
       setRows(prev => [...prev, created]);
       toast.success(t.addRow.success.value, { id: toastId });
       refreshStats();
@@ -1759,7 +1864,7 @@ export default function CustomTableDetailPage() {
         refreshStats();
       } catch (error) {
         console.error('Failed to rollback rows:', error);
-        toast.error((t as any).paste.undoFailed.value);
+        toast.error(tx(t, ['paste', 'undoFailed'], 'Failed to undo insert'));
       }
     },
     [tableId, refreshStats, t],
@@ -1768,7 +1873,7 @@ export default function CustomTableDetailPage() {
   const handlePasteAdd = useCallback(async () => {
     if (!tableId || !pastePreview || pasteApplying) return;
     if (!pastePreview.dataRows.length) {
-      toast.error((t as any).paste.noRows.value);
+      toast.error(tx(t, ['paste', 'noRows'], 'No rows found'));
       return;
     }
     if (pastePreview.hasErrors) return;
@@ -1777,7 +1882,7 @@ export default function CustomTableDetailPage() {
       const newColumns = pastePreview.columns.filter(col => col.mode === 'new');
       const missingTitles = newColumns.some(col => !col.newTitle || !col.newTitle.trim());
       if (missingTitles) {
-        toast.error((t as any).paste.missingColumnTitle.value);
+        toast.error(tx(t, ['paste', 'missingColumnTitle'], 'Missing column title'));
         setPasteApplying(false);
         return;
       }
@@ -1803,7 +1908,7 @@ export default function CustomTableDetailPage() {
       }
 
       const payloadRows = pastePreview.dataRows.map(row => {
-        const data: Record<string, any> = {};
+        const data: CustomTableRowPatch = {};
         for (const [key, value] of Object.entries(row)) {
           const actualKey = placeholderToKey.get(key) || key;
           data[actualKey] = value;
@@ -1821,7 +1926,7 @@ export default function CustomTableDetailPage() {
         responsePayload.items ||
         responsePayload.data?.items ||
         [];
-      const normalizedRows: CustomTableGridRow[] = Array.isArray(createdRows) ? createdRows : [];
+      const normalizedRows = getResponseItems(createdRows);
       const createdCount =
         responsePayload.created ??
         responsePayload.data?.created ??
@@ -1847,9 +1952,9 @@ export default function CustomTableDetailPage() {
             } flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg`}
           >
             <span className="text-sm text-gray-800">
-              {(t as any).paste.addedPrefix.value}
+              {tx(t, ['paste', 'addedPrefix'], 'Added ')}
               {createdCount}
-              {(t as any).paste.addedSuffix.value}
+              {tx(t, ['paste', 'addedSuffix'], ' rows')}
             </span>
             {undoIds.length > 0 && (
               <button
@@ -1863,7 +1968,7 @@ export default function CustomTableDetailPage() {
                 }}
                 className="text-sm font-semibold text-primary hover:text-primary-hover"
               >
-                {(t as any).paste.undo.value}
+                {tx(t, ['paste', 'undo'], 'Undo')}
               </button>
             )}
           </div>
@@ -1872,7 +1977,7 @@ export default function CustomTableDetailPage() {
       );
     } catch (error) {
       console.error('Failed to batch insert rows:', error);
-      toast.error((t as any).paste.insertFailed.value);
+      toast.error(tx(t, ['paste', 'insertFailed'], 'Failed to insert rows'));
     } finally {
       setPasteApplying(false);
     }
@@ -1888,7 +1993,11 @@ export default function CustomTableDetailPage() {
     t,
   ]);
 
-  const updateCellFromGrid = async (rowId: string, columnKey: string, value: any) => {
+  const updateCellFromGrid = async (
+    rowId: string,
+    columnKey: string,
+    value: CustomTableCellValue,
+  ) => {
     if (!tableId) return;
     if (rowId.startsWith('temp-')) {
       setRows(prev =>
@@ -1919,7 +2028,7 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const updateRowFromDrawer = async (rowId: string, patchData: Record<string, any>) => {
+  const updateRowFromDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
     if (!tableId) return;
     if (!Object.keys(patchData).length) return;
     if (rowId.startsWith('temp-')) {
@@ -1942,7 +2051,7 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const updateRowStyle = async (rowId: string, styles: Record<string, any>) => {
+  const updateRowStyle = async (rowId: string, styles: CustomTableRowStyles) => {
     if (!tableId) return;
     try {
       const row = rows.find(r => r.id === rowId);
@@ -1962,7 +2071,7 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const saveRowFromDrawer = async (rowId: string, patchData: Record<string, any>) => {
+  const saveRowFromDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
     try {
       await updateRowFromDrawer(rowId, patchData);
     } catch (error) {
@@ -1972,12 +2081,12 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const saveRowAndCloseDrawer = async (rowId: string, patchData: Record<string, any>) => {
+  const saveRowAndCloseDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
     await saveRowFromDrawer(rowId, patchData);
     closeRowDrawer();
   };
 
-  const saveRowAndNext = async (rowId: string, patchData: Record<string, any>) => {
+  const saveRowAndNext = async (rowId: string, patchData: CustomTableRowPatch) => {
     await saveRowFromDrawer(rowId, patchData);
     const ids = displayRows.map(r => r.id);
     const idx = ids.indexOf(rowId);
@@ -1987,7 +2096,7 @@ export default function CustomTableDetailPage() {
       setRowDrawerMode('edit');
       setRowDrawerOpen(true);
     } else {
-      toast((t as any).toasts.noMoreRows.value);
+      toast(tx(t, ['toasts', 'noMoreRows'], 'No more rows'));
     }
   };
 
@@ -2020,7 +2129,7 @@ export default function CustomTableDetailPage() {
       setDeleteRowTarget(null);
       refreshStats();
     } catch (error) {
-      const status = (error as any)?.response?.status;
+      const status = getApiErrorStatus(error);
       if (status === 404 || status === 410) {
         toast.success(t.deleteRow.success.value, { id: toastId });
         setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
@@ -2067,7 +2176,7 @@ export default function CustomTableDetailPage() {
           succeededIds.push(rowId);
           return;
         }
-        const status = (result as any)?.reason?.response?.status;
+        const status = result.status === 'rejected' ? getApiErrorStatus(result.reason) : undefined;
         if (status === 404 || status === 410) {
           succeededIds.push(rowId);
           return;
@@ -2101,10 +2210,10 @@ export default function CustomTableDetailPage() {
     if (existing) return existing;
     if (!tableId) throw new Error('Missing tableId');
 
-    const toastId = toast.loading((t as any).toasts.creatingPaidColumn.value);
+    const toastId = toast.loading(tx(t, ['toasts', 'creatingPaidColumn'], 'Creating Paid column'));
     try {
       const response = await apiClient.post(`/custom-tables/${tableId}/columns`, {
-        title: (t as any).paidColumn.value,
+        title: tx(t, ['paidColumn'], 'Paid'),
         type: 'boolean',
         config: { icon: 'mdi:check-circle-outline' },
       });
@@ -2112,12 +2221,16 @@ export default function CustomTableDetailPage() {
       if (!created || typeof created.key !== 'string') {
         throw new Error('Invalid create column response');
       }
-      setTable(prev => (prev ? { ...prev, columns: [...(prev.columns || []), created] } : prev));
-      toast.success((t as any).toasts.paidColumnCreated.value, { id: toastId });
+      setTable(prev =>
+        prev
+          ? { ...prev, columns: [...(prev.columns || []), created as CustomTablePageColumn] }
+          : prev,
+      );
+      toast.success(tx(t, ['toasts', 'paidColumnCreated'], 'Paid column created'), { id: toastId });
       return created.key;
     } catch (error) {
       console.error('Failed to create Paid column:', error);
-      toast.error((t as any).toasts.paidColumnCreateFailed.value, {
+      toast.error(tx(t, ['toasts', 'paidColumnCreateFailed'], 'Failed to create Paid column'), {
         id: toastId,
       });
       throw error;
@@ -2130,21 +2243,7 @@ export default function CustomTableDetailPage() {
       const response = await apiClient.post(`/custom-tables/${tableId}/rows/paid-classify`, {
         rowIds,
       });
-      const payload =
-        response.data?.items ||
-        response.data?.data?.items ||
-        response.data?.data ||
-        response.data ||
-        [];
-      const items = Array.isArray(payload) ? payload : [];
-      const map = new Map<string, boolean | null>();
-      items.forEach((item: any) => {
-        const id = item?.rowId || item?.id;
-        if (typeof id !== 'string') return;
-        const paid = typeof item?.paid === 'boolean' ? (item.paid as boolean) : null;
-        map.set(id, paid);
-      });
-      return map;
+      return getClassificationResults(response.data);
     } catch (error) {
       console.error('Failed to classify paid status:', error);
       return new Map();
@@ -2159,7 +2258,9 @@ export default function CustomTableDetailPage() {
 
     setBulkMarking(paid ? 'paid' : 'unpaid');
     const toastId = toast.loading(
-      paid ? (t as any).actions.markingPaid.value : (t as any).actions.markingUnpaid.value,
+      paid
+        ? tx(t, ['actions', 'markingPaid'], 'Marking paid')
+        : tx(t, ['actions', 'markingUnpaid'], 'Marking unpaid'),
     );
 
     try {
@@ -2208,12 +2309,14 @@ export default function CustomTableDetailPage() {
       setSelectedRowIds(failedIds);
 
       if (failedIds.length) {
-        toast.error((t as any).toasts.updateSomeRowsFailed.value, {
+        toast.error(tx(t, ['toasts', 'updateSomeRowsFailed'], 'Failed to update some rows'), {
           id: toastId,
         });
       } else {
         toast.success(
-          paid ? (t as any).toasts.markedPaid.value : (t as any).toasts.markedUnpaid.value,
+          paid
+            ? tx(t, ['toasts', 'markedPaid'], 'Marked paid')
+            : tx(t, ['toasts', 'markedUnpaid'], 'Marked unpaid'),
           { id: toastId },
         );
       }
@@ -2221,7 +2324,7 @@ export default function CustomTableDetailPage() {
       refreshStats();
     } catch (error) {
       console.error('Failed to mark rows:', error);
-      toast.error((t as any).toasts.updateRowsFailed.value, { id: toastId });
+      toast.error(tx(t, ['toasts', 'updateRowsFailed'], 'Failed to update rows'), { id: toastId });
     } finally {
       setBulkMarking(null);
     }
@@ -2243,7 +2346,7 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const openDeleteColumn = (column: CustomTableColumn) => {
+  const openDeleteColumn = (column: CustomTablePageColumn) => {
     setDeleteColumnTarget(column);
     setDeleteColumnModalOpen(true);
   };
@@ -2398,7 +2501,7 @@ export default function CustomTableDetailPage() {
                   : 'text-gray-500 hover:text-gray-900'
               }`}
             >
-              {(t as any).actions.columns.value}
+              {tx(t, ['actions', 'columns'], 'Columns')}
               {normalizedActiveTabId === columnsTabId && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
               )}
@@ -2421,8 +2524,8 @@ export default function CustomTableDetailPage() {
                   />
                   <span>
                     {bulkMarking === 'paid'
-                      ? (t as any).actions.markingPaid.value
-                      : (t as any).actions.markPaid.value}
+                      ? tx(t, ['actions', 'markingPaid'], 'Marking paid')
+                      : tx(t, ['actions', 'markPaid'], 'Mark paid')}
                   </span>
                 </button>
                 <button
@@ -2436,8 +2539,8 @@ export default function CustomTableDetailPage() {
                   />
                   <span>
                     {bulkMarking === 'unpaid'
-                      ? (t as any).actions.markingUnpaid.value
-                      : (t as any).actions.markUnpaid.value}
+                      ? tx(t, ['actions', 'markingUnpaid'], 'Marking unpaid')
+                      : tx(t, ['actions', 'markUnpaid'], 'Mark unpaid')}
                   </span>
                 </button>
                 <button
@@ -2445,7 +2548,7 @@ export default function CustomTableDetailPage() {
                   className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
                 >
                   <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span>{(t as any).actions.print.value}</span>
+                  <span>{tx(t, ['actions', 'print'], 'Print')}</span>
                 </button>
                 <button
                   onClick={openBulkDelete}
@@ -2453,14 +2556,14 @@ export default function CustomTableDetailPage() {
                   className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600 transition-colors hover:border-red-100 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
                 >
                   <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span>{(t as any).actions.delete.value}</span>
+                  <span>{tx(t, ['actions', 'delete'], 'Delete')}</span>
                 </button>
               </div>
               <div className="hidden sm:flex flex-col items-end gap-2">
                 <div className="relative group">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
                   <input
-                    placeholder={(t as any).actions.searchPlaceholder.value}
+                    placeholder={tx(t, ['actions', 'searchPlaceholder'], 'Search')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     className="pl-9 pr-4 py-2 text-sm w-48 lg:w-80 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
@@ -2505,7 +2608,7 @@ export default function CustomTableDetailPage() {
                 disabled={isColumnsDefault}
                 className="w-full rounded-xl border border-primary bg-primary/10 px-5 py-3.5 text-sm font-semibold text-primary hover:bg-primary/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary/10"
               >
-                {(t as any).actions.columnsReset.value}
+                {tx(t, ['actions', 'columnsReset'], 'Reset columns')}
               </button>
             </div>
           </div>
@@ -2519,7 +2622,7 @@ export default function CustomTableDetailPage() {
           }}
           size="xl"
           className="rounded-2xl"
-          title={(t as any).addColumn.modalTitle?.value ?? t.addColumn.titleLabel}
+          title={tx(t, ['addColumn', 'modalTitle'], t.addColumn.titleLabel.value ?? '')}
           footer={
             <div className="flex w-full items-center justify-between">
               <button
@@ -2721,8 +2824,8 @@ export default function CustomTableDetailPage() {
           <div className="flex items-center gap-4">
             <span className="text-xl font-semibold tracking-tight text-gray-900">
               {pastePreview
-                ? `${(t as any).paste.titlePrefix.value}${pastePreview.totalRows}${(t as any).paste.titleSuffix.value}`
-                : (t as any).paste.titleFallback.value}
+                ? `${tx(t, ['paste', 'titlePrefix'], '')}${pastePreview.totalRows}${tx(t, ['paste', 'titleSuffix'], '')}`
+                : tx(t, ['paste', 'titleFallback'], 'Paste preview')}
             </span>
             {pastePreview?.hasHeadersToggle && (
               <div className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer transition-colors bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
@@ -2731,7 +2834,7 @@ export default function CustomTableDetailPage() {
                   onCheckedChange={handlePasteHeadersToggle}
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20"
                 />
-                <span>{(t as any).paste.headersToggle.value}</span>
+                <span>{tx(t, ['paste', 'headersToggle'], 'Use first row as headers')}</span>
               </div>
             )}
           </div>
@@ -2740,8 +2843,8 @@ export default function CustomTableDetailPage() {
           <ModalFooter
             onCancel={resetPastePreview}
             onConfirm={handlePasteAdd}
-            cancelText={(t as any).paste.cancel.value}
-            confirmText={(t as any).paste.add.value}
+            cancelText={tx(t, ['paste', 'cancel'], 'Cancel')}
+            confirmText={tx(t, ['paste', 'add'], 'Add')}
             isConfirmLoading={pasteApplying}
             isConfirmDisabled={
               pasteParsing ||
@@ -2755,7 +2858,7 @@ export default function CustomTableDetailPage() {
         {pasteParsing && (
           <div className="flex flex-1 items-center justify-center gap-3 text-sm text-gray-500">
             <Spinner className="h-6 w-6 text-primary" />
-            <span>{(t as any).paste.parsing.value}</span>
+            <span>{tx(t, ['paste', 'parsing'], 'Parsing...')}</span>
           </div>
         )}
         {!pasteParsing && pastePreview && (
@@ -2764,7 +2867,7 @@ export default function CustomTableDetailPage() {
               <div className="flex-none px-6 py-3 border-b border-gray-100 bg-white">
                 <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900">
                   <div className="font-semibold whitespace-nowrap text-xs uppercase tracking-wide opacity-80 pt-0.5">
-                    {(t as any).paste.errorsTitle.value}
+                    {tx(t, ['paste', 'errorsTitle'], 'Errors')}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-amber-700">
                     {(['date', 'amount', 'currency', 'paid'] as PasteErrorKey[])
@@ -2774,7 +2877,7 @@ export default function CustomTableDetailPage() {
                           key={key}
                           className="flex items-center gap-1 bg-amber-100/50 px-2 py-0.5 rounded text-xs font-medium"
                         >
-                          <span>{(t as any).paste.errors[key].value}:</span>
+                          <span>{tx(t, ['paste', 'errors', key], key)}:</span>
                           <span className="font-mono font-bold">{pastePreview.errors[key]}</span>
                         </span>
                       ))}
@@ -2786,7 +2889,7 @@ export default function CustomTableDetailPage() {
             <div className="flex-1 relative bg-gray-50/30">
               {pastePreview.totalRows === 0 ? (
                 <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                  {(t as any).paste.noRows.value}
+                  {tx(t, ['paste', 'noRows'], 'No rows found')}
                 </div>
               ) : (
                 <div className="absolute inset-0 overflow-auto">
@@ -2842,11 +2945,11 @@ export default function CustomTableDetailPage() {
                             colSpan={pastePreview.columns.length}
                             className="py-6 text-center text-xs text-gray-400 bg-gray-50/30"
                           >
-                            {(t as any).paste.moreRowsPrefix.value}
+                            {tx(t, ['paste', 'moreRowsPrefix'], '')}
                             <span className="font-semibold text-gray-600 mx-1">
                               {pastePreview.extraRowsCount}
                             </span>
-                            {(t as any).paste.moreRowsSuffix.value}
+                            {tx(t, ['paste', 'moreRowsSuffix'], '')}
                           </td>
                         </tr>
                       )}
@@ -2885,7 +2988,7 @@ export default function CustomTableDetailPage() {
             : t.deleteColumn.confirmNoName.value
         }
         confirmText={t.deleteColumn.confirm.value}
-        cancelText={(t as any).deleteColumn.cancel.value}
+        cancelText={tx(t, ['deleteColumn', 'cancel'], 'Cancel')}
         isDestructive
       />
 
@@ -2896,12 +2999,12 @@ export default function CustomTableDetailPage() {
           setBulkDeleteRowIds([]);
         }}
         onConfirm={deleteSelectedRows}
-        title={(t as any).bulkDeleteRows.confirmTitle.value}
-        message={`${(t as any).bulkDeleteRows.confirmMessagePrefix.value}${(
+        title={tx(t, ['bulkDeleteRows', 'confirmTitle'], 'Delete selected rows')}
+        message={`${tx(t, ['bulkDeleteRows', 'confirmMessagePrefix'], '')}${(
           bulkDeleteRowIds.length || selectedRowIds.length
-        ).toString()}${(t as any).bulkDeleteRows.confirmMessageSuffix.value}`}
-        confirmText={(t as any).bulkDeleteRows.confirm.value}
-        cancelText={(t as any).bulkDeleteRows.cancel.value}
+        ).toString()}${tx(t, ['bulkDeleteRows', 'confirmMessageSuffix'], '')}`}
+        confirmText={tx(t, ['bulkDeleteRows', 'confirm'], 'Delete')}
+        cancelText={tx(t, ['bulkDeleteRows', 'cancel'], 'Cancel')}
         isDestructive
       />
 
@@ -2912,14 +3015,14 @@ export default function CustomTableDetailPage() {
           setDeleteRowTarget(null);
         }}
         onConfirm={deleteRow}
-        title={(t as any).deleteRow.confirmTitle.value}
+        title={tx(t, ['deleteRow', 'confirmTitle'], 'Delete row')}
         message={
           deleteRowTarget
-            ? `${(t as any).deleteRow.confirmWithNumberPrefix.value}${deleteRowTarget?.rowNumber ?? ''}${(t as any).deleteRow.confirmWithNumberSuffix.value}`
-            : (t as any).deleteRow.confirmNoNumber.value
+            ? `${tx(t, ['deleteRow', 'confirmWithNumberPrefix'], '')}${deleteRowTarget?.rowNumber ?? ''}${tx(t, ['deleteRow', 'confirmWithNumberSuffix'], '')}`
+            : tx(t, ['deleteRow', 'confirmNoNumber'], 'Delete this row?')
         }
-        confirmText={(t as any).deleteRow.confirm.value}
-        cancelText={(t as any).deleteRow.cancel.value}
+        confirmText={tx(t, ['deleteRow', 'confirm'], 'Delete')}
+        cancelText={tx(t, ['deleteRow', 'cancel'], 'Cancel')}
         isLoading={false}
       />
     </div>

@@ -8,6 +8,11 @@ import type {
 } from '../src/modules/parsing/interfaces/parsed-statement.interface';
 import { ParserFactoryService } from '../src/modules/parsing/services/parser-factory.service';
 
+type ParsedTransactionJson = Partial<ParsedTransaction> & {
+  transactionDate?: string;
+  date?: string;
+};
+
 function guessFileType(filePath: string): FileType {
   const ext = path.extname(filePath).toLowerCase();
   if (ext === '.pdf') return FileType.PDF;
@@ -30,9 +35,9 @@ function loadExpected(filePath: string): ParsedStatement {
       balanceStart: metadata.balanceStart ?? metadata.balance_start,
       balanceEnd: metadata.balanceEnd ?? metadata.balance_end,
     },
-    transactions: tx.map((t: any) => ({
+    transactions: tx.map((t: ParsedTransactionJson) => ({
       ...t,
-      transactionDate: new Date(t.transactionDate || t.date),
+      transactionDate: new Date(t.transactionDate || t.date || Date.now()),
     })),
   };
 }

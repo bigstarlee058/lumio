@@ -1,3 +1,5 @@
+/// <reference types="jest" />
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository } from 'typeorm';
 import {
@@ -10,9 +12,18 @@ import { Transaction } from '../../../../entities/transaction.entity';
 import { ClassificationService } from '../../../classification/services/classification.service';
 import { GoogleSheetsService } from '../../../google-sheets/google-sheets.service';
 import { MetricsService } from '../../../observability/metrics.service';
-import { MetadataExtractionService } from '../metadata-extraction.service';
+import {
+  ExtractedMetadata,
+  MetadataExtractionService,
+} from '../metadata-extraction.service';
 import { ParserFactoryService } from '../parser-factory.service';
 import { StatementProcessingService } from '../statement-processing.service';
+
+type RepositoryMock<T> = Partial<Record<'findOne' | 'save' | 'create' | 'find' | 'count', jest.Mock>>;
+
+type ParserFactoryAccess = {
+  parserFactory: Pick<ParserFactoryService, 'getParser' | 'detectBankAndFormat'>;
+};
 
 describe('StatementProcessingService - Headers Integration', () => {
   let service: StatementProcessingService;
@@ -56,36 +67,39 @@ describe('StatementProcessingService - Headers Integration', () => {
   };
 
   beforeEach(async () => {
-    const mockStatementRepository = {
+    const mockStatementRepository: RepositoryMock<Statement> = {
       findOne: jest.fn(),
       save: jest.fn(),
       create: jest.fn(),
-    } as any;
+    };
 
-    const mockTransactionRepository = {
+    const mockTransactionRepository: RepositoryMock<Transaction> = {
       save: jest.fn(),
       create: jest.fn(),
-    } as any;
+    };
 
-    const mockParserFactory = {
+    const mockParserFactory: Pick<ParserFactoryService, 'detectBankAndFormat' | 'getParser'> = {
       detectBankAndFormat: jest.fn(),
       getParser: jest.fn(),
-    } as any;
+    };
 
     const mockClassificationService = {
       determineMajorityCategory: jest.fn(),
       classifyTransaction: jest.fn(),
-    } as any;
+    };
 
-    const mockMetadataExtractionService = {
+    const mockMetadataExtractionService: Pick<
+      MetadataExtractionService,
+      'extractMetadata' | 'createDisplayInfo' | 'convertToParsedStatementMetadata'
+    > = {
       extractMetadata: jest.fn(),
       createDisplayInfo: jest.fn(),
       convertToParsedStatementMetadata: jest.fn(),
-    } as any;
+    };
 
-    const mockGoogleSheetsService = {
+    const mockGoogleSheetsService: Pick<GoogleSheetsService, 'syncStatementTransactions'> = {
       syncStatementTransactions: jest.fn(),
-    } as any;
+    };
 
     const mockMetricsService = {
       statementParsingDurationSeconds: {
@@ -97,7 +111,7 @@ describe('StatementProcessingService - Headers Integration', () => {
       aiParsingCallsTotal: {
         inc: jest.fn(),
       },
-    } as any;
+    } as unknown as MetricsService;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -154,8 +168,8 @@ describe('StatementProcessingService - Headers Integration', () => {
         getVersion: jest.fn().mockReturnValue('1.0.0'),
       };
 
-      const mockParserFactory = service as any;
-      mockParserFactory.parserFactory = {
+      const serviceAccess = service as unknown as ParserFactoryAccess;
+      serviceAccess.parserFactory = {
         getParser: jest.fn().mockResolvedValue(mockParser),
         detectBankAndFormat: jest.fn().mockResolvedValue({
           bankName: BankName.KASPI,
@@ -166,7 +180,7 @@ describe('StatementProcessingService - Headers Integration', () => {
         }),
       };
 
-      const mockExtractedMetadata = {
+      const mockExtractedMetadata: ExtractedMetadata = {
         rawHeader: 'БАНКОВСКАЯ ВЫПИСКА\nАО "Народный Банк"',
         normalizedHeader: 'БАНКОВСКАЯ ВЫПИСКА АО Народный Банк',
         statementType: 'statement',
@@ -194,6 +208,7 @@ describe('StatementProcessingService - Headers Integration', () => {
           code: 'KZT',
           symbol: '₸',
         },
+        additionalInfo: {},
       };
 
       const mockDisplayInfo = {
@@ -219,13 +234,13 @@ describe('StatementProcessingService - Headers Integration', () => {
 
       jest
         .spyOn(metadataExtractionService, 'extractMetadata')
-        .mockResolvedValue(mockExtractedMetadata as any);
+        .mockResolvedValue(mockExtractedMetadata);
 
       jest.spyOn(metadataExtractionService, 'createDisplayInfo').mockReturnValue(mockDisplayInfo);
 
       jest
         .spyOn(metadataExtractionService, 'convertToParsedStatementMetadata')
-        .mockReturnValue(mockEnhancedMetadata as any);
+        .mockReturnValue(mockEnhancedMetadata);
 
       // Mock the file system check
       const fs = require('fs');
@@ -253,8 +268,8 @@ describe('StatementProcessingService - Headers Integration', () => {
         getVersion: jest.fn().mockReturnValue('1.0.0'),
       };
 
-      const mockParserFactory = service as any;
-      mockParserFactory.parserFactory = {
+      const serviceAccess = service as unknown as ParserFactoryAccess;
+      serviceAccess.parserFactory = {
         getParser: jest.fn().mockResolvedValue(mockParser),
         detectBankAndFormat: jest.fn().mockResolvedValue({
           bankName: BankName.KASPI,
@@ -284,6 +299,17 @@ describe('StatementProcessingService - Headers Integration', () => {
     });
 
     it('should include header display info in parsing details', async () => {
+      type HeaderDisplayResult = Statement & {
+        parsingDetails?: {
+          metadataExtracted?: {
+            headerDisplay?: {
+              title?: string;
+              accountDisplay?: string;
+            };
+          };
+        } | null;
+      };
+
       const mockEnhancedStatement = {
         ...mockStatement,
         parsingDetails: {
@@ -307,7 +333,7 @@ describe('StatementProcessingService - Headers Integration', () => {
 
       const result = (await statementRepository.findOne({
         where: { id: 'test-statement-id' },
-      })) as any;
+      })) as HeaderDisplayResult | null;
 
       expect(result?.parsingDetails?.metadataExtracted?.headerDisplay).toBeDefined();
       expect(result?.parsingDetails?.metadataExtracted?.headerDisplay?.title).toBe(

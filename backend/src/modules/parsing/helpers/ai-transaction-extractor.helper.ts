@@ -52,7 +52,7 @@ ${redactedText}`,
       }
 
       return rawTransactions
-        .map((tx: any) =>
+        .map((tx: Record<string, unknown>) =>
           mapParsedTransaction(tx, {
             normalizeDate,
             normalizeNumber,

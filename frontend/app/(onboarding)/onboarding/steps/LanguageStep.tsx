@@ -4,6 +4,7 @@ import { Select } from '@/app/components/ui/select';
 import { useIntlayer } from '@/app/i18n';
 import { useMemo } from 'react';
 import ReactSelect, { type StylesConfig } from 'react-select';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 
 const COMMON_TIMEZONES = [
@@ -17,9 +18,15 @@ const COMMON_TIMEZONES = [
 ];
 
 const resolveTimeZoneOptions = () => {
-  if (typeof Intl !== 'undefined' && typeof (Intl as any).supportedValuesOf === 'function') {
+  const supportedValuesOf = (
+    globalThis.Intl as unknown as {
+      supportedValuesOf?: (key: string) => string[];
+    }
+  ).supportedValuesOf;
+
+  if (typeof supportedValuesOf === 'function') {
     try {
-      const zones = (Intl as any).supportedValuesOf('timeZone') as string[];
+      const zones = supportedValuesOf('timeZone');
       if (Array.isArray(zones) && zones.length > 0) {
         return zones;
       }
@@ -71,7 +78,9 @@ export function LanguageStep({
   onLocaleChange,
   onTimeZoneChange,
 }: LanguageStepProps) {
-  const t = useIntlayer('onboardingPage' as any) as any;
+  const t = useIntlayer('onboardingPage');
+  const text = (path: string[], fallback = '') =>
+    resolveOnboardingText(getNestedOnboardingValue(t, path), fallback, locale);
   const timeZoneOptions = useMemo(resolveTimeZoneOptions, []);
   const timezoneSelectOptions = useMemo<TimeZoneOption[]>(
     () => timeZoneOptions.map(zone => ({ value: zone, label: zone })),
@@ -92,9 +101,9 @@ export function LanguageStep({
   }, [timeZone, timezoneSelectOptions]);
 
   const languageOptions: Array<{ value: SupportedLocale; label: string }> = [
-    { value: 'ru', label: t.language.localeOptions.ru.value },
-    { value: 'en', label: t.language.localeOptions.en.value },
-    { value: 'kk', label: t.language.localeOptions.kk.value },
+    { value: 'ru', label: text(['language', 'localeOptions', 'ru'], 'Russian') },
+    { value: 'en', label: text(['language', 'localeOptions', 'en'], 'English') },
+    { value: 'kk', label: text(['language', 'localeOptions', 'kk'], 'Kazakh') },
   ];
 
   const timezoneSelectStyles = useMemo<StylesConfig<TimeZoneOption, false>>(
@@ -157,8 +166,15 @@ export function LanguageStep({
   return (
     <section className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">{t.language.title}</h2>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{t.language.subtitle}</p>
+        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
+          {text(['language', 'title'], 'Language and timezone')}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          {text(
+            ['language', 'subtitle'],
+            'Choose your preferred interface language and timezone for accurate report timestamps.',
+          )}
+        </p>
       </div>
 
       <div className="space-y-3">
@@ -166,7 +182,7 @@ export function LanguageStep({
           className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground"
           htmlFor="onboarding-locale"
         >
-          {t.language.localeLabel}
+          {text(['language', 'localeLabel'], 'Language')}
         </label>
         <Select
           id="onboarding-locale"
@@ -186,7 +202,7 @@ export function LanguageStep({
           className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground"
           htmlFor="onboarding-timezone-select"
         >
-          {t.language.timeZoneLabel}
+          {text(['language', 'timeZoneLabel'], 'Timezone')}
         </label>
 
         <ReactSelect<TimeZoneOption, false>
@@ -194,9 +210,9 @@ export function LanguageStep({
           options={timezoneSelectOptions}
           value={selectedTimeZoneOption}
           onChange={option => onTimeZoneChange(option?.value || null)}
-          placeholder={toText(t.language.timeZonePlaceholder, 'Select timezone')}
+          placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
           noOptionsMessage={() =>
-            toText(t.language.timeZoneNoOptions, 'No matching timezones found')
+            text(['language', 'timeZoneNoOptions'], 'No matching timezones found')
           }
           isSearchable
           menuPlacement="auto"
@@ -204,7 +220,12 @@ export function LanguageStep({
           styles={timezoneSelectStyles}
         />
 
-        <p className="text-sm text-muted-foreground">{t.language.timeZoneHint}</p>
+        <p className="text-sm text-muted-foreground">
+          {text(
+            ['language', 'timeZoneHint'],
+            'You can always change this later in profile settings.',
+          )}
+        </p>
       </div>
     </section>
   );

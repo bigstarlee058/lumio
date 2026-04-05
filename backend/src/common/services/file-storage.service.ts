@@ -154,7 +154,7 @@ export class FileStorageService {
       .where('statement.id = :id', { id: statementId })
       .getOne();
 
-    return ((withData as any)?.fileData as Buffer | null | undefined) ?? null;
+    return withData?.fileData ?? null;
   }
 
   private async getFileDataByHash(params: {
@@ -177,7 +177,7 @@ export class FileStorageService {
     }
 
     const other = await qb.getOne();
-    return ((other as any)?.fileData as Buffer | null | undefined) ?? null;
+    return other?.fileData ?? null;
   }
 
   async getStatementFileStream(

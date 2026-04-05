@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
-import { TelegramService } from './telegram.service';
+import { TelegramService, type TelegramUpdatePayload } from './telegram.service';
 
 @Controller('telegram/webhook')
 export class TelegramWebhookController {
@@ -9,7 +9,7 @@ export class TelegramWebhookController {
   @Post()
   @Public()
   @HttpCode(200)
-  async handleUpdate(@Body() update: any) {
+  async handleUpdate(@Body() update: TelegramUpdatePayload) {
     await this.telegramService.handleUpdate(update);
     return { ok: true };
   }

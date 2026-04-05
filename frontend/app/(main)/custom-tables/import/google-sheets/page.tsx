@@ -5,6 +5,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
 import { Icon } from '@iconify/react';
 import { Sparkles } from 'lucide-react';
@@ -50,9 +51,25 @@ interface PreviewResponse {
   sampleRows: Array<{
     rowNumber: number;
     values: Array<string | null>;
-    styles?: Array<Record<string, any> | null>;
+    styles?: Array<SheetCellStyle | null>;
   }>;
 }
+
+type SheetTextFormat = {
+  foregroundColor?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  fontSize?: number;
+  fontFamily?: string;
+};
+
+type SheetCellStyle = {
+  backgroundColor?: string;
+  horizontalAlignment?: string;
+  textFormat?: SheetTextFormat;
+};
 
 export default function GoogleSheetsImportPage() {
   const router = useRouter();
@@ -184,10 +201,9 @@ export default function GoogleSheetsImportPage() {
         setTableName(selectedConnection?.sheetName || t.defaults.tableName.value);
       }
       toast.success(t.toasts.previewReady.value);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Preview failed:', error);
-      const message = error?.response?.data?.message || t.toasts.previewFailed.value;
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, t.toasts.previewFailed.value));
     } finally {
       setLoadingPreview(false);
     }
@@ -227,10 +243,9 @@ export default function GoogleSheetsImportPage() {
       setJobStage('queued');
       setJobError('');
       toast.success(t.toasts.importStarted.value);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Commit failed:', error);
-      const message = error?.response?.data?.message || t.toasts.importFailed.value;
-      toast.error(message);
+      toast.error(getApiErrorMessage(error, t.toasts.importFailed.value));
     } finally {
       setCommitting(false);
     }
@@ -435,9 +450,7 @@ export default function GoogleSheetsImportPage() {
               data-tour-id="gs-import-preview-button"
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {(loadingPreview || loadingConnections) && (
-                <Spinner className="h-4 w-4" />
-              )}
+              {(loadingPreview || loadingConnections) && <Spinner className="h-4 w-4" />}
               {loadingConnections ? t.source.previewButtonLoading : t.source.previewButton}
             </button>
             {loadingConnections && (
@@ -527,11 +540,7 @@ export default function GoogleSheetsImportPage() {
               data-tour-id="gs-import-commit-button"
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {committing ? (
-                <Spinner className="h-4 w-4" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
+              {committing ? <Spinner className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
               {jobId ? t.result.importRunning : t.result.importButton}
             </button>
             {jobId ? (
@@ -761,12 +770,11 @@ const mapHorizontalAlignment = (value: unknown): CSSProperties['textAlign'] | un
   return undefined;
 };
 
-const sheetStyleToCss = (style: Record<string, any>) => {
+const sheetStyleToCss = (style: SheetCellStyle) => {
   const backgroundColor =
     typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined;
   const textAlign = mapHorizontalAlignment(style.horizontalAlignment);
-  const tf =
-    style.textFormat && typeof style.textFormat === 'object' ? (style.textFormat as any) : null;
+  const tf = style.textFormat ?? null;
   const color = tf && typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined;
   const fontWeight = tf && typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined;
   const fontStyle =
@@ -779,7 +787,7 @@ const sheetStyleToCss = (style: Record<string, any>) => {
     const parts: string[] = [];
     if (underline === true) parts.push('underline');
     if (strikethrough === true) parts.push('line-through');
-    textDecorationLine = parts.join(' ') as any;
+    textDecorationLine = parts.join(' ') as CSSProperties['textDecorationLine'];
   } else if (underline === false || strikethrough === false) {
     textDecorationLine = 'none';
   }

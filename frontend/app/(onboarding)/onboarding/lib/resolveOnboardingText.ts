@@ -50,6 +50,20 @@ const isMeaningfulStringified = (value: string): boolean => {
   return value.length > 0 && value !== '[object Object]';
 };
 
+export function getNestedOnboardingValue(source: unknown, path: string[]): unknown {
+  let current = source;
+
+  for (const segment of path) {
+    if (!current || typeof current !== 'object') {
+      return undefined;
+    }
+
+    current = (current as Record<string, unknown>)[segment];
+  }
+
+  return current;
+}
+
 export function resolveOnboardingText(
   token: unknown,
   fallback = '',

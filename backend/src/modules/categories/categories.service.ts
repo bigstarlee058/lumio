@@ -10,7 +10,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
-import type { Repository } from 'typeorm';
+import type { FindOptionsWhere, Repository } from 'typeorm';
 import { Statement, Transaction, User, WorkspaceMember, WorkspaceRole } from '../../entities';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { Category, CategorySource, CategoryType } from '../../entities/category.entity';
@@ -163,7 +163,7 @@ export class CategoriesService {
   }
 
   async findAll(workspaceId: string, type?: CategoryType): Promise<Category[]> {
-    const where: any = { workspaceId };
+    const where: FindOptionsWhere<Category> = { workspaceId };
     if (type) {
       where.type = type;
     }

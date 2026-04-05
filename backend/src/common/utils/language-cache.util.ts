@@ -296,8 +296,8 @@ export class LanguageCacheService {
     domainCache: Record<string, DomainLanguageEntry>;
     bankCache: Record<string, DomainLanguageEntry>;
   } {
-    const domainCache: Record<string, any> = {};
-    const bankCache: Record<string, any> = {};
+    const domainCache: Record<string, DomainLanguageEntry> = {};
+    const bankCache: Record<string, DomainLanguageEntry> = {};
 
     for (const [key, value] of this.domainCache.entries()) {
       domainCache[key] = value;

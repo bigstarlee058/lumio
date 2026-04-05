@@ -1,7 +1,7 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
@@ -65,7 +65,24 @@ const SOURCE_BADGE_CLASSNAME: Record<UnapprovedSource, string> = {
   unknown: 'border-gray-200 bg-gray-100 text-gray-700',
 };
 
-const resolveLabel = (value: any, fallback: string) => value?.value ?? value ?? fallback;
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') return value;
+  const record = getRecord(value);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
 
 const formatTemplate = (template: string, values: Record<string, string | number>) =>
   Object.entries(values).reduce(
@@ -231,109 +248,95 @@ export default function UnapprovedCashView() {
   const { currentWorkspace } = useWorkspace();
   const t = useIntlayer('statementsPage');
   const workspaceCurrency = (currentWorkspace?.currency || 'KZT').toUpperCase();
+  const tx = useCallback(
+    (path: string[], fallback: string) =>
+      resolveLabel(getNestedValue(t, ['unapprovedCash', ...path]), fallback),
+    [t],
+  );
 
-  const unapprovedAny = (t as any)?.unapprovedCash ?? {};
   const labels = {
-    title: resolveLabel(unapprovedAny.title, 'Unapproved cash'),
-    subtitle: resolveLabel(
-      unapprovedAny.subtitle,
+    title: tx(['title'], 'Unapproved cash'),
+    subtitle: tx(
+      ['subtitle'],
       'Review uploaded statements before they appear in reports and exports.',
     ),
-    searchPlaceholder: resolveLabel(
-      unapprovedAny.searchPlaceholder,
-      'Search file, bank, or transaction',
-    ),
+    searchPlaceholder: tx(['searchPlaceholder'], 'Search file, bank, or transaction'),
     filters: {
-      reason: resolveLabel(unapprovedAny.filters?.reason, 'Reason'),
-      source: resolveLabel(unapprovedAny.filters?.source, 'Source'),
-      amountFrom: resolveLabel(unapprovedAny.filters?.amountFrom, 'Amount from'),
-      amountTo: resolveLabel(unapprovedAny.filters?.amountTo, 'Amount to'),
-      dateFrom: resolveLabel(unapprovedAny.filters?.dateFrom, 'Date from'),
-      dateTo: resolveLabel(unapprovedAny.filters?.dateTo, 'Date to'),
-      allReasons: resolveLabel(unapprovedAny.filters?.allReasons, 'All reasons'),
-      allSources: resolveLabel(unapprovedAny.filters?.allSources, 'All sources'),
-      reset: resolveLabel(unapprovedAny.filters?.reset, 'Reset filters'),
+      reason: tx(['filters', 'reason'], 'Reason'),
+      source: tx(['filters', 'source'], 'Source'),
+      amountFrom: tx(['filters', 'amountFrom'], 'Amount from'),
+      amountTo: tx(['filters', 'amountTo'], 'Amount to'),
+      dateFrom: tx(['filters', 'dateFrom'], 'Date from'),
+      dateTo: tx(['filters', 'dateTo'], 'Date to'),
+      allReasons: tx(['filters', 'allReasons'], 'All reasons'),
+      allSources: tx(['filters', 'allSources'], 'All sources'),
+      reset: tx(['filters', 'reset'], 'Reset filters'),
     },
     reasons: {
-      missingCategory: resolveLabel(unapprovedAny.reasons?.missingCategory, 'Missing category'),
-      duplicateDetected: resolveLabel(
-        unapprovedAny.reasons?.duplicateDetected,
-        'Duplicate detected',
-      ),
-      unknownMerchant: resolveLabel(unapprovedAny.reasons?.unknownMerchant, 'Unknown merchant'),
-      missingType: resolveLabel(unapprovedAny.reasons?.missingType, 'Missing type'),
-      missingCurrency: resolveLabel(unapprovedAny.reasons?.missingCurrency, 'Missing currency'),
-      ocrIssues: resolveLabel(unapprovedAny.reasons?.ocrIssues, 'OCR issues'),
-      requiresConfirmation: resolveLabel(
-        unapprovedAny.reasons?.requiresConfirmation,
-        'Requires confirmation',
-      ),
+      missingCategory: tx(['reasons', 'missingCategory'], 'Missing category'),
+      duplicateDetected: tx(['reasons', 'duplicateDetected'], 'Duplicate detected'),
+      unknownMerchant: tx(['reasons', 'unknownMerchant'], 'Unknown merchant'),
+      missingType: tx(['reasons', 'missingType'], 'Missing type'),
+      missingCurrency: tx(['reasons', 'missingCurrency'], 'Missing currency'),
+      ocrIssues: tx(['reasons', 'ocrIssues'], 'OCR issues'),
+      requiresConfirmation: tx(['reasons', 'requiresConfirmation'], 'Requires confirmation'),
     },
     sources: {
-      gmail: resolveLabel(unapprovedAny.sources?.gmail, 'Gmail'),
-      pdf: resolveLabel(unapprovedAny.sources?.pdf, 'PDF'),
-      bank: resolveLabel(unapprovedAny.sources?.bank, 'Bank'),
-      manual: resolveLabel(unapprovedAny.sources?.manual, 'Manual'),
-      unknown: resolveLabel(unapprovedAny.sources?.unknown, 'Unknown'),
+      gmail: tx(['sources', 'gmail'], 'Gmail'),
+      pdf: tx(['sources', 'pdf'], 'PDF'),
+      bank: tx(['sources', 'bank'], 'Bank'),
+      manual: tx(['sources', 'manual'], 'Manual'),
+      unknown: tx(['sources', 'unknown'], 'Unknown'),
     },
     summary: {
-      total: resolveLabel(unapprovedAny.summary?.total, 'Total unapproved'),
-      missingCategory: resolveLabel(unapprovedAny.summary?.missingCategory, 'Missing category'),
-      duplicates: resolveLabel(unapprovedAny.summary?.duplicates, 'Duplicates'),
-      confirmation: resolveLabel(unapprovedAny.summary?.confirmation, 'Needs confirmation'),
+      total: tx(['summary', 'total'], 'Total unapproved'),
+      missingCategory: tx(['summary', 'missingCategory'], 'Missing category'),
+      duplicates: tx(['summary', 'duplicates'], 'Duplicates'),
+      confirmation: tx(['summary', 'confirmation'], 'Needs confirmation'),
     },
     table: {
-      merchant: resolveLabel(unapprovedAny.table?.merchant, 'Statement'),
-      date: resolveLabel(unapprovedAny.table?.date, 'Date'),
-      amount: resolveLabel(unapprovedAny.table?.amount, 'Amount'),
-      reason: resolveLabel(unapprovedAny.table?.reason, 'Reason'),
-      source: resolveLabel(unapprovedAny.table?.source, 'Source'),
-      actions: resolveLabel(unapprovedAny.table?.actions, 'Actions'),
+      merchant: tx(['table', 'merchant'], 'Statement'),
+      date: tx(['table', 'date'], 'Date'),
+      amount: tx(['table', 'amount'], 'Amount'),
+      reason: tx(['table', 'reason'], 'Reason'),
+      source: tx(['table', 'source'], 'Source'),
+      actions: tx(['table', 'actions'], 'Actions'),
     },
     actions: {
-      selected: resolveLabel(unapprovedAny.actions?.selected, 'Selected: {count}'),
-      selectAllVisible: resolveLabel(unapprovedAny.actions?.selectAllVisible, 'Select all visible'),
-      clearSelection: resolveLabel(unapprovedAny.actions?.clearSelection, 'Clear selection'),
-      assignCategory: resolveLabel(unapprovedAny.actions?.assignCategory, 'Assign category'),
-      approveSelected: resolveLabel(unapprovedAny.actions?.approveSelected, 'Approve selected'),
-      mergeDuplicates: resolveLabel(unapprovedAny.actions?.mergeDuplicates, 'Merge duplicates'),
-      ignore: resolveLabel(unapprovedAny.actions?.ignore, 'Ignore'),
-      reviewFix: resolveLabel(unapprovedAny.actions?.reviewFix, 'Review / Fix'),
-      approve: resolveLabel(unapprovedAny.actions?.approve, 'Approve'),
-      refresh: resolveLabel(unapprovedAny.actions?.refresh, 'Refresh'),
-      applying: resolveLabel(unapprovedAny.actions?.applying, 'Applying...'),
+      selected: tx(['actions', 'selected'], 'Selected: {count}'),
+      selectAllVisible: tx(['actions', 'selectAllVisible'], 'Select all visible'),
+      clearSelection: tx(['actions', 'clearSelection'], 'Clear selection'),
+      assignCategory: tx(['actions', 'assignCategory'], 'Assign category'),
+      approveSelected: tx(['actions', 'approveSelected'], 'Approve selected'),
+      mergeDuplicates: tx(['actions', 'mergeDuplicates'], 'Merge duplicates'),
+      ignore: tx(['actions', 'ignore'], 'Ignore'),
+      reviewFix: tx(['actions', 'reviewFix'], 'Review / Fix'),
+      approve: tx(['actions', 'approve'], 'Approve'),
+      refresh: tx(['actions', 'refresh'], 'Refresh'),
+      applying: tx(['actions', 'applying'], 'Applying...'),
     },
     empty: {
-      title: resolveLabel(unapprovedAny.empty?.title, 'All clear'),
-      description: resolveLabel(
-        unapprovedAny.empty?.description,
+      title: tx(['empty', 'title'], 'All clear'),
+      description: tx(
+        ['empty', 'description'],
         'No statement files need manual review for the selected filters.',
       ),
     },
     toasts: {
-      loadFailed: resolveLabel(
-        unapprovedAny.toasts?.loadFailed,
-        'Failed to load unapproved cash queue',
-      ),
-      assignSuccess: resolveLabel(unapprovedAny.toasts?.assignSuccess, 'Category assigned'),
-      assignFailed: resolveLabel(unapprovedAny.toasts?.assignFailed, 'Failed to assign category'),
-      approveSuccess: resolveLabel(unapprovedAny.toasts?.approveSuccess, 'Transactions approved'),
-      approveFailed: resolveLabel(
-        unapprovedAny.toasts?.approveFailed,
-        'Failed to approve transactions',
-      ),
-      mergeSuccess: resolveLabel(unapprovedAny.toasts?.mergeSuccess, 'Duplicates merged'),
-      mergeFailed: resolveLabel(unapprovedAny.toasts?.mergeFailed, 'Failed to merge duplicates'),
-      mergeNeedDuplicates: resolveLabel(
-        unapprovedAny.toasts?.mergeNeedDuplicates,
+      loadFailed: tx(['toasts', 'loadFailed'], 'Failed to load unapproved cash queue'),
+      assignSuccess: tx(['toasts', 'assignSuccess'], 'Category assigned'),
+      assignFailed: tx(['toasts', 'assignFailed'], 'Failed to assign category'),
+      approveSuccess: tx(['toasts', 'approveSuccess'], 'Transactions approved'),
+      approveFailed: tx(['toasts', 'approveFailed'], 'Failed to approve transactions'),
+      mergeSuccess: tx(['toasts', 'mergeSuccess'], 'Duplicates merged'),
+      mergeFailed: tx(['toasts', 'mergeFailed'], 'Failed to merge duplicates'),
+      mergeNeedDuplicates: tx(
+        ['toasts', 'mergeNeedDuplicates'],
         'Select at least 2 duplicate transactions',
       ),
-      ignoreSuccess: resolveLabel(
-        unapprovedAny.toasts?.ignoreSuccess,
-        'Ignored {count} transaction(s)',
-      ),
-      reviewUnavailable: resolveLabel(
-        unapprovedAny.toasts?.reviewUnavailable,
+      ignoreSuccess: tx(['toasts', 'ignoreSuccess'], 'Ignored {count} transaction(s)'),
+      reviewUnavailable: tx(
+        ['toasts', 'reviewUnavailable'],
         'Review is unavailable for this transaction',
       ),
     },
@@ -617,7 +620,11 @@ export default function UnapprovedCashView() {
             className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={refreshing || loading}
           >
-            {refreshing || loading ? <Spinner className="h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
+            {refreshing || loading ? (
+              <Spinner className="h-4 w-4" />
+            ) : (
+              <RefreshCcw className="h-4 w-4" />
+            )}
             {labels.actions.refresh}
           </button>
         </div>
@@ -812,7 +819,7 @@ export default function UnapprovedCashView() {
       <div className="min-h-0 flex-1 overflow-y-auto rounded-lg border border-gray-200 bg-white">
         {loading ? (
           <div className="flex h-full min-h-[280px] items-center justify-center">
-            <Spinner size={80} className="text-primary" />
+            <Spinner className="h-20 w-20 text-primary" />
           </div>
         ) : filteredQueue.length === 0 ? (
           <div className="flex h-full min-h-[280px] flex-col items-center justify-center px-6 text-center">

@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createCustomTablesTour } from './custom-tables-tour';
 
+type TourTextPayload = Parameters<typeof createCustomTablesTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -23,7 +25,7 @@ describe('createCustomTablesTour', () => {
   };
 
   it('uses the current custom tables selector set', () => {
-    const tour = createCustomTablesTour(texts as any);
+    const tour = createCustomTablesTour(texts as TourTextPayload);
 
     expect(tour.page).toBe('/custom-tables');
     expect(tour.steps.map(step => step.selector)).toEqual([
@@ -52,7 +54,7 @@ describe('createCustomTablesTour', () => {
       },
     };
 
-    const tour = createCustomTablesTour(legacyTexts as any);
+    const tour = createCustomTablesTour(legacyTexts as TourTextPayload);
 
     expect(tour.steps[1]?.title).toBe('Create export');
     expect(tour.steps[2]?.title).toBe('Create dropdown');

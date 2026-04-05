@@ -6,6 +6,29 @@ import { ColumnValidationResult } from './column-validation.service';
 import { DuplicationQualityMetrics, DuplicationResult } from './intelligent-deduplication.service';
 import { NormalizationResult } from './statement-normalization.service';
 
+interface QualityMetricsResults {
+  duplication?: DuplicationResult;
+  normalization?: NormalizationResult;
+  validation?: ColumnValidationResult;
+  checksum?: ChecksumValidationResult;
+  metadata?: ExtractedMetadata;
+}
+
+interface QualityMetricsContext {
+  bankId?: string;
+  processingTime: number;
+  memoryUsage?: number;
+  format?: string;
+  transactionCount?: number;
+}
+
+interface RichExtractedMetadata extends ExtractedMetadata {
+  account?: { number?: string };
+  period?: { label?: string };
+  currency?: { code?: string };
+  institution?: { name?: string };
+}
+
 export interface QualityMetricsSnapshot {
   timestamp: Date;
   processingId: string;
@@ -236,7 +259,7 @@ export interface QualityInsight {
   title: string;
   description: string;
   impact: string;
-  data: any;
+  data: Record<string, unknown>;
   confidence: number;
 }
 
@@ -271,6 +294,24 @@ export class QualityMetricsService {
   private readonly metricsHistory: QualityMetricsSnapshot[] = [];
   private readonly maxHistorySize = 1000;
 
+  private getNormalizationScore(normalization?: NormalizationResult): number {
+    return normalization?.qualityMetrics.dataQualityScore || 0;
+  }
+
+  private getNormalizationCompleteness(normalization?: NormalizationResult): number {
+    if (!normalization) return 0;
+    const totalRows = normalization.qualityMetrics.totalRows;
+    return totalRows > 0 ? normalization.qualityMetrics.successfullyNormalized / totalRows : 0;
+  }
+
+  private getNormalizationAutoFixSuccessRate(normalization?: NormalizationResult): number {
+    return this.getNormalizationCompleteness(normalization);
+  }
+
+  private getRichMetadata(metadata?: ExtractedMetadata): RichExtractedMetadata | undefined {
+    return metadata as RichExtractedMetadata | undefined;
+  }
+
   // Quality thresholds
   private readonly thresholds: QualityThresholds = {
     overallScore: {
@@ -303,12 +344,7 @@ export class QualityMetricsService {
       checksum?: ChecksumValidationResult;
       metadata?: ExtractedMetadata;
     },
-    context: {
-      bankId?: string;
-      processingTime: number;
-      memoryUsage?: number;
-      format?: string;
-    },
+    context: QualityMetricsContext,
   ): Promise<QualityMetricsSnapshot> {
     this.logger.log(`Recording quality metrics for processing: ${processingId}`);
 
@@ -353,7 +389,7 @@ export class QualityMetricsService {
 
   private calculateOverallMetrics(
     transactions: ParsedTransaction[],
-    results: any,
+    results: QualityMetricsResults,
   ): OverallQualityMetrics {
     let completeness = 0;
     let accuracy = 0;
@@ -368,7 +404,7 @@ export class QualityMetricsService {
     }
 
     if (results.normalization) {
-      const normQuality = results.normalization.qualityMetrics?.overallScore || 0;
+      const normQuality = this.getNormalizationScore(results.normalization);
       accuracy += normQuality * 0.2;
       completeness += normQuality * 0.3;
       consistency += normQuality * 0.3;
@@ -382,7 +418,7 @@ export class QualityMetricsService {
     }
 
     if (results.checksum) {
-      const checksumQuality = results.checksum.qualityMetrics?.overallScore || 0;
+      const checksumQuality = results.checksum.qualityScore || 0;
       accuracy += checksumQuality * 0.2;
       consistency += checksumQuality * 0.2;
     }
@@ -412,7 +448,7 @@ export class QualityMetricsService {
 
   private async calculateBreakdownMetrics(
     transactions: ParsedTransaction[],
-    results: any,
+    results: QualityMetricsResults,
   ): Promise<BreakdownMetrics> {
     return {
       parsing: this.calculateParsingMetrics(results),
@@ -423,7 +459,7 @@ export class QualityMetricsService {
     };
   }
 
-  private calculateParsingMetrics(results: any): ParsingQualityMetrics {
+  private calculateParsingMetrics(results: QualityMetricsResults): ParsingQualityMetrics {
     // Simplified calculation - would use actual parsing metrics
     return {
       successRate: 0.95, // Assumed from results
@@ -434,8 +470,8 @@ export class QualityMetricsService {
     };
   }
 
-  private calculateExtractionMetrics(results: any): ExtractionQualityMetrics {
-    const metadata = results.metadata;
+  private calculateExtractionMetrics(results: QualityMetricsResults): ExtractionQualityMetrics {
+    const metadata = this.getRichMetadata(results.metadata);
 
     if (!metadata) {
       return {
@@ -463,7 +499,9 @@ export class QualityMetricsService {
     };
   }
 
-  private calculateNormalizationMetrics(results: any): NormalizationQualityMetrics {
+  private calculateNormalizationMetrics(
+    results: QualityMetricsResults,
+  ): NormalizationQualityMetrics {
     const normalization = results.normalization;
 
     if (!normalization) {
@@ -477,19 +515,15 @@ export class QualityMetricsService {
     }
 
     return {
-      fieldNormalizationRate: normalization.qualityMetrics?.completenessRatio || 0,
-      typeConversionAccuracy: normalization.qualityMetrics?.dataQualityScore || 0,
+      fieldNormalizationRate: this.getNormalizationCompleteness(normalization),
+      typeConversionAccuracy: normalization.qualityMetrics.dataQualityScore || 0,
       formatStandardizationRate: 0.95, // Assumed
       dataCleaningEffectiveness: 0.9, // Assumed
-      autoFixSuccessRate:
-        normalization.fixAttempts?.length > 0
-          ? normalization.fixAttempts.filter(f => f.success).length /
-            normalization.fixAttempts.length
-          : 1,
+      autoFixSuccessRate: this.getNormalizationAutoFixSuccessRate(normalization),
     };
   }
 
-  private calculateValidationMetrics(results: any): ValidationQualityMetrics {
+  private calculateValidationMetrics(results: QualityMetricsResults): ValidationQualityMetrics {
     const validation = results.validation;
 
     if (!validation) {
@@ -503,8 +537,7 @@ export class QualityMetricsService {
     }
 
     const totalIssues = validation.inconsistencies?.length || 0;
-    const criticalIssues =
-      validation.inconsistencies?.filter(i => i.severity === 'critical').length || 0;
+    const criticalIssues = validation.inconsistencies?.filter(i => i.severity === 'high').length || 0;
     const warnings =
       validation.inconsistencies?.filter(i => i.severity === 'medium' || i.severity === 'low')
         .length || 0;
@@ -518,7 +551,9 @@ export class QualityMetricsService {
     };
   }
 
-  private calculateDeduplicationMetrics(results: any): DeduplicationQualityMetrics {
+  private calculateDeduplicationMetrics(
+    results: QualityMetricsResults,
+  ): DeduplicationQualityMetrics {
     const deduplication = results.duplication;
 
     if (!deduplication) {
@@ -680,7 +715,7 @@ export class QualityMetricsService {
     return trends;
   }
 
-  private calculatePerformanceMetrics(context: any): PerformanceMetrics {
+  private calculatePerformanceMetrics(context: QualityMetricsContext): PerformanceMetrics {
     return {
       processingTime: {
         average: context.processingTime || 0,
@@ -716,7 +751,7 @@ export class QualityMetricsService {
   private generateAlerts(
     overallMetrics: OverallQualityMetrics,
     performanceMetrics: PerformanceMetrics,
-    context: any,
+    context: QualityMetricsContext,
   ): QualityAlert[] {
     const alerts: QualityAlert[] = [];
 
@@ -790,7 +825,10 @@ export class QualityMetricsService {
     return 'poor';
   }
 
-  private calculateConfidence(transactions: ParsedTransaction[], results: any): number {
+  private calculateConfidence(
+    transactions: ParsedTransaction[],
+    results: QualityMetricsResults,
+  ): number {
     // Simplified confidence calculation
     let confidence = 0.8; // Base confidence
 
@@ -812,7 +850,7 @@ export class QualityMetricsService {
     return Math.min(confidence, 1.0);
   }
 
-  private calculateReliability(results: any): number {
+  private calculateReliability(results: QualityMetricsResults): number {
     // Calculate reliability based on consistency of results
     let reliability = 0.9; // Base reliability
 

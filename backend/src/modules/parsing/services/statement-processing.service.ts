@@ -28,6 +28,12 @@ import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
 import { MetadataExtractionService } from './metadata-extraction.service';
 import { ParserFactoryService } from './parser-factory.service';
 
+interface StatementImportPreview {
+  sessionId?: string;
+  transactions?: unknown;
+  [key: string]: unknown;
+}
+
 function parsePositiveInt(value: string | undefined, fallback: number) {
   if (!value) return fallback;
   const parsed = Number.parseInt(value, 10);
@@ -71,6 +77,19 @@ export class StatementProcessingService {
     private readonly eventEmitter?: EventEmitter2,
   ) {}
 
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
+
+  private getImportPreview(statement: Statement): StatementImportPreview | undefined {
+    const importPreview = statement.parsingDetails?.importPreview;
+    return this.isRecord(importPreview) ? (importPreview as StatementImportPreview) : undefined;
+  }
+
   private async resolveActorName(userId: string): Promise<string> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -110,7 +129,7 @@ export class StatementProcessingService {
       .where('statement.id = :id', { id: statement.id })
       .getOne();
 
-    let fileData: Buffer | null | undefined = (withData as any)?.fileData;
+    let fileData: Buffer | null | undefined = withData?.fileData;
 
     if (!fileData && statement.fileHash) {
       const alternative = await this.statementRepository
@@ -123,7 +142,7 @@ export class StatementProcessingService {
         .andWhere('statement.fileData IS NOT NULL')
         .orderBy('statement.createdAt', 'DESC')
         .getOne();
-      fileData = (alternative as any)?.fileData;
+      fileData = alternative?.fileData;
     }
 
     if (!fileData) {
@@ -327,7 +346,7 @@ export class StatementProcessingService {
       throw new Error(`Statement ${statementId} not found`);
     }
 
-    const importPreview = (statement.parsingDetails as any)?.importPreview;
+    const importPreview = this.getImportPreview(statement);
     if (!importPreview?.sessionId) {
       if (statement.status === StatementStatus.COMPLETED) {
         return statement;
@@ -375,7 +394,9 @@ export class StatementProcessingService {
           };
         }
       } catch (dedupError) {
-        this.logger.warn(`Cross-statement deduplication failed: ${dedupError.message}`);
+        this.logger.warn(
+          `Cross-statement deduplication failed: ${this.getErrorMessage(dedupError)}`,
+        );
       }
     }
 
@@ -390,7 +411,7 @@ export class StatementProcessingService {
     statement.parsingDetails = {
       ...(statement.parsingDetails || {}),
       importCommit: commitResult.summary,
-    } as Statement['parsingDetails'];
+    } as unknown as Statement['parsingDetails'];
 
     await this.statementRepository.save(statement);
 
@@ -461,7 +482,7 @@ export class StatementProcessingService {
         } catch (error) {
           addLog(
             'warn',
-            `PDF text extraction failed before detection: ${(error as Error)?.message}`,
+            `PDF text extraction failed before detection: ${this.getErrorMessage(error)}`,
           );
         }
       }
@@ -584,7 +605,7 @@ export class StatementProcessingService {
         addLog('info', `Account display: "${displayInfo.accountDisplay}"`);
         addLog('info', `Institution display: "${displayInfo.institutionDisplay}"`);
       } catch (metadataError) {
-        addLog('warn', `Metadata extraction failed: ${metadataError.message}`);
+        addLog('warn', `Metadata extraction failed: ${this.getErrorMessage(metadataError)}`);
         // Continue without metadata - not a critical error
       }
 
@@ -609,7 +630,7 @@ export class StatementProcessingService {
           this.reportAi('validate', parsedStatement.transactions.length > 0 ? 'success' : 'empty');
         } catch (aiError) {
           this.reportAi('validate', 'error');
-          addLog('warn', `AI reconciliation failed: ${(aiError as Error)?.message}`);
+          addLog('warn', `AI reconciliation failed: ${this.getErrorMessage(aiError)}`);
         }
       } else {
         if (!aiEnabled) {
@@ -788,16 +809,17 @@ export class StatementProcessingService {
 
       return statement;
     } catch (error) {
-      const errorMsg = `Error processing statement ${statementId}: ${error.message}`;
+      const message = this.getErrorMessage(error);
+      const errorMsg = `Error processing statement ${statementId}: ${message}`;
       addLog('error', errorMsg);
       parsingDetails.errors = parsingDetails.errors || [];
-      parsingDetails.errors.push(error.message);
+      parsingDetails.errors.push(message);
       parsingDetails.processingTime = Date.now() - startTime;
       this.countError('processing', error);
       this.observeDuration('total', startTime, statement.bankName, statement.fileType, 'error');
 
       statement.status = StatementStatus.ERROR;
-      statement.errorMessage = error.message;
+      statement.errorMessage = message;
       statement.parsingDetails = parsingDetails;
       await this.statementRepository.save(statement);
 
@@ -807,7 +829,7 @@ export class StatementProcessingService {
           userId: statement.userId,
           statementId: statement.id,
           statementName: statement.fileName,
-          errorMessage: error.message,
+          errorMessage: message,
         } satisfies ParsingErrorEvent);
       }
 
@@ -890,7 +912,7 @@ export class StatementProcessingService {
       } catch (error) {
         log(
           'warn',
-          `AI batch categorization failed, fallback to default classification: ${error.message}`,
+          `AI batch categorization failed, fallback to default classification: ${this.getErrorMessage(error)}`,
         );
       }
     }
@@ -1018,7 +1040,7 @@ export class StatementProcessingService {
           log('info', `Processed ${i + 1}/${deduped.length} transactions`);
         }
       } catch (error) {
-        const errorMsg = `Error creating transaction ${i + 1}: ${error.message}`;
+        const errorMsg = `Error creating transaction ${i + 1}: ${this.getErrorMessage(error)}`;
         log('error', errorMsg);
         // Continue processing other transactions
       }

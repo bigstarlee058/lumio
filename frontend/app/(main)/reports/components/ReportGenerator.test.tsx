@@ -2,6 +2,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { Circle } from 'lucide-react';
+
+const EmptyIcon = Circle;
 
 vi.mock('@/app/i18n', () => ({
   useIntlayer: () => ({
@@ -28,7 +31,7 @@ describe('ReportGenerator', () => {
           id: 'pnl',
           name: 'PnL localise',
           description: 'Description locale',
-          icon: (() => null) as any,
+           icon: EmptyIcon,
           category: 'financial',
           formats: ['excel', 'pdf'],
         }}

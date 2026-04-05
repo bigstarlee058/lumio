@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createAdminTour } from './admin-tour';
 
+type TourTextPayload = Parameters<typeof createAdminTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -21,7 +23,7 @@ describe('createAdminTour', () => {
   };
 
   it('uses the current admin selector set', () => {
-    const tour = createAdminTour(texts as any);
+    const tour = createAdminTour(texts as TourTextPayload);
 
     expect(tour.page).toBe('/admin');
     expect(tour.steps.map(step => step.selector)).toEqual([
@@ -46,7 +48,7 @@ describe('createAdminTour', () => {
       },
     };
 
-    const tour = createAdminTour(legacyTexts as any);
+    const tour = createAdminTour(legacyTexts as TourTextPayload);
 
     expect(tour.steps[1]?.title).toBe('Admin Tabs');
     expect(tour.steps[2]?.title).toBe('Statements Log');

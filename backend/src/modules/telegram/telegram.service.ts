@@ -18,6 +18,43 @@ interface TelegramSendResult {
   messageId: string;
 }
 
+interface TelegramDocumentPayload {
+  file_id: string;
+  file_name?: string;
+  mime_type?: string;
+}
+
+interface TelegramMessagePayload {
+  chat?: { id?: number | string };
+  text?: string;
+  from?: { id?: number | string };
+  document?: TelegramDocumentPayload;
+}
+
+export interface TelegramUpdatePayload {
+  message?: TelegramMessagePayload;
+}
+
+interface TelegramSendMessageResponse {
+  ok: boolean;
+  description?: string;
+  error_code?: number;
+  result?: {
+    message_id?: number | string;
+  };
+}
+
+interface TelegramGetFileResponse {
+  ok: boolean;
+  description?: string;
+  result?: {
+    file_path?: string;
+  };
+}
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
 class TelegramApiError extends Error {
   constructor(
     message: string,
@@ -80,8 +117,8 @@ export class TelegramService {
           dto.chatId,
           '✅ Telegram подключен. Мы будем отправлять отчёты в этот чат.',
         );
-      } catch (error: any) {
-        this.logger.warn(`Failed to send confirmation message: ${error?.message || error}`);
+      } catch (error: unknown) {
+        this.logger.warn(`Failed to send confirmation message: ${getErrorMessage(error)}`);
       }
     }
 
@@ -236,7 +273,7 @@ export class TelegramService {
           throw new TelegramApiError('Telegram API temporary error', response.status);
         }
 
-        const payload = await response.json();
+        const payload = (await response.json()) as TelegramSendMessageResponse;
 
         if (!payload.ok) {
           const description = payload?.description || 'Unknown error';
@@ -246,8 +283,8 @@ export class TelegramService {
         }
 
         return { messageId: String(payload.result?.message_id || '') };
-      } catch (error: any) {
-        if (error?.name === 'AbortError') {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') {
           throw new TimeoutError('Telegram request timed out');
         }
         throw error;
@@ -271,7 +308,7 @@ export class TelegramService {
     }
   }
 
-  async handleUpdate(update: any): Promise<void> {
+  async handleUpdate(update: TelegramUpdatePayload): Promise<void> {
     if (!this.isEnabled()) {
       return;
     }
@@ -372,7 +409,7 @@ export class TelegramService {
   private async handleDocumentUpload(
     chatId: string,
     telegramId: string | null,
-    document: any,
+    document: TelegramDocumentPayload,
   ): Promise<void> {
     if (!telegramId) {
       await this.sendMessage(
@@ -514,7 +551,7 @@ export class TelegramService {
       body: JSON.stringify({ file_id: fileId }),
     });
 
-    const payload = await response.json();
+    const payload = (await response.json()) as TelegramGetFileResponse;
 
     if (!payload.ok) {
       const description = payload?.description || 'Unknown error';
@@ -522,7 +559,7 @@ export class TelegramService {
       throw new BadRequestException(`Telegram API error: ${description}`);
     }
 
-    return payload.result?.file_path as string;
+    return payload.result?.file_path || '';
   }
 
   private async sendHelpMessage(chatId: string): Promise<void> {

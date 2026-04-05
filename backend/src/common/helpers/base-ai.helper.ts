@@ -16,6 +16,22 @@ type GenerateJsonOptions = {
   maxDelayMs: number;
 };
 
+type AiInlineDataPart = {
+  inlineData: {
+    mimeType: string;
+    data: string;
+  };
+};
+
+type AiTextPart = {
+  text: string;
+};
+
+type AiContent = {
+  role: 'user' | 'model';
+  parts: Array<AiInlineDataPart | AiTextPart>;
+};
+
 export abstract class BaseAiHelper {
   protected geminiModel: GenerativeModel | null = null;
 
@@ -33,7 +49,7 @@ export abstract class BaseAiHelper {
   }
 
   protected async generateJsonContent(
-    contents: any[],
+    contents: AiContent[],
     options: GenerateJsonOptions,
   ): Promise<string | null> {
     if (!this.geminiModel || !this.isAvailable()) {

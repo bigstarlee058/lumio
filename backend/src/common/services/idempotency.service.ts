@@ -5,7 +5,7 @@ import { LessThan, Repository } from 'typeorm';
 import { IdempotencyKey } from '../../entities/idempotency-key.entity';
 
 interface IdempotencyResponse {
-  data: any;
+  data: unknown;
   cached: boolean;
 }
 
@@ -65,7 +65,7 @@ export class IdempotencyService {
     key: string,
     userId: string,
     workspaceId: string | null,
-    response: any,
+    response: unknown,
     ttlHours = 24,
   ): Promise<void> {
     const responseHash = this.hashResponse(response);
@@ -77,7 +77,7 @@ export class IdempotencyService {
       userId,
       workspaceId,
       responseHash,
-      responseData: response,
+      responseData: (response ?? {}) as Record<string, unknown>,
       expiresAt,
     });
 
@@ -99,7 +99,7 @@ export class IdempotencyService {
   /**
    * Hash response data for integrity checking
    */
-  private hashResponse(response: any): string {
+  private hashResponse(response: unknown): string {
     const data = JSON.stringify(response);
     return crypto.createHash('sha256').update(data).digest('hex');
   }

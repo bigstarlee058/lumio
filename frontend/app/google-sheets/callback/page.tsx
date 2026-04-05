@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { Alert, Container, Paper, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
@@ -32,8 +33,8 @@ function CallbackContent() {
         window.setTimeout(() => {
           router.push('/integrations/google-sheets');
         }, 1200);
-      } catch (err: any) {
-        setError(err?.response?.data?.message || t.errors.connectFailed.value);
+      } catch (err) {
+        setError(getApiErrorMessage(err, t.errors.connectFailed.value));
       }
     };
 

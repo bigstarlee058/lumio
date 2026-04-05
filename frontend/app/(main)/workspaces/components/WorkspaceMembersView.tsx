@@ -125,7 +125,11 @@ const getInitials = (value?: string) =>
     .map(part => part[0]?.toUpperCase() ?? '')
     .join('');
 
-const getApiMessage = (error: any, fallback: string) => error?.response?.data?.message ?? fallback;
+const getApiMessage = (error: unknown, fallback: string) => {
+  if (!error || typeof error !== 'object') return fallback;
+  const response = (error as { response?: { data?: { message?: string } } }).response;
+  return response?.data?.message ?? fallback;
+};
 
 const formatDate = (value?: string) => {
   if (!value) return 'N/A';

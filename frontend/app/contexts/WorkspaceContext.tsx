@@ -1,8 +1,12 @@
 'use client';
 
 import type React from 'react';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '../lib/api';
+
+type WorkspaceSettings = Record<string, unknown>;
+type WorkspacePermissions = Record<string, boolean>;
 
 interface WorkspaceStats {
   integrationCount: number;
@@ -20,12 +24,12 @@ interface Workspace {
   backgroundImage: string | null;
   currency: string | null;
   isFavorite: boolean;
-  settings: Record<string, any> | null;
+  settings: WorkspaceSettings | null;
   ownerId: string | null;
   createdAt: Date;
   updatedAt: Date;
   memberRole?: string;
-  memberPermissions?: any;
+  memberPermissions?: WorkspacePermissions;
   stats?: WorkspaceStats;
 }
 
@@ -70,9 +74,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         setCurrentWorkspace(response.data[0]);
         localStorage.setItem('currentWorkspaceId', response.data[0].id);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to fetch workspaces:', err);
-      setError(err?.message || 'Failed to load workspaces');
+      setError(getApiErrorMessage(err, 'Failed to load workspaces'));
     } finally {
       setLoading(false);
     }
@@ -92,9 +96,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         } else {
           await refreshWorkspaces();
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to switch workspace:', err);
-        setError(err?.message || 'Failed to switch workspace');
+        setError(getApiErrorMessage(err, 'Failed to switch workspace'));
         throw err;
       } finally {
         setLoading(false);
@@ -119,7 +123,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         if (currentWorkspace?.id === workspaceId) {
           setCurrentWorkspace({ ...currentWorkspace, isFavorite: response.data.isFavorite });
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to toggle favorite:', err);
         throw err;
       }
@@ -138,7 +142,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         if (currentWorkspace?.id === workspaceId) {
           setCurrentWorkspace({ ...currentWorkspace, backgroundImage });
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Failed to update background:', err);
         throw err;
       }

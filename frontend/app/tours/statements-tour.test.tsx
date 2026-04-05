@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from 'vitest';
 import StatementsCircularUploadMenu from '@/app/(main)/statements/components/StatementsCircularUploadMenu';
 import { createStatementsTour } from './statements-tour';
 
+type StatementsTourPayload = Parameters<typeof createStatementsTour>[0];
+
 vi.mock('next/image', () => ({
   default: ({ alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <img {...props} alt={alt ?? ''} />
@@ -85,7 +87,7 @@ describe('createStatementsTour', () => {
   });
 
   it('supports intlayer payloads with content-wrapped steps', () => {
-    const tour = createStatementsTour({ content: texts } as any);
+    const tour = createStatementsTour({ content: texts } as StatementsTourPayload);
 
     expect(tour.name).toBe('Statements Tour');
     expect(tour.steps[1]?.title).toBe('Upload actions');
@@ -130,7 +132,7 @@ describe('createStatementsTour', () => {
       },
     };
 
-    const tour = createStatementsTour(legacyTexts as any);
+    const tour = createStatementsTour(legacyTexts as StatementsTourPayload);
 
     expect(tour.steps[1]?.title).toBe('Upload actions');
     expect(tour.steps[3]?.title).toBe('Filters');

@@ -3,6 +3,8 @@ import {
   WorkspaceRole,
 } from '../../../entities/workspace-member.entity';
 
+type JsonObject = Record<string, unknown>;
+
 export class WorkspaceStatsDto {
   integrationCount: number;
   recentActivity: boolean;
@@ -19,7 +21,7 @@ export class WorkspaceResponseDto {
   backgroundImage: string | null;
   currency: string | null;
   isFavorite: boolean;
-  settings: Record<string, any> | null;
+  settings: JsonObject | null;
   ownerId: string | null;
   createdAt: Date;
   updatedAt: Date;

@@ -6,21 +6,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const documentTypeIconSpy = vi.hoisted(() => vi.fn());
 const pdfThumbnailSpy = vi.hoisted(() => vi.fn());
 
+type IconProps = {
+  fileId?: string;
+};
+
 vi.mock('@/app/components/DocumentTypeIcon', () => ({
-  DocumentTypeIcon: (props: any) => {
+  DocumentTypeIcon: (props: IconProps) => {
     documentTypeIconSpy(props);
     return <div data-testid={`document-type-icon-${props.fileId || 'static'}`} />;
   },
 }));
 
 vi.mock('@/app/components/PDFThumbnail', () => ({
-  PDFThumbnail: (props: any) => {
+  PDFThumbnail: (props: IconProps) => {
     pdfThumbnailSpy(props);
     return <div data-testid={`pdf-thumbnail-${props.fileId || 'static'}`} />;
   },
 }));
 
 import { StatementsListItem } from './StatementsListItem';
+
+type StatementsListItemProps = React.ComponentProps<typeof StatementsListItem>;
 
 type Statement = {
   id: string;
@@ -415,7 +421,7 @@ describe('StatementsListItem', () => {
     act(() => {
       root.render(
         <StatementsListItem
-          statement={statement as any}
+          statement={statement as StatementsListItemProps['statement']}
           viewLabel="View"
           isReceipt={false}
           isProcessing={false}

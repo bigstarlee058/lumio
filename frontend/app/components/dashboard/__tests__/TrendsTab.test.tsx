@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import '../test-setup';
 import { TrendsTab } from '../TrendsTab';
 
+type TrendsTabData = React.ComponentProps<typeof TrendsTab>['data'];
+
 const hooksMock = vi.hoisted(() => ({
   useDashboardTrends: vi.fn(),
 }));
@@ -40,7 +42,7 @@ describe('TrendsTab', () => {
 
     render(
       <TrendsTab
-        data={{} as any}
+        data={{} as TrendsTabData}
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}
@@ -71,7 +73,7 @@ describe('TrendsTab', () => {
 
     render(
       <TrendsTab
-        data={{} as any}
+        data={{} as TrendsTabData}
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}

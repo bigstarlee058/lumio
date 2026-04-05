@@ -5,7 +5,7 @@ import { CurrencySelector } from '@/app/(main)/workspaces/components/CurrencySel
 import { AVAILABLE_BACKGROUNDS } from '@/app/(main)/workspaces/constants';
 import { useIntlayer } from '@/app/i18n';
 import { useEffect, useState } from 'react';
-import { resolveOnboardingText } from '../lib/resolveOnboardingText';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 
 interface WorkspaceStepProps {
@@ -29,9 +29,10 @@ export function WorkspaceStep({
   onWorkspaceBackgroundImageChange,
   onCurrencyPickerOpenChange,
 }: WorkspaceStepProps) {
-  const t = useIntlayer('onboardingPage' as any) as any;
+  const t = useIntlayer('onboardingPage');
   const [currencyPickerOpen, setCurrencyPickerOpen] = useState(false);
-  const text = (token: unknown, fallback = '') => resolveOnboardingText(token, fallback, locale);
+  const text = (path: string[], fallback = '') =>
+    resolveOnboardingText(getNestedOnboardingValue(t, path), fallback, locale);
 
   useEffect(() => {
     onCurrencyPickerOpenChange?.(currencyPickerOpen);
@@ -69,7 +70,7 @@ export function WorkspaceStep({
               onClick={() => setCurrencyPickerOpen(false)}
               className="inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              {text(t.navigation.back, 'Back')}
+              {text(['navigation', 'back'], 'Back')}
             </button>
           </div>
         </div>
@@ -81,10 +82,13 @@ export function WorkspaceStep({
     <section className="space-y-4">
       <div>
         <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-          {text(t.workspace.title, 'Set up your first workspace')}
+          {text(['workspace', 'title'], 'Set up your first workspace')}
         </h2>
         <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">
-          {text(t.workspace.subtitle, 'Set workspace name and default currency for accurate data tracking.')}
+          {text(
+            ['workspace', 'subtitle'],
+            'Set workspace name and default currency for accurate data tracking.',
+          )}
         </p>
       </div>
 
@@ -94,14 +98,17 @@ export function WorkspaceStep({
             className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground"
             htmlFor="workspace-name"
           >
-            {text(t.workspace.nameLabel, 'Workspace name')}
+            {text(['workspace', 'nameLabel'], 'Workspace name')}
           </label>
           <input
             id="workspace-name"
             type="text"
             value={workspaceName}
             onChange={event => onWorkspaceNameChange(event.target.value)}
-            placeholder={text(t.workspace.namePlaceholder, 'For example: My Company workspace')}
+            placeholder={text(
+              ['workspace', 'namePlaceholder'],
+              'For example: My Company workspace',
+            )}
             className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
@@ -115,14 +122,17 @@ export function WorkspaceStep({
             onOpenChange={setCurrencyPickerOpen}
           />
           <p className="text-xs text-muted-foreground">
-            {text(t.workspace.currencyHint, 'This currency will be used by default for new records.')}
+            {text(
+              ['workspace', 'currencyHint'],
+              'This currency will be used by default for new records.',
+            )}
           </p>
         </div>
       </div>
 
       <div className="space-y-2">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          {text(t.workspace.backgroundLabel, 'Workspace background')}
+          {text(['workspace', 'backgroundLabel'], 'Workspace background')}
         </p>
 
         <BackgroundSelector
@@ -138,19 +148,22 @@ export function WorkspaceStep({
 
         <div className="space-y-1.5">
           <label className="text-xs text-foreground" htmlFor="workspace-custom-background">
-            {text(t.workspace.customBackgroundLabel, 'Custom image (URL)')}
+            {text(['workspace', 'customBackgroundLabel'], 'Custom image (URL)')}
           </label>
           <input
             id="workspace-custom-background"
             type="url"
             value={isCustomBackground ? workspaceBackgroundImage || '' : ''}
             onChange={event => onWorkspaceBackgroundImageChange(event.target.value || null)}
-            placeholder={text(t.workspace.customBackgroundPlaceholder, 'https://example.com/my-image.jpg')}
+            placeholder={text(
+              ['workspace', 'customBackgroundPlaceholder'],
+              'https://example.com/my-image.jpg',
+            )}
             className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
           <p className="text-xs text-muted-foreground">
             {text(
-              t.workspace.customBackgroundHint,
+              ['workspace', 'customBackgroundHint'],
               'Paste your own image URL or choose one of the presets below.',
             )}
           </p>

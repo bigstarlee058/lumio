@@ -4,26 +4,45 @@ import {
   mapTransactionsToValues,
 } from '@/modules/google-sheets/services/google-sheets-api.util';
 
+type TestTransaction = {
+  categoryId?: string | null;
+  branchId?: string | null;
+  walletId?: string | null;
+};
+
+type NamedItem = { name: string };
+type MappedRow = {
+  transaction: TestTransaction;
+  category: NamedItem | null;
+  branch: NamedItem | null;
+  wallet: NamedItem | null;
+};
+
 describe('google-sheets-api.util', () => {
   it('maps transactions to sheet values with lookup maps', () => {
-    const transactions = [
+    const transactions: TestTransaction[] = [
       {
         categoryId: 'category-1',
         branchId: 'branch-1',
         walletId: 'wallet-1',
       },
     ];
-    const categories = new Map([['category-1', { name: 'Food' }]]);
-    const branches = new Map([['branch-1', { name: 'HQ' }]]);
-    const wallets = new Map([['wallet-1', { name: 'Main' }]]);
+    const categories = new Map<string, NamedItem>([['category-1', { name: 'Food' }]]);
+    const branches = new Map<string, NamedItem>([['branch-1', { name: 'HQ' }]]);
+    const wallets = new Map<string, NamedItem>([['wallet-1', { name: 'Main' }]]);
 
     const values = mapTransactionsToValues(
-      transactions as any,
-      categories as any,
-      branches as any,
-      wallets as any,
-      (transaction, category, branch, wallet) => ({ transaction, category, branch, wallet }),
-      row => [row.wallet.name, row.branch.name, row.category.name],
+      transactions,
+      categories,
+      branches,
+      wallets,
+      (
+        transaction: TestTransaction,
+        category: NamedItem | null,
+        branch: NamedItem | null,
+        wallet: NamedItem | null,
+      ): MappedRow => ({ transaction, category, branch, wallet }),
+      (row: MappedRow) => [row.wallet?.name, row.branch?.name, row.category?.name],
     );
 
     expect(values).toEqual([['Main', 'HQ', 'Food']]);
@@ -36,12 +55,12 @@ describe('google-sheets-api.util', () => {
   });
 
   it('builds shared sheet write context', () => {
-    expect(createSheetWriteContext('token', null, token => ({ token }))).toEqual({
+    expect(createSheetWriteContext('token', null, (token: string) => ({ token }))).toEqual({
       sheets: { token: 'token' },
       sheetName: 'Sheet1',
       range: 'Sheet1!A:S',
     });
-    expect(createSheetWriteContext('token', 'Ops', token => ({ token }))).toEqual({
+    expect(createSheetWriteContext('token', 'Ops', (token: string) => ({ token }))).toEqual({
       sheets: { token: 'token' },
       sheetName: 'Ops',
       range: 'Ops!A:S',

@@ -25,8 +25,35 @@ export interface ExtractedMetadata extends EnhancedExtractedMetadata {
     locale?: string;
   };
   additionalInfo: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
+}
+
+type PatternExtractionResult =
+  | null
+  | { type: string; source: string }
+  | ExtractedMetadata['period']
+  | ExtractedMetadata['account']
+  | ExtractedMetadata['currency']
+  | ExtractedMetadata['institution'];
+
+type StructuredDataRow = unknown[];
+
+interface HeaderInfo {
+  title?: string;
+  subtitle?: string;
+  documentType?: string;
+  language: string;
+  locale: string;
+}
+
+interface DisplayInfo {
+  title: string;
+  subtitle: string;
+  periodDisplay?: string;
+  accountDisplay?: string;
+  institutionDisplay: string;
+  currencyDisplay?: string;
 }
 
 export interface HeaderPattern {
@@ -34,7 +61,7 @@ export interface HeaderPattern {
   patterns: RegExp[];
   languages: string[];
   priority: number;
-  extractor: (match: RegExpMatchArray) => any;
+  extractor: (match: RegExpMatchArray) => PatternExtractionResult;
 }
 
 export interface InstitutionProfile {
@@ -48,6 +75,10 @@ export interface InstitutionProfile {
 @Injectable()
 export class MetadataExtractionService {
   private readonly logger = new Logger(MetadataExtractionService.name);
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
 
   // Language patterns for different metadata types
   private readonly headerPatterns: HeaderPattern[] = [
@@ -270,7 +301,7 @@ export class MetadataExtractionService {
           metadata.confidence = Math.min(1, (metadata.confidence || 0) + pattern.priority * 0.1);
         }
       } catch (error) {
-        this.logger.warn(`Failed to extract ${pattern.type}: ${error.message}`);
+        this.logger.warn(`Failed to extract ${pattern.type}: ${this.getErrorMessage(error)}`);
       }
     }
 
@@ -331,7 +362,7 @@ export class MetadataExtractionService {
     return Boolean((hasDate && hasAmount) || hasAccountNumber);
   }
 
-  private extractByPattern(text: string, pattern: HeaderPattern): any {
+  private extractByPattern(text: string, pattern: HeaderPattern): PatternExtractionResult {
     for (const regex of pattern.patterns) {
       regex.lastIndex = 0; // Reset regex state
       const match = regex.exec(text);
@@ -344,26 +375,34 @@ export class MetadataExtractionService {
 
   private mergeExtractionResult(
     metadata: Partial<ExtractedMetadata>,
-    type: string,
-    result: any,
+    type: HeaderPattern['type'],
+    result: PatternExtractionResult,
   ): void {
     switch (type) {
       case 'statement_type':
-        metadata.statementType = result.type;
+        if (result && 'type' in result) {
+          metadata.statementType = result.type;
+        }
         break;
       case 'period':
-        if (result) {
+        if (result && 'dateFrom' in result) {
           metadata.period = result;
         }
         break;
       case 'account':
-        metadata.account = { ...metadata.account, ...result };
+        if (result && 'number' in result) {
+          metadata.account = { ...metadata.account, ...result };
+        }
         break;
       case 'currency':
-        metadata.currency = { ...metadata.currency, ...result };
+        if (result && 'code' in result) {
+          metadata.currency = { ...metadata.currency, ...result };
+        }
         break;
       case 'institution':
-        metadata.institution = { ...metadata.institution, ...result };
+        if (result && 'name' in result) {
+          metadata.institution = { ...metadata.institution, ...result };
+        }
         break;
     }
   }
@@ -533,7 +572,7 @@ export class MetadataExtractionService {
 
   // Method to extract metadata from structured data (like parsed PDF tables)
   async extractMetadataFromStructuredData(
-    data: any[],
+    data: StructuredDataRow[],
     locale?: string,
   ): Promise<Partial<ExtractedMetadata>> {
     // Implementation for structured data extraction
@@ -554,8 +593,8 @@ export class MetadataExtractionService {
     return metadata;
   }
 
-  private extractHeaderInfo(metadata: Partial<ExtractedMetadata>, locale?: string): any {
-    const headerInfo: any = {
+  private extractHeaderInfo(metadata: Partial<ExtractedMetadata>, locale?: string): HeaderInfo {
+    const headerInfo: HeaderInfo = {
       language: locale || this.detectLanguage(metadata.rawHeader || ''),
       locale: locale || this.getDefaultLocale(metadata),
     };
@@ -631,8 +670,12 @@ export class MetadataExtractionService {
   }
 
   // Method to create display information for UI
-  createDisplayInfo(metadata: ExtractedMetadata): any {
-    const display: any = {};
+  createDisplayInfo(metadata: ExtractedMetadata): DisplayInfo {
+    const display: DisplayInfo = {
+      title: '',
+      subtitle: '',
+      institutionDisplay: '',
+    };
 
     // Title display
     display.title = metadata.headerInfo?.title || metadata.normalizedHeader || 'Выписка по счету';

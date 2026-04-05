@@ -6,6 +6,10 @@ import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
 
+type ChartTooltipParam = {
+  value: number;
+};
+
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 interface FinlabBalanceStatCardProps {
@@ -38,9 +42,9 @@ export function FinlabBalanceStatCard({
         backgroundColor: '#1e293b',
         borderWidth: 0,
         textStyle: { color: '#fff' },
-        formatter: (params: any) => {
+        formatter: (params: ChartTooltipParam[]) => {
           let str = `<div style="font-weight:bold;margin-bottom:4px;">Total Balance</div>`;
-          params.forEach((param: any) => {
+          params.forEach(param => {
             str += `<div style="color:#e2e8f0">${formatAmount(param.value)}</div>`;
           });
           return str;

@@ -5,17 +5,19 @@ import { createRoot } from 'react-dom/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePullToRefresh } from './usePullToRefresh';
 
+type PullToRefreshHook = ReturnType<typeof usePullToRefresh>;
+
 let latestHook: {
-  handlers: {
-    onTouchStart: (event: any) => void;
-    onTouchMove: (event: any) => void;
-    onTouchEnd: () => void;
-    onTouchCancel: () => void;
-  };
+  handlers: PullToRefreshHook['handlers'];
   isReadyToRefresh: boolean;
   isRefreshing: boolean;
   pullDistance: number;
 } | null = null;
+
+type TouchLikeEvent = {
+  touches: Array<{ clientX: number; clientY: number }>;
+  preventDefault: () => void;
+};
 
 function HookProbe({ onRefresh }: { onRefresh: () => Promise<void> | void }) {
   latestHook = usePullToRefresh({
@@ -30,7 +32,7 @@ function HookProbe({ onRefresh }: { onRefresh: () => Promise<void> | void }) {
   return <div data-testid="pull-probe" />;
 }
 
-const createTouchEvent = (y: number) => ({
+const createTouchEvent = (y: number): TouchLikeEvent => ({
   touches: [{ clientX: 0, clientY: y }],
   preventDefault: () => undefined,
 });
@@ -52,8 +54,8 @@ describe('usePullToRefresh', () => {
     expect(latestHook).toBeTruthy();
 
     await act(async () => {
-      latestHook?.handlers.onTouchStart(createTouchEvent(0));
-      latestHook?.handlers.onTouchMove(createTouchEvent(60));
+      latestHook?.handlers.onTouchStart(createTouchEvent(0) as unknown as React.TouchEvent<Element>);
+      latestHook?.handlers.onTouchMove(createTouchEvent(60) as unknown as React.TouchEvent<Element>);
     });
 
     await act(async () => {

@@ -1,9 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { BankProfile } from './bank-profile.service';
 
+type FeatureFlagScalar = string | number | boolean;
+type FeatureFlagValue = FeatureFlagScalar | string[] | Record<string, unknown> | null;
+type FeatureStats = Record<string, { enabled: boolean; usageCount: number; lastUsed: string | null }>;
+
 export interface FeatureFlagConfig {
   enabled: boolean;
-  value?: any;
+  value?: FeatureFlagValue;
   conditions?: FeatureFlagCondition[];
   rolloutPercentage?: number;
   lastUpdated: string;
@@ -22,12 +26,12 @@ export interface FeatureFlagContext {
   locale?: string;
   format?: string;
   environment?: string;
-  customProperties?: Record<string, any>;
+  customProperties?: Record<string, unknown>;
 }
 
 export interface FeatureFlagResult {
   enabled: boolean;
-  value?: any;
+  value?: FeatureFlagValue;
   reason: string;
   source: 'global' | 'condition' | 'rollout' | 'default';
 }
@@ -370,7 +374,11 @@ export class FeatureFlagService {
     };
   }
 
-  getValue(flagName: string, defaultValue: any = null, context?: FeatureFlagContext): any {
+  getValue(
+    flagName: string,
+    defaultValue: FeatureFlagValue = null,
+    context?: FeatureFlagContext,
+  ): FeatureFlagValue {
     const result = this.isEnabled(flagName, context);
     return result.enabled ? (result.value ?? true) : defaultValue;
   }
@@ -562,6 +570,12 @@ export class FeatureFlagService {
 
   private evaluateCondition(condition: FeatureFlagCondition, context: FeatureFlagContext): boolean {
     const contextValue = this.getContextValue(condition.field, context);
+    const comparableValue =
+      typeof contextValue === 'string' ||
+      typeof contextValue === 'number' ||
+      typeof contextValue === 'boolean'
+        ? contextValue
+        : String(contextValue);
 
     switch (condition.operator) {
       case 'equals':
@@ -575,16 +589,22 @@ export class FeatureFlagService {
       case 'endsWith':
         return String(contextValue).toLowerCase().endsWith(String(condition.value).toLowerCase());
       case 'in':
-        return Array.isArray(condition.value) && condition.value.includes(contextValue);
+        return (
+          Array.isArray(condition.value) &&
+          condition.value.map(value => String(value)).includes(String(comparableValue))
+        );
       case 'notIn':
-        return Array.isArray(condition.value) && !condition.value.includes(contextValue);
+        return (
+          Array.isArray(condition.value) &&
+          !condition.value.map(value => String(value)).includes(String(comparableValue))
+        );
       default:
         this.logger.warn(`Unknown condition operator: ${condition.operator}`);
         return false;
     }
   }
 
-  private getContextValue(field: string, context: FeatureFlagContext): any {
+  private getContextValue(field: string, context: FeatureFlagContext): unknown {
     switch (field) {
       case 'bankId':
         return context.bankId;
@@ -618,7 +638,7 @@ export class FeatureFlagService {
     { enabled: boolean; usageCount: number; lastUsed: string | null }
   > {
     // In a real implementation, this would track usage from analytics
-    const stats: Record<string, any> = {};
+    const stats: FeatureStats = {};
 
     this.featureFlags.forEach((config, flagName) => {
       stats[flagName] = {

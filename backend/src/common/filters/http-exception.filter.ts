@@ -6,8 +6,16 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 import { RequestContext } from '../observability/request-context';
+
+type MessageWithDetails = {
+  message?: unknown;
+};
+
+const isMessageWithDetails = (value: unknown): value is MessageWithDetails =>
+  typeof value === 'object' && value !== null && 'message' in value;
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,7 +24,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest<Request>();
+    const request = ctx.getRequest<AuthenticatedRequest>();
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -30,7 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (!(exception instanceof HttpException)) {
       this.logger.error(
         { type: 'unhandled_exception', url: request.url, method: request.method },
-        (exception as any)?.stack,
+        exception instanceof Error ? exception.stack : undefined,
       );
     }
 
@@ -38,8 +46,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       error: {
         code: this.getErrorCode(status),
         message: this.getLocalizedMessage(status, message, locale),
-        details:
-          typeof message === 'object' && (message as any).message ? (message as any) : undefined,
+        details: isMessageWithDetails(message) && message.message ? message : undefined,
       },
       requestId: RequestContext.getRequestId(),
       traceId: RequestContext.getTraceId(),
@@ -63,8 +70,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     return codes[status] || 'UNKNOWN_ERROR';
   }
 
-  private resolveLocale(request: Request): 'en' | 'ru' {
-    const userLocale = (request as any)?.user?.locale as string | undefined;
+  private resolveLocale(request: AuthenticatedRequest): 'en' | 'ru' {
+    const userLocale = request.user?.locale;
     const headerLocale = request.headers['accept-language'];
     const normalizedHeader = Array.isArray(headerLocale)
       ? headerLocale[0]
@@ -98,16 +105,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const extractedMessage =
       typeof rawMessage === 'string'
         ? rawMessage
-        : ((rawMessage as any)?.message ?? localizedByStatus[status]?.[locale] ?? 'Error');
+        : ((isMessageWithDetails(rawMessage) ? rawMessage.message : undefined) ??
+            localizedByStatus[status]?.[locale] ??
+            'Error');
 
     if (Array.isArray(extractedMessage)) {
       return localizedByStatus[status]?.[locale] ?? 'Error';
     }
 
-    if (defaultEnglishMessages.has(extractedMessage)) {
+    if (typeof extractedMessage === 'string' && defaultEnglishMessages.has(extractedMessage)) {
       return localizedByStatus[status]?.[locale] ?? extractedMessage;
     }
 
-    return extractedMessage || localizedByStatus[status]?.[locale] || 'Error';
+    if (typeof extractedMessage === 'string' && extractedMessage) {
+      return extractedMessage;
+    }
+
+    return localizedByStatus[status]?.[locale] || 'Error';
   }
 }

@@ -33,6 +33,9 @@ import { GenerateReportDto } from './dto/generate-report.dto';
 import { SpendOverTimeQueryDto } from './dto/spend-over-time-query.dto';
 import { TopCategoriesQueryDto } from './dto/top-categories-query.dto';
 import { type WorkspaceExportDto, WorkspaceExportFormat } from './dto/workspace-export.dto';
+import type { CustomReport } from './interfaces/custom-report.interface';
+import type { DailyReport } from './interfaces/daily-report.interface';
+import type { MonthlyReport } from './interfaces/monthly-report.interface';
 import { ReportsService } from './reports.service';
 
 @Controller('reports')
@@ -185,7 +188,7 @@ export class ReportsController {
     @Res() res: Response,
   ) {
     // Generate report based on date range
-    let reportData: any;
+    let reportData: DailyReport | MonthlyReport | CustomReport;
 
     if (dto.dateFrom && dto.dateTo) {
       // Custom report

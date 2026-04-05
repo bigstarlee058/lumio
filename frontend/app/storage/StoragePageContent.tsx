@@ -16,7 +16,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { Popover } from '@mui/material';
+import { Popover, type PopoverProps } from '@mui/material';
 import {
   Bookmark,
   Check,
@@ -80,7 +80,7 @@ interface FolderOption {
 interface StorageView {
   id: string;
   name: string;
-  filters?: Record<string, any>;
+  filters?: StorageViewPayload;
   createdAt: string;
 }
 
@@ -141,6 +141,73 @@ const DEFAULT_FILTERS = {
 const DEFAULT_SORT: { field: SortField; direction: SortDirection } = {
   field: 'createdAt',
   direction: 'desc',
+};
+
+interface StorageViewFilterValues {
+  status?: string;
+  bank?: string;
+  categoryId?: string;
+  ownership?: string;
+  folderId?: string;
+  tagIds?: string[];
+}
+
+interface StorageViewPayload {
+  searchQuery?: string;
+  search?: string;
+  sort?: {
+    field?: SortField;
+    direction?: SortDirection;
+  };
+  filters?: StorageViewFilterValues;
+}
+
+const getRecord = (value: unknown): Record<string, unknown> | null => {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+};
+
+const getNestedValue = (source: unknown, path: string[]): unknown => {
+  let current: unknown = source;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) {
+      return undefined;
+    }
+
+    current = record[segment];
+  }
+
+  return current;
+};
+
+const colorPickerPopoverSlotProps: PopoverProps['slotProps'] = {
+  paper: {
+    sx: {
+      p: 1.5,
+      mt: 1,
+      borderRadius: '16px',
+      border: '1px solid',
+      borderColor: 'divider',
+      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+      overflow: 'visible',
+      '&::before': {
+        content: '""',
+        display: 'block',
+        position: 'absolute',
+        top: 0,
+        right: 14,
+        width: 10,
+        height: 10,
+        bgcolor: 'background.paper',
+        transform: 'translateY(-50%) rotate(45deg)',
+        zIndex: 0,
+        borderLeft: '1px solid',
+        borderTop: '1px solid',
+        borderColor: 'divider',
+      },
+    },
+  },
 };
 
 const getBankDisplayName = (bankName: string) => {
@@ -204,11 +271,12 @@ const tagChipClass = (isActive: boolean) =>
 interface DraggableModalFileItemProps {
   file: StorageFile;
   canEditFile: (file: StorageFile) => boolean;
-  t: any;
+  rowHintLabel: string;
+  tableFromLabel: string;
 }
 
 const DraggableModalFileItem = React.memo(
-  ({ file, canEditFile, t }: DraggableModalFileItemProps) => {
+  ({ file, canEditFile, rowHintLabel, tableFromLabel }: DraggableModalFileItemProps) => {
     const router = useRouter();
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
       id: `modal-file-${file.id}`,
@@ -231,7 +299,7 @@ const DraggableModalFileItem = React.memo(
             ref={setNodeRef}
             type="button"
             onClick={() => router.push(`/statements/${file.id}/view`)}
-            title={canEditFile(file) ? t.dragDrop.rowHint.value : undefined}
+            title={canEditFile(file) ? rowHintLabel : undefined}
             className={`flex min-w-0 flex-1 items-center gap-3 text-left hover:text-primary ${
               isDragging ? 'opacity-50' : ''
             } ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
@@ -249,7 +317,7 @@ const DraggableModalFileItem = React.memo(
                 {file.fileName}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {t.table.from} {file.bankName}
+                {tableFromLabel} {file.bankName}
               </p>
             </div>
           </button>
@@ -280,7 +348,17 @@ interface DraggableFileRowProps {
   handleCategoryChange: (fileId: string, categoryId: string) => void;
   categories: CategoryOption[];
   categoriesLoading: boolean;
-  t: any;
+  trashSelectRowLabel: string;
+  dragDropRowHintLabel: string;
+  previewLabel: string;
+  sharedLinksShortLabel: string;
+  categoryNoneLabel: string;
+  ownerLabel: string;
+  trashRestoreActionLabel: string;
+  trashDeleteActionLabel: string;
+  viewTooltipLabel: string;
+  downloadTooltipLabel: string;
+  deleteActionLabel: string;
   getPermissionLabel: (perm?: string | null) => string;
   formatDate: (date: string) => string;
   handleRestoreFromTrash: (file: StorageFile) => void;
@@ -312,7 +390,17 @@ const DraggableFileRow = React.memo(
     handleCategoryChange,
     categories,
     categoriesLoading,
-    t,
+    trashSelectRowLabel,
+    dragDropRowHintLabel,
+    previewLabel,
+    sharedLinksShortLabel,
+    categoryNoneLabel,
+    ownerLabel,
+    trashRestoreActionLabel,
+    trashDeleteActionLabel,
+    viewTooltipLabel,
+    downloadTooltipLabel,
+    deleteActionLabel,
     getPermissionLabel,
     formatDate,
     handleRestoreFromTrash,
@@ -344,7 +432,7 @@ const DraggableFileRow = React.memo(
               checked={selectedTrashIds.includes(file.id)}
               onCheckedChange={() => toggleTrashSelection(file.id)}
               className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              aria-label={t.trash.selectRow.value}
+              aria-label={trashSelectRowLabel}
             />
           </td>
         )}
@@ -352,7 +440,7 @@ const DraggableFileRow = React.memo(
           <div
             className={`flex items-center gap-1 ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
             {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
-            title={canEditFile(file) ? t.dragDrop.rowHint.value : undefined}
+            title={canEditFile(file) ? dragDropRowHintLabel : undefined}
           >
             {canEditFile(file) && (
               <div className="p-1 text-gray-300 dark:text-slate-600 pointer-events-none">
@@ -366,7 +454,7 @@ const DraggableFileRow = React.memo(
                 setPreviewFileName(file.fileName);
                 setPreviewModalOpen(true);
               }}
-              title={t.preview.value}
+              title={previewLabel}
             >
               <DocumentTypeIcon
                 fileType={file.fileType}
@@ -399,7 +487,7 @@ const DraggableFileRow = React.memo(
                 {file.sharedLinksCount > 0 && (
                   <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-300">
                     <Share2 size={12} />
-                    {file.sharedLinksCount} {t.sharedLinksShort}
+                    {file.sharedLinksCount} {sharedLinksShortLabel}
                   </span>
                 )}
                 {renderAvailabilityChip(file.fileAvailability)}
@@ -452,7 +540,7 @@ const DraggableFileRow = React.memo(
               }
               className="min-w-40 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-slate-800/60 disabled:text-gray-400 dark:disabled:text-gray-500"
             >
-              <option value="">{t.categoryCell.none}</option>
+              <option value="">{categoryNoneLabel}</option>
               {categories
                 .filter(cat => cat.isEnabled !== false)
                 .map(cat => (
@@ -477,7 +565,7 @@ const DraggableFileRow = React.memo(
                 : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-100 border border-indigo-100 dark:border-indigo-500/30'
             }`}
           >
-            {file.isOwner ? t.permission.owner.value : getPermissionLabel(file.permissionType)}
+            {file.isOwner ? ownerLabel : getPermissionLabel(file.permissionType)}
           </span>
         </td>
 
@@ -496,14 +584,14 @@ const DraggableFileRow = React.memo(
                 <button
                   onClick={() => handleRestoreFromTrash(file)}
                   className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:text-emerald-700 dark:hover:text-emerald-200 transition-colors"
-                  title={t.trash.restoreAction.value}
+                  title={trashRestoreActionLabel}
                 >
                   <RotateCcw size={18} />
                 </button>
                 <button
                   onClick={() => confirmPermanentDelete(file)}
                   className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                  title={t.trash.deleteAction.value}
+                  title={trashDeleteActionLabel}
                 >
                   <Trash2 size={18} />
                 </button>
@@ -513,14 +601,14 @@ const DraggableFileRow = React.memo(
                 <button
                   onClick={() => handleView(file.id)}
                   className="p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-emerald-500/20 hover:text-blue-700 dark:hover:text-blue-200 transition-colors"
-                  title={t.actions.tooltipView.value}
+                  title={viewTooltipLabel}
                 >
                   <Eye size={18} />
                 </button>
                 <button
                   onClick={() => handleDownload(file.id, file.fileName)}
                   className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors"
-                  title={t.actions.tooltipDownload.value}
+                  title={downloadTooltipLabel}
                 >
                   <Download size={18} />
                 </button>
@@ -528,7 +616,7 @@ const DraggableFileRow = React.memo(
                   <button
                     onClick={() => confirmDelete(file)}
                     className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                    title={t.actions.delete.value}
+                    title={deleteActionLabel}
                   >
                     <Trash2 size={18} />
                   </button>
@@ -557,7 +645,7 @@ const DroppableFolderButton = React.memo(
     active?: boolean;
     children: React.ReactNode;
     className?: string;
-    onClick?: (e: React.MouseEvent) => void;
+    onClick?: (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => void;
     onContextMenu?: (e: React.MouseEvent) => void;
   }) => {
     const { isOver, setNodeRef } = useDroppable({
@@ -575,7 +663,7 @@ const DroppableFolderButton = React.memo(
           onContextMenu={onContextMenu}
           onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
-              onClick?.(e as any);
+              onClick?.(e);
             }
           }}
           tabIndex={onClick ? 0 : -1}
@@ -637,11 +725,27 @@ function StoragePageContent({
 }: {
   initialList?: 'active' | 'trash';
 }) {
-  const resolveLabel = (value: unknown, fallback: string): string =>
-    (value as { value?: string })?.value ?? (value as string) ?? fallback;
+  const resolveLabel = (value: unknown, fallback: string): string => {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (value && typeof value === 'object' && 'value' in value) {
+      const tokenValue = (value as { value?: unknown }).value;
+      if (typeof tokenValue === 'string') {
+        return tokenValue;
+      }
+    }
+
+    return fallback;
+  };
   const router = useRouter();
   const t = useIntlayer('storagePage');
   const { locale } = useLocale();
+  const tx = useCallback(
+    (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
+    [t],
+  );
   const PAGE_SIZE = 20;
   const trashTtlDays = useMemo(() => {
     const parsed = Number.parseInt(process.env.NEXT_PUBLIC_STORAGE_TRASH_TTL_DAYS || '', 10);
@@ -1076,7 +1180,7 @@ function StoragePageContent({
       );
       const folderName = folderId ? folders.find(f => f.id === folderId)?.name : null;
       const message = folderName
-        ? `${(t.toasts as any).fileMovedTo.value} "${folderName}"`
+        ? `${tx(['toasts', 'fileMovedTo'], 'File moved to folder')} "${folderName}"`
         : t.toasts.folderUpdated.value;
 
       toast.success(message);
@@ -1455,7 +1559,7 @@ function StoragePageContent({
 
   const applyView = (view: StorageView) => {
     const storedFilters = view.filters ?? {};
-    const rawFilters = (storedFilters.filters ?? {}) as Record<string, any>;
+    const rawFilters = storedFilters.filters ?? {};
     const { tagIds: _tagIds, ...restFilters } = rawFilters;
     const nextFilters = {
       ...DEFAULT_FILTERS,
@@ -1859,10 +1963,10 @@ function StoragePageContent({
   const emptyStateTitle = isTrashView ? t.trash.empty.title : t.empty.title;
   const emptyStateSubtitle = isTrashView ? t.trash.empty.subtitle : t.empty.subtitle;
   const paginationLabels = {
-    shown: resolveLabel((t as any)?.pagination?.shown, 'Showing {from}–{to} of {count}'),
-    previous: resolveLabel((t as any)?.pagination?.previous, 'Previous'),
-    next: resolveLabel((t as any)?.pagination?.next, 'Next'),
-    pageOf: resolveLabel((t as any)?.pagination?.pageOf, 'Page {page} of {count}'),
+    shown: tx(['pagination', 'shown'], 'Showing {from}–{to} of {count}'),
+    previous: tx(['pagination', 'previous'], 'Previous'),
+    next: tx(['pagination', 'next'], 'Next'),
+    pageOf: tx(['pagination', 'pageOf'], 'Page {page} of {count}'),
   };
   const formatPaginationLabel = (template: string, values: Record<string, string | number>) =>
     Object.entries(values).reduce(
@@ -2093,7 +2197,7 @@ function StoragePageContent({
                       : 'bg-blue-600 text-white opacity-50 cursor-not-allowed'
                   }`}
                 >
-                  {(t as any).gmail?.viewReceipts ?? 'View Receipts'}
+                  {tx(['gmail', 'viewReceipts'], 'View Receipts')}
                 </button>
 
                 <button
@@ -2101,8 +2205,8 @@ function StoragePageContent({
                   className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-slate-600 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 >
                   {gmailStatus?.connected === true
-                    ? ((t as any).gmail?.settings ?? 'Settings')
-                    : ((t as any).gmail?.connect ?? 'Connect')}
+                    ? tx(['gmail', 'settings'], 'Settings')
+                    : tx(['gmail', 'connect'], 'Connect')}
                 </button>
               </div>
             </div>
@@ -2243,7 +2347,17 @@ function StoragePageContent({
                         handleCategoryChange={handleCategoryChange}
                         categories={categories}
                         categoriesLoading={categoriesLoading}
-                        t={t}
+                        trashSelectRowLabel={t.trash.selectRow.value}
+                        dragDropRowHintLabel={t.dragDrop.rowHint.value}
+                        previewLabel={t.preview.value}
+                        sharedLinksShortLabel={resolveLabel(t.sharedLinksShort, 'links')}
+                        categoryNoneLabel={resolveLabel(t.categoryCell.none, 'No category')}
+                        ownerLabel={t.permission.owner.value}
+                        trashRestoreActionLabel={t.trash.restoreAction.value}
+                        trashDeleteActionLabel={t.trash.deleteAction.value}
+                        viewTooltipLabel={t.actions.tooltipView.value}
+                        downloadTooltipLabel={t.actions.tooltipDownload.value}
+                        deleteActionLabel={t.actions.delete.value}
                         getPermissionLabel={getPermissionLabel}
                         formatDate={formatDate}
                         handleRestoreFromTrash={handleRestoreFromTrash}
@@ -2516,7 +2630,7 @@ function StoragePageContent({
                                               e.stopPropagation();
                                               setPickedFolderId(null);
                                               toast.success(
-                                                `${(t.toasts as any).fileMovedTo.value} "${folder.name}"`,
+                                                `${tx(['toasts', 'fileMovedTo'], 'File moved to folder')} "${folder.name}"`,
                                               );
                                             }}
                                             className="ml-auto inline-flex items-center gap-1 rounded-lg bg-primary text-white px-3 py-1 text-xs font-semibold shadow-sm hover:bg-primary/90 transition-all scale-105"
@@ -2626,37 +2740,7 @@ function StoragePageContent({
                                 vertical: 'top',
                                 horizontal: 'right',
                               }}
-                              slotProps={
-                                {
-                                  paper: {
-                                    sx: {
-                                      p: 1.5,
-                                      mt: 1,
-                                      borderRadius: '16px',
-                                      border: '1px solid',
-                                      borderColor: 'divider',
-                                      boxShadow:
-                                        '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-                                      overflow: 'visible',
-                                      '&::before': {
-                                        content: '""',
-                                        display: 'block',
-                                        position: 'absolute',
-                                        top: 0,
-                                        right: 14,
-                                        width: 10,
-                                        height: 10,
-                                        bgcolor: 'background.paper',
-                                        transform: 'translateY(-50%) rotate(45deg)',
-                                        zIndex: 0,
-                                        borderLeft: '1px solid',
-                                        borderTop: '1px solid',
-                                        borderColor: 'divider',
-                                      },
-                                    },
-                                  },
-                                } as any
-                              }
+                              slotProps={colorPickerPopoverSlotProps}
                             >
                               <HexColorPicker color={newTagColor} onChange={setNewTagColor} />
                             </Popover>
@@ -2724,37 +2808,7 @@ function StoragePageContent({
                                             vertical: 'top',
                                             horizontal: 'right',
                                           }}
-                                          slotProps={
-                                            {
-                                              paper: {
-                                                sx: {
-                                                  p: 1.5,
-                                                  mt: 1,
-                                                  borderRadius: '16px',
-                                                  border: '1px solid',
-                                                  borderColor: 'divider',
-                                                  boxShadow:
-                                                    '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-                                                  overflow: 'visible',
-                                                  '&::before': {
-                                                    content: '""',
-                                                    display: 'block',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    right: 14,
-                                                    width: 10,
-                                                    height: 10,
-                                                    bgcolor: 'background.paper',
-                                                    transform: 'translateY(-50%) rotate(45deg)',
-                                                    zIndex: 0,
-                                                    borderLeft: '1px solid',
-                                                    borderTop: '1px solid',
-                                                    borderColor: 'divider',
-                                                  },
-                                                },
-                                              },
-                                            } as any
-                                          }
+                                          slotProps={colorPickerPopoverSlotProps}
                                         >
                                           <HexColorPicker
                                             color={editingTagColor || '#4f46e5'}
@@ -2865,7 +2919,8 @@ function StoragePageContent({
                               key={file.id}
                               file={file}
                               canEditFile={canEditFile}
-                              t={t}
+                              rowHintLabel={t.dragDrop.rowHint.value}
+                              tableFromLabel={tx(['table', 'from'], 'from')}
                             />
                           ))
                         )}

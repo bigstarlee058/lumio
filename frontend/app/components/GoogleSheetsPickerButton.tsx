@@ -26,6 +26,11 @@ export function GoogleSheetsPickerButton({
 }: Props) {
   const [loading, setLoading] = useState(false);
 
+  const getErrorMessage = (error: unknown) => {
+    if (!error || typeof error !== 'object') return 'Google Picker is unavailable';
+    return (error as { message?: string }).message || 'Google Picker is unavailable';
+  };
+
   const handleClick = async () => {
     if (!accessToken || !apiKey || disabled) return;
 
@@ -34,8 +39,8 @@ export function GoogleSheetsPickerButton({
       const selection = await pickSpreadsheet({ accessToken, apiKey });
       if (!selection) return;
       await onPick(selection);
-    } catch (error: any) {
-      onError(error?.message || 'Google Picker is unavailable');
+    } catch (error: unknown) {
+      onError(getErrorMessage(error));
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,8 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createCategoriesTour } from './categories-tour';
 
+type TourTextPayload = Parameters<typeof createCategoriesTour>[0];
+
 const readSource = (...segments: string[]) =>
   readFileSync(path.join(process.cwd(), ...segments), 'utf8');
 
@@ -21,7 +23,7 @@ describe('createCategoriesTour', () => {
   };
 
   it('uses the current categories route and selector set', () => {
-    const tour = createCategoriesTour(texts as any);
+    const tour = createCategoriesTour(texts as TourTextPayload);
 
     expect(tour.page).toBe('/workspaces/categories');
     expect(tour.steps.map(step => step.selector)).toEqual([
@@ -46,7 +48,7 @@ describe('createCategoriesTour', () => {
       },
     };
 
-    const tour = createCategoriesTour(legacyTexts as any);
+    const tour = createCategoriesTour(legacyTexts as TourTextPayload);
 
     expect(tour.steps[1]?.title).toBe('Add');
     expect(tour.steps[2]?.title).toBe('Search');

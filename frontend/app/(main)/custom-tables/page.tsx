@@ -4,7 +4,6 @@ import { FilterActions } from '@/app/(main)/statements/components/filters/Filter
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
 import ConfirmModal from '@/app/components/ConfirmModal';
-import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import {
   DropdownMenu,
@@ -14,9 +13,11 @@ import {
 } from '@/app/components/ui/dropdown-menu';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { AppPagination } from '@/app/components/ui/pagination';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import {
   CUSTOM_TABLES_OPEN_ACTION_EVENT,
   CUSTOM_TABLES_VIEW_EVENT,
@@ -106,13 +107,45 @@ interface StatementItem {
   bankName?: string | null;
 }
 
-const extractErrorMessage = (error: any): string | null => {
-  return (
-    error?.response?.data?.error?.message ||
-    error?.response?.data?.message ||
-    (typeof error?.response?.data === 'string' ? error.response.data : null) ||
-    null
-  );
+type TranslationValue = string | { value?: string };
+
+type ExportColumn = {
+  key: string;
+  title?: string | null;
+  position?: number | null;
+};
+
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') return value;
+  const record = getRecord(value);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
+
+const tx = (root: unknown, path: string[], fallback: string) =>
+  resolveLabel(getNestedValue(root, path), fallback);
+
+const getExportColumn = (value: unknown): ExportColumn | null => {
+  const record = getRecord(value);
+  if (!record || typeof record.key !== 'string') return null;
+
+  return {
+    key: record.key,
+    title: typeof record.title === 'string' ? record.title : null,
+    position: typeof record.position === 'number' ? record.position : null,
+  };
 };
 
 const formatUpdatedDate = (value?: string | null): string => {
@@ -356,7 +389,7 @@ export default function CustomTablesPage() {
       setItems(Array.isArray(payload) ? payload : []);
     } catch (error) {
       console.error('Failed to load custom tables:', error);
-      toast.error(extractErrorMessage(error) || t.toasts.loadTablesFailed.value);
+      toast.error(getApiErrorMessage(error, t.toasts.loadTablesFailed.value));
     } finally {
       setLoading(false);
     }
@@ -372,7 +405,7 @@ export default function CustomTablesPage() {
       setStatements(Array.isArray(payload) ? payload : []);
     } catch (error) {
       console.error('Failed to load statements:', error);
-      toast.error(extractErrorMessage(error) || t.toasts.loadStatementsFailed.value);
+      toast.error(getApiErrorMessage(error, t.toasts.loadStatementsFailed.value));
     } finally {
       setStatementsLoading(false);
     }
@@ -405,7 +438,7 @@ export default function CustomTablesPage() {
       await loadTables();
     } catch (error) {
       console.error('Failed to create custom table:', error);
-      toast.error(extractErrorMessage(error) || t.toasts.createFailed.value);
+      toast.error(getApiErrorMessage(error, t.toasts.createFailed.value));
     } finally {
       setCreating(false);
     }
@@ -536,7 +569,7 @@ export default function CustomTablesPage() {
       await loadTables();
     } catch (error) {
       console.error('Failed to create from statements:', error);
-      toast.error(extractErrorMessage(error) || t.toasts.createFromStatementFailed.value);
+      toast.error(getApiErrorMessage(error, t.toasts.createFromStatementFailed.value));
     } finally {
       setCreatingFromStatements(false);
     }
@@ -614,7 +647,10 @@ export default function CustomTablesPage() {
 
       const detail = tableResponse.data?.data || tableResponse.data;
       const columns = Array.isArray(detail?.columns)
-        ? [...detail.columns].sort((a, b) => (a.position || 0) - (b.position || 0))
+        ? detail.columns
+            .map((column: unknown) => getExportColumn(column))
+            .filter((column: ExportColumn | null): column is ExportColumn => column !== null)
+            .sort((a: ExportColumn, b: ExportColumn) => (a.position || 0) - (b.position || 0))
         : [];
 
       if (columns.length === 0) {
@@ -649,10 +685,10 @@ export default function CustomTablesPage() {
         cursor = nextCursor;
       }
 
-      const headers = columns.map((column: any) => column.title || column.key);
+      const headers = columns.map((column: ExportColumn) => column.title || column.key);
       const normalizedRows = rows.map(row => {
         const mapped: Record<string, unknown> = {};
-        columns.forEach((column: any, index: number) => {
+        columns.forEach((column: ExportColumn, index: number) => {
           const header = headers[index];
           mapped[header] = row?.data?.[column.key] ?? '';
         });
@@ -697,7 +733,7 @@ export default function CustomTablesPage() {
       toast.success(`Export complete: ${table.name}`, { id: toastId });
     } catch (error) {
       console.error('Failed to export table:', error);
-      toast.error(extractErrorMessage(error) || 'Failed to export table', {
+      toast.error(getApiErrorMessage(error, 'Failed to export table'), {
         id: toastId,
       });
     } finally {
@@ -734,7 +770,7 @@ export default function CustomTablesPage() {
         toast('This table source has no automatic refresh.', { icon: 'ℹ️' });
       } catch (error) {
         console.error('Failed to update table data:', error);
-        toast.error(extractErrorMessage(error) || 'Failed to update table data');
+        toast.error(getApiErrorMessage(error, 'Failed to update table data'));
       } finally {
         setUpdatingTableId(prev => (prev === table.id ? null : prev));
       }
@@ -742,164 +778,162 @@ export default function CustomTablesPage() {
     [loadTables, router],
   );
 
-  const resolveLabel = (value: any, fallback: string) => value?.value ?? value ?? fallback;
-  const headerTitle = resolveLabel((t as any)?.header?.title, 'Tables');
-  const headerSubtitle = resolveLabel(
-    (t as any)?.header?.subtitle,
+  const headerTitle = tx(t, ['header', 'title'], 'Tables');
+  const headerSubtitle = tx(
+    t,
+    ['header', 'subtitle'],
     'Export and manage structured tables created from statements and receipts for accounting and reporting.',
   );
-  const searchPlaceholder = resolveLabel((t as any).searchPlaceholder, 'Search tables...');
-  const sourcesAny = (t.sources as any) ?? {};
-  const filtersAny = (t as any).filters ?? {};
-  const actionsAny = (t.actions as any) ?? {};
-  const sourceLabel = resolveLabel(sourcesAny.label, 'Source');
+  const searchPlaceholder = tx(t, ['searchPlaceholder'], 'Search tables...');
+  const sourcesT = getRecord(getNestedValue(t, ['sources'])) ?? {};
+  const filtersT = getRecord(getNestedValue(t, ['filters'])) ?? {};
+  const actionsT = getRecord(getNestedValue(t, ['actions'])) ?? {};
+  const confirmDeleteT = getRecord(getNestedValue(t, ['confirmDelete'])) ?? {};
+  const createFromStatementsT = getRecord(getNestedValue(t, ['createFromStatements'])) ?? {};
+  const sourceLabel = resolveLabel(sourcesT.label, 'Source');
   const filterLabels = {
-    all: resolveLabel(filtersAny.all, 'All'),
-    manual: resolveLabel(sourcesAny.manual, 'Manual'),
-    sheets: resolveLabel(sourcesAny.googleSheets, 'Google Sheets'),
-    statement: resolveLabel(filtersAny.fromStatement, 'From statement'),
-    sortUpdated: resolveLabel(filtersAny.sortUpdated, 'Recent updates'),
-    sortName: resolveLabel(filtersAny.sortName, 'By name'),
-    filters: resolveLabel(filtersAny.filters, 'Filters'),
-    sort: resolveLabel(filtersAny.sort, 'Sort'),
+    all: resolveLabel(filtersT.all, 'All'),
+    manual: resolveLabel(sourcesT.manual, 'Manual'),
+    sheets: resolveLabel(sourcesT.googleSheets, 'Google Sheets'),
+    statement: resolveLabel(filtersT.fromStatement, 'From statement'),
+    sortUpdated: resolveLabel(filtersT.sortUpdated, 'Recent updates'),
+    sortName: resolveLabel(filtersT.sortName, 'By name'),
+    filters: resolveLabel(filtersT.filters, 'Filters'),
+    sort: resolveLabel(filtersT.sort, 'Sort'),
   };
   const filterOptionLabels = {
-    apply: resolveLabel(filtersAny.apply, 'Apply'),
-    reset: resolveLabel(filtersAny.reset, 'Reset'),
-    resetFilters: resolveLabel(filtersAny.resetFilters, 'Reset filters'),
-    viewResults: resolveLabel(filtersAny.viewResults, 'View results'),
-    saveSearch: resolveLabel(filtersAny.saveSearch, 'Save search'),
-    any: resolveLabel(filtersAny.any, 'Any'),
-    drawerTitle: resolveLabel(filtersAny.drawerTitle, 'Filters'),
-    drawerGeneral: resolveLabel(filtersAny.drawerGeneral, 'General'),
+    apply: resolveLabel(filtersT.apply, 'Apply'),
+    reset: resolveLabel(filtersT.reset, 'Reset'),
+    resetFilters: resolveLabel(filtersT.resetFilters, 'Reset filters'),
+    viewResults: resolveLabel(filtersT.viewResults, 'View results'),
+    saveSearch: resolveLabel(filtersT.saveSearch, 'Save search'),
+    any: resolveLabel(filtersT.any, 'Any'),
+    drawerTitle: resolveLabel(filtersT.drawerTitle, 'Filters'),
+    drawerGeneral: resolveLabel(filtersT.drawerGeneral, 'General'),
   };
   const paginationLabels = {
-    shown: resolveLabel((t as any)?.pagination?.shown, 'Showing {from}–{to} of {count}'),
-    previous: resolveLabel((t as any)?.pagination?.previous, 'Previous'),
-    next: resolveLabel((t as any)?.pagination?.next, 'Next'),
-    pageOf: resolveLabel((t as any)?.pagination?.pageOf, 'Page {page} of {count}'),
+    shown: tx(t, ['pagination', 'shown'], 'Showing {from}–{to} of {count}'),
+    previous: tx(t, ['pagination', 'previous'], 'Previous'),
+    next: tx(t, ['pagination', 'next'], 'Next'),
+    pageOf: tx(t, ['pagination', 'pageOf'], 'Page {page} of {count}'),
   };
-  const openLabel = resolveLabel(actionsAny.open, 'Open');
-  const createLabel = resolveLabel(actionsAny.create, 'Create');
-  const createExportTableLabel = resolveLabel(actionsAny.createExportTable, 'Create export table');
+  const openLabel = resolveLabel(actionsT.open, 'Open');
+  const createLabel = resolveLabel(actionsT.create, 'Create');
+  const createExportTableLabel = resolveLabel(actionsT.createExportTable, 'Create export table');
   const createFirstExportTableLabel = resolveLabel(
-    actionsAny.createFirstExportTable,
+    actionsT.createFirstExportTable,
     'Create your first export table',
   );
   const importGoogleSheetsLabel = resolveLabel(
-    actionsAny.importGoogleSheets,
+    actionsT.importGoogleSheets,
     'Import from Google Sheets',
   );
-  const createBlankTableLabel = resolveLabel(actionsAny.createBlankTable, 'Create blank table');
-  const exportLabel = resolveLabel(actionsAny.export, 'Export');
-  const exportCsvLabel = resolveLabel(actionsAny.exportCsv, 'CSV');
-  const exportXlsxLabel = resolveLabel(actionsAny.exportXlsx, 'XLSX');
-  const updateDataLabel = resolveLabel(actionsAny.updateData, 'Update data');
-  const deleteLabel = resolveLabel(actionsAny.delete, 'Delete');
-  const fromLabel = resolveLabel((t as any)?.fromLabel, 'From');
+  const createBlankTableLabel = resolveLabel(actionsT.createBlankTable, 'Create blank table');
+  const exportLabel = resolveLabel(actionsT.export, 'Export');
+  const exportCsvLabel = resolveLabel(actionsT.exportCsv, 'CSV');
+  const exportXlsxLabel = resolveLabel(actionsT.exportXlsx, 'XLSX');
+  const updateDataLabel = resolveLabel(actionsT.updateData, 'Update data');
+  const deleteLabel = resolveLabel(actionsT.delete, 'Delete');
+  const fromLabel = tx(t, ['fromLabel'], 'From');
   const growthHintLabel = resolveLabel(
-    (t as any)?.growthHint,
+    getNestedValue(t, ['growthHint']),
     'You can create multiple export tables for different reports or periods.',
   );
   const namingHintLabel = resolveLabel(
-    (t as any)?.namingHint,
+    getNestedValue(t, ['namingHint']),
     'Try clear names: Expenses export - Feb 2026, VAT reconciliation - Q1, Bank statements export.',
   );
   const ctaDescriptionLabel = resolveLabel(
-    (t as any).ctaDescription,
+    getNestedValue(t, ['ctaDescription']),
     'Create a table by mapping fields from statements or receipts for export to Excel or accounting systems.',
   );
-  const createFromStatementsAny = (t as any)?.createFromStatements ?? {};
   const createFromStatementsLabels = {
-    title: resolveLabel(createFromStatementsAny.title, 'Create table from statements'),
-    step1: resolveLabel(createFromStatementsAny.step1, 'Step 1 - Select statements'),
-    step2: resolveLabel(createFromStatementsAny.step2, 'Step 2 - Table details'),
-    stepCounter: resolveLabel(createFromStatementsAny.stepCounter, 'Step {current} of {total}'),
+    title: resolveLabel(createFromStatementsT.title, 'Create table from statements'),
+    step1: resolveLabel(createFromStatementsT.step1, 'Step 1 - Select statements'),
+    step2: resolveLabel(createFromStatementsT.step2, 'Step 2 - Table details'),
+    stepCounter: resolveLabel(createFromStatementsT.stepCounter, 'Step {current} of {total}'),
     step1Description: resolveLabel(
-      createFromStatementsAny.step1Description,
+      createFromStatementsT.step1Description,
       'Choose the statements to include. You can search, filter, and group the list.',
     ),
     step2Description: resolveLabel(
-      createFromStatementsAny.step2Description,
+      createFromStatementsT.step2Description,
       'Set table details and review what will be exported before creating the table.',
     ),
-    nameOptional: resolveLabel(createFromStatementsAny.nameOptional, 'Name (optional)'),
+    nameOptional: resolveLabel(createFromStatementsT.nameOptional, 'Name (optional)'),
     namePlaceholder: resolveLabel(
-      createFromStatementsAny.namePlaceholder,
+      createFromStatementsT.namePlaceholder,
       'e.g. Payments from statement',
     ),
     descriptionOptional: resolveLabel(
-      createFromStatementsAny.descriptionOptional,
+      createFromStatementsT.descriptionOptional,
       'Description (optional)',
     ),
-    descriptionPlaceholder: resolveLabel(
-      createFromStatementsAny.descriptionPlaceholder,
-      'Optional',
-    ),
-    statementsLoading: resolveLabel(createFromStatementsAny.statementsLoading, 'Loading...'),
-    statementsEmpty: resolveLabel(createFromStatementsAny.statementsEmpty, 'No statements'),
+    descriptionPlaceholder: resolveLabel(createFromStatementsT.descriptionPlaceholder, 'Optional'),
+    statementsLoading: resolveLabel(createFromStatementsT.statementsLoading, 'Loading...'),
+    statementsEmpty: resolveLabel(createFromStatementsT.statementsEmpty, 'No statements'),
     hint: resolveLabel(
-      createFromStatementsAny.hint,
+      createFromStatementsT.hint,
       'Only processed statements with transactions are available',
     ),
     searchPlaceholder: resolveLabel(
-      createFromStatementsAny.searchPlaceholder,
+      createFromStatementsT.searchPlaceholder,
       'Search by file, source, or period',
     ),
-    sourceFilter: resolveLabel(createFromStatementsAny.sourceFilter, 'Source'),
-    sourceAll: resolveLabel(createFromStatementsAny.sourceAll, 'All sources'),
-    groupBy: resolveLabel(createFromStatementsAny.groupBy, 'Group by'),
-    groupBySource: resolveLabel(createFromStatementsAny.groupBySource, 'Source'),
-    groupByPeriod: resolveLabel(createFromStatementsAny.groupByPeriod, 'Period'),
-    sourceLabel: resolveLabel(createFromStatementsAny.sourceLabel, 'Source'),
-    periodLabel: resolveLabel(createFromStatementsAny.periodLabel, 'Period'),
-    fileLabel: resolveLabel(createFromStatementsAny.fileLabel, 'File'),
-    rowsLabel: resolveLabel(createFromStatementsAny.rowsLabel, 'Rows'),
-    selectedLabel: resolveLabel(createFromStatementsAny.selectedLabel, 'Selected: {count}'),
+    sourceFilter: resolveLabel(createFromStatementsT.sourceFilter, 'Source'),
+    sourceAll: resolveLabel(createFromStatementsT.sourceAll, 'All sources'),
+    groupBy: resolveLabel(createFromStatementsT.groupBy, 'Group by'),
+    groupBySource: resolveLabel(createFromStatementsT.groupBySource, 'Source'),
+    groupByPeriod: resolveLabel(createFromStatementsT.groupByPeriod, 'Period'),
+    sourceLabel: resolveLabel(createFromStatementsT.sourceLabel, 'Source'),
+    periodLabel: resolveLabel(createFromStatementsT.periodLabel, 'Period'),
+    fileLabel: resolveLabel(createFromStatementsT.fileLabel, 'File'),
+    rowsLabel: resolveLabel(createFromStatementsT.rowsLabel, 'Rows'),
+    selectedLabel: resolveLabel(createFromStatementsT.selectedLabel, 'Selected: {count}'),
     duplicateUploads: resolveLabel(
-      createFromStatementsAny.duplicateUploads,
+      createFromStatementsT.duplicateUploads,
       'Duplicate uploads: {count} (latest is used)',
     ),
     noSearchResults: resolveLabel(
-      createFromStatementsAny.noSearchResults,
+      createFromStatementsT.noSearchResults,
       'No statements match the current filters',
     ),
-    previewTitle: resolveLabel(createFromStatementsAny.previewTitle, 'Preview'),
+    previewTitle: resolveLabel(createFromStatementsT.previewTitle, 'Preview'),
     previewSummary: resolveLabel(
-      createFromStatementsAny.previewSummary,
+      createFromStatementsT.previewSummary,
       'You are creating a table from {statements} statements',
     ),
-    previewRows: resolveLabel(createFromStatementsAny.previewRows, 'Total rows: {rows}'),
+    previewRows: resolveLabel(createFromStatementsT.previewRows, 'Total rows: {rows}'),
     previewEditable: resolveLabel(
-      createFromStatementsAny.previewEditable,
+      createFromStatementsT.previewEditable,
       'You can still change statement selection on Step 1.',
     ),
-    next: resolveLabel(createFromStatementsAny.next, 'Next'),
-    back: resolveLabel(createFromStatementsAny.back, 'Back'),
-    createWithRows: resolveLabel(createFromStatementsAny.createWithRows, 'Create ({rows} rows)'),
-    creating: resolveLabel(createFromStatementsAny.creating, 'Creating...'),
+    next: resolveLabel(createFromStatementsT.next, 'Next'),
+    back: resolveLabel(createFromStatementsT.back, 'Back'),
+    createWithRows: resolveLabel(createFromStatementsT.createWithRows, 'Create ({rows} rows)'),
+    creating: resolveLabel(createFromStatementsT.creating, 'Creating...'),
   };
   const columnLabels = {
-    name: resolveLabel((t as any)?.columns?.name, 'Name'),
-    purpose: resolveLabel((t as any)?.columns?.purpose, 'Purpose / Type'),
-    source: resolveLabel((t as any)?.columns?.source, 'Source'),
-    rows: resolveLabel((t as any)?.columns?.rows, 'Rows'),
-    updatedAt: resolveLabel((t as any)?.columns?.updatedAt, 'Last updated'),
-    actions: resolveLabel((t as any)?.columns?.actions, 'Actions'),
+    name: tx(t, ['columns', 'name'], 'Name'),
+    purpose: tx(t, ['columns', 'purpose'], 'Purpose / Type'),
+    source: tx(t, ['columns', 'source'], 'Source'),
+    rows: tx(t, ['columns', 'rows'], 'Rows'),
+    updatedAt: tx(t, ['columns', 'updatedAt'], 'Last updated'),
+    actions: tx(t, ['columns', 'actions'], 'Actions'),
   };
   const emptyLabels = {
-    title: resolveLabel((t as any)?.empty?.title, 'No export tables yet'),
+    title: tx(t, ['empty', 'title'], 'No export tables yet'),
     description: resolveLabel(
-      (t as any)?.empty?.description,
+      getNestedValue(t, ['empty', 'description']),
       'Create a table for accounting exports from statements and receipts.',
     ),
-    step1: resolveLabel((t as any)?.empty?.step1, '1. Select statements or receipts to include'),
+    step1: tx(t, ['empty', 'step1'], '1. Select statements or receipts to include'),
     step2: resolveLabel(
-      (t as any)?.empty?.step2,
+      getNestedValue(t, ['empty', 'step2']),
       '2. Pick fields: date, amount, merchant, category, VAT',
     ),
-    step3: resolveLabel((t as any)?.empty?.step3, '3. Create the table structure'),
-    step4: resolveLabel((t as any)?.empty?.step4, '4. Export to Excel or refresh anytime'),
+    step3: tx(t, ['empty', 'step3'], '3. Create the table structure'),
+    step4: tx(t, ['empty', 'step4'], '4. Export to Excel or refresh anytime'),
   };
 
   const filterLinkClassName =
@@ -1800,14 +1834,14 @@ export default function CustomTablesPage() {
           setDeleteTarget(null);
         }}
         onConfirm={handleDelete}
-        title={(t.confirmDelete as any).title.value}
+        title={resolveLabel(confirmDeleteT.title, 'Delete table')}
         message={
           deleteTarget
-            ? `${(t.confirmDelete as any).messageWithNamePrefix.value}${deleteTarget.name}${(t.confirmDelete as any).messageWithNameSuffix.value}`
-            : (t.confirmDelete as any).messageNoName.value
+            ? `${resolveLabel(confirmDeleteT.messageWithNamePrefix, 'Delete ')}${deleteTarget.name}${resolveLabel(confirmDeleteT.messageWithNameSuffix, '?')}`
+            : resolveLabel(confirmDeleteT.messageNoName, 'Delete this table?')
         }
-        confirmText={(t.confirmDelete as any).confirm.value}
-        cancelText={(t.confirmDelete as any).cancel.value}
+        confirmText={resolveLabel(confirmDeleteT.confirm, 'Delete')}
+        cancelText={resolveLabel(confirmDeleteT.cancel, 'Cancel')}
         isDestructive
       />
     </>

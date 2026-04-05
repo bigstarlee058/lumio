@@ -3,6 +3,14 @@ import { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-stateme
 import { ChecksumValidationResult } from './checksum-validation.service';
 import { NormalizationResult } from './statement-normalization.service';
 
+type QualityLogMetadata = Record<string, unknown>;
+
+interface BatchQualityMetrics extends QualityMetrics {
+  averageQualityScore: number;
+  totalProcessingTime: number;
+  throughput: number;
+}
+
 export interface QualityLogEntry {
   timestamp: Date;
   statementId?: string;
@@ -10,7 +18,7 @@ export interface QualityLogEntry {
   metrics: QualityMetrics;
   issues: QualityIssue[];
   performance: PerformanceMetrics;
-  metadata: Record<string, any>;
+  metadata: QualityLogMetadata;
 }
 
 export interface QualityMetrics {
@@ -36,7 +44,7 @@ export interface QualityIssue {
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   affectedRows?: number[];
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 export interface PerformanceMetrics {
@@ -80,7 +88,10 @@ export class QualityLoggingService {
       timestamp,
       statementId: this.extractStatementId(statement),
       locale: statement.metadata.locale,
-      metrics,
+      metrics: {
+        ...metrics,
+        processingTime: performance.totalTime,
+      },
       issues,
       performance,
       metadata: {
@@ -191,7 +202,7 @@ export class QualityLoggingService {
           type: 'checksum_mismatch',
           severity: disc.severity as 'low' | 'medium' | 'high',
           description: `${disc.type}: ${disc.difference.toFixed(2)} (${disc.percentageDifference.toFixed(1)}% difference)`,
-          details: disc,
+          details: { ...disc },
         });
       });
     }
@@ -314,10 +325,10 @@ export class QualityLoggingService {
   private async calculateBatchMetrics(
     statements: ParsedStatement[],
     results: NormalizationResult[],
-  ): Promise<any> {
+  ): Promise<BatchQualityMetrics> {
     const totalTransactions = statements.reduce((sum, stmt) => sum + stmt.transactions.length, 0);
     const totalProcessingTime = results.reduce(
-      (sum, result) => sum + (result.qualityMetrics as any).processingTime || 0,
+      (sum, result) => sum + this.getProcessingTime(result),
       0,
     );
 
@@ -334,13 +345,35 @@ export class QualityLoggingService {
     const throughput =
       totalProcessingTime > 0 ? (totalTransactions / totalProcessingTime) * 1000 : 0;
 
+    const failedProcessing = results.reduce(
+      (sum, result) => sum + result.qualityMetrics.failedNormalization,
+      0,
+    );
+    const duplicatesRemoved = results.reduce(
+      (sum, result) => sum + result.qualityMetrics.duplicatesRemoved,
+      0,
+    );
+
     return {
       totalTransactions,
+      successfullyProcessed: totalTransactions - failedProcessing,
+      failedProcessing,
+      duplicatesRemoved,
+      dataQualityScore: averageQualityScore,
+      checksumQualityScore: undefined,
+      overallQualityScore: averageQualityScore,
+      processingTime: totalProcessingTime,
+      completeness: totalTransactions > 0 ? (totalTransactions - failedProcessing) / totalTransactions : 0,
       totalProcessingTime,
       averageQualityScore,
       errorRate,
       throughput,
     };
+  }
+
+  private getProcessingTime(result: NormalizationResult): number {
+    const candidate = (result.qualityMetrics as { processingTime?: unknown }).processingTime;
+    return typeof candidate === 'number' ? candidate : 0;
   }
 
   // Public methods for accessing quality logs

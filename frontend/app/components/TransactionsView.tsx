@@ -48,6 +48,16 @@ type ColumnDef = {
   render?: (tx: Transaction) => React.ReactNode;
 };
 
+const getTransactionValue = (transaction: Transaction, key: string): unknown => {
+  const record = transaction as unknown as Record<string, unknown>;
+  return record[key];
+};
+
+const getNamedObjectLabel = (value: object): string | null => {
+  const record = value as Record<string, unknown>;
+  return typeof record.name === 'string' ? record.name : null;
+};
+
 /**
  * Component for displaying transactions list with search and pagination
  */
@@ -222,7 +232,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
         key,
         label: labelMap[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase()),
         render: (tx: Transaction) => {
-          const value = (tx as any)[key];
+          const value = getTransactionValue(tx, key);
           if (value === null || value === undefined || value === '') {
             return t.dash;
           }
@@ -232,7 +242,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
             );
           }
           if (typeof value === 'object') {
-            return value.name || JSON.stringify(value);
+            return getNamedObjectLabel(value) || JSON.stringify(value);
           }
           return value.toString();
         },
@@ -283,7 +293,9 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
                 <TableRow key={tx.id} hover>
                   {availableColumns.map(col => (
                     <TableCell key={col.key}>
-                      {col.render ? col.render(tx) : ((tx as any)[col.key] ?? '—').toString()}
+                      {col.render
+                        ? col.render(tx)
+                        : (getTransactionValue(tx, col.key) ?? '—').toString()}
                     </TableCell>
                   ))}
                 </TableRow>

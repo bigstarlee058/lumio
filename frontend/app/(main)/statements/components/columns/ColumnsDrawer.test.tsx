@@ -4,6 +4,8 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ColumnsDrawer } from './ColumnsDrawer';
 
+type ColumnsDrawerProps = React.ComponentProps<typeof ColumnsDrawer>;
+
 vi.mock('@dnd-kit/core', () => ({
   DndContext: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   PointerSensor: function PointerSensor() {},
@@ -45,7 +47,7 @@ describe('ColumnsDrawer', () => {
         columns={[
           { id: 'receipt', label: 'Receipt', visible: true },
           { id: 'date', label: 'Date', visible: true },
-        ] as any}
+        ] as ColumnsDrawerProps['columns']}
       />,
     );
 

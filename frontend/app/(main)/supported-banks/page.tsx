@@ -11,8 +11,21 @@ type SupportedBankCard = {
   notes: string;
 };
 
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
 export default function SupportedBanksPage() {
-  const t = useIntlayer('supportedBanksPage' as any) as any;
+  const t = useIntlayer('supportedBanksPage');
 
   const getText = (value: unknown, fallback: string) => {
     if (typeof value === 'string') {
@@ -33,18 +46,18 @@ export default function SupportedBanksPage() {
     {
       id: 'kaspi',
       logo: '/images/bank-logo/kaspi.png',
-      name: getText(t?.banks?.kaspi?.name, 'Kaspi'),
+      name: getText(getNestedValue(t, ['banks', 'kaspi', 'name']), 'Kaspi'),
       notes: getText(
-        t?.banks?.kaspi?.notes,
+        getNestedValue(t, ['banks', 'kaspi', 'notes']),
         'Upload Kaspi PDF statements for automatic transaction extraction.',
       ),
     },
     {
       id: 'bereke',
       logo: '/images/bank-logo/bereke-bank.png',
-      name: getText(t?.banks?.bereke?.name, 'Bereke'),
+      name: getText(getNestedValue(t, ['banks', 'bereke', 'name']), 'Bereke'),
       notes: getText(
-        t?.banks?.bereke?.notes,
+        getNestedValue(t, ['banks', 'bereke', 'notes']),
         'Upload Bereke PDF statements for automatic transaction extraction.',
       ),
     },
@@ -59,11 +72,11 @@ export default function SupportedBanksPage() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">
-              {getText(t?.title, 'Supported banks')}
+              {getText(getNestedValue(t, ['title']), 'Supported banks')}
             </h1>
             <p className="mt-2 text-sm text-gray-500">
               {getText(
-                t?.subtitle,
+                getNestedValue(t, ['subtitle']),
                 'List of banks currently available for automatic statement parsing.',
               )}
             </p>
@@ -72,7 +85,7 @@ export default function SupportedBanksPage() {
 
         <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
-          {getText(t?.parserStatus, 'Parser is active')}
+          {getText(getNestedValue(t, ['parserStatus']), 'Parser is active')}
         </div>
       </div>
 
@@ -96,16 +109,17 @@ export default function SupportedBanksPage() {
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{bank.name}</h2>
                 <p className="text-sm text-gray-500">
-                  {getText(t?.statusLabel, 'Status')}: {getText(t?.supported, 'Supported')}
+                  {getText(getNestedValue(t, ['statusLabel']), 'Status')}:{' '}
+                  {getText(getNestedValue(t, ['supported']), 'Supported')}
                 </p>
               </div>
             </div>
 
             <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/70 px-3 py-2 text-sm text-gray-700">
               <span className="font-medium text-gray-800">
-                {getText(t?.formatsLabel, 'Supported format')}:
+                {getText(getNestedValue(t, ['formatsLabel']), 'Supported format')}:
               </span>
-              {getText(t?.pdfStatements, 'PDF statements')}
+              {getText(getNestedValue(t, ['pdfStatements']), 'PDF statements')}
             </div>
 
             <p className="mt-3 text-sm text-gray-600">{bank.notes}</p>
@@ -114,7 +128,7 @@ export default function SupportedBanksPage() {
       </div>
 
       <p className="mt-6 text-sm font-medium text-gray-500">
-        {getText(t?.comingSoon, 'More banks are coming soon')}
+        {getText(getNestedValue(t, ['comingSoon']), 'More banks are coming soon')}
       </p>
     </div>
   );

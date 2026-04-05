@@ -1,13 +1,5 @@
 'use client';
 
-declare global {
-  interface Window {
-    gapi?: {
-      load: (name: string, options: { callback: () => void }) => void;
-    };
-  }
-}
-
 type PickerDoc = {
   id: string;
   name?: string;
@@ -75,7 +67,7 @@ export const pickDriveFiles = async (params: {
     mimeTypes: params.mimeTypes,
   });
   await ensurePickerLoaded();
-  const picker = (window as any).google?.picker;
+  const picker = window.google?.picker;
   if (!picker) {
     console.error('[google-picker] window.google.picker missing');
     throw new Error('Google Picker is not available');
@@ -87,7 +79,7 @@ export const pickDriveFiles = async (params: {
       .setSelectFolderEnabled(false)
       .setMimeTypes(params.mimeTypes.join(','));
 
-    const pickerInstance = new picker.PickerBuilder()
+    const pickerInstance = new picker.PickerBuilder<PickerDoc>()
       .setDeveloperKey(params.apiKey)
       .setOAuthToken(params.accessToken)
       .enableFeature(picker.Feature.MULTISELECT_ENABLED)
@@ -119,7 +111,7 @@ export const pickDriveFolder = async (params: {
     hasApiKey: Boolean(params.apiKey),
   });
   await ensurePickerLoaded();
-  const picker = (window as any).google?.picker;
+  const picker = window.google?.picker;
   if (!picker) {
     console.error('[google-picker] window.google.picker missing');
     throw new Error('Google Picker is not available');
@@ -130,7 +122,7 @@ export const pickDriveFolder = async (params: {
       .setIncludeFolders(true)
       .setSelectFolderEnabled(true);
 
-    const pickerInstance = new picker.PickerBuilder()
+    const pickerInstance = new picker.PickerBuilder<PickerDoc>()
       .setDeveloperKey(params.apiKey)
       .setOAuthToken(params.accessToken)
       .addView(view)

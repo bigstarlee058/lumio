@@ -42,6 +42,12 @@ interface PdfPlumberResult {
   tables: PdfPlumberTable[];
 }
 
+type RawPdfTextItem = Partial<Record<'text' | 'x' | 'y' | 'width' | 'height' | 'page', unknown>>;
+type RawPdfTextRow = Partial<Record<'page' | 'y' | 'text' | 'items', unknown>>;
+type RawPdfStructuredCell = Partial<Record<'text' | 'x', unknown>>;
+type RawPdfStructuredRow = Partial<Record<'page' | 'y' | 'columns' | 'cells', unknown>>;
+type RawPdfTable = Partial<Record<'page' | 'data' | 'structured', unknown>>;
+
 const parserCache = new Map<string, PdfPlumberResult>();
 let pythonExecutable: string | null = null;
 
@@ -204,7 +210,7 @@ function normalizeResult(raw: Partial<PdfPlumberResult>): PdfPlumberResult {
   };
 }
 
-function normalizeRow(row: any): PdfTextRow | null {
+function normalizeRow(row: RawPdfTextRow | null | undefined): PdfTextRow | null {
   if (!row) {
     return null;
   }
@@ -221,7 +227,7 @@ function normalizeRow(row: any): PdfTextRow | null {
   };
 }
 
-function normalizeItem(item: any): PdfTextItem | null {
+function normalizeItem(item: RawPdfTextItem | null | undefined): PdfTextItem | null {
   if (!item || typeof item.text !== 'string' || !item.text.trim()) {
     return null;
   }
@@ -236,13 +242,13 @@ function normalizeItem(item: any): PdfTextItem | null {
   };
 }
 
-function normalizeTable(table: any): PdfPlumberTable | null {
+function normalizeTable(table: RawPdfTable | null | undefined): PdfPlumberTable | null {
   if (!table) {
     return null;
   }
 
   const data: string[][] = Array.isArray(table.data)
-    ? table.data.map((row: any[]) => (Array.isArray(row) ? row.map(cleanText) : []))
+    ? table.data.map(row => (Array.isArray(row) ? row.map(cleanText) : []))
     : [];
 
   const structured: PdfTableRow[] = Array.isArray(table.structured)
@@ -256,13 +262,13 @@ function normalizeTable(table: any): PdfPlumberTable | null {
   };
 }
 
-function normalizeStructuredRow(row: any): PdfTableRow | null {
+function normalizeStructuredRow(row: RawPdfStructuredRow | null | undefined): PdfTableRow | null {
   if (!row) {
     return null;
   }
 
   const cells: PdfTableRowCell[] = Array.isArray(row.cells)
-    ? row.cells.map((cell: any) => ({
+    ? row.cells.map((cell: RawPdfStructuredCell) => ({
         text: cleanText(cell?.text),
         x: Number(cell?.x) || 0,
       }))

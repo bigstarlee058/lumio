@@ -1,6 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { useState } from 'react';
 
 export function useReceiptUpload() {
@@ -29,8 +30,8 @@ export function useReceiptUpload() {
       });
 
       return response.data;
-    } catch (uploadError: any) {
-      const message = uploadError?.response?.data?.message ?? 'Upload failed';
+    } catch (uploadError) {
+      const message = getApiErrorMessage(uploadError, 'Upload failed');
       setError(message);
       throw uploadError;
     } finally {

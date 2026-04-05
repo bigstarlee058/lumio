@@ -1,16 +1,16 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
-import type { Column, Table } from '@tanstack/react-table';
+import type { Column, Row, Table } from '@tanstack/react-table';
 import { type CSSProperties } from 'react';
-import type { CustomTableGridRow } from '../../utils/stylingUtils';
+import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
 interface EditableBooleanCellProps {
-  row: any;
+  row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
   table: Table<CustomTableGridRow>;
   cellType: string;
-  onUpdateCell: (rowId: string, columnKey: string, value: any) => Promise<void>;
+  onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   style?: CSSProperties;
 }
 

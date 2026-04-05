@@ -2,6 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { OpenRouter } from '@openrouter/sdk';
 
+type OpenRouterMessage = {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+};
+
+type OpenRouterChatApi = {
+  completions: {
+    create(input: { model: string; messages: OpenRouterMessage[] }): Promise<unknown>;
+  };
+};
+
 @Injectable()
 export class OpenRouterService {
   private readonly apiKey: string | null;
@@ -21,15 +32,15 @@ export class OpenRouterService {
     return !!this.apiKey;
   }
 
-  async chat(messages: any[], model = 'openai/gpt-3.5-turbo') {
+  async chat(messages: OpenRouterMessage[], model = 'openai/gpt-3.5-turbo') {
     const client = await this.getClient();
 
     try {
-      // Cast to `any` to avoid the TypeScript error while preserving runtime behavior
-      const completion = await (client.chat as any).completions.create({
+      const chatApi = client.chat as unknown as OpenRouterChatApi;
+      const completion = await chatApi.completions.create({
         model,
         messages,
-      } as any);
+      });
       return completion;
     } catch (error) {
       this.logger.error('Failed to call OpenRouter API', error);

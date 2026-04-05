@@ -3,6 +3,12 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+type DropdownItemProps = {
+  children: React.ReactNode;
+  onPress?: () => void;
+  itemKey?: string;
+};
+
 const apiPost = vi.fn();
 const toastLoading = vi.fn();
 const toastSuccess = vi.fn();
@@ -30,7 +36,7 @@ vi.mock('@heroui/react', () => ({
       {React.Children.map(children, child => {
         if (!React.isValidElement(child)) return child;
         const key = child.key == null ? undefined : String(child.key);
-        return React.cloneElement(child as React.ReactElement<any>, {
+        return React.cloneElement(child as React.ReactElement<DropdownItemProps>, {
           itemKey: key,
           onPress: () => {
             if (key) {
@@ -188,7 +194,7 @@ describe('ExportDropdown', () => {
           downloading: { value: 'Downloading...' },
           success: { value: 'File downloaded successfully' },
           error: { value: 'Download failed' },
-        } as any}
+        } as Partial<Parameters<typeof ExportDropdown>[0]['t']>}
       />,
     );
 

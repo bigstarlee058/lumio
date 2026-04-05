@@ -2,24 +2,56 @@ import type { CSSProperties } from 'react';
 
 export type ColumnType = 'text' | 'number' | 'date' | 'boolean' | 'select' | 'multi_select';
 
+export type CustomTableCellValue = string | number | boolean | string[] | null;
+export type CustomTableRowPatch = Record<string, CustomTableCellValue>;
+
+export interface CustomTableColumnConfig {
+  options?: string[];
+  [key: string]: unknown;
+}
+
+export interface SheetTextFormat {
+  foregroundColor?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  fontSize?: number;
+  fontFamily?: string;
+}
+
+export interface SheetStyle {
+  backgroundColor?: string;
+  horizontalAlignment?: string;
+  verticalAlignment?: string;
+  textFormat?: SheetTextFormat;
+  [key: string]: unknown;
+}
+
+export interface CustomTableRowStyles {
+  manualFill?: string;
+  manualTag?: string;
+  [key: string]: SheetStyle | string | undefined;
+}
+
 export interface CustomTableColumn {
   id: string;
   key: string;
   title: string;
   type: ColumnType;
   position: number;
-  config: Record<string, any> | null;
+  config: CustomTableColumnConfig | null;
   style?: {
-    header?: Record<string, any>;
-    cell?: Record<string, any>;
+    header?: SheetStyle;
+    cell?: SheetStyle;
   } | null;
 }
 
 export interface CustomTableGridRow {
   id: string;
   rowNumber: number;
-  data: Record<string, any>;
-  styles?: Record<string, any> | null;
+  data: CustomTableRowPatch;
+  styles?: CustomTableRowStyles | null;
 }
 
 export type RowFilterOp =
@@ -37,19 +69,19 @@ export type RowFilterOp =
   | 'isNotEmpty'
   | 'search';
 
-export type RowFilter = { col: string; op: RowFilterOp; value?: any };
+export type RowFilter = { col: string; op: RowFilterOp; value?: unknown };
 
-export const isPlainObject = (value: unknown): value is Record<string, any> => {
+export const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   if (!value || typeof value !== 'object') return false;
   if (Array.isArray(value)) return false;
   return true;
 };
 
 export const mergeSheetStyle = (
-  base: Record<string, any> | null | undefined,
-  override: Record<string, any> | null | undefined,
-): Record<string, any> => {
-  const merged: Record<string, any> = { ...(base || {}) };
+  base: SheetStyle | null | undefined,
+  override: SheetStyle | null | undefined,
+): SheetStyle => {
+  const merged: SheetStyle = { ...(base || {}) };
   if (!override) return merged;
   for (const [key, value] of Object.entries(override)) {
     if (value === null) {
@@ -98,14 +130,13 @@ export const mapFontFamily = (value: string): string | undefined => {
   return `${quoted}, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
 };
 
-export const sheetStyleToCss = (style: Record<string, any>) => {
+export const sheetStyleToCss = (style: SheetStyle) => {
   const backgroundColor =
     typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined;
   const textAlign = mapHorizontalAlignment(style.horizontalAlignment);
   const verticalAlign = mapVerticalAlignment(style.verticalAlignment);
 
-  const tf =
-    style.textFormat && typeof style.textFormat === 'object' ? (style.textFormat as any) : null;
+  const tf = style.textFormat && typeof style.textFormat === 'object' ? style.textFormat : null;
   const color = tf && typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined;
   const fontWeight = tf && typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined;
   const fontStyle =
@@ -118,7 +149,7 @@ export const sheetStyleToCss = (style: Record<string, any>) => {
     const parts: string[] = [];
     if (underline === true) parts.push('underline');
     if (strikethrough === true) parts.push('line-through');
-    textDecorationLine = parts.join(' ') as any;
+    textDecorationLine = parts.join(' ') as CSSProperties['textDecorationLine'];
   } else if (underline === false || strikethrough === false) {
     textDecorationLine = 'none';
   }
@@ -146,10 +177,11 @@ export const sheetStyleToCss = (style: Record<string, any>) => {
 export const getCellStyle = (
   row: CustomTableGridRow,
   columnKey: string,
-  baseStyle?: Record<string, any>,
+  baseStyle?: SheetStyle,
 ): CSSProperties => {
   const rowStyles = row.styles || {};
-  const cellOverride = rowStyles[columnKey];
+  const rawCellOverride = rowStyles[columnKey];
+  const cellOverride = isPlainObject(rawCellOverride) ? (rawCellOverride as SheetStyle) : undefined;
 
   const merged = mergeSheetStyle(baseStyle, cellOverride);
   const css = sheetStyleToCss(merged);

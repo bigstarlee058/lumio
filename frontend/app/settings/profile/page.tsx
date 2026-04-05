@@ -65,6 +65,25 @@ type TimeZoneOption = {
   label: string;
 };
 
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') return value;
+  const record = getRecord(value);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
+
 type NotificationPreferences = {
   statementUploaded: boolean;
   importCommitted: boolean;
@@ -164,10 +183,15 @@ const COMMON_TIMEZONES = [
   'America/New_York',
 ];
 
+type IntlWithSupportedValuesOf = typeof Intl & {
+  supportedValuesOf?: (key: string) => string[];
+};
+
 const resolveTimeZoneOptions = () => {
-  if (typeof Intl !== 'undefined' && typeof (Intl as any).supportedValuesOf === 'function') {
+  const intl = Intl as IntlWithSupportedValuesOf;
+  if (typeof Intl !== 'undefined' && typeof intl.supportedValuesOf === 'function') {
     try {
-      const zones = (Intl as any).supportedValuesOf('timeZone') as string[];
+      const zones = intl.supportedValuesOf('timeZone');
       if (Array.isArray(zones) && zones.length > 0) {
         return zones;
       }
@@ -234,6 +258,10 @@ export default function ProfileSettingsPage() {
   const [changelogSelectedEntry, setChangelogSelectedEntry] = useState<ChangelogEntry | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const timeZoneOptions = useMemo(resolveTimeZoneOptions, []);
+  const tx = useCallback(
+    (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
+    [t],
+  );
 
   const timeZoneSelectOptions = useMemo<TimeZoneOption[]>(() => {
     const autoLabel = t.profileCard.timeZones.auto.value;
@@ -356,9 +384,7 @@ export default function ProfileSettingsPage() {
     setAvatarErrorMessage(null);
 
     if (file.size > MAX_AVATAR_SIZE_BYTES) {
-      setAvatarErrorMessage(
-        (t as any).profileCard?.avatarSizeError?.value || 'Avatar file is too large',
-      );
+      setAvatarErrorMessage(tx(['profileCard', 'avatarSizeError'], 'Avatar file is too large'));
       if (avatarInputRef.current) {
         avatarInputRef.current.value = '';
       }
@@ -378,13 +404,10 @@ export default function ProfileSettingsPage() {
         setUser(nextUser);
         localStorage.setItem('user', JSON.stringify(nextUser));
       }
-      setAvatarMessage((t as any).profileCard?.avatarUpdated?.value || 'Avatar updated');
+      setAvatarMessage(tx(['profileCard', 'avatarUpdated'], 'Avatar updated'));
     } catch (error: unknown) {
       setAvatarErrorMessage(
-        getApiErrorMessage(
-          error,
-          (t as any).profileCard?.avatarError?.value || 'Failed to update avatar',
-        ),
+        getApiErrorMessage(error, tx(['profileCard', 'avatarError'], 'Failed to update avatar')),
       );
     } finally {
       setAvatarUploading(false);
@@ -433,8 +456,10 @@ export default function ProfileSettingsPage() {
 
   const handleLogoutAll = async () => {
     const confirmed = window.confirm(
-      (t as any).sessionsCard?.logoutAllConfirm?.value ||
+      tx(
+        ['sessionsCard', 'logoutAllConfirm'],
         'Log out of all devices? You will need to sign in again on each device.',
+      ),
     );
 
     if (!confirmed) {
@@ -463,7 +488,7 @@ export default function ProfileSettingsPage() {
       setSessionsError(
         getApiErrorMessage(
           error,
-          (t as any).sessionsCard?.sessionsLoadError?.value || 'Failed to load sessions',
+          tx(['sessionsCard', 'sessionsLoadError'], 'Failed to load sessions'),
         ),
       );
     } finally {
@@ -497,7 +522,7 @@ export default function ProfileSettingsPage() {
         });
       } catch {
         if (!active) return;
-        setNotificationError((t as any).notificationsCard?.errors?.load?.value || '');
+        setNotificationError(tx(['notificationsCard', 'errors', 'load'], ''));
       } finally {
         if (active) {
           setNotificationsLoading(false);
@@ -566,10 +591,10 @@ export default function ProfileSettingsPage() {
 
     try {
       await apiClient.patch('/notifications/preferences', { [key]: value });
-      setNotificationMessage((t as any).notificationsCard?.messages?.saved?.value || '');
+      setNotificationMessage(tx(['notificationsCard', 'messages', 'saved'], ''));
     } catch {
       setNotificationPreferences(previous);
-      setNotificationError((t as any).notificationsCard?.errors?.save?.value || '');
+      setNotificationError(tx(['notificationsCard', 'errors', 'save'], ''));
     } finally {
       setNotificationSavingKey(null);
     }
@@ -577,9 +602,11 @@ export default function ProfileSettingsPage() {
 
   const handleLogoutSession = async (session: UserSession) => {
     const confirmMessage = session.isCurrent
-      ? (t as any).sessionsCard?.logoutCurrentConfirm?.value ||
-        'Log out on this device? You will need to sign in again.'
-      : (t as any).sessionsCard?.logoutSessionConfirm?.value || 'Log out this device session?';
+      ? tx(
+          ['sessionsCard', 'logoutCurrentConfirm'],
+          'Log out on this device? You will need to sign in again.',
+        )
+      : tx(['sessionsCard', 'logoutSessionConfirm'], 'Log out this device session?');
 
     if (!window.confirm(confirmMessage)) {
       return;
@@ -600,14 +627,12 @@ export default function ProfileSettingsPage() {
       }
 
       setSessions(prev => prev.filter(current => current.id !== session.id));
-      setSessionsMessage(
-        (t as any).sessionsCard?.sessionLogoutSuccess?.value || 'Session logged out',
-      );
+      setSessionsMessage(tx(['sessionsCard', 'sessionLogoutSuccess'], 'Session logged out'));
     } catch (error: unknown) {
       setSessionsError(
         getApiErrorMessage(
           error,
-          (t as any).sessionsCard?.sessionLogoutError?.value || 'Failed to log out session',
+          tx(['sessionsCard', 'sessionLogoutError'], 'Failed to log out session'),
         ),
       );
     } finally {
@@ -652,8 +677,10 @@ export default function ProfileSettingsPage() {
     }
 
     const confirmed = window.confirm(
-      (t as any).passwordCard?.confirmSubmit?.value ||
+      tx(
+        ['passwordCard', 'confirmSubmit'],
         'Update password now? You may need to sign in again on other devices.',
+      ),
     );
 
     if (!confirmed) {
@@ -716,62 +743,59 @@ export default function ProfileSettingsPage() {
     email: { title: t.emailCard.title.value, icon: MailOutlineIcon },
     password: { title: t.passwordCard.title.value, icon: LockOutlinedIcon },
     notifications: {
-      title: (t as any).notificationsCard?.title?.value || 'Notifications',
-      description: (t as any).notificationsCard?.description?.value || '',
+      title: tx(['notificationsCard', 'title'], 'Notifications'),
+      description: tx(['notificationsCard', 'description'], ''),
       icon: NotificationsNoneOutlinedIcon,
     },
     changelog: {
-      title: (t as any).changelogCard?.title?.value || 'Changelog',
-      description: (t as any).changelogCard?.description?.value || '',
+      title: tx(['changelogCard', 'title'], 'Changelog'),
+      description: tx(['changelogCard', 'description'], ''),
       icon: UpdateOutlinedIcon,
     },
   };
 
   const notificationLabels = {
-    loading: (t as any).notificationsCard?.loading?.value || '',
-    workspaceTitle: (t as any).notificationsCard?.workspace?.title?.value || '',
-    workspaceDescription: (t as any).notificationsCard?.workspace?.description?.value || '',
-    systemTitle: (t as any).notificationsCard?.system?.title?.value || '',
-    systemDescription: (t as any).notificationsCard?.system?.description?.value || '',
+    loading: tx(['notificationsCard', 'loading'], ''),
+    workspaceTitle: tx(['notificationsCard', 'workspace', 'title'], ''),
+    workspaceDescription: tx(['notificationsCard', 'workspace', 'description'], ''),
+    systemTitle: tx(['notificationsCard', 'system', 'title'], ''),
+    systemDescription: tx(['notificationsCard', 'system', 'description'], ''),
     items: {
       statementUploaded: {
-        label: (t as any).notificationsCard?.items?.statementUploaded?.label?.value || '',
-        description:
-          (t as any).notificationsCard?.items?.statementUploaded?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'statementUploaded', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'statementUploaded', 'description'], ''),
       },
       importCommitted: {
-        label: (t as any).notificationsCard?.items?.importCommitted?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.importCommitted?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'importCommitted', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'importCommitted', 'description'], ''),
       },
       categoryChanges: {
-        label: (t as any).notificationsCard?.items?.categoryChanges?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.categoryChanges?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'categoryChanges', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'categoryChanges', 'description'], ''),
       },
       memberActivity: {
-        label: (t as any).notificationsCard?.items?.memberActivity?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.memberActivity?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'memberActivity', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'memberActivity', 'description'], ''),
       },
       dataDeleted: {
-        label: (t as any).notificationsCard?.items?.dataDeleted?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.dataDeleted?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'dataDeleted', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'dataDeleted', 'description'], ''),
       },
       workspaceUpdated: {
-        label: (t as any).notificationsCard?.items?.workspaceUpdated?.label?.value || '',
-        description:
-          (t as any).notificationsCard?.items?.workspaceUpdated?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'workspaceUpdated', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'workspaceUpdated', 'description'], ''),
       },
       parsingErrors: {
-        label: (t as any).notificationsCard?.items?.parsingErrors?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.parsingErrors?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'parsingErrors', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'parsingErrors', 'description'], ''),
       },
       importFailures: {
-        label: (t as any).notificationsCard?.items?.importFailures?.label?.value || '',
-        description: (t as any).notificationsCard?.items?.importFailures?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'importFailures', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'importFailures', 'description'], ''),
       },
       uncategorizedItems: {
-        label: (t as any).notificationsCard?.items?.uncategorizedItems?.label?.value || '',
-        description:
-          (t as any).notificationsCard?.items?.uncategorizedItems?.description?.value || '',
+        label: tx(['notificationsCard', 'items', 'uncategorizedItems', 'label'], ''),
+        description: tx(['notificationsCard', 'items', 'uncategorizedItems', 'description'], ''),
       },
     },
   };
@@ -819,7 +843,7 @@ export default function ProfileSettingsPage() {
 
           {hasProfileChanges && (
             <Alert variant="warning">
-              {(t as any).profileCard?.unsavedChanges?.value || 'Unsaved changes'}
+              {tx(['profileCard', 'unsavedChanges'], 'Unsaved changes')}
             </Alert>
           )}
 
@@ -852,7 +876,7 @@ export default function ProfileSettingsPage() {
                 labels={{
                   light: t.appearanceCard.light.value,
                   dark: t.appearanceCard.dark.value,
-                  auto: (t as any).appearanceCard?.auto?.value || 'Auto',
+                  auto: tx(['appearanceCard', 'auto'], 'Auto'),
                   active: t.appearanceCard.active.value,
                   followsSystem: t.appearanceCard.followsSystem.value,
                 }}
@@ -878,8 +902,10 @@ export default function ProfileSettingsPage() {
           {sessionsMessage && <Alert variant="success">{sessionsMessage}</Alert>}
           {sessionsError && <Alert variant="error">{sessionsError}</Alert>}
           <Alert variant="warning">
-            {(t as any).sessionsCard?.securityHint?.value ||
-              'Only sign out devices you recognize. Signing out current device ends this session immediately.'}
+            {tx(
+              ['sessionsCard', 'securityHint'],
+              'Only sign out devices you recognize. Signing out current device ends this session immediately.',
+            )}
           </Alert>
 
           <div className="rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
@@ -891,13 +917,13 @@ export default function ProfileSettingsPage() {
 
           <div className="space-y-3">
             <div className="text-sm font-semibold text-foreground">
-              {(t as any).sessionsCard?.activeSessionsLabel?.value || 'Active devices'}
+              {tx(['sessionsCard', 'activeSessionsLabel'], 'Active devices')}
             </div>
 
             {sessionsLoading ? (
               <div className="flex items-center gap-2 rounded-xl border border-border px-4 py-5 text-sm text-muted-foreground">
                 <Spinner className="h-[18px] w-[18px] text-inherit" />
-                {(t as any).sessionsCard?.loadingLabel?.value || 'Loading sessions...'}
+                {tx(['sessionsCard', 'loadingLabel'], 'Loading sessions...')}
               </div>
             ) : sessions.length ? (
               <div className="space-y-2">
@@ -919,19 +945,18 @@ export default function ProfileSettingsPage() {
                             <span>{`${session.device} · ${session.browser}`}</span>
                             {session.isCurrent && (
                               <Badge variant="info">
-                                {(t as any).sessionsCard?.currentSessionBadge?.value ||
-                                  'This device'}
+                                {tx(['sessionsCard', 'currentSessionBadge'], 'This device')}
                               </Badge>
                             )}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {session.os}
                             {session.ipAddress
-                              ? ` · ${(t as any).sessionsCard?.ipLabel?.value || 'IP'}: ${session.ipAddress}`
+                              ? ` · ${tx(['sessionsCard', 'ipLabel'], 'IP')}: ${session.ipAddress}`
                               : ''}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {(t as any).sessionsCard?.lastActiveLabel?.value || 'Last active'}:{' '}
+                            {tx(['sessionsCard', 'lastActiveLabel'], 'Last active')}:{' '}
                             {new Date(session.lastUsedAt).toLocaleString()}
                           </div>
                         </div>
@@ -944,9 +969,11 @@ export default function ProfileSettingsPage() {
                           disabled={isLogoutLoading}
                           className="gap-2"
                         >
-                          {isLogoutLoading && <Spinner className="h-[14px] w-[14px] text-inherit" />}
+                          {isLogoutLoading && (
+                            <Spinner className="h-[14px] w-[14px] text-inherit" />
+                          )}
                           <LogoutIcon className="text-[18px]" />
-                          {(t as any).sessionsCard?.logoutSessionButton?.value || 'Log out'}
+                          {tx(['sessionsCard', 'logoutSessionButton'], 'Log out')}
                         </Button>
                       </div>
                     </div>
@@ -955,7 +982,7 @@ export default function ProfileSettingsPage() {
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border bg-muted/60 px-4 py-6 text-sm text-muted-foreground">
-                {(t as any).sessionsCard?.emptySessionsLabel?.value || 'No active sessions found.'}
+                {tx(['sessionsCard', 'emptySessionsLabel'], 'No active sessions found.')}
               </div>
             )}
           </div>
@@ -1103,11 +1130,11 @@ export default function ProfileSettingsPage() {
     }
 
     if (activeSection === 'changelog') {
-      const releaseLabelText = (t as any).changelogCard?.releaseLabel?.value || 'Release';
-      const closeLabelText = (t as any).changelogCard?.closeLabel?.value || 'Close changelog';
-      const emptyText = (t as any).changelogCard?.empty?.value || 'No published updates yet.';
-      const loadingText = (t as any).changelogCard?.loading?.value || 'Loading changelog...';
-      const openDetailsText = (t as any).changelogCard?.openDetails?.value || 'Open details';
+      const releaseLabelText = tx(['changelogCard', 'releaseLabel'], 'Release');
+      const closeLabelText = tx(['changelogCard', 'closeLabel'], 'Close changelog');
+      const emptyText = tx(['changelogCard', 'empty'], 'No published updates yet.');
+      const loadingText = tx(['changelogCard', 'loading'], 'Loading changelog...');
+      const openDetailsText = tx(['changelogCard', 'openDetails'], 'Open details');
 
       const formattedEntries = changelogEntries.map(entry => {
         const date = new Date(entry.date);
@@ -1193,8 +1220,10 @@ export default function ProfileSettingsPage() {
         {passwordMessage && <Alert variant="success">{passwordMessage}</Alert>}
         {passwordError && <Alert variant="error">{passwordError}</Alert>}
         <Alert variant="warning">
-          {(t as any).passwordCard?.securityHint?.value ||
-            'Use a unique password and keep your account email secure. Confirm before applying password changes.'}
+          {tx(
+            ['passwordCard', 'securityHint'],
+            'Use a unique password and keep your account email secure. Confirm before applying password changes.',
+          )}
         </Alert>
 
         <div className="space-y-2">
@@ -1219,7 +1248,7 @@ export default function ProfileSettingsPage() {
             onChange={e => setPasswords({ ...passwords, next: e.target.value })}
             required
           />
-            <p className="text-xs text-muted-foreground">{t.passwordCard.newPasswordHelp.value}</p>
+          <p className="text-xs text-muted-foreground">{t.passwordCard.newPasswordHelp.value}</p>
         </div>
 
         <div className="space-y-2">
@@ -1276,7 +1305,7 @@ export default function ProfileSettingsPage() {
                       )}
                     </button>
                     <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-xs font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {(t as any).profileCard?.editPhotoLabel?.value || 'Edit photo'}
+                      {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
                     </div>
                     <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card shadow">
                       <EditIcon className="text-muted-foreground" fontSize="small" />
@@ -1348,7 +1377,7 @@ export default function ProfileSettingsPage() {
                       )}
                     </button>
                     <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {(t as any).profileCard?.editPhotoLabel?.value || 'Edit photo'}
+                      {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
                     </div>
                     <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow">
                       <EditIcon className="text-muted-foreground" fontSize="small" />

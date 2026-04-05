@@ -23,6 +23,29 @@ export interface AiExtractionResult {
   documentNumber?: string;
 }
 
+type RawAiLineItem = Partial<Record<'description' | 'quantity' | 'unitPrice' | 'amount' | 'tax', unknown>>;
+type RawAiExtractionResult = Partial<
+  Record<
+    | 'documentType'
+    | 'transactionType'
+    | 'totalAmount'
+    | 'currency'
+    | 'date'
+    | 'vendor'
+    | 'tax'
+    | 'taxRate'
+    | 'subtotal'
+    | 'lineItems'
+    | 'categoryHint'
+    | 'paymentMethod'
+    | 'documentNumber',
+    unknown
+  >
+>;
+
+const optionalString = (value: unknown): string | undefined =>
+  typeof value === 'string' ? value : undefined;
+
 const EXTRACTION_PROMPT = `You are a financial document parser. Extract all available data from this document and return ONLY JSON.
 
 Output format:
@@ -91,7 +114,9 @@ export class AiDocumentExtractor extends BaseAiHelper {
     ]);
   }
 
-  private async callModel(contents: any[]): Promise<AiExtractionResult | null> {
+  private async callModel(
+    contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> }>,
+  ): Promise<AiExtractionResult | null> {
     try {
       const timeoutMs = Number.parseInt(process.env.AI_TIMEOUT_MS || '20000', 10);
       const content = await this.generateJsonContent(contents, {
@@ -114,10 +139,10 @@ export class AiDocumentExtractor extends BaseAiHelper {
     }
   }
 
-  private normalizeResult(raw: any): AiExtractionResult {
+  private normalizeResult(raw: RawAiExtractionResult): AiExtractionResult {
     return {
-      documentType: this.normalizeDocumentType(raw?.documentType),
-      transactionType: this.normalizeTransactionType(raw?.transactionType),
+      documentType: this.normalizeDocumentType(optionalString(raw?.documentType)),
+      transactionType: this.normalizeTransactionType(optionalString(raw?.transactionType)),
       totalAmount: typeof raw?.totalAmount === 'number' ? Math.abs(raw.totalAmount) : undefined,
       currency: typeof raw?.currency === 'string' ? raw.currency.toUpperCase() : undefined,
       date: typeof raw?.date === 'string' ? raw.date : undefined,
@@ -126,7 +151,13 @@ export class AiDocumentExtractor extends BaseAiHelper {
       taxRate: typeof raw?.taxRate === 'number' ? raw.taxRate : undefined,
       subtotal: typeof raw?.subtotal === 'number' ? raw.subtotal : undefined,
       lineItems: Array.isArray(raw?.lineItems)
-        ? raw.lineItems.filter((item: any) => item?.description && typeof item?.amount === 'number')
+        ? raw.lineItems.filter(
+            (item: unknown): item is LineItem =>
+              typeof item === 'object' &&
+              item !== null &&
+              typeof (item as RawAiLineItem).description === 'string' &&
+              typeof (item as RawAiLineItem).amount === 'number',
+          )
         : undefined,
       categoryHint: typeof raw?.categoryHint === 'string' ? raw.categoryHint : undefined,
       paymentMethod: typeof raw?.paymentMethod === 'string' ? raw.paymentMethod : undefined,

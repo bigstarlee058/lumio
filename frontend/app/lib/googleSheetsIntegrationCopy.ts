@@ -1,4 +1,4 @@
-type UnknownRecord = Record<string, any>;
+type UnknownRecord = Record<string, unknown>;
 
 const readNodeValue = (value: unknown): string | undefined => {
   if (typeof value === 'string') {

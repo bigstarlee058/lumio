@@ -4,6 +4,7 @@ import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/Statement
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useLocale } from '@/app/i18n';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import {
   type StatementCategoryNode,
   flattenStatementCategories,
@@ -298,8 +299,8 @@ export default function CreateExpenseDrawer({
         requireManualCategorySelection: false,
       });
       handleClose();
-    } catch (submitError: any) {
-      setError(submitError?.message || 'Failed to upload files');
+    } catch (submitError: unknown) {
+      setError(getApiErrorMessage(submitError, 'Failed to upload files'));
     } finally {
       setSubmitting(false);
     }
@@ -322,8 +323,8 @@ export default function CreateExpenseDrawer({
         allowDuplicates: ALWAYS_ALLOW_STATEMENT_DUPLICATES,
       });
       handleClose();
-    } catch (submitError: any) {
-      setError(submitError?.message || 'Failed to submit manual expense');
+    } catch (submitError: unknown) {
+      setError(getApiErrorMessage(submitError, 'Failed to submit manual expense'));
     } finally {
       setSubmitting(false);
     }

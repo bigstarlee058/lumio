@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import { createFieldValidationState } from './column-validation.util';
 
+type FieldValue = string | number | boolean | Date | null | undefined;
+type TransactionRecord = ParsedTransaction & Record<string, FieldValue>;
+
 export interface ColumnValidationResult {
   isValid: boolean;
   inconsistencies: ColumnInconsistency[];
@@ -13,8 +16,8 @@ export interface ColumnInconsistency {
   type: 'missing_column' | 'extra_column' | 'type_mismatch' | 'format_inconsistency';
   field: string;
   rowNumber?: number;
-  expectedValue?: any;
-  actualValue?: any;
+  expectedValue?: unknown;
+  actualValue?: unknown;
   severity: 'low' | 'medium' | 'high';
   autoFixable: boolean;
 }
@@ -30,6 +33,14 @@ export interface ColumnSchema {
 @Injectable()
 export class ColumnValidationService {
   private readonly logger = new Logger(ColumnValidationService.name);
+
+  private getTransactionField(transaction: ParsedTransaction, field: string): FieldValue {
+    return (transaction as TransactionRecord)[field];
+  }
+
+  private setTransactionField(transaction: ParsedTransaction, field: string, value: unknown): void {
+    (transaction as TransactionRecord)[field] = value as FieldValue;
+  }
 
   // Expected schema for transaction data
   private readonly transactionSchema: ColumnSchema[] = [
@@ -109,14 +120,18 @@ export class ColumnValidationService {
 
     // Check each field according to schema
     for (const schema of this.transactionSchema) {
-      const fieldResult = await this.validateField(transaction[schema.field], schema, rowNumber);
+      const fieldResult = await this.validateField(
+        this.getTransactionField(transaction, schema.field),
+        schema,
+        rowNumber,
+      );
 
       if (!fieldResult.isValid) {
         inconsistencies.push(...fieldResult.inconsistencies);
 
         // Apply auto-fix if possible
         if (fieldResult.correctedValue !== undefined) {
-          corrected[schema.field] = fieldResult.correctedValue;
+          this.setTransactionField(corrected, schema.field, fieldResult.correctedValue);
         }
       }
     }
@@ -133,10 +148,10 @@ export class ColumnValidationService {
   }
 
   private async validateField(
-    value: any,
+    value: unknown,
     schema: ColumnSchema,
     rowNumber: number,
-  ): Promise<{ isValid: boolean; inconsistencies: ColumnInconsistency[]; correctedValue?: any }> {
+  ): Promise<{ isValid: boolean; inconsistencies: ColumnInconsistency[]; correctedValue?: unknown }> {
     const inconsistencies: ColumnInconsistency[] = [];
 
     // Check required fields
@@ -190,13 +205,13 @@ export class ColumnValidationService {
   }
 
   private async validateFieldType(
-    value: any,
+    value: unknown,
     schema: ColumnSchema,
     rowNumber: number,
   ): Promise<{
     isValid: boolean;
     inconsistencies: ColumnInconsistency[];
-    correctedValue?: any;
+    correctedValue?: unknown;
   }> {
     const state = createFieldValidationState(value);
 
@@ -250,7 +265,10 @@ export class ColumnValidationService {
 
       case 'date':
         if (!(value instanceof Date) || Number.isNaN(value.getTime())) {
-          const dateValue = new Date(value);
+          const dateValue =
+            typeof value === 'string' || typeof value === 'number' || value instanceof Date
+              ? new Date(value)
+              : new Date(Number.NaN);
           if (Number.isNaN(dateValue.getTime())) {
             state.isValid = false;
             state.inconsistencies.push({
@@ -313,13 +331,13 @@ export class ColumnValidationService {
   }
 
   private async validateFieldFormat(
-    value: any,
+    value: unknown,
     schema: ColumnSchema,
     rowNumber: number,
   ): Promise<{
     isValid: boolean;
     inconsistencies: ColumnInconsistency[];
-    correctedValue?: any;
+    correctedValue?: unknown;
   }> {
     const state = createFieldValidationState(value);
 
@@ -542,7 +560,7 @@ export class ColumnValidationService {
     return { inconsistencies, correctedTransactions };
   }
 
-  private getDefaultValue(schema: ColumnSchema): any {
+  private getDefaultValue(schema: ColumnSchema): FieldValue {
     switch (schema.type) {
       case 'string':
         return '';
@@ -557,7 +575,7 @@ export class ColumnValidationService {
     }
   }
 
-  private parseBoolean(value: any): boolean | undefined {
+  private parseBoolean(value: unknown): boolean | undefined {
     if (typeof value === 'boolean') return value;
 
     const strValue = String(value).toLowerCase().trim();

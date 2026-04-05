@@ -23,12 +23,31 @@ type Props = {
   sourceCounts: Record<CustomTableSourceFilter, number>;
 };
 
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getNestedValue = (root: unknown, path: string[]): unknown => {
+  let current: unknown = root;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) return undefined;
+    current = record[segment];
+  }
+
+  return current;
+};
+
 const resolveLabel = (value: unknown, fallback: string): string =>
-  (value as { value?: string })?.value ?? (value as string) ?? fallback;
+  typeof value === 'string'
+    ? value
+    : getRecord(value)?.value && typeof getRecord(value)?.value === 'string'
+      ? (getRecord(value)?.value as string)
+      : fallback;
 
 export default function CustomTablesSidePanel({ activeSource, sortOrder, sourceCounts }: Props) {
   const t = useIntlayer('customTablesPage');
-  const sidePanelT = (t as any).sidePanel ?? {};
+  const sidePanelT = getRecord(getNestedValue(t, ['sidePanel'])) ?? {};
   const allCount = sourceCounts.all;
   const manualCount = sourceCounts.manual;
   const googleSheetsCount = sourceCounts.google_sheets_import;
@@ -39,11 +58,14 @@ export default function CustomTablesSidePanel({ activeSource, sortOrder, sourceC
       accountingTitle: resolveLabel(sidePanelT.accountingTitle, 'Accounting'),
       insightsTitle: resolveLabel(sidePanelT.insightsTitle, 'Insights'),
       allTables: resolveLabel(sidePanelT.allTables, 'All tables'),
-      manual: resolveLabel((t as any)?.sources?.manual, 'Manual'),
-      googleSheets: resolveLabel((t as any)?.sources?.googleSheets, 'Google Sheets'),
-      fromStatement: resolveLabel((t as any)?.filters?.fromStatement, 'From statement'),
-      recentUpdates: resolveLabel((t as any)?.filters?.sortUpdated, 'Recent updates'),
-      byName: resolveLabel((t as any)?.filters?.sortName, 'By name'),
+      manual: resolveLabel(getNestedValue(t, ['sources', 'manual']), 'Manual'),
+      googleSheets: resolveLabel(getNestedValue(t, ['sources', 'googleSheets']), 'Google Sheets'),
+      fromStatement: resolveLabel(
+        getNestedValue(t, ['filters', 'fromStatement']),
+        'From statement',
+      ),
+      recentUpdates: resolveLabel(getNestedValue(t, ['filters', 'sortUpdated']), 'Recent updates'),
+      byName: resolveLabel(getNestedValue(t, ['filters', 'sortName']), 'By name'),
       sourceOverview: resolveLabel(sidePanelT.sourceOverview, 'Sources overview'),
       noData: resolveLabel(sidePanelT.noData, 'No data'),
     }),

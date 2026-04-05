@@ -2,6 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
@@ -155,8 +156,8 @@ function BalanceSheet() {
           }
           return merged;
         });
-      } catch (err: any) {
-        setError(err?.response?.data?.message || t.errors.loadReport.value);
+      } catch (error: unknown) {
+        setError(getApiErrorMessage(error, t.errors.loadReport.value));
       } finally {
         setLoading(false);
       }
@@ -194,8 +195,8 @@ function BalanceSheet() {
 
         setSaveHint(text('balanceSaved', 'Balance saved'));
         await loadSheet(effectiveDate);
-      } catch (err: any) {
-        setError(err?.response?.data?.message || t.errors.loadReport.value);
+      } catch (error: unknown) {
+        setError(getApiErrorMessage(error, t.errors.loadReport.value));
         setSaveHint('');
       } finally {
         setSavingAccountId(null);
@@ -237,8 +238,8 @@ function BalanceSheet() {
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-      } catch (err: any) {
-        setError(err?.response?.data?.message || t.errors.loadReport.value);
+      } catch (error: unknown) {
+        setError(getApiErrorMessage(error, t.errors.loadReport.value));
       } finally {
         setExportingFormat(null);
       }

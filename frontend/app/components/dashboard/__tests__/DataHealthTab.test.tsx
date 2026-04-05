@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import '../test-setup';
 import { DataHealthTab } from '../DataHealthTab';
 
+type DataHealthTabData = React.ComponentProps<typeof DataHealthTab>['data'];
+
 describe('DataHealthTab', () => {
   it('uses dark-safe metric card surfaces instead of translucent white panels', () => {
     render(
@@ -19,7 +21,7 @@ describe('DataHealthTab', () => {
             lastUploadDate: '2025-05-31T00:00:00.000Z',
             parsingWarnings: 1,
           },
-        } as any}
+        } as DataHealthTabData}
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}
@@ -50,7 +52,7 @@ describe('DataHealthTab', () => {
             lastUploadDate: '2025-05-31T00:00:00.000Z',
             parsingWarnings: 0,
           },
-        } as any}
+        } as DataHealthTabData}
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}

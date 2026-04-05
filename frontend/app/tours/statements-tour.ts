@@ -52,7 +52,8 @@ export function createStatementsTour(texts: {
         selector: 'body',
         title: steps.welcome.title.value,
         description: steps.welcome.description.value,
-        side: 'center' as any,
+        side: 'bottom',
+        align: 'center',
       },
       {
         selector: '[data-tour-id="statements-upload-trigger"]',
@@ -100,7 +101,8 @@ export function createStatementsTour(texts: {
         selector: 'body',
         title: steps.completed.title.value,
         description: steps.completed.description.value,
-        side: 'center' as any,
+        side: 'bottom',
+        align: 'center',
       },
     ],
   };

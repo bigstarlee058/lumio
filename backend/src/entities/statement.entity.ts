@@ -11,6 +11,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+type JsonObject = Record<string, unknown>;
 import { normalizeFilename } from '../common/utils/filename.util';
 import { Category } from './category.entity';
 import { Folder } from './folder.entity';
@@ -236,14 +238,14 @@ export class Statement {
     };
     droppedSamples?: Array<{
       reason: string;
-      transaction?: Record<string, any>;
+      transaction?: JsonObject;
     }>;
     crossStatementDuplicates?: {
       groups: number;
       marked: number;
     };
-    importPreview?: Record<string, any>;
-    importCommit?: Record<string, any>;
+    importPreview?: JsonObject;
+    importCommit?: JsonObject;
     processingTime?: number; // milliseconds
     logEntries?: Array<{ timestamp: string; level: string; message: string }>;
     manualCategorySelectionRequired?: boolean;

@@ -5,6 +5,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import {
   AccessTime,
   CheckCircleOutline,
@@ -61,6 +62,34 @@ export default function TelegramSettingsPage() {
   const [sendingDaily, setSendingDaily] = useState(false);
   const [sendingMonthly, setSendingMonthly] = useState(false);
 
+  const formatTelegramDate = (dateString: string | null | undefined) => {
+    if (!dateString) return t.history.dash.value;
+    const date = new Date(dateString);
+    return date.toLocaleString(locale);
+  };
+
+  const getReportTypeLabel = (type: ReportType) => {
+    switch (type) {
+      case 'daily':
+        return t.reportType.daily.value;
+      case 'monthly':
+        return t.reportType.monthly.value;
+      default:
+        return t.reportType.custom.value;
+    }
+  };
+
+  const getStatusLabel = (status: ReportStatus) => {
+    switch (status) {
+      case 'sent':
+        return t.reportStatus.sent.value;
+      case 'failed':
+        return t.reportStatus.failed.value;
+      default:
+        return t.reportStatus.pending.value;
+    }
+  };
+
   useEffect(() => {
     if (user) {
       setChatId(user.telegramChatId || '');
@@ -96,8 +125,8 @@ export default function TelegramSettingsPage() {
       setError(null);
       await apiClient.post('/telegram/connect', { chatId, telegramId: telegramId || undefined });
       setStatusMessage(t.messages.connected.value);
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.connectFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.connectFailed.value);
       setError(message);
     } finally {
       setLoading(false);
@@ -117,8 +146,8 @@ export default function TelegramSettingsPage() {
       });
       setStatusMessage(t.messages.sent.value);
       await loadReports();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.sendFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.sendFailed.value);
       setError(message);
     } finally {
       setSending(false);
@@ -300,18 +329,18 @@ export default function TelegramSettingsPage() {
                   )}
                   {reports.map(report => (
                     <TableRow key={report.id} hover>
-                      <TableCell>{reportTypeLabel(report.reportType, t)}</TableCell>
-                      <TableCell>{formatDate(report.reportDate, locale, t)}</TableCell>
+                      <TableCell>{getReportTypeLabel(report.reportType)}</TableCell>
+                      <TableCell>{formatTelegramDate(report.reportDate)}</TableCell>
                       <TableCell>{report.chatId}</TableCell>
                       <TableCell>
                         <Chip
                           size="small"
                           color={getStatusColor(report.status)}
-                          label={statusLabel(report.status, t)}
+                          label={getStatusLabel(report.status)}
                         />
                       </TableCell>
                       <TableCell>
-                        {formatDate(report.sentAt || report.createdAt, locale, t)}
+                        {formatTelegramDate(report.sentAt || report.createdAt)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -335,12 +364,6 @@ export default function TelegramSettingsPage() {
   );
 }
 
-function formatDate(dateString: string | null | undefined, locale: string, t: any) {
-  if (!dateString) return t.history.dash.value;
-  const date = new Date(dateString);
-  return date.toLocaleString(locale);
-}
-
 function getStatusColor(status: ReportStatus) {
   switch (status) {
     case 'sent':
@@ -349,27 +372,5 @@ function getStatusColor(status: ReportStatus) {
       return 'error';
     default:
       return 'default';
-  }
-}
-
-function reportTypeLabel(type: ReportType, t: any) {
-  switch (type) {
-    case 'daily':
-      return t.reportType.daily.value;
-    case 'monthly':
-      return t.reportType.monthly.value;
-    default:
-      return t.reportType.custom.value;
-  }
-}
-
-function statusLabel(status: ReportStatus, t: any) {
-  switch (status) {
-    case 'sent':
-      return t.reportStatus.sent.value;
-    case 'failed':
-      return t.reportStatus.failed.value;
-    default:
-      return t.reportStatus.pending.value;
   }
 }

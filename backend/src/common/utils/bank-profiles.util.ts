@@ -144,15 +144,18 @@ export class BankProfileService {
   /**
    * Validate bank profile structure
    */
-  private validateProfile(profile: any): profile is BankProfile {
+  private validateProfile(profile: unknown): profile is BankProfile {
+    const candidate = profile as Partial<BankProfile> | null;
+
     return (
       typeof profile === 'object' &&
-      typeof profile.name === 'string' &&
-      typeof profile.language === 'string' &&
-      typeof profile.patterns === 'object' &&
-      typeof profile.columns === 'object' &&
-      Array.isArray(profile.patterns.date?.formats) &&
-      Array.isArray(profile.columns.date?.keywords)
+      profile !== null &&
+      typeof candidate?.name === 'string' &&
+      typeof candidate?.language === 'string' &&
+      typeof candidate?.patterns === 'object' &&
+      typeof candidate?.columns === 'object' &&
+      Array.isArray(candidate?.patterns?.date?.formats) &&
+      Array.isArray(candidate?.columns?.date?.keywords)
     );
   }
 

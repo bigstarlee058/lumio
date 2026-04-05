@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
+import type { DeepPartial, Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import {
   AuditAction,
   AuditEvent,
@@ -15,6 +16,11 @@ import { Statement } from '../../../entities/statement.entity';
 import { Transaction } from '../../../entities/transaction.entity';
 import { Workspace } from '../../../entities/workspace.entity';
 import type { RollbackResult } from '../interfaces/audit-event.interface';
+
+type SnapshotRecord = Record<string, unknown>;
+
+const asSnapshotRecord = (value: unknown): SnapshotRecord | null =>
+  value && typeof value === 'object' ? (value as SnapshotRecord) : null;
 
 @Injectable()
 export class RollbackService {
@@ -111,9 +117,11 @@ export class RollbackService {
       if (!row) {
         return { success: false, message: 'Row not found for rollback' };
       }
-      const data = { ...(row.data || {}) } as Record<string, any>;
-      data[columnKey] = (snapshot.before as Record<string, any>)?.value ?? null;
-      await this.customTableRowRepository.update(event.entityId, { data } as any);
+      const data: CustomTableRow['data'] = { ...(row.data || {}) };
+      data[columnKey] = asSnapshotRecord(snapshot.before)?.value ?? null;
+      await this.customTableRowRepository.update(event.entityId, {
+        data,
+      });
       return { success: true, message: 'Cell update rolled back' };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -135,23 +143,26 @@ export class RollbackService {
           if (!snapshot?.before) {
             return { success: false, message: 'Missing before state for rollback' };
           }
-          await repository.update(event.entityId, snapshot.before as any);
+          await repository.update(
+            event.entityId,
+            snapshot.before as QueryDeepPartialEntity<T>,
+          );
           return { success: true, message: 'Update rolled back' };
         }
         case AuditAction.DELETE: {
           if (!snapshot?.before) {
             return { success: false, message: 'Missing before state for rollback' };
           }
-          let restored = repository.create(snapshot.before as any);
+          let restored = repository.create(snapshot.before as DeepPartial<T>);
           if (event.entityType === EntityType.STATEMENT && 'deletedAt' in restored) {
-            const { deletedAt: _deletedAt, ...rest } = restored as Record<string, any>;
-            restored = rest as typeof restored;
+            const { deletedAt: _deletedAt, ...rest } = restored as unknown as SnapshotRecord;
+            restored = rest as unknown as typeof restored;
           }
           await repository.save(restored);
           return { success: true, message: 'Delete rolled back' };
         }
         case AuditAction.CREATE: {
-          await repository.delete(event.entityId as any);
+          await repository.delete(event.entityId);
           return { success: true, message: 'Create rolled back' };
         }
         default:
@@ -166,14 +177,14 @@ export class RollbackService {
 
   private extractSnapshots(
     diff: AuditEventDiff | null | undefined,
-  ): { before: Record<string, any> | null; after: Record<string, any> | null } | null {
+  ): { before: SnapshotRecord | null; after: SnapshotRecord | null } | null {
     if (!diff || Array.isArray(diff)) {
       return null;
     }
 
     return {
-      before: diff.before ? (diff.before as Record<string, any>) : null,
-      after: diff.after ? (diff.after as Record<string, any>) : null,
+      before: asSnapshotRecord(diff.before),
+      after: asSnapshotRecord(diff.after),
     };
   }
 }

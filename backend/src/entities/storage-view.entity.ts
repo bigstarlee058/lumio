@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import type { StorageViewFilters } from '../modules/storage/interfaces/storage-view-filters.interface';
 import { Workspace } from './workspace.entity';
 
 @Entity('storage_views')
@@ -28,7 +29,7 @@ export class StorageView {
   name: string;
 
   @Column({ name: 'filters', type: 'jsonb' })
-  filters: Record<string, any>;
+  filters: StorageViewFilters;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

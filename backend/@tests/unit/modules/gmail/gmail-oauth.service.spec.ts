@@ -1,17 +1,28 @@
-import { IntegrationProvider, IntegrationStatus, type Integration } from '@/entities/integration.entity';
-import type { IntegrationToken } from '@/entities/integration-token.entity';
-import type { User } from '@/entities/user.entity';
-import type { GmailSettings } from '@/entities/gmail-settings.entity';
 import { OAuthIntegrationBaseService } from '@/common/services/oauth-integration-base.service';
+import type { GmailSettings } from '@/entities/gmail-settings.entity';
+import type { IntegrationToken } from '@/entities/integration-token.entity';
+import {
+  type Integration,
+  IntegrationProvider,
+  IntegrationStatus,
+} from '@/entities/integration.entity';
+import type { User } from '@/entities/user.entity';
 import { GmailOAuthService } from '@/modules/gmail/services/gmail-oauth.service';
 
-function createRepoMock<T>() {
+type RepoMock<T> = {
+  findOne: jest.Mock<Promise<T | null>, [unknown]>;
+  save: jest.Mock<Promise<T>, [Partial<T>]>;
+  create: jest.Mock<T, [Partial<T>]>;
+  delete: jest.Mock<Promise<unknown>, [unknown]>;
+};
+
+function createRepoMock<T>(): RepoMock<T> {
   return {
     findOne: jest.fn(),
     save: jest.fn(async (data: Partial<T>) => data as T),
     create: jest.fn((data: Partial<T>) => data as T),
     delete: jest.fn(),
-  } as any;
+  };
 }
 
 describe('GmailOAuthService', () => {
@@ -40,7 +51,7 @@ describe('GmailOAuthService', () => {
   it('reuses signed state helpers when building the auth url', () => {
     expect(service).toBeInstanceOf(OAuthIntegrationBaseService);
 
-    const url = service.getAuthUrl({ id: 'user-1', workspaceId: 'ws-1' } as User);
+    const url = service.getAuthUrl({ id: 'user-1', workspaceId: 'ws-1' } as unknown as User);
 
     expect(url).toContain('state=');
     expect(url).toContain('access_type=offline');
@@ -58,7 +69,9 @@ describe('GmailOAuthService', () => {
 
     await service.disconnect('user-1');
 
-    expect(integrationTokenRepository.delete).toHaveBeenCalledWith({ integrationId: 'integration-1' });
+    expect(integrationTokenRepository.delete).toHaveBeenCalledWith({
+      integrationId: 'integration-1',
+    });
     expect(gmailSettingsRepository.delete).toHaveBeenCalledWith({ integrationId: 'integration-1' });
     expect(integrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({

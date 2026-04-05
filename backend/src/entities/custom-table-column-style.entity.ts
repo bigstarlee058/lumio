@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+type JsonObject = Record<string, unknown>;
+
 @Entity('custom_table_column_styles')
 @Index('IDX_custom_table_column_styles_table_id', ['tableId'])
 @Index('IDX_custom_table_column_styles_table_column_key_unique', ['tableId', 'columnKey'], {
@@ -23,7 +25,7 @@ export class CustomTableColumnStyle {
   columnKey: string;
 
   @Column({ name: 'style', type: 'jsonb', default: () => "'{}'::jsonb" })
-  style: Record<string, any>;
+  style: JsonObject;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

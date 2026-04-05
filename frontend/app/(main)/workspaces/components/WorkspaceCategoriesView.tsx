@@ -1,6 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
@@ -32,9 +33,39 @@ import {
   alpha,
   useTheme,
 } from '@mui/material';
-import { Spinner } from '@/app/components/ui/spinner';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+
+const getRecord = (value: unknown): Record<string, unknown> | null => {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+};
+
+const getNestedValue = (source: unknown, path: string[]): unknown => {
+  let current: unknown = source;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) {
+      return undefined;
+    }
+    current = record[segment];
+  }
+
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string): string => {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (value && typeof value === 'object' && 'value' in value) {
+    const tokenValue = (value as { value?: unknown }).value;
+    if (typeof tokenValue === 'string') {
+      return tokenValue;
+    }
+  }
+  return fallback;
+};
 
 interface Category {
   id: string;
@@ -130,6 +161,7 @@ export default function WorkspaceCategoriesView() {
   const { locale } = useLocale();
   const theme = useTheme();
   const { user } = useAuth();
+  const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -149,11 +181,11 @@ export default function WorkspaceCategoriesView() {
 
   const getCategoryBadgeLabel = (category: Category) => {
     if (category.source === 'parsing') {
-      return (t as any).sourceBadges?.parsing?.value || 'Parsing data';
+      return tx(['sourceBadges', 'parsing'], 'Parsing data');
     }
 
     if (category.isSystem || category.source === 'system') {
-      return (t as any).sourceBadges?.system?.value || 'System';
+      return tx(['sourceBadges', 'system'], 'System');
     }
 
     return null;
@@ -429,7 +461,7 @@ export default function WorkspaceCategoriesView() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               data-tour-id="categories-search"
-              placeholder={(t as any).searchPlaceholder?.value || 'Find category'}
+              placeholder={tx(['searchPlaceholder'], 'Find category')}
               className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
             />
           </div>
@@ -464,7 +496,10 @@ export default function WorkspaceCategoriesView() {
           Disabling a category will hide it from statements and reports.
         </div>
 
-        <div className="rounded-3xl border border-border bg-card p-2 shadow-sm" data-tour-id="categories-list">
+        <div
+          className="rounded-3xl border border-border bg-card p-2 shadow-sm"
+          data-tour-id="categories-list"
+        >
           <div className="flex items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <div className="flex items-center gap-3">
               <Checkbox
@@ -475,9 +510,9 @@ export default function WorkspaceCategoriesView() {
                 }
                 onCheckedChange={handleToggleSelectAll}
               />
-              <span>{(t as any).columns?.name?.value || 'Name'}</span>
+              <span>{tx(['columns', 'name'], 'Name')}</span>
             </div>
-            <span>{(t as any).enabled?.value || 'Enabled'}</span>
+            <span>{tx(['enabled'], 'Enabled')}</span>
           </div>
 
           {loading ? (
@@ -490,7 +525,7 @@ export default function WorkspaceCategoriesView() {
                 <SearchIcon className="text-[32px]" />
               </div>
               <h3 className="text-lg font-medium text-foreground">
-                {(t as any).noData?.value || 'No categories'}
+                {tx(['noData'], 'No categories')}
               </h3>
               <div className="mt-6">
                 <button
@@ -709,7 +744,7 @@ export default function WorkspaceCategoriesView() {
                     checked={formData.withoutIcon}
                     onChange={e => setFormData({ ...formData, withoutIcon: e.target.checked })}
                   />
-                  {(t as any).dialog?.withoutIcon?.value || 'Without icon'}
+                  {tx(['dialog', 'withoutIcon'], 'Without icon')}
                 </label>
               </Box>
               <Box

@@ -1,17 +1,17 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
-import type { Column, Table } from '@tanstack/react-table';
+import type { Column, Row, Table } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
-import type { CustomTableGridRow } from '../../utils/stylingUtils';
+import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
 interface EditableSelectCellProps {
-  row: any;
+  row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
   table: Table<CustomTableGridRow>;
   cellType: string;
-  onUpdateCell: (rowId: string, columnKey: string, value: any) => Promise<void>;
+  onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   options?: string[];
   multiple?: boolean;
   style?: CSSProperties;
@@ -26,17 +26,18 @@ export function EditableSelectCell({
   style,
 }: EditableSelectCellProps) {
   const initialValue = row.original.data[column.id];
+  const initialValues = Array.isArray(initialValue)
+    ? initialValue.map(value => String(value))
+    : initialValue === null || initialValue === undefined
+      ? []
+      : [String(initialValue)];
+  const initialSingleValue =
+    initialValue === null || initialValue === undefined || Array.isArray(initialValue)
+      ? ''
+      : String(initialValue);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    multiple
-      ? Array.isArray(initialValue)
-        ? initialValue
-        : initialValue
-          ? [initialValue]
-          : []
-      : [],
-  );
-  const [selectedValue, setSelectedValue] = useState<string>(multiple ? '' : initialValue || '');
+  const [selectedValues, setSelectedValues] = useState<string[]>(multiple ? initialValues : []);
+  const [selectedValue, setSelectedValue] = useState<string>(multiple ? '' : initialSingleValue);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export function EditableSelectCell({
         await onUpdateCell(row.original.id, column.id, option);
       } catch (error) {
         console.error('Failed to update cell:', error);
-        setSelectedValue(initialValue || '');
+        setSelectedValue(initialSingleValue);
       }
     }
   };

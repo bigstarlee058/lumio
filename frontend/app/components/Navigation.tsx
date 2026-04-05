@@ -76,6 +76,15 @@ const MOBILE_MENU_VISIBILITY_EVENT = 'lumio-mobile-menu-visibility';
 
 type AppLanguage = 'ru' | 'en' | 'kk';
 
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+
+const getStringValue = (value: unknown, fallback: string) => {
+  if (typeof value === 'string') return value;
+  const record = getRecord(value);
+  return typeof record?.value === 'string' ? record.value : fallback;
+};
+
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
@@ -92,7 +101,7 @@ export default function Navigation() {
     languages: languageNames,
     tour,
   } = useIntlayer('navigation');
-  const trashLabel = (userMenu as Record<string, any>).trash?.value ?? 'Trash';
+  const trashLabel = getStringValue(getRecord(userMenu)?.trash, 'Trash');
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuMounted, setMobileMenuMounted] = useState(false);
@@ -320,9 +329,7 @@ export default function Navigation() {
             detail: { themePreference: previousThemePreference },
           }),
         );
-        toast.error(
-          getText((nav as Record<string, any>)?.theme?.description) || 'Failed to update theme',
-        );
+        toast.error(getText(getRecord(getRecord(nav)?.theme)?.description) || 'Failed to update theme');
       }
     },
     [getText, nav, selectedTheme, setTheme, setUser, user],
@@ -378,7 +385,7 @@ export default function Navigation() {
 
   const navItems = [
     {
-      label: (nav as any).dashboard,
+      label: nav.dashboard,
       path: DEFAULT_APP_ROUTE,
       icon: <DashboardIcon sx={{ fontSize: 18 }} />,
       permission: 'statement.view',
@@ -482,7 +489,7 @@ export default function Navigation() {
         >
           <span className="inline-flex items-center gap-2.5 tracking-wide">
             <Menu size={18} color="currentColor" strokeWidth={2.25} />
-            {((userMenu as any).moreActions?.value as string) || 'Menu'}
+            {getStringValue(getRecord(userMenu)?.moreActions, 'Menu')}
           </span>
         </Button>
       </DropdownTrigger>
@@ -566,7 +573,7 @@ export default function Navigation() {
             key="knowledgeBase"
             startContent={<SchoolIcon sx={{ fontSize: 18 }} className="text-muted-foreground" />}
           >
-            {(userMenu as any).knowledgeBase}
+            {userMenu.knowledgeBase}
           </DropdownItem>
         </DropdownSection>
 
@@ -809,7 +816,7 @@ export default function Navigation() {
                     >
                       <PlayCircle size={18} className="text-muted-foreground" />
                       <span className="flex-1 text-left">
-                        {((nav as any)?.tours?.value as string) ?? 'Tours'}
+                        {getStringValue(getRecord(nav)?.tours, 'Tours')}
                       </span>
                     </button>
                   }

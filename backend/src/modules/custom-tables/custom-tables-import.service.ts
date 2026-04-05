@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, type Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 as uuidv4 } from 'uuid';
 import {
   ActorType,
@@ -29,6 +30,68 @@ import {
   GoogleSheetsImportLayoutType,
   type GoogleSheetsImportPreviewDto,
 } from './dto/google-sheets-import-preview.dto';
+
+type JsonObject = Record<string, unknown>;
+
+interface GoogleSheetsDriverError {
+  driverError?: { code?: string };
+}
+
+interface GoogleSheetsRgbColorLike {
+  red?: unknown;
+  green?: unknown;
+  blue?: unknown;
+  alpha?: unknown;
+}
+
+interface GoogleSheetsTextFormatLike {
+  foregroundColor?: GoogleSheetsRgbColorLike;
+}
+
+interface GoogleSheetsCellFormatLike {
+  backgroundColor?: GoogleSheetsRgbColorLike;
+  textFormat?: GoogleSheetsTextFormatLike;
+}
+
+interface GoogleSheetsCellLike {
+  userEnteredFormat?: GoogleSheetsCellFormatLike;
+}
+
+interface GoogleSheetsColumnMetadataLike {
+  pixelSize?: unknown;
+}
+
+interface GoogleSheetsRowLike {
+  values?: GoogleSheetsCellLike[];
+}
+
+interface GoogleSheetsSheetDataLike {
+  rowData?: GoogleSheetsRowLike[];
+  columnMetadata?: GoogleSheetsColumnMetadataLike[];
+}
+
+interface GoogleSheetsSheetLike {
+  properties?: { title?: string };
+  data?: GoogleSheetsSheetDataLike[];
+}
+
+interface GoogleSheetsSpreadsheetLike {
+  sheets?: GoogleSheetsSheetLike[];
+}
+
+interface CustomTableViewColumnSettings {
+  width?: number;
+}
+
+interface CustomTableViewSettings {
+  columns?: Record<string, CustomTableViewColumnSettings>;
+  [key: string]: unknown;
+}
+
+type RowInsertPayload = Pick<CustomTableRow, 'tableId' | 'rowNumber' | 'data'> & {
+  styles?: Record<string, unknown>;
+};
+type RowInsertQueryPayload = QueryDeepPartialEntity<CustomTableRow>;
 
 interface A1RangeBounds {
   sheetName: string;
@@ -145,7 +208,10 @@ const clamp01 = (value: unknown): number | null => {
   return Math.max(0, Math.min(1, n));
 };
 
-const toCssColorWithOpacity = (color: any, opacity: number): string | undefined => {
+const toCssColorWithOpacity = (
+  color: GoogleSheetsRgbColorLike | null | undefined,
+  opacity: number,
+): string | undefined => {
   if (!color || typeof color !== 'object') return undefined;
   const r = clamp01(color.red);
   const g = clamp01(color.green);
@@ -158,7 +224,7 @@ const toCssColorWithOpacity = (color: any, opacity: number): string | undefined 
   return `rgba(${rr}, ${gg}, ${bb}, ${alpha})`;
 };
 
-const extractSheetStyle = (format: any): SheetCellStyle => {
+const extractSheetStyle = (format: GoogleSheetsCellFormatLike | null | undefined): SheetCellStyle => {
   if (!format || typeof format !== 'object') return {};
   const style: SheetCellStyle = {};
 
@@ -168,13 +234,13 @@ const extractSheetStyle = (format: any): SheetCellStyle => {
   return style;
 };
 
-const isEmptyStyle = (style: Record<string, any> | null | undefined): boolean => {
+const isEmptyStyle = (style: JsonObject | null | undefined): boolean => {
   if (!style || typeof style !== 'object') return true;
   return Object.keys(style).length === 0;
 };
 
 const styleSignature = (style: SheetCellStyle): string => {
-  const signature: Record<string, any> = {};
+  const signature: JsonObject = {};
   if (style.backgroundColor !== undefined) {
     signature.backgroundColor = style.backgroundColor;
   }
@@ -194,14 +260,14 @@ const diffStyle = (base: SheetCellStyle, actual: SheetCellStyle): SheetCellStyle
     if (!baseHas && !actualHas) continue;
 
     if (!actualHas && baseHas) {
-      (patch as any)[key] = null;
+      patch[key] = null;
       continue;
     }
 
     if (actualHas) {
       const equal = JSON.stringify(baseVal) === JSON.stringify(actualVal);
       if (!baseHas || !equal) {
-        (patch as any)[key] = actualVal as any;
+        patch[key] = actualVal ?? null;
       }
     }
   }
@@ -221,7 +287,7 @@ export interface HighlightedRowInfo {
 
 type NormalizedRgbColor = { r: number; g: number; b: number; alpha: number };
 
-const normalizeRgbColor = (value: any): NormalizedRgbColor | null => {
+const normalizeRgbColor = (value: GoogleSheetsRgbColorLike | null | undefined): NormalizedRgbColor | null => {
   if (!value || typeof value !== 'object') return null;
   const r = clamp01(value.red);
   const g = clamp01(value.green);
@@ -262,7 +328,7 @@ const contrastRatio = (lumA: number, lumB: number): number => {
 };
 
 const detectHighContrastRows = (
-  gridRowData: any[] | null | undefined,
+  gridRowData: GoogleSheetsRowLike[] | null | undefined,
   startRowNumber: number,
   headerRowIndex: number,
   valuesLength: number,
@@ -373,6 +439,49 @@ export class CustomTablesImportService {
     private readonly auditService: AuditService,
   ) {}
 
+  private getDriverErrorCode(error: unknown): string | undefined {
+    if (typeof error === 'object' && error !== null) {
+      return (error as GoogleSheetsDriverError).driverError?.code;
+    }
+    return undefined;
+  }
+
+  private getSheetEntry(
+    spreadsheet: GoogleSheetsSpreadsheetLike | undefined,
+    worksheetName: string,
+  ): GoogleSheetsSheetLike | undefined {
+    return (
+      spreadsheet?.sheets?.find(sheet => sheet?.properties?.title === worksheetName) ||
+      spreadsheet?.sheets?.[0]
+    );
+  }
+
+  private getColumnSourceConfig(
+    config: CustomTableColumn['config'] | null | undefined,
+  ): { colIndex?: number } | null {
+    if (!config || typeof config !== 'object') {
+      return null;
+    }
+    const source = (config as { source?: unknown }).source;
+    return typeof source === 'object' && source !== null ? (source as { colIndex?: number }) : null;
+  }
+
+  private getViewSettings(table: CustomTable): CustomTableViewSettings {
+    return table.viewSettings && typeof table.viewSettings === 'object'
+      ? (table.viewSettings as CustomTableViewSettings)
+      : {};
+  }
+
+  private toViewSettingsPatch(
+    viewSettings: CustomTableViewSettings,
+  ): QueryDeepPartialEntity<Record<string, unknown>> {
+    return viewSettings as QueryDeepPartialEntity<Record<string, unknown>>;
+  }
+
+  private toRowInsertQueryPayload(rows: RowInsertPayload[]): RowInsertQueryPayload[] {
+    return rows as RowInsertQueryPayload[];
+  }
+
   private generateColumnKey(): string {
     const raw = uuidv4().replace(/-/g, '');
     return `col_${raw.slice(0, 12)}`;
@@ -384,7 +493,7 @@ export class CustomTablesImportService {
     entityType: EntityType;
     entityId: string;
     action: AuditAction;
-    meta?: Record<string, any> | null;
+    meta?: JsonObject | null;
     diff?: AuditEventDiff | null;
     batchId?: string | null;
   }) {
@@ -412,7 +521,7 @@ export class CustomTablesImportService {
     workspaceId: string | null;
     tableId: string;
     rows: CustomTableRow[];
-    meta?: Record<string, any> | null;
+    meta?: JsonObject | null;
   }) {
     if (!params.rows.length) return;
     try {
@@ -438,7 +547,7 @@ export class CustomTablesImportService {
 
   private throwHelpfulSchemaError(error: unknown): never {
     if (error instanceof QueryFailedError) {
-      const code = (error as any)?.driverError?.code;
+      const code = this.getDriverErrorCode(error);
       if (code === '42P01' || code === '42703') {
         throw new BadRequestException(
           'Схема БД не обновлена для Custom Tables. Запустите миграции (`npm -C backend run migration:run`) или включите автозапуск миграций (переменная окружения `RUN_MIGRATIONS=true`) и перезапустите backend.',
@@ -607,11 +716,11 @@ export class CustomTablesImportService {
       }
 
       const spreadsheet = grid.spreadsheet;
-      const sheetEntry =
-        spreadsheet?.sheets?.find((s: any) => s?.properties?.title === worksheetName) ||
-        spreadsheet?.sheets?.[0];
+      const sheetEntry = this.getSheetEntry(spreadsheet as GoogleSheetsSpreadsheetLike, worksheetName);
       const dataEntry = sheetEntry?.data?.[0];
-      const gridRowData = Array.isArray(dataEntry?.rowData) ? dataEntry.rowData : null;
+      const gridRowData = Array.isArray(dataEntry?.rowData)
+        ? (dataEntry.rowData as GoogleSheetsRowLike[])
+        : null;
       highlightedRows = detectHighContrastRows(
         gridRowData,
         bounds.startRow,
@@ -832,13 +941,13 @@ export class CustomTablesImportService {
 
     const keyByIndex = new Map<number, string>();
     createdColumns.forEach(col => {
-      const source = (col.config as any)?.source;
+      const source = this.getColumnSourceConfig(col.config);
       if (source && typeof source.colIndex === 'number') {
         keyByIndex.set(source.colIndex, col.key);
       }
     });
 
-    let gridRowData: any[] | null = null;
+    let gridRowData: GoogleSheetsRowLike[] | null = null;
     let highlightedRows: HighlightedRowInfo[] = [];
     const baseStyleByIndex = new Map<number, SheetCellStyle>();
 
@@ -856,13 +965,13 @@ export class CustomTablesImportService {
       }
 
       const spreadsheet = grid.spreadsheet;
-      const sheetEntry =
-        spreadsheet?.sheets?.find((s: any) => s?.properties?.title === worksheetName) ||
-        spreadsheet?.sheets?.[0];
+      const sheetEntry = this.getSheetEntry(spreadsheet as GoogleSheetsSpreadsheetLike, worksheetName);
       const dataEntry = sheetEntry?.data?.[0];
-      gridRowData = Array.isArray(dataEntry?.rowData) ? dataEntry.rowData : null;
+      gridRowData = Array.isArray(dataEntry?.rowData)
+        ? (dataEntry.rowData as GoogleSheetsRowLike[])
+        : null;
       const columnMetadata = Array.isArray(dataEntry?.columnMetadata)
-        ? dataEntry.columnMetadata
+        ? (dataEntry.columnMetadata as GoogleSheetsColumnMetadataLike[])
         : null;
       highlightedRows = detectHighContrastRows(
         gridRowData,
@@ -873,13 +982,10 @@ export class CustomTablesImportService {
 
       if (columnMetadata?.length) {
         try {
-          const current =
-            table.viewSettings && typeof table.viewSettings === 'object' ? table.viewSettings : {};
-          const viewSettings: Record<string, any> = { ...(current || {}) };
-          const columnsSettings: Record<string, any> = {
-            ...(viewSettings.columns && typeof viewSettings.columns === 'object'
-              ? viewSettings.columns
-              : {}),
+          const current = this.getViewSettings(table);
+          const viewSettings: CustomTableViewSettings = { ...current };
+          const columnsSettings: Record<string, CustomTableViewColumnSettings> = {
+            ...(viewSettings.columns || {}),
           };
 
           let changed = false;
@@ -898,10 +1004,11 @@ export class CustomTablesImportService {
 
           if (changed) {
             viewSettings.columns = columnsSettings;
-            table.viewSettings = viewSettings;
-            await this.customTableRepository.update({ id: table.id }, {
-              viewSettings,
-            } as any);
+            table.viewSettings = viewSettings as CustomTable['viewSettings'];
+            await this.customTableRepository.update(
+              { id: table.id },
+              { viewSettings: this.toViewSettingsPatch(viewSettings) },
+            );
           }
         } catch {
           this.logger.warn(`Google Sheets column width import skipped for tableId=${table.id}`);
@@ -941,7 +1048,7 @@ export class CustomTablesImportService {
 
           baseStyleByIndex.set(colIndex, baseStyle);
 
-          const payload: Record<string, any> = {};
+          const payload: JsonObject = {};
           if (!isEmptyStyle(headerStyle)) payload.header = headerStyle;
           if (!isEmptyStyle(baseStyle)) payload.cell = baseStyle;
           if (Object.keys(payload).length) {
@@ -983,11 +1090,11 @@ export class CustomTablesImportService {
         }
       }
     }
-    const rowsToInsert = [];
+    const rowsToInsert: RowInsertPayload[] = [];
     for (let rowIdx = dataStartIndex; rowIdx < values.length; rowIdx += 1) {
       const sourceRowNumber = bounds.startRow + rowIdx;
       const rowValues = values[rowIdx] || [];
-      const data: Record<string, any> = {};
+      const data: Record<string, string | null> = {};
       for (const col of finalColumns) {
         const key = keyByIndex.get(col.index);
         if (!key) continue;
@@ -1018,7 +1125,7 @@ export class CustomTablesImportService {
           .createQueryBuilder()
           .insert()
           .into(CustomTableRow)
-          .values(chunk)
+          .values(this.toRowInsertQueryPayload(chunk))
           .execute();
       } catch (error) {
         this.throwHelpfulSchemaError(error);
@@ -1110,7 +1217,7 @@ export class CustomTablesImportService {
               rowId,
               columnKey,
               style: patch,
-            } as any);
+            } as CustomTableCellStyle);
           }
         }
 
@@ -1122,7 +1229,7 @@ export class CustomTablesImportService {
               .createQueryBuilder()
               .insert()
               .into(CustomTableCellStyle)
-              .values(chunk as any)
+              .values(chunk)
               .execute();
           } catch (error) {
             this.throwHelpfulSchemaError(error);

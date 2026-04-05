@@ -1,24 +1,24 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { useIntlayer, useLocale } from '@/app/i18n';
-import { Tab, Tabs } from '@mui/material';
-import { RefreshCcw } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DataHealthTab } from '@/app/components/dashboard/DataHealthTab';
 import { ExportDropdown } from '@/app/components/dashboard/ExportDropdown';
 import { OverviewTab } from '@/app/components/dashboard/OverviewTab';
 import { TrendsTab } from '@/app/components/dashboard/TrendsTab';
 import { Card, CardContent } from '@/app/components/ui/card';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useDashboard } from '@/app/hooks/useDashboard';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
+import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveDashboardEffectivePeriod } from '@/app/lib/dashboard-effective-window';
 import { resolveDashboardStatusHeading } from '@/app/lib/dashboard-status-heading';
+import { Tab, Tabs } from '@mui/material';
+import { RefreshCcw } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const resolveLocale = (locale: string) => {
   if (locale === 'ru') return 'ru-RU';
@@ -48,7 +48,7 @@ export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const { locale } = useLocale();
-  const t = useIntlayer('dashboardPage' as any) as any;
+  const t = useIntlayer('dashboardPage');
   const text = (value: unknown) => {
     if (typeof value === 'string') return value;
     if (value && typeof value === 'object' && 'value' in value) {
@@ -137,8 +137,12 @@ export default function DashboardPage() {
       }),
     [data, error, loading],
   );
-  const statusHeading = text(t.statusHeading?.[statusHeadingKey]) || statusHeadingFallback[statusHeadingKey];
-  const effectivePeriod = resolveDashboardEffectivePeriod(data?.effectiveSince, data?.effectiveEndDate);
+  const statusHeading =
+    text(t.statusHeading?.[statusHeadingKey]) || statusHeadingFallback[statusHeadingKey];
+  const effectivePeriod = resolveDashboardEffectivePeriod(
+    data?.effectiveSince,
+    data?.effectiveEndDate,
+  );
 
   if (isRedirecting) {
     return (

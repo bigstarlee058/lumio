@@ -1,11 +1,29 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
+import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import {
   CustomTableImportJob,
   CustomTableImportJobStatus,
   CustomTableImportJobType,
 } from '../../entities/custom-table-import-job.entity';
+import type { GoogleSheetsImportCommitDto } from './dto/google-sheets-import-commit.dto';
+
+type GoogleSheetsCommitJobPayload = GoogleSheetsImportCommitDto;
+type ImportJobResult = Record<string, unknown>;
+type JobProgressUpdate = {
+  progress?: number;
+  stage?: string | null;
+  lockedAt: Date;
+};
+type JobCompletionUpdate = QueryDeepPartialEntity<CustomTableImportJob> & {
+  status: CustomTableImportJobStatus;
+  progress?: number;
+  stage: string;
+  result?: QueryDeepPartialEntity<Record<string, unknown>> | null;
+  error: string | null;
+  finishedAt: Date;
+};
 
 @Injectable()
 export class CustomTableImportJobsService {
@@ -16,9 +34,13 @@ export class CustomTableImportJobsService {
     private readonly jobRepository: Repository<CustomTableImportJob>,
   ) {}
 
+  private toJobResultPatch(result: ImportJobResult): QueryDeepPartialEntity<Record<string, unknown>> {
+    return result as QueryDeepPartialEntity<Record<string, unknown>>;
+  }
+
   async createGoogleSheetsJob(
     userId: string,
-    payload: Record<string, any>,
+    payload: GoogleSheetsCommitJobPayload,
   ): Promise<CustomTableImportJob> {
     const job = this.jobRepository.create({
       userId,
@@ -26,7 +48,7 @@ export class CustomTableImportJobsService {
       status: CustomTableImportJobStatus.PENDING,
       progress: 0,
       stage: 'queued',
-      payload,
+      payload: payload as unknown as Record<string, unknown>,
       result: null,
       error: null,
     });
@@ -40,12 +62,12 @@ export class CustomTableImportJobsService {
   }
 
   async updateProgress(jobId: string, patch: { progress?: number; stage?: string | null }) {
-    const update: any = {};
+    const update: JobProgressUpdate = {
+      lockedAt: new Date(),
+    };
     if (patch.progress !== undefined) update.progress = patch.progress;
     if (patch.stage !== undefined) update.stage = patch.stage;
     // Heartbeat for stale-lock recovery: keep locked_at fresh while the job is actively reporting progress.
-    update.lockedAt = new Date();
-    if (!Object.keys(update).length) return;
     try {
       await this.jobRepository.update({ id: jobId }, update);
     } catch (error) {
@@ -53,23 +75,26 @@ export class CustomTableImportJobsService {
     }
   }
 
-  async markDone(jobId: string, result: Record<string, any>) {
-    await this.jobRepository.update({ id: jobId }, {
+  async markDone(jobId: string, result: ImportJobResult) {
+    const update: JobCompletionUpdate = {
       status: CustomTableImportJobStatus.DONE,
       progress: 100,
       stage: 'done',
-      result,
+      result: this.toJobResultPatch(result),
       error: null,
       finishedAt: new Date(),
-    } as any);
+    };
+    await this.jobRepository.update({ id: jobId }, update);
   }
 
   async markFailed(jobId: string, error: string) {
-    await this.jobRepository.update({ id: jobId }, {
+    const update: JobCompletionUpdate = {
       status: CustomTableImportJobStatus.FAILED,
       stage: 'failed',
       error: error?.slice(0, 5000) || 'Unknown error',
+      result: null,
       finishedAt: new Date(),
-    } as any);
+    };
+    await this.jobRepository.update({ id: jobId }, update);
   }
 }

@@ -3,6 +3,9 @@ import { type BankName, FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import { BaseTabularParser } from './base-tabular.parser';
 
+type ExcelCellValue = string | number | boolean | Date | null;
+type ExcelRow = ExcelCellValue[];
+
 export class ExcelParser extends BaseTabularParser {
   async canParse(
     bankName: BankName,
@@ -17,21 +20,21 @@ export class ExcelParser extends BaseTabularParser {
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+    const data = XLSX.utils.sheet_to_json<ExcelCellValue[]>(worksheet, { header: 1, defval: '' });
 
     if (data.length < 2) {
       throw new Error('Excel file is empty or has no data rows');
     }
 
     // First row is header
-    const headers = (data[0] as any[]).map(h => String(h).toLowerCase().trim());
-    const rows = data.slice(1) as any[][];
+    const headers = (data[0] || []).map(h => String(h).toLowerCase().trim());
+    const rows = data.slice(1);
 
     // Map columns
     const columnMapping = this.mapColumns(headers);
 
     // Extract metadata from first few rows or filename
-    const metadata = this.extractMetadata(filePath, data as any[][]);
+    const metadata = this.extractMetadata(filePath, data);
 
     // Extract transactions
     const transactions: ParsedTransaction[] = [];
@@ -52,7 +55,7 @@ export class ExcelParser extends BaseTabularParser {
       transactions,
     };
   }
-  private extractMetadata(filePath: string, data: any[][]): ParsedStatement['metadata'] {
+  private extractMetadata(filePath: string, data: ExcelRow[]): ParsedStatement['metadata'] {
     // Try to extract from first rows or use defaults
     const accountNumber = this.extractAccountNumberFromData(data) || 'Unknown';
     const dateRange = this.extractDateRangeFromData(data);
@@ -74,7 +77,7 @@ export class ExcelParser extends BaseTabularParser {
     };
   }
 
-  private extractAccountNumberFromData(data: any[][]): string | null {
+  private extractAccountNumberFromData(data: ExcelRow[]): string | null {
     // Look in first few rows
     for (let i = 0; i < Math.min(5, data.length); i++) {
       const row = data[i];
@@ -89,7 +92,7 @@ export class ExcelParser extends BaseTabularParser {
     return null;
   }
 
-  private extractDateRangeFromData(data: any[][]): {
+  private extractDateRangeFromData(data: ExcelRow[]): {
     from: Date | null;
     to: Date | null;
   } {

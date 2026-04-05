@@ -3,6 +3,7 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import Image from 'next/image';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 
 export interface OnboardingIntegrationCard {
   key: string;
@@ -20,15 +21,22 @@ interface IntegrationsStepProps {
 }
 
 export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
-  const t = useIntlayer('onboardingPage' as any) as any;
+  const t = useIntlayer('onboardingPage');
+  const text = (path: string[], fallback = '') =>
+    resolveOnboardingText(getNestedOnboardingValue(t, path), fallback);
 
   return (
     <section className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-          {t.integrations.title}
+          {text(['integrations', 'title'], 'Connect your integrations')}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{t.integrations.subtitle}</p>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          {text(
+            ['integrations', 'subtitle'],
+            'Pick services you want to set up now. You can connect them later as well.',
+          )}
+        </p>
       </div>
 
       <div
@@ -59,7 +67,9 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                     : 'bg-muted text-muted-foreground border border-border'
                 }`}
               >
-                {card.connected ? t.integrations.connectedBadge : t.integrations.availableBadge}
+                {card.connected
+                  ? text(['integrations', 'connectedBadge'], 'Connected')
+                  : text(['integrations', 'availableBadge'], 'Available')}
               </span>
             </div>
 
@@ -80,7 +90,12 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
         ))}
       </div>
 
-      <p className="text-sm text-muted-foreground">{t.integrations.helper}</p>
+      <p className="text-sm text-muted-foreground">
+        {text(
+          ['integrations', 'helper'],
+          'If you skip this step, you can connect integrations later in Settings -> Integrations.',
+        )}
+      </p>
     </section>
   );
 }

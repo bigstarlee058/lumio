@@ -4,12 +4,14 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { Download, MoreVertical, X } from 'lucide-react';
-import { type ChangeEvent, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, type ComponentType, useEffect, useRef, useState } from 'react';
 import { ModalShell } from './ui/modal-shell';
 
+type ReactPdfComponentProps = Record<string, unknown>;
+
 type ReactPdfModule = {
-  Document: React.ComponentType<any>;
-  Page: React.ComponentType<any>;
+  Document: ComponentType<ReactPdfComponentProps>;
+  Page: ComponentType<ReactPdfComponentProps>;
   pdfjs: {
     version: string;
     GlobalWorkerOptions: {
@@ -54,7 +56,7 @@ export function PDFPreviewModal({
   onFileAttached,
   onParsingStarted,
 }: PDFPreviewModalProps) {
-  const t = useIntlayer('pdfPreviewModal' as never) as any;
+  const t = useIntlayer('pdfPreviewModal');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -340,7 +342,9 @@ export function PDFPreviewModal({
           className="relative flex items-center justify-between border-b border-[#e4e6e3] px-5 py-4 dark:border-white/10 dark:bg-[#111827]"
           ref={menuRef}
         >
-          <h2 className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">Receipt</h2>
+          <h2 className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
+            Receipt
+          </h2>
 
           <div className="absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-1">
             <button
@@ -362,18 +366,21 @@ export function PDFPreviewModal({
           </div>
 
           {menuOpen && (
-              <div className="absolute right-5 top-[calc(100%+12px)] z-40 w-[360px] max-w-[calc(100vw-90px)] rounded-[24px] border border-[#d8ddd8] bg-white p-2 shadow-[0_14px_28px_rgba(17,24,39,0.14)] dark:border-slate-700/60 dark:bg-[#111827]">
-                <button
-                  type="button"
-                  onClick={handleDownloadFromMenu}
-                  className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left transition-colors hover:bg-[#f5f8f5] dark:hover:bg-white/5"
-                >
-                  <Download className="h-7 w-7 text-[#99a39d] dark:text-slate-400" strokeWidth={2.3} />
-                  <span className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
-                    Download
-                  </span>
-                </button>
-              </div>
+            <div className="absolute right-5 top-[calc(100%+12px)] z-40 w-[360px] max-w-[calc(100vw-90px)] rounded-[24px] border border-[#d8ddd8] bg-white p-2 shadow-[0_14px_28px_rgba(17,24,39,0.14)] dark:border-slate-700/60 dark:bg-[#111827]">
+              <button
+                type="button"
+                onClick={handleDownloadFromMenu}
+                className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left transition-colors hover:bg-[#f5f8f5] dark:hover:bg-white/5"
+              >
+                <Download
+                  className="h-7 w-7 text-[#99a39d] dark:text-slate-400"
+                  strokeWidth={2.3}
+                />
+                <span className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
+                  Download
+                </span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -382,7 +389,9 @@ export function PDFPreviewModal({
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-[#0b1220]/80">
               <div className="text-center">
                 <Spinner className="mx-auto mb-4 h-10 w-10 text-black dark:text-white" />
-                <p className="text-sm font-medium text-gray-500 dark:text-slate-400">{t.loading.value}</p>
+                <p className="text-sm font-medium text-gray-500 dark:text-slate-400">
+                  {t.loading.value}
+                </p>
               </div>
             </div>
           )}
@@ -441,8 +450,12 @@ export function PDFPreviewModal({
           {showParsePrompt && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/25 px-4">
               <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-[0_20px_36px_rgba(15,23,42,0.2)] dark:bg-[#111827]">
-                <h3 className="text-base font-semibold text-[#0f3428] dark:text-slate-100">{t.startParsing.value}</h3>
-                <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">{t.startParsingDescription.value}</p>
+                <h3 className="text-base font-semibold text-[#0f3428] dark:text-slate-100">
+                  {t.startParsing.value}
+                </h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
+                  {t.startParsingDescription.value}
+                </p>
                 <div className="mt-5 flex items-center justify-end gap-2">
                   <button
                     type="button"
@@ -473,8 +486,8 @@ export function PDFPreviewModal({
                   alt={fileName}
                   className={
                     isStoreReceiptImagePreview
-                       ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
-                       : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
+                      ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
+                      : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
                   }
                 />
               </div>

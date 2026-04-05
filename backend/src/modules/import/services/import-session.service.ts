@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, type QueryRunner, Repository } from 'typeorm';
 import {
+  type ImportConflictResolution,
   ImportSession,
   ImportSessionMetadata,
   ImportSessionMode,
+  type ImportSessionPreviewClassification,
   ImportSessionStatus,
 } from '../../../entities/import-session.entity';
 import { Statement } from '../../../entities/statement.entity';
-import { Transaction } from '../../../entities/transaction.entity';
+import { Transaction, TransactionType } from '../../../entities/transaction.entity';
 import { User } from '../../../entities/user.entity';
 import { Workspace } from '../../../entities/workspace.entity';
 import type {
@@ -77,6 +79,11 @@ interface TransactionClassification {
   conflict?: ConflictGroup;
   error?: string;
 }
+
+type PreviewClassification = ImportSessionPreviewClassification;
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
 
 /**
  * Service for orchestrating the import workflow.
@@ -381,12 +388,13 @@ export class ImportSessionService {
           fingerprint,
         });
       } catch (error) {
-        this.logger.warn(`Failed to generate fingerprint for transaction ${i}: ${error.message}`);
+        const message = getErrorMessage(error);
+        this.logger.warn(`Failed to generate fingerprint for transaction ${i}: ${message}`);
         classifications.push({
           transaction: tx,
           index: i,
           status: 'failed',
-          error: `Fingerprint generation failed: ${error.message}`,
+          error: `Fingerprint generation failed: ${message}`,
         });
       }
     }
@@ -503,7 +511,7 @@ export class ImportSessionService {
           error: c.error,
         })),
       },
-    } as any;
+    };
 
     await this.importSessionRepository.update(
       { id: session.id },
@@ -530,7 +538,7 @@ export class ImportSessionService {
     this.logger.debug(`Processing commit for session ${session.id}`);
 
     // Validate that preview data exists
-    const metadata = session.sessionMetadata as any;
+    const metadata = session.sessionMetadata;
     if (!metadata?.previewData?.classifications) {
       throw new ImportValidationError(
         'Cannot commit without preview data. Run preview mode first.',
@@ -539,11 +547,11 @@ export class ImportSessionService {
     }
 
     // Retrieve preview classifications
-    const previewClassifications = metadata.previewData.classifications;
+    const previewClassifications: PreviewClassification[] = metadata.previewData.classifications;
 
     // Check for unresolved conflicts
     const unresolvedConflicts = previewClassifications.filter(
-      (c: any) => c.status === 'conflicted' && !c.resolution,
+      c => c.status === 'conflicted' && !c.resolution,
     );
 
     if (unresolvedConflicts.length > 0) {
@@ -553,7 +561,7 @@ export class ImportSessionService {
         {
           sessionId: session.id,
           conflictCount: unresolvedConflicts.length,
-          conflicts: unresolvedConflicts.map((c: any) => c.index),
+          conflicts: unresolvedConflicts.map(c => c.index),
         },
       );
     }
@@ -752,7 +760,7 @@ export class ImportSessionService {
     parsed: ParsedTransaction,
     session: ImportSession,
     accountNumber: string,
-    queryRunner: any,
+    queryRunner: QueryRunner,
   ): Promise<Transaction> {
     const fingerprint = this.fingerprintService.generateFingerprint(
       {
@@ -784,7 +792,7 @@ export class ImportSessionService {
       exchangeRate: parsed.exchangeRate || null,
       amountForeign: parsed.amountForeign || null,
       paymentPurpose: parsed.paymentPurpose,
-      transactionType: isIncome ? 'income' : 'expense',
+      transactionType: isIncome ? TransactionType.INCOME : TransactionType.EXPENSE,
       fingerprint,
       isDuplicate: false,
       isVerified: false,
@@ -921,18 +929,18 @@ export class ImportSessionService {
       );
     }
 
-    const metadata = session.sessionMetadata as any;
+    const metadata = session.sessionMetadata;
     if (!metadata?.previewData?.classifications) {
       throw new ImportValidationError('No preview data found for session', { sessionId });
     }
 
     // Apply resolutions to preview data
-    const classifications = metadata.previewData.classifications;
+    const classifications: PreviewClassification[] = metadata.previewData.classifications;
     let resolvedCount = 0;
 
     for (const [indexStr, action] of Object.entries(resolutions)) {
       const index = Number.parseInt(indexStr, 10);
-      const classification = classifications.find((c: any) => c.index === index);
+      const classification = classifications.find(c => c.index === index);
 
       if (!classification) {
         this.logger.warn(`No classification found for index ${index}, skipping`);
@@ -946,7 +954,7 @@ export class ImportSessionService {
         continue;
       }
 
-      classification.resolution = action;
+      classification.resolution = action as ImportConflictResolution;
       resolvedCount++;
     }
 

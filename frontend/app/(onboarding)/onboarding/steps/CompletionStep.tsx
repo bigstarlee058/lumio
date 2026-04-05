@@ -3,6 +3,7 @@
 import { useIntlayer } from '@/app/i18n';
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 
 interface ConnectedIntegration {
@@ -28,14 +29,16 @@ export function CompletionStep({
   workspaceBackgroundImage,
   connectedIntegrations,
 }: CompletionStepProps) {
-  const t = useIntlayer('onboardingPage' as any) as any;
+  const t = useIntlayer('onboardingPage');
+  const text = (path: string[], fallback = '') =>
+    resolveOnboardingText(getNestedOnboardingValue(t, path), fallback, locale);
 
   const localeLabel =
     locale === 'ru'
-      ? t.language.localeOptions.ru.value
+      ? text(['language', 'localeOptions', 'ru'], 'Russian')
       : locale === 'kk'
-        ? t.language.localeOptions.kk.value
-        : t.language.localeOptions.en.value;
+        ? text(['language', 'localeOptions', 'kk'], 'Kazakh')
+        : text(['language', 'localeOptions', 'en'], 'English');
 
   return (
     <section className="space-y-6">
@@ -44,33 +47,55 @@ export function CompletionStep({
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">{t.completion.title}</h2>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">{t.completion.subtitle}</p>
+        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
+          {text(['completion', 'title'], 'Done! Setup complete')}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          {text(
+            ['completion', 'subtitle'],
+            'Press the button below to continue to your workspace.',
+          )}
+        </p>
       </div>
 
       <div className="rounded-2xl border border-border bg-card p-4">
         <p className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          {t.completion.summaryTitle}
+          {text(['completion', 'summaryTitle'], 'Your setup')}
         </p>
         <ul className="space-y-2 text-sm text-foreground">
-          <li>{t.completion.summary.language.value.replace('{value}', localeLabel)}</li>
-          <li>{t.completion.summary.timeZone.value.replace('{value}', timeZone || 'UTC')}</li>
-          <li>{t.completion.summary.workspace.value.replace('{value}', workspaceName || '-')}</li>
           <li>
-            {t.completion.summary.currency.value.replace(
+            {text(['completion', 'summary', 'language'], 'Language: {value}').replace(
               '{value}',
-              workspaceCurrency || t.completion.notSet.value,
+              localeLabel,
             )}
           </li>
           <li>
-            {t.completion.summary.background.value.replace(
+            {text(['completion', 'summary', 'timeZone'], 'Timezone: {value}').replace(
+              '{value}',
+              timeZone || 'UTC',
+            )}
+          </li>
+          <li>
+            {text(['completion', 'summary', 'workspace'], 'Workspace: {value}').replace(
+              '{value}',
+              workspaceName || '-',
+            )}
+          </li>
+          <li>
+            {text(['completion', 'summary', 'currency'], 'Currency: {value}').replace(
+              '{value}',
+              workspaceCurrency || text(['completion', 'notSet'], 'not set'),
+            )}
+          </li>
+          <li>
+            {text(['completion', 'summary', 'background'], 'Workspace background: {value}').replace(
               '{value}',
               workspaceBackgroundImage
-                ? t.completion.backgroundSet.value
-                : t.completion.notSet.value,
+                ? text(['completion', 'backgroundSet'], 'set')
+                : text(['completion', 'notSet'], 'not set'),
             )}
           </li>
-          <li>{t.completion.summary.integrations.value}</li>
+          <li>{text(['completion', 'summary', 'integrations'], 'Connected integrations:')}</li>
         </ul>
 
         <div className="mt-4 border-t border-border pt-3">
@@ -93,7 +118,9 @@ export function CompletionStep({
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{t.completion.noIntegrations.value}</p>
+            <p className="text-sm text-muted-foreground">
+              {text(['completion', 'noIntegrations'], 'No integrations connected')}
+            </p>
           )}
         </div>
       </div>

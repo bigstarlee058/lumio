@@ -63,7 +63,7 @@ ${redactedPreview}`,
 
       const mapped = Array.isArray(rawTransactions)
         ? rawTransactions
-            .map((tx: any) =>
+            .map((tx: Record<string, unknown>) =>
               mapParsedTransaction(tx, {
                 normalizeDate,
                 normalizeNumber,
@@ -72,7 +72,7 @@ ${redactedPreview}`,
             .filter((tx): tx is ParsedTransaction => tx !== null)
         : parsed.transactions;
 
-      const notes = Array.isArray(data?.notes) ? data.notes.map((n: any) => String(n)) : [];
+      const notes = Array.isArray(data?.notes) ? data.notes.map((n: unknown) => String(n)) : [];
 
       const meta = data?.metadata || {};
       const corrected: ParsedStatement = {

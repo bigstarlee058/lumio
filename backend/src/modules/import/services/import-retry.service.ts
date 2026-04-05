@@ -109,7 +109,7 @@ export class ImportRetryService {
           }
         : null,
       retryHistory: [
-        ...(((existingMetadata as any).retryHistory as RetryMetadata['retryHistory']) || []),
+        ...(existingMetadata.retryHistory || []),
         {
           attempt: attempt + 1,
           timestamp: new Date().toISOString(),
@@ -125,7 +125,7 @@ export class ImportRetryService {
         sessionMetadata: {
           ...existingMetadata,
           ...retryMetadata,
-        } as any,
+        },
       },
     );
 
@@ -163,7 +163,7 @@ export class ImportRetryService {
       );
     }
 
-    const metadata = session.sessionMetadata as any;
+    const metadata = session.sessionMetadata;
     const nextRetryAt = metadata?.nextRetryAt;
 
     if (!nextRetryAt) {
@@ -196,7 +196,7 @@ export class ImportRetryService {
         sessionMetadata: {
           ...session.sessionMetadata,
           nextRetryAt: null,
-        } as any,
+        },
       },
     );
 
@@ -206,7 +206,13 @@ export class ImportRetryService {
 
     this.logger.log(`Executing retry for session ${sessionId}`);
 
-    return updatedSession!;
+    if (!updatedSession) {
+      throw new NotFoundException(
+        `Import session with ID ${sessionId} not found after retry update`,
+      );
+    }
+
+    return updatedSession;
   }
 
   /**
@@ -251,7 +257,7 @@ export class ImportRetryService {
    * @returns Retry metadata or null if no retry info exists
    */
   getRetryMetadata(session: ImportSession): RetryMetadata | null {
-    const metadata = session.sessionMetadata as any;
+    const metadata = session.sessionMetadata;
     if (!metadata?.retryCount) {
       return null;
     }
@@ -325,7 +331,7 @@ export class ImportRetryService {
             `Permanently failed: ${classified.message} (${classified.code})`,
           ],
           nextRetryAt: null,
-        } as any,
+        },
       },
     );
 

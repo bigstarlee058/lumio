@@ -2,7 +2,7 @@
  * Tour Manager - manages launching, navigation and state of tours
  */
 
-import { type DriveStep, type Driver, driver } from 'driver.js';
+import { type AllowedButtons, type DriveStep, type Driver, driver } from 'driver.js';
 import {
   type TourConfig,
   type TourDriverConfig,
@@ -13,6 +13,21 @@ import {
 
 const TOUR_STORAGE_KEY = 'lumio_tour_state';
 const TOUR_STATE_VERSION = '1.0.0';
+
+interface AnalyticsTracker {
+  track: (event: string, properties: Record<string, unknown>) => void;
+}
+
+function toAllowedButtons(value?: string[]): AllowedButtons[] | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  return value.filter(
+    (button): button is AllowedButtons =>
+      button === 'next' || button === 'previous' || button === 'close',
+  );
+}
 
 function getPreferredLang(): string {
   if (typeof document !== 'undefined') {
@@ -31,7 +46,7 @@ function resolveText(input: unknown): string {
 
     // react-intlayer wraps primitives into a Proxy of a ReactElement.
     // The Proxy exposes `.value` via a getter trap, so `'value' in record` is false.
-    const maybeValue = (record as any).value;
+    const maybeValue: unknown = Reflect.get(record, 'value');
     if (typeof maybeValue !== 'undefined') {
       return resolveText(maybeValue);
     }
@@ -55,6 +70,24 @@ function resolveText(input: unknown): string {
   }
 
   return String(input);
+}
+
+function getAnalyticsTracker(): AnalyticsTracker | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const analytics = (window as Window & { analytics?: unknown }).analytics;
+  if (!analytics || typeof analytics !== 'object' || !('track' in analytics)) {
+    return null;
+  }
+
+  const track = (analytics as { track?: unknown }).track;
+  if (typeof track !== 'function') {
+    return null;
+  }
+
+  return analytics as AnalyticsTracker;
 }
 
 export class TourManager {
@@ -84,7 +117,7 @@ export class TourManager {
       showProgress: overrides?.showProgress ?? true,
       animate: overrides?.animate ?? true,
       allowClose: overrides?.allowClose ?? true,
-      showButtons: overrides?.showButtons as any,
+      showButtons: toAllowedButtons(overrides?.showButtons),
       popoverClass: 'tour-popover',
       progressText: overrides?.progressText ?? '{{current}} of {{total}}',
       nextBtnText: overrides?.nextBtnText ?? 'Next',
@@ -339,7 +372,7 @@ export class TourManager {
             return;
           }
 
-          const onClick = () => {
+          const onClick = (_event: Event) => {
             detachAdvanceListener?.();
             detachAdvanceListener = null;
 
@@ -356,7 +389,7 @@ export class TourManager {
           } as AddEventListenerOptions);
           detachAdvanceListener = () => {
             try {
-              target.removeEventListener('click', onClick as any);
+              target.removeEventListener('click', onClick);
             } catch {
               // noop
             }
@@ -521,7 +554,7 @@ export class TourManager {
   private saveProgress(progress: TourProgress): void {
     const state = this.loadState() ?? this.getDefaultState();
     // Transform Date to ISO string for correct serialization
-    const serializedProgress = {
+    const serializedProgress: TourProgress = {
       ...progress,
       startedAt:
         progress.startedAt instanceof Date ? progress.startedAt.toISOString() : progress.startedAt,
@@ -530,7 +563,7 @@ export class TourManager {
           ? progress.completedAt.toISOString()
           : progress.completedAt,
     };
-    state.currentProgress = serializedProgress as any;
+    state.currentProgress = serializedProgress;
     this.saveState(state);
   }
 
@@ -585,8 +618,9 @@ export class TourManager {
    */
   private trackEvent(event: string, data: Partial<{ tourId: string; stepIndex?: number }>): void {
     // Integration with analytics system
-    if (typeof window !== 'undefined' && (window as any).analytics) {
-      (window as any).analytics.track(event, {
+    const analytics = getAnalyticsTracker();
+    if (analytics) {
+      analytics.track(event, {
         ...data,
         timestamp: new Date().toISOString(),
       });

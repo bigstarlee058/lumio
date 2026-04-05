@@ -5,6 +5,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { Spinner } from '@/app/components/ui/spinner';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import DuplicateGroupCard from './components/DuplicateGroupCard';
@@ -51,8 +52,8 @@ export default function TransactionDuplicatesPage() {
         },
       });
       setDuplicateGroups(response.data.groups);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load duplicates');
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, 'Failed to load duplicates'));
     } finally {
       setLoading(false);
     }
@@ -98,8 +99,8 @@ export default function TransactionDuplicatesPage() {
       setSuccess(`Successfully marked ${response.data.markedCount} transactions as duplicates`);
       setSelectedGroups(new Set());
       await loadDuplicates(); // Reload to update the list
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to mark duplicates');
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, 'Failed to mark duplicates'));
     } finally {
       setMarking(false);
     }

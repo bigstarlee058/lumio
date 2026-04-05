@@ -1,15 +1,15 @@
 'use client';
 
-import type { Cell, Column, Table } from '@tanstack/react-table';
+import type { Column, Row, Table } from '@tanstack/react-table';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
-import type { CustomTableGridRow } from '../../utils/stylingUtils';
+import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
 interface EditableTextCellProps {
-  row: any;
+  row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
   table: Table<CustomTableGridRow>;
   cellType: string;
-  onUpdateCell: (rowId: string, columnKey: string, value: any) => Promise<void>;
+  onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   style?: CSSProperties;
 }
 
@@ -20,7 +20,8 @@ export function EditableTextCell({
   onUpdateCell,
   style,
 }: EditableTextCellProps) {
-  const initialValue = row.original.data[column.id] || '';
+  const rawValue = row.original.data[column.id];
+  const initialValue = rawValue === null || rawValue === undefined ? '' : String(rawValue);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [isSaving, setIsSaving] = useState(false);

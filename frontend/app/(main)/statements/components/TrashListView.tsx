@@ -486,7 +486,7 @@ export default function TrashListView({ onCountChange }: Props) {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-            <Spinner size={80} className="text-primary" />
+            <Spinner className="h-20 w-20 text-primary" />
           </div>
         ) : filteredFiles.length === 0 ? (
           <div className="px-4 py-20 text-center">

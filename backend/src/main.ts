@@ -3,6 +3,7 @@ import * as path from 'path';
 import './common/utils/node-crypto-polyfill';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AppLogger } from './common/observability/app-logger.service';
@@ -31,19 +32,19 @@ async function bootstrap() {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: new AppLogger(),
   });
 
   // Serve static files from public folder (frontend assets)
   const publicPath = path.join(__dirname, 'public');
   if (fs.existsSync(publicPath)) {
-    (app as any).useStaticAssets(publicPath);
+    app.useStaticAssets(publicPath);
   }
-  (app as any).useStaticAssets(uploadsDir, { prefix: '/uploads' });
+  app.useStaticAssets(uploadsDir, { prefix: '/uploads' });
 
   // Request context & correlation IDs
-  (app as any).use(requestContextMiddleware);
+  app.use(requestContextMiddleware);
 
   // Global prefix for API versioning
   app.setGlobalPrefix('api/v1');

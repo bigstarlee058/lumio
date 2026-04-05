@@ -25,7 +25,7 @@ interface LanguageCache {
   [key: string]: {
     locale: string;
     confidence: number;
-    method: string;
+    method: AdvancedDetectionResult['method'];
     timestamp: number;
   };
 }
@@ -66,7 +66,7 @@ class LanguageDetectionCache {
     return {
       locale: entry.locale,
       confidence: entry.confidence,
-      method: entry.method as any,
+      method: entry.method,
       reason: `cached:${entry.method}`,
     };
   }

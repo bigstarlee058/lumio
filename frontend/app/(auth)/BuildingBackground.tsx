@@ -3,6 +3,15 @@
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 
+interface BuildingProps {
+  delay: number;
+  duration: number;
+  w?: number;
+  h?: number;
+  left?: string;
+  right?: string;
+}
+
 const stableWindowNoise = (seed: number) => {
   // Deterministic pseudo-random value in [0, 1)
   const x = Math.sin(seed * 12.9898) * 43758.5453;
@@ -63,7 +72,7 @@ const Block = ({
 );
 
 // 1. Clock Tower
-const ClockTower = ({ delay, duration, w = 120, h = 300, ...pos }: any) => (
+const ClockTower = ({ delay, duration, w = 120, h = 300, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -142,7 +151,7 @@ const ClockTower = ({ delay, duration, w = 120, h = 300, ...pos }: any) => (
 );
 
 // 2. Stepped Skyscraper
-const SteppedSkyscraper = ({ delay, duration, w = 140, h = 350, ...pos }: any) => (
+const SteppedSkyscraper = ({ delay, duration, w = 140, h = 350, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -174,7 +183,7 @@ const SteppedSkyscraper = ({ delay, duration, w = 140, h = 350, ...pos }: any) =
 );
 
 // 3. Dome Building (Bank / Capitol)
-const DomeBuilding = ({ delay, duration, w = 180, h = 180, ...pos }: any) => (
+const DomeBuilding = ({ delay, duration, w = 180, h = 180, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -221,7 +230,7 @@ const DomeBuilding = ({ delay, duration, w = 180, h = 180, ...pos }: any) => (
 );
 
 // 4. Modern Slanted
-const ModernSlanted = ({ delay, duration, w = 120, h = 300, ...pos }: any) => (
+const ModernSlanted = ({ delay, duration, w = 120, h = 300, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -254,7 +263,7 @@ const ModernSlanted = ({ delay, duration, w = 120, h = 300, ...pos }: any) => (
 );
 
 // 5. Gothic Cathedral/Castle
-const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: any) => (
+const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -384,7 +393,7 @@ const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: any) => (
 );
 
 // 6. Standard Building
-const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: any) => (
+const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: BuildingProps) => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

@@ -52,6 +52,12 @@ const SUPPORTED_RECEIPT_MIME_TYPES = new Set([
   'application/pdf',
 ]);
 
+interface ThumbnailErrorLike {
+  getStatus?: () => number;
+  response?: { message?: string };
+  message?: string;
+}
+
 @Controller('statements')
 @UseGuards(JwtAuthGuard)
 export class StatementsController {
@@ -60,6 +66,24 @@ export class StatementsController {
     private readonly receiptStatementService: ReceiptStatementService,
     private readonly idempotencyService: IdempotencyService,
   ) {}
+
+  private toObjectRecord(value: unknown): Record<string, unknown> {
+    return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : {};
+  }
+
+  private getThumbnailError(error: unknown): ThumbnailErrorLike {
+    return typeof error === 'object' && error !== null ? (error as ThumbnailErrorLike) : {};
+  }
+
+  private isUploadedFile(file: unknown): file is Express.Multer.File {
+    return (
+      typeof file === 'object' &&
+      file !== null &&
+      'originalname' in file &&
+      'mimetype' in file &&
+      'size' in file
+    );
+  }
 
   // Legacy POST /statements endpoint (backward compatibility for single 'file' field)
   @Post()
@@ -153,18 +177,16 @@ export class StatementsController {
   @UseInterceptors(FileInterceptor('file', multerConfig))
   async attachFile(
     @Param('id') id: string,
-    @UploadedFile() file: any,
+    @UploadedFile() file: unknown,
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
   ) {
-    const uploadedFile = file as Express.Multer.File | undefined;
-
-    if (!uploadedFile) {
+    if (!this.isUploadedFile(file)) {
       throw new BadRequestException('No file provided');
     }
 
-    validateFile(uploadedFile);
-    return this.statementsService.attachFile(id, user.id, workspaceId, uploadedFile);
+    validateFile(file);
+    return this.statementsService.attachFile(id, user.id, workspaceId, file);
   }
 
   private async handleUpload(
@@ -188,7 +210,7 @@ export class StatementsController {
       const cached = await this.idempotencyService.checkKey(idempotencyKey, user.id, workspaceId);
       if (cached) {
         return {
-          ...cached.data,
+          ...this.toObjectRecord(cached.data),
           cached: true,
         };
       }
@@ -333,12 +355,14 @@ export class StatementsController {
     } catch (error) {
       // Log full error details for diagnostics (includes stack when available)
       console.error(`Thumbnail generation error for statement ${id}:`, error);
+      const thumbnailError = this.getThumbnailError(error);
 
       // Try to infer HTTP status from Nest HttpException if present
-      const statusCode = typeof error?.getStatus === 'function' ? error.getStatus() : null;
+      const statusCode =
+        typeof thumbnailError.getStatus === 'function' ? thumbnailError.getStatus() : null;
       // Prefer structured response message when available, otherwise fallback to generic message
       const message =
-        (error && (error?.response?.message || error?.message)) || 'Thumbnail not available';
+        thumbnailError.response?.message || thumbnailError.message || 'Thumbnail not available';
 
       // If generation failed on the server side (transient), tell client to retry later and cache briefly
       if (

@@ -27,7 +27,24 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CreateCategorizationRuleDto } from './dto/create-categorization-rule.dto';
 import { TestCategorizationRuleDto } from './dto/test-categorization-rule.dto';
 import { UpdateCategorizationRuleDto } from './dto/update-categorization-rule.dto';
+import type { ClassificationCondition } from './interfaces/classification-rule.interface';
 import { ClassificationService } from './services/classification.service';
+
+type CategorizationRuleAuditSnapshot = {
+  id: string;
+  userId: string;
+  workspaceId: string;
+  name: string;
+  description: string | null;
+  conditions: ClassificationCondition[];
+  result: CategorizationRule['result'];
+  priority: number;
+  isActive: boolean;
+  matchCount: number;
+  lastMatchedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 @Controller('categorization-rules')
 @UseGuards(JwtAuthGuard)
@@ -117,7 +134,7 @@ export class CategorizationRulesController {
       entityType: EntityType.RULE,
       entityId: rule.id,
       action: AuditAction.CREATE,
-      diff: { before: null, after: rule },
+      diff: { before: null, after: this.toAuditSnapshot(rule) },
     });
 
     return rule;
@@ -145,7 +162,7 @@ export class CategorizationRulesController {
       throw new Error('Categorization rule not found');
     }
 
-    const before = { ...rule };
+    const before = this.toAuditSnapshot(rule);
     if (dto.name !== undefined) rule.name = dto.name;
     if (dto.description !== undefined) rule.description = dto.description;
     if (dto.conditions !== undefined) rule.conditions = dto.conditions;
@@ -163,7 +180,7 @@ export class CategorizationRulesController {
       entityType: EntityType.RULE,
       entityId: rule.id,
       action: AuditAction.UPDATE,
-      diff: { before, after: rule },
+      diff: { before, after: this.toAuditSnapshot(rule) },
       isUndoable: true,
     });
 
@@ -201,7 +218,7 @@ export class CategorizationRulesController {
       entityType: EntityType.RULE,
       entityId: rule.id,
       action: AuditAction.DELETE,
-      diff: { before: rule, after: null },
+      diff: { before: this.toAuditSnapshot(rule), after: null },
       isUndoable: true,
     });
   }
@@ -218,7 +235,7 @@ export class CategorizationRulesController {
     const transactions = await this.transactionRepository.findByIds(dto.transactionIds);
 
     const matches = transactions.filter(transaction =>
-      this.classificationService['matchesRule'](transaction, dto.conditions),
+      this.classificationService.matchesRule(transaction, dto.conditions),
     );
 
     return {
@@ -235,11 +252,11 @@ export class CategorizationRulesController {
     };
   }
 
-  private getMatchReason(transaction: Transaction, conditions: any[]): string {
+  private getMatchReason(transaction: Transaction, conditions: ClassificationCondition[]): string {
     const matchedConditions: string[] = [];
 
     for (const condition of conditions) {
-      const fieldValue = (transaction as any)[condition.field];
+      const fieldValue = this.getFieldValue(transaction, condition.field);
       if (!fieldValue) continue;
 
       let matches = false;
@@ -276,5 +293,41 @@ export class CategorizationRulesController {
     }
 
     return matchedConditions.join(' AND ');
+  }
+
+  private getFieldValue(
+    transaction: Transaction,
+    field: ClassificationCondition['field'],
+  ): string | number | null {
+    switch (field) {
+      case 'counterparty_name':
+        return transaction.counterpartyName;
+      case 'payment_purpose':
+        return transaction.paymentPurpose;
+      case 'amount':
+        return transaction.amount || transaction.debit || transaction.credit || 0;
+      case 'counterparty_bin':
+        return transaction.counterpartyBin || null;
+      case 'document_number':
+        return transaction.documentNumber || null;
+    }
+  }
+
+  private toAuditSnapshot(rule: CategorizationRule): CategorizationRuleAuditSnapshot {
+    return {
+      id: rule.id,
+      userId: rule.userId,
+      workspaceId: rule.workspaceId,
+      name: rule.name,
+      description: rule.description,
+      conditions: rule.conditions,
+      result: rule.result,
+      priority: rule.priority,
+      isActive: rule.isActive,
+      matchCount: rule.matchCount,
+      lastMatchedAt: rule.lastMatchedAt?.toISOString() || null,
+      createdAt: rule.createdAt.toISOString(),
+      updatedAt: rule.updatedAt.toISOString(),
+    };
   }
 }

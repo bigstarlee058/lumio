@@ -28,7 +28,7 @@ interface ExportDropdownProps {
 
 const EXPORT_ITEMS: Array<{
   key: ExportFormat;
-  labelKey: keyof ExportDropdownProps['t'];
+  labelKey: keyof NonNullable<ExportDropdownProps['t']>;
   icon: typeof FileSpreadsheet;
 }> = [
   { key: 'excel', labelKey: 'excel', icon: FileSpreadsheet },

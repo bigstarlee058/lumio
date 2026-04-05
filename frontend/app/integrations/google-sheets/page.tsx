@@ -5,6 +5,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { getGoogleSheetsIntegrationCopy } from '@/app/lib/googleSheetsIntegrationCopy';
 import { getGoogleSheetsPickerState } from '@/app/lib/googleSheetsPickerState';
 import {
@@ -130,8 +131,8 @@ export default function GoogleSheetsIntegrationPage() {
       }
       toast.success(t.toasts.openingAuth.value);
       window.location.href = url;
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.connectFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.connectFailed.value);
       setError(message);
       toast.error(message);
     } finally {
@@ -148,8 +149,8 @@ export default function GoogleSheetsIntegrationPage() {
       const items: WorksheetOption[] = response.data?.data || response.data || [];
       setWorksheets(items);
       setWorksheetName(current => getDefaultWorksheetName(current, items));
-    } catch (err: any) {
-      const message = err?.response?.data?.message || copy.errors.loadWorksheets;
+    } catch (err) {
+      const message = getApiErrorMessage(err, copy.errors.loadWorksheets);
       setError(message);
       toast.error(message);
     } finally {
@@ -186,8 +187,8 @@ export default function GoogleSheetsIntegrationPage() {
       setSuccess(copy.toasts.connected);
       toast.success(copy.toasts.connected);
       await loadConnections();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.connectFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.connectFailed.value);
       setError(message);
       toast.error(message);
     } finally {
@@ -204,8 +205,8 @@ export default function GoogleSheetsIntegrationPage() {
       setSuccess(t.toasts.syncStarted.value);
       toast.success(t.toasts.syncStarted.value);
       await loadConnections();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.syncFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.syncFailed.value);
       setError(message);
       toast.error(message);
     } finally {
@@ -222,8 +223,8 @@ export default function GoogleSheetsIntegrationPage() {
       setSuccess(t.toasts.removed.value);
       toast.success(t.toasts.removed.value);
       await loadConnections();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || t.errors.removeFailed.value;
+    } catch (err) {
+      const message = getApiErrorMessage(err, t.errors.removeFailed.value);
       setError(message);
       toast.error(message);
     } finally {

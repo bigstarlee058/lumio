@@ -1,5 +1,39 @@
+/// <reference types="jest" />
+
 import { Test, TestingModule } from '@nestjs/testing';
-import { MetadataExtractionService } from '../metadata-extraction.service';
+import {
+  ExtractedMetadata,
+  HeaderPattern,
+  MetadataExtractionService,
+} from '../metadata-extraction.service';
+
+function createExtractedMetadataFixture(
+  overrides: Partial<ExtractedMetadata> = {},
+): ExtractedMetadata {
+  return {
+    rawHeader: '',
+    normalizedHeader: '',
+    statementType: 'statement',
+    confidence: 0.9,
+    extractionMethod: 'hybrid',
+    period: {
+      dateFrom: new Date('2024-01-01'),
+      dateTo: new Date('2024-01-31'),
+      label: '01.01.2024 - 31.01.2024',
+    },
+    account: {
+      number: 'KZ123456789012345678',
+    },
+    currency: {
+      code: 'KZT',
+    },
+    institution: {
+      name: 'Test Bank',
+    },
+    additionalInfo: {},
+    ...overrides,
+  };
+}
 
 describe('MetadataExtractionService', () => {
   let service: MetadataExtractionService;
@@ -126,17 +160,12 @@ describe('MetadataExtractionService', () => {
 
   describe('createDisplayInfo', () => {
     it('should create formatted display information', async () => {
-      const metadata = {
+      const metadata = createExtractedMetadataFixture({
         account: { number: 'KZ123456789012345678', name: 'Текущий счет' },
-        period: {
-          dateFrom: new Date('2024-01-01'),
-          dateTo: new Date('2024-01-31'),
-          label: '01.01.2024 - 31.01.2024',
-        },
         institution: { name: 'Народный Банк Казахстана' },
         currency: { code: 'KZT', symbol: '₸' },
         headerInfo: { title: 'Банковская выписка' },
-      } as any;
+      });
 
       const displayInfo = service.createDisplayInfo(metadata);
 
@@ -148,9 +177,9 @@ describe('MetadataExtractionService', () => {
     });
 
     it('should mask account numbers for security', () => {
-      const metadata = {
+      const metadata = createExtractedMetadataFixture({
         account: { number: 'KZ123456789012345678' },
-      } as any;
+      });
 
       const displayInfo = service.createDisplayInfo(metadata);
 
@@ -160,7 +189,7 @@ describe('MetadataExtractionService', () => {
 
   describe('convertToParsedStatementMetadata', () => {
     it('should convert extracted metadata to ParsedStatementMetadata format', async () => {
-      const extractedMetadata = {
+      const extractedMetadata = createExtractedMetadataFixture({
         account: { number: 'KZ123456789012345678' },
         period: {
           dateFrom: new Date('2024-01-01'),
@@ -172,7 +201,7 @@ describe('MetadataExtractionService', () => {
         rawHeader: 'Банковская выписка',
         normalizedHeader: 'Банковская выписка',
         headerInfo: { locale: 'ru' },
-      } as any;
+      });
 
       const converted = service.convertToParsedStatementMetadata(extractedMetadata);
 
@@ -218,12 +247,12 @@ describe('MetadataExtractionService', () => {
 
   describe('custom patterns and profiles', () => {
     it('should allow adding custom patterns', () => {
-      const customPattern = {
-        type: 'custom_test' as any,
+      const customPattern: HeaderPattern = {
+        type: 'statement_type',
         patterns: [/TEST_PATTERN/gi],
         languages: ['en'],
         priority: 10,
-        extractor: (match: RegExpMatchArray) => ({ found: true }),
+        extractor: (match: RegExpMatchArray) => ({ type: 'statement', source: match[0] }),
       };
 
       expect(() => service.addCustomPattern(customPattern)).not.toThrow();

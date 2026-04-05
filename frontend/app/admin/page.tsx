@@ -77,7 +77,7 @@ const ACTIONS = [
 const SEVERITIES = ['info', 'warn', 'critical'] as const;
 
 export default function AdminPage() {
-  const t = useIntlayer('adminPage') as any;
+  const t = useIntlayer('adminPage');
   const { locale } = useLocale();
   const [tab, setTab] = useState(0);
   const [statements, setStatements] = useState<Statement[]>([]);
@@ -319,14 +319,14 @@ export default function AdminPage() {
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                 {t.usersTab.hint}
               </Typography>
-               <Button
-                 variant="contained"
-                 component={Link}
-                 href="/admin/users"
-                 data-tour-id="admin-users-link"
-               >
-                 {t.usersTab.button}
-               </Button>
+              <Button
+                variant="contained"
+                component={Link}
+                href="/admin/users"
+                data-tour-id="admin-users-link"
+              >
+                {t.usersTab.button}
+              </Button>
             </Box>
           )}
 
@@ -339,10 +339,10 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-                   <div
-                     className="h-fit rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-                     data-tour-id="admin-audit-filters"
-                   >
+                  <div
+                    className="h-fit rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+                    data-tour-id="admin-audit-filters"
+                  >
                     <h3 className="text-sm font-semibold text-gray-700">
                       {t.auditTab.filters.title}
                     </h3>

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, Repository } from 'typeorm';
+import { Between, type FindOptionsWhere, In, Repository } from 'typeorm';
 import { Transaction } from '../../../entities/transaction.entity';
 
 export interface DuplicateCandidate {
@@ -199,7 +199,7 @@ export class CrossStatementDeduplicationService {
     workspaceId: string,
     statementId?: string,
   ): Promise<Transaction[]> {
-    const where: any = {
+    const where: FindOptionsWhere<Transaction> = {
       workspaceId,
       isDuplicate: false,
     };

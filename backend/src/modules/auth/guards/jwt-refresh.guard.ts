@@ -1,5 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import type { User } from '../../../entities/user.entity';
 
 @Injectable()
 export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {
@@ -8,7 +9,13 @@ export class JwtRefreshGuard extends AuthGuard('jwt-refresh') {
    * check so tests (and production) fail fast when the user payload is missing
    * mandatory fields.
    */
-  handleRequest(err: any, user: any, _info?: any, _context?: any): any {
+  handleRequest<TUser extends User = User>(
+    err: Error | null,
+    user: TUser | false,
+    _info?: unknown,
+    _context?: ExecutionContext,
+    _status?: unknown,
+  ): TUser {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }

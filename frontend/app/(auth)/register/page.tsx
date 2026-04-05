@@ -5,17 +5,10 @@ import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
-import { syncLocaleFromUser } from '@/app/lib/locale';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
-import {
-  Alert,
-  Box,
-  Button,
-  Divider,
-  Link,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { syncLocaleFromUser } from '@/app/lib/locale';
+import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
@@ -68,8 +61,8 @@ function RegisterPageContent() {
           setEmailLocked(true);
         }
       })
-      .catch((err: any) => {
-        setError(err?.response?.data?.message || t.inviteLoadFailed.value);
+      .catch((error: unknown) => {
+        setError(getApiErrorMessage(error, t.inviteLoadFailed.value));
       })
       .finally(() => {
         setInviteLoading(false);
@@ -103,10 +96,8 @@ function RegisterPageContent() {
       }
 
       window.location.href = '/onboarding';
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message || err.response?.data?.error?.message || t.registerFailed.value,
-      );
+    } catch (error: unknown) {
+      setError(getApiErrorMessage(error, t.registerFailed.value));
     } finally {
       setLoading(false);
     }

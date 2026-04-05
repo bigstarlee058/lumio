@@ -1,8 +1,12 @@
 'use client';
 
 import {
+  type ActorType,
+  type AuditAction,
   type AuditEvent,
   type AuditEventFilter,
+  type EntityType,
+  type Severity,
   fetchAuditEvents,
   rollbackEvent,
 } from '@/lib/api/audit';
@@ -45,6 +49,30 @@ const ACTIONS = [
 ] as const;
 const SEVERITIES = ['info', 'warn', 'critical'] as const;
 
+const isEntityType = (value: string): value is EntityType =>
+  (ENTITY_TYPES as readonly string[]).includes(value);
+
+const isActorType = (value: string): value is ActorType =>
+  (ACTOR_TYPES as readonly string[]).includes(value);
+
+const isAuditAction = (value: string): value is AuditAction =>
+  (ACTIONS as readonly string[]).includes(value);
+
+const isSeverity = (value: string): value is Severity =>
+  (SEVERITIES as readonly string[]).includes(value);
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (typeof error === 'object' && error !== null) {
+    const err = error as {
+      message?: string;
+      response?: { data?: { message?: string } };
+    };
+    return err.response?.data?.message || err.message || fallback;
+  }
+
+  return fallback;
+};
+
 export default function AuditPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [total, setTotal] = useState(0);
@@ -76,8 +104,8 @@ export default function AuditPage() {
       const response = await fetchAuditEvents(params);
       setEvents(response.data || []);
       setTotal(response.total || 0);
-    } catch (err: any) {
-      setError(err?.message || 'Failed to load audit events');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Failed to load audit events'));
     } finally {
       setLoading(false);
     }
@@ -108,8 +136,8 @@ export default function AuditPage() {
       setRollbackTarget(null);
       setDrawerOpen(false);
       loadEvents();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || err?.message || 'Rollback failed';
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, 'Rollback failed');
       setRollbackError(message);
     } finally {
       setRollbackLoading(false);
@@ -136,9 +164,11 @@ export default function AuditPage() {
                   className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
                   value={filters.entityType || ''}
                   onChange={e => {
+                    const rawValue = e.target.value;
+                    const entityType = rawValue && isEntityType(rawValue) ? rawValue : undefined;
                     setFilters(prev => ({
                       ...prev,
-                      entityType: (e.target.value || undefined) as any,
+                      entityType,
                     }));
                     setPage(1);
                   }}
@@ -158,9 +188,11 @@ export default function AuditPage() {
                   className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
                   value={filters.actorType || ''}
                   onChange={e => {
+                    const rawValue = e.target.value;
+                    const actorType = rawValue && isActorType(rawValue) ? rawValue : undefined;
                     setFilters(prev => ({
                       ...prev,
-                      actorType: (e.target.value || undefined) as any,
+                      actorType,
                     }));
                     setPage(1);
                   }}
@@ -195,9 +227,11 @@ export default function AuditPage() {
                   className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
                   value={filters.action || ''}
                   onChange={e => {
+                    const rawValue = e.target.value;
+                    const action = rawValue && isAuditAction(rawValue) ? rawValue : undefined;
                     setFilters(prev => ({
                       ...prev,
-                      action: (e.target.value || undefined) as any,
+                      action,
                     }));
                     setPage(1);
                   }}
@@ -217,9 +251,11 @@ export default function AuditPage() {
                   className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
                   value={filters.severity || ''}
                   onChange={e => {
+                    const rawValue = e.target.value;
+                    const severity = rawValue && isSeverity(rawValue) ? rawValue : undefined;
                     setFilters(prev => ({
                       ...prev,
-                      severity: (e.target.value || undefined) as any,
+                      severity,
                     }));
                     setPage(1);
                   }}

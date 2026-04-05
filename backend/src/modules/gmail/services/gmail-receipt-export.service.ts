@@ -5,6 +5,20 @@ import { In, Repository } from 'typeorm';
 import { Category, Receipt } from '../../../entities';
 import { GmailOAuthService } from './gmail-oauth.service';
 
+type ReceiptRowCell = string | number;
+type ReceiptRow = ReceiptRowCell[];
+
+interface ReceiptParsedData {
+  date?: string;
+  vendor?: string;
+  amount?: string | number;
+  currency?: string;
+  tax?: string | number;
+  subtotal?: string | number;
+  category?: string;
+  confidence?: number;
+}
+
 @Injectable()
 export class GmailReceiptExportService {
   private readonly logger = new Logger(GmailReceiptExportService.name);
@@ -16,6 +30,10 @@ export class GmailReceiptExportService {
     private readonly categoryRepository: Repository<Category>,
     private readonly gmailOAuthService: GmailOAuthService,
   ) {}
+
+  private getParsedData(receipt: Receipt): ReceiptParsedData {
+    return (receipt.parsedData ?? {}) as ReceiptParsedData;
+  }
 
   async exportToSheets(
     userId: string,
@@ -62,8 +80,12 @@ export class GmailReceiptExportService {
           },
         });
 
-        finalSpreadsheetId = createResponse.data.spreadsheetId!;
-        sheetUrl = createResponse.data.spreadsheetUrl!;
+        if (!createResponse.data.spreadsheetId || !createResponse.data.spreadsheetUrl) {
+          throw new Error('Failed to create spreadsheet');
+        }
+
+        finalSpreadsheetId = createResponse.data.spreadsheetId;
+        sheetUrl = createResponse.data.spreadsheetUrl;
       } else {
         sheetUrl = `https://docs.google.com/spreadsheets/d/${finalSpreadsheetId}`;
       }
@@ -83,7 +105,7 @@ export class GmailReceiptExportService {
       ];
 
       // Prepare data rows
-      const rows = [headers];
+      const rows: ReceiptRow[] = [headers];
       for (const receipt of receipts) {
         rows.push(this.formatReceiptRow(receipt));
       }
@@ -148,8 +170,8 @@ export class GmailReceiptExportService {
     }
   }
 
-  formatReceiptRow(receipt: Receipt): any[] {
-    const parsedData = receipt.parsedData || {};
+  formatReceiptRow(receipt: Receipt): ReceiptRow {
+    const parsedData = this.getParsedData(receipt);
     const gmailLink = `https://mail.google.com/mail/u/0/#all/${receipt.gmailMessageId}`;
 
     return [

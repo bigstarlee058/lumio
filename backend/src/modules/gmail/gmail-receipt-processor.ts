@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { gmail_v1 } from 'googleapis';
 import { LessThan, Repository } from 'typeorm';
 import {
   ActorType,
@@ -24,6 +25,8 @@ import { GmailService } from './services/gmail.service';
 const JOB_LOCK_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 const WORKER_ID = `worker-${process.pid}-${Math.random().toString(36).substr(2, 9)}`;
 
+type ReceiptAttachment = NonNullable<NonNullable<Receipt['metadata']>['attachments']>[number];
+
 @Injectable()
 export class GmailReceiptProcessor {
   private readonly logger = new Logger(GmailReceiptProcessor.name);
@@ -43,6 +46,13 @@ export class GmailReceiptProcessor {
     private readonly auditService: AuditService,
     private readonly eventEmitter?: EventEmitter2,
   ) {}
+
+  private getHeaderValue(
+    headers: gmail_v1.Schema$MessagePartHeader[] | null | undefined,
+    name: string,
+  ): string {
+    return headers?.find(header => header.name?.toLowerCase() === name.toLowerCase())?.value || '';
+  }
 
   @Interval(3000)
   async processJobs(): Promise<void> {
@@ -129,32 +139,33 @@ export class GmailReceiptProcessor {
       const message = await this.gmailService.getMessage(job.userId, job.payload.gmailMessageId);
 
       // Extract metadata
-      const headers = message.payload.headers || [];
-      const getHeader = (name: string) =>
-        headers.find((h: any) => h.name.toLowerCase() === name.toLowerCase())?.value || '';
-
-      const subject = getHeader('Subject');
-      const sender = getHeader('From');
-      const dateHeader = getHeader('Date');
+      const headers = message.payload?.headers || [];
+      const subject = this.getHeaderValue(headers, 'Subject');
+      const sender = this.getHeaderValue(headers, 'From');
+      const dateHeader = this.getHeaderValue(headers, 'Date');
       const receivedAt = dateHeader ? new Date(dateHeader) : new Date();
-      const emailBody = this.extractEmailBody(message.payload);
+      const emailBody = this.extractEmailBody(message.payload || undefined);
 
       // Find attachments
-      const attachments: any[] = [];
-      const findAttachments = (part: any) => {
+      const attachments: ReceiptAttachment[] = [];
+      const findAttachments = (part?: gmail_v1.Schema$MessagePart) => {
+        if (!part) {
+          return;
+        }
+
         if (part.filename && part.body?.attachmentId) {
           attachments.push({
             id: part.body.attachmentId,
             filename: part.filename,
-            mimeType: part.mimeType,
-            size: part.body.size,
+            mimeType: part.mimeType || 'application/octet-stream',
+            size: part.body.size || 0,
           });
         }
-        if (part.parts) {
+        if (Array.isArray(part.parts)) {
           part.parts.forEach(findAttachments);
         }
       };
-      findAttachments(message.payload);
+      findAttachments(message.payload || undefined);
 
       // Download attachments
       const attachmentPaths: string[] = [];
@@ -350,10 +361,10 @@ export class GmailReceiptProcessor {
     }
   }
 
-  private extractEmailBody(payload: any): string | null {
+  private extractEmailBody(payload?: gmail_v1.Schema$MessagePart): string | null {
     const bodies: { mimeType: string; data: string }[] = [];
 
-    const walk = (part: any) => {
+    const walk = (part?: gmail_v1.Schema$MessagePart) => {
       if (part?.body?.data && (part.mimeType === 'text/plain' || part.mimeType === 'text/html')) {
         bodies.push({
           mimeType: part.mimeType,

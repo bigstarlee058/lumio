@@ -15,6 +15,8 @@ import type { DataEntryType } from './data-entry.entity';
 import { User } from './user.entity';
 import { Workspace } from './workspace.entity';
 
+type JsonObject = Record<string, unknown>;
+
 export enum CustomTableSource {
   MANUAL = 'manual',
   GOOGLE_SHEETS_IMPORT = 'google_sheets_import',
@@ -74,7 +76,7 @@ export class CustomTable {
   rows: CustomTableRow[];
 
   @Column({ name: 'view_settings', type: 'jsonb', default: () => "'{}'::jsonb" })
-  viewSettings: Record<string, any>;
+  viewSettings: JsonObject;
 
   @Column({ name: 'data_entry_scope', type: 'varchar', length: 16, nullable: true })
   dataEntryScope: 'type' | 'all' | null;

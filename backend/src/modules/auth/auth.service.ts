@@ -7,10 +7,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
+import type { StringValue } from 'ms';
 import { IsNull, type Repository } from 'typeorm';
 import { DEV_DEFAULTS } from '../../common/utils/dev-defaults';
 import {
@@ -46,6 +47,9 @@ export interface UserSessionDto {
   lastUsedAt: Date;
   isCurrent: boolean;
 }
+
+const toJwtExpiresIn = (value: string | undefined, fallback: StringValue): StringValue =>
+  (value || fallback) as StringValue;
 
 const jwtSecret = () =>
   process.env.JWT_SECRET ||
@@ -464,10 +468,12 @@ export class AuthService {
         sessionId: payload.sessionId,
       };
 
-      const access_token = this.jwtService.sign(accessTokenPayload, {
+      const accessTokenOptions: JwtSignOptions = {
         secret: jwtSecret(),
-        expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-      } as any);
+        expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, '1h'),
+      };
+
+      const access_token = this.jwtService.sign(accessTokenPayload, accessTokenOptions);
 
       return { access_token };
     } catch (error) {
@@ -570,15 +576,18 @@ export class AuthService {
       sessionId,
     };
 
-    const access_token = this.jwtService.sign(payload, {
+    const accessTokenOptions: JwtSignOptions = {
       secret: jwtSecret(),
-      expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-    } as any);
+      expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, '1h'),
+    };
 
-    const refresh_token = this.jwtService.sign(refreshPayload, {
+    const refreshTokenOptions: JwtSignOptions = {
       secret: jwtRefreshSecret(),
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '30d',
-    } as any);
+      expiresIn: toJwtExpiresIn(process.env.JWT_REFRESH_EXPIRES_IN, '30d'),
+    };
+
+    const access_token = this.jwtService.sign(payload, accessTokenOptions);
+    const refresh_token = this.jwtService.sign(refreshPayload, refreshTokenOptions);
 
     const parsedDevice = this.parseUserAgent(sessionContext?.userAgent);
     await this.authSessionRepository.save(

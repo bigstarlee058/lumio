@@ -1,21 +1,14 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import type { Request } from 'express';
 import { DataSource } from 'typeorm';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 
 @Injectable()
 export class WorkspaceContextGuard implements CanActivate {
   constructor(private readonly dataSource: DataSource) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<
-      Request & {
-        workspace?: any;
-        user?: any;
-        workspaceRole?: string;
-        workspaceMemberPermissions?: any;
-      }
-    >();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const workspaceId = request.headers['x-workspace-id'] as string;
     const user = request.user;
 

@@ -7,7 +7,12 @@ import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { AuditEvent } from '@/lib/api/audit';
 import { fetchEntityHistory } from '@/lib/api/audit';
 import { useEffect, useMemo, useState } from 'react';
-import type { ColumnType, CustomTableColumn, CustomTableGridRow } from '../utils/stylingUtils';
+import type {
+  ColumnType,
+  CustomTableColumn,
+  CustomTableGridRow,
+  CustomTableRowPatch,
+} from '../utils/stylingUtils';
 
 type DrawerMode = 'view' | 'edit';
 
@@ -18,10 +23,16 @@ interface RowDrawerProps {
   columns: CustomTableColumn[];
   onClose: () => void;
   onModeChange?: (mode: DrawerMode) => void;
-  onSave: (rowId: string, patchData: Record<string, any>) => Promise<void>;
-  onSaveAndClose?: (rowId: string, patchData: Record<string, any>) => Promise<void>;
-  onSaveAndNext?: (rowId: string, patchData: Record<string, any>) => Promise<void>;
+  onSave: (rowId: string, patchData: CustomTableRowPatch) => Promise<void>;
+  onSaveAndClose?: (rowId: string, patchData: CustomTableRowPatch) => Promise<void>;
+  onSaveAndNext?: (rowId: string, patchData: CustomTableRowPatch) => Promise<void>;
 }
+
+const getColumnOptions = (column: CustomTableColumn): string[] => {
+  return Array.isArray(column.config?.options)
+    ? column.config.options.map(option => String(option))
+    : [];
+};
 
 const normalizeValue = (type: ColumnType, value: unknown) => {
   if (type === 'boolean') return Boolean(value);
@@ -68,8 +79,8 @@ export function RowDrawer({
     return [...columns].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
   }, [columns]);
 
-  const [baseData, setBaseData] = useState<Record<string, any>>({});
-  const [draft, setDraft] = useState<Record<string, any>>({});
+  const [baseData, setBaseData] = useState<CustomTableRowPatch>({});
+  const [draft, setDraft] = useState<CustomTableRowPatch>({});
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
   const [historyEvents, setHistoryEvents] = useState<AuditEvent[]>([]);
@@ -83,7 +94,7 @@ export function RowDrawer({
       setDraft({});
       return;
     }
-    const initial: Record<string, any> = {};
+    const initial: CustomTableRowPatch = {};
     for (const col of orderedColumns) {
       initial[col.key] = normalizeValue(col.type, row.data?.[col.key]);
     }
@@ -109,7 +120,7 @@ export function RowDrawer({
   }, [open, row?.id]);
 
   const patch = useMemo(() => {
-    const next: Record<string, any> = {};
+    const next: CustomTableRowPatch = {};
     for (const col of orderedColumns) {
       const key = col.key;
       const before = baseData?.[key];
@@ -227,9 +238,7 @@ export function RowDrawer({
           <div className="space-y-3">
             {orderedColumns.map(col => {
               const value = mode === 'edit' ? draft[col.key] : row.data?.[col.key];
-              const options = Array.isArray((col.config as any)?.options)
-                ? ((col.config as any).options as unknown[]).map(v => String(v))
-                : [];
+              const options = getColumnOptions(col);
 
               return (
                 <div key={col.key} className="rounded-lg border border-gray-200 bg-white p-4">

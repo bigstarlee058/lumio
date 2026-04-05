@@ -5,16 +5,16 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
-import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import apiClient from '@/app/lib/api';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
+import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
 import { OnboardingProgress } from './components/OnboardingProgress';
 import { resolveOnboardingBootstrapLocale } from './lib/locale-bootstrap';
 import { resolveOnboardingFlow } from './lib/onboarding-flow';
-import { resolveOnboardingText } from './lib/resolveOnboardingText';
+import { getNestedOnboardingValue, resolveOnboardingText } from './lib/resolveOnboardingText';
 import { CompletionStep } from './steps/CompletionStep';
 import { IntegrationsStep } from './steps/IntegrationsStep';
 import { LanguageStep } from './steps/LanguageStep';
@@ -96,21 +96,24 @@ export default function OnboardingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setLocale, locale: appLocale } = useLocale();
-  const t = useIntlayer('onboardingPage' as any) as any;
+  const t = useIntlayer('onboardingPage');
   const { user, loading: authLoading, setUser } = useAuth();
   const { refreshWorkspaces } = useWorkspace();
   const flow = resolveOnboardingFlow(searchParams.get('mode'), user?.onboardingCompletedAt);
   const isCreateWorkspaceFlow = flow.mode === 'create-workspace';
 
   const { currentStep, data, updateData, goBack, goNext, skipAll, totalSteps, isLastStep } =
-    useOnboardingWizard({
-      locale: normalizeLocale(appLocale),
-      timeZone: detectTimeZone(),
-      workspaceName: '',
-      workspaceCurrency: DEFAULT_CURRENCY,
-      workspaceBackgroundImage: DEFAULT_BACKGROUND,
-      integrationsToSetup: [],
-    }, flow.stepKeys.length);
+    useOnboardingWizard(
+      {
+        locale: normalizeLocale(appLocale),
+        timeZone: detectTimeZone(),
+        workspaceName: '',
+        workspaceCurrency: DEFAULT_CURRENCY,
+        workspaceBackgroundImage: DEFAULT_BACKGROUND,
+        integrationsToSetup: [],
+      },
+      flow.stepKeys.length,
+    );
 
   const [isInitializing, setIsInitializing] = useState(true);
   const [bootstrapComplete, setBootstrapComplete] = useState(false);
@@ -139,6 +142,15 @@ export default function OnboardingPage() {
     googleSheets: false,
     telegram: false,
   });
+  const tx = useCallback(
+    (path: string[], fallback = '', localeOverride?: string) =>
+      resolveOnboardingText(
+        getNestedOnboardingValue(t, path),
+        fallback,
+        localeOverride ?? data.locale,
+      ),
+    [data.locale, t],
+  );
 
   const checkIntegrationConnected = async (
     integration: (typeof ONBOARDING_INTEGRATIONS)[number],
@@ -272,13 +284,7 @@ export default function OnboardingPage() {
         }
       } catch {
         if (!cancelled) {
-          setError(
-            resolveOnboardingText(
-              t.errors.workspaceLoadFailed,
-              'Failed to load workspace settings.',
-              data.locale,
-            ),
-          );
+          setError(tx(['errors', 'workspaceLoadFailed'], 'Failed to load workspace settings.'));
         }
       } finally {
         if (!cancelled) {
@@ -326,33 +332,16 @@ export default function OnboardingPage() {
   }, [currentStep, flow.stepKeys]);
 
   const stepLabels = useMemo(() => {
-    const resolveLabel = (token: unknown, fallback: string) => {
-      const tokenValue =
-        token && typeof token === 'object' && 'value' in token
-          ? (token as { value?: unknown }).value
-          : token;
-
-      return resolveOnboardingText(tokenValue, fallback, data.locale);
-    };
-
     const stepLabelMap = {
-      welcome: resolveLabel(t.steps.welcome, 'Welcome'),
-      language: resolveLabel(t.steps.language, 'Language'),
-      workspace: resolveLabel(t.steps.workspace, 'Workspace'),
-      integrations: resolveLabel(t.steps.integrations, 'Integrations'),
-      completion: resolveLabel(t.steps.completion, 'Done'),
+      welcome: tx(['steps', 'welcome'], 'Welcome'),
+      language: tx(['steps', 'language'], 'Language'),
+      workspace: tx(['steps', 'workspace'], 'Workspace'),
+      integrations: tx(['steps', 'integrations'], 'Integrations'),
+      completion: tx(['steps', 'completion'], 'Done'),
     } as const;
 
     return flow.stepKeys.map(stepKey => stepLabelMap[stepKey]);
-  }, [
-    data.locale,
-    flow.stepKeys,
-    t.steps.completion,
-    t.steps.integrations,
-    t.steps.language,
-    t.steps.welcome,
-    t.steps.workspace,
-  ]);
+  }, [flow.stepKeys, tx]);
 
   const workspaceStepIndex = flow.stepKeys.indexOf('workspace');
   const welcomeStepIndex = flow.stepKeys.indexOf('welcome');
@@ -422,28 +411,19 @@ export default function OnboardingPage() {
     () =>
       ONBOARDING_INTEGRATIONS.map(integration => ({
         key: integration.key,
-        title: resolveOnboardingText(
-          t.integrations.cards[integration.key].title,
+        title: tx(
+          ['integrations', 'cards', integration.key, 'title'],
           INTEGRATION_TITLE_FALLBACK[integration.key],
-          data.locale,
         ),
-        description: resolveOnboardingText(
-          t.integrations.cards[integration.key].description,
-          '',
-          data.locale,
-        ),
+        description: tx(['integrations', 'cards', integration.key, 'description']),
         iconSrc: integration.iconSrc,
         connected: integrationStatuses[integration.key],
         loading: integrationLoading[integration.key],
         actionLabel: integrationStatuses[integration.key]
-          ? resolveOnboardingText(t.integrations.connectedBadge, 'Connected', data.locale)
-          : resolveOnboardingText(
-              t.integrations.cards[integration.key].action,
-              'Connect',
-              data.locale,
-            ),
+          ? tx(['integrations', 'connectedBadge'], 'Connected')
+          : tx(['integrations', 'cards', integration.key, 'action'], 'Connect'),
       })),
-    [data.locale, integrationLoading, integrationStatuses, t],
+    [integrationLoading, integrationStatuses, tx],
   );
 
   const connectedIntegrationItems = useMemo(
@@ -495,13 +475,7 @@ export default function OnboardingPage() {
         }
       }
     } catch {
-      setError(
-        resolveOnboardingText(
-          t.integrations.connectFailed,
-          'Failed to connect integration.',
-          data.locale,
-        ),
-      );
+      setError(tx(['integrations', 'connectFailed'], 'Failed to connect integration.'));
     } finally {
       setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
     }
@@ -516,7 +490,7 @@ export default function OnboardingPage() {
       const workspaceCurrency = data.workspaceCurrency.trim().toUpperCase();
       const workspaceBackgroundImage = (data.workspaceBackgroundImage || '').trim();
 
-       if (isCreateWorkspaceFlow) {
+      if (isCreateWorkspaceFlow) {
         const preferencesResponse = await apiClient.patch('/users/me/preferences', {
           locale: data.locale,
           timeZone: data.timeZone || null,
@@ -574,13 +548,7 @@ export default function OnboardingPage() {
 
       router.replace(DEFAULT_APP_ROUTE);
     } catch {
-      setError(
-        resolveOnboardingText(
-          t.errors.completeFailed,
-          'Failed to save onboarding settings.',
-          data.locale,
-        ),
-      );
+      setError(tx(['errors', 'completeFailed'], 'Failed to save onboarding settings.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -637,7 +605,12 @@ export default function OnboardingPage() {
     [updateData],
   );
 
-  if (authLoading || isInitializing || !user || (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser)) {
+  if (
+    authLoading ||
+    isInitializing ||
+    !user ||
+    (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser)
+  ) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Spinner className="h-10 w-10 text-primary" />
@@ -665,7 +638,7 @@ export default function OnboardingPage() {
             LUMIO
           </span>
           <span className="text-xs font-semibold text-muted-foreground">
-            {resolveOnboardingText(t.progressLabel, 'Step {current} of {total}', data.locale)
+            {tx(['progressLabel'], 'Step {current} of {total}')
               .replace('{current}', String(currentStep + 1))
               .replace('{total}', String(totalSteps))}
           </span>
@@ -699,8 +672,8 @@ export default function OnboardingPage() {
                   : 'flex flex-col gap-6 pt-5'
               }
             >
-                <div className="relative">
-                  <div style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
+              <div className="relative">
+                <div style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
                   {currentStep === welcomeStepIndex ? <WelcomeStep /> : null}
                   {currentStep === languageStepIndex ? (
                     <LanguageStep
@@ -750,27 +723,23 @@ export default function OnboardingPage() {
 
               {!hideMainNavigation ? (
                 <div>
-                    <OnboardingNavigation
-                      currentStep={currentStep}
-                      totalSteps={totalSteps}
-                      isSubmitting={isSubmitting || isStepTransitioning}
-                      showSkip={showSkipButton}
-                      canExitOnBack={canExitOnBack}
-                      onBack={handleBack}
-                      onNext={handleNext}
-                      onSkip={handleSkip}
+                  <OnboardingNavigation
+                    currentStep={currentStep}
+                    totalSteps={totalSteps}
+                    isSubmitting={isSubmitting || isStepTransitioning}
+                    showSkip={showSkipButton}
+                    canExitOnBack={canExitOnBack}
+                    onBack={handleBack}
+                    onNext={handleNext}
+                    onSkip={handleSkip}
                     onSkipAll={handleSkipAll}
                     labels={{
-                      back: resolveOnboardingText(t.navigation.back, 'Back', data.locale),
-                      next: resolveOnboardingText(t.navigation.next, 'Next', data.locale),
-                      finish: resolveOnboardingText(
-                        t.navigation.finish,
-                        'Start using app',
-                        data.locale,
-                      ),
-                      skip: resolveOnboardingText(t.navigation.skip, 'Skip', data.locale),
-                      skipAll: resolveOnboardingText(t.navigation.skipAll, 'Skip all', data.locale),
-                      saving: resolveOnboardingText(t.navigation.saving, 'Saving...', data.locale),
+                      back: tx(['navigation', 'back'], 'Back'),
+                      next: tx(['navigation', 'next'], 'Next'),
+                      finish: tx(['navigation', 'finish'], 'Start using app'),
+                      skip: tx(['navigation', 'skip'], 'Skip'),
+                      skipAll: tx(['navigation', 'skipAll'], 'Skip all'),
+                      saving: tx(['navigation', 'saving'], 'Saving...'),
                     }}
                   />
                 </div>

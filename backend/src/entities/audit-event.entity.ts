@@ -10,6 +10,9 @@ import {
 import { User } from './user.entity';
 import { Workspace } from './workspace.entity';
 
+type JsonValue = string | number | boolean | null | Date | object | JsonValue[];
+type JsonObject = Record<string, unknown>;
+
 export enum ActorType {
   USER = 'user',
   SYSTEM = 'system',
@@ -53,7 +56,7 @@ export enum Severity {
   CRITICAL = 'critical',
 }
 
-export type BeforeAfterDiff<T = Record<string, any>> = {
+export type BeforeAfterDiff<T = object> = {
   before: T | null;
   after: T | null;
 };
@@ -61,7 +64,7 @@ export type BeforeAfterDiff<T = Record<string, any>> = {
 export type PatchOperation = {
   op: 'add' | 'remove' | 'replace' | 'move' | 'copy' | 'test';
   path: string;
-  value?: any;
+  value?: JsonValue;
   from?: string;
 };
 
@@ -84,7 +87,7 @@ export interface AuditEventMeta {
   };
   rollbackOf?: string;
   originalAction?: AuditAction;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 @Entity('audit_events')

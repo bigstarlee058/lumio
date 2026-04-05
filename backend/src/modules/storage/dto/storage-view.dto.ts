@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import type { StorageViewFilters } from '../interfaces/storage-view-filters.interface';
 
 export class StorageViewDto {
   @IsString()
@@ -7,5 +8,5 @@ export class StorageViewDto {
   name: string;
 
   @IsOptional()
-  filters?: Record<string, any>;
+  filters?: StorageViewFilters;
 }

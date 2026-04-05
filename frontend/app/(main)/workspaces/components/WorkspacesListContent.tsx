@@ -32,7 +32,7 @@ export default function WorkspacesListContent({
   redirectPathOnSelect = '/workspaces/overview',
   onWorkspaceActivated,
 }: Props) {
-  const content: any = useIntlayer('workspaces-selector' as any) as any;
+  const content = useIntlayer('workspaces-selector');
   const { currentWorkspace, workspaces, loading, switchWorkspace, refreshWorkspaces } =
     useWorkspace();
   const router = useRouter();

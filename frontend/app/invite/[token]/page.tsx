@@ -3,6 +3,7 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import {
   Alert,
   Box,
@@ -72,8 +73,8 @@ export default function AcceptInvitePage() {
       .then(response => {
         setInvitation(response.data);
       })
-      .catch((err: any) => {
-        setInvitationError(err?.response?.data?.message || t.errors.loadFailed.value);
+      .catch((err: unknown) => {
+        setInvitationError(getApiErrorMessage(err, t.errors.loadFailed.value));
       })
       .finally(() => {
         setInvitationLoading(false);
@@ -145,8 +146,8 @@ export default function AcceptInvitePage() {
       }
 
       window.location.href = '/settings/workspace';
-    } catch (err: any) {
-      setAcceptError(err?.response?.data?.message || t.errors.acceptFailed.value);
+    } catch (err) {
+      setAcceptError(getApiErrorMessage(err, t.errors.acceptFailed.value));
     } finally {
       setAccepting(false);
     }

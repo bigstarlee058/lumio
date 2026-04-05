@@ -4,23 +4,24 @@ import {
   Injectable,
   type NestInterceptor,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import type { Observable } from 'rxjs';
+import type { RoutedRequest } from '../../common/interfaces/routed-request.interface';
 import { MetricsService } from './metrics.service';
 
-const getRouteLabel = (req: Request): string => {
-  const baseUrl = (req as any).baseUrl || '';
-  const routePath = (req as any).route?.path || '';
+const getRouteLabel = (req: RoutedRequest): string => {
+  const baseUrl = req.baseUrl || '';
+  const routePath = req.route?.path || '';
   if (routePath) return `${baseUrl}${routePath}`;
   return (req.originalUrl || req.url || '').split('?')[0] || 'unknown';
 };
 
 @Injectable()
-export class HttpMetricsInterceptor implements NestInterceptor {
+export class HttpMetricsInterceptor implements NestInterceptor<unknown, unknown> {
   constructor(private readonly metricsService: MetricsService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest<Request>();
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const req = context.switchToHttp().getRequest<RoutedRequest>();
     const res = context.switchToHttp().getResponse<Response>();
 
     const method = (req.method || 'UNKNOWN').toUpperCase();

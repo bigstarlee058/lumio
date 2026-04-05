@@ -3,6 +3,7 @@ import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { google } from 'googleapis';
+import type { gmail_v1 } from 'googleapis';
 import type { Repository } from 'typeorm';
 import { resolveUploadsDir } from '../../../common/utils/uploads.util';
 import { GmailSettings, Integration } from '../../../entities';
@@ -18,6 +19,10 @@ export class GmailService {
     private readonly gmailSettingsRepository: Repository<GmailSettings>,
     private readonly gmailOAuthService: GmailOAuthService,
   ) {}
+
+  private getGmailClient(client: Awaited<ReturnType<GmailOAuthService['getGmailClient']>>['client']) {
+    return google.gmail({ version: 'v1', auth: client });
+  }
 
   async setupGmailEnvironment(integration: Integration, userId: string): Promise<void> {
     try {
@@ -97,9 +102,9 @@ export class GmailService {
       includeLabelFilter?: boolean;
       maxMessages?: number;
     },
-  ): Promise<any[]> {
+  ): Promise<gmail_v1.Schema$Message[]> {
     const { client, integration } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = google.gmail({ version: 'v1', auth: client });
+    const gmail = this.getGmailClient(client);
 
     const settings = await this.gmailSettingsRepository.findOne({
       where: { integrationId: integration.id },
@@ -119,7 +124,7 @@ export class GmailService {
       searchQuery = `label:${settings.labelId} ${searchQuery}`.trim();
     }
 
-    const messages: any[] = [];
+    const messages: gmail_v1.Schema$Message[] = [];
     let pageToken: string | undefined;
 
     while (messages.length < maxMessages) {
@@ -143,9 +148,9 @@ export class GmailService {
     return messages;
   }
 
-  async getMessage(userId: string, messageId: string): Promise<any> {
+  async getMessage(userId: string, messageId: string): Promise<gmail_v1.Schema$Message> {
     const { client } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = google.gmail({ version: 'v1', auth: client });
+    const gmail = this.getGmailClient(client);
 
     const response = await gmail.users.messages.get({
       userId: 'me',

@@ -10,6 +10,8 @@ import {
 } from 'typeorm';
 import { CustomTable } from './custom-table.entity';
 
+type JsonObject = Record<string, unknown>;
+
 @Entity('custom_table_rows')
 @Index('IDX_custom_table_rows_table_row_number_unique', ['tableId', 'rowNumber'], { unique: true })
 @Index('IDX_custom_table_rows_table_id', ['tableId'])
@@ -28,10 +30,10 @@ export class CustomTableRow {
   rowNumber: number;
 
   @Column({ name: 'data', type: 'jsonb', default: () => "'{}'::jsonb" })
-  data: Record<string, any>;
+  data: JsonObject;
 
   @Column({ name: 'styles', type: 'jsonb', nullable: true, default: () => "'{}'::jsonb" })
-  styles?: Record<string, any> | null;
+  styles?: JsonObject | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

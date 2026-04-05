@@ -21,10 +21,16 @@ import { EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
 import { Audit } from '../audit/decorators/audit.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { BulkUpdateItemDto } from './dto/bulk-update-transaction.dto';
 import { BulkUpdateTransactionDto } from './dto/bulk-update-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { CrossStatementDeduplicationService } from './services/cross-statement-deduplication.service';
 import { TransactionsService } from './transactions.service';
+
+interface LegacyBulkUpdateTransactionDto {
+  ids: string[];
+  updates: UpdateTransactionDto;
+}
 
 @Controller('transactions')
 @UseGuards(JwtAuthGuard)
@@ -105,12 +111,12 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
   @RequirePermission(Permission.TRANSACTION_BULK_UPDATE)
   async bulkUpdate(
-    @Body() body: BulkUpdateTransactionDto | { ids: string[]; updates: any },
+    @Body() body: BulkUpdateTransactionDto | LegacyBulkUpdateTransactionDto,
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     // Support both {items} and {ids, updates} formats for backward compatibility
-    let items: Array<{ id: string; updates: any }>;
+    let items: BulkUpdateItemDto[];
 
     if ('items' in body) {
       items = body.items;

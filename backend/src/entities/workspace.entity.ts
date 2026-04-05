@@ -38,7 +38,7 @@ export class Workspace {
   isFavorite: boolean;
 
   @Column({ type: 'jsonb', nullable: true })
-  settings: Record<string, any> | null;
+  settings: Record<string, unknown> | null;
 
   @Column({ name: 'owner_id', nullable: true })
   ownerId: string | null;

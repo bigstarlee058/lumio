@@ -1,7 +1,7 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import { Button } from '@/app/components/ui/button';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -74,12 +74,47 @@ const triggerBlobDownload = (blob: Blob, fileName: string) => {
   window.URL.revokeObjectURL(url);
 };
 
+const getRecord = (value: unknown): Record<string, unknown> | null => {
+  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+};
+
+const getNestedValue = (source: unknown, path: string[]): unknown => {
+  let current: unknown = source;
+
+  for (const segment of path) {
+    const record = getRecord(current);
+    if (!record) {
+      return undefined;
+    }
+    current = record[segment];
+  }
+
+  return current;
+};
+
+const resolveLabel = (value: unknown, fallback: string): string => {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (value && typeof value === 'object' && 'value' in value) {
+    const tokenValue = (value as { value?: unknown }).value;
+    if (typeof tokenValue === 'string') {
+      return tokenValue;
+    }
+  }
+  return fallback;
+};
+
 export function PayablesView() {
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const { locale } = useLocale();
   const t = useIntlayer('statementsPage');
+  const tx = useCallback(
+    (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
+    [t],
+  );
   const [summary, setSummary] = useState<PayablesSummary>(DEFAULT_SUMMARY);
   const [items, setItems] = useState<Payable[]>([]);
   const [filters, setFilters] = useState<PayablesFiltersState>(DEFAULT_PAYABLES_FILTERS);
@@ -136,136 +171,140 @@ export function PayablesView() {
     setQueryPage(1);
   }, [searchParams]);
 
-  const payablesAny = (t as any)?.payables ?? {};
-
   const labels = useMemo(
     () => ({
-      title: payablesAny.title?.value ?? 'Payables',
-      subtitle:
-        payablesAny.subtitle?.value ??
+      title: tx(['payables', 'title'], 'Payables'),
+      subtitle: tx(
+        ['payables', 'subtitle'],
         'Track upcoming payments, overdue bills, and paid expenses in one queue.',
-      add: payablesAny.add?.value ?? 'Add payable',
-      refresh: payablesAny.refresh?.value ?? 'Refresh',
-      export: payablesAny.export?.value ?? 'Export',
-      exportCsv: payablesAny.exportCsv?.value ?? 'Export CSV',
-      exportXlsx: payablesAny.exportXlsx?.value ?? 'Export XLSX',
-      searchPlaceholder: payablesAny.searchPlaceholder?.value ?? 'Search vendor or comment',
+      ),
+      add: tx(['payables', 'add'], 'Add payable'),
+      refresh: tx(['payables', 'refresh'], 'Refresh'),
+      export: tx(['payables', 'export'], 'Export'),
+      exportCsv: tx(['payables', 'exportCsv'], 'Export CSV'),
+      exportXlsx: tx(['payables', 'exportXlsx'], 'Export XLSX'),
+      searchPlaceholder: tx(['payables', 'searchPlaceholder'], 'Search vendor or comment'),
       summary: {
-        toPay: payablesAny.summary?.toPay?.value ?? 'To Pay',
-        overdue: payablesAny.summary?.overdue?.value ?? 'Overdue',
-        dueThisWeek: payablesAny.summary?.dueThisWeek?.value ?? 'Due This Week',
-        paidThisMonth: payablesAny.summary?.paidThisMonth?.value ?? 'Paid This Month',
-        itemsSuffix: payablesAny.summary?.itemsSuffix?.value ?? 'items',
+        toPay: tx(['payables', 'summary', 'toPay'], 'To Pay'),
+        overdue: tx(['payables', 'summary', 'overdue'], 'Overdue'),
+        dueThisWeek: tx(['payables', 'summary', 'dueThisWeek'], 'Due This Week'),
+        paidThisMonth: tx(['payables', 'summary', 'paidThisMonth'], 'Paid This Month'),
+        itemsSuffix: tx(['payables', 'summary', 'itemsSuffix'], 'items'),
       },
       filters: {
-        status: payablesAny.filters?.status?.value ?? 'Status',
-        source: payablesAny.filters?.source?.value ?? 'Source',
-        dueFrom: payablesAny.filters?.dueFrom?.value ?? 'Due from',
-        dueTo: payablesAny.filters?.dueTo?.value ?? 'Due to',
-        sort: payablesAny.filters?.sort?.value ?? 'Sort',
-        reset: payablesAny.filters?.reset?.value ?? 'Reset',
-        allStatuses: payablesAny.filters?.allStatuses?.value ?? 'All statuses',
-        allSources: payablesAny.filters?.allSources?.value ?? 'All sources',
+        status: tx(['payables', 'filters', 'status'], 'Status'),
+        source: tx(['payables', 'filters', 'source'], 'Source'),
+        dueFrom: tx(['payables', 'filters', 'dueFrom'], 'Due from'),
+        dueTo: tx(['payables', 'filters', 'dueTo'], 'Due to'),
+        sort: tx(['payables', 'filters', 'sort'], 'Sort'),
+        reset: tx(['payables', 'filters', 'reset'], 'Reset'),
+        allStatuses: tx(['payables', 'filters', 'allStatuses'], 'All statuses'),
+        allSources: tx(['payables', 'filters', 'allSources'], 'All sources'),
         statusOptions: {
-          to_pay: payablesAny.status?.toPay?.value ?? 'To pay',
-          scheduled: payablesAny.status?.scheduled?.value ?? 'Scheduled',
-          paid: payablesAny.status?.paid?.value ?? 'Paid',
-          overdue: payablesAny.status?.overdue?.value ?? 'Overdue',
-          archived: payablesAny.status?.archived?.value ?? 'Archived',
+          to_pay: tx(['payables', 'status', 'toPay'], 'To pay'),
+          scheduled: tx(['payables', 'status', 'scheduled'], 'Scheduled'),
+          paid: tx(['payables', 'status', 'paid'], 'Paid'),
+          overdue: tx(['payables', 'status', 'overdue'], 'Overdue'),
+          archived: tx(['payables', 'status', 'archived'], 'Archived'),
         },
         sourceOptions: {
-          manual: payablesAny.sources?.manual?.value ?? 'Manual',
-          invoice: payablesAny.sources?.invoice?.value ?? 'Invoice',
-          statement: payablesAny.sources?.statement?.value ?? 'Statement',
+          manual: tx(['payables', 'sources', 'manual'], 'Manual'),
+          invoice: tx(['payables', 'sources', 'invoice'], 'Invoice'),
+          statement: tx(['payables', 'sources', 'statement'], 'Statement'),
         },
         sortOptions: {
-          dueDateAsc: payablesAny.sort?.dueDateAsc?.value ?? 'Due date (earliest)',
-          dueDateDesc: payablesAny.sort?.dueDateDesc?.value ?? 'Due date (latest)',
-          amountDesc: payablesAny.sort?.amountDesc?.value ?? 'Amount (highest)',
-          vendorAsc: payablesAny.sort?.vendorAsc?.value ?? 'Vendor (A-Z)',
+          dueDateAsc: tx(['payables', 'sort', 'dueDateAsc'], 'Due date (earliest)'),
+          dueDateDesc: tx(['payables', 'sort', 'dueDateDesc'], 'Due date (latest)'),
+          amountDesc: tx(['payables', 'sort', 'amountDesc'], 'Amount (highest)'),
+          vendorAsc: tx(['payables', 'sort', 'vendorAsc'], 'Vendor (A-Z)'),
         },
       },
       list: {
-        vendor: payablesAny.list?.vendor?.value ?? 'Vendor',
-        dueDate: payablesAny.list?.dueDate?.value ?? 'Due date',
-        amount: payablesAny.list?.amount?.value ?? 'Amount',
-        source: payablesAny.list?.source?.value ?? 'Source',
-        status: payablesAny.list?.status?.value ?? 'Status',
-        actions: payablesAny.list?.actions?.value ?? 'Actions',
-        markPaid: payablesAny.actions?.markPaid?.value ?? 'Mark paid',
-        edit: payablesAny.actions?.edit?.value ?? 'Edit',
-        archive: payablesAny.actions?.archive?.value ?? 'Archive',
-        delete: payablesAny.actions?.delete?.value ?? 'Delete',
-        pageShown: (t as any)?.pagination?.shown?.value ?? 'Showing {from}–{to} of {count}',
-        previous: (t as any)?.pagination?.previous?.value ?? 'Previous',
-        next: (t as any)?.pagination?.next?.value ?? 'Next',
-        pageOf: (t as any)?.pagination?.pageOf?.value ?? 'Page {page} of {count}',
+        vendor: tx(['payables', 'list', 'vendor'], 'Vendor'),
+        dueDate: tx(['payables', 'list', 'dueDate'], 'Due date'),
+        amount: tx(['payables', 'list', 'amount'], 'Amount'),
+        source: tx(['payables', 'list', 'source'], 'Source'),
+        status: tx(['payables', 'list', 'status'], 'Status'),
+        actions: tx(['payables', 'list', 'actions'], 'Actions'),
+        markPaid: tx(['payables', 'actions', 'markPaid'], 'Mark paid'),
+        edit: tx(['payables', 'actions', 'edit'], 'Edit'),
+        archive: tx(['payables', 'actions', 'archive'], 'Archive'),
+        delete: tx(['payables', 'actions', 'delete'], 'Delete'),
+        pageShown: tx(['pagination', 'shown'], 'Showing {from}–{to} of {count}'),
+        previous: tx(['pagination', 'previous'], 'Previous'),
+        next: tx(['pagination', 'next'], 'Next'),
+        pageOf: tx(['pagination', 'pageOf'], 'Page {page} of {count}'),
         statusLabels: {
-          to_pay: payablesAny.status?.toPay?.value ?? 'To pay',
-          scheduled: payablesAny.status?.scheduled?.value ?? 'Scheduled',
-          paid: payablesAny.status?.paid?.value ?? 'Paid',
-          overdue: payablesAny.status?.overdue?.value ?? 'Overdue',
-          archived: payablesAny.status?.archived?.value ?? 'Archived',
+          to_pay: tx(['payables', 'status', 'toPay'], 'To pay'),
+          scheduled: tx(['payables', 'status', 'scheduled'], 'Scheduled'),
+          paid: tx(['payables', 'status', 'paid'], 'Paid'),
+          overdue: tx(['payables', 'status', 'overdue'], 'Overdue'),
+          archived: tx(['payables', 'status', 'archived'], 'Archived'),
         },
         sourceLabels: {
-          manual: payablesAny.sources?.manual?.value ?? 'Manual',
-          invoice: payablesAny.sources?.invoice?.value ?? 'Invoice',
-          statement: payablesAny.sources?.statement?.value ?? 'Statement',
+          manual: tx(['payables', 'sources', 'manual'], 'Manual'),
+          invoice: tx(['payables', 'sources', 'invoice'], 'Invoice'),
+          statement: tx(['payables', 'sources', 'statement'], 'Statement'),
         },
       },
       drawer: {
-        createTitle: payablesAny.drawer?.createTitle?.value ?? 'Create payable',
-        editTitle: payablesAny.drawer?.editTitle?.value ?? 'Edit payable',
-        vendor: payablesAny.drawer?.vendor?.value ?? 'Vendor',
-        amount: payablesAny.drawer?.amount?.value ?? 'Amount',
-        currency: payablesAny.drawer?.currency?.value ?? 'Currency',
-        dueDate: payablesAny.drawer?.dueDate?.value ?? 'Due date',
-        source: payablesAny.drawer?.source?.value ?? 'Source',
-        status: payablesAny.drawer?.status?.value ?? 'Status',
-        comment: payablesAny.drawer?.comment?.value ?? 'Comment',
-        save: payablesAny.drawer?.save?.value ?? 'Save',
-        saving: payablesAny.drawer?.saving?.value ?? 'Saving...',
-        cancel: payablesAny.drawer?.cancel?.value ?? 'Cancel',
+        createTitle: tx(['payables', 'drawer', 'createTitle'], 'Create payable'),
+        editTitle: tx(['payables', 'drawer', 'editTitle'], 'Edit payable'),
+        vendor: tx(['payables', 'drawer', 'vendor'], 'Vendor'),
+        amount: tx(['payables', 'drawer', 'amount'], 'Amount'),
+        currency: tx(['payables', 'drawer', 'currency'], 'Currency'),
+        dueDate: tx(['payables', 'drawer', 'dueDate'], 'Due date'),
+        source: tx(['payables', 'drawer', 'source'], 'Source'),
+        status: tx(['payables', 'drawer', 'status'], 'Status'),
+        comment: tx(['payables', 'drawer', 'comment'], 'Comment'),
+        save: tx(['payables', 'drawer', 'save'], 'Save'),
+        saving: tx(['payables', 'drawer', 'saving'], 'Saving...'),
+        cancel: tx(['payables', 'drawer', 'cancel'], 'Cancel'),
         sourceOptions: {
-          manual: payablesAny.sources?.manual?.value ?? 'Manual',
-          invoice: payablesAny.sources?.invoice?.value ?? 'Invoice',
-          statement: payablesAny.sources?.statement?.value ?? 'Statement',
+          manual: tx(['payables', 'sources', 'manual'], 'Manual'),
+          invoice: tx(['payables', 'sources', 'invoice'], 'Invoice'),
+          statement: tx(['payables', 'sources', 'statement'], 'Statement'),
         },
         statusOptions: {
-          to_pay: payablesAny.status?.toPay?.value ?? 'To pay',
-          scheduled: payablesAny.status?.scheduled?.value ?? 'Scheduled',
-          paid: payablesAny.status?.paid?.value ?? 'Paid',
-          overdue: payablesAny.status?.overdue?.value ?? 'Overdue',
-          archived: payablesAny.status?.archived?.value ?? 'Archived',
+          to_pay: tx(['payables', 'status', 'toPay'], 'To pay'),
+          scheduled: tx(['payables', 'status', 'scheduled'], 'Scheduled'),
+          paid: tx(['payables', 'status', 'paid'], 'Paid'),
+          overdue: tx(['payables', 'status', 'overdue'], 'Overdue'),
+          archived: tx(['payables', 'status', 'archived'], 'Archived'),
         },
       },
-      emptyTitle: payablesAny.empty?.title?.value ?? 'No payables found',
-      emptyDescription:
-        payablesAny.empty?.description?.value ??
+      emptyTitle: tx(['payables', 'empty', 'title'], 'No payables found'),
+      emptyDescription: tx(
+        ['payables', 'empty', 'description'],
         'Try changing filters or create your first payable.',
-      authLoading: payablesAny.auth?.loading?.value ?? 'Loading...',
-      loginRequired: payablesAny.auth?.loginRequired?.value ?? 'Please sign in to view payables.',
-      noWorkspace:
-        payablesAny.auth?.workspaceRequired?.value ?? 'Select a workspace to view payables.',
+      ),
+      authLoading: tx(['payables', 'auth', 'loading'], 'Loading...'),
+      loginRequired: tx(['payables', 'auth', 'loginRequired'], 'Please sign in to view payables.'),
+      noWorkspace: tx(
+        ['payables', 'auth', 'workspaceRequired'],
+        'Select a workspace to view payables.',
+      ),
       toasts: {
-        loadFailed: payablesAny.toasts?.loadFailed?.value ?? 'Failed to load payables',
-        createSuccess: payablesAny.toasts?.createSuccess?.value ?? 'Payable created',
-        createFailed: payablesAny.toasts?.createFailed?.value ?? 'Failed to create payable',
-        updateSuccess: payablesAny.toasts?.updateSuccess?.value ?? 'Payable updated',
-        updateFailed: payablesAny.toasts?.updateFailed?.value ?? 'Failed to update payable',
-        markPaidSuccess: payablesAny.toasts?.markPaidSuccess?.value ?? 'Marked as paid',
-        markPaidFailed:
-          payablesAny.toasts?.markPaidFailed?.value ?? 'Failed to mark payable as paid',
-        archiveSuccess: payablesAny.toasts?.archiveSuccess?.value ?? 'Payable archived',
-        archiveFailed: payablesAny.toasts?.archiveFailed?.value ?? 'Failed to archive payable',
-        deleteSuccess: payablesAny.toasts?.deleteSuccess?.value ?? 'Payable deleted',
-        deleteFailed: payablesAny.toasts?.deleteFailed?.value ?? 'Failed to delete payable',
-        deleteConfirm: payablesAny.toasts?.deleteConfirm?.value ?? 'Delete {vendor}?',
-        exportSuccess: payablesAny.toasts?.exportSuccess?.value ?? 'Export started',
-        exportFailed: payablesAny.toasts?.exportFailed?.value ?? 'Failed to export payables',
+        loadFailed: tx(['payables', 'toasts', 'loadFailed'], 'Failed to load payables'),
+        createSuccess: tx(['payables', 'toasts', 'createSuccess'], 'Payable created'),
+        createFailed: tx(['payables', 'toasts', 'createFailed'], 'Failed to create payable'),
+        updateSuccess: tx(['payables', 'toasts', 'updateSuccess'], 'Payable updated'),
+        updateFailed: tx(['payables', 'toasts', 'updateFailed'], 'Failed to update payable'),
+        markPaidSuccess: tx(['payables', 'toasts', 'markPaidSuccess'], 'Marked as paid'),
+        markPaidFailed: tx(
+          ['payables', 'toasts', 'markPaidFailed'],
+          'Failed to mark payable as paid',
+        ),
+        archiveSuccess: tx(['payables', 'toasts', 'archiveSuccess'], 'Payable archived'),
+        archiveFailed: tx(['payables', 'toasts', 'archiveFailed'], 'Failed to archive payable'),
+        deleteSuccess: tx(['payables', 'toasts', 'deleteSuccess'], 'Payable deleted'),
+        deleteFailed: tx(['payables', 'toasts', 'deleteFailed'], 'Failed to delete payable'),
+        deleteConfirm: tx(['payables', 'toasts', 'deleteConfirm'], 'Delete {vendor}?'),
+        exportSuccess: tx(['payables', 'toasts', 'exportSuccess'], 'Export started'),
+        exportFailed: tx(['payables', 'toasts', 'exportFailed'], 'Failed to export payables'),
       },
     }),
-    [payablesAny, t],
+    [t, tx],
   );
 
   const loadData = useCallback(
@@ -442,7 +481,7 @@ export function PayablesView() {
   if (authLoading || workspaceLoading || loading) {
     return (
       <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
-        <Spinner size={80} className="text-primary" />
+        <Spinner className="h-20 w-20 text-primary" />
       </div>
     );
   }

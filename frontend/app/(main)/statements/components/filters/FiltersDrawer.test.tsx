@@ -6,8 +6,30 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FiltersDrawer } from './FiltersDrawer';
 import { DEFAULT_STATEMENT_FILTERS } from './statement-filters';
 
+type ShellProps = {
+  isOpen: boolean;
+  children: React.ReactNode;
+  title: React.ReactNode;
+};
+
+type ButtonProps = {
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+};
+
+type RowProps = {
+  label: React.ReactNode;
+  onClick?: () => void;
+};
+
+type SectionProps = {
+  title: React.ReactNode;
+  children: React.ReactNode;
+};
+
 vi.mock('@/app/components/ui/drawer-shell', () => ({
-  DrawerShell: ({ isOpen, children, title }: any) =>
+  DrawerShell: ({ isOpen, children, title }: ShellProps) =>
     isOpen ? (
       <div>
         <div>{title}</div>
@@ -17,7 +39,7 @@ vi.mock('@/app/components/ui/drawer-shell', () => ({
 }));
 
 vi.mock('@/app/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
+  Button: ({ children, onClick, disabled }: ButtonProps) => (
     <button type="button" onClick={onClick} disabled={disabled}>
       {children}
     </button>
@@ -25,7 +47,7 @@ vi.mock('@/app/components/ui/button', () => ({
 }));
 
 vi.mock('./FilterSection', () => ({
-  FilterSection: ({ title, children }: any) => (
+  FilterSection: ({ title, children }: SectionProps) => (
     <section data-testid={`section-${String(title).toLowerCase()}`}>
       <h2>{title}</h2>
       {children}
@@ -34,7 +56,7 @@ vi.mock('./FilterSection', () => ({
 }));
 
 vi.mock('./FilterRow', () => ({
-  FilterRow: ({ label, onClick }: any) => (
+  FilterRow: ({ label, onClick }: RowProps) => (
     <button type="button" onClick={onClick}>
       {label}
     </button>
@@ -42,7 +64,7 @@ vi.mock('./FilterRow', () => ({
 }));
 
 vi.mock('./FilterOptionRow', () => ({
-  FilterOptionRow: ({ label, onClick }: any) => (
+  FilterOptionRow: ({ label, onClick }: RowProps) => (
     <button type="button" onClick={onClick}>
       {label}
     </button>
@@ -50,7 +72,7 @@ vi.mock('./FilterOptionRow', () => ({
 }));
 
 vi.mock('./FilterAvatarRow', () => ({
-  FilterAvatarRow: ({ label, onClick }: any) => (
+  FilterAvatarRow: ({ label, onClick }: RowProps) => (
     <button type="button" onClick={onClick}>
       {label}
     </button>

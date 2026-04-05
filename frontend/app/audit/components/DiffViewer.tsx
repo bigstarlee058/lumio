@@ -14,7 +14,7 @@ const FIELD_LABELS: Record<string, string> = {
   position: 'Position',
 };
 
-const formatValue = (value: any) => {
+const formatValue = (value: unknown) => {
   if (value === null || value === undefined) return '—';
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
@@ -25,6 +25,9 @@ const formatValue = (value: any) => {
     return String(value);
   }
 };
+
+const getRecord = (value: unknown): Record<string, unknown> | null =>
+  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
 
 export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
   if (!diff) {
@@ -73,8 +76,8 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
       </div>
       <div className="divide-y divide-gray-200">
         {keys.map(key => {
-          const beforeValue = (before as any)?.[key];
-          const afterValue = (after as any)?.[key];
+          const beforeValue = getRecord(before)?.[key];
+          const afterValue = getRecord(after)?.[key];
           const hadBefore = Object.prototype.hasOwnProperty.call(before, key);
           const hadAfter = Object.prototype.hasOwnProperty.call(after, key);
           const changed = JSON.stringify(beforeValue) !== JSON.stringify(afterValue);

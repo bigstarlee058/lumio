@@ -6,6 +6,7 @@ import { FilterOptionRow } from '@/app/(main)/statements/components/filters/Filt
 import { RangeCalendar } from '@heroui/calendar';
 import { parseDate } from '@internationalized/date';
 import { ChevronRight } from 'lucide-react';
+import type { ComponentProps } from 'react';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,
@@ -21,6 +22,10 @@ type DateModeOption = {
   value: StatementFilterDateMode;
   label: string;
 };
+
+type RangeCalendarProps = ComponentProps<typeof RangeCalendar>;
+type CalendarRangeValue = RangeCalendarProps['value'];
+type CalendarRangeChange = Parameters<NonNullable<RangeCalendarProps['onChange']>>[0];
 
 type DateFilterDropdownProps = {
   open: boolean;
@@ -70,7 +75,7 @@ export function DateFilterDropdown({
   const current = ensureDate(value);
   const calendarStart = toCalendarDate(current.date);
   const calendarEnd = toCalendarDate(current.dateTo || current.date);
-  const calendarValue = calendarStart
+  const calendarValue: CalendarRangeValue = calendarStart
     ? {
         start: calendarStart,
         end: calendarEnd || calendarStart,
@@ -129,8 +134,8 @@ export function DateFilterDropdown({
             <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50/60 px-3 py-3">
               <RangeCalendar
                 aria-label="Date range"
-                value={calendarValue as any}
-                onChange={(range: any) => {
+                value={calendarValue}
+                onChange={(range: CalendarRangeChange) => {
                   const startValue = range?.start?.toString?.();
                   const endValue = range?.end?.toString?.() || startValue;
                   const fallbackDate = current.date || resolveFallbackDate();

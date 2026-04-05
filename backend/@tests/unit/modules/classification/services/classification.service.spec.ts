@@ -405,6 +405,7 @@ describe('ClassificationService', () => {
       };
 
       jest.spyOn(categoryLearningRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(categoryLearningRepository, 'create').mockImplementation((data) => data as CategoryLearning);
       jest.spyOn(categoryLearningRepository, 'save').mockResolvedValue({} as CategoryLearning);
 
       const result = await service.classifyTransactionsBatch(

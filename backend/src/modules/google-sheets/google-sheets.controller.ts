@@ -20,12 +20,24 @@ import { ConnectSheetDto } from './dto/connect-sheet.dto';
 import { OAuthCallbackDto } from './dto/oauth-callback.dto';
 import { GoogleSheetsService } from './google-sheets.service';
 
+type PublicGoogleSheet = {
+  id: string;
+  sheetId: string;
+  sheetName: string;
+  worksheetName: string | null;
+  isActive: boolean;
+  refreshToken?: string | null;
+  lastSync: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 @Controller('google-sheets')
 @UseGuards(JwtAuthGuard)
 export class GoogleSheetsController {
   constructor(private readonly googleSheetsService: GoogleSheetsService) {}
 
-  private toPublicSheet(sheet: any) {
+  private toPublicSheet(sheet: PublicGoogleSheet) {
     const refreshToken = typeof sheet.refreshToken === 'string' ? sheet.refreshToken : '';
     return {
       id: sheet.id,

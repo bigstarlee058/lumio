@@ -29,8 +29,8 @@ export class CreateDataEntryDto {
   @IsString()
   currency?: string;
 
-  @ValidateIf(o => {
-    const raw = (o as any)?.customFieldValue;
+  @ValidateIf((o: Pick<CreateDataEntryDto, 'customFieldValue'>) => {
+    const raw = o.customFieldValue;
     if (raw === undefined || raw === null) return false;
     return String(raw).trim().length > 0;
   })

@@ -51,6 +51,23 @@ import type { UpdateCustomTableDto } from './dto/update-custom-table.dto';
 import { AiPaidStatusClassifier, type PaidStatusInput } from './helpers/ai-paid-status.helper';
 
 type DataEntryFieldKey = 'date' | 'type' | 'amount' | 'currency' | 'note';
+type JsonObject = Record<string, unknown>;
+type RowDataValue = string | number | boolean | null | undefined | JsonObject | RowDataValue[];
+type RowDataRecord = Record<string, RowDataValue>;
+type ColumnSourceConfig = {
+  kind?: string;
+  field?: string;
+  name?: string;
+  colIndex?: number;
+};
+type DriverErrorLike = { driverError?: { code?: string } };
+type RowStylesRecord = Record<string, JsonObject>;
+type CustomTableWithViewSettings = CustomTable & { viewSettings?: JsonObject };
+type ColumnWithStyle = CustomTableColumn & { style?: CustomTableColumnStyle['style'] | null };
+type ColumnDefinitionConfig = JsonObject | null;
+type RowInsertData = Record<string, string | number | null>;
+type ViewSettingsColumns = Record<string, { width?: number }>;
+type QueryParams = Record<string, string | number | boolean | string[] | number[] | null>;
 
 @Injectable()
 export class CustomTablesService {
@@ -84,9 +101,87 @@ export class CustomTablesService {
     private readonly auditService: AuditService,
   ) {}
 
+  private getDriverErrorCode(error: unknown): string | undefined {
+    return typeof error === 'object' && error !== null
+      ? (error as DriverErrorLike).driverError?.code
+      : undefined;
+  }
+
+  private toRowDataRecord(data: unknown): RowDataRecord {
+    return typeof data === 'object' && data !== null && !Array.isArray(data)
+      ? (data as RowDataRecord)
+      : {};
+  }
+
+  private getRowDataValue(data: Record<string, unknown>, key: string): unknown {
+    return data[key];
+  }
+
+  private getColumnSourceConfig(config: CustomTableColumn['config'] | null | undefined): ColumnSourceConfig | null {
+    if (!config || typeof config !== 'object') {
+      return null;
+    }
+    const source = (config as { source?: unknown }).source;
+    return typeof source === 'object' && source !== null ? (source as ColumnSourceConfig) : null;
+  }
+
+  private getJsonMeta(meta?: JsonObject | null): JsonObject | null {
+    return meta ?? null;
+  }
+
+  private getViewSettingsObject(table: CustomTable): JsonObject {
+    return table.viewSettings && typeof table.viewSettings === 'object'
+      ? (table.viewSettings as JsonObject)
+      : {};
+  }
+
+  private getViewSettingsColumns(viewSettings: JsonObject): ViewSettingsColumns {
+    const columns = viewSettings.columns;
+    return typeof columns === 'object' && columns !== null ? (columns as ViewSettingsColumns) : {};
+  }
+
+  private attachColumnStyles(
+    columns: CustomTableColumn[],
+    stylesByKey: Map<string, CustomTableColumnStyle['style']>,
+  ): ColumnWithStyle[] {
+    return columns.map(column => {
+      const columnWithStyle = column as ColumnWithStyle;
+      columnWithStyle.style = stylesByKey.get(column.key) || null;
+      return columnWithStyle;
+    });
+  }
+
+  private mergeRowStyles(
+    rows: CustomTableRow[],
+    cellStyles: CustomTableCellStyle[],
+  ): CustomTableRow[] {
+    const stylesByRowId = new Map<string, JsonObject>();
+    rows.forEach(row => {
+      if (row.styles && typeof row.styles === 'object') {
+        stylesByRowId.set(row.id, row.styles as JsonObject);
+      }
+    });
+
+    const byRow: RowStylesRecord = {};
+    for (const style of cellStyles) {
+      const current = byRow[style.rowId] || {};
+      current[style.columnKey] = style.style as JsonObject;
+      byRow[style.rowId] = current;
+    }
+
+    rows.forEach(row => {
+      row.styles = {
+        ...(byRow[row.id] || {}),
+        ...(stylesByRowId.get(row.id) || {}),
+      };
+    });
+
+    return rows;
+  }
+
   private throwHelpfulSchemaError(error: unknown): never {
     if (error instanceof QueryFailedError) {
-      const code = (error as any)?.driverError?.code;
+      const code = this.getDriverErrorCode(error);
       if (code === '42P01' || code === '42703') {
         throw new BadRequestException(
           'Схема БД не обновлена для Custom Tables. Запустите миграции (`npm -C backend run migration:run`) или включите автозапуск миграций (переменная окружения `RUN_MIGRATIONS=true`) и перезапустите backend.',
@@ -160,14 +255,14 @@ export class CustomTablesService {
   }
 
   private sanitizeRowData(
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     allowedKeys: Set<string>,
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
       return {};
     }
 
-    const sanitized: Record<string, any> = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data)) {
       if (allowedKeys.has(key)) {
         sanitized[key] = value;
@@ -230,11 +325,11 @@ export class CustomTablesService {
     return { commentKeys, counterpartyKeys };
   }
 
-  private collectRowText(data: Record<string, any>, keys: string[]): string {
+  private collectRowText(data: Record<string, unknown>, keys: string[]): string {
     if (!data || typeof data !== 'object') return '';
     const parts: string[] = [];
     for (const key of keys) {
-      const value = (data as any)[key];
+      const value = this.getRowDataValue(data, key);
       if (value === null || value === undefined) continue;
       if (Array.isArray(value)) {
         for (const item of value) {
@@ -267,8 +362,7 @@ export class CustomTablesService {
     };
 
     for (const column of columns) {
-      const config = column.config && typeof column.config === 'object' ? column.config : null;
-      const source = config ? (config as any).source : null;
+      const source = this.getColumnSourceConfig(column.config);
       if (source?.kind === 'data_entry_field' && source.field && !fieldKeyByName[source.field]) {
         fieldKeyByName[source.field as DataEntryFieldKey] = column.key;
       }
@@ -326,7 +420,7 @@ export class CustomTablesService {
     entityId: string;
     action: AuditAction;
     diff?: AuditEventDiff | null;
-    meta?: Record<string, any> | null;
+    meta?: JsonObject | null;
     batchId?: string | null;
     severity?: Severity;
     isUndoable?: boolean;
@@ -358,7 +452,7 @@ export class CustomTablesService {
     workspaceId: string | null;
     tableId: string;
     rows: CustomTableRow[];
-    meta?: Record<string, any>;
+    meta?: JsonObject;
   }) {
     if (!params.rows.length) return;
     try {
@@ -457,9 +551,7 @@ export class CustomTablesService {
         select: ['columnKey', 'style'],
       });
       const byKey = new Map(styles.map(s => [s.columnKey, s.style]));
-      table.columns.forEach(col => {
-        (col as any).style = byKey.get(col.key) || null;
-      });
+      table.columns = this.attachColumnStyles(table.columns, byKey);
     } catch (error) {
       this.logger.warn(`Failed to load column styles for tableId=${tableId}`);
     }
@@ -566,7 +658,7 @@ export class CustomTablesService {
       id: string;
       title: string;
       type: CustomTableColumnType;
-      config?: Record<string, any> | null;
+      config?: ColumnDefinitionConfig;
     }> = [
       {
         id: 'date',
@@ -704,7 +796,7 @@ export class CustomTablesService {
     }
 
     const rowsToInsert = entries.map((entry, idx) => {
-      const data: Record<string, any> = {};
+      const data: RowInsertData = {};
       data[dateKey] = entry.date;
       data[amountKey] = entry.amount;
       data[currencyKey] = entry.currency || 'KZT';
@@ -841,7 +933,7 @@ export class CustomTablesService {
       id: string;
       title: string;
       type: CustomTableColumnType;
-      config?: Record<string, any> | null;
+      config?: ColumnDefinitionConfig;
     }> = [
       {
         id: 'date',
@@ -932,7 +1024,7 @@ export class CustomTablesService {
     }
 
     const rowsToInsert = entries.map((entry, idx) => {
-      const data: Record<string, any> = {};
+      const data: RowInsertData = {};
       data[dateKey] = entry.date;
       data[amountKey] = entry.amount;
       data[currencyKey] = entry.currency || 'KZT';
@@ -1055,7 +1147,7 @@ export class CustomTablesService {
     };
 
     const rowsToInsert = entries.map((entry, idx) => {
-      const data: Record<string, any> = {};
+      const data: RowInsertData = {};
       const dateKey = fieldKeyByName.date;
       const amountKey = fieldKeyByName.amount;
       const currencyKey = fieldKeyByName.currency;
@@ -1098,9 +1190,7 @@ export class CustomTablesService {
           createdRows.push(...savedChunk);
         }
       }
-      await manager.update(CustomTable, { id: table.id }, {
-        dataEntrySyncedAt: syncedAt,
-      } as any);
+      await manager.update(CustomTable, { id: table.id }, { dataEntrySyncedAt: syncedAt });
     });
 
     await this.logRowBatchCreate({
@@ -1154,7 +1244,7 @@ export class CustomTablesService {
     try {
       transactions = await this.transactionRepository.find({
         where: { statementId: In(statementIds) },
-        order: { transactionDate: 'ASC', createdAt: 'ASC' } as any,
+        order: { transactionDate: 'ASC', createdAt: 'ASC' },
       });
     } catch (error) {
       this.throwHelpfulSchemaError(error);
@@ -1288,7 +1378,7 @@ export class CustomTablesService {
     };
 
     const rowsToInsert = transactions.map((tx, idx) => {
-      const data: Record<string, any> = {};
+      const data: RowInsertData = {};
 
       if (includeStatementCol && statementKey) {
         data[statementKey] = statementNameById.get(tx.statementId) || tx.statementId;
@@ -1637,11 +1727,11 @@ export class CustomTablesService {
           ELSE NULL
         END)`;
 
-        const apply = (sql: string, paramsObj: Record<string, any>) => {
+        const apply = (sql: string, paramsObj: QueryParams) => {
           query.andWhere(sql, paramsObj);
         };
 
-        const withCol = (paramsObj: Record<string, any>) => ({
+        const withCol = (paramsObj: QueryParams): QueryParams => ({
           ...paramsObj,
           [colParam]: col,
         });
@@ -1866,32 +1956,12 @@ export class CustomTablesService {
       if (!rows.length) return { items: [], total };
 
       try {
-        const stylesByRowId = new Map<string, Record<string, any>>();
-        rows.forEach(row => {
-          if (row.styles && typeof row.styles === 'object') {
-            stylesByRowId.set(row.id, row.styles as any);
-          }
-        });
-
         const rowIds = rows.map(r => r.id);
         const styles = await this.customTableCellStyleRepository.find({
           where: { rowId: In(rowIds) },
           select: ['rowId', 'columnKey', 'style'],
         });
-        const byRow = new Map<string, Record<string, any>>();
-        for (const s of styles) {
-          const current = byRow.get(s.rowId) || {};
-          current[s.columnKey] = s.style;
-          byRow.set(s.rowId, current);
-        }
-        rows.forEach(row => {
-          const merged = { ...(byRow.get(row.id) || {}) };
-          const rowLevel = stylesByRowId.get(row.id);
-          if (rowLevel) {
-            Object.assign(merged, rowLevel);
-          }
-          (row as any).styles = merged;
-        });
+        this.mergeRowStyles(rows, styles);
       } catch (error) {
         this.logger.warn(`Failed to load cell styles for tableId=${tableId}`);
       }
@@ -2045,8 +2115,8 @@ export class CustomTablesService {
     const batchId = patchKeys.length > 1 ? uuidv4() : null;
 
     for (const key of patchKeys) {
-      const beforeValue = (beforeData as any)?.[key] ?? null;
-      const afterValue = (saved.data as any)?.[key] ?? null;
+      const beforeValue = beforeData?.[key] ?? null;
+      const afterValue = this.toRowDataRecord(saved.data)[key] ?? null;
       await this.logEvent({
         userId,
         workspaceId,
@@ -2186,14 +2256,11 @@ export class CustomTablesService {
     }
 
     const viewSettings = (
-      table.viewSettings && typeof table.viewSettings === 'object' ? table.viewSettings : {}
-    ) as Record<string, any>;
-    const columns = (
-      viewSettings.columns && typeof viewSettings.columns === 'object' ? viewSettings.columns : {}
-    ) as Record<string, any>;
-    const existing = (
-      columns[columnKey] && typeof columns[columnKey] === 'object' ? columns[columnKey] : {}
-    ) as Record<string, any>;
+      this.getViewSettingsObject(table)
+    ) as JsonObject;
+    const columns = this.getViewSettingsColumns(viewSettings);
+    const existing =
+      columns[columnKey] && typeof columns[columnKey] === 'object' ? columns[columnKey] : {};
     const next = { ...existing };
 
     if (dto.width !== undefined) {

@@ -1,8 +1,15 @@
+/// <reference types="jest" />
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
 import { ParserFactoryService } from '../services/parser-factory.service';
+
+type ExpectedTransactionInput = Record<string, unknown> & {
+  transactionDate?: string;
+  date?: string;
+};
 
 function guessFileType(filePath: string): FileType {
   const ext = path.extname(filePath).toLowerCase();
@@ -15,7 +22,7 @@ function guessFileType(filePath: string): FileType {
 function loadExpected(filePath: string): ParsedStatement {
   const raw = fs.readFileSync(filePath, 'utf8');
   const parsed = JSON.parse(raw);
-  const tx = Array.isArray(parsed.transactions) ? parsed.transactions : [];
+  const tx = Array.isArray(parsed.transactions) ? (parsed.transactions as ExpectedTransactionInput[]) : [];
   const metadata = parsed.metadata || {};
   return {
     metadata: {
@@ -26,9 +33,11 @@ function loadExpected(filePath: string): ParsedStatement {
       balanceStart: metadata.balanceStart ?? metadata.balance_start,
       balanceEnd: metadata.balanceEnd ?? metadata.balance_end,
     },
-    transactions: tx.map((t: any) => ({
+    transactions: tx.map(t => ({
       ...t,
       transactionDate: new Date(t.transactionDate || t.date),
+      counterpartyName: typeof t.counterpartyName === 'string' ? t.counterpartyName : '',
+      paymentPurpose: typeof t.paymentPurpose === 'string' ? t.paymentPurpose : '',
     })),
   };
 }
@@ -89,7 +98,7 @@ describe('golden parsing (optional)', () => {
       expect(actual.metadata.currency).toBe(expectedData.metadata.currency);
       expect(actual.transactions.length).toBe(expectedData.transactions.length);
 
-      const sum = (list: any[], key: 'debit' | 'credit') =>
+      const sum = (list: ParsedStatement['transactions'], key: 'debit' | 'credit') =>
         list.reduce((acc, t) => acc + (Number(t[key]) || 0), 0);
 
       expect(sum(actual.transactions, 'debit')).toBeCloseTo(

@@ -28,7 +28,7 @@ export class CsvParser extends BaseTabularParser {
           headers = headerList.map(h => h.toLowerCase().trim());
           columnMapping = this.mapColumns(headers);
         })
-        .on('data', (row: any) => {
+        .on('data', (row: Record<string, string>) => {
           if (isFirstRow) {
             isFirstRow = false;
             // Skip if first row looks like header

@@ -11,6 +11,8 @@ import {
 } from 'class-validator';
 import { CustomTableColumnType } from '../../../entities/custom-table-column.entity';
 
+type JsonObject = Record<string, unknown>;
+
 export class CreateCustomTableColumnDto {
   @IsString()
   @MinLength(1)
@@ -36,5 +38,5 @@ export class CreateCustomTableColumnDto {
 
   @IsOptional()
   @IsObject()
-  config?: Record<string, any> | null;
+  config?: JsonObject | null;
 }

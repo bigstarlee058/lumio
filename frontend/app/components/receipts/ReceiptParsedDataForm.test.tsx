@@ -4,11 +4,22 @@ import { describe, expect, it, vi } from 'vitest';
 import { ReceiptParsedDataForm } from './ReceiptParsedDataForm';
 import type { EditableReceiptParsedData } from './receipt-types';
 
+type CustomDatePickerMockProps = {
+  value?: string;
+  onChange?: (value: string) => void;
+  label?: React.ReactNode;
+  containerTestId?: string;
+};
+
 vi.mock('@/app/components/CustomDatePicker', () => ({
-  default: ({ value, onChange, label, containerTestId }: any) => (
+  default: ({ value, onChange, label, containerTestId }: CustomDatePickerMockProps) => (
     <div data-testid={containerTestId ?? 'mock-custom-date-picker'}>
       <span>{label}</span>
-      <button type="button" aria-label="HeroUI Date" onClick={() => onChange('2024-07-29')}>
+      <button
+        type="button"
+        aria-label="HeroUI Date"
+        onClick={() => onChange?.('2024-07-29')}
+      >
         {value || 'Pick date'}
       </button>
     </div>

@@ -29,9 +29,54 @@ import type { UpdateDropboxSettingsDto } from './dto/update-dropbox-settings.dto
 
 const DEFAULT_SYNC_TIME = '03:00';
 
+type DropboxApiClient = Dropbox & {
+  auth: {
+    setRefreshToken(refreshToken: string): void;
+    refreshAccessToken(): Promise<{ result: { access_token?: string; expires_in?: number } }>;
+    getAuthenticationUrl(
+      redirectUri: string,
+      state: string,
+      responseType: string,
+      tokenAccessType: string,
+      scope?: string,
+      includeGrantedScopes?: string,
+      usePkce?: boolean,
+    ): string;
+    getAccessTokenFromCode(
+      redirectUri: string,
+      code?: string,
+    ): Promise<{ result: { access_token?: string; refresh_token?: string; expires_in?: number } }>;
+  };
+};
+
+type DropboxApiError = {
+  error?: { error_summary?: string };
+  message?: string;
+};
+
+type DropboxFileMetadata = {
+  '.tag': 'file';
+  name?: string;
+  size?: number;
+};
+
+type DropboxDownloadResult = {
+  fileBinary?: Buffer | ArrayBuffer | Uint8Array;
+  fileBlob?: { arrayBuffer(): Promise<ArrayBuffer> };
+};
+
 @Injectable()
 export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   protected readonly logger = new Logger(DropboxService.name);
+
+  private asDropboxApiClient(client: Dropbox): DropboxApiClient {
+    return client as DropboxApiClient;
+  }
+
+  private getDropboxErrorMessage(error: unknown): string {
+    const dropboxError = error as DropboxApiError;
+    return dropboxError.error?.error_summary || dropboxError.message || 'Import failed';
+  }
 
   constructor(
     @InjectRepository(Integration)
@@ -107,9 +152,9 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   protected async refreshAccessToken(
     refreshToken: string,
   ): Promise<{ accessToken: string; expiresAt?: Date }> {
-    const dbx = this.getDropboxClient();
-    (dbx as any).auth.setRefreshToken(refreshToken);
-    const response = await (dbx as any).auth.refreshAccessToken();
+    const dbx = this.asDropboxApiClient(this.getDropboxClient());
+    dbx.auth.setRefreshToken(refreshToken);
+    const response = await dbx.auth.refreshAccessToken();
 
     const accessToken = response.result.access_token;
     if (!accessToken) {
@@ -152,7 +197,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     const dbx = this.getDropboxClient();
 
     return this.buildProviderAuthUrl(user, state =>
-      (dbx as any).auth.getAuthenticationUrl(
+      this.asDropboxApiClient(dbx).auth.getAuthenticationUrl(
         redirectUri,
         state,
         'code',
@@ -181,9 +226,12 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     const dbx = this.getDropboxClient();
     const redirectUri = this.getRedirectUri();
 
-    let tokenResponse: any;
+    let tokenResponse: { result: { access_token?: string; refresh_token?: string; expires_in?: number } };
     try {
-      tokenResponse = await (dbx as any).auth.getAccessTokenFromCode(redirectUri, params.code);
+      tokenResponse = await this.asDropboxApiClient(dbx).auth.getAccessTokenFromCode(
+        redirectUri,
+        params.code,
+      );
     } catch (error) {
       this.logger.error(`Dropbox token exchange failed: ${error}`);
       return `${redirectBase}?status=error&reason=token_exchange_failed`;
@@ -259,8 +307,8 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
         settings.folderName = folderName;
         return this.dropboxSettingsRepository.save(settings);
       }
-    } catch (error: any) {
-      if (error?.error?.error_summary?.includes('path/conflict/folder')) {
+    } catch (error) {
+      if (this.getDropboxErrorMessage(error).includes('path/conflict/folder')) {
         settings.folderId = '/lumio';
         settings.folderName = 'Lumio';
         return this.dropboxSettingsRepository.save(settings);
@@ -286,7 +334,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           };
         }
 
-        const fileMetadata = meta.result as any;
+        const fileMetadata = meta.result as DropboxFileMetadata;
         const originalName = fileMetadata.name || `dropbox-file-${fileId}`;
         const ext = path.extname(path.basename(originalName)).toLowerCase();
 
@@ -305,11 +353,22 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           size: fileMetadata.size || 0,
           getContents: async () => {
             const download = await dbx.filesDownload({ path: fileId });
-            const binary =
-              (download.result as any).fileBinary ||
-              (await (download.result as any).fileBlob?.arrayBuffer());
+            const downloadResult = download.result as DropboxDownloadResult;
+            const binary = downloadResult.fileBinary || (await downloadResult.fileBlob?.arrayBuffer());
 
-            return Buffer.isBuffer(binary) ? binary : Buffer.from(binary);
+            if (Buffer.isBuffer(binary)) {
+              return binary;
+            }
+
+            if (binary instanceof Uint8Array) {
+              return Buffer.from(binary);
+            }
+
+            if (binary instanceof ArrayBuffer) {
+              return Buffer.from(new Uint8Array(binary));
+            }
+
+            return Buffer.from([]);
           },
         };
       },
@@ -323,8 +382,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           undefined,
           false,
         ),
-      getErrorMessage: error =>
-        (error as any)?.error?.error_summary || (error as any)?.message || 'Import failed',
+      getErrorMessage: error => this.getDropboxErrorMessage(error),
     });
   }
 
@@ -345,8 +403,8 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
         return `${fileName}-${stamp}`;
       }
       return `${fileName.slice(0, dot)}-${stamp}${fileName.slice(dot)}`;
-    } catch (error: any) {
-      if (error?.error?.error_summary?.includes('path/not_found')) {
+    } catch (error) {
+      if (this.getDropboxErrorMessage(error).includes('path/not_found')) {
         return fileName;
       }
       throw error;

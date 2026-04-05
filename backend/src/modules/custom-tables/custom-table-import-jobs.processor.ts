@@ -10,6 +10,10 @@ import {
 } from '../../entities/custom-table-import-job.entity';
 import { CustomTableImportJobsService } from './custom-table-import-jobs.service';
 import { CustomTablesImportService } from './custom-tables-import.service';
+import type { GoogleSheetsImportCommitDto } from './dto/google-sheets-import-commit.dto';
+
+type GoogleSheetsCommitJobPayload = GoogleSheetsImportCommitDto;
+type JobUnlockUpdate = { lockedAt: null; lockedBy: null };
 
 @Injectable()
 export class CustomTableImportJobsProcessor {
@@ -27,6 +31,14 @@ export class CustomTableImportJobsProcessor {
     private readonly importService: CustomTablesImportService,
     private readonly jobsService: CustomTableImportJobsService,
   ) {}
+
+  private toRecord(value: unknown): Record<string, unknown> | null {
+    return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+  }
 
   @Interval(2000)
   async tick() {
@@ -72,11 +84,15 @@ export class CustomTableImportJobsProcessor {
       }
 
       if (typeof current === 'object') {
-        const obj = current as Record<string, any>;
-        const directId = obj?.id;
+        const obj = this.toRecord(current);
+        if (!obj) {
+          continue;
+        }
+
+        const directId = obj.id;
         if (typeof directId === 'string' && uuidRe.test(directId)) return directId;
 
-        const maybeRows = obj?.rows;
+        const maybeRows = obj.rows;
         if (Array.isArray(maybeRows)) stack.push(maybeRows);
 
         for (const value of Object.values(obj)) {
@@ -153,7 +169,7 @@ export class CustomTableImportJobsProcessor {
     this.logger.log(`Processing job ${job.id} type=${job.type}`);
     try {
       if (job.type === CustomTableImportJobType.GOOGLE_SHEETS) {
-        const dto = job.payload as any;
+        const dto = job.payload as unknown as GoogleSheetsCommitJobPayload;
         const result = await this.importService.executeGoogleSheetsCommit(job.userId, dto, {
           onProgress: async (progress, stage) => {
             await this.jobsService.updateProgress(job.id, { progress, stage });
@@ -163,15 +179,19 @@ export class CustomTableImportJobsProcessor {
         return;
       }
       throw new Error(`Unsupported job type: ${job.type}`);
-    } catch (error: any) {
-      const message = error?.message || String(error);
+    } catch (error) {
+      const message = this.getErrorMessage(error);
       this.logger.error(`Job ${job.id} failed: ${message}`);
       await this.jobsService.markFailed(job.id, message);
     } finally {
-      await this.jobRepository.update({ id: job.id, status: CustomTableImportJobStatus.RUNNING }, {
+      const update: JobUnlockUpdate = {
         lockedAt: null,
         lockedBy: null,
-      } as any);
+      };
+      await this.jobRepository.update(
+        { id: job.id, status: CustomTableImportJobStatus.RUNNING },
+        update,
+      );
     }
   }
 }

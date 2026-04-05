@@ -9,6 +9,8 @@ import {
 import { User } from './user.entity';
 import { Workspace } from './workspace.entity';
 
+type JsonObject = Record<string, unknown>;
+
 @Entity('idempotency_keys')
 export class IdempotencyKey {
   @PrimaryGeneratedColumn('uuid')
@@ -35,7 +37,7 @@ export class IdempotencyKey {
   responseHash: string;
 
   @Column({ name: 'response_data', type: 'jsonb' })
-  responseData: Record<string, any>;
+  responseData: JsonObject;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

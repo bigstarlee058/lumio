@@ -5,6 +5,12 @@ import { Star } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
+const getApiMessage = (error: unknown, fallback: string) => {
+  if (!error || typeof error !== 'object') return fallback;
+  const response = (error as { response?: { data?: { message?: string } } }).response;
+  return response?.data?.message || fallback;
+};
+
 interface WorkspaceCardProps {
   workspace: {
     id: string;
@@ -30,8 +36,8 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
       if (onFavoriteToggle) {
         onFavoriteToggle();
       }
-    } catch (error: any) {
-      toast.error('Failed to update favorite status');
+    } catch (error: unknown) {
+      toast.error(getApiMessage(error, 'Failed to update favorite status'));
     }
   };
 
