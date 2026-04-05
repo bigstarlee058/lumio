@@ -48,11 +48,12 @@ import {
   type TaxRateOption,
   resolveExpenseDrawerMode,
 } from '@/app/lib/statement-expense-drawer';
+import { useStatementPreview } from './hooks/useStatementPreview';
 import {
-  areAllVisibleSelected,
-  toggleSelectAllVisible,
-  toggleStatementSelection,
-} from '@/app/lib/statement-selection';
+  type DuplicateMeta,
+  type DuplicateOverride,
+  useStatementSelection,
+} from './hooks/useStatementSelection';
 import {
   getStatementDisplayMerchant,
   getStatementMerchantLabel,
@@ -178,34 +179,6 @@ interface Statement {
 
 type UnifiedStatement = Statement;
 
-type DuplicateRole = 'primary' | 'suspected';
-
-
-type DuplicateMeta = {
-  position: number;
-  total: number;
-  role: DuplicateRole;
-  reason: string;
-  groupKey: string;
-  groupLabel: string;
-  groupTone: DuplicateGroupTone;
-  primaryId: string;
-};
-
-type DuplicateOverrideState = 'duplicate' | 'not_duplicate';
-
-type DuplicateOverride = {
-  state: DuplicateOverrideState;
-  groupKey?: string;
-  groupLabel?: string;
-  groupTone?: DuplicateGroupTone;
-  primaryId?: string;
-  position?: number;
-  total?: number;
-};
-
-
-
 
 type Props = {
   stage: StatementStage;
@@ -286,19 +259,10 @@ export default function StatementsListView({ stage }: Props) {
 
   useLockBodyScroll(expenseDrawerOpen);
 
-  const [previewModalOpen, setPreviewModalOpen] = useState(false);
-  const [previewFileId, setPreviewFileId] = useState<string | null>(null);
-  const [previewFileName, setPreviewFileName] = useState<string>('');
-  const [previewSource, setPreviewSource] = useState<'statement' | 'gmail' | 'receipt'>(
-    'statement',
-  );
-  const [previewAllowAttachFile, setPreviewAllowAttachFile] = useState(false);
-  const [selectedStatementIds, setSelectedStatementIds] = useState<string[]>([]);
+  const { preview, openPreview, closePreview } = useStatementPreview();
   const [duplicateOverrides, setDuplicateOverrides] = useState<Record<string, DuplicateOverride>>(
     {},
   );
-  const [selectedActionsOpen, setSelectedActionsOpen] = useState(false);
-  const selectedActionsRef = useRef<HTMLDivElement | null>(null);
   const listScrollRef = useRef<HTMLDivElement | null>(null);
 
   const [draftFilters, setDraftFilters] = useState<StatementFilters>(DEFAULT_STATEMENT_FILTERS);
@@ -707,27 +671,38 @@ export default function StatementsListView({ stage }: Props) {
     [visibleStatements],
   );
 
-  const allVisibleSelected = useMemo(
-    () => areAllVisibleSelected(selectedStatementIds, visibleStatementIds),
-    [selectedStatementIds, visibleStatementIds],
-  );
-
-  const duplicateStatementIds = useMemo(
-    () =>
-      visibleStatements
-        .filter(statement => duplicateMetaById.has(statement.id))
-        .map(statement => statement.id),
-    [visibleStatements, duplicateMetaById],
-  );
-
-  const selectedDuplicateCount = useMemo(
-    () => selectedStatementIds.filter(id => duplicateMetaById.has(id)).length,
-    [selectedStatementIds, duplicateMetaById],
-  );
-
-  const hasSelectedDuplicates = selectedDuplicateCount > 0;
-
-  const selectedCount = selectedStatementIds.length;
+  const {
+    selectedStatementIds,
+    selectedActionsOpen,
+    setSelectedActionsOpen,
+    selectedActionsRef,
+    allVisibleSelected,
+    selectedCount,
+    selectedDuplicateCount,
+    hasSelectedDuplicates,
+    duplicateStatementIds,
+    handleToggleStatement,
+    handleToggleSelectAll,
+    handleExportSelected,
+    handleDeleteSelected,
+    handleMarkSelectedAsDuplicate,
+    handleDismissSelectedDuplicates,
+    handleSelectDetectedDuplicates,
+    handleMergeSelectedDuplicates,
+  } = useStatementSelection({
+    displayStatements,
+    visibleStatementIds,
+    duplicateMetaById,
+    setDuplicateOverrides,
+    search,
+    stage,
+    onRefreshStatements: async opts => {
+      await loadStatements({ ...opts });
+    },
+    onRefreshGmail: async opts => {
+      await loadGmailReceipts({ ...opts });
+    },
+  });
 
   const loadStatements = async (opts?: {
     silent?: boolean;
@@ -940,33 +915,6 @@ export default function StatementsListView({ stage }: Props) {
     router.replace(nextQuery ? `/statements/submit?${nextQuery}` : '/statements/submit');
   }, [stage, searchParams, router]);
 
-  useEffect(() => {
-    const visibleSet = new Set(visibleStatementIds);
-    setSelectedStatementIds(prev => prev.filter(id => visibleSet.has(id)));
-  }, [visibleStatementIds]);
-
-  useEffect(() => {
-    if (!selectedActionsOpen) return;
-
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (!selectedActionsRef.current) return;
-      if (!selectedActionsRef.current.contains(event.target as Node)) {
-        setSelectedActionsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleOutsideClick);
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [selectedActionsOpen]);
-
-  useEffect(() => {
-    if (selectedCount === 0) {
-      setSelectedActionsOpen(false);
-    }
-  }, [selectedCount]);
-
   const refreshStatementsAfterCreate = async () => {
     setPage(1);
     try {
@@ -1092,332 +1040,6 @@ export default function StatementsListView({ stage }: Props) {
     const action = resolveStatementViewAction(statement);
 
     router.push(action.href);
-  };
-
-  const handleToggleStatement = (statementId: string) => {
-    setSelectedStatementIds(prev => toggleStatementSelection(prev, statementId));
-  };
-
-  const handleToggleSelectAll = (checked: boolean) => {
-    setSelectedStatementIds(prev => toggleSelectAllVisible(prev, visibleStatementIds, checked));
-  };
-
-  const handleExportSelected = async () => {
-    if (selectedStatementIds.length === 0) return;
-
-    try {
-      const selectedStatements = displayStatements.filter(statement =>
-        selectedStatementIds.includes(statement.id),
-      );
-      const exportableStatements = selectedStatements.filter(
-        statement => !isGmailStatement(statement),
-      );
-
-      if (exportableStatements.length === 0) {
-        setSelectedActionsOpen(false);
-        toast.error(
-          'Selected receipts cannot be exported from this menu',
-          getBulkActionErrorOptions('statements-bulk-export-unsupported'),
-        );
-        return;
-      }
-
-      let exportedCount = 0;
-      let failedCount = 0;
-
-      for (const statement of exportableStatements) {
-        try {
-          const response = await apiClient.get(getExportEndpoint(statement), {
-            responseType: 'blob',
-          });
-          const blob = response.data as Blob;
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = statement.fileName || `${statement.id}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          exportedCount += 1;
-        } catch (error) {
-          failedCount += 1;
-          console.error(`Failed to export statement ${statement.id}:`, error);
-        }
-      }
-
-      if (exportedCount === 0) {
-        toast.error('Failed to export selected statements');
-        return;
-      }
-
-      if (failedCount > 0) {
-        toast.success(`Exported ${exportedCount} statement(s), ${failedCount} failed`);
-      } else {
-        toast.success(`Exported ${exportedCount} statement(s)`);
-      }
-      setSelectedActionsOpen(false);
-    } catch (error) {
-      console.error('Failed to export selected statements:', error);
-      toast.error('Failed to export selected statements');
-    }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (selectedStatementIds.length === 0) return;
-
-    const selectedStatements = displayStatements.filter(statement =>
-      selectedStatementIds.includes(statement.id),
-    );
-    const deletableStatements = selectedStatements.filter(
-      statement => !isGmailStatement(statement),
-    );
-
-    if (deletableStatements.length === 0) {
-      setSelectedActionsOpen(false);
-      toast.error(
-        'Selected receipts cannot be deleted from this menu',
-        getBulkActionErrorOptions('statements-bulk-delete-unsupported'),
-      );
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Move ${deletableStatements.length} selected statement(s) to trash?`,
-    );
-    if (!confirmed) return;
-
-    try {
-      const results = await Promise.allSettled(
-        deletableStatements.map(statement => apiClient.delete(getDeleteEndpoint(statement))),
-      );
-      const deletedIds: string[] = [];
-      const failedIds: string[] = [];
-
-      results.forEach((result, index) => {
-        const statementId = deletableStatements[index]?.id;
-        if (!statementId) return;
-        if (result.status === 'fulfilled') {
-          deletedIds.push(statementId);
-          return;
-        }
-        const status = getApiErrorStatus(result.reason);
-        if (status === 404 || status === 410) {
-          deletedIds.push(statementId);
-          return;
-        }
-        failedIds.push(statementId);
-      });
-
-      if (deletedIds.length === 0) {
-        toast.error('Failed to delete selected statements');
-        return;
-      }
-
-      setSelectedStatementIds(prev => prev.filter(id => !deletedIds.includes(id)));
-      setSelectedActionsOpen(false);
-      await loadStatements({ search, showErrorToast: false });
-
-      if (failedIds.length > 0) {
-        toast.success(
-          `Moved ${deletedIds.length} statement(s) to trash, ${failedIds.length} failed`,
-        );
-      } else {
-        toast.success('Selected statements moved to trash');
-      }
-    } catch (error) {
-      console.error('Failed to delete selected statements:', error);
-      toast.error('Failed to delete selected statements');
-    }
-  };
-
-  const handleMarkSelectedAsDuplicate = () => {
-    if (selectedStatementIds.length === 0) return;
-
-    setDuplicateOverrides(prev => {
-      const next = { ...prev };
-      const manualGroupIndex = Object.values(prev).filter(override =>
-        override.groupKey?.startsWith('manual-group:'),
-      ).length;
-      const groupKey = `manual-group:${Date.now()}:${manualGroupIndex}`;
-      const groupLabel = `Group Manual ${manualGroupIndex + 1}`;
-      const groupTone = DUPLICATE_GROUP_TONES[manualGroupIndex % DUPLICATE_GROUP_TONES.length];
-      const primaryId = selectedStatementIds[0];
-      const total = selectedStatementIds.length;
-
-      selectedStatementIds.forEach((statementId, index) => {
-        next[statementId] = {
-          state: 'duplicate',
-          groupKey,
-          groupLabel,
-          groupTone,
-          primaryId,
-          position: index + 1,
-          total,
-        };
-      });
-      return next;
-    });
-
-    toast.success(`Marked ${selectedStatementIds.length} item(s) as duplicate`);
-    setSelectedActionsOpen(false);
-  };
-
-  const handleDismissSelectedDuplicates = () => {
-    if (selectedStatementIds.length === 0) return;
-
-    setDuplicateOverrides(prev => {
-      const next = { ...prev };
-      selectedStatementIds.forEach(statementId => {
-        next[statementId] = { state: 'not_duplicate' };
-      });
-      return next;
-    });
-
-    toast.success(`Dismissed duplicate flags for ${selectedStatementIds.length} item(s)`);
-    setSelectedActionsOpen(false);
-  };
-
-  const handleSelectDetectedDuplicates = () => {
-    if (duplicateStatementIds.length === 0) {
-      toast.error('No duplicates detected in current list');
-      return;
-    }
-
-    setSelectedStatementIds(prev => Array.from(new Set([...prev, ...duplicateStatementIds])));
-    toast.success(`Selected ${duplicateStatementIds.length} duplicate item(s)`);
-  };
-
-  const handleMergeSelectedDuplicates = async () => {
-    if (selectedStatementIds.length < 2) {
-      toast.error('Select at least 2 items to merge duplicates');
-      return;
-    }
-
-    const selectedStatements = displayStatements.filter(statement =>
-      selectedStatementIds.includes(statement.id),
-    );
-    const selectedDuplicateStatements = selectedStatements.filter(statement =>
-      duplicateMetaById.has(statement.id),
-    );
-
-    if (selectedDuplicateStatements.length < 2) {
-      toast.error('Select at least 2 detected duplicates to merge');
-      return;
-    }
-
-    const statementById = new Map(displayStatements.map(statement => [statement.id, statement]));
-    const statementsToDelete = new Set<string>();
-    const gmailToMark = new Map<string, string>();
-    let skippedGmailCount = 0;
-
-    selectedDuplicateStatements.forEach(statement => {
-      const meta = duplicateMetaById.get(statement.id);
-      if (!meta || statement.id === meta.primaryId) {
-        return;
-      }
-
-      if (isGmailStatement(statement)) {
-        const primaryStatement = statementById.get(meta.primaryId);
-        if (primaryStatement && isGmailStatement(primaryStatement)) {
-          gmailToMark.set(statement.id, primaryStatement.id);
-        } else {
-          skippedGmailCount += 1;
-        }
-        return;
-      }
-
-      statementsToDelete.add(statement.id);
-    });
-
-    if (statementsToDelete.size === 0 && gmailToMark.size === 0) {
-      toast.error('No mergeable duplicates found in selected items');
-      return;
-    }
-
-    const confirmMessage = `Merge selected duplicates? Keep primary records, merge ${gmailToMark.size} receipt(s) and move ${statementsToDelete.size} statement(s) to trash.`;
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      const statementIdsToDelete = Array.from(statementsToDelete);
-      const gmailEntriesToMark = Array.from(gmailToMark.entries());
-      const statementDeleteResults = await Promise.allSettled(
-        statementIdsToDelete.map(statementId => apiClient.delete(`/statements/${statementId}`)),
-      );
-      const gmailMarkResults = await Promise.allSettled(
-        gmailEntriesToMark.map(([receiptId, originalReceiptId]) =>
-          gmailReceiptsApi.markDuplicate(receiptId, originalReceiptId),
-        ),
-      );
-
-      const deletedStatementIds: string[] = [];
-      const markedGmailIds: string[] = [];
-      let failedStatements = 0;
-      let failedGmail = 0;
-
-      statementDeleteResults.forEach((result, index) => {
-        const statementId = statementIdsToDelete[index];
-        if (!statementId) return;
-        if (result.status === 'fulfilled') {
-          deletedStatementIds.push(statementId);
-          return;
-        }
-        const status = getApiErrorStatus(result.reason);
-        if (status === 404 || status === 410) {
-          deletedStatementIds.push(statementId);
-          return;
-        }
-        failedStatements += 1;
-      });
-
-      gmailMarkResults.forEach((result, index) => {
-        const receiptId = gmailEntriesToMark[index]?.[0];
-        if (!receiptId) return;
-        if (result.status === 'fulfilled') {
-          markedGmailIds.push(receiptId);
-          return;
-        }
-        failedGmail += 1;
-      });
-
-      if (deletedStatementIds.length === 0 && markedGmailIds.length === 0) {
-        toast.error('Failed to merge selected duplicates');
-        return;
-      }
-
-      setDuplicateOverrides(prev => {
-        const next = { ...prev };
-        markedGmailIds.forEach(receiptId => {
-          next[receiptId] = { state: 'duplicate' };
-        });
-        return next;
-      });
-
-      const processedIds = new Set([...deletedStatementIds, ...markedGmailIds]);
-      setSelectedStatementIds(prev => prev.filter(id => !processedIds.has(id)));
-      setSelectedActionsOpen(false);
-
-      await loadStatements({ silent: true, search, showErrorToast: false });
-      if (stage === 'submit') {
-        await loadGmailReceipts({ silent: true, showErrorToast: false });
-      }
-
-      const skipHint = skippedGmailCount
-        ? ` ${skippedGmailCount} Gmail item(s) skipped because primary record is not Gmail.`
-        : '';
-      const failureHint =
-        failedStatements || failedGmail
-          ? ` ${failedGmail} receipt(s) and ${failedStatements} statement(s) failed.`
-          : '';
-      toast.success(
-        `Merged duplicates: ${markedGmailIds.length} receipt(s), ${deletedStatementIds.length} statement(s).${skipHint}${failureHint}`,
-      );
-    } catch (error) {
-      console.error('Failed to merge selected duplicates:', error);
-      toast.error('Failed to merge selected duplicates');
-    }
   };
 
   const activeFilterCount = useMemo(() => {
@@ -2099,18 +1721,20 @@ export default function StatementsListView({ stage }: Props) {
                     onView={() => handleView(statement)}
                     onIconClick={() => {
                       if (isReceipt) {
-                        setPreviewAllowAttachFile(false);
-                        setPreviewSource(isGmailStatement(statement) ? 'gmail' : 'receipt');
-                        setPreviewFileId(statement.id);
-                        setPreviewFileName(statement.fileName || 'receipt.pdf');
-                        setPreviewModalOpen(true);
+                        openPreview({
+                          fileId: statement.id,
+                          fileName: statement.fileName || 'receipt.pdf',
+                          source: isGmailStatement(statement) ? 'gmail' : 'receipt',
+                          allowAttachFile: false,
+                        });
                         return;
                       }
-                      setPreviewAllowAttachFile(allowAttachFallback);
-                      setPreviewSource('statement');
-                      setPreviewFileId(statement.id);
-                      setPreviewFileName(statement.fileName);
-                      setPreviewModalOpen(true);
+                      openPreview({
+                        fileId: statement.id,
+                        fileName: statement.fileName,
+                        source: 'statement',
+                        allowAttachFile: allowAttachFallback,
+                      });
                     }}
                     onToggleSelect={() => handleToggleStatement(statement.id)}
                     selected={selectedStatementIds.includes(statement.id)}
@@ -2140,17 +1764,14 @@ export default function StatementsListView({ stage }: Props) {
         )}
       </div>
 
-      {previewFileId && (
+      {preview.fileId && (
         <PDFPreviewModal
-          isOpen={previewModalOpen}
-          onClose={() => {
-            setPreviewModalOpen(false);
-            setPreviewAllowAttachFile(false);
-          }}
-          fileId={previewFileId}
-          fileName={previewFileName}
-          source={previewSource}
-          allowAttachFile={previewAllowAttachFile}
+          isOpen={preview.isOpen}
+          onClose={closePreview}
+          fileId={preview.fileId}
+          fileName={preview.fileName}
+          source={preview.source}
+          allowAttachFile={preview.allowAttachFile}
           onFileAttached={refreshStatementsAfterAttach}
           onParsingStarted={refreshStatementsAfterAttach}
         />
