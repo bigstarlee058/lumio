@@ -48,23 +48,12 @@ import {
   type TaxRateOption,
   resolveExpenseDrawerMode,
 } from '@/app/lib/statement-expense-drawer';
-import { useStatementPreview } from './hooks/useStatementPreview';
-import {
-  type DuplicateMeta,
-  type DuplicateOverride,
-  useStatementSelection,
-} from './hooks/useStatementSelection';
 import {
   getStatementDisplayMerchant,
   getStatementMerchantLabel,
-  hasProcessingStatements,
   isManualExpenseStatement,
 } from '@/app/lib/statement-status';
-import {
-  type GmailSyncSkeletonMeta,
-  STATEMENTS_GMAIL_SYNC_EVENT,
-  STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
-} from '@/app/lib/statement-upload-actions';
+import { STATEMENTS_GMAIL_SYNC_STORAGE_KEY } from '@/app/lib/statement-upload-actions';
 import { type StatementStage, getStatementStage } from '@/app/lib/statement-workflow';
 import Skeleton from '@mui/material/Skeleton';
 import {
@@ -118,6 +107,13 @@ import {
   hasGmailReceiptAmount,
   mapGmailReceiptsToStatements,
 } from './gmail-receipt-mapping';
+import { useStatementPreview } from './hooks/useStatementPreview';
+import {
+  type DuplicateMeta,
+  type DuplicateOverride,
+  useStatementSelection,
+} from './hooks/useStatementSelection';
+import { useStatementsListData } from './hooks/useStatementsListData';
 import {
   uploadReceiptScanFiles as runUploadReceiptScanFiles,
   uploadScanDrawerFiles as runUploadScanDrawerFiles,
@@ -179,7 +175,6 @@ interface Statement {
 
 type UnifiedStatement = Statement;
 
-
 type Props = {
   stage: StatementStage;
 };
@@ -192,12 +187,6 @@ export default function StatementsListView({ stage }: Props) {
   const isMobile = useIsMobile();
   const t = useIntlayer('statementsPage');
   const PAGE_SIZE = 30;
-  const [statements, setStatements] = useState<Statement[]>([]);
-  const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
-  const [gmailLoading, setGmailLoading] = useState(false);
-  const [gmailSyncSkeletonKeys, setGmailSyncSkeletonKeys] = useState<string[]>([]);
-  const statementsRef = useRef<Statement[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const pageSize = PAGE_SIZE;
   const [searchInput, setSearchInput] = useState('');
@@ -276,7 +265,29 @@ export default function StatementsListView({ stage }: Props) {
   const [columnsDrawerOpen, setColumnsDrawerOpen] = useState(false);
   const [columns, setColumns] = useState<StatementColumn[]>(DEFAULT_STATEMENT_COLUMNS);
   const [draftColumns, setDraftColumns] = useState<StatementColumn[]>(DEFAULT_STATEMENT_COLUMNS);
-  const shouldPollStatements = useMemo(() => hasProcessingStatements(statements), [statements]);
+
+  const {
+    statements,
+    gmailReceipts,
+    loading,
+    gmailLoading,
+    gmailSyncSkeletonKeys,
+    setGmailSyncSkeletonKeys,
+    loadStatements,
+    loadGmailReceipts,
+    refreshActiveStatements,
+  } = useStatementsListData<Statement>({
+    appliedFilters,
+    search,
+    stage,
+    user,
+    page,
+    pageSize,
+    router,
+    loadListErrorLabel: resolveLabel(t.loadListError, 'Failed to load statements'),
+    refreshFailedLabel: resolveLabel(t.refreshFailed, 'Failed to refresh statements'),
+  });
+
   const hasGmailReceipts = useMemo(() => gmailReceipts.length > 0, [gmailReceipts]);
 
   const filterOptionLabels = {
@@ -433,39 +444,6 @@ export default function StatementsListView({ stage }: Props) {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchInput]);
-
-  useEffect(() => {
-    statementsRef.current = statements;
-  }, [statements]);
-
-  const lastAutoOpenedIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    loadStatements({ search });
-    if (stage === 'submit') {
-      loadGmailReceipts({ silent: true, showErrorToast: false });
-    }
-  }, [user, search, appliedFilters, stage]);
-
-  const buildGmailSyncSkeletonKeys = (count: number) => {
-    return Array.from({ length: count }, (_, index) => `gmail-sync-${Date.now()}-${index}`);
-  };
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
-    const raw = sessionStorage.getItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
-    if (!raw) return;
-    try {
-      const parsed = JSON.parse(raw) as GmailSyncSkeletonMeta | null;
-      if (parsed && parsed.count > 0) {
-        const nextCount = Math.min(parsed.count, PAGE_SIZE);
-        setGmailSyncSkeletonKeys(buildGmailSyncSkeletonKeys(nextCount));
-      }
-    } catch {
-      sessionStorage.removeItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
-    }
-  }, [stage]);
 
   useEffect(() => {
     if (!user) return;
@@ -704,54 +682,6 @@ export default function StatementsListView({ stage }: Props) {
     },
   });
 
-  const loadStatements = async (opts?: {
-    silent?: boolean;
-    notifyOnCompletion?: boolean;
-    search?: string;
-    showErrorToast?: boolean;
-  }) => {
-    const { silent, notifyOnCompletion, search, showErrorToast } = opts || {};
-    if (!silent) {
-      setLoading(true);
-    }
-
-    let didLoad = true;
-    try {
-      const response = await apiClient.get('/statements', {
-        params: buildStatementRequestParams({ appliedFilters, search }),
-      });
-
-      const rawData = response.data?.data || response.data || [];
-      const statementsWithFileType = rawData.map((stmt: Statement) => ({
-        ...stmt,
-        fileType: stmt.fileName?.toLowerCase().includes('pdf') ? 'pdf' : 'file',
-      }));
-      setStatements(statementsWithFileType);
-
-      if (notifyOnCompletion && Array.isArray(statementsWithFileType)) {
-        const firstFinished = statementsWithFileType.find(
-          (next: Statement) => next.status === 'parsed',
-        );
-        if (firstFinished && lastAutoOpenedIdRef.current !== firstFinished.id) {
-          lastAutoOpenedIdRef.current = firstFinished.id;
-          router.push(`/statements/${firstFinished.id}/edit`);
-        }
-      }
-    } catch (error) {
-      didLoad = false;
-      console.error('Failed to load statements:', error);
-      if (showErrorToast !== false) {
-        toast.error(resolveLabel(t.loadListError, 'Failed to load statements'));
-      }
-    } finally {
-      if (!silent) {
-        setLoading(false);
-      }
-    }
-
-    return didLoad;
-  };
-
   const loadManualExpenseOptions = async () => {
     try {
       const [categoriesResponse, taxRatesResponse] = await Promise.all([
@@ -782,48 +712,6 @@ export default function StatementsListView({ stage }: Props) {
     }
   };
 
-  const loadGmailReceipts = async (opts?: { silent?: boolean; showErrorToast?: boolean }) => {
-    const { silent, showErrorToast } = opts || {};
-    if (!silent) {
-      setGmailLoading(true);
-    }
-
-    try {
-      const response = await gmailReceiptsApi.listReceipts({
-        limit: pageSize,
-        offset: Math.max(0, (page - 1) * pageSize),
-        includeInvalid: false,
-      });
-      const receipts = Array.isArray(response.data?.receipts) ? response.data.receipts : [];
-      setGmailReceipts(receipts.filter(hasGmailReceiptAmount));
-    } catch (error) {
-      console.error('Failed to load Gmail receipts:', error);
-      if (showErrorToast !== false) {
-        toast.error(resolveLabel(t.loadListError, 'Failed to load receipts'));
-      }
-    } finally {
-      if (!silent) {
-        setGmailLoading(false);
-      }
-    }
-  };
-
-  const refreshActiveStatements = async () => {
-    const didLoad = await loadStatements({
-      silent: true,
-      search,
-      showErrorToast: false,
-    });
-
-    if (stage === 'submit') {
-      await loadGmailReceipts({ silent: true, showErrorToast: false });
-    }
-
-    if (!didLoad) {
-      toast.error(resolveLabel(t.refreshFailed, 'Failed to refresh statements'));
-    }
-  };
-
   const {
     handlers: pullToRefreshHandlers,
     pullDistance,
@@ -837,53 +725,6 @@ export default function StatementsListView({ stage }: Props) {
     },
     onRefresh: refreshActiveStatements,
   });
-
-  useEffect(() => {
-    if (!user || !shouldPollStatements) return;
-
-    const intervalId = window.setInterval(() => {
-      loadStatements({
-        silent: true,
-        search,
-        showErrorToast: false,
-      }).catch(error => {
-        console.error('Failed to poll statements:', error);
-      });
-    }, 4000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [user, shouldPollStatements, search, appliedFilters]);
-
-  useEffect(() => {
-    if (!user || stage !== 'submit') return;
-    const intervalId = window.setInterval(() => {
-      loadGmailReceipts({ silent: true, showErrorToast: false }).catch(error => {
-        console.error('Failed to poll Gmail receipts:', error);
-      });
-    }, 6000);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [user, stage]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
-
-    const handleGmailSyncEvent = (event: Event) => {
-      const detail = (event as CustomEvent<GmailSyncSkeletonMeta>).detail;
-      if (!detail || detail.count <= 0) return;
-      const nextCount = Math.min(detail.count, PAGE_SIZE);
-      setGmailSyncSkeletonKeys(buildGmailSyncSkeletonKeys(nextCount));
-    };
-
-    window.addEventListener(STATEMENTS_GMAIL_SYNC_EVENT, handleGmailSyncEvent);
-    return () => {
-      window.removeEventListener(STATEMENTS_GMAIL_SYNC_EVENT, handleGmailSyncEvent);
-    };
-  }, [stage]);
 
   useEffect(() => {
     const handleOpenExpenseDrawer = (event: Event) => {
