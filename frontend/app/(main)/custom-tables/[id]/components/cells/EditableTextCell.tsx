@@ -1,8 +1,9 @@
 'use client';
 
 import type { Column, Row, Table } from '@tanstack/react-table';
-import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { type CSSProperties } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
+import { useEditableCell } from './useEditableCell';
 
 interface EditableTextCellProps {
   row: Row<CustomTableGridRow>;
@@ -13,67 +14,34 @@ interface EditableTextCellProps {
   style?: CSSProperties;
 }
 
-export function EditableTextCell({
-  row,
-  column,
-  table,
-  onUpdateCell,
-  style,
-}: EditableTextCellProps) {
+export function EditableTextCell({ row, column, onUpdateCell, style }: EditableTextCellProps) {
   const rawValue = row.original.data[column.id];
   const initialValue = rawValue === null || rawValue === undefined ? '' : String(rawValue);
-  const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(initialValue);
-  const [isSaving, setIsSaving] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleSave = async () => {
-    if (value === initialValue) {
-      setIsEditing(false);
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      await onUpdateCell(row.original.id, column.id, value);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Failed to update cell:', error);
-      setValue(initialValue);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setValue(initialValue);
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleCancel();
-    }
-  };
+  const {
+    isEditing,
+    setIsEditing,
+    inputValue,
+    setInputValue,
+    isSaving,
+    inputRef,
+    handleSave,
+    handleCancel,
+    handleKeyDown,
+  } = useEditableCell<string>({
+    initialValue,
+    rowId: row.original.id,
+    columnKey: column.id,
+    onUpdateCell,
+  });
 
   if (isEditing) {
     return (
       <input
         ref={inputRef}
         type="text"
-        value={value}
-        onChange={e => setValue(e.target.value)}
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         disabled={isSaving}
@@ -90,7 +58,7 @@ export function EditableTextCell({
       style={style}
       title="Double-click to edit"
     >
-      {value || <span className="text-gray-400 dark:text-gray-600">—</span>}
+      {inputValue || <span className="text-gray-400 dark:text-gray-600">—</span>}
     </div>
   );
 }

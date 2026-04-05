@@ -1,8 +1,9 @@
 'use client';
 
 import type { Column, Row, Table } from '@tanstack/react-table';
-import { type CSSProperties, useEffect, useRef, useState } from 'react';
+import { type CSSProperties } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
+import { useEditableCell } from './useEditableCell';
 
 interface EditableNumberCellProps {
   row: Row<CustomTableGridRow>;
@@ -14,53 +15,27 @@ interface EditableNumberCellProps {
 }
 
 export function EditableNumberCell({ row, column, onUpdateCell, style }: EditableNumberCellProps) {
-  const initialValue = row.original.data[column.id];
-  const [isEditing, setIsEditing] = useState(false);
-  const [value, setValue] = useState(initialValue?.toString() || '');
-  const [isSaving, setIsSaving] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const rawValue = row.original.data[column.id];
+  const initialValue = rawValue === null || rawValue === undefined ? null : Number(rawValue);
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleSave = async () => {
-    const numValue = value.trim() === '' ? null : Number(value);
-
-    if (numValue === initialValue) {
-      setIsEditing(false);
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      await onUpdateCell(row.original.id, column.id, numValue);
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Failed to update cell:', error);
-      setValue(initialValue?.toString() || '');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setValue(initialValue?.toString() || '');
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleCancel();
-    }
-  };
+  const {
+    isEditing,
+    setIsEditing,
+    inputValue,
+    setInputValue,
+    isSaving,
+    inputRef,
+    handleSave,
+    handleCancel,
+    handleKeyDown,
+  } = useEditableCell<number | null>({
+    initialValue,
+    rowId: row.original.id,
+    columnKey: column.id,
+    onUpdateCell,
+    toInputString: v => (v === null || v === undefined ? '' : String(v)),
+    parseValue: raw => (raw.trim() === '' ? null : Number(raw)),
+  });
 
   if (isEditing) {
     return (
@@ -68,8 +43,8 @@ export function EditableNumberCell({ row, column, onUpdateCell, style }: Editabl
         ref={inputRef}
         type="number"
         step="any"
-        value={value}
-        onChange={e => setValue(e.target.value)}
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         disabled={isSaving}
