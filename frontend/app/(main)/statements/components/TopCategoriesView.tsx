@@ -26,18 +26,14 @@ import {
   buildPreviousPeriodRange,
   getComparisonDelta,
 } from '@/app/(main)/statements/components/top-merchants.utils';
+import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
 import { useStatementFilters } from '@/app/(main)/statements/hooks/useStatementFilters';
-import type {
-  GmailReceipt,
-  StatementMeta,
-  Transaction,
-} from '@/app/(main)/statements/types/statement-types';
+import type { GmailReceipt } from '@/app/(main)/statements/types/statement-types';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
-import apiClient from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
   formatMoney,
@@ -64,7 +60,6 @@ import {
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -103,10 +98,6 @@ export default function TopCategoriesView() {
   const { currentWorkspace, workspaces } = useWorkspace();
   const { resolvedTheme } = useTheme();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
-  const [loading, setLoading] = useState(true);
-  const [statements, setStatements] = useState<StatementMeta[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
   const [searchInput, setSearchInput] = useState('');
   const [workspaceFilter, setWorkspaceFilter] = useState<'current' | 'all' | string>('current');
   const [activeFlowType, setActiveFlowType] = useState<TopCategoryFlowType>('spend');
@@ -138,6 +129,16 @@ export default function TopCategoriesView() {
   } = useStatementFilters('lumio-top-categories-filters');
 
   const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
+
+  const { statements, transactions, gmailReceipts, loading, workspaceTargets } = useAnalyticsData({
+    user,
+    currentWorkspace,
+    workspaces,
+    workspaceFilter,
+    currentWorkspaceLabel: tx(['topCategoriesAnalytics', 'currentWorkspace'], 'Current workspace'),
+    includeTransactions: true,
+    errorToastMessage: tx(['loadListError'], 'Failed to load category data'),
+  });
 
   const labels = {
     title: tx(['topCategoriesAnalytics', 'title'], 'Top categories'),
@@ -305,184 +306,6 @@ export default function TopCategoriesView() {
     { value: 'dateRange', label: filterOptionLabels.hasDateRange },
     { value: 'currency', label: filterOptionLabels.hasCurrency },
   ];
-
-  const workspaceTargets = useMemo(() => {
-    if (workspaceFilter === 'all') {
-      const all = workspaces.map(workspace => ({
-        id: workspace.id,
-        name: workspace.name || 'Workspace',
-      }));
-      if (all.length > 0) return all;
-    }
-
-    if (workspaceFilter === 'current') {
-      if (currentWorkspace?.id) {
-        return [
-          { id: currentWorkspace.id, name: currentWorkspace.name || labels.currentWorkspace },
-        ];
-      }
-      return [];
-    }
-
-    const selectedWorkspace = workspaces.find(workspace => workspace.id === workspaceFilter);
-    return [{ id: workspaceFilter, name: selectedWorkspace?.name || labels.currentWorkspace }];
-  }, [
-    workspaceFilter,
-    workspaces,
-    currentWorkspace?.id,
-    currentWorkspace?.name,
-    labels.currentWorkspace,
-  ]);
-
-  const workspaceTargetKey = useMemo(
-    () => workspaceTargets.map(target => target.id).join(','),
-    [workspaceTargets],
-  );
-
-  useEffect(() => {
-    let isMounted = true;
-    const userId = user?.id;
-
-    const loadData = async () => {
-      if (!userId) return;
-      if (workspaceTargets.length === 0) {
-        setStatements([]);
-        setTransactions([]);
-        setGmailReceipts([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const allStatements: StatementMeta[] = [];
-        const allTransactions: Transaction[] = [];
-        const allReceipts: GmailReceipt[] = [];
-
-        for (const target of workspaceTargets) {
-          const requestHeaders = {
-            'X-Workspace-Id': target.id,
-          };
-
-          const statementsPageSize = 500;
-          let statementsPage = 1;
-          let statementsTotal = Number.POSITIVE_INFINITY;
-          const workspaceStatements: StatementMeta[] = [];
-
-          while (workspaceStatements.length < statementsTotal) {
-            const response = await apiClient.get('/statements', {
-              params: {
-                page: statementsPage,
-                limit: statementsPageSize,
-              },
-              headers: requestHeaders,
-            });
-
-            const items = response.data?.data || response.data || [];
-            const batch = Array.isArray(items) ? items : [];
-            workspaceStatements.push(
-              ...batch.map(statement => ({
-                ...statement,
-                workspaceId: target.id,
-                workspaceName: target.name,
-              })),
-            );
-            statementsTotal = Number(response.data?.total ?? workspaceStatements.length);
-
-            if (batch.length < statementsPageSize) break;
-            statementsPage += 1;
-          }
-
-          allStatements.push(...workspaceStatements);
-
-          const transactionsPageSize = 500;
-          let transactionsPage = 1;
-          let transactionsTotal = Number.POSITIVE_INFINITY;
-          const workspaceTransactions: Transaction[] = [];
-
-          while (workspaceTransactions.length < transactionsTotal) {
-            const response = await apiClient.get('/transactions', {
-              params: {
-                page: transactionsPage,
-                limit: transactionsPageSize,
-              },
-              headers: requestHeaders,
-            });
-
-            const items = response.data?.data || response.data?.items || response.data || [];
-            const batch = Array.isArray(items) ? items : [];
-            workspaceTransactions.push(
-              ...batch.map(transaction => ({
-                ...transaction,
-                workspaceId: target.id,
-                workspaceName: target.name,
-              })),
-            );
-            transactionsTotal = Number(response.data?.total ?? workspaceTransactions.length);
-
-            if (batch.length < transactionsPageSize) break;
-            transactionsPage += 1;
-          }
-
-          allTransactions.push(...workspaceTransactions);
-
-          const receiptsLimit = 100;
-          let receiptsOffset = 0;
-          let receiptsTotal = Number.POSITIVE_INFINITY;
-          const workspaceReceipts: GmailReceipt[] = [];
-
-          while (workspaceReceipts.length < receiptsTotal) {
-            const response = await apiClient.get('/integrations/gmail/receipts', {
-              params: {
-                limit: receiptsLimit,
-                offset: receiptsOffset,
-              },
-              headers: requestHeaders,
-            });
-            const payload = response.data || {};
-            const batch = Array.isArray(payload?.receipts) ? payload.receipts : [];
-            workspaceReceipts.push(
-              ...batch.map((receipt: GmailReceipt) => ({
-                ...receipt,
-                workspaceId: target.id,
-                workspaceName: target.name,
-              })),
-            );
-            receiptsTotal = Number(payload?.total ?? workspaceReceipts.length);
-
-            if (batch.length < receiptsLimit) break;
-            receiptsOffset += receiptsLimit;
-          }
-
-          allReceipts.push(...workspaceReceipts);
-        }
-
-        if (!isMounted) return;
-        setStatements(allStatements);
-        setTransactions(allTransactions);
-        setGmailReceipts(allReceipts);
-      } catch (error) {
-        console.error('Failed to load top categories data', error);
-        if (isMounted) {
-          toast.error(tx(['loadListError'], 'Failed to load spending data'));
-          setStatements([]);
-          setTransactions([]);
-          setGmailReceipts([]);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user?.id, workspaceTargetKey]);
 
   const allRecords = useMemo<TopCategoryRecord[]>(() => {
     const statementById = new Map(statements.map(statement => [statement.id, statement]));

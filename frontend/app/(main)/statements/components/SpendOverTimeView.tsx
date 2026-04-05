@@ -26,12 +26,12 @@ import {
   getComparisonDelta,
   resolveSourceChannel,
 } from '@/app/(main)/statements/components/top-merchants.utils';
+import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
-import apiClient from '@/app/lib/api';
 import {
   formatMoney,
   getNestedValue,
@@ -59,72 +59,8 @@ import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
-
-type StatementMeta = {
-  id: string;
-  status?: string;
-  createdAt?: string | null;
-  statementDateFrom?: string | null;
-  statementDateTo?: string | null;
-  bankName?: string | null;
-  fileType?: string | null;
-  currency?: string | null;
-  exported?: boolean | null;
-  paid?: boolean | null;
-  workspaceId?: string;
-  workspaceName?: string;
-  parsingDetails?: {
-    metadataExtracted?: {
-      currency?: string;
-      headerDisplay?: {
-        currencyDisplay?: string;
-      };
-    };
-  } | null;
-  user?: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    avatarUrl?: string | null;
-  } | null;
-};
-
-type Transaction = {
-  id: string;
-  statementId?: string | null;
-  counterpartyName?: string | null;
-  transactionDate?: string | null;
-  debit?: number | string | null;
-  credit?: number | string | null;
-  amount?: number | string | null;
-  currency?: string | null;
-  paymentPurpose?: string | null;
-  transactionType?: 'income' | 'expense' | null;
-  createdAt?: string | null;
-  workspaceId?: string;
-  workspaceName?: string;
-};
-
-type GmailReceipt = {
-  id: string;
-  subject: string;
-  sender: string;
-  receivedAt: string;
-  status: string;
-  transactionId?: string | null;
-  parsedData?: {
-    amount?: number;
-    currency?: string;
-    vendor?: string;
-    date?: string;
-    transactionType?: 'income' | 'expense' | 'transfer' | 'unknown';
-  };
-  workspaceId?: string;
-  workspaceName?: string;
-};
 
 type ViewTypeValue = 'line' | 'bar' | 'stacked';
 type SortKey = 'amount' | 'average' | 'operations';
@@ -243,10 +179,6 @@ export default function SpendOverTimeView() {
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
   const initial = useMemo(() => loadStoredState(), []);
 
-  const [loading, setLoading] = useState(true);
-  const [statements, setStatements] = useState<StatementMeta[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
   const [searchInput, setSearchInput] = useState('');
   const [workspaceFilter, setWorkspaceFilter] = useState<'current' | 'all' | string>(
     initial.workspaceFilter,
@@ -272,6 +204,16 @@ export default function SpendOverTimeView() {
   const [filtersDrawerOpen, setFiltersDrawerOpen] = useState(false);
   const [filtersDrawerScreen, setFiltersDrawerScreen] = useState('root');
   const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
+
+  const { statements, transactions, gmailReceipts, loading, workspaceTargets } = useAnalyticsData({
+    user,
+    currentWorkspace,
+    workspaces,
+    workspaceFilter,
+    currentWorkspaceLabel: tx(['spendOverTimeAnalytics', 'currentWorkspace'], 'Current workspace'),
+    includeTransactions: true,
+    errorToastMessage: tx(['loadListError'], 'Failed to load spending data'),
+  });
 
   const labels = {
     title: tx(['spendOverTimeAnalytics', 'title'], 'Spend over time'),
@@ -441,39 +383,6 @@ export default function SpendOverTimeView() {
     { value: 'currency', label: filterOptionLabels.hasCurrency },
   ];
 
-  const workspaceTargets = useMemo(() => {
-    if (workspaceFilter === 'all') {
-      const all = workspaces.map(workspace => ({
-        id: workspace.id,
-        name: workspace.name || 'Workspace',
-      }));
-      if (all.length > 0) return all;
-    }
-
-    if (workspaceFilter === 'current') {
-      if (currentWorkspace?.id) {
-        return [
-          { id: currentWorkspace.id, name: currentWorkspace.name || labels.currentWorkspace },
-        ];
-      }
-      return [];
-    }
-
-    const selectedWorkspace = workspaces.find(workspace => workspace.id === workspaceFilter);
-    return [{ id: workspaceFilter, name: selectedWorkspace?.name || labels.currentWorkspace }];
-  }, [
-    workspaceFilter,
-    workspaces,
-    currentWorkspace?.id,
-    currentWorkspace?.name,
-    labels.currentWorkspace,
-  ]);
-
-  const workspaceTargetKey = useMemo(
-    () => workspaceTargets.map(target => target.id).join(','),
-    [workspaceTargets],
-  );
-
   useEffect(() => {
     saveStoredState({
       filters: appliedFilters,
@@ -483,101 +392,6 @@ export default function SpendOverTimeView() {
       activeFlowType,
     });
   }, [appliedFilters, groupBy, viewType, workspaceFilter, activeFlowType]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadData = async () => {
-      if (!user?.id) return;
-      if (workspaceTargets.length === 0) {
-        setStatements([]);
-        setTransactions([]);
-        setGmailReceipts([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const allStatements: StatementMeta[] = [];
-        const allTransactions: Transaction[] = [];
-        const allReceipts: GmailReceipt[] = [];
-
-        for (const target of workspaceTargets) {
-          const requestHeaders = {
-            'X-Workspace-Id': target.id,
-          };
-
-          const statementsResponse = await apiClient.get('/statements', {
-            params: { page: 1, limit: 500 },
-            headers: requestHeaders,
-          });
-          const statementItems = statementsResponse.data?.data || statementsResponse.data || [];
-          allStatements.push(
-            ...(Array.isArray(statementItems) ? statementItems : []).map(statement => ({
-              ...statement,
-              workspaceId: target.id,
-              workspaceName: target.name,
-            })),
-          );
-
-          const transactionsResponse = await apiClient.get('/transactions', {
-            params: { page: 1, limit: 500 },
-            headers: requestHeaders,
-          });
-          const transactionItems =
-            transactionsResponse.data?.data ||
-            transactionsResponse.data?.items ||
-            transactionsResponse.data ||
-            [];
-          allTransactions.push(
-            ...(Array.isArray(transactionItems) ? transactionItems : []).map(transaction => ({
-              ...transaction,
-              workspaceId: target.id,
-              workspaceName: target.name,
-            })),
-          );
-
-          const receiptsResponse = await apiClient.get('/integrations/gmail/receipts', {
-            params: { limit: 100, offset: 0 },
-            headers: requestHeaders,
-          });
-          const receiptItems = receiptsResponse.data?.receipts || [];
-          allReceipts.push(
-            ...(Array.isArray(receiptItems) ? receiptItems : []).map(receipt => ({
-              ...receipt,
-              workspaceId: target.id,
-              workspaceName: target.name,
-            })),
-          );
-        }
-
-        if (!isMounted) return;
-        setStatements(allStatements);
-        setTransactions(allTransactions);
-        setGmailReceipts(allReceipts);
-      } catch (error) {
-        console.error('Failed to load spend over time data', error);
-        if (isMounted) {
-          toast.error('Failed to load spending data');
-          setStatements([]);
-          setTransactions([]);
-          setGmailReceipts([]);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    void loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user?.id, workspaceTargetKey]);
 
   const allRecords = useMemo<SpendOverTimeRecord[]>(() => {
     const statementById = new Map(statements.map(statement => [statement.id, statement]));

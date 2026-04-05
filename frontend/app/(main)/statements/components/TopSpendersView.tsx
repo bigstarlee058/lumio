@@ -16,12 +16,12 @@ import {
   type TopSpenderFlowType,
   type TopSpenderSourceChannel,
   buildPreviousPeriodRange,
-  buildTopSpendersStatementsParams,
   getComparisonDelta,
   resolveSourceChannel,
   resolveSpenderFlow,
   sortAggregateRows,
 } from '@/app/(main)/statements/components/top-spenders.utils';
+import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
 import { useStatementFilters } from '@/app/(main)/statements/hooks/useStatementFilters';
 import type { GmailReceipt } from '@/app/(main)/statements/types/statement-types';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
@@ -29,7 +29,6 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
-import apiClient from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
   formatMoney,
@@ -55,7 +54,6 @@ import {
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -99,7 +97,7 @@ const getBankDisplayName = (bankName?: string | null) => {
 const mapGmailReceiptToStatement = (
   receipt: GmailReceipt,
   fallbackCurrency: string,
-): StatementFilterItem => ({
+): StatementFilterItem & { workspaceId?: string; workspaceName?: string } => ({
   id: receipt.id,
   source: 'gmail',
   fileName: resolveGmailMerchantLabel({
@@ -137,9 +135,6 @@ export default function TopSpendersView() {
   const { currentWorkspace, workspaces } = useWorkspace();
   const { resolvedTheme } = useTheme();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
-  const [loading, setLoading] = useState(true);
-  const [statements, setStatements] = useState<StatementFilterItem[]>([]);
-  const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
   const [searchInput, setSearchInput] = useState('');
   const [workspaceFilter, setWorkspaceFilter] = useState<'current' | 'all' | string>('current');
   const [activeFlowType, setActiveFlowType] = useState<TopSpenderFlowType>('spend');
@@ -171,6 +166,28 @@ export default function TopSpendersView() {
   } = useStatementFilters('lumio-top-spenders-filters');
 
   const tx = (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback);
+
+  const {
+    statements: rawStatements,
+    gmailReceipts,
+    loading,
+    workspaceTargets,
+  } = useAnalyticsData({
+    user,
+    currentWorkspace,
+    workspaces,
+    workspaceFilter,
+    currentWorkspaceLabel: tx(['topSpenders', 'currentWorkspace'], 'Current workspace'),
+    includeTransactions: false,
+    errorToastMessage: tx(['loadListError'], 'Failed to load spending data'),
+  });
+  // TopSpendersView works with the richer StatementFilterItem shape; the API
+  // response contains all required fields even though the hook types it as the
+  // minimal StatementMeta. Workspace annotations are also present at runtime.
+  const statements = rawStatements as unknown as (StatementFilterItem & {
+    workspaceId?: string;
+    workspaceName?: string;
+  })[];
 
   const labels = {
     title: tx(['topSpenders', 'title'], 'Top spenders'),
@@ -329,150 +346,6 @@ export default function TopSpendersView() {
     { value: 'dateRange', label: filterOptionLabels.hasDateRange },
     { value: 'currency', label: filterOptionLabels.hasCurrency },
   ];
-
-  const workspaceTargets = useMemo(() => {
-    if (workspaceFilter === 'all') {
-      const all = workspaces.map(workspace => ({
-        id: workspace.id,
-        name: workspace.name || 'Workspace',
-      }));
-      if (all.length > 0) return all;
-    }
-
-    if (workspaceFilter === 'current') {
-      if (currentWorkspace?.id) {
-        return [
-          { id: currentWorkspace.id, name: currentWorkspace.name || labels.currentWorkspace },
-        ];
-      }
-      return [];
-    }
-
-    const selectedWorkspace = workspaces.find(workspace => workspace.id === workspaceFilter);
-    return [
-      {
-        id: workspaceFilter,
-        name: selectedWorkspace?.name || labels.currentWorkspace,
-      },
-    ];
-  }, [
-    workspaceFilter,
-    workspaces,
-    currentWorkspace?.id,
-    currentWorkspace?.name,
-    labels.currentWorkspace,
-  ]);
-
-  const workspaceTargetKey = useMemo(
-    () => workspaceTargets.map(target => target.id).join(','),
-    [workspaceTargets],
-  );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadData = async () => {
-      if (!user) return;
-      if (workspaceTargets.length === 0) {
-        setStatements([]);
-        setGmailReceipts([]);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const allStatements: StatementFilterItem[] = [];
-        const allReceipts: GmailReceipt[] = [];
-
-        for (const target of workspaceTargets) {
-          const requestHeaders = {
-            'X-Workspace-Id': target.id,
-          };
-
-          const statementsPageSize = 500;
-          let statementsPage = 1;
-          let statementsTotal = Number.POSITIVE_INFINITY;
-          const workspaceStatements: StatementFilterItem[] = [];
-
-          while (workspaceStatements.length < statementsTotal) {
-            const response = await apiClient.get('/statements', {
-              params: buildTopSpendersStatementsParams(statementsPage, statementsPageSize),
-              headers: requestHeaders,
-            });
-
-            const items = response.data?.data || response.data || [];
-            const batch = Array.isArray(items) ? items : [];
-            workspaceStatements.push(
-              ...batch.map(statement => ({
-                ...statement,
-                workspaceId: target.id,
-                workspaceName: target.name,
-              })),
-            );
-            statementsTotal = Number(response.data?.total ?? workspaceStatements.length);
-
-            if (batch.length < statementsPageSize) break;
-            statementsPage += 1;
-          }
-
-          allStatements.push(...workspaceStatements);
-
-          const receiptsLimit = 100;
-          let receiptsOffset = 0;
-          let receiptsTotal = Number.POSITIVE_INFINITY;
-          const workspaceReceipts: GmailReceipt[] = [];
-
-          while (workspaceReceipts.length < receiptsTotal) {
-            const response = await apiClient.get('/integrations/gmail/receipts', {
-              params: {
-                limit: receiptsLimit,
-                offset: receiptsOffset,
-              },
-              headers: requestHeaders,
-            });
-            const payload = response.data || {};
-            const batch = Array.isArray(payload?.receipts) ? payload.receipts : [];
-            workspaceReceipts.push(
-              ...batch.map((receipt: GmailReceipt) => ({
-                ...receipt,
-                workspaceId: target.id,
-                workspaceName: target.name,
-              })),
-            );
-            receiptsTotal = Number(payload?.total ?? workspaceReceipts.length);
-
-            if (batch.length < receiptsLimit) break;
-            receiptsOffset += receiptsLimit;
-          }
-
-          allReceipts.push(...workspaceReceipts);
-        }
-
-        if (!isMounted) return;
-        setStatements(allStatements);
-        setGmailReceipts(allReceipts);
-      } catch (error) {
-        console.error('Failed to load top spenders data', error);
-        if (isMounted) {
-          toast.error(tx(['loadListError'], 'Failed to load spending data'));
-          setStatements([]);
-          setGmailReceipts([]);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user, t, workspaceTargetKey, workspaceTargets]);
 
   const allRecords = useMemo<TopSpenderRecord[]>(() => {
     const mappedStatements: TopSpenderRecord[] = statements.map(item => {
