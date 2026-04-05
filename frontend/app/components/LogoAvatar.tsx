@@ -23,6 +23,10 @@ export function LogoAvatar({
 }: LogoAvatarProps) {
   const [imageError, setImageError] = React.useState(false);
 
+  React.useEffect(() => {
+    setImageError(false);
+  }, [src]);
+
   if (src && !imageError) {
     return (
       <img
@@ -38,6 +42,7 @@ export function LogoAvatar({
 
   return (
     <span
+      role="img"
       className={className}
       style={{ width: size, height: size, ...fallbackStyle }}
       aria-label={alt}
