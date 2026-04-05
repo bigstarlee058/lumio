@@ -8,18 +8,12 @@ import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { syncLocaleFromUser } from '@/app/lib/locale';
+import { safeInternalPath } from '@/app/lib/safe-path';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
-
-function safeInternalPath(nextPath: string | null) {
-  if (!nextPath) return null;
-  if (!nextPath.startsWith('/')) return null;
-  if (nextPath.startsWith('//')) return null;
-  return nextPath;
-}
 
 function extractInviteTokenFromNext(nextPath: string | null) {
   if (!nextPath) return null;

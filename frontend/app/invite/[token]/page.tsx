@@ -4,16 +4,8 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { safeInternalPath } from '@/app/lib/safe-path';
+import { Alert, Box, Button, Card, CardContent, Container, Stack, Typography } from '@mui/material';
 import { ShieldCheck } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -34,13 +26,6 @@ type CurrentUser = {
   name: string;
   workspaceId?: string | null;
 };
-
-function safeInternalPath(nextPath: string | null) {
-  if (!nextPath) return null;
-  if (!nextPath.startsWith('/')) return null;
-  if (nextPath.startsWith('//')) return null;
-  return nextPath;
-}
 
 export default function AcceptInvitePage() {
   const params = useParams<{ token: string }>();
