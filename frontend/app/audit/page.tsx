@@ -1,5 +1,6 @@
 'use client';
 
+import ConfirmModal from '@/app/components/ConfirmModal';
 import {
   type ActorType,
   type AuditAction,
@@ -14,7 +15,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AuditEventDrawer } from './components/AuditEventDrawer';
 import { AuditEventTable } from './components/AuditEventTable';
-import { RollbackConfirmModal } from './components/RollbackConfirmModal';
 import { assertRollbackSucceeded } from './utils/rollback-result';
 
 const ENTITY_TYPES = [
@@ -379,13 +379,34 @@ export default function AuditPage() {
         onRollback={handleRollback}
       />
 
-      <RollbackConfirmModal
-        open={Boolean(rollbackTarget)}
-        event={rollbackTarget}
-        onCancel={() => setRollbackTarget(null)}
+      <ConfirmModal
+        isOpen={Boolean(rollbackTarget)}
+        onClose={() => setRollbackTarget(null)}
         onConfirm={confirmRollback}
-        loading={rollbackLoading}
-        error={rollbackError}
+        title="Confirm rollback"
+        message={
+          rollbackTarget && (
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600">
+                This will attempt to rollback:{' '}
+                {rollbackTarget.description ||
+                  `${rollbackTarget.entityType} ${rollbackTarget.entityId}`}
+                .
+              </p>
+              {rollbackTarget.diff && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700">
+                  Rollback is based on stored diff data. Review changes before continuing.
+                </div>
+              )}
+              {rollbackError && <div className="text-sm text-red-600">{rollbackError}</div>}
+            </div>
+          )
+        }
+        confirmText={rollbackLoading ? 'Rolling back...' : 'Rollback'}
+        cancelText="Cancel"
+        isDestructive
+        isLoading={rollbackLoading}
+        manualClose
       />
     </div>
   );

@@ -15,6 +15,9 @@ interface ConfirmModalProps {
   cancelText?: string;
   isDestructive?: boolean;
   isLoading?: boolean;
+  icon?: React.ReactNode;
+  /** When true, the modal will not auto-close after confirming; caller manages close. */
+  manualClose?: boolean;
 }
 
 export default function ConfirmModal({
@@ -27,6 +30,8 @@ export default function ConfirmModal({
   cancelText,
   isDestructive = false,
   isLoading = false,
+  icon,
+  manualClose = false,
 }: ConfirmModalProps) {
   const t = useIntlayer('confirmModal');
 
@@ -35,7 +40,7 @@ export default function ConfirmModal({
 
   const handleConfirm = () => {
     onConfirm();
-    if (!isLoading) {
+    if (!isLoading && !manualClose) {
       onClose();
     }
   };
@@ -53,7 +58,7 @@ export default function ConfirmModal({
           <div
             className={`p-2 rounded-full ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}
           >
-            <AlertTriangle size={20} />
+            {icon ?? <AlertTriangle size={20} />}
           </div>
           <span>{title}</span>
         </div>
