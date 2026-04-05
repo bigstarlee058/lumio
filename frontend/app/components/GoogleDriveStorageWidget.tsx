@@ -19,7 +19,7 @@ const googleDriveProvider: StorageWidgetProvider = {
     const tokenResp = await apiClient.get('/integrations/google-drive/picker-token');
     const accessToken = tokenResp.data?.accessToken;
     if (!accessToken) {
-      return [];
+      throw new Error('Google Drive picker token unavailable');
     }
     return pickDriveFiles({ accessToken, apiKey, mimeTypes });
   },
