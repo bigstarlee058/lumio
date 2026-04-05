@@ -51,48 +51,6 @@ import toast from 'react-hot-toast';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
-type Statement = {
-  id: string;
-  source?: 'statement' | 'gmail';
-  fileName: string;
-  status: string;
-  totalDebit?: number | string | null;
-  totalCredit?: number | string | null;
-  createdAt?: string | null;
-  statementDateFrom?: string | null;
-  statementDateTo?: string | null;
-  bankName?: string | null;
-  fileType?: string | null;
-  currency?: string | null;
-  exported?: boolean | null;
-  paid?: boolean | null;
-  parsingDetails?: {
-    metadataExtracted?: {
-      currency?: string;
-      headerDisplay?: {
-        currencyDisplay?: string;
-      };
-    };
-  } | null;
-  user?: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-    avatarUrl?: string | null;
-  } | null;
-  parsedData?: {
-    vendor?: string | null;
-    amount?: number;
-    currency?: string;
-    date?: string;
-  } | null;
-  subject?: string | null;
-  sender?: string | null;
-  receivedAt?: string | null;
-  workspaceId?: string;
-  workspaceName?: string;
-};
-
 type TopSpenderRecord = StatementFilterItem & {
   sourceType: 'statement' | 'gmail';
   sourceChannel: TopSpenderSourceChannel;
@@ -136,7 +94,7 @@ const resolveLabel = (value: unknown, fallback: string): string => {
   return fallback;
 };
 
-const getStatementDate = (statement: Statement) => {
+const getStatementDate = (statement: StatementFilterItem) => {
   if (statement.source === 'gmail') {
     return statement.parsedData?.date || statement.receivedAt || statement.createdAt || '';
   }
@@ -155,9 +113,8 @@ const resolveCurrencyCode = (currency: string | null | undefined, fallback = 'KZ
   return fallback;
 };
 
-const getStatementCurrency = (statement: Statement, fallbackCurrency: string) => {
+const getStatementCurrency = (statement: StatementFilterItem, fallbackCurrency: string) => {
   return (
-    statement.parsedData?.currency ||
     statement.currency ||
     statement.parsingDetails?.metadataExtracted?.currency ||
     statement.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay ||
@@ -177,7 +134,7 @@ const getBankDisplayName = (bankName?: string | null) => {
 const mapGmailReceiptToStatement = (
   receipt: GmailReceipt,
   fallbackCurrency: string,
-): Statement => ({
+): StatementFilterItem => ({
   id: receipt.id,
   source: 'gmail',
   fileName: resolveGmailMerchantLabel({
@@ -201,7 +158,10 @@ const mapGmailReceiptToStatement = (
   currency: resolveCurrencyCode(receipt.parsedData?.currency, fallbackCurrency),
   user: null,
   receivedAt: receipt.receivedAt,
-  parsedData: receipt.parsedData,
+  parsedData: {
+    vendor: receipt.parsedData?.vendor,
+    date: receipt.parsedData?.date,
+  },
   workspaceId: receipt.workspaceId,
   workspaceName: receipt.workspaceName,
 });
@@ -251,7 +211,7 @@ export default function TopSpendersView() {
   const { resolvedTheme } = useTheme();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
   const [loading, setLoading] = useState(true);
-  const [statements, setStatements] = useState<Statement[]>([]);
+  const [statements, setStatements] = useState<StatementFilterItem[]>([]);
   const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
   const [searchInput, setSearchInput] = useState('');
   const [workspaceFilter, setWorkspaceFilter] = useState<'current' | 'all' | string>('current');
@@ -496,7 +456,7 @@ export default function TopSpendersView() {
       setLoading(true);
 
       try {
-        const allStatements: Statement[] = [];
+        const allStatements: StatementFilterItem[] = [];
         const allReceipts: GmailReceipt[] = [];
 
         for (const target of workspaceTargets) {
@@ -507,7 +467,7 @@ export default function TopSpendersView() {
           const statementsPageSize = 500;
           let statementsPage = 1;
           let statementsTotal = Number.POSITIVE_INFINITY;
-          const workspaceStatements: Statement[] = [];
+          const workspaceStatements: StatementFilterItem[] = [];
 
           while (workspaceStatements.length < statementsTotal) {
             const response = await apiClient.get('/statements', {

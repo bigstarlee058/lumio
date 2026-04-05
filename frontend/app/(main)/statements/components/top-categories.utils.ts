@@ -1,14 +1,13 @@
-import type {
-  StatementFilterItem,
-  StatementFilters,
-} from '@/app/(main)/statements/components/filters/statement-filters';
-import { DEFAULT_STATEMENT_FILTERS } from '@/app/(main)/statements/components/filters/statement-filters';
+import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
   resolveAmountFlow,
   resolveSourceChannel as resolveSourceChannelBase,
   sortAggregateRows,
 } from '@/app/(main)/statements/components/shared-analytics.utils';
-import type { SourceChannel, SourceType } from '@/app/(main)/statements/components/shared-analytics.utils';
+import type {
+  SourceChannel,
+  SourceType,
+} from '@/app/(main)/statements/components/shared-analytics.utils';
 
 export type TopCategoryFlowType = 'spend' | 'income';
 export type TopCategorySourceType = SourceType;
@@ -53,29 +52,6 @@ type ResolveCategoryFlowInput = {
   credit?: number | string | null;
   amount?: number | string | null;
   transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
-};
-
-const STORAGE_KEY = 'lumio-top-categories-filters';
-
-export const loadTopCategoriesFilters = (): StatementFilters => {
-  if (typeof window === 'undefined') return DEFAULT_STATEMENT_FILTERS;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return DEFAULT_STATEMENT_FILTERS;
-
-  try {
-    const parsed = JSON.parse(raw) as Partial<StatementFilters>;
-    return {
-      ...DEFAULT_STATEMENT_FILTERS,
-      ...parsed,
-    };
-  } catch {
-    return DEFAULT_STATEMENT_FILTERS;
-  }
-};
-
-export const saveTopCategoriesFilters = (filters: StatementFilters) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
 };
 
 export const resolveCategoryFlow = (input: ResolveCategoryFlowInput) => {
