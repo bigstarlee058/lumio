@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { getReceiptLogoUrl } from '../lib/brand-logo';
+import { LogoAvatar } from './LogoAvatar';
 
 type Props = {
   sender: string;
@@ -43,32 +44,19 @@ const getInitials = (label: string): string => {
 };
 
 export function BrandLogoAvatar({ sender, vendorName, size = 32 }: Props) {
-  const [imageError, setImageError] = React.useState(false);
   const logoUrl = getReceiptLogoUrl(sender);
   const fallbackSource = vendorName ?? extractLocalPart(sender);
   const initials = getInitials(fallbackSource);
 
-  if (logoUrl && !imageError) {
-    return (
-      <img
-        src={logoUrl}
-        alt={vendorName || 'Brand'}
-        width={size}
-        height={size}
-        className="rounded-xl object-contain bg-white border border-slate-100"
-        onError={() => setImageError(true)}
-      />
-    );
-  }
-
   return (
-    <span
+    <LogoAvatar
+      src={logoUrl}
+      alt={vendorName || 'Brand'}
+      size={size}
+      imgClassName="rounded-xl object-contain bg-white border border-slate-100"
       className="inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 font-bold text-xs shrink-0"
-      style={{ width: size, height: size, fontSize: size * 0.35 }}
-      aria-label={vendorName || 'Brand'}
-      title={vendorName || 'Brand'}
-    >
-      {initials}
-    </span>
+      fallbackStyle={{ fontSize: size * 0.35 }}
+      fallback={initials}
+    />
   );
 }
