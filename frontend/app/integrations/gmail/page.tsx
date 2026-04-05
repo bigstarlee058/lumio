@@ -5,6 +5,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { formatDateTime } from '@/app/lib/format-datetime';
 import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -32,16 +33,6 @@ type GmailStatus = {
   status: 'connected' | 'disconnected' | 'needs_reauth';
   settings?: GmailSettings | null;
   scopes?: string[];
-};
-
-const formatDateTime = (value?: string | null, locale?: string) => {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return new Intl.DateTimeFormat(locale || 'en', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date);
 };
 
 export default function GmailIntegrationPage() {

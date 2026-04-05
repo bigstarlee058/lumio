@@ -2,6 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { formatDateTime } from '@/app/lib/format-datetime';
 import { getPickerDocName, pickDriveFiles } from '@/app/lib/googleDrivePicker';
 import { RefreshCcw, Settings, UploadCloud } from 'lucide-react';
 import Image from 'next/image';
@@ -34,16 +35,6 @@ const MIME_TYPES = [
   'text/csv',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ];
-
-const formatDateTime = (value?: string | null, locale?: string) => {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return new Intl.DateTimeFormat(locale || 'ru', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date);
-};
 
 export function GoogleDriveStorageWidget({ locale }: { locale?: string }) {
   const t = useIntlayer('storagePage');
