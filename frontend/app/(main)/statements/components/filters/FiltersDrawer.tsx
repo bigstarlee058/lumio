@@ -4,7 +4,6 @@ import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { cn } from '@/app/lib/utils';
 import { ChevronLeft } from 'lucide-react';
-import { FilterAvatarRow } from './FilterAvatarRow';
 import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
 import { FilterSection } from './FilterSection';
@@ -270,7 +269,7 @@ export function FiltersDrawer({
       return (
         <div className="space-y-1">
           {options.map(option => (
-            <FilterAvatarRow
+            <FilterOptionRow
               key={option.id}
               label={option.label}
               description={option.description}

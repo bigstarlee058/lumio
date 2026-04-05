@@ -2,9 +2,9 @@ import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FilterAvatarRow } from './FilterAvatarRow';
+import { FilterOptionRow } from './FilterOptionRow';
 
-describe('FilterAvatarRow', () => {
+describe('FilterOptionRow (avatar mode)', () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
 
@@ -26,7 +26,12 @@ describe('FilterAvatarRow', () => {
   it('renders ReceiptIcon for receipt filter rows instead of the generic bank fallback icon', () => {
     act(() => {
       root.render(
-        <FilterAvatarRow label="Receipt" bankName="receipt" selected={false} onClick={() => undefined} />,
+        <FilterOptionRow
+          label="Receipt"
+          bankName="receipt"
+          selected={false}
+          onClick={() => undefined}
+        />,
       );
     });
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
-import { FilterAvatarRow } from '@/app/(main)/statements/components/filters/FilterAvatarRow';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
+import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
 
 type FromOption = {
   id: string;
@@ -45,7 +45,7 @@ export function FromFilterDropdown({
         {options.map(option => {
           const isSelected = selected.has(option.id);
           return (
-            <FilterAvatarRow
+            <FilterOptionRow
               key={option.id}
               label={option.label}
               description={option.description}

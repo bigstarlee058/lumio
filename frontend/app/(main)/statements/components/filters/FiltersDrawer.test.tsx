@@ -71,14 +71,6 @@ vi.mock('./FilterOptionRow', () => ({
   ),
 }));
 
-vi.mock('./FilterAvatarRow', () => ({
-  FilterAvatarRow: ({ label, onClick }: RowProps) => (
-    <button type="button" onClick={onClick}>
-      {label}
-    </button>
-  ),
-}));
-
 const baseProps = {
   open: true,
   onClose: () => undefined,
