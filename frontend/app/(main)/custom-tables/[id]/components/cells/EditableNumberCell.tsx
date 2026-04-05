@@ -1,6 +1,6 @@
 'use client';
 
-import type { Column, Row, Table } from '@tanstack/react-table';
+import type { Column, Row } from '@tanstack/react-table';
 import { type CSSProperties } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 import { useEditableCell } from './useEditableCell';
@@ -8,7 +8,6 @@ import { useEditableCell } from './useEditableCell';
 interface EditableNumberCellProps {
   row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
-  table: Table<CustomTableGridRow>;
   cellType: string;
   onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   style?: CSSProperties;
@@ -34,7 +33,11 @@ export function EditableNumberCell({ row, column, onUpdateCell, style }: Editabl
     columnKey: column.id,
     onUpdateCell,
     toInputString: v => (v === null || v === undefined ? '' : String(v)),
-    parseValue: raw => (raw.trim() === '' ? null : Number(raw)),
+    parseValue: raw => {
+      if (raw.trim() === '') return null;
+      const num = Number(raw);
+      return Number.isNaN(num) ? null : num;
+    },
   });
 
   if (isEditing) {

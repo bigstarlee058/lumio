@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CustomTableCellValue } from '../../utils/stylingUtils';
 
 export interface UseEditableCellOptions<T extends CustomTableCellValue> {
@@ -72,7 +72,7 @@ export function useEditableCell<T extends CustomTableCellValue>({
     }
   }, [isEditing]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const parsedValue = parseValue ? parseValue(inputValue) : (inputValue as T);
 
     // Skip the network call when nothing has changed.
@@ -92,22 +92,25 @@ export function useEditableCell<T extends CustomTableCellValue>({
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [inputValue, initialValue, parseValue, onUpdateCell, rowId, columnKey, toInputString]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setInputValue(toInputString(initialValue));
     setIsEditing(false);
-  };
+  }, [initialValue, toInputString]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      void handleSave();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      handleCancel();
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        void handleSave();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        handleCancel();
+      }
+    },
+    [handleSave, handleCancel],
+  );
 
   return {
     isEditing,

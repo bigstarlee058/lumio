@@ -1,6 +1,6 @@
 'use client';
 
-import type { Column, Row, Table } from '@tanstack/react-table';
+import type { Column, Row } from '@tanstack/react-table';
 import { type CSSProperties } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 import { useEditableCell } from './useEditableCell';
@@ -8,7 +8,6 @@ import { useEditableCell } from './useEditableCell';
 interface EditableTextCellProps {
   row: Row<CustomTableGridRow>;
   column: Column<CustomTableGridRow>;
-  table: Table<CustomTableGridRow>;
   cellType: string;
   onUpdateCell: (rowId: string, columnKey: string, value: CustomTableCellValue) => Promise<void>;
   style?: CSSProperties;
