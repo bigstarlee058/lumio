@@ -34,6 +34,24 @@ export default function DropboxIntegrationPage() {
   const t = useIntlayer('dropboxIntegrationPage');
   const appKey = process.env.NEXT_PUBLIC_DROPBOX_APP_KEY || '';
 
+  const messages = useMemo(
+    () => ({
+      errors: {
+        loadStatus: t.errors?.loadStatus?.value || 'Failed to load Dropbox status',
+        connectFailed: t.errors?.connectFailed?.value || 'Failed to connect to Dropbox',
+        disconnectFailed: t.errors?.disconnectFailed?.value || 'Failed to disconnect',
+        syncFailed: 'Sync failed',
+      },
+      toasts: {
+        connected: t.toasts?.connected?.value || 'Connected to Dropbox!',
+        connecting: t.toasts?.connecting?.value || 'Connecting to Dropbox...',
+        disconnected: t.toasts?.disconnected?.value || 'Disconnected from Dropbox',
+        syncStarted: t.toasts?.syncStarted?.value || 'Sync started',
+      },
+    }),
+    [t],
+  );
+
   const {
     status: baseStatus,
     loading,
@@ -46,20 +64,7 @@ export default function DropboxIntegrationPage() {
   } = useIntegrationStatus({
     apiPath: 'dropbox',
     user,
-    messages: {
-      errors: {
-        loadStatus: t.errors?.loadStatus?.value || 'Failed to load Dropbox status',
-        connectFailed: t.errors?.connectFailed?.value || 'Failed to connect to Dropbox',
-        disconnectFailed: t.errors?.disconnectFailed?.value || 'Failed to disconnect',
-        syncFailed: t.errors?.connectFailed?.value || 'Sync failed',
-      },
-      toasts: {
-        connected: t.toasts?.connected?.value || 'Connected to Dropbox!',
-        connecting: t.toasts?.connecting?.value || 'Connecting to Dropbox...',
-        disconnected: t.toasts?.disconnected?.value || 'Disconnected from Dropbox',
-        syncStarted: t.toasts?.syncStarted?.value || 'Sync started',
-      },
-    },
+    messages,
   });
 
   const status = baseStatus as DropboxStatus | null;

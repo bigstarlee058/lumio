@@ -9,8 +9,8 @@ import type { IntegrationStatus, IntegrationStatusMessages } from '../types';
 export type UseIntegrationStatusConfig = {
   /** The API route segment, e.g. 'gmail', 'dropbox', 'google-drive' */
   apiPath: string;
-  /** User object — status is loaded only when truthy */
-  user: unknown;
+  /** User object — status is loaded only when truthy (checked for truthiness only) */
+  user: object | null | undefined;
   messages: IntegrationStatusMessages;
 };
 
@@ -63,7 +63,12 @@ export function useIntegrationStatus({
       toast.success(messages.toasts.connected);
     }
     if (statusParam === 'error') {
-      toast.error(messages.errors.connectFailed);
+      if (messages.onCallbackError) {
+        const reason = searchParams.get('reason') ?? undefined;
+        messages.onCallbackError(reason);
+      } else {
+        toast.error(messages.errors.connectFailed);
+      }
     }
   }, [searchParams, messages]);
 

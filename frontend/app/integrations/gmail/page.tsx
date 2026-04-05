@@ -8,8 +8,7 @@ import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
@@ -40,23 +39,22 @@ type GmailStatus = {
 export default function GmailIntegrationPage() {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('gmailIntegrationPage');
-  const searchParams = useSearchParams();
 
   // Gmail sync has a custom response format, so we manage syncing state locally
   const [gmailSyncing, setGmailSyncing] = useState(false);
   const [gmailSaving, setGmailSaving] = useState(false);
 
-  const {
-    status: baseStatus,
-    loading,
-    saving,
-    loadStatus,
-    handleConnect,
-    handleDisconnect,
-  } = useIntegrationStatus({
-    apiPath: 'gmail',
-    user,
-    messages: {
+  // Gmail has a special OAuth error callback with a `reason` query param.
+  // We pass this as onCallbackError so the hook skips its own generic error toast.
+  const handleCallbackError = useCallback(
+    (reason?: string) => {
+      toast.error(reason ? `${t.errors.authFailed.value}: ${reason}` : t.errors.authFailed.value);
+    },
+    [t],
+  );
+
+  const messages = useMemo(
+    () => ({
       errors: {
         loadStatus: t.errors.loadStatus.value,
         connectFailed: t.errors.connectFailed.value,
@@ -69,21 +67,27 @@ export default function GmailIntegrationPage() {
         disconnected: t.toasts.disconnected.value,
         syncStarted: t.toasts.syncStarted.value,
       },
-      successCallbackParam: 'success',
-    },
+      successCallbackParam: 'success' as const,
+      onCallbackError: handleCallbackError,
+    }),
+    [t, handleCallbackError],
+  );
+
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+  } = useIntegrationStatus({
+    apiPath: 'gmail',
+    user,
+    messages,
   });
 
   // Cast to GmailStatus to access Gmail-specific settings
   const status = baseStatus as GmailStatus | null;
-
-  // Gmail has a special OAuth error callback with a `reason` query param
-  useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam === 'error') {
-      const reason = searchParams.get('reason');
-      toast.error(reason ? `${t.errors.authFailed.value}: ${reason}` : t.errors.authFailed.value);
-    }
-  }, [searchParams, t]);
 
   const updateSettings = async (payload: Partial<GmailSettings>) => {
     try {

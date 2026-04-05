@@ -34,6 +34,24 @@ export default function GoogleDriveIntegrationPage() {
   const t = useIntlayer('googleDriveIntegrationPage');
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_DRIVE_API_KEY || '';
 
+  const messages = useMemo(
+    () => ({
+      errors: {
+        loadStatus: t.errors.loadStatus.value,
+        connectFailed: t.errors.connectFailed.value,
+        disconnectFailed: t.errors.disconnectFailed.value,
+        syncFailed: 'Sync failed',
+      },
+      toasts: {
+        connected: t.toasts.connected.value,
+        connecting: t.toasts.connecting.value,
+        disconnected: t.toasts.disconnected.value,
+        syncStarted: t.toasts.syncStarted.value,
+      },
+    }),
+    [t],
+  );
+
   const {
     status: baseStatus,
     loading,
@@ -46,20 +64,7 @@ export default function GoogleDriveIntegrationPage() {
   } = useIntegrationStatus({
     apiPath: 'google-drive',
     user,
-    messages: {
-      errors: {
-        loadStatus: t.errors.loadStatus.value,
-        connectFailed: t.errors.connectFailed.value,
-        disconnectFailed: t.errors.disconnectFailed.value,
-        syncFailed: t.errors.connectFailed.value,
-      },
-      toasts: {
-        connected: t.toasts.connected.value,
-        connecting: t.toasts.connecting.value,
-        disconnected: t.toasts.disconnected.value,
-        syncStarted: t.toasts.syncStarted.value,
-      },
-    },
+    messages,
   });
 
   const status = baseStatus as DriveStatus | null;
