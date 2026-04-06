@@ -5,7 +5,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { enUS, kk, ru } from 'date-fns/locale';
-import { CheckCircle, Plus, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
+import { CheckCircle, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -63,16 +63,7 @@ export default function CustomTableDetailPage() {
       });
     });
   }, []);
-  const {
-    table,
-    setTable,
-    categories,
-    categoryId,
-    setCategoryId,
-    loading,
-    loadTable,
-    loadCategories,
-  } = useTableData({
+  const { table, setTable, loading, loadTable } = useTableData({
     tableId,
     isAuthenticated: Boolean(user),
     authLoading,
