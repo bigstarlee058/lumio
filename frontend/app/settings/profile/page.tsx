@@ -40,13 +40,15 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SecurityIcon from '@mui/icons-material/Security';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
+import { useNotifications } from '@/app/settings/profile/hooks/useNotifications';
+import { useProfileForm } from '@/app/settings/profile/hooks/useProfileForm';
+import { useSessions } from '@/app/settings/profile/hooks/useSessions';
 import {
   type ChangelogPayload,
   type NotificationPreferences,
   type SectionId,
   type TimeZoneOption,
   type UserSession,
-  defaultNotificationPreferences,
   getApiErrorMessage,
   getInitials,
   getSessionIcon,
@@ -67,12 +69,7 @@ export default function ProfileSettingsPage() {
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const t = useIntlayer('settingsProfilePage');
   const [activeSection, setActiveSection] = useState<SectionId>('profile');
-  const [profileName, setProfileName] = useState('');
-  const [profileTimeZone, setProfileTimeZone] = useState<string>('');
   const [themePreference, setThemePreference] = useState<ThemePreference>('auto');
-  const [profileMessage, setProfileMessage] = useState<string | null>(null);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileLoading, setProfileLoading] = useState(false);
   const [appearanceMessage, setAppearanceMessage] = useState<string | null>(null);
   const [appearanceError, setAppearanceError] = useState<string | null>(null);
   const [appearanceLoading, setAppearanceLoading] = useState(false);
@@ -81,26 +78,7 @@ export default function ProfileSettingsPage() {
   const [emailMessage, setEmailMessage] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [emailLoading, setEmailLoading] = useState(false);
-  const [sessions, setSessions] = useState<UserSession[]>([]);
-  const [sessionsLoading, setSessionsLoading] = useState(false);
-  const [sessionsError, setSessionsError] = useState<string | null>(null);
-  const [sessionsMessage, setSessionsMessage] = useState<string | null>(null);
-  const [logoutSessionLoadingId, setLogoutSessionLoadingId] = useState<string | null>(null);
-  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(
-    defaultNotificationPreferences,
-  );
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
-  const [notificationSavingKey, setNotificationSavingKey] = useState<
-    keyof NotificationPreferences | null
-  >(null);
-  const [notificationError, setNotificationError] = useState<string | null>(null);
-  const [notificationMessage, setNotificationMessage] = useState<string | null>(null);
-
-  const [passwords, setPasswords] = useState({
-    current: '',
-    next: '',
-    confirm: '',
-  });
+  const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -119,6 +97,68 @@ export default function ProfileSettingsPage() {
     (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
     [t],
   );
+
+  const isAuthenticated = useMemo(() => !!user, [user]);
+
+  const {
+    profileName,
+    setProfileName,
+    profileTimeZone,
+    setProfileTimeZone,
+    profileMessage,
+    setProfileMessage,
+    profileError,
+    setProfileError,
+    profileLoading,
+    hasProfileChanges,
+    handleProfileSubmit,
+  } = useProfileForm(user, setUser, {
+    successFallback: t.profileCard.successFallback.value,
+    errorFallback: t.profileCard.errorFallback.value,
+  });
+
+  const {
+    sessions,
+    sessionsLoading,
+    sessionsError,
+    sessionsMessage,
+    logoutSessionLoadingId,
+    loadSessions,
+    handleLogoutSession,
+    handleLogoutAll,
+  } = useSessions(isAuthenticated, activeSection, {
+    loadError: tx(['sessionsCard', 'sessionsLoadError'], 'Failed to load sessions'),
+    logoutAllConfirm: tx(
+      ['sessionsCard', 'logoutAllConfirm'],
+      'Log out of all devices? You will need to sign in again on each device.',
+    ),
+    logoutCurrentConfirm: tx(
+      ['sessionsCard', 'logoutCurrentConfirm'],
+      'Log out on this device? You will need to sign in again.',
+    ),
+    logoutSessionConfirm: tx(
+      ['sessionsCard', 'logoutSessionConfirm'],
+      'Log out this device session?',
+    ),
+    sessionLogoutSuccess: tx(['sessionsCard', 'sessionLogoutSuccess'], 'Session logged out'),
+    sessionLogoutError: tx(
+      ['sessionsCard', 'sessionLogoutError'],
+      'Failed to log out session',
+    ),
+  });
+
+  const {
+    notificationPreferences,
+    notificationsLoading,
+    notificationSavingKey,
+    notificationError,
+    notificationMessage,
+    toggleNotificationPreference,
+  } = useNotifications(isAuthenticated, activeSection, {
+    loadError: tx(['notificationsCard', 'errors', 'load'], ''),
+    saveError: tx(['notificationsCard', 'errors', 'save'], ''),
+    savedMessage: tx(['notificationsCard', 'messages', 'saved'], ''),
+  });
 
   const timeZoneSelectOptions = useMemo<TimeZoneOption[]>(() => {
     const autoLabel = t.profileCard.timeZones.auto.value;
@@ -163,13 +203,7 @@ export default function ProfileSettingsPage() {
   }, [timeZoneSearch, timeZoneSelectOptions]);
 
   useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email);
-    }
-    if (user?.name) {
-      setProfileName(user.name);
-    }
-    setProfileTimeZone(user?.timeZone || '');
+    if (user?.email) setEmail(user.email);
     setThemePreference(resolveThemePreference(user?.themePreference));
   }, [user]);
 
@@ -184,54 +218,6 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     setAvatarError(false);
   }, [user?.avatarUrl]);
-
-  const isAuthenticated = useMemo(() => !!user, [user]);
-  const hasProfileChanges = useMemo(() => {
-    return (
-      profileName.trim() !== (user?.name || '').trim() || profileTimeZone !== (user?.timeZone || '')
-    );
-  }, [profileName, profileTimeZone, user?.name, user?.timeZone]);
-
-  const handleProfileSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setProfileMessage(null);
-    setProfileError(null);
-
-    const normalizedName = profileName.trim();
-    if (!hasProfileChanges) {
-      return;
-    }
-
-    try {
-      setProfileLoading(true);
-      const response = await apiClient.patch('/users/me/preferences', {
-        name: normalizedName,
-        timeZone: profileTimeZone ? profileTimeZone : null,
-      });
-
-      const responseUser = response.data?.user;
-      const nextUser = responseUser
-        ? { ...(user || {}), ...responseUser }
-        : user
-          ? {
-              ...user,
-              name: normalizedName,
-              timeZone: profileTimeZone || null,
-            }
-          : null;
-
-      if (nextUser) {
-        setUser(nextUser);
-        localStorage.setItem('user', JSON.stringify(nextUser));
-      }
-
-      setProfileMessage(response.data?.message || t.profileCard.successFallback.value);
-    } catch (error: unknown) {
-      setProfileError(getApiErrorMessage(error, t.profileCard.errorFallback.value));
-    } finally {
-      setProfileLoading(false);
-    }
-  };
 
   const handleAvatarSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -311,88 +297,6 @@ export default function ProfileSettingsPage() {
     }
   };
 
-  const handleLogoutAll = async () => {
-    const confirmed = window.confirm(
-      tx(
-        ['sessionsCard', 'logoutAllConfirm'],
-        'Log out of all devices? You will need to sign in again on each device.',
-      ),
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await apiClient.post('/auth/logout-all');
-    } catch (error) {
-      console.error('Logout-all error:', error);
-    } finally {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
-      router.push('/login');
-    }
-  };
-
-  const loadSessions = useCallback(async () => {
-    try {
-      setSessionsLoading(true);
-      setSessionsError(null);
-      const response = await apiClient.get<UserSession[]>('/auth/sessions');
-      setSessions(Array.isArray(response.data) ? response.data : []);
-    } catch (error: unknown) {
-      setSessionsError(
-        getApiErrorMessage(
-          error,
-          tx(['sessionsCard', 'sessionsLoadError'], 'Failed to load sessions'),
-        ),
-      );
-    } finally {
-      setSessionsLoading(false);
-    }
-  }, [t]);
-
-  useEffect(() => {
-    if (!isAuthenticated || activeSection !== 'sessions') {
-      return;
-    }
-
-    loadSessions();
-  }, [activeSection, isAuthenticated, loadSessions]);
-
-  useEffect(() => {
-    if (!isAuthenticated || activeSection !== 'notifications') {
-      return;
-    }
-
-    let active = true;
-    const loadNotificationPreferences = async () => {
-      setNotificationsLoading(true);
-      setNotificationError(null);
-      try {
-        const response = await apiClient.get('/notifications/preferences');
-        if (!active) return;
-        setNotificationPreferences({
-          ...defaultNotificationPreferences,
-          ...(response.data || {}),
-        });
-      } catch {
-        if (!active) return;
-        setNotificationError(tx(['notificationsCard', 'errors', 'load'], ''));
-      } finally {
-        if (active) {
-          setNotificationsLoading(false);
-        }
-      }
-    };
-
-    void loadNotificationPreferences();
-    return () => {
-      active = false;
-    };
-  }, [activeSection, isAuthenticated]);
-
   useEffect(() => {
     if (!isAuthenticated || activeSection !== 'changelog') {
       return;
@@ -434,68 +338,6 @@ export default function ProfileSettingsPage() {
       cancelled = true;
     };
   }, [activeSection, currentWorkspace, isAuthenticated, workspaceLoading]);
-
-  const toggleNotificationPreference = async (
-    key: keyof NotificationPreferences,
-    value: boolean,
-  ) => {
-    setNotificationSavingKey(key);
-    setNotificationError(null);
-    setNotificationMessage(null);
-
-    const previous = notificationPreferences;
-    setNotificationPreferences(current => ({ ...current, [key]: value }));
-
-    try {
-      await apiClient.patch('/notifications/preferences', { [key]: value });
-      setNotificationMessage(tx(['notificationsCard', 'messages', 'saved'], ''));
-    } catch {
-      setNotificationPreferences(previous);
-      setNotificationError(tx(['notificationsCard', 'errors', 'save'], ''));
-    } finally {
-      setNotificationSavingKey(null);
-    }
-  };
-
-  const handleLogoutSession = async (session: UserSession) => {
-    const confirmMessage = session.isCurrent
-      ? tx(
-          ['sessionsCard', 'logoutCurrentConfirm'],
-          'Log out on this device? You will need to sign in again.',
-        )
-      : tx(['sessionsCard', 'logoutSessionConfirm'], 'Log out this device session?');
-
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      setLogoutSessionLoadingId(session.id);
-      setSessionsError(null);
-      setSessionsMessage(null);
-      await apiClient.post(`/auth/sessions/${session.id}/logout`);
-
-      if (session.isCurrent) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        router.push('/login');
-        return;
-      }
-
-      setSessions(prev => prev.filter(current => current.id !== session.id));
-      setSessionsMessage(tx(['sessionsCard', 'sessionLogoutSuccess'], 'Session logged out'));
-    } catch (error: unknown) {
-      setSessionsError(
-        getApiErrorMessage(
-          error,
-          tx(['sessionsCard', 'sessionLogoutError'], 'Failed to log out session'),
-        ),
-      );
-    } finally {
-      setLogoutSessionLoadingId(null);
-    }
-  };
 
   const handleEmailSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
