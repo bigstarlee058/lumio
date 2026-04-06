@@ -1,0 +1,80 @@
+'use client';
+
+import apiClient from '@/app/lib/api';
+import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import type { CustomTable } from '../utils/tableTypes';
+
+interface Category {
+  id: string;
+  name: string;
+  color?: string | null;
+  icon?: string | null;
+}
+
+export interface UseTableDataReturn {
+  table: CustomTable | null;
+  setTable: React.Dispatch<React.SetStateAction<CustomTable | null>>;
+  categories: Category[];
+  categoryId: string;
+  setCategoryId: React.Dispatch<React.SetStateAction<string>>;
+  loading: boolean;
+  loadTable: () => Promise<void>;
+  loadCategories: () => Promise<void>;
+}
+
+interface UseTableDataParams {
+  tableId: string | null;
+  isAuthenticated: boolean;
+  authLoading: boolean;
+  loadTableFailedMessage: string;
+}
+
+export function useTableData({
+  tableId,
+  isAuthenticated,
+  authLoading,
+  loadTableFailedMessage,
+}: UseTableDataParams): UseTableDataReturn {
+  const [table, setTable] = useState<CustomTable | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryId, setCategoryId] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/categories');
+      const payload = response.data?.data || response.data || [];
+      setCategories(Array.isArray(payload) ? payload : []);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+    }
+  }, []);
+
+  const loadTable = useCallback(async () => {
+    if (!tableId) return;
+    setLoading(true);
+    try {
+      const response = await apiClient.get(`/custom-tables/${tableId}`);
+      const payload = response.data?.data || response.data;
+      setTable(payload);
+      const currentCategoryId = payload?.categoryId || payload?.category?.id || '';
+      setCategoryId(currentCategoryId || '');
+    } catch (error) {
+      console.error('Failed to load table:', error);
+      toast.error(loadTableFailedMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [tableId, loadTableFailedMessage]);
+
+  // Initial load on auth + tableId
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && tableId) {
+      loadCategories();
+      loadTable();
+    }
+  }, [authLoading, isAuthenticated, tableId, loadCategories, loadTable]);
+
+  return { table, setTable, categories, categoryId, setCategoryId, loading, loadTable, loadCategories };
+}

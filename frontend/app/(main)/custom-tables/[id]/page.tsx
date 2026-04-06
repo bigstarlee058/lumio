@@ -26,6 +26,7 @@ import {
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTabStats } from './hooks/useTabStats';
+import { useTableData } from './hooks/useTableData';
 import { useTableGrid } from './hooks/useTableGrid';
 import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
@@ -52,12 +53,9 @@ import {
 import type {
   ColumnType,
   CustomTableCellValue,
-  CustomTableColumn,
-  CustomTableColumnConfig,
   CustomTableGridRow,
   CustomTableRowPatch,
   CustomTableRowStyles,
-  SheetStyle,
 } from './utils/stylingUtils';
 import {
   getClassificationResults,
@@ -70,45 +68,15 @@ import {
   isRecord,
   tx,
 } from './utils/tableHelpers';
+import type {
+  CustomTable,
+  CustomTablePageColumn,
+  CustomTableViewSettings,
+} from './utils/tableTypes';
 
 type EditingScope = 'name' | 'description' | 'both';
 
 type RowFilterValue = string | number | boolean | Array<string | number | boolean>;
-
-interface CustomTablePageColumn extends CustomTableColumn {
-  isRequired: boolean;
-  isUnique: boolean;
-  width?: number;
-  config: CustomTableColumnConfig | null;
-  style?: {
-    header?: SheetStyle;
-    cell?: SheetStyle;
-  } | null;
-}
-
-interface CustomTableViewColumnSettings {
-  width?: number;
-}
-
-interface CustomTableViewSettings {
-  columns?: Record<string, CustomTableViewColumnSettings>;
-}
-
-interface CustomTable {
-  id: string;
-  name: string;
-  description: string | null;
-  source: string;
-  categoryId?: string | null;
-  category?: {
-    id: string;
-    name: string;
-    color?: string | null;
-    icon?: string | null;
-  } | null;
-  columns: CustomTablePageColumn[];
-  viewSettings?: CustomTableViewSettings | null;
-}
 
 type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
 
@@ -139,17 +107,13 @@ export default function CustomTableDetailPage() {
       });
     });
   }, []);
-  const [table, setTable] = useState<CustomTable | null>(null);
-  const [categories, setCategories] = useState<
-    Array<{
-      id: string;
-      name: string;
-      color?: string | null;
-      icon?: string | null;
-    }>
-  >([]);
-  const [categoryId, setCategoryId] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const { table, setTable, categories, categoryId, setCategoryId, loading, loadTable, loadCategories } =
+    useTableData({
+      tableId,
+      isAuthenticated: Boolean(user),
+      authLoading,
+      loadTableFailedMessage: t.grid.loadTableFailed.value,
+    });
   const [gridFiltersParam, setGridFiltersParam] = useState<string | undefined>(undefined);
   const [selectedColumnKeys, setSelectedColumnKeys] = useState<string[]>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
@@ -360,33 +324,6 @@ export default function CustomTableDetailPage() {
     }
     return next;
   }, [orderedColumns, columnWidths]);
-
-  const loadCategories = async () => {
-    try {
-      const response = await apiClient.get('/categories');
-      const payload = response.data?.data || response.data || [];
-      setCategories(Array.isArray(payload) ? payload : []);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
-  };
-
-  const loadTable = async () => {
-    if (!tableId) return;
-    setLoading(true);
-    try {
-      const response = await apiClient.get(`/custom-tables/${tableId}`);
-      const payload = response.data?.data || response.data;
-      setTable(payload);
-      const currentCategoryId = payload?.categoryId || payload?.category?.id || '';
-      setCategoryId(currentCategoryId || '');
-    } catch (error) {
-      console.error('Failed to load table:', error);
-      toast.error(t.grid.loadTableFailed.value);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const {
     editingMeta,
@@ -676,13 +613,6 @@ export default function CustomTableDetailPage() {
       window.removeEventListener('afterprint', handleAfterPrint);
     };
   }, []);
-
-  useEffect(() => {
-    if (!authLoading && user && tableId) {
-      loadCategories();
-      loadTable();
-    }
-  }, [authLoading, user, tableId]);
 
   const createRow: () => Promise<CustomTableGridRow | null> = async () => {
     if (!tableId) return null;
