@@ -1,7 +1,9 @@
 export type StatementExpenseMode = 'scan' | 'manual';
+export type ManualStep = 'amount' | 'details';
 
 export const STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT = 'statements:open-expense-drawer';
 export const ALWAYS_ALLOW_STATEMENT_DUPLICATES = true;
+export const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
 export type OpenExpenseDrawerEventDetail = {
   mode?: StatementExpenseMode | string | null;
@@ -153,6 +155,17 @@ export function computeManualAmountFontSize(value: string): number {
 
 export function resolveExpenseDrawerMode(mode: string | null | undefined): StatementExpenseMode {
   return mode === 'manual' ? 'manual' : 'scan';
+}
+
+export function resolveDefaultCurrency(currency: string | null | undefined): string {
+  const normalized = String(currency || '')
+    .trim()
+    .toUpperCase();
+  return normalized.length > 0 ? normalized : 'KZT';
+}
+
+export function createDefaultManualDraft(currency: string): ManualExpenseDraft {
+  return { amount: '', currency, description: '', merchant: '', categoryId: '', taxRateId: '' };
 }
 
 export function validateManualExpenseDraft(draft: ManualExpenseDraft): {

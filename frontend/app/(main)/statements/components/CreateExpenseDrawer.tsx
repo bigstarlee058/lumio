@@ -1,26 +1,15 @@
 'use client';
 
 import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/StatementCategoryDrawer';
+import { useExpenseForm } from '@/app/(main)/statements/components/hooks/useExpenseForm';
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { useLocale } from '@/app/i18n';
-import { getApiErrorMessage } from '@/app/lib/api-error';
+import { type StatementCategoryNode } from '@/app/lib/statement-categories';
 import {
-  type StatementCategoryNode,
-  flattenStatementCategories,
-} from '@/app/lib/statement-categories';
-import {
-  ALWAYS_ALLOW_STATEMENT_DUPLICATES,
-  type CurrencySearchItem,
   type ManualExpenseDraft,
   type StatementExpenseMode,
   type TaxRateOption,
-  buildCurrencySearchIndex,
-  computeManualAmountFontSize,
-  hasPositiveManualAmount,
-  resolveExpenseDrawerMode,
   sanitizeManualAmountInput,
-  validateManualExpenseDraft,
 } from '@/app/lib/statement-expense-drawer';
 import { cn } from '@/app/lib/utils';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
@@ -37,7 +26,6 @@ import {
   Search,
   UploadCloud,
 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
 
 type Props = {
   open: boolean;
@@ -59,27 +47,6 @@ type Props = {
   }) => Promise<void>;
 };
 
-const resolveDefaultCurrency = (currency: string | null | undefined): string => {
-  const normalized = String(currency || '')
-    .trim()
-    .toUpperCase();
-
-  return normalized.length > 0 ? normalized : 'KZT';
-};
-
-const createDefaultManualDraft = (currency: string): ManualExpenseDraft => ({
-  amount: '',
-  currency,
-  description: '',
-  merchant: '',
-  categoryId: '',
-  taxRateId: '',
-});
-
-const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
-
-type ManualStep = 'amount' | 'details';
-
 export default function CreateExpenseDrawer({
   open,
   initialMode,
@@ -90,245 +57,61 @@ export default function CreateExpenseDrawer({
   onSubmitScan,
   onSubmitManual,
 }: Props) {
-  const { locale } = useLocale();
-  const resolvedDefaultCurrency = resolveDefaultCurrency(defaultCurrency);
-  const [mode, setMode] = useState<StatementExpenseMode>('scan');
-  const [manualStep, setManualStep] = useState<ManualStep>('amount');
-  const [currencyPickerOpen, setCurrencyPickerOpen] = useState(false);
-  const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
-  const [taxRateDrawerOpen, setTaxRateDrawerOpen] = useState(false);
-  const [currencySearch, setCurrencySearch] = useState('');
-  const [manualRecentCurrencies, setManualRecentCurrencies] = useState<string[]>([
-    ...DEFAULT_RECENT_CURRENCIES,
-  ]);
-  const [files, setFiles] = useState<File[]>([]);
-  const [manualDraft, setManualDraft] = useState<ManualExpenseDraft>(() =>
-    createDefaultManualDraft(resolvedDefaultCurrency),
-  );
-  const [manualDate, setManualDate] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const manualAmountInputRef = useRef<HTMLInputElement | null>(null);
-
-  const currencyItems = useMemo(() => buildCurrencySearchIndex(), []);
-
-  const currencyByCode = useMemo(
-    () => new Map(currencyItems.map(item => [item.code, item])),
-    [currencyItems],
-  );
-
-  const selectedCurrencyItem = currencyByCode.get(manualDraft.currency);
-  const selectedCurrencySymbol = selectedCurrencyItem?.symbol ?? manualDraft.currency;
-  const manualAmountFontSize = useMemo(
-    () => computeManualAmountFontSize(manualDraft.amount),
-    [manualDraft.amount],
-  );
-  const flatCategories = useMemo(
-    () => flattenStatementCategories(categories, '', locale),
-    [categories, locale],
-  );
-  const selectedCategoryName = useMemo(
-    () => flatCategories.find(category => category.id === manualDraft.categoryId)?.name ?? '',
-    [flatCategories, manualDraft.categoryId],
-  );
-  const defaultTaxRate = useMemo(
-    () =>
-      taxRates.find(taxRate => taxRate.isEnabled && taxRate.isDefault) ||
-      taxRates.find(taxRate => taxRate.isEnabled) ||
-      null,
-    [taxRates],
-  );
-  const selectedTaxRate = useMemo(() => {
-    if (!manualDraft.taxRateId) {
-      return defaultTaxRate;
-    }
-
-    return taxRates.find(taxRate => taxRate.id === manualDraft.taxRateId) || null;
-  }, [manualDraft.taxRateId, taxRates, defaultTaxRate]);
-  const enabledTaxRates = useMemo(() => taxRates.filter(taxRate => taxRate.isEnabled), [taxRates]);
+  const {
+    mode,
+    setMode,
+    manualStep,
+    setManualStep,
+    currencyPickerOpen,
+    setCurrencyPickerOpen,
+    categoryDrawerOpen,
+    setCategoryDrawerOpen,
+    taxRateDrawerOpen,
+    setTaxRateDrawerOpen,
+    currencySearch,
+    setCurrencySearch,
+    files,
+    manualDraft,
+    setManualDraft,
+    manualDate,
+    setManualDate,
+    submitting,
+    error,
+    setError,
+    fileInputRef,
+    manualAmountInputRef,
+    selectedCurrencyItem,
+    selectedCurrencySymbol,
+    manualAmountFontSize,
+    flatCategories,
+    selectedCategoryName,
+    defaultTaxRate,
+    selectedTaxRate,
+    enabledTaxRates,
+    selectedMatchesSearch,
+    recentCurrencyItems,
+    allCurrencyItems,
+    hasManualAmount,
+    manualValidation,
+    handleSelectCurrency,
+    handleClose,
+    handleBackClick,
+    handleFilesSelected,
+    handleManualNext,
+    handleSubmitScan,
+    handleSubmitManual,
+  } = useExpenseForm({
+    open,
+    initialMode,
+    defaultCurrency,
+    categories,
+    taxRates,
+    onClose,
+    onSubmitScan,
+    onSubmitManual,
+  });
 
   const currencyQuery = currencySearch.trim().toLowerCase();
-
-  const selectedMatchesSearch = useMemo(() => {
-    if (!selectedCurrencyItem) return false;
-    if (!currencyQuery) return true;
-    return selectedCurrencyItem.searchText.includes(currencyQuery);
-  }, [selectedCurrencyItem, currencyQuery]);
-
-  const recentCurrencyItems = useMemo(
-    () =>
-      manualRecentCurrencies
-        .map(code => currencyByCode.get(code))
-        .filter((item): item is CurrencySearchItem => Boolean(item))
-        .filter(item => item.code !== manualDraft.currency),
-    [manualRecentCurrencies, currencyByCode, manualDraft.currency],
-  );
-
-  const allCurrencyItems = useMemo(() => {
-    const source =
-      currencyQuery.length > 0
-        ? currencyItems.filter(item => item.searchText.includes(currencyQuery))
-        : currencyItems;
-
-    return source.filter(item => item.code !== manualDraft.currency);
-  }, [currencyItems, currencyQuery, manualDraft.currency]);
-
-  const hasManualAmount = useMemo(
-    () => hasPositiveManualAmount(manualDraft.amount),
-    [manualDraft.amount],
-  );
-
-  useEffect(() => {
-    if (!open) {
-      setError(null);
-      setSubmitting(false);
-      return;
-    }
-
-    const resolvedMode = resolveExpenseDrawerMode(initialMode);
-    setMode(resolvedMode);
-    setManualStep('amount');
-    setCurrencyPickerOpen(false);
-    setCategoryDrawerOpen(false);
-    setTaxRateDrawerOpen(false);
-    setCurrencySearch('');
-    setManualDraft(createDefaultManualDraft(resolvedDefaultCurrency));
-  }, [open, initialMode, resolvedDefaultCurrency]);
-
-  useEffect(() => {
-    if (!open || mode !== 'manual' || manualStep !== 'amount' || currencyPickerOpen) {
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      manualAmountInputRef.current?.focus();
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-    };
-  }, [open, mode, manualStep, currencyPickerOpen]);
-
-  const manualValidation = useMemo(() => validateManualExpenseDraft(manualDraft), [manualDraft]);
-
-  const pushRecentCurrency = (currencyCode: string) => {
-    setManualRecentCurrencies(prev => [
-      currencyCode,
-      ...prev.filter(item => item !== currencyCode),
-    ]);
-  };
-
-  const handleSelectCurrency = (currencyCode: string) => {
-    setManualDraft(prev => ({ ...prev, currency: currencyCode }));
-    pushRecentCurrency(currencyCode);
-    setCurrencySearch('');
-    setCurrencyPickerOpen(false);
-  };
-
-  const handleClose = () => {
-    setMode('scan');
-    setManualStep('amount');
-    setCurrencyPickerOpen(false);
-    setCategoryDrawerOpen(false);
-    setTaxRateDrawerOpen(false);
-    setCurrencySearch('');
-    setFiles([]);
-    setManualDraft(createDefaultManualDraft(resolvedDefaultCurrency));
-    setManualDate(new Date().toISOString().slice(0, 10));
-    setError(null);
-    setSubmitting(false);
-    onClose();
-  };
-
-  const handleBackClick = () => {
-    if (categoryDrawerOpen) {
-      setCategoryDrawerOpen(false);
-      return;
-    }
-
-    if (taxRateDrawerOpen) {
-      setTaxRateDrawerOpen(false);
-      return;
-    }
-
-    if (mode === 'manual' && currencyPickerOpen) {
-      setCurrencyPickerOpen(false);
-      setCurrencySearch('');
-      return;
-    }
-
-    if (mode === 'manual' && manualStep === 'details') {
-      setManualStep('amount');
-      return;
-    }
-
-    handleClose();
-  };
-
-  const handleFilesSelected = (selected: FileList | null) => {
-    if (!selected) return;
-    setFiles(Array.from(selected));
-    setError(null);
-  };
-
-  const handleManualNext = () => {
-    if (!hasManualAmount) {
-      setError('Enter a valid amount');
-      return;
-    }
-
-    setError(null);
-    setManualStep('details');
-  };
-
-  const handleSubmitScan = async () => {
-    if (files.length === 0) {
-      setError('Choose at least one file');
-      return;
-    }
-
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      await onSubmitScan({
-        files,
-        allowDuplicates: ALWAYS_ALLOW_STATEMENT_DUPLICATES,
-        requireManualCategorySelection: false,
-      });
-      handleClose();
-    } catch (submitError: unknown) {
-      setError(getApiErrorMessage(submitError, 'Failed to upload files'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleSubmitManual = async () => {
-    if (!manualValidation.amount || !manualValidation.merchant || !manualValidation.category) {
-      setError('Amount, merchant, and category are required');
-      return;
-    }
-
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      await onSubmitManual({
-        draft: manualDraft,
-        date: manualDate,
-        files,
-        allowDuplicates: ALWAYS_ALLOW_STATEMENT_DUPLICATES,
-      });
-      handleClose();
-    } catch (submitError: unknown) {
-      setError(getApiErrorMessage(submitError, 'Failed to submit manual expense'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <>
