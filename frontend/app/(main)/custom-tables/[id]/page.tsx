@@ -17,6 +17,7 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
 import { RowDrawer } from './components/RowDrawer';
+import { type ColumnFilterState, type RowFilterOp, DEFAULT_COLUMN_WIDTH, useColumnConfig } from './hooks/useColumnConfig';
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTableMeta } from './hooks/useTableMeta';
@@ -91,31 +92,9 @@ interface CustomTable {
   viewSettings?: CustomTableViewSettings | null;
 }
 
-type RowFilterOp =
-  | 'eq'
-  | 'neq'
-  | 'contains'
-  | 'startsWith'
-  | 'gt'
-  | 'gte'
-  | 'lt'
-  | 'lte'
-  | 'between'
-  | 'in'
-  | 'isEmpty'
-  | 'isNotEmpty'
-  | 'search';
 
 type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
 
-type ColumnFilterState = {
-  min?: string;
-  max?: string;
-  from?: string;
-  to?: string;
-  op?: RowFilterOp;
-  value?: string;
-};
 
 type TranslationTree = {
   value?: string;
@@ -277,8 +256,6 @@ export default function CustomTableDetailPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [bulkMarking, setBulkMarking] = useState<'paid' | 'unpaid' | null>(null);
   const columnsTabId = '__columns__';
-  const [columnOrder, setColumnOrder] = useState<string[]>([]);
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useState<string[]>([]);
 
   const [newColumnOpen, setNewColumnOpen] = useState(false);
   const [newColumn, setNewColumn] = useState<{
@@ -288,7 +265,6 @@ export default function CustomTableDetailPage() {
     title: '',
     type: 'text',
   });
-  const [columnFilters, setColumnFilters] = useState<Record<string, ColumnFilterState>>({});
 
   const [dateFrom, setDateFrom] = useState<string | null>(null);
   const [dateTo, setDateTo] = useState<string | null>(null);
@@ -321,11 +297,6 @@ export default function CustomTableDetailPage() {
     [t],
   );
 
-  const DEFAULT_COLUMN_WIDTH = 180;
-  const MIN_COLUMN_WIDTH = 60;
-  const MAX_COLUMN_WIDTH = 1200;
-  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
-  const columnWidthTimersRef = useRef<Record<string, number>>({});
   const rowsRef = useRef<CustomTableGridRow[]>([]);
   const rowsRequestSeqRef = useRef(0);
   const rowsAbortControllerRef = useRef<AbortController | null>(null);
@@ -384,48 +355,26 @@ export default function CustomTableDetailPage() {
     return [...cols].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
   }, [table?.columns]);
 
-  useEffect(() => {
-    if (!tableId) return;
-    const storageKey = `custom-table:${tableId}:columns`;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return;
-      const parsed = JSON.parse(raw) as {
-        order?: string[];
-        hidden?: string[];
-      };
-      if (Array.isArray(parsed.order)) setColumnOrder(parsed.order);
-      if (Array.isArray(parsed.hidden)) setHiddenColumnKeys(parsed.hidden);
-    } catch (error) {
-      console.warn('Failed to load column settings:', error);
-    }
-  }, [tableId]);
-
-  useEffect(() => {
-    if (!tableId) return;
-    const storageKey = `custom-table:${tableId}:columns`;
-    try {
-      localStorage.setItem(
-        storageKey,
-        JSON.stringify({ order: columnOrder, hidden: hiddenColumnKeys }),
-      );
-    } catch (error) {
-      console.warn('Failed to persist column settings:', error);
-    }
-  }, [tableId, columnOrder, hiddenColumnKeys]);
-
-  useEffect(() => {
-    const keys = orderedColumns.map(c => c.key);
-    setColumnOrder(prev => {
-      if (!prev.length) return keys;
-      const next = prev.filter(k => keys.includes(k));
-      keys.forEach(k => {
-        if (!next.includes(k)) next.push(k);
-      });
-      return next;
-    });
-    setHiddenColumnKeys(prev => prev.filter(k => keys.includes(k)));
-  }, [orderedColumns]);
+  const {
+    columnOrder,
+    setColumnOrder,
+    hiddenColumnKeys,
+    setHiddenColumnKeys,
+    columnFilters,
+    setColumnFilters,
+    columnWidths,
+    getColumnWidth,
+    persistColumnWidth,
+    toggleColumnHidden,
+    moveColumn,
+    resetColumns,
+  } = useColumnConfig({
+    tableId,
+    orderedColumns,
+    viewSettings: table?.viewSettings,
+    isAuthenticated: Boolean(user),
+    columnWidthSaveFailedMessage: t.grid.columnWidthSaveFailed.value,
+  });
 
   const paidColKey = useMemo(() => findPaidColumnKey(orderedColumns), [orderedColumns]);
 
@@ -605,61 +554,6 @@ export default function CustomTableDetailPage() {
     setSelectedColumnKeys(prev => prev.filter(k => allowed.has(k)));
   }, [orderedColumns]);
 
-  useEffect(() => {
-    if (!tableId || !orderedColumns.length) return;
-    const storageKey = `custom-table:${tableId}:column-widths`;
-    let localWidths: Record<string, number> = {};
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-          localWidths = parsed as Record<string, number>;
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to load column widths from storage:', error);
-    }
-
-    const viewCols = getViewColumns(table?.viewSettings);
-    const hasServerWidths = Object.values(viewCols).some(
-      entry => typeof entry?.width === 'number' && Number.isFinite(entry.width),
-    );
-
-    const newWidths: Record<string, number> = {};
-    for (const col of orderedColumns) {
-      const serverWidth = viewCols?.[col.key]?.width;
-      const localWidth = localWidths[col.key];
-      let width: number | undefined;
-
-      if (hasServerWidths && typeof serverWidth === 'number' && Number.isFinite(serverWidth)) {
-        width = serverWidth;
-      } else if (typeof localWidth === 'number' && Number.isFinite(localWidth) && localWidth > 0) {
-        width = localWidth;
-      } else if (!hasServerWidths && typeof serverWidth === 'number') {
-        width = serverWidth;
-      }
-
-      if (!(typeof width === 'number' && Number.isFinite(width))) {
-        width = col.width;
-      }
-      if (!(typeof width === 'number' && Number.isFinite(width))) {
-        width = DEFAULT_COLUMN_WIDTH;
-      }
-      newWidths[col.key] = width;
-    }
-    setColumnWidths(newWidths);
-  }, [tableId, table?.id, orderedColumns, DEFAULT_COLUMN_WIDTH]);
-
-  const clampWidth = (width: number) =>
-    Math.max(MIN_COLUMN_WIDTH, Math.min(MAX_COLUMN_WIDTH, width));
-
-  const getColumnWidth = (colKey: string) => {
-    const width = columnWidths[colKey];
-    if (typeof width === 'number' && Number.isFinite(width)) return width;
-    return DEFAULT_COLUMN_WIDTH;
-  };
-
   const gridColumnWidths = useMemo(() => {
     const next: Record<string, number> = {};
     for (const col of orderedColumns) {
@@ -667,49 +561,6 @@ export default function CustomTableDetailPage() {
     }
     return next;
   }, [orderedColumns, columnWidths]);
-
-  useEffect(() => {
-    return () => {
-      const timers = columnWidthTimersRef.current;
-      Object.values(timers).forEach(timerId => window.clearTimeout(timerId));
-    };
-  }, []);
-
-  const persistColumnWidth = async (colKey: string, width: number) => {
-    if (!tableId) return;
-    const prevWidth = getColumnWidth(colKey);
-    const finalWidth = clampWidth(width);
-    if (Math.abs(finalWidth - prevWidth) < 1) return;
-
-    const storageKey = `custom-table:${tableId}:column-widths`;
-    setColumnWidths(prev => {
-      const next = { ...prev, [colKey]: finalWidth };
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(next));
-      } catch (error) {
-        console.warn('Failed to persist column widths to storage:', error);
-      }
-      return next;
-    });
-
-    if (!user) return;
-
-    const existing = columnWidthTimersRef.current[colKey];
-    if (existing) window.clearTimeout(existing);
-    columnWidthTimersRef.current[colKey] = window.setTimeout(async () => {
-      try {
-        await apiClient.patch(`/custom-tables/${tableId}/view-settings/columns`, {
-          columnKey: colKey,
-          width: finalWidth,
-        });
-      } catch (error) {
-        console.error('Failed to persist column width:', error);
-        toast.error(t.grid.columnWidthSaveFailed.value);
-      } finally {
-        delete columnWidthTimersRef.current[colKey];
-      }
-    }, 800);
-  };
 
   const loadCategories = async () => {
     try {
@@ -1704,31 +1555,6 @@ export default function CustomTableDetailPage() {
       console.error('Failed to create column:', error);
       toast.error(t.addColumn.failed.value, { id: toastId });
     }
-  };
-
-  const toggleColumnHidden = (key: string) => {
-    setHiddenColumnKeys(prev =>
-      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key],
-    );
-  };
-
-  const moveColumn = (key: string, direction: 'up' | 'down') => {
-    setColumnOrder(prev => {
-      const order = prev.length ? [...prev] : orderedColumns.map(c => c.key);
-      const index = order.indexOf(key);
-      if (index === -1) return order;
-      const nextIndex = direction === 'up' ? index - 1 : index + 1;
-      if (nextIndex < 0 || nextIndex >= order.length) return order;
-      const next = [...order];
-      const [moved] = next.splice(index, 1);
-      next.splice(nextIndex, 0, moved);
-      return next;
-    });
-  };
-
-  const resetColumns = () => {
-    setHiddenColumnKeys([]);
-    setColumnOrder(orderedColumns.map(c => c.key));
   };
 
   if (authLoading || loading) {
