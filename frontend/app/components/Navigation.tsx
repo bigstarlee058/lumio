@@ -6,6 +6,7 @@ import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
+import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   THEME_STORAGE_EVENT,
   type ThemePreference,
@@ -67,23 +68,14 @@ import toast from 'react-hot-toast';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useAuth } from '../hooks/useAuth';
 import { usePermissions } from '../hooks/usePermissions';
-import { canAccessWorkspaceActivity } from '../lib/workspace-activity-access';
 import { DEFAULT_APP_ROUTE } from '../lib/default-app-route';
+import { canAccessWorkspaceActivity } from '../lib/workspace-activity-access';
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['800', '900'] });
 
 const MOBILE_MENU_VISIBILITY_EVENT = 'lumio-mobile-menu-visibility';
 
 type AppLanguage = 'ru' | 'en' | 'kk';
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getStringValue = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') return value;
-  const record = getRecord(value);
-  return typeof record?.value === 'string' ? record.value : fallback;
-};
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -101,7 +93,7 @@ export default function Navigation() {
     languages: languageNames,
     tour,
   } = useIntlayer('navigation');
-  const trashLabel = getStringValue(getRecord(userMenu)?.trash, 'Trash');
+  const trashLabel = resolveLabel(getRecord(userMenu)?.trash, 'Trash');
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileMenuMounted, setMobileMenuMounted] = useState(false);
@@ -117,14 +109,7 @@ export default function Navigation() {
 
   useLockBodyScroll(languageModalOpen || mobileMenuOpen);
 
-  const getText = useCallback((token: unknown) => {
-    if (typeof token === 'string') return token;
-    if (token && typeof token === 'object' && 'value' in token) {
-      const value = (token as { value?: string }).value;
-      return typeof value === 'string' ? value : '';
-    }
-    return '';
-  }, []);
+  const getText = useCallback((token: unknown) => resolveLabel(token, ''), []);
 
   type PopoverType = NonNullable<DriveStep['popover']>;
 
@@ -329,7 +314,9 @@ export default function Navigation() {
             detail: { themePreference: previousThemePreference },
           }),
         );
-        toast.error(getText(getRecord(getRecord(nav)?.theme)?.description) || 'Failed to update theme');
+        toast.error(
+          getText(getRecord(getRecord(nav)?.theme)?.description) || 'Failed to update theme',
+        );
       }
     },
     [getText, nav, selectedTheme, setTheme, setUser, user],
@@ -489,7 +476,7 @@ export default function Navigation() {
         >
           <span className="inline-flex items-center gap-2.5 tracking-wide">
             <Menu size={18} color="currentColor" strokeWidth={2.25} />
-            {getStringValue(getRecord(userMenu)?.moreActions, 'Menu')}
+            {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
           </span>
         </Button>
       </DropdownTrigger>
@@ -596,7 +583,11 @@ export default function Navigation() {
       <div className="container-shared px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-14">
           <div className="flex items-center">
-            <Link href={DEFAULT_APP_ROUTE} className="shrink-0 flex items-center gap-3" data-tour-id="brand">
+            <Link
+              href={DEFAULT_APP_ROUTE}
+              className="shrink-0 flex items-center gap-3"
+              data-tour-id="brand"
+            >
               <div className="flex items-center justify-center w-8 h-8 bg-[#0a66c2] rounded-[10px] border-[2px] border-white shrink-0">
                 <svg
                   width="14"
@@ -816,7 +807,7 @@ export default function Navigation() {
                     >
                       <PlayCircle size={18} className="text-muted-foreground" />
                       <span className="flex-1 text-left">
-                        {getStringValue(getRecord(nav)?.tours, 'Tours')}
+                        {resolveLabel(getRecord(nav)?.tours, 'Tours')}
                       </span>
                     </button>
                   }
@@ -836,16 +827,16 @@ export default function Navigation() {
           }}
           title={
             <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLanguageModalOpen(false);
-                    setLanguageSearch('');
-                  }}
-                  className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-                  aria-label="Close language drawer"
-                >
-                  <ChevronLeft className="h-5 w-5" />
+              <button
+                type="button"
+                onClick={() => {
+                  setLanguageModalOpen(false);
+                  setLanguageSearch('');
+                }}
+                className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                aria-label="Close language drawer"
+              >
+                <ChevronLeft className="h-5 w-5" />
               </button>
               <span>{languageModal.title}</span>
             </div>
@@ -878,9 +869,7 @@ export default function Navigation() {
                         type="button"
                         onClick={() => handleLanguageSelect(lang.code)}
                         className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
-                          selected
-                            ? 'bg-muted text-foreground'
-                            : 'text-foreground hover:bg-muted'
+                          selected ? 'bg-muted text-foreground' : 'text-foreground hover:bg-muted'
                         }`}
                       >
                         <span className="font-medium">{lang.label}</span>
