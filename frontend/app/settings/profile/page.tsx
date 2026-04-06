@@ -33,158 +33,32 @@ import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-ut
 import { cn } from '@/app/lib/utils';
 import { ModeToggle } from '@/components/mode-toggle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DesktopWindowsOutlinedIcon from '@mui/icons-material/DesktopWindowsOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SecurityIcon from '@mui/icons-material/Security';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
-import TabletMacOutlinedIcon from '@mui/icons-material/TabletMacOutlined';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
-import type { AxiosError } from 'axios';
+import {
+  type ChangelogPayload,
+  type NotificationPreferences,
+  type SectionId,
+  type TimeZoneOption,
+  type UserSession,
+  defaultNotificationPreferences,
+  getApiErrorMessage,
+  getInitials,
+  getSessionIcon,
+  normalizeSection,
+  resolveTimeZoneOptions,
+  sections,
+  systemNotificationSettings,
+  workspaceNotificationSettings,
+} from '@/app/settings/profile/profileHelpers';
 import { CalendarDays, Check, Clock3, FileText, Palette, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type ComponentType, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-type ApiErrorResponse = { message?: string; error?: { message?: string } };
-type UserSession = {
-  id: string;
-  device: string;
-  browser: string;
-  os: string;
-  ipAddress: string | null;
-  createdAt: string;
-  lastUsedAt: string;
-  isCurrent: boolean;
-};
-
-type TimeZoneOption = {
-  value: string;
-  label: string;
-};
-
-
-type NotificationPreferences = {
-  statementUploaded: boolean;
-  importCommitted: boolean;
-  categoryChanges: boolean;
-  memberActivity: boolean;
-  dataDeleted: boolean;
-  workspaceUpdated: boolean;
-  parsingErrors: boolean;
-  importFailures: boolean;
-  uncategorizedItems: boolean;
-};
-
-interface ChangelogPayload {
-  entries?: ChangelogEntry[];
-}
-
-const defaultNotificationPreferences: NotificationPreferences = {
-  statementUploaded: true,
-  importCommitted: true,
-  categoryChanges: true,
-  memberActivity: true,
-  dataDeleted: true,
-  workspaceUpdated: true,
-  parsingErrors: true,
-  importFailures: true,
-  uncategorizedItems: true,
-};
-
-const workspaceNotificationSettings: Array<{
-  key: keyof NotificationPreferences;
-}> = [
-  { key: 'statementUploaded' },
-  { key: 'importCommitted' },
-  { key: 'categoryChanges' },
-  { key: 'memberActivity' },
-  { key: 'dataDeleted' },
-  { key: 'workspaceUpdated' },
-];
-
-const systemNotificationSettings: Array<{
-  key: keyof NotificationPreferences;
-}> = [{ key: 'parsingErrors' }, { key: 'importFailures' }, { key: 'uncategorizedItems' }];
-
-const sections = [
-  'profile',
-  'appearance',
-  'sessions',
-  'email',
-  'password',
-  'notifications',
-  'changelog',
-] as const;
-type SectionId = (typeof sections)[number];
-
-const normalizeSection = (value: string | null | undefined): SectionId => {
-  if (!value) return 'profile';
-  if ((sections as readonly string[]).includes(value)) return value as SectionId;
-  return 'profile';
-};
-
-const getApiErrorMessage = (error: unknown, fallback: string) => {
-  const axiosError = error as AxiosError<ApiErrorResponse>;
-  return (
-    axiosError?.response?.data?.message || axiosError?.response?.data?.error?.message || fallback
-  );
-};
-
-const getInitials = (value: string) => {
-  if (!value) return '—';
-  const tokens = value.trim().split(/\s+/).filter(Boolean);
-  if (!tokens.length) return '—';
-  if (tokens.length === 1) return tokens[0].slice(0, 2).toUpperCase();
-  return (tokens[0][0] + tokens[1][0]).toUpperCase();
-};
-
-const getSessionIcon = (device: string) => {
-  const normalized = device.toLowerCase();
-  if (normalized.includes('mobile')) {
-    return SmartphoneOutlinedIcon;
-  }
-  if (normalized.includes('tablet')) {
-    return TabletMacOutlinedIcon;
-  }
-  if (normalized.includes('bot')) {
-    return SmartToyOutlinedIcon;
-  }
-  return DesktopWindowsOutlinedIcon;
-};
-
-const COMMON_TIMEZONES = [
-  'UTC',
-  'Europe/Moscow',
-  'Asia/Almaty',
-  'Asia/Astana',
-  'Asia/Tashkent',
-  'Europe/Berlin',
-  'America/New_York',
-];
-
-type IntlWithSupportedValuesOf = typeof Intl & {
-  supportedValuesOf?: (key: string) => string[];
-};
-
-const resolveTimeZoneOptions = () => {
-  const intl = Intl as IntlWithSupportedValuesOf;
-  if (typeof Intl !== 'undefined' && typeof intl.supportedValuesOf === 'function') {
-    try {
-      const zones = intl.supportedValuesOf('timeZone');
-      if (Array.isArray(zones) && zones.length > 0) {
-        return zones;
-      }
-    } catch {
-      // Fallback below
-    }
-  }
-
-  return COMMON_TIMEZONES;
-};
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
