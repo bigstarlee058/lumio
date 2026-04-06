@@ -11,10 +11,10 @@ import {
   applyStatementsFilters,
 } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
-  buildAnalyticsFilterLabels,
-  buildAnalyticsFilterOptions,
-  filterLinkClassName,
-} from '@/app/(main)/statements/helpers/analytics-filter-labels';
+  buildTopSpendersBarChart,
+  buildTopSpendersSourceChart,
+  buildTopSpendersTrendChart,
+} from '@/app/(main)/statements/components/top-spenders.chart';
 import {
   type AggregateSortKey,
   type TopSpenderAggregateRow,
@@ -26,6 +26,11 @@ import {
   resolveSpenderFlow,
   sortAggregateRows,
 } from '@/app/(main)/statements/components/top-spenders.utils';
+import {
+  buildAnalyticsFilterLabels,
+  buildAnalyticsFilterOptions,
+  filterLinkClassName,
+} from '@/app/(main)/statements/helpers/analytics-filter-labels';
 import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
 import { useStatementFilters } from '@/app/(main)/statements/hooks/useStatementFilters';
 import type { GmailReceipt } from '@/app/(main)/statements/types/statement-types';
@@ -34,7 +39,6 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
-import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
   formatMoney,
   getNestedValue,
@@ -43,6 +47,7 @@ import {
   resolveCurrencyCode,
   resolveLabel,
 } from '@/app/lib/analytics-common';
+import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import { resolveBankLogo } from '@bank-logos';
 import {
   ArrowDown,
@@ -618,84 +623,30 @@ export default function TopSpendersView() {
       });
   }, [selectedRow, flowFilteredRecords]);
 
-  const topCompaniesChart = useMemo(() => {
-    const top = sortedAggregatedRows.slice(0, 12).reverse();
-    return {
-      backgroundColor: 'transparent',
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      grid: { left: 120, right: 20, top: 20, bottom: 20 },
-      xAxis: { type: 'value' },
-      yAxis: {
-        type: 'category',
-        data: top.map(item => item.company),
-      },
-      series: [
-        {
-          type: 'bar',
-          data: top.map(item => Number(item.total.toFixed(2))),
-          itemStyle: {
-            color: resolvedTheme === 'dark' ? '#38BDF8' : '#0EA5E9',
-            borderRadius: [4, 4, 4, 4],
-          },
-        },
-      ],
-    };
-  }, [sortedAggregatedRows, resolvedTheme]);
+  const topCompaniesChart = useMemo(
+    () => buildTopSpendersBarChart(sortedAggregatedRows, resolvedTheme),
+    [sortedAggregatedRows, resolvedTheme],
+  );
 
-  const sourceChart = useMemo(() => {
-    return {
-      backgroundColor: 'transparent',
-      tooltip: { trigger: 'item' },
-      legend: { top: 'bottom' },
-      series: [
-        {
-          type: 'pie',
-          radius: ['35%', '72%'],
-          data: [
-            { name: labels.sourceStatement, value: Number(totals.statementTotal.toFixed(2)) },
-            { name: labels.sourceGmail, value: Number(totals.receiptTotal.toFixed(2)) },
-          ],
-        },
-      ],
-    };
-  }, [labels.sourceGmail, labels.sourceStatement, totals.receiptTotal, totals.statementTotal]);
+  const sourceChart = useMemo(
+    () =>
+      buildTopSpendersSourceChart(totals, {
+        sourceStatement: labels.sourceStatement,
+        sourceGmail: labels.sourceGmail,
+      }),
+    [totals, labels.sourceStatement, labels.sourceGmail],
+  );
 
-  const trendChart = useMemo(() => {
-    const points = new Map<string, number>();
-    flowFilteredRecords.forEach(record => {
-      const rawDate = record.dateValue || record.createdAt || '';
-      if (!rawDate) return;
-      const parsed = new Date(rawDate);
-      if (Number.isNaN(parsed.getTime())) return;
-      const dateKey = parsed.toISOString().split('T')[0];
-      points.set(dateKey, (points.get(dateKey) || 0) + record.amount);
-    });
-
-    const sorted = Array.from(points.entries())
-      .map(([date, amount]) => ({ date, amount }))
-      .sort((a, b) => a.date.localeCompare(b.date));
-
-    return {
-      backgroundColor: 'transparent',
-      tooltip: { trigger: 'axis' },
-      grid: { left: 30, right: 30, bottom: 30, top: 30 },
-      xAxis: { type: 'category', data: sorted.map(point => point.date) },
-      yAxis: { type: 'value' },
-      series: [
-        {
-          name: activeFlowType === 'income' ? labels.totalIncome : labels.totalSpend,
-          type: 'line',
-          smooth: true,
-          data: sorted.map(point => Number(point.amount.toFixed(2))),
-          areaStyle: {
-            color: resolvedTheme === 'dark' ? 'rgba(56,189,248,0.16)' : 'rgba(14,165,233,0.14)',
-          },
-          lineStyle: { color: resolvedTheme === 'dark' ? '#38BDF8' : '#0EA5E9' },
-          itemStyle: { color: resolvedTheme === 'dark' ? '#38BDF8' : '#0EA5E9' },
-        },
-      ],
-    };
-  }, [flowFilteredRecords, activeFlowType, labels.totalIncome, labels.totalSpend, resolvedTheme]);
+  const trendChart = useMemo(
+    () =>
+      buildTopSpendersTrendChart(
+        flowFilteredRecords,
+        activeFlowType,
+        { totalIncome: labels.totalIncome, totalSpend: labels.totalSpend },
+        resolvedTheme,
+      ),
+    [flowFilteredRecords, activeFlowType, labels.totalIncome, labels.totalSpend, resolvedTheme],
+  );
 
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
   const isIncomeView = activeFlowType === 'income';
