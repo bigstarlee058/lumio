@@ -2,16 +2,16 @@
 
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { Checkbox } from '@/app/components/ui/checkbox';
-import { ModalShell } from '@/app/components/ui/modal-shell';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { enUS, kk, ru } from 'date-fns/locale';
-import { CheckCircle, Plus, Printer, Save, Search, Trash2, X, XCircle } from 'lucide-react';
+import { CheckCircle, Plus, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
+import { AddColumnModal } from './components/AddColumnModal';
 import { PastePreviewModal } from './components/PastePreviewModal';
 import { RowDrawer } from './components/RowDrawer';
 import { useBulkRowActions } from './hooks/useBulkRowActions';
@@ -38,7 +38,6 @@ import {
   getActiveTabFilter,
   normalizeActiveTabId,
 } from './utils/quickTabs';
-import type { ColumnType } from './utils/stylingUtils';
 import { isContentEditableTarget, tx } from './utils/tableHelpers';
 import type { CustomTablePageColumn } from './utils/tableTypes';
 
@@ -296,7 +295,7 @@ export default function CustomTableDetailPage() {
     setGridFiltersParam(next);
   };
 
-  const { dateFrom, setDateFrom, dateTo, setDateTo, combinedFiltersParam } = useTableFilters({
+  const { combinedFiltersParam } = useTableFilters({
     orderedColumns,
     columnFilters,
     gridFiltersParam,
@@ -747,88 +746,15 @@ export default function CustomTableDetailPage() {
           </div>
         )}
 
-        <ModalShell
+        <AddColumnModal
+          t={t}
           isOpen={newColumnOpen}
-          onClose={() => {
-            setNewColumnOpen(false);
-            setNewColumn({ title: '', type: 'text' });
-          }}
-          size="xl"
-          className="rounded-2xl"
-          title={tx(t, ['addColumn', 'modalTitle'], t.addColumn.titleLabel.value ?? '')}
-          footer={
-            <div className="flex w-full items-center justify-between">
-              <button
-                type="button"
-                onClick={() => {
-                  setNewColumnOpen(false);
-                  setNewColumn({ title: '', type: 'text' });
-                }}
-                className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
-                {t.addColumn.cancel}
-              </button>
-              <button
-                type="button"
-                onClick={createColumn}
-                disabled={!newColumn.title.trim()}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Save className="h-4 w-4" />
-                {t.addColumn.save}
-              </button>
-            </div>
-          }
-        >
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-            <div className="md:col-span-4">
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="new-column-title"
-              >
-                {t.addColumn.titleLabel}
-              </label>
-              <input
-                id="new-column-title"
-                value={newColumn.title}
-                onChange={e => setNewColumn(prev => ({ ...prev, title: e.target.value }))}
-                onKeyDown={event => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    if (newColumn.title.trim()) createColumn();
-                  }
-                }}
-                placeholder={t.addColumn.titlePlaceholder.value ?? ''}
-                className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition shadow-sm"
-              />
-            </div>
-            <div className="md:col-span-2">
-              <label
-                className="block text-sm font-semibold text-gray-700 mb-2"
-                htmlFor="new-column-type"
-              >
-                {t.addColumn.typeLabel}
-              </label>
-              <select
-                id="new-column-type"
-                value={newColumn.type}
-                onChange={e =>
-                  setNewColumn(prev => ({
-                    ...prev,
-                    type: e.target.value as ColumnType,
-                  }))
-                }
-                className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition"
-              >
-                {columnTypes.map(typeItem => (
-                  <option key={typeItem.value} value={typeItem.value}>
-                    {typeItem.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </ModalShell>
+          onClose={() => setNewColumnOpen(false)}
+          newColumn={newColumn}
+          setNewColumn={setNewColumn}
+          createColumn={createColumn}
+          columnTypes={columnTypes}
+        />
       </div>
 
       <div className={isFullscreen ? 'h-full w-full pt-0 custom-table-print-target' : 'mt-0'}>
