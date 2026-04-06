@@ -17,6 +17,8 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
 import { RowDrawer } from './components/RowDrawer';
+import { useDeleteModals } from './hooks/useDeleteModals';
+import { useRowDrawer } from './hooks/useRowDrawer';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
 import {
   type PasteColumnMapping,
@@ -342,15 +344,29 @@ export default function CustomTableDetailPage() {
   const statsRequestSeqRef = useRef(0);
   const statsAbortControllerRef = useRef<AbortController | null>(null);
 
-  const [deleteColumnModalOpen, setDeleteColumnModalOpen] = useState(false);
-  const [deleteColumnTarget, setDeleteColumnTarget] = useState<CustomTablePageColumn | null>(null);
-  const [deleteRowModalOpen, setDeleteRowModalOpen] = useState(false);
-  const [deleteRowTarget, setDeleteRowTarget] = useState<CustomTableGridRow | null>(null);
-  const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
-  const [bulkDeleteRowIds, setBulkDeleteRowIds] = useState<string[]>([]);
-  const [rowDrawerOpen, setRowDrawerOpen] = useState(false);
-  const [rowDrawerMode, setRowDrawerMode] = useState<'view' | 'edit'>('view');
-  const [rowDrawerRowId, setRowDrawerRowId] = useState<string | null>(null);
+  const {
+    deleteRowModalOpen,
+    deleteRowTarget,
+    requestDeleteRow,
+    closeDeleteRowModal,
+    bulkDeleteModalOpen,
+    bulkDeleteRowIds,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    deleteColumnModalOpen,
+    deleteColumnTarget,
+    openDeleteColumnModal,
+    closeDeleteColumnModal,
+  } = useDeleteModals();
+  const {
+    rowDrawerOpen,
+    rowDrawerMode,
+    rowDrawerRowId,
+    drawerRow,
+    setRowDrawerMode,
+    openRowDrawer,
+    closeRowDrawer,
+  } = useRowDrawer(rows);
   const [mounted, setMounted] = useState(false);
   const [tabCounts, setTabCounts] = useState<{
     total: number;
@@ -593,29 +609,6 @@ export default function CustomTableDetailPage() {
     const visibleIds = new Set(displayRows.map(r => r.id));
     setSelectedRowIds(prev => prev.filter(id => visibleIds.has(id)));
   }, [displayRows, selectedRowIds.length]);
-
-  const drawerRow = useMemo(() => {
-    if (!rowDrawerRowId) return null;
-    return rows.find(r => r.id === rowDrawerRowId) || null;
-  }, [rows, rowDrawerRowId]);
-
-  const openRowDrawer = (rowId: string, mode: 'view' | 'edit') => {
-    setRowDrawerRowId(rowId);
-    setRowDrawerMode(mode);
-    setRowDrawerOpen(true);
-  };
-
-  const closeRowDrawer = () => {
-    setRowDrawerOpen(false);
-    setRowDrawerRowId(null);
-    setRowDrawerMode('view');
-  };
-
-  useEffect(() => {
-    if (!rowDrawerOpen || !rowDrawerRowId) return;
-    const exists = rows.some(r => r.id === rowDrawerRowId);
-    if (!exists) closeRowDrawer();
-  }, [rowDrawerOpen, rowDrawerRowId, rows]);
 
   useEffect(() => {
     const allowed = new Set(orderedColumns.map(c => c.key));
@@ -1487,19 +1480,9 @@ export default function CustomTableDetailPage() {
     const idx = ids.indexOf(rowId);
     const nextId = idx >= 0 ? ids[idx + 1] : null;
     if (nextId) {
-      setRowDrawerRowId(nextId);
-      setRowDrawerMode('edit');
-      setRowDrawerOpen(true);
+      openRowDrawer(nextId, 'edit');
     } else {
       toast(tx(t, ['toasts', 'noMoreRows'], 'No more rows'));
-    }
-  };
-
-  const requestDeleteRowFromGrid = (rowId: string) => {
-    const row = rows.find(r => r.id === rowId);
-    if (row) {
-      setDeleteRowTarget(row);
-      setDeleteRowModalOpen(true);
     }
   };
 
@@ -1508,8 +1491,7 @@ export default function CustomTableDetailPage() {
     if (deleteRowTarget.id?.startsWith('temp-')) {
       setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
       setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-      setDeleteRowModalOpen(false);
-      setDeleteRowTarget(null);
+      closeDeleteRowModal();
       toast.success(t.deleteRow.success.value);
       refreshStats();
       return;
@@ -1520,8 +1502,7 @@ export default function CustomTableDetailPage() {
       toast.success(t.deleteRow.success.value, { id: toastId });
       setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
       setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-      setDeleteRowModalOpen(false);
-      setDeleteRowTarget(null);
+      closeDeleteRowModal();
       refreshStats();
     } catch (error) {
       const status = getApiErrorStatus(error);
@@ -1529,20 +1510,13 @@ export default function CustomTableDetailPage() {
         toast.success(t.deleteRow.success.value, { id: toastId });
         setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
         setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-        setDeleteRowModalOpen(false);
-        setDeleteRowTarget(null);
+        closeDeleteRowModal();
         refreshStats();
         return;
       }
       console.error('Failed to delete row:', error);
       toast.error(t.deleteRow.failed.value, { id: toastId });
     }
-  };
-
-  const openBulkDelete = () => {
-    if (!selectedRowIds.length) return;
-    setBulkDeleteRowIds(selectedRowIds);
-    setBulkDeleteModalOpen(true);
   };
 
   const deleteSelectedRows = async () => {
@@ -1595,8 +1569,7 @@ export default function CustomTableDetailPage() {
       console.error('Failed to bulk delete rows:', error);
       toast.error(t.bulkDeleteRows.failed.value, { id: toastId });
     } finally {
-      setBulkDeleteModalOpen(false);
-      setBulkDeleteRowIds([]);
+      closeBulkDeleteModal();
     }
   };
 
@@ -1741,19 +1714,13 @@ export default function CustomTableDetailPage() {
     }
   };
 
-  const openDeleteColumn = (column: CustomTablePageColumn) => {
-    setDeleteColumnTarget(column);
-    setDeleteColumnModalOpen(true);
-  };
-
   const deleteColumn = async () => {
     if (!tableId || !deleteColumnTarget) return;
     const toastId = toast.loading(t.deleteColumn.loading.value);
     try {
       await apiClient.delete(`/custom-tables/${tableId}/columns/${deleteColumnTarget.id}`);
       toast.success(t.deleteColumn.success.value, { id: toastId });
-      setDeleteColumnModalOpen(false);
-      setDeleteColumnTarget(null);
+      closeDeleteColumnModal();
       await loadTable();
     } catch (error) {
       console.error('Failed to delete column:', error);
@@ -1946,7 +1913,7 @@ export default function CustomTableDetailPage() {
                   <span>{tx(t, ['actions', 'print'], 'Print')}</span>
                 </button>
                 <button
-                  onClick={openBulkDelete}
+                  onClick={() => openBulkDeleteModal(selectedRowIds)}
                   disabled={selectedRowIds.length === 0}
                   className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600 transition-colors hover:border-red-100 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
                 >
@@ -2121,14 +2088,14 @@ export default function CustomTableDetailPage() {
               onCreateRow={createRow}
               onViewRow={rowId => openRowDrawer(rowId, 'view')}
               onEditRow={rowId => openRowDrawer(rowId, 'edit')}
-              onDeleteRow={requestDeleteRowFromGrid}
+              onDeleteRow={rowId => requestDeleteRow(rows, rowId)}
               onPersistColumnWidth={persistColumnWidth}
               selectedColumnKeys={selectedColumnKeys}
               onSelectedColumnKeysChange={setSelectedColumnKeys}
               onRenameColumnTitle={renameColumnTitleFromGrid}
               onDeleteColumn={colKey => {
                 const targetColumn = orderedColumns.find(c => c.key === colKey);
-                if (targetColumn) openDeleteColumn(targetColumn);
+                if (targetColumn) openDeleteColumnModal(targetColumn);
               }}
               onSelectedRowIdsChange={setSelectedRowIds}
               onAddColumnClick={() => setNewColumnOpen(true)}
@@ -2371,10 +2338,7 @@ export default function CustomTableDetailPage() {
 
       <ConfirmModal
         isOpen={deleteColumnModalOpen}
-        onClose={() => {
-          setDeleteColumnModalOpen(false);
-          setDeleteColumnTarget(null);
-        }}
+        onClose={closeDeleteColumnModal}
         onConfirm={deleteColumn}
         title={t.deleteColumn.confirmTitle.value}
         message={
@@ -2389,10 +2353,7 @@ export default function CustomTableDetailPage() {
 
       <ConfirmModal
         isOpen={bulkDeleteModalOpen}
-        onClose={() => {
-          setBulkDeleteModalOpen(false);
-          setBulkDeleteRowIds([]);
-        }}
+        onClose={closeBulkDeleteModal}
         onConfirm={deleteSelectedRows}
         title={tx(t, ['bulkDeleteRows', 'confirmTitle'], 'Delete selected rows')}
         message={`${tx(t, ['bulkDeleteRows', 'confirmMessagePrefix'], '')}${(
@@ -2405,10 +2366,7 @@ export default function CustomTableDetailPage() {
 
       <ConfirmModal
         isOpen={deleteRowModalOpen}
-        onClose={() => {
-          setDeleteRowModalOpen(false);
-          setDeleteRowTarget(null);
-        }}
+        onClose={closeDeleteRowModal}
         onConfirm={deleteRow}
         title={tx(t, ['deleteRow', 'confirmTitle'], 'Delete row')}
         message={
