@@ -21,16 +21,29 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
-import { MAX_AVATAR_SIZE_BYTES } from '@/app/lib/constants';
-import {
-  THEME_STORAGE_EVENT,
-  type ThemePreference,
-  resolveThemePreference,
-} from '@/app/lib/theme-preference';
-import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import { cn } from '@/app/lib/utils';
+import { useAppearance } from '@/app/settings/profile/hooks/useAppearance';
+import { useAvatarUpload } from '@/app/settings/profile/hooks/useAvatarUpload';
+import { useChangelog } from '@/app/settings/profile/hooks/useChangelog';
+import { useEmailForm } from '@/app/settings/profile/hooks/useEmailForm';
+import { useNotifications } from '@/app/settings/profile/hooks/useNotifications';
+import { usePasswordForm } from '@/app/settings/profile/hooks/usePasswordForm';
+import { useProfileForm } from '@/app/settings/profile/hooks/useProfileForm';
+import { useSessions } from '@/app/settings/profile/hooks/useSessions';
+import {
+  type NotificationPreferences,
+  type SectionId,
+  type TimeZoneOption,
+  getInitials,
+  getSessionIcon,
+  normalizeSection,
+  resolveTimeZoneOptions,
+  sections,
+  systemNotificationSettings,
+  workspaceNotificationSettings,
+} from '@/app/settings/profile/profileHelpers';
 import { ModeToggle } from '@/components/mode-toggle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
@@ -40,27 +53,9 @@ import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SecurityIcon from '@mui/icons-material/Security';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
-import { useNotifications } from '@/app/settings/profile/hooks/useNotifications';
-import { useProfileForm } from '@/app/settings/profile/hooks/useProfileForm';
-import { useSessions } from '@/app/settings/profile/hooks/useSessions';
-import {
-  type ChangelogPayload,
-  type NotificationPreferences,
-  type SectionId,
-  type TimeZoneOption,
-  type UserSession,
-  getApiErrorMessage,
-  getInitials,
-  getSessionIcon,
-  normalizeSection,
-  resolveTimeZoneOptions,
-  sections,
-  systemNotificationSettings,
-  workspaceNotificationSettings,
-} from '@/app/settings/profile/profileHelpers';
 import { CalendarDays, Check, Clock3, FileText, Palette, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { type ComponentType, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -69,29 +64,8 @@ export default function ProfileSettingsPage() {
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const t = useIntlayer('settingsProfilePage');
   const [activeSection, setActiveSection] = useState<SectionId>('profile');
-  const [themePreference, setThemePreference] = useState<ThemePreference>('auto');
-  const [appearanceMessage, setAppearanceMessage] = useState<string | null>(null);
-  const [appearanceError, setAppearanceError] = useState<string | null>(null);
-  const [appearanceLoading, setAppearanceLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [emailPassword, setEmailPassword] = useState('');
-  const [emailMessage, setEmailMessage] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [passwords, setPasswords] = useState({ current: '', next: '', confirm: '' });
-  const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [avatarError, setAvatarError] = useState(false);
-  const [avatarUploading, setAvatarUploading] = useState(false);
-  const [avatarMessage, setAvatarMessage] = useState<string | null>(null);
-  const [avatarErrorMessage, setAvatarErrorMessage] = useState<string | null>(null);
   const [isTimeZoneModalOpen, setIsTimeZoneModalOpen] = useState(false);
   const [timeZoneSearch, setTimeZoneSearch] = useState('');
-  const [changelogEntries, setChangelogEntries] = useState<ChangelogEntry[]>([]);
-  const [changelogLoading, setChangelogLoading] = useState(false);
-  const [changelogSelectedEntry, setChangelogSelectedEntry] = useState<ChangelogEntry | null>(null);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
   const timeZoneOptions = useMemo(resolveTimeZoneOptions, []);
   const tx = useCallback(
     (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
@@ -141,10 +115,7 @@ export default function ProfileSettingsPage() {
       'Log out this device session?',
     ),
     sessionLogoutSuccess: tx(['sessionsCard', 'sessionLogoutSuccess'], 'Session logged out'),
-    sessionLogoutError: tx(
-      ['sessionsCard', 'sessionLogoutError'],
-      'Failed to log out session',
-    ),
+    sessionLogoutError: tx(['sessionsCard', 'sessionLogoutError'], 'Failed to log out session'),
   });
 
   const {
@@ -202,10 +173,66 @@ export default function ProfileSettingsPage() {
     return timeZoneSelectOptions.filter(option => option.label.toLowerCase().includes(query));
   }, [timeZoneSearch, timeZoneSelectOptions]);
 
-  useEffect(() => {
-    if (user?.email) setEmail(user.email);
-    setThemePreference(resolveThemePreference(user?.themePreference));
-  }, [user]);
+  const {
+    avatarError,
+    setAvatarError,
+    avatarUploading,
+    avatarMessage,
+    avatarErrorMessage,
+    avatarInputRef,
+    handleAvatarSelect,
+  } = useAvatarUpload(user, setUser, {
+    sizeError: tx(['profileCard', 'avatarSizeError'], 'Avatar file is too large'),
+    updated: tx(['profileCard', 'avatarUpdated'], 'Avatar updated'),
+    errorFallback: tx(['profileCard', 'avatarError'], 'Failed to update avatar'),
+  });
+
+  const {
+    themePreference,
+    appearanceMessage,
+    appearanceError,
+    appearanceLoading,
+    handleThemePreferenceChange,
+  } = useAppearance(user, setUser, {
+    successFallback: t.appearanceCard.title.value,
+    errorFallback: t.profileCard.errorFallback.value,
+  });
+
+  const {
+    email,
+    setEmail,
+    emailPassword,
+    setEmailPassword,
+    emailMessage,
+    emailError,
+    emailLoading,
+    handleEmailSubmit,
+  } = useEmailForm(user, {
+    passwordRequired: t.validation.passwordRequiredForEmail.value,
+    successFallback: t.emailCard.successFallback.value,
+    errorFallback: t.emailCard.errorFallback.value,
+  });
+
+  const {
+    passwords,
+    setPasswords,
+    passwordMessage,
+    passwordError,
+    passwordLoading,
+    handlePasswordSubmit,
+  } = usePasswordForm({
+    mismatch: t.validation.passwordMismatch.value,
+    confirmSubmit: tx(
+      ['passwordCard', 'confirmSubmit'],
+      'Update password now? You may need to sign in again on other devices.',
+    ),
+    successFallback: t.passwordCard.successFallback.value,
+    errorFallback: t.passwordCard.errorFallback.value,
+  });
+
+  const workspaceReady = !!(currentWorkspace && !workspaceLoading);
+  const { changelogEntries, changelogLoading, changelogSelectedEntry, setChangelogSelectedEntry } =
+    useChangelog(isAuthenticated, activeSection, workspaceReady);
 
   useEffect(() => {
     setActiveSection(normalizeSection(window.location.hash?.replace('#', '')));
@@ -214,193 +241,6 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     window.history.replaceState(null, '', `#${activeSection}`);
   }, [activeSection]);
-
-  useEffect(() => {
-    setAvatarError(false);
-  }, [user?.avatarUrl]);
-
-  const handleAvatarSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setAvatarMessage(null);
-    setAvatarErrorMessage(null);
-
-    if (file.size > MAX_AVATAR_SIZE_BYTES) {
-      setAvatarErrorMessage(tx(['profileCard', 'avatarSizeError'], 'Avatar file is too large'));
-      if (avatarInputRef.current) {
-        avatarInputRef.current.value = '';
-      }
-      return;
-    }
-
-    setAvatarUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      const response = await apiClient.post('/users/me/avatar', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      const nextUser = response.data?.user || user;
-      if (nextUser) {
-        setUser(nextUser);
-        localStorage.setItem('user', JSON.stringify(nextUser));
-      }
-      setAvatarMessage(tx(['profileCard', 'avatarUpdated'], 'Avatar updated'));
-    } catch (error: unknown) {
-      setAvatarErrorMessage(
-        getApiErrorMessage(error, tx(['profileCard', 'avatarError'], 'Failed to update avatar')),
-      );
-    } finally {
-      setAvatarUploading(false);
-      if (avatarInputRef.current) {
-        avatarInputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleThemePreferenceChange = async (nextThemePreference: ThemePreference) => {
-    setAppearanceMessage(null);
-    setAppearanceError(null);
-
-    try {
-      setAppearanceLoading(true);
-      const response = await apiClient.patch('/users/me/preferences', {
-        themePreference: nextThemePreference,
-      });
-
-      const responseUser = response.data?.user;
-      const nextUser = responseUser
-        ? { ...(user || {}), ...responseUser, themePreference: nextThemePreference }
-        : user
-          ? { ...user, themePreference: nextThemePreference }
-          : null;
-
-      setThemePreference(nextThemePreference);
-
-      if (nextUser) {
-        setUser(nextUser);
-        localStorage.setItem('user', JSON.stringify(nextUser));
-        window.dispatchEvent(
-          new CustomEvent(THEME_STORAGE_EVENT, {
-            detail: { themePreference: nextThemePreference },
-          }),
-        );
-      }
-
-      setAppearanceMessage(response.data?.message || t.appearanceCard.title.value);
-    } catch (error: unknown) {
-      setAppearanceError(getApiErrorMessage(error, t.profileCard.errorFallback.value));
-    } finally {
-      setAppearanceLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!isAuthenticated || activeSection !== 'changelog') {
-      return;
-    }
-
-    if (!currentWorkspace || workspaceLoading) {
-      return;
-    }
-
-    let cancelled = false;
-
-    const loadChangelog = async () => {
-      try {
-        setChangelogLoading(true);
-        const response = await fetch('/changelog.json', { cache: 'no-store' });
-
-        if (!response.ok) {
-          throw new Error(`Failed to load changelog: ${response.status}`);
-        }
-
-        const payload = (await response.json()) as ChangelogPayload;
-        if (!cancelled) {
-          setChangelogEntries(Array.isArray(payload.entries) ? payload.entries : []);
-        }
-      } catch {
-        if (!cancelled) {
-          setChangelogEntries([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setChangelogLoading(false);
-        }
-      }
-    };
-
-    void loadChangelog();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [activeSection, currentWorkspace, isAuthenticated, workspaceLoading]);
-
-  const handleEmailSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setEmailMessage(null);
-    setEmailError(null);
-
-    if (!emailPassword) {
-      setEmailError(t.validation.passwordRequiredForEmail.value);
-      return;
-    }
-
-    try {
-      setEmailLoading(true);
-      const response = await apiClient.patch('/users/me/email', {
-        email,
-        currentPassword: emailPassword,
-      });
-
-      setEmailMessage(response.data?.message || t.emailCard.successFallback.value);
-      setEmailPassword('');
-    } catch (error: unknown) {
-      setEmailError(getApiErrorMessage(error, t.emailCard.errorFallback.value));
-    } finally {
-      setEmailLoading(false);
-    }
-  };
-
-  const handlePasswordSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setPasswordMessage(null);
-    setPasswordError(null);
-
-    if (passwords.next !== passwords.confirm) {
-      setPasswordError(t.validation.passwordMismatch.value);
-      return;
-    }
-
-    const confirmed = window.confirm(
-      tx(
-        ['passwordCard', 'confirmSubmit'],
-        'Update password now? You may need to sign in again on other devices.',
-      ),
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setPasswordLoading(true);
-      const response = await apiClient.patch('/users/me/password', {
-        currentPassword: passwords.current,
-        newPassword: passwords.next,
-      });
-
-      setPasswordMessage(response.data?.message || t.passwordCard.successFallback.value);
-      setPasswords({ current: '', next: '', confirm: '' });
-    } catch (error: unknown) {
-      setPasswordError(getApiErrorMessage(error, t.passwordCard.errorFallback.value));
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
 
   if (loading) {
     return (

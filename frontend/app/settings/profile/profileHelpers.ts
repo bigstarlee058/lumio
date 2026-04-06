@@ -86,9 +86,7 @@ export const normalizeSection = (value: string | null | undefined): SectionId =>
 export const getApiErrorMessage = (error: unknown, fallback: string) => {
   const axiosError = error as AxiosError<ApiErrorResponse>;
   return (
-    axiosError?.response?.data?.message ||
-    axiosError?.response?.data?.error?.message ||
-    fallback
+    axiosError?.response?.data?.message || axiosError?.response?.data?.error?.message || fallback
   );
 };
 

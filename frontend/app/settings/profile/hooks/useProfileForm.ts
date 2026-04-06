@@ -1,17 +1,9 @@
 'use client';
 
+import type { User } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/settings/profile/profileHelpers';
 import { useEffect, useMemo, useState } from 'react';
-
-type User = {
-  name?: string | null;
-  email?: string | null;
-  timeZone?: string | null;
-  themePreference?: string | null;
-  avatarUrl?: string | null;
-  [key: string]: unknown;
-};
 
 export type UseProfileFormMessages = {
   successFallback: string;
