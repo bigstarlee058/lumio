@@ -107,102 +107,19 @@ interface StatementItem {
   bankName?: string | null;
 }
 
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
+import {
+  type ExportColumn,
+  formatUpdatedBadge,
+  getExportColumn,
+  sanitizeFileName,
+  toCsv,
+} from './customTablesHelpers';
+
 type TranslationValue = string | { value?: string };
-
-type ExportColumn = {
-  key: string;
-  title?: string | null;
-  position?: number | null;
-};
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') return value;
-  const record = getRecord(value);
-  return typeof record?.value === 'string' ? record.value : fallback;
-};
 
 const tx = (root: unknown, path: string[], fallback: string) =>
   resolveLabel(getNestedValue(root, path), fallback);
-
-const getExportColumn = (value: unknown): ExportColumn | null => {
-  const record = getRecord(value);
-  if (!record || typeof record.key !== 'string') return null;
-
-  return {
-    key: record.key,
-    title: typeof record.title === 'string' ? record.title : null,
-    position: typeof record.position === 'number' ? record.position : null,
-  };
-};
-
-const formatUpdatedDate = (value?: string | null): string => {
-  if (!value) return '—';
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
-
-  const day = String(date.getUTCDate()).padStart(2, '0');
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const year = date.getUTCFullYear();
-
-  return `${day}.${month}.${year}`;
-};
-
-const formatUpdatedBadge = (value?: string | null): string => {
-  if (!value) return '—';
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
-
-  const now = new Date();
-  const isSameDay =
-    date.getUTCFullYear() === now.getUTCFullYear() &&
-    date.getUTCMonth() === now.getUTCMonth() &&
-    date.getUTCDate() === now.getUTCDate();
-
-  if (isSameDay) {
-    return 'Today';
-  }
-
-  return formatUpdatedDate(value);
-};
-
-const sanitizeFileName = (value: string) =>
-  value
-    .trim()
-    .replace(/[^a-zA-Z0-9-_]+/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_|_$/g, '') || 'table_export';
-
-const toCsv = (headers: string[], rows: Array<Record<string, unknown>>) => {
-  const escapeCell = (input: unknown) => {
-    const raw = input === null || input === undefined ? '' : String(input);
-    if (raw.includes('"')) {
-      return `"${raw.replace(/"/g, '""')}"`;
-    }
-    if (raw.includes(',') || raw.includes('\n')) {
-      return `"${raw}"`;
-    }
-    return raw;
-  };
-
-  const headerLine = headers.map(escapeCell).join(',');
-  const dataLines = rows.map(row => headers.map(header => escapeCell(row[header])).join(','));
-  return [headerLine, ...dataLines].join('\n');
-};
 
 export default function CustomTablesPage() {
   const router = useRouter();
