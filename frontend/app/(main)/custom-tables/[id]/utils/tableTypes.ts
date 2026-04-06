@@ -1,8 +1,4 @@
-import type {
-  CustomTableColumn,
-  CustomTableColumnConfig,
-  SheetStyle,
-} from './stylingUtils';
+import type { CustomTableColumn, CustomTableColumnConfig, SheetStyle } from './stylingUtils';
 
 export interface CustomTablePageColumn extends CustomTableColumn {
   isRequired: boolean;

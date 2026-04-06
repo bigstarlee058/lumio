@@ -76,5 +76,14 @@ export function useTableData({
     }
   }, [authLoading, isAuthenticated, tableId, loadCategories, loadTable]);
 
-  return { table, setTable, categories, categoryId, setCategoryId, loading, loadTable, loadCategories };
+  return {
+    table,
+    setTable,
+    categories,
+    categoryId,
+    setCategoryId,
+    loading,
+    loadTable,
+    loadCategories,
+  };
 }

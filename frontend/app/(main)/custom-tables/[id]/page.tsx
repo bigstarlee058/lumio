@@ -24,25 +24,14 @@ import {
   useColumnConfig,
 } from './hooks/useColumnConfig';
 import { useDeleteModals } from './hooks/useDeleteModals';
+import { usePasteImport } from './hooks/usePasteImport';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTabStats } from './hooks/useTabStats';
 import { useTableData } from './hooks/useTableData';
 import { useTableGrid } from './hooks/useTableGrid';
 import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
-import {
-  type PasteColumnMapping,
-  type PasteErrorKey,
-  type PasteFieldKey,
-  type PasteMappingSelection,
-  type PastePreviewData,
-  type PastePreviewRow,
-  type PasteSourceColumn,
-  buildPastePreview,
-  isAbortError,
-  isEditableTarget,
-  parseClipboardRows,
-} from './utils/pasteUtils';
+import type { PasteErrorKey } from './utils/pasteUtils';
 import {
   type QuickTab,
   buildQuickTabs,
@@ -107,13 +96,21 @@ export default function CustomTableDetailPage() {
       });
     });
   }, []);
-  const { table, setTable, categories, categoryId, setCategoryId, loading, loadTable, loadCategories } =
-    useTableData({
-      tableId,
-      isAuthenticated: Boolean(user),
-      authLoading,
-      loadTableFailedMessage: t.grid.loadTableFailed.value,
-    });
+  const {
+    table,
+    setTable,
+    categories,
+    categoryId,
+    setCategoryId,
+    loading,
+    loadTable,
+    loadCategories,
+  } = useTableData({
+    tableId,
+    isAuthenticated: Boolean(user),
+    authLoading,
+    loadTableFailedMessage: t.grid.loadTableFailed.value,
+  });
   const [gridFiltersParam, setGridFiltersParam] = useState<string | undefined>(undefined);
   const [selectedColumnKeys, setSelectedColumnKeys] = useState<string[]>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
@@ -177,20 +174,6 @@ export default function CustomTableDetailPage() {
     closeDeleteColumnModal,
   } = useDeleteModals();
   const [mounted, setMounted] = useState(false);
-  const [pastePreviewOpen, setPastePreviewOpen] = useState(false);
-  const [pasteParsing, setPasteParsing] = useState(false);
-  const [pasteApplying, setPasteApplying] = useState(false);
-  const [pasteRawRows, setPasteRawRows] = useState<string[][]>([]);
-  const [pasteUseHeaders, setPasteUseHeaders] = useState(false);
-  const [pastePreview, setPastePreview] = useState<PastePreviewData | null>(null);
-  const [pasteMapping, setPasteMapping] = useState<Record<number, PasteMappingSelection>>({});
-  const [pasteEdits, setPasteEdits] = useState<Record<string, string>>({});
-  const pastePreviewTimerRef = useRef<number | null>(null);
-
-  const hasMissingPasteColumnTitles = useMemo(
-    () => Boolean(pastePreview?.columns.some(col => col.mode === 'new' && !col.newTitle?.trim())),
-    [pastePreview],
-  );
 
   /* original orderedColumns */
   const orderedColumns = useMemo(() => {
@@ -497,6 +480,73 @@ export default function CustomTableDetailPage() {
     closeRowDrawer,
   } = useRowDrawer(rows);
 
+  const handleInsertSuccess = useCallback(
+    (createdCount: number, onUndo: () => void) => {
+      const undoWindowMs = 8000;
+      let undoExpired = false;
+      const timeoutId = window.setTimeout(() => {
+        undoExpired = true;
+      }, undoWindowMs);
+      const toastId = toast.custom(
+        toastProps => (
+          <div
+            className={`${
+              toastProps.visible ? 'animate-enter' : 'animate-leave'
+            } flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg`}
+          >
+            <span className="text-sm text-gray-800">
+              {tx(t, ['paste', 'addedPrefix'], 'Added ')}
+              {createdCount}
+              {tx(t, ['paste', 'addedSuffix'], ' rows')}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                if (undoExpired) return;
+                undoExpired = true;
+                window.clearTimeout(timeoutId);
+                toast.dismiss(toastId);
+                onUndo();
+              }}
+              className="text-sm font-semibold text-primary hover:text-primary-hover"
+            >
+              {tx(t, ['paste', 'undo'], 'Undo')}
+            </button>
+          </div>
+        ),
+        { duration: undoWindowMs },
+      );
+    },
+    [t],
+  );
+
+  const {
+    pastePreviewOpen,
+    pasteParsing,
+    pasteApplying,
+    pasteUseHeaders,
+    pastePreview,
+    hasMissingPasteColumnTitles,
+    resetPastePreview,
+    handlePasteHeadersToggle,
+    handlePasteCellChange,
+    handlePasteAdd,
+  } = usePasteImport({
+    tableId,
+    orderedColumns,
+    pasteDefaults,
+    loadTable,
+    refreshStats,
+    setRows,
+    onInsertSuccess: handleInsertSuccess,
+    messages: {
+      noRows: tx(t, ['paste', 'noRows'], 'No rows found'),
+      missingColumnTitle: tx(t, ['paste', 'missingColumnTitle'], 'Missing column title'),
+      insertFailed: tx(t, ['paste', 'insertFailed'], 'Failed to insert rows'),
+      undoFailed: tx(t, ['paste', 'undoFailed'], 'Failed to undo insert'),
+    },
+  });
+
   const displayRows = useMemo(() => rows, [rows]);
 
   // Reset row selection when filters change
@@ -531,57 +581,6 @@ export default function CustomTableDetailPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
-  const startPastePreview = useCallback(
-    (text: string) => {
-      if (!orderedColumns.length) return;
-      const { rows } = parseClipboardRows(text);
-      if (!rows.length) return;
-      setPasteRawRows(rows);
-      setPastePreviewOpen(true);
-      setPasteParsing(true);
-      setPasteEdits({});
-      window.setTimeout(() => {
-        const initial = buildPastePreview(rows, false, orderedColumns, null, {}, pasteDefaults);
-        const shouldUseHeaders = initial.preview.headersDetected;
-        if (shouldUseHeaders) {
-          const withHeaders = buildPastePreview(
-            rows,
-            true,
-            orderedColumns,
-            null,
-            {},
-            pasteDefaults,
-          );
-          setPasteUseHeaders(true);
-          setPastePreview(withHeaders.preview);
-          setPasteMapping(withHeaders.mapping);
-        } else {
-          setPasteUseHeaders(false);
-          setPastePreview(initial.preview);
-          setPasteMapping(initial.mapping);
-        }
-        setPasteParsing(false);
-      }, 0);
-    },
-    [orderedColumns, pasteDefaults],
-  );
-
-  useEffect(() => {
-    const onPaste = (event: ClipboardEvent) => {
-      if (pastePreviewOpen || pasteApplying) return;
-      if (!orderedColumns.length) return;
-      if (isEditableTarget(event.target)) return;
-      const clipboardText = event.clipboardData?.getData('text/plain') || '';
-      if (!clipboardText) return;
-      const normalized = clipboardText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-      const hasMultipleLines = normalized.split('\n').length > 1;
-      if (!normalized.includes('\t') && !hasMultipleLines) return;
-      event.preventDefault();
-      startPastePreview(clipboardText);
-    };
-    document.addEventListener('paste', onPaste);
-    return () => document.removeEventListener('paste', onPaste);
-  }, [pastePreviewOpen, pasteApplying, orderedColumns.length, startPastePreview]);
 
   useEffect(() => {
     if (!isFullscreen) return;
@@ -638,235 +637,6 @@ export default function CustomTableDetailPage() {
       return null;
     }
   };
-
-  const resetPastePreview = useCallback(() => {
-    setPastePreviewOpen(false);
-    setPastePreview(null);
-    setPasteRawRows([]);
-    setPasteUseHeaders(false);
-    setPasteParsing(false);
-    setPasteApplying(false);
-    setPasteMapping({});
-    setPasteEdits({});
-    if (pastePreviewTimerRef.current) {
-      window.clearTimeout(pastePreviewTimerRef.current);
-      pastePreviewTimerRef.current = null;
-    }
-  }, []);
-
-  const buildPreviewAsync = useCallback(
-    (
-      rows: string[][],
-      useHeaders: boolean,
-      mappingSelection: Record<number, PasteMappingSelection> | null,
-      edits: Record<string, string>,
-    ) => {
-      setPasteParsing(true);
-      if (pastePreviewTimerRef.current) {
-        window.clearTimeout(pastePreviewTimerRef.current);
-      }
-      pastePreviewTimerRef.current = window.setTimeout(() => {
-        const result = buildPastePreview(
-          rows,
-          useHeaders,
-          orderedColumns,
-          mappingSelection,
-          edits,
-          pasteDefaults,
-        );
-        setPastePreview(result.preview);
-        setPasteMapping(result.mapping);
-        setPasteParsing(false);
-        pastePreviewTimerRef.current = null;
-      }, 0);
-    },
-    [orderedColumns, pasteDefaults],
-  );
-
-  const handlePasteHeadersToggle = useCallback(
-    (checked: boolean) => {
-      setPasteUseHeaders(checked);
-      if (!pasteRawRows.length) return;
-      setPasteEdits({});
-      buildPreviewAsync(pasteRawRows, checked, null, {});
-    },
-    [pasteRawRows, buildPreviewAsync],
-  );
-
-  const rebuildPasteWithState = useCallback(
-    (nextMapping: Record<number, PasteMappingSelection>, nextEdits: Record<string, string>) => {
-      if (!pasteRawRows.length) return;
-      buildPreviewAsync(pasteRawRows, pasteUseHeaders, nextMapping, nextEdits);
-    },
-    [pasteRawRows, pasteUseHeaders, buildPreviewAsync],
-  );
-
-  const handlePasteCellChange = useCallback(
-    (rowIndex: number, sourceIndex: number, value: string) => {
-      setPasteEdits(prev => {
-        const next = { ...prev, [`${rowIndex}:${sourceIndex}`]: value };
-        rebuildPasteWithState(pasteMapping, next);
-        return next;
-      });
-    },
-    [pasteMapping, rebuildPasteWithState],
-  );
-
-  const appendRows = useCallback((createdRows: CustomTableGridRow[]) => {
-    setRows(prev => {
-      const merged = [...prev, ...createdRows];
-      const seen = new Set<string>();
-      const deduped: CustomTableGridRow[] = [];
-      for (const row of merged) {
-        const id = row.id || String(row.rowNumber);
-        if (!id || seen.has(id)) continue;
-        seen.add(id);
-        deduped.push(row);
-      }
-      deduped.sort((a, b) => (a.rowNumber ?? 0) - (b.rowNumber ?? 0));
-      return deduped;
-    });
-  }, []);
-
-  const rollbackRows = useCallback(
-    async (rowIds: string[]) => {
-      if (!tableId || !rowIds.length) return;
-      try {
-        await Promise.all(
-          rowIds.map(rowId => apiClient.delete(`/custom-tables/${tableId}/rows/${rowId}`)),
-        );
-        setRows(prev => prev.filter(row => !rowIds.includes(row.id)));
-        refreshStats();
-      } catch (error) {
-        console.error('Failed to rollback rows:', error);
-        toast.error(tx(t, ['paste', 'undoFailed'], 'Failed to undo insert'));
-      }
-    },
-    [tableId, refreshStats, t],
-  );
-
-  const handlePasteAdd = useCallback(async () => {
-    if (!tableId || !pastePreview || pasteApplying) return;
-    if (!pastePreview.dataRows.length) {
-      toast.error(tx(t, ['paste', 'noRows'], 'No rows found'));
-      return;
-    }
-    if (pastePreview.hasErrors) return;
-    setPasteApplying(true);
-    try {
-      const newColumns = pastePreview.columns.filter(col => col.mode === 'new');
-      const missingTitles = newColumns.some(col => !col.newTitle || !col.newTitle.trim());
-      if (missingTitles) {
-        toast.error(tx(t, ['paste', 'missingColumnTitle'], 'Missing column title'));
-        setPasteApplying(false);
-        return;
-      }
-      const placeholderToKey = new Map<string, string>();
-      if (newColumns.length) {
-        const created = await Promise.all(
-          newColumns.map(col =>
-            apiClient.post(`/custom-tables/${tableId}/columns`, {
-              title: col.newTitle?.trim(),
-              type: col.newType ?? 'text',
-            }),
-          ),
-        );
-        created.forEach((response, index) => {
-          const payload = response.data?.data || response.data;
-          const key = payload?.key;
-          const placeholderKey = newColumns[index]?.columnKey || '';
-          if (key && placeholderKey) {
-            placeholderToKey.set(placeholderKey, key);
-          }
-        });
-        await loadTable();
-      }
-
-      const payloadRows = pastePreview.dataRows.map(row => {
-        const data: CustomTableRowPatch = {};
-        for (const [key, value] of Object.entries(row)) {
-          const actualKey = placeholderToKey.get(key) || key;
-          data[actualKey] = value;
-        }
-        return { data };
-      });
-
-      const response = await apiClient.post(`/custom-tables/${tableId}/rows/batch`, {
-        rows: payloadRows,
-      });
-      const responsePayload = response.data || {};
-      const createdRows =
-        responsePayload.rows ||
-        responsePayload.data?.rows ||
-        responsePayload.items ||
-        responsePayload.data?.items ||
-        [];
-      const normalizedRows = getResponseItems(createdRows);
-      const createdCount =
-        responsePayload.created ??
-        responsePayload.data?.created ??
-        normalizedRows.length ??
-        pastePreview.dataRows.length;
-      if (normalizedRows.length) {
-        appendRows(normalizedRows);
-      }
-      resetPastePreview();
-      refreshStats();
-
-      const undoWindowMs = 8000;
-      const undoIds = normalizedRows.map(row => row.id).filter(Boolean);
-      let undoExpired = false;
-      const timeoutId = window.setTimeout(() => {
-        undoExpired = true;
-      }, undoWindowMs);
-      const toastId = toast.custom(
-        toastProps => (
-          <div
-            className={`${
-              toastProps.visible ? 'animate-enter' : 'animate-leave'
-            } flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg`}
-          >
-            <span className="text-sm text-gray-800">
-              {tx(t, ['paste', 'addedPrefix'], 'Added ')}
-              {createdCount}
-              {tx(t, ['paste', 'addedSuffix'], ' rows')}
-            </span>
-            {undoIds.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (undoExpired) return;
-                  undoExpired = true;
-                  window.clearTimeout(timeoutId);
-                  toast.dismiss(toastId);
-                  rollbackRows(undoIds);
-                }}
-                className="text-sm font-semibold text-primary hover:text-primary-hover"
-              >
-                {tx(t, ['paste', 'undo'], 'Undo')}
-              </button>
-            )}
-          </div>
-        ),
-        { duration: undoWindowMs },
-      );
-    } catch (error) {
-      console.error('Failed to batch insert rows:', error);
-      toast.error(tx(t, ['paste', 'insertFailed'], 'Failed to insert rows'));
-    } finally {
-      setPasteApplying(false);
-    }
-  }, [
-    tableId,
-    pastePreview,
-    pasteApplying,
-    appendRows,
-    resetPastePreview,
-    loadTable,
-    refreshStats,
-    rollbackRows,
-    t,
-  ]);
 
   const updateCellFromGrid = async (
     rowId: string,
