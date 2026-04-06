@@ -1,9 +1,6 @@
 'use client';
 
-import { type ChangelogEntry, ChangelogModal } from '@/app/components/ChangelogModal';
 import { Alert } from '@/app/components/ui/alert';
-import { Badge } from '@/app/components/ui/badge';
-import { Button } from '@/app/components/ui/button';
 import {
   Card,
   CardContent,
@@ -11,12 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/app/components/ui/card';
-import { Checkbox } from '@/app/components/ui/checkbox';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Select as UiSelect } from '@/app/components/ui/select';
-import { Separator } from '@/app/components/ui/separator';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -24,6 +18,13 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import { cn } from '@/app/lib/utils';
+import { AppearanceSection } from '@/app/settings/profile/components/AppearanceSection';
+import { ChangelogSection } from '@/app/settings/profile/components/ChangelogSection';
+import { EmailSection } from '@/app/settings/profile/components/EmailSection';
+import { NotificationsSection } from '@/app/settings/profile/components/NotificationsSection';
+import { PasswordSection } from '@/app/settings/profile/components/PasswordSection';
+import { ProfileSection } from '@/app/settings/profile/components/ProfileSection';
+import { SessionsSection } from '@/app/settings/profile/components/SessionsSection';
 import { useAppearance } from '@/app/settings/profile/hooks/useAppearance';
 import { useAvatarUpload } from '@/app/settings/profile/hooks/useAvatarUpload';
 import { useChangelog } from '@/app/settings/profile/hooks/useChangelog';
@@ -33,29 +34,23 @@ import { usePasswordForm } from '@/app/settings/profile/hooks/usePasswordForm';
 import { useProfileForm } from '@/app/settings/profile/hooks/useProfileForm';
 import { useSessions } from '@/app/settings/profile/hooks/useSessions';
 import {
-  type NotificationPreferences,
   type SectionId,
   type TimeZoneOption,
   getInitials,
-  getSessionIcon,
   normalizeSection,
   resolveTimeZoneOptions,
   sections,
-  systemNotificationSettings,
-  workspaceNotificationSettings,
 } from '@/app/settings/profile/profileHelpers';
-import { ModeToggle } from '@/components/mode-toggle';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import LogoutIcon from '@mui/icons-material/Logout';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SecurityIcon from '@mui/icons-material/Security';
 import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
-import { CalendarDays, Check, Clock3, FileText, Palette, Search } from 'lucide-react';
+import { Check, Palette, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -293,522 +288,97 @@ export default function ProfileSettingsPage() {
     },
   };
 
-  const notificationLabels = {
-    loading: tx(['notificationsCard', 'loading'], ''),
-    workspaceTitle: tx(['notificationsCard', 'workspace', 'title'], ''),
-    workspaceDescription: tx(['notificationsCard', 'workspace', 'description'], ''),
-    systemTitle: tx(['notificationsCard', 'system', 'title'], ''),
-    systemDescription: tx(['notificationsCard', 'system', 'description'], ''),
-    items: {
-      statementUploaded: {
-        label: tx(['notificationsCard', 'items', 'statementUploaded', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'statementUploaded', 'description'], ''),
-      },
-      importCommitted: {
-        label: tx(['notificationsCard', 'items', 'importCommitted', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'importCommitted', 'description'], ''),
-      },
-      categoryChanges: {
-        label: tx(['notificationsCard', 'items', 'categoryChanges', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'categoryChanges', 'description'], ''),
-      },
-      memberActivity: {
-        label: tx(['notificationsCard', 'items', 'memberActivity', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'memberActivity', 'description'], ''),
-      },
-      dataDeleted: {
-        label: tx(['notificationsCard', 'items', 'dataDeleted', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'dataDeleted', 'description'], ''),
-      },
-      workspaceUpdated: {
-        label: tx(['notificationsCard', 'items', 'workspaceUpdated', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'workspaceUpdated', 'description'], ''),
-      },
-      parsingErrors: {
-        label: tx(['notificationsCard', 'items', 'parsingErrors', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'parsingErrors', 'description'], ''),
-      },
-      importFailures: {
-        label: tx(['notificationsCard', 'items', 'importFailures', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'importFailures', 'description'], ''),
-      },
-      uncategorizedItems: {
-        label: tx(['notificationsCard', 'items', 'uncategorizedItems', 'label'], ''),
-        description: tx(['notificationsCard', 'items', 'uncategorizedItems', 'description'], ''),
-      },
-    },
-  };
-
-  const renderSectionContent = () => {
-    if (activeSection === 'profile') {
-      return (
-        <form className="space-y-5" onSubmit={handleProfileSubmit}>
-          {profileMessage && <Alert variant="success">{profileMessage}</Alert>}
-          {profileError && <Alert variant="error">{profileError}</Alert>}
-
-          <div className="space-y-2">
-            <Label htmlFor="profile-name">{t.profileCard.nameLabel.value}</Label>
-            <Input
-              id="profile-name"
-              value={profileName}
-              onChange={e => {
-                setProfileName(e.target.value);
-                setProfileMessage(null);
-                setProfileError(null);
-              }}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="profile-timezone">{t.profileCard.timeZoneLabel.value}</Label>
-            <button
-              id="profile-timezone-trigger"
-              data-testid="profile-timezone-trigger"
-              type="button"
-              onClick={() => {
-                setIsTimeZoneModalOpen(true);
-                setTimeZoneSearch('');
-              }}
-              className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors hover:border-primary"
-              aria-haspopup="dialog"
-              aria-expanded={isTimeZoneModalOpen}
-            >
-              <span>{selectedTimeZoneOption.label}</span>
-              <span className="text-muted-foreground">v</span>
-            </button>
-            <p className="text-xs text-muted-foreground">{t.profileCard.timeZoneHelp.value}</p>
-          </div>
-
-          {hasProfileChanges && (
-            <Alert variant="warning">
-              {tx(['profileCard', 'unsavedChanges'], 'Unsaved changes')}
-            </Alert>
-          )}
-
-          <div className="flex justify-end">
-            <Button type="submit" disabled={profileLoading || !hasProfileChanges} className="gap-2">
-              {profileLoading && <Spinner className="h-4 w-4 text-inherit" />}
-              {t.profileCard.submit.value}
-            </Button>
-          </div>
-        </form>
-      );
-    }
-
-    if (activeSection === 'appearance') {
-      return (
-        <div className="space-y-5">
-          {appearanceMessage ? <Alert variant="success">{appearanceMessage}</Alert> : null}
-          {appearanceError ? <Alert variant="error">{appearanceError}</Alert> : null}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.appearanceCard.themeLabel.value}</CardTitle>
-              <CardDescription>{t.appearanceCard.themeHelp.value}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ModeToggle
-                value={themePreference}
-                onThemeChange={handleThemePreferenceChange}
-                showPreview={false}
-                labels={{
-                  light: t.appearanceCard.light.value,
-                  dark: t.appearanceCard.dark.value,
-                  auto: tx(['appearanceCard', 'auto'], 'Auto'),
-                  active: t.appearanceCard.active.value,
-                  followsSystem: t.appearanceCard.followsSystem.value,
-                }}
-              />
-              <p className="text-xs text-muted-foreground">
-                {t.appearanceCard.followsSystem.value}
-              </p>
-              {appearanceLoading ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Spinner className="h-4 w-4 text-inherit" />
-                  <span>{t.appearanceCard.active.value}</span>
-                </div>
-              ) : null}
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
-    if (activeSection === 'sessions') {
-      return (
-        <div className="space-y-5">
-          {sessionsMessage && <Alert variant="success">{sessionsMessage}</Alert>}
-          {sessionsError && <Alert variant="error">{sessionsError}</Alert>}
-          <Alert variant="warning">
-            {tx(
-              ['sessionsCard', 'securityHint'],
-              'Only sign out devices you recognize. Signing out current device ends this session immediately.',
-            )}
-          </Alert>
-
-          <div className="rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {t.sessionsCard.lastLoginLabel.value}:
-            </span>{' '}
-            {user?.lastLogin ? new Date(user.lastLogin).toLocaleString() : '—'}
-          </div>
-
-          <div className="space-y-3">
-            <div className="text-sm font-semibold text-foreground">
-              {tx(['sessionsCard', 'activeSessionsLabel'], 'Active devices')}
-            </div>
-
-            {sessionsLoading ? (
-              <div className="flex items-center gap-2 rounded-xl border border-border px-4 py-5 text-sm text-muted-foreground">
-                <Spinner className="h-[18px] w-[18px] text-inherit" />
-                {tx(['sessionsCard', 'loadingLabel'], 'Loading sessions...')}
-              </div>
-            ) : sessions.length ? (
-              <div className="space-y-2">
-                {sessions.map(session => {
-                  const SessionIcon = getSessionIcon(session.device);
-                  const isLogoutLoading = logoutSessionLoadingId === session.id;
-
-                  return (
-                    <div
-                      key={session.id}
-                      className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 px-4 py-4 md:flex-row md:items-start md:justify-between"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                          <SessionIcon className="text-[20px]" />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-                            <span>{`${session.device} · ${session.browser}`}</span>
-                            {session.isCurrent && (
-                              <Badge variant="info">
-                                {tx(['sessionsCard', 'currentSessionBadge'], 'This device')}
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {session.os}
-                            {session.ipAddress
-                              ? ` · ${tx(['sessionsCard', 'ipLabel'], 'IP')}: ${session.ipAddress}`
-                              : ''}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {tx(['sessionsCard', 'lastActiveLabel'], 'Last active')}:{' '}
-                            {new Date(session.lastUsedAt).toLocaleString()}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <Button
-                          variant={session.isCurrent ? 'destructive' : 'outline'}
-                          onClick={() => handleLogoutSession(session)}
-                          disabled={isLogoutLoading}
-                          className="gap-2"
-                        >
-                          {isLogoutLoading && (
-                            <Spinner className="h-[14px] w-[14px] text-inherit" />
-                          )}
-                          <LogoutIcon className="text-[18px]" />
-                          {tx(['sessionsCard', 'logoutSessionButton'], 'Log out')}
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="rounded-xl border border-dashed border-border bg-muted/60 px-4 py-6 text-sm text-muted-foreground">
-                {tx(['sessionsCard', 'emptySessionsLabel'], 'No active sessions found.')}
-              </div>
-            )}
-          </div>
-
-          <div className="flex justify-end">
-            <Button variant="destructive" onClick={handleLogoutAll} className="gap-2">
-              <LogoutIcon className="text-[18px]" />
-              {t.sessionsCard.logoutAllButton.value}
-            </Button>
-          </div>
-        </div>
-      );
-    }
-
-    if (activeSection === 'email') {
-      return (
-        <form className="space-y-5" onSubmit={handleEmailSubmit}>
-          {emailMessage && <Alert variant="success">{emailMessage}</Alert>}
-          {emailError && <Alert variant="error">{emailError}</Alert>}
-
-          <div className="space-y-2">
-            <Label htmlFor="email-next">{t.emailCard.newEmailLabel.value}</Label>
-            <Input
-              id="email-next"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email-password">{t.emailCard.currentPasswordLabel.value}</Label>
-            <Input
-              id="email-password"
-              type="password"
-              value={emailPassword}
-              onChange={e => setEmailPassword(e.target.value)}
-              required
-            />
-            <p className="text-xs text-muted-foreground">{t.emailCard.currentPasswordHelp.value}</p>
-          </div>
-
-          <div className="flex justify-end">
-            <Button type="submit" disabled={emailLoading} className="gap-2">
-              {emailLoading && <Spinner className="h-4 w-4 text-inherit" />}
-              {t.emailCard.submit.value}
-            </Button>
-          </div>
-        </form>
-      );
-    }
-
-    if (activeSection === 'notifications') {
-      return (
-        <div className="space-y-4">
-          {notificationError ? <Alert variant="error">{notificationError}</Alert> : null}
-          {notificationMessage ? <Alert variant="success">{notificationMessage}</Alert> : null}
-
-          {notificationsLoading ? (
-            <div className="rounded-xl border border-border bg-card/60 px-4 py-5 text-sm text-muted-foreground">
-              {notificationLabels.loading}
-            </div>
-          ) : (
-            <>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{notificationLabels.workspaceTitle}</CardTitle>
-                  <CardDescription>{notificationLabels.workspaceDescription}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {workspaceNotificationSettings.map(setting => {
-                    const inputId = `workspace-pref-${setting.key}`;
-                    const item =
-                      notificationLabels.items[
-                        setting.key as keyof typeof notificationLabels.items
-                      ];
-                    return (
-                      <div
-                        key={setting.key}
-                        className="flex items-start justify-between gap-4 rounded-xl border border-border p-3"
-                      >
-                        <div className="space-y-1">
-                          <label htmlFor={inputId} className="text-sm font-medium text-foreground">
-                            {item.label}
-                          </label>
-                          <p className="text-xs text-muted-foreground">{item.description}</p>
-                        </div>
-                        <Checkbox
-                          id={inputId}
-                          checked={notificationPreferences[setting.key]}
-                          onCheckedChange={checked =>
-                            void toggleNotificationPreference(setting.key, checked)
-                          }
-                          disabled={notificationSavingKey === setting.key}
-                          aria-label={item.label}
-                        />
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>{notificationLabels.systemTitle}</CardTitle>
-                  <CardDescription>{notificationLabels.systemDescription}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {systemNotificationSettings.map(setting => {
-                    const inputId = `system-pref-${setting.key}`;
-                    const item =
-                      notificationLabels.items[
-                        setting.key as keyof typeof notificationLabels.items
-                      ];
-                    return (
-                      <div
-                        key={setting.key}
-                        className="flex items-start justify-between gap-4 rounded-xl border border-border p-3"
-                      >
-                        <div className="space-y-1">
-                          <label htmlFor={inputId} className="text-sm font-medium text-foreground">
-                            {item.label}
-                          </label>
-                          <p className="text-xs text-muted-foreground">{item.description}</p>
-                        </div>
-                        <Checkbox
-                          id={inputId}
-                          checked={notificationPreferences[setting.key]}
-                          onCheckedChange={checked =>
-                            void toggleNotificationPreference(setting.key, checked)
-                          }
-                          disabled={notificationSavingKey === setting.key}
-                          aria-label={item.label}
-                        />
-                      </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            </>
-          )}
-        </div>
-      );
-    }
-
-    if (activeSection === 'changelog') {
-      const releaseLabelText = tx(['changelogCard', 'releaseLabel'], 'Release');
-      const closeLabelText = tx(['changelogCard', 'closeLabel'], 'Close changelog');
-      const emptyText = tx(['changelogCard', 'empty'], 'No published updates yet.');
-      const loadingText = tx(['changelogCard', 'loading'], 'Loading changelog...');
-      const openDetailsText = tx(['changelogCard', 'openDetails'], 'Open details');
-
-      const formattedEntries = changelogEntries.map(entry => {
-        const date = new Date(entry.date);
-        const formattedDate = Number.isNaN(date.getTime())
-          ? entry.date
-          : new Intl.DateTimeFormat(locale || 'ru', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-            }).format(date);
-
-        return {
-          ...entry,
-          dateLabel: formattedDate,
-        };
-      });
-
-      return (
-        <div className="space-y-4">
-          {changelogLoading ? (
-            <div className="rounded-2xl border border-border bg-card px-5 py-8 text-sm text-muted-foreground">
-              {loadingText}
-            </div>
-          ) : formattedEntries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card px-5 py-14 text-center">
-              <FileText className="mb-3 h-8 w-8 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">{emptyText}</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {formattedEntries.map(entry => (
-                <button
-                  key={entry.id}
-                  type="button"
-                  onClick={() => setChangelogSelectedEntry(entry)}
-                  className="w-full rounded-2xl border border-border bg-card px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/50"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h2 className="line-clamp-2 text-lg font-semibold leading-snug text-foreground">
-                        {entry.title}
-                      </h2>
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
-                        {entry.summary}
-                      </p>
-                    </div>
-
-                    {entry.version ? (
-                      <span className="shrink-0 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-                        {entry.version}
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                    <span className="inline-flex items-center gap-1.5">
-                      <CalendarDays className="h-3.5 w-3.5" />
-                      {entry.dateLabel}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <Clock3 className="h-3.5 w-3.5" />
-                      {openDetailsText}
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          <ChangelogModal
-            isOpen={Boolean(changelogSelectedEntry)}
-            onClose={() => setChangelogSelectedEntry(null)}
-            entry={changelogSelectedEntry}
-            releaseLabel={releaseLabelText}
-            closeLabel={closeLabelText}
-          />
-        </div>
-      );
-    }
-
-    return (
-      <form className="space-y-5" onSubmit={handlePasswordSubmit}>
-        {passwordMessage && <Alert variant="success">{passwordMessage}</Alert>}
-        {passwordError && <Alert variant="error">{passwordError}</Alert>}
-        <Alert variant="warning">
-          {tx(
-            ['passwordCard', 'securityHint'],
-            'Use a unique password and keep your account email secure. Confirm before applying password changes.',
-          )}
-        </Alert>
-
-        <div className="space-y-2">
-          <Label htmlFor="password-current">{t.passwordCard.currentPasswordLabel.value}</Label>
-          <Input
-            id="password-current"
-            type="password"
-            value={passwords.current}
-            onChange={e => setPasswords({ ...passwords, current: e.target.value })}
-            required
-          />
-        </div>
-
-        <Separator />
-
-        <div className="space-y-2">
-          <Label htmlFor="password-next">{t.passwordCard.newPasswordLabel.value}</Label>
-          <Input
-            id="password-next"
-            type="password"
-            value={passwords.next}
-            onChange={e => setPasswords({ ...passwords, next: e.target.value })}
-            required
-          />
-          <p className="text-xs text-muted-foreground">{t.passwordCard.newPasswordHelp.value}</p>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password-confirm">{t.passwordCard.confirmPasswordLabel.value}</Label>
-          <Input
-            id="password-confirm"
-            type="password"
-            value={passwords.confirm}
-            onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
-            required
-          />
-        </div>
-
-        <div className="flex justify-end">
-          <Button type="submit" variant="secondary" disabled={passwordLoading} className="gap-2">
-            {passwordLoading && <Spinner className="h-4 w-4 text-inherit" />}
-            {t.passwordCard.submit.value}
-          </Button>
-        </div>
-      </form>
-    );
+  const sectionContent: Record<SectionId, React.ReactElement> = {
+    profile: (
+      <ProfileSection
+        t={t}
+        tx={tx}
+        profileMessage={profileMessage}
+        profileError={profileError}
+        profileLoading={profileLoading}
+        profileName={profileName}
+        setProfileName={setProfileName}
+        setProfileMessage={setProfileMessage}
+        setProfileError={setProfileError}
+        hasProfileChanges={hasProfileChanges}
+        handleProfileSubmit={handleProfileSubmit}
+        isTimeZoneModalOpen={isTimeZoneModalOpen}
+        setIsTimeZoneModalOpen={setIsTimeZoneModalOpen}
+        setTimeZoneSearch={setTimeZoneSearch}
+        selectedTimeZoneOption={selectedTimeZoneOption}
+      />
+    ),
+    appearance: (
+      <AppearanceSection
+        t={t}
+        tx={tx}
+        appearanceMessage={appearanceMessage}
+        appearanceError={appearanceError}
+        appearanceLoading={appearanceLoading}
+        themePreference={themePreference}
+        handleThemePreferenceChange={handleThemePreferenceChange}
+      />
+    ),
+    sessions: (
+      <SessionsSection
+        t={t}
+        tx={tx}
+        sessionsMessage={sessionsMessage}
+        sessionsError={sessionsError}
+        sessionsLoading={sessionsLoading}
+        sessions={sessions}
+        userLastLogin={user?.lastLogin}
+        logoutSessionLoadingId={logoutSessionLoadingId}
+        handleLogoutSession={handleLogoutSession}
+        handleLogoutAll={handleLogoutAll}
+      />
+    ),
+    email: (
+      <EmailSection
+        t={t}
+        email={email}
+        setEmail={setEmail}
+        emailPassword={emailPassword}
+        setEmailPassword={setEmailPassword}
+        emailMessage={emailMessage}
+        emailError={emailError}
+        emailLoading={emailLoading}
+        handleEmailSubmit={handleEmailSubmit}
+      />
+    ),
+    password: (
+      <PasswordSection
+        t={t}
+        tx={tx}
+        passwordMessage={passwordMessage}
+        passwordError={passwordError}
+        passwordLoading={passwordLoading}
+        passwords={passwords}
+        setPasswords={setPasswords}
+        handlePasswordSubmit={handlePasswordSubmit}
+      />
+    ),
+    notifications: (
+      <NotificationsSection
+        tx={tx}
+        notificationError={notificationError}
+        notificationMessage={notificationMessage}
+        notificationsLoading={notificationsLoading}
+        notificationPreferences={notificationPreferences}
+        notificationSavingKey={notificationSavingKey}
+        toggleNotificationPreference={toggleNotificationPreference}
+      />
+    ),
+    changelog: (
+      <ChangelogSection
+        tx={tx}
+        locale={locale}
+        changelogEntries={changelogEntries}
+        changelogLoading={changelogLoading}
+        changelogSelectedEntry={changelogSelectedEntry}
+        setChangelogSelectedEntry={setChangelogSelectedEntry}
+      />
+    ),
   };
 
   const activeMeta = sectionMeta[activeSection];
@@ -957,7 +527,7 @@ export default function ProfileSettingsPage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6 lg:p-8">{renderSectionContent()}</CardContent>
+            <CardContent className="p-6 lg:p-8">{sectionContent[activeSection]}</CardContent>
           </Card>
         </main>
       </div>
