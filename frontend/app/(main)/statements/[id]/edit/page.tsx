@@ -3,15 +3,7 @@
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { DetailActionButton } from '@/app/components/ui/detail-action-button';
 import { useAuth } from '@/app/hooks/useAuth';
-import { useAutoSave } from '@/app/hooks/useAutoSave';
-import apiClient from '@/app/lib/api';
-import { getApiErrorMessage } from '@/app/lib/api-error';
-import { payablesApi } from '@/app/lib/payables-api';
-import {
-  flattenStatementCategories,
-  getCategoryDisplayName,
-  localizeStatementCategoryName,
-} from '@/app/lib/statement-categories';
+import { flattenStatementCategories, getCategoryDisplayName } from '@/app/lib/statement-categories';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
 import {
   AccountBalance,
@@ -64,161 +56,28 @@ import AlertTitle from '@mui/material/AlertTitle';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { useParams, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'react-hot-toast';
 
 import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { Spinner } from '@/app/components/ui/spinner';
 import {
-  type StatementStage,
   type StatementStageAction,
   type StatementStageActionId,
-  getStatementStage,
   getStatementStageActions,
   isStageActionBlocked,
-  setStatementStage,
 } from '@/app/lib/statement-workflow';
 import { type ParsingDroppedSample, ParsingWarningsPanel } from './ParsingWarningsPanel';
 import StatementCategoryDrawer from './StatementCategoryDrawer';
-import { buildPayableFromStatement } from './payable-from-statement';
-
-interface CategoryOption {
-  id: string;
-  name: string;
-  type?: 'income' | 'expense';
-  isEnabled?: boolean;
-  source?: 'system' | 'user' | 'parsing';
-  isSystem?: boolean;
-  children?: CategoryOption[];
-}
-
-interface BranchOption {
-  id: string;
-  name: string;
-}
-
-interface WalletOption {
-  id: string;
-  name: string;
-}
-
-interface Transaction {
-  id: string;
-  transactionDate: string;
-  documentNumber?: string;
-  counterpartyName: string;
-  counterpartyBin?: string;
-  counterpartyAccount?: string;
-  counterpartyBank?: string;
-  debit?: number;
-  credit?: number;
-  paymentPurpose: string;
-  currency?: string;
-  exchangeRate?: number;
-  amountForeign?: number;
-  categoryId?: string;
-  branchId?: string;
-  walletId?: string;
-  article?: string;
-  comments?: string;
-  transactionType: 'income' | 'expense';
-  category?: {
-    id: string;
-    name: string;
-    isEnabled?: boolean;
-    source?: 'system' | 'user' | 'parsing';
-    isSystem?: boolean;
-  };
-  branch?: { id: string; name: string };
-  wallet?: { id: string; name: string };
-}
-
-interface Statement {
-  id: string;
-  fileName: string;
-  status: string;
-  totalTransactions: number;
-  categoryId?: string | null;
-  category?: {
-    id: string;
-    name: string;
-    isEnabled?: boolean;
-    source?: 'system' | 'user' | 'parsing';
-    isSystem?: boolean;
-  } | null;
-  statementDateFrom?: string | null;
-  statementDateTo?: string | null;
-  balanceStart?: number | string | null;
-  balanceEnd?: number | string | null;
-  parsingDetails?: {
-    detectedBank?: string;
-    detectedFormat?: string;
-    detectedBy?: string;
-    detectedEvidence?: string[];
-    otherBankMentions?: string[];
-    parserUsed?: string;
-    totalLinesProcessed?: number;
-    transactionsFound?: number;
-    transactionsCreated?: number;
-    errors?: string[];
-    warnings?: string[];
-    metadataExtracted?: {
-      accountNumber?: string;
-      dateFrom?: string;
-      dateTo?: string;
-      balanceStart?: number;
-      balanceEnd?: number;
-      rawHeader?: string;
-      normalizedHeader?: string;
-      headerDisplay?: {
-        title?: string;
-        subtitle?: string;
-        periodDisplay?: string;
-        accountDisplay?: string;
-        institutionDisplay?: string;
-        currencyDisplay?: string;
-      };
-    };
-    processingTime?: number;
-    logEntries?: Array<{ timestamp: string; level: string; message: string }>;
-    droppedSamples?: Array<string | ParsingDroppedSample>;
-  } | null;
-}
-
-const normalizeDateInput = (value?: string | Date | null) => {
-  if (!value) return '';
-  const date = typeof value === 'string' ? new Date(value) : value;
-  return Number.isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0];
-};
-
-const normalizeNumberInput = (value?: number | string | null) => {
-  if (value === null || value === undefined) return '';
-  return typeof value === 'string' ? value : value.toString();
-};
-
-const parseNullableNumber = (value: string) => {
-  if (value.trim() === '') return null;
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : null;
-};
-
-const resolveLocale = (locale: string) => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
-  return 'en-US';
-};
-
-const isIdEmpty = (id?: string | null) =>
-  !id || id === 'null' || id === 'undefined' || id === '0' || id === '';
-
-const filterEnabledCategories = (items: CategoryOption[]): CategoryOption[] => {
-  return items
-    .filter(item => item.isEnabled !== false)
-    .map(item => ({
-      ...item,
-      children: item.children ? filterEnabledCategories(item.children) : undefined,
-    }));
-};
+import {
+  type BranchOption,
+  type CategoryOption,
+  type Transaction,
+  filterEnabledCategories,
+  formatLabel,
+  formatNumber as formatNumberHelper,
+  isIdEmpty,
+  resolveLocale,
+} from './editHelpers';
+import { useStatementEditForm } from './hooks/useStatementEditForm';
 
 export default function EditStatementPage() {
   const params = useParams();
@@ -230,381 +89,78 @@ export default function EditStatementPage() {
   const { locale } = useLocale();
   const statementId = params.id as string;
 
-  const [statement, setStatement] = useState<Statement | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [exportingToTable, setExportingToTable] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
-  const [editingRow, setEditingRow] = useState<string | null>(null);
-  const [editedData, setEditedData] = useState<Record<string, Partial<Transaction>>>({});
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
-  const [branches, setBranches] = useState<BranchOption[]>([]);
-  const [wallets, setWallets] = useState<WalletOption[]>([]);
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [bulkCategoryDialogOpen, setBulkCategoryDialogOpen] = useState(false);
-  const [statementCategoryDrawerOpen, setStatementCategoryDrawerOpen] = useState(false);
-  const [statementCategorySaving, setStatementCategorySaving] = useState(false);
-  const [stageActionLoadingId, setStageActionLoadingId] = useState<StatementStageActionId | null>(
-    null,
-  );
-  const [currentStage, setCurrentStage] = useState<StatementStage>('submit');
-
-  const [bulkCategoryId, setBulkCategoryId] = useState('');
-  const [metadataForm, setMetadataForm] = useState({
-    balanceStart: '',
-    balanceEnd: '',
-    statementDateFrom: '',
-    statementDateTo: '',
-  });
-  const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
-  const [parsingDetailsExpanded, setParsingDetailsExpanded] = useState(true);
-  const balanceStartInputRef = useRef<HTMLInputElement | null>(null);
-  const balanceEndInputRef = useRef<HTMLInputElement | null>(null);
-
-  useEffect(() => {
-    if (user && statementId) {
-      setCurrentStage(getStatementStage(statementId));
-      loadData();
-    }
-  }, [user, statementId]);
-
-  const formatLabel = (
-    template: string | undefined,
-    replacements: Record<string, string | number>,
-  ) => {
-    if (!template) return '';
-
-    return Object.entries(replacements).reduce(
-      (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
-      template,
-    );
-  };
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setOptionsLoading(true);
-      const [statementRes, transactionsRes, categoriesRes, branchesRes, walletsRes] =
-        await Promise.all([
-          apiClient.get(`/statements/${statementId}`),
-          apiClient.get(`/transactions?statement_id=${statementId}&limit=1000`),
-          apiClient.get('/categories'),
-          apiClient.get('/branches'),
-          apiClient.get('/wallets'),
-        ]);
-
-      const statementData = statementRes.data?.data || statementRes.data;
-
-      setStatement(statementData);
-
-      const transactionsData = transactionsRes.data.data || transactionsRes.data;
-
-      setTransactions(transactionsData);
-      setCategories(categoriesRes.data?.data || categoriesRes.data || []);
-      setBranches(branchesRes.data?.data || branchesRes.data || []);
-      setWallets(walletsRes.data?.data || walletsRes.data || []);
-
-      const extractedMeta = statementData?.parsingDetails?.metadataExtracted || {};
-
-      setMetadataForm({
-        balanceStart: normalizeNumberInput(
-          statementData?.balanceStart ?? extractedMeta.balanceStart,
-        ),
-        balanceEnd: normalizeNumberInput(statementData?.balanceEnd ?? extractedMeta.balanceEnd),
-        statementDateFrom: normalizeDateInput(
-          statementData?.statementDateFrom ?? extractedMeta.dateFrom,
-        ),
-        statementDateTo: normalizeDateInput(statementData?.statementDateTo ?? extractedMeta.dateTo),
-      });
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.loadData.value));
-    } finally {
-      setLoading(false);
-      setOptionsLoading(false);
-    }
-  };
-
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return '';
-    try {
-      return new Date(dateString).toLocaleDateString('ru-RU');
-    } catch (err) {
-      return String(dateString);
-    }
-  };
-
-  const handleExportToCustomTable = async () => {
-    if (!statementId) return;
-    setExportingToTable(true);
-    const toastId = toast.loading(t.labels.exportLoading.value);
-
-    if (!statement) {
-      toast.error(t.labels.exportFailure.value, { id: toastId });
-      setExportingToTable(false);
-      return;
-    }
-
-    try {
-      const rawName = `${t.labels.statementNamePrefix.value}${statement.fileName}`;
-      const MAX_NAME_LENGTH = 120;
-      const name = rawName.length > MAX_NAME_LENGTH ? rawName.slice(0, MAX_NAME_LENGTH) : rawName;
-
-      const payload = {
-        statementIds: [statementId],
-        name,
-        description: t.labels.exportDescription.value
-          .replace('{{dateFrom}}', formatDate(statement.statementDateFrom))
-          .replace('{{dateTo}}', formatDate(statement.statementDateTo)),
-      };
-
-      const response = await apiClient.post('/custom-tables/from-statements', payload);
-      const tableId = response?.data?.tableId || response?.data?.id;
-
-      if (tableId) {
-        toast.success(t.labels.exportSuccess.value, { id: toastId });
-        router.push(`/custom-tables/${tableId}`);
-      } else {
-        toast.error(t.labels.exportFailure.value, { id: toastId });
-        router.push('/custom-tables');
-      }
-    } catch (err) {
-      console.error('Export to custom table failed:', err);
-      toast.error(t.labels.exportFailure.value, { id: toastId });
-    } finally {
-      setExportingToTable(false);
-    }
-  };
-
-  const handleRowSelect = (id: string) => {
-    const newSelected = new Set(selectedRows);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
-    setSelectedRows(newSelected);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedRows.size === transactions.length) {
-      setSelectedRows(new Set());
-    } else {
-      setSelectedRows(new Set(transactions.map(t => t.id)));
-    }
-  };
-
-  const handleEdit = (transaction: Transaction) => {
-    setEditingRow(transaction.id);
-    setEditedData({
-      [transaction.id]: { ...transaction },
-    });
-  };
-
-  const handleFieldChange = (
-    transactionId: string,
-    field: keyof Transaction,
-    value: Transaction[keyof Transaction],
-  ) => {
-    setEditedData({
-      ...editedData,
-      [transactionId]: {
-        ...editedData[transactionId],
-        [field]: value,
-      },
-    });
-  };
-
-  const handleSave = async (transactionId: string) => {
-    try {
-      const updates = editedData[transactionId];
-      await apiClient.patch(`/transactions/${transactionId}`, updates);
-      setTransactions(prev => prev.map(t => (t.id === transactionId ? { ...t, ...updates } : t)));
-      setEditingRow(null);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.saveTransaction.value));
-    }
-  };
-
-  const handleMetadataChange = (field: string, value: string) => {
-    setMetadataForm({
-      ...metadataForm,
-      [field]: value,
-    });
-  };
-
-  const handleMetadataAutoSave = useCallback(
-    async (formData: typeof metadataForm) => {
-      try {
-        const payload = {
-          balanceStart: parseNullableNumber(formData.balanceStart),
-          balanceEnd: parseNullableNumber(formData.balanceEnd),
-          statementDateFrom: formData.statementDateFrom || null,
-          statementDateTo: formData.statementDateTo || null,
-        };
-        const response = await apiClient.patch(`/statements/${statementId}`, payload);
-        const updatedStatement = response.data?.data || response.data;
-        setStatement(updatedStatement);
-      } catch (err) {
-        console.error('Metadata autosave failed:', err);
-      }
-    },
-    [statementId],
-  );
-
-  const handleResolveParsingWarning = useCallback((warning: string) => {
-    setParsingDetailsExpanded(true);
-
-    const target = /balance mismatch/i.test(warning)
-      ? balanceEndInputRef.current || balanceStartInputRef.current
-      : null;
-
-    if (target) {
-      window.setTimeout(() => {
-        if (typeof target.scrollIntoView === 'function') {
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        target.focus();
-      }, 0);
-    }
-  }, []);
-
-  const handleConvertDroppedSample = useCallback(
-    async (sample: ParsingDroppedSample, index: number, warning?: string) => {
-      const response = await apiClient.post(`/statements/${statementId}/convert-dropped-sample`, {
-        index,
-        warning,
-        transaction: sample.transaction,
-      });
-
-      const updatedStatement = response.data?.statement || response.data?.data?.statement;
-      const createdTransaction = response.data?.transaction || response.data?.data?.transaction;
-
-      if (updatedStatement) {
-        setStatement(updatedStatement);
-      }
-
-      if (createdTransaction) {
-        setTransactions(prev => [createdTransaction, ...prev]);
-      } else {
-        await loadData();
-      }
-
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    },
-    [statementId],
-  );
-
-  useAutoSave({
-    data: metadataForm,
-    onSave: handleMetadataAutoSave,
-    debounceMs: 500,
-    enabled: Boolean(statementId && statement && !loading),
+  const {
+    statement,
+    setStatement,
+    transactions,
+    setTransactions,
+    loading,
+    saving,
+    exportingToTable,
+    optionsLoading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    selectedRows,
+    setSelectedRows,
+    editingRow,
+    editedData,
+    categories,
+    branches,
+    wallets,
+    bulkCategoryDialogOpen,
+    setBulkCategoryDialogOpen,
+    statementCategoryDrawerOpen,
+    setStatementCategoryDrawerOpen,
+    statementCategorySaving,
+    stageActionLoadingId,
+    currentStage,
+    bulkCategoryId,
+    setBulkCategoryId,
+    metadataForm,
+    setMetadataForm,
+    exportConfirmOpen,
+    setExportConfirmOpen,
+    parsingDetailsExpanded,
+    setParsingDetailsExpanded,
+    balanceStartInputRef,
+    balanceEndInputRef,
+    loadData,
+    handleExportToCustomTable,
+    handleRowSelect,
+    handleSelectAll,
+    handleEdit,
+    handleFieldChange,
+    handleSave,
+    handleCancel,
+    handleMetadataChange,
+    handleResolveParsingWarning,
+    handleConvertDroppedSample,
+    handleDelete,
+    handleBulkUpdate,
+    handleBulkDelete,
+    handleOpenBulkCategory,
+    handleApplyBulkCategory,
+    handleStageAction,
+    handleStatementCategorySelect,
+  } = useStatementEditForm(statementId, user, router, {
+    loadDataError: t.errors.loadData.value,
+    saveTransactionError: t.errors.saveTransaction.value,
+    deleteTransactionError: t.errors.deleteTransaction.value,
+    updateTransactionsError: t.errors.updateTransactions.value,
+    deleteTransactionsError: t.errors.deleteTransactions.value,
+    assignCategoryError: t.errors.assignCategory.value,
+    exportLoading: t.labels.exportLoading.value,
+    exportSuccess: t.labels.exportSuccess.value,
+    exportFailure: t.labels.exportFailure.value,
+    exportDescription: t.labels.exportDescription.value,
+    statementNamePrefix: t.labels.statementNamePrefix.value,
+    categoryUpdated: labels.categoryUpdated?.value || 'Category updated',
+    categoryUpdateFailed: labels.categoryUpdateFailed?.value || 'Failed to update category',
   });
 
-  const handleCancel = () => {
-    setEditingRow(null);
-    setEditedData({});
-  };
-
-  const handleDelete = async (transactionId: string) => {
-    if (!window.confirm(labels.confirmDeleteOne?.value || 'Delete transaction?')) return;
-    try {
-      await apiClient.delete(`/transactions/${transactionId}`);
-      setTransactions(prev => prev.filter(t => t.id !== transactionId));
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.deleteTransaction.value));
-    }
-  };
-
-  const handleBulkUpdate = async () => {
-    try {
-      setSaving(true);
-      const updates = Array.from(selectedRows)
-        .filter(id => editedData[id])
-        .map(id => ({
-          id,
-          updates: editedData[id],
-        }));
-      await apiClient.patch('/transactions/bulk', { items: updates });
-      loadData();
-      setSelectedRows(new Set());
-      setEditedData({});
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.updateTransactions.value));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleBulkDelete = async () => {
-    if (
-      !window.confirm(
-        formatLabel(labels.confirmDeleteMany?.value, { count: selectedRows.size }) ||
-          `Delete ${selectedRows.size} transactions?`,
-      )
-    ) {
-      return;
-    }
-    try {
-      setSaving(true);
-      await apiClient.post('/transactions/bulk-delete', {
-        ids: Array.from(selectedRows),
-      });
-      setTransactions(prev => prev.filter(t => !selectedRows.has(t.id)));
-      setSelectedRows(new Set());
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.deleteTransactions.value));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleOpenBulkCategory = () => {
-    if (selectedRows.size === 0) return;
-    setBulkCategoryDialogOpen(true);
-  };
-
-  const handleApplyBulkCategory = async () => {
-    if (!bulkCategoryId) return;
-    try {
-      setSaving(true);
-      const items = Array.from(selectedRows).map(id => ({
-        id,
-        updates: { categoryId: bulkCategoryId },
-      }));
-      await apiClient.patch('/transactions/bulk', { items });
-      loadData();
-      setSelectedRows(new Set());
-      setBulkCategoryDialogOpen(false);
-      setBulkCategoryId('');
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (error: unknown) {
-      setError(getApiErrorMessage(error, t.errors.assignCategory.value));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const formatNumber = (num?: number | null) => {
-    if (num === null || num === undefined) return '—';
-    return new Intl.NumberFormat(resolveLocale(locale), {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  };
+  const formatNumber = (num?: number | null) => formatNumberHelper(num, locale);
 
   const renderEditCell = (
     transaction: Transaction,
@@ -732,75 +288,6 @@ export default function EditStatementPage() {
   );
 
   const stageActions = getStatementStageActions(currentStage);
-
-  const handleStageAction = async (action: StatementStageAction) => {
-    if (!statement?.id) return;
-    if (isStageActionBlocked(action.id, missingCategoryCount)) {
-      return;
-    }
-
-    setStageActionLoadingId(action.id);
-
-    try {
-      if (action.id === 'pay') {
-        const payableDraft = buildPayableFromStatement({ statement, transactions });
-
-        if (!payableDraft) {
-          toast.error('No expense amount available to create payable');
-          setStageActionLoadingId(null);
-          return;
-        }
-
-        await payablesApi.create(payableDraft);
-      }
-
-      setStatementStage(statement.id, action.nextStage);
-      setCurrentStage(action.nextStage);
-      setStageActionLoadingId(null);
-      toast.success(stageActionToasts[action.id]);
-      router.push(action.redirectPath);
-    } catch (error) {
-      console.error('Failed to process stage action:', error);
-      setStageActionLoadingId(null);
-      toast.error(action.id === 'pay' ? 'Failed to create payable' : 'Failed to update stage');
-    }
-  };
-
-  const handleStatementCategorySelect = async (categoryId: string) => {
-    if (!statement?.id || statementCategorySaving) return;
-
-    try {
-      setStatementCategorySaving(true);
-      const response = await apiClient.patch(`/storage/files/${statement.id}/category`, {
-        categoryId: categoryId || null,
-      });
-
-      const selectedCategory =
-        response.data?.category ||
-        flattenedStatementCategories.find(category => category.id === categoryId) ||
-        null;
-
-      setStatement(prev =>
-        prev
-          ? {
-              ...prev,
-              categoryId: response.data?.categoryId ?? (categoryId || null),
-              category: selectedCategory,
-            }
-          : prev,
-      );
-
-      toast.success(labels.categoryUpdated?.value || 'Category updated');
-    } catch (error: unknown) {
-      setError(
-        getApiErrorMessage(error, '') ||
-          labels.categoryUpdateFailed?.value ||
-          'Failed to update category',
-      );
-    } finally {
-      setStatementCategorySaving(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -1086,7 +573,9 @@ export default function EditStatementPage() {
                       <Button
                         variant="contained"
                         startIcon={isLoading ? <Spinner className="size-[18px]" /> : <Check />}
-                        onClick={() => handleStageAction(action)}
+                        onClick={() =>
+                          handleStageAction(action, stageActionToasts, missingCategoryCount)
+                        }
                         disabled={isDisabled}
                         sx={{
                           textTransform: 'none',
@@ -1100,7 +589,9 @@ export default function EditStatementPage() {
                       </Button>
                     ) : (
                       <DetailActionButton
-                        onClick={() => handleStageAction(action)}
+                        onClick={() =>
+                          handleStageAction(action, stageActionToasts, missingCategoryCount)
+                        }
                         disabled={isDisabled}
                       >
                         {isLoading ? (
@@ -1532,7 +1023,7 @@ export default function EditStatementPage() {
         categories={enabledStatementCategories}
         selectedCategoryId={statement?.categoryId || ''}
         selecting={statementCategorySaving}
-        onSelect={handleStatementCategorySelect}
+        onSelect={categoryId => handleStatementCategorySelect(categoryId, flattenedStatementCategories)}
         labels={{
           title: labels.categoryDrawerTitle?.value || 'Category',
           searchPlaceholder: labels.categorySearchPlaceholder?.value || 'Search',
@@ -1611,7 +1102,12 @@ export default function EditStatementPage() {
               <Button
                 variant="outlined"
                 color="error"
-                onClick={handleBulkDelete}
+                onClick={() =>
+                  handleBulkDelete(
+                    formatLabel(labels.confirmDeleteMany?.value, { count: selectedRows.size }) ||
+                      `Delete ${selectedRows.size} transactions?`,
+                  )
+                }
                 disabled={saving}
                 startIcon={<Delete />}
                 size="small"
@@ -1926,7 +1422,11 @@ export default function EditStatementPage() {
                         </IconButton>
                         <IconButton
                           size="small"
-                          onClick={() => handleDelete(transaction.id)}
+                          onClick={() => {
+                            if (window.confirm(labels.confirmDeleteOne?.value || 'Delete transaction?')) {
+                              void handleDelete(transaction.id);
+                            }
+                          }}
                           sx={{
                             color: 'error.600',
                             '&:hover': {
