@@ -19,6 +19,7 @@ import { CustomTableTanStack } from './CustomTableTanStack';
 import { RowDrawer } from './components/RowDrawer';
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { useRowDrawer } from './hooks/useRowDrawer';
+import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
 import {
   type PasteColumnMapping,
@@ -254,17 +255,6 @@ export default function CustomTableDetailPage() {
       });
     });
   }, []);
-  const [editingMeta, setEditingMeta] = useState(false);
-  const [metaDraft, setMetaDraft] = useState<{
-    name: string;
-    description: string;
-  }>({
-    name: '',
-    description: '',
-  });
-  const [savingMeta, setSavingMeta] = useState(false);
-  const [editingScope, setEditingScope] = useState<EditingScope | null>('both');
-
   const [table, setTable] = useState<CustomTable | null>(null);
   const [categories, setCategories] = useState<
     Array<{
@@ -748,6 +738,27 @@ export default function CustomTableDetailPage() {
     }
   };
 
+  const {
+    editingMeta,
+    metaDraft,
+    savingMeta,
+    editingScope,
+    setEditingMeta,
+    setMetaDraft,
+    setEditingScope,
+    cancelEditMeta,
+    saveMeta,
+  } = useTableMeta({
+    tableId,
+    table,
+    loadTable,
+    messages: {
+      nameRequired: t.meta.nameRequired.value,
+      saved: t.meta.saved.value,
+      saveFailed: t.meta.saveFailed.value,
+    },
+  });
+
   const loadRows = useCallback(
     async (opts?: {
       reset?: boolean;
@@ -1073,59 +1084,6 @@ export default function CustomTableDetailPage() {
       loadTable();
     }
   }, [authLoading, user, tableId]);
-
-  useEffect(() => {
-    if (!table || editingMeta) return;
-    setMetaDraft({
-      name: table.name || '',
-      description: table.description || '',
-    });
-  }, [table?.id, table?.name, table?.description, editingMeta]);
-
-  const cancelEditMeta = () => {
-    setEditingMeta(false);
-    setMetaDraft({
-      name: table?.name || '',
-      description: table?.description || '',
-    });
-    setEditingScope(null);
-  };
-
-  const saveMeta = async () => {
-    if (!tableId) return;
-    const scope: EditingScope = editingScope ?? 'both';
-    const payload: Record<string, unknown> = {};
-    if (scope !== 'description') {
-      const name = metaDraft.name.trim();
-      if (!name) {
-        toast.error(t.meta.nameRequired.value);
-        return;
-      }
-      payload.name = name;
-    }
-    if (scope !== 'name') {
-      const description = metaDraft.description.trim();
-      payload.description = description ? description : null;
-    }
-    if (!Object.keys(payload).length) {
-      setEditingMeta(false);
-      setEditingScope(null);
-      return;
-    }
-    setSavingMeta(true);
-    try {
-      await apiClient.patch(`/custom-tables/${tableId}`, payload);
-      setEditingMeta(false);
-      setEditingScope(null);
-      await loadTable();
-      toast.success(t.meta.saved.value);
-    } catch (error) {
-      console.error('Failed to update table meta:', error);
-      toast.error(t.meta.saveFailed.value);
-    } finally {
-      setSavingMeta(false);
-    }
-  };
 
   const createRow: () => Promise<CustomTableGridRow | null> = async () => {
     if (!tableId) return null;
