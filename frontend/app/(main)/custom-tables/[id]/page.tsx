@@ -6,8 +6,6 @@ import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import apiClient from '@/app/lib/api';
-import { getApiErrorStatus } from '@/app/lib/api-error';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { format } from 'date-fns';
 import { enUS, kk, ru } from 'date-fns/locale';
@@ -17,14 +15,17 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
 import { RowDrawer } from './components/RowDrawer';
+import { useBulkRowActions } from './hooks/useBulkRowActions';
 import {
   type ColumnFilterState,
   DEFAULT_COLUMN_WIDTH,
   type RowFilterOp,
   useColumnConfig,
 } from './hooks/useColumnConfig';
+import { useColumnManagement } from './hooks/useColumnManagement';
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { usePasteImport } from './hooks/usePasteImport';
+import { useRowActions } from './hooks/useRowActions';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTabStats } from './hooks/useTabStats';
 import { useTableData } from './hooks/useTableData';
@@ -39,29 +40,9 @@ import {
   getActiveTabFilter,
   normalizeActiveTabId,
 } from './utils/quickTabs';
-import type {
-  ColumnType,
-  CustomTableCellValue,
-  CustomTableGridRow,
-  CustomTableRowPatch,
-  CustomTableRowStyles,
-} from './utils/stylingUtils';
-import {
-  getClassificationResults,
-  getCreatedRowResponse,
-  getNestedRecord,
-  getNestedValue,
-  getRecord,
-  getResponseItems,
-  isContentEditableTarget,
-  isRecord,
-  tx,
-} from './utils/tableHelpers';
-import type {
-  CustomTable,
-  CustomTablePageColumn,
-  CustomTableViewSettings,
-} from './utils/tableTypes';
+import type { ColumnType } from './utils/stylingUtils';
+import { isContentEditableTarget, tx } from './utils/tableHelpers';
+import type { CustomTablePageColumn } from './utils/tableTypes';
 
 type EditingScope = 'name' | 'description' | 'both';
 
@@ -116,17 +97,7 @@ export default function CustomTableDetailPage() {
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
   const [activeTabId, setActiveTabId] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [bulkMarking, setBulkMarking] = useState<'paid' | 'unpaid' | null>(null);
   const columnsTabId = '__columns__';
-
-  const [newColumnOpen, setNewColumnOpen] = useState(false);
-  const [newColumn, setNewColumn] = useState<{
-    title: string;
-    type: ColumnType;
-  }>({
-    title: '',
-    type: 'text',
-  });
 
   const [dateFrom, setDateFrom] = useState<string | null>(null);
   const [dateTo, setDateTo] = useState<string | null>(null);
@@ -613,397 +584,94 @@ export default function CustomTableDetailPage() {
     };
   }, []);
 
-  const createRow: () => Promise<CustomTableGridRow | null> = async () => {
-    if (!tableId) return null;
-    const toastId = toast.loading(t.addRow.loading.value);
-    try {
-      const response = await apiClient.post(`/custom-tables/${tableId}/rows`, {
-        data: {},
-      });
-      const payload = response.data?.data ?? response.data?.item ?? response.data;
-      const createdRaw = Array.isArray(payload) ? payload[0] : payload;
-      const created = getCreatedRowResponse(createdRaw);
-      if (!created) {
-        throw new Error('Invalid create row response');
-      }
-      created.rowNumber = created.rowNumber || rows.length + 1;
-      setRows(prev => [...prev, created]);
-      toast.success(t.addRow.success.value, { id: toastId });
-      refreshStats();
-      return created;
-    } catch (error) {
-      console.error('Failed to add row:', error);
-      toast.error(t.addRow.failed.value, { id: toastId });
-      return null;
-    }
-  };
+  const {
+    createRow,
+    updateCellFromGrid,
+    updateRowFromDrawer,
+    updateRowStyle,
+    saveRowFromDrawer,
+    saveRowAndCloseDrawer,
+    saveRowAndNext,
+  } = useRowActions({
+    tableId,
+    paidColKey,
+    rows,
+    displayRows,
+    setRows,
+    refreshStats,
+    openRowDrawer,
+    closeRowDrawer,
+    messages: {
+      addRowLoading: t.addRow.loading.value,
+      addRowSuccess: t.addRow.success.value,
+      addRowFailed: t.addRow.failed.value,
+      saveValueFailed: t.grid.saveValueFailed.value,
+      noMoreRows: tx(t, ['toasts', 'noMoreRows'], 'No more rows'),
+    },
+  });
 
-  const updateCellFromGrid = async (
-    rowId: string,
-    columnKey: string,
-    value: CustomTableCellValue,
-  ) => {
-    if (!tableId) return;
-    if (rowId.startsWith('temp-')) {
-      setRows(prev =>
-        prev.map(r =>
-          r.id === rowId ? { ...r, data: { ...(r.data || {}), [columnKey]: value } } : r,
-        ),
-      );
-      if (columnKey === paidColKey) {
-        refreshStats();
-      }
-      return;
-    }
-    try {
-      await apiClient.patch(`/custom-tables/${tableId}/rows/${rowId}`, {
-        data: { [columnKey]: value },
-      });
-      setRows(prev =>
-        prev.map(r =>
-          r.id === rowId ? { ...r, data: { ...(r.data || {}), [columnKey]: value } } : r,
-        ),
-      );
-      if (columnKey === paidColKey) {
-        refreshStats();
-      }
-    } catch (error) {
-      console.error('Failed to update cell:', error);
-      toast.error(t.grid.saveValueFailed.value);
-    }
-  };
+  const { bulkMarking, deleteRow, deleteSelectedRows, markSelectedRowsPaid } = useBulkRowActions({
+    tableId,
+    paidColKey,
+    selectedRowIds,
+    setSelectedRowIds,
+    deleteRowTarget,
+    bulkDeleteRowIds,
+    closeDeleteRowModal,
+    closeBulkDeleteModal,
+    rows,
+    setRows,
+    setTable,
+    refreshStats,
+    messages: {
+      deleteRowLoading: t.deleteRow.loading.value,
+      deleteRowSuccess: t.deleteRow.success.value,
+      deleteRowFailed: t.deleteRow.failed.value,
+      bulkDeleteLoading: t.bulkDeleteRows.loading.value,
+      bulkDeleteSuccess: t.bulkDeleteRows.success.value,
+      bulkDeleteFailed: t.bulkDeleteRows.failed.value,
+      creatingPaidColumn: tx(t, ['toasts', 'creatingPaidColumn'], 'Creating Paid column'),
+      paidColumnCreated: tx(t, ['toasts', 'paidColumnCreated'], 'Paid column created'),
+      paidColumnCreateFailed: tx(
+        t,
+        ['toasts', 'paidColumnCreateFailed'],
+        'Failed to create Paid column',
+      ),
+      markingPaid: tx(t, ['actions', 'markingPaid'], 'Marking paid'),
+      markingUnpaid: tx(t, ['actions', 'markingUnpaid'], 'Marking unpaid'),
+      markedPaid: tx(t, ['toasts', 'markedPaid'], 'Marked paid'),
+      markedUnpaid: tx(t, ['toasts', 'markedUnpaid'], 'Marked unpaid'),
+      updateSomeRowsFailed: tx(t, ['toasts', 'updateSomeRowsFailed'], 'Failed to update some rows'),
+      updateRowsFailed: tx(t, ['toasts', 'updateRowsFailed'], 'Failed to update rows'),
+      paidColumnTitle: tx(t, ['paidColumn'], 'Paid'),
+    },
+  });
 
-  const updateRowFromDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
-    if (!tableId) return;
-    if (!Object.keys(patchData).length) return;
-    if (rowId.startsWith('temp-')) {
-      setRows(prev =>
-        prev.map(r => (r.id === rowId ? { ...r, data: { ...(r.data || {}), ...patchData } } : r)),
-      );
-      if (paidColKey && Object.prototype.hasOwnProperty.call(patchData, paidColKey)) {
-        refreshStats();
-      }
-      return;
-    }
-    await apiClient.patch(`/custom-tables/${tableId}/rows/${rowId}`, {
-      data: patchData,
-    });
-    setRows(prev =>
-      prev.map(r => (r.id === rowId ? { ...r, data: { ...(r.data || {}), ...patchData } } : r)),
-    );
-    if (paidColKey && Object.prototype.hasOwnProperty.call(patchData, paidColKey)) {
-      refreshStats();
-    }
-  };
-
-  const updateRowStyle = async (rowId: string, styles: CustomTableRowStyles) => {
-    if (!tableId) return;
-    try {
-      const row = rows.find(r => r.id === rowId);
-      const mergedStyles = { ...(row?.styles || {}), ...styles };
-      if (rowId.startsWith('temp-')) {
-        setRows(prev => prev.map(r => (r.id === rowId ? { ...r, styles: mergedStyles } : r)));
-        return;
-      }
-      await apiClient.patch(`/custom-tables/${tableId}/rows/${rowId}`, {
-        data: row?.data || {},
-        styles: mergedStyles,
-      });
-      setRows(prev => prev.map(r => (r.id === rowId ? { ...r, styles: mergedStyles } : r)));
-    } catch (error) {
-      console.error('Failed to update row styles:', error);
-      toast.error(t.grid.saveValueFailed.value);
-    }
-  };
-
-  const saveRowFromDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
-    try {
-      await updateRowFromDrawer(rowId, patchData);
-    } catch (error) {
-      console.error('Failed to update row:', error);
-      toast.error(t.grid.saveValueFailed.value);
-      throw error;
-    }
-  };
-
-  const saveRowAndCloseDrawer = async (rowId: string, patchData: CustomTableRowPatch) => {
-    await saveRowFromDrawer(rowId, patchData);
-    closeRowDrawer();
-  };
-
-  const saveRowAndNext = async (rowId: string, patchData: CustomTableRowPatch) => {
-    await saveRowFromDrawer(rowId, patchData);
-    const ids = displayRows.map(r => r.id);
-    const idx = ids.indexOf(rowId);
-    const nextId = idx >= 0 ? ids[idx + 1] : null;
-    if (nextId) {
-      openRowDrawer(nextId, 'edit');
-    } else {
-      toast(tx(t, ['toasts', 'noMoreRows'], 'No more rows'));
-    }
-  };
-
-  const deleteRow = async () => {
-    if (!tableId || !deleteRowTarget) return;
-    if (deleteRowTarget.id?.startsWith('temp-')) {
-      setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
-      setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-      closeDeleteRowModal();
-      toast.success(t.deleteRow.success.value);
-      refreshStats();
-      return;
-    }
-    const toastId = toast.loading(t.deleteRow.loading.value);
-    try {
-      await apiClient.delete(`/custom-tables/${tableId}/rows/${deleteRowTarget.id}`);
-      toast.success(t.deleteRow.success.value, { id: toastId });
-      setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
-      setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-      closeDeleteRowModal();
-      refreshStats();
-    } catch (error) {
-      const status = getApiErrorStatus(error);
-      if (status === 404 || status === 410) {
-        toast.success(t.deleteRow.success.value, { id: toastId });
-        setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
-        setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
-        closeDeleteRowModal();
-        refreshStats();
-        return;
-      }
-      console.error('Failed to delete row:', error);
-      toast.error(t.deleteRow.failed.value, { id: toastId });
-    }
-  };
-
-  const deleteSelectedRows = async () => {
-    if (!tableId) return;
-    const ids = bulkDeleteRowIds.length ? bulkDeleteRowIds : selectedRowIds;
-    if (!ids.length) return;
-
-    const toastId = toast.loading(t.bulkDeleteRows.loading.value);
-
-    try {
-      const tempIds = ids.filter(id => id.startsWith('temp-'));
-      if (tempIds.length) {
-        setRows(prev => prev.filter(row => !tempIds.includes(row.id)));
-      }
-      const results = await Promise.allSettled(
-        ids
-          .filter(id => !id.startsWith('temp-'))
-          .map(rowId => apiClient.delete(`/custom-tables/${tableId}/rows/${rowId}`)),
-      );
-      const succeededIds: string[] = [];
-      const failedIds: string[] = [];
-      const realIds = ids.filter(id => !id.startsWith('temp-'));
-      results.forEach((result, index) => {
-        const rowId = realIds[index];
-        if (result.status === 'fulfilled') {
-          succeededIds.push(rowId);
-          return;
-        }
-        const status = result.status === 'rejected' ? getApiErrorStatus(result.reason) : undefined;
-        if (status === 404 || status === 410) {
-          succeededIds.push(rowId);
-          return;
-        }
-        failedIds.push(rowId);
-      });
-
-      if (succeededIds.length) {
-        const succeededSet = new Set(succeededIds);
-        setRows(prev => prev.filter(row => !succeededSet.has(row.id)));
-      }
-      setSelectedRowIds(failedIds.filter(id => !id.startsWith('temp-')));
-
-      if (failedIds.length) {
-        toast.error(t.bulkDeleteRows.failed.value, { id: toastId });
-      } else {
-        toast.success(t.bulkDeleteRows.success.value, { id: toastId });
-      }
-      refreshStats();
-    } catch (error) {
-      console.error('Failed to bulk delete rows:', error);
-      toast.error(t.bulkDeleteRows.failed.value, { id: toastId });
-    } finally {
-      closeBulkDeleteModal();
-    }
-  };
-
-  const ensurePaidStatusColumnKey = async (): Promise<string> => {
-    const existing = paidColKey;
-    if (existing) return existing;
-    if (!tableId) throw new Error('Missing tableId');
-
-    const toastId = toast.loading(tx(t, ['toasts', 'creatingPaidColumn'], 'Creating Paid column'));
-    try {
-      const response = await apiClient.post(`/custom-tables/${tableId}/columns`, {
-        title: tx(t, ['paidColumn'], 'Paid'),
-        type: 'boolean',
-        config: { icon: 'mdi:check-circle-outline' },
-      });
-      const created = response.data?.data || response.data;
-      if (!created || typeof created.key !== 'string') {
-        throw new Error('Invalid create column response');
-      }
-      setTable(prev =>
-        prev
-          ? { ...prev, columns: [...(prev.columns || []), created as CustomTablePageColumn] }
-          : prev,
-      );
-      toast.success(tx(t, ['toasts', 'paidColumnCreated'], 'Paid column created'), { id: toastId });
-      return created.key;
-    } catch (error) {
-      console.error('Failed to create Paid column:', error);
-      toast.error(tx(t, ['toasts', 'paidColumnCreateFailed'], 'Failed to create Paid column'), {
-        id: toastId,
-      });
-      throw error;
-    }
-  };
-
-  const classifyPaidStatuses = async (rowIds: string[]): Promise<Map<string, boolean | null>> => {
-    if (!tableId || !rowIds.length) return new Map();
-    try {
-      const response = await apiClient.post(`/custom-tables/${tableId}/rows/paid-classify`, {
-        rowIds,
-      });
-      return getClassificationResults(response.data);
-    } catch (error) {
-      console.error('Failed to classify paid status:', error);
-      return new Map();
-    }
-  };
-
-  const markSelectedRowsPaid = async (paid: boolean) => {
-    if (!tableId) return;
-    const ids = [...selectedRowIds];
-    if (!ids.length) return;
-    if (bulkMarking) return;
-
-    setBulkMarking(paid ? 'paid' : 'unpaid');
-    const toastId = toast.loading(
-      paid
-        ? tx(t, ['actions', 'markingPaid'], 'Marking paid')
-        : tx(t, ['actions', 'markingUnpaid'], 'Marking unpaid'),
-    );
-
-    try {
-      const paidColKey = await ensurePaidStatusColumnKey();
-      const predictions = await classifyPaidStatuses(ids);
-      const updates = ids.map(rowId => {
-        const predicted = predictions.get(rowId);
-        const value = predicted === null || predicted === undefined ? paid : predicted;
-        return { rowId, value };
-      });
-
-      const results = await Promise.allSettled(
-        updates.map(update =>
-          apiClient.patch(`/custom-tables/${tableId}/rows/${update.rowId}`, {
-            data: { [paidColKey]: update.value },
-          }),
-        ),
-      );
-
-      const failedIds: string[] = [];
-      const succeededMap = new Map<string, boolean>();
-      results.forEach((result, index) => {
-        const update = updates[index];
-        if (result.status === 'fulfilled') {
-          succeededMap.set(update.rowId, update.value);
-        } else {
-          failedIds.push(update.rowId);
-        }
-      });
-
-      if (succeededMap.size) {
-        setRows(prev =>
-          prev.map(row => {
-            if (!succeededMap.has(row.id)) return row;
-            return {
-              ...row,
-              data: {
-                ...(row.data || {}),
-                [paidColKey]: succeededMap.get(row.id) as boolean,
-              },
-            };
-          }),
-        );
-      }
-
-      setSelectedRowIds(failedIds);
-
-      if (failedIds.length) {
-        toast.error(tx(t, ['toasts', 'updateSomeRowsFailed'], 'Failed to update some rows'), {
-          id: toastId,
-        });
-      } else {
-        toast.success(
-          paid
-            ? tx(t, ['toasts', 'markedPaid'], 'Marked paid')
-            : tx(t, ['toasts', 'markedUnpaid'], 'Marked unpaid'),
-          { id: toastId },
-        );
-      }
-
-      refreshStats();
-    } catch (error) {
-      console.error('Failed to mark rows:', error);
-      toast.error(tx(t, ['toasts', 'updateRowsFailed'], 'Failed to update rows'), { id: toastId });
-    } finally {
-      setBulkMarking(null);
-    }
-  };
-
-  const renameColumnTitleFromGrid = async (columnKey: string, nextTitle: string) => {
-    if (!tableId) return;
-    const colId = orderedColumns.find(c => c.key === columnKey)?.id;
-    if (!colId) return;
-    try {
-      await apiClient.patch(`/custom-tables/${tableId}/columns/${colId}`, {
-        title: nextTitle,
-      });
-      await loadTable();
-      toast.success(t.renameColumn.success.value);
-    } catch (error) {
-      console.error('Failed to rename column:', error);
-      toast.error(t.renameColumn.failed.value);
-    }
-  };
-
-  const deleteColumn = async () => {
-    if (!tableId || !deleteColumnTarget) return;
-    const toastId = toast.loading(t.deleteColumn.loading.value);
-    try {
-      await apiClient.delete(`/custom-tables/${tableId}/columns/${deleteColumnTarget.id}`);
-      toast.success(t.deleteColumn.success.value, { id: toastId });
-      closeDeleteColumnModal();
-      await loadTable();
-    } catch (error) {
-      console.error('Failed to delete column:', error);
-      toast.error(t.deleteColumn.failed.value, { id: toastId });
-    }
-  };
-
-  const createColumn = async () => {
-    if (!tableId) return;
-    const title = newColumn.title.trim();
-    if (!title) return;
-    const toastId = toast.loading(t.addColumn.loading.value);
-    try {
-      await apiClient.post(`/custom-tables/${tableId}/columns`, {
-        title,
-        type: newColumn.type,
-      });
-      toast.success(t.addColumn.success.value, { id: toastId });
-      setNewColumnOpen(false);
-      setNewColumn({ title: '', type: 'text' });
-      await loadTable();
-    } catch (error) {
-      console.error('Failed to create column:', error);
-      toast.error(t.addColumn.failed.value, { id: toastId });
-    }
-  };
+  const {
+    newColumnOpen,
+    setNewColumnOpen,
+    newColumn,
+    setNewColumn,
+    createColumn,
+    deleteColumn,
+    renameColumnTitleFromGrid,
+  } = useColumnManagement({
+    tableId,
+    orderedColumns,
+    loadTable,
+    deleteColumnTarget,
+    closeDeleteColumnModal,
+    messages: {
+      addColumnLoading: t.addColumn.loading.value,
+      addColumnSuccess: t.addColumn.success.value,
+      addColumnFailed: t.addColumn.failed.value,
+      deleteColumnLoading: t.deleteColumn.loading.value,
+      deleteColumnSuccess: t.deleteColumn.success.value,
+      deleteColumnFailed: t.deleteColumn.failed.value,
+      renameColumnSuccess: t.renameColumn.success.value,
+      renameColumnFailed: t.renameColumn.failed.value,
+    },
+  });
 
   if (authLoading || loading) {
     return (
