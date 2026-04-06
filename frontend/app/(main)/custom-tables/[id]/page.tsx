@@ -1,25 +1,21 @@
 'use client';
 
 import ConfirmModal from '@/app/components/ConfirmModal';
-import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { enUS, kk, ru } from 'date-fns/locale';
 import { CheckCircle, Plus, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
 import { AddColumnModal } from './components/AddColumnModal';
+import { ColumnsVisibilityPanel } from './components/ColumnsVisibilityPanel';
 import { PastePreviewModal } from './components/PastePreviewModal';
 import { RowDrawer } from './components/RowDrawer';
 import { useBulkRowActions } from './hooks/useBulkRowActions';
-import {
-  type ColumnFilterState,
-  DEFAULT_COLUMN_WIDTH,
-  useColumnConfig,
-} from './hooks/useColumnConfig';
+import { useColumnConfig } from './hooks/useColumnConfig';
 import { useColumnManagement } from './hooks/useColumnManagement';
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { usePasteImport } from './hooks/usePasteImport';
@@ -29,7 +25,6 @@ import { useTabStats } from './hooks/useTabStats';
 import { useTableData } from './hooks/useTableData';
 import { useTableFilters } from './hooks/useTableFilters';
 import { useTableGrid } from './hooks/useTableGrid';
-import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
 import {
   type QuickTab,
@@ -40,8 +35,6 @@ import {
 } from './utils/quickTabs';
 import { isContentEditableTarget, tx } from './utils/tableHelpers';
 import type { CustomTablePageColumn } from './utils/tableTypes';
-
-type EditingScope = 'name' | 'description' | 'both';
 
 export default function CustomTableDetailPage() {
   const params = useParams<{ id: string }>();
@@ -144,16 +137,12 @@ export default function CustomTableDetailPage() {
 
   const {
     columnOrder,
-    setColumnOrder,
     hiddenColumnKeys,
-    setHiddenColumnKeys,
     columnFilters,
-    setColumnFilters,
     columnWidths,
     getColumnWidth,
     persistColumnWidth,
     toggleColumnHidden,
-    moveColumn,
     resetColumns,
   } = useColumnConfig({
     tableId,
@@ -268,27 +257,6 @@ export default function CustomTableDetailPage() {
     }
     return next;
   }, [orderedColumns, columnWidths]);
-
-  const {
-    editingMeta,
-    metaDraft,
-    savingMeta,
-    editingScope,
-    setEditingMeta,
-    setMetaDraft,
-    setEditingScope,
-    cancelEditMeta,
-    saveMeta,
-  } = useTableMeta({
-    tableId,
-    table,
-    loadTable,
-    messages: {
-      nameRequired: t.meta.nameRequired.value,
-      saved: t.meta.saved.value,
-      saveFailed: t.meta.saveFailed.value,
-    },
-  });
 
   const onGridFiltersParamChange = (next: string | undefined) => {
     if (next === gridFiltersParam) return;
@@ -707,43 +675,15 @@ export default function CustomTableDetailPage() {
         )}
 
         {normalizedActiveTabId === columnsTabId && (
-          <div className="w-full px-2 pb-4 pt-4 sm:px-4">
-            <div className="mx-auto w-full max-w-3xl space-y-4 sm:space-y-5">
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-                <ul className="divide-y divide-gray-200">
-                  {(columnOrder.length ? columnOrder : orderedColumns.map(c => c.key)).map(key => {
-                    const col = orderedColumns.find(c => c.key === key);
-                    if (!col) return null;
-                    const isHidden = hiddenColumnKeys.includes(col.key);
-                    return (
-                      <li key={col.key} className="list-none">
-                        <div
-                          className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm transition-colors sm:px-5 sm:py-3.5 sm:text-base ${
-                            isHidden ? 'text-gray-400' : 'text-gray-800 hover:bg-gray-50'
-                          }`}
-                        >
-                          <span className="truncate font-medium">{col.title || col.key}</span>
-                          <Checkbox
-                            checked={!isHidden}
-                            onCheckedChange={() => toggleColumnHidden(col.key)}
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20 sm:h-5 sm:w-5"
-                          />
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-              <button
-                type="button"
-                onClick={resetColumns}
-                disabled={isColumnsDefault}
-                className="w-full rounded-xl border border-primary bg-primary/10 px-5 py-3.5 text-sm font-semibold text-primary hover:bg-primary/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary/10"
-              >
-                {tx(t, ['actions', 'columnsReset'], 'Reset columns')}
-              </button>
-            </div>
-          </div>
+          <ColumnsVisibilityPanel
+            t={t}
+            columnOrder={columnOrder}
+            orderedColumns={orderedColumns}
+            hiddenColumnKeys={hiddenColumnKeys}
+            isColumnsDefault={isColumnsDefault}
+            toggleColumnHidden={toggleColumnHidden}
+            resetColumns={resetColumns}
+          />
         )}
 
         <AddColumnModal
