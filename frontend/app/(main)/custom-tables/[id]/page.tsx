@@ -17,9 +17,15 @@ import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState }
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
 import { RowDrawer } from './components/RowDrawer';
-import { type ColumnFilterState, type RowFilterOp, DEFAULT_COLUMN_WIDTH, useColumnConfig } from './hooks/useColumnConfig';
+import {
+  type ColumnFilterState,
+  DEFAULT_COLUMN_WIDTH,
+  type RowFilterOp,
+  useColumnConfig,
+} from './hooks/useColumnConfig';
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { useRowDrawer } from './hooks/useRowDrawer';
+import { useTabStats } from './hooks/useTabStats';
 import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
 import {
@@ -161,13 +167,6 @@ const getResponseItems = (value: unknown): CustomTableGridRow[] => {
   }));
 };
 
-const readRowsTotal = (response: unknown): number => {
-  const data = getNestedRecord(response, 'data');
-  const meta = data ? getNestedRecord(data, 'meta') : null;
-  const totalCandidate = meta?.total ?? data?.total ?? getNestedValue(data, ['items', 'length']);
-  return typeof totalCandidate === 'number' ? totalCandidate : 0;
-};
-
 const getViewColumns = (viewSettings: CustomTableViewSettings | null | undefined) =>
   viewSettings?.columns ?? {};
 
@@ -302,9 +301,6 @@ export default function CustomTableDetailPage() {
   const rowsAbortControllerRef = useRef<AbortController | null>(null);
   const loadingRowsRef = useRef(false);
   const combinedFiltersRef = useRef<string | undefined>(undefined);
-  const statsRequestSeqRef = useRef(0);
-  const statsAbortControllerRef = useRef<AbortController | null>(null);
-
   const {
     deleteRowModalOpen,
     deleteRowTarget,
@@ -329,11 +325,6 @@ export default function CustomTableDetailPage() {
     closeRowDrawer,
   } = useRowDrawer(rows);
   const [mounted, setMounted] = useState(false);
-  const [tabCounts, setTabCounts] = useState<{
-    total: number;
-    paid: number | null;
-    unpaid: number | null;
-  }>({ total: 0, paid: null, unpaid: null });
   const [pastePreviewOpen, setPastePreviewOpen] = useState(false);
   const [pasteParsing, setPasteParsing] = useState(false);
   const [pasteApplying, setPasteApplying] = useState(false);
@@ -377,6 +368,12 @@ export default function CustomTableDetailPage() {
   });
 
   const paidColKey = useMemo(() => findPaidColumnKey(orderedColumns), [orderedColumns]);
+
+  const { tabCounts, refreshStats } = useTabStats({
+    tableId,
+    isAuthenticated: Boolean(user),
+    paidColKey,
+  });
 
   const orderedVisibleColumns = useMemo(() => {
     const columnsByKey = new Map(orderedColumns.map(c => [c.key, c]));
@@ -432,76 +429,9 @@ export default function CustomTableDetailPage() {
     rowsRef.current = rows;
   }, [rows]);
 
-  const refreshStats = useCallback(async () => {
-    if (!tableId || !user) return;
-    statsRequestSeqRef.current += 1;
-    const requestId = statsRequestSeqRef.current;
-    statsAbortControllerRef.current?.abort();
-    const controller = new AbortController();
-    statsAbortControllerRef.current = controller;
-
-    try {
-      const totalRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: { limit: 1 },
-      });
-
-      if (!paidColKey) {
-        const totalResponse = await totalRequest;
-        if (controller.signal.aborted || requestId !== statsRequestSeqRef.current) return;
-        setTabCounts({
-          total: readRowsTotal(totalResponse),
-          paid: null,
-          unpaid: null,
-        });
-        return;
-      }
-
-      const paidRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: {
-          limit: 1,
-          filters: JSON.stringify([{ col: paidColKey, op: 'eq', value: true }]),
-        },
-      });
-      const unpaidRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: {
-          limit: 1,
-          filters: JSON.stringify([{ col: paidColKey, op: 'eq', value: false }]),
-        },
-      });
-
-      const [totalResponse, paidResponse, unpaidResponse] = await Promise.all([
-        totalRequest,
-        paidRequest,
-        unpaidRequest,
-      ]);
-      if (controller.signal.aborted || requestId !== statsRequestSeqRef.current) return;
-
-      setTabCounts({
-        total: readRowsTotal(totalResponse),
-        paid: readRowsTotal(paidResponse),
-        unpaid: readRowsTotal(unpaidResponse),
-      });
-    } catch (error) {
-      if (isAbortError(error)) return;
-      console.error('Failed to fetch table stats:', error);
-    } finally {
-      if (statsAbortControllerRef.current === controller) {
-        statsAbortControllerRef.current = null;
-      }
-    }
-  }, [paidColKey, tableId, user]);
-
-  useEffect(() => {
-    refreshStats();
-  }, [refreshStats]);
-
   useEffect(
     () => () => {
       rowsAbortControllerRef.current?.abort();
-      statsAbortControllerRef.current?.abort();
     },
     [],
   );
