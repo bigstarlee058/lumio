@@ -59,6 +59,17 @@ import type {
   CustomTableRowStyles,
   SheetStyle,
 } from './utils/stylingUtils';
+import {
+  getClassificationResults,
+  getCreatedRowResponse,
+  getNestedRecord,
+  getNestedValue,
+  getRecord,
+  getResponseItems,
+  isContentEditableTarget,
+  isRecord,
+  tx,
+} from './utils/tableHelpers';
 
 type EditingScope = 'name' | 'description' | 'both';
 
@@ -100,102 +111,6 @@ interface CustomTable {
 }
 
 type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
-
-type TranslationTree = {
-  value?: string;
-  [key: string]: unknown;
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  isRecord(value) ? value : null;
-
-const getNestedRecord = (value: unknown, key: string): Record<string, unknown> | null => {
-  const record = getRecord(value);
-  return record ? getRecord(record[key]) : null;
-};
-
-const getNestedValue = (value: unknown, path: string[]): unknown => {
-  let current: unknown = value;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
-const getTranslationValue = (root: unknown, path: string[], fallback = ''): string => {
-  const candidate = getNestedValue(root, path);
-  if (typeof candidate === 'string') return candidate;
-  const record = getRecord(candidate);
-  return typeof record?.value === 'string' ? record.value : fallback;
-};
-
-const isContentEditableTarget = (value: unknown): value is { isContentEditable: boolean } =>
-  isRecord(value) && typeof value.isContentEditable === 'boolean';
-
-const getCreatedRowResponse = (value: unknown): CustomTableGridRow | null => {
-  const record = getRecord(value);
-  if (!record) return null;
-
-  const idCandidate = record.id ?? record.rowId ?? record.row_id;
-  const rowNumberCandidate = record.rowNumber ?? record.row_number;
-  const id = typeof idCandidate === 'string' ? idCandidate : null;
-  const rowNumber = typeof rowNumberCandidate === 'number' ? rowNumberCandidate : null;
-  const data = getRecord(record.data) as CustomTableRowPatch | null;
-  const styles = getRecord(record.styles) as CustomTableRowStyles | null;
-
-  return {
-    id: id ?? `temp-${Date.now()}`,
-    rowNumber: rowNumber ?? 1,
-    data: data ?? {},
-    styles: styles ?? null,
-  };
-};
-
-const getResponseItems = (value: unknown): CustomTableGridRow[] => {
-  if (!Array.isArray(value)) return [];
-  return value.filter(isRecord).map(item => ({
-    id: typeof item.id === 'string' ? item.id : String(item.rowNumber ?? ''),
-    rowNumber: typeof item.rowNumber === 'number' ? item.rowNumber : 0,
-    data: (getRecord(item.data) as CustomTableRowPatch | null) ?? {},
-    styles: (getRecord(item.styles) as CustomTableRowStyles | null) ?? null,
-  }));
-};
-
-const getViewColumns = (viewSettings: CustomTableViewSettings | null | undefined) =>
-  viewSettings?.columns ?? {};
-
-const getClassificationResults = (value: unknown): Map<string, boolean | null> => {
-  const payload =
-    getNestedValue(value, ['data', 'items']) ??
-    getNestedValue(value, ['items']) ??
-    getNestedValue(value, ['data']) ??
-    value;
-  const items = Array.isArray(payload) ? payload : [];
-  const result = new Map<string, boolean | null>();
-
-  for (const item of items) {
-    const record = getRecord(item);
-    if (!record) continue;
-    const id =
-      typeof record.rowId === 'string'
-        ? record.rowId
-        : typeof record.id === 'string'
-          ? record.id
-          : null;
-    if (!id) continue;
-    result.set(id, typeof record.paid === 'boolean' ? record.paid : null);
-  }
-
-  return result;
-};
-
-const tx = (root: unknown, path: string[], fallback = '') =>
-  getTranslationValue(root, path, fallback);
 
 export default function CustomTableDetailPage() {
   const params = useParams<{ id: string }>();
