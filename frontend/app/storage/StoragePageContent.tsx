@@ -7,11 +7,8 @@ import {
   type DragEndEvent,
   DragOverlay,
   type DragStartEvent,
-  PointerSensor,
   closestCenter,
   pointerWithin,
-  useSensor,
-  useSensors,
 } from '@dnd-kit/core';
 import { Popover } from '@mui/material';
 import {
@@ -51,11 +48,14 @@ import { DraggableFileRow } from './components/DraggableFileRow';
 import { DraggableModalFileItem } from './components/DraggableModalFileItem';
 import { DroppableFolderButton } from './components/DroppableFolderButton';
 import { DroppableHeaderTrigger } from './components/DroppableHeaderTrigger';
+import { useStorageDnd } from './hooks/useStorageDnd';
 import { useStorageFiles } from './hooks/useStorageFiles';
+import { useStorageFilters } from './hooks/useStorageFilters';
 import { useStorageFolders } from './hooks/useStorageFolders';
 import { useStorageTags } from './hooks/useStorageTags';
+import { useStorageTrash } from './hooks/useStorageTrash';
+import { useStorageViews } from './hooks/useStorageViews';
 import {
-  type CategoryOption,
   DEFAULT_FILTERS,
   DEFAULT_SORT,
   DEFAULT_TRASH_TTL_DAYS,
@@ -64,8 +64,6 @@ import {
   type FolderOption,
   MS_PER_DAY,
   NO_FOLDER,
-  type SortDirection,
-  type SortField,
   type StorageFile,
   type StorageView,
   type StorageViewPayload,
@@ -96,7 +94,6 @@ function StoragePageContent({
     (path: string[], fallback: string) => resolveLabel(getNestedValue(t, path), fallback),
     [t],
   );
-  const PAGE_SIZE = 20;
   const trashTtlDays = useMemo(() => {
     const parsed = Number.parseInt(process.env.NEXT_PUBLIC_STORAGE_TRASH_TTL_DAYS || '', 10);
     if (Number.isFinite(parsed) && parsed > 0) {
@@ -144,12 +141,6 @@ function StoragePageContent({
     trashDeleteSuccess: t.trash.deleteSuccess.value,
     trashDeleteFailed: t.trash.deleteFailed.value,
   });
-  const [activeList, setActiveList] = useState<'active' | 'trash'>(
-    initialList as 'active' | 'trash',
-  );
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [activeModal, setActiveModal] = useState<'folders' | null>(null);
   const {
     folders,
@@ -259,23 +250,75 @@ function StoragePageContent({
     setFiles,
     setFolders,
   );
-  const [views, setViews] = useState<StorageView[]>([]);
-  const [viewsLoading, setViewsLoading] = useState(false);
-  const [viewName, setViewName] = useState('');
-  const [viewSaving, setViewSaving] = useState(false);
-  const [activeViewId, setActiveViewId] = useState<string | null>(null);
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const [stagedFilters, setStagedFilters] = useState(DEFAULT_FILTERS);
-  const [sort, setSort] = useState(DEFAULT_SORT);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [page, setPage] = useState(1);
-  const pageSize = PAGE_SIZE;
-  const [draggingFile, setDraggingFile] = useState<StorageFile | null>(null);
-  const [folderDropTargetId, setFolderDropTargetId] = useState<string | null>(null);
-  const [folderModalFromDrag, setFolderModalFromDrag] = useState(false);
-  const [selectedTrashIds, setSelectedTrashIds] = useState<string[]>([]);
-  const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
-  const [emptyTrashModalOpen, setEmptyTrashModalOpen] = useState(false);
+  const {
+    activeList,
+    setActiveList,
+    searchQuery,
+    setSearchQuery,
+    categories,
+    setCategories,
+    categoriesLoading,
+    filters,
+    setFilters,
+    stagedFilters,
+    setStagedFilters,
+    sort,
+    setSort,
+    filterOpen,
+    setFilterOpen,
+    page,
+    setPage,
+    pageSize,
+    activeViewId,
+    setActiveViewId,
+    loadCategories,
+    handleSortChange,
+    handleSearchChange,
+    handleListChange,
+  } = useStorageFilters({ loadCategoriesFailed: t.toasts.loadCategoriesFailed.value }, initialList);
+  const {
+    views,
+    setViews,
+    viewsLoading,
+    viewName,
+    setViewName,
+    viewSaving,
+    loadViews,
+    applyView,
+    handleSaveView,
+    handleDeleteView,
+  } = useStorageViews(
+    {
+      loadViewsFailed: t.toasts.loadViewsFailed.value,
+      viewNameRequired: t.toasts.viewNameRequired.value,
+      viewSaved: t.toasts.viewSaved.value,
+      viewSaveFailed: t.toasts.viewSaveFailed.value,
+      viewDeleted: t.toasts.viewDeleted.value,
+      viewDeleteFailed: t.toasts.viewDeleteFailed.value,
+    },
+    setActiveViewId,
+    setFilters,
+    setStagedFilters,
+    setSearchQuery,
+    setSort,
+  );
+  const {
+    draggingFile,
+    setDraggingFile,
+    folderDropTargetId,
+    setFolderDropTargetId,
+    folderModalFromDrag,
+    setFolderModalFromDrag,
+    sensors,
+  } = useStorageDnd();
+  const {
+    selectedTrashIds,
+    setSelectedTrashIds,
+    bulkDeleteModalOpen,
+    setBulkDeleteModalOpen,
+    emptyTrashModalOpen,
+    setEmptyTrashModalOpen,
+  } = useStorageTrash(files, { activeList, searchQuery, filters, sort });
 
   // PDF Preview Modal State
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
@@ -322,19 +365,6 @@ function StoragePageContent({
     loadFiles(activeList);
   }, [activeList]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, filters, sort, activeList]);
-
-  useEffect(() => {
-    setSelectedTrashIds([]);
-  }, [activeList, searchQuery, filters, sort]);
-
-  useEffect(() => {
-    if (!isTrashView) return;
-    setSelectedTrashIds(prev => prev.filter(id => files.some(file => file.id === id)));
-  }, [files, isTrashView]);
-
   useLockBodyScroll(activeModal !== null || filterOpen);
 
   const openModal = (modal: 'folders') => {
@@ -366,50 +396,10 @@ function StoragePageContent({
     clearFolderMoveFeedback();
   };
 
-  const loadCategories = async () => {
-    try {
-      setCategoriesLoading(true);
-      const response = await api.get('/categories');
-      setCategories(response.data || []);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-      toast.error(t.toasts.loadCategoriesFailed.value);
-    } finally {
-      setCategoriesLoading(false);
-    }
-  };
-
-  const loadViews = async () => {
-    try {
-      setViewsLoading(true);
-      const response = await api.get('/storage/views');
-      setViews(response.data || []);
-    } catch (error) {
-      console.error('Failed to load views:', error);
-      toast.error(t.toasts.loadViewsFailed.value);
-    } finally {
-      setViewsLoading(false);
-    }
-  };
-
   const canEditFile = useCallback(
     (file: StorageFile) => !file.deletedAt && (file.isOwner || file.permissionType === 'editor'),
     [],
   );
-  const sensors = useSensors(
-    useSensor(
-      PointerSensor,
-      useMemo(
-        () => ({
-          activationConstraint: {
-            distance: 8,
-          },
-        }),
-        [],
-      ),
-    ),
-  );
-
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const file = active.data.current?.file as StorageFile;
@@ -447,82 +437,6 @@ function StoragePageContent({
     }
   };
 
-  const handleSortChange = (value: string) => {
-    const [field, direction] = value.split(':') as [SortField, SortDirection];
-    if (!field || !direction) return;
-    setSort({ field, direction });
-    setActiveViewId(null);
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    setActiveViewId(null);
-  };
-
-  const handleListChange = (next: 'active' | 'trash') => {
-    setActiveList(next);
-    setFilterOpen(false);
-  };
-
-  const applyView = (view: StorageView) => {
-    const storedFilters = view.filters ?? {};
-    const rawFilters = storedFilters.filters ?? {};
-    const { tagIds: _tagIds, ...restFilters } = rawFilters;
-    const nextFilters = {
-      ...DEFAULT_FILTERS,
-      ...restFilters,
-    };
-    setFilters(nextFilters);
-    setStagedFilters(nextFilters);
-    setSearchQuery(storedFilters.searchQuery ?? storedFilters.search ?? '');
-    setSort({
-      field: storedFilters.sort?.field ?? DEFAULT_SORT.field,
-      direction: storedFilters.sort?.direction ?? DEFAULT_SORT.direction,
-    });
-    setActiveViewId(view.id);
-  };
-
-  const handleSaveView = async () => {
-    const name = viewName.trim();
-    if (!name) {
-      toast.error(t.toasts.viewNameRequired.value);
-      return;
-    }
-    try {
-      setViewSaving(true);
-      const response = await api.post('/storage/views', {
-        name,
-        filters: {
-          searchQuery,
-          filters: filterOpen ? stagedFilters : filters,
-          sort,
-        },
-      });
-      setViews(prev => [response.data, ...prev]);
-      setViewName('');
-      setActiveViewId(response.data?.id ?? null);
-      toast.success(t.toasts.viewSaved.value);
-    } catch (error) {
-      console.error('Failed to save view:', error);
-      toast.error(t.toasts.viewSaveFailed.value);
-    } finally {
-      setViewSaving(false);
-    }
-  };
-
-  const handleDeleteView = async (viewId: string) => {
-    try {
-      await api.delete(`/storage/views/${viewId}`);
-      setViews(prev => prev.filter(view => view.id !== viewId));
-      if (activeViewId === viewId) {
-        setActiveViewId(null);
-      }
-      toast.success(t.toasts.viewDeleted.value);
-    } catch (error) {
-      console.error('Failed to delete view:', error);
-      toast.error(t.toasts.viewDeleteFailed.value);
-    }
-  };
   const formatDate = useCallback(
     (dateString: string): string => {
       const date = new Date(dateString);
@@ -2018,7 +1932,15 @@ function StoragePageContent({
                           />
                           <button
                             type="button"
-                            onClick={handleSaveView}
+                            onClick={() =>
+                              handleSaveView({
+                                searchQuery,
+                                filterOpen,
+                                filters,
+                                stagedFilters,
+                                sort,
+                              })
+                            }
                             disabled={viewSaving || !viewName.trim()}
                             className="inline-flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-3 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-primary"
                             title={t.views.saveTooltip.value}
