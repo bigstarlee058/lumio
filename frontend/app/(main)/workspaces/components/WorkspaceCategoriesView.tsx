@@ -5,6 +5,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
 import { cn } from '@/app/lib/utils';
 import { Icon } from '@iconify/react';
@@ -35,37 +36,6 @@ import {
 } from '@mui/material';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-
-const getRecord = (value: unknown): Record<string, unknown> | null => {
-  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-};
-
-const getNestedValue = (source: unknown, path: string[]): unknown => {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) {
-      return undefined;
-    }
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string): string => {
-  if (typeof value === 'string') {
-    return value;
-  }
-  if (value && typeof value === 'object' && 'value' in value) {
-    const tokenValue = (value as { value?: unknown }).value;
-    if (typeof tokenValue === 'string') {
-      return tokenValue;
-    }
-  }
-  return fallback;
-};
 
 interface Category {
   id: string;

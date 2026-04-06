@@ -2,6 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
+import { resolveLabel } from '@/app/lib/side-panel-utils';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import Breadcrumbs from './Breadcrumbs';
@@ -25,21 +26,6 @@ const resolveBreadcrumbHref = (slug: string) => {
   if (slug === 'settings') return '/settings/profile';
   if (slug === 'custom-tables/import') return '/custom-tables?import=1';
   return `/${slug}`;
-};
-
-const resolveLabel = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') {
-    return value;
-  }
-
-  if (value && typeof value === 'object' && 'value' in value) {
-    const tokenValue = (value as { value?: string }).value;
-    if (typeof tokenValue === 'string') {
-      return tokenValue;
-    }
-  }
-
-  return fallback;
 };
 
 export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcrumbsProps) {

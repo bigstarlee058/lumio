@@ -1,6 +1,7 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { Building2, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -11,43 +12,15 @@ type SupportedBankCard = {
   notes: string;
 };
 
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
 export default function SupportedBanksPage() {
   const t = useIntlayer('supportedBanksPage');
-
-  const getText = (value: unknown, fallback: string) => {
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    if (value && typeof value === 'object' && 'value' in value) {
-      const tokenValue = (value as { value?: string }).value;
-      if (typeof tokenValue === 'string') {
-        return tokenValue;
-      }
-    }
-
-    return fallback;
-  };
 
   const banks: SupportedBankCard[] = [
     {
       id: 'kaspi',
       logo: '/images/bank-logo/kaspi.png',
-      name: getText(getNestedValue(t, ['banks', 'kaspi', 'name']), 'Kaspi'),
-      notes: getText(
+      name: resolveLabel(getNestedValue(t, ['banks', 'kaspi', 'name']), 'Kaspi'),
+      notes: resolveLabel(
         getNestedValue(t, ['banks', 'kaspi', 'notes']),
         'Upload Kaspi PDF statements for automatic transaction extraction.',
       ),
@@ -55,8 +28,8 @@ export default function SupportedBanksPage() {
     {
       id: 'bereke',
       logo: '/images/bank-logo/bereke-bank.png',
-      name: getText(getNestedValue(t, ['banks', 'bereke', 'name']), 'Bereke'),
-      notes: getText(
+      name: resolveLabel(getNestedValue(t, ['banks', 'bereke', 'name']), 'Bereke'),
+      notes: resolveLabel(
         getNestedValue(t, ['banks', 'bereke', 'notes']),
         'Upload Bereke PDF statements for automatic transaction extraction.',
       ),
@@ -72,10 +45,10 @@ export default function SupportedBanksPage() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">
-              {getText(getNestedValue(t, ['title']), 'Supported banks')}
+              {resolveLabel(getNestedValue(t, ['title']), 'Supported banks')}
             </h1>
             <p className="mt-2 text-sm text-gray-500">
-              {getText(
+              {resolveLabel(
                 getNestedValue(t, ['subtitle']),
                 'List of banks currently available for automatic statement parsing.',
               )}
@@ -85,7 +58,7 @@ export default function SupportedBanksPage() {
 
         <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
           <CheckCircle2 className="h-3.5 w-3.5" />
-          {getText(getNestedValue(t, ['parserStatus']), 'Parser is active')}
+          {resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
         </div>
       </div>
 
@@ -109,17 +82,17 @@ export default function SupportedBanksPage() {
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{bank.name}</h2>
                 <p className="text-sm text-gray-500">
-                  {getText(getNestedValue(t, ['statusLabel']), 'Status')}:{' '}
-                  {getText(getNestedValue(t, ['supported']), 'Supported')}
+                  {resolveLabel(getNestedValue(t, ['statusLabel']), 'Status')}:{' '}
+                  {resolveLabel(getNestedValue(t, ['supported']), 'Supported')}
                 </p>
               </div>
             </div>
 
             <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/70 px-3 py-2 text-sm text-gray-700">
               <span className="font-medium text-gray-800">
-                {getText(getNestedValue(t, ['formatsLabel']), 'Supported format')}:
+                {resolveLabel(getNestedValue(t, ['formatsLabel']), 'Supported format')}:
               </span>
-              {getText(getNestedValue(t, ['pdfStatements']), 'PDF statements')}
+              {resolveLabel(getNestedValue(t, ['pdfStatements']), 'PDF statements')}
             </div>
 
             <p className="mt-3 text-sm text-gray-600">{bank.notes}</p>
@@ -128,7 +101,7 @@ export default function SupportedBanksPage() {
       </div>
 
       <p className="mt-6 text-sm font-medium text-gray-500">
-        {getText(getNestedValue(t, ['comingSoon']), 'More banks are coming soon')}
+        {resolveLabel(getNestedValue(t, ['comingSoon']), 'More banks are coming soon')}
       </p>
     </div>
   );

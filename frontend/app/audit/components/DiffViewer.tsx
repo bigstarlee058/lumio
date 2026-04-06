@@ -1,5 +1,6 @@
 'use client';
 
+import { getRecord } from '@/app/lib/side-panel-utils';
 import type { AuditEventDiff } from '@/lib/api/audit';
 import React from 'react';
 
@@ -25,9 +26,6 @@ const formatValue = (value: unknown) => {
     return String(value);
   }
 };
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
 
 export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
   if (!diff) {
@@ -59,9 +57,9 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
 
   const before = diff.before || {};
   const after = diff.after || {};
-  const keys = Array.from(new Set([...Object.keys(before || {}), ...Object.keys(after || {})])).filter(
-    key => !TECHNICAL_FIELDS.has(key),
-  );
+  const keys = Array.from(
+    new Set([...Object.keys(before || {}), ...Object.keys(after || {})]),
+  ).filter(key => !TECHNICAL_FIELDS.has(key));
 
   if (keys.length === 0) {
     return <div className="text-sm text-gray-500">No user-facing changes available.</div>;

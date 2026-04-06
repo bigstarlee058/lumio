@@ -1,12 +1,13 @@
 'use client';
 
 import ConfirmModal from '@/app/components/ConfirmModal';
-import { Spinner } from '@/app/components/ui/spinner';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { AppPagination } from '@/app/components/ui/pagination';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   areAllVisibleSelected,
   toggleSelectAllVisible,
@@ -63,127 +64,126 @@ export default function TrashListView({ onCountChange }: Props) {
     return DEFAULT_TRASH_TTL_DAYS;
   }, []);
 
-  const resolveLabel = (value: unknown, fallback: string): string =>
-    (value as { value?: string })?.value ?? (value as string) ?? fallback;
-
-  const getNested = (source: unknown, path: string[]): unknown => {
-    let current: unknown = source;
-
-    for (const key of path) {
-      if (!current || typeof current !== 'object') return undefined;
-      current = (current as Record<string, unknown>)[key];
-    }
-
-    return current;
-  };
-
   const labels = {
-    title: resolveLabel(getNested(t, ['trash', 'title']), 'Trash'),
+    title: resolveLabel(getNestedValue(t, ['trash', 'title']), 'Trash'),
     retentionPolicy: resolveLabel(
-      getNested(t, ['trash', 'retentionPolicy']),
+      getNestedValue(t, ['trash', 'retentionPolicy']),
       `Deleted items are permanently removed after ${trashTtlDays} days.`,
     ),
     searchPlaceholder: resolveLabel(
-      getNested(t, ['trash', 'searchPlaceholder']),
+      getNestedValue(t, ['trash', 'searchPlaceholder']),
       'Search in trash...',
     ),
     selectedCountTemplate: resolveLabel(
-      getNested(t, ['trash', 'selectedCount']) ?? getNested(t, ['trash', 'selectedLabel']),
+      getNestedValue(t, ['trash', 'selectedCount']) ??
+        getNestedValue(t, ['trash', 'selectedLabel']),
       'Selected: {count}',
     ),
-    restore: resolveLabel(getNested(t, ['trash', 'restore']), 'Restore'),
-    delete: resolveLabel(getNested(t, ['trash', 'delete']), 'Delete'),
+    restore: resolveLabel(getNestedValue(t, ['trash', 'restore']), 'Restore'),
+    delete: resolveLabel(getNestedValue(t, ['trash', 'delete']), 'Delete'),
     emptyTrash: resolveLabel(
-      getNested(t, ['trash', 'emptyTrash']) ?? getNested(t, ['trash', 'emptyAction']),
+      getNestedValue(t, ['trash', 'emptyTrash']) ?? getNestedValue(t, ['trash', 'emptyAction']),
       'Empty trash',
     ),
     emptyTitle: resolveLabel(
-      getNested(t, ['trash', 'empty', 'title']) ?? getNested(t, ['trash', 'emptyTitle']),
+      getNestedValue(t, ['trash', 'empty', 'title']) ?? getNestedValue(t, ['trash', 'emptyTitle']),
       'Trash is empty',
     ),
     emptyDescription: resolveLabel(
-      getNested(t, ['trash', 'empty', 'subtitle']) ?? getNested(t, ['trash', 'emptyDescription']),
+      getNestedValue(t, ['trash', 'empty', 'subtitle']) ??
+        getNestedValue(t, ['trash', 'emptyDescription']),
       'Deleted files will appear here',
     ),
-    typeHeader: resolveLabel(getNested(t, ['trash', 'listHeader', 'type']), 'Type'),
+    typeHeader: resolveLabel(getNestedValue(t, ['trash', 'listHeader', 'type']), 'Type'),
     deletedAtHeader: resolveLabel(
-      getNested(t, ['trash', 'listHeader', 'deletedAt']) ??
-        getNested(t, ['trash', 'listHeader', 'deleted']),
+      getNestedValue(t, ['trash', 'listHeader', 'deletedAt']) ??
+        getNestedValue(t, ['trash', 'listHeader', 'deleted']),
       'Deleted at',
     ),
     autoDeleteHeader: resolveLabel(
-      getNested(t, ['trash', 'listHeader', 'willDeleteAt']),
+      getNestedValue(t, ['trash', 'listHeader', 'willDeleteAt']),
       'Will be permanently deleted on',
     ),
-    nameHeader: resolveLabel(getNested(t, ['trash', 'listHeader', 'name']), 'Name'),
-    actionsHeader: resolveLabel(getNested(t, ['trash', 'listHeader', 'actions']), 'Actions'),
+    nameHeader: resolveLabel(getNestedValue(t, ['trash', 'listHeader', 'name']), 'Name'),
+    actionsHeader: resolveLabel(getNestedValue(t, ['trash', 'listHeader', 'actions']), 'Actions'),
     entityTypeStatement: resolveLabel(
-      getNested(t, ['trash', 'entityTypes', 'statement']),
+      getNestedValue(t, ['trash', 'entityTypes', 'statement']),
       'Statement',
     ),
-    entityTypeTable: resolveLabel(getNested(t, ['trash', 'entityTypes', 'table']), 'Table'),
+    entityTypeTable: resolveLabel(getNestedValue(t, ['trash', 'entityTypes', 'table']), 'Table'),
     entityTypeWorkspace: resolveLabel(
-      getNested(t, ['trash', 'entityTypes', 'workspace']),
+      getNestedValue(t, ['trash', 'entityTypes', 'workspace']),
       'Workspace',
     ),
-    selectAll: resolveLabel(getNested(t, ['trash', 'selectAll']), 'Select all in trash'),
-    restoreLoading: resolveLabel(getNested(t, ['trash', 'restoreLoading']), 'Restoring...'),
-    restoreSuccess: resolveLabel(getNested(t, ['trash', 'restoreSuccess']), 'File restored'),
-    restoreFailed: resolveLabel(getNested(t, ['trash', 'restoreFailed']), 'Failed to restore file'),
-    deleteLoading: resolveLabel(getNested(t, ['trash', 'deleteLoading']), 'Deleting forever...'),
+    selectAll: resolveLabel(getNestedValue(t, ['trash', 'selectAll']), 'Select all in trash'),
+    restoreLoading: resolveLabel(getNestedValue(t, ['trash', 'restoreLoading']), 'Restoring...'),
+    restoreSuccess: resolveLabel(getNestedValue(t, ['trash', 'restoreSuccess']), 'File restored'),
+    restoreFailed: resolveLabel(
+      getNestedValue(t, ['trash', 'restoreFailed']),
+      'Failed to restore file',
+    ),
+    deleteLoading: resolveLabel(
+      getNestedValue(t, ['trash', 'deleteLoading']),
+      'Deleting forever...',
+    ),
     deleteSuccess: resolveLabel(
-      getNested(t, ['trash', 'deleteSuccess']),
+      getNestedValue(t, ['trash', 'deleteSuccess']),
       'File deleted permanently',
     ),
     deleteFailed: resolveLabel(
-      getNested(t, ['trash', 'deleteFailed']),
+      getNestedValue(t, ['trash', 'deleteFailed']),
       'Failed to delete file permanently',
     ),
     loadError: resolveLabel(
-      getNested(t, ['trash', 'loadError']) ?? getNested(t, ['loadListError']),
+      getNestedValue(t, ['trash', 'loadError']) ?? getNestedValue(t, ['loadListError']),
       'Failed to load trash',
     ),
     confirmDeleteTitle: resolveLabel(
-      getNested(t, ['trash', 'confirmDeleteTitle']) ?? getNested(t, ['trash', 'bulkDeleteTitle']),
+      getNestedValue(t, ['trash', 'confirmDeleteTitle']) ??
+        getNestedValue(t, ['trash', 'bulkDeleteTitle']),
       'Delete permanently?',
     ),
     confirmDeleteMessage: resolveLabel(
-      getNested(t, ['trash', 'confirmDeleteMessage']) ??
-        getNested(t, ['trash', 'bulkDeleteMessage']),
+      getNestedValue(t, ['trash', 'confirmDeleteMessage']) ??
+        getNestedValue(t, ['trash', 'bulkDeleteMessage']),
       'Selected files will be permanently deleted.',
     ),
     confirmDelete: resolveLabel(
-      getNested(t, ['trash', 'confirmDelete']) ?? getNested(t, ['trash', 'bulkDeleteConfirm']),
+      getNestedValue(t, ['trash', 'confirmDelete']) ??
+        getNestedValue(t, ['trash', 'bulkDeleteConfirm']),
       'Delete',
     ),
     confirmCancel: resolveLabel(
-      getNested(t, ['trash', 'confirmCancel']) ?? getNested(t, ['trash', 'bulkDeleteCancel']),
+      getNestedValue(t, ['trash', 'confirmCancel']) ??
+        getNestedValue(t, ['trash', 'bulkDeleteCancel']),
       'Cancel',
     ),
     confirmEmptyTitle: resolveLabel(
-      getNested(t, ['trash', 'confirmEmptyTitle']) ?? getNested(t, ['trash', 'emptyTitle']),
+      getNestedValue(t, ['trash', 'confirmEmptyTitle']) ??
+        getNestedValue(t, ['trash', 'emptyTitle']),
       'Empty trash?',
     ),
     confirmEmptyMessage: resolveLabel(
-      getNested(t, ['trash', 'confirmEmptyMessage']) ?? getNested(t, ['trash', 'emptyMessage']),
+      getNestedValue(t, ['trash', 'confirmEmptyMessage']) ??
+        getNestedValue(t, ['trash', 'emptyMessage']),
       'All files in trash will be deleted permanently.',
     ),
     confirmEmpty: resolveLabel(
-      getNested(t, ['trash', 'confirmEmpty']) ?? getNested(t, ['trash', 'emptyConfirm']),
+      getNestedValue(t, ['trash', 'confirmEmpty']) ?? getNestedValue(t, ['trash', 'emptyConfirm']),
       'Empty',
     ),
     irreversibleWarning: resolveLabel(
-      getNested(t, ['trash', 'irreversibleWarning']),
+      getNestedValue(t, ['trash', 'irreversibleWarning']),
       'This action is irreversible',
     ),
     paginationShown: resolveLabel(
-      getNested(t, ['pagination', 'shown']),
+      getNestedValue(t, ['pagination', 'shown']),
       'Showing {from}–{to} of {count}',
     ),
-    paginationPrevious: resolveLabel(getNested(t, ['pagination', 'previous']), 'Previous'),
-    paginationNext: resolveLabel(getNested(t, ['pagination', 'next']), 'Next'),
+    paginationPrevious: resolveLabel(getNestedValue(t, ['pagination', 'previous']), 'Previous'),
+    paginationNext: resolveLabel(getNestedValue(t, ['pagination', 'next']), 'Next'),
     paginationPageOf: resolveLabel(
-      getNested(t, ['pagination', 'pageOf']),
+      getNestedValue(t, ['pagination', 'pageOf']),
       'Page {page} of {count}',
     ),
   };

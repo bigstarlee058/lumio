@@ -13,6 +13,7 @@ import {
   type UpdatePayableInput,
   payablesApi,
 } from '@/app/lib/payables-api';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { Download, Plus, RefreshCcw } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -72,37 +73,6 @@ const triggerBlobDownload = (blob: Blob, fileName: string) => {
   link.click();
   link.remove();
   window.URL.revokeObjectURL(url);
-};
-
-const getRecord = (value: unknown): Record<string, unknown> | null => {
-  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-};
-
-const getNestedValue = (source: unknown, path: string[]): unknown => {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) {
-      return undefined;
-    }
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string): string => {
-  if (typeof value === 'string') {
-    return value;
-  }
-  if (value && typeof value === 'object' && 'value' in value) {
-    const tokenValue = (value as { value?: unknown }).value;
-    if (typeof tokenValue === 'string') {
-      return tokenValue;
-    }
-  }
-  return fallback;
 };
 
 export function PayablesView() {
