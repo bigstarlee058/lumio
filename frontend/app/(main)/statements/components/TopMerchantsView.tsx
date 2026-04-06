@@ -11,6 +11,11 @@ import {
   applyStatementsFilters,
 } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
+  buildAnalyticsFilterLabels,
+  buildAnalyticsFilterOptions,
+  filterLinkClassName,
+} from '@/app/(main)/statements/helpers/analytics-filter-labels';
+import {
   type AggregateSortKey,
   type TopMerchantAggregateRow,
   type TopMerchantFlowType,
@@ -180,110 +185,9 @@ export default function TopMerchantsView() {
     reset: tx(['filters', 'reset'], 'Reset'),
   };
 
-  const filterOptionLabels = {
-    apply: tx(['filters', 'apply'], 'Apply'),
-    reset: tx(['filters', 'reset'], 'Reset'),
-    resetFilters: tx(['filters', 'resetFilters'], 'Reset filters'),
-    viewResults: tx(['filters', 'viewResults'], 'View results'),
-    saveSearch: tx(['filters', 'saveSearch'], 'Save search'),
-    any: tx(['filters', 'any'], 'Any'),
-    yes: tx(['filters', 'yes'], 'Yes'),
-    no: tx(['filters', 'no'], 'No'),
-    typeExpense: tx(['filters', 'typeExpense'], 'Expense'),
-    typeReport: tx(['filters', 'typeReport'], 'Expense Report'),
-    typeChat: tx(['filters', 'typeChat'], 'Chat'),
-    typeTrip: tx(['filters', 'typeTrip'], 'Trip'),
-    typeTask: tx(['filters', 'typeTask'], 'Task'),
-    statusUnreported: tx(['filters', 'statusUnreported'], 'Unreported'),
-    statusDraft: tx(['filters', 'statusDraft'], 'Draft'),
-    statusOutstanding: tx(['filters', 'statusOutstanding'], 'Outstanding'),
-    statusApproved: tx(['filters', 'statusApproved'], 'Approved'),
-    statusPaid: tx(['filters', 'statusPaid'], 'Paid'),
-    statusDone: tx(['filters', 'statusDone'], 'Done'),
-    dateThisMonth: tx(['filters', 'dateThisMonth'], 'This month'),
-    dateLastMonth: tx(['filters', 'dateLastMonth'], 'Last month'),
-    dateYearToDate: tx(['filters', 'dateYearToDate'], 'Year to date'),
-    dateOn: tx(['filters', 'dateOn'], 'On'),
-    dateAfter: tx(['filters', 'dateAfter'], 'After'),
-    dateBefore: tx(['filters', 'dateBefore'], 'Before'),
-    drawerTitle: tx(['filters', 'drawerTitle'], 'Filters'),
-    drawerGeneral: tx(['filters', 'drawerGeneral'], 'General'),
-    drawerExpenses: tx(['filters', 'drawerExpenses'], 'Expenses'),
-    drawerReports: tx(['filters', 'drawerReports'], 'Reports'),
-    drawerGroupBy: tx(['filters', 'drawerGroupBy'], 'Group by'),
-    drawerHas: tx(['filters', 'drawerHas'], 'Has'),
-    drawerKeywords: tx(['filters', 'drawerKeywords'], 'Keywords'),
-    drawerLimit: tx(['filters', 'drawerLimit'], 'Limit'),
-    drawerTo: tx(['filters', 'drawerTo'], 'To'),
-    drawerAmount: tx(['filters', 'drawerAmount'], 'Amount'),
-    drawerApproved: tx(['filters', 'drawerApproved'], 'Approved'),
-    drawerBillable: tx(['filters', 'drawerBillable'], 'Billable'),
-    groupByDate: tx(['filters', 'groupByDate'], 'Date'),
-    groupByStatus: tx(['filters', 'groupByStatus'], 'Status'),
-    groupByType: tx(['filters', 'groupByType'], 'Type'),
-    groupByBank: tx(['filters', 'groupByBank'], 'Bank'),
-    groupByUser: tx(['filters', 'groupByUser'], 'User'),
-    groupByAmount: tx(['filters', 'groupByAmount'], 'Amount'),
-    hasErrors: tx(['filters', 'hasErrors'], 'Errors'),
-    hasLogs: tx(['filters', 'hasLogs'], 'Logs'),
-    hasTransactions: tx(['filters', 'hasTransactions'], 'Transactions'),
-    hasDateRange: tx(['filters', 'hasDateRange'], 'Date range'),
-    hasCurrency: tx(['filters', 'hasCurrency'], 'Currency'),
-  };
-
-  const filterLinkClassName =
-    'inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-primary';
-
-  const typeOptions = [
-    { value: 'expense', label: filterOptionLabels.typeExpense },
-    { value: 'expense_report', label: filterOptionLabels.typeReport },
-    { value: 'chat', label: filterOptionLabels.typeChat },
-    { value: 'trip', label: filterOptionLabels.typeTrip },
-    { value: 'task', label: filterOptionLabels.typeTask },
-    { value: 'gmail', label: 'Gmail' },
-    { value: 'pdf', label: 'PDF' },
-    { value: 'xlsx', label: 'Excel' },
-    { value: 'csv', label: 'CSV' },
-    { value: 'image', label: 'Image' },
-  ];
-
-  const statusOptions = [
-    { value: 'unreported', label: filterOptionLabels.statusUnreported },
-    { value: 'draft', label: filterOptionLabels.statusDraft },
-    { value: 'outstanding', label: filterOptionLabels.statusOutstanding },
-    { value: 'approved', label: filterOptionLabels.statusApproved },
-    { value: 'paid', label: filterOptionLabels.statusPaid },
-    { value: 'done', label: filterOptionLabels.statusDone },
-  ];
-
-  const datePresets = [
-    { value: 'thisMonth' as const, label: filterOptionLabels.dateThisMonth },
-    { value: 'lastMonth' as const, label: filterOptionLabels.dateLastMonth },
-    { value: 'yearToDate' as const, label: filterOptionLabels.dateYearToDate },
-  ];
-
-  const dateModes = [
-    { value: 'on' as const, label: filterOptionLabels.dateOn },
-    { value: 'after' as const, label: filterOptionLabels.dateAfter },
-    { value: 'before' as const, label: filterOptionLabels.dateBefore },
-  ];
-
-  const groupByOptions = [
-    { value: 'date', label: filterOptionLabels.groupByDate },
-    { value: 'status', label: filterOptionLabels.groupByStatus },
-    { value: 'type', label: filterOptionLabels.groupByType },
-    { value: 'bank', label: filterOptionLabels.groupByBank },
-    { value: 'user', label: filterOptionLabels.groupByUser },
-    { value: 'amount', label: filterOptionLabels.groupByAmount },
-  ];
-
-  const hasOptions = [
-    { value: 'errors', label: filterOptionLabels.hasErrors },
-    { value: 'processingDetails', label: filterOptionLabels.hasLogs },
-    { value: 'transactions', label: filterOptionLabels.hasTransactions },
-    { value: 'dateRange', label: filterOptionLabels.hasDateRange },
-    { value: 'currency', label: filterOptionLabels.hasCurrency },
-  ];
+  const filterOptionLabels = buildAnalyticsFilterLabels(tx);
+  const { typeOptions, statusOptions, datePresets, dateModes, groupByOptions, hasOptions } =
+    buildAnalyticsFilterOptions(filterOptionLabels);
 
   const allRecords = useMemo<MerchantRecord[]>(() => {
     const statementById = new Map(statements.map(statement => [statement.id, statement]));
