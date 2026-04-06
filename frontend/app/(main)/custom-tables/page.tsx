@@ -68,14 +68,7 @@ import {
   getSelectedStatementsSummary,
   groupStatementSelectionOptions,
 } from './create-from-statements-utils';
-import {
-  type TableRegistryItem,
-  formatRowsCount,
-  resolveCreatedFromBadge,
-  resolveHumanTableName,
-  resolveSourceSummary,
-  resolveTablePurpose,
-} from './table-registry-utils';
+import { useCustomTablesData } from './hooks/useCustomTablesData';
 
 interface Category {
   id: string;
@@ -107,10 +100,11 @@ interface StatementItem {
   bankName?: string | null;
 }
 
-import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   type ExportColumn,
   formatUpdatedBadge,
+  formatUpdatedDate,
   getExportColumn,
   sanitizeFileName,
   toCsv,
@@ -125,11 +119,45 @@ export default function CustomTablesPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('customTablesPage');
-  const [items, setItems] = useState<CustomTableItem[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const {
+    items,
+    setItems,
+    categories,
+    loading,
+    rowsCountByTableId,
+    setRowsCountByTableId,
+    searchQuery,
+    setSearchQuery,
+    filterSource,
+    setFilterSource,
+    sortOrder,
+    setSortOrder,
+    draftFilterSource,
+    setDraftFilterSource,
+    draftSortOrder,
+    setDraftSortOrder,
+    sourceDropdownOpen,
+    setSourceDropdownOpen,
+    sortDropdownOpen,
+    setSortDropdownOpen,
+    filtersDrawerOpen,
+    setFiltersDrawerOpen,
+    filtersDrawerScreen,
+    setFiltersDrawerScreen,
+    page,
+    setPage,
+    filteredCount,
+    totalPages,
+    rangeStart,
+    rangeEnd,
+    registryItems,
+    loadTables,
+  } = useCustomTablesData(Boolean(user), authLoading, {
+    loadTablesFailed: t.toasts.loadTablesFailed.value,
+  });
+
   const [statements, setStatements] = useState<StatementItem[]>([]);
   const [statementsLoading, setStatementsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState({
@@ -153,25 +181,9 @@ export default function CustomTablesPage() {
   const [creatingFromStatements, setCreatingFromStatements] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<CustomTableItem | null>(null);
-  const [rowsCountByTableId, setRowsCountByTableId] = useState<Record<string, number>>({});
   const [exportingTableId, setExportingTableId] = useState<string | null>(null);
   const [updatingTableId, setUpdatingTableId] = useState<string | null>(null);
-
-  // New State for Redesign
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterSource, setFilterSource] = useState<CustomTableSourceFilter>('all');
-  const [sortOrder, setSortOrder] = useState<CustomTableSortOrder>('updated_desc');
-  const [draftFilterSource, setDraftFilterSource] = useState<CustomTableSourceFilter>('all');
-  const [draftSortOrder, setDraftSortOrder] = useState<CustomTableSortOrder>('updated_desc');
-  const [sourceDropdownOpen, setSourceDropdownOpen] = useState(false);
-  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [filtersDrawerOpen, setFiltersDrawerOpen] = useState(false);
-  const [filtersDrawerScreen, setFiltersDrawerScreen] = useState('root');
   const hasHandledImportParam = useRef(false);
-
-  // Pagination State
-  const [page, setPage] = useState(1);
-  const ROWS_PER_PAGE = 20;
 
   const canCreate = useMemo(() => form.name.trim().length > 0, [form.name]);
 
@@ -216,101 +228,10 @@ export default function CustomTablesPage() {
     return statementSelectionOptions.filter(option => selectedSet.has(option.representativeId));
   }, [selectedStatementIds, statementSelectionOptions]);
 
-  const filteredItems = useMemo(() => {
-    let result = [...items];
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(item => item.name.toLowerCase().includes(q));
-    }
-
-    if (filterSource !== 'all') {
-      if (filterSource === 'statement') {
-        result = result.filter(item => item.source === 'statement');
-      } else {
-        result = result.filter(item => item.source === filterSource);
-      }
-    }
-
-    if (sortOrder === 'name_asc') {
-      result.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      result.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
-    }
-
-    return result;
-  }, [items, searchQuery, filterSource, sortOrder]);
-
-  // Reset page when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, filterSource, sortOrder]);
-
   useEffect(() => {
     const available = new Set(statementSelectionOptions.map(option => option.representativeId));
     setSelectedStatementIds(prev => prev.filter(id => available.has(id)));
   }, [statementSelectionOptions]);
-
-  const paginatedItems = useMemo(() => {
-    const start = (page - 1) * ROWS_PER_PAGE;
-    const end = start + ROWS_PER_PAGE;
-    return filteredItems.slice(start, end);
-  }, [filteredItems, page]);
-
-  const totalPages = Math.ceil(filteredItems.length / ROWS_PER_PAGE);
-  const rangeStart = filteredItems.length === 0 ? 0 : (page - 1) * ROWS_PER_PAGE + 1;
-  const rangeEnd = Math.min(page * ROWS_PER_PAGE, filteredItems.length);
-
-  const registryItems = useMemo(
-    () =>
-      paginatedItems.map(item => {
-        const tableItem: TableRegistryItem = {
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          source: item.source,
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-        };
-
-        return {
-          ...item,
-          displayName: resolveHumanTableName(tableItem),
-          purpose: resolveTablePurpose(tableItem),
-          sourceSummary: resolveSourceSummary(tableItem),
-          sourceDescriptor: item.sourceDetails?.trim() || resolveSourceSummary(tableItem),
-          createdFromBadge: resolveCreatedFromBadge(tableItem),
-          rowsCountLabel: formatRowsCount(rowsCountByTableId[item.id]),
-          updatedLabel: formatUpdatedBadge(item.updatedAt),
-        };
-      }),
-    [paginatedItems, rowsCountByTableId],
-  );
-
-  const loadCategories = useCallback(async () => {
-    try {
-      const response = await apiClient.get('/categories');
-      const payload = response.data?.data || response.data || [];
-      setCategories(Array.isArray(payload) ? payload : []);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
-    }
-  }, []);
-
-  const loadTables = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient.get('/custom-tables');
-      const payload =
-        response.data?.items || response.data?.data?.items || response.data?.data || [];
-      setItems(Array.isArray(payload) ? payload : []);
-    } catch (error) {
-      console.error('Failed to load custom tables:', error);
-      toast.error(getApiErrorMessage(error, t.toasts.loadTablesFailed.value));
-    } finally {
-      setLoading(false);
-    }
-  }, [t.toasts.loadTablesFailed.value]);
 
   const loadStatements = useCallback(async () => {
     setStatementsLoading(true);
@@ -327,13 +248,6 @@ export default function CustomTablesPage() {
       setStatementsLoading(false);
     }
   }, [t.toasts.loadStatementsFailed.value]);
-
-  useEffect(() => {
-    if (!authLoading && user) {
-      void loadTables();
-      void loadCategories();
-    }
-  }, [authLoading, loadCategories, loadTables, user]);
 
   const handleCreate = async () => {
     if (!canCreate) return;
@@ -511,49 +425,6 @@ export default function CustomTablesPage() {
       setDeleteTarget(null);
     }
   };
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const missing = paginatedItems.filter(
-      table => typeof rowsCountByTableId[table.id] !== 'number',
-    );
-    if (missing.length === 0) {
-      return;
-    }
-
-    const loadRowsCount = async () => {
-      const entries = await Promise.all(
-        missing.map(async table => {
-          try {
-            const response = await apiClient.get(`/custom-tables/${table.id}/rows`, {
-              params: { limit: 1 },
-            });
-            const total = Number(response.data?.meta?.total);
-            return [table.id, Number.isFinite(total) ? total : 0] as const;
-          } catch {
-            return [table.id, 0] as const;
-          }
-        }),
-      );
-
-      if (cancelled) return;
-
-      setRowsCountByTableId(prev => {
-        const next = { ...prev };
-        entries.forEach(([id, count]) => {
-          next[id] = count;
-        });
-        return next;
-      });
-    };
-
-    void loadRowsCount();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [paginatedItems, rowsCountByTableId]);
 
   const handleExportTable = useCallback(async (table: CustomTableItem, format: 'csv' | 'xlsx') => {
     setExportingTableId(table.id);
@@ -871,7 +742,7 @@ export default function CustomTablesPage() {
     { value: 'updated_desc' as const, label: filterLabels.sortUpdated },
     { value: 'name_asc' as const, label: filterLabels.sortName },
   ];
-  const shouldShowGrowthHint = filteredItems.length > 0 && filteredItems.length <= 2;
+  const shouldShowGrowthHint = filteredCount > 0 && filteredCount <= 2;
 
   const applySourceFilters = () => {
     setFilterSource(draftFilterSource);
@@ -1117,7 +988,7 @@ export default function CustomTablesPage() {
             <div className="flex justify-center items-center h-64">
               <Spinner className="h-20 w-20 text-primary" />
             </div>
-          ) : filteredItems.length === 0 ? (
+          ) : filteredCount === 0 ? (
             <div className="rounded-2xl border border-border bg-card px-6 py-10 sm:px-10 sm:py-12">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <TableIcon className="h-8 w-8" />
@@ -1334,12 +1205,12 @@ export default function CustomTablesPage() {
                 data-tour-id="pagination"
               >
                 <div className="text-sm text-gray-600">
-                  {filteredItems.length === 0
+                  {filteredCount === 0
                     ? emptyLabels.title
                     : formatPaginationLabel(paginationLabels.shown, {
                         from: rangeStart,
                         to: rangeEnd,
-                        count: filteredItems.length,
+                        count: filteredCount,
                       })}
                 </div>
                 <div className="flex items-center gap-2">
