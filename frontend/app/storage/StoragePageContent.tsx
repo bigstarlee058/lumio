@@ -51,12 +51,14 @@ import { DraggableFileRow } from './components/DraggableFileRow';
 import { DraggableModalFileItem } from './components/DraggableModalFileItem';
 import { DroppableFolderButton } from './components/DroppableFolderButton';
 import { DroppableHeaderTrigger } from './components/DroppableHeaderTrigger';
+import { useStorageFiles } from './hooks/useStorageFiles';
+import { useStorageFolders } from './hooks/useStorageFolders';
+import { useStorageTags } from './hooks/useStorageTags';
 import {
   type CategoryOption,
   DEFAULT_FILTERS,
   DEFAULT_SORT,
   DEFAULT_TRASH_TTL_DAYS,
-  FOLDER_NAME_MAX,
   type FileAvailability,
   type FileAvailabilityStatus,
   type FolderOption,
@@ -102,28 +104,161 @@ function StoragePageContent({
     }
     return DEFAULT_TRASH_TTL_DAYS;
   }, []);
-  const [files, setFiles] = useState<StorageFile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    files,
+    setFiles,
+    loading,
+    deleteModalOpen,
+    setDeleteModalOpen,
+    fileToDelete,
+    setFileToDelete,
+    permanentDeleteModalOpen,
+    setPermanentDeleteModalOpen,
+    fileToDeletePermanently,
+    setFileToDeletePermanently,
+    loadFiles,
+    handleView,
+    handleDownload,
+    handleCategoryChange,
+    confirmDelete,
+    handleDelete,
+    confirmPermanentDelete,
+    handlePermanentDelete,
+    handleRestoreFromTrash,
+    handleBulkRestore,
+    handleBulkDeleteFromTrash,
+    handleEmptyTrash,
+  } = useStorageFiles({
+    loadFilesFailed: t.toasts.loadFilesFailed.value,
+    downloaded: t.toasts.downloaded.value,
+    downloadFailed: t.toasts.downloadFailed.value,
+    categoryUpdated: t.toasts.categoryUpdated.value,
+    categoryUpdateFailed: t.toasts.categoryUpdateFailed.value,
+    deleteLoading: t.delete.loading.value,
+    deleteSuccess: t.delete.success.value,
+    deleteError: t.delete.error.value,
+    trashRestoreLoading: t.trash.restoreLoading.value,
+    trashRestoreSuccess: t.trash.restoreSuccess.value,
+    trashRestoreFailed: t.trash.restoreFailed.value,
+    trashDeleteLoading: t.trash.deleteLoading.value,
+    trashDeleteSuccess: t.trash.deleteSuccess.value,
+    trashDeleteFailed: t.trash.deleteFailed.value,
+  });
   const [activeList, setActiveList] = useState<'active' | 'trash'>(
     initialList as 'active' | 'trash',
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
-  const [tags, setTags] = useState<TagOption[]>([]);
-  const [folders, setFolders] = useState<FolderOption[]>([]);
-  const [newTagName, setNewTagName] = useState('');
-  const [newTagColor, setNewTagColor] = useState('#4f46e5');
-  const [newFolderName, setNewFolderName] = useState('');
-  const [editingTagId, setEditingTagId] = useState<string | null>(null);
-  const [editingTagName, setEditingTagName] = useState('');
-  const [editingTagColor, setEditingTagColor] = useState<string | null>(null);
-  const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
-  const [editingFolderName, setEditingFolderName] = useState('');
-  const [newTagPickerOpen, setNewTagPickerOpen] = useState(false);
-  const [newTagAnchorEl, setNewTagAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [editingTagPickerId, setEditingTagPickerId] = useState<string | null>(null);
-  const [editingTagAnchorEl, setEditingTagAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [activeModal, setActiveModal] = useState<'folders' | null>(null);
+  const {
+    folders,
+    setFolders,
+    newFolderName,
+    setNewFolderName,
+    editingFolderId,
+    setEditingFolderId,
+    editingFolderName,
+    setEditingFolderName,
+    folderTagPickerId,
+    setFolderTagPickerId,
+    deleteFolderModalOpen,
+    setDeleteFolderModalOpen,
+    folderToDelete,
+    deleteFolderWithContents,
+    setDeleteFolderWithContents,
+    folderMoveFeedback,
+    activeFolderId,
+    setActiveFolderId,
+    folderFileQuery,
+    setFolderFileQuery,
+    folderContextMenu,
+    setFolderContextMenu,
+    pickedFolderId,
+    setPickedFolderId,
+    loadFolders,
+    handleCreateFolder,
+    handleStartEditFolder,
+    handleRenameFolder,
+    handleCancelEditFolder,
+    handleUpdateFolderTag,
+    confirmDeleteFolder,
+    closeDeleteFolderModal,
+    handleDeleteFolder,
+    handleMoveFolderIdx,
+    handleFolderContextMenu,
+    handleMoveToFolder,
+    canEditFolder,
+    clampFolderName,
+    clearFolderMoveFeedback,
+  } = useStorageFolders(
+    {
+      loadFoldersFailed: t.toasts.loadFoldersFailed.value,
+      folderNameRequired: t.toasts.folderNameRequired.value,
+      folderNameTooLong: t.folders.nameTooLong.value,
+      folderCreated: t.toasts.folderCreated.value,
+      folderCreateFailed: t.toasts.folderCreateFailed.value,
+      folderRenamed: t.toasts.folderRenamed.value,
+      folderRenameFailed: t.toasts.folderRenameFailed.value,
+      folderTagUpdateFailed: t.toasts.folderTagUpdateFailed.value,
+      folderDeleteLoading: t.toasts.folderDeleteLoading.value,
+      folderDeleted: t.toasts.folderDeleted.value,
+      folderDeleteFailed: t.toasts.folderDeleteFailed.value,
+      folderUpdated: t.toasts.folderUpdated.value,
+      folderUpdateFailed: t.toasts.folderUpdateFailed.value,
+      fileMovedTo: tx(['toasts', 'fileMovedTo'], 'File moved to folder'),
+    },
+    setFiles,
+    activeModal === 'folders',
+  );
+  const {
+    tags,
+    setTags,
+    newTagName,
+    setNewTagName,
+    newTagColor,
+    setNewTagColor,
+    editingTagId,
+    setEditingTagId,
+    editingTagName,
+    setEditingTagName,
+    editingTagColor,
+    setEditingTagColor,
+    newTagPickerOpen,
+    setNewTagPickerOpen,
+    newTagAnchorEl,
+    setNewTagAnchorEl,
+    editingTagPickerId,
+    setEditingTagPickerId,
+    editingTagAnchorEl,
+    setEditingTagAnchorEl,
+    deleteTagModalOpen,
+    setDeleteTagModalOpen,
+    tagToDelete,
+    setTagToDelete,
+    loadTags,
+    handleCreateTag,
+    handleStartEditTag,
+    handleRenameTag,
+    handleCancelEditTag,
+    confirmDeleteTag,
+    handleDeleteTag,
+    canEditTag,
+  } = useStorageTags(
+    {
+      loadTagsFailed: t.toasts.loadTagsFailed.value,
+      tagNameRequired: t.toasts.tagNameRequired.value,
+      tagCreated: t.toasts.tagCreated.value,
+      tagCreateFailed: t.toasts.tagCreateFailed.value,
+      tagRenamed: t.toasts.tagRenamed.value,
+      tagRenameFailed: t.toasts.tagRenameFailed.value,
+      tagDeleteLoading: t.toasts.tagDeleteLoading.value,
+      tagDeleted: t.toasts.tagDeleted.value,
+      tagDeleteFailed: t.toasts.tagDeleteFailed.value,
+    },
+    setFiles,
+    setFolders,
+  );
   const [views, setViews] = useState<StorageView[]>([]);
   const [viewsLoading, setViewsLoading] = useState(false);
   const [viewName, setViewName] = useState('');
@@ -135,36 +270,12 @@ function StoragePageContent({
   const [filterOpen, setFilterOpen] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = PAGE_SIZE;
-  const [activeModal, setActiveModal] = useState<'folders' | null>(null);
-  const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
-  const [folderFileQuery, setFolderFileQuery] = useState('');
   const [draggingFile, setDraggingFile] = useState<StorageFile | null>(null);
   const [folderDropTargetId, setFolderDropTargetId] = useState<string | null>(null);
   const [folderModalFromDrag, setFolderModalFromDrag] = useState(false);
-  const [folderMoveFeedback, setFolderMoveFeedback] = useState<{
-    tone: 'success' | 'error';
-    message: string;
-  } | null>(null);
-  const [folderTagPickerId, setFolderTagPickerId] = useState<string | null>(null);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [fileToDelete, setFileToDelete] = useState<StorageFile | null>(null);
-  const [permanentDeleteModalOpen, setPermanentDeleteModalOpen] = useState(false);
-  const [fileToDeletePermanently, setFileToDeletePermanently] = useState<StorageFile | null>(null);
   const [selectedTrashIds, setSelectedTrashIds] = useState<string[]>([]);
   const [bulkDeleteModalOpen, setBulkDeleteModalOpen] = useState(false);
   const [emptyTrashModalOpen, setEmptyTrashModalOpen] = useState(false);
-  const [deleteFolderModalOpen, setDeleteFolderModalOpen] = useState(false);
-  const [folderToDelete, setFolderToDelete] = useState<FolderOption | null>(null);
-  const [deleteFolderWithContents, setDeleteFolderWithContents] = useState(false);
-  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState(false);
-  const [tagToDelete, setTagToDelete] = useState<TagOption | null>(null);
-  const [folderContextMenu, setFolderContextMenu] = useState<{
-    x: number;
-    y: number;
-    folder: FolderOption;
-  } | null>(null);
-  const [pickedFolderId, setPickedFolderId] = useState<string | null>(null);
-  const lastWheelTime = useRef<number>(0);
 
   // PDF Preview Modal State
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
@@ -197,64 +308,8 @@ function StoragePageContent({
     'google',
   );
 
-  const folderMoveFeedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const isTrashView = activeList === 'trash';
   const isFolderActive = activeModal === 'folders';
-
-  useEffect(() => {
-    if (!pickedFolderId || activeModal !== 'folders') return;
-
-    const handleWheel = (e: WheelEvent) => {
-      // Find the folder list container or check if the event target is inside the modal
-      const now = Date.now();
-      if (now - lastWheelTime.current < 80) return; // Throttle faster for smoothness
-
-      const idx = folders.findIndex(f => f.id === pickedFolderId);
-      if (idx === -1) return;
-
-      if (Math.abs(e.deltaY) < 10) return; // Ignore small movements
-
-      if (e.deltaY > 0) {
-        // Move down
-        if (idx < folders.length - 1) {
-          handleMoveFolderIdx(pickedFolderId, idx + 1, false);
-          lastWheelTime.current = now;
-        }
-      } else if (e.deltaY < 0) {
-        // Move up
-        if (idx > 0) {
-          handleMoveFolderIdx(pickedFolderId, idx - 1, false);
-          lastWheelTime.current = now;
-        }
-      }
-    };
-
-    // We use capture to override normal scroll if folder is picked
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [pickedFolderId, folders, activeModal, t]);
-
-  const handleFolderContextMenu = (event: React.MouseEvent, folder: FolderOption) => {
-    event.preventDefault();
-    setFolderContextMenu({
-      x: event.clientX,
-      y: event.clientY,
-      folder,
-    });
-  };
-
-  useEffect(() => {
-    const handleClickOutside = () => setFolderContextMenu(null);
-    if (folderContextMenu) {
-      window.addEventListener('click', handleClickOutside);
-      window.addEventListener('scroll', handleClickOutside, true);
-    }
-    return () => {
-      window.removeEventListener('click', handleClickOutside);
-      window.removeEventListener('scroll', handleClickOutside, true);
-    };
-  }, [folderContextMenu]);
 
   useEffect(() => {
     loadCategories();
@@ -311,21 +366,6 @@ function StoragePageContent({
     clearFolderMoveFeedback();
   };
 
-  const loadFiles = async (listMode: 'active' | 'trash' = activeList) => {
-    try {
-      setLoading(true);
-      const response = await api.get('/storage/files', {
-        params: listMode === 'trash' ? { deleted: 'only' } : undefined,
-      });
-      setFiles(response.data);
-    } catch (error) {
-      console.error('Failed to load files:', error);
-      toast.error(t.toasts.loadFilesFailed.value);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadCategories = async () => {
     try {
       setCategoriesLoading(true);
@@ -336,26 +376,6 @@ function StoragePageContent({
       toast.error(t.toasts.loadCategoriesFailed.value);
     } finally {
       setCategoriesLoading(false);
-    }
-  };
-
-  const loadTags = async () => {
-    try {
-      const response = await api.get('/storage/tags');
-      setTags(response.data || []);
-    } catch (error) {
-      console.error('Failed to load tags:', error);
-      toast.error(t.toasts.loadTagsFailed.value);
-    }
-  };
-
-  const loadFolders = async () => {
-    try {
-      const response = await api.get('/storage/folders');
-      setFolders(response.data || []);
-    } catch (error) {
-      console.error('Failed to load folders:', error);
-      toast.error(t.toasts.loadFoldersFailed.value);
     }
   };
 
@@ -372,93 +392,10 @@ function StoragePageContent({
     }
   };
 
-  const handleView = (fileId: string) => {
-    const file = files.find(f => f.id === fileId);
-    if (
-      file &&
-      (file.status === 'completed' || file.status === 'parsed' || file.status === 'validated')
-    ) {
-      router.push(`/statements/${fileId}/edit`);
-    } else {
-      router.push(`/storage/${fileId}`);
-    }
-  };
-
-  const handleDownload = async (fileId: string, fileName: string) => {
-    try {
-      const response = await api.get(`/storage/files/${fileId}/download`, {
-        responseType: 'blob',
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      toast.success(t.toasts.downloaded.value);
-    } catch (error) {
-      console.error('Failed to download file:', error);
-      toast.error(t.toasts.downloadFailed.value);
-    }
-  };
-
-  const handleCategoryChange = async (fileId: string, categoryId: string) => {
-    try {
-      const response = await api.patch(`/storage/files/${fileId}/category`, {
-        categoryId: categoryId || null,
-      });
-
-      setFiles(prev =>
-        prev.map(file =>
-          file.id === fileId
-            ? {
-                ...file,
-                categoryId: response.data?.categoryId ?? null,
-                category: response.data?.category ?? null,
-              }
-            : file,
-        ),
-      );
-      toast.success(t.toasts.categoryUpdated.value);
-    } catch (error) {
-      console.error('Failed to update file category:', error);
-      toast.error(t.toasts.categoryUpdateFailed.value);
-    }
-  };
-
   const canEditFile = useCallback(
     (file: StorageFile) => !file.deletedAt && (file.isOwner || file.permissionType === 'editor'),
     [],
   );
-  const canEditFolder = (folder: FolderOption) => folder.userId !== null;
-  const canEditTag = (tag: TagOption) => tag.userId !== null;
-  const clampFolderName = (value: string, previous: string) => {
-    if (value.length <= FOLDER_NAME_MAX) return value;
-    if (previous.length <= FOLDER_NAME_MAX) {
-      toast.error(t.folders.nameTooLong.value);
-    }
-    return value.slice(0, FOLDER_NAME_MAX);
-  };
-
-  const clearFolderMoveFeedback = () => {
-    if (folderMoveFeedbackTimeout.current) {
-      clearTimeout(folderMoveFeedbackTimeout.current);
-      folderMoveFeedbackTimeout.current = null;
-    }
-    setFolderMoveFeedback(null);
-  };
-
-  const setFolderMoveMessage = (tone: 'success' | 'error', message: string) => {
-    clearFolderMoveFeedback();
-    setFolderMoveFeedback({ tone, message });
-    folderMoveFeedbackTimeout.current = setTimeout(() => {
-      setFolderMoveFeedback(null);
-      folderMoveFeedbackTimeout.current = null;
-    }, 3500);
-  };
-
   const sensors = useSensors(
     useSensor(
       PointerSensor,
@@ -508,384 +445,6 @@ function StoragePageContent({
     if (folderModalFromDrag) {
       closeModal();
     }
-  };
-
-  const handleMoveToFolder = async (fileId: string, folderId: string | null) => {
-    try {
-      await api.patch(`/storage/files/${fileId}/folder`, {
-        folderId,
-      });
-      setFiles(prev =>
-        prev.map(file =>
-          file.id === fileId
-            ? {
-                ...file,
-                folderId,
-                folder: folderId ? (folders.find(folder => folder.id === folderId) ?? null) : null,
-              }
-            : file,
-        ),
-      );
-      const folderName = folderId ? folders.find(f => f.id === folderId)?.name : null;
-      const message = folderName
-        ? `${tx(['toasts', 'fileMovedTo'], 'File moved to folder')} "${folderName}"`
-        : t.toasts.folderUpdated.value;
-
-      toast.success(message);
-      setFolderMoveMessage('success', message);
-    } catch (error) {
-      console.error('Failed to move file to folder:', error);
-      toast.error(t.toasts.folderUpdateFailed.value);
-      setFolderMoveMessage('error', t.toasts.folderUpdateFailed.value);
-    }
-  };
-
-  const handleCreateFolder = async () => {
-    const name = newFolderName.trim();
-    if (!name) {
-      toast.error(t.toasts.folderNameRequired.value);
-      return;
-    }
-    if (name.length > FOLDER_NAME_MAX) {
-      toast.error(t.folders.nameTooLong.value);
-      return;
-    }
-    try {
-      const response = await api.post('/storage/folders', { name });
-      setFolders(prev => [...prev, response.data].sort((a, b) => a.name.localeCompare(b.name)));
-      setNewFolderName('');
-      toast.success(t.toasts.folderCreated.value);
-    } catch (error) {
-      console.error('Failed to create folder:', error);
-      toast.error(t.toasts.folderCreateFailed.value);
-    }
-  };
-
-  const handleStartEditFolder = (folder: FolderOption) => {
-    setEditingFolderId(folder.id);
-    setEditingFolderName(folder.name);
-    setFolderTagPickerId(null);
-  };
-
-  const handleRenameFolder = async (folderId: string) => {
-    const name = editingFolderName.trim();
-    if (!name) {
-      toast.error(t.toasts.folderNameRequired.value);
-      return;
-    }
-    if (name.length > FOLDER_NAME_MAX) {
-      toast.error(t.folders.nameTooLong.value);
-      return;
-    }
-    try {
-      const response = await api.patch(`/storage/folders/${folderId}`, {
-        name,
-      });
-      setFolders(prev =>
-        prev.map(folder => (folder.id === folderId ? { ...folder, ...response.data } : folder)),
-      );
-      setFiles(prev =>
-        prev.map(file =>
-          file.folderId === folderId
-            ? {
-                ...file,
-                folder: file.folder
-                  ? { ...file.folder, name: response.data?.name || name }
-                  : { id: folderId, name: response.data?.name || name },
-              }
-            : file,
-        ),
-      );
-      setEditingFolderId(null);
-      setEditingFolderName('');
-      toast.success(t.toasts.folderRenamed.value);
-    } catch (error) {
-      console.error('Failed to rename folder:', error);
-      toast.error(t.toasts.folderRenameFailed.value);
-    }
-  };
-
-  const handleCancelEditFolder = () => {
-    setEditingFolderId(null);
-    setEditingFolderName('');
-  };
-
-  const handleUpdateFolderTag = async (folderId: string, tagId: string | null) => {
-    try {
-      const response = await api.patch(`/storage/folders/${folderId}`, {
-        tagId,
-      });
-      setFolders(prev =>
-        prev.map(folder => (folder.id === folderId ? { ...folder, ...response.data } : folder)),
-      );
-      setFolderTagPickerId(null);
-    } catch (error) {
-      console.error('Failed to update folder tag:', error);
-      toast.error(t.toasts.folderTagUpdateFailed.value);
-    }
-  };
-
-  const handleCreateTag = async () => {
-    const name = newTagName.trim();
-    if (!name) {
-      toast.error(t.toasts.tagNameRequired.value);
-      return;
-    }
-    try {
-      const payload = { name, color: newTagColor || undefined };
-      const response = await api.post('/storage/tags', payload);
-      setTags(prev => [...prev, response.data].sort((a, b) => a.name.localeCompare(b.name)));
-      setNewTagName('');
-      toast.success(t.toasts.tagCreated.value);
-    } catch (error) {
-      console.error('Failed to create tag:', error);
-      toast.error(t.toasts.tagCreateFailed.value);
-    }
-  };
-
-  const handleStartEditTag = (tag: TagOption) => {
-    setEditingTagId(tag.id);
-    setEditingTagName(tag.name);
-    setEditingTagColor(tag.color ?? '#4f46e5');
-    setEditingTagPickerId(null);
-  };
-
-  const handleRenameTag = async (tagId: string) => {
-    const name = editingTagName.trim();
-    if (!name) {
-      toast.error(t.toasts.tagNameRequired.value);
-      return;
-    }
-    try {
-      const response = await api.patch(`/storage/tags/${tagId}`, {
-        name,
-        color: editingTagColor,
-      });
-      setTags(prev => prev.map(tag => (tag.id === tagId ? { ...tag, ...response.data } : tag)));
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.tagId === tagId || folder.tag?.id === tagId
-            ? {
-                ...folder,
-                tag: response.data?.id
-                  ? { ...folder.tag, ...response.data }
-                  : { ...folder.tag, name, color: editingTagColor },
-              }
-            : folder,
-        ),
-      );
-      setFiles(prev =>
-        prev.map(file => ({
-          ...file,
-          tags: (file.tags || []).map(tag =>
-            tag.id === tagId
-              ? {
-                  ...tag,
-                  name: response.data?.name || name,
-                  color: response.data?.color ?? editingTagColor ?? null,
-                }
-              : tag,
-          ),
-        })),
-      );
-      setEditingTagId(null);
-      setEditingTagName('');
-      setEditingTagColor(null);
-      toast.success(t.toasts.tagRenamed.value);
-    } catch (error) {
-      console.error('Failed to rename tag:', error);
-      toast.error(t.toasts.tagRenameFailed.value);
-    }
-  };
-
-  const handleCancelEditTag = () => {
-    setEditingTagId(null);
-    setEditingTagName('');
-    setEditingTagColor(null);
-    setEditingTagPickerId(null);
-  };
-
-  const confirmDeleteTag = (tag: TagOption) => {
-    setTagToDelete(tag);
-    setDeleteTagModalOpen(true);
-  };
-
-  const handleDeleteTag = async () => {
-    if (!tagToDelete) return;
-    const toastId = toast.loading(t.toasts.tagDeleteLoading.value);
-    try {
-      await api.delete(`/storage/tags/${tagToDelete.id}`);
-      setTags(prev => prev.filter(tag => tag.id !== tagToDelete.id));
-      // Remove tag from folders
-      setFolders(prev =>
-        prev.map(folder =>
-          folder.tagId === tagToDelete.id ? { ...folder, tagId: null, tag: null } : folder,
-        ),
-      );
-      // Remove tag from files
-      setFiles(prev =>
-        prev.map(file => ({
-          ...file,
-          tags: (file.tags || []).filter(tag => tag.id !== tagToDelete.id),
-        })),
-      );
-      toast.success(t.toasts.tagDeleted.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to delete tag:', error);
-      toast.error(t.toasts.tagDeleteFailed.value, { id: toastId });
-    } finally {
-      setTagToDelete(null);
-      setDeleteTagModalOpen(false);
-    }
-  };
-
-  const confirmDelete = (file: StorageFile) => {
-    setFileToDelete(file);
-    setDeleteModalOpen(true);
-  };
-
-  const confirmPermanentDelete = (file: StorageFile) => {
-    setFileToDeletePermanently(file);
-    setPermanentDeleteModalOpen(true);
-  };
-
-  const closeDeleteFolderModal = () => {
-    setDeleteFolderModalOpen(false);
-    setFolderToDelete(null);
-    setDeleteFolderWithContents(false);
-  };
-
-  const confirmDeleteFolder = (folder: FolderOption) => {
-    setFolderToDelete(folder);
-    setDeleteFolderWithContents(false);
-    setDeleteFolderModalOpen(true);
-    setFolderTagPickerId(null);
-  };
-
-  const handleDeleteFolder = async () => {
-    const targetFolder = folderToDelete;
-    const removeContents = deleteFolderWithContents;
-    if (!targetFolder) return;
-    const toastId = toast.loading(t.toasts.folderDeleteLoading.value);
-    try {
-      await api.delete(`/storage/folders/${targetFolder.id}`, {
-        params: { deleteFiles: removeContents },
-      });
-      setFolders(prev => prev.filter(folder => folder.id !== targetFolder.id));
-      if (removeContents) {
-        setFiles(prev => prev.filter(file => file.folderId !== targetFolder.id));
-      } else {
-        setFiles(prev =>
-          prev.map(file =>
-            file.folderId === targetFolder.id ? { ...file, folderId: null, folder: null } : file,
-          ),
-        );
-      }
-      if (activeFolderId === targetFolder.id) {
-        setActiveFolderId('');
-      }
-      if (editingFolderId === targetFolder.id) {
-        setEditingFolderId(null);
-        setEditingFolderName('');
-      }
-      if (folderTagPickerId === targetFolder.id) {
-        setFolderTagPickerId(null);
-      }
-      toast.success(t.toasts.folderDeleted.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to delete folder:', error);
-      toast.error(t.toasts.folderDeleteFailed.value, { id: toastId });
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!fileToDelete) return;
-    const toastId = toast.loading(t.delete.loading.value);
-    try {
-      await api.post(`/storage/files/${fileToDelete.id}/trash`);
-      setFiles(prev => prev.filter(file => file.id !== fileToDelete.id));
-      toast.success(t.delete.success.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to move file to trash:', error);
-      toast.error(t.delete.error.value, { id: toastId });
-    }
-    setFileToDelete(null);
-  };
-
-  const handleRestoreFromTrash = async (file: StorageFile) => {
-    const toastId = toast.loading(t.trash.restoreLoading.value);
-    try {
-      await api.post(`/storage/files/${file.id}/trash/restore`);
-      setFiles(prev => prev.filter(item => item.id !== file.id));
-      toast.success(t.trash.restoreSuccess.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to restore file from trash:', error);
-      toast.error(t.trash.restoreFailed.value, { id: toastId });
-    }
-  };
-
-  const handleMoveFolderIdx = (fromId: string, toIdx: number, finalize = true) => {
-    const fromIdx = folders.findIndex(f => f.id === fromId);
-    if (fromIdx === -1) return;
-    const newFolders = [...folders];
-    const [movedFolder] = newFolders.splice(fromIdx, 1);
-    newFolders.splice(toIdx, 0, movedFolder);
-    setFolders(newFolders);
-    if (finalize) {
-      setPickedFolderId(null);
-      toast.success(t.toasts.folderUpdated.value);
-    }
-  };
-
-  const handlePermanentDelete = async () => {
-    if (!fileToDeletePermanently) return;
-    const toastId = toast.loading(t.trash.deleteLoading.value);
-    try {
-      await api.delete(`/storage/files/${fileToDeletePermanently.id}/trash`);
-      setFiles(prev => prev.filter(file => file.id !== fileToDeletePermanently.id));
-      toast.success(t.trash.deleteSuccess.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to permanently delete file:', error);
-      toast.error(t.trash.deleteFailed.value, { id: toastId });
-    }
-    setFileToDeletePermanently(null);
-  };
-
-  const handleBulkRestore = async (ids = selectedTrashIds) => {
-    if (!ids.length) return;
-    const toastId = toast.loading(t.trash.restoreLoading.value);
-    try {
-      await api.post('/storage/files/trash/bulk/restore', {
-        statementIds: ids,
-      });
-      setFiles(prev => prev.filter(file => !ids.includes(file.id)));
-      setSelectedTrashIds([]);
-      toast.success(t.trash.restoreSuccess.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to restore files from trash:', error);
-      toast.error(t.trash.restoreFailed.value, { id: toastId });
-    }
-  };
-
-  const handleBulkDeleteFromTrash = async (ids = selectedTrashIds) => {
-    if (!ids.length) return;
-    const toastId = toast.loading(t.trash.deleteLoading.value);
-    try {
-      await api.post('/storage/files/bulk/trash/delete', {
-        statementIds: ids,
-      });
-      setFiles(prev => prev.filter(file => !ids.includes(file.id)));
-      setSelectedTrashIds([]);
-      toast.success(t.trash.deleteSuccess.value, { id: toastId });
-    } catch (error) {
-      console.error('Failed to delete files from trash:', error);
-      toast.error(t.trash.deleteFailed.value, { id: toastId });
-    }
-  };
-
-  const handleEmptyTrash = async () => {
-    const ids = files.map(file => file.id);
-    await handleBulkDeleteFromTrash(ids);
   };
 
   const handleSortChange = (value: string) => {
@@ -1574,7 +1133,7 @@ function StoragePageContent({
                     </span>
                     <button
                       type="button"
-                      onClick={() => handleBulkRestore()}
+                      onClick={() => handleBulkRestore(selectedTrashIds)}
                       disabled={selectedTrashCount === 0}
                       className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-100 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -2594,7 +2153,7 @@ function StoragePageContent({
         <ConfirmModal
           isOpen={bulkDeleteModalOpen}
           onClose={() => setBulkDeleteModalOpen(false)}
-          onConfirm={() => handleBulkDeleteFromTrash()}
+          onConfirm={() => handleBulkDeleteFromTrash(selectedTrashIds)}
           title={t.trash.bulkDeleteTitle.value}
           message={t.trash.bulkDeleteMessage.value.replace('{count}', String(selectedTrashCount))}
           confirmText={t.trash.bulkDeleteConfirm.value}
