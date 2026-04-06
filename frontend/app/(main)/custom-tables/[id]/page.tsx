@@ -2,24 +2,22 @@
 
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { Checkbox } from '@/app/components/ui/checkbox';
-import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
-import { Spinner } from '@/app/components/ui/spinner';
+import { ModalShell } from '@/app/components/ui/modal-shell';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { format } from 'date-fns';
 import { enUS, kk, ru } from 'date-fns/locale';
 import { CheckCircle, Plus, Printer, Save, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CustomTableTanStack } from './CustomTableTanStack';
+import { PastePreviewModal } from './components/PastePreviewModal';
 import { RowDrawer } from './components/RowDrawer';
 import { useBulkRowActions } from './hooks/useBulkRowActions';
 import {
   type ColumnFilterState,
   DEFAULT_COLUMN_WIDTH,
-  type RowFilterOp,
   useColumnConfig,
 } from './hooks/useColumnConfig';
 import { useColumnManagement } from './hooks/useColumnManagement';
@@ -29,10 +27,10 @@ import { useRowActions } from './hooks/useRowActions';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTabStats } from './hooks/useTabStats';
 import { useTableData } from './hooks/useTableData';
+import { useTableFilters } from './hooks/useTableFilters';
 import { useTableGrid } from './hooks/useTableGrid';
 import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
-import type { PasteErrorKey } from './utils/pasteUtils';
 import {
   type QuickTab,
   buildQuickTabs,
@@ -45,10 +43,6 @@ import { isContentEditableTarget, tx } from './utils/tableHelpers';
 import type { CustomTablePageColumn } from './utils/tableTypes';
 
 type EditingScope = 'name' | 'description' | 'both';
-
-type RowFilterValue = string | number | boolean | Array<string | number | boolean>;
-
-type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
 
 export default function CustomTableDetailPage() {
   const params = useParams<{ id: string }>();
@@ -98,9 +92,6 @@ export default function CustomTableDetailPage() {
   const [activeTabId, setActiveTabId] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const columnsTabId = '__columns__';
-
-  const [dateFrom, setDateFrom] = useState<string | null>(null);
-  const [dateTo, setDateTo] = useState<string | null>(null);
 
   const columnTypes = useMemo(
     () => [
@@ -305,134 +296,14 @@ export default function CustomTableDetailPage() {
     setGridFiltersParam(next);
   };
 
-  const parseDateValue = (value: unknown): Date | null => {
-    if (!value) return null;
-    const raw = typeof value === 'string' ? value : String(value);
-    const parsed = new Date(raw);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  };
-
-  const requestFilters = useMemo<RowFilter[]>(() => {
-    const result: RowFilter[] = [];
-    const toIsoDate = (date: Date) => format(date, 'yyyy-MM-dd', { locale: dateFnsLocale });
-
-    for (const col of orderedColumns) {
-      const state = columnFilters[col.key];
-      if (!state) continue;
-
-      if (col.type === 'number') {
-        const min = state?.min !== undefined && state?.min !== '' ? Number(state.min) : undefined;
-        const max = state?.max !== undefined && state?.max !== '' ? Number(state.max) : undefined;
-        if (
-          min !== undefined &&
-          max !== undefined &&
-          Number.isFinite(min) &&
-          Number.isFinite(max)
-        ) {
-          result.push({ col: col.key, op: 'between', value: [min, max] });
-        } else if (min !== undefined && Number.isFinite(min)) {
-          result.push({ col: col.key, op: 'gte', value: min });
-        } else if (max !== undefined && Number.isFinite(max)) {
-          result.push({ col: col.key, op: 'lte', value: max });
-        }
-        continue;
-      }
-
-      if (col.type === 'date') {
-        const from = state?.from ? new Date(`${state.from}T00:00:00`) : undefined;
-        const to = state?.to ? new Date(`${state.to}T00:00:00`) : undefined;
-        const fromOk = from && !Number.isNaN(from.getTime());
-        const toOk = to && !Number.isNaN(to.getTime());
-        if (fromOk && toOk && from && to) {
-          result.push({
-            col: col.key,
-            op: 'between',
-            value: [toIsoDate(from), toIsoDate(to)],
-          });
-        } else if (fromOk && from) {
-          result.push({ col: col.key, op: 'gte', value: toIsoDate(from) });
-        } else if (toOk && to) {
-          result.push({ col: col.key, op: 'lte', value: toIsoDate(to) });
-        }
-        continue;
-      }
-
-      const op: RowFilterOp = state?.op || 'contains';
-      if (op === 'isEmpty' || op === 'isNotEmpty') {
-        result.push({ col: col.key, op });
-        continue;
-      }
-      const rawValue = typeof state?.value === 'string' ? state.value : String(state?.value ?? '');
-      const value = rawValue.trim();
-      if (!value) continue;
-      result.push({ col: col.key, op, value });
-    }
-    return result;
-  }, [orderedColumns, columnFilters, dateFnsLocale]);
-
-  const dateFilterColKey = useMemo(() => {
-    const firstDateCol = orderedColumns.find(c => c.type === 'date');
-    return firstDateCol?.key || null;
-  }, [orderedColumns]);
-
-  const dateFilters = useMemo<RowFilter[]>(() => {
-    if (!dateFilterColKey) return [];
-    const from = parseDateValue(dateFrom);
-    const to = parseDateValue(dateTo);
-    const fromOk = from && !Number.isNaN(from.getTime());
-    const toOk = to && !Number.isNaN(to.getTime());
-    if (!fromOk && !toOk) return [];
-    const toIsoDate = (date: Date) => format(date, 'yyyy-MM-dd', { locale: dateFnsLocale });
-    if (fromOk && toOk && from && to) {
-      return [
-        {
-          col: dateFilterColKey,
-          op: 'between',
-          value: [toIsoDate(from), toIsoDate(to)],
-        },
-      ];
-    }
-    if (fromOk && from) return [{ col: dateFilterColKey, op: 'gte', value: toIsoDate(from) }];
-    if (toOk && to) return [{ col: dateFilterColKey, op: 'lte', value: toIsoDate(to) }];
-    return [];
-  }, [dateFilterColKey, dateFrom, dateTo, dateFnsLocale]);
-
-  const searchFilter = useMemo<RowFilter | null>(() => {
-    const value = searchQuery.trim();
-    if (!value) return null;
-    return { col: '__search__', op: 'search', value };
-  }, [searchQuery]);
-
-  const combinedFiltersParam = useMemo(() => {
-    const base = parseFiltersParam(gridFiltersParam);
-    const tabFilters = activeTabFilter ? [activeTabFilter] : [];
-    const searchFilters = searchFilter ? [searchFilter] : [];
-    const overrideCols = new Set<string>([
-      ...requestFilters.map(f => f.col),
-      ...dateFilters.map(f => f.col),
-      ...tabFilters.map(f => f.col),
-      ...searchFilters.map(f => f.col),
-    ]);
-    const baseWithoutOverrides = base.filter(f => !overrideCols.has(f.col));
-    const merged = [
-      ...baseWithoutOverrides,
-      ...requestFilters,
-      ...dateFilters,
-      ...tabFilters,
-      ...searchFilters,
-    ];
-    return merged.length ? JSON.stringify(merged) : undefined;
-  }, [gridFiltersParam, requestFilters, dateFilters, activeTabFilter, searchFilter]);
-
-  function parseFiltersParam(raw: string | undefined): RowFilter[] {
-    if (!raw) return [];
-    try {
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? (parsed as RowFilter[]) : [];
-    } catch {
-      return [];
-    }
-  }
+  const { dateFrom, setDateFrom, dateTo, setDateTo, combinedFiltersParam } = useTableFilters({
+    orderedColumns,
+    columnFilters,
+    gridFiltersParam,
+    activeTabFilter,
+    searchQuery,
+    dateFnsLocale,
+  });
 
   const { rows, setRows, loadingRows, hasMore, loadRows } = useTableGrid({
     tableId,
@@ -1073,156 +944,19 @@ export default function CustomTableDetailPage() {
         }
       `}</style>
 
-      <ModalShell
+      <PastePreviewModal
+        t={t}
         isOpen={pastePreviewOpen}
         onClose={resetPastePreview}
-        size="full"
-        showCloseButton={!pasteApplying}
-        closeOnBackdropClick={!pasteApplying}
-        closeOnEscape={!pasteApplying}
-        className="w-[95vw] max-w-none h-[90vh] rounded-2xl overflow-hidden"
-        contentClassName="flex flex-col h-full p-0 gap-0"
-        title={
-          <div className="flex items-center gap-4">
-            <span className="text-xl font-semibold tracking-tight text-gray-900">
-              {pastePreview
-                ? `${tx(t, ['paste', 'titlePrefix'], '')}${pastePreview.totalRows}${tx(t, ['paste', 'titleSuffix'], '')}`
-                : tx(t, ['paste', 'titleFallback'], 'Paste preview')}
-            </span>
-            {pastePreview?.hasHeadersToggle && (
-              <div className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 cursor-pointer transition-colors bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200">
-                <Checkbox
-                  checked={pasteUseHeaders}
-                  onCheckedChange={handlePasteHeadersToggle}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20"
-                />
-                <span>{tx(t, ['paste', 'headersToggle'], 'Use first row as headers')}</span>
-              </div>
-            )}
-          </div>
-        }
-        footer={
-          <ModalFooter
-            onCancel={resetPastePreview}
-            onConfirm={handlePasteAdd}
-            cancelText={tx(t, ['paste', 'cancel'], 'Cancel')}
-            confirmText={tx(t, ['paste', 'add'], 'Add')}
-            isConfirmLoading={pasteApplying}
-            isConfirmDisabled={
-              pasteParsing ||
-              !pastePreview?.dataRows.length ||
-              Boolean(pastePreview?.hasErrors) ||
-              hasMissingPasteColumnTitles
-            }
-          />
-        }
-      >
-        {pasteParsing && (
-          <div className="flex flex-1 items-center justify-center gap-3 text-sm text-gray-500">
-            <Spinner className="h-6 w-6 text-primary" />
-            <span>{tx(t, ['paste', 'parsing'], 'Parsing...')}</span>
-          </div>
-        )}
-        {!pasteParsing && pastePreview && (
-          <div className="flex flex-col h-full">
-            {pastePreview.hasErrors && (
-              <div className="flex-none px-6 py-3 border-b border-gray-100 bg-white">
-                <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-2 text-sm text-amber-900">
-                  <div className="font-semibold whitespace-nowrap text-xs uppercase tracking-wide opacity-80 pt-0.5">
-                    {tx(t, ['paste', 'errorsTitle'], 'Errors')}
-                  </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-amber-700">
-                    {(['date', 'amount', 'currency', 'paid'] as PasteErrorKey[])
-                      .filter(key => pastePreview.errors[key] > 0)
-                      .map(key => (
-                        <span
-                          key={key}
-                          className="flex items-center gap-1 bg-amber-100/50 px-2 py-0.5 rounded text-xs font-medium"
-                        >
-                          <span>{tx(t, ['paste', 'errors', key], key)}:</span>
-                          <span className="font-mono font-bold">{pastePreview.errors[key]}</span>
-                        </span>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex-1 relative bg-gray-50/30">
-              {pastePreview.totalRows === 0 ? (
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                  {tx(t, ['paste', 'noRows'], 'No rows found')}
-                </div>
-              ) : (
-                <div className="absolute inset-0 overflow-auto">
-                  <table className="min-w-full border-collapse text-sm">
-                    <thead className="sticky top-0 z-10 bg-white shadow-sm border-b border-gray-200">
-                      <tr>
-                        {pastePreview.columns.map(col => (
-                          <th
-                            key={`${col.field}-${col.columnKey}`}
-                            className="px-3 py-3 text-left min-w-[180px] border-r border-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-500"
-                          >
-                            {col.label}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-50">
-                      {pastePreview.previewRows.map(row => (
-                        <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
-                          {row.cells.map((cell, index) => (
-                            <td
-                              key={`${row.id}-${index}`}
-                              className={`px-3 py-2 text-sm border-r border-gray-50 transition-colors ${
-                                cell.error ? 'bg-red-50 text-red-700' : 'text-gray-700'
-                              }`}
-                            >
-                              {cell.sourceIndex !== null ? (
-                                <input
-                                  value={cell.value}
-                                  onChange={event =>
-                                    handlePasteCellChange(
-                                      row.rowIndex,
-                                      cell.sourceIndex as number,
-                                      event.target.value,
-                                    )
-                                  }
-                                  className={`w-full bg-transparent border-none p-0 focus:ring-0 text-sm ${
-                                    cell.error
-                                      ? 'text-red-700 placeholder:text-red-400'
-                                      : 'text-gray-900'
-                                  }`}
-                                />
-                              ) : (
-                                <div className="truncate">{cell.value || '—'}</div>
-                              )}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                      {pastePreview.extraRowsCount > 0 && (
-                        <tr>
-                          <td
-                            colSpan={pastePreview.columns.length}
-                            className="py-6 text-center text-xs text-gray-400 bg-gray-50/30"
-                          >
-                            {tx(t, ['paste', 'moreRowsPrefix'], '')}
-                            <span className="font-semibold text-gray-600 mx-1">
-                              {pastePreview.extraRowsCount}
-                            </span>
-                            {tx(t, ['paste', 'moreRowsSuffix'], '')}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </ModalShell>
+        pasteApplying={pasteApplying}
+        pasteParsing={pasteParsing}
+        pastePreview={pastePreview}
+        pasteUseHeaders={pasteUseHeaders}
+        hasMissingPasteColumnTitles={hasMissingPasteColumnTitles}
+        onHeadersToggle={handlePasteHeadersToggle}
+        onCellChange={handlePasteCellChange}
+        onConfirm={handlePasteAdd}
+      />
 
       <RowDrawer
         open={rowDrawerOpen}
