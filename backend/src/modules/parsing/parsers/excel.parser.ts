@@ -33,8 +33,15 @@ export class ExcelParser extends BaseTabularParser {
     // Map columns
     const columnMapping = this.mapColumns(headers);
 
+    // Detect currency from header rows before building transactions
+    const headerSample = data
+      .slice(0, 5)
+      .map(r => (r || []).join(' '))
+      .join(' ');
+    const detectedCurrency = this.detectCurrency(headerSample) || 'KZT';
+
     // Extract metadata from first few rows or filename
-    const metadata = this.extractMetadata(filePath, data);
+    const metadata = this.extractMetadata(filePath, data, detectedCurrency);
 
     // Extract transactions
     const transactions: ParsedTransaction[] = [];
@@ -44,7 +51,7 @@ export class ExcelParser extends BaseTabularParser {
         continue;
       }
 
-      const transaction = this.parseRow(row, columnMapping, index => row[index], 'Excel');
+      const transaction = this.parseRow(row, columnMapping, index => row[index], 'Excel', detectedCurrency);
       if (transaction) {
         transactions.push(transaction);
       }
@@ -55,7 +62,11 @@ export class ExcelParser extends BaseTabularParser {
       transactions,
     };
   }
-  private extractMetadata(filePath: string, data: ExcelRow[]): ParsedStatement['metadata'] {
+  private extractMetadata(
+    filePath: string,
+    data: ExcelRow[],
+    detectedCurrency = 'KZT',
+  ): ParsedStatement['metadata'] {
     // Try to extract from first rows or use defaults
     const accountNumber = this.extractAccountNumberFromData(data) || 'Unknown';
     const dateRange = this.extractDateRangeFromData(data);
@@ -70,7 +81,7 @@ export class ExcelParser extends BaseTabularParser {
       accountNumber,
       dateFrom: dateRange.from || new Date(),
       dateTo: dateRange.to || new Date(),
-      currency: 'KZT',
+      currency: detectedCurrency,
       rawHeader: headerInfo.rawHeader,
       normalizedHeader: headerInfo.normalizedHeader,
       locale: localeInfo.locale !== 'unknown' ? localeInfo.locale : undefined,

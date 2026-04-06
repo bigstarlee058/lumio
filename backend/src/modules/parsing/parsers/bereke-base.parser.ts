@@ -141,10 +141,12 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
       }`,
     );
 
+    const detectedCurrency = this.detectCurrency(normalizedText) || 'KZT';
+
     const transactionStartTime = Date.now();
     console.log(`[${this.parserName}] Extracting transactions from pdf2table rows...`);
     const tableTransactions = mapPdfTableRowsToTransactions(tableRows, {
-      defaultCurrency: 'KZT',
+      defaultCurrency: detectedCurrency,
       stopWords: ['итого', 'оборот', 'остаток'],
     });
     console.log(
@@ -192,7 +194,7 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
         dateTo: to,
         balanceStart: balanceStart || undefined,
         balanceEnd: balanceEnd || undefined,
-        currency: 'KZT',
+        currency: detectedCurrency,
       },
       transactions,
     };

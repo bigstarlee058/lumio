@@ -437,11 +437,14 @@ export class StatementProcessingService {
 
     const statement = await this.statementRepository.findOne({
       where: { id: statementId },
+      relations: ['workspace'],
     });
 
     if (!statement) {
       throw new Error(`Statement ${statementId} not found`);
     }
+
+    const workspaceCurrency = statement.workspace?.currency || null;
 
     const manualCategorySelectionRequired =
       statement.parsingDetails?.manualCategorySelectionRequired === true;
@@ -647,7 +650,7 @@ export class StatementProcessingService {
       }> = [];
       const schemaResult = this.enforceTransactionSchema(
         parsedStatement.transactions,
-        parsedStatement.metadata?.currency || statement.currency || 'KZT',
+        parsedStatement.metadata?.currency || statement.currency || workspaceCurrency || 'KZT',
         addLog,
         droppedSamples,
       );
@@ -661,6 +664,7 @@ export class StatementProcessingService {
       const enrichedMetadata = this.buildCompleteMetadata(
         parsedStatement,
         parsedStatement.transactions,
+        workspaceCurrency,
       );
       parsingDetails.metadataExtracted = {
         accountNumber: enrichedMetadata.accountNumber || undefined,
@@ -946,7 +950,7 @@ export class StatementProcessingService {
           debit: parsed.debit ?? null,
           credit: parsed.credit ?? null,
           amount,
-          currency: parsed.currency || statement.currency || 'KZT',
+          currency: parsed.currency || statement.currency || statement.workspace?.currency || 'KZT',
           paymentPurpose,
           transactionType,
           workspaceId: statement.workspaceId,
@@ -969,7 +973,8 @@ export class StatementProcessingService {
           classification.categoryId = aiCategoryByIndex.get(i);
         }
 
-        const currency = parsed.currency || statement.currency || 'KZT';
+        const currency =
+          parsed.currency || statement.currency || statement.workspace?.currency || 'KZT';
         const exchangeRate = parsed.exchangeRate ?? null;
         const amountForeign = parsed.amountForeign ?? null;
 
@@ -1109,6 +1114,7 @@ export class StatementProcessingService {
   private buildCompleteMetadata(
     parsed: ParsedStatement,
     transactions: ParsedTransaction[],
+    workspaceCurrency?: string | null,
   ): {
     accountNumber: string;
     dateFrom: Date;
@@ -1140,7 +1146,8 @@ export class StatementProcessingService {
     const dateTo = parsed.metadata.dateTo || maxDate || dateFrom;
     const balanceStart = parsed.metadata.balanceStart ?? null;
     const balanceEnd = parsed.metadata.balanceEnd ?? null;
-    const currency = parsed.metadata.currency || currencyFromTransactions || 'KZT';
+    const currency =
+      parsed.metadata.currency || currencyFromTransactions || workspaceCurrency || 'KZT';
 
     return {
       accountNumber,

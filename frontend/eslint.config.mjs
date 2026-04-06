@@ -1,0 +1,176 @@
+// ESLint 9 flat config — enforces structural rules Biome cannot:
+// max-lines, max-lines-per-function, max-params, max-depth, complexity,
+// explicit return types, no-await-in-loop, and React hook discipline.
+//
+// Biome handles: formatting, naming conventions, no-any, no-nested-ternary,
+// exhaustive deps, no-delete, no-accumulating-spread.
+// ESLint handles: everything below that requires AST traversal + type info.
+
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default tseslint.config(
+  // ── Ignore patterns ────────────────────────────────────────────────────────
+  {
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'out/**',
+      'build/**',
+      'coverage/**',
+      '.intlayer/**',
+      '**/*.stories.*',
+      '**/*.config.{js,mjs,cjs,ts}',
+      'next-env.d.ts',
+    ],
+  },
+
+  // ── Base ruleset ───────────────────────────────────────────────────────────
+  js.configs.recommended,
+
+  // ── TypeScript: strict (no type-checking pass — use tsc for that) ─────────
+  ...tseslint.configs.strict,
+
+  // ── Language options ───────────────────────────────────────────────────────
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parserOptions: {
+        // Type-aware rules (no-floating-promises, await-thenable, etc.)
+        project: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
+  },
+
+  // ── Core structural rules (the ones Biome cannot enforce) ─────────────────
+  {
+    rules: {
+      // ── File / function size ─────────────────────────────────────────────
+      // Fat files are a sign of missing module decomposition.
+      'max-lines': ['error', { max: 250, skipBlankLines: true, skipComments: true }],
+
+      // 40 lines per function forces extraction into hooks and helpers.
+      'max-lines-per-function': [
+        'error',
+        { max: 40, skipBlankLines: true, skipComments: true, IIFEs: true },
+      ],
+
+      // More than 3 parameters is a sign of missing abstraction (use an options object).
+      'max-params': ['error', { max: 3 }],
+
+      // Nesting beyond 3 levels is unreadable; use early returns and helpers.
+      'max-depth': ['error', { max: 3 }],
+
+      // Cyclomatic complexity — mirrors biome's cognitive complexity limit.
+      complexity: ['error', { max: 6 }],
+
+      // ── Async discipline ─────────────────────────────────────────────────
+      // await in a loop serializes parallel work; extract to Promise.all or a service.
+      'no-await-in-loop': 'error',
+
+      // ── Console hygiene ──────────────────────────────────────────────────
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+
+      // ── TypeScript: explicit types ───────────────────────────────────────
+      // Every exported function must declare its return type explicitly.
+      // This is the single most important rule Biome cannot enforce.
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+          allowDirectConstAssertionInArrowFunctions: true,
+        },
+      ],
+
+      // Public API surface of modules must have explicit types.
+      '@typescript-eslint/explicit-module-boundary-types': 'error',
+
+      // Floating promises are silent bugs — always handle or void explicitly.
+      '@typescript-eslint/no-floating-promises': 'error',
+
+      // Awaiting a non-Promise is always a bug.
+      '@typescript-eslint/await-thenable': 'error',
+
+      // Misused promises (e.g. if (asyncFn()) {}) are silent bugs.
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+
+      // Force typed arrays, maps, records over unsafe `{}` return types.
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+
+      // ── Unused code ──────────────────────────────────────────────────────
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+
+      // Override base rule — TS version handles overloads correctly.
+      'no-unused-vars': 'off',
+    },
+  },
+
+  // ── React Hooks rules ──────────────────────────────────────────────────────
+  {
+    plugins: { 'react-hooks': reactHooks },
+    rules: {
+      // Hooks must be called unconditionally and only inside components/hooks.
+      'react-hooks/rules-of-hooks': 'error',
+
+      // Missing deps = stale closures = silent bugs.
+      // (Biome also enforces this, belt-and-suspenders.)
+      'react-hooks/exhaustive-deps': 'error',
+    },
+  },
+
+  // ── TSX / component files — tighter limits ─────────────────────────────────
+  {
+    files: ['**/*.tsx'],
+    rules: {
+      // Components are stricter: 30 lines forces extraction into subcomponents.
+      'max-lines-per-function': [
+        'error',
+        { max: 30, skipBlankLines: true, skipComments: true, IIFEs: true },
+      ],
+
+      // Components must not take more than 2 props inline — use a Props type.
+      // (This counts function params, not object keys inside the props type.)
+      'max-params': ['error', { max: 1 }],
+    },
+  },
+
+  // ── Test files — relax structural rules ───────────────────────────────────
+  {
+    files: [
+      '**/*.spec.{ts,tsx}',
+      '**/*.test.{ts,tsx}',
+      '**/@tests/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+      'max-params': 'off',
+      'no-await-in-loop': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+    },
+  },
+);

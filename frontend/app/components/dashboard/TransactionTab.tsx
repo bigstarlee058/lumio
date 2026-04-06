@@ -1,13 +1,16 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import DetailsDrawer from '@/app/components/transactions/DetailsDrawer';
 import TransactionsTable from '@/app/components/transactions/TransactionsTable';
 import type { Category, FilterState, Transaction } from '@/app/components/transactions/types';
+import { CurrencyDisplayToggle } from '@/app/components/ui/CurrencyDisplayToggle';
+import { CurrencyFilterDropdown } from '@/app/components/ui/CurrencyFilterDropdown';
 import { Spinner } from '@/app/components/ui/spinner';
+import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';
 import api from '@/app/lib/api';
 
 type TransactionApiRecord = Partial<Transaction> & {
@@ -21,6 +24,7 @@ type TransactionApiRecord = Partial<Transaction> & {
 
 export function TransactionTab() {
   const t = useIntlayer('transactionsPageView');
+  const { showConverted, workspaceCurrency } = useCurrencyDisplay();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -31,6 +35,7 @@ export function TransactionTab() {
   const [detailsTransaction, setDetailsTransaction] = useState<Transaction | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bulkCategoryId, setBulkCategoryId] = useState<string>('');
+  const [currencyFilter, setCurrencyFilter] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -43,8 +48,12 @@ export function TransactionTab() {
       setLoading(true);
       setError(null);
 
+      const params: Record<string, string | number> = { limit: 500 };
+      if (showConverted) params.convert_to = workspaceCurrency;
+      if (currencyFilter) params.currency = currencyFilter;
+
       const [txResponse, catResponse] = await Promise.all([
-        api.get('/transactions', { params: { limit: 500 } }),
+        api.get('/transactions', { params }),
         api.get('/categories'),
       ]);
 
@@ -67,6 +76,9 @@ export function TransactionTab() {
         exchangeRate: tx.exchangeRate,
         article: tx.article,
         amountForeign: tx.amountForeign,
+        convertedAmount: tx.convertedAmount,
+        conversionRate: tx.conversionRate,
+        convertedCurrency: tx.convertedCurrency,
         category: tx.category,
         branch: tx.branch,
         wallet: tx.wallet,
@@ -83,9 +95,15 @@ export function TransactionTab() {
     }
   };
 
+  const availableCurrencies = useMemo(
+    () => [...new Set(transactions.map(tx => tx.currency).filter(Boolean) as string[])].sort(),
+    [transactions],
+  );
+
   useEffect(() => {
     fetchData();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showConverted, workspaceCurrency, currencyFilter]);
 
   const handleRowClick = (transaction: Transaction) => {
     setDetailsTransaction(transaction);
@@ -150,6 +168,16 @@ export function TransactionTab() {
 
   return (
     <div className="space-y-6">
+      {/* Currency Controls */}
+      <div className="flex flex-wrap items-center gap-2">
+        <CurrencyDisplayToggle />
+        <CurrencyFilterDropdown
+          currencies={availableCurrencies}
+          value={currencyFilter}
+          onChange={setCurrencyFilter}
+        />
+      </div>
+
       {/* Bulk Actions Toolbar */}
       {selectedIds.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 rounded-none border border-primary/30 bg-primary/5 p-4 transition-all duration-300">

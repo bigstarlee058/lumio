@@ -37,7 +37,7 @@ export class GenericPdfParser extends BaseParser {
 
     const headerInfo = this.extractHeaderFromText(text);
     const localeInfo = this.detectLocale(text);
-    const detectedCurrency = detectCurrency(text) || 'KZT';
+    const detectedCurrency = this.detectCurrency(text) || 'KZT';
     const tableTransactions = mapPdfTableRowsToTransactions(tableRows, {
       defaultCurrency: detectedCurrency,
       stopWords: ['итого', 'оборот', 'остаток'],
@@ -92,7 +92,3 @@ export class GenericPdfParser extends BaseParser {
   }
 }
 
-function detectCurrency(text: string): string | null {
-  const match = text.match(/\b(KZT|USD|EUR|RUB)\b/i);
-  return match ? match[1].toUpperCase() : null;
-}

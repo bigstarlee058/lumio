@@ -7,6 +7,7 @@ import type { AuditEvent } from '@/lib/api/audit';
 import { fetchEntityHistory } from '@/lib/api/audit';
 import { Building2, Calendar, FileText, Tag, TrendingDown, TrendingUp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';
 import { DrawerShell } from '../ui/drawer-shell';
 import type { Category, Transaction } from './types';
 
@@ -32,6 +33,7 @@ export default function DetailsDrawer({
 }: DetailsDrawerProps) {
   const { locale } = useLocale();
   const t = useIntlayer('transactionsDrawer');
+  const { showConverted } = useCurrencyDisplay();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [updating, setUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
@@ -204,9 +206,18 @@ export default function DetailsDrawer({
                   {t.debit.value}
                 </div>
                 <div className="mt-2 text-lg font-semibold text-red-700">
-                  {transaction.debit > 0
-                    ? formatAmount(transaction.debit, transaction.currency)
-                    : '—'}
+                  {transaction.debit > 0 ? (
+                    <>
+                      {showConverted && transaction.convertedAmount !== undefined
+                        ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency)
+                        : formatAmount(transaction.debit, transaction.currency)}
+                      {showConverted && transaction.convertedAmount !== undefined && (
+                        <div className="mt-0.5 text-xs font-normal text-red-400">
+                          {formatAmount(transaction.debit, transaction.currency)}
+                        </div>
+                      )}
+                    </>
+                  ) : '—'}
                 </div>
               </div>
 
@@ -216,9 +227,18 @@ export default function DetailsDrawer({
                   {t.credit.value}
                 </div>
                 <div className="mt-2 text-lg font-semibold text-emerald-700">
-                  {transaction.credit > 0
-                    ? formatAmount(transaction.credit, transaction.currency)
-                    : '—'}
+                  {transaction.credit > 0 ? (
+                    <>
+                      {showConverted && transaction.convertedAmount !== undefined
+                        ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency)
+                        : formatAmount(transaction.credit, transaction.currency)}
+                      {showConverted && transaction.convertedAmount !== undefined && (
+                        <div className="mt-0.5 text-xs font-normal text-emerald-400">
+                          {formatAmount(transaction.credit, transaction.currency)}
+                        </div>
+                      )}
+                    </>
+                  ) : '—'}
                 </div>
               </div>
             </div>

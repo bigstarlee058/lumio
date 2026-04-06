@@ -58,6 +58,8 @@ export class TransactionsController {
     @Query('categoryId') categoryIdCamel?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('currency') currency?: string,
+    @Query('convert_to') convertTo?: string,
   ) {
     // Prefer snake_case for backward compatibility, fall back to camelCase
     const statementId = statementIdSnake || statementIdCamel;
@@ -71,6 +73,8 @@ export class TransactionsController {
       dateTo: dateTo ? new Date(dateTo) : undefined,
       type,
       categoryId,
+      currency,
+      convertTo,
       page: page ? Number.parseInt(page) : 1,
       limit: limit ? Number.parseInt(limit) : 50,
     });

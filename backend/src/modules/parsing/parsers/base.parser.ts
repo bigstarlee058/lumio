@@ -97,6 +97,27 @@ export abstract class BaseParser implements IParser {
     return null;
   }
 
+  protected detectCurrency(text: string): string | null {
+    if (!text) return null;
+
+    // Match ISO 4217 codes at word boundaries — ordered by specificity
+    const codeMatch = text.match(
+      /\b(KZT|UZS|GEL|UAH|BYN|AMD|AZN|KGS|TJS|TMT|USD|EUR|RUB|GBP|CNY|TRY|AED|JPY|CHF|CAD|AUD|SEK|NOK|DKK|PLN|CZK|HUF|RON|INR|BRL|MXN|SGD|HKD|NZD|ZAR|THB|MYR|IDR|ILS|SAR|QAR|KWD)\b/i,
+    );
+    if (codeMatch) {
+      return codeMatch[1].toUpperCase();
+    }
+
+    // Unambiguous currency symbols
+    if (text.includes('₸')) return 'KZT';
+    if (text.includes('₽')) return 'RUB';
+    if (text.includes('€')) return 'EUR';
+    if (text.includes('£')) return 'GBP';
+    if (text.includes('¥')) return 'JPY';
+
+    return null;
+  }
+
   protected normalizeHeader(header: string | null | undefined): string | null {
     if (!header) {
       return null;

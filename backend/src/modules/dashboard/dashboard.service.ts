@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { In, IsNull, type Repository } from 'typeorm';
 import { AuditEvent, EntityType } from '../../entities/audit-event.entity';
 import { Payable, PayableStatus } from '../../entities/payable.entity';
@@ -37,6 +38,7 @@ export class DashboardService {
     private readonly workspaceRepo: Repository<Workspace>,
     @InjectRepository(AuditEvent)
     private readonly auditRepo: Repository<AuditEvent>,
+    private readonly exchangeRatesService: ExchangeRatesService,
   ) {}
 
   async getDashboard(
@@ -109,10 +111,18 @@ export class DashboardService {
     since: Date,
     endDate: Date,
   ): Promise<DashboardFinancialSnapshot> {
-    const txResult = await this.transactionRepo
+    const workspace = await this.workspaceRepo.findOne({
+      where: { id: workspaceId },
+      select: ['currency'],
+    });
+    const targetCurrency = workspace?.currency || 'KZT';
+
+    // Group income/expense by currency so we can convert each group
+    const txRows = await this.transactionRepo
       .createQueryBuilder('t')
       .innerJoin('t.statement', 's')
       .select([
+        't.currency AS currency',
         'COALESCE(SUM(CASE WHEN t.transactionType = :income THEN t.credit ELSE 0 END), 0) AS income',
         'COALESCE(SUM(CASE WHEN t.transactionType = :expense THEN t.debit ELSE 0 END), 0) AS expense',
         'COALESCE(SUM(CASE WHEN s.status IN (:...unapprovedStatuses) THEN (CASE WHEN t.transactionType = :income THEN t.credit ELSE -t.debit END) ELSE 0 END), 0) AS "unapprovedCash"',
@@ -131,22 +141,40 @@ export class DashboardService {
         StatementStatus.PARSED,
         StatementStatus.VALIDATED,
       ])
-      .getRawOne<{ income: string; expense: string; unapprovedCash: string }>();
+      .groupBy('t.currency')
+      .getRawMany<{ currency: string; income: string; expense: string; unapprovedCash: string }>();
 
-    // All-time balance: income credits minus expense debits, no date range
+    let income = 0;
+    let expense = 0;
+    let unapprovedCash = 0;
+    for (const row of txRows) {
+      const cur = (row.currency || 'KZT').toUpperCase();
+      const rate = cur === targetCurrency ? 1 : await this.exchangeRatesService.getRate(cur, targetCurrency);
+      income += (Number.parseFloat(row.income) || 0) * rate;
+      expense += (Number.parseFloat(row.expense) || 0) * rate;
+      unapprovedCash += (Number.parseFloat(row.unapprovedCash) || 0) * rate;
+    }
+
+    // All-time balance grouped by currency
     const balanceQuery = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
     this.applyWorkspaceStatementFilters(balanceQuery, workspaceId, true);
 
-    const balanceResult = await balanceQuery
-      .select(
-        `COALESCE(SUM(CASE WHEN t.transactionType = :balIncome THEN t.credit WHEN t.transactionType = :balExpense THEN -t.debit ELSE 0 END), 0)`,
-        'totalBalance',
-      )
+    const balanceRows = await balanceQuery
+      .select([
+        't.currency AS currency',
+        `COALESCE(SUM(CASE WHEN t.transactionType = :balIncome THEN t.credit WHEN t.transactionType = :balExpense THEN -t.debit ELSE 0 END), 0) AS "balance"`,
+      ])
       .setParameter('balIncome', TransactionType.INCOME)
       .setParameter('balExpense', TransactionType.EXPENSE)
-      .getRawOne<{ totalBalance: string }>();
+      .groupBy('t.currency')
+      .getRawMany<{ currency: string; balance: string }>();
 
-    const totalBalance = Number.parseFloat(balanceResult?.totalBalance ?? '') || 0;
+    let totalBalance = 0;
+    for (const row of balanceRows) {
+      const cur = (row.currency || 'KZT').toUpperCase();
+      const rate = cur === targetCurrency ? 1 : await this.exchangeRatesService.getRate(cur, targetCurrency);
+      totalBalance += (Number.parseFloat(row.balance) || 0) * rate;
+    }
 
     const payableResult = await this.payableRepo
       .createQueryBuilder('p')
@@ -160,14 +188,6 @@ export class DashboardService {
       .setParameter('overdue', PayableStatus.OVERDUE)
       .getRawOne<{ totalPayable: string; totalOverdue: string }>();
 
-    const income = Number.parseFloat(txResult?.income ?? '') || 0;
-    const expense = Number.parseFloat(txResult?.expense ?? '') || 0;
-    const unapprovedCash = Number.parseFloat(txResult?.unapprovedCash ?? '') || 0;
-    const workspace = await this.workspaceRepo.findOne({
-      where: { id: workspaceId },
-      select: ['currency'],
-    });
-
     return {
       totalBalance,
       income30d: income,
@@ -176,7 +196,7 @@ export class DashboardService {
       totalPayable: Number.parseFloat(payableResult?.totalPayable ?? '') || 0,
       totalOverdue: Number.parseFloat(payableResult?.totalOverdue ?? '') || 0,
       unapprovedCash,
-      currency: workspace?.currency || 'KZT',
+      currency: targetCurrency,
     };
   }
 

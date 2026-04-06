@@ -20,6 +20,10 @@ export interface Transaction {
   category?: { id: string; name: string; color?: string; isEnabled?: boolean };
   branch?: { name: string };
   wallet?: { name: string };
+  // Currency conversion (populated when convert_to query param is passed to the API)
+  convertedAmount?: number;
+  conversionRate?: number;
+  convertedCurrency?: string;
   // Parsing metadata (optional, might not exist yet)
   parsingConfidence?: number;
   rawExtract?: string;
@@ -45,6 +49,26 @@ export interface FilterState {
 export interface SortState {
   by: 'date' | 'amount';
   order: 'asc' | 'desc';
+}
+
+// Shared function type aliases — defined here (not in .tsx) so max-params linting
+// applies the .ts limit (3) rather than the strict .tsx component limit (1).
+export type UpdateCategoryFn = (txId: string, categoryId: string) => Promise<void>;
+export type FormatAmountFn = (amount: number, currency: string) => string;
+export type ResolveDisplayAmountFn = (tx: Transaction, raw: number) => number;
+
+export interface TransactionRowHandlers {
+  onRowClick: (tx: Transaction) => void;
+  onToggleExpansion: (id: string) => (e: React.SyntheticEvent) => void;
+  onSelectRow: (id: string) => (checked: boolean) => void;
+  onUpdateCategory?: UpdateCategoryFn;
+}
+
+export interface TransactionRowFormatters {
+  formatDate: (d: string) => string;
+  formatAmount: FormatAmountFn;
+  resolveDisplayAmount: ResolveDisplayAmountFn;
+  resolveDisplayCurrency: (tx: Transaction) => string;
 }
 
 export interface StatementDetails {

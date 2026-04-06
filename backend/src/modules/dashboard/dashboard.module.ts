@@ -7,6 +7,7 @@ import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
 import { Workspace } from '../../entities/workspace.entity';
+import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 
@@ -21,6 +22,7 @@ import { DashboardService } from './dashboard.service';
       Workspace,
       AuditEvent,
     ]),
+    ExchangeRatesModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

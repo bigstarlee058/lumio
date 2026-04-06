@@ -15,6 +15,10 @@ export class CsvParser extends BaseTabularParser {
   }
 
   async parse(filePath: string, cachedText?: string): Promise<ParsedStatement> {
+    // Detect currency from raw file content before streaming rows
+    const rawContent = fs.readFileSync(filePath, 'utf-8').slice(0, 4096);
+    const detectedCurrency = this.detectCurrency(rawContent) || 'KZT';
+
     return new Promise((resolve, reject) => {
       const transactions: ParsedTransaction[] = [];
       let headers: string[] = [];
@@ -45,7 +49,13 @@ export class CsvParser extends BaseTabularParser {
           }
 
           const rowValues = Object.values(row);
-          const transaction = this.parseRow(row, columnMapping, index => rowValues[index], 'CSV');
+          const transaction = this.parseRow(
+            row,
+            columnMapping,
+            index => rowValues[index],
+            'CSV',
+            detectedCurrency,
+          );
           if (transaction) {
             transactions.push(transaction);
           }
@@ -59,7 +69,7 @@ export class CsvParser extends BaseTabularParser {
               accountNumber: 'Unknown',
               dateFrom: new Date(),
               dateTo: new Date(),
-              currency: 'KZT',
+              currency: detectedCurrency,
               rawHeader: headerText || undefined,
               normalizedHeader: normalizedHeader || undefined,
               locale: localeInfo.locale !== 'unknown' ? localeInfo.locale : undefined,

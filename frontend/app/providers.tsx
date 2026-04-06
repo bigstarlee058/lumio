@@ -15,6 +15,7 @@ import { Toaster } from 'react-hot-toast';
 import { IntlayerProviderContent } from 'react-intlayer';
 import { type AppLocale, isSupportedLocale, persistLocaleToCookie, readLocaleFromCookie } from '@/app/lib/locale';
 import { SidePanelProvider } from './components/side-panel';
+import { CurrencyDisplayProvider } from './contexts/CurrencyDisplayContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { WorkspaceProvider, useWorkspace } from './contexts/WorkspaceContext';
 import { useAutoTheme } from './hooks/useAutoTheme';
@@ -64,6 +65,7 @@ function WorkspaceScopedProviders({
 
   return (
     <React.Fragment key={currentWorkspace?.id ?? 'no-workspace'}>
+      <CurrencyDisplayProvider>
       <NotificationProvider>
         <SidePanelProvider
           defaultWidth="md"
@@ -89,6 +91,7 @@ function WorkspaceScopedProviders({
           {children}
         </SidePanelProvider>
       </NotificationProvider>
+      </CurrencyDisplayProvider>
     </React.Fragment>
   );
 }

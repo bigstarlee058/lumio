@@ -2,6 +2,7 @@
 
 import { Button } from '@/app/components/ui/button';
 import { Spinner } from '@/app/components/ui/spinner';
+import { formatAmount, formatDate } from '@/app/components/transactions/helpers/transactionFormatters';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
 import { Download, FileText, FileUp, TrendingDown, TrendingUp } from 'lucide-react';
@@ -67,27 +68,6 @@ export default function SummaryBar({
     };
   }, [transactions]);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(
-      locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US',
-      {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      },
-    );
-  };
-
-  const formatAmount = (amount: number, currency: string): string => {
-    if (Number.isNaN(amount)) return '—';
-    return new Intl.NumberFormat(locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US', {
-      style: 'currency',
-      currency: currency || 'KZT',
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
   return (
     <div className="rounded-none border border-gray-200 bg-white p-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -106,7 +86,7 @@ export default function SummaryBar({
                 )}
               </div>
               <div className="text-xs text-gray-500">
-                {t.uploadedAt.value}: {formatDate(statement.createdAt)}
+                {t.uploadedAt.value}: {formatDate(statement.createdAt, locale)}
               </div>
             </div>
           </div>
@@ -148,7 +128,7 @@ export default function SummaryBar({
                 {t.debitTotal.value}
               </div>
               <div className="mt-1 text-lg font-semibold text-red-700">
-                {formatAmount(stats.debitTotal, stats.currency)}
+                {formatAmount(stats.debitTotal, stats.currency, locale)}
               </div>
             </div>
 
@@ -159,7 +139,7 @@ export default function SummaryBar({
                 {t.creditTotal.value}
               </div>
               <div className="mt-1 text-lg font-semibold text-emerald-700">
-                {formatAmount(stats.creditTotal, stats.currency)}
+                {formatAmount(stats.creditTotal, stats.currency, locale)}
               </div>
             </div>
           </div>

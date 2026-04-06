@@ -12,10 +12,17 @@ import { User } from '../../entities/user.entity';
 import { WorkspaceMember, WorkspaceRole } from '../../entities/workspace-member.entity';
 import { AuditService } from '../audit/audit.service';
 import { ClassificationService } from '../classification/services/classification.service';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import type { DataDeletedEvent } from '../notifications/events/notification-events';
 import type { BulkUpdateItemDto } from './dto/bulk-update-transaction.dto';
 import type { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { TransactionType } from '../../entities/transaction.entity';
+
+export type TransactionWithConversion = Transaction & {
+  convertedAmount?: number;
+  conversionRate?: number;
+  convertedCurrency?: string;
+};
 
 @Injectable()
 export class TransactionsService {
@@ -31,6 +38,7 @@ export class TransactionsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly auditService: AuditService,
     private readonly classificationService: ClassificationService,
+    private readonly exchangeRatesService: ExchangeRatesService,
     private readonly eventEmitter?: EventEmitter2,
   ) {}
 
@@ -76,10 +84,12 @@ export class TransactionsService {
       dateTo?: Date;
       type?: string;
       categoryId?: string;
+      currency?: string;
+      convertTo?: string;
       page?: number;
       limit?: number;
     },
-  ): Promise<{ data: Transaction[]; total: number; page: number; limit: number }> {
+  ): Promise<{ data: TransactionWithConversion[]; total: number; page: number; limit: number }> {
     const query = this.transactionRepository
       .createQueryBuilder('transaction')
       .where('transaction.workspaceId = :workspaceId', { workspaceId })
@@ -117,13 +127,40 @@ export class TransactionsService {
       });
     }
 
+    if (filters.currency) {
+      query.andWhere('UPPER(transaction.currency) = :currency', {
+        currency: filters.currency.toUpperCase(),
+      });
+    }
+
     const page = filters.page || 1;
     const limit = filters.limit || 50;
     const skip = (page - 1) * limit;
 
     query.orderBy('transaction.transactionDate', 'DESC').skip(skip).take(limit);
 
-    const [data, total] = await query.getManyAndCount();
+    const [rawData, total] = await query.getManyAndCount();
+
+    if (!filters.convertTo) {
+      return { data: rawData, total, page, limit };
+    }
+
+    const targetCurrency = filters.convertTo.toUpperCase();
+    const items = rawData.map(tx => ({
+      amount: Number(tx.amount) || Number(tx.debit) || Number(tx.credit) || 0,
+      currency: tx.currency || 'KZT',
+      date: tx.transactionDate,
+    }));
+    const conversions = await this.exchangeRatesService.bulkConvert(items, targetCurrency);
+
+    const data: TransactionWithConversion[] = rawData.map((tx, i) => {
+      const conv = conversions[i];
+      return Object.assign(Object.create(Object.getPrototypeOf(tx)), tx, {
+        convertedAmount: conv.converted,
+        conversionRate: conv.rate,
+        convertedCurrency: targetCurrency,
+      });
+    });
 
     return { data, total, page, limit };
   }

@@ -80,6 +80,16 @@ export abstract class BaseTabularParser extends BaseParser {
       ) {
         mapping.purpose = index;
       }
+      if (
+        lowerHeader === 'валюта' ||
+        lowerHeader === 'currency' ||
+        lowerHeader === 'ccy' ||
+        lowerHeader === 'cur' ||
+        lowerHeader.includes('валюта') ||
+        lowerHeader.includes('currency')
+      ) {
+        mapping.currency = index;
+      }
     });
 
     return mapping;
@@ -90,6 +100,7 @@ export abstract class BaseTabularParser extends BaseParser {
     columnMapping: TabularColumnMapping,
     getValue: (index: number) => unknown,
     sourceLabel = 'tabular',
+    defaultCurrency = 'KZT',
   ): ParsedTransaction | null {
     try {
       const dateIndex = columnMapping.date;
@@ -110,6 +121,18 @@ export abstract class BaseTabularParser extends BaseParser {
       const debitIndex = columnMapping.debit;
       const creditIndex = columnMapping.credit;
       const purposeIndex = columnMapping.purpose;
+      const currencyIndex = columnMapping.currency;
+
+      const currencyFromColumn =
+        currencyIndex !== undefined
+          ? String(getValue(currencyIndex) || '')
+              .trim()
+              .toUpperCase()
+          : null;
+      const currency =
+        currencyFromColumn && /^[A-Z]{3}$/.test(currencyFromColumn)
+          ? currencyFromColumn
+          : defaultCurrency;
 
       return {
         transactionDate,
@@ -135,7 +158,7 @@ export abstract class BaseTabularParser extends BaseParser {
             : undefined,
         paymentPurpose:
           purposeIndex !== undefined ? String(getValue(purposeIndex) || '') : 'Не указано',
-        currency: 'KZT',
+        currency,
       };
     } catch (error) {
       console.error(`Error parsing ${sourceLabel} row:`, error);

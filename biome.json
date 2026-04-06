@@ -1,5 +1,6 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+
   "files": {
     "ignore": [
       "**/node_modules/**",
@@ -22,48 +23,128 @@
       "**/.agent/**"
     ]
   },
+
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 100
   },
+
   "organizeImports": {
     "enabled": true
   },
-    "javascript": {
-      "formatter": {
-        "quoteStyle": "single",
-        "trailingCommas": "all",
-        "semicolons": "always",
-        "arrowParentheses": "asNeeded"
-        },
-        "parser": {
-          "unsafeParameterDecoratorsEnabled": true
-      }
+
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "asNeeded"
     },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+
   "linter": {
     "enabled": true,
     "rules": {
-        "recommended": true,
-        "a11y": {
-          "useButtonType": "off"
+      "recommended": true,
+
+      "a11y": {
+        "useButtonType": "off"
+      },
+
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 6
+          }
         },
-        "correctness": {
-          "useExhaustiveDependencies": "off"
-        },
-        "suspicious": {
-          "noExplicitAny": "error"
-        },
-        "style": {
-          "useImportType": "off",
-          "useNodejsImportProtocol": "off",
-          "noUnusedTemplateLiteral": "off"
-        },
-        "complexity": {
-          "noForEach": "off"
+        "noNestedTernary": "error",
+        "noForEach": "error",
+        "useFlatMap": "error",
+        "useOptionalChain": "error",
+        "useSimplifiedLogicExpression": "error",
+        "noUselessTernary": "error",
+        "noUselessFragments": "error",
+        "noStaticOnlyClass": "error",
+        "noUselessCatch": "error",
+        "noUselessConstructor": "error"
+      },
+
+      "correctness": {
+        "useExhaustiveDependencies": "error",
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "noUnusedPrivateClassMembers": "error",
+        "noInvalidUseBeforeDeclaration": "error"
+      },
+
+      "suspicious": {
+        "noExplicitAny": "error",
+        "noDoubleEquals": "error",
+        "noImplicitAnyLet": "error",
+        "useIsArray": "error",
+        "noDebugger": "error",
+        "noEmptyBlockStatements": "error",
+        "noDuplicateObjectKeys": "error"
+      },
+
+      "style": {
+        "useImportType": "off",
+        "useNodejsImportProtocol": "off",
+        "noUnusedTemplateLiteral": "error",
+        "useConst": "error",
+        "useBlockStatements": "error",
+        "useDefaultParameterLast": "error",
+        "noUselessElse": "error",
+        "useShorthandAssign": "error",
+        "useSingleVarDeclarator": "error",
+        "useTemplate": "error",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "strictCase": true,
+            "requireAscii": true,
+            "conventions": [
+              {
+                "selector": { "kind": "typeLike" },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": { "kind": "enumMember" },
+                "formats": ["CONSTANT_CASE"]
+              },
+              {
+                "selector": { "kind": "function" },
+                "formats": ["camelCase", "PascalCase"]
+              },
+              {
+                "selector": { "kind": "variable" },
+                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+              },
+              {
+                "selector": { "kind": "classProperty" },
+                "formats": ["camelCase"]
+              },
+              {
+                "selector": { "kind": "classMethod" },
+                "formats": ["camelCase"]
+              }
+            ]
+          }
         }
+      },
+
+      "performance": {
+        "noDelete": "error",
+        "noAccumulatingSpread": "error"
+      }
     }
   },
+
   "overrides": [
     {
       "include": [
@@ -76,23 +157,51 @@
             "useButtonType": "off"
           },
           "correctness": {
-            "useExhaustiveDependencies": "off"
+            "useExhaustiveDependencies": "error"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "error",
+              "options": {
+                "maxAllowedComplexity": 6
+              }
+            },
+            "noNestedTernary": "error",
+            "noForEach": "error",
+            "noUselessFragments": "error"
+          },
+          "suspicious": {
+            "noExplicitAny": "error",
+            "noImplicitAnyLet": "error"
+          },
+          "style": {
+            "noUselessElse": "error",
+            "useBlockStatements": "error",
+            "useTemplate": "error"
           }
         }
       }
     },
+
     {
       "include": [
         "**/@tests/**/*.{ts,tsx}",
-        "**/test/**/*.{ts,tsx}"
+        "**/test/**/*.{ts,tsx}",
+        "**/*.spec.{ts,tsx}",
+        "**/*.test.{ts,tsx}"
       ],
       "linter": {
         "rules": {
           "suspicious": {
-            "noExplicitAny": "off"
+            "noExplicitAny": "off",
+            "noEmptyBlockStatements": "off"
           },
           "style": {
-            "useImportType": "off"
+            "useImportType": "off",
+            "useNamingConvention": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "warn"
           }
         }
       },

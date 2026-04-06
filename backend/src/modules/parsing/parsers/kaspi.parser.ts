@@ -48,11 +48,13 @@ export class KaspiParser extends BaseParser {
     console.log(`[KaspiParser] Balances: start=${balances.start}, end=${balances.end}`);
     console.log(`[KaspiParser] Period: ${dateRange.from?.toISOString().split('T')[0] || 'N/A'}`);
 
+    const detectedCurrency = this.detectCurrency(text) || 'KZT';
+
     const tableTransactions = mapPdfTableRowsToTransactions(tableRows, {
-      defaultCurrency: 'KZT',
+      defaultCurrency: detectedCurrency,
       stopWords: ['итого', 'оборот', 'остаток'],
     });
-    const kaspiTableTransactions = this.extractKaspiTableTransactions(tableRows);
+    const kaspiTableTransactions = this.extractKaspiTableTransactions(tableRows, detectedCurrency);
     const combinedTableTx = kaspiTableTransactions.length
       ? mergeTransactions(kaspiTableTransactions, tableTransactions)
       : tableTransactions;
@@ -77,7 +79,7 @@ export class KaspiParser extends BaseParser {
     return {
       metadata: {
         accountNumber: accountNumber || '',
-        currency: 'KZT',
+        currency: detectedCurrency,
         dateFrom: dateRange.from || new Date(),
         dateTo: dateRange.to || new Date(),
         balanceStart: balances.start,
@@ -266,7 +268,10 @@ export class KaspiParser extends BaseParser {
     return transactions;
   }
 
-  private extractKaspiTableTransactions(tableRows: string[][]): ParsedTransaction[] {
+  private extractKaspiTableTransactions(
+    tableRows: string[][],
+    defaultCurrency = 'KZT',
+  ): ParsedTransaction[] {
     if (!tableRows.length) {
       return [];
     }
@@ -330,7 +335,7 @@ export class KaspiParser extends BaseParser {
         debit,
         credit,
         paymentPurpose: idxPurpose >= 0 ? row[idxPurpose] : 'Не указано',
-        currency: 'KZT',
+        currency: defaultCurrency,
       };
 
       transactions.push(transaction);
@@ -421,11 +426,8 @@ export class KaspiParser extends BaseParser {
       }
     }
 
-    let currency = currentTransaction.currency;
-    const currencyMatch = combinedBlock.match(/\b(USD|EUR|KZT|RUB)\b/i);
-    if (!currency && currencyMatch) {
-      currency = currencyMatch[1].toUpperCase();
-    }
+    const currencyFromBlock = this.detectCurrency(combinedBlock);
+    const currency = currencyFromBlock || currentTransaction.currency || 'KZT';
 
     return {
       transactionDate: currentTransaction.transactionDate ?? new Date(),

@@ -21,6 +21,7 @@ import {
   BalanceAccount,
   BalanceSnapshot,
   Branch,
+  ExchangeRate,
   Category,
   CategoryLearning,
   CustomTable,
@@ -63,6 +64,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { CustomTablesModule } from './modules/custom-tables/custom-tables.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
 import { DataEntryModule } from './modules/data-entry/data-entry.module';
 import { DropboxModule } from './modules/dropbox/dropbox.module';
 import { GmailModule } from './modules/gmail/gmail.module';
@@ -152,6 +154,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       Receipt,
       ReceiptProcessingJob,
       TaxRate,
+      ExchangeRate,
     ]),
     CommonModule,
     AuthModule,
@@ -182,6 +185,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     ObservabilityModule,
     DashboardModule,
     PayablesModule,
+    ExchangeRatesModule,
   ],
   controllers: [AppController],
   providers: [
