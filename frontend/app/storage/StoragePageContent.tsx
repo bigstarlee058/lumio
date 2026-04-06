@@ -2,7 +2,6 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { resolveBankLogo } from '@bank-logos';
 import {
   DndContext,
   type DragEndEvent,
@@ -11,36 +10,30 @@ import {
   PointerSensor,
   closestCenter,
   pointerWithin,
-  useDraggable,
-  useDroppable,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { Popover, type PopoverProps } from '@mui/material';
+import { Popover } from '@mui/material';
 import {
   Bookmark,
   Check,
-  Download,
-  Eye,
   FileText,
   FileX,
   Filter,
   Folder,
-  GripVertical,
   MoreVertical,
   PencilLine,
   Plus,
   RotateCcw,
   Save,
   Search,
-  Share2,
   Tag,
   Trash2,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import toast from 'react-hot-toast';
 import { BankLogoAvatar } from '../components/BankLogoAvatar';
@@ -53,669 +46,38 @@ import { Checkbox } from '../components/ui/checkbox';
 import { AppPagination } from '../components/ui/pagination';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import api from '../lib/api';
-
-type FileAvailabilityStatus = 'both' | 'disk' | 'db' | 'missing';
-
-type FileAvailability = {
-  onDisk: boolean;
-  inDb: boolean;
-  status: FileAvailabilityStatus;
-};
-
-interface TagOption {
-  id: string;
-  name: string;
-  color?: string | null;
-  userId?: string | null;
-}
-
-interface FolderOption {
-  id: string;
-  name: string;
-  userId?: string | null;
-  tagId?: string | null;
-  tag?: TagOption | null;
-}
-
-interface StorageView {
-  id: string;
-  name: string;
-  filters?: StorageViewPayload;
-  createdAt: string;
-}
-
-interface StorageFile {
-  id: string;
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-  bankName: string;
-  status: string;
-  createdAt: string;
-  deletedAt?: string | null;
-  isOwner: boolean;
-  permissionType?: string;
-  canReshare: boolean;
-  sharedLinksCount: number;
-  categoryId?: string | null;
-  category?: {
-    id: string;
-    name: string;
-    color?: string;
-    icon?: string;
-    isEnabled?: boolean;
-  } | null;
-  folderId?: string | null;
-  folder?: FolderOption | null;
-  tags?: TagOption[];
-  metadata?: {
-    accountNumber?: string;
-    periodStart?: string;
-    periodEnd?: string;
-  };
-  fileAvailability?: FileAvailability;
-}
-
-interface CategoryOption {
-  id: string;
-  name: string;
-  color?: string;
-  icon?: string;
-  isEnabled?: boolean;
-}
-
-type SortField = 'createdAt' | 'fileName' | 'bankName';
-type SortDirection = 'asc' | 'desc';
-
-const NO_FOLDER = '__none__';
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
-const DEFAULT_TRASH_TTL_DAYS = 30;
-const FOLDER_NAME_MAX = 40;
-const DEFAULT_FILTERS = {
-  status: '',
-  bank: '',
-  categoryId: '',
-  ownership: '',
-  folderId: '',
-};
-const DEFAULT_SORT: { field: SortField; direction: SortDirection } = {
-  field: 'createdAt',
-  direction: 'desc',
-};
-
-interface StorageViewFilterValues {
-  status?: string;
-  bank?: string;
-  categoryId?: string;
-  ownership?: string;
-  folderId?: string;
-  tagIds?: string[];
-}
-
-interface StorageViewPayload {
-  searchQuery?: string;
-  search?: string;
-  sort?: {
-    field?: SortField;
-    direction?: SortDirection;
-  };
-  filters?: StorageViewFilterValues;
-}
-
-const getRecord = (value: unknown): Record<string, unknown> | null => {
-  return typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-};
-
-const getNestedValue = (source: unknown, path: string[]): unknown => {
-  let current: unknown = source;
-
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) {
-      return undefined;
-    }
-
-    current = record[segment];
-  }
-
-  return current;
-};
-
-const colorPickerPopoverSlotProps: PopoverProps['slotProps'] = {
-  paper: {
-    sx: {
-      p: 1.5,
-      mt: 1,
-      borderRadius: '16px',
-      border: '1px solid',
-      borderColor: 'divider',
-      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-      overflow: 'visible',
-      '&::before': {
-        content: '""',
-        display: 'block',
-        position: 'absolute',
-        top: 0,
-        right: 14,
-        width: 10,
-        height: 10,
-        bgcolor: 'background.paper',
-        transform: 'translateY(-50%) rotate(45deg)',
-        zIndex: 0,
-        borderLeft: '1px solid',
-        borderTop: '1px solid',
-        borderColor: 'divider',
-      },
-    },
-  },
-};
-
-const getBankDisplayName = (bankName: string) => {
-  const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
-  return resolved.key !== 'other' ? resolved.displayName : bankName;
-};
-
-const getAvailabilityColor = (status: FileAvailabilityStatus) => {
-  switch (status) {
-    case 'both':
-      return 'bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-100 dark:border-green-500/30';
-    case 'missing':
-      return 'bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-100 dark:border-red-500/30';
-    default:
-      return 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700/60';
-  }
-};
-
-const getAvailabilityDot = (status: FileAvailabilityStatus) => {
-  switch (status) {
-    case 'both':
-      return 'bg-green-500';
-    case 'missing':
-      return 'bg-red-500';
-    default:
-      return 'bg-slate-400';
-  }
-};
-
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
-};
-
-const getTagChipStyle = (tag: TagOption) => {
-  if (!tag.color) return undefined;
-  return {
-    borderColor: tag.color,
-    color: tag.color,
-  };
-};
-
-const truncateFileNameForDisplay = (name: string, maxLength = 15) => {
-  if (!name) return '';
-  if (name.length <= maxLength) return name;
-  const truncated = name.slice(0, Math.max(0, maxLength - 1));
-  return `${truncated}…`;
-};
-
-const tagChipClass = (isActive: boolean) =>
-  `inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
-    isActive
-      ? 'bg-primary/10 text-primary border-primary/30'
-      : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-slate-800/60 dark:text-gray-200 dark:border-slate-700/60'
-  }`;
-
-interface DraggableModalFileItemProps {
-  file: StorageFile;
-  canEditFile: (file: StorageFile) => boolean;
-  rowHintLabel: string;
-  tableFromLabel: string;
-}
-
-const DraggableModalFileItem = React.memo(
-  ({ file, canEditFile, rowHintLabel, tableFromLabel }: DraggableModalFileItemProps) => {
-    const router = useRouter();
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-      id: `modal-file-${file.id}`,
-      data: { file },
-      disabled: !canEditFile(file),
-    });
-
-    return (
-      <div className="px-3 py-2">
-        <div
-          className={`flex items-center gap-1 ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
-          {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
-        >
-          {canEditFile(file) && (
-            <div className="text-gray-300 dark:text-slate-600 pointer-events-none">
-              <GripVertical size={16} />
-            </div>
-          )}
-          <button
-            ref={setNodeRef}
-            type="button"
-            onClick={() => router.push(`/statements/${file.id}/view`)}
-            title={canEditFile(file) ? rowHintLabel : undefined}
-            className={`flex min-w-0 flex-1 items-center gap-3 text-left hover:text-primary ${
-              isDragging ? 'opacity-50' : ''
-            } ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
-          >
-            <div className="flex items-center justify-center">
-              <DocumentTypeIcon
-                fileType={file.fileType}
-                fileName={file.fileName}
-                fileId={file.id}
-                size={32}
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
-                {file.fileName}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {tableFromLabel} {file.bankName}
-              </p>
-            </div>
-          </button>
-        </div>
-      </div>
-    );
-  },
-);
-
-interface DraggableFileRowProps {
-  dataTourId?: string;
-  file: StorageFile;
-  isTrashView: boolean;
-  selectedTrashIds: string[];
-  toggleTrashSelection: (id: string) => void;
-  setPreviewFileId: (id: string) => void;
-  setPreviewFileName: (name: string) => void;
-  setPreviewModalOpen: (open: boolean) => void;
-  canEditFile: (file: StorageFile) => boolean;
-  truncateFileNameForDisplay: (name: string, max?: number) => string;
-  renderTrashExpiryBadge: (date?: string | null) => React.ReactNode;
-  renderAvailabilityChip: (availability?: FileAvailability) => React.ReactNode;
-  tagChipClass: (isActive: boolean) => string;
-  getTagChipStyle: (tag: TagOption) => React.CSSProperties | undefined;
-  getBankDisplayName: (name: string) => string;
-  formatFileSize: (bytes: number) => string;
-  renderStatusBadge: (status: string) => React.ReactNode;
-  handleCategoryChange: (fileId: string, categoryId: string) => void;
-  categories: CategoryOption[];
-  categoriesLoading: boolean;
-  trashSelectRowLabel: string;
-  dragDropRowHintLabel: string;
-  previewLabel: string;
-  sharedLinksShortLabel: string;
-  categoryNoneLabel: string;
-  ownerLabel: string;
-  trashRestoreActionLabel: string;
-  trashDeleteActionLabel: string;
-  viewTooltipLabel: string;
-  downloadTooltipLabel: string;
-  deleteActionLabel: string;
-  getPermissionLabel: (perm?: string | null) => string;
-  formatDate: (date: string) => string;
-  handleRestoreFromTrash: (file: StorageFile) => void;
-  confirmPermanentDelete: (file: StorageFile) => void;
-  handleView: (id: string) => void;
-  handleDownload: (id: string, name: string) => void;
-  confirmDelete: (file: StorageFile) => void;
-}
-
-const DraggableFileRow = React.memo(
-  ({
-    dataTourId,
-    file,
-    isTrashView,
-    selectedTrashIds,
-    toggleTrashSelection,
-    setPreviewFileId,
-    setPreviewFileName,
-    setPreviewModalOpen,
-    canEditFile,
-    truncateFileNameForDisplay,
-    renderTrashExpiryBadge,
-    renderAvailabilityChip,
-    tagChipClass,
-    getTagChipStyle,
-    getBankDisplayName,
-    formatFileSize,
-    renderStatusBadge,
-    handleCategoryChange,
-    categories,
-    categoriesLoading,
-    trashSelectRowLabel,
-    dragDropRowHintLabel,
-    previewLabel,
-    sharedLinksShortLabel,
-    categoryNoneLabel,
-    ownerLabel,
-    trashRestoreActionLabel,
-    trashDeleteActionLabel,
-    viewTooltipLabel,
-    downloadTooltipLabel,
-    deleteActionLabel,
-    getPermissionLabel,
-    formatDate,
-    handleRestoreFromTrash,
-    confirmPermanentDelete,
-    handleView,
-    handleDownload,
-    confirmDelete,
-  }: DraggableFileRowProps) => {
-    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-      id: `file-${file.id}`,
-      data: { file },
-      disabled: !canEditFile(file),
-    });
-
-    const style = {
-      opacity: isDragging ? 0.3 : 1,
-    };
-
-    return (
-      <tr
-        ref={setNodeRef}
-        data-tour-id={dataTourId}
-        style={style}
-        className={`transition-all duration-150 hover:bg-gray-50 dark:hover:bg-slate-700/40 ${isDragging ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-      >
-        {isTrashView && (
-          <td className="px-6 py-5">
-            <Checkbox
-              checked={selectedTrashIds.includes(file.id)}
-              onCheckedChange={() => toggleTrashSelection(file.id)}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-              aria-label={trashSelectRowLabel}
-            />
-          </td>
-        )}
-        <td className="px-6 py-5">
-          <div
-            className={`flex items-center gap-1 ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
-            {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
-            title={canEditFile(file) ? dragDropRowHintLabel : undefined}
-          >
-            {canEditFile(file) && (
-              <div className="p-1 text-gray-300 dark:text-slate-600 pointer-events-none">
-                <GripVertical size={20} />
-              </div>
-            )}
-            <button
-              className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 bg-transparent border-0 p-0"
-              onClick={() => {
-                setPreviewFileId(file.id);
-                setPreviewFileName(file.fileName);
-                setPreviewModalOpen(true);
-              }}
-              title={previewLabel}
-            >
-              <DocumentTypeIcon
-                fileType={file.fileType}
-                fileName={file.fileName}
-                fileId={file.id}
-                size={40}
-                className="text-red-500 dark:text-red-400"
-              />
-            </button>
-            <div className={`min-w-0 flex-1`}>
-              <button
-                className="text-base font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-transparent border-0 p-0 text-left w-full"
-                title={file.fileName}
-                onClick={() => {
-                  setPreviewFileId(file.id);
-                  setPreviewFileName(file.fileName);
-                  setPreviewModalOpen(true);
-                }}
-              >
-                {truncateFileNameForDisplay(file.fileName)}
-              </button>
-              <div className="mt-1 flex items-center gap-2 flex-wrap text-xs text-gray-500 dark:text-gray-300">
-                {file.folder?.name && (
-                  <span className="inline-flex items-center gap-1 text-gray-500 dark:text-gray-300">
-                    <Folder className="h-3.5 w-3.5" />
-                    {file.folder.name}
-                  </span>
-                )}
-                {isTrashView && renderTrashExpiryBadge(file.deletedAt)}
-                {file.sharedLinksCount > 0 && (
-                  <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-300">
-                    <Share2 size={12} />
-                    {file.sharedLinksCount} {sharedLinksShortLabel}
-                  </span>
-                )}
-                {renderAvailabilityChip(file.fileAvailability)}
-              </div>
-              {file.tags && file.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {file.tags.map(tag => (
-                    <span key={tag.id} className={tagChipClass(false)} style={getTagChipStyle(tag)}>
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap">
-          <div className="flex items-center gap-2">
-            <BankLogoAvatar bankName={file.bankName} size={28} />
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
-              {getBankDisplayName(file.bankName)}
-            </span>
-          </div>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap">
-          <span className="text-sm font-mono text-gray-600 dark:text-gray-300">
-            {file.metadata?.accountNumber ? `••••${file.metadata.accountNumber.slice(-4)}` : '—'}
-          </span>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          {formatFileSize(file.fileSize)}
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          {renderStatusBadge(file.status)}
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          <div className="space-y-1">
-            <select
-              value={file.categoryId || ''}
-              onChange={e => handleCategoryChange(file.id, e.target.value)}
-              disabled={
-                isTrashView ||
-                categoriesLoading ||
-                (!file.isOwner && file.permissionType !== 'editor')
-              }
-              className="min-w-40 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-slate-800/60 disabled:text-gray-400 dark:disabled:text-gray-500"
-            >
-              <option value="">{categoryNoneLabel}</option>
-              {categories
-                .filter(cat => cat.isEnabled !== false)
-                .map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-            </select>
-            {file.category?.isEnabled === false ? (
-              <p className="text-xs font-medium text-red-600">
-                {file.category.name} - choose category
-              </p>
-            ) : null}
-          </div>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-sm">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-              file.isOwner
-                ? 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-slate-600'
-                : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-100 border border-indigo-100 dark:border-indigo-500/30'
-            }`}
-          >
-            {file.isOwner ? ownerLabel : getPermissionLabel(file.permissionType)}
-          </span>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          <div className="flex flex-col leading-tight">
-            <span>
-              {formatDate(isTrashView && file.deletedAt ? file.deletedAt : file.createdAt)}
-            </span>
-          </div>
-        </td>
-
-        <td className="px-6 py-5 whitespace-nowrap text-right text-sm">
-          <div className="relative inline-flex items-center justify-end gap-1">
-            {isTrashView ? (
-              <>
-                <button
-                  onClick={() => handleRestoreFromTrash(file)}
-                  className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:text-emerald-700 dark:hover:text-emerald-200 transition-colors"
-                  title={trashRestoreActionLabel}
-                >
-                  <RotateCcw size={18} />
-                </button>
-                <button
-                  onClick={() => confirmPermanentDelete(file)}
-                  className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                  title={trashDeleteActionLabel}
-                >
-                  <Trash2 size={18} />
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => handleView(file.id)}
-                  className="p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-emerald-500/20 hover:text-blue-700 dark:hover:text-blue-200 transition-colors"
-                  title={viewTooltipLabel}
-                >
-                  <Eye size={18} />
-                </button>
-                <button
-                  onClick={() => handleDownload(file.id, file.fileName)}
-                  className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors"
-                  title={downloadTooltipLabel}
-                >
-                  <Download size={18} />
-                </button>
-                {canEditFile(file) && (
-                  <button
-                    onClick={() => confirmDelete(file)}
-                    className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                    title={deleteActionLabel}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    );
-  },
-);
-
-const DroppableFolderButton = React.memo(
-  ({
-    folderId,
-    isNoFolder,
-    active,
-    children,
-    className,
-    onClick,
-    onContextMenu,
-  }: {
-    folderId?: string;
-    isNoFolder?: boolean;
-    active?: boolean;
-    children: React.ReactNode;
-    className?: string;
-    onClick?: (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => void;
-    onContextMenu?: (e: React.MouseEvent) => void;
-  }) => {
-    const { isOver, setNodeRef } = useDroppable({
-      id: isNoFolder ? 'folder-none' : `folder-${folderId}`,
-      data: { folderId, isNoFolder },
-    });
-
-    // Additional highlight style if dragged over
-    const highlightClass = isOver ? 'ring-2 ring-inset ring-primary bg-primary/10' : '';
-
-    return (
-      <div ref={setNodeRef} className={`relative rounded-lg ${highlightClass}`} role="presentation">
-        <div
-          onClick={onClick}
-          onContextMenu={onContextMenu}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              onClick?.(e);
-            }
-          }}
-          tabIndex={onClick ? 0 : -1}
-          role={onClick ? 'button' : 'presentation'}
-          className={className}
-        >
-          {children}
-        </div>
-      </div>
-    );
-  },
-);
-
-const DroppableHeaderTrigger = ({
-  children,
-  onDragOver,
-}: {
-  children: React.ReactNode;
-  onDragOver: () => void;
-}) => {
-  const { setNodeRef, isOver } = useDroppable({
-    id: 'header-folders-trigger',
-  });
-
-  useEffect(() => {
-    if (isOver) {
-      const timer = setTimeout(() => {
-        onDragOver();
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isOver, onDragOver]);
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`relative z-10 transition-all ${
-        isOver ? 'ring-2 ring-primary bg-primary/20 scale-105 rounded-full' : ''
-      }`}
-    >
-      {children}
-    </div>
-  );
-};
-
-const getStatusTone = (status: string) => {
-  const normalized = status.toLowerCase();
-  if (normalized === 'completed' || normalized === 'parsed') return 'success';
-  if (normalized === 'processing' || normalized === 'uploaded') return 'warning';
-  if (normalized === 'error') return 'error';
-  return 'default';
-};
+import { getNestedValue, resolveLabel } from '../lib/side-panel-utils';
+import { DraggableFileRow } from './components/DraggableFileRow';
+import { DraggableModalFileItem } from './components/DraggableModalFileItem';
+import { DroppableFolderButton } from './components/DroppableFolderButton';
+import { DroppableHeaderTrigger } from './components/DroppableHeaderTrigger';
+import {
+  type CategoryOption,
+  DEFAULT_FILTERS,
+  DEFAULT_SORT,
+  DEFAULT_TRASH_TTL_DAYS,
+  FOLDER_NAME_MAX,
+  type FileAvailability,
+  type FileAvailabilityStatus,
+  type FolderOption,
+  MS_PER_DAY,
+  NO_FOLDER,
+  type SortDirection,
+  type SortField,
+  type StorageFile,
+  type StorageView,
+  type StorageViewPayload,
+  type TagOption,
+  colorPickerPopoverSlotProps,
+  formatFileSize,
+  getAvailabilityColor,
+  getAvailabilityDot,
+  getBankDisplayName,
+  getStatusTone,
+  getTagChipStyle,
+  tagChipClass,
+  truncateFileNameForDisplay,
+} from './storageHelpers';
 
 /**
  * Storage page - displays all files with sharing and permissions
@@ -725,20 +87,6 @@ function StoragePageContent({
 }: {
   initialList?: 'active' | 'trash';
 }) {
-  const resolveLabel = (value: unknown, fallback: string): string => {
-    if (typeof value === 'string') {
-      return value;
-    }
-
-    if (value && typeof value === 'object' && 'value' in value) {
-      const tokenValue = (value as { value?: unknown }).value;
-      if (typeof tokenValue === 'string') {
-        return tokenValue;
-      }
-    }
-
-    return fallback;
-  };
   const router = useRouter();
   const t = useIntlayer('storagePage');
   const { locale } = useLocale();
