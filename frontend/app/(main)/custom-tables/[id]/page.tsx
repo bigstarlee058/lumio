@@ -26,6 +26,7 @@ import {
 import { useDeleteModals } from './hooks/useDeleteModals';
 import { useRowDrawer } from './hooks/useRowDrawer';
 import { useTabStats } from './hooks/useTabStats';
+import { useTableGrid } from './hooks/useTableGrid';
 import { useTableMeta } from './hooks/useTableMeta';
 import { handleFullscreenEscapeNavigation } from './utils/fullscreenEscapeNavigation';
 import {
@@ -98,9 +99,7 @@ interface CustomTable {
   viewSettings?: CustomTableViewSettings | null;
 }
 
-
 type RowFilter = { col: string; op: RowFilterOp; value?: RowFilterValue };
-
 
 type TranslationTree = {
   value?: string;
@@ -170,14 +169,6 @@ const getResponseItems = (value: unknown): CustomTableGridRow[] => {
 const getViewColumns = (viewSettings: CustomTableViewSettings | null | undefined) =>
   viewSettings?.columns ?? {};
 
-const getRowIdentity = (row: unknown): string => {
-  const record = getRecord(row);
-  if (!record) return '';
-  if (typeof record.id === 'string') return record.id;
-  if (typeof record.rowNumber === 'number') return String(record.rowNumber);
-  return '';
-};
-
 const getClassificationResults = (value: unknown): Map<string, boolean | null> => {
   const payload =
     getNestedValue(value, ['data', 'items']) ??
@@ -243,11 +234,7 @@ export default function CustomTableDetailPage() {
     }>
   >([]);
   const [categoryId, setCategoryId] = useState<string>('');
-  const [rows, setRows] = useState<CustomTableGridRow[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingRows, setLoadingRows] = useState(false);
-  const [savingCell, setSavingCell] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [gridFiltersParam, setGridFiltersParam] = useState<string | undefined>(undefined);
   const [selectedColumnKeys, setSelectedColumnKeys] = useState<string[]>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
@@ -296,11 +283,6 @@ export default function CustomTableDetailPage() {
     [t],
   );
 
-  const rowsRef = useRef<CustomTableGridRow[]>([]);
-  const rowsRequestSeqRef = useRef(0);
-  const rowsAbortControllerRef = useRef<AbortController | null>(null);
-  const loadingRowsRef = useRef(false);
-  const combinedFiltersRef = useRef<string | undefined>(undefined);
   const {
     deleteRowModalOpen,
     deleteRowTarget,
@@ -315,15 +297,6 @@ export default function CustomTableDetailPage() {
     openDeleteColumnModal,
     closeDeleteColumnModal,
   } = useDeleteModals();
-  const {
-    rowDrawerOpen,
-    rowDrawerMode,
-    rowDrawerRowId,
-    drawerRow,
-    setRowDrawerMode,
-    openRowDrawer,
-    closeRowDrawer,
-  } = useRowDrawer(rows);
   const [mounted, setMounted] = useState(false);
   const [pastePreviewOpen, setPastePreviewOpen] = useState(false);
   const [pasteParsing, setPasteParsing] = useState(false);
@@ -425,17 +398,6 @@ export default function CustomTableDetailPage() {
 
   const stickyRightColumnIds = useMemo(() => ['__actions'], []);
 
-  useEffect(() => {
-    rowsRef.current = rows;
-  }, [rows]);
-
-  useEffect(
-    () => () => {
-      rowsAbortControllerRef.current?.abort();
-    },
-    [],
-  );
-
   const quickTabs = useMemo<QuickTab[]>(() => {
     return buildQuickTabs({
       labels: {
@@ -470,14 +432,6 @@ export default function CustomTableDetailPage() {
   useEffect(() => {
     setSelectedRowIds([]);
   }, [normalizedActiveTabId]);
-
-  const displayRows = useMemo(() => rows, [rows]);
-
-  useEffect(() => {
-    if (!selectedRowIds.length) return;
-    const visibleIds = new Set(displayRows.map(r => r.id));
-    setSelectedRowIds(prev => prev.filter(id => visibleIds.has(id)));
-  }, [displayRows, selectedRowIds.length]);
 
   useEffect(() => {
     const allowed = new Set(orderedColumns.map(c => c.key));
@@ -539,72 +493,6 @@ export default function CustomTableDetailPage() {
       saveFailed: t.meta.saveFailed.value,
     },
   });
-
-  const loadRows = useCallback(
-    async (opts?: {
-      reset?: boolean;
-      filtersParam?: string;
-    }) => {
-      if (!tableId) return;
-      const shouldReset = Boolean(opts?.reset);
-      if (!shouldReset && loadingRowsRef.current) return;
-
-      rowsRequestSeqRef.current += 1;
-      const requestId = rowsRequestSeqRef.current;
-
-      if (shouldReset) {
-        rowsAbortControllerRef.current?.abort();
-      }
-
-      const controller = new AbortController();
-      rowsAbortControllerRef.current = controller;
-      loadingRowsRef.current = true;
-      setLoadingRows(true);
-
-      try {
-        const cursor = shouldReset
-          ? undefined
-          : rowsRef.current[rowsRef.current.length - 1]?.rowNumber;
-        const filters = opts?.filtersParam ?? combinedFiltersRef.current;
-
-        const response = await apiClient.get(`/custom-tables/${tableId}/rows`, {
-          signal: controller.signal,
-          params: { cursor, limit: 50, filters },
-        });
-
-        if (controller.signal.aborted || requestId !== rowsRequestSeqRef.current) return;
-
-        const items = response.data?.items || response.data?.data?.items || [];
-        const next = Array.isArray(items) ? items : [];
-        setRows(prev => {
-          const merged = shouldReset ? next : [...prev, ...next];
-          const seen = new Set<string>();
-          const deduped: typeof merged = [];
-          for (const row of merged) {
-            const id = getRowIdentity(row);
-            if (!id || seen.has(id)) continue;
-            seen.add(id);
-            deduped.push(row);
-          }
-          return deduped;
-        });
-        setHasMore(next.length >= 50);
-      } catch (error) {
-        if (isAbortError(error)) return;
-        console.error('Failed to load rows:', error);
-        toast.error(t.grid.loadRowsFailed.value);
-      } finally {
-        if (requestId === rowsRequestSeqRef.current) {
-          loadingRowsRef.current = false;
-          setLoadingRows(false);
-        }
-        if (rowsAbortControllerRef.current === controller) {
-          rowsAbortControllerRef.current = null;
-        }
-      }
-    },
-    [tableId, t.grid.loadRowsFailed.value],
-  );
 
   const onGridFiltersParamChange = (next: string | undefined) => {
     if (next === gridFiltersParam) return;
@@ -730,10 +618,6 @@ export default function CustomTableDetailPage() {
     return merged.length ? JSON.stringify(merged) : undefined;
   }, [gridFiltersParam, requestFilters, dateFilters, activeTabFilter, searchFilter]);
 
-  useEffect(() => {
-    combinedFiltersRef.current = combinedFiltersParam;
-  }, [combinedFiltersParam]);
-
   function parseFiltersParam(raw: string | undefined): RowFilter[] {
     if (!raw) return [];
     try {
@@ -744,16 +628,35 @@ export default function CustomTableDetailPage() {
     }
   }
 
+  const { rows, setRows, loadingRows, hasMore, loadRows } = useTableGrid({
+    tableId,
+    isAuthenticated: Boolean(user),
+    combinedFiltersParam,
+    loadRowsFailedMessage: t.grid.loadRowsFailed.value,
+  });
+
+  const {
+    rowDrawerOpen,
+    rowDrawerMode,
+    rowDrawerRowId,
+    drawerRow,
+    setRowDrawerMode,
+    openRowDrawer,
+    closeRowDrawer,
+  } = useRowDrawer(rows);
+
+  const displayRows = useMemo(() => rows, [rows]);
+
+  // Reset row selection when filters change
   useEffect(() => {
-    if (!user || !tableId) return;
-    setHasMore(true);
-    setRows([]);
     setSelectedRowIds([]);
-    const timer = window.setTimeout(() => {
-      loadRows({ reset: true, filtersParam: combinedFiltersParam });
-    }, 250);
-    return () => window.clearTimeout(timer);
-  }, [combinedFiltersParam, loadRows, tableId, user]);
+  }, [combinedFiltersParam]);
+
+  useEffect(() => {
+    if (!selectedRowIds.length) return;
+    const visibleIds = new Set(displayRows.map(r => r.id));
+    setSelectedRowIds(prev => prev.filter(id => visibleIds.has(id)));
+  }, [displayRows, selectedRowIds.length]);
 
   useEffect(() => {
     if (!user) return;
