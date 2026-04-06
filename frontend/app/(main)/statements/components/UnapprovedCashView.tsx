@@ -6,6 +6,7 @@ import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { DatePicker } from '@heroui/date-picker';
 import { type DateValue, parseDate } from '@internationalized/date';
 import { Check, RefreshCcw, Search, X } from 'lucide-react';
@@ -63,25 +64,6 @@ const SOURCE_BADGE_CLASSNAME: Record<UnapprovedSource, string> = {
   bank: 'border-emerald-200 bg-emerald-50 text-emerald-700',
   manual: 'border-indigo-200 bg-indigo-50 text-indigo-700',
   unknown: 'border-gray-200 bg-gray-100 text-gray-700',
-};
-
-const getRecord = (value: unknown): Record<string, unknown> | null =>
-  typeof value === 'object' && value !== null ? (value as Record<string, unknown>) : null;
-
-const getNestedValue = (root: unknown, path: string[]): unknown => {
-  let current: unknown = root;
-  for (const segment of path) {
-    const record = getRecord(current);
-    if (!record) return undefined;
-    current = record[segment];
-  }
-  return current;
-};
-
-const resolveLabel = (value: unknown, fallback: string) => {
-  if (typeof value === 'string') return value;
-  const record = getRecord(value);
-  return typeof record?.value === 'string' ? record.value : fallback;
 };
 
 const formatTemplate = (template: string, values: Record<string, string | number>) =>
