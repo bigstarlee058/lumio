@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/app/components/ui/card';
 import { Spinner } from '@/app/components/ui/spinner';
+import type { ThemePreference } from '@/app/lib/theme-preference';
 import { ModeToggle } from '@/components/mode-toggle';
 
 type Props = {
@@ -26,8 +27,8 @@ type Props = {
   appearanceMessage: string | null;
   appearanceError: string | null;
   appearanceLoading: boolean;
-  themePreference: string;
-  handleThemePreferenceChange: (v: string) => void;
+  themePreference: ThemePreference;
+  handleThemePreferenceChange: (nextTheme: ThemePreference) => void | Promise<void>;
 };
 
 export function AppearanceSection({

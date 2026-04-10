@@ -10,20 +10,23 @@ import {
 } from '@/app/components/ui/card';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import {
+  type NotificationPreferences,
   systemNotificationSettings,
   workspaceNotificationSettings,
 } from '@/app/settings/profile/profileHelpers';
 
+type NotificationKey = keyof NotificationPreferences;
 type NotificationItem = { label: string; description: string };
+type ToggleNotificationPreference = (key: NotificationKey, value: boolean) => Promise<void>;
 
 type Props = {
   tx: (path: string[], fallback: string) => string;
   notificationError: string | null;
   notificationMessage: string | null;
   notificationsLoading: boolean;
-  notificationPreferences: Record<string, boolean>;
-  notificationSavingKey: string | null;
-  toggleNotificationPreference: (key: string, checked: boolean | 'indeterminate') => Promise<void>;
+  notificationPreferences: NotificationPreferences;
+  notificationSavingKey: NotificationKey | null;
+  toggleNotificationPreference: ToggleNotificationPreference;
 };
 
 function NotificationSettingRow({
@@ -33,11 +36,11 @@ function NotificationSettingRow({
   saving,
   onToggle,
 }: {
-  settingKey: string;
+  settingKey: NotificationKey;
   item: NotificationItem;
   checked: boolean;
   saving: boolean;
-  onToggle: (key: string, checked: boolean | 'indeterminate') => Promise<void>;
+  onToggle: ToggleNotificationPreference;
 }) {
   const inputId = `pref-${settingKey}`;
   return (
@@ -51,7 +54,7 @@ function NotificationSettingRow({
       <Checkbox
         id={inputId}
         checked={checked}
-        onCheckedChange={value => void onToggle(settingKey, value)}
+        onCheckedChange={value => void onToggle(settingKey, value === true)}
         disabled={saving}
         aria-label={item.label}
       />
