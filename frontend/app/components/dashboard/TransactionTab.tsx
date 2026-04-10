@@ -1,41 +1,34 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import DetailsDrawer from '@/app/components/transactions/DetailsDrawer';
 import TransactionsTable from '@/app/components/transactions/TransactionsTable';
-import type { Category, FilterState, Transaction } from '@/app/components/transactions/types';
+import { useTransactionData } from '@/app/components/transactions/hooks/useTransactionData';
+import type { FilterState, Transaction } from '@/app/components/transactions/types';
 import { CurrencyDisplayToggle } from '@/app/components/ui/CurrencyDisplayToggle';
 import { CurrencyFilterDropdown } from '@/app/components/ui/CurrencyFilterDropdown';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';
 import api from '@/app/lib/api';
 
-type TransactionApiRecord = Partial<Transaction> & {
-  id: string;
-  transactionDate: string;
-  counterpartyName: string;
-  paymentPurpose: string;
-  debit?: number | null;
-  credit?: number | null;
-};
-
 export function TransactionTab() {
   const t = useIntlayer('transactionsPageView');
   const { showConverted, workspaceCurrency } = useCurrencyDisplay();
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [currencyFilter, setCurrencyFilter] = useState<string | null>(null);
+  const { transactions, categories, loading, error, refetch } = useTransactionData({
+    showConverted,
+    workspaceCurrency,
+    currencyFilter,
+  });
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [detailsTransaction, setDetailsTransaction] = useState<Transaction | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [bulkCategoryId, setBulkCategoryId] = useState<string>('');
-  const [currencyFilter, setCurrencyFilter] = useState<string | null>(null);
 
   const [filters, setFilters] = useState<FilterState>({
     search: '',
@@ -43,67 +36,10 @@ export function TransactionTab() {
     category: null,
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const params: Record<string, string | number> = { limit: 500 };
-      if (showConverted) params.convert_to = workspaceCurrency;
-      if (currencyFilter) params.currency = currencyFilter;
-
-      const [txResponse, catResponse] = await Promise.all([
-        api.get('/transactions', { params }),
-        api.get('/categories'),
-      ]);
-
-      const rawTransactions =
-        (txResponse.data.data as TransactionApiRecord[] | undefined) ??
-        (txResponse.data.items as TransactionApiRecord[] | undefined) ??
-        [];
-      const transformedTransactions: Transaction[] = rawTransactions.map(tx => ({
-        id: tx.id,
-        transactionDate: tx.transactionDate,
-        documentNumber: tx.documentNumber,
-        counterpartyName: tx.counterpartyName,
-        counterpartyBin: tx.counterpartyBin,
-        paymentPurpose: tx.paymentPurpose,
-        debit: tx.debit || 0,
-        credit: tx.credit || 0,
-        amount: tx.debit ? -Math.abs(tx.debit) : Math.abs(tx.credit || 0),
-        transactionType: tx.transactionType || (tx.debit ? 'expense' : 'income'),
-        currency: tx.currency,
-        exchangeRate: tx.exchangeRate,
-        article: tx.article,
-        amountForeign: tx.amountForeign,
-        convertedAmount: tx.convertedAmount,
-        conversionRate: tx.conversionRate,
-        convertedCurrency: tx.convertedCurrency,
-        category: tx.category,
-        branch: tx.branch,
-        wallet: tx.wallet,
-      }));
-
-      setTransactions(transformedTransactions);
-      setCategories(catResponse.data || []);
-    } catch (err) {
-      console.error('Error fetching transactions:', err);
-      setError('Failed to load transactions');
-      toast.error('Failed to load transactions');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const availableCurrencies = useMemo(
     () => [...new Set(transactions.map(tx => tx.currency).filter(Boolean) as string[])].sort(),
     [transactions],
   );
-
-  useEffect(() => {
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showConverted, workspaceCurrency, currencyFilter]);
 
   const handleRowClick = (transaction: Transaction) => {
     setDetailsTransaction(transaction);
@@ -121,7 +57,7 @@ export function TransactionTab() {
         transactionIds: txIds,
         categoryId,
       });
-      await fetchData();
+      await refetch();
       toast.success(t.categoriesUpdated?.value || `Category updated successfully`);
     } catch (err) {
       console.error('Failed to update category:', err);
