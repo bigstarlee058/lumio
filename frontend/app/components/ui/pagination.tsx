@@ -1,15 +1,13 @@
 'use client';
 
-import { Pagination } from '@heroui/react';
-import type { PaginationProps } from '@heroui/react';
+import MuiPagination, { type PaginationProps as MuiPaginationProps } from '@mui/material/Pagination';
+import * as React from 'react';
 
-type AppPaginationProps = Omit<
-  PaginationProps,
-  'page' | 'total' | 'onChange' | 'showControls' | 'loop'
-> & {
+type AppPaginationProps = Omit<MuiPaginationProps, 'count' | 'onChange'> & {
   page: number;
   total: number;
   onChange: (page: number) => void;
+  className?: string;
 };
 
 export function AppPagination({ page, total, onChange, className, ...props }: AppPaginationProps) {
@@ -17,15 +15,15 @@ export function AppPagination({ page, total, onChange, className, ...props }: Ap
   const safePage = Math.min(Math.max(1, page), safeTotal);
 
   return (
-    <Pagination
+    <MuiPagination
       {...props}
       page={safePage}
-      total={safeTotal}
-      onChange={onChange}
-      showControls
-      loop
-      isDisabled={safeTotal <= 1}
+      count={safeTotal}
+      onChange={(_event, p) => onChange(p)}
+      disabled={safeTotal <= 1}
       className={className}
+      showFirstButton
+      showLastButton
     />
   );
 }
