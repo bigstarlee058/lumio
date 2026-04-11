@@ -1,48 +1,87 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
+import MuiButton, { type ButtonProps as MuiButtonProps } from '@mui/material/Button';
+import MuiIconButton from '@mui/material/IconButton';
 import * as React from 'react';
 
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'soft';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
 
-const variantClasses: Record<ButtonVariant, string> = {
-  default: 'bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
-  outline: 'border border-primary text-primary hover:bg-primary/10 bg-transparent',
-  ghost: 'text-foreground hover:bg-muted',
-  destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-  soft: 'bg-primary/10 text-primary hover:bg-primary/20',
+const mapVariant = (
+  v: ButtonVariant,
+): {
+  variant: MuiButtonProps['variant'];
+  color: MuiButtonProps['color'];
+} => {
+  switch (v) {
+    case 'default':
+      return { variant: 'contained', color: 'primary' };
+    case 'secondary':
+      return { variant: 'contained', color: 'secondary' };
+    case 'outline':
+      return { variant: 'outlined', color: 'primary' };
+    case 'ghost':
+      return { variant: 'text', color: 'inherit' };
+    case 'destructive':
+      return { variant: 'contained', color: 'error' };
+    case 'soft':
+      return { variant: 'outlined', color: 'primary' };
+  }
 };
 
-const sizeClasses: Record<ButtonSize, string> = {
-  default: 'h-10 px-4 py-2',
-  sm: 'h-9 px-3',
-  lg: 'h-11 px-6',
-  icon: 'h-10 w-10',
+const mapSize = (s: ButtonSize): MuiButtonProps['size'] => {
+  if (s === 'sm') return 'small';
+  if (s === 'lg') return 'large';
+  return 'medium';
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', type, ...props }, ref) => (
-    <button
-      ref={ref}
-      type={type ?? 'button'}
-      className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2',
-        'disabled:pointer-events-none disabled:opacity-50 ring-offset-background',
-        variantClasses[variant],
-        sizeClasses[size],
-        className,
-      )}
-      {...props}
-    />
-  ),
+  (
+    { variant = 'default', size = 'default', type, children, onClick, disabled, className, style, ...props },
+    ref,
+  ) => {
+    const muiVariant = mapVariant(variant);
+    const muiSize = mapSize(size);
+
+    if (size === 'icon') {
+      return (
+        <MuiIconButton
+          ref={ref}
+          type={type ?? 'button'}
+          size={muiSize}
+          onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+          disabled={disabled}
+          className={className}
+          style={style}
+        >
+          {children}
+        </MuiIconButton>
+      );
+    }
+
+    return (
+      <MuiButton
+        ref={ref}
+        type={type ?? 'button'}
+        variant={muiVariant.variant}
+        color={muiVariant.color}
+        size={muiSize}
+        onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+        disabled={disabled}
+        className={className}
+        style={style}
+        {...(props as object)}
+      >
+        {children}
+      </MuiButton>
+    );
+  },
 );
 Button.displayName = 'Button';
 
