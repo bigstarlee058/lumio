@@ -1,46 +1,38 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
-import { Chip } from '@heroui/chip';
+import Chip from '@mui/material/Chip';
 import { forwardRef } from 'react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
-type FilterChipButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
+type FilterChipButtonProps = {
   children: ReactNode;
   active?: boolean;
+  disabled?: boolean;
+  onClick?: MouseEventHandler<HTMLElement>;
+  className?: string;
+  style?: React.CSSProperties;
+  type?: 'button' | 'submit' | 'reset';
+  'aria-pressed'?: boolean;
+  'aria-label'?: string;
+  id?: string;
 };
 
-export const FilterChipButton = forwardRef<HTMLButtonElement, FilterChipButtonProps>(
-  ({ children, active = false, className, disabled, type = 'button', ...props }, ref) => {
+export const FilterChipButton = forwardRef<HTMLDivElement, FilterChipButtonProps>(
+  ({ children, active = false, className, disabled, onClick, style, ...props }, ref) => {
     return (
-      <button
+      <Chip
         ref={ref}
-        type={type}
+        label={children}
+        clickable={!disabled}
         disabled={disabled}
-        className={cn(
-          'group inline-flex rounded-full bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:ring-offset-2',
-          className,
-        )}
-        {...props}
-      >
-        <Chip
-          radius="full"
-          variant="bordered"
-          classNames={{
-            base: cn(
-              'min-h-8 border px-0 transition-colors',
-              active
-                ? 'border-primary/30 bg-primary/10 text-primary'
-                : 'border-gray-200 bg-white text-gray-700 group-hover:border-primary group-hover:text-primary',
-              disabled ? 'opacity-60' : '',
-            ),
-            content:
-              'flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-[13px] font-medium leading-none',
-          }}
-        >
-          {children}
-        </Chip>
-      </button>
+        onClick={onClick as MouseEventHandler<HTMLDivElement> | undefined}
+        variant={active ? 'filled' : 'outlined'}
+        color={active ? 'primary' : 'default'}
+        size="small"
+        className={className}
+        style={style}
+        {...(props as object)}
+      />
     );
   },
 );
