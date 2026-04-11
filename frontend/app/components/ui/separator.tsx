@@ -1,13 +1,11 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
+import Divider, { type DividerProps } from '@mui/material/Divider';
 import * as React from 'react';
 
-const Separator = React.forwardRef<HTMLHRElement, React.HTMLAttributes<HTMLHRElement>>(
-  ({ className, ...props }, ref) => (
-    <hr ref={ref} className={cn('h-px w-full border-0 bg-border', className)} {...props} />
-  ),
-);
+const Separator = React.forwardRef<HTMLHRElement, DividerProps>((props, ref) => (
+  <Divider ref={ref} {...props} />
+));
 Separator.displayName = 'Separator';
 
 export { Separator };
