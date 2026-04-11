@@ -1,0 +1,87 @@
+/* app/styles/tokens.css
+ * Source of truth for design tokens. Used by both MUI theme (via var() in
+ * styleOverrides) and BEM blocks in app/styles/blocks/*.css.
+ */
+
+:root {
+  /* Palette — light */
+  --lumio-color-primary: #0284c7;
+  --lumio-color-primary-hover: #0369a1;
+  --lumio-color-primary-contrast: #ffffff;
+  --lumio-color-secondary: #475569;
+  --lumio-color-secondary-contrast: #ffffff;
+  --lumio-color-danger: #dc2626;
+  --lumio-color-danger-contrast: #ffffff;
+  --lumio-color-success: #16a34a;
+  --lumio-color-warning: #d97706;
+  --lumio-color-info: #0ea5e9;
+
+  --lumio-color-bg: #ffffff;
+  --lumio-color-surface: #ffffff;
+  --lumio-color-surface-muted: #f1f5f9;
+  --lumio-color-text-primary: #0f172a;
+  --lumio-color-text-secondary: #4b5563;
+  --lumio-color-border: #d7e2ef;
+  --lumio-color-border-strong: #94a3b8;
+
+  /* Spacing (4px base) */
+  --lumio-space-0: 0;
+  --lumio-space-1: 4px;
+  --lumio-space-2: 8px;
+  --lumio-space-3: 12px;
+  --lumio-space-4: 16px;
+  --lumio-space-5: 20px;
+  --lumio-space-6: 24px;
+  --lumio-space-8: 32px;
+  --lumio-space-10: 40px;
+  --lumio-space-12: 48px;
+
+  /* Typography */
+  --lumio-font-family: var(--font-manrope), "Manrope", "Inter", "Segoe UI", sans-serif;
+  --lumio-font-size-xs: 12px;
+  --lumio-font-size-sm: 13px;
+  --lumio-font-size-base: 14px;
+  --lumio-font-size-md: 15px;
+  --lumio-font-size-lg: 16px;
+  --lumio-font-size-xl: 18px;
+  --lumio-font-weight-regular: 400;
+  --lumio-font-weight-medium: 500;
+  --lumio-font-weight-semibold: 600;
+  --lumio-font-weight-bold: 700;
+  --lumio-line-height-tight: 1.25;
+  --lumio-line-height-normal: 1.5;
+
+  /* Shape */
+  --lumio-radius-none: 0;
+  --lumio-radius-full: 9999px;
+
+  /* Shadow */
+  --lumio-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --lumio-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+
+  /* Z-index */
+  --lumio-z-dropdown: 1000;
+  --lumio-z-modal: 1300;
+  --lumio-z-popover: 1400;
+  --lumio-z-tooltip: 1500;
+}
+
+.dark {
+  --lumio-color-primary: #5B9BD5;
+  --lumio-color-primary-hover: #4A8BC5;
+  --lumio-color-primary-contrast: #0F1419;
+  --lumio-color-secondary: #1A2332;
+  --lumio-color-secondary-contrast: #E2E8F0;
+  --lumio-color-danger: #ef4444;
+  --lumio-color-success: #22c55e;
+  --lumio-color-warning: #f59e0b;
+  --lumio-color-info: #38bdf8;
+
+  --lumio-color-bg: #0F1419;
+  --lumio-color-surface: #151C24;
+  --lumio-color-surface-muted: #1E2A3A;
+  --lumio-color-text-primary: #e2e8f0;
+  --lumio-color-text-secondary: #8899AA;
+  --lumio-color-border: #1E2A3A;
+  --lumio-color-border-strong: #334155;
+}

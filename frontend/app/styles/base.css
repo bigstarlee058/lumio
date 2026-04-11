@@ -1,0 +1,60 @@
+/* app/styles/base.css
+ * Minimal reset, typography base, BEM utilities (u-* prefix).
+ * No BEM blocks here — only global primitives.
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--lumio-font-family);
+  font-size: var(--lumio-font-size-base);
+  line-height: var(--lumio-line-height-normal);
+  color: var(--lumio-color-text-primary);
+  background: var(--lumio-color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Utilities */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.u-text-center { text-align: center; }
+.u-text-right { text-align: right; }
+.u-text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.u-flex { display: flex; }
+.u-flex-col { display: flex; flex-direction: column; }
+.u-items-center { align-items: center; }
+.u-justify-between { justify-content: space-between; }
+.u-gap-1 { gap: var(--lumio-space-1); }
+.u-gap-2 { gap: var(--lumio-space-2); }
+.u-gap-3 { gap: var(--lumio-space-3); }
+.u-gap-4 { gap: var(--lumio-space-4); }
+
+.u-w-full { width: 100%; }
+.u-h-full { height: 100%; }
