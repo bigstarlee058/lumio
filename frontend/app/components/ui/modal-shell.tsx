@@ -181,7 +181,7 @@ export function ModalFooter({
           disabled={isConfirmDisabled || isConfirmLoading}
           variant="contained"
           color={confirmVariant === 'destructive' ? 'error' : 'primary'}
-          startIcon={isConfirmLoading ? <Spinner className="h-4 w-4" /> : undefined}
+          startIcon={isConfirmLoading ? <Spinner size={16} /> : undefined}
         >
           {confirmText}
         </MuiButton>

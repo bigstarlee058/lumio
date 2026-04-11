@@ -5,6 +5,7 @@ import { FilterDropdown } from '@/app/(main)/statements/components/filters/Filte
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { useIntlayer } from '@/app/i18n';
+import Box from '@mui/material/Box';
 import { DollarSign } from 'lucide-react';
 import { useState } from 'react';
 
@@ -38,7 +39,7 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
 
   const trigger = (
     <FilterChipButton active={!!value} onClick={() => setOpen(o => !o)}>
-      <DollarSign className="h-3.5 w-3.5" />
+      <DollarSign size={14} />
       {value ?? t.currency.value}
     </FilterChipButton>
   );
@@ -47,7 +48,7 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
 
   return (
     <FilterDropdown open={open} onOpenChange={setOpen} trigger={trigger}>
-      <div className="max-h-[280px] space-y-1 overflow-y-auto pr-1">
+      <Box sx={{ maxHeight: 280, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {currencies.map(code => (
           <FilterOptionRow
             key={code}
@@ -57,7 +58,7 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
             variant="radio"
           />
         ))}
-      </div>
+      </Box>
       <FilterActions
         onReset={handleReset}
         onApply={handleApply}

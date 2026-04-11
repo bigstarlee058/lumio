@@ -209,7 +209,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<HTMLLIElement, DropdownMenuChe
       {...(props as object)}
     >
       <ListItemIcon>
-        {checked ? <Check className="h-4 w-4" /> : <span className="h-4 w-4 inline-block" />}
+        {checked ? <Check size={16} /> : <span style={{ width: 16, height: 16, display: 'inline-block' }} />}
       </ListItemIcon>
       {children}
     </MenuItem>

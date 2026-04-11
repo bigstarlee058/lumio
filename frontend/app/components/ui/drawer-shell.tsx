@@ -111,7 +111,7 @@ export function DrawerShell({
               size="small"
               sx={{ ml: 'auto' }}
             >
-              <X className="h-5 w-5" />
+              <X size={20} />
             </IconButton>
           )}
         </div>
