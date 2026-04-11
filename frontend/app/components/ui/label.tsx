@@ -1,18 +1,23 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
+import Typography from '@mui/material/Typography';
 import * as React from 'react';
 
-const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
-  ({ className, htmlFor, children, ...props }, ref) => (
-    <label
-      ref={ref}
-      className={cn('text-sm font-medium text-foreground', className)}
-      htmlFor={htmlFor}
-      {...props}
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+
+const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
+  ({ className, style, children, ...props }, ref) => (
+    <Typography
+      component="label"
+      variant="body2"
+      fontWeight={600}
+      ref={ref as React.Ref<HTMLLabelElement>}
+      className={className}
+      style={style}
+      {...(props as object)}
     >
       {children}
-    </label>
+    </Typography>
   ),
 );
 Label.displayName = 'Label';
