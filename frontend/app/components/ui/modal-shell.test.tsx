@@ -40,7 +40,6 @@ describe('ModalShell', () => {
 
     const dialog = document.body.querySelector('[role="dialog"]') as HTMLDivElement | null;
     expect(dialog).toBeTruthy();
-    expect(dialog?.className).toContain('z-[400]');
   });
 
   it('uses the shared spinner in a loading confirm action', async () => {

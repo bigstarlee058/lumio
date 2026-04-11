@@ -1,12 +1,13 @@
 'use client';
 
-import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
-import { cn } from '@/app/lib/utils';
 import { Spinner } from '@/app/components/ui/spinner';
+import MuiButton from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
 import { X } from 'lucide-react';
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
@@ -35,12 +36,12 @@ export interface ModalShellProps {
   contentClassName?: string;
 }
 
-const sizeClasses: Record<ModalSize, string> = {
-  sm: 'max-w-md',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
-  full: 'max-w-[95vw] h-[90vh]',
+const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
+  sm: 'sm',
+  md: 'md',
+  lg: 'lg',
+  xl: 'xl',
+  full: false,
 };
 
 /**
@@ -48,7 +49,6 @@ const sizeClasses: Record<ModalSize, string> = {
  *
  * Provides consistent styling, animations, and behavior for all modals:
  * - Backdrop overlay
- * - Fade-in/zoom-in animations
  * - Body scroll lock
  * - Keyboard (ESC) support
  * - Focus management
@@ -66,110 +66,60 @@ export function ModalShell({
   className,
   contentClassName,
 }: ModalShellProps) {
-  const [mounted, setMounted] = React.useState(false);
+  const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
+    if (reason === 'backdropClick' && !closeOnBackdropClick) return;
+    if (reason === 'escapeKeyDown' && !closeOnEscape) return;
+    onClose();
+  };
 
-  useLockBodyScroll(isOpen);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const handleEscape = useCallback(
-    (event: KeyboardEvent) => {
-      if (closeOnEscape && event.key === 'Escape') {
-        onClose();
-      }
-    },
-    [closeOnEscape, onClose],
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
-  }, [isOpen, handleEscape]);
-
-  const handleBackdropClick = useCallback(() => {
-    if (closeOnBackdropClick) {
-      onClose();
-    }
-  }, [closeOnBackdropClick, onClose]);
-
-  if (!isOpen || !mounted) return null;
-
-  const modal = (
-    <div
-      className="fixed inset-0 z-[400] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4"
-      // biome-ignore lint/a11y/useSemanticElements: using div for styling control
-      role="dialog"
-      aria-modal="true"
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      maxWidth={sizeToMaxWidth[size]}
+      fullWidth
+      fullScreen={size === 'full'}
+      className={className}
       aria-labelledby={title ? 'modal-title' : undefined}
+      sx={{ zIndex: 400 }}
     >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/30 animate-in fade-in duration-200"
-        onClick={handleBackdropClick}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            handleBackdropClick();
-          }
-        }}
-        aria-hidden="true"
-        role="presentation"
-      />
-
-      {/* Modal container */}
-      <div
-        className={cn(
-          'relative flex flex-col bg-white shadow-2xl animate-in zoom-in-95 duration-200 focus:outline-none',
-          sizeClasses[size],
-          className,
-        )}
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => e.stopPropagation()}
-        role="presentation"
-      >
-        {/* Header */}
-        {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-4 md:p-5 border-b border-gray-100">
-            {title && (
-              <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
-                {title}
-              </h2>
-            )}
-            {showCloseButton && (
-              <button
-                type="button"
-                onClick={onClose}
-                className={cn(
-                  'text-gray-400 bg-transparent hover:bg-gray-100 hover:text-gray-900',
-                  'rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center',
-                  'transition-colors focus:outline-none focus:ring-2 focus:ring-gray-200',
-                  !title && 'ml-auto',
-                )}
-                aria-label="Close modal"
-              >
-                <X size={20} />
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Content */}
-        <div className={cn('p-4 md:p-5', contentClassName)}>{children}</div>
-
-        {/* Footer */}
-        {footer && (
-          <div className="flex items-center justify-end p-4 md:p-5 border-t border-gray-100 gap-3">
-            {footer}
-          </div>
-        )}
-      </div>
-    </div>
+      {(title || showCloseButton) && (
+        <DialogTitle
+          id="modal-title"
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}
+        >
+          {title}
+          {showCloseButton && (
+            <IconButton
+              type="button"
+              onClick={onClose}
+              aria-label="Close modal"
+              size="small"
+              sx={{ ml: 'auto' }}
+            >
+              <X size={20} />
+            </IconButton>
+          )}
+        </DialogTitle>
+      )}
+      <DialogContent className={contentClassName}>{children}</DialogContent>
+      {footer && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            padding: '16px 20px',
+            borderTop: '1px solid',
+            borderColor: 'rgba(0,0,0,0.12)',
+            gap: 12,
+          }}
+        >
+          {footer}
+        </div>
+      )}
+    </Dialog>
   );
-
-  return createPortal(modal, document.body);
 }
 
 /**
@@ -182,7 +132,11 @@ export function ModalHeader({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn('flex items-center gap-3', className)}>{children}</div>;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} className={className}>
+      {children}
+    </div>
+  );
 }
 
 /**
@@ -216,36 +170,21 @@ export function ModalFooter({
   return (
     <>
       {onCancel && (
-        <button
-          type="button"
-          onClick={onCancel}
-          className="py-2 px-4 text-sm font-medium text-gray-700 bg-white rounded-full border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 transition-colors"
-        >
+        <MuiButton type="button" onClick={onCancel} variant="outlined" color="inherit">
           {cancelText}
-        </button>
+        </MuiButton>
       )}
       {onConfirm && (
-        <button
+        <MuiButton
           type="button"
           onClick={onConfirm}
           disabled={isConfirmDisabled || isConfirmLoading}
-          className={cn(
-            'py-2 px-4 text-sm font-medium text-white rounded-full focus:ring-4 focus:outline-none transition-colors shadow-sm',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            confirmVariant === 'destructive'
-              ? 'bg-red-600 hover:bg-red-700 focus:ring-red-300'
-              : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-300',
-          )}
+          variant="contained"
+          color={confirmVariant === 'destructive' ? 'error' : 'primary'}
+          startIcon={isConfirmLoading ? <Spinner className="h-4 w-4" /> : undefined}
         >
-          {isConfirmLoading ? (
-            <span className="flex items-center gap-2">
-              <Spinner className="h-4 w-4" />
-              {confirmText}
-            </span>
-          ) : (
-            confirmText
-          )}
-        </button>
+          {confirmText}
+        </MuiButton>
       )}
     </>
   );
