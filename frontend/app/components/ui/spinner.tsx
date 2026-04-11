@@ -1,15 +1,20 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
-import { LoaderIcon } from 'lucide-react';
-import type { ComponentProps } from 'react';
+import CircularProgress, { type CircularProgressProps } from '@mui/material/CircularProgress';
+import * as React from 'react';
 
-function Spinner({ className, ...props }: ComponentProps<'svg'>) {
+export interface SpinnerProps extends Omit<CircularProgressProps, 'aria-label'> {
+  label?: string;
+  className?: string;
+}
+
+function Spinner({ label, size = 16, className, ...props }: SpinnerProps) {
   return (
-    <LoaderIcon
+    <CircularProgress
       role="status"
-      aria-label="Loading"
-      className={cn('size-4 animate-spin', className)}
+      aria-label={label ?? 'Loading'}
+      size={size}
+      className={className}
       {...props}
     />
   );
