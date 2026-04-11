@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
+import Chip, { type ChipProps } from '@mui/material/Chip';
 import * as React from 'react';
 
 export type BadgeVariant =
@@ -12,31 +12,43 @@ export type BadgeVariant =
   | 'warning'
   | 'info';
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'color'> {
   variant?: BadgeVariant;
+  label?: ChipProps['label'];
 }
 
-const variantClasses: Record<BadgeVariant, string> = {
-  default: 'bg-primary/10 text-primary border-transparent',
-  secondary: 'bg-secondary text-secondary-foreground border-transparent',
-  outline: 'border-border text-foreground bg-transparent',
-  destructive: 'bg-destructive/10 text-destructive border-transparent',
-  success:
-    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-transparent',
-  warning:
-    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-transparent',
-  info: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-transparent',
+const variantToChipProps = (
+  variant: BadgeVariant,
+): Pick<ChipProps, 'variant' | 'color' | 'sx'> => {
+  switch (variant) {
+    case 'default':
+      return { variant: 'filled', color: 'primary', sx: { opacity: 0.9 } };
+    case 'secondary':
+      return { variant: 'filled', color: 'secondary' };
+    case 'outline':
+      return { variant: 'outlined', color: 'default' };
+    case 'destructive':
+      return { variant: 'filled', color: 'error' };
+    case 'success':
+      return { variant: 'filled', color: 'success' };
+    case 'warning':
+      return { variant: 'filled', color: 'warning' };
+    case 'info':
+      return { variant: 'filled', color: 'info' };
+  }
 };
 
-function Badge({ className, variant = 'default', ...props }: BadgeProps) {
+function Badge({ className, style, variant = 'default', label, children, ...props }: BadgeProps) {
+  const chipProps = variantToChipProps(variant);
+
   return (
-    <div
-      className={cn(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-        variantClasses[variant],
-        className,
-      )}
-      {...props}
+    <Chip
+      label={label ?? children}
+      size="small"
+      {...chipProps}
+      className={className}
+      style={style}
+      {...(props as object)}
     />
   );
 }
