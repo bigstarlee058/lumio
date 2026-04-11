@@ -1,12 +1,10 @@
 'use client';
 
-import { useIsMobile } from '@/app/hooks/useIsMobile';
-import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
-import { cn } from '@/app/lib/utils';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { X } from 'lucide-react';
 import * as React from 'react';
-import { useCallback, useEffect, useLayoutEffect } from 'react';
-import { createPortal } from 'react-dom';
 
 export type DrawerPosition = 'left' | 'right';
 export type DrawerWidth = 'sm' | 'md' | 'lg' | 'xl';
@@ -36,26 +34,12 @@ export interface DrawerShellProps {
   lockScroll?: boolean;
 }
 
-const widthClasses: Record<DrawerWidth, string> = {
-  sm: 'max-w-xs',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
+const widthMap: Record<DrawerWidth, number | string> = {
+  sm: 320,
+  md: 448,
+  lg: 512,
+  xl: 576,
 };
-
-const positionClasses: Record<DrawerPosition, { container: string; open: string; closed: string }> =
-  {
-    left: {
-      container: 'left-0 top-0 h-full border-r',
-      open: 'translate-x-0',
-      closed: '-translate-x-full',
-    },
-    right: {
-      container: 'right-0 top-0 h-full border-l',
-      open: 'translate-x-0',
-      closed: 'translate-x-full',
-    },
-  };
 
 /**
  * DrawerShell - Unified drawer/slide-out panel component
@@ -77,221 +61,64 @@ export function DrawerShell({
   closeOnBackdropClick = true,
   closeOnEscape = true,
   className,
-  lockScroll = true,
+  lockScroll: _lockScroll = true,
 }: DrawerShellProps) {
-  const isMobile = useIsMobile();
-  const [mounted, setMounted] = React.useState(false);
-  const [isRendered, setIsRendered] = React.useState(false);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [dragOffset, setDragOffset] = React.useState(0);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const touchStartXRef = React.useRef<number | null>(null);
-  const touchStartYRef = React.useRef<number | null>(null);
-  const dragActiveRef = React.useRef(false);
+  const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
+    if (reason === 'backdropClick' && !closeOnBackdropClick) return;
+    if (reason === 'escapeKeyDown' && !closeOnEscape) return;
+    onClose();
+  };
 
-  useLockBodyScroll(isOpen && lockScroll);
+  const drawerWidth = widthMap[width];
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useLayoutEffect(() => {
-    if (isOpen) {
-      setIsRendered(true);
-      setIsVisible(false);
-      const frame = requestAnimationFrame(() => {
-        if (containerRef.current) {
-          containerRef.current.getBoundingClientRect();
-        }
-        setIsVisible(true);
-      });
-      return () => cancelAnimationFrame(frame);
-    }
-
-    if (!isOpen && isRendered) {
-      setIsVisible(false);
-      const timer = window.setTimeout(() => {
-        setIsRendered(false);
-      }, 500);
-      return () => window.clearTimeout(timer);
-    }
-  }, [isOpen, isRendered]);
-
-  const handleEscape = useCallback(
-    (event: KeyboardEvent) => {
-      if (closeOnEscape && event.key === 'Escape') {
-        onClose();
-      }
-    },
-    [closeOnEscape, onClose],
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
-  }, [isOpen, handleEscape]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setDragOffset(0);
-      dragActiveRef.current = false;
-      touchStartXRef.current = null;
-      touchStartYRef.current = null;
-    }
-  }, [isOpen]);
-
-  const handleBackdropClick = useCallback(() => {
-    if (closeOnBackdropClick) {
-      onClose();
-    }
-  }, [closeOnBackdropClick, onClose]);
-
-  const handleTouchStart = useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
-      if (!isMobile || !isOpen || event.touches.length !== 1) return;
-
-      touchStartXRef.current = event.touches[0]?.clientX ?? null;
-      touchStartYRef.current = event.touches[0]?.clientY ?? null;
-      dragActiveRef.current = true;
-    },
-    [isMobile, isOpen],
-  );
-
-  const handleTouchMove = useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
-      if (!isMobile || !dragActiveRef.current) return;
-      if (touchStartXRef.current === null || touchStartYRef.current === null) return;
-
-      const currentTouch = event.touches[0];
-      if (!currentTouch) return;
-
-      const deltaX = currentTouch.clientX - touchStartXRef.current;
-      const deltaY = currentTouch.clientY - touchStartYRef.current;
-
-      if (Math.abs(deltaX) <= Math.abs(deltaY)) {
-        return;
-      }
-
-      event.preventDefault();
-
-      if (position === 'right') {
-        setDragOffset(Math.max(0, Math.min(240, deltaX)));
-        return;
-      }
-
-      setDragOffset(Math.min(0, Math.max(-240, deltaX)));
-    },
-    [isMobile, position],
-  );
-
-  const handleTouchEnd = useCallback(() => {
-    if (!isMobile || !dragActiveRef.current) {
-      return;
-    }
-
-    const shouldClose = position === 'right' ? dragOffset > 72 : dragOffset < -72;
-
-    dragActiveRef.current = false;
-    touchStartXRef.current = null;
-    touchStartYRef.current = null;
-    setDragOffset(0);
-
-    if (shouldClose) {
-      onClose();
-    }
-  }, [dragOffset, isMobile, onClose, position]);
-
-  if (!mounted || !isRendered) return null;
-
-  const positionConfig = positionClasses[position];
-
-  const drawer = (
-    <dialog
-      className={cn(
-        'fixed inset-0 z-[2000] m-0 h-screen w-screen max-h-none max-w-none border-0 bg-transparent p-0',
-        isVisible ? '' : 'pointer-events-none',
-      )}
-      open={isRendered}
-      aria-modal={isOpen}
-      aria-hidden={!isOpen}
-      aria-labelledby={title ? 'drawer-title' : undefined}
+  return (
+    <Drawer
+      open={isOpen}
+      onClose={handleClose}
+      anchor={position}
+      className={className}
+      PaperProps={{
+        sx: {
+          width: drawerWidth,
+          borderRadius: 0,
+          display: 'flex',
+          flexDirection: 'column',
+        },
+      }}
     >
-      {/* Backdrop */}
-      <div
-        ref={containerRef}
-        className={cn(
-          'absolute inset-0 bg-black/40 transition-opacity duration-300',
-          isVisible ? 'opacity-100' : 'opacity-0',
-        )}
-        onClick={handleBackdropClick}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            handleBackdropClick();
-          }
-        }}
-        aria-hidden="true"
-        role="presentation"
-      />
-
-      {/* Drawer container */}
-      <div
-        className={cn(
-          'fixed flex h-full w-full flex-col overflow-hidden bg-card text-foreground shadow-2xl',
-          dragOffset !== 0 ? 'transition-none' : 'transition-transform duration-500 ease-out',
-          'border-border',
-          positionConfig.container,
-          isVisible ? positionConfig.open : positionConfig.closed,
-          widthClasses[width],
-          className,
-        )}
-        style={
-          dragOffset !== 0
-            ? {
-                transform: `translateX(${dragOffset}px)`,
-              }
-            : undefined
-        }
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => e.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
-        role="presentation"
-      >
-        {/* Header */}
-        {(title || showCloseButton) && (
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card px-6 py-4">
-            {title && (
-              <h2 id="drawer-title" className="text-lg font-bold text-foreground">
-                {title}
-              </h2>
-            )}
-            {showCloseButton && (
-              <button
-                type="button"
-                onClick={onClose}
-                className={cn(
-                  'rounded-lg p-2 text-muted-foreground transition',
-                  'hover:bg-muted hover:text-foreground',
-                  'focus:outline-none focus:ring-2 focus:ring-border',
-                  !title && 'ml-auto',
-                )}
-                aria-label="Close drawer"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Content */}
-        <div className="flex min-h-0 flex-1 flex-col p-6">{children}</div>
+      {(title || showCloseButton) && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '16px 24px',
+            borderBottom: '1px solid',
+            borderColor: 'rgba(0,0,0,0.12)',
+          }}
+          aria-labelledby={title ? 'drawer-title' : undefined}
+        >
+          {title && (
+            <Typography id="drawer-title" variant="h6" fontWeight={700}>
+              {title}
+            </Typography>
+          )}
+          {showCloseButton && (
+            <IconButton
+              type="button"
+              onClick={onClose}
+              aria-label="Close drawer"
+              size="small"
+              sx={{ ml: 'auto' }}
+            >
+              <X className="h-5 w-5" />
+            </IconButton>
+          )}
+        </div>
+      )}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 24, minHeight: 0 }}>
+        {children}
       </div>
-    </dialog>
+    </Drawer>
   );
-
-  return createPortal(drawer, document.body);
 }
