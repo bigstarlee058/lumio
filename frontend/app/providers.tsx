@@ -8,6 +8,8 @@ import {
 } from '@/app/lib/theme-preference';
 import { HeroUIProvider } from '@heroui/react';
 import { MantineProvider } from '@mantine/core';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ThemeProvider } from '@mui/material/styles';
 import { useTheme as useNextTheme } from 'next-themes';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -148,9 +150,11 @@ export function Providers({
           defaultColorScheme="light"
         >
           <ThemeProvider theme={muiTheme}>
-            <WorkspaceProvider>
-              <WorkspaceScopedProviders mounted={mounted}>{children}</WorkspaceScopedProviders>
-            </WorkspaceProvider>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <WorkspaceProvider>
+                <WorkspaceScopedProviders mounted={mounted}>{children}</WorkspaceScopedProviders>
+              </WorkspaceProvider>
+            </LocalizationProvider>
           </ThemeProvider>
         </MantineProvider>
       </IntlayerProviderContent>
