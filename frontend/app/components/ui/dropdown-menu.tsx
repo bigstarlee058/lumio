@@ -85,7 +85,7 @@ interface DropdownMenuTriggerProps {
 }
 
 function DropdownMenuTrigger({ children, asChild }: DropdownMenuTriggerProps) {
-  const { onOpen } = React.useContext(DropdownMenuContext);
+  const { onOpen, open } = React.useContext(DropdownMenuContext);
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     onOpen(e.currentTarget);
@@ -100,6 +100,8 @@ function DropdownMenuTrigger({ children, asChild }: DropdownMenuTriggerProps) {
         }
         handleClick(e);
       },
+      'aria-expanded': open,
+      'aria-haspopup': 'menu',
     });
   }
 

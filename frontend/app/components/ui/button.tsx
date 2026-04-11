@@ -59,6 +59,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           disabled={disabled}
           className={className}
           style={style}
+          {...(props as object)}
         >
           {children}
         </MuiIconButton>

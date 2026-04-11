@@ -81,7 +81,6 @@ export function ModalShell({
       fullScreen={size === 'full'}
       className={className}
       aria-labelledby={title ? 'modal-title' : undefined}
-      sx={{ zIndex: 400 }}
     >
       {(title || showCloseButton) && (
         <DialogTitle

@@ -7,7 +7,7 @@ import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
 import { DollarSign } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface CurrencyFilterDropdownProps {
   /** All currency codes present in the current dataset (e.g. ['KZT', 'USD', 'EUR']). */
@@ -25,6 +25,10 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
   const t = useIntlayer('currencyDisplayToggle');
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<string | null>(value);
+
+  useEffect(() => {
+    if (!open) setPending(value);
+  }, [value, open]);
 
   const handleApply = () => {
     onChange(pending);
