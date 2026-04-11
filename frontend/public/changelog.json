@@ -1,13 +1,529 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "3e51d807deb760f9cf72e10bee4277e5794b43d9"
+      "main": "21d724edea5a9f1b16a98f39b292fb2ea83b6d7c"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-06T19:57:57.606Z",
+    "lastGeneratedAt": "2026-04-11T13:30:10.224Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-11-21d724e",
+      "version": "main-21d724e",
+      "branch": "main",
+      "date": "2026-04-11T13:30:10.224Z",
+      "title": "Release update - April 11, 2026",
+      "summary": "This release includes 39 improvements and 1 fix.",
+      "markdown": "## Improvements\n- **frontend**: Extract shared analytics helpers into analytics-common.ts\n- **frontend**: Extract StatementsListView inline helpers to utils\n- **frontend**: Extract useStatementPreview and useStatementSelection hooks\n- **frontend**: Extract useStatementsListData hook for data fetching and polling\n- **frontend**: Move formatPaginationLabel helper to utils (P1i)\n- **frontend**: Extract useAnalyticsData hook, apply to all 4 analytics views\n- **frontend**: Extract useSpendOverTimeState hook from SpendOverTimeView\n- **frontend**: Extract paste clipboard helpers to pasteUtils.ts (P2a)\n- **frontend**: Extract useRowDrawer and useDeleteModals from CustomTableDetailPage (P2f+P2g)\n- **frontend**: Extract useTableMeta from CustomTableDetailPage (P2e)\n- **frontend**: Extract useColumnConfig from CustomTableDetailPage (P2d)\n- **frontend**: Extract useTabStats hook from CustomTable detail page\n- **frontend**: Extract useTableGrid hook from CustomTable detail page\n- **frontend**: Extract tableHelpers.ts from CustomTable detail page\n- **frontend**: Extract useTableData hook and tableTypes from CustomTable page\n- **frontend**: Extract usePasteImport hook from CustomTable detail page\n- **frontend**: Extract useRowActions, useBulkRowActions, useColumnManagement hooks\n- **frontend**: Extract useTableFilters hook and PastePreviewModal component\n- **frontend**: Extract AddColumnModal sub-component from CustomTable page\n- **frontend**: Extract ColumnsVisibilityPanel and remove dead code\n- **frontend**: Remove unused destructured values from CustomTable page\n- **frontend**: Extract customTablesHelpers.ts and use shared intlayer utils\n- **frontend**: Extract useCustomTablesData hook from CustomTables list page\n- **frontend**: Extract StoragePageContent helpers and sub-components\n- **frontend**: Extract useStorageFiles, useStorageFolders, useStorageTags from StoragePageContent\n- **frontend**: Extract useStorageDnd, useStorageFilters, useStorageViews, useStorageTrash from StoragePageContent\n- **frontend**: Extract editHelpers and useStatementEditForm hook (PR 2u+2v)\n- **frontend**: Extract analytics-filter-labels helper (PR 1b)\n- **frontend**: Extract profileHelpers.ts for Settings Profile (PR 3a partial)\n- **frontend**: Extract useSessions, useNotifications, useProfileForm hooks (PR 3a)\n- **frontend**: Extract useAppearance, useAvatarUpload, useChangelog, useEmailForm, usePasswordForm hooks (PR 3a cont.)\n- **frontend**: Extract useExpenseForm hook from CreateExpenseDrawer (PR 3c)\n- **frontend**: Replace inline helpers with shared imports in Navigation.tsx (PR 3b)\n- **frontend**: Replace inline helpers with shared imports in UnapprovedCashView (PR 3d)\n- **frontend**: Replace inline helpers with shared imports across 7 files\n- **frontend**: Extract ECharts option builders to chart helper files (PR 1d)\n- **frontend**: Extract profile settings section components\n- **frontend**: Extract useTransactionData hook and transactionMapper helper\n- **frontend**: Split DetailsDrawer into tabs and history hook\n\n## Fixes\n- **frontend**: Align refactored hooks with tightened types from main",
+      "commits": [
+        {
+          "sha": "e0576af46ba87e1e5ef02b0ec610737688e87cd5",
+          "shortSha": "e0576af",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-06T19:57:58Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "a4f2d7082f85d87d159e5047ecb8e9191f323a70",
+          "shortSha": "a4f2d70",
+          "subject": "refactor(frontend): extract shared analytics helpers into analytics-common.ts",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:05:44+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/lib/analytics-common.ts",
+            "frontend/app/lib/intlayer-resolve.ts"
+          ]
+        },
+        {
+          "sha": "1f7a8218caa95ede9d4448b1ae7b0e38de3a59fb",
+          "shortSha": "1f7a821",
+          "subject": "refactor(frontend): extract StatementsListView inline helpers to utils",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:10:15+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/StatementsListView.utils.ts"
+          ]
+        },
+        {
+          "sha": "4a139cb8d143e5e898a377075695b0bf7e1520ed",
+          "shortSha": "4a139cb",
+          "subject": "refactor(frontend): extract useStatementPreview and useStatementSelection hooks",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:22:24+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/hooks/useStatementPreview.ts",
+            "frontend/app/(main)/statements/components/hooks/useStatementSelection.ts"
+          ]
+        },
+        {
+          "sha": "0588dc753dfd14c933416be0c34b81403529ecca",
+          "shortSha": "0588dc7",
+          "subject": "refactor(frontend): extract useStatementsListData hook for data fetching and polling",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:31:57+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/hooks/useStatementsListData.ts"
+          ]
+        },
+        {
+          "sha": "7bc83e6f3f6cae05053b0727461ed8bd012e4082",
+          "shortSha": "7bc83e6",
+          "subject": "refactor(frontend): move formatPaginationLabel helper to utils (P1i)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:35:43+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/StatementsListView.utils.ts"
+          ]
+        },
+        {
+          "sha": "d354c1c8d7a4a99a2848006ec38d433321e57bec",
+          "shortSha": "d354c1c",
+          "subject": "refactor(frontend): extract useAnalyticsData hook, apply to all 4 analytics views",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:51:58+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/hooks/useAnalyticsData.ts"
+          ]
+        },
+        {
+          "sha": "c6c62ee24c676b8f9851cff62e2392a94f2363b4",
+          "shortSha": "c6c62ee",
+          "subject": "refactor(frontend): extract useSpendOverTimeState hook from SpendOverTimeView",
+          "author": "symonbaikov",
+          "date": "2026-04-06T02:58:09+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/hooks/useSpendOverTimeState.ts"
+          ]
+        },
+        {
+          "sha": "6368c0b6e15f6ec5844776bea330a42ab8e6eb68",
+          "shortSha": "6368c0b",
+          "subject": "refactor(frontend): extract paste clipboard helpers to pasteUtils.ts (P2a)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T03:06:06+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/utils/pasteUtils.ts"
+          ]
+        },
+        {
+          "sha": "65b2242f41686f0771c93a75c07e15fea2391cb1",
+          "shortSha": "65b2242",
+          "subject": "refactor(frontend): extract useRowDrawer and useDeleteModals from CustomTableDetailPage (P2f+P2g)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T03:15:14+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useDeleteModals.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useRowDrawer.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "f94336c1f8697d981d4309f38f5c2284361ce228",
+          "shortSha": "f94336c",
+          "subject": "refactor(frontend): extract useTableMeta from CustomTableDetailPage (P2e)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T03:55:08+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableMeta.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "f97e46a2c98821fbbcf26b0a58216f1641dc1a55",
+          "shortSha": "f97e46a",
+          "subject": "refactor(frontend): extract useColumnConfig from CustomTableDetailPage (P2d)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:02:05+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useColumnConfig.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "046a9656f943de5258beedb206352c6d91351d11",
+          "shortSha": "046a965",
+          "subject": "refactor(frontend): extract useTabStats hook from CustomTable detail page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:07:47+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTabStats.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "445115fd1d6054beee4ddc8dc162e653af1e4997",
+          "shortSha": "445115f",
+          "subject": "refactor(frontend): extract useTableGrid hook from CustomTable detail page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:13:22+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableGrid.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "1b233b319810647a763eb6a40b98c8e596f2c394",
+          "shortSha": "1b233b3",
+          "subject": "refactor(frontend): extract tableHelpers.ts from CustomTable detail page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:16:23+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/utils/tableHelpers.ts"
+          ]
+        },
+        {
+          "sha": "e93ec02c1c1fd0e0cb55ad04b1c93876a62bb918",
+          "shortSha": "e93ec02",
+          "subject": "refactor(frontend): extract useTableData hook and tableTypes from CustomTable page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:23:28+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableData.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/utils/tableTypes.ts"
+          ]
+        },
+        {
+          "sha": "a3e67720490f37cf460b9cd96e7d3e8e80466f43",
+          "shortSha": "a3e6772",
+          "subject": "refactor(frontend): extract usePasteImport hook from CustomTable detail page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:38:15+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/usePasteImport.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableData.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/utils/tableTypes.ts"
+          ]
+        },
+        {
+          "sha": "1c55aa02fe3001e215450fa4c33b2861fb5e5e46",
+          "shortSha": "1c55aa0",
+          "subject": "refactor(frontend): extract useRowActions, useBulkRowActions, useColumnManagement hooks",
+          "author": "symonbaikov",
+          "date": "2026-04-06T04:46:37+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useBulkRowActions.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useColumnManagement.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useRowActions.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "4753643cc97c285ac74be66bddf9be8271dfc0ce",
+          "shortSha": "4753643",
+          "subject": "refactor(frontend): extract useTableFilters hook and PastePreviewModal component",
+          "author": "symonbaikov",
+          "date": "2026-04-06T07:45:56+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/PastePreviewModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableFilters.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "12e7a5969b768e09e9ea530513bb812bccf977c5",
+          "shortSha": "12e7a59",
+          "subject": "refactor(frontend): extract AddColumnModal sub-component from CustomTable page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T07:50:22+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/AddColumnModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "6dfa20eeba55b451603e3056b6bc68ea7528033f",
+          "shortSha": "6dfa20e",
+          "subject": "refactor(frontend): extract ColumnsVisibilityPanel and remove dead code",
+          "author": "symonbaikov",
+          "date": "2026-04-06T07:55:46+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/ColumnsVisibilityPanel.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "a39debad8131edf3de1f2314ae6514fb9dbe359e",
+          "shortSha": "a39deba",
+          "subject": "refactor(frontend): remove unused destructured values from CustomTable page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T07:58:03+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "9e310da2f2a33666a0ce1331cbd8f0f36175a3c7",
+          "shortSha": "9e310da",
+          "subject": "refactor(frontend): extract customTablesHelpers.ts and use shared intlayer utils",
+          "author": "symonbaikov",
+          "date": "2026-04-06T08:01:04+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/customTablesHelpers.ts",
+            "frontend/app/(main)/custom-tables/page.tsx"
+          ]
+        },
+        {
+          "sha": "17169ea956c78cb9f546555f6e033ecd27a676ed",
+          "shortSha": "17169ea",
+          "subject": "refactor(frontend): extract useCustomTablesData hook from CustomTables list page",
+          "author": "symonbaikov",
+          "date": "2026-04-06T08:10:04+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/hooks/useCustomTablesData.ts",
+            "frontend/app/(main)/custom-tables/page.tsx"
+          ]
+        },
+        {
+          "sha": "e2129de90ec839c718f065c340a4898cbcfe6810",
+          "shortSha": "e2129de",
+          "subject": "refactor(frontend): extract StoragePageContent helpers and sub-components",
+          "author": "symonbaikov",
+          "date": "2026-04-06T08:20:08+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/components/DraggableModalFileItem.tsx",
+            "frontend/app/storage/components/DroppableFolderButton.tsx",
+            "frontend/app/storage/components/DroppableHeaderTrigger.tsx",
+            "frontend/app/storage/storageHelpers.ts"
+          ]
+        },
+        {
+          "sha": "c58ac329dfc1cb97a8870d8eb948bf5252aeb9d2",
+          "shortSha": "c58ac32",
+          "subject": "refactor(frontend): extract useStorageFiles, useStorageFolders, useStorageTags from StoragePageContent",
+          "author": "symonbaikov",
+          "date": "2026-04-06T08:36:14+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/hooks/useStorageFiles.ts",
+            "frontend/app/storage/hooks/useStorageFolders.ts",
+            "frontend/app/storage/hooks/useStorageTags.ts"
+          ]
+        },
+        {
+          "sha": "c80f84971d513500e64bcd3a0f0b8ccc347c2fc0",
+          "shortSha": "c80f849",
+          "subject": "refactor(frontend): extract useStorageDnd, useStorageFilters, useStorageViews, useStorageTrash from StoragePageContent",
+          "author": "symonbaikov",
+          "date": "2026-04-06T08:48:31+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/hooks/useStorageDnd.ts",
+            "frontend/app/storage/hooks/useStorageFilters.ts",
+            "frontend/app/storage/hooks/useStorageTrash.ts",
+            "frontend/app/storage/hooks/useStorageViews.ts"
+          ]
+        },
+        {
+          "sha": "0c3723f1675c56850fbfa1ed6d6e88881aca4310",
+          "shortSha": "0c3723f",
+          "subject": "refactor(frontend): extract editHelpers and useStatementEditForm hook (PR 2u+2v)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T09:11:11+03:00",
+          "files": [
+            "frontend/app/(main)/statements/[id]/edit/editHelpers.ts",
+            "frontend/app/(main)/statements/[id]/edit/hooks/useStatementEditForm.ts",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx"
+          ]
+        },
+        {
+          "sha": "ea419a864faf16a7b9139331536cb447d9c047da",
+          "shortSha": "ea419a8",
+          "subject": "refactor(frontend): extract analytics-filter-labels helper (PR 1b)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T09:24:05+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/helpers/analytics-filter-labels.ts"
+          ]
+        },
+        {
+          "sha": "3ec10f45dc7a27a82382088136b1b9f287ec3506",
+          "shortSha": "3ec10f4",
+          "subject": "refactor(frontend): extract profileHelpers.ts for Settings Profile (PR 3a partial)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T10:47:35+03:00",
+          "files": [
+            "frontend/app/settings/profile/page.tsx",
+            "frontend/app/settings/profile/profileHelpers.ts"
+          ]
+        },
+        {
+          "sha": "e7273fa4b27356d5b8b148139a9befde87bb5300",
+          "shortSha": "e7273fa",
+          "subject": "refactor(frontend): extract useSessions, useNotifications, useProfileForm hooks (PR 3a)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T10:51:41+03:00",
+          "files": [
+            "frontend/app/settings/profile/hooks/useNotifications.ts",
+            "frontend/app/settings/profile/hooks/useProfileForm.ts",
+            "frontend/app/settings/profile/hooks/useSessions.ts",
+            "frontend/app/settings/profile/page.tsx"
+          ]
+        },
+        {
+          "sha": "4da6b4968ce05057406217b0ede58ec71e539776",
+          "shortSha": "4da6b49",
+          "subject": "refactor(frontend): extract useAppearance, useAvatarUpload, useChangelog, useEmailForm, usePasswordForm hooks (PR 3a cont.)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:00:46+03:00",
+          "files": [
+            "frontend/app/settings/profile/hooks/useAppearance.ts",
+            "frontend/app/settings/profile/hooks/useAvatarUpload.ts",
+            "frontend/app/settings/profile/hooks/useChangelog.ts",
+            "frontend/app/settings/profile/hooks/useEmailForm.ts",
+            "frontend/app/settings/profile/hooks/usePasswordForm.ts",
+            "frontend/app/settings/profile/hooks/useProfileForm.ts",
+            "frontend/app/settings/profile/page.tsx",
+            "frontend/app/settings/profile/profileHelpers.ts"
+          ]
+        },
+        {
+          "sha": "77614257de368b26adc9c38ade8648ef214513d7",
+          "shortSha": "7761425",
+          "subject": "refactor(frontend): extract useExpenseForm hook from CreateExpenseDrawer (PR 3c)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:06:56+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/hooks/useExpenseForm.ts",
+            "frontend/app/lib/statement-expense-drawer.ts"
+          ]
+        },
+        {
+          "sha": "1decbd631ed92ac8c4eba9cefefacd11d51d34fc",
+          "shortSha": "1decbd6",
+          "subject": "refactor(frontend): replace inline helpers with shared imports in Navigation.tsx (PR 3b)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:13:57+03:00",
+          "files": [
+            "frontend/app/components/Navigation.tsx"
+          ]
+        },
+        {
+          "sha": "a2097baec4e748b0467a8a42350654afdbdcfb13",
+          "shortSha": "a2097ba",
+          "subject": "refactor(frontend): replace inline helpers with shared imports in UnapprovedCashView (PR 3d)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:16:41+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx"
+          ]
+        },
+        {
+          "sha": "861e673c810bbb5f5fdf51d9cbaeb07cad989dba",
+          "shortSha": "861e673",
+          "subject": "refactor(frontend): replace inline helpers with shared imports across 7 files",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:27:43+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/TrashListView.tsx",
+            "frontend/app/(main)/statements/components/TrashSidePanel.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesView.tsx",
+            "frontend/app/(main)/supported-banks/page.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/audit/components/DiffViewer.tsx",
+            "frontend/app/components/GlobalBreadcrumbs.tsx"
+          ]
+        },
+        {
+          "sha": "8fbcdac61a52b45d53a1dde6555d55b7063aa8ba",
+          "shortSha": "8fbcdac",
+          "subject": "refactor(frontend): extract ECharts option builders to chart helper files (PR 1d)",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:38:22+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time.chart.ts",
+            "frontend/app/(main)/statements/components/top-categories.chart.ts",
+            "frontend/app/(main)/statements/components/top-merchants.chart.ts",
+            "frontend/app/(main)/statements/components/top-spenders.chart.ts"
+          ]
+        },
+        {
+          "sha": "e6f17ead29b13fd17b72742bba02ac7eb84cf626",
+          "shortSha": "e6f17ea",
+          "subject": "refactor(frontend): extract profile settings section components",
+          "author": "symonbaikov",
+          "date": "2026-04-06T11:51:09+03:00",
+          "files": [
+            "frontend/app/settings/profile/components/AppearanceSection.tsx",
+            "frontend/app/settings/profile/components/ChangelogSection.tsx",
+            "frontend/app/settings/profile/components/EmailSection.tsx",
+            "frontend/app/settings/profile/components/NotificationsSection.tsx",
+            "frontend/app/settings/profile/components/PasswordSection.tsx",
+            "frontend/app/settings/profile/components/ProfileSection.tsx",
+            "frontend/app/settings/profile/components/SessionsSection.tsx",
+            "frontend/app/settings/profile/page.tsx"
+          ]
+        },
+        {
+          "sha": "b8ab191e62f0f575470f71f1d65117a6bde3b56d",
+          "shortSha": "b8ab191",
+          "subject": "fix(frontend): align refactored hooks with tightened types from main",
+          "author": "symonbaikov",
+          "date": "2026-04-10T16:40:48+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableFilters.ts",
+            "frontend/app/settings/profile/components/AppearanceSection.tsx",
+            "frontend/app/settings/profile/components/NotificationsSection.tsx"
+          ]
+        },
+        {
+          "sha": "c4b01b8fd46bd924e5f320e32beb635352bd49d7",
+          "shortSha": "c4b01b8",
+          "subject": "refactor(frontend): extract useTransactionData hook and transactionMapper helper",
+          "author": "symonbaikov",
+          "date": "2026-04-10T16:45:22+03:00",
+          "files": [
+            "frontend/app/components/dashboard/TransactionTab.tsx",
+            "frontend/app/components/transactions/helpers/transactionMapper.ts",
+            "frontend/app/components/transactions/hooks/useTransactionData.ts"
+          ]
+        },
+        {
+          "sha": "21d724edea5a9f1b16a98f39b292fb2ea83b6d7c",
+          "shortSha": "21d724e",
+          "subject": "refactor(frontend): split DetailsDrawer into tabs and history hook",
+          "author": "symonbaikov",
+          "date": "2026-04-10T16:49:45+03:00",
+          "files": [
+            "frontend/app/components/transactions/DetailsDrawer.tsx",
+            "frontend/app/components/transactions/TransactionDetailsTab.tsx",
+            "frontend/app/components/transactions/TransactionHistoryTab.tsx",
+            "frontend/app/components/transactions/hooks/useTransactionHistory.ts"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-06-3e51d80",
       "version": "main-3e51d80",
