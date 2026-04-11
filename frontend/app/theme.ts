@@ -3,7 +3,8 @@ import { getAppSurfaceTokens } from './mantine-theme';
 
 export type ThemeMode = 'light' | 'dark';
 
-const sharedOptions: Pick<ThemeOptions, 'typography' | 'components'> = {
+const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> = {
+  shape: { borderRadius: 0 },
   typography: {
     fontFamily:
       'var(--font-manrope), "Manrope", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
@@ -18,28 +19,55 @@ const sharedOptions: Pick<ThemeOptions, 'typography' | 'components'> = {
   components: {
     MuiButton: {
       styleOverrides: {
-        root: { borderRadius: 999, padding: '8px 18px' },
-        contained: {
-          boxShadow: 'none',
-        },
+        root: { borderRadius: 0, padding: '8px 18px' },
+        contained: { boxShadow: 'none' },
       },
+    },
+    MuiIconButton: {
+      styleOverrides: { root: { borderRadius: 0 } },
     },
     MuiCard: {
       styleOverrides: {
-        root: {
-          borderRadius: 12,
-          boxShadow: 'none',
-          backgroundImage: 'none',
-        },
+        root: { borderRadius: 0, boxShadow: 'none', backgroundImage: 'none' },
       },
     },
     MuiPaper: {
       styleOverrides: {
-        root: {
-          backgroundImage: 'none',
-        },
+        root: { backgroundImage: 'none' },
+        rounded: { borderRadius: 0 },
       },
     },
+    MuiDialog: {
+      styleOverrides: { paper: { borderRadius: 0 } },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: { root: { borderRadius: 0 } },
+    },
+    MuiFilledInput: {
+      styleOverrides: { root: { borderRadius: 0 } },
+    },
+    MuiTextField: {
+      defaultProps: { variant: 'outlined' },
+    },
+    MuiChip: {
+      styleOverrides: { root: { borderRadius: 0 } },
+    },
+    MuiAlert: {
+      styleOverrides: { root: { borderRadius: 0 } },
+    },
+    MuiMenu: {
+      styleOverrides: { paper: { borderRadius: 0 } },
+    },
+    MuiPopover: {
+      styleOverrides: { paper: { borderRadius: 0 } },
+    },
+    MuiTooltip: {
+      styleOverrides: { tooltip: { borderRadius: 0 } },
+    },
+    MuiTableContainer: {
+      styleOverrides: { root: { borderRadius: 0 } },
+    },
+    // Avatar, Switch, CircularProgress intentionally NOT overridden (stay round)
   },
 };
 
