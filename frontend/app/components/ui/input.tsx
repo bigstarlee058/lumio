@@ -1,21 +1,28 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import * as React from 'react';
 
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, ...props }, ref) => (
-    <input
-      ref={ref}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  /** MUI input slot props for adornments */
+  startAdornment?: React.ReactNode;
+  endAdornment?: React.ReactNode;
+  error?: boolean;
+};
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, startAdornment, endAdornment, error, style, ...props }, ref) => (
+    <OutlinedInput
+      inputRef={ref}
       type={type}
-      className={cn(
-        'flex h-10 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground',
-        'placeholder:text-muted-foreground',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        className,
-      )}
-      {...props}
+      error={error}
+      className={className}
+      style={style}
+      startAdornment={startAdornment}
+      endAdornment={endAdornment}
+      size="small"
+      inputProps={props as React.InputHTMLAttributes<HTMLInputElement>}
+      sx={{ width: '100%' }}
     />
   ),
 );
