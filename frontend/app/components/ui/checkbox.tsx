@@ -1,23 +1,33 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
-import { Checkbox as HeroCheckbox } from '@heroui/react';
+import MuiCheckbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import * as React from 'react';
 
-export interface CheckboxProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof HeroCheckbox>, 'onValueChange'> {
+export interface CheckboxProps {
   checked?: boolean;
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  disabled?: boolean;
   indeterminate?: boolean;
+  className?: string;
+  label?: React.ReactNode;
+  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'default';
+  size?: 'small' | 'medium' | 'large';
+  id?: string;
+  name?: string;
+  value?: string | number | readonly string[];
+  required?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
   (
     {
-      className,
-      classNames,
       checked,
       defaultChecked,
       disabled,
@@ -25,52 +35,42 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       onCheckedChange,
       onChange,
       color = 'primary',
-      radius = 'sm',
-      size = 'md',
+      size = 'small',
+      label,
+      className,
+      style,
       ...props
     },
     ref,
   ) => {
-    const wrapperSizeClass =
-      size === 'sm' ? '!h-4 !w-4' : size === 'lg' ? '!h-6 !w-6' : '!h-5 !w-5';
-
-    const handleValueChange = (nextChecked: boolean) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>, nextChecked: boolean) => {
       onCheckedChange?.(nextChecked);
-      if (onChange) {
-        const syntheticEvent = {
-          target: { checked: nextChecked },
-          currentTarget: { checked: nextChecked },
-        } as React.ChangeEvent<HTMLInputElement>;
-        onChange(syntheticEvent);
-      }
+      onChange?.(event);
     };
 
-    return (
-      <HeroCheckbox
+    const muiSize = size === 'large' ? 'medium' : (size as 'small' | 'medium');
+
+    const checkbox = (
+      <MuiCheckbox
         ref={ref}
-        isSelected={checked}
-        defaultSelected={defaultChecked}
-        isDisabled={disabled}
-        isIndeterminate={indeterminate}
-        onValueChange={handleValueChange}
+        checked={checked}
+        defaultChecked={defaultChecked}
+        disabled={disabled}
+        indeterminate={indeterminate}
+        onChange={handleChange}
         color={color}
-        radius={radius}
-        size={size}
-        className="select-none"
-        classNames={{
-          base: cn('m-0 p-0 shrink-0 overflow-visible', classNames?.base),
-          wrapper: cn(
-            wrapperSizeClass,
-            '!rounded-[6px] border-gray-300 data-[selected=true]:border-primary',
-            className,
-            classNames?.wrapper,
-          ),
-          icon: cn('text-white', classNames?.icon),
-          label: classNames?.label,
-        }}
+        size={muiSize}
+        className={className}
+        style={style}
         {...props}
       />
     );
+
+    if (label) {
+      return <FormControlLabel control={checkbox} label={label} />;
+    }
+
+    return checkbox;
   },
 );
 
