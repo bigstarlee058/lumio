@@ -5,9 +5,9 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ParsingWarningsPanel, formatDroppedSample } from './ParsingWarningsPanel';
 
-vi.mock('@heroui/tooltip', () => ({
-  Tooltip: ({ children, content }: { children: React.ReactNode; content: React.ReactNode }) => (
-    <div data-tooltip-content={String(content)}>{children}</div>
+vi.mock('@mui/material/Tooltip', () => ({
+  default: ({ children, title }: { children: React.ReactNode; title: React.ReactNode }) => (
+    <div data-tooltip-content={String(title)}>{children}</div>
   ),
 }));
 

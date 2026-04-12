@@ -1,8 +1,6 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { buildCurrencySearchIndex } from '@/app/lib/statement-expense-drawer';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
-import { Tooltip } from '@heroui/tooltip';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
   Alert,
   AlertTitle,
@@ -19,7 +17,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Check, ChevronLeft, Search } from 'lucide-react';
+import Tooltip from '@mui/material/Tooltip';
+import { Check, ChevronLeft, Search, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 interface ParsingWarningsPanelProps {
@@ -424,13 +423,13 @@ export function ParsingWarningsPanel({
 
                     return matchedEntry ? (
                       <Tooltip
-                        content={
+                        title={
                           matchedEntry.action === 'resolve'
                             ? resolveBalanceTooltipLabel
                             : fixTooltipLabel
                         }
                         placement="top"
-                        delay={150}
+                        enterDelay={150}
                       >
                         <Button
                           variant="text"
@@ -470,14 +469,14 @@ export function ParsingWarningsPanel({
                             },
                           }}
                         >
-                          <WarningAmberIcon color="warning" fontSize="small" sx={{ mt: 0.25 }} />
+                          <TriangleAlert size={16} style={{ color: '#ed6c02', marginTop: 2, flexShrink: 0 }} />
                           <Typography variant="body2">{warning}</Typography>
                         </Button>
                       </Tooltip>
                     ) : (
                       <>
                         <ListItemIcon sx={{ minWidth: 28, mt: 0.25 }}>
-                          <WarningAmberIcon color="warning" fontSize="small" />
+                          <TriangleAlert size={16} style={{ color: '#ed6c02' }} />
                         </ListItemIcon>
                         <ListItemText
                           primary={warning}
