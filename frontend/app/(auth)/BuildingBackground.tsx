@@ -408,11 +408,11 @@ const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: Buildin
 
 const BuildingBackground = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
       {/* City Skyline Layers */}
 
       {/* Back Layer - slower, darker, smaller */}
-      <div className="absolute inset-x-0 bottom-0 h-96 opacity-30">
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 384, opacity: 0.3 }}>
         {/* We need buildings on the far left that will safely sit behind the form */}
         <StandardBuilding left="5%" delay={0.2} duration={1.5} w={120} h={300} />
         <ModernSlanted left="25%" delay={0.4} duration={1.5} w={80} h={240} />
@@ -428,7 +428,7 @@ const BuildingBackground = () => {
       </div>
 
       {/* Front Layer - faster, brighter, larger */}
-      <div className="absolute inset-x-0 bottom-0 h-80 opacity-60">
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 320, opacity: 0.6 }}>
         <SteppedSkyscraper left="5%" delay={0.6} duration={1.2} w={140} h={350} />
 
         {/* ClockTower on front layer has been completely removed to avoid showing under UI */}

@@ -36,7 +36,7 @@ const Coin = ({
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-full drop-shadow-lg"
+      style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}
       aria-hidden="true"
     >
       <circle cx="12" cy="12" r="10" fill="#FFD700" stroke="#B8860B" strokeWidth="1" />
@@ -112,7 +112,7 @@ const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; ro
 
 const MoneyAnimation = () => {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
       {/* Floating Coins */}
       <Coin delay={0} x="10%" y="20%" />
       <Coin delay={1.5} x="80%" y="15%" />

@@ -2,7 +2,6 @@
 
 import CircularProgress from '@mui/material/CircularProgress';
 import { Checkbox } from '@/app/components/ui/checkbox';
-import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { Pencil } from 'lucide-react';
 import {
@@ -94,7 +93,6 @@ export default function UsersManagementPage() {
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
-  // useLockBodyScroll(permissionsDialogOpen);
 
   useEffect(() => {
     loadUsers();
