@@ -2,8 +2,8 @@
 
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
-import { cn } from '@/app/lib/utils';
-import ReceiptIcon from '@mui/icons-material/Receipt';
+import Box from '@mui/material/Box';
+import { Receipt } from 'lucide-react';
 import { Check } from 'lucide-react';
 
 type FilterOptionRowProps = {
@@ -32,6 +32,25 @@ export function FilterOptionRow({
 }: FilterOptionRowProps) {
   const hasAvatar = avatarUrl != null || iconUrl != null || bankName != null;
 
+  const checkIndicator = (
+    <Box
+      component="span"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 24,
+        height: 24,
+        borderRadius: variant === 'checkbox' ? 1 : '50%',
+        bgcolor: selected ? 'primary.main' : 'grey.100',
+        color: selected ? 'primary.contrastText' : 'transparent',
+        flexShrink: 0,
+      }}
+    >
+      {selected && <Check size={16} />}
+    </Box>
+  );
+
   if (hasAvatar) {
     const fallbackLetter = label.trim().charAt(0).toUpperCase() || 'U';
     const resolvedAvatarUrl = normalizeAvatarUrl(avatarUrl);
@@ -41,49 +60,77 @@ export function FilterOptionRow({
       <button
         type="button"
         onClick={onClick}
-        className={cn(
-          'flex w-full items-center justify-between gap-3 rounded-xl px-2 py-3 text-left transition hover:bg-gray-50',
-          className,
-        )}
+        className={className}
+        style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '12px 8px',
+          textAlign: 'left',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: 12,
+          transition: 'background 0.15s',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
       >
-        <div className="flex items-center gap-3">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           {iconUrl ? (
-            <img src={iconUrl} alt={label} className="h-8 w-8 rounded-full object-contain" />
+            <img src={iconUrl} alt={label} style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'contain' }} />
           ) : normalizedBankName === 'receipt' ? (
-            <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-500"
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                bgcolor: 'grey.100',
+                color: 'text.secondary',
+              }}
               aria-label={label}
               title={label}
             >
-              <ReceiptIcon data-testid="receipt-filter-icon" sx={{ fontSize: 24 }} />
-            </span>
+              <Receipt data-testid="receipt-filter-icon" size={24} />
+            </Box>
           ) : bankName ? (
             <BankLogoAvatar bankName={bankName} size={32} />
           ) : resolvedAvatarUrl ? (
             <img
               src={resolvedAvatarUrl}
               alt={label}
-              className="h-8 w-8 rounded-full object-cover"
+              style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-500">
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                bgcolor: 'grey.100',
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'text.secondary',
+              }}
+            >
               {fallbackLetter}
-            </div>
+            </Box>
           )}
-          <div>
-            <div className="text-base font-semibold text-gray-900">{label}</div>
-            {description ? <div className="text-sm text-gray-500">{description}</div> : null}
-          </div>
-        </div>
-        <span
-          className={cn(
-            'flex h-6 w-6 items-center justify-center rounded-full',
-            selected ? 'bg-primary text-white' : 'bg-gray-100 text-transparent',
-            variant === 'checkbox' && 'rounded-md',
-          )}
-        >
-          {selected && <Check className="h-4 w-4" />}
-        </span>
+          <Box>
+            <Box sx={{ fontSize: 16, fontWeight: 600, color: 'text.primary' }}>{label}</Box>
+            {description ? <Box sx={{ fontSize: 14, color: 'text.secondary' }}>{description}</Box> : null}
+          </Box>
+        </Box>
+        {checkIndicator}
       </button>
     );
   }
@@ -92,21 +139,29 @@ export function FilterOptionRow({
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        'flex w-full items-center justify-between gap-3 rounded-xl px-2 py-3 text-left text-base font-semibold text-gray-900 transition hover:bg-gray-50',
-        className,
-      )}
+      className={className}
+      style={{
+        display: 'flex',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+        padding: '12px 8px',
+        textAlign: 'left',
+        fontSize: 16,
+        fontWeight: 600,
+        color: '#111827',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        borderRadius: 12,
+        transition: 'background 0.15s',
+      }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
     >
       <span>{label}</span>
-      <span
-        className={cn(
-          'flex h-6 w-6 items-center justify-center rounded-full',
-          selected ? 'bg-primary text-white' : 'bg-gray-100 text-transparent',
-          variant === 'checkbox' && 'rounded-md',
-        )}
-      >
-        {selected && <Check className="h-4 w-4" />}
-      </span>
+      {checkIndicator}
     </button>
   );
 }

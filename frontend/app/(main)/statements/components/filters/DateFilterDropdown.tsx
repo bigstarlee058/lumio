@@ -3,10 +3,9 @@
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
-import { RangeCalendar } from '@heroui/calendar';
-import { parseDate } from '@internationalized/date';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { parseISO, isValid, format } from 'date-fns';
 import { ChevronRight } from 'lucide-react';
-import type { ComponentProps } from 'react';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,
@@ -22,10 +21,6 @@ type DateModeOption = {
   value: StatementFilterDateMode;
   label: string;
 };
-
-type RangeCalendarProps = ComponentProps<typeof RangeCalendar>;
-type CalendarRangeValue = RangeCalendarProps['value'];
-type CalendarRangeChange = Parameters<NonNullable<RangeCalendarProps['onChange']>>[0];
 
 type DateFilterDropdownProps = {
   open: boolean;
@@ -48,16 +43,16 @@ const ensureDate = (value?: StatementFilterDate | null): StatementFilterDate => 
   dateTo: value?.dateTo,
 });
 
-const toCalendarDate = (value?: string) => {
+const resolveFallbackDate = () => new Date().toISOString().slice(0, 10);
+
+const toDateObj = (value?: string | null): Date | null => {
   if (!value) return null;
-  try {
-    return parseDate(value);
-  } catch {
-    return null;
-  }
+  const parsed = parseISO(value);
+  return isValid(parsed) ? parsed : null;
 };
 
-const resolveFallbackDate = () => new Date().toISOString().slice(0, 10);
+const toIsoDate = (date: Date | null): string =>
+  date && isValid(date) ? format(date, 'yyyy-MM-dd') : resolveFallbackDate();
 
 export function DateFilterDropdown({
   open,
@@ -73,19 +68,14 @@ export function DateFilterDropdown({
   resetLabel,
 }: DateFilterDropdownProps) {
   const current = ensureDate(value);
-  const calendarStart = toCalendarDate(current.date);
-  const calendarEnd = toCalendarDate(current.dateTo || current.date);
-  const calendarValue: CalendarRangeValue = calendarStart
-    ? {
-        start: calendarStart,
-        end: calendarEnd || calendarStart,
-      }
-    : null;
+
+  const startValue: Date | null = toDateObj(current.date);
+  const endValue: Date | null = toDateObj(current.dateTo) ?? startValue;
 
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
-      <div className="space-y-2">
-        <div className="space-y-1">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {presets.map(option => (
             <FilterOptionRow
               key={option.value}
@@ -97,10 +87,9 @@ export function DateFilterDropdown({
           ))}
         </div>
 
-        <div className="border-t border-gray-200 pt-2">
-          <div className="space-y-1">
+        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {modes.map(option => {
-              const isSelected = current.mode === option.value;
               return (
                 <button
                   key={option.value}
@@ -120,51 +109,81 @@ export function DateFilterDropdown({
                           },
                     )
                   }
-                  className="flex w-full items-center justify-between rounded-xl px-2 py-3 text-left text-base font-semibold text-gray-900 transition hover:bg-gray-50"
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderRadius: 12,
+                    padding: '12px 8px',
+                    textAlign: 'left',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: '#111827',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
                 >
                   <span>{option.label}</span>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
-                  {isSelected ? null : null}
+                  <ChevronRight size={20} style={{ color: '#9ca3af' }} />
                 </button>
               );
             })}
           </div>
 
           {current.mode && (
-            <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50/60 px-3 py-3">
-              <RangeCalendar
-                aria-label="Date range"
-                value={calendarValue}
-                onChange={(range: CalendarRangeChange) => {
-                  const startValue = range?.start?.toString?.();
-                  const endValue = range?.end?.toString?.() || startValue;
-                  const fallbackDate = current.date || resolveFallbackDate();
-
-                  if (current.mode === 'after') {
-                    onChange({
-                      mode: current.mode,
-                      date: startValue || fallbackDate,
-                    });
-                    return;
-                  }
-
+            <div
+              data-testid="date-range-picker"
+              style={{
+                marginTop: 12,
+                borderRadius: 12,
+                border: '1px solid #e5e7eb',
+                background: 'rgba(249,250,251,0.6)',
+                padding: 12,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+              }}
+            >
+              <DatePicker
+                label="Start date"
+                value={startValue}
+                onChange={(newVal: Date | null) => {
+                  const dateStr = toIsoDate(newVal);
                   if (current.mode === 'before') {
+                    onChange({ mode: current.mode, date: dateStr });
+                  } else {
                     onChange({
                       mode: current.mode,
-                      date: endValue || startValue || fallbackDate,
+                      date: dateStr,
+                      dateTo:
+                        current.mode === 'on'
+                          ? toIsoDate(endValue)
+                          : current.dateTo,
                     });
-                    return;
                   }
-
-                  onChange({
-                    mode: current.mode,
-                    date: startValue || fallbackDate,
-                    dateTo: endValue || startValue || fallbackDate,
-                  });
                 }}
-                visibleMonths={1}
-                className="w-full"
+                slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
+              {current.mode === 'on' && (
+                <DatePicker
+                  label="End date"
+                  value={endValue}
+                  onChange={(newVal: Date | null) => {
+                    const dateStr = toIsoDate(newVal);
+                    onChange({
+                      mode: current.mode,
+                      date: current.date ?? resolveFallbackDate(),
+                      dateTo: dateStr,
+                    });
+                  }}
+                  slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                />
+              )}
             </div>
           )}
         </div>

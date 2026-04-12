@@ -2,7 +2,9 @@
 
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { cn } from '@/app/lib/utils';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { ChevronLeft } from 'lucide-react';
 import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
@@ -147,10 +149,22 @@ export function FiltersDrawer({
     return Number.isFinite(parsed) ? parsed : null;
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    borderRadius: 12,
+    border: '1px solid #e5e7eb',
+    background: '#fff',
+    padding: '8px 12px',
+    fontSize: 14,
+    color: '#111827',
+    outline: 'none',
+    boxSizing: 'border-box',
+  };
+
   const renderScreenContent = () => {
     if (screen === 'type') {
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={!filters.type}
@@ -166,13 +180,13 @@ export function FiltersDrawer({
               variant="radio"
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'status') {
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={filters.statuses.length === 0}
@@ -192,14 +206,14 @@ export function FiltersDrawer({
               variant="checkbox"
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'date') {
       return (
-        <div className="space-y-4">
-          <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <FilterOptionRow
               label={labels.any}
               selected={!filters.date}
@@ -215,9 +229,9 @@ export function FiltersDrawer({
                 variant="radio"
               />
             ))}
-          </div>
+          </Box>
 
-          <div className="border-t border-gray-200 pt-4 space-y-1">
+          <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {dateModes.map(option => (
               <FilterOptionRow
                 key={option.value}
@@ -235,7 +249,16 @@ export function FiltersDrawer({
               />
             ))}
             {filters.date?.mode ? (
-              <div className="rounded-xl border border-gray-200 bg-gray-50/60 px-3 py-3">
+              <Box
+                sx={{
+                  borderRadius: 3,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  bgcolor: 'rgba(249,250,251,0.6)',
+                  px: 1.5,
+                  py: 1.5,
+                }}
+              >
                 <input
                   type="date"
                   value={filters.date?.date || ''}
@@ -247,12 +270,12 @@ export function FiltersDrawer({
                       },
                     })
                   }
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+                  style={inputStyle}
                 />
-              </div>
+              </Box>
             ) : null}
-          </div>
-        </div>
+          </Box>
+        </Box>
       );
     }
 
@@ -261,13 +284,23 @@ export function FiltersDrawer({
       const options = screen === 'from' ? fromOptions : toOptions;
       if (options.length === 0) {
         return (
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 text-sm text-gray-500">
+          <Box
+            sx={{
+              borderRadius: 4,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2,
+              fontSize: 14,
+              color: 'text.secondary',
+            }}
+          >
             {labels.any}
-          </div>
+          </Box>
         );
       }
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           {options.map(option => (
             <FilterOptionRow
               key={option.id}
@@ -287,29 +320,31 @@ export function FiltersDrawer({
               }
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'keywords') {
       return (
-        <div className="space-y-3">
-          <div className="text-sm font-medium text-gray-500">{labels.keywords}</div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Typography variant="body2" fontWeight={500} color="text.secondary">
+            {labels.keywords}
+          </Typography>
           <input
             value={filters.keywords}
             onChange={event => onUpdateFilters({ keywords: event.target.value })}
             placeholder={labels.keywords}
-            className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+            style={inputStyle}
           />
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'amount') {
       return (
-        <div className="space-y-4">
-          <div>
-            <div className="text-sm font-medium text-gray-500">Min</div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box>
+            <Typography variant="body2" fontWeight={500} color="text.secondary">Min</Typography>
             <input
               inputMode="decimal"
               value={filters.amountMin !== null ? String(filters.amountMin) : ''}
@@ -317,11 +352,11 @@ export function FiltersDrawer({
                 onUpdateFilters({ amountMin: parseNumberInput(event.target.value) })
               }
               placeholder="0"
-              className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={{ ...inputStyle, marginTop: 8 }}
             />
-          </div>
-          <div>
-            <div className="text-sm font-medium text-gray-500">Max</div>
+          </Box>
+          <Box>
+            <Typography variant="body2" fontWeight={500} color="text.secondary">Max</Typography>
             <input
               inputMode="decimal"
               value={filters.amountMax !== null ? String(filters.amountMax) : ''}
@@ -329,10 +364,10 @@ export function FiltersDrawer({
                 onUpdateFilters({ amountMax: parseNumberInput(event.target.value) })
               }
               placeholder="0"
-              className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={{ ...inputStyle, marginTop: 8 }}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       );
     }
 
@@ -366,7 +401,7 @@ export function FiltersDrawer({
         onUpdateFilters({ paid: value });
       };
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={currentValue === null}
@@ -385,13 +420,13 @@ export function FiltersDrawer({
             onClick={() => updateBooleanFilter(false)}
             variant="radio"
           />
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'groupBy') {
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={!filters.groupBy}
@@ -407,13 +442,13 @@ export function FiltersDrawer({
               variant="radio"
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'has') {
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={filters.has.length === 0}
@@ -433,35 +468,47 @@ export function FiltersDrawer({
               variant="checkbox"
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'limit') {
       return (
-        <div className="space-y-3">
-          <div className="text-sm font-medium text-gray-500">{labels.limit}</div>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Typography variant="body2" fontWeight={500} color="text.secondary">
+            {labels.limit}
+          </Typography>
           <input
             inputMode="numeric"
             value={filters.limit !== null ? String(filters.limit) : ''}
             onChange={event => onUpdateFilters({ limit: parseNumberInput(event.target.value) })}
             placeholder="0"
-            className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+            style={inputStyle}
           />
-        </div>
+        </Box>
       );
     }
 
     if (screen === 'currency') {
       if (currencyOptions.length === 0) {
         return (
-          <div className="rounded-2xl border border-gray-200 bg-white p-4 text-sm text-gray-500">
+          <Box
+            sx={{
+              borderRadius: 4,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2,
+              fontSize: 14,
+              color: 'text.secondary',
+            }}
+          >
             {labels.any}
-          </div>
+          </Box>
         );
       }
       return (
-        <div className="space-y-1">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
           <FilterOptionRow
             label={labels.any}
             selected={filters.currencies.length === 0}
@@ -481,12 +528,37 @@ export function FiltersDrawer({
               variant="checkbox"
             />
           ))}
-        </div>
+        </Box>
       );
     }
 
     return null;
   };
+
+  const viewResultsButton = (
+    <Button className="w-full" size="lg" onClick={onViewResults}>
+      {labels.viewResults}
+      {activeCount > 0 ? (
+        <Box
+          component="span"
+          sx={{
+            ml: 1,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            bgcolor: 'rgba(255,255,255,0.2)',
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          {activeCount}
+        </Box>
+      ) : null}
+    </Button>
+  );
 
   return (
     <DrawerShell
@@ -495,35 +567,43 @@ export function FiltersDrawer({
       position="right"
       width="sm"
       showCloseButton={false}
-      className="bg-white border-l-0"
       title={
-        <div className="flex w-full items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button
+        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <IconButton
               type="button"
               onClick={isRoot ? onClose : onBack}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
               aria-label={screenTitle}
+              size="small"
             >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <span className="text-lg font-semibold text-gray-900">{screenTitle}</span>
-          </div>
+              <ChevronLeft size={20} />
+            </IconButton>
+            <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+              {screenTitle}
+            </Typography>
+          </Box>
           {isRoot ? (
             <button
               type="button"
               onClick={onResetAll}
-              className="text-sm font-semibold text-primary transition hover:text-primary-hover"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 600,
+                color: 'var(--primary)',
+              }}
             >
               {labels.resetFilters}
             </button>
           ) : null}
-        </div>
+        </Box>
       }
     >
-      <div className="flex h-full flex-col">
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {isRoot ? (
-          <div className="flex-1 overflow-y-auto space-y-6 pb-28">
+          <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 3, pb: 14 }}>
             <FilterSection title={labels.general}>
               {isScreenVisible('type') ? (
                 <FilterRow
@@ -657,48 +737,37 @@ export function FiltersDrawer({
                 />
               ) : null}
             </FilterSection>
-          </div>
+          </Box>
         ) : (
-          <div className="flex-1 overflow-y-auto space-y-5 pb-20">
-            <div className="rounded-2xl bg-transparent p-0">{renderScreenContent()}</div>
-          </div>
+          <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2.5, pb: 10 }}>
+            <Box sx={{ borderRadius: 4, bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
+          </Box>
         )}
 
         {isRoot ? (
-          <div className="sticky bottom-0 pt-4 pb-2 space-y-3 bg-white">
-            <Button variant="secondary" className="w-full rounded-full" size="lg" disabled>
+          <Box
+            sx={{
+              position: 'sticky',
+              bottom: 0,
+              pt: 2,
+              pb: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <Button variant="secondary" className="w-full" size="lg" disabled>
               {labels.saveSearch}
             </Button>
-            <Button className="w-full rounded-full" size="lg" onClick={onViewResults}>
-              {labels.viewResults}
-              {activeCount > 0 ? (
-                <span
-                  className={cn(
-                    'ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs font-semibold',
-                  )}
-                >
-                  {activeCount}
-                </span>
-              ) : null}
-            </Button>
-          </div>
+            {viewResultsButton}
+          </Box>
         ) : (
-          <div className="sticky bottom-0 pt-4 pb-2 bg-white">
-            <Button className="w-full rounded-full" size="lg" onClick={onViewResults}>
-              {labels.viewResults}
-              {activeCount > 0 ? (
-                <span
-                  className={cn(
-                    'ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs font-semibold',
-                  )}
-                >
-                  {activeCount}
-                </span>
-              ) : null}
-            </Button>
-          </div>
+          <Box sx={{ position: 'sticky', bottom: 0, pt: 2, pb: 1, bgcolor: 'background.paper' }}>
+            {viewResultsButton}
+          </Box>
         )}
-      </div>
+      </Box>
     </DrawerShell>
   );
 }

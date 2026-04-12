@@ -26,14 +26,14 @@ vi.mock('@/app/(main)/statements/components/filters/FilterOptionRow', () => ({
   FilterOptionRow: ({ label }: { label: string }) => <button type="button">{label}</button>,
 }));
 
-vi.mock('@heroui/calendar', () => ({
-  RangeCalendar: ({ visibleMonths }: { visibleMonths: number }) => (
-    <div data-testid="range-calendar" data-visible-months={visibleMonths} />
+vi.mock('@mui/x-date-pickers/DatePicker', () => ({
+  DatePicker: ({ label }: { label: string }) => (
+    <div data-testid="date-picker" data-label={label} />
   ),
 }));
 
 describe('DateFilterDropdown', () => {
-  it('renders one visible month for desktop mode', async () => {
+  it('renders date pickers when mode is set', async () => {
     mockUseIsMobile.mockReturnValue(false);
     mockFilterDropdown.mockReset();
 
@@ -58,8 +58,8 @@ describe('DateFilterDropdown', () => {
       );
     });
 
-    const calendar = container.querySelector('[data-testid="range-calendar"]');
-    expect(calendar?.getAttribute('data-visible-months')).toBe('1');
+    const pickers = container.querySelectorAll('[data-testid="date-picker"]');
+    expect(pickers.length).toBeGreaterThanOrEqual(1);
     expect(mockFilterDropdown).toHaveBeenCalledWith(
       expect.not.objectContaining({
         contentClassName: expect.any(String),
