@@ -5,6 +5,7 @@ import { useIntlayer } from '@/app/i18n';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { Download, MoreVertical, X } from 'lucide-react';
 import { type ChangeEvent, type ComponentType, useEffect, useRef, useState } from 'react';
+import '@/app/styles/blocks/lumio-pdf-preview-modal.css';
 import { ModalShell } from './ui/modal-shell';
 
 type ReactPdfComponentProps = Record<string, unknown>;
@@ -334,23 +335,20 @@ export function PDFPreviewModal({
       onClose={onClose}
       size="full"
       showCloseButton={false}
-      className="h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-none overflow-hidden rounded-[22px] border border-[#d4e3d6] shadow-[0_24px_80px_rgba(16,24,40,0.16)]"
+      className="lumio-pdf-preview-modal__shell"
       contentClassName="!h-full !p-0"
     >
-      <div className="flex h-full min-h-0 flex-col bg-white dark:bg-[#111827]">
-        <div
-          className="relative flex items-center justify-between border-b border-[#e4e6e3] px-5 py-4 dark:border-white/10 dark:bg-[#111827]"
-          ref={menuRef}
-        >
-          <h2 className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
+      <div className="lumio-pdf-preview-modal__body">
+        <div className="lumio-pdf-preview-modal__header" ref={menuRef}>
+          <h2 className="lumio-pdf-preview-modal__title">
             Receipt
           </h2>
 
-          <div className="absolute right-5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+          <div className="lumio-pdf-preview-modal__header-actions">
             <button
               type="button"
               onClick={() => setMenuOpen(prev => !prev)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-primary transition-colors hover:bg-[#eaf5ee] dark:text-slate-300 dark:hover:bg-white/10"
+              className="lumio-pdf-preview-modal__menu-btn"
               aria-label="Open file menu"
             >
               <MoreVertical size={24} strokeWidth={2.4} />
@@ -358,7 +356,7 @@ export function PDFPreviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[#9aa39e] transition-colors hover:bg-[#eef2ee] hover:text-[#6f7773] dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
+              className="lumio-pdf-preview-modal__close-btn"
               aria-label="Close preview"
             >
               <X size={33} strokeWidth={2.4} />
@@ -366,17 +364,17 @@ export function PDFPreviewModal({
           </div>
 
           {menuOpen && (
-            <div className="absolute right-5 top-[calc(100%+12px)] z-40 w-[360px] max-w-[calc(100vw-90px)] rounded-[24px] border border-[#d8ddd8] bg-white p-2 shadow-[0_14px_28px_rgba(17,24,39,0.14)] dark:border-slate-700/60 dark:bg-[#111827]">
+            <div className="lumio-pdf-preview-modal__dropdown-menu">
               <button
                 type="button"
                 onClick={handleDownloadFromMenu}
-                className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left transition-colors hover:bg-[#f5f8f5] dark:hover:bg-white/5"
+                className="lumio-pdf-preview-modal__dropdown-item"
               >
                 <Download
-                  className="h-7 w-7 text-[#99a39d] dark:text-slate-400"
+                  className="lumio-pdf-preview-modal__dropdown-icon"
                   strokeWidth={2.3}
                 />
-                <span className="text-[22px] font-semibold leading-none text-[#0f3428] dark:text-slate-100">
+                <span className="lumio-pdf-preview-modal__dropdown-label">
                   Download
                 </span>
               </button>
@@ -384,12 +382,12 @@ export function PDFPreviewModal({
           )}
         </div>
 
-        <div className="relative min-h-0 flex-1 bg-[#f3f4f2] dark:bg-[#0b1220]">
+        <div className="lumio-pdf-preview-modal__content">
           {loading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-[#0b1220]/80">
-              <div className="text-center">
-                <Spinner className="mx-auto mb-4 h-10 w-10 text-black dark:text-white" />
-                <p className="text-sm font-medium text-gray-500 dark:text-slate-400">
+            <div className="lumio-pdf-preview-modal__loading-overlay">
+              <div className="lumio-pdf-preview-modal__loading-body">
+                <Spinner size={40} sx={{ display: 'block', mx: 'auto', mb: 2 }} />
+                <p className="lumio-pdf-preview-modal__loading-text">
                   {t.loading.value}
                 </p>
               </div>
@@ -397,39 +395,39 @@ export function PDFPreviewModal({
           )}
 
           {error && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white dark:bg-[#111827]">
-              <div className="max-w-md p-6 text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-red-100 bg-red-50 dark:border-red-500/20 dark:bg-red-500/10">
-                  <X size={24} className="text-red-500" strokeWidth={1.5} />
+            <div className="lumio-pdf-preview-modal__error-overlay">
+              <div className="lumio-pdf-preview-modal__error-body">
+                <div className="lumio-pdf-preview-modal__error-icon-wrapper">
+                  <X size={24} style={{ color: '#ef4444' }} strokeWidth={1.5} />
                 </div>
-                <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-slate-100">
+                <h3 className="lumio-pdf-preview-modal__error-title">
                   {showAttachFallback ? t.fileNotAttached.value : t.loadError.value}
                 </h3>
-                <p className="mb-4 text-sm text-gray-500 dark:text-slate-400">
+                <p className="lumio-pdf-preview-modal__error-message">
                   {showAttachFallback ? t.uploadFileHint.value : error}
                 </p>
 
                 {showAttachFallback ? (
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="lumio-pdf-preview-modal__error-actions">
                     <input
                       ref={attachInputRef}
                       type="file"
                       accept="application/pdf,image/*,.csv,.xlsx,.xls,.docx"
                       onChange={handleAttachFile}
-                      className="hidden"
+                      className="lumio-pdf-preview-modal__hidden-input"
                     />
                     <button
                       type="button"
                       onClick={handleAttachClick}
                       disabled={attachingFile}
-                      className="rounded-lg bg-gray-900 px-5 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="lumio-pdf-preview-modal__btn-primary"
                     >
                       {attachingFile ? t.uploading.value : t.uploadFile.value}
                     </button>
                     <button
                       type="button"
                       onClick={onClose}
-                      className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-slate-700/60 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                      className="lumio-pdf-preview-modal__btn-secondary"
                     >
                       {t.close.value}
                     </button>
@@ -438,7 +436,7 @@ export function PDFPreviewModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-lg bg-gray-900 px-5 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+                    className="lumio-pdf-preview-modal__btn-primary"
                   >
                     {t.close.value}
                   </button>
@@ -448,20 +446,20 @@ export function PDFPreviewModal({
           )}
 
           {showParsePrompt && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/25 px-4">
-              <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-[0_20px_36px_rgba(15,23,42,0.2)] dark:bg-[#111827]">
-                <h3 className="text-base font-semibold text-[#0f3428] dark:text-slate-100">
+            <div className="lumio-pdf-preview-modal__parse-prompt-overlay">
+              <div className="lumio-pdf-preview-modal__parse-prompt-card">
+                <h3 className="lumio-pdf-preview-modal__parse-prompt-title">
                   {t.startParsing.value}
                 </h3>
-                <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
+                <p className="lumio-pdf-preview-modal__parse-prompt-desc">
                   {t.startParsingDescription.value}
                 </p>
-                <div className="mt-5 flex items-center justify-end gap-2">
+                <div className="lumio-pdf-preview-modal__parse-prompt-actions">
                   <button
                     type="button"
                     onClick={() => setShowParsePrompt(false)}
                     disabled={startingParsing}
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-50 dark:border-slate-700/60 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="lumio-pdf-preview-modal__btn-secondary"
                   >
                     {t.decline.value}
                   </button>
@@ -469,7 +467,7 @@ export function PDFPreviewModal({
                     type="button"
                     onClick={handleStartReplaceParsing}
                     disabled={startingParsing}
-                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:opacity-50"
+                    className="lumio-pdf-preview-modal__btn-accent"
                   >
                     {startingParsing ? t.startingParsing.value : t.startParsingButton.value}
                   </button>
@@ -479,15 +477,15 @@ export function PDFPreviewModal({
           )}
 
           {!error && pdfObjectUrl && isImagePreview && (
-            <div ref={viewportRef} className="h-full min-h-0 overflow-y-auto px-5 py-7">
-              <div className="mx-auto flex w-full max-w-[1200px] justify-center">
+            <div ref={viewportRef} className="lumio-pdf-preview-modal__viewport">
+              <div className="lumio-pdf-preview-modal__page-wrapper">
                 <img
                   src={pdfObjectUrl}
                   alt={fileName}
                   className={
                     isStoreReceiptImagePreview
-                      ? 'max-h-none w-[min(92vw,960px)] max-w-none rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
-                      : 'max-h-[78vh] max-w-full rounded-lg bg-white object-contain shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900'
+                      ? 'lumio-pdf-preview-modal__image-preview lumio-pdf-preview-modal__image-preview--receipt'
+                      : 'lumio-pdf-preview-modal__image-preview'
                   }
                 />
               </div>
@@ -495,8 +493,8 @@ export function PDFPreviewModal({
           )}
 
           {!error && pdfObjectUrl && !isImagePreview && DocumentComponent && PageComponent && (
-            <div ref={viewportRef} className="h-full min-h-0 overflow-y-auto px-5 py-7">
-              <div className="mx-auto flex w-full max-w-[1200px] flex-col items-center gap-6">
+            <div ref={viewportRef} className="lumio-pdf-preview-modal__viewport">
+              <div className="lumio-pdf-preview-modal__pdf-wrapper">
                 <DocumentComponent
                   file={pdfObjectUrl}
                   loading={null}
@@ -504,16 +502,16 @@ export function PDFPreviewModal({
                     setNumPages(loadedPages)
                   }
                   onLoadError={() => setError(t.errors.displayFailed.value)}
-                  className="w-full"
+                  style={{ width: '100%' }}
                 >
                   {Array.from({ length: numPages }, (_, index) => (
-                    <div key={`page_${index + 1}`} className="flex w-full justify-center">
+                    <div key={`page_${index + 1}`} className="lumio-pdf-preview-modal__pdf-page-wrap">
                       <PageComponent
                         pageNumber={index + 1}
                         width={pageWidth}
                         renderTextLayer={false}
                         renderAnnotationLayer={false}
-                        className="overflow-hidden rounded-[2px] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.08)] dark:bg-slate-900"
+                        className="lumio-pdf-preview-modal__pdf-page"
                       />
                     </div>
                   ))}
