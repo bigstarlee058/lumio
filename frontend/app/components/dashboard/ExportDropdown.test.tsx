@@ -3,12 +3,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-type DropdownItemProps = {
-  children: React.ReactNode;
-  onPress?: () => void;
-  itemKey?: string;
-};
-
 const apiPost = vi.fn();
 const toastLoading = vi.fn();
 const toastSuccess = vi.fn();
@@ -26,32 +20,6 @@ vi.mock('react-hot-toast', () => ({
     success: toastSuccess,
     error: toastError,
   },
-}));
-
-vi.mock('@heroui/react', () => ({
-  Dropdown: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  DropdownMenu: ({ children, onAction }: { children: React.ReactNode; onAction?: (key: React.Key) => void }) => (
-    <div>
-      {React.Children.map(children, child => {
-        if (!React.isValidElement(child)) return child;
-        const key = child.key == null ? undefined : String(child.key);
-        return React.cloneElement(child as React.ReactElement<DropdownItemProps>, {
-          itemKey: key,
-          onPress: () => {
-            if (key) {
-              onAction?.(key);
-            }
-          },
-        });
-      })}
-    </div>
-  ),
-  DropdownItem: ({ children, onPress, itemKey }: { children: React.ReactNode; onPress?: () => void; itemKey?: string }) => (
-    <button type="button" data-testid={`dropdown-item-${itemKey}`} onClick={onPress}>
-      {children}
-    </button>
-  ),
 }));
 
 describe('ExportDropdown', () => {
@@ -132,6 +100,10 @@ describe('ExportDropdown', () => {
       />,
     );
 
+    // Open the dropdown menu
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }));
+
+    // Click the PDF item
     fireEvent.click(screen.getByTestId('dropdown-item-pdf'));
 
     await waitFor(() => {
@@ -173,6 +145,10 @@ describe('ExportDropdown', () => {
       />,
     );
 
+    // Open the dropdown menu
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }));
+
+    // Click the docx item
     fireEvent.click(screen.getByTestId('dropdown-item-docx'));
 
     await waitFor(() => {
@@ -213,6 +189,6 @@ describe('ExportDropdown', () => {
       />,
     );
 
-    expect(screen.getByRole('button', { name: 'Export' }).className).toContain('rounded-lg');
+    expect(screen.getByRole('button', { name: 'Export' })).toBeTruthy();
   });
 });

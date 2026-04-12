@@ -1,9 +1,9 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
+import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { Download, FileSpreadsheet, FileText, FileType2 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 type ExportFormat = 'excel' | 'pdf' | 'csv' | 'docx';
@@ -39,6 +39,8 @@ const EXPORT_ITEMS: Array<{
 
 export function ExportDropdown({ t }: ExportDropdownProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   const text = (token: Token | undefined, fallback: string) => token?.value || fallback;
 
@@ -67,6 +69,7 @@ export function ExportDropdown({ t }: ExportDropdownProps) {
       return;
     }
 
+    setAnchorEl(null);
     setIsLoading(true);
     const toastId = toast.loading(text(t?.downloading, 'Downloading...'));
 
@@ -97,36 +100,59 @@ export function ExportDropdown({ t }: ExportDropdownProps) {
   };
 
   return (
-    <Dropdown>
-      <DropdownTrigger>
-        <button
-          type="button"
-          disabled={isLoading}
-          className="flex items-center gap-2 rounded-lg border border-border px-5 py-2.5 text-foreground transition-colors hover:bg-muted disabled:opacity-60"
-        >
-          <Download size={14} className={isLoading ? 'animate-pulse' : undefined} />
-          <span
-            className="text-[13px] font-medium"
-            style={{ fontFamily: 'var(--font-dashboard-mono)' }}
-          >
-            {isLoading ? text(t?.downloading, 'Downloading...') : text(t?.button, 'Export')}
-          </span>
-        </button>
-      </DropdownTrigger>
-      <DropdownMenu
+    <>
+      <Button
+        variant="outlined"
+        disabled={isLoading}
+        onClick={event => setAnchorEl(event.currentTarget)}
+        startIcon={<Download size={14} style={{ opacity: isLoading ? 0.6 : 1 }} />}
+        sx={{
+          fontFamily: 'var(--font-dashboard-mono)',
+          fontSize: 13,
+          fontWeight: 500,
+          px: 2.5,
+          py: 1.25,
+          borderColor: 'var(--border-color)',
+          color: 'var(--foreground)',
+          '&:hover': { backgroundColor: 'var(--muted)' },
+          '&.Mui-disabled': { opacity: 0.6 },
+        }}
+      >
+        {isLoading ? text(t?.downloading, 'Downloading...') : text(t?.button, 'Export')}
+      </Button>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
         aria-label={text(t?.title, 'Export data')}
-        onAction={key => handleExport(key as ExportFormat)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
         {EXPORT_ITEMS.map(item => {
           const Icon = item.icon;
-
+          const label = text(
+            t?.[item.labelKey] as Token | undefined,
+            item.key === 'docx'
+              ? 'Word (.docx)'
+              : item.key === 'excel'
+                ? 'Excel (.xlsx)'
+                : item.key.toUpperCase(),
+          );
           return (
-            <DropdownItem key={item.key} startContent={<Icon size={16} />}>
-              {text(t?.[item.labelKey] as Token | undefined, item.key === 'docx' ? 'Word (.docx)' : item.key === 'excel' ? 'Excel (.xlsx)' : item.key.toUpperCase())}
-            </DropdownItem>
+            <MenuItem
+              key={item.key}
+              data-testid={`dropdown-item-${item.key}`}
+              onClick={() => void handleExport(item.key)}
+            >
+              <ListItemIcon>
+                <Icon size={16} />
+              </ListItemIcon>
+              <ListItemText>{label}</ListItemText>
+            </MenuItem>
           );
         })}
-      </DropdownMenu>
-    </Dropdown>
+      </Menu>
+    </>
   );
 }
