@@ -54,23 +54,19 @@ export default function DetailsDrawer({
       width="md"
       lockScroll={false}
     >
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 border-b border-gray-200 pb-2 text-sm font-semibold">
+      <div className="lumio-tx-drawer">
+        <div className="lumio-tx-drawer__tabs">
           <button
             type="button"
             onClick={() => setActiveTab('details')}
-            className={`rounded-none px-3 py-1 ${
-              activeTab === 'details' ? 'border-b-2 border-primary text-primary' : 'text-gray-500'
-            }`}
+            className={`lumio-tx-drawer__tab${activeTab === 'details' ? ' lumio-tx-drawer__tab--active' : ''}`}
           >
             Details
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className={`rounded-none px-3 py-1 ${
-              activeTab === 'history' ? 'border-b-2 border-primary text-primary' : 'text-gray-500'
-            }`}
+            className={`lumio-tx-drawer__tab${activeTab === 'history' ? ' lumio-tx-drawer__tab--active' : ''}`}
           >
             History
           </button>

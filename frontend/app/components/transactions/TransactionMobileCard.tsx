@@ -18,12 +18,11 @@ interface TransactionMobileCardProps {
   columnDateLabel: string;
 }
 
-interface CardClassOptions { isSelected: boolean; hasErrors?: boolean; hasWarnings?: boolean; }
-function buildCardClass({ isSelected, hasErrors, hasWarnings }: CardClassOptions): string {
-  const base = 'rounded-none border p-3 transition';
-  const sel = isSelected ? 'border-primary bg-primary/5' : 'border-gray-200 bg-white';
-  const status = hasErrors ? 'border-red-200 bg-red-50/40' : hasWarnings ? 'border-amber-200 bg-amber-50/30' : '';
-  return `${base} ${sel} ${status}`;
+function buildCardClass({ isSelected, hasErrors, hasWarnings }: { isSelected: boolean; hasErrors?: boolean; hasWarnings?: boolean }): string {
+  if (isSelected) return 'lumio-tx-card lumio-tx-card--selected';
+  if (hasErrors) return 'lumio-tx-card lumio-tx-card--error';
+  if (hasWarnings) return 'lumio-tx-card lumio-tx-card--warning';
+  return 'lumio-tx-card';
 }
 
 function MobileAmounts({ tx, formatters }: { tx: Transaction; formatters: TransactionRowFormatters }): React.ReactElement {
@@ -31,21 +30,21 @@ function MobileAmounts({ tx, formatters }: { tx: Transaction; formatters: Transa
   const credit = Number(tx.credit);
   const fmtAmt = (n: number): string => formatters.formatAmount(formatters.resolveDisplayAmount(tx, n), formatters.resolveDisplayCurrency(tx));
   return (
-    <div className="text-right">
-      {debit > 0 && <p className="text-sm font-bold text-gray-900">{fmtAmt(debit)}</p>}
-      {credit > 0 && <p className="text-sm font-bold text-emerald-600">{fmtAmt(credit)}</p>}
-      {debit <= 0 && credit <= 0 && <p className="text-sm text-gray-400">—</p>}
+    <div className="lumio-tx-card__amounts">
+      {debit > 0 && <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{fmtAmt(debit)}</p>}
+      {credit > 0 && <p style={{ fontSize: 14, fontWeight: 700, color: '#16a34a' }}>{fmtAmt(credit)}</p>}
+      {debit <= 0 && credit <= 0 && <p style={{ fontSize: 14, color: '#9ca3af' }}>—</p>}
     </div>
   );
 }
 
 function MobileExpandedDetails({ tx, formatDate, columnBinLabel, columnDateLabel }: { tx: Transaction; formatDate: (d: string) => string; columnBinLabel: string; columnDateLabel: string }): React.ReactElement {
   return (
-    <div className="mt-3 grid grid-cols-2 gap-3 rounded-none border border-gray-100 bg-gray-50 p-3 text-xs">
-      <div><span className="mb-1 block font-semibold text-gray-500">{columnBinLabel}</span><span className="font-mono text-gray-900">{tx.counterpartyBin ?? '—'}</span></div>
-      <div><span className="mb-1 block font-semibold text-gray-500">Currency</span><span className="text-gray-900">{tx.currency ?? '—'}</span></div>
-      <div><span className="mb-1 block font-semibold text-gray-500">Doc Number</span><span className="text-gray-900">{tx.documentNumber ?? '—'}</span></div>
-      <div><span className="mb-1 block font-semibold text-gray-500">{columnDateLabel}</span><span className="text-gray-900">{formatDate(tx.transactionDate)}</span></div>
+    <div className="lumio-tx-card__expanded">
+      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>{columnBinLabel}</span><span style={{ fontFamily: 'var(--font-mono)', color: '#111827' }}>{tx.counterpartyBin ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>Currency</span><span style={{ color: '#111827' }}>{tx.currency ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>Doc Number</span><span style={{ color: '#111827' }}>{tx.documentNumber ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>{columnDateLabel}</span><span style={{ color: '#111827' }}>{formatDate(tx.transactionDate)}</span></div>
     </div>
   );
 }
@@ -53,19 +52,28 @@ function MobileExpandedDetails({ tx, formatDate, columnBinLabel, columnDateLabel
 export function TransactionMobileCard({ tx, isExpanded, isSelected, categories, handlers, formatters, uncategorizedLabel, columnBinLabel, columnDateLabel }: TransactionMobileCardProps): React.ReactElement {
   return (
     <div data-testid={`transaction-card-${tx.id}`} className={buildCardClass({ isSelected, hasErrors: tx.hasErrors, hasWarnings: tx.hasWarnings })}>
-      <div className="flex items-start gap-3">
-        <div className="pt-0.5" onClick={e => e.stopPropagation()}><Checkbox checked={isSelected} onCheckedChange={handlers.onSelectRow(tx.id)} className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary/20" aria-label={`Select transaction ${tx.counterpartyName}`} /></div>
-        <div className="min-w-0 flex-1">
-          <button type="button" onClick={() => handlers.onRowClick(tx)} className="w-full rounded-none text-left focus:outline-none focus:ring-2 focus:ring-primary/20">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0"><p className="truncate text-sm font-semibold text-gray-900">{tx.counterpartyName}</p><p className="mt-0.5 text-xs text-gray-500">{formatters.formatDate(tx.transactionDate)}</p></div>
+      <div className="lumio-tx-card__body">
+        <div className="lumio-tx-card__checkbox" onClick={e => e.stopPropagation()}>
+          <Checkbox checked={isSelected} onCheckedChange={handlers.onSelectRow(tx.id)} style={{ height: 20, width: 20 }} aria-label={`Select transaction ${tx.counterpartyName}`} />
+        </div>
+        <div className="lumio-tx-card__content">
+          <button type="button" onClick={() => handlers.onRowClick(tx)} className="lumio-tx-card__clickable">
+            <div className="lumio-tx-card__header">
+              <div className="lumio-tx-card__name">
+                <p>{tx.counterpartyName}</p>
+                <p>{formatters.formatDate(tx.transactionDate)}</p>
+              </div>
               <MobileAmounts tx={tx} formatters={formatters} />
             </div>
-            <p className="mt-2 line-clamp-2 text-xs text-gray-600">{tx.paymentPurpose || '—'}</p>
+            <p className="lumio-tx-card__purpose">{tx.paymentPurpose || '—'}</p>
           </button>
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <div className="min-w-0" onClick={e => e.stopPropagation()}><CategoryDropdown tx={tx} categories={categories} label={uncategorizedLabel} align="start" onUpdateCategory={handlers.onUpdateCategory} /></div>
-            <button type="button" onClick={handlers.onToggleExpansion(tx.id)} aria-expanded={isExpanded} aria-label={isExpanded ? 'Collapse row' : 'Expand row'} className="inline-flex items-center justify-center rounded-none p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700">{isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}</button>
+          <div className="lumio-tx-card__footer">
+            <div style={{ minWidth: 0 }} onClick={e => e.stopPropagation()}>
+              <CategoryDropdown tx={tx} categories={categories} label={uncategorizedLabel} align="start" onUpdateCategory={handlers.onUpdateCategory} />
+            </div>
+            <button type="button" onClick={handlers.onToggleExpansion(tx.id)} aria-expanded={isExpanded} aria-label={isExpanded ? 'Collapse row' : 'Expand row'} className="lumio-tx-card__expand-btn">
+              {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
           </div>
           {isExpanded && <MobileExpandedDetails tx={tx} formatDate={formatters.formatDate} columnBinLabel={columnBinLabel} columnDateLabel={columnDateLabel} />}
         </div>

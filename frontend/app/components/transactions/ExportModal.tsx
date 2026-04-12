@@ -35,45 +35,35 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
         />
       }
     >
-      <div className="space-y-4">
-        <p className="text-sm text-gray-600">{t.description.value}</p>
+      <div className="lumio-export-modal">
+        <p style={{ fontSize: 14, color: '#4b5563' }}>{t.description.value}</p>
 
-        <div className="grid gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Export to Table */}
           <label
-            className={`relative flex cursor-pointer rounded-none border p-4 shadow-none focus:outline-none ${
-              selectedType === 'table'
-                ? 'border-primary border ring-primary'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
+            className={`lumio-export-modal__option${selectedType === 'table' ? ' lumio-export-modal__option--selected' : ' lumio-export-modal__option--unselected'}`}
           >
             <input
               type="radio"
               name="export-type"
               value="table"
-              className="sr-only"
+              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
               checked={selectedType === 'table'}
               onChange={() => setSelectedType('table')}
             />
-            <span className="flex flex-1">
-              <span className="flex flex-col">
-                <span className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                  <Table className="h-4 w-4 text-primary" />
-                  {t.exportToTable.value}
-                </span>
-                <span className="mt-1 flex items-center text-xs text-gray-500">
-                  {t.exportToTableDescription.value}
-                </span>
+            <span className="lumio-export-modal__option-content">
+              <span className="lumio-export-modal__option-title">
+                <Table size={16} color="var(--primary)" />
+                {t.exportToTable.value}
+              </span>
+              <span className="lumio-export-modal__option-desc">
+                {t.exportToTableDescription.value}
               </span>
             </span>
-            <span
-              className={`h-4 w-4 rounded-full border border-gray-300 ${
-                selectedType === 'table' ? 'border-primary bg-primary' : 'bg-transparent'
-              }`}
-            >
+            <span className={`lumio-export-modal__radio${selectedType === 'table' ? ' lumio-export-modal__radio--selected' : ''}`}>
               {selectedType === 'table' && (
-                <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                <span className="lumio-export-modal__radio-dot">
+                  <span className="lumio-export-modal__radio-inner" />
                 </span>
               )}
             </span>
@@ -81,39 +71,29 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
 
           {/* Export to Excel */}
           <label
-            className={`relative flex cursor-pointer rounded-none border p-4 shadow-none focus:outline-none ${
-              selectedType === 'excel'
-                ? 'border-primary border ring-primary'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
+            className={`lumio-export-modal__option${selectedType === 'excel' ? ' lumio-export-modal__option--selected' : ' lumio-export-modal__option--unselected'}`}
           >
             <input
               type="radio"
               name="export-type"
               value="excel"
-              className="sr-only"
+              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
               checked={selectedType === 'excel'}
               onChange={() => setSelectedType('excel')}
             />
-            <span className="flex flex-1">
-              <span className="flex flex-col">
-                <span className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                  <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                  Excel / CSV
-                </span>
-                <span className="mt-1 flex items-center text-xs text-gray-500">
-                  {t.downloadFile.value}
-                </span>
+            <span className="lumio-export-modal__option-content">
+              <span className="lumio-export-modal__option-title">
+                <FileSpreadsheet size={16} color="#16a34a" />
+                Excel / CSV
+              </span>
+              <span className="lumio-export-modal__option-desc">
+                {t.downloadFile.value}
               </span>
             </span>
-            <span
-              className={`h-4 w-4 rounded-full border border-gray-300 ${
-                selectedType === 'excel' ? 'border-primary bg-primary' : 'bg-transparent'
-              }`}
-            >
+            <span className={`lumio-export-modal__radio${selectedType === 'excel' ? ' lumio-export-modal__radio--selected' : ''}`}>
               {selectedType === 'excel' && (
-                <span className="absolute inset-0 flex items-center justify-center">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                <span className="lumio-export-modal__radio-dot">
+                  <span className="lumio-export-modal__radio-inner" />
                 </span>
               )}
             </span>

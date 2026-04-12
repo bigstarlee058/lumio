@@ -28,33 +28,34 @@ interface SortIconProps {
 }
 
 export function SortIcon({ sort, field }: SortIconProps): React.ReactElement {
-  if (sort.by !== field) return <ChevronDown className="h-3 w-3 opacity-30" />;
+  if (sort.by !== field) return <ChevronDown size={12} style={{ opacity: 0.3 }} />;
   return sort.order === 'asc'
-    ? <ChevronDown className="h-3 w-3 rotate-180" />
-    : <ChevronDown className="h-3 w-3" />;
+    ? <ChevronDown size={12} style={{ transform: 'rotate(180deg)' }} />
+    : <ChevronDown size={12} />;
 }
 
 interface AmountCellProps {
   amount: number;
   tx: Transaction;
   formatters: TransactionRowFormatters;
-  colorClass: string;
+  color: string;
 }
 
-function AmountCell({ amount, tx, formatters, colorClass }: AmountCellProps): React.ReactElement {
-  if (amount <= 0) return <span className="text-gray-400">—</span>;
+function AmountCell({ amount, tx, formatters, color }: AmountCellProps): React.ReactElement {
+  if (amount <= 0) return <span style={{ color: '#9ca3af' }}>—</span>;
   return (
-    <span className={`font-bold ${colorClass}`}>
+    <span style={{ fontWeight: 700, color }}>
       {formatters.formatAmount(formatters.resolveDisplayAmount(tx, amount), formatters.resolveDisplayCurrency(tx))}
     </span>
   );
 }
 
-interface RowClassOptions { isSelected: boolean; hasErrors?: boolean; hasWarnings?: boolean; }
-function buildRowClass({ isSelected, hasErrors, hasWarnings }: RowClassOptions): string {
-  const status = hasErrors ? 'bg-red-50/50' : hasWarnings ? 'bg-amber-50/30' : '';
-  const selection = isSelected ? 'bg-primary/5 border-primary' : 'border-transparent';
-  return `cursor-pointer transition hover:bg-muted/50 border-l-4 ${selection} ${status}`;
+function buildRowClass({ isSelected, hasErrors, hasWarnings }: { isSelected: boolean; hasErrors?: boolean; hasWarnings?: boolean }): string {
+  let cls = 'lumio-tx-table__row';
+  if (isSelected) cls += ' lumio-tx-table__row--selected';
+  else if (hasErrors) cls += ' lumio-tx-table__row--error';
+  else if (hasWarnings) cls += ' lumio-tx-table__row--warning';
+  return cls;
 }
 
 export function TransactionRow({ tx, isExpanded, isSelected, categories, handlers, formatters, categoryLabel, columnBinLabel, columnDateLabel }: TransactionRowProps): React.ReactElement {
@@ -63,16 +64,18 @@ export function TransactionRow({ tx, isExpanded, isSelected, categories, handler
   return (
     <React.Fragment>
       <tr onClick={() => handlers.onRowClick(tx)} onKeyDown={handleKey} tabIndex={0} aria-label={`Transaction from ${tx.counterpartyName}`} className={rowCls}>
-        <td className="px-2 py-4 text-center" onClick={handlers.onToggleExpansion(tx.id)} aria-expanded={isExpanded}>
-          <div className="flex items-center justify-center h-full text-gray-400 hover:text-gray-600">{isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}</div>
+        <td className="lumio-tx-table__td--center" onClick={handlers.onToggleExpansion(tx.id)} aria-expanded={isExpanded}>
+          <div className="lumio-tx-table__expand-btn">{isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</div>
         </td>
-        <td className="px-4 py-4" onClick={e => e.stopPropagation()}><Checkbox checked={isSelected} onCheckedChange={handlers.onSelectRow(tx.id)} className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary/20" /></td>
-        <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500 tabular-nums">{formatters.formatDate(tx.transactionDate)}</td>
-        <td className="px-4 py-4 text-sm font-semibold text-gray-900"><div className="max-w-[200px]" title={tx.counterpartyName}>{tx.counterpartyName}</div></td>
-        <td className="px-4 py-4 text-sm text-gray-500"><div className="line-clamp-2 max-w-[300px]" title={tx.paymentPurpose}>{tx.paymentPurpose || '—'}</div></td>
-        <td className="whitespace-nowrap px-4 py-4 text-right text-sm"><AmountCell amount={Number(tx.debit)} tx={tx} formatters={formatters} colorClass="text-gray-900" /></td>
-        <td className="whitespace-nowrap px-4 py-4 text-right text-sm"><AmountCell amount={Number(tx.credit)} tx={tx} formatters={formatters} colorClass="text-emerald-600" /></td>
-        <td className="px-4 py-4" onClick={e => e.stopPropagation()}><CategoryDropdown tx={tx} categories={categories} label={categoryLabel} align="end" onUpdateCategory={handlers.onUpdateCategory} /></td>
+        <td className="lumio-tx-table__td" onClick={e => e.stopPropagation()}>
+          <Checkbox checked={isSelected} onCheckedChange={handlers.onSelectRow(tx.id)} style={{ height: 20, width: 20 }} />
+        </td>
+        <td className="lumio-tx-table__td--nowrap" style={{ fontSize: 14, color: '#6b7280', fontVariantNumeric: 'tabular-nums' }}>{formatters.formatDate(tx.transactionDate)}</td>
+        <td className="lumio-tx-table__td" style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}><div style={{ maxWidth: 200 }} title={tx.counterpartyName}>{tx.counterpartyName}</div></td>
+        <td className="lumio-tx-table__td" style={{ fontSize: 14, color: '#6b7280' }}><div style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', maxWidth: 300 }} title={tx.paymentPurpose}>{tx.paymentPurpose || '—'}</div></td>
+        <td className="lumio-tx-table__td--nowrap-right" style={{ fontSize: 14 }}><AmountCell amount={Number(tx.debit)} tx={tx} formatters={formatters} color="#111827" /></td>
+        <td className="lumio-tx-table__td--nowrap-right" style={{ fontSize: 14 }}><AmountCell amount={Number(tx.credit)} tx={tx} formatters={formatters} color="#16a34a" /></td>
+        <td className="lumio-tx-table__td" onClick={e => e.stopPropagation()}><CategoryDropdown tx={tx} categories={categories} label={categoryLabel} align="end" onUpdateCategory={handlers.onUpdateCategory} /></td>
       </tr>
       {isExpanded && <TransactionExpandedRow tx={tx} formatDate={formatters.formatDate} columnBinLabel={columnBinLabel} columnDateLabel={columnDateLabel} />}
     </React.Fragment>

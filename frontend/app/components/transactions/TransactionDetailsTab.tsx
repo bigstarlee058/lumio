@@ -51,55 +51,43 @@ export function TransactionDetailsTab({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="lumio-tx-detail">
       {/* Date and Document */}
-      <div className="space-y-3">
-        <div className="flex items-start gap-3">
-          <div className="rounded-none bg-gray-100 p-2">
-            <Calendar className="h-5 w-5 text-gray-600" />
+      <div className="lumio-tx-detail__section">
+        <div className="lumio-tx-detail__icon-row">
+          <div className="lumio-tx-detail__icon">
+            <Calendar size={20} color="#4b5563" />
           </div>
-          <div className="flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              {t.date.value}
-            </div>
-            <div className="mt-1 text-sm font-semibold text-gray-900">
-              {formatDate(transaction.transactionDate, locale)}
-            </div>
+          <div className="lumio-tx-detail__field">
+            <div className="lumio-tx-detail__label">{t.date.value}</div>
+            <div className="lumio-tx-detail__value">{formatDate(transaction.transactionDate, locale)}</div>
           </div>
         </div>
 
         {transaction.documentNumber && (
-          <div className="flex items-start gap-3">
-            <div className="rounded-none bg-gray-100 p-2">
-              <FileText className="h-5 w-5 text-gray-600" />
+          <div className="lumio-tx-detail__icon-row">
+            <div className="lumio-tx-detail__icon">
+              <FileText size={20} color="#4b5563" />
             </div>
-            <div className="flex-1">
-              <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                {t.documentNumber.value}
-              </div>
-              <div className="mt-1 text-sm font-semibold text-gray-900">
-                {transaction.documentNumber}
-              </div>
+            <div className="lumio-tx-detail__field">
+              <div className="lumio-tx-detail__label">{t.documentNumber.value}</div>
+              <div className="lumio-tx-detail__value">{transaction.documentNumber}</div>
             </div>
           </div>
         )}
       </div>
 
       {/* Counterparty */}
-      <div className="rounded-none border border-gray-200 bg-gray-50/60 p-4">
-        <div className="flex items-start gap-3">
-          <div className="rounded-none bg-white p-2 border border-gray-100">
-            <Building2 className="h-5 w-5 text-gray-600" />
+      <div className="lumio-tx-detail__card">
+        <div className="lumio-tx-detail__icon-row">
+          <div className="lumio-tx-detail__icon--white">
+            <Building2 size={20} color="#4b5563" />
           </div>
-          <div className="flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              {t.counterparty.value}
-            </div>
-            <div className="mt-1 text-sm font-bold text-gray-900">
-              {transaction.counterpartyName}
-            </div>
+          <div className="lumio-tx-detail__field">
+            <div className="lumio-tx-detail__label">{t.counterparty.value}</div>
+            <div className="lumio-tx-detail__value" style={{ fontWeight: 700 }}>{transaction.counterpartyName}</div>
             {transaction.counterpartyBin && (
-              <div className="mt-1 text-xs text-gray-600">
+              <div style={{ marginTop: 4, fontSize: 12, color: '#4b5563' }}>
                 {t.bin.value}: {transaction.counterpartyBin}
               </div>
             )}
@@ -109,135 +97,115 @@ export function TransactionDetailsTab({
 
       {/* Payment Purpose */}
       <div>
-        <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-          {t.purpose.value}
-        </div>
-        <div className="mt-2 rounded-none border border-gray-200 bg-gray-50/60 p-3 text-sm text-gray-900">
+        <div className="lumio-tx-detail__label">{t.purpose.value}</div>
+        <div className="lumio-tx-detail__card" style={{ marginTop: 8, fontSize: 14, color: '#111827' }}>
           {transaction.paymentPurpose || '—'}
         </div>
       </div>
 
       {/* Amounts */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-none border border-red-200 bg-red-50/60 p-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-red-700">
-            <TrendingDown className="h-4 w-4" />
+      <div className="lumio-tx-detail__amount-grid">
+        <div className="lumio-tx-detail__amount-card lumio-tx-detail__amount-card--debit">
+          <div className="lumio-tx-detail__amount-label lumio-tx-detail__amount-label--debit">
+            <TrendingDown size={16} />
             {t.debit.value}
           </div>
-          <div className="mt-2 text-lg font-semibold text-red-700">
+          <div className="lumio-tx-detail__amount-value lumio-tx-detail__amount-value--debit">
             {transaction.debit > 0 ? (
               <>
                 {showConverted && transaction.convertedAmount !== undefined
-                  ? formatAmount(
-                      transaction.convertedAmount,
-                      transaction.convertedCurrency ?? 'KZT',
-                      locale,
-                    )
+                  ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency ?? 'KZT', locale)
                   : formatAmount(transaction.debit, transaction.currency ?? 'KZT', locale)}
                 {showConverted && transaction.convertedAmount !== undefined && (
-                  <div className="mt-0.5 text-xs font-normal text-red-400">
+                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: '#fca5a5' }}>
                     {formatAmount(transaction.debit, transaction.currency ?? 'KZT', locale)}
                   </div>
                 )}
               </>
-            ) : (
-              '—'
-            )}
+            ) : '—'}
           </div>
         </div>
 
-        <div className="rounded-none border border-emerald-200 bg-emerald-50/60 p-4">
-          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-            <TrendingUp className="h-4 w-4" />
+        <div className="lumio-tx-detail__amount-card lumio-tx-detail__amount-card--credit">
+          <div className="lumio-tx-detail__amount-label lumio-tx-detail__amount-label--credit">
+            <TrendingUp size={16} />
             {t.credit.value}
           </div>
-          <div className="mt-2 text-lg font-semibold text-emerald-700">
+          <div className="lumio-tx-detail__amount-value lumio-tx-detail__amount-value--credit">
             {transaction.credit > 0 ? (
               <>
                 {showConverted && transaction.convertedAmount !== undefined
-                  ? formatAmount(
-                      transaction.convertedAmount,
-                      transaction.convertedCurrency ?? 'KZT',
-                      locale,
-                    )
+                  ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency ?? 'KZT', locale)
                   : formatAmount(transaction.credit, transaction.currency ?? 'KZT', locale)}
                 {showConverted && transaction.convertedAmount !== undefined && (
-                  <div className="mt-0.5 text-xs font-normal text-emerald-400">
+                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: '#6ee7b7' }}>
                     {formatAmount(transaction.credit, transaction.currency ?? 'KZT', locale)}
                   </div>
                 )}
               </>
-            ) : (
-              '—'
-            )}
+            ) : '—'}
           </div>
         </div>
       </div>
 
       {/* Additional Details */}
-      <div className="space-y-2 rounded-none border border-gray-200 bg-gray-50/60 p-4">
-        <div className="text-xs font-semibold uppercase tracking-wide text-gray-700">
-          {t.additionalDetails.value}
-        </div>
+      <div className="lumio-tx-detail__card">
+        <div className="lumio-tx-detail__label" style={{ color: '#374151', marginBottom: 8 }}>{t.additionalDetails.value}</div>
 
         {transaction.currency && (
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t.currency.value}:</span>
-            <span className="font-semibold text-gray-900">{transaction.currency}</span>
+          <div className="lumio-tx-detail__row">
+            <span style={{ color: '#4b5563' }}>{t.currency.value}:</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.currency}</span>
           </div>
         )}
 
         {transaction.exchangeRate && (
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t.exchangeRate.value}:</span>
-            <span className="font-semibold text-gray-900">
-              {transaction.exchangeRate.toFixed(4)}
-            </span>
+          <div className="lumio-tx-detail__row">
+            <span style={{ color: '#4b5563' }}>{t.exchangeRate.value}:</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.exchangeRate.toFixed(4)}</span>
           </div>
         )}
 
         {transaction.article && (
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t.article.value}:</span>
-            <span className="font-semibold text-gray-900">{transaction.article}</span>
+          <div className="lumio-tx-detail__row">
+            <span style={{ color: '#4b5563' }}>{t.article.value}:</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.article}</span>
           </div>
         )}
 
         {transaction.branch?.name && (
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t.branch.value}:</span>
-            <span className="font-semibold text-gray-900">{transaction.branch.name}</span>
+          <div className="lumio-tx-detail__row">
+            <span style={{ color: '#4b5563' }}>{t.branch.value}:</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.branch.name}</span>
           </div>
         )}
 
         {transaction.wallet?.name && (
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{t.wallet.value}:</span>
-            <span className="font-semibold text-gray-900">{transaction.wallet.name}</span>
+          <div className="lumio-tx-detail__row">
+            <span style={{ color: '#4b5563' }}>{t.wallet.value}:</span>
+            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.wallet.name}</span>
           </div>
         )}
       </div>
 
       {/* Parsing Metadata */}
       {(transaction.parsingConfidence || transaction.rawExtract) && (
-        <div className="space-y-2 rounded-none border border-blue-200 bg-blue-50/60 p-4">
-          <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">
-            {t.parsingMetadata.value}
-          </div>
+        <div className="lumio-tx-detail__card lumio-tx-detail__card--blue">
+          <div className="lumio-tx-detail__label" style={{ color: '#1d4ed8', marginBottom: 8 }}>{t.parsingMetadata.value}</div>
 
           {transaction.parsingConfidence && (
-            <div className="flex justify-between text-sm">
-              <span className="text-blue-600">{t.confidence.value}:</span>
-              <span className="font-semibold text-blue-900">
+            <div className="lumio-tx-detail__row">
+              <span style={{ color: '#2563eb' }}>{t.confidence.value}:</span>
+              <span style={{ fontWeight: 600, color: '#1e3a8a' }}>
                 {(transaction.parsingConfidence * 100).toFixed(1)}%
               </span>
             </div>
           )}
 
           {transaction.rawExtract && (
-            <div className="mt-2">
-              <span className="text-xs text-blue-600">{t.rawExtract.value}:</span>
-              <div className="mt-1 max-h-20 overflow-y-auto rounded bg-blue-100/80 p-2 font-mono text-xs text-blue-900">
+            <div style={{ marginTop: 8 }}>
+              <span style={{ fontSize: 12, color: '#2563eb' }}>{t.rawExtract.value}:</span>
+              <div style={{ marginTop: 4, maxHeight: 80, overflowY: 'auto', borderRadius: 4, backgroundColor: 'rgba(191, 219, 254, 0.8)', padding: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1e3a8a' }}>
                 {transaction.rawExtract}
               </div>
             </div>
@@ -246,72 +214,57 @@ export function TransactionDetailsTab({
       )}
 
       {/* Current Category */}
-      <div className="rounded-none border border-gray-200 bg-gray-50/60 p-4">
-        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-700">
-          <Tag className="h-4 w-4" />
+      <div className="lumio-tx-detail__card">
+        <div className="lumio-tx-detail__label" style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}>
+          <Tag size={16} />
           {t.currentCategory.value}
         </div>
-        <div className="mt-2">
+        <div style={{ marginTop: 8 }}>
           {transaction.category ? (
             <span
-              className="inline-flex items-center gap-2 rounded-none px-3 py-1.5 text-sm font-semibold"
+              className="lumio-tx-detail__cat-badge"
               style={{
-                backgroundColor:
-                  transaction.category.isEnabled === false
-                    ? '#fee2e2'
-                    : transaction.category.color
-                      ? `${transaction.category.color}15`
-                      : '#e5e7eb',
-                color:
-                  transaction.category.isEnabled === false
-                    ? '#b91c1c'
-                    : transaction.category.color || '#374151',
+                backgroundColor: transaction.category.isEnabled === false ? '#fee2e2' : transaction.category.color ? `${transaction.category.color}15` : '#e5e7eb',
+                color: transaction.category.isEnabled === false ? '#b91c1c' : transaction.category.color || '#374151',
               }}
             >
-              {transaction.category.isEnabled === false
-                ? `${transaction.category.name} — select category`
-                : transaction.category.name}
+              {transaction.category.isEnabled === false ? `${transaction.category.name} — select category` : transaction.category.name}
             </span>
           ) : (
-            <span className="text-sm text-gray-500">{t.noCategory.value}</span>
+            <span style={{ fontSize: 14, color: '#6b7280' }}>{t.noCategory.value}</span>
           )}
         </div>
       </div>
 
       {/* Actions */}
-      <div className="space-y-3 border-t border-gray-200 pt-6">
-        <div className="text-sm font-semibold text-gray-900">{t.actions.value}</div>
+      <div className="lumio-tx-detail__actions">
+        <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.actions.value}</div>
 
         {/* Set Category */}
         {onUpdateCategory && (
-          <div className="space-y-2">
-            <label
-              htmlFor="category-select"
-              className="block text-xs font-semibold text-gray-700"
-            >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <label htmlFor="category-select" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151' }}>
               {t.setCategory.value}
             </label>
-            <div className="flex gap-2">
+            <div className="lumio-tx-detail__set-cat">
               <select
                 id="category-select"
                 value={selectedCategoryId}
                 onChange={e => setSelectedCategoryId(e.target.value)}
-                className="flex-1 rounded-none border border-gray-200 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+                className="lumio-tx-detail__select"
               >
                 <option value="">{t.selectCategory.value}</option>
                 {categories
                   .filter(cat => cat.isEnabled !== false)
                   .map(cat => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
               </select>
               <button
                 type="button"
                 onClick={handleUpdateCategory}
                 disabled={!selectedCategoryId || updating}
-                className="rounded-none bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="lumio-tx-detail__apply-btn"
               >
                 {updating ? t.updating.value : t.apply.value}
               </button>
@@ -321,11 +274,7 @@ export function TransactionDetailsTab({
 
         {/* Mark as Ignored */}
         {onMarkIgnored && (
-          <button
-            type="button"
-            onClick={handleMarkIgnored}
-            className="w-full rounded-none border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-primary hover:text-primary"
-          >
+          <button type="button" onClick={handleMarkIgnored} className="lumio-tx-detail__ignore-btn">
             {t.markIgnored.value}
           </button>
         )}

@@ -44,7 +44,6 @@ export default function SummaryBar({
     const totalErrors = transactions.filter(tx => tx.hasErrors).length;
     const uncategorized = transactions.filter(tx => !tx.category).length;
 
-    // Safely convert debit and credit to numbers, handling string values or NaN
     const debitTotal = transactions.reduce((sum, tx) => {
       const debitValue = Number(tx.debit);
       return sum + (Number.isNaN(debitValue) ? 0 : debitValue);
@@ -57,27 +56,19 @@ export default function SummaryBar({
 
     const currency = transactions[0]?.currency || 'KZT';
 
-    return {
-      totalParsed,
-      totalWarnings,
-      totalErrors,
-      uncategorized,
-      debitTotal,
-      creditTotal,
-      currency,
-    };
+    return { totalParsed, totalWarnings, totalErrors, uncategorized, debitTotal, creditTotal, currency };
   }, [transactions]);
 
   return (
-    <div className="rounded-none border border-gray-200 bg-white p-6">
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div className="lumio-tx-summary">
+      <div className="lumio-tx-summary__grid">
         {/* Left section: File metadata and parsing status */}
-        <div className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-gray-900">
-                <FileText className="h-4 w-4" />
-                <span className="font-semibold">{getBankDisplayName(statement.bankName)}</span>
+        <div className="lumio-tx-summary__meta">
+          <div className="lumio-tx-summary__file-row">
+            <div className="lumio-tx-summary__file-info">
+              <div className="lumio-tx-summary__file-name">
+                <FileText size={16} />
+                <span style={{ fontWeight: 600 }}>{getBankDisplayName(statement.bankName)}</span>
                 {statement.metadata?.accountNumber && (
                   <>
                     <span>•</span>
@@ -85,33 +76,33 @@ export default function SummaryBar({
                   </>
                 )}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="lumio-tx-summary__upload-date">
                 {t.uploadedAt.value}: {formatDate(statement.createdAt, locale)}
               </div>
             </div>
           </div>
 
           {/* Parsing status */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-none border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+          <div className="lumio-tx-summary__badges">
+            <div className="lumio-tx-summary__badge lumio-tx-summary__badge--parsed">
+              <span className="lumio-tx-summary__badge-dot" />
               {t.parsed.value}: {stats.totalParsed}
             </div>
             {stats.totalWarnings > 0 && (
-              <div className="inline-flex items-center gap-1.5 rounded-none border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-600" />
+              <div className="lumio-tx-summary__badge lumio-tx-summary__badge--warnings">
+                <span className="lumio-tx-summary__badge-dot" />
                 {t.warnings.value}: {stats.totalWarnings}
               </div>
             )}
             {stats.totalErrors > 0 && (
-              <div className="inline-flex items-center gap-1.5 rounded-none border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+              <div className="lumio-tx-summary__badge lumio-tx-summary__badge--errors">
+                <span className="lumio-tx-summary__badge-dot" />
                 {t.errors.value}: {stats.totalErrors}
               </div>
             )}
             {stats.uncategorized > 0 && (
-              <div className="inline-flex items-center gap-1.5 rounded-none border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+              <div className="lumio-tx-summary__badge lumio-tx-summary__badge--uncategorized">
+                <span className="lumio-tx-summary__badge-dot" />
                 {t.uncategorized.value}: {stats.uncategorized}
               </div>
             )}
@@ -119,44 +110,44 @@ export default function SummaryBar({
         </div>
 
         {/* Right section: Financial totals and actions */}
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="lumio-tx-summary__totals-grid">
             {/* Debit Total */}
-            <div className="rounded-none border border-red-200 bg-red-50/50 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-red-700">
-                <TrendingDown className="h-4 w-4" />
+            <div className="lumio-tx-summary__total-card lumio-tx-summary__total-card--debit">
+              <div className="lumio-tx-summary__total-label lumio-tx-summary__total-label--debit">
+                <TrendingDown size={16} />
                 {t.debitTotal.value}
               </div>
-              <div className="mt-1 text-lg font-semibold text-red-700">
+              <div className="lumio-tx-summary__total-amount lumio-tx-summary__total-amount--debit">
                 {formatAmount(stats.debitTotal, stats.currency, locale)}
               </div>
             </div>
 
             {/* Credit Total */}
-            <div className="rounded-none border border-emerald-200 bg-emerald-50/50 p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-                <TrendingUp className="h-4 w-4" />
+            <div className="lumio-tx-summary__total-card lumio-tx-summary__total-card--credit">
+              <div className="lumio-tx-summary__total-label lumio-tx-summary__total-label--credit">
+                <TrendingUp size={16} />
                 {t.creditTotal.value}
               </div>
-              <div className="mt-1 text-lg font-semibold text-emerald-700">
+              <div className="lumio-tx-summary__total-amount lumio-tx-summary__total-amount--credit">
                 {formatAmount(stats.creditTotal, stats.currency, locale)}
               </div>
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="lumio-tx-summary__actions">
             {(stats.totalErrors > 0 || stats.uncategorized > 0) && (
               <Button
                 variant={stats.totalErrors > 0 ? 'destructive' : 'secondary'}
                 size="sm"
                 onClick={onFixIssues}
                 disabled={fixing}
-                className={fixing ? 'opacity-70 cursor-not-allowed' : ''}
+                style={fixing ? { opacity: 0.7, cursor: 'not-allowed' } : undefined}
               >
                 {fixing ? (
                   <>
-                    <Spinner className="mr-2 h-4 w-4" />
+                    <Spinner style={{ marginRight: 8, height: 16, width: 16 }} />
                     {t.fixIssues.value}
                   </>
                 ) : stats.totalErrors > 0 ? (
@@ -168,12 +159,12 @@ export default function SummaryBar({
             )}
             {onDownload && (
               <Button variant="outline" size="sm" onClick={onDownload}>
-                <Download className="mr-2 h-4 w-4" />
+                <Download size={16} style={{ marginRight: 8 }} />
                 {t.download?.value || 'Download'}
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={onExport}>
-              <FileUp className="mr-2 h-4 w-4" />
+              <FileUp size={16} style={{ marginRight: 8 }} />
               {t.export.value}
             </Button>
           </div>

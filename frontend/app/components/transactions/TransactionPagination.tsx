@@ -20,15 +20,19 @@ export function TransactionPagination({ page, rowsPerPage, totalPages, totalCoun
   const end = Math.min((page + 1) * rowsPerPage, totalCount);
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3">
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-700">{rowsPerPageLabel}:</span>
-        <select value={rowsPerPage} onChange={e => { onRowsPerPageChange(Number(e.target.value)); onPageChange(0); }} className="rounded-none border border-gray-200 px-2 py-1 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10">
+    <div className="lumio-tx-pagination">
+      <div className="lumio-tx-pagination__left">
+        <span style={{ fontSize: 14, color: '#374151' }}>{rowsPerPageLabel}:</span>
+        <select
+          value={rowsPerPage}
+          onChange={e => { onRowsPerPageChange(Number(e.target.value)); onPageChange(0); }}
+          className="lumio-tx-pagination__select"
+        >
           {PAGE_SIZES.map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-700">{start}–{end} {ofLabel} {totalCount}</span>
+      <div className="lumio-tx-pagination__right">
+        <span style={{ fontSize: 14, color: '#374151' }}>{start}–{end} {ofLabel} {totalCount}</span>
         <AppPagination page={page + 1} total={totalPages} onChange={p => onPageChange(p - 1)} />
       </div>
     </div>

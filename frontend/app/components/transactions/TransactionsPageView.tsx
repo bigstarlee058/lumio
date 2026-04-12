@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useIntlayer } from '@/app/i18n';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -90,7 +92,6 @@ export default function TransactionsPageView({
   };
 
   const handleFixIssues = async () => {
-    // Get all uncategorized transactions
     const uncategorizedTxIds = transactions.filter(tx => !tx.category).map(tx => tx.id);
 
     if (uncategorizedTxIds.length === 0) {
@@ -104,7 +105,6 @@ export default function TransactionsPageView({
         t.categorizingProgress.value.replace('{{count}}', String(uncategorizedTxIds.length)),
       );
 
-      // Call classification API
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || '/api/v1'}/classification/bulk`,
         {
@@ -123,19 +123,13 @@ export default function TransactionsPageView({
 
       const results = await response.json();
 
-      // Reload data to show updated categories
       if (onReload) {
         await onReload();
       }
 
-      // Show detailed results based on outcome
       if (results.successful > 0 && results.failed === 0 && results.notFound === 0) {
-        // All successful
-        toast.success(t.categorizeSuccess.value.replace('{{count}}', String(results.successful)), {
-          id: toastId,
-        });
+        toast.success(t.categorizeSuccess.value.replace('{{count}}', String(results.successful)), { id: toastId });
       } else if (results.successful > 0 && (results.failed > 0 || results.notFound > 0)) {
-        // Partial success
         toast(
           t.categorizePartial.value
             .replace('{{successful}}', String(results.successful))
@@ -145,12 +139,9 @@ export default function TransactionsPageView({
         );
         console.error('Categorization errors:', results.errors);
       } else {
-        // All failed
         toast.error(
           t.categorizeFailed.value.replace('{{count}}', String(results.failed + results.notFound)),
-          {
-            id: toastId,
-          },
+          { id: toastId },
         );
         console.error('All errors:', results.errors);
       }
@@ -163,7 +154,7 @@ export default function TransactionsPageView({
   };
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Summary Bar */}
       <SummaryBar
         statement={statement}
@@ -176,27 +167,23 @@ export default function TransactionsPageView({
 
       {/* Bulk Actions Toolbar */}
       {selectedIds.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 rounded-none border border-primary/30 bg-primary/5 p-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
-              {selectedIds.length}
-            </span>
-            <span className="text-sm font-semibold text-gray-700">{t.selected.value}</span>
+        <div className="lumio-tx-bulk">
+          <div className="lumio-tx-bulk__count">
+            <span className="lumio-tx-bulk__badge">{selectedIds.length}</span>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>{t.selected.value}</Typography>
           </div>
 
-          <div className="flex flex-1 items-center gap-2">
+          <div className="lumio-tx-bulk__controls">
             <select
               value={bulkCategoryId}
               onChange={e => setBulkCategoryId(e.target.value)}
-              className="flex-1 max-w-xs rounded-none border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="lumio-tx-bulk__select"
             >
               <option value="">{t.selectCategory.value}</option>
               {categories
                 .filter(cat => cat.isEnabled !== false)
                 .map(cat => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
             </select>
 
@@ -204,7 +191,7 @@ export default function TransactionsPageView({
               type="button"
               onClick={handleBulkAssignCategory}
               disabled={!bulkCategoryId}
-              className="rounded-none bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="lumio-tx-bulk__apply-btn"
             >
               {t.apply.value}
             </button>
@@ -213,7 +200,7 @@ export default function TransactionsPageView({
           <button
             type="button"
             onClick={() => setSelectedIds([])}
-            className="rounded-none border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            className="lumio-tx-bulk__clear-btn"
           >
             {t.clearSelection.value}
           </button>
@@ -253,6 +240,6 @@ export default function TransactionsPageView({
           }
         }}
       />
-    </div>
+    </Box>
   );
 }

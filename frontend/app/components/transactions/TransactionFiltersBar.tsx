@@ -27,8 +27,6 @@ interface TransactionFiltersBarProps {
   t: FilterTranslations;
 }
 
-const INPUT_CLS = 'w-full rounded-none border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10';
-
 interface FilterToggleButtonProps {
   hasActiveFilters: boolean;
   activeCount: number;
@@ -37,14 +35,15 @@ interface FilterToggleButtonProps {
 }
 
 function FilterToggleButton({ hasActiveFilters, activeCount, filterLabel, onClick }: FilterToggleButtonProps): React.ReactElement {
-  const cls = hasActiveFilters
-    ? 'border-primary bg-primary/10 text-primary'
-    : 'border-gray-200 bg-white text-gray-600 hover:border-primary hover:text-primary';
   return (
-    <button type="button" onClick={onClick} className={`inline-flex items-center gap-2 rounded-none border px-4 py-2 text-sm font-semibold transition ${cls}`}>
-      <Filter className="h-4 w-4" />
+    <button
+      type="button"
+      onClick={onClick}
+      className={`lumio-tx-filters__toggle-btn${hasActiveFilters ? ' lumio-tx-filters__toggle-btn--active' : ''}`}
+    >
+      <Filter size={16} />
       {filterLabel}
-      {hasActiveFilters && <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-white">{activeCount}</span>}
+      {hasActiveFilters && <span className="lumio-tx-filters__count">{activeCount}</span>}
     </button>
   );
 }
@@ -57,9 +56,9 @@ interface StatusSelectProps {
 
 function StatusSelect({ filters, onFilterChange, t }: StatusSelectProps): React.ReactElement {
   return (
-    <div className="flex-1 min-w-[200px]">
-      <label htmlFor="status-filter" className="mb-1 block text-xs font-semibold text-gray-700">{t.statusFilter.value}</label>
-      <select id="status-filter" value={filters.status} onChange={e => onFilterChange({ ...filters, status: e.target.value as FilterState['status'] })} className={INPUT_CLS}>
+    <div className="lumio-tx-filters__select-wrap">
+      <label htmlFor="status-filter" className="lumio-tx-filters__label">{t.statusFilter.value}</label>
+      <select id="status-filter" value={filters.status} onChange={e => onFilterChange({ ...filters, status: e.target.value as FilterState['status'] })} className="lumio-tx-filters__select">
         <option value="all">{t.statusAll.value}</option>
         <option value="warnings">{t.statusWarnings.value}</option>
         <option value="errors">{t.statusErrors.value}</option>
@@ -78,9 +77,9 @@ interface CategorySelectProps {
 
 function CategorySelect({ filters, categories, onFilterChange, t }: CategorySelectProps): React.ReactElement {
   return (
-    <div className="flex-1 min-w-[200px]">
-      <label htmlFor="category-filter" className="mb-1 block text-xs font-semibold text-gray-700">{t.categoryFilter.value}</label>
-      <select id="category-filter" value={filters.category ?? ''} onChange={e => onFilterChange({ ...filters, category: e.target.value || null })} className={INPUT_CLS}>
+    <div className="lumio-tx-filters__select-wrap">
+      <label htmlFor="category-filter" className="lumio-tx-filters__label">{t.categoryFilter.value}</label>
+      <select id="category-filter" value={filters.category ?? ''} onChange={e => onFilterChange({ ...filters, category: e.target.value || null })} className="lumio-tx-filters__select">
         <option value="">{t.categoryAll.value}</option>
         {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
       </select>
@@ -99,12 +98,12 @@ interface FilterPanelProps {
 
 function FilterPanel({ filters, categories, hasActiveFilters, onFilterChange, onClearFilters, t }: FilterPanelProps): React.ReactElement {
   return (
-    <div className="rounded-none border border-gray-200 bg-gray-50/60 p-4">
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="lumio-tx-filters__panel">
+      <div className="lumio-tx-filters__panel-inner">
         <StatusSelect filters={filters} onFilterChange={onFilterChange} t={t} />
         <CategorySelect filters={filters} categories={categories} onFilterChange={onFilterChange} t={t} />
         {hasActiveFilters && (
-          <button type="button" onClick={onClearFilters} className="mt-auto rounded-none border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-primary hover:text-primary">
+          <button type="button" onClick={onClearFilters} className="lumio-tx-filters__clear-btn">
             {t.clearFilters.value}
           </button>
         )}
@@ -117,14 +116,14 @@ export function TransactionFiltersBar({ filters, categories, hasActiveFilters, s
   const activeCount = (filters.status !== 'all' ? 1 : 0) + (filters.category ? 1 : 0);
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder={t.searchPlaceholder.value} value={filters.search} onChange={e => onFilterChange({ ...filters, search: e.target.value })} className="w-full rounded-none border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10" />
+    <div className="lumio-tx-filters">
+      <div className="lumio-tx-filters__top">
+        <div className="lumio-tx-filters__search-wrap">
+          <Search size={16} className="lumio-tx-filters__search-icon" />
+          <input type="text" placeholder={t.searchPlaceholder.value} value={filters.search} onChange={e => onFilterChange({ ...filters, search: e.target.value })} className="lumio-tx-filters__search" />
           {filters.search && (
-            <button type="button" onClick={() => onFilterChange({ ...filters, search: '' })} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-              <X className="h-4 w-4" />
+            <button type="button" onClick={() => onFilterChange({ ...filters, search: '' })} className="lumio-tx-filters__clear-search">
+              <X size={16} />
             </button>
           )}
         </div>

@@ -14,8 +14,8 @@ interface TransactionHistoryTabProps {
 export function TransactionHistoryTab({ events, loading, onSelect }: TransactionHistoryTabProps) {
   if (loading) {
     return (
-      <div className="space-y-4">
-        <div className="rounded-none border border-gray-200 bg-white p-4 text-sm text-gray-500">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ border: '1px solid #e5e7eb', backgroundColor: '#fff', padding: 16, fontSize: 14, color: '#6b7280' }}>
           Loading history...
         </div>
       </div>
@@ -23,7 +23,7 @@ export function TransactionHistoryTab({ events, loading, onSelect }: Transaction
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <EntityHistoryTimeline events={events} onSelect={onSelect} />
     </div>
   );

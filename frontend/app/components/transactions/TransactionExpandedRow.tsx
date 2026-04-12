@@ -17,9 +17,9 @@ interface FieldProps {
 
 function ExpandedField({ label, value, mono }: FieldProps): React.ReactElement {
   return (
-    <div>
-      <span className="block font-semibold text-gray-500 mb-1">{label}</span>
-      <span className={mono ? 'font-mono text-gray-900' : 'text-gray-900'}>{value}</span>
+    <div className="lumio-tx-table__expanded-field">
+      <label>{label}</label>
+      <span style={{ fontFamily: mono ? 'var(--font-mono)' : undefined, color: '#111827' }}>{value}</span>
     </div>
   );
 }
@@ -31,10 +31,10 @@ export function TransactionExpandedRow({
   columnDateLabel,
 }: TransactionExpandedRowProps): React.ReactElement {
   return (
-    <tr className="bg-gray-50/40">
+    <tr className="lumio-tx-table__expanded-row">
       <td colSpan={2} />
-      <td colSpan={7} className="px-4 py-3">
-        <div className="grid grid-cols-2 gap-4 rounded-none bg-white p-4 text-xs sm:grid-cols-4 border border-gray-100">
+      <td colSpan={7} style={{ padding: '12px 16px' }}>
+        <div className="lumio-tx-table__expanded-content">
           <ExpandedField label={columnBinLabel} value={tx.counterpartyBin ?? '—'} mono />
           <ExpandedField label="Currency" value={tx.currency ?? '—'} />
           <ExpandedField label="Doc Number" value={tx.documentNumber ?? '—'} />

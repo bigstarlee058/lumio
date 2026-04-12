@@ -32,7 +32,7 @@ export default function TransactionsTable({ transactions, categories, selectedId
   const handlers = { onRowClick, onToggleExpansion: state.toggleExpansion, onSelectRow: state.handleSelectRow, onUpdateCategory };
   const sharedProps = { transactions: state.paginatedTransactions, categories, selectedIds, expandedIds: state.expandedIds, sort: state.sort, allSelected: state.allSelected, someSelected: state.someSelected, handlers, formatters, onSelectAll: state.handleSelectAll, onToggleSort: state.toggleSort, noResultsLabel: t.noResults.value, categoryLabel: t.categoryFilter.value, uncategorizedLabel: t.statusUncategorized.value, columnBinLabel: t.columnBin.value, columnDateLabel: t.columnDate.value };
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <TransactionFiltersBar filters={filters} categories={categories} hasActiveFilters={state.hasActiveFilters} showFilters={state.showFilters} onFilterChange={onFilterChange} onToggleFilters={() => state.setShowFilters(!state.showFilters)} onClearFilters={state.clearFilters} t={t} />
       {isMobile ? <TransactionMobileList {...sharedProps} allTransactionsCount={state.filteredAndSortedTransactions.length} columnDateSortLabel={t.columnDate.value} /> : <TransactionDesktopTable {...sharedProps} t={t} />}
       {state.filteredAndSortedTransactions.length > 0 && <TransactionPagination page={state.page} rowsPerPage={state.rowsPerPage} totalPages={state.totalPages} totalCount={state.filteredAndSortedTransactions.length} rowsPerPageLabel={t.rowsPerPage.value} ofLabel={t.of.value} onPageChange={state.setPage} onRowsPerPageChange={state.setRowsPerPage} />}
