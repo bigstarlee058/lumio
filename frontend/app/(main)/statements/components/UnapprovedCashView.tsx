@@ -7,8 +7,8 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
-import { DatePicker } from '@heroui/date-picker';
-import { type DateValue, parseDate } from '@internationalized/date';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { parseISO, isValid as isValidDate, format as formatDate } from 'date-fns';
 import { Check, RefreshCcw, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -120,18 +120,19 @@ const normalizeToDateString = (value?: string | null) => {
   return `${year}-${month}-${day}`;
 };
 
-const toCalendarDate = (value?: string | null) => {
+const toCalendarDate = (value?: string | null): Date | null => {
   const normalized = normalizeToDateString(value);
   if (!normalized) return null;
 
   try {
-    return parseDate(normalized);
+    const parsed = parseISO(normalized);
+    return isValidDate(parsed) ? parsed : null;
   } catch {
     return null;
   }
 };
 
-const toFilterDateValue = (date: DateValue | null) => (date ? date.toString() : '');
+const toFilterDateValue = (date: Date | null) => (date && isValidDate(date) ? formatDate(date, 'yyyy-MM-dd') : '');
 
 const fetchAllTransactions = async (): Promise<UnapprovedQueueTransaction[]> => {
   const allTransactions: UnapprovedQueueTransaction[] = [];
@@ -727,38 +728,20 @@ export default function UnapprovedCashView() {
 
           <div className="mt-2 grid gap-2 md:grid-cols-2">
             <DatePicker
-              aria-label={labels.filters.dateFrom}
+              label={labels.filters.dateFrom}
               value={toCalendarDate(filters.dateFrom)}
-              onChange={value =>
+              onChange={(value: Date | null) =>
                 setFilters(prev => ({ ...prev, dateFrom: toFilterDateValue(value) }))
               }
-              granularity="day"
-              showMonthAndYearPickers
-              className="w-full"
-              classNames={{
-                inputWrapper:
-                  'min-h-[44px] rounded-md border border-gray-200 bg-white px-3 py-2 shadow-none transition-colors hover:border-gray-300 group-data-[focus=true]:border-primary group-data-[focus=true]:ring-2 group-data-[focus=true]:ring-primary/10',
-                input: 'text-sm text-gray-900',
-                segment: 'text-sm text-gray-900',
-                selectorButton: 'text-gray-700',
-              }}
+              slotProps={{ textField: { size: 'small', fullWidth: true } }}
             />
             <DatePicker
-              aria-label={labels.filters.dateTo}
+              label={labels.filters.dateTo}
               value={toCalendarDate(filters.dateTo)}
-              onChange={value =>
+              onChange={(value: Date | null) =>
                 setFilters(prev => ({ ...prev, dateTo: toFilterDateValue(value) }))
               }
-              granularity="day"
-              showMonthAndYearPickers
-              className="w-full"
-              classNames={{
-                inputWrapper:
-                  'min-h-[44px] rounded-md border border-gray-200 bg-white px-3 py-2 shadow-none transition-colors hover:border-gray-300 group-data-[focus=true]:border-primary group-data-[focus=true]:ring-2 group-data-[focus=true]:ring-primary/10',
-                input: 'text-sm text-gray-900',
-                segment: 'text-sm text-gray-900',
-                selectorButton: 'text-gray-700',
-              }}
+              slotProps={{ textField: { size: 'small', fullWidth: true } }}
             />
           </div>
         </div>

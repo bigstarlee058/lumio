@@ -5,9 +5,8 @@ import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { PDFThumbnail } from '@/app/components/PDFThumbnail';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
-import { Tooltip } from '@heroui/tooltip';
-import PaymentsIcon from '@mui/icons-material/Payments';
-import ReceiptIcon from '@mui/icons-material/Receipt';
+import MuiTooltip from '@mui/material/Tooltip';
+import { CreditCard, Receipt } from 'lucide-react';
 import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -331,7 +330,7 @@ export function StatementsListItem({
                   <p className="truncate text-sm font-semibold text-gray-900 flex items-center gap-1.5">
                     {isProcessing ? 'Processing...' : merchantLabel}
                     {isPossibleDuplicate && (
-                      <Tooltip content={duplicateTooltipText} placement="top" delay={150}>
+                      <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
                         <span
                           className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${duplicateStyle.badge} ${duplicateRoleBadgeClass}`}
                         >
@@ -344,7 +343,7 @@ export function StatementsListItem({
                           {resolvedDuplicateRole === 'primary' ? 'P' : 'S'}
                           {duplicatePosition ? `#${duplicatePosition}` : ''}
                         </span>
-                      </Tooltip>
+                      </MuiTooltip>
                     )}
                   </p>
                   <p
@@ -463,10 +462,10 @@ export function StatementsListItem({
                     className="rounded-full object-contain"
                   />
                 ) : isLocalReceipt ? (
-                  <ReceiptIcon
+                  <Receipt
                     data-testid="receipt-statement-type-icon"
-                    sx={{ fontSize: 16 }}
-                    className="text-gray-500"
+                    size={16}
+                    style={{ color: '#6b7280' }}
                   />
                 ) : (
                   <BankLogoAvatar bankName={statement.bankName} size={16} />
@@ -482,7 +481,7 @@ export function StatementsListItem({
               {hasError ? (
                 <AlertCircle className="h-4 w-4 text-red-500 ml-1" />
               ) : isPossibleDuplicate ? (
-                <Tooltip content={duplicateTooltipText} placement="top" delay={150}>
+                <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
                   <div
                     className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide ml-1 ${duplicateStyle.badge} ${duplicateRoleBadgeClass}`}
                   >
@@ -493,12 +492,12 @@ export function StatementsListItem({
                     )}
                     {duplicateBadgeLabel}
                   </div>
-                </Tooltip>
+                </MuiTooltip>
               ) : isManualExpense ? (
-                <PaymentsIcon
+                <CreditCard
                   data-testid="manual-expense-type-icon"
+                  size={14}
                   className="text-gray-500 opacity-50 ml-1"
-                  sx={{ fontSize: 14 }}
                 />
               ) : (
                 <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 bg-gray-100 rounded px-1.5 py-0.5 ml-1 opacity-70">
