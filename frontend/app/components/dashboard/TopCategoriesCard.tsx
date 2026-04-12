@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardData } from '@/app/hooks/useDashboard';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
@@ -61,34 +63,31 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
 
   if (!option) {
     return (
-      <div
-        className="flex h-full w-full items-center justify-center text-[13px] text-[#888888]"
-        style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+      <Box
+        sx={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#888888', fontFamily: 'var(--font-dashboard-sans)' }}
       >
         No category data
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="flex h-full w-full relative">
+    <Box sx={{ display: 'flex', height: '100%', width: '100%', position: 'relative' }}>
       <ReactECharts style={{ height: '100%', width: '100%' }} option={option} notMerge lazyUpdate />
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="text-center pb-2 pr-[80px]">
-          <p
-            className="text-[10px] font-semibold uppercase tracking-[2px] text-[#7A869B]"
-            style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+      <Box sx={{ pointerEvents: 'none', position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{ textAlign: 'center', pb: 0.5, pr: '80px' }}>
+          <Typography
+            sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', color: '#7A869B', fontFamily: 'var(--font-dashboard-mono)' }}
           >
             TOTAL
-          </p>
-          <p
-            className="text-[14px] font-bold text-[#1a1a1a]"
-            style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+          </Typography>
+          <Typography
+            sx={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', fontFamily: 'var(--font-dashboard-sans)' }}
           >
             Categories
-          </p>
-        </div>
-      </div>
-    </div>
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 }

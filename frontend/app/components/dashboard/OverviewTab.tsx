@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Card, CardContent } from '@/app/components/ui/card';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { FileUp } from 'lucide-react';
@@ -72,56 +74,80 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
 
   if (hasNoData) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:bg-card">
-          <FileUp className="h-10 w-10 text-muted-foreground" />
-        </div>
-        <h2
-          className="mb-2 text-xl font-bold text-foreground"
-          style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 10, px: 2, textAlign: 'center' }}>
+        <Box
+          sx={{
+            mb: 3,
+            display: 'flex',
+            height: 80,
+            width: 80,
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid var(--border)',
+            bgcolor: 'var(--card)',
+            backdropFilter: 'blur(24px)',
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+          }}
+        >
+          <FileUp size={40} color="var(--muted-foreground)" />
+        </Box>
+        <Typography
+          component="h2"
+          sx={{ mb: 1, fontSize: 20, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
         >
           Upload your first statement
-        </h2>
-        <p
-          className="mb-8 max-w-md text-sm text-muted-foreground"
-          style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+        </Typography>
+        <Typography
+          sx={{ mb: 4, maxWidth: 448, fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Start tracking your finances by uploading a bank statement. We&apos;ll parse it
           automatically and show your cash flow, categories, and insights.
-        </p>
+        </Typography>
         <Link
           href="/statements?openExpenseDrawer=scan"
-          className="inline-flex items-center gap-2 rounded-none bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
-          style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            backgroundColor: 'var(--primary)',
+            padding: '12px 24px',
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--primary-foreground)',
+            transition: 'background-color 150ms',
+            textDecoration: 'none',
+            fontFamily: 'var(--font-dashboard-sans)',
+          }}
         >
-          <FileUp className="h-4 w-4" />
+          <FileUp size={16} />
           Parse statement
         </Link>
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="flex flex-col gap-[30px] w-full pb-10">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%', pb: '40px' }}>
       {effectivePeriod ? (
-        <div
-          className="rounded-xl border border-border bg-muted/70 px-4 py-3 text-[12px] text-muted-foreground backdrop-blur-md"
-          style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+        <Box
+          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
-        </div>
+        </Box>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-[32px] xl:grid-cols-4">
+      <Box
+        sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }, gap: '32px' }}
+      >
         {snapshotCards.map(({ key, label, colorClass }) => {
           const value = data.snapshot[key];
           const textColor = colorClass(value);
           return (
             <Card
               key={key}
-              className="h-[72px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card"
+              className={`h-[72px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card`}
             >
-              <CardContent className="px-3 py-2 flex flex-col justify-between h-full">
+              <CardContent style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                 <span
                   className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[1px]"
                   style={{ fontFamily: 'var(--font-dashboard-mono)' }}
@@ -145,18 +171,20 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
             </Card>
           );
         })}
-      </div>
+      </Box>
 
-      <div className="grid grid-cols-1 gap-5 items-stretch lg:grid-cols-12 mt-4">
-        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] lg:col-span-4 dark:border-border dark:bg-card">
-          <CardContent className="p-6 flex flex-col h-full overflow-hidden gap-3">
+      <Box
+        sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(12, 1fr)' }, gap: 2.5, alignItems: 'stretch', mt: 2 }}
+      >
+        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card" style={{ gridColumn: 'span 4' }}>
+          <CardContent style={{ padding: 24, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', gap: 12 }}>
             <h2
               className="text-[18px] font-bold text-foreground uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               ACTION REQUIRED
             </h2>
-            <div className="flex-1 overflow-y-auto">
+            <div style={{ flex: 1, overflowY: 'auto' }}>
               <ActionRequired
                 actions={mappedActions}
                 title="Action Required"
@@ -167,15 +195,15 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           </CardContent>
         </Card>
 
-        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] lg:col-span-8 dark:border-border dark:bg-card">
-          <CardContent className="p-6 h-full flex flex-col overflow-hidden gap-3">
+        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card" style={{ gridColumn: 'span 8' }}>
+          <CardContent className="p-6" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 12 }}>
             <h2
               className="text-[18px] font-bold text-foreground uppercase"
               style={{ fontFamily: 'var(--font-dashboard-mono)' }}
             >
               CASH FLOW ({rangeLabel.toUpperCase()})
             </h2>
-            <div className="bg-transparent flex-1 flex flex-col relative px-6 py-5 min-h-[240px]">
+            <div style={{ backgroundColor: 'transparent', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', padding: '20px 24px', minHeight: 240 }}>
               <CashFlowMini
                 data={data.cashFlow}
                 emptyLabel="No cash flow data yet"
@@ -183,7 +211,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

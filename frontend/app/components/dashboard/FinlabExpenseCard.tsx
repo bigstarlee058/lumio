@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
 import { Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -80,44 +82,63 @@ export function FinlabExpenseCard({
   }, [data, range]);
 
   return (
-    <div className="bg-white rounded-none p-6 shadow-none h-full flex flex-col justify-between border border-[#E8E8E8]">
+    <Box
+      sx={{
+        bgcolor: 'white',
+        p: 3,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        border: '1px solid #E8E8E8',
+      }}
+    >
       <div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-slate-600 font-medium text-sm">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#475569', fontWeight: 500, fontSize: 14 }}>
             Expense Analysis
-            <Info className="w-3.5 h-3.5 text-slate-400" />
-          </div>
-        </div>
-        <div className="mt-4">
-          <div className="text-[32px] font-bold text-slate-900 tracking-tight">
+            <Info size={14} color="#94a3b8" />
+          </Box>
+        </Box>
+        <Box sx={{ mt: 2 }}>
+          <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#0f172a', letterSpacing: '-0.02em' }}>
             {formatAmount(totalExpense)}
-          </div>
-          <div className="mt-2 flex items-center gap-2">
+          </Typography>
+          <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
             <span
-              className={`inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold ${pct <= 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '2px 6px',
+                fontSize: 11,
+                fontWeight: 700,
+                ...(pct <= 0
+                  ? { backgroundColor: '#f0fdf4', color: '#16a34a' }
+                  : { backgroundColor: '#fff1f2', color: '#e11d48' }),
+              }}
             >
               ⬊ {pct > 0 ? '+' : ''}
               {pct.toFixed(1)}%
             </span>
-            <span className="text-xs text-slate-400 font-medium">VS This Month</span>
-          </div>
-        </div>
+            <Typography sx={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>VS This Month</Typography>
+          </Box>
+        </Box>
       </div>
 
-      <div className="mt-6">
-        <div className="flex justify-center mb-2">
+      <Box sx={{ mt: 3 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
           <PeriodDropdown value={range} onChange={onRangeChange} />
-        </div>
+        </Box>
         {option ? (
-          <div className="h-[100px] w-full">
+          <Box sx={{ height: 100, width: '100%' }}>
             <ReactECharts option={option} style={{ height: '100px', width: '100%' }} />
-          </div>
+          </Box>
         ) : (
-          <div className="h-[100px] flex items-center justify-center text-xs text-slate-400">
-            No data
-          </div>
+          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Typography sx={{ fontSize: 12, color: '#94a3b8' }}>No data</Typography>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

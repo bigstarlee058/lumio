@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { cn } from '@/app/lib/utils';
 import Link from 'next/link';
@@ -28,11 +30,11 @@ function getRelativeTime(isoDate: string): string {
 
 type SeverityKey = 'green' | 'amber' | 'red' | 'blue';
 
-const severityText: Record<SeverityKey, string> = {
-  green: 'text-[#4A7C59]',
-  amber: 'text-[#C05A3C]', // Adapted amber to a warm rusty tone
-  red: 'text-[var(--primary)]',
-  blue: 'text-[#3B82F6]',
+const severityTextColor: Record<SeverityKey, string> = {
+  green: '#4A7C59',
+  amber: '#C05A3C',
+  red: 'var(--primary)',
+  blue: '#3B82F6',
 };
 
 export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabProps) {
@@ -98,149 +100,249 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full pb-10">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%', pb: '40px' }}>
       {/* Tab Actions Header */}
-      <div className="flex items-center gap-6 pb-2">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, pb: 1 }}>
         <Link
           href="/statements"
-          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="ff-dashboard-sans"
+          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', textDecoration: 'none' }}
         >
           Upload / Parse
         </Link>
         <Link
           href="/statements/approve"
-          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="ff-dashboard-sans"
+          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', textDecoration: 'none' }}
         >
           Review Queue ({dataHealth.statementsPendingReview})
         </Link>
         <button
           type="button"
-          className="ff-dashboard-sans text-[12px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="ff-dashboard-sans"
+          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
           Export
         </button>
-      </div>
+      </Box>
 
       {/* 1. Summary metric strip */}
       <section>
-        <h2 className="mb-4 text-foreground ff-dashboard-mono text-[24px] font-bold">
+        <Typography
+          component="h2"
+          className="ff-dashboard-mono"
+          sx={{ mb: 2, color: 'text.primary', fontSize: 24, fontWeight: 700 }}
+        >
           DATA QUALITY METRICS
-        </h2>
-        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' },
+            gap: 2,
+          }}
+        >
           {metricCards.map(({ key, label, value, severity }) => {
-            const textColor = severityText[severity];
+            const textColor = severityTextColor[severity];
             return (
-              <div
+              <Box
                 key={key}
-                className={cn(
-                  'flex h-[120px] flex-col rounded-2xl border border-border bg-card/90 p-[14px] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 dark:border-border dark:bg-card',
-                )}
+                sx={{
+                  height: 120,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: '1px solid var(--border)',
+                  bgcolor: 'var(--card)',
+                  p: '14px',
+                  backdropFilter: 'blur(24px)',
+                  boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+                  transition: 'transform 200ms',
+                  '&:hover': { transform: 'translateY(-2px)' },
+                }}
               >
-                <span className="text-muted-foreground ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
+                <Typography
+                  component="span"
+                  className="ff-dashboard-mono"
+                  sx={{ color: 'text.secondary', fontSize: 11, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', lineHeight: 1 }}
+                >
                   {label}
-                </span>
+                </Typography>
 
-                <div className="text-foreground ff-dashboard-mono text-[40px] font-bold leading-none mt-[20px]">
+                <Typography
+                  className="ff-dashboard-mono"
+                  sx={{ color: 'text.primary', fontSize: 40, fontWeight: 700, lineHeight: 1, mt: '20px' }}
+                >
                   {isLoading ? '—' : value}
-                </div>
+                </Typography>
 
-                <div className="mt-auto">
-                  <span className={cn('ff-dashboard-sans text-[13px] font-medium', textColor)}>
+                <Box sx={{ mt: 'auto' }}>
+                  <Typography
+                    component="span"
+                    className="ff-dashboard-sans"
+                    sx={{ fontSize: 13, fontWeight: 500, color: textColor }}
+                  >
                     {value === 0 ? 'All good' : `${value} need${value === 1 ? 's' : ''} attention`}
-                  </span>
-                </div>
-              </div>
+                  </Typography>
+                </Box>
+              </Box>
             );
           })}
-        </div>
+        </Box>
       </section>
 
       {/* 2. Last upload + Unapproved cash row */}
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <Box
+        component="section"
+        sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(2, 1fr)' }, gap: 2 }}
+      >
         {/* Last upload card */}
-        <div className="relative flex h-[340px] flex-col rounded-2xl border border-border bg-card/90 p-[16px] backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-          <span className="text-muted-foreground ff-dashboard-mono text-[11px] font-semibold tracking-[1px] uppercase leading-none">
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            height: 340,
+            border: '1px solid var(--border)',
+            bgcolor: 'var(--card)',
+            p: '16px',
+            backdropFilter: 'blur(24px)',
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+          }}
+        >
+          <Typography
+            component="span"
+            className="ff-dashboard-mono"
+            sx={{ color: 'text.secondary', fontSize: 11, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', lineHeight: 1 }}
+          >
             LAST UPLOAD
-          </span>
+          </Typography>
 
           {dataHealth.lastUploadDate ? (
             <>
-              <div className="text-foreground ff-dashboard-mono text-[56px] font-bold leading-[1.1] mt-[90px] tracking-tight">
+              <Typography
+                className="ff-dashboard-mono"
+                sx={{ color: 'text.primary', fontSize: 56, fontWeight: 700, lineHeight: 1.1, mt: '90px', letterSpacing: '-0.02em' }}
+              >
                 {getRelativeTime(dataHealth.lastUploadDate)}
-              </div>
-              <div className="text-muted-foreground ff-dashboard-sans text-[13px] font-medium mt-auto pb-[20px]">
+              </Typography>
+              <Typography
+                className="ff-dashboard-sans"
+                sx={{ color: 'text.secondary', fontSize: 13, fontWeight: 500, mt: 'auto', pb: '20px' }}
+              >
                 {new Date(dataHealth.lastUploadDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
                 })}
-              </div>
+              </Typography>
             </>
           ) : (
-            <div className="mt-[90px] flex flex-col gap-2">
-              <p className="text-foreground ff-dashboard-mono text-[32px] font-bold">No data yet</p>
+            <Box sx={{ mt: '90px', display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography
+                className="ff-dashboard-mono"
+                sx={{ color: 'text.primary', fontSize: 32, fontWeight: 700 }}
+              >
+                No data yet
+              </Typography>
               <Link
                 href="/statements/submit"
-                className="text-[#C05A3C] hover:text-[#A0452C] ff-dashboard-sans text-[13px] font-medium transition-colors"
+                className="ff-dashboard-sans"
+                style={{ color: '#C05A3C', fontSize: 13, fontWeight: 500, transition: 'color 150ms', textDecoration: 'none' }}
               >
                 Upload your first statement →
               </Link>
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
 
         {/* Unapproved cash card */}
-        <div className="bg-black/40 border border-white/10 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.2)] rounded-2xl p-[16px] h-[340px] flex flex-col relative">
-          <span className="text-white/75 ff-dashboard-mono text-[11px] font-semibold tracking-[1.4px] uppercase leading-none">
+        <Box
+          sx={{
+            bgcolor: 'rgba(0,0,0,0.4)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(24px)',
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.2)',
+            p: '16px',
+            height: 340,
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
+          <Typography
+            component="span"
+            className="ff-dashboard-mono"
+            sx={{ color: 'rgba(255,255,255,0.75)', fontSize: 11, fontWeight: 600, letterSpacing: '1.4px', textTransform: 'uppercase', lineHeight: 1 }}
+          >
             UNAPPROVED CASH
-          </span>
+          </Typography>
 
-          <div
-            className={cn(
-              'ff-dashboard-mono font-bold leading-[1.1] mt-[100px] tracking-tight',
-              dataHealth.unapprovedCash > 0
-                ? 'text-[var(--primary)] text-[56px]'
-                : 'text-[#F5F3EF] text-[48px]',
-            )}
+          <Typography
+            className="ff-dashboard-mono"
+            sx={{
+              fontWeight: 700,
+              lineHeight: 1.1,
+              mt: '100px',
+              letterSpacing: '-0.02em',
+              color: dataHealth.unapprovedCash > 0 ? 'var(--primary)' : '#F5F3EF',
+              fontSize: dataHealth.unapprovedCash > 0 ? 56 : 48,
+            }}
           >
             {isLoading
               ? '—'
               : dataHealth.unapprovedCash > 0
                 ? formatAmount(dataHealth.unapprovedCash)
                 : 'ALL CASH APPROVED'}
-          </div>
+          </Typography>
 
           {dataHealth.unapprovedCash > 0 && (
             <Link
               href="/statements/approve"
-              className="text-[#888888] hover:text-[#F5F3EF] ff-dashboard-sans text-[13px] font-medium mt-auto pb-[20px] transition-colors"
+              className="ff-dashboard-sans"
+              style={{ color: '#888888', fontSize: 13, fontWeight: 500, marginTop: 'auto', paddingBottom: 20, transition: 'color 150ms', textDecoration: 'none' }}
             >
               Review &amp; approve cash →
             </Link>
           )}
-        </div>
-      </section>
+        </Box>
+      </Box>
 
       {/* 3. Quick links (only if there are issues) */}
       {quickLinks.length > 0 && (
-        <section className="mt-4">
-          <h2 className="mb-4 text-foreground ff-dashboard-mono text-[16px] font-bold uppercase tracking-wide">
+        <Box component="section" sx={{ mt: 2 }}>
+          <Typography
+            component="h2"
+            className="ff-dashboard-mono"
+            sx={{ mb: 2, color: 'text.primary', fontSize: 16, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+          >
             ACTION REQUIRED
-          </h2>
-          <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] divide-y divide-border dark:border-border dark:bg-card">
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              border: '1px solid var(--border)',
+              bgcolor: 'var(--card)',
+              backdropFilter: 'blur(24px)',
+              boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+              '& > a + a': { borderTop: '1px solid var(--border)' },
+            }}
+          >
             {quickLinks.map(({ label, href }) => (
               <Link
                 key={href}
                 href={href}
-                className="ff-dashboard-sans flex items-center justify-between p-4 text-[14px] font-medium text-foreground transition-colors hover:bg-muted"
+                className="ff-dashboard-sans"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', transition: 'background-color 150ms', textDecoration: 'none' }}
               >
                 <span>{label}</span>
-                <span className="text-[#C05A3C]">→</span>
+                <span style={{ color: '#C05A3C' }}>→</span>
               </Link>
             ))}
-          </div>
-        </section>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

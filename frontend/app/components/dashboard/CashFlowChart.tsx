@@ -66,7 +66,7 @@ export function CashFlowChart({ data, emptyLabel }: CashFlowChartProps) {
 
   if (!option) {
     return (
-      <div className="flex h-64 items-center justify-center text-sm text-gray-500">
+      <div style={{ display: 'flex', height: 256, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#6b7280' }}>
         {emptyLabel}
       </div>
     );

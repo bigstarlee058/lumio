@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardData } from '@/app/hooks/useDashboard';
 import { Card, CardContent } from '../ui/card';
 
@@ -18,9 +20,9 @@ export function TopMerchantsCard({
 }: TopMerchantsCardProps) {
   if (!merchants.length) {
     return (
-      <Card className="h-full rounded-none border border-[#E8E8E8] bg-white shadow-none">
-        <CardContent className="flex h-full items-center justify-center text-sm text-slate-400">
-          {emptyLabel}
+      <Card style={{ height: '100%', borderRadius: 0, border: '1px solid #E8E8E8', backgroundColor: 'white', boxShadow: 'none' }}>
+        <CardContent style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>{emptyLabel}</Typography>
         </CardContent>
       </Card>
     );
@@ -30,48 +32,53 @@ export function TopMerchantsCard({
 
   return (
     <Card className="h-full rounded-none border border-[#E8E8E8] bg-white shadow-none">
-      <CardContent className="p-6 space-y-5">
-        <div className="flex items-center justify-between">
+      <CardContent style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <Typography sx={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#94a3b8' }}>
               {title}
-            </p>
-            <p className="mt-1 text-sm text-slate-500">Spending distribution</p>
+            </Typography>
+            <Typography sx={{ mt: 0.5, fontSize: 14, color: '#64748b' }}>Spending distribution</Typography>
           </div>
-          <span className="text-xs font-semibold text-slate-500">Last period</span>
-        </div>
+          <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>Last period</Typography>
+        </Box>
 
-        <div className="space-y-4">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {merchants.slice(0, 5).map(merchant => {
             const width = Math.max(6, Math.round((merchant.amount / maxAmount) * 100));
             return (
-              <div key={merchant.name} className="space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none bg-slate-50 text-slate-700 border border-[#E8E8E8]">
+              <Box key={merchant.name} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
+                    <Box
+                      component="span"
+                      sx={{ display: 'flex', height: 36, width: 36, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#334155', border: '1px solid #E8E8E8' }}
+                    >
                       {merchant.name?.[0] ?? '•'}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-800">
+                    </Box>
+                    <div style={{ minWidth: 0 }}>
+                      <Typography
+                        sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#1e293b' }}
+                      >
                         {merchant.name}
-                      </p>
-                      <p className="text-xs text-slate-500">{merchant.count} payments</p>
+                      </Typography>
+                      <Typography sx={{ fontSize: 12, color: '#64748b' }}>{merchant.count} payments</Typography>
                     </div>
-                  </div>
-                  <span className="text-sm font-semibold text-slate-900">
+                  </Box>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
                     {formatAmount(merchant.amount)}
-                  </span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                  <div
-                    className="h-full rounded-full bg-[#0284c7] transition-all"
+                  </Typography>
+                </Box>
+                <Box sx={{ height: 8, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                  <Box
+                    sx={{ height: '100%', bgcolor: '#0284c7', transition: 'width 300ms' }}
                     style={{ width: `${width}%` }}
                   />
-                </div>
-              </div>
+                </Box>
+              </Box>
             );
           })}
-        </div>
+        </Box>
       </CardContent>
     </Card>
   );

@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useIntlayer } from '@/app/i18n';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -88,49 +90,74 @@ export function TransactionTab() {
 
   if (loading && transactions.length === 0) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center">
+      <Box sx={{ display: 'flex', minHeight: 400, alignItems: 'center', justifyContent: 'center' }}>
         <Spinner className="h-8 w-8 text-primary" />
-      </div>
+      </Box>
     );
   }
 
   if (error && transactions.length === 0) {
     return (
-      <div className="rounded-none border border-red-200 bg-red-50 p-4 text-red-600 mb-4">
+      <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fff1f2', p: 2, color: '#dc2626', mb: 2 }}>
         {error}
-      </div>
+      </Box>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Currency Controls */}
-      <div className="flex flex-wrap items-center gap-2">
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
         <CurrencyDisplayToggle />
         <CurrencyFilterDropdown
           currencies={availableCurrencies}
           value={currencyFilter}
           onChange={setCurrencyFilter}
         />
-      </div>
+      </Box>
 
       {/* Bulk Actions Toolbar */}
       {selectedIds.length > 0 && (
-        <div className="flex flex-wrap items-center gap-3 rounded-none border border-primary/30 bg-primary/5 p-4 transition-all duration-300">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 1.5,
+            border: '1px solid rgba(var(--primary-rgb), 0.3)',
+            bgcolor: 'rgba(var(--primary-rgb), 0.05)',
+            p: 2,
+            transition: 'all 300ms',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                height: 24,
+                width: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                bgcolor: 'var(--primary)',
+                fontSize: 12,
+                fontWeight: 700,
+                color: 'white',
+              }}
+            >
               {selectedIds.length}
-            </span>
-            <span className="text-sm font-semibold text-gray-700">
+            </Box>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
               {t.selected?.value || 'selected'}
-            </span>
-          </div>
+            </Typography>
+          </Box>
 
-          <div className="flex flex-1 items-center gap-2">
+          <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', gap: 1 }}>
             <select
               value={bulkCategoryId}
               onChange={e => setBulkCategoryId(e.target.value)}
-              className="flex-1 max-w-xs rounded-none border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              style={{ flex: 1, maxWidth: 320, border: '1px solid #e5e7eb', backgroundColor: 'white', padding: '8px 12px', fontSize: 14, outline: 'none' }}
             >
               <option value="">{t.selectCategory?.value || 'Select category...'}</option>
               {categories
@@ -146,20 +173,30 @@ export function TransactionTab() {
               type="button"
               onClick={handleBulkAssignCategory}
               disabled={!bulkCategoryId}
-              className="rounded-none bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{
+                backgroundColor: 'var(--primary)',
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                color: 'white',
+                border: 'none',
+                cursor: bulkCategoryId ? 'pointer' : 'not-allowed',
+                opacity: bulkCategoryId ? 1 : 0.5,
+                transition: 'opacity 150ms',
+              }}
             >
               {t.apply?.value || 'Apply'}
             </button>
-          </div>
+          </Box>
 
           <button
             type="button"
             onClick={() => setSelectedIds([])}
-            className="rounded-none border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            style={{ border: '1px solid #e5e7eb', backgroundColor: 'white', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer', transition: 'background-color 150ms' }}
           >
             {t.clearSelection?.value || 'Clear selection'}
           </button>
-        </div>
+        </Box>
       )}
 
       {/* Transactions Table */}
@@ -182,6 +219,6 @@ export function TransactionTab() {
         onClose={handleCloseDrawer}
         onUpdateCategory={handleSingleUpdateCategory}
       />
-    </div>
+    </Box>
   );
 }

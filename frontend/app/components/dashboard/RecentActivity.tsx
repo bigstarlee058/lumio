@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Card, CardContent } from '@/app/components/ui/card';
 import type { DashboardRecentActivity } from '@/app/hooks/useDashboard';
 import {
@@ -89,20 +91,22 @@ export function RecentActivity({
   const groups = groupActivities(activities);
 
   return (
-    <Card className="border-0 shadow-none rounded-none bg-white h-full relative overflow-hidden group/card text-left transition-all duration-300">
-      <CardContent className="h-full pt-8 p-8 overflow-hidden relative z-10">
+    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: 0, backgroundColor: 'white', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
+      <CardContent style={{ height: '100%', padding: '32px', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
         {activities.length === 0 ? (
-          <div className="flex h-32 items-center justify-center text-sm text-[var(--ff-dash-muted)]">
-            {emptyLabel}
-          </div>
+          <Box sx={{ display: 'flex', height: 128, alignItems: 'center', justifyContent: 'center' }}>
+            <Typography sx={{ fontSize: 14, color: 'var(--ff-dash-muted)' }}>{emptyLabel}</Typography>
+          </Box>
         ) : (
-          <div className="space-y-6 h-full overflow-auto pr-6 scrollbar-hide text-left">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, height: '100%', overflowY: 'auto', pr: 3, textAlign: 'left' }}>
             {groups.map(group => (
-              <div key={group.bucket} className="space-y-5">
-                <div className="text-[11px] font-[700] uppercase tracking-[0.18em] text-slate-400">
+              <Box key={group.bucket} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+                <Typography
+                  sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#94a3b8' }}
+                >
                   {group.bucket}
-                </div>
-                <div className="flex flex-col gap-5">
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {group.list.map(activity => {
                     const config = typeConfig[activity.type] ?? typeConfig.transaction;
                     const Icon = config.icon;
@@ -113,45 +117,63 @@ export function RecentActivity({
                       <Link
                         key={activity.id}
                         href={activity.href}
-                        className="flex items-start gap-4 rounded-none border border-transparent bg-white/40 px-2 py-1 transition-all hover:border-sky-100 hover:bg-sky-50/40"
+                        style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '4px 8px', transition: 'all 150ms', textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.4)', border: '1px solid transparent' }}
                       >
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-none bg-slate-50 text-slate-600 border border-[#E8E8E8] transition-colors hover:bg-sky-50 hover:text-sky-700 hover:ring-sky-100">
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <div className="flex flex-col min-w-0 flex-1 justify-center">
-                          <span className="block truncate text-[14px] font-[600] text-slate-900">
+                        <Box
+                          component="span"
+                          sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#475569', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                        >
+                          <Icon size={16} />
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1, justifyContent: 'center' }}>
+                          <Typography
+                            component="span"
+                            sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#0f172a' }}
+                          >
                             {titleText}
-                          </span>
-                          <span className="flex items-center gap-2 text-[12px] mt-0.5 text-slate-500 font-[400]">
-                            <span className="truncate">{contextText}</span>
-                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-[600] uppercase tracking-[0.12em] text-slate-500">
+                          </Typography>
+                          <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, mt: 0.5, color: '#64748b', fontWeight: 400 }}>
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{contextText}</span>
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                borderRadius: 9999,
+                                backgroundColor: '#f1f5f9',
+                                padding: '2px 8px',
+                                fontSize: 10,
+                                fontWeight: 600,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.12em',
+                                color: '#64748b',
+                              }}
+                            >
                               {new Date(activity.timestamp).toLocaleDateString()}
                             </span>
-                          </span>
-                        </div>
+                          </Box>
+                        </Box>
                         {activity.amount != null ? (
-                          <span className="flex items-center gap-1.5 text-[14px] font-[600] shrink-0 font-ibm-plex-sans tracking-tight">
+                          <Box
+                            component="span"
+                            sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: 14, fontWeight: 600, flexShrink: 0, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.01em' }}
+                          >
                             {activity.amount >= 0 ? (
-                              <ArrowUpRight className="h-4 w-4 text-emerald-500 stroke-[2.5]" />
+                              <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} />
                             ) : (
-                              <ArrowDownRight className="h-4 w-4 text-slate-400 stroke-[2.5]" />
+                              <ArrowDownRight size={16} color="#94a3b8" strokeWidth={2.5} />
                             )}
-                            <span
-                              className={
-                                activity.amount >= 0 ? 'text-emerald-600' : 'text-slate-600'
-                              }
-                            >
+                            <span style={{ color: activity.amount >= 0 ? '#16a34a' : '#475569' }}>
                               {formatAmount(Math.abs(activity.amount))}
                             </span>
-                          </span>
+                          </Box>
                         ) : null}
                       </Link>
                     );
                   })}
-                </div>
-              </div>
+                </Box>
+              </Box>
             ))}
-          </div>
+          </Box>
         )}
       </CardContent>
     </Card>

@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { useDashboardTrends } from '@/app/hooks/useDashboard';
@@ -122,270 +124,313 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
   }, [resolvedTheme, trendsData]);
 
   return (
-    <div className="flex flex-col gap-6 w-full pb-10">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%', pb: '40px' }}>
       {effectivePeriod ? (
-        <div
-          className="rounded-xl border border-border bg-muted/70 px-4 py-3 text-[12px] text-muted-foreground backdrop-blur-md"
-          style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+        <Box
+          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
-        </div>
+        </Box>
       ) : null}
 
-      <div className="flex items-center justify-between">
-        <h1
-          className="text-[30px] font-bold text-foreground"
-          style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography
+          component="h1"
+          sx={{ fontSize: 30, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
         >
           TRENDS DASHBOARD
-        </h1>
-      </div>
+        </Typography>
+      </Box>
 
-      <div className="flex items-center gap-2">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         {DAY_OPTIONS.map(opt => (
           <button
             key={opt.value}
             type="button"
             onClick={() => setDays(opt.value)}
-            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold tracking-[1px] transition-colors ${
-              days === opt.value
-                ? 'bg-primary text-primary-foreground'
-                : 'border border-border bg-card/90 text-muted-foreground backdrop-blur-md hover:bg-muted'
-            }`}
-            style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+            style={{
+              padding: '6px 12px',
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '1px',
+              transition: 'background-color 150ms, color 150ms',
+              cursor: 'pointer',
+              border: days === opt.value ? 'none' : '1px solid var(--border)',
+              backgroundColor: days === opt.value ? 'var(--primary)' : 'var(--card)',
+              color: days === opt.value ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
+              fontFamily: 'var(--font-dashboard-mono)',
+            }}
           >
             {opt.label}
           </button>
         ))}
-      </div>
+      </Box>
 
       {loading && (
-        <div className="flex items-center justify-center py-16">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
           <Spinner className="h-8 w-8 text-[#1a1a1a]" />
-        </div>
+        </Box>
       )}
 
       {!loading && error && (
-        <div className="flex items-center justify-center py-12">
-          <p
-            className="text-[13px] text-[#D13D56]"
-            style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6 }}>
+          <Typography
+            sx={{ fontSize: 13, color: '#D13D56', fontFamily: 'var(--font-dashboard-sans)' }}
           >
             {error}
-          </p>
-        </div>
+          </Typography>
+        </Box>
       )}
 
       {!loading && !error && !trendsData && (
-        <div className="flex items-center justify-center py-12">
-          <p
-            className="text-[13px] text-muted-foreground"
-            style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6 }}>
+          <Typography
+            sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
           >
             No trend data available for this period.
-          </p>
-        </div>
+          </Typography>
+        </Box>
       )}
 
       {!loading && !error && trendsData && (
         <>
-          <section className="flex flex-col gap-3 mt-4">
-            <h2
-              className="text-[12px] font-bold tracking-[1px] text-muted-foreground uppercase"
-              style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+          <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}>
+            <Typography
+              component="h2"
+              sx={{ fontSize: 12, fontWeight: 700, letterSpacing: '1px', color: 'text.secondary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
             >
               DATA SOURCES
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/90 p-6 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-                <h3
-                  className="text-[18px] font-bold text-foreground"
-                  style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' },
+                gap: 2.5,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.5,
+                  border: '1px solid var(--border)',
+                  bgcolor: 'var(--card)',
+                  p: 3,
+                  backdropFilter: 'blur(24px)',
+                  boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+                }}
+              >
+                <Typography
+                  component="h3"
+                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
                 >
                   STATEMENTS
-                </h3>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
-                      Income
-                    </span>
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Income</Typography>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
                       {formatAmount(trendsData.sources.statements.income)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
-                      Expense
-                    </span>
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Expense</Typography>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
                       {formatAmount(trendsData.sources.statements.expense)}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-auto pt-2">
-                  <span
-                    className="text-[11px] font-semibold text-emerald-400 tracking-[1px] uppercase"
-                    style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 'auto', pt: 1 }}>
+                  <Typography
+                    component="span"
+                    sx={{ fontSize: 11, fontWeight: 600, color: '#34d399', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
                   >
                     SYNCED
-                  </span>
-                </div>
-              </div>
+                  </Typography>
+                </Box>
+              </Box>
 
-              <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/90 p-6 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-                <h3
-                  className="text-[18px] font-bold text-foreground"
-                  style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.5,
+                  border: '1px solid var(--border)',
+                  bgcolor: 'var(--card)',
+                  p: 3,
+                  backdropFilter: 'blur(24px)',
+                  boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+                }}
+              >
+                <Typography
+                  component="h3"
+                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
                 >
                   NET FLOW
-                </h3>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
-                      Net
-                    </span>
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Net</Typography>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
                       {formatAmount(
                         Math.abs(
                           trendsData.sources.statements.income -
                             trendsData.sources.statements.expense,
                         ),
                       )}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
-                      Categories
-                    </span>
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Categories</Typography>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
                       {trendsData.categories.length}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-auto pt-2">
-                  <span
-                    className="text-[11px] font-semibold text-primary tracking-[1px] uppercase"
-                    style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 'auto', pt: 1 }}>
+                  <Typography
+                    component="span"
+                    sx={{ fontSize: 11, fontWeight: 600, color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
                   >
                     ACTIVE
-                  </span>
-                </div>
-              </div>
+                  </Typography>
+                </Box>
+              </Box>
 
-              <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card/90 p-6 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-                <h3
-                  className="text-[18px] font-bold text-foreground"
-                  style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1.5,
+                  border: '1px solid var(--border)',
+                  bgcolor: 'var(--card)',
+                  p: 3,
+                  backdropFilter: 'blur(24px)',
+                  boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+                }}
+              >
+                <Typography
+                  component="h3"
+                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
                 >
                   COUNTERPARTIES
-                </h3>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
-                      Total Found
-                    </span>
-                    <span
-                      className="text-[14px] text-muted-foreground"
-                      style={{ fontFamily: 'var(--font-dashboard-sans)' }}
-                    >
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Total Found</Typography>
+                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
                       {trendsData.counterparties.length}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-auto pt-2">
-                  <span
-                    className="text-[11px] font-semibold text-muted-foreground tracking-[1px] uppercase"
-                    style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 'auto', pt: 1 }}>
+                  <Typography
+                    component="span"
+                    sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
                   >
                     READY
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
 
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mt-4">
-            <div className="lg:col-span-8 flex h-full flex-col gap-3 rounded-2xl border border-border bg-card/90 p-6 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-              <h3
-                className="text-[18px] font-bold text-foreground uppercase"
-                style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+          <Box
+            component="section"
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', lg: 'repeat(12, 1fr)' },
+              gap: 2.5,
+              alignItems: 'start',
+              mt: 2,
+            }}
+          >
+            <Box
+              sx={{
+                gridColumn: { xs: '1', lg: 'span 8' },
+                display: 'flex',
+                height: '100%',
+                flexDirection: 'column',
+                gap: 1.5,
+                border: '1px solid var(--border)',
+                bgcolor: 'var(--card)',
+                p: 3,
+                backdropFilter: 'blur(24px)',
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+              }}
+            >
+              <Typography
+                component="h3"
+                sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
               >
                 SPEND TREND
-              </h3>
+              </Typography>
               {dailyTrendOption ? (
-                <div className="flex-1 min-h-[280px]">
+                <Box sx={{ flex: 1, minHeight: 280 }}>
                   <ReactECharts
                     option={dailyTrendOption}
                     style={{ height: '100%', width: '100%' }}
                     notMerge
                     lazyUpdate
                   />
-                </div>
+                </Box>
               ) : (
-                <div
-                  className="flex h-[280px] items-center justify-center text-[13px] text-muted-foreground"
-                  style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+                <Box
+                  sx={{ display: 'flex', height: 280, alignItems: 'center', justifyContent: 'center' }}
                 >
-                  No trend data available for selected range
-                </div>
+                  <Typography
+                    sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
+                  >
+                    No trend data available for selected range
+                  </Typography>
+                </Box>
               )}
-            </div>
+            </Box>
 
-            <div className="lg:col-span-4 flex h-full flex-col gap-3 rounded-2xl border border-border bg-card/90 p-6 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card">
-              <h3
-                className="text-[18px] font-bold text-foreground uppercase"
-                style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+            <Box
+              sx={{
+                gridColumn: { xs: '1', lg: 'span 4' },
+                display: 'flex',
+                height: '100%',
+                flexDirection: 'column',
+                gap: 1.5,
+                border: '1px solid var(--border)',
+                bgcolor: 'var(--card)',
+                p: 3,
+                backdropFilter: 'blur(24px)',
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+              }}
+            >
+              <Typography
+                component="h3"
+                sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
               >
                 CATEGORY BREAKDOWN
-              </h3>
+              </Typography>
               {rosePieOption ? (
-                <div className="flex-1 min-h-[280px]">
+                <Box sx={{ flex: 1, minHeight: 280 }}>
                   <ReactECharts
                     option={rosePieOption}
                     style={{ height: '100%', width: '100%' }}
                     notMerge
                     lazyUpdate
                   />
-                </div>
+                </Box>
               ) : (
-                <div
-                  className="flex h-[280px] items-center justify-center text-[13px] text-muted-foreground"
-                  style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+                <Box
+                  sx={{ display: 'flex', height: 280, alignItems: 'center', justifyContent: 'center' }}
                 >
-                  No categorized transactions to visualize
-                </div>
+                  <Typography
+                    sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
+                  >
+                    No categorized transactions to visualize
+                  </Typography>
+                </Box>
               )}
-            </div>
-          </section>
+            </Box>
+          </Box>
         </>
       )}
-    </div>
+    </Box>
   );
 }

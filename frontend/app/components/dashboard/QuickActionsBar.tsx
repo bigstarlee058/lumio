@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
 import { FileUp, ListChecks } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +21,7 @@ interface QuickActionsBarProps {
 
 export function QuickActionsBar({ reviewCount }: QuickActionsBarProps) {
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
       {staticActions.map(action => {
         const label =
           action.key === 'review'
@@ -34,14 +35,14 @@ export function QuickActionsBar({ reviewCount }: QuickActionsBarProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="gap-1.5 rounded-full text-slate-500 hover:text-slate-700 hover:bg-slate-100 text-xs h-7 px-3 font-normal"
+              style={{ gap: 6, borderRadius: 9999, color: '#64748b', fontSize: 12, height: 28, padding: '0 12px', fontWeight: 400 }}
             >
-              <action.icon className="h-3.5 w-3.5" />
+              <action.icon size={14} />
               {label}
             </Button>
           </Link>
         );
       })}
-    </div>
+    </Box>
   );
 }

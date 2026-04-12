@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardRange } from '@/app/hooks/useDashboard';
 import { gmailReceiptsApi } from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
@@ -54,25 +56,34 @@ export function FinlabTransactionCard({
   }, [range]);
 
   return (
-    <div className="bg-white rounded-none p-5 shadow-none h-full flex flex-col border border-[#E8E8E8]">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5 text-slate-800 font-bold text-[17px]">
+    <Box
+      sx={{
+        bgcolor: 'white',
+        p: 2.5,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid #E8E8E8',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 17 }}>
           Last Transaction
-          <Info className="w-4 h-4 text-slate-400" />
-        </div>
+          <Info size={16} color="#94a3b8" />
+        </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
-      </div>
+      </Box>
 
       {isLoading ? (
-        <div className="flex h-[200px] items-center justify-center text-sm text-slate-400">
-          Loading...
-        </div>
+        <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>Loading...</Typography>
+        </Box>
       ) : receipts.length === 0 ? (
-        <div className="flex h-[200px] items-center justify-center text-sm text-slate-400">
-          No receipts found
-        </div>
+        <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No receipts found</Typography>
+        </Box>
       ) : (
-        <div className="space-y-3">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {receipts.slice(0, 5).map(receipt => {
             const vendorLabel = resolveGmailMerchantLabel({
               vendor: receipt.parsedData?.vendor,
@@ -87,20 +98,22 @@ export function FinlabTransactionCard({
               receivedAt instanceof Date && !Number.isNaN(receivedAt.valueOf());
 
             return (
-              <div key={receipt.id} className="flex items-center justify-between group">
-                <div className="flex items-center gap-4">
+              <Box key={receipt.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <BrandLogoAvatar sender={receipt.sender} vendorName={vendorLabel} size={48} />
                   <div>
-                    <p className="text-[15px] font-bold text-slate-800 tracking-tight leading-tight">
+                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: '#1e293b', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
                       {vendorLabel}
-                    </p>
-                    <p className="text-[13px] text-slate-400 font-medium mt-0.5">Gmail receipt</p>
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: '#94a3b8', fontWeight: 500, mt: 0.5 }}>
+                      Gmail receipt
+                    </Typography>
                   </div>
-                </div>
+                </Box>
 
-                <div className="flex items-center gap-10">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-[14px] font-bold text-slate-800">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>
                       {hasValidReceivedAt
                         ? receivedAt?.toLocaleDateString('en-US', {
                             month: 'long',
@@ -108,34 +121,45 @@ export function FinlabTransactionCard({
                             year: 'numeric',
                           })
                         : '—'}
-                    </p>
-                    <p className="text-[13px] text-slate-400 font-medium mt-0.5">
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: '#94a3b8', fontWeight: 500, mt: 0.5 }}>
                       {hasValidReceivedAt
                         ? receivedAt?.toLocaleTimeString('en-US', {
                             hour: '2-digit',
                             minute: '2-digit',
                           })
                         : '—'}
-                    </p>
-                  </div>
+                    </Typography>
+                  </Box>
 
-                  <div className="w-24 text-right">
-                    <span className="text-[16px] font-bold text-slate-800 block">
+                  <Box sx={{ width: 96, textAlign: 'right' }}>
+                    <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, color: '#1e293b', display: 'block' }}>
                       {amount == null ? '—' : formatAmount(amount)}
-                    </span>
-                  </div>
+                    </Typography>
+                  </Box>
 
-                  <div className="w-[84px] text-right">
-                    <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-none text-[13px] font-bold bg-emerald-50 text-emerald-600">
+                  <Box sx={{ width: 84, textAlign: 'right' }}>
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '6px 16px',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        backgroundColor: '#f0fdf4',
+                        color: '#16a34a',
+                      }}
+                    >
                       {isApproved ? 'Approved' : 'Success'}
                     </span>
-                  </div>
-                </div>
-              </div>
+                  </Box>
+                </Box>
+              </Box>
             );
           })}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

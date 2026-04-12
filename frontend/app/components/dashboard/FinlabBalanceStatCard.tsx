@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
 import { Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -96,24 +98,33 @@ export function FinlabBalanceStatCard({
   }, [data, formatAmount, range]);
 
   return (
-    <div className="bg-white rounded-none p-6 shadow-none h-full flex flex-col border border-[#E8E8E8]">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-1.5 text-slate-800 font-bold text-base">
+    <Box
+      sx={{
+        bgcolor: 'white',
+        p: 3,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid #E8E8E8',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 16 }}>
           Balance Statistics
-          <Info className="w-4 h-4 text-slate-400" />
-        </div>
+          <Info size={16} color="#94a3b8" />
+        </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
-      </div>
+      </Box>
 
-      <div className="h-[160px] w-full">
+      <Box sx={{ height: 160, width: '100%' }}>
         {option ? (
           <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-slate-400">
-            No data available
-          </div>
+          <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+            <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No data available</Typography>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

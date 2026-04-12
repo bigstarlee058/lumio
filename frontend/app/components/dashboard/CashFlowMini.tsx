@@ -98,18 +98,17 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
   }, [data, resolvedTheme]);
 
   return (
-    <div className="flex flex-col w-full h-full relative">
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', position: 'relative' }}>
       {!option ? (
-        <div className="flex-1 flex items-center justify-center">
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span
-            className="text-[18px] text-muted-foreground"
-            style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+            style={{ fontSize: 18, color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
           >
             {emptyLabel}
           </span>
         </div>
       ) : (
-        <div className="flex-1 w-full">
+        <div style={{ flex: 1, width: '100%' }}>
           <ReactECharts
             style={{ height: '100%', width: '100%' }}
             option={option}

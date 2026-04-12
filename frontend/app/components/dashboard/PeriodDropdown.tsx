@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import type { DashboardRange } from '@/app/hooks/useDashboard';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -29,16 +30,26 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
   }, []);
 
   return (
-    <div ref={ref} className="relative inline-block">
+    <Box ref={ref} sx={{ position: 'relative', display: 'inline-block' }}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="text-xs text-slate-400 font-medium flex items-center gap-1 hover:text-slate-600"
+        style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
-        {LABELS[value]} <span className="text-[10px]">▼</span>
+        {LABELS[value]} <span style={{ fontSize: 10 }}>▼</span>
       </button>
       {open ? (
-        <div className="absolute right-0 mt-1 w-[140px] rounded-none border border-[#E8E8E8] bg-white shadow-none z-10">
+        <Box
+          sx={{
+            position: 'absolute',
+            right: 0,
+            mt: 0.5,
+            width: 140,
+            border: '1px solid #E8E8E8',
+            bgcolor: 'white',
+            zIndex: 10,
+          }}
+        >
           {(Object.entries(LABELS) as [DashboardRange, string][]).map(([r, label]) => (
             <button
               key={r}
@@ -47,15 +58,24 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
                 onChange(r);
                 setOpen(false);
               }}
-              className={`block w-full text-left px-3 py-2 text-sm hover:bg-slate-50 ${
-                value === r ? 'text-blue-600 font-semibold' : 'text-slate-700'
-              }`}
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                padding: '8px 12px',
+                fontSize: 14,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: value === r ? '#2563eb' : '#334155',
+                fontWeight: value === r ? 600 : 400,
+              }}
             >
               {label}
             </button>
           ))}
-        </div>
+        </Box>
       ) : null}
-    </div>
+    </Box>
   );
 }

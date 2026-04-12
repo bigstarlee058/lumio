@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
 import { FileUp, Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -30,18 +31,18 @@ export function QuickActions({ allowed, labels }: QuickActionsProps) {
   const visibleActions = allowed ? actions.filter(action => allowed.includes(action.key)) : actions;
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
       {visibleActions.map(action => (
         <Link key={action.href} href={action.href}>
           <Button
             variant="outline"
-            className="gap-2 rounded-full border-primary/30 text-primary hover:border-primary hover:bg-primary/5"
+            style={{ gap: 8, borderRadius: 9999, borderColor: 'rgba(var(--primary-rgb),0.3)', color: 'var(--primary)' }}
           >
-            <action.icon className="h-4 w-4" />
+            <action.icon size={16} />
             {labels[action.key]}
           </Button>
         </Link>
       ))}
-    </div>
+    </Box>
   );
 }

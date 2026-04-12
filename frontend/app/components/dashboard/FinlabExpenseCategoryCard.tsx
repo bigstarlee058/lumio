@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { Info } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -50,55 +52,86 @@ export function FinlabExpenseCategoryCard({
   }, [categories]);
 
   return (
-    <div className="bg-white rounded-none p-6 shadow-none h-full border border-[#E8E8E8]">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-1.5 text-slate-800 font-bold text-base">
+    <Box
+      sx={{
+        bgcolor: 'white',
+        p: 3,
+        height: '100%',
+        border: '1px solid #E8E8E8',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 16 }}>
           Expense Category
-          <Info className="w-4 h-4 text-slate-400" />
-        </div>
+          <Info size={16} color="#94a3b8" />
+        </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
-      </div>
+      </Box>
 
       {!categories.length ? (
-        <div className="flex h-[160px] items-center justify-center text-sm text-slate-400">
-          No data available
-        </div>
+        <Box sx={{ display: 'flex', height: 160, alignItems: 'center', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No data available</Typography>
+        </Box>
       ) : (
-        <div className="flex flex-col sm:flex-row items-center gap-6 mt-4">
-          <div className="relative w-[140px] h-[140px] shrink-0">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: 'center',
+            gap: 3,
+            mt: 2,
+          }}
+        >
+          <Box sx={{ position: 'relative', width: 140, height: 140, flexShrink: 0 }}>
             {option && <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />}
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-lg font-bold text-slate-800">100%</span>
-              <span className="text-[10px] text-slate-400 font-medium">Data Recorded</span>
-            </div>
-          </div>
+            <Box
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                pointerEvents: 'none',
+              }}
+            >
+              <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#1e293b' }}>100%</Typography>
+              <Typography sx={{ fontSize: 10, color: '#94a3b8', fontWeight: 500 }}>Data Recorded</Typography>
+            </Box>
+          </Box>
 
-          <div className="flex-1 space-y-3 min-w-0 pr-4 w-full">
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, minWidth: 0, pr: 2, width: '100%' }}>
             {categories.slice(0, 4).map((cat, idx) => {
               const pct = ((cat.amount / total) * 100).toFixed(1);
               return (
-                <div
+                <Box
                   key={cat.id ?? cat.name ?? `cat-${idx}`}
-                  className="flex items-center justify-between gap-4"
+                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: COLORS[idx % COLORS.length] }}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                    <Box
+                      sx={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
                     />
-                    <span className="text-sm text-slate-600 font-medium truncate">
-                      {cat.name ?? 'Other'} <span className="text-slate-400 text-xs">({pct}%)</span>
-                    </span>
-                  </div>
-                  <span className="text-sm font-bold text-slate-800 whitespace-nowrap">
+                    <Typography
+                      component="span"
+                      sx={{ fontSize: 14, color: '#475569', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    >
+                      {cat.name ?? 'Other'}{' '}
+                      <span style={{ color: '#94a3b8', fontSize: 12 }}>({pct}%)</span>
+                    </Typography>
+                  </Box>
+                  <Typography
+                    component="span"
+                    sx={{ fontSize: 14, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap' }}
+                  >
                     {formatAmount(cat.amount)}
-                  </span>
-                </div>
+                  </Typography>
+                </Box>
               );
             })}
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

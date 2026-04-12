@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import { Card, CardContent } from '@/app/components/ui/card';
 import type { DashboardFinancialSnapshot } from '@/app/hooks/useDashboard';
 import { ArrowDownRight, ArrowUpRight, Banknote, Clock, TrendingUp, Wallet } from 'lucide-react';
@@ -28,52 +29,69 @@ const cards = [
 
 export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialSnapshotProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-6">
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(2, 1fr)', lg: 'repeat(6, 1fr)' },
+        gap: 2,
+      }}
+    >
       {cards.map(({ key, labelKey, icon: Icon }) => {
         const value = snapshot[key];
 
         return (
           <Card
             key={key}
-            className="group border-0 bg-white shadow-none border border-[#E8E8E8] rounded-none"
+            style={{ border: '1px solid #E8E8E8', background: 'white', boxShadow: 'none', borderRadius: 0 }}
           >
-            <CardContent className="p-5 flex flex-col h-full justify-between">
+            <CardContent style={{ padding: 20, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               <div>
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>
                   <span>{labels[labelKey]}</span>
-                  <span className="flex h-8 w-8 items-center justify-center rounded-none bg-slate-50 text-slate-500 border border-[#E8E8E8] group-hover:bg-sky-50 group-hover:text-primary group-hover:ring-sky-100 transition-colors">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                </div>
-                <div className="mt-4">
-                  <span className="text-2xl font-bold font-ibm-plex-sans tracking-tight text-slate-900">
+                  <Box
+                    component="span"
+                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                  >
+                    <Icon size={16} />
+                  </Box>
+                </Box>
+                <Box sx={{ mt: 2 }}>
+                  <span style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.02em', color: '#0f172a' }}>
                     {formatAmount(value)}
                   </span>
-                </div>
+                </Box>
               </div>
 
               {key === 'netFlow30d' ? (
-                <div className="mt-4">
+                <Box sx={{ mt: 2 }}>
                   <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold border ring-inset ${
-                      value >= 0
-                        ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
-                        : 'bg-rose-50 text-rose-700 ring-rose-200'
-                    }`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: '2px 8px',
+                      borderRadius: 9999,
+                      fontSize: 11,
+                      fontWeight: 600,
+                      border: '1px solid',
+                      ...(value >= 0
+                        ? { backgroundColor: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
+                        : { backgroundColor: '#fff1f2', color: '#be123c', borderColor: '#fecdd3' }),
+                    }}
                   >
                     {value >= 0 ? (
-                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      <ArrowUpRight size={14} />
                     ) : (
-                      <ArrowDownRight className="h-3.5 w-3.5" />
+                      <ArrowDownRight size={14} />
                     )}
                     {value >= 0 ? 'Positive flow' : 'Negative flow'}
                   </span>
-                </div>
+                </Box>
               ) : null}
             </CardContent>
           </Card>
         );
       })}
-    </div>
+    </Box>
   );
 }

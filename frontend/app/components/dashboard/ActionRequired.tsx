@@ -1,5 +1,7 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardActionItem } from '@/app/hooks/useDashboard';
 import { ArrowUpRight } from 'lucide-react';
@@ -20,57 +22,60 @@ interface ActionRequiredProps {
   isLoading?: boolean;
 }
 
-const priorityDot: Record<ActionPriority, string> = {
-  critical: 'bg-[#D13D56]',
-  warning: 'bg-[#F5A623]',
-  info: 'bg-[#0584C7]',
-  success: 'bg-[#0D9568]',
+const priorityDotColor: Record<ActionPriority, string> = {
+  critical: '#D13D56',
+  warning: '#F5A623',
+  info: '#0584C7',
+  success: '#0D9568',
 };
 
 export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequiredProps) {
   if (!isLoading && actions.length === 0) {
     return (
-      <p
-        className="text-[13px] font-medium text-emerald-400"
-        style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+      <Typography
+        sx={{ fontSize: 13, fontWeight: 500, color: '#34d399', fontFamily: 'var(--font-dashboard-sans)' }}
       >
         {emptyLabel}
-      </p>
+      </Typography>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       {actions.map(action => {
         const priority: ActionPriority = action.priority ?? 'info';
-        const dot = priorityDot[priority];
+        const dotColor = priorityDotColor[priority];
 
         return (
           <Link
             key={action.type}
             href={action.href}
-            className="group flex items-center justify-between py-1 transition-colors duration-150 hover:opacity-80"
+            className="group"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', transition: 'opacity 150ms', textDecoration: 'none' }}
           >
-            <div className="flex items-center gap-2 min-w-0">
-              <span className={`h-1.5 w-1.5 rounded-none shrink-0 ${dot}`} />
-              <span
-                className="text-[13px] text-foreground font-medium truncate"
-                style={{ fontFamily: 'var(--font-dashboard-sans)' }}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+              <Box
+                component="span"
+                sx={{ height: 6, width: 6, borderRadius: 0, flexShrink: 0, backgroundColor: dotColor, display: 'inline-block' }}
+              />
+              <Typography
+                component="span"
+                sx={{ fontSize: 13, color: 'text.primary', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-dashboard-sans)' }}
               >
                 {isLoading ? (
-                  <Spinner className="size-3 inline" />
+                  <Spinner style={{ width: 12, height: 12, display: 'inline' }} />
                 ) : (
                   <>
-                    <span className="font-bold">{action.count}</span>{' '}
-                    <span className="font-normal">{action.label}</span>
+                    <strong>{action.count}</strong>{' '}
+                    <span style={{ fontWeight: 400 }}>{action.label}</span>
                   </>
                 )}
-              </span>
-            </div>
-            <ArrowUpRight className="ml-2 h-3 w-3 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+              </Typography>
+            </Box>
+            <ArrowUpRight size={12} style={{ marginLeft: 8, flexShrink: 0, color: 'var(--muted-foreground)', opacity: 0, transition: 'opacity 150ms' }} />
           </Link>
         );
       })}
-    </div>
+    </Box>
   );
 }
