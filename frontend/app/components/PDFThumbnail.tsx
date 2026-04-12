@@ -2,8 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import ErrorIcon from '@mui/icons-material/Error';
-import { FileText } from 'lucide-react';
+import { AlertCircle, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface PDFThumbnailProps {
@@ -167,24 +166,41 @@ export function PDFThumbnail({
     if (errorMessage) {
       return (
         <div
-          className="flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white p-4 text-center"
-          style={{ width: frameWidth, height: frameHeight }}
+          style={{
+            width: frameWidth,
+            height: frameHeight,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 12,
+            border: '1px solid #e5e7eb',
+            borderRadius: 12,
+            backgroundColor: '#fff',
+            padding: 16,
+            textAlign: 'center',
+          }}
         >
-          <ErrorIcon data-testid="pdf-thumbnail-error-icon" className="text-gray-400" />
-          <p className="text-sm text-gray-500">{errorMessage}</p>
+          <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: '#9ca3af' }} />
+          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{errorMessage}</p>
         </div>
       );
     }
 
     return (
       <div
-        className="flex items-center justify-center"
-        style={{ width: frameWidth, height: frameHeight }}
+        style={{
+          width: frameWidth,
+          height: frameHeight,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <FileText
           data-testid="pdf-thumbnail-fallback-icon"
           size={fallbackIconSize}
-          className="text-gray-400"
+          style={{ color: '#9ca3af' }}
         />
       </div>
     );
@@ -193,20 +209,34 @@ export function PDFThumbnail({
   return (
     <div
       data-testid="pdf-thumbnail-frame"
-      className="relative shadow-sm rounded-xl overflow-hidden"
-      style={{ width: frameWidth, height: resolvedFrameHeight }}
+      style={{
+        position: 'relative',
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+        borderRadius: 12,
+        overflow: 'hidden',
+        width: frameWidth,
+        height: resolvedFrameHeight,
+      }}
     >
-        {loading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Spinner className="h-4 w-4 text-gray-600" />
+      {loading && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Spinner size={16} sx={{ color: '#4b5563' }} />
         </div>
       )}
       {thumbnailDataUrl && (
         <img
           src={thumbnailDataUrl}
           alt={fileName || 'PDF thumbnail'}
-          className={`w-full h-full object-contain ${className}`}
-          style={{ transition: 'opacity 0.2s' }}
+          className={className}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'opacity 0.2s' }}
         />
       )}
     </div>

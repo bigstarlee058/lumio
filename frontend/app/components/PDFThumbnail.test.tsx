@@ -52,7 +52,7 @@ describe('PDFThumbnail', () => {
     expect(fallbackIcon).toBeTruthy();
     expect(fallbackIcon?.getAttribute('width')).toBe('29');
     expect(fallbackIcon?.getAttribute('height')).toBe('29');
-    expect(fallbackIcon?.className.baseVal).toContain('text-gray-400');
+    expect(fallbackIcon?.getAttribute('style')).toContain('color: rgb(156, 163, 175)');
     expect(fallbackIcon?.className.baseVal).not.toContain('text-red-500');
   });
 
