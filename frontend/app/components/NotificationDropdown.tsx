@@ -3,13 +3,12 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { useNotifications } from '@/app/hooks/useNotifications';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { cn } from '@/app/lib/utils';
 import { Divider, Menu } from '@mui/material';
-import { NotificationsNone } from '@mui/icons-material';
-import { AlertTriangle, CircleAlert, Info } from 'lucide-react';
+import { AlertTriangle, Bell, CircleAlert, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import '@/app/styles/blocks/lumio-notification-dropdown.css';
 
 type NotificationDropdownProps = {
   triggerClassName?: string;
@@ -130,20 +129,17 @@ export function NotificationDropdown({
       <button
         type="button"
         onClick={handleOpen}
-        className={cn(
-          'relative h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white transition-colors',
-          triggerClassName,
-        )}
+        className={`lumio-notification-dropdown__trigger${triggerClassName ? ` ${triggerClassName}` : ''}`}
         title={t.aria.notifications.value}
         aria-label={t.aria.notifications.value}
       >
-        <NotificationsNone sx={{ fontSize: iconSize }} />
+        <Bell size={iconSize} />
         {loading ? (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
-            <Spinner className="size-3 text-white" />
+          <span className="lumio-notification-dropdown__badge">
+            <Spinner size={12} sx={{ color: 'white' }} />
           </span>
         ) : unreadCount > 0 ? (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 rounded-full bg-[#ff4d4f] text-white text-[11px] font-bold leading-none flex items-center justify-center border-2 border-[#1a2130]">
+          <span className="lumio-notification-dropdown__badge">
             {unreadLabel}
           </span>
         ) : null}
@@ -170,11 +166,11 @@ export function NotificationDropdown({
         }}
         MenuListProps={{ disablePadding: true }}
       >
-        <div className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
-          <div className="text-sm font-semibold text-foreground">{t.title.value}</div>
+        <div className="lumio-notification-dropdown__header">
+          <div className="lumio-notification-dropdown__title">{t.title.value}</div>
           <button
             type="button"
-            className="text-xs text-primary hover:opacity-80 disabled:text-muted-foreground"
+            className="lumio-notification-dropdown__mark-all"
             onClick={() => void markAllAsRead()}
             disabled={unreadCount === 0}
           >
@@ -182,15 +178,15 @@ export function NotificationDropdown({
           </button>
         </div>
 
-        <div className="max-h-[420px] overflow-y-auto bg-card">
+        <div className="lumio-notification-dropdown__list">
           {loading && notifications.length === 0 ? (
-            <div className="px-4 py-8 text-sm text-muted-foreground text-center">
+            <div className="lumio-notification-dropdown__empty">
               {t.loading.value}
             </div>
           ) : null}
 
           {!loading && notifications.length === 0 ? (
-            <div className="px-4 py-8 text-sm text-muted-foreground text-center">
+            <div className="lumio-notification-dropdown__empty">
               {t.empty.value}
             </div>
           ) : null}
@@ -199,11 +195,11 @@ export function NotificationDropdown({
             const href = getNotificationHref(notification);
             const severityIcon =
               notification.severity === 'error' ? (
-                <CircleAlert size={14} className="text-red-500" />
+                <CircleAlert size={14} style={{ color: '#ef4444' }} />
               ) : notification.severity === 'warn' ? (
-                <AlertTriangle size={14} className="text-amber-500" />
+                <AlertTriangle size={14} style={{ color: '#f59e0b' }} />
               ) : (
-                <Info size={14} className="text-primary" />
+                <Info size={14} style={{ color: 'var(--color-primary)' }} />
               );
 
             return (
@@ -220,27 +216,23 @@ export function NotificationDropdown({
                     router.push(href);
                   }
                 }}
-                className={cn(
-                  'w-full text-left px-4 py-3 border-b border-border/70 hover:bg-muted/70 transition-colors',
-                  !notification.isRead && 'bg-primary/5',
-                  href && 'cursor-pointer',
-                )}
+                className={`lumio-notification-dropdown__item${!notification.isRead ? ' lumio-notification-dropdown__item--unread' : ''}`}
               >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5">{severityIcon}</div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium text-foreground truncate">
+                <div className="lumio-notification-dropdown__item-body">
+                  <div className="lumio-notification-dropdown__item-icon">{severityIcon}</div>
+                  <div className="lumio-notification-dropdown__item-content">
+                    <div className="lumio-notification-dropdown__item-header-row">
+                      <p className="lumio-notification-dropdown__item-title">
                         {notification.title}
                       </p>
                       {!notification.isRead ? (
-                        <span className="mt-1 h-2 w-2 rounded-full bg-primary shrink-0" />
+                        <span className="lumio-notification-dropdown__unread-dot" />
                       ) : null}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                    <p className="lumio-notification-dropdown__item-message">
                       {notification.message}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted-foreground">
+                    <p className="lumio-notification-dropdown__item-time">
                       {formatRelativeTime(notification.createdAt, locale, t.justNow.value)}
                     </p>
                   </div>
@@ -251,10 +243,10 @@ export function NotificationDropdown({
         </div>
 
         <Divider />
-        <div className="px-4 py-2 bg-muted/30">
+        <div className="lumio-notification-dropdown__footer">
           <Link
             href="/settings/notifications"
-            className="text-xs text-primary hover:opacity-80"
+            className="lumio-notification-dropdown__settings-link"
             onClick={() => handleClose()}
           >
             {t.settingsLink.value}
