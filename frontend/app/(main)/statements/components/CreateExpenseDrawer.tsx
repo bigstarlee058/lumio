@@ -12,7 +12,6 @@ import {
   sanitizeManualAmountInput,
 } from '@/app/lib/statement-expense-drawer';
 import { cn } from '@/app/lib/utils';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import {
   Calendar,
   Check,
@@ -22,6 +21,7 @@ import {
   FileText,
   PencilLine,
   Plus,
+  Receipt,
   ScanLine,
   Search,
   UploadCloud,
@@ -255,7 +255,7 @@ export default function CreateExpenseDrawer({
             ) : mode === 'scan' ? (
               <>
                 <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-muted/60 px-6 py-12 text-center">
-                  <ReceiptLongIcon className="text-muted-foreground" sx={{ fontSize: 56 }} />
+                  <Receipt size={56} style={{ color: 'var(--muted-foreground)' }} />
                   <p className="mt-6 text-[30px] font-semibold leading-none text-foreground">
                     Upload receipts
                   </p>
