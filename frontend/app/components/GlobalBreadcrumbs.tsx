@@ -3,6 +3,7 @@
 import { useIntlayer } from '@/app/i18n';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { resolveLabel } from '@/app/lib/side-panel-utils';
+import Box from '@mui/material/Box';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import Breadcrumbs from './Breadcrumbs';
@@ -59,10 +60,10 @@ export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcru
   }
 
   return (
-    <div data-global-breadcrumbs className="bg-transparent">
-      <div className="container-shared px-4 py-2 sm:px-6 lg:px-8">
+    <div data-global-breadcrumbs>
+      <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 1 }}>
         <Breadcrumbs items={items} />
-      </div>
+      </Box>
     </div>
   );
 }

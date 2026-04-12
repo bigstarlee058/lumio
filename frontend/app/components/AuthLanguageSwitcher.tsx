@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import IconButton from '@mui/material/IconButton';
 import { Check, ChevronLeft, Globe, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -59,18 +59,16 @@ export function AuthLanguageSwitcher() {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-muted-foreground hover:text-foreground rounded-full"
+      <IconButton
         aria-label={currentLanguageLabel}
         onClick={() => {
           setLanguageSearch('');
           setLanguageModalOpen(true);
         }}
+        sx={{ borderRadius: '50%', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
       >
         <Globe size={20} suppressHydrationWarning />
-      </Button>
+      </IconButton>
 
       <DrawerShell
         isOpen={languageModalOpen}
@@ -79,14 +77,14 @@ export function AuthLanguageSwitcher() {
           setLanguageSearch('');
         }}
         title={
-          <div className="flex items-center gap-3">
+          <div className="lumio-language-switcher__drawer-title">
             <button
               type="button"
               onClick={() => {
                 setLanguageModalOpen(false);
                 setLanguageSearch('');
               }}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="lumio-language-switcher__back-btn"
               aria-label="Close language drawer"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -99,20 +97,20 @@ export function AuthLanguageSwitcher() {
         showCloseButton={false}
         className="max-w-full border-l-0 bg-card sm:max-w-lg"
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 space-y-4 overflow-y-auto pb-4">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <div className="lumio-language-switcher__body">
+          <div className="lumio-language-switcher__scroll-area">
+            <div className="lumio-language-switcher__search-wrapper">
+              <Search className="lumio-language-switcher__search-icon h-5 w-5" />
               <input
                 type="text"
                 value={languageSearch}
                 onChange={event => setLanguageSearch(event.target.value)}
                 placeholder="Search"
-                className="w-full rounded-2xl border border-primary bg-card py-3 pl-11 pr-4 text-base text-foreground outline-none"
+                className="lumio-language-switcher__search-input"
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="lumio-language-switcher__list">
               {filteredLanguages.length > 0 ? (
                 filteredLanguages.map(lang => {
                   const selected = ((locale || 'ru') as AppLanguage) === lang.code;
@@ -121,19 +119,15 @@ export function AuthLanguageSwitcher() {
                       key={lang.code}
                       type="button"
                       onClick={() => handleLanguageSelect(lang.code)}
-                      className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
-                        selected
-                          ? 'bg-muted text-foreground'
-                          : 'text-foreground hover:bg-muted'
-                      }`}
+                      className={`lumio-language-switcher__lang-btn${selected ? ' lumio-language-switcher__lang-btn--selected bg-muted' : ''}`}
                     >
-                      <span className="font-medium">{lang.label}</span>
+                      <span className="lumio-language-switcher__lang-label">{lang.label}</span>
                       {selected ? <Check className="h-5 w-5 text-primary" /> : null}
                     </button>
                   );
                 })
               ) : (
-                <p className="rounded-xl bg-card px-4 py-3 text-sm text-muted-foreground">
+                <p className="lumio-language-switcher__empty">
                   No languages found
                 </p>
               )}

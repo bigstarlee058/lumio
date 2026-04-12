@@ -1,5 +1,8 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { X } from 'lucide-react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { ModalShell } from './ui/modal-shell';
@@ -24,27 +27,66 @@ interface ChangelogModalProps {
 
 const markdownComponents: Components = {
   h1: ({ children }) => (
-    <h1 className="mb-4 text-3xl font-semibold leading-tight text-[#0f3428]">{children}</h1>
+    <Typography
+      variant="h4"
+      component="h1"
+      sx={{ mb: 2, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+    >
+      {children}
+    </Typography>
   ),
   h2: ({ children }) => (
-    <h2 className="mb-3 mt-8 text-2xl font-semibold leading-tight text-[#0f3428]">{children}</h2>
+    <Typography
+      variant="h5"
+      component="h2"
+      sx={{ mb: 1.5, mt: 4, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+    >
+      {children}
+    </Typography>
   ),
   h3: ({ children }) => (
-    <h3 className="mb-2 mt-6 text-xl font-semibold leading-tight text-[#0f3428]">{children}</h3>
+    <Typography
+      variant="h6"
+      component="h3"
+      sx={{ mb: 1, mt: 3, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+    >
+      {children}
+    </Typography>
   ),
-  p: ({ children }) => <p className="mb-4 text-[#2f4a3f]">{children}</p>,
+  p: ({ children }) => (
+    <Typography component="p" sx={{ mb: 2, color: '#2f4a3f' }}>
+      {children}
+    </Typography>
+  ),
   ul: ({ children }) => (
-    <ul className="mb-5 list-disc space-y-2 pl-6 text-[#2f4a3f]">{children}</ul>
+    <Box
+      component="ul"
+      sx={{ mb: 2.5, pl: 3, color: '#2f4a3f', listStyleType: 'disc', '& li': { mb: 0.5 } }}
+    >
+      {children}
+    </Box>
   ),
   ol: ({ children }) => (
-    <ol className="mb-5 list-decimal space-y-2 pl-6 text-[#2f4a3f]">{children}</ol>
+    <Box
+      component="ol"
+      sx={{ mb: 2.5, pl: 3, color: '#2f4a3f', listStyleType: 'decimal', '& li': { mb: 0.5 } }}
+    >
+      {children}
+    </Box>
   ),
   li: ({ children }) => <li>{children}</li>,
-  strong: ({ children }) => <strong className="font-semibold text-[#17352b]">{children}</strong>,
-  code: ({ children }) => (
-    <code className="rounded bg-[#edf3ed] px-1.5 py-0.5 text-[13px] text-[#1a4638]">
+  strong: ({ children }) => (
+    <Box component="strong" sx={{ fontWeight: 600, color: '#17352b' }}>
       {children}
-    </code>
+    </Box>
+  ),
+  code: ({ children }) => (
+    <Box
+      component="code"
+      sx={{ bgcolor: '#edf3ed', px: 0.75, py: 0.25, fontSize: 13, color: '#1a4638', borderRadius: 0 }}
+    >
+      {children}
+    </Box>
   ),
 };
 
@@ -70,34 +112,64 @@ export function ChangelogModal({
       className="h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-none overflow-hidden rounded-[22px] border border-[#d4e3d6] shadow-[0_24px_80px_rgba(16,24,40,0.16)]"
       contentClassName="!h-full !p-0"
     >
-      <div className="flex h-full min-h-0 flex-col bg-white">
-        <div className="flex items-start justify-between gap-4 border-b border-[#e4e6e3] px-5 py-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6f7a73]">
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'background.paper' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 2,
+            borderBottom: '1px solid #e4e6e3',
+            px: 2.5,
+            py: 2,
+          }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography
+              variant="caption"
+              sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#6f7a73' }}
+            >
               {releaseLabel}
-            </p>
-            <h2 className="text-2xl font-semibold leading-tight text-[#0f3428]">{entry.title}</h2>
-            <p className="text-sm text-[#607168]">{formattedDate}</p>
-          </div>
+            </Typography>
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}>
+              {entry.title}
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#607168' }}>
+              {formattedDate}
+            </Typography>
+          </Box>
 
-          <button
-            type="button"
+          <IconButton
             onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-[#9aa39e] transition-colors hover:bg-[#eef2ee] hover:text-[#6f7773]"
             aria-label={closeLabel}
+            sx={{ color: '#9aa39e', '&:hover': { bgcolor: '#eef2ee', color: '#6f7773' } }}
           >
             <X size={30} strokeWidth={2.4} />
-          </button>
-        </div>
+          </IconButton>
+        </Box>
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-[#f5f7f4] px-5 py-7">
-          <article className="mx-auto w-full max-w-4xl rounded-[20px] border border-[#dde5dd] bg-white px-6 py-6 text-[15px] leading-7 text-[#17352b] sm:px-8 sm:py-8">
+        <Box sx={{ minHeight: 0, flex: 1, overflowY: 'auto', bgcolor: '#f5f7f4', px: 2.5, py: 3.5 }}>
+          <Box
+            component="article"
+            sx={{
+              mx: 'auto',
+              width: '100%',
+              maxWidth: '56rem',
+              border: '1px solid #dde5dd',
+              bgcolor: 'background.paper',
+              px: { xs: 3, sm: 4 },
+              py: { xs: 3, sm: 4 },
+              fontSize: 15,
+              lineHeight: 1.75,
+              color: '#17352b',
+            }}
+          >
             <div className="changelog-markdown">
               <ReactMarkdown components={markdownComponents}>{entry.markdown}</ReactMarkdown>
             </div>
-          </article>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     </ModalShell>
   );
 }

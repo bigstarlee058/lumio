@@ -1,6 +1,8 @@
 'use client';
 
 import { cn } from '@/app/lib/utils';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import React, { useMemo, useState } from 'react';
 import { createBasicSidePanelConfig } from '../configs';
 import { SidePanel, SidePanelProvider } from '../index';
@@ -96,11 +98,11 @@ export function StatementsPageExample() {
 
   return (
     <PageWithSidePanel sidePanelConfig={sidePanelConfig} sidePanelWidth="md">
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-2xl font-bold mb-6">Statements</h1>
-        <p className="text-gray-600">Current filter: {statusFilter || 'All'}</p>
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Statements</Typography>
+        <Typography sx={{ color: 'text.secondary' }}>Current filter: {statusFilter || 'All'}</Typography>
         {/* Rest of page content */}
-      </div>
+      </Box>
     </PageWithSidePanel>
   );
 }
@@ -128,10 +130,10 @@ export function ReportsPageExample() {
       sidePanelWidth="lg"
       sidePanelPosition="right"
     >
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-2xl font-bold mb-6">Reports - {activeTab}</h1>
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Reports - {activeTab}</Typography>
         {/* Rest of page content */}
-      </div>
+      </Box>
     </PageWithSidePanel>
   );
 }
@@ -159,11 +161,11 @@ export function StoragePageExample() {
       sidePanelWidth="md"
       defaultCollapsed={false}
     >
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-2xl font-bold mb-6">Storage</h1>
-        <p className="text-gray-600">Active folder: {activeFolderId || 'All Files'}</p>
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Storage</Typography>
+        <Typography sx={{ color: 'text.secondary' }}>Active folder: {activeFolderId || 'All Files'}</Typography>
         {/* Rest of page content */}
-      </div>
+      </Box>
     </PageWithSidePanel>
   );
 }
@@ -198,10 +200,10 @@ export function SettingsPageExample() {
       sidePanelWidth="sm"
       sidePanelPosition="left"
     >
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-2xl font-bold mb-6">Settings - {activeSection}</h1>
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Settings - {activeSection}</Typography>
         {/* Rest of page content based on activeSection */}
-      </div>
+      </Box>
     </PageWithSidePanel>
   );
 }

@@ -1,6 +1,10 @@
 'use client';
 
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
+import Box from '@mui/material/Box';
+import MuiButton from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { PanelLeftOpen, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -218,16 +222,25 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
           </div>
 
           {!globalMobileMenuOpen ? (
-            <button
+            <MuiButton
               type="button"
               data-testid="mobile-side-panel-open"
-              className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-[65] inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-md transition-colors hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 lg:hidden"
+              variant="outlined"
+              size="small"
               onClick={() => setMobileSidePanelOpen(true)}
               aria-label="Open side panel"
+              startIcon={<PanelLeftOpen size={16} />}
+              sx={{
+                position: 'fixed',
+                bottom: 'calc(1rem + env(safe-area-inset-bottom))',
+                right: 16,
+                zIndex: 65,
+                fontWeight: 600,
+                display: { xs: 'inline-flex', lg: 'none' },
+              }}
             >
-              <PanelLeftOpen size={16} />
-              <span>Sections</span>
-            </button>
+              Sections
+            </MuiButton>
           ) : null}
         </>
       ) : null}
@@ -271,20 +284,29 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
             onTouchEnd={handlePanelTouchEnd}
             onTouchCancel={handlePanelTouchEnd}
           >
-            <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <p className="text-sm font-semibold text-foreground">
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  px: 2,
+                  py: 1.5,
+                }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
                   {mobileDialogConfig.header?.title ?? 'Sections'}
-                </p>
-                <button
-                  type="button"
+                </Typography>
+                <IconButton
+                  size="small"
                   onClick={() => setMobileSidePanelOpen(false)}
-                  className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                   aria-label="Close side panel"
                 >
                   <X size={18} />
-                </button>
-              </div>
+                </IconButton>
+              </Box>
 
               <div className="h-[calc(100vh-57px)] overflow-hidden">
                 <SidePanel
@@ -294,7 +316,7 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
                   className="h-full border-0 shadow-none"
                 />
               </div>
-            </div>
+            </Box>
           </dialog>
         </div>
       ) : null}

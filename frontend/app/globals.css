@@ -6,6 +6,8 @@
 @import "./styles/blocks/lumio-navigation.css";
 @import "./styles/blocks/lumio-notification-dropdown.css";
 @import "./styles/blocks/lumio-pdf-preview-modal.css";
+@import "./styles/blocks/lumio-language-switcher.css";
+@import "./styles/blocks/lumio-breadcrumbs.css";
 @plugin "./hero.ts";
 @source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 
