@@ -1,19 +1,11 @@
 'use client';
 
 import {
-  AccountBalance as BankIcon,
-  CalendarToday as CalendarIcon,
-  Receipt as ReceiptIcon,
-  TrendingDown as TrendingDownIcon,
-  TrendingUp as TrendingUpIcon,
-} from '@mui/icons-material';
-import {
   Box,
   Chip,
   Divider,
   GlobalStyles,
   Paper,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -22,6 +14,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { Calendar, Landmark, Receipt, TrendingDown, TrendingUp } from 'lucide-react';
 import React from 'react';
 
 import { useIntlayer } from '@/app/i18n';
@@ -201,7 +194,7 @@ export default function TransactionDocumentViewer({
         >
           <Box sx={{ position: 'relative', zIndex: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <BankIcon sx={{ fontSize: 40, mr: 2, opacity: 0.9 }} />
+              <Landmark size={40} style={{ marginRight: 16, opacity: 0.9 }} />
               <Box>
                 <Typography variant="h4" fontWeight="700" letterSpacing="0.5px">
                   {headerDisplay?.title || t.bankStatement.value}
@@ -328,7 +321,7 @@ export default function TransactionDocumentViewer({
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TrendingUpIcon sx={{ color: 'success.main', mr: 1, fontSize: 20 }} />
+              <TrendingUp size={20} style={{ color: 'var(--mui-palette-success-main)', marginRight: 8 }} />
               <Typography variant="caption" color="success.dark">
                 {t.income}
               </Typography>
@@ -361,7 +354,7 @@ export default function TransactionDocumentViewer({
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TrendingDownIcon sx={{ color: 'error.main', mr: 1, fontSize: 20 }} />
+              <TrendingDown size={20} style={{ color: 'var(--mui-palette-error-main)', marginRight: 8 }} />
               <Typography variant="caption" color="error.dark">
                 {t.expenses}
               </Typography>
@@ -446,7 +439,7 @@ export default function TransactionDocumentViewer({
                 {t.totalTransactions}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <ReceiptIcon sx={{ color: 'primary.main' }} />
+                <Receipt size={24} style={{ color: 'var(--mui-palette-primary-main)' }} />
                 <Typography variant="h4" fontWeight="700" color="primary.main">
                   {transactions.length}
                 </Typography>
@@ -632,7 +625,7 @@ export default function TransactionDocumentViewer({
                   >
                     <TableCell sx={{ minWidth: 100 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CalendarIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                        <Calendar size={16} style={{ color: 'var(--mui-palette-text-secondary)' }} />
                         <Typography variant="body2" fontWeight="500">
                           {formatDate(transaction.transactionDate)}
                         </Typography>

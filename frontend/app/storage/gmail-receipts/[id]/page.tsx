@@ -16,19 +16,19 @@ import {
 import type { AuditEvent } from '@/lib/api/audit';
 import { fetchEntityHistory } from '@/lib/api/audit';
 import {
-  ArrowBack,
-  Cancel,
-  Category,
-  CheckCircle,
-  Delete,
-  Edit,
-  ExpandMore,
-  IosShare,
-  Payment,
+  ArrowLeft,
+  CheckCircle2,
+  ChevronDown,
+  CreditCard,
+  Layers,
+  Pencil,
   Receipt,
   Send,
-  Warning,
-} from '@mui/icons-material';
+  Share2,
+  Trash2,
+  TriangleAlert,
+  XCircle,
+} from 'lucide-react';
 import {
   Accordion,
   AccordionDetails,
@@ -565,7 +565,7 @@ export default function GmailReceiptDocumentPage() {
             Receipt not found
           </Typography>
           <Button
-            startIcon={<ArrowBack />}
+            startIcon={<ArrowLeft size={18} />}
             onClick={() => router.push('/statements')}
             sx={{ mt: 2, textTransform: 'none' }}
           >
@@ -584,7 +584,7 @@ export default function GmailReceiptDocumentPage() {
       {/* Back + Header */}
       <Box sx={{ mb: 4 }}>
         <Button
-          startIcon={<ArrowBack />}
+          startIcon={<ArrowLeft size={18} />}
           onClick={() => router.push('/statements')}
           sx={{
             mb: 3,
@@ -623,7 +623,7 @@ export default function GmailReceiptDocumentPage() {
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
               <Chip
-                icon={<Receipt />}
+                icon={<Receipt size={16} />}
                 label={`${Math.max(1, lineItems.length)} line items`}
                 size="small"
                 sx={{
@@ -650,7 +650,7 @@ export default function GmailReceiptDocumentPage() {
               />
               {hasCategoryIssues && (
                 <Chip
-                  icon={<Warning />}
+                  icon={<TriangleAlert size={16} />}
                   label="Category required"
                   size="small"
                   sx={{
@@ -671,7 +671,7 @@ export default function GmailReceiptDocumentPage() {
             {/* Category button */}
             <Button
               variant="outlined"
-              startIcon={<Category />}
+              startIcon={<Layers size={18} />}
               onClick={() => setCategoryDrawerOpen(true)}
               title={selectedCategory?.name || 'Select category'}
               sx={{
@@ -720,7 +720,7 @@ export default function GmailReceiptDocumentPage() {
               <span style={{ display: 'inline-flex' }}>
                 <Button
                   variant="outlined"
-                  startIcon={submitting ? <Spinner className="h-[18px] w-[18px]" /> : <Send />}
+                  startIcon={submitting ? <Spinner className="h-[18px] w-[18px]" /> : <Send size={18} />}
                   onClick={handleSubmitDocument}
                   disabled={!canSubmit || submitting}
                   sx={{
@@ -743,7 +743,7 @@ export default function GmailReceiptDocumentPage() {
 
             <Button
               variant="outlined"
-              startIcon={<Payment />}
+              startIcon={<CreditCard size={18} />}
               onClick={handleOpenPayableDrawer}
               sx={{
                 textTransform: 'none',
@@ -764,7 +764,7 @@ export default function GmailReceiptDocumentPage() {
             {/* Export */}
             <Button
               variant="outlined"
-              startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <IosShare />}
+              startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <Share2 size={18} />}
               onClick={handleExport}
               disabled={exporting}
               sx={{
@@ -786,7 +786,7 @@ export default function GmailReceiptDocumentPage() {
             {/* Watch in Gmail */}
             <Button
               variant="outlined"
-              startIcon={<Receipt />}
+              startIcon={<Receipt size={18} />}
               component="a"
               href={gmailMessageLink || undefined}
               target="_blank"
@@ -925,7 +925,7 @@ export default function GmailReceiptDocumentPage() {
           overflow: 'hidden',
         }}
       >
-        <AccordionSummary expandIcon={<ExpandMore />} sx={{ bgcolor: 'grey.50' }}>
+        <AccordionSummary expandIcon={<ChevronDown size={20} />} sx={{ bgcolor: 'grey.50' }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary' }}>
             Receipt details &amp; parsing info
           </Typography>
@@ -1249,7 +1249,7 @@ export default function GmailReceiptDocumentPage() {
             <Box sx={{ display: 'flex', gap: 1.5 }}>
               <Button
                 variant="outlined"
-                startIcon={<Category />}
+                startIcon={<Layers size={18} />}
                 onClick={() => setBulkCategoryDialogOpen(true)}
                 size="small"
                 sx={{
@@ -1266,7 +1266,7 @@ export default function GmailReceiptDocumentPage() {
               <Button
                 variant="outlined"
                 color="error"
-                startIcon={<Delete />}
+                startIcon={<Trash2 size={18} />}
                 onClick={handleBulkDelete}
                 size="small"
                 sx={{ textTransform: 'none', fontWeight: 500, borderRadius: 2 }}
@@ -1536,7 +1536,7 @@ export default function GmailReceiptDocumentPage() {
                           <Chip
                             label="No category"
                             size="small"
-                            icon={<Warning sx={{ fontSize: 16 }} />}
+                            icon={<TriangleAlert size={16} />}
                             sx={{
                               bgcolor: 'error.50',
                               color: 'error.700',
@@ -1592,7 +1592,7 @@ export default function GmailReceiptDocumentPage() {
                             '&:hover': { bgcolor: 'success.50' },
                           }}
                         >
-                          <CheckCircle fontSize="small" />
+                          <CheckCircle2 size={16} />
                         </IconButton>
                         <IconButton
                           size="small"
@@ -1602,7 +1602,7 @@ export default function GmailReceiptDocumentPage() {
                             '&:hover': { bgcolor: 'grey.100' },
                           }}
                         >
-                          <Cancel fontSize="small" />
+                          <XCircle size={16} />
                         </IconButton>
                       </Box>
                     ) : (
@@ -1615,7 +1615,7 @@ export default function GmailReceiptDocumentPage() {
                             '&:hover': { bgcolor: 'primary.50' },
                           }}
                         >
-                          <Edit fontSize="small" />
+                          <Pencil size={16} />
                         </IconButton>
                         <IconButton
                           size="small"
@@ -1626,7 +1626,7 @@ export default function GmailReceiptDocumentPage() {
                             '&:hover': { bgcolor: 'error.50' },
                           }}
                         >
-                          <Delete fontSize="small" />
+                          <Trash2 size={16} />
                         </IconButton>
                       </Box>
                     )}
@@ -1695,7 +1695,7 @@ export default function GmailReceiptDocumentPage() {
           </Button>
           <Button
             variant="contained"
-            startIcon={<CheckCircle />}
+            startIcon={<CheckCircle2 size={18} />}
             onClick={handleApplyBulkCategory}
             disabled={!bulkCategoryId}
             sx={{

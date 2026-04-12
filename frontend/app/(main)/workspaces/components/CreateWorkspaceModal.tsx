@@ -3,8 +3,12 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { api } from '@/app/lib/api';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
-import { Button, Input, Textarea } from '@heroui/react';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useId, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -142,174 +146,149 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={(next: boolean) => {
-          if (!next) {
-            handleClose();
-          }
-        }}
-        size="5xl"
-        placement="center"
-        backdrop="opaque"
-        scrollBehavior="inside"
-        classNames={{
-          base: 'rounded-2xl border border-gray-200 shadow-xl',
-          backdrop: 'bg-gray-900/40 backdrop-blur-[1px]',
-          closeButton:
-            'text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors',
-        }}
+      <Dialog
+        open={isOpen}
+        onClose={handleClose}
+        maxWidth="lg"
+        fullWidth
+        scroll="paper"
       >
-        <ModalContent>
-          {onClose => (
-            <>
-              <ModalHeader className="flex flex-col gap-3 border-b border-gray-200 px-8 py-6">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                  Workspace setup
-                </div>
-                <div>
-                  <h2 id={dialogTitleId} className="text-2xl font-semibold text-gray-900">
-                    Create New Workspace
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Create a dedicated space for your documents, receipts, and reports.
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="text-sm text-gray-400">Step {step} of 3</div>
-                  <nav aria-label="Workspace setup steps" className="flex flex-wrap gap-2">
-                    {[
-                      {
-                        id: 1,
-                        label: 'Basic Info',
-                        detail: 'Name, description, icon',
-                      },
-                      {
-                        id: 2,
-                        label: 'Customization',
-                        detail: 'Currency and background',
-                      },
-                      {
-                        id: 3,
-                        label: 'Integrations',
-                        detail: 'Connect services',
-                      },
-                    ].map(item => (
-                      <div
-                        key={item.id}
-                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                          item.id === step
-                            ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-gray-200 text-gray-500'
-                        }`}
-                        aria-current={item.id === step ? 'step' : undefined}
-                      >
-                        {item.label}
-                      </div>
-                    ))}
-                  </nav>
-                </div>
-              </ModalHeader>
-
-              <ModalBody className="px-8 py-8">
-                {step === 1 && (
-                  <div className="space-y-6">
-                    <Input
-                      label="Workspace Name"
-                      isRequired
-                      value={name}
-                      onValueChange={setName}
-                      placeholder="My Workspace"
-                      maxLength={255}
-                    />
-                    <Textarea
-                      label="Description (optional)"
-                      value={description}
-                      onValueChange={setDescription}
-                      placeholder="What is this workspace for?"
-                      maxLength={500}
-                      minRows={4}
-                    />
-                    {/* Icon selection removed — feature not used. */}
+        <DialogTitle sx={{ px: 4, pt: 3, pb: 1 }}>
+          <div className="flex flex-col gap-3">
+            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+              Workspace setup
+            </div>
+            <div>
+              <h2 id={dialogTitleId} className="text-2xl font-semibold text-gray-900">
+                Create New Workspace
+              </h2>
+              <p className="text-sm text-gray-500">
+                Create a dedicated space for your documents, receipts, and reports.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm text-gray-400">Step {step} of 3</div>
+              <nav aria-label="Workspace setup steps" className="flex flex-wrap gap-2">
+                {[
+                  { id: 1, label: 'Basic Info' },
+                  { id: 2, label: 'Customization' },
+                  { id: 3, label: 'Integrations' },
+                ].map(item => (
+                  <div
+                    key={item.id}
+                    className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
+                      item.id === step
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-gray-200 text-gray-500'
+                    }`}
+                    aria-current={item.id === step ? 'step' : undefined}
+                  >
+                    {item.label}
                   </div>
-                )}
+                ))}
+              </nav>
+            </div>
+          </div>
+        </DialogTitle>
 
-                {step === 2 && (
-                  <div className="space-y-8">
-                    <CurrencySelector
-                      selectedCurrency={selectedCurrency}
-                      onSelect={setSelectedCurrency}
-                      mode="inline"
-                      open={false}
-                      onOpenChange={nextOpen => {
-                        if (nextOpen) {
-                          setCurrencyDrawerOpen(true);
-                        }
-                      }}
-                    />
-
-                    <div>
-                      <p className="mb-3 text-sm font-medium text-gray-700">Background Image</p>
-                      <BackgroundSelector
-                        selectedBackground={selectedBackground}
-                        onSelect={setSelectedBackground}
-                        backgrounds={AVAILABLE_BACKGROUNDS}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <ServiceIntegrationSuggestions
-                    workspaceId={createdWorkspaceId ?? ''}
-                    onSkip={handleSkipIntegrations}
-                  />
-                )}
-              </ModalBody>
-
-              <ModalFooter className="flex items-center justify-between gap-3 border-t border-gray-200 px-8 py-6">
-                {step > 1 ? (
-                  <Button type="button" variant="bordered" onClick={handleBack}>
-                    <ChevronLeft size={16} />
-                    Back
-                  </Button>
-                ) : (
-                  <div />
-                )}
-
-                {step === 1 && (
-                  <Button type="button" color="primary" onClick={handleNext}>
-                    Next
-                    <ChevronRight size={16} />
-                  </Button>
-                )}
-
-                {step === 2 && (
-                  <div className="flex items-center gap-3">
-                    <Button
-                      type="button"
-                      variant="bordered"
-                      onClick={handleFinishFromStep2}
-                      isDisabled={loading}
-                    >
-                      {loading ? 'Creating...' : 'Skip Integrations'}
-                    </Button>
-                    <Button
-                      type="button"
-                      color="primary"
-                      onClick={handleProceedToStep3}
-                      isDisabled={loading}
-                    >
-                      {loading ? 'Creating...' : 'Next'}
-                      {!loading && <ChevronRight size={16} />}
-                    </Button>
-                  </div>
-                )}
-              </ModalFooter>
-            </>
+        <DialogContent dividers sx={{ px: 4, py: 4 }}>
+          {step === 1 && (
+            <div className="space-y-6">
+              <TextField
+                label="Workspace Name"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="My Workspace"
+                inputProps={{ maxLength: 255 }}
+                fullWidth
+              />
+              <TextField
+                label="Description (optional)"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="What is this workspace for?"
+                inputProps={{ maxLength: 500 }}
+                multiline
+                minRows={4}
+                fullWidth
+              />
+              {/* Icon selection removed — feature not used. */}
+            </div>
           )}
-        </ModalContent>
-      </Modal>
+
+          {step === 2 && (
+            <div className="space-y-8">
+              <CurrencySelector
+                selectedCurrency={selectedCurrency}
+                onSelect={setSelectedCurrency}
+                mode="inline"
+                open={false}
+                onOpenChange={nextOpen => {
+                  if (nextOpen) {
+                    setCurrencyDrawerOpen(true);
+                  }
+                }}
+              />
+
+              <div>
+                <p className="mb-3 text-sm font-medium text-gray-700">Background Image</p>
+                <BackgroundSelector
+                  selectedBackground={selectedBackground}
+                  onSelect={setSelectedBackground}
+                  backgrounds={AVAILABLE_BACKGROUNDS}
+                />
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <ServiceIntegrationSuggestions
+              workspaceId={createdWorkspaceId ?? ''}
+              onSkip={handleSkipIntegrations}
+            />
+          )}
+        </DialogContent>
+
+        <DialogActions sx={{ px: 4, py: 3, justifyContent: 'space-between' }}>
+          <div>
+            {step > 1 && (
+              <Button type="button" variant="outlined" onClick={handleBack} startIcon={<ChevronLeft size={16} />}>
+                Back
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {step === 1 && (
+              <Button type="button" variant="contained" onClick={handleNext} endIcon={<ChevronRight size={16} />}>
+                Next
+              </Button>
+            )}
+
+            {step === 2 && (
+              <>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  onClick={handleFinishFromStep2}
+                  disabled={loading}
+                >
+                  {loading ? 'Creating...' : 'Skip Integrations'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  onClick={handleProceedToStep3}
+                  disabled={loading}
+                  endIcon={!loading ? <ChevronRight size={16} /> : undefined}
+                >
+                  {loading ? 'Creating...' : 'Next'}
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogActions>
+      </Dialog>
       <DrawerShell
         isOpen={isOpen && step === 2 && currencyDrawerOpen}
         onClose={() => setCurrencyDrawerOpen(false)}

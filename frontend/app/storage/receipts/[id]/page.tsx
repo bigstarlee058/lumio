@@ -6,7 +6,10 @@ import { ReceiptParsedDataForm } from '@/app/components/receipts/ReceiptParsedDa
 import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import { ArrowLeft, Download, Table } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -563,61 +566,44 @@ export default function ReceiptDocumentPage() {
         </div>
       </div>
 
-      <Modal
-        isOpen={exportConfirmOpen}
-        onOpenChange={(next: boolean) => {
-          if (!next) {
-            setExportConfirmOpen(false);
-          }
-        }}
-        size="2xl"
-        placement="center"
-        backdrop="opaque"
-        classNames={{
-          base: 'rounded-2xl border border-gray-200 shadow-xl',
-          backdrop: 'bg-gray-900/40 backdrop-blur-[1px]',
-          closeButton:
-            'text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors',
-        }}
+      <Dialog
+        open={exportConfirmOpen}
+        onClose={() => setExportConfirmOpen(false)}
+        maxWidth="sm"
+        fullWidth
       >
-        <ModalContent>
-          {onClose => (
-            <>
-              <ModalHeader className="border-b border-gray-200 px-8 py-6 text-[22px] font-semibold text-gray-900">
-                Confirm export
-              </ModalHeader>
-              <ModalBody className="border-b border-gray-200 px-8 py-8">
-                <p className="text-base leading-8 text-gray-700">
-                  Are you sure you want to export this statement to a custom table?
-                </p>
-              </ModalBody>
-              <ModalFooter className="justify-end gap-3 px-8 py-6">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-md border border-gray-200 bg-white px-6 py-2.5 text-base font-medium text-gray-600 hover:border-primary hover:text-primary"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onClose();
-                    void handleExportToTable();
-                  }}
-                  disabled={exportingToTable || !canExportToTable}
-                  className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {exportingToTable ? (
-                    <Spinner className="h-4 w-4" />
-                  ) : null}
-                  Export
-                </button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+        <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>
+          Confirm export
+        </DialogTitle>
+        <DialogContent dividers>
+          <p className="text-base leading-8 text-gray-700">
+            Are you sure you want to export this statement to a custom table?
+          </p>
+        </DialogContent>
+        <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
+          <button
+            type="button"
+            onClick={() => setExportConfirmOpen(false)}
+            className="rounded-md border border-gray-200 bg-white px-6 py-2.5 text-base font-medium text-gray-600 hover:border-primary hover:text-primary"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setExportConfirmOpen(false);
+              void handleExportToTable();
+            }}
+            disabled={exportingToTable || !canExportToTable}
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {exportingToTable ? (
+              <Spinner className="h-4 w-4" />
+            ) : null}
+            Export
+          </button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

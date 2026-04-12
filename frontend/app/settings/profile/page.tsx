@@ -41,14 +41,7 @@ import {
   resolveTimeZoneOptions,
   sections,
 } from '@/app/settings/profile/profileHelpers';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EditIcon from '@mui/icons-material/Edit';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import SecurityIcon from '@mui/icons-material/Security';
-import UpdateOutlinedIcon from '@mui/icons-material/UpdateOutlined';
-import { Check, Palette, Search } from 'lucide-react';
+import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -260,10 +253,10 @@ export default function ProfileSettingsPage() {
     {
       title: string;
       description?: string;
-      icon: ComponentType<{ className?: string }>;
+      icon: ComponentType<{ size?: number; className?: string }>;
     }
   > = {
-    profile: { title: t.profileCard.title.value, icon: AccountCircleIcon },
+    profile: { title: t.profileCard.title.value, icon: UserCircle },
     appearance: {
       title: t.appearanceCard.title.value,
       description: t.appearanceCard.description.value,
@@ -272,19 +265,19 @@ export default function ProfileSettingsPage() {
     sessions: {
       title: t.sessionsCard.title.value,
       description: t.sessionsCard.logoutAllHelp.value,
-      icon: SecurityIcon,
+      icon: Shield,
     },
-    email: { title: t.emailCard.title.value, icon: MailOutlineIcon },
-    password: { title: t.passwordCard.title.value, icon: LockOutlinedIcon },
+    email: { title: t.emailCard.title.value, icon: Mail },
+    password: { title: t.passwordCard.title.value, icon: Lock },
     notifications: {
       title: tx(['notificationsCard', 'title'], 'Notifications'),
       description: tx(['notificationsCard', 'description'], ''),
-      icon: NotificationsNoneOutlinedIcon,
+      icon: Bell,
     },
     changelog: {
       title: tx(['changelogCard', 'title'], 'Changelog'),
       description: tx(['changelogCard', 'description'], ''),
-      icon: UpdateOutlinedIcon,
+      icon: Clock,
     },
   };
 
@@ -417,7 +410,7 @@ export default function ProfileSettingsPage() {
                       {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
                     </div>
                     <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card shadow">
-                      <EditIcon className="text-muted-foreground" fontSize="small" />
+                      <Pencil size={14} className="text-muted-foreground" />
                     </div>
                     <input
                       ref={avatarInputRef}
@@ -451,7 +444,7 @@ export default function ProfileSettingsPage() {
                           isActive ? 'text-primary' : 'text-muted-foreground',
                         )}
                       >
-                        <Icon className="text-[18px]" />
+                        <Icon size={18} />
                       </span>
                       <span>{sectionMeta[id].title}</span>
                     </button>
@@ -489,7 +482,7 @@ export default function ProfileSettingsPage() {
                       {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
                     </div>
                     <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow">
-                      <EditIcon className="text-muted-foreground" fontSize="small" />
+                      <Pencil size={14} className="text-muted-foreground" />
                     </div>
                   </div>
                 </div>
@@ -513,7 +506,7 @@ export default function ProfileSettingsPage() {
             <CardHeader className="border-b border-border bg-muted/60 dark:bg-muted/60">
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <ActiveIcon className="text-[20px]" />
+                  <ActiveIcon size={20} />
                 </div>
                 <div>
                   <CardTitle className="text-lg font-semibold text-foreground">

@@ -9,9 +9,9 @@ type ButtonMockProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 type FieldMockProps = {
-  label: string;
+  label?: string;
   value?: string;
-  onValueChange?: (value: string) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
 };
 
@@ -41,39 +41,40 @@ vi.mock('react-hot-toast', () => ({
   },
 }));
 
-vi.mock('@heroui/modal', () => ({
-  Modal: ({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) =>
-    isOpen ? <div data-testid="create-workspace-modal">{children}</div> : null,
-  ModalContent: ({ children }: { children: (onClose: () => void) => React.ReactNode }) => (
-    <div>{children(() => undefined)}</div>
-  ),
-  ModalHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
-  ModalBody: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
-  ModalFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
+vi.mock('@mui/material/Dialog', () => ({
+  default: ({ open, children }: { open: boolean; children: React.ReactNode }) =>
+    open ? <div data-testid="create-workspace-modal">{children}</div> : null,
 }));
 
-vi.mock('@heroui/react', () => ({
-  Button: ({ children, onClick, isDisabled, type = 'button', ...props }: ButtonMockProps) => (
-    <button type={type} onClick={onClick} disabled={isDisabled} {...props}>
+vi.mock('@mui/material/DialogTitle', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock('@mui/material/DialogContent', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock('@mui/material/DialogActions', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock('@mui/material/Button', () => ({
+  default: ({ children, onClick, disabled, type = 'button', ...props }: ButtonMockProps) => (
+    <button type={type} onClick={onClick} disabled={disabled} {...props}>
       {children}
     </button>
   ),
-  Input: ({ label, value, onValueChange, placeholder }: FieldMockProps) => (
+}));
+
+vi.mock('@mui/material/TextField', () => ({
+  default: ({ label, value, onChange, placeholder, multiline }: FieldMockProps & { multiline?: boolean }) => (
     <label>
       <span>{label}</span>
-      <input aria-label={label} value={value} placeholder={placeholder} onChange={e => onValueChange?.(e.target.value)} />
-    </label>
-  ),
-  Textarea: ({ label, value, onValueChange, placeholder }: FieldMockProps) => (
-    <label>
-      <span>{label}</span>
-      <textarea aria-label={label} value={value} placeholder={placeholder} onChange={e => onValueChange?.(e.target.value)} />
+      {multiline ? (
+        <textarea aria-label={label ?? ''} value={value} placeholder={placeholder} onChange={e => onChange?.({ target: { value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)} />
+      ) : (
+        <input aria-label={label ?? ''} value={value} placeholder={placeholder} onChange={onChange} />
+      )}
     </label>
   ),
 }));

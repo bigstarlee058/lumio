@@ -6,13 +6,7 @@ import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import {
-  AccessTime,
-  CheckCircleOutline,
-  ErrorOutline,
-  Send,
-  Telegram as TelegramIcon,
-} from '@mui/icons-material';
+import { Bot as TelegramIcon, CheckCircle, Clock, Send, XCircle } from 'lucide-react';
 import {
   Alert,
   Box,
@@ -240,7 +234,7 @@ export default function TelegramSettingsPage() {
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Button
                 variant="contained"
-                startIcon={<CheckCircleOutline />}
+                startIcon={<CheckCircle size={18} />}
                 onClick={connectTelegram}
                 disabled={loading}
               >
@@ -248,7 +242,7 @@ export default function TelegramSettingsPage() {
               </Button>
               {user?.telegramId && (
                 <Chip
-                  icon={<TelegramIcon />}
+                  icon={<TelegramIcon size={16} />}
                   color="success"
                   label={`${t.connect.linkedIdPrefix.value}: ${user.telegramId}`}
                   variant="outlined"
@@ -285,7 +279,7 @@ export default function TelegramSettingsPage() {
               </Button>
               <Button
                 variant="outlined"
-                startIcon={<AccessTime />}
+                startIcon={<Clock size={18} />}
                 onClick={() => sendReport('monthly')}
                 disabled={sendingMonthly || !chatId}
               >

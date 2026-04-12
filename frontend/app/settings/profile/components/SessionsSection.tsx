@@ -5,7 +5,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { type UserSession, getSessionIcon } from '@/app/settings/profile/profileHelpers';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { LogOut } from 'lucide-react';
 
 type Props = {
   t: {
@@ -76,7 +76,7 @@ export function SessionsSection({
                 >
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <SessionIcon className="text-[20px]" />
+                      <SessionIcon size={20} />
                     </div>
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
@@ -108,7 +108,7 @@ export function SessionsSection({
                       className="gap-2"
                     >
                       {isLogoutLoading && <Spinner className="h-[14px] w-[14px] text-inherit" />}
-                      <LogoutIcon className="text-[18px]" />
+                      <LogOut size={18} />
                       {tx(['sessionsCard', 'logoutSessionButton'], 'Log out')}
                     </Button>
                   </div>
@@ -125,7 +125,7 @@ export function SessionsSection({
 
       <div className="flex justify-end">
         <Button variant="destructive" onClick={handleLogoutAll} className="gap-2">
-          <LogoutIcon className="text-[18px]" />
+          <LogOut size={18} />
           {t.sessionsCard.logoutAllButton.value}
         </Button>
       </div>

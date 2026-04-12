@@ -1,7 +1,7 @@
 'use client';
 
 import { resolveBankLogo } from '@bank-logos';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { Landmark } from 'lucide-react';
 import React from 'react';
 
 import { LogoAvatar } from './LogoAvatar';
@@ -17,23 +17,21 @@ export function BankLogoAvatar({ bankName, size = 32, className, rounded = true 
   const resolved = resolveBankLogo(bankName);
   const src = resolved.key !== 'other' ? resolved.src : null;
 
-  const roundedClass = rounded ? 'rounded-full' : 'rounded-lg';
+  const borderRadius = rounded ? '50%' : '8px';
 
   return (
     <LogoAvatar
       src={src}
       alt={bankName || resolved.displayName || 'Bank'}
       size={size}
-      imgClassName={[roundedClass, 'bg-gray-100 object-contain', className]
-        .filter(Boolean)
-        .join(' ')}
-      className={['inline-flex items-center justify-center text-gray-500', roundedClass, className]
-        .filter(Boolean)
-        .join(' ')}
+      imgClassName={className}
+      imgStyle={{ borderRadius, backgroundColor: '#f3f4f6', objectFit: 'contain' }}
+      className={className}
+      fallbackStyle={{ borderRadius, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}
       fallback={
-        <AccountBalanceIcon
+        <Landmark
           data-testid="bank-logo-fallback-icon"
-          sx={{ fontSize: Math.max(14, Math.round(size * 0.9)) }}
+          size={Math.max(14, Math.round(size * 0.9))}
         />
       }
     />

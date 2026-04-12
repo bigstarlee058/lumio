@@ -9,6 +9,7 @@ export type LogoAvatarProps = {
   className?: string;
   fallback: React.ReactNode;
   imgClassName?: string;
+  imgStyle?: React.CSSProperties;
   fallbackStyle?: React.CSSProperties;
 };
 
@@ -19,6 +20,7 @@ export function LogoAvatar({
   className,
   fallback,
   imgClassName,
+  imgStyle,
   fallbackStyle,
 }: LogoAvatarProps) {
   const [imageError, setImageError] = React.useState(false);
@@ -35,6 +37,7 @@ export function LogoAvatar({
         width={size}
         height={size}
         className={imgClassName}
+        style={imgStyle}
         onError={() => setImageError(true)}
       />
     );

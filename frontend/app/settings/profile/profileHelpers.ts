@@ -1,8 +1,7 @@
 import type { ChangelogEntry } from '@/app/components/ChangelogModal';
-import DesktopWindowsOutlinedIcon from '@mui/icons-material/DesktopWindowsOutlined';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
-import TabletMacOutlinedIcon from '@mui/icons-material/TabletMacOutlined';
+import type React from 'react';
+import type { LucideProps } from 'lucide-react';
+import { Bot, Monitor, Smartphone, Tablet } from 'lucide-react';
 import type { AxiosError } from 'axios';
 
 export type ApiErrorResponse = { message?: string; error?: { message?: string } };
@@ -98,12 +97,12 @@ export const getInitials = (value: string) => {
   return (tokens[0][0] + tokens[1][0]).toUpperCase();
 };
 
-export const getSessionIcon = (device: string) => {
+export const getSessionIcon = (device: string): React.ComponentType<LucideProps> => {
   const normalized = device.toLowerCase();
-  if (normalized.includes('mobile')) return SmartphoneOutlinedIcon;
-  if (normalized.includes('tablet')) return TabletMacOutlinedIcon;
-  if (normalized.includes('bot')) return SmartToyOutlinedIcon;
-  return DesktopWindowsOutlinedIcon;
+  if (normalized.includes('mobile')) return Smartphone;
+  if (normalized.includes('tablet')) return Tablet;
+  if (normalized.includes('bot')) return Bot;
+  return Monitor;
 };
 
 const COMMON_TIMEZONES = [

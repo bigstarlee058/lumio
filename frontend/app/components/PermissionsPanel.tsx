@@ -2,11 +2,6 @@
 
 import { useIntlayer, useLocale } from '@/app/i18n';
 import {
-  PersonAdd as AddPersonIcon,
-  Delete as DeleteIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material';
-import {
   Alert,
   Box,
   Button,
@@ -33,6 +28,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { Pencil, Trash2, UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import api from '../lib/api';
@@ -214,7 +210,7 @@ export default function PermissionsPanel({
           </Typography>
           <Button
             variant="contained"
-            startIcon={<AddPersonIcon />}
+            startIcon={<UserPlus size={18} />}
             onClick={() => setGrantDialogOpen(true)}
           >
             {t.grantAccess}
@@ -272,7 +268,7 @@ export default function PermissionsPanel({
                     <TableCell align="center">
                       <Tooltip title={t.tooltips.edit.value}>
                         <IconButton size="small" onClick={() => handleEditClick(permission)}>
-                          <EditIcon />
+                          <Pencil size={16} />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title={t.tooltips.revoke.value}>
@@ -280,7 +276,7 @@ export default function PermissionsPanel({
                           size="small"
                           onClick={() => handleRevokePermission(permission.id)}
                         >
-                          <DeleteIcon />
+                          <Trash2 size={16} />
                         </IconButton>
                       </Tooltip>
                     </TableCell>

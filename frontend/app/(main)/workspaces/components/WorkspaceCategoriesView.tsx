@@ -8,16 +8,7 @@ import apiClient from '@/app/lib/api';
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
 import { cn } from '@/app/lib/utils';
-import { Icon } from '@iconify/react';
-import {
-  Add,
-  Check,
-  ChevronRight,
-  DeleteOutline,
-  FolderOutlined,
-  LockOutlined,
-  Search as SearchIcon,
-} from '@mui/icons-material';
+import { Check, ChevronRight, FolderOpen, Lock, Plus, Search as SearchIcon, Tag } from 'lucide-react';
 import {
   Box,
   Button,
@@ -400,7 +391,7 @@ export default function WorkspaceCategoriesView() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <FolderOutlined className="text-[22px]" />
+              <FolderOpen size={22} />
             </div>
             <div>
               <h1 className="text-2xl font-semibold text-foreground">{t.title}</h1>
@@ -414,7 +405,7 @@ export default function WorkspaceCategoriesView() {
               data-tour-id="categories-add-button"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <Add fontSize="small" />
+              <Plus size={16} />
               {t.add}
             </button>
           </div>
@@ -423,8 +414,8 @@ export default function WorkspaceCategoriesView() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full max-w-md">
             <SearchIcon
+              size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              fontSize="small"
             />
             <input
               type="text"
@@ -492,7 +483,7 @@ export default function WorkspaceCategoriesView() {
           ) : filteredCategories.length === 0 ? (
             <div className="text-center py-16 px-4">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <SearchIcon className="text-[32px]" />
+                <SearchIcon size={32} />
               </div>
               <h3 className="text-lg font-medium text-foreground">
                 {tx(['noData'], 'No categories')}
@@ -502,7 +493,7 @@ export default function WorkspaceCategoriesView() {
                   onClick={() => handleOpenDialog()}
                   className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
                 >
-                  <Add fontSize="small" />
+                  <Plus size={16} />
                   {t.add}
                 </button>
               </div>
@@ -546,7 +537,7 @@ export default function WorkspaceCategoriesView() {
                               sx={{ width: 16, height: 16, objectFit: 'contain' }}
                             />
                           ) : (
-                            <Icon icon={category.icon || 'mdi:tag'} width={16} height={16} />
+                            <Tag size={16} />
                           )}
                         </div>
                       ) : null}
@@ -600,7 +591,7 @@ export default function WorkspaceCategoriesView() {
                       </button>
                       {category.isSystem ? (
                         <div className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60">
-                          <LockOutlined fontSize="small" />
+                          <Lock size={16} />
                         </div>
                       ) : (
                         <button
@@ -608,7 +599,7 @@ export default function WorkspaceCategoriesView() {
                           onClick={() => handleOpenDialog(category)}
                           className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                         >
-                          <ChevronRight fontSize="small" />
+                          <ChevronRight size={16} />
                         </button>
                       )}
                     </div>
@@ -703,7 +694,7 @@ export default function WorkspaceCategoriesView() {
                       },
                     }}
                   >
-                    <Icon icon={iconName} width={24} height={24} />
+                    <Tag size={24} />
                   </Box>
                 ))}
               </Box>
@@ -784,7 +775,7 @@ export default function WorkspaceCategoriesView() {
                       outline: formData.color === color ? `2px solid ${color}` : 'none',
                     }}
                   >
-                    {formData.color === color && <Check sx={{ color: 'white', fontSize: 20 }} />}
+                    {formData.color === color && <Check size={20} style={{ color: 'white' }} />}
                   </Box>
                 ))}
               </Box>
@@ -825,7 +816,7 @@ export default function WorkspaceCategoriesView() {
                     sx={{ width: 28, height: 28, objectFit: 'contain' }}
                   />
                 ) : !formData.withoutIcon ? (
-                  <Icon icon={formData.icon || 'mdi:tag'} width={28} height={28} />
+                  <Tag size={28} />
                 ) : null}
               </Box>
               <Typography variant="subtitle1" fontWeight="bold">

@@ -4,17 +4,14 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
-  Input,
-} from '@heroui/react';
-import { Tooltip } from '@heroui/tooltip';
-import SendIcon from '@mui/icons-material/Send';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import { Send as SendIcon } from 'lucide-react';
 import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -161,6 +158,10 @@ export default function WorkspaceMembersView() {
   const [searchEmail, setSearchEmail] = useState('');
   const [roleFilter, setRoleFilter] = useState<MemberRoleFilter>('all');
   const [sortBy, setSortBy] = useState<MemberSortBy>('name');
+  const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
+  const [roleMenuAnchor, setRoleMenuAnchor] = useState<null | HTMLElement>(null);
+  const [memberMenuAnchorMap, setMemberMenuAnchorMap] = useState<Record<string, HTMLElement | null>>({});
+  const [roleMenuAnchorMap, setRoleMenuAnchorMap] = useState<Record<string, HTMLElement | null>>({});
   const [invitePermissions, setInvitePermissions] = useState<InvitePermissions>({
     canEditStatements: true,
     canEditCustomTables: true,
@@ -399,10 +400,10 @@ export default function WorkspaceMembersView() {
               </p>
             </div>
             <Button
-              color="primary"
-              radius="sm"
-              onPress={() => setShowInviteForm(prev => !prev)}
-              startContent={<MailPlus size={16} />}
+              variant="contained"
+              size="small"
+              onClick={() => setShowInviteForm(prev => !prev)}
+              startIcon={<MailPlus size={16} />}
             >
               Invite member
             </Button>
@@ -484,10 +485,10 @@ export default function WorkspaceMembersView() {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                color="primary"
-                radius="sm"
-                isDisabled={!isOwnerOrAdmin || inviteLoading}
-                startContent={<SendIcon fontSize="small" />}
+                variant="contained"
+                size="small"
+                disabled={!isOwnerOrAdmin || inviteLoading}
+                startIcon={<SendIcon size={16} />}
               >
                 {inviteLoading ? 'Sending...' : 'Send invitation'}
               </Button>
@@ -497,56 +498,75 @@ export default function WorkspaceMembersView() {
 
         <div className="rounded-2xl border border-border bg-card p-4 space-y-3 sm:p-6">
           <div className="flex flex-wrap items-center gap-3">
-            <Input
+            <TextField
               aria-label="Search members by email"
               placeholder="Search by email"
               value={searchEmail}
-              onValueChange={setSearchEmail}
-              startContent={<Search size={16} className="text-muted-foreground" />}
-              radius="sm"
-              variant="bordered"
+              onChange={e => setSearchEmail(e.target.value)}
+              size="small"
+              variant="outlined"
               className="w-full sm:max-w-sm"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={16} className="text-muted-foreground" />
+                  </InputAdornment>
+                ),
+              }}
             />
 
-            <Dropdown placement="bottom-start">
-              <DropdownTrigger>
-                <Button radius="sm" variant="flat" className="min-w-[160px] justify-between">
-                  Sort: {SORT_OPTIONS.find(option => option.key === sortBy)?.label || 'Name'}
-                  <ChevronDown size={14} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Member sorting"
-                selectedKeys={[sortBy]}
-                selectionMode="single"
-                onAction={key => setSortBy(String(key) as MemberSortBy)}
-              >
-                {SORT_OPTIONS.map(option => (
-                  <DropdownItem key={option.key}>{option.label}</DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={e => setSortMenuAnchor(e.currentTarget)}
+              endIcon={<ChevronDown size={14} />}
+              sx={{ minWidth: 160, justifyContent: 'space-between' }}
+            >
+              Sort: {SORT_OPTIONS.find(option => option.key === sortBy)?.label || 'Name'}
+            </Button>
+            <Menu
+              anchorEl={sortMenuAnchor}
+              open={Boolean(sortMenuAnchor)}
+              onClose={() => setSortMenuAnchor(null)}
+              aria-label="Member sorting"
+            >
+              {SORT_OPTIONS.map(option => (
+                <MenuItem
+                  key={option.key}
+                  selected={option.key === sortBy}
+                  onClick={() => { setSortBy(option.key); setSortMenuAnchor(null); }}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
 
-            <Dropdown placement="bottom-start">
-              <DropdownTrigger>
-                <Button radius="sm" variant="flat" className="min-w-[180px] justify-between">
-                  Role:{' '}
-                  {ROLE_FILTER_OPTIONS.find(option => option.key === roleFilter)?.label ||
-                    'All roles'}
-                  <ChevronDown size={14} />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Member role filter"
-                selectedKeys={[roleFilter]}
-                selectionMode="single"
-                onAction={key => setRoleFilter(String(key) as MemberRoleFilter)}
-              >
-                {ROLE_FILTER_OPTIONS.map(option => (
-                  <DropdownItem key={option.key}>{option.label}</DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={e => setRoleMenuAnchor(e.currentTarget)}
+              endIcon={<ChevronDown size={14} />}
+              sx={{ minWidth: 180, justifyContent: 'space-between' }}
+            >
+              Role:{' '}
+              {ROLE_FILTER_OPTIONS.find(option => option.key === roleFilter)?.label || 'All roles'}
+            </Button>
+            <Menu
+              anchorEl={roleMenuAnchor}
+              open={Boolean(roleMenuAnchor)}
+              onClose={() => setRoleMenuAnchor(null)}
+              aria-label="Member role filter"
+            >
+              {ROLE_FILTER_OPTIONS.map(option => (
+                <MenuItem
+                  key={option.key}
+                  selected={option.key === roleFilter}
+                  onClick={() => { setRoleFilter(option.key); setRoleMenuAnchor(null); }}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
           </div>
 
           <p className="text-xs text-muted-foreground">
@@ -594,82 +614,87 @@ export default function WorkspaceMembersView() {
 
                   <div className="flex items-center gap-2">
                     <Tooltip
-                      content={ROLE_TOOLTIPS[member.role] || 'Workspace role'}
+                      title={ROLE_TOOLTIPS[member.role] || 'Workspace role'}
                       placement="top"
                     >
-                      {canManageRole ? (
-                        <Dropdown placement="bottom-end">
-                          <DropdownTrigger>
+                      <span>
+                        {canManageRole ? (
+                          <>
                             <button
                               type="button"
                               disabled={roleUpdating}
+                              onClick={e => setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))}
                               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-opacity ${ROLE_STYLES[member.role] || ROLE_STYLES.member} ${roleUpdating ? 'opacity-60' : ''}`}
                             >
                               {roleUpdating ? 'Updating...' : getRoleLabel(member.role)}
                               <ChevronDown size={12} />
                             </button>
-                          </DropdownTrigger>
-                          <DropdownMenu
-                            aria-label={`Change role for ${member.email || member.id}`}
-                            onAction={key =>
-                              void handleChangeMemberRole(member, String(key) as WorkspaceRole)
-                            }
+                            <Menu
+                              anchorEl={roleMenuAnchorMap[member.id]}
+                              open={Boolean(roleMenuAnchorMap[member.id])}
+                              onClose={() => setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))}
+                              aria-label={`Change role for ${member.email || member.id}`}
+                            >
+                              {roleTargets.map(role => (
+                                <MenuItem
+                                  key={role}
+                                  disabled={role === member.role}
+                                  onClick={() => {
+                                    setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: null }));
+                                    void handleChangeMemberRole(member, role);
+                                  }}
+                                >
+                                  {getRoleLabel(role)}
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </>
+                        ) : (
+                          <span
+                            className={`rounded-full border px-2.5 py-1 text-xs font-medium ${ROLE_STYLES[member.role] || ROLE_STYLES.member}`}
                           >
-                            {roleTargets.map(role => (
-                              <DropdownItem key={role} isDisabled={role === member.role}>
-                                {getRoleLabel(role)}
-                              </DropdownItem>
-                            ))}
-                          </DropdownMenu>
-                        </Dropdown>
-                      ) : (
-                        <span
-                          className={`rounded-full border px-2.5 py-1 text-xs font-medium ${ROLE_STYLES[member.role] || ROLE_STYLES.member}`}
-                        >
-                          {getRoleLabel(member.role)}
-                        </span>
-                      )}
+                            {getRoleLabel(member.role)}
+                          </span>
+                        )}
+                      </span>
                     </Tooltip>
 
-                    <Dropdown placement="bottom-end">
-                      <DropdownTrigger>
-                        <Button
-                          isIconOnly
-                          size="sm"
-                          variant="light"
-                          aria-label={`Actions for ${member.email || member.id}`}
+                    <IconButton
+                      size="small"
+                      aria-label={`Actions for ${member.email || member.id}`}
+                      onClick={e => setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))}
+                    >
+                      <MoreHorizontal size={16} />
+                    </IconButton>
+                    <Menu
+                      anchorEl={memberMenuAnchorMap[member.id]}
+                      open={Boolean(memberMenuAnchorMap[member.id])}
+                      onClose={() => setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))}
+                      aria-label={`Member actions for ${member.email || member.id}`}
+                    >
+                      {canManageRole && roleTargets.map(role => (
+                        <MenuItem
+                          key={`role:${role}`}
+                          disabled={role === member.role}
+                          onClick={() => {
+                            setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }));
+                            void handleMemberMenuAction(member, `role:${role}`);
+                          }}
                         >
-                          <MoreHorizontal size={16} />
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu
-                        aria-label={`Member actions for ${member.email || member.id}`}
-                        onAction={key => void handleMemberMenuAction(member, String(key))}
+                          Set as {getRoleLabel(role)}
+                        </MenuItem>
+                      ))}
+                      <MenuItem
+                        disabled={!canRemove || removingMemberId === member.id}
+                        onClick={() => {
+                          setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }));
+                          void handleMemberMenuAction(member, 'remove');
+                        }}
+                        sx={{ color: 'error.main' }}
                       >
-                        {canManageRole ? (
-                          <DropdownSection title="Change role">
-                            {roleTargets.map(role => (
-                              <DropdownItem key={`role:${role}`} isDisabled={role === member.role}>
-                                Set as {getRoleLabel(role)}
-                              </DropdownItem>
-                            ))}
-                          </DropdownSection>
-                        ) : null}
-
-                        <DropdownSection>
-                          <DropdownItem
-                            key="remove"
-                            color="danger"
-                            isDisabled={!canRemove || removingMemberId === member.id}
-                            className="text-danger data-[hover=true]:bg-danger/10 data-[hover=true]:text-danger data-[focus=true]:bg-danger/10 data-[focus=true]:text-danger"
-                          >
-                            {removingMemberId === member.id
-                              ? 'Removing...'
-                              : 'Remove from workspace'}
-                          </DropdownItem>
-                        </DropdownSection>
-                      </DropdownMenu>
-                    </Dropdown>
+                        {removingMemberId === member.id ? 'Removing...' : 'Remove from workspace'}
+                      </MenuItem>
+                    </Menu>
                   </div>
                 </div>
               );
@@ -713,29 +738,27 @@ export default function WorkspaceMembersView() {
 
                   <div className="flex items-center gap-2">
                     <Button
-                      size="sm"
-                      variant="flat"
-                      isDisabled={!isOwnerOrAdmin || isActionBusy}
-                      isLoading={isResending}
-                      onPress={() => void handleResendInvitation(invite)}
+                      size="small"
+                      variant="outlined"
+                      disabled={!isOwnerOrAdmin || isActionBusy}
+                      onClick={() => void handleResendInvitation(invite)}
                     >
-                      Resend
+                      {isResending ? 'Sending...' : 'Resend'}
                     </Button>
                     <Button
-                      size="sm"
-                      variant="flat"
-                      color="danger"
-                      isDisabled={!isOwnerOrAdmin || isActionBusy}
-                      isLoading={isRevoking}
-                      onPress={() => void handleRevokeInvitation(invite.id)}
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      disabled={!isOwnerOrAdmin || isActionBusy}
+                      onClick={() => void handleRevokeInvitation(invite.id)}
                     >
-                      Revoke
+                      {isRevoking ? 'Revoking...' : 'Revoke'}
                     </Button>
                     <Button
-                      size="sm"
-                      variant="light"
-                      isDisabled={isActionBusy}
-                      onPress={() => void copyInviteLink(invite.token, invite.link)}
+                      size="small"
+                      variant="text"
+                      disabled={isActionBusy}
+                      onClick={() => void copyInviteLink(invite.token, invite.link)}
                     >
                       Copy link
                     </Button>

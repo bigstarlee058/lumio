@@ -1,7 +1,6 @@
 'use client';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { ContentCopy as CopyIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import {
   Box,
   Chip,
@@ -14,6 +13,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { Copy, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import api from '../lib/api';
@@ -180,12 +180,12 @@ export default function ShareDialog({
                       onClick={() => handleCopyLink(link.token)}
                       color={copiedToken === link.token ? 'success' : 'default'}
                     >
-                      <CopyIcon />
+                      <Copy size={18} />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={t.tooltips.delete.value}>
                     <IconButton edge="end" onClick={() => handleDeleteLink(link.id)}>
-                      <DeleteIcon />
+                      <Trash2 size={18} />
                     </IconButton>
                   </Tooltip>
                 </ListItemSecondaryAction>

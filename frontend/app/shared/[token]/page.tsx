@@ -2,7 +2,7 @@
 
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { Download as DownloadIcon, Lock as LockIcon } from '@mui/icons-material';
+import { Download as DownloadIcon, Lock as LockIcon } from 'lucide-react';
 import {
   Alert,
   Box,
@@ -152,7 +152,7 @@ export default function SharedFilePage() {
       <Container maxWidth="sm" sx={{ mt: 8, mb: 4 }}>
         <Paper sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <LockIcon sx={{ fontSize: 64, color: 'primary.main' }} />
+            <LockIcon size={64} style={{ color: 'var(--mui-palette-primary-main)' }} />
             <Typography variant="h5" align="center">
               {t.protected.title}
             </Typography>
@@ -218,7 +218,7 @@ export default function SharedFilePage() {
             <Button
               variant="contained"
               size="small"
-              startIcon={<DownloadIcon />}
+              startIcon={<DownloadIcon size={18} />}
               onClick={handleDownload}
               sx={{ ml: 'auto' }}
             >

@@ -37,21 +37,21 @@ vi.mock('react-hot-toast', () => ({
   },
 }));
 
-vi.mock('@heroui/modal', () => ({
-  Modal: ({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) =>
-    isOpen ? <div data-testid="receipt-export-modal">{children}</div> : null,
-  ModalContent: ({ children }: { children: (onClose: () => void) => React.ReactNode }) => (
-    <div>{children(() => undefined)}</div>
-  ),
-  ModalHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
-  ModalBody: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
-  ModalFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
+vi.mock('@mui/material/Dialog', () => ({
+  default: ({ open, children }: { open: boolean; children: React.ReactNode }) =>
+    open ? <div data-testid="receipt-export-modal">{children}</div> : null,
+}));
+
+vi.mock('@mui/material/DialogTitle', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock('@mui/material/DialogContent', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+vi.mock('@mui/material/DialogActions', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('next/navigation', () => ({
