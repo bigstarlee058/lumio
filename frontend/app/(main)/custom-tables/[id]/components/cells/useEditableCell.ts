@@ -31,7 +31,7 @@ export interface UseEditableCellResult<T extends CustomTableCellValue> {
   inputValue: string;
   setInputValue: (v: string) => void;
   isSaving: boolean;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   handleSave: () => Promise<void>;
   handleCancel: () => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
