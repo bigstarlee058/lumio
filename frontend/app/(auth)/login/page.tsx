@@ -2,7 +2,7 @@
 
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
-import { Spinner } from '@/app/components/ui/spinner';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
@@ -270,7 +270,7 @@ function LoginPageContent() {
           }}
           disabled={loading}
         >
-          {loading ? <Spinner className="h-6 w-6 text-inherit" /> : t.submit}
+          {loading ? <CircularProgress size={24} color="inherit" /> : t.submit}
         </Button>
         <Box textAlign="center" sx={{ mt: 3 }}>
           <Link
