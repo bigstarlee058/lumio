@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap");
 @import "./styles/tokens.css";
 @import "./styles/base.css";
-@import "tailwindcss";
 @import "./tours/tour-theme.css";
 @import "./styles/blocks/lumio-navigation.css";
 @import "./styles/blocks/lumio-notification-dropdown.css";
@@ -9,19 +8,6 @@
 @import "./styles/blocks/lumio-language-switcher.css";
 @import "./styles/blocks/lumio-breadcrumbs.css";
 @import "./styles/blocks/lumio-audit-panel.css";
-
-/* Use `.dark` class for Tailwind's `dark:` variant (so it follows our app theme toggle, not OS preference). */
-@custom-variant dark (&:where(.dark, .dark *));
-
-@theme {
-  --color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  @theme {
-    --color-scheme: light;
-  }
-}
 
 :root {
   --background: #ffffff;
@@ -141,28 +127,6 @@
   --ff-dashboard-card: #151c24;
   --ff-dashboard-card-border: #1e2a3a;
   --ff-dashboard-card-foreground: #e2e8f0;
-}
-
-@theme inline {
-  --color-scheme: class;
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-card: var(--card-bg);
-  --color-card-foreground: var(--card-foreground);
-  --color-border: var(--border-color);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-geist-mono);
 }
 
 body {
