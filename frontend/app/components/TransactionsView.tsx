@@ -2,7 +2,6 @@
 
 import { AppPagination } from '@/app/components/ui/pagination';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { Search as SearchIcon } from '@mui/icons-material';
 import {
   Box,
   Chip,
@@ -16,6 +15,7 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
+import { Search as SearchIcon } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 export interface Transaction {
@@ -303,26 +303,44 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
             )}
           </TableBody>
         </Table>
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">{t.pagination.rowsPerPage.value}:</span>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 1.5,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            px: 2,
+            py: 1.5,
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <span style={{ fontSize: 14, color: '#374151' }}>{t.pagination.rowsPerPage.value}:</span>
             <select
               value={rowsPerPage}
               onChange={e => {
                 setRowsPerPage(Number.parseInt(e.target.value, 10));
                 setPage(0);
               }}
-              className="rounded-md border border-gray-200 px-2 py-1 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={{
+                borderRadius: 6,
+                border: '1px solid #e5e7eb',
+                padding: '2px 8px',
+                fontSize: 14,
+                outline: 'none',
+              }}
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
               <option value={50}>50</option>
               <option value={100}>100</option>
             </select>
-          </div>
+          </Box>
 
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <span style={{ fontSize: 14, color: '#374151' }}>
               {filteredTransactions.length === 0
                 ? `0-0 ${t.pagination.of.value} 0`
                 : `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, filteredTransactions.length)} ${t.pagination.of.value} ${filteredTransactions.length}`}
@@ -332,8 +350,8 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
               total={totalPages}
               onChange={nextPage => setPage(nextPage - 1)}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </TableContainer>
     </Box>
   );
