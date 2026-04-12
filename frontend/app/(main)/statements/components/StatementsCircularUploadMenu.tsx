@@ -6,8 +6,7 @@ import {
   buildStatementUploadMenuModel,
 } from '@/app/lib/statement-upload-actions';
 import { cn } from '@/app/lib/utils';
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
-import { Cloud, Plus, Receipt, ScanLine } from 'lucide-react';
+import { Cloud, Plus, Receipt, ScanLine, Scan } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -268,7 +267,7 @@ export default function StatementsCircularUploadMenu({
         )}
         aria-label="Scan"
       >
-        <DocumentScannerIcon sx={{ fontSize: 24 }} />
+        <Scan size={24} />
       </button>
 
       <button

@@ -105,10 +105,10 @@ describe('StatementsSidePanel FAB navigation', () => {
     });
   });
 
-  it('uses Unpublished icon for unapproved cash navigation item', async () => {
-    const [{ default: StatementsSidePanel }, { default: UnpublishedIcon }] = await Promise.all([
+  it('uses Ban icon for unapproved cash navigation item', async () => {
+    const [{ default: StatementsSidePanel }, { Ban }] = await Promise.all([
       import('./StatementsSidePanel'),
-      import('@mui/icons-material/Unpublished'),
+      import('lucide-react'),
     ]);
     const container = document.createElement('div');
     const root = createRoot(container);
@@ -122,7 +122,7 @@ describe('StatementsSidePanel FAB navigation', () => {
       .find(item => item.id === 'unapproved-cash');
 
     expect(React.isValidElement(unapprovedCashItem?.icon)).toBe(true);
-    expect((unapprovedCashItem?.icon as React.ReactElement).type).toBe(UnpublishedIcon);
+    expect((unapprovedCashItem?.icon as React.ReactElement).type).toBe(Ban);
 
     await act(async () => {
       root.unmount();

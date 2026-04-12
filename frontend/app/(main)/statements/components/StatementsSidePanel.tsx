@@ -22,10 +22,7 @@ import {
   STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
 } from '@/app/lib/statement-upload-actions';
 import { countStatementStages, getStatementStageMap } from '@/app/lib/statement-workflow';
-import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
-import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
-import UnpublishedIcon from '@mui/icons-material/Unpublished';
-import { Banknote, CalendarRange, Folder, Pencil, Send, ThumbsUp, User } from 'lucide-react';
+import { Ban, Banknote, CalendarRange, Folder, Pencil, Send, ShoppingCart, Table2, ThumbsUp, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -489,7 +486,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             {
               id: 'unapproved-cash',
               label: tx(['sidePanel', 'unapprovedCash'], 'Unapproved cash'),
-              icon: <UnpublishedIcon sx={{ fontSize: 20 }} />,
+              icon: <Ban size={20} />,
               badge: counts.unapprovedCash,
               badgeLoading: countsLoading,
               badgeVariant: getQueueBadgeVariant(counts.unapprovedCash),
@@ -527,7 +524,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             {
               id: 'top-merchants',
               label: tx(['sidePanel', 'topMerchants'], 'Top merchants'),
-              icon: <PointOfSaleIcon sx={{ fontSize: 20 }} />,
+              icon: <ShoppingCart size={20} />,
               badge: topMerchantsCount,
               badgeLoading: countsLoading,
               badgeVariant: 'default',
@@ -549,7 +546,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
             {
               id: 'tables-reports',
               label: tx(['sidePanel', 'tablesReports'], 'Tables reports'),
-              icon: <TableChartOutlinedIcon sx={{ fontSize: 20 }} />,
+              icon: <Table2 size={20} />,
               badge: tablesReportsCount,
               badgeLoading: countsLoading,
               badgeVariant: 'default',
