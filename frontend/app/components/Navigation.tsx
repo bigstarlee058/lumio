@@ -20,29 +20,18 @@ import { type DriveStep, driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { Divider, ListItemIcon, ListItemText, Menu as MuiMenu, MenuItem } from '@mui/material';
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
-} from '@heroui/react';
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import AssignmentAddIcon from '@mui/icons-material/AssignmentAdd';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
-import LanguageIcon from '@mui/icons-material/Language';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import SchoolIcon from '@mui/icons-material/School';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import {
+  BarChart2,
+  BookOpen,
+  Building2,
   Check,
   ChevronLeft,
   Clock3,
-  Database,
-  Edit3,
   FileText,
+  Globe,
+  HelpCircle,
+  LayoutDashboard,
   LogOut,
   Menu,
   Moon,
@@ -52,12 +41,12 @@ import {
   Settings,
   Sun,
   Table,
-  Tags,
   Trash2,
   User,
-  Wallet,
   X,
+  Zap,
 } from 'lucide-react';
+import '@/app/styles/blocks/lumio-navigation.css';
 import { useTheme } from 'next-themes';
 import { Nunito } from 'next/font/google';
 import Image from 'next/image';
@@ -105,6 +94,8 @@ export default function Navigation() {
   const [selectedTheme, setSelectedTheme] = useState<ThemePreference>(() =>
     getStoredThemePreference(),
   );
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const userMenuOpen = Boolean(userMenuAnchorEl);
   const isMobile = useIsMobile();
 
   useLockBodyScroll(languageModalOpen || mobileMenuOpen);
@@ -374,7 +365,7 @@ export default function Navigation() {
     {
       label: nav.dashboard,
       path: DEFAULT_APP_ROUTE,
-      icon: <DashboardIcon sx={{ fontSize: 18 }} />,
+      icon: <LayoutDashboard size={18} />,
       permission: 'statement.view',
     },
     {
@@ -392,13 +383,13 @@ export default function Navigation() {
     {
       label: nav.workspaces,
       path: '/workspaces',
-      icon: <ApartmentIcon sx={{ fontSize: 18 }} />,
+      icon: <Building2 size={18} />,
       permission: 'workspaces.view',
     },
     {
       label: nav.reports,
       path: '/reports',
-      icon: <AssignmentAddIcon sx={{ fontSize: 18 }} />,
+      icon: <BarChart2 size={18} />,
       permission: 'statement.view',
     },
   ];
@@ -465,130 +456,114 @@ export default function Navigation() {
     return null;
   }
 
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
+  };
+
+  const handleUserMenuItemAction = (key: string) => {
+    handleUserMenuClose();
+    handleUserMenuAction(key);
+  };
+
   const renderUserActionsMenu = (mobile = false) => (
-    <Dropdown placement={mobile ? 'bottom-start' : 'bottom-end'}>
-      <DropdownTrigger>
-        <Button
-          radius="full"
-          size="md"
-          className="min-w-[100px] h-[40px] px-5 !bg-card !text-primary border border-border font-semibold text-[15px] hover:scale-105 active:scale-95 transition-transform"
-          data-tour-id={mobile ? undefined : 'user-menu-trigger'}
-        >
-          <span className="inline-flex items-center gap-2.5 tracking-wide">
-            <Menu size={18} color="currentColor" strokeWidth={2.25} />
-            {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
-          </span>
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="User menu actions"
-        className="w-[320px]"
-        disabledKeys={['profile-info']}
-        itemClasses={{
-          base: 'gap-3 px-3 py-2.5 data-[hover=true]:bg-muted data-[focus=true]:bg-muted',
-          title: 'text-base',
-        }}
-        onAction={handleUserMenuAction}
+    <>
+      <button
+        type="button"
+        onClick={handleUserMenuOpen}
+        className="lumio-navigation__user-menu-trigger"
+        data-tour-id={mobile ? undefined : 'user-menu-trigger'}
       >
-        <DropdownSection showDivider>
-          <DropdownItem
-            key="profile-info"
-            textValue={`${user.name} ${user.email}`}
-            className="h-auto cursor-default rounded-xl px-3 py-3 opacity-100"
-          >
-            <div className="flex items-center gap-3">
-              <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-muted text-muted-foreground flex items-center justify-center">
-                {normalizedAvatarUrl && !avatarError ? (
-                  <img
-                    src={normalizedAvatarUrl}
-                    alt={user.name || 'User avatar'}
-                    className="h-full w-full object-cover"
-                    onError={() => setAvatarError(true)}
-                  />
-                ) : (
-                  <User size={20} />
-                )}
-              </div>
-              <div className="min-w-0">
-                <div className="text-base font-semibold text-foreground truncate">{user.name}</div>
-                <div className="text-sm font-normal text-muted-foreground truncate">
-                  {user.email}
-                </div>
-              </div>
-            </div>
-          </DropdownItem>
-        </DropdownSection>
+        <Menu size={18} strokeWidth={2.25} />
+        {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
+      </button>
 
-        <DropdownSection showDivider>
-          <DropdownItem
-            key="settings"
-            startContent={<Settings size={18} className="text-muted-foreground" />}
-          >
-            {userMenu.settings}
-          </DropdownItem>
-          <DropdownItem
-            key="integrations"
-            startContent={<Plug size={18} className="text-muted-foreground" />}
-          >
-            {userMenu.integrations}
-          </DropdownItem>
-          <DropdownItem
-            key="trash"
-            startContent={<Trash2 size={18} className="text-muted-foreground" />}
-          >
-            {trashLabel}
-          </DropdownItem>
-          <DropdownItem
-            key="language"
-            startContent={<LanguageIcon sx={{ fontSize: 18 }} className="text-muted-foreground" />}
-            endContent={<span className="text-sm text-muted-foreground">{languageLabel}</span>}
-          >
-            {userMenu.language}
-          </DropdownItem>
+      <MuiMenu
+        anchorEl={userMenuAnchorEl}
+        open={userMenuOpen}
+        onClose={handleUserMenuClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: mobile ? 'left' : 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: mobile ? 'left' : 'right' }}
+        PaperProps={{ sx: { width: 320, mt: 0.5 } }}
+      >
+        {/* Profile info — non-interactive */}
+        <div className="lumio-navigation__profile-item">
+          <div className="lumio-navigation__avatar">
+            {normalizedAvatarUrl && !avatarError ? (
+              <img
+                src={normalizedAvatarUrl}
+                alt={user.name || 'User avatar'}
+                onError={() => setAvatarError(true)}
+              />
+            ) : (
+              <User size={20} />
+            )}
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div className="lumio-navigation__profile-name">{user.name}</div>
+            <div className="lumio-navigation__profile-email">{user.email}</div>
+          </div>
+        </div>
 
-          {isAdmin || canAccessWorkspaceActivity(currentWorkspace?.memberRole) ? (
-            <DropdownItem
-              key="admin"
-              startContent={
-                <ElectricBoltIcon sx={{ fontSize: 18 }} className="text-muted-foreground" />
-              }
-            >
-              {userMenu.admin}
-            </DropdownItem>
-          ) : null}
-          <DropdownItem
-            key="knowledgeBase"
-            startContent={<SchoolIcon sx={{ fontSize: 18 }} className="text-muted-foreground" />}
-          >
-            {userMenu.knowledgeBase}
-          </DropdownItem>
-        </DropdownSection>
+        <Divider />
 
-        <DropdownSection>
-          <DropdownItem
-            key="logout"
-            color="danger"
-            startContent={<LogOut size={18} />}
-            className="text-danger data-[hover=true]:bg-danger/10 data-[hover=true]:text-danger data-[focus=true]:bg-danger/10 data-[focus=true]:text-danger"
-          >
-            {userMenu.logout}
-          </DropdownItem>
-        </DropdownSection>
-      </DropdownMenu>
-    </Dropdown>
+        <MenuItem onClick={() => handleUserMenuItemAction('settings')}>
+          <ListItemIcon><Settings size={18} /></ListItemIcon>
+          <ListItemText>{userMenu.settings}</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => handleUserMenuItemAction('integrations')}>
+          <ListItemIcon><Plug size={18} /></ListItemIcon>
+          <ListItemText>{userMenu.integrations}</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => handleUserMenuItemAction('trash')}>
+          <ListItemIcon><Trash2 size={18} /></ListItemIcon>
+          <ListItemText>{trashLabel}</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => handleUserMenuItemAction('language')}>
+          <ListItemIcon><Globe size={18} /></ListItemIcon>
+          <ListItemText>{userMenu.language}</ListItemText>
+          <span style={{ fontSize: '0.875rem', color: 'var(--muted-foreground, #64748b)', marginLeft: 8 }}>{languageLabel}</span>
+        </MenuItem>
+
+        {isAdmin || canAccessWorkspaceActivity(currentWorkspace?.memberRole) ? (
+          <MenuItem onClick={() => handleUserMenuItemAction('admin')}>
+            <ListItemIcon><Zap size={18} /></ListItemIcon>
+            <ListItemText>{userMenu.admin}</ListItemText>
+          </MenuItem>
+        ) : null}
+
+        <MenuItem onClick={() => handleUserMenuItemAction('knowledgeBase')}>
+          <ListItemIcon><BookOpen size={18} /></ListItemIcon>
+          <ListItemText>{userMenu.knowledgeBase}</ListItemText>
+        </MenuItem>
+
+        <Divider />
+
+        <MenuItem
+          onClick={() => handleUserMenuItemAction('logout')}
+          sx={{ color: 'error.main', '& .MuiListItemIcon-root': { color: 'error.main' } }}
+        >
+          <ListItemIcon><LogOut size={18} /></ListItemIcon>
+          <ListItemText>{userMenu.logout}</ListItemText>
+        </MenuItem>
+      </MuiMenu>
+    </>
   );
 
   return (
-    <header className="border-b border-white/10 bg-[#1a2130] shadow-sm transition-all duration-300">
-      <div className="container-shared px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-14">
-          <div className="flex items-center">
+    <header className="lumio-navigation">
+      <div className="lumio-navigation__inner">
+        <div className="lumio-navigation__bar">
+          <div className="lumio-navigation__brand">
             <Link
               href={DEFAULT_APP_ROUTE}
-              className="shrink-0 flex items-center gap-3"
+              className="lumio-navigation__logo-link"
               data-tour-id="brand"
             >
-              <div className="flex items-center justify-center w-8 h-8 bg-[#0a66c2] rounded-[10px] border-[2px] border-white shrink-0">
+              <div className="lumio-navigation__logo-icon">
                 <svg
                   width="14"
                   height="14"
@@ -606,65 +581,56 @@ export default function Navigation() {
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </div>
-              <span
-                className={`text-white text-[19px] tracking-[0.2em] font-extrabold ${nunito.className}`}
-              >
+              <span className={`lumio-navigation__logo-text ${nunito.className}`}>
                 LUMIO
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:ml-6 md:flex md:space-x-1" data-tour-id="primary-nav">
+            <nav className="lumio-navigation__primary-nav" data-tour-id="primary-nav">
               {visibleNavItems.map(item => {
                 const isActive = isNavItemActive(item.path);
                 return (
                   <Link
                     key={item.path}
                     href={item.path}
-                    className={`
-                        group inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[13px] font-medium transition-colors duration-200
-                        ${
-                          isActive
-                            ? 'bg-primary/15 text-white'
-                            : 'text-slate-400 hover:text-white hover:bg-primary/10'
-                        }
-                      `}
+                    className={`lumio-navigation__nav-item${isActive ? ' lumio-navigation__nav-item--active' : ''}`}
                   >
-                    <span className="opacity-70 group-hover:opacity-100 transition-opacity">
+                    <span className="lumio-navigation__nav-icon">
                       {item.icon}
                     </span>
-                    <span className="hidden lg:block">{item.label}</span>
+                    <span className="lumio-navigation__nav-label">{item.label}</span>
                   </Link>
                 );
               })}
             </nav>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-4">
+          <div className="lumio-navigation__actions">
+            <div className="lumio-navigation__desktop-actions">
               <>
                 <NotificationDropdown />
                 <TourMenu
                   trigger={
                     <button
-                      className="h-8 w-8 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:bg-primary/10 transition-colors"
+                      className="lumio-navigation__icon-btn"
                       title="Help"
                     >
-                      <QuestionMarkIcon sx={{ fontSize: 20 }} />
+                      <HelpCircle size={20} />
                     </button>
                   }
                 />
               </>
 
               {/* User Menu */}
-              <div className="relative ml-3">{renderUserActionsMenu()}</div>
+              <div className="lumio-navigation__user-menu-area">{renderUserActionsMenu()}</div>
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center md:hidden">
+            <div className="lumio-navigation__mobile-toggle">
               <button
                 onClick={() => setMobileMenuOpen(prev => !prev)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-primary/10 focus:outline-none"
+                className="lumio-navigation__mobile-btn"
                 data-tour-id="mobile-menu-toggle"
                 aria-label="Open menu"
                 aria-expanded={mobileMenuOpen}
@@ -677,146 +643,132 @@ export default function Navigation() {
       </div>
 
       {/* Mobile Drawer (slides from right) */}
-      <div className="md:hidden">
-        {mobileMenuMounted ? (
-          <div className={`fixed inset-0 z-[70] ${mobileMenuVisible ? '' : 'pointer-events-none'}`}>
-            <div
-              className={`absolute inset-0 bg-black/30 transition-opacity duration-200 ${
-                mobileMenuVisible ? 'opacity-100' : 'opacity-0'
-              }`}
-              role="button"
-              tabIndex={0}
-              aria-label="Close menu"
-              onClick={() => setMobileMenuOpen(false)}
-              onKeyDown={event => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setMobileMenuOpen(false);
-                }
-              }}
-            />
-
-            <dialog
-              className={`fixed inset-y-0 right-0 left-auto w-[88vw] max-w-sm border-l border-border bg-card text-card-foreground shadow-2xl transform-gpu will-change-transform transition-transform duration-300 ease-out ${
-                mobileMenuVisible ? 'translate-x-0' : 'translate-x-full'
-              }`}
-              style={{
-                padding: 0,
-                margin: 0,
-                left: 'auto',
-              }}
-              aria-modal="true"
-              open
-              onCancel={event => {
+      {mobileMenuMounted ? (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 70, pointerEvents: mobileMenuVisible ? undefined : 'none' }}
+        >
+          <div
+            className={`lumio-navigation__mobile-drawer-overlay${mobileMenuVisible ? ' lumio-navigation__mobile-drawer-overlay--visible' : ' lumio-navigation__mobile-drawer-overlay--hidden'}`}
+            role="button"
+            tabIndex={0}
+            aria-label="Close menu"
+            onClick={() => setMobileMenuOpen(false)}
+            onKeyDown={event => {
+              if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 setMobileMenuOpen(false);
-              }}
-            >
-              <div className="flex items-center justify-between border-b border-border bg-card px-4 py-4">
-                <div className="min-w-0">{renderUserActionsMenu(true)}</div>
-                <div className="flex items-center gap-2">
-                  <NotificationDropdown
-                    triggerClassName="h-9 w-9 text-muted-foreground hover:bg-muted hover:text-foreground"
-                    iconSize={22}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
-                    aria-label="Close menu"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
+              }
+            }}
+          />
+
+          <dialog
+            className={`lumio-navigation__mobile-drawer${mobileMenuVisible ? '' : ' lumio-navigation__mobile-drawer--closed'}`}
+            aria-modal="true"
+            open
+            onCancel={event => {
+              event.preventDefault();
+              setMobileMenuOpen(false);
+            }}
+          >
+            <div className="lumio-navigation__mobile-drawer-header">
+              <div style={{ minWidth: 0 }}>{renderUserActionsMenu(true)}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <NotificationDropdown
+                  iconSize={22}
+                />
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="lumio-navigation__mobile-drawer-close-btn"
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </button>
               </div>
+            </div>
 
-              <div className="h-[calc(100vh-64px)] overflow-y-auto bg-card px-2 py-2">
-                <div className="pt-1 pb-2">
-                  {visibleNavItems.map(item => {
-                    const isActive = isNavItemActive(item.path);
+            <div className="lumio-navigation__mobile-drawer-body">
+              <div style={{ paddingTop: 4, paddingBottom: 8 }}>
+                {visibleNavItems.map(item => {
+                  const isActive = isNavItemActive(item.path);
 
-                    return (
-                      <Link
-                        key={item.path}
-                        href={item.path}
-                        className={`flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium transition-colors ${
-                          isActive ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
-                        }`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <span className={isActive ? 'text-primary' : 'text-muted-foreground'}>
-                          {item.icon}
-                        </span>
-                        <span className="flex-1">{item.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-
-                <div className="my-2 h-px bg-border" />
-
-                <div className="bg-card px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Theme
-                </div>
-
-                {(
-                  [
-                    {
-                      key: 'light' as const,
-                      label: 'Light',
-                      icon: <Sun size={18} />,
-                    },
-                    {
-                      key: 'dark' as const,
-                      label: 'Dark',
-                      icon: <Moon size={18} />,
-                    },
-                    {
-                      key: 'auto' as const,
-                      label: 'Auto',
-                      icon: <Clock3 size={18} />,
-                    },
-                  ] as const
-                ).map(opt => {
-                  const active = selectedTheme === opt.key;
                   return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      className={`w-full flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium transition-colors ${
-                        active ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
-                      }`}
-                      onClick={() => void handleThemePreferenceChange(opt.key)}
+                    <Link
+                      key={item.path}
+                      href={item.path}
+                      className={`lumio-navigation__mobile-nav-item${isActive ? ' lumio-navigation__mobile-nav-item--active' : ''}`}
+                      onClick={() => setMobileMenuOpen(false)}
                     >
-                      <span className={active ? 'text-primary' : 'text-muted-foreground'}>
-                        {opt.icon}
+                      <span className={isActive ? 'lumio-navigation__mobile-nav-icon--active' : 'lumio-navigation__mobile-nav-icon'}>
+                        {item.icon}
                       </span>
-                      <span className="flex-1 text-left">{opt.label}</span>
-                      {active && <Check size={18} />}
-                    </button>
+                      <span style={{ flex: 1 }}>{item.label}</span>
+                    </Link>
                   );
                 })}
-
-                <div className="my-2 h-px bg-border" />
-
-                <TourMenu
-                  trigger={
-                    <button
-                      type="button"
-                      className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-base font-medium text-foreground transition-colors hover:bg-muted"
-                    >
-                      <PlayCircle size={18} className="text-muted-foreground" />
-                      <span className="flex-1 text-left">
-                        {resolveLabel(getRecord(nav)?.tours, 'Tours')}
-                      </span>
-                    </button>
-                  }
-                />
               </div>
-            </dialog>
-          </div>
-        ) : null}
-      </div>
+
+              <div className="lumio-navigation__mobile-divider" />
+
+              <div className="lumio-navigation__mobile-section-label">
+                Theme
+              </div>
+
+              {(
+                [
+                  {
+                    key: 'light' as const,
+                    label: 'Light',
+                    icon: <Sun size={18} />,
+                  },
+                  {
+                    key: 'dark' as const,
+                    label: 'Dark',
+                    icon: <Moon size={18} />,
+                  },
+                  {
+                    key: 'auto' as const,
+                    label: 'Auto',
+                    icon: <Clock3 size={18} />,
+                  },
+                ] as const
+              ).map(opt => {
+                const active = selectedTheme === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`lumio-navigation__mobile-menu-btn${active ? ' lumio-navigation__mobile-menu-btn--active' : ''}`}
+                    onClick={() => void handleThemePreferenceChange(opt.key)}
+                  >
+                    <span className={active ? 'lumio-navigation__mobile-nav-icon--active' : 'lumio-navigation__mobile-nav-icon'}>
+                      {opt.icon}
+                    </span>
+                    <span style={{ flex: 1, textAlign: 'left' }}>{opt.label}</span>
+                    {active && <Check size={18} />}
+                  </button>
+                );
+              })}
+
+              <div className="lumio-navigation__mobile-divider" />
+
+              <TourMenu
+                trigger={
+                  <button
+                    type="button"
+                    className="lumio-navigation__mobile-menu-btn"
+                  >
+                    <PlayCircle size={18} className="lumio-navigation__mobile-nav-icon" />
+                    <span style={{ flex: 1, textAlign: 'left' }}>
+                      {resolveLabel(getRecord(nav)?.tours, 'Tours')}
+                    </span>
+                  </button>
+                }
+              />
+            </div>
+          </dialog>
+        </div>
+      ) : null}
 
       {portalReady && (
         <DrawerShell
@@ -826,17 +778,17 @@ export default function Navigation() {
             setLanguageSearch('');
           }}
           title={
-            <div className="flex items-center gap-3">
+            <div className="lumio-navigation__lang-header">
               <button
                 type="button"
                 onClick={() => {
                   setLanguageModalOpen(false);
                   setLanguageSearch('');
                 }}
-                className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                className="lumio-navigation__lang-back-btn"
                 aria-label="Close language drawer"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft style={{ width: 20, height: 20 }} />
               </button>
               <span>{languageModal.title}</span>
             </div>
@@ -844,22 +796,21 @@ export default function Navigation() {
           position="right"
           width="lg"
           showCloseButton={false}
-          className="max-w-full border-l-0 bg-card sm:max-w-lg"
         >
-          <div className="flex h-full flex-col">
-            <div className="flex-1 space-y-4 overflow-y-auto pb-4">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          <div className="lumio-navigation__lang-body">
+            <div className="lumio-navigation__lang-scroll">
+              <div className="lumio-navigation__lang-search-wrapper">
+                <Search className="lumio-navigation__lang-search-icon" />
                 <input
                   type="text"
                   value={languageSearch}
                   onChange={event => setLanguageSearch(event.target.value)}
                   placeholder="Search"
-                  className="w-full rounded-2xl border border-primary bg-card py-3 pl-11 pr-4 text-base text-foreground outline-none"
+                  className="lumio-navigation__lang-search-input"
                 />
               </div>
 
-              <div className="space-y-2">
+              <div className="lumio-navigation__lang-list">
                 {filteredLanguages.length > 0 ? (
                   filteredLanguages.map(lang => {
                     const selected = normalizedLocale === lang.code;
@@ -868,17 +819,15 @@ export default function Navigation() {
                         key={lang.code}
                         type="button"
                         onClick={() => handleLanguageSelect(lang.code)}
-                        className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
-                          selected ? 'bg-muted text-foreground' : 'text-foreground hover:bg-muted'
-                        }`}
+                        className={`lumio-navigation__lang-option${selected ? ' lumio-navigation__lang-option--selected' : ''}`}
                       >
-                        <span className="font-medium">{lang.label}</span>
-                        {selected ? <Check className="h-5 w-5 text-primary" /> : null}
+                        <span className="lumio-navigation__lang-option-label">{lang.label}</span>
+                        {selected ? <Check style={{ width: 20, height: 20, color: 'var(--color-primary)' }} /> : null}
                       </button>
                     );
                   })
                 ) : (
-                  <p className="rounded-xl bg-card px-4 py-3 text-sm text-muted-foreground">
+                  <p className="lumio-navigation__lang-empty">
                     No languages found
                   </p>
                 )}
