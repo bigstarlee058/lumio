@@ -9,8 +9,6 @@
 @import "./styles/blocks/lumio-language-switcher.css";
 @import "./styles/blocks/lumio-breadcrumbs.css";
 @import "./styles/blocks/lumio-audit-panel.css";
-@plugin "./hero.ts";
-@source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 
 /* Use `.dark` class for Tailwind's `dark:` variant (so it follows our app theme toggle, not OS preference). */
 @custom-variant dark (&:where(.dark, .dark *));

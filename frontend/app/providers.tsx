@@ -6,8 +6,6 @@ import {
   getStoredThemePreference,
   resolveThemePreference,
 } from '@/app/lib/theme-preference';
-import { HeroUIProvider } from '@heroui/react';
-import { MantineProvider } from '@mantine/core';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ThemeProvider } from '@mui/material/styles';
@@ -22,7 +20,6 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { WorkspaceProvider, useWorkspace } from './contexts/WorkspaceContext';
 import { useAutoTheme } from './hooks/useAutoTheme';
 import { useHTMLLanguage } from './hooks/useHTMLLanguage';
-import { mantineCssVariablesResolver, mantineTheme } from './mantine-theme';
 import { createAppTheme } from './theme';
 import { TourAutoStarter } from './tours/components/TourAutoStarter';
 
@@ -109,7 +106,6 @@ export function Providers({
   const [mounted, setMounted] = useState(false);
   const [locale, setLocale] = useState<AppLocale>(() => readLocaleFromCookie() ?? initialLocale);
   const paletteMode = mounted && resolvedTheme === 'dark' ? 'dark' : 'light';
-  const colorScheme = paletteMode === 'dark' ? 'dark' : 'light';
   const muiTheme = useMemo(() => createAppTheme(paletteMode), [paletteMode]);
 
   useEffect(() => {
@@ -135,29 +131,20 @@ export function Providers({
   };
 
   return (
-    <HeroUIProvider>
-      <IntlayerProviderContent
-        locale={locale}
-        setLocale={handleLocaleChange}
-      >
-        <HTMLLanguageSync />
-        <ThemePreferenceSync />
-        <TourAutoStarter />
-        <MantineProvider
-          theme={mantineTheme}
-          cssVariablesResolver={mantineCssVariablesResolver}
-          forceColorScheme={colorScheme}
-          defaultColorScheme="light"
-        >
-          <ThemeProvider theme={muiTheme}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <WorkspaceProvider>
-                <WorkspaceScopedProviders mounted={mounted}>{children}</WorkspaceScopedProviders>
-              </WorkspaceProvider>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </MantineProvider>
-      </IntlayerProviderContent>
-    </HeroUIProvider>
+    <IntlayerProviderContent
+      locale={locale}
+      setLocale={handleLocaleChange}
+    >
+      <HTMLLanguageSync />
+      <ThemePreferenceSync />
+      <TourAutoStarter />
+      <ThemeProvider theme={muiTheme}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <WorkspaceProvider>
+            <WorkspaceScopedProviders mounted={mounted}>{children}</WorkspaceScopedProviders>
+          </WorkspaceProvider>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </IntlayerProviderContent>
   );
 }

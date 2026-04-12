@@ -7,14 +7,6 @@ const workspaceState = vi.hoisted(() => ({
   currentWorkspaceId: 'workspace-1',
 }));
 
-vi.mock('@heroui/react', () => ({
-  HeroUIProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
-vi.mock('@mantine/core', () => ({
-  MantineProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
 vi.mock('@mui/material/styles', () => ({
   ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
@@ -78,11 +70,6 @@ vi.mock('./hooks/useAutoTheme', () => ({
 
 vi.mock('./hooks/useHTMLLanguage', () => ({
   useHTMLLanguage: vi.fn(),
-}));
-
-vi.mock('./mantine-theme', () => ({
-  mantineCssVariablesResolver: () => ({}),
-  mantineTheme: {},
 }));
 
 vi.mock('./theme', () => ({

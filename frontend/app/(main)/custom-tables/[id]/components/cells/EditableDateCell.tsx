@@ -1,9 +1,8 @@
 'use client';
 
-import { DatePicker } from '@heroui/date-picker';
-import { parseDate } from '@internationalized/date';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import type { Column, Row, Table } from '@tanstack/react-table';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { type CSSProperties, useState } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
@@ -35,16 +34,10 @@ const normalizeDateValue = (value: unknown) => {
   return format(parsed, 'yyyy-MM-dd');
 };
 
-const toCalendarDate = (value: string | null) => {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    return parseDate(value);
-  } catch {
-    return null;
-  }
+const toDate = (value: string | null): Date | null => {
+  if (!value) return null;
+  const d = new Date(value);
+  return isValid(d) ? d : null;
 };
 
 export function EditableDateCell({ row, column, onUpdateCell, style }: EditableDateCellProps) {
@@ -88,27 +81,25 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
       <div className="relative z-20 min-w-[220px]" style={style}>
         <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
           <DatePicker
-            aria-label="Select date"
-            value={toCalendarDate(selectedValue)}
+            value={toDate(selectedValue)}
             onChange={date => {
-              const nextValue = date ? date.toString() : null;
+              const nextValue =
+                date && isValid(date) ? format(date, 'yyyy-MM-dd') : null;
               setSelectedValue(nextValue);
               void handleSave(nextValue);
             }}
-            isOpen={isEditing}
-            onOpenChange={open => {
-              if (!open && !isSaving) {
-                setIsEditing(false);
-              }
+            open={isEditing}
+            onOpen={() => setIsEditing(true)}
+            onClose={() => {
+              if (!isSaving) setIsEditing(false);
             }}
-            granularity="day"
-            showMonthAndYearPickers
-            size="sm"
-            variant="bordered"
-            isDisabled={isSaving}
-            className="w-full"
-            classNames={{
-              inputWrapper: 'bg-white dark:bg-gray-800',
+            disabled={isSaving}
+            slotProps={{
+              textField: {
+                size: 'small',
+                fullWidth: true,
+                'aria-label': 'Select date',
+              },
             }}
           />
           <div className="mt-2 flex justify-end gap-2 border-t border-gray-200 pt-2 dark:border-gray-700">

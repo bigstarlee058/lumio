@@ -192,13 +192,17 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
   };
 });
 
-vi.mock('@heroui/modal', () => ({
-  Modal: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  ModalBody: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  ModalContent: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  ModalFooter: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-  ModalHeader: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
-}));
+vi.mock('@mui/material', async () => {
+  const actual = await vi.importActual<typeof import('@mui/material')>('@mui/material');
+  return {
+    ...actual,
+    Dialog: ({ open, children }: { open: boolean; children?: React.ReactNode }) =>
+      open ? <div data-testid="create-from-statements-modal">{children}</div> : null,
+    DialogTitle: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    DialogContent: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+    DialogActions: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
+  };
+});
 
 describe('CustomTablesPage', () => {
   it('uses dark-safe empty-state surfaces instead of light-only cards', async () => {

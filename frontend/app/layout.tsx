@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import '@mantine/core/styles.css';
 import { IBM_Plex_Sans, Inter, Manrope, Nunito, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';

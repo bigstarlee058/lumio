@@ -27,9 +27,7 @@ import {
   type CustomTableSourceFilter,
   type CustomTableViewEventDetail,
 } from '@/app/lib/custom-table-actions';
-import { Button as HeroButton } from '@heroui/button';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
-import { Icon } from '@iconify/react';
+import { Tag as CategoryIcon } from 'lucide-react';
 import {
   Box,
   Button,
@@ -1069,7 +1067,7 @@ export default function CustomTablesPage() {
                       title={openLabel}
                     >
                       {table.category?.icon ? (
-                        <Icon icon={table.category.icon} className="h-5 w-5 text-gray-700" />
+                        <CategoryIcon size={20} className="text-gray-700" />
                       ) : (
                         <TableIcon className="h-5 w-5 text-gray-600" />
                       )}
@@ -1107,15 +1105,14 @@ export default function CustomTablesPage() {
                     <div className="flex items-center justify-end gap-2 md:w-[360px] md:shrink-0">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <HeroButton
-                            size="sm"
-                            color="primary"
-                            isDisabled={exportingTableId === table.id}
+                          <button
+                            type="button"
+                            disabled={exportingTableId === table.id}
                             onClick={event => event.stopPropagation()}
-                            className="font-medium"
+                            className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50"
                           >
                             {exportLabel}
-                          </HeroButton>
+                          </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="min-w-[180px]" align="end">
                           <DropdownMenuItem
@@ -1139,44 +1136,40 @@ export default function CustomTablesPage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <HeroButton
-                        size="sm"
-                        variant="bordered"
-                        className="font-medium border-gray-200 text-gray-700 hover:border-primary hover:text-primary"
+                      <button
+                        type="button"
+                        className="inline-flex items-center rounded-md border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary"
                         onClick={event => {
                           event.stopPropagation();
                           router.push(`/custom-tables/${table.id}`);
                         }}
                       >
                         {openLabel}
-                      </HeroButton>
+                      </button>
 
-                      <HeroButton
-                        size="sm"
-                        variant="light"
-                        className="text-gray-500 font-medium hover:text-gray-800"
-                        isDisabled={updatingTableId === table.id}
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50"
+                        disabled={updatingTableId === table.id}
                         onClick={event => {
                           event.stopPropagation();
                           void handleUpdateData(table);
                         }}
-                        startContent={<RefreshCcw className="h-3.5 w-3.5" />}
                       >
+                        <RefreshCcw className="h-3.5 w-3.5" />
                         {updateDataLabel}
-                      </HeroButton>
+                      </button>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <HeroButton
-                            isIconOnly
-                            size="sm"
-                            variant="bordered"
-                            className="border-gray-200 text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-md border border-gray-200 p-1.5 text-gray-600 hover:border-gray-300 hover:text-gray-900"
                             onClick={event => event.stopPropagation()}
                             aria-label="More actions"
                           >
                             <Ellipsis className="h-4 w-4" />
-                          </HeroButton>
+                          </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="min-w-[180px]" align="end">
                           <DropdownMenuItem
@@ -1227,39 +1220,27 @@ export default function CustomTablesPage() {
           )}
         </div>
       </div>
-      <Modal
-        isOpen={createFromStatementsOpen}
-        onOpenChange={next => {
-          if (!next) {
-            closeCreateFromStatements();
-          }
-        }}
-        size="5xl"
-        placement="center"
-        backdrop="opaque"
-        scrollBehavior="inside"
-        classNames={{
-          base: 'rounded-xl border border-gray-200 shadow-xl',
-          backdrop: 'bg-gray-900/40 backdrop-blur-[1px]',
-          closeButton:
-            'text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors',
-        }}
+      <Dialog
+        open={createFromStatementsOpen}
+        onClose={closeCreateFromStatements}
+        maxWidth="lg"
+        fullWidth
+        scroll="paper"
+        PaperProps={{ sx: { borderRadius: 3, border: '1px solid', borderColor: 'divider' } }}
       >
-        <ModalContent>
-          <>
-            <ModalHeader className="flex-col items-start gap-0 border-b border-gray-200 px-6 py-5">
-              <div className="text-3xl font-semibold text-gray-900">
-                {createFromStatementsLabels.title}
-              </div>
-              <div className="mt-1 text-sm text-gray-500">
-                {formatPaginationLabel(createFromStatementsLabels.stepCounter, {
-                  current: createFromStatementsStep,
-                  total: 2,
-                })}
-              </div>
-            </ModalHeader>
+        <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', px: 3, py: 2.5 }}>
+          <div className="text-3xl font-semibold text-gray-900">
+            {createFromStatementsLabels.title}
+          </div>
+          <div className="mt-1 text-sm text-gray-500">
+            {formatPaginationLabel(createFromStatementsLabels.stepCounter, {
+              current: createFromStatementsStep,
+              total: 2,
+            })}
+          </div>
+        </DialogTitle>
 
-            <ModalBody className="space-y-4 px-6 py-5">
+        <DialogContent dividers sx={{ px: 3, py: 2.5 }}>
               <div className="grid grid-cols-2 gap-2">
                 <div
                   className={`rounded-lg border px-3 py-2 text-xs font-medium ${
@@ -1494,47 +1475,45 @@ export default function CustomTablesPage() {
                   </div>
                 </div>
               )}
-            </ModalBody>
+        </DialogContent>
 
-            <ModalFooter className="gap-2 border-t border-gray-200 px-6 py-4">
-              <Button onClick={closeCreateFromStatements} type="button">
-                {t.actions.cancel.value}
+        <DialogActions sx={{ gap: 1, borderTop: '1px solid', borderColor: 'divider', px: 3, py: 2 }}>
+          <Button onClick={closeCreateFromStatements} type="button">
+            {t.actions.cancel.value}
+          </Button>
+
+          {createFromStatementsStep === 1 ? (
+            <Button
+              variant="contained"
+              disabled={!selectedStatementSummary.selectedCount}
+              onClick={() => setCreateFromStatementsStep(2)}
+              type="button"
+            >
+              {createFromStatementsLabels.next}
+            </Button>
+          ) : (
+            <>
+              <Button onClick={() => setCreateFromStatementsStep(1)} type="button">
+                {createFromStatementsLabels.back}
               </Button>
-
-              {createFromStatementsStep === 1 ? (
-                <Button
-                  variant="contained"
-                  disabled={!selectedStatementSummary.selectedCount}
-                  onClick={() => setCreateFromStatementsStep(2)}
-                  type="button"
-                >
-                  {createFromStatementsLabels.next}
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={() => setCreateFromStatementsStep(1)} type="button">
-                    {createFromStatementsLabels.back}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    disabled={!selectedStatementPayloadIds.length || creatingFromStatements}
-                    onClick={handleCreateFromStatements}
-                    type="button"
-                  >
-                    {creatingFromStatements
-                      ? createFromStatementsLabels.creating
-                      : selectedStatementSummary.totalRows > 0
-                        ? formatPaginationLabel(createFromStatementsLabels.createWithRows, {
-                            rows: selectedStatementSummary.totalRows,
-                          })
-                        : t.actions.create.value}
-                  </Button>
-                </>
-              )}
-            </ModalFooter>
-          </>
-        </ModalContent>
-      </Modal>
+              <Button
+                variant="contained"
+                disabled={!selectedStatementPayloadIds.length || creatingFromStatements}
+                onClick={handleCreateFromStatements}
+                type="button"
+              >
+                {creatingFromStatements
+                  ? createFromStatementsLabels.creating
+                  : selectedStatementSummary.totalRows > 0
+                    ? formatPaginationLabel(createFromStatementsLabels.createWithRows, {
+                        rows: selectedStatementSummary.totalRows,
+                      })
+                    : t.actions.create.value}
+              </Button>
+            </>
+          )}
+        </DialogActions>
+      </Dialog>
       {createOpen && (
         <Dialog open={createOpen} onClose={() => setCreateOpen(false)} fullWidth maxWidth="md">
           <DialogTitle>{t.create.title}</DialogTitle>

@@ -1,8 +1,7 @@
 'use client';
 
-import { Icon } from '@iconify/react';
 import type { Column, Table } from '@tanstack/react-table';
-import { X } from 'lucide-react';
+import { Tag, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { CustomTableGridRow } from '../../utils/stylingUtils';
 
@@ -111,7 +110,7 @@ export function EditableHeader({
             icon.startsWith('/uploads/') ? (
               <img src={icon} alt="" className="h-4 w-4 object-contain" />
             ) : (
-              <Icon icon={icon} className="h-4 w-4" />
+              <Tag size={16} />
             )}
           </span>
         )}

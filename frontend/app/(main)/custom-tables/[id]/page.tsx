@@ -3,9 +3,8 @@
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { enUS, kk, ru } from 'date-fns/locale';
-import { CheckCircle, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
+import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -550,7 +549,7 @@ export default function CustomTableDetailPage() {
             onClick={handleBackNavigation}
             className="inline-flex shrink-0 items-center gap-1.5 pb-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
           >
-            <ArrowBackIcon sx={{ fontSize: 16 }} />
+            <ArrowBackIcon size={16} />
             <span>{t.nav.back.value}</span>
           </button>
 

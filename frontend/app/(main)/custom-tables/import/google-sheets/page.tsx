@@ -7,8 +7,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
-import { Icon } from '@iconify/react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Tag as CategoryIconFallback } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -509,7 +508,7 @@ export default function GoogleSheetsImportPage() {
                     {(() => {
                       const selected = categories.find(c => c.id === categoryId);
                       return selected?.icon ? (
-                        <Icon icon={selected.icon} className="h-4 w-4 text-gray-900" />
+                        <CategoryIconFallback size={16} className="text-gray-900" />
                       ) : (
                         <Image
                           src="/icons/icons8-google-sheets-48.png"
