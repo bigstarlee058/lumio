@@ -1,8 +1,7 @@
 'use client';
 
-import { DatePicker } from '@heroui/date-picker';
-import { type DateValue, parseDate } from '@internationalized/date';
-import { format } from 'date-fns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format, isValid, parseISO } from 'date-fns';
 
 interface CustomDatePickerProps {
   value?: string | null;
@@ -15,13 +14,14 @@ interface CustomDatePickerProps {
 
 const DATE_VALUE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-const normalizeToDateString = (value?: string | null) => {
+const normalizeToDate = (value?: string | null): Date | null => {
   if (!value) {
     return null;
   }
 
   if (DATE_VALUE_REGEX.test(value)) {
-    return value;
+    const d = parseISO(value);
+    return isValid(d) ? d : null;
   }
 
   const parsed = new Date(value);
@@ -29,20 +29,7 @@ const normalizeToDateString = (value?: string | null) => {
     return null;
   }
 
-  return format(parsed, 'yyyy-MM-dd');
-};
-
-const toCalendarDate = (value?: string | null) => {
-  const normalized = normalizeToDateString(value);
-  if (!normalized) {
-    return null;
-  }
-
-  try {
-    return parseDate(normalized);
-  } catch {
-    return null;
-  }
+  return parsed;
 };
 
 export default function CustomDatePicker({
@@ -53,35 +40,32 @@ export default function CustomDatePicker({
   helperText,
   containerTestId,
 }: CustomDatePickerProps) {
-  const calendarValue = toCalendarDate(value);
+  const dateValue = normalizeToDate(value);
 
-  const handleChange = (date: DateValue | null) => {
-    onChange(date ? date.toString() : '');
+  const handleChange = (date: Date | null) => {
+    if (date && isValid(date)) {
+      onChange(format(date, 'yyyy-MM-dd'));
+    } else {
+      onChange('');
+    }
   };
 
   return (
     <div data-testid={containerTestId}>
-      {label ? (
-        <span className="text-xs text-gray-500 block mb-1 font-medium ml-1">{label}</span>
-      ) : null}
       <DatePicker
-        aria-label={label ?? placeholder ?? 'Date'}
-        value={calendarValue}
+        label={label}
+        value={dateValue}
         onChange={handleChange}
-        granularity="day"
-        showMonthAndYearPickers
-        className="w-full"
-        classNames={{
-          base: 'w-full',
-          inputWrapper:
-            'h-10 min-h-[40px] rounded-md border border-gray-300 bg-white px-3 py-0 shadow-none transition-colors hover:border-[var(--mui-palette-primary-main)] group-data-[focus=true]:border-[var(--mui-palette-primary-main)] group-data-[focus=true]:ring-0',
-          innerWrapper: 'h-full gap-x-2',
-          input: 'text-sm text-gray-900',
-          segment: 'text-sm text-gray-900 leading-none',
-          selectorButton: 'h-8 w-8 min-w-8 text-gray-500',
+        slotProps={{
+          textField: {
+            fullWidth: true,
+            size: 'small',
+            helperText: helperText,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            placeholder: placeholder,
+          } as any,
         }}
       />
-      {helperText ? <p className="mt-1 ml-3.5 text-xs text-gray-500">{helperText}</p> : null}
     </div>
   );
 }

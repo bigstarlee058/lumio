@@ -299,7 +299,7 @@
   font-size: 16px;
   font-weight: 500;
   text-decoration: none;
-  transition: colors 200ms;
+  transition: color 200ms, background-color 200ms;
   color: var(--foreground);
 }
 

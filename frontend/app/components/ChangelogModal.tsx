@@ -30,7 +30,7 @@ const markdownComponents: Components = {
     <Typography
       variant="h4"
       component="h1"
-      sx={{ mb: 2, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+      sx={{ mb: 2, fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}
     >
       {children}
     </Typography>
@@ -39,7 +39,7 @@ const markdownComponents: Components = {
     <Typography
       variant="h5"
       component="h2"
-      sx={{ mb: 1.5, mt: 4, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+      sx={{ mb: 1.5, mt: 4, fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}
     >
       {children}
     </Typography>
@@ -48,20 +48,20 @@ const markdownComponents: Components = {
     <Typography
       variant="h6"
       component="h3"
-      sx={{ mb: 1, mt: 3, fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}
+      sx={{ mb: 1, mt: 3, fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}
     >
       {children}
     </Typography>
   ),
   p: ({ children }) => (
-    <Typography component="p" sx={{ mb: 2, color: '#2f4a3f' }}>
+    <Typography component="p" sx={{ mb: 2, color: 'text.primary' }}>
       {children}
     </Typography>
   ),
   ul: ({ children }) => (
     <Box
       component="ul"
-      sx={{ mb: 2.5, pl: 3, color: '#2f4a3f', listStyleType: 'disc', '& li': { mb: 0.5 } }}
+      sx={{ mb: 2.5, pl: 3, color: 'text.primary', listStyleType: 'disc', '& li': { mb: 0.5 } }}
     >
       {children}
     </Box>
@@ -69,21 +69,21 @@ const markdownComponents: Components = {
   ol: ({ children }) => (
     <Box
       component="ol"
-      sx={{ mb: 2.5, pl: 3, color: '#2f4a3f', listStyleType: 'decimal', '& li': { mb: 0.5 } }}
+      sx={{ mb: 2.5, pl: 3, color: 'text.primary', listStyleType: 'decimal', '& li': { mb: 0.5 } }}
     >
       {children}
     </Box>
   ),
   li: ({ children }) => <li>{children}</li>,
   strong: ({ children }) => (
-    <Box component="strong" sx={{ fontWeight: 600, color: '#17352b' }}>
+    <Box component="strong" sx={{ fontWeight: 600, color: 'text.primary' }}>
       {children}
     </Box>
   ),
   code: ({ children }) => (
     <Box
       component="code"
-      sx={{ bgcolor: '#edf3ed', px: 0.75, py: 0.25, fontSize: 13, color: '#1a4638', borderRadius: 0 }}
+      sx={{ bgcolor: 'action.hover', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: 0 }}
     >
       {children}
     </Box>
@@ -119,7 +119,8 @@ export function ChangelogModal({
             alignItems: 'flex-start',
             justifyContent: 'space-between',
             gap: 2,
-            borderBottom: '1px solid #e4e6e3',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
             px: 2.5,
             py: 2,
           }}
@@ -127,14 +128,14 @@ export function ChangelogModal({
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography
               variant="caption"
-              sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#6f7a73' }}
+              sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'text.secondary' }}
             >
               {releaseLabel}
             </Typography>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 600, lineHeight: 1.25, color: '#0f3428' }}>
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}>
               {entry.title}
             </Typography>
-            <Typography variant="body2" sx={{ color: '#607168' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {formattedDate}
             </Typography>
           </Box>
@@ -142,26 +143,27 @@ export function ChangelogModal({
           <IconButton
             onClick={onClose}
             aria-label={closeLabel}
-            sx={{ color: '#9aa39e', '&:hover': { bgcolor: '#eef2ee', color: '#6f7773' } }}
+            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}
           >
             <X size={30} strokeWidth={2.4} />
           </IconButton>
         </Box>
 
-        <Box sx={{ minHeight: 0, flex: 1, overflowY: 'auto', bgcolor: '#f5f7f4', px: 2.5, py: 3.5 }}>
+        <Box sx={{ minHeight: 0, flex: 1, overflowY: 'auto', bgcolor: 'grey.100', px: 2.5, py: 3.5 }}>
           <Box
             component="article"
             sx={{
               mx: 'auto',
               width: '100%',
               maxWidth: '56rem',
-              border: '1px solid #dde5dd',
+              border: '1px solid',
+              borderColor: 'divider',
               bgcolor: 'background.paper',
               px: { xs: 3, sm: 4 },
               py: { xs: 3, sm: 4 },
               fontSize: 15,
               lineHeight: 1.75,
-              color: '#17352b',
+              color: 'text.primary',
             }}
           >
             <div className="changelog-markdown">

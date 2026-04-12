@@ -177,7 +177,7 @@ export default function Navigation() {
         },
       ];
     });
-  }, [getText, tour]);
+  }, [getText, tour, isMobile]);
 
   useEffect(() => setPortalReady(true), []);
 
@@ -613,6 +613,7 @@ export default function Navigation() {
                 <TourMenu
                   trigger={
                     <button
+                      type="button"
                       className="lumio-navigation__icon-btn"
                       title="Help"
                     >
