@@ -3,7 +3,7 @@
 import { useIntlayer, useLocale } from '@/app/i18n';
 import type { AuditEvent, AuditEventFilter } from '@/lib/api/audit';
 import { fetchAuditEvents } from '@/lib/api/audit';
-import { Delete, Error as ErrorIcon, Refresh } from '@mui/icons-material';
+import { AlertCircle, RefreshCw, Trash2 } from 'lucide-react';
 import {
   Box,
   Button,
@@ -237,7 +237,7 @@ export default function AdminPage() {
                   inputProps={{ 'data-tour-id': 'admin-statements-search' }}
                   sx={{ flexGrow: 1 }}
                 />
-                <Button variant="outlined" startIcon={<Refresh />} onClick={loadStatements}>
+                <Button variant="outlined" startIcon={<RefreshCw size={16} />} onClick={loadStatements}>
                   {t.refresh}
                 </Button>
               </Box>
@@ -293,17 +293,17 @@ export default function AdminPage() {
                             }}
                             disabled={!statement.errorMessage}
                           >
-                            <ErrorIcon />
+                            <AlertCircle size={18} />
                           </IconButton>
                           <IconButton
                             size="small"
                             onClick={() => handleReprocess(statement.id)}
                             disabled={statement.status === 'processing' || statementsLoading}
                           >
-                            <Refresh />
+                            <RefreshCw size={18} />
                           </IconButton>
                           <IconButton size="small" onClick={() => handleDelete(statement.id)}>
-                            <Delete />
+                            <Trash2 size={18} />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -331,192 +331,201 @@ export default function AdminPage() {
           )}
 
           {tab === 2 && (
-            <div className="min-h-screen bg-gray-50 px-6 py-8">
-              <div className="w-full space-y-6">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">{t.auditTab.title}</h2>
-                  <p className="text-sm text-gray-600">{t.auditTab.helper}</p>
-                </div>
+            <Box className="lumio-audit-panel">
+              <Box className="lumio-audit-panel__header">
+                <Typography variant="h6" component="h2">
+                  {t.auditTab.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t.auditTab.helper}
+                </Typography>
+              </Box>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
-                  <div
-                    className="h-fit rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
-                    data-tour-id="admin-audit-filters"
-                  >
-                    <h3 className="text-sm font-semibold text-gray-700">
-                      {t.auditTab.filters.title}
-                    </h3>
-                    <div className="mt-4 space-y-3 text-sm">
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.entityType}</span>
-                        <select
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.entityType || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              entityType: (event.target.value ||
-                                undefined) as AuditEventFilter['entityType'],
-                            }));
-                            setAuditPage(1);
-                          }}
-                        >
-                          <option value="">{t.auditTab.filters.all}</option>
-                          {ENTITY_TYPES.map(type => (
-                            <option key={type} value={type}>
-                              {type}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
+              <Box className="lumio-audit-panel__layout">
+                <Paper
+                  variant="outlined"
+                  className="lumio-audit-panel__filters"
+                  data-tour-id="admin-audit-filters"
+                >
+                  <Typography variant="subtitle2" gutterBottom>
+                    {t.auditTab.filters.title}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                    <TextField
+                      select
+                      label={t.auditTab.filters.entityType}
+                      size="small"
+                      value={auditFilters.entityType || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          entityType: (event.target.value ||
+                            undefined) as AuditEventFilter['entityType'],
+                        }));
+                        setAuditPage(1);
+                      }}
+                      SelectProps={{ native: true }}
+                    >
+                      <option value="">{t.auditTab.filters.all}</option>
+                      {ENTITY_TYPES.map(type => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </TextField>
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.user}</span>
-                        <input
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.actorLabel || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              actorLabel: event.target.value || undefined,
-                            }));
-                            setAuditPage(1);
-                          }}
-                        />
-                      </label>
+                    <TextField
+                      label={t.auditTab.filters.user}
+                      size="small"
+                      value={auditFilters.actorLabel || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          actorLabel: event.target.value || undefined,
+                        }));
+                        setAuditPage(1);
+                      }}
+                    />
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.action}</span>
-                        <select
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.action || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              action: (event.target.value ||
-                                undefined) as AuditEventFilter['action'],
-                            }));
-                            setAuditPage(1);
-                          }}
-                        >
-                          <option value="">{t.auditTab.filters.all}</option>
-                          {ACTIONS.map(action => (
-                            <option key={action} value={action}>
-                              {action}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
+                    <TextField
+                      select
+                      label={t.auditTab.filters.action}
+                      size="small"
+                      value={auditFilters.action || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          action: (event.target.value ||
+                            undefined) as AuditEventFilter['action'],
+                        }));
+                        setAuditPage(1);
+                      }}
+                      SelectProps={{ native: true }}
+                    >
+                      <option value="">{t.auditTab.filters.all}</option>
+                      {ACTIONS.map(action => (
+                        <option key={action} value={action}>
+                          {action}
+                        </option>
+                      ))}
+                    </TextField>
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.entityId}</span>
-                        <input
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.entityId || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              entityId: event.target.value || undefined,
-                            }));
-                            setAuditPage(1);
-                          }}
-                        />
-                      </label>
+                    <TextField
+                      label={t.auditTab.filters.entityId}
+                      size="small"
+                      value={auditFilters.entityId || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          entityId: event.target.value || undefined,
+                        }));
+                        setAuditPage(1);
+                      }}
+                    />
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.severity}</span>
-                        <select
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.severity || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              severity: (event.target.value ||
-                                undefined) as AuditEventFilter['severity'],
-                            }));
-                            setAuditPage(1);
-                          }}
-                        >
-                          <option value="">{t.auditTab.filters.all}</option>
-                          {SEVERITIES.map(severity => (
-                            <option key={severity} value={severity}>
-                              {severity}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
+                    <TextField
+                      select
+                      label={t.auditTab.filters.severity}
+                      size="small"
+                      value={auditFilters.severity || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          severity: (event.target.value ||
+                            undefined) as AuditEventFilter['severity'],
+                        }));
+                        setAuditPage(1);
+                      }}
+                      SelectProps={{ native: true }}
+                    >
+                      <option value="">{t.auditTab.filters.all}</option>
+                      {SEVERITIES.map(severity => (
+                        <option key={severity} value={severity}>
+                          {severity}
+                        </option>
+                      ))}
+                    </TextField>
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.dateFrom}</span>
-                        <input
-                          type="date"
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.dateFrom || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              dateFrom: event.target.value || undefined,
-                            }));
-                            setAuditPage(1);
-                          }}
-                        />
-                      </label>
+                    <TextField
+                      label={t.auditTab.filters.dateFrom}
+                      type="date"
+                      size="small"
+                      value={auditFilters.dateFrom || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          dateFrom: event.target.value || undefined,
+                        }));
+                        setAuditPage(1);
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                    />
 
-                      <label className="block">
-                        <span className="text-gray-500">{t.auditTab.filters.dateTo}</span>
-                        <input
-                          type="date"
-                          className="mt-1 w-full rounded-lg border border-gray-200 px-3 py-2"
-                          value={auditFilters.dateTo || ''}
-                          onChange={event => {
-                            setAuditFilters(prev => ({
-                              ...prev,
-                              dateTo: event.target.value || undefined,
-                            }));
-                            setAuditPage(1);
-                          }}
-                        />
-                      </label>
-                    </div>
-                  </div>
+                    <TextField
+                      label={t.auditTab.filters.dateTo}
+                      type="date"
+                      size="small"
+                      value={auditFilters.dateTo || ''}
+                      onChange={event => {
+                        setAuditFilters(prev => ({
+                          ...prev,
+                          dateTo: event.target.value || undefined,
+                        }));
+                        setAuditPage(1);
+                      }}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  </Box>
+                </Paper>
 
-                  <div className="space-y-4">
-                    {auditError && (
-                      <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                        {auditError}
-                      </div>
-                    )}
-                    {auditLoading ? (
-                      <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-500">
+                <Box className="lumio-audit-panel__results">
+                  {auditError && (
+                    <Box
+                      sx={{
+                        mb: 2,
+                        p: 2,
+                        bgcolor: 'error.light',
+                        color: 'error.contrastText',
+                        borderRadius: 1,
+                      }}
+                    >
+                      {auditError}
+                    </Box>
+                  )}
+                  {auditLoading ? (
+                    <Paper variant="outlined" sx={{ p: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
                         {t.auditTab.loading}
-                      </div>
-                    ) : auditLogs.length === 0 ? (
-                      <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-500">
+                      </Typography>
+                    </Paper>
+                  ) : auditLogs.length === 0 ? (
+                    <Paper variant="outlined" sx={{ p: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
                         {t.auditTab.empty}
-                      </div>
-                    ) : (
-                      <AuditEventTable
-                        events={auditLogs}
-                        onSelect={event => {
-                          setSelectedAuditEvent(event);
-                          setAuditDrawerOpen(true);
-                        }}
-                        page={auditPage}
-                        limit={auditLimit}
-                        total={auditTotal}
-                        onPageChange={setAuditPage}
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
+                      </Typography>
+                    </Paper>
+                  ) : (
+                    <AuditEventTable
+                      events={auditLogs}
+                      onSelect={event => {
+                        setSelectedAuditEvent(event);
+                        setAuditDrawerOpen(true);
+                      }}
+                      page={auditPage}
+                      limit={auditLimit}
+                      total={auditTotal}
+                      onPageChange={setAuditPage}
+                    />
+                  )}
+                </Box>
+              </Box>
 
               <AuditEventDrawer
                 event={selectedAuditEvent}
                 open={auditDrawerOpen}
                 onClose={() => setAuditDrawerOpen(false)}
               />
-            </div>
+            </Box>
           )}
         </Box>
       </Paper>

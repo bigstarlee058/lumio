@@ -1,10 +1,10 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
+import CircularProgress from '@mui/material/CircularProgress';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { Cancel, Edit, Save } from '@mui/icons-material';
+import { Pencil } from 'lucide-react';
 import {
   Alert,
   Box,
@@ -222,7 +222,7 @@ export default function UsersManagementPage() {
 
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <Spinner className="h-10 w-10 text-primary" />
+              <CircularProgress size={40} />
             </Box>
           ) : (
             <TableContainer>
@@ -282,7 +282,7 @@ export default function UsersManagementPage() {
                           onClick={() => handleEditPermissions(user)}
                           title={t.tooltips.managePermissions.value}
                         >
-                          <Edit />
+                          <Pencil size={18} />
                         </IconButton>
                       </TableCell>
                     </TableRow>
@@ -342,7 +342,7 @@ export default function UsersManagementPage() {
             {t.dialog.cancel}
           </Button>
           <Button onClick={handleSavePermissions} variant="contained" disabled={saving}>
-            {saving ? <Spinner className="h-5 w-5 text-inherit" /> : t.dialog.save}
+            {saving ? <CircularProgress size={20} color="inherit" /> : t.dialog.save}
           </Button>
         </DialogActions>
       </Dialog>
