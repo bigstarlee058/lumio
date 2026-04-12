@@ -1,7 +1,15 @@
 import { type ThemeOptions, alpha, createTheme } from '@mui/material/styles';
-import { getAppSurfaceTokens } from './mantine-theme';
 
 export type ThemeMode = 'light' | 'dark';
+
+type AppSurfaceTokens = {
+  primary: string;
+};
+
+const SURFACE_TOKENS: Record<ThemeMode, AppSurfaceTokens> = {
+  light: { primary: '#0284c7' },
+  dark: { primary: '#5B9BD5' },
+};
 
 const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> = {
   shape: { borderRadius: 0 },
@@ -123,7 +131,7 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
 };
 
 export const createAppTheme = (mode: ThemeMode) => {
-  const surfaces = getAppSurfaceTokens(mode);
+  const surfaces = SURFACE_TOKENS[mode];
 
   return createTheme({
     ...sharedOptions,
