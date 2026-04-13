@@ -336,7 +336,7 @@ export function PDFPreviewModal({
       size="full"
       showCloseButton={false}
       className="lumio-pdf-preview-modal__shell"
-      contentClassName="!h-full !p-0"
+      contentSx={{ height: '100%', padding: 0 }}
     >
       <div className="lumio-pdf-preview-modal__body">
         <div className="lumio-pdf-preview-modal__header" ref={menuRef}>

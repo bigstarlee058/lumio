@@ -35,6 +35,8 @@ export interface ModalShellProps {
   paperSx?: SxProps<Theme>;
   /** sx props forwarded to the DialogContent element */
   contentSx?: SxProps<Theme>;
+  /** className forwarded to the Paper element */
+  className?: string;
 }
 
 const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
@@ -66,6 +68,7 @@ export function ModalShell({
   closeOnEscape = true,
   paperSx,
   contentSx,
+  className,
 }: ModalShellProps) {
   const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
     if (reason === 'backdropClick' && !closeOnBackdropClick) return;
@@ -80,7 +83,7 @@ export function ModalShell({
       maxWidth={sizeToMaxWidth[size]}
       fullWidth
       fullScreen={size === 'full'}
-      PaperProps={paperSx ? { sx: paperSx } : undefined}
+      PaperProps={{ className, ...(paperSx ? { sx: paperSx } : {}) }}
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       {(title || showCloseButton) && (

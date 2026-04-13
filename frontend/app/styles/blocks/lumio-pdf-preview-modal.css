@@ -15,7 +15,7 @@
   height: 100%;
   min-height: 0;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
 }
 
 .dark .lumio-pdf-preview-modal__body {
@@ -29,7 +29,7 @@
   justify-content: space-between;
   border-bottom: 1px solid #e4e6e3;
   padding: 16px 20px;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
 }
 
 .dark .lumio-pdf-preview-modal__header {
@@ -122,7 +122,7 @@
   max-width: calc(100vw - 90px);
   border-radius: 0;
   border: 1px solid #d8ddd8;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
   padding: 8px;
   box-shadow: 0 14px 28px rgba(17, 24, 39, 0.14);
 }
@@ -222,7 +222,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
 }
 
 .dark .lumio-pdf-preview-modal__error-overlay {
@@ -305,7 +305,7 @@
 .lumio-pdf-preview-modal__btn-secondary {
   border-radius: 0;
   border: 1px solid #e5e7eb;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
   padding: 8px 20px;
   font-size: 14px;
   font-weight: 500;
@@ -367,7 +367,7 @@
   width: 100%;
   max-width: 448px;
   border-radius: 0;
-  background-color: #fff;
+  background-color: var(--lumio-color-surface);
   padding: 20px;
   box-shadow: 0 20px 36px rgba(15, 23, 42, 0.2);
 }
