@@ -24,7 +24,7 @@ export function buildTopMerchantsBarChart(
         data: top.map(item => Number(item.total.toFixed(2))),
         itemStyle: {
           color: resolvedTheme === 'dark' ? '#38BDF8' : '#0EA5E9',
-          borderRadius: [4, 4, 4, 4],
+          borderRadius: [0, 0, 0, 0],
         },
       },
     ],

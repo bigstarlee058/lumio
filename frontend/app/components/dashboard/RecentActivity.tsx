@@ -138,7 +138,7 @@ export function RecentActivity({
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                borderRadius: 9999,
+                                borderRadius: 0,
                                 backgroundColor: 'var(--muted)',
                                 padding: '2px 8px',
                                 fontSize: 10,

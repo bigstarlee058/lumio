@@ -175,7 +175,7 @@ export function PDFThumbnail({
             justifyContent: 'center',
             gap: 12,
             border: '1px solid #e5e7eb',
-            borderRadius: 12,
+            borderRadius: 0,
             backgroundColor: 'var(--card-bg)',
             padding: 16,
             textAlign: 'center',

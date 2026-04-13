@@ -150,7 +150,7 @@ export default function WorkspacesListContent({
                     style={{
                       padding: 8,
                       border: '1px solid #d1d5db',
-                      background: showSortMenu ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : '#fff',
+                      background: showSortMenu ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : 'var(--card-bg)',
                       color: showSortMenu ? 'var(--primary)' : '#4b5563',
                       cursor: 'pointer',
                       borderRadius: 0,
@@ -212,7 +212,7 @@ export default function WorkspacesListContent({
                     style={{
                       padding: 8,
                       border: '1px solid #d1d5db',
-                      background: viewMode === mode ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : '#fff',
+                      background: viewMode === mode ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : 'var(--card-bg)',
                       color: viewMode === mode ? 'var(--primary)' : '#4b5563',
                       cursor: 'pointer',
                       borderRadius: 0,

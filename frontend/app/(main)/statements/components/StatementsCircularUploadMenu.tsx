@@ -275,7 +275,7 @@ export default function StatementsCircularUploadMenu({
                 zIndex: 50,
                 transform: 'translateY(-50%)',
                 whiteSpace: 'nowrap',
-                borderRadius: 9999,
+                borderRadius: 0,
                 border: '1px solid var(--border-color, #e5e7eb)',
                 background: 'var(--card-bg, #fff)',
                 padding: '4px 10px',

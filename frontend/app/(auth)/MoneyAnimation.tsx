@@ -84,7 +84,7 @@ const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; ro
         height: '100%',
         background: '#85bb65',
         border: '2px solid #5a8c43',
-        borderRadius: '4px',
+        borderRadius: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

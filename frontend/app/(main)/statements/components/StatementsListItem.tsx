@@ -341,7 +341,7 @@ export function StatementsListItem({
               <Checkbox
                 checked={selected}
                 onCheckedChange={onToggleSelect}
-                style={{ height: 16, width: 16, borderRadius: 4 }}
+                style={{ height: 16, width: 16, borderRadius: 0 }}
               />
             )}
           </div>
@@ -376,7 +376,7 @@ export function StatementsListItem({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 4,
-                            borderRadius: 4,
+                            borderRadius: 0,
                             padding: '2px 6px',
                             fontSize: 10,
                             letterSpacing: '0.05em',
@@ -489,7 +489,7 @@ export function StatementsListItem({
                         pointerEvents: 'none',
                         position: 'fixed',
                         zIndex: 140,
-                        borderRadius: 12,
+                        borderRadius: 0,
                         border: '1px solid #e5e7eb',
                         background: 'var(--card-bg)',
                         padding: 8,
@@ -556,7 +556,7 @@ export function StatementsListItem({
                       alignItems: 'center',
                       gap: 4,
                       padding: '2px 6px',
-                      borderRadius: 4,
+                      borderRadius: 0,
                       fontSize: 10,
                       letterSpacing: '0.05em',
                       marginLeft: 4,
@@ -580,7 +580,7 @@ export function StatementsListItem({
                   style={{ color: '#6b7280', opacity: 0.5, marginLeft: 4 }}
                 />
               ) : (
-                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: 4, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: 0, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
                   {resolvedTypeLabel === 'PDF' ? 'PDF' : resolvedTypeLabel}
                 </span>
               )}

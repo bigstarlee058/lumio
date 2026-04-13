@@ -157,7 +157,7 @@ export function NotificationDropdown({
             mt: 1,
             p: 0,
             overflow: 'hidden',
-            borderRadius: '16px',
+            borderRadius: 0,
             border: '1px solid var(--border-color)',
             backgroundColor: 'var(--card-bg)',
             color: 'var(--card-foreground)',

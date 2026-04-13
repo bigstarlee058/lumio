@@ -1338,7 +1338,7 @@ export default function StatementsListView({ stage }: Props) {
 
             <button
               type="button"
-              style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap", borderRadius: 6, padding: "6px 8px", fontSize: 13, fontWeight: 500, color: "var(--primary)", cursor: "pointer", background: "none", border: "none" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap", borderRadius: 0, padding: "6px 8px", fontSize: 13, fontWeight: 500, color: "var(--primary)", cursor: "pointer", background: "none", border: "none" }}
               onClick={() => {
                 setDraftFilters(appliedFilters);
                 setFiltersDrawerScreen('root');
@@ -1353,7 +1353,7 @@ export default function StatementsListView({ stage }: Props) {
                 </span>
               ) : null}
             </button>
-            <button type="button" style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap", borderRadius: 6, padding: "6px 8px", fontSize: 13, fontWeight: 500, color: "var(--primary)", cursor: "pointer", background: "none", border: "none" }} onClick={handleColumnsOpen}>
+            <button type="button" style={{ display: "inline-flex", alignItems: "center", gap: 6, whiteSpace: "nowrap", borderRadius: 0, padding: "6px 8px", fontSize: 13, fontWeight: 500, color: "var(--primary)", cursor: "pointer", background: "none", border: "none" }} onClick={handleColumnsOpen}>
               <Columns2 size={14} />
               {filterLabels.columns}
             </button>
@@ -1451,7 +1451,7 @@ export default function StatementsListView({ stage }: Props) {
                     >
                       <div className="lumio-stmt-list-view__skeleton-mobile">
                         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                          <div style={{ height: 16, width: 16, borderRadius: 4, border: "1px solid #e5e7eb", background: "#f3f4f6" }} />
+                          <div style={{ height: 16, width: 16, borderRadius: 0, border: "1px solid #e5e7eb", background: "#f3f4f6" }} />
                           <div style={{ width: 40 }}>
                             <Skeleton variant="rounded" width={34} height={34} />
                           </div>
@@ -1469,7 +1469,7 @@ export default function StatementsListView({ stage }: Props) {
                         <div style={{ display: "flex", alignItems: "center", flex: 1, minWidth: 0 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0, marginRight: 16 }}>
                             <div style={{ width: 16, display: "flex", justifyContent: "center" }}>
-                              <div style={{ height: 16, width: 16, borderRadius: 4, border: "1px solid #e5e7eb", background: "#f3f4f6" }} />
+                              <div style={{ height: 16, width: 16, borderRadius: 0, border: "1px solid #e5e7eb", background: "#f3f4f6" }} />
                             </div>
                             <div style={{ width: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
                               <Skeleton variant="rounded" width={28} height={28} />

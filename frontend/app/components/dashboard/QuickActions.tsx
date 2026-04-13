@@ -36,7 +36,7 @@ export function QuickActions({ allowed, labels }: QuickActionsProps) {
         <Link key={action.href} href={action.href}>
           <Button
             variant="outline"
-            style={{ gap: 8, borderRadius: 9999, borderColor: 'rgba(var(--primary-rgb),0.3)', color: 'var(--primary)' }}
+            style={{ gap: 8, borderRadius: 0, borderColor: 'rgba(var(--primary-rgb),0.3)', color: 'var(--primary)' }}
           >
             <action.icon size={16} />
             {labels[action.key]}

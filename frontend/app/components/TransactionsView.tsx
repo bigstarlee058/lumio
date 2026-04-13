@@ -325,7 +325,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
                 setPage(0);
               }}
               style={{
-                borderRadius: 6,
+                borderRadius: 0,
                 border: '1px solid #e5e7eb',
                 padding: '2px 8px',
                 fontSize: 14,

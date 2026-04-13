@@ -17,7 +17,7 @@ export function BankLogoAvatar({ bankName, size = 32, className, rounded = true 
   const resolved = resolveBankLogo(bankName);
   const src = resolved.key !== 'other' ? resolved.src : null;
 
-  const borderRadius = rounded ? '50%' : '8px';
+  const borderRadius = rounded ? '50%' : 0;
 
   return (
     <LogoAvatar

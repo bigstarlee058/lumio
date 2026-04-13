@@ -144,7 +144,7 @@ export function SidePanel({
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12 }}
+              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 0 }}
               aria-label="Expand panel"
             >
               {position === 'left' ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -203,7 +203,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={handleToggleCollapsed}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12 }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 0 }}
                     aria-label="Collapse panel"
                   >
                     {position === 'left' ? (
@@ -235,7 +235,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={onRetry}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: 12 }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: 0 }}
                   >
                     <RefreshCw size={14} />
                     Retry
@@ -278,7 +278,7 @@ export function SidePanel({
                         fontWeight: 500,
                         border: 'none',
                         cursor: 'pointer',
-                        borderRadius: 14,
+                        borderRadius: 0,
                         opacity: (action.disabled || action.loading) ? 0.5 : 1,
                         ...(action.variant === 'primary'
                           ? { backgroundColor: 'var(--primary)', color: 'white' }

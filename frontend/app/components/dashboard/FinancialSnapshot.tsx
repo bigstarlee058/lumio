@@ -70,7 +70,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
                       alignItems: 'center',
                       gap: 4,
                       padding: '2px 8px',
-                      borderRadius: 9999,
+                      borderRadius: 0,
                       fontSize: 11,
                       fontWeight: 600,
                       border: '1px solid',

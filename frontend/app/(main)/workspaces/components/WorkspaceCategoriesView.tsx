@@ -660,7 +660,7 @@ export default function WorkspaceCategoriesView() {
                           alignItems: 'center',
                           width: 54,
                           height: 32,
-                          borderRadius: 9999,
+                          borderRadius: 0,
                           border: 'none',
                           background: isEnabled ? 'var(--primary)' : 'rgba(107,114,128,0.4)',
                           cursor: isToggling ? 'default' : 'pointer',

@@ -172,7 +172,6 @@ export default function TransactionDocumentViewer({
             bgcolor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             color: 'white',
-            borderRadius: 3,
             position: 'relative',
             overflow: 'hidden',
             '&::before': {
@@ -274,7 +273,6 @@ export default function TransactionDocumentViewer({
               p: 3,
               border: '1px solid',
               borderColor: 'grey.200',
-              borderRadius: 2,
               transition: 'all 0.2s',
               '&:hover': {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
@@ -304,7 +302,6 @@ export default function TransactionDocumentViewer({
               p: 3,
               border: '1px solid',
               borderColor: 'success.light',
-              borderRadius: 2,
               bgcolor: 'success.50',
               transition: 'all 0.2s',
               '&:hover': {
@@ -337,7 +334,6 @@ export default function TransactionDocumentViewer({
               p: 3,
               border: '1px solid',
               borderColor: 'error.light',
-              borderRadius: 2,
               bgcolor: 'error.50',
               transition: 'all 0.2s',
               '&:hover': {
@@ -370,7 +366,6 @@ export default function TransactionDocumentViewer({
               p: 3,
               border: '1px solid',
               borderColor: 'grey.200',
-              borderRadius: 2,
               transition: 'all 0.2s',
               '&:hover': {
                 boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
@@ -403,7 +398,6 @@ export default function TransactionDocumentViewer({
             mb: 4,
             border: '1px solid',
             borderColor: 'grey.200',
-            borderRadius: 2,
             bgcolor: netChange >= 0 ? 'success.50' : 'error.50',
             '@media print': {
               backgroundColor: netChange >= 0 ? '#e8f5e9 !important' : '#ffebee !important',
@@ -454,7 +448,6 @@ export default function TransactionDocumentViewer({
           sx={{
             border: '1px solid',
             borderColor: 'grey.200',
-            borderRadius: 2,
             overflow: 'hidden',
             '@media print': {
               pageBreakInside: 'auto',

@@ -30,11 +30,7 @@ export function TourProgress({ current, total, className = '' }: TourProgressPro
         value={progress}
         sx={{
           height: 6,
-          borderRadius: 3,
           backgroundColor: 'action.hover',
-          '& .MuiLinearProgress-bar': {
-            borderRadius: 3,
-          },
         }}
       />
     </Box>

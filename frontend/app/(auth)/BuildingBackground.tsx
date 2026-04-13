@@ -52,7 +52,7 @@ const WindowGrid = ({
             stableWindowNoise((cols + 11) * (rows + 7) * (i + 1)) < density
               ? 'white'
               : 'transparent',
-          borderRadius: '2px',
+          borderRadius: 0,
         }}
       />
     ))}
@@ -400,7 +400,7 @@ const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: Buildin
     transition={{ duration, delay, ease: 'easeOut' }}
     style={{ position: 'absolute', bottom: 0, ...pos }}
   >
-    <Block w={w} h={h} style={{ borderRadius: '8px 8px 0 0' }}>
+    <Block w={w} h={h} style={{ borderRadius: 0 }}>
       <WindowGrid cols={Math.floor(w / 25)} rows={Math.floor(h / 25)} density={0.3} />
     </Block>
   </motion.div>

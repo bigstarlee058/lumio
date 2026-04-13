@@ -506,7 +506,7 @@ export default function TrashListView({ onCountChange }: Props) {
                   onCheckedChange={checked =>
                     setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                   }
-                  style={{ height: 16, width: 16, borderRadius: 4 }}
+                  style={{ height: 16, width: 16, borderRadius: 0 }}
                   aria-label={labels.selectAll}
                 />
                 <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>{labels.selectAll}</span>
@@ -520,7 +520,7 @@ export default function TrashListView({ onCountChange }: Props) {
                     onCheckedChange={checked =>
                       setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                     }
-                    style={{ height: 16, width: 16, borderRadius: 4 }}
+                    style={{ height: 16, width: 16, borderRadius: 0 }}
                     aria-label={labels.selectAll}
                   />
                 </div>

@@ -228,7 +228,7 @@ export default function TablesReportsView() {
           barMaxWidth: 28,
           itemStyle: {
             color: '#38BDF8',
-            borderRadius: [0, 4, 4, 0],
+            borderRadius: [0, 0, 0, 0],
           },
         },
       ],
@@ -253,13 +253,13 @@ export default function TablesReportsView() {
               Aggregated insights from your custom tables
             </p>
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #e2e8f0', background: '#f1f5f9', padding: 4, borderRadius: 9999 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #e2e8f0', background: '#f1f5f9', padding: 4, borderRadius: 0 }}>
             <button
               type="button"
               onClick={() => setActiveFlowType('all')}
               style={{
-                borderRadius: 9999,
-                background: activeFlowType === 'all' ? '#fff' : 'transparent',
+                borderRadius: 0,
+                background: activeFlowType === 'all' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
                 fontWeight: activeFlowType === 'all' ? 600 : 400,
@@ -275,8 +275,8 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('expense')}
               style={{
-                borderRadius: 9999,
-                background: activeFlowType === 'expense' ? '#fff' : 'transparent',
+                borderRadius: 0,
+                background: activeFlowType === 'expense' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
                 fontWeight: activeFlowType === 'expense' ? 600 : 400,
@@ -292,8 +292,8 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('income')}
               style={{
-                borderRadius: 9999,
-                background: activeFlowType === 'income' ? '#fff' : 'transparent',
+                borderRadius: 0,
+                background: activeFlowType === 'income' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
                 fontWeight: activeFlowType === 'income' ? 600 : 400,
@@ -390,7 +390,7 @@ export default function TablesReportsView() {
                 )
               }
               style={{
-                borderRadius: 9999,
+                borderRadius: 0,
                 background: selectedTableIds.includes(table.id) ? '#e0f2fe' : '#f1f5f9',
                 padding: '4px 12px',
                 color: selectedTableIds.includes(table.id) ? '#0369a1' : '#64748b',
@@ -477,7 +477,7 @@ export default function TablesReportsView() {
                   type="button"
                   onClick={() => setSortKey(key)}
                   style={{
-                    borderRadius: 9999,
+                    borderRadius: 0,
                     background: sortKey === key ? '#e0f2fe' : '#f1f5f9',
                     padding: '4px 12px',
                     fontSize: 12,
@@ -526,7 +526,7 @@ export default function TablesReportsView() {
                         <span
                           style={{
                             display: 'inline-flex',
-                            borderRadius: 9999,
+                            borderRadius: 0,
                             background: row.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
                             padding: '2px 8px',
                             fontSize: 12,
@@ -602,7 +602,7 @@ export default function TablesReportsView() {
                                 <span
                                   style={{
                                     display: 'inline-flex',
-                                    borderRadius: 9999,
+                                    borderRadius: 0,
                                     background: item.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
                                     padding: '2px 8px',
                                     fontSize: 12,

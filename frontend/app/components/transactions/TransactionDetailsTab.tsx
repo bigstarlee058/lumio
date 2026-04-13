@@ -205,7 +205,7 @@ export function TransactionDetailsTab({
           {transaction.rawExtract && (
             <div style={{ marginTop: 8 }}>
               <span style={{ fontSize: 12, color: '#2563eb' }}>{t.rawExtract.value}:</span>
-              <div style={{ marginTop: 4, maxHeight: 80, overflowY: 'auto', borderRadius: 4, backgroundColor: 'rgba(191, 219, 254, 0.8)', padding: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1e3a8a' }}>
+              <div style={{ marginTop: 4, maxHeight: 80, overflowY: 'auto', borderRadius: 0, backgroundColor: 'rgba(191, 219, 254, 0.8)', padding: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1e3a8a' }}>
                 {transaction.rawExtract}
               </div>
             </div>

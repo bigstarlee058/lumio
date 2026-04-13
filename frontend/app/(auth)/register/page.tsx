@@ -119,7 +119,6 @@ function RegisterPageContent() {
             p: 2,
             bgcolor: 'rgba(255,255,255,0.1)',
             backdropFilter: 'blur(10px)',
-            borderRadius: 2,
             border: '1px solid rgba(255,255,255,0.2)',
           }}
         >
@@ -132,7 +131,6 @@ function RegisterPageContent() {
             p: 2,
             bgcolor: 'rgba(255,255,255,0.1)',
             backdropFilter: 'blur(10px)',
-            borderRadius: 2,
             border: '1px solid rgba(255,255,255,0.2)',
           }}
         >
@@ -180,7 +178,7 @@ function RegisterPageContent() {
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
@@ -210,7 +208,7 @@ function RegisterPageContent() {
           value={formData.name}
           onChange={handleChange}
           InputProps={{
-            sx: { borderRadius: 1.5 },
+            sx: {},
           }}
           sx={{ mb: 2 }}
         />
@@ -226,7 +224,7 @@ function RegisterPageContent() {
           onChange={handleChange}
           disabled={emailLocked || inviteLoading}
           InputProps={{
-            sx: { borderRadius: 1.5 },
+            sx: {},
           }}
           sx={{ mb: 2 }}
         />
@@ -243,7 +241,7 @@ function RegisterPageContent() {
           onChange={handleChange}
           helperText={t.passwordHelper.value}
           InputProps={{
-            sx: { borderRadius: 1.5 },
+            sx: {},
           }}
           sx={{ mb: 2 }}
         />
@@ -256,7 +254,7 @@ function RegisterPageContent() {
           value={formData.company}
           onChange={handleChange}
           InputProps={{
-            sx: { borderRadius: 1.5 },
+            sx: {},
           }}
           sx={{ mb: 3 }}
         />
@@ -267,7 +265,7 @@ function RegisterPageContent() {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 50,
+            borderRadius: 0,
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',

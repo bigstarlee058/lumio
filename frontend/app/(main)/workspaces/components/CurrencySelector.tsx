@@ -137,7 +137,7 @@ export function CurrencySelector({
           style={{
             width: '100%',
             border: minimal ? '1px solid transparent' : '1px solid var(--border)',
-            background: minimal ? '#fff' : 'var(--card)',
+            background: minimal ? 'var(--card-bg)' : 'var(--card)',
             padding: '10px 12px 10px 40px',
             fontSize: 14,
             color: 'var(--foreground)',

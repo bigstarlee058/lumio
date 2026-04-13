@@ -757,7 +757,7 @@ export default function UnapprovedCashView() {
         {selectedCount > 0 ? (
           <div style={{ border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: 'rgba(var(--primary-rgb,0,0,0),0.05)', padding: 12, borderRadius: 0 }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--primary)', padding: '4px 10px', fontSize: 12, fontWeight: 600, color: '#fff', borderRadius: 9999 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--primary)', padding: '4px 10px', fontSize: 12, fontWeight: 600, color: '#fff', borderRadius: 0 }}>
                 {formatTemplate(labels.actions.selected, { count: selectedCount })}
               </span>
 
@@ -859,13 +859,13 @@ export default function UnapprovedCashView() {
                             {reasonPreview.map(reason => (
                               <span
                                 key={reason}
-                                style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
+                                style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 0 }}
                               >
                                 {reasonLabelById[reason]}
                               </span>
                             ))}
                             {hiddenReasonCount > 0 ? (
-                              <span style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#f9fafb', color: '#4b5563', padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}>
+                              <span style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#f9fafb', color: '#4b5563', padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 0 }}>
                                 +{hiddenReasonCount}
                               </span>
                             ) : null}
@@ -873,7 +873,7 @@ export default function UnapprovedCashView() {
                         </td>
                         <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
                           <span
-                            style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
+                            style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 0 }}
                           >
                             {sourceLabelById[item.source]}
                           </span>
@@ -927,7 +927,7 @@ export default function UnapprovedCashView() {
                       {item.reasons.map(reason => (
                         <span
                           key={reason}
-                          style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
+                          style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 0 }}
                         >
                           {reasonLabelById[reason]}
                         </span>
@@ -936,7 +936,7 @@ export default function UnapprovedCashView() {
 
                     <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span
-                        style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
+                        style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 0 }}
                       >
                         {sourceLabelById[item.source]}
                       </span>

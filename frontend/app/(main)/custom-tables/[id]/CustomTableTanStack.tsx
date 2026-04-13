@@ -644,7 +644,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
             position: 'relative',
             overflowY: 'auto',
             border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-            backgroundColor: isDark ? '#111827' : '#fff',
+            backgroundColor: 'var(--card-bg)',
             height: props.isFullscreen ? 'calc(100vh - 150px)' : '600px',
           }}
         >
@@ -657,7 +657,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
               alignItems: 'center',
               justifyContent: 'space-between',
               borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-              backgroundColor: isDark ? '#111827' : '#fff',
+              backgroundColor: 'var(--card-bg)',
               padding: '8px 12px',
             }}
           >
@@ -718,7 +718,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                     data-testid={`custom-table-mobile-card-${row.id}`}
                     style={{
                       border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
-                      backgroundColor: isDark ? '#111827' : '#fff',
+                      backgroundColor: 'var(--card-bg)',
                       padding: 12,
                       ...rowStyle,
                     }}
@@ -924,7 +924,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           overflowX: props.isPrintMode ? 'visible' : 'auto',
           border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
           borderTop: 'none',
-          backgroundColor: isDark ? '#111827' : '#fff',
+          backgroundColor: 'var(--card-bg)',
           paddingTop: 4,
           height: props.isPrintMode ? 'auto' : props.isFullscreen ? 'calc(100vh - 150px)' : '600px',
           overflow: props.isPrintMode ? 'visible' : undefined,
@@ -1100,7 +1100,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             ...(hasRowFill
                               ? {}
                               : {
-                                  backgroundColor: isDark ? '#111827' : '#fff',
+                                  backgroundColor: 'var(--card-bg)',
                                 }),
                             ...(rowBackground ? { backgroundColor: rowBackground } : {}),
                             ...getStickyStyle(cell.column.id, false, rowBackground),
@@ -1140,7 +1140,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             ...(hasRowFill
                               ? {}
                               : {
-                                  backgroundColor: isDark ? '#111827' : '#fff',
+                                  backgroundColor: 'var(--card-bg)',
                                 }),
                             ...(rowBackground ? { backgroundColor: rowBackground } : {}),
                             ...getStickyStyle(cell.column.id, false, rowBackground),

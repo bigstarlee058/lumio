@@ -189,7 +189,7 @@ export function CustomTablesFiltersDrawer({
           </Box>
         ) : (
           <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2.5, pb: 5 }}>
-            <Box sx={{ borderRadius: 4, bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
+            <Box sx={{ bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
           </Box>
         )}
 
@@ -211,7 +211,7 @@ export function CustomTablesFiltersDrawer({
               fullWidth
               size="large"
               disabled
-              sx={{ borderRadius: 999 }}
+              sx={{}}
             >
               {labels.saveSearch}
             </MuiButton>
@@ -220,7 +220,7 @@ export function CustomTablesFiltersDrawer({
               fullWidth
               size="large"
               onClick={onViewResults}
-              sx={{ borderRadius: 999 }}
+              sx={{}}
             >
               {labels.viewResults}
               {activeCount > 0 ? (
@@ -251,7 +251,7 @@ export function CustomTablesFiltersDrawer({
               fullWidth
               size="large"
               onClick={onViewResults}
-              sx={{ borderRadius: 999 }}
+              sx={{}}
             >
               {labels.viewResults}
               {activeCount > 0 ? (

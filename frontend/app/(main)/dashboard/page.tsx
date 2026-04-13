@@ -175,7 +175,7 @@ export default function DashboardPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                borderRadius: 9999,
+                borderRadius: 0,
                 border: '1px solid',
                 borderColor:
                   isReadyToRefresh || pullRefreshing

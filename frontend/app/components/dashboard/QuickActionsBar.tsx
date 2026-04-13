@@ -35,7 +35,7 @@ export function QuickActionsBar({ reviewCount }: QuickActionsBarProps) {
             <Button
               variant="ghost"
               size="sm"
-              style={{ gap: 6, borderRadius: 9999, color: '#64748b', fontSize: 12, height: 28, padding: '0 12px', fontWeight: 400 }}
+              style={{ gap: 6, borderRadius: 0, color: '#64748b', fontSize: 12, height: 28, padding: '0 12px', fontWeight: 400 }}
             >
               <action.icon size={14} />
               {label}

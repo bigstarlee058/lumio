@@ -31,7 +31,7 @@ export function buildSpendOverTimeTrendChart(
           data: points.map(point => Number(point.income.toFixed(2))),
           itemStyle: {
             color: resolvedTheme === 'dark' ? '#4ade80' : '#16a34a',
-            borderRadius: [6, 6, 0, 0],
+            borderRadius: [0, 0, 0, 0],
           },
         },
         {
@@ -41,7 +41,7 @@ export function buildSpendOverTimeTrendChart(
           data: points.map(point => Number(point.expense.toFixed(2))),
           itemStyle: {
             color: resolvedTheme === 'dark' ? '#f87171' : '#dc2626',
-            borderRadius: [6, 6, 0, 0],
+            borderRadius: [0, 0, 0, 0],
           },
         },
       ],
@@ -69,7 +69,7 @@ export function buildSpendOverTimeTrendChart(
             barWidth: 24,
             itemStyle: {
               color: resolvedTheme === 'dark' ? darkColor : color,
-              borderRadius: [6, 6, 0, 0],
+              borderRadius: [0, 0, 0, 0],
             },
           }
         : {
@@ -144,7 +144,7 @@ export function buildSpendOverTimePeriodsChart(
                 : resolvedTheme === 'dark'
                   ? '#f87171'
                   : '#dc2626',
-            borderRadius: [4, 4, 4, 4],
+            borderRadius: [0, 0, 0, 0],
           },
         })),
       },

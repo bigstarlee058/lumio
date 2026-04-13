@@ -1628,7 +1628,6 @@ export default function GmailReceiptDocumentPage() {
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 2,
             boxShadow: 'none',
             border: '1px solid',
             borderColor: 'grey.200',
@@ -1683,7 +1682,6 @@ export default function GmailReceiptDocumentPage() {
             sx={{
               textTransform: 'none',
               fontWeight: 600,
-              borderRadius: 2,
               boxShadow: 'none',
               '&:hover': { boxShadow: 'none' },
             }}

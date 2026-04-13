@@ -178,7 +178,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
               padding: '0 6px',
               fontSize: 10,
               fontWeight: 600,
-              borderRadius: 9999,
+              borderRadius: 0,
               backgroundColor: 'var(--primary)',
               color: 'white',
             }}
@@ -215,7 +215,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
     border: 'none',
     cursor: item.disabled ? 'not-allowed' : 'pointer',
     opacity: item.disabled ? 0.5 : 1,
-    borderRadius: 14,
+    borderRadius: 0,
     backgroundColor: item.active
       ? isHighEmphasis
         ? 'rgba(var(--primary-rgb),0.1)'
@@ -430,7 +430,7 @@ function SummaryItemComponent({ item }: { item: SummaryItem }) {
           )}
         </div>
         {item.icon && (
-          <div style={{ padding: 8, borderRadius: 12, backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
+          <div style={{ padding: 8, borderRadius: 0, backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
             <RenderIcon icon={item.icon} size={16} />
           </div>
         )}
@@ -592,7 +592,7 @@ function ActionItemComponent({ item }: { item: ActionItem }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        borderRadius: 14,
+        borderRadius: 0,
         fontWeight: 500,
         cursor: item.disabled || item.loading ? 'not-allowed' : 'pointer',
         opacity: item.disabled || item.loading ? 0.5 : 1,
@@ -687,7 +687,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
           display: 'inline-flex',
           width: 36,
           height: 20,
-          borderRadius: 10,
+          borderRadius: 0,
           flexShrink: 0,
           cursor: item.disabled ? 'not-allowed' : 'pointer',
           transition: 'background-color 200ms',
@@ -809,7 +809,7 @@ function ErrorItemComponent({ item }: { item: ErrorItem }) {
         border: '1px solid',
         borderColor: ERROR_BORDER[item.severity],
         backgroundColor: ERROR_BG[item.severity],
-        borderRadius: 14,
+        borderRadius: 0,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
