@@ -1,6 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { IntegrationStatus } from '../types';
@@ -41,62 +42,118 @@ export function IntegrationStatusCard({
   extraActions,
 }: IntegrationStatusCardProps) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+    <Box
+      sx={{
+        borderRadius: 0,
+        border: '1px solid #e5e7eb',
+        bgcolor: '#fff',
+        p: 3,
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           {status?.connected ? (
-            <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+            <CheckCircle2 style={{ height: 24, width: 24, color: '#10b981' }} />
           ) : (
-            <XCircle className="h-6 w-6 text-red-500" />
+            <XCircle style={{ height: 24, width: 24, color: '#ef4444' }} />
           )}
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-            <p className="text-sm text-gray-500">{statusLabel}</p>
-          </div>
-        </div>
+          <Box>
+            <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+              {title}
+            </Typography>
+            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{statusLabel}</Typography>
+          </Box>
+        </Box>
 
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex flex-wrap gap-2">
+        <Stack alignItems="flex-end" spacing={1}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {status?.connected ? (
               <>
-                <button
-                  type="button"
+                <Button
+                  variant="outlined"
+                  size="small"
                   onClick={onSync}
                   disabled={saving || syncing}
-                  className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
+                  startIcon={
+                    syncing ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <RefreshCcw style={{ height: 16, width: 16 }} />
+                    )
+                  }
+                  sx={{
+                    borderRadius: 0,
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textTransform: 'none',
+                    '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+                  }}
                 >
-                  {syncing ? <Spinner className="h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
                   {syncLabel}
-                </button>
+                </Button>
                 {extraActions}
-                <button
-                  type="button"
+                <Button
+                  variant="outlined"
+                  size="small"
                   onClick={onDisconnect}
                   disabled={saving}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  startIcon={
+                    saving ? (
+                      <Spinner className="h-4 w-4" />
+                    ) : (
+                      <Link2Off style={{ height: 16, width: 16 }} />
+                    )
+                  }
+                  sx={{
+                    borderRadius: 0,
+                    borderColor: '#e5e7eb',
+                    color: '#374151',
+                    fontWeight: 600,
+                    fontSize: 14,
+                    textTransform: 'none',
+                    '&:hover': { bgcolor: '#f9fafb' },
+                  }}
                 >
-                  {saving ? <Spinner className="h-4 w-4" /> : <Link2Off className="h-4 w-4" />}
                   {disconnectLabel}
-                </button>
+                </Button>
               </>
             ) : (
-              <button
-                type="button"
+              <Button
+                variant="contained"
+                size="small"
                 onClick={onConnect}
                 disabled={saving}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                startIcon={
+                  saving ? (
+                    <Spinner className="h-4 w-4" />
+                  ) : (
+                    <RefreshCcw style={{ height: 16, width: 16 }} />
+                  )
+                }
+                sx={{
+                  borderRadius: 0,
+                  fontWeight: 600,
+                  fontSize: 14,
+                  textTransform: 'none',
+                }}
               >
-                {saving ? <Spinner className="h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
                 {status?.status === 'needs_reauth' ? reconnectLabel : connectLabel}
-              </button>
+              </Button>
             )}
-          </div>
+          </Box>
 
           {!status?.connected && disconnectedHint && (
-            <p className="text-xs text-gray-500 max-w-xs text-right mt-1">{disconnectedHint}</p>
+            <Typography
+              style={{ fontSize: 12, color: '#6b7280', maxWidth: 280, textAlign: 'right' }}
+            >
+              {disconnectedHint}
+            </Typography>
           )}
-        </div>
-      </div>
-    </div>
+        </Stack>
+      </Box>
+    </Box>
   );
 }

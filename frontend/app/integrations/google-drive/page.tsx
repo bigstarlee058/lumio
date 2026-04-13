@@ -7,6 +7,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { getPickerDocName, pickDriveFolder } from '@/app/lib/googleDrivePicker';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { useMemo } from 'react';
@@ -111,44 +112,78 @@ export default function GoogleDriveIntegrationPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '60vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#6b7280',
+        }}
+      >
         <Spinner className="h-6 w-6" />
-      </div>
+      </Box>
     );
   }
 
   if (!user) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm text-center">
-          <p className="text-gray-800 font-semibold mb-2">{t.status.disconnected.value}</p>
-          <p className="text-sm text-gray-600">{t.header.subtitle}</p>
-        </div>
-      </div>
+      <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid #e5e7eb',
+            bgcolor: '#fff',
+            p: 3,
+            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+            textAlign: 'center',
+          }}
+        >
+          <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
+            {t.status.disconnected.value}
+          </Typography>
+          <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.header.subtitle}</Typography>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-start gap-3 mb-6">
-        <div className="p-2 rounded-full bg-primary/10 text-primary">
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: '50%',
+            bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
+            display: 'flex',
+          }}
+        >
           <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={24} height={24} />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.header.title}</h1>
-          <p className="text-secondary mt-1">{t.header.subtitle}</p>
-        </div>
-      </div>
+        </Box>
+        <Box>
+          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
+            {t.header.title}
+          </Typography>
+          <Typography style={{ color: '#6b7280', marginTop: 4 }}>{t.header.subtitle}</Typography>
+        </Box>
+      </Box>
 
       {loading && (
-        <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
-          <Spinner className="h-4 w-4" />
-          {t.loading}
-        </div>
+        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CircularProgress size={16} />
+          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.loading}</Typography>
+        </Box>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
+          gap: 2,
+        }}
+      >
+        <Stack spacing={2}>
           <IntegrationStatusCard
             status={status}
             title={t.header.title}
@@ -166,79 +201,136 @@ export default function GoogleDriveIntegrationPage() {
           />
 
           {status?.connected && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">{t.settings.title}</h2>
+            <Box
+              sx={{
+                borderRadius: 0,
+                border: '1px solid #e5e7eb',
+                bgcolor: '#fff',
+                p: 3,
+                boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+              }}
+            >
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
+              >
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+                  {t.settings.title}
+                </Typography>
                 <button
                   type="button"
                   onClick={handlePickFolder}
                   disabled={!status?.connected || saving}
-                  className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-1.5 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    border: '1px solid var(--color-primary)',
+                    borderRadius: 0,
+                    padding: '6px 16px',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: 'var(--color-primary)',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                  }}
                 >
                   {t.actions.pickFolder}
                 </button>
-              </div>
+              </Box>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-500">{t.settings.folder}</p>
-                  <p className="font-medium text-gray-900">
+              <Box
+                sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}
+              >
+                <Stack spacing={0.5}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.folder}
+                  </Typography>
+                  <Typography style={{ fontWeight: 500, color: '#111827' }}>
                     {status?.settings?.folderName ||
                       status?.settings?.folderId ||
                       t.settings.folderPlaceholder}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-500">{t.settings.lastSync}</p>
-                  <p className="font-medium text-gray-900">
+                  </Typography>
+                </Stack>
+                <Stack spacing={0.5}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.lastSync}
+                  </Typography>
+                  <Typography style={{ fontWeight: 500, color: '#111827' }}>
                     {formatDateTime(status?.settings?.lastSyncAt, user?.locale) || '—'}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">{t.settings.syncEnabled}</p>
-                  <div className="inline-flex items-center gap-2">
+                  </Typography>
+                </Stack>
+                <Stack spacing={1}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.syncEnabled}
+                  </Typography>
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                     <Checkbox
                       checked={status?.settings?.syncEnabled ?? true}
                       onCheckedChange={checked => updateSettings({ syncEnabled: checked })}
                       disabled={!status?.connected || saving}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm text-gray-700">
+                    <Typography style={{ fontSize: 14, color: '#374151' }}>
                       {status?.settings?.syncEnabled ? t.status.connected : t.status.disconnected}
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">{t.settings.syncTime}</p>
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Stack spacing={1}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.syncTime}
+                  </Typography>
                   <input
                     type="time"
                     value={status?.settings?.syncTime || '03:00'}
                     onChange={e => updateSettings({ syncTime: e.target.value })}
                     disabled={!status?.connected || saving}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    style={{
+                      width: '100%',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: 0,
+                      padding: '8px 12px',
+                      fontSize: 14,
+                      color: '#111827',
+                    }}
                   />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-500">{t.settings.timeZone}</p>
-                  <p className="font-medium text-gray-900">{status?.settings?.timeZone || 'UTC'}</p>
-                </div>
-              </div>
-            </div>
+                </Stack>
+                <Stack spacing={0.5}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.timeZone}
+                  </Typography>
+                  <Typography style={{ fontWeight: 500, color: '#111827' }}>
+                    {status?.settings?.timeZone || 'UTC'}
+                  </Typography>
+                </Stack>
+              </Box>
+            </Box>
           )}
-        </div>
+        </Stack>
 
         {status?.connected && (
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm h-fit">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-primary mt-1" />
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>{t.settings.syncEnabled}</p>
-                <p>{t.settings.folderPlaceholder}</p>
-              </div>
-            </div>
-          </div>
+          <Box
+            sx={{
+              borderRadius: 0,
+              border: '1px solid #e5e7eb',
+              bgcolor: '#fff',
+              p: 3,
+              boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+              height: 'fit-content',
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+              <AlertCircle style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }} />
+              <Stack spacing={1}>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+                  {t.settings.syncEnabled}
+                </Typography>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+                  {t.settings.folderPlaceholder}
+                </Typography>
+              </Stack>
+            </Box>
+          </Box>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

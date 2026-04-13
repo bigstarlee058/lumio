@@ -1,5 +1,7 @@
 'use client';
 
+import { Box, Button, Divider, Stack, Typography } from '@mui/material';
+
 interface OnboardingNavigationProps {
   currentStep: number;
   totalSteps: number;
@@ -37,50 +39,90 @@ export function OnboardingNavigation({
   const isLastStep = currentStep === totalSteps - 1;
 
   return (
-    <div className="space-y-4 border-t border-border pt-5">
-      <div className="flex items-center justify-between gap-3">
-        <button
-          type="button"
+    <Stack spacing={2} sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+        <Button
+          variant="outlined"
           onClick={onBack}
           disabled={disableBack}
-          className="rounded-full border border-border bg-card px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+          sx={{
+            borderRadius: 0,
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            color: 'text.primary',
+            fontWeight: 600,
+            fontSize: 14,
+            textTransform: 'none',
+            px: 2.5,
+            py: 1,
+            '&:hover': { bgcolor: 'action.hover' },
+            '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+          }}
         >
           {labels.back}
-        </button>
+        </Button>
 
-        <div className="flex items-center gap-2">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {showSkip ? (
-            <button
-              type="button"
+            <Button
+              variant="text"
               onClick={onSkip}
               disabled={isSubmitting}
-              className="rounded-full border border-transparent px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+              sx={{
+                borderRadius: 0,
+                color: 'text.secondary',
+                fontWeight: 600,
+                fontSize: 14,
+                textTransform: 'none',
+                px: 2,
+                py: 1,
+                '&:hover': { bgcolor: 'action.hover' },
+                '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+              }}
             >
               {labels.skip}
-            </button>
+            </Button>
           ) : null}
 
-          <button
-            type="button"
+          <Button
+            variant="contained"
             onClick={onNext}
             disabled={isSubmitting}
-            className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            sx={{
+              borderRadius: 0,
+              fontWeight: 600,
+              fontSize: 14,
+              textTransform: 'none',
+              px: 2.5,
+              py: 1,
+              '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+            }}
           >
             {isLastStep ? (isSubmitting ? labels.saving : labels.finish) : labels.next}
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Box>
 
       {!isLastStep ? (
         <button
           type="button"
           onClick={onSkipAll}
           disabled={isSubmitting}
-          className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: 'var(--mui-palette-text-secondary)',
+            background: 'transparent',
+            border: 'none',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+            opacity: isSubmitting ? 0.5 : 1,
+          }}
         >
           {labels.skipAll}
         </button>
       ) : null}
-    </div>
+    </Stack>
   );
 }

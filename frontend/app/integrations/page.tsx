@@ -2,6 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { Box, Chip, Divider, Stack, Typography } from '@mui/material';
 import { CheckCircle2, ExternalLink, Plug, Search, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -29,7 +30,7 @@ export default function IntegrationsPage() {
             alt="Dropbox"
             width={32}
             height={32}
-            className="rounded"
+            style={{ borderRadius: 0 }}
           />
         ),
         actions: [
@@ -58,7 +59,7 @@ export default function IntegrationsPage() {
             alt="Google Drive"
             width={32}
             height={32}
-            className="rounded"
+            style={{ borderRadius: 0 }}
           />
         ),
         actions: [
@@ -82,7 +83,13 @@ export default function IntegrationsPage() {
         category: 'email',
         recommended: true,
         icon: (
-          <Image src="/icons/gmail.png" alt="Gmail" width={32} height={32} className="rounded" />
+          <Image
+            src="/icons/gmail.png"
+            alt="Gmail"
+            width={32}
+            height={32}
+            style={{ borderRadius: 0 }}
+          />
         ),
         actions: [
           {
@@ -110,7 +117,7 @@ export default function IntegrationsPage() {
             alt="Google Sheets"
             width={32}
             height={32}
-            className="rounded"
+            style={{ borderRadius: 0 }}
           />
         ),
         actions: [
@@ -139,7 +146,7 @@ export default function IntegrationsPage() {
             alt="Telegram"
             width={32}
             height={32}
-            className="rounded"
+            style={{ borderRadius: 0 }}
           />
         ),
         actions: [
@@ -256,330 +263,450 @@ export default function IntegrationsPage() {
   const activeByCategory = groupByCategory(active);
   const availableByCategory = groupByCategory(available);
 
-  return (
-    <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
-            <Plug className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.title}</h1>
-            <p className="mt-1 text-secondary dark:text-slate-400">{t.subtitle}</p>
-          </div>
-        </div>
+  const renderCard = (item: (typeof integrations)[number]) => (
+    <Box
+      key={item.key}
+      data-integration-card={item.key}
+      role={item.primaryAction?.href && !item.primaryAction.external ? 'button' : undefined}
+      tabIndex={item.primaryAction?.href && !item.primaryAction.external ? 0 : undefined}
+      sx={{
+        border: '1px solid #e5e7eb',
+        borderRadius: 0,
+        p: 2,
+        bgcolor: '#fff',
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+        cursor:
+          item.primaryAction?.href && !item.primaryAction.external ? 'pointer' : 'default',
+        '&:hover': {
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+        },
+        '&:focus-visible': {
+          outline: '2px solid var(--color-primary)',
+          outlineOffset: 2,
+        },
+      }}
+      onClick={() => handleCardClick(item)}
+      onKeyDown={event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        handleCardClick(item);
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: 0,
+            bgcolor: '#f9fafb',
+            border: '1px solid #f3f4f6',
+            display: 'flex',
+          }}
+        >
+          {item.icon}
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+              {item.name}
+            </Typography>
+            {item.recommended && (
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  px: 1,
+                  py: 0.25,
+                  bgcolor: '#fef3c7',
+                  color: '#92400e',
+                  border: '1px solid #fde68a',
+                  borderRadius: 0,
+                }}
+              >
+                <Star style={{ height: 12, width: 12, marginRight: 4 }} />
+                {t.recommendedBadge}
+              </Box>
+            )}
+            {!item.recommended && (
+              <Box
+                component="span"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  px: 1,
+                  py: 0.25,
+                  bgcolor: '#ecfdf5',
+                  color: '#065f46',
+                  border: '1px solid #a7f3d0',
+                  borderRadius: 0,
+                }}
+              >
+                <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {item.badge}
+              </Box>
+            )}
+          </Box>
+          <Typography style={{ fontSize: 14, color: '#4b5563', marginTop: 4 }}>
+            {item.description}
+          </Typography>
+          <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {item.actions.map(action =>
+              action.external ? (
+                <a
+                  key={action.href}
+                  href={action.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={event => event.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 0,
+                    color: '#374151',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {action.label}
+                  <ExternalLink style={{ height: 12, width: 12, marginLeft: 4, color: '#9ca3af' }} />
+                </a>
+              ) : action.primary && item.active ? (
+                <button
+                  key={action.href}
+                  type="button"
+                  disabled
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 0,
+                    color: '#9ca3af',
+                    cursor: 'not-allowed',
+                    background: 'transparent',
+                  }}
+                  onClick={event => event.stopPropagation()}
+                >
+                  {action.label}
+                </button>
+              ) : action.primary ? (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  onClick={event => event.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '6px 16px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    borderRadius: 0,
+                    background: 'var(--color-primary)',
+                    color: '#fff',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {action.label}
+                </Link>
+              ) : (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  onClick={event => event.stopPropagation()}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    padding: '6px 12px',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 0,
+                    color: '#374151',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {action.label}
+                </Link>
+              ),
+            )}
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
 
-        <div className="relative w-full max-w-md">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-4 w-4 text-gray-400" />
-          </div>
+  const renderCategoryDivider = (label: React.ReactNode) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+      <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
+      <Box
+        component="span"
+        sx={{
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          color: '#6b7280',
+          px: 1.5,
+          py: 0.5,
+          border: '1px solid #e5e7eb',
+          borderRadius: 0,
+          bgcolor: '#fff',
+        }}
+      >
+        {label}
+      </Box>
+      <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
+    </Box>
+  );
+
+  return (
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { md: 'center' },
+          justifyContent: 'space-between',
+          gap: 3,
+          mb: 4,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: '50%',
+              bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
+              color: 'primary.main',
+              display: 'flex',
+            }}
+          >
+            <Plug style={{ height: 24, width: 24 }} />
+          </Box>
+          <Box>
+            <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
+              {t.title}
+            </Typography>
+            <Typography style={{ marginTop: 4, color: '#6b7280' }}>{t.subtitle}</Typography>
+          </Box>
+        </Box>
+
+        <Box sx={{ position: 'relative', width: '100%', maxWidth: 448 }}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 12,
+              display: 'flex',
+              alignItems: 'center',
+              pointerEvents: 'none',
+            }}
+          >
+            <Search style={{ height: 16, width: 16, color: '#9ca3af' }} />
+          </Box>
           <input
             type="text"
             data-tour-id="integrations-search"
-            className="block w-full rounded-full border border-gray-200 bg-white py-2 pl-10 pr-4 text-sm placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            style={{
+              display: 'block',
+              width: '100%',
+              border: '1px solid #e5e7eb',
+              borderRadius: 0,
+              background: '#fff',
+              padding: '8px 16px 8px 40px',
+              fontSize: 14,
+              color: '#111827',
+            }}
             placeholder={t.searchPlaceholder.value}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {!searchQuery && (
-        <div className="mb-8 rounded-xl bg-primary/5 border border-primary/20 p-4 flex items-start gap-3">
-          <Star className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-          <div>
-            <p className="text-sm font-medium text-gray-900">{t.banner}</p>
-          </div>
-        </div>
+        <Box
+          sx={{
+            mb: 4,
+            borderRadius: 0,
+            bgcolor: 'rgba(var(--color-primary-rgb), 0.05)',
+            border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
+            p: 2,
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1.5,
+          }}
+        >
+          <Star
+            style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 2, flexShrink: 0 }}
+          />
+          <Box>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>
+              {t.banner}
+            </Typography>
+          </Box>
+        </Box>
       )}
 
-      <div className="space-y-8">
+      <Stack spacing={4}>
         {active.length > 0 || !searchQuery ? (
-          <div data-tour-id="integrations-connected">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.sections.connected}</h3>
+          <Box data-tour-id="integrations-connected">
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12 }}>
+              {t.sections.connected}
+            </Typography>
             {active.length === 0 && !searchQuery ? (
-              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-                {t.empty.connected}
-              </div>
+              <Box
+                sx={{
+                  borderRadius: 0,
+                  border: '1px dashed #e5e7eb',
+                  bgcolor: '#f9fafb',
+                  p: 2,
+                }}
+              >
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.empty.connected}</Typography>
+              </Box>
             ) : (
-              <div className="space-y-6">
-                {categories.map((category, index) => {
+              <Stack spacing={3}>
+                {categories.map(category => {
                   const items = activeByCategory.get(category.key) ?? [];
                   if (items.length === 0) return null;
                   return (
-                    <div key={`active-${category.key}`}>
-                      {index !== 0 && (
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="h-px flex-1 bg-gray-200" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 px-3 py-1 rounded-full border border-gray-200 bg-white">
-                            {category.label}
-                          </span>
-                          <div className="h-px flex-1 bg-gray-200" />
-                        </div>
-                      )}
-                      {index === 0 && (
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="h-px flex-1 bg-gray-200" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 px-3 py-1 rounded-full border border-gray-200 bg-white">
-                            {category.label}
-                          </span>
-                          <div className="h-px flex-1 bg-gray-200" />
-                        </div>
-                      )}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {items.map(item => (
-                          <div
-                            key={item.key}
-                            data-integration-card={item.key}
-                            role={
-                              item.primaryAction?.href && !item.primaryAction.external
-                                ? 'button'
-                                : undefined
-                            }
-                            tabIndex={
-                              item.primaryAction?.href && !item.primaryAction.external
-                                ? 0
-                                : undefined
-                            }
-                            className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                            onClick={() => handleCardClick(item)}
-                            onKeyDown={event => {
-                              if (event.key !== 'Enter' && event.key !== ' ') return;
-                              event.preventDefault();
-                              handleCardClick(item);
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="p-2 rounded-lg bg-gray-50 border border-gray-100">
-                                {item.icon}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h2 className="text-lg font-semibold text-gray-900">
-                                    {item.name}
-                                  </h2>
-                                  {item.recommended && (
-                                    <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                      <Star className="h-3 w-3 mr-1 fill-current" />
-                                      {t.recommendedBadge}
-                                    </span>
-                                  )}
-                                  {!item.recommended && (
-                                    <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                      <CheckCircle2 className="h-3 w-3 mr-1" /> {item.badge}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                  {item.description}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                  {item.actions.map(action =>
-                                    action.external ? (
-                                      <a
-                                        key={action.href}
-                                        href={action.href}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-                                      >
-                                        {action.label}
-                                        <ExternalLink className="h-3 w-3 ml-1 text-gray-400" />
-                                      </a>
-                                    ) : action.primary && item.active ? (
-                                      <button
-                                        key={action.href}
-                                        type="button"
-                                        disabled
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-400 cursor-not-allowed"
-                                        onClick={event => event.stopPropagation()}
-                                      >
-                                        {action.label}
-                                      </button>
-                                    ) : action.primary ? (
-                                      <Link
-                                        key={action.href}
-                                        href={action.href}
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-4 py-1.5 text-xs font-medium rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                                      >
-                                        {action.label}
-                                      </Link>
-                                    ) : (
-                                      <Link
-                                        key={action.href}
-                                        href={action.href}
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-                                      >
-                                        {action.label}
-                                      </Link>
-                                    ),
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <Box key={`active-${category.key}`}>
+                      {renderCategoryDivider(category.label)}
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: {
+                            xs: '1fr',
+                            md: '1fr 1fr',
+                            lg: '1fr 1fr 1fr',
+                            xl: '1fr 1fr 1fr 1fr',
+                          },
+                          gap: 2,
+                        }}
+                      >
+                        {items.map(item => renderCard(item))}
+                      </Box>
+                    </Box>
                   );
                 })}
-              </div>
+              </Stack>
             )}
-          </div>
+          </Box>
         ) : null}
 
         {available.length > 0 || !searchQuery ? (
-          <div data-tour-id="integrations-available">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.sections.available}</h3>
+          <Box data-tour-id="integrations-available">
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12 }}>
+              {t.sections.available}
+            </Typography>
             {available.length === 0 && !searchQuery ? (
-              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-                {t.empty.available}
-              </div>
+              <Box
+                sx={{
+                  borderRadius: 0,
+                  border: '1px dashed #e5e7eb',
+                  bgcolor: '#f9fafb',
+                  p: 2,
+                }}
+              >
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.empty.available}</Typography>
+              </Box>
             ) : (
-              <div className="space-y-6">
+              <Stack spacing={3}>
                 {categories.map(category => {
                   const items = availableByCategory.get(category.key) ?? [];
                   if (items.length === 0) return null;
                   return (
-                    <div key={`available-${category.key}`}>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="h-px flex-1 bg-gray-200" />
-                        <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 px-3 py-1 rounded-full border border-gray-200 bg-white">
-                          {category.label}
-                        </span>
-                        <div className="h-px flex-1 bg-gray-200" />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {items.map(item => (
-                          <div
-                            key={item.key}
-                            data-integration-card={item.key}
-                            data-tour-id={
-                              item.key === 'google-sheets'
-                                ? 'integration-card-google-sheets'
-                                : undefined
-                            }
-                            role={
-                              item.primaryAction?.href && !item.primaryAction.external
-                                ? 'button'
-                                : undefined
-                            }
-                            tabIndex={
-                              item.primaryAction?.href && !item.primaryAction.external
-                                ? 0
-                                : undefined
-                            }
-                            className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                            onClick={() => handleCardClick(item)}
-                            onKeyDown={event => {
-                              if (event.key !== 'Enter' && event.key !== ' ') return;
-                              event.preventDefault();
-                              handleCardClick(item);
-                            }}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className="p-2 rounded-lg bg-gray-50 border border-gray-100">
-                                {item.icon}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h2 className="text-lg font-semibold text-gray-900">
-                                    {item.name}
-                                  </h2>
-                                  {item.recommended && (
-                                    <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
-                                      <Star className="h-3 w-3 mr-1 fill-current" />
-                                      {t.recommendedBadge}
-                                    </span>
-                                  )}
-                                  {!item.recommended && (
-                                    <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
-                                      <CheckCircle2 className="h-3 w-3 mr-1" /> {item.badge}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                  {item.description}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                  {item.actions.map(action =>
-                                    action.external ? (
-                                      <a
-                                        key={action.href}
-                                        href={action.href}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-                                      >
-                                        {action.label}
-                                        <ExternalLink className="h-3 w-3 ml-1 text-gray-400" />
-                                      </a>
-                                    ) : action.primary && item.active ? (
-                                      <button
-                                        key={action.href}
-                                        type="button"
-                                        disabled
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-400 cursor-not-allowed"
-                                        onClick={event => event.stopPropagation()}
-                                      >
-                                        {action.label}
-                                      </button>
-                                    ) : action.primary ? (
-                                      <Link
-                                        key={action.href}
-                                        href={action.href}
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-4 py-1.5 text-xs font-medium rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                                      >
-                                        {action.label}
-                                      </Link>
-                                    ) : (
-                                      <Link
-                                        key={action.href}
-                                        href={action.href}
-                                        onClick={event => event.stopPropagation()}
-                                        className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
-                                      >
-                                        {action.label}
-                                      </Link>
-                                    ),
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <Box key={`available-${category.key}`}>
+                      {renderCategoryDivider(category.label)}
+                      <Box
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: {
+                            xs: '1fr',
+                            md: '1fr 1fr',
+                            lg: '1fr 1fr 1fr',
+                            xl: '1fr 1fr 1fr 1fr',
+                          },
+                          gap: 2,
+                        }}
+                        data-tour-id={undefined}
+                      >
+                        {items.map(item => {
+                          const card = renderCard(item);
+                          if (item.key === 'google-sheets') {
+                            return (
+                              <Box key={item.key} data-tour-id="integration-card-google-sheets">
+                                {card}
+                              </Box>
+                            );
+                          }
+                          return card;
+                        })}
+                      </Box>
+                    </Box>
                   );
                 })}
-              </div>
+              </Stack>
             )}
-          </div>
+          </Box>
         ) : null}
 
         {searchQuery && filteredIntegrations.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-4 rounded-full bg-gray-100 p-4">
-              <Search className="h-8 w-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900">{t.noResults.value}</h3>
-            <p className="text-gray-500 mt-1">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              py: 10,
+              textAlign: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                mb: 2,
+                borderRadius: '50%',
+                bgcolor: '#f3f4f6',
+                p: 2,
+                display: 'flex',
+              }}
+            >
+              <Search style={{ height: 32, width: 32, color: '#9ca3af' }} />
+            </Box>
+            <Typography style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>
+              {t.noResults.value}
+            </Typography>
+            <Typography style={{ color: '#6b7280', marginTop: 4 }}>
               {t.noResultsDescription.value.replace('{{query}}', searchQuery)}
-            </p>
+            </Typography>
             <button
               onClick={() => setSearchQuery('')}
-              className="mt-4 text-sm font-semibold text-primary hover:underline"
+              style={{
+                marginTop: 16,
+                fontSize: 14,
+                fontWeight: 600,
+                color: 'var(--color-primary)',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+              }}
             >
               {t.resetSearch.value}
             </button>
-          </div>
+          </Box>
         )}
-      </div>
-    </div>
+      </Stack>
+    </Box>
   );
 }

@@ -6,6 +6,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
+import { Box, CircularProgress, Stack, Typography } from '@mui/material';
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
@@ -141,50 +142,89 @@ export default function GmailIntegrationPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '60vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#6b7280',
+        }}
+      >
         <Spinner className="h-6 w-6" />
-      </div>
+      </Box>
     );
   }
 
   if (!user) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm text-center">
-          <p className="text-gray-800 font-semibold mb-2">{t.common.notConnected.value}</p>
-          <p className="text-sm text-gray-600">{t.errors.loginRequired.value}</p>
-        </div>
-      </div>
+      <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid #e5e7eb',
+            bgcolor: '#fff',
+            p: 3,
+            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+            textAlign: 'center',
+          }}
+        >
+          <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
+            {t.common.notConnected.value}
+          </Typography>
+          <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+            {t.errors.loginRequired.value}
+          </Typography>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-start gap-3 mb-6">
-        <div className="p-2 rounded-full bg-primary/10 text-primary overflow-hidden">
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: '50%',
+            bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
+            overflow: 'hidden',
+            display: 'flex',
+          }}
+        >
           <Image
             src="/icons/gmail.png"
             alt="Gmail"
             width={24}
             height={24}
-            className="h-6 w-6 object-contain"
+            style={{ height: 24, width: 24, objectFit: 'contain' }}
           />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t.header.title.value}</h1>
-          <p className="text-gray-600 mt-1">{t.header.subtitle.value}</p>
-        </div>
-      </div>
+        </Box>
+        <Box>
+          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
+            {t.header.title.value}
+          </Typography>
+          <Typography style={{ color: '#4b5563', marginTop: 4 }}>
+            {t.header.subtitle.value}
+          </Typography>
+        </Box>
+      </Box>
 
       {loading && (
-        <div className="mb-4 flex items-center gap-2 text-sm text-gray-500">
-          <Spinner className="h-4 w-4" />
-          {t.common.loading.value}
-        </div>
+        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <CircularProgress size={16} />
+          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.common.loading.value}</Typography>
+        </Box>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 space-y-4">
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
+          gap: 2,
+        }}
+      >
+        <Stack spacing={2}>
           <IntegrationStatusCard
             status={status}
             title={t.header.title.value}
@@ -202,61 +242,80 @@ export default function GmailIntegrationPage() {
           />
 
           {status?.connected && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">{t.settings.title.value}</h2>
+            <Box
+              sx={{
+                borderRadius: 0,
+                border: '1px solid #e5e7eb',
+                bgcolor: '#fff',
+                p: 3,
+                boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+              }}
+            >
+              <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 24 }}>
+                {t.settings.title.value}
+              </Typography>
 
-              <div className="space-y-4">
+              <Stack spacing={2}>
                 {/* Label Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">{t.settings.labelName.value}</p>
-                    <p className="font-medium text-gray-900">
+                <Box
+                  sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}
+                >
+                  <Stack spacing={0.5}>
+                    <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                      {t.settings.labelName.value}
+                    </Typography>
+                    <Typography style={{ fontWeight: 500, color: '#111827' }}>
                       {status.settings?.labelName || 'Lumio/Receipts'}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">{t.settings.lastSync.value}</p>
-                    <p className="font-medium text-gray-900">
+                    </Typography>
+                  </Stack>
+                  <Stack spacing={0.5}>
+                    <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                      {t.settings.lastSync.value}
+                    </Typography>
+                    <Typography style={{ fontWeight: 500, color: '#111827' }}>
                       {formatDateTime(status.settings?.lastSyncAt, user?.locale) ||
                         t.common.unknownDate.value}
-                    </p>
-                  </div>
-                </div>
+                    </Typography>
+                  </Stack>
+                </Box>
 
                 {/* Filter Settings */}
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2">
+                <Stack spacing={1}>
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                     <Checkbox
                       checked={status.settings?.filterEnabled ?? true}
                       onCheckedChange={checked => updateSettings({ filterEnabled: checked })}
                       disabled={isSaving}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm text-gray-700">{t.settings.filterEnabled.value}</span>
-                  </div>
-                </div>
+                    <Typography style={{ fontSize: 14, color: '#374151' }}>
+                      {t.settings.filterEnabled.value}
+                    </Typography>
+                  </Box>
+                </Stack>
 
                 {/* Watch Status */}
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-500">{t.settings.watchStatus.value}</p>
-                  <p className="font-medium text-gray-900">
+                <Stack spacing={0.5}>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+                    {t.settings.watchStatus.value}
+                  </Typography>
+                  <Typography style={{ fontWeight: 500, color: '#111827' }}>
                     {status.settings?.watchEnabled ? (
-                      <span className="text-emerald-600">{t.status.active.value}</span>
+                      <span style={{ color: '#059669' }}>{t.status.active.value}</span>
                     ) : (
-                      <span className="text-gray-400">{t.status.inactive.value}</span>
+                      <span style={{ color: '#9ca3af' }}>{t.status.inactive.value}</span>
                     )}
-                  </p>
+                  </Typography>
                   {status.settings?.watchExpiration && (
-                    <p className="text-xs text-gray-500">
+                    <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                       {t.settings.expires.value}:{' '}
                       {formatDateTime(status.settings.watchExpiration, user?.locale)}
-                    </p>
+                    </Typography>
                   )}
-                </div>
+                </Stack>
 
                 {/* Keywords */}
-                <div className="space-y-2">
-                  <label htmlFor="gmail-filter-keywords" className="text-sm text-gray-500">
+                <Stack spacing={1}>
+                  <label htmlFor="gmail-filter-keywords" style={{ fontSize: 14, color: '#6b7280' }}>
                     {t.settings.keywords.value}
                   </label>
                   <input
@@ -273,14 +332,23 @@ export default function GmailIntegrationPage() {
                     }
                     disabled={isSaving}
                     placeholder={t.settings.keywordsPlaceholder.value}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    style={{
+                      width: '100%',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: 0,
+                      padding: '8px 12px',
+                      fontSize: 14,
+                      color: '#111827',
+                    }}
                   />
-                  <p className="text-xs text-gray-500">{t.settings.keywordsHelp.value}</p>
-                </div>
+                  <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+                    {t.settings.keywordsHelp.value}
+                  </Typography>
+                </Stack>
 
                 {/* Has Attachment Filter */}
-                <div className="space-y-2">
-                  <div className="inline-flex items-center gap-2">
+                <Stack spacing={1}>
+                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                     <Checkbox
                       checked={status.settings?.filterConfig?.hasAttachment ?? true}
                       onCheckedChange={checked =>
@@ -292,33 +360,45 @@ export default function GmailIntegrationPage() {
                         })
                       }
                       disabled={isSaving}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <span className="text-sm text-gray-700">{t.settings.hasAttachment.value}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <Typography style={{ fontSize: 14, color: '#374151' }}>
+                      {t.settings.hasAttachment.value}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Stack>
+            </Box>
           )}
-        </div>
+        </Stack>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm h-fit">
-          <div className="flex items-start gap-2">
-            <div className="mt-1 text-primary">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">{t.info.title.value}</h3>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>{t.info.step1.value}</p>
-                <p>{t.info.step2.value}</p>
-                <p>{t.info.step3.value}</p>
-                <p>{t.info.step4.value}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid #e5e7eb',
+            bgcolor: '#fff',
+            p: 2,
+            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+            height: 'fit-content',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            <Box sx={{ mt: 0.5, color: 'primary.main' }}>
+              <CheckCircle2 style={{ height: 20, width: 20 }} />
+            </Box>
+            <Box>
+              <Typography style={{ fontWeight: 600, color: '#111827', marginBottom: 8 }}>
+                {t.info.title.value}
+              </Typography>
+              <Stack spacing={1}>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step1.value}</Typography>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step2.value}</Typography>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step3.value}</Typography>
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step4.value}</Typography>
+              </Stack>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }

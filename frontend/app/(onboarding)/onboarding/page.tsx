@@ -8,6 +8,7 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
@@ -612,68 +613,92 @@ export default function OnboardingPage() {
     (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser)
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Spinner className="h-10 w-10 text-primary" />
-      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          minHeight: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <CircularProgress size={40} color="primary" />
+      </Box>
     );
   }
 
   return (
-    <main className="min-h-screen px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-      <div
-        className="mx-auto w-full"
+    <Box
+      component="main"
+      sx={{ minHeight: '100vh', px: { xs: 2, sm: 3, lg: 4 }, py: { xs: 2, lg: 3 } }}
+    >
+      <Box
+        sx={{ mx: 'auto', width: '100%' }}
         style={{
           maxWidth: wizardTargetMaxWidth,
           transition: 'max-width 260ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
-        <div
-          className={
-            isWorkspaceCurrencyPickerView
-              ? 'mb-3 flex items-center justify-between'
-              : 'mb-4 flex items-center justify-between'
-          }
+        <Box
+          sx={{
+            mb: isWorkspaceCurrencyPickerView ? 1.5 : 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
         >
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          <Typography
+            style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em' }}
+            sx={{ color: 'primary.main' }}
+          >
             LUMIO
-          </span>
-          <span className="text-xs font-semibold text-muted-foreground">
+          </Typography>
+          <Typography style={{ fontSize: 12, fontWeight: 600 }} sx={{ color: 'text.secondary' }}>
             {tx(['progressLabel'], 'Step {current} of {total}')
               .replace('{current}', String(currentStep + 1))
               .replace('{total}', String(totalSteps))}
-          </span>
-        </div>
+          </Typography>
+        </Box>
 
-        <div
-          className={`rounded-3xl border border-border bg-card/95 shadow-sm backdrop-blur-sm ${
-            isWorkspaceCurrencyPickerView ? 'p-4 sm:p-5' : 'p-5 sm:p-6'
-          }`}
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+            backdropFilter: 'blur(8px)',
+            p: isWorkspaceCurrencyPickerView ? { xs: 2, sm: 2.5 } : { xs: 2.5, sm: 3 },
+          }}
         >
           <OnboardingProgress currentStep={currentStep} stepLabels={stepLabels} />
 
           {error ? (
-            <div className="mt-4 rounded-xl border border-[#ebd0d0] bg-[#fff4f4] px-4 py-3 text-sm text-[#8a3f3f]">
+            <Alert
+              severity="error"
+              sx={{ mt: 2, borderRadius: 0 }}
+            >
               {error}
-            </div>
+            </Alert>
           ) : null}
 
-          <div
+          <Box
             style={{
               height: animatedBlockHeight ? `${animatedBlockHeight}px` : undefined,
               transition: 'height 260ms cubic-bezier(0.22, 1, 0.36, 1)',
               overflow: 'hidden',
             }}
           >
-            <div
+            <Box
               ref={stepBlockRef}
-              className={
-                isWorkspaceCurrencyPickerView
-                  ? 'flex flex-col gap-4 pt-0'
-                  : 'flex flex-col gap-6 pt-5'
-              }
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: isWorkspaceCurrencyPickerView ? 2 : 3,
+                pt: isWorkspaceCurrencyPickerView ? 0 : 2.5,
+              }}
             >
-              <div className="relative">
-                <div style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
+              <Box sx={{ position: 'relative' }}>
+                <Box style={{ visibility: isStepTransitioning ? 'hidden' : 'visible' }}>
                   {currentStep === welcomeStepIndex ? <WelcomeStep /> : null}
                   {currentStep === languageStepIndex ? (
                     <LanguageStep
@@ -714,15 +739,22 @@ export default function OnboardingPage() {
                       connectedIntegrations={connectedIntegrationItems}
                     />
                   ) : null}
-                </div>
+                </Box>
 
                 {isStepTransitioning ? (
-                  <div className="absolute inset-0 rounded-2xl bg-white" />
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: 0,
+                      bgcolor: 'background.paper',
+                    }}
+                  />
                 ) : null}
-              </div>
+              </Box>
 
               {!hideMainNavigation ? (
-                <div>
+                <Box>
                   <OnboardingNavigation
                     currentStep={currentStep}
                     totalSteps={totalSteps}
@@ -742,12 +774,12 @@ export default function OnboardingPage() {
                       saving: tx(['navigation', 'saving'], 'Saving...'),
                     }}
                   />
-                </div>
+                </Box>
               ) : null}
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }

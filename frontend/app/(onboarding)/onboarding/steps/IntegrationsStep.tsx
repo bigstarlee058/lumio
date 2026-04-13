@@ -2,6 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 
@@ -26,76 +27,130 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
     resolveOnboardingText(getNestedOnboardingValue(t, path), fallback);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
-          {text(['integrations', 'title'], 'Connect your integrations')}
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-          {text(
-            ['integrations', 'subtitle'],
-            'Pick services you want to set up now. You can connect them later as well.',
-          )}
-        </p>
-      </div>
+    <Box component="section">
+      <Stack spacing={3}>
+        <Box>
+          <Typography
+            variant="h4"
+            style={{ fontWeight: 600 }}
+            sx={{ fontSize: { xs: 24, sm: 30 }, color: 'text.primary' }}
+          >
+            {text(['integrations', 'title'], 'Connect your integrations')}
+          </Typography>
+          <Typography
+            style={{ marginTop: 8 }}
+            sx={{ fontSize: { xs: 14, sm: 16 }, color: 'text.secondary' }}
+          >
+            {text(
+              ['integrations', 'subtitle'],
+              'Pick services you want to set up now. You can connect them later as well.',
+            )}
+          </Typography>
+        </Box>
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))' }}
-      >
-        {cards.map(card => (
-          <article key={card.key} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="mb-3 inline-flex rounded-lg border border-primary/20 bg-primary/10 p-2">
-                  <Image
-                    src={card.iconSrc}
-                    alt={card.title}
-                    width={24}
-                    height={24}
-                    className="rounded"
-                  />
-                </div>
-                <h3 className="text-sm font-semibold text-foreground">{card.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{card.description}</p>
-              </div>
-
-              <span
-                className={`inline-flex shrink-0 rounded-full px-2 py-1 text-xs font-semibold ${
-                  card.connected
-                    ? 'bg-primary/10 text-primary border border-primary/30'
-                    : 'bg-muted text-muted-foreground border border-border'
-                }`}
-              >
-                {card.connected
-                  ? text(['integrations', 'connectedBadge'], 'Connected')
-                  : text(['integrations', 'availableBadge'], 'Available')}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => onConnect(card.key)}
-              disabled={card.connected || card.loading}
-              className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
-                card.connected
-                  ? 'border border-border bg-muted text-muted-foreground'
-                  : 'bg-primary text-primary-foreground hover:bg-primary-hover'
-              }`}
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 2,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          }}
+        >
+          {cards.map(card => (
+            <Box
+              key={card.key}
+              component="article"
+              sx={{
+                borderRadius: 0,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                p: 2,
+                boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+              }}
             >
-              {card.loading ? <Spinner className="h-3.5 w-3.5" /> : null}
-              {card.actionLabel}
-            </button>
-          </article>
-        ))}
-      </div>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      mb: 1.5,
+                      display: 'inline-flex',
+                      borderRadius: 0,
+                      border: '1px solid',
+                      borderColor: 'primary.light',
+                      bgcolor: 'primary.50',
+                      p: 1,
+                    }}
+                  >
+                    <Image
+                      src={card.iconSrc}
+                      alt={card.title}
+                      width={24}
+                      height={24}
+                      style={{ borderRadius: 0 }}
+                    />
+                  </Box>
+                  <Typography style={{ fontSize: 14, fontWeight: 600 }} sx={{ color: 'text.primary' }}>
+                    {card.title}
+                  </Typography>
+                  <Typography style={{ marginTop: 4, fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+                    {card.description}
+                  </Typography>
+                </Box>
 
-      <p className="text-sm text-muted-foreground">
-        {text(
-          ['integrations', 'helper'],
-          'If you skip this step, you can connect integrations later in Settings -> Integrations.',
-        )}
-      </p>
-    </section>
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    flexShrink: 0,
+                    borderRadius: 0,
+                    px: 1,
+                    py: 0.5,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    border: '1px solid',
+                    borderColor: card.connected ? 'primary.light' : 'divider',
+                    bgcolor: card.connected ? 'primary.50' : 'action.hover',
+                    color: card.connected ? 'primary.main' : 'text.secondary',
+                  }}
+                >
+                  {card.connected
+                    ? text(['integrations', 'connectedBadge'], 'Connected')
+                    : text(['integrations', 'availableBadge'], 'Available')}
+                </Box>
+              </Box>
+
+              <Button
+                variant={card.connected ? 'outlined' : 'contained'}
+                size="small"
+                onClick={() => onConnect(card.key)}
+                disabled={card.connected || card.loading}
+                startIcon={card.loading ? <Spinner className="h-3.5 w-3.5" /> : undefined}
+                sx={{
+                  mt: 2,
+                  borderRadius: 0,
+                  fontWeight: 600,
+                  fontSize: 12,
+                  textTransform: 'none',
+                  ...(card.connected && {
+                    borderColor: 'divider',
+                    color: 'text.secondary',
+                    bgcolor: 'action.hover',
+                  }),
+                }}
+              >
+                {card.actionLabel}
+              </Button>
+            </Box>
+          ))}
+        </Box>
+
+        <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+          {text(
+            ['integrations', 'helper'],
+            'If you skip this step, you can connect integrations later in Settings -> Integrations.',
+          )}
+        </Typography>
+      </Stack>
+    </Box>
   );
 }

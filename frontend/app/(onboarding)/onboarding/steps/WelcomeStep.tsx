@@ -1,6 +1,7 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
+import { Box, Stack, Typography } from '@mui/material';
 import { CheckCircle2, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 
@@ -10,65 +11,118 @@ export function WelcomeStep() {
     resolveOnboardingText(getNestedOnboardingValue(t, path), fallback);
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-          {text(['welcome', 'title'], "Let's tailor Lumio for you")}
-        </h1>
-        <p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-          {text(
-            ['welcome', 'subtitle'],
-            'This takes a couple of minutes: choose language, default currency, and integrations.',
-          )}
-        </p>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <p className="mt-3 text-sm font-medium text-foreground">
-            {text(['welcome', 'points', 'fastSetup'], 'Quick initial setup')}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <Workflow className="h-5 w-5 text-primary" />
-          <p className="mt-3 text-sm font-medium text-foreground">
-            {text(['welcome', 'points', 'integrations'], 'Connect services in one click')}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <ShieldCheck className="h-5 w-5 text-primary" />
-          <p className="mt-3 text-sm font-medium text-foreground">
-            {text(['welcome', 'points', 'control'], 'Clear start and full control')}
-          </p>
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-border bg-card p-4">
-        <p className="mb-3 text-sm font-semibold text-foreground">
-          {text(['welcome', 'nextTitle'], 'What happens next')}
-        </p>
-        <ul className="space-y-2 text-sm text-muted-foreground">
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-primary" />
-            {text(['welcome', 'nextSteps', 'language'], 'Pick interface language and timezone')}
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-primary" />
+    <Box component="section">
+      <Stack spacing={3}>
+        <Box>
+          <Typography
+            variant="h3"
+            style={{ fontWeight: 600, lineHeight: 1.2 }}
+            sx={{ fontSize: { xs: 30, sm: 36 }, color: 'text.primary' }}
+          >
+            {text(['welcome', 'title'], "Let's tailor Lumio for you")}
+          </Typography>
+          <Typography
+            style={{ marginTop: 12, maxWidth: 672, lineHeight: 1.75 }}
+            sx={{ fontSize: 16, color: 'text.secondary' }}
+          >
             {text(
-              ['welcome', 'nextSteps', 'workspace'],
-              'Set workspace name, currency, and background',
+              ['welcome', 'subtitle'],
+              'This takes a couple of minutes: choose language, default currency, and integrations.',
             )}
-          </li>
-          <li className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-primary" />
-            {text(
-              ['welcome', 'nextSteps', 'integrations'],
-              'Connect integrations you need right now',
-            )}
-          </li>
-        </ul>
-      </div>
-    </section>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gap: 1.5,
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+          }}
+        >
+          <Box
+            sx={{
+              borderRadius: 0,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2,
+            }}
+          >
+            <Sparkles style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
+            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+              {text(['welcome', 'points', 'fastSetup'], 'Quick initial setup')}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              borderRadius: 0,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2,
+            }}
+          >
+            <Workflow style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
+            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+              {text(['welcome', 'points', 'integrations'], 'Connect services in one click')}
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              borderRadius: 0,
+              border: '1px solid',
+              borderColor: 'divider',
+              bgcolor: 'background.paper',
+              p: 2,
+            }}
+          >
+            <ShieldCheck style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
+            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+              {text(['welcome', 'points', 'control'], 'Clear start and full control')}
+            </Typography>
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            p: 2,
+          }}
+        >
+          <Typography style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }} sx={{ color: 'text.primary' }}>
+            {text(['welcome', 'nextTitle'], 'What happens next')}
+          </Typography>
+          <Stack component="ul" spacing={1} style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+                {text(['welcome', 'nextSteps', 'language'], 'Pick interface language and timezone')}
+              </Typography>
+            </Box>
+            <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+                {text(
+                  ['welcome', 'nextSteps', 'workspace'],
+                  'Set workspace name, currency, and background',
+                )}
+              </Typography>
+            </Box>
+            <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+                {text(
+                  ['welcome', 'nextSteps', 'integrations'],
+                  'Connect integrations you need right now',
+                )}
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
+      </Stack>
+    </Box>
   );
 }

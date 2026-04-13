@@ -1,5 +1,7 @@
 'use client';
 
+import { Box, Stack, Typography } from '@mui/material';
+
 interface OnboardingProgressProps {
   currentStep: number;
   stepLabels: string[];
@@ -8,42 +10,78 @@ interface OnboardingProgressProps {
 export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgressProps) {
   const totalSteps = stepLabels.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
-  const columnsClass =
-    totalSteps === 3
-      ? 'grid-cols-3'
-      : totalSteps === 4
-        ? 'grid-cols-4'
-        : 'grid-cols-5';
 
   return (
-    <div className="space-y-4">
-      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-primary transition-all duration-300"
-          style={{ width: `${progress}%` }}
+    <Stack spacing={2}>
+      <Box
+        sx={{
+          height: 8,
+          width: '100%',
+          overflow: 'hidden',
+          borderRadius: 0,
+          bgcolor: 'action.hover',
+        }}
+      >
+        <Box
+          sx={{
+            height: '100%',
+            borderRadius: 0,
+            bgcolor: 'primary.main',
+            transition: 'width 300ms ease',
+            width: `${progress}%`,
+          }}
         />
-      </div>
+      </Box>
 
-      <div className={`grid gap-2 ${columnsClass}`}>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 1,
+          gridTemplateColumns: `repeat(${totalSteps}, 1fr)`,
+        }}
+      >
         {stepLabels.map((label, index) => {
           const isActive = index === currentStep;
           const isPassed = index < currentStep;
           return (
-            <div
+            <Box
               key={label}
-              className={`rounded-xl border px-3 py-2 text-center text-xs font-semibold transition-colors sm:text-sm ${
-                isActive
-                  ? 'border-primary bg-primary/10 text-primary'
+              sx={{
+                borderRadius: 0,
+                border: '1px solid',
+                px: 1.5,
+                py: 1,
+                textAlign: 'center',
+                fontSize: { xs: 12, sm: 14 },
+                fontWeight: 600,
+                transition: 'colors 0.2s',
+                borderColor: isActive
+                  ? 'primary.main'
                   : isPassed
-                    ? 'border-primary/40 bg-primary/5 text-primary'
-                    : 'border-border bg-card text-muted-foreground'
-              }`}
+                    ? 'primary.light'
+                    : 'divider',
+                bgcolor: isActive
+                  ? 'primary.50'
+                  : isPassed
+                    ? 'primary.50'
+                    : 'background.paper',
+                color: isActive || isPassed ? 'primary.main' : 'text.secondary',
+              }}
             >
-              {label}
-            </div>
+              <Typography
+                component="span"
+                style={{
+                  fontSize: 'inherit',
+                  fontWeight: 'inherit',
+                  color: 'inherit',
+                }}
+              >
+                {label}
+              </Typography>
+            </Box>
           );
         })}
-      </div>
-    </div>
+      </Box>
+    </Stack>
   );
 }
