@@ -212,7 +212,7 @@ export function PDFThumbnail({
       style={{
         position: 'relative',
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-        borderRadius: 12,
+        borderRadius: 0,
         overflow: 'hidden',
         width: frameWidth,
         height: resolvedFrameHeight,

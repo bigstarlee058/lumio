@@ -145,7 +145,6 @@ function DropdownMenuContent({
         paper: {
           sx: {
             minWidth: 220,
-            borderRadius: 2,
             boxShadow: 3,
             p: 0.5,
           },

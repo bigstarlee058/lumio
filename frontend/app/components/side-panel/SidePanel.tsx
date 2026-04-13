@@ -188,7 +188,7 @@ export function SidePanel({
                     onClick={action.onClick}
                     disabled={action.disabled || action.loading}
                     title={action.tooltip || action.label}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 0, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
                   >
                     {action.loading ? (
                       <Spinner size={16} />

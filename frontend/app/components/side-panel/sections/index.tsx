@@ -385,7 +385,7 @@ function SummaryItemComponent({ item }: { item: SummaryItem }) {
   }, [item]);
 
   return (
-    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: 14 }}>
+    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: 0 }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p

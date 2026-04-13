@@ -154,7 +154,6 @@ export function FilterOptionRow({
         background: 'none',
         border: 'none',
         cursor: 'pointer',
-        borderRadius: 12,
         transition: 'background 0.15s',
       }}
       onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}

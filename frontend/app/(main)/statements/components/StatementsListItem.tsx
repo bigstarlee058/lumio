@@ -451,7 +451,7 @@ export function StatementsListItem({
                   checked={selected}
                   onCheckedChange={onToggleSelect}
                   onClick={(event: { stopPropagation: () => void }) => event.stopPropagation()}
-                  style={{ pointerEvents: 'auto', height: 16, width: 16, borderRadius: 4 }}
+                  style={{ pointerEvents: 'auto', height: 16, width: 16 }}
                 />
               )}
             </div>

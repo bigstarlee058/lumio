@@ -140,7 +140,6 @@ export function DateFilterDropdown({
               data-testid="date-range-picker"
               style={{
                 marginTop: 12,
-                borderRadius: 12,
                 border: '1px solid #e5e7eb',
                 background: 'rgba(249,250,251,0.6)',
                 padding: 12,
