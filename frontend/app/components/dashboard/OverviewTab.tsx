@@ -2,7 +2,6 @@
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Card, CardContent } from '@/app/components/ui/card';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { FileUp } from 'lucide-react';
 import Link from 'next/link';
@@ -51,30 +50,38 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     {
       key: 'totalBalance' as const,
       label: 'TOTAL BALANCE',
-      colorClass: (v: number) =>
-        v >= 0 ? 'text-slate-700 dark:text-slate-300' : 'text-[#D13D56]',
+      colorClass: (v: number) => (v >= 0 ? '#334155' : '#D13D56'),
     },
     {
       key: 'income30d' as const,
       label: `INCOME (${rangeLabel})`.toUpperCase(),
-      colorClass: () => 'text-emerald-600 dark:text-emerald-400',
+      colorClass: () => '#059669',
     },
     {
       key: 'expense30d' as const,
       label: `EXPENSE (${rangeLabel})`.toUpperCase(),
-      colorClass: () => 'text-[#D13D56]',
+      colorClass: () => '#D13D56',
     },
     {
       key: 'netFlow30d' as const,
       label: `NET FLOW (${rangeLabel})`.toUpperCase(),
-      colorClass: (v: number) =>
-        v >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#D13D56]',
+      colorClass: (v: number) => (v >= 0 ? '#059669' : '#D13D56'),
     },
   ];
 
   if (hasNoData) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 10, px: 2, textAlign: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          py: 10,
+          px: 2,
+          textAlign: 'center',
+        }}
+      >
         <Box
           sx={{
             mb: 3,
@@ -93,12 +100,24 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
         </Box>
         <Typography
           component="h2"
-          sx={{ mb: 1, fontSize: 20, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
+          sx={{
+            mb: 1,
+            fontSize: 20,
+            fontWeight: 700,
+            color: 'text.primary',
+            fontFamily: 'var(--font-dashboard-mono)',
+          }}
         >
           Upload your first statement
         </Typography>
         <Typography
-          sx={{ mb: 4, maxWidth: 448, fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
+          sx={{
+            mb: 4,
+            maxWidth: 448,
+            fontSize: 14,
+            color: 'text.secondary',
+            fontFamily: 'var(--font-dashboard-sans)',
+          }}
         >
           Start tracking your finances by uploading a bank statement. We&apos;ll parse it
           automatically and show your cash flow, categories, and insights.
@@ -130,36 +149,75 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%', pb: '40px' }}>
       {effectivePeriod ? (
         <Box
-          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
+          sx={{
+            border: '1px solid var(--border)',
+            bgcolor: 'var(--muted)',
+            px: 2,
+            py: 1.5,
+            fontSize: 12,
+            color: 'text.secondary',
+            backdropFilter: 'blur(12px)',
+            fontFamily: 'var(--font-dashboard-sans)',
+          }}
         >
           Showing latest available period: {effectivePeriod}
         </Box>
       ) : null}
 
       <Box
-        sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' }, gap: '32px' }}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' },
+          gap: '32px',
+        }}
       >
         {snapshotCards.map(({ key, label, colorClass }) => {
           const value = data.snapshot[key];
           const textColor = colorClass(value);
           return (
-            <Card
+            <Box
               key={key}
-              className={`h-[72px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card`}
+              sx={{
+                border: '1px solid var(--border)',
+                bgcolor: 'white',
+                height: 72,
+                boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+              }}
             >
-              <CardContent style={{ padding: '8px 12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+              <Box
+                sx={{
+                  px: 1.5,
+                  py: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  height: '100%',
+                }}
+              >
                 <span
-                  className="text-[10px] font-semibold text-muted-foreground uppercase tracking-[1px]"
-                  style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+                  style={{
+                    fontFamily: 'var(--font-dashboard-mono)',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: '#94a3b8',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                  }}
                 >
                   {label}
                 </span>
                 <span
-                  className={`text-[30px] font-bold leading-none ${textColor} mt-1`}
-                  style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+                  style={{
+                    fontFamily: 'var(--font-dashboard-mono)',
+                    fontSize: 30,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    color: textColor,
+                    marginTop: 4,
+                  }}
                 >
                   {isLoading ? (
-                    <Spinner className="size-3" />
+                    <Spinner size={12} />
                   ) : (
                     <>
                       {value < 0 && key !== 'expense30d' ? '− ' : ''}
@@ -167,20 +225,48 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
                     </>
                   )}
                 </span>
-              </CardContent>
-            </Card>
+              </Box>
+            </Box>
           );
         })}
       </Box>
 
       <Box
-        sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'repeat(12, 1fr)' }, gap: 2.5, alignItems: 'stretch', mt: 2 }}
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', lg: 'repeat(12, 1fr)' },
+          gap: 2.5,
+          alignItems: 'stretch',
+          mt: 2,
+        }}
       >
-        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card" style={{ gridColumn: 'span 4' }}>
-          <CardContent style={{ padding: 24, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', gap: 12 }}>
+        <Box
+          sx={{
+            gridColumn: 'span 4',
+            border: '1px solid var(--border)',
+            bgcolor: 'white',
+            minHeight: 320,
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+          }}
+        >
+          <Box
+            sx={{
+              p: 3,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              overflow: 'hidden',
+              gap: 1.5,
+            }}
+          >
             <h2
-              className="text-[18px] font-bold text-foreground uppercase"
-              style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: '#111827',
+                textTransform: 'uppercase',
+                fontFamily: 'var(--font-dashboard-mono)',
+              }}
             >
               ACTION REQUIRED
             </h2>
@@ -192,25 +278,54 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
                 isLoading={isLoading}
               />
             </div>
-          </CardContent>
-        </Card>
+          </Box>
+        </Box>
 
-        <Card className="min-h-[320px] rounded-2xl border border-border bg-card/90 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.04)] dark:border-border dark:bg-card" style={{ gridColumn: 'span 8' }}>
-          <CardContent className="p-6" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', gap: 12 }}>
+        <Box
+          sx={{
+            gridColumn: 'span 8',
+            border: '1px solid var(--border)',
+            bgcolor: 'white',
+            minHeight: 320,
+            boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
+          }}
+        >
+          <Box
+            sx={{
+              p: 3,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              gap: 1.5,
+            }}
+          >
             <h2
-              className="text-[18px] font-bold text-foreground uppercase"
-              style={{ fontFamily: 'var(--font-dashboard-mono)' }}
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: '#111827',
+                textTransform: 'uppercase',
+                fontFamily: 'var(--font-dashboard-mono)',
+              }}
             >
               CASH FLOW ({rangeLabel.toUpperCase()})
             </h2>
-            <div style={{ backgroundColor: 'transparent', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', padding: '20px 24px', minHeight: 240 }}>
-              <CashFlowMini
-                data={data.cashFlow}
-                emptyLabel="No cash flow data yet"
-              />
+            <div
+              style={{
+                backgroundColor: 'transparent',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                padding: '20px 24px',
+                minHeight: 240,
+              }}
+            >
+              <CashFlowMini data={data.cashFlow} emptyLabel="No cash flow data yet" />
             </div>
-          </CardContent>
-        </Card>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

@@ -91,7 +91,7 @@ export function TransactionTab() {
   if (loading && transactions.length === 0) {
     return (
       <Box sx={{ display: 'flex', minHeight: 400, alignItems: 'center', justifyContent: 'center' }}>
-        <Spinner className="h-8 w-8 text-primary" />
+        <Spinner size={32} />
       </Box>
     );
   }

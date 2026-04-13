@@ -168,7 +168,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
 
       {loading && (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
-          <Spinner className="h-8 w-8 text-[#1a1a1a]" />
+          <Spinner size={32} />
         </Box>
       )}
 

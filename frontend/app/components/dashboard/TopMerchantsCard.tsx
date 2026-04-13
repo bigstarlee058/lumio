@@ -3,7 +3,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { DashboardData } from '@/app/hooks/useDashboard';
-import { Card, CardContent } from '../ui/card';
 
 interface TopMerchantsCardProps {
   merchants: NonNullable<DashboardData['topMerchants']>;
@@ -20,27 +19,41 @@ export function TopMerchantsCard({
 }: TopMerchantsCardProps) {
   if (!merchants.length) {
     return (
-      <Card style={{ height: '100%', borderRadius: 0, border: '1px solid #E8E8E8', backgroundColor: 'white', boxShadow: 'none' }}>
-        <CardContent style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'white' }}>
+        <Box
+          sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}
+        >
           <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>{emptyLabel}</Typography>
-        </CardContent>
-      </Card>
+        </Box>
+      </Box>
     );
   }
 
   const maxAmount = Math.max(...merchants.map(m => m.amount));
 
   return (
-    <Card className="h-full rounded-none border border-[#E8E8E8] bg-white shadow-none">
-      <CardContent style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'white' }}>
+      <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <Typography sx={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#94a3b8' }}>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.18em',
+                color: '#94a3b8',
+              }}
+            >
               {title}
             </Typography>
-            <Typography sx={{ mt: 0.5, fontSize: 14, color: '#64748b' }}>Spending distribution</Typography>
+            <Typography sx={{ mt: 0.5, fontSize: 14, color: '#64748b' }}>
+              Spending distribution
+            </Typography>
           </div>
-          <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>Last period</Typography>
+          <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>
+            Last period
+          </Typography>
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -48,21 +61,47 @@ export function TopMerchantsCard({
             const width = Math.max(6, Math.round((merchant.amount / maxAmount) * 100));
             return (
               <Box key={merchant.name} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
+                  }}
+                >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0 }}>
                     <Box
                       component="span"
-                      sx={{ display: 'flex', height: 36, width: 36, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#334155', border: '1px solid #E8E8E8' }}
+                      sx={{
+                        display: 'flex',
+                        height: 36,
+                        width: 36,
+                        flexShrink: 0,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: '#f8fafc',
+                        color: '#334155',
+                        border: '1px solid #E8E8E8',
+                      }}
                     >
                       {merchant.name?.[0] ?? '•'}
                     </Box>
                     <div style={{ minWidth: 0 }}>
                       <Typography
-                        sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#1e293b' }}
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: '#1e293b',
+                        }}
                       >
                         {merchant.name}
                       </Typography>
-                      <Typography sx={{ fontSize: 12, color: '#64748b' }}>{merchant.count} payments</Typography>
+                      <Typography sx={{ fontSize: 12, color: '#64748b' }}>
+                        {merchant.count} payments
+                      </Typography>
                     </div>
                   </Box>
                   <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
@@ -79,7 +118,7 @@ export function TopMerchantsCard({
             );
           })}
         </Box>
-      </CardContent>
-    </Card>
+      </Box>
+    </Box>
   );
 }
