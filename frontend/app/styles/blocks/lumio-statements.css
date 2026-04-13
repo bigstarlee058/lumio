@@ -706,7 +706,7 @@
   width: 100%;
   border-radius: 0;
   border: 1px solid var(--border-color, #d7e2ef);
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   padding: 0 16px 0 48px;
   font-size: 16px;
   color: var(--foreground, #0f172a);
@@ -794,7 +794,7 @@
 }
 .lumio-col-drawer__col-item--dragging {
   z-index: 10;
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .lumio-col-drawer__grip {
@@ -825,7 +825,7 @@
 .lumio-col-drawer__footer {
   position: sticky;
   bottom: 0;
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   padding: 16px 0 8px;
 }
 
@@ -2460,7 +2460,7 @@
   color: var(--foreground, #0f172a);
 }
 .lumio-expense-drawer__tab--active {
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   color: var(--foreground, #0f172a);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -2487,7 +2487,7 @@
   width: 100%;
   border-radius: 0;
   border: 1px solid var(--border-color, #d7e2ef);
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   padding: 12px 16px 12px 40px;
   font-size: 14px;
   color: var(--foreground, #0f172a);
@@ -2544,7 +2544,7 @@
 .lumio-expense-drawer__no-result {
   border-radius: 0;
   border: 1px solid var(--border-color, #d7e2ef);
-  background: var(--card-bg, #fff);
+  background: var(--card-bg, var(--lumio-color-surface));
   padding: 12px;
   font-size: 14px;
   color: var(--muted-foreground, #4b5563);
