@@ -136,7 +136,7 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
         : pt?.status?.disconnected?.value || pt?.status?.disconnected || 'Disconnected';
 
   return (
-    <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+    <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ padding: 8, borderRadius: '50%', background: 'rgba(var(--lumio-primary-rgb,99,102,241),0.1)', color: 'var(--lumio-primary,#6366f1)' }}>

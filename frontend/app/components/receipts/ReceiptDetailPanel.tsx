@@ -259,7 +259,7 @@ export function ReceiptDetailPanel({
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'action.hover', p: 2.5 }}>
+          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'var(--muted)', p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: '#475569' }}>
                 {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}

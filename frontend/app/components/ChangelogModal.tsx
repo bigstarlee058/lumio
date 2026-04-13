@@ -83,7 +83,7 @@ const markdownComponents: Components = {
   code: ({ children }) => (
     <Box
       component="code"
-      sx={{ bgcolor: 'action.hover', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: 0 }}
+      sx={{ bgcolor: 'var(--muted)', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: 0 }}
     >
       {children}
     </Box>
@@ -143,7 +143,7 @@ export function ChangelogModal({
           <IconButton
             onClick={onClose}
             aria-label={closeLabel}
-            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}
+            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'var(--muted)', color: 'text.primary' } }}
           >
             <X size={30} strokeWidth={2.4} />
           </IconButton>
