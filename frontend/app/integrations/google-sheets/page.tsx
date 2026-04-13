@@ -498,7 +498,7 @@ export default function GoogleSheetsIntegrationPage() {
                     width: '100%',
                     border: '1px solid #e5e7eb',
                     borderRadius: 0,
-                    background: '#fff',
+                    background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
                     opacity: !selectedSpreadsheet || loadingWorksheets ? 0.6 : 1,
@@ -526,7 +526,7 @@ export default function GoogleSheetsIntegrationPage() {
                     width: '100%',
                     border: '1px solid #e5e7eb',
                     borderRadius: 0,
-                    background: '#fff',
+                    background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
                   }}

@@ -85,7 +85,7 @@ const selectStyle: React.CSSProperties = {
   fontSize: 14,
   borderRadius: 0,
   outline: 'none',
-  background: '#fff',
+  background: 'var(--card-bg)',
 };
 
 const inputStyle: React.CSSProperties = {
@@ -96,7 +96,7 @@ const inputStyle: React.CSSProperties = {
   fontSize: 14,
   borderRadius: 0,
   outline: 'none',
-  background: '#fff',
+  background: 'var(--card-bg)',
 };
 
 export default function AuditPage() {
@@ -192,7 +192,7 @@ export default function AuditPage() {
               gap: 3,
             }}
           >
-            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
               <Typography variant="body2" fontWeight={600} style={{ color: '#374151' }}>
                 Filters
               </Typography>
@@ -353,7 +353,7 @@ export default function AuditPage() {
             <Stack spacing={2}>
               {error && <Alert severity="error" sx={{ borderRadius: 0 }}>{error}</Alert>}
               {loading ? (
-                <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3 }}>
+                <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3 }}>
                   <Typography variant="body2" style={{ color: '#6b7280' }}>
                     Loading audit events...
                   </Typography>

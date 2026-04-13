@@ -797,7 +797,7 @@ export default function CustomTablesPage() {
   if (!user) {
     return (
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, fontSize: 14, color: '#4b5563' }}>
           {t.auth.loginRequired}
         </Box>
       </Box>
@@ -843,7 +843,7 @@ export default function CustomTablesPage() {
       />
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
         <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: { xs: 2.5, sm: 3 }, py: 2.5 }}>
+          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: { xs: 2.5, sm: 3 }, py: 2.5 }}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: { md: 'center' }, justifyContent: { md: 'space-between' } }}>
               <Box sx={{ minWidth: 0 }}>
                 <Typography variant="h1" style={{ fontSize: 24, fontWeight: 600, color: '#111827' }}>{headerTitle}</Typography>
@@ -866,7 +866,7 @@ export default function CustomTablesPage() {
                       component="button"
                       type="button"
                       data-tour-id="custom-tables-create-dropdown"
-                      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.25, fontSize: 14, fontWeight: 500, color: '#111827', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
+                      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.25, fontSize: 14, fontWeight: 500, color: '#111827', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
                     >
                       <TableIcon className="h-4 w-4" />
                       {createLabel}
@@ -897,7 +897,7 @@ export default function CustomTablesPage() {
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px 12px 44px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
+              style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '12px 16px 12px 44px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
             />
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
@@ -969,7 +969,7 @@ export default function CustomTablesPage() {
               component="button"
               type="button"
               onClick={handleOpenFiltersDrawer}
-              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1.5, py: 0.75, fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" />
               {filterLabels.filters}
@@ -988,8 +988,8 @@ export default function CustomTablesPage() {
               <Spinner className="h-20 w-20 text-primary" />
             </Box>
           ) : filteredCount === 0 ? (
-            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: { xs: 3, sm: 5 }, py: { xs: 5, sm: 6 } }}>
-              <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', bgcolor: '#f3f4f6', color: '#9ca3af' }}>
+            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: { xs: 3, sm: 5 }, py: { xs: 5, sm: 6 } }}>
+              <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', bgcolor: 'action.hover', color: '#9ca3af' }}>
                 <TableIcon className="h-8 w-8" />
               </Box>
               <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: '#111827' }}>
@@ -1041,7 +1041,7 @@ export default function CustomTablesPage() {
                 {registryItems.map(table => (
                   <Box
                     key={table.id}
-                    sx={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5, '&:hover': { bgcolor: '#f9fafb' } }}
+                    sx={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5, '&:hover': { bgcolor: 'action.hover' } }}
                     onClick={() => router.push(`/custom-tables/${table.id}`)}
                     onKeyDown={event => {
                       if (event.target !== event.currentTarget) {
@@ -1492,7 +1492,7 @@ export default function CustomTablesPage() {
                       {selectedStatementPreviewItems.map(option => (
                         <Box
                           key={option.representativeId}
-                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1, py: 0.5 }}
+                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 1, py: 0.5 }}
                         >
                           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#374151' }}>{option.title}</span>
                           <span style={{ fontSize: 12, fontWeight: 500, color: '#111827', flexShrink: 0, marginLeft: 8 }}>

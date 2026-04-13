@@ -185,7 +185,7 @@ export default function DashboardPage() {
                 fontSize: 12,
                 fontWeight: 500,
                 boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                backgroundColor: 'white',
+                backgroundColor: 'var(--card-bg)',
                 color: isReadyToRefresh || pullRefreshing ? 'var(--primary)' : '#6b7280',
               }}
             >

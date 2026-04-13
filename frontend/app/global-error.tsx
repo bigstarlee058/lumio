@@ -30,7 +30,7 @@ export default function GlobalError({
                 padding: '10px 16px',
                 borderRadius: 8,
                 border: '1px solid #e2e8f0',
-                background: '#ffffff',
+                background: 'var(--card-bg)',
                 cursor: 'pointer',
               }}
             >

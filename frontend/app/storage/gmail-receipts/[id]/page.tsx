@@ -764,7 +764,6 @@ export default function GmailReceiptDocumentPage() {
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                borderRadius: 2,
                 borderColor: 'grey.300',
                 color: 'text.secondary',
                 '&:hover': {
@@ -789,7 +788,6 @@ export default function GmailReceiptDocumentPage() {
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                borderRadius: 2,
                 borderColor: 'grey.300',
                 color: gmailMessageLink ? 'text.secondary' : 'text.disabled',
                 '&:hover': {
@@ -817,7 +815,6 @@ export default function GmailReceiptDocumentPage() {
           variant="filled"
           severity={readinessSeverity}
           sx={{
-            borderRadius: '0 !important',
             px: { xs: 2.5, sm: 4 },
             py: 0.75,
             minHeight: 42,
@@ -854,7 +851,7 @@ export default function GmailReceiptDocumentPage() {
       >
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             Date
@@ -867,7 +864,7 @@ export default function GmailReceiptDocumentPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             Income
@@ -878,7 +875,7 @@ export default function GmailReceiptDocumentPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             Expense
@@ -889,7 +886,7 @@ export default function GmailReceiptDocumentPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             Confidence
@@ -912,7 +909,6 @@ export default function GmailReceiptDocumentPage() {
         elevation={0}
         sx={{
           mb: 4,
-          borderRadius: 2,
           border: '1px solid',
           borderColor: 'divider',
           '&:before': { display: 'none' },
@@ -1107,7 +1103,6 @@ export default function GmailReceiptDocumentPage() {
                       py: 1,
                       border: '1px solid',
                       borderColor: 'grey.200',
-                      borderRadius: 1,
                       bgcolor: 'grey.50',
                     }}
                   >
@@ -1145,7 +1140,6 @@ export default function GmailReceiptDocumentPage() {
                       p: 2,
                       border: '1px solid',
                       borderColor: 'warning.200',
-                      borderRadius: 1,
                       bgcolor: 'warning.50',
                     }}
                   >
@@ -1167,7 +1161,6 @@ export default function GmailReceiptDocumentPage() {
                           fontWeight: 600,
                           borderColor: 'warning.400',
                           color: 'warning.800',
-                          borderRadius: 1.5,
                           '&:hover': { bgcolor: 'warning.100' },
                         }}
                       >
@@ -1186,7 +1179,7 @@ export default function GmailReceiptDocumentPage() {
                 variant="outlined"
                 color="error"
                 onClick={handleUnmarkDuplicate}
-                sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2 }}
+                sx={{ textTransform: 'none', fontWeight: 600 }}
               >
                 Unmark as duplicate
               </Button>
@@ -1230,7 +1223,6 @@ export default function GmailReceiptDocumentPage() {
             bgcolor: 'primary.50',
             border: '1px solid',
             borderColor: 'primary.200',
-            borderRadius: 2,
           }}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1251,7 +1243,6 @@ export default function GmailReceiptDocumentPage() {
                   fontWeight: 500,
                   borderColor: 'primary.300',
                   color: 'primary.700',
-                  borderRadius: 2,
                   '&:hover': { borderColor: 'primary.400', bgcolor: 'primary.100' },
                 }}
               >
@@ -1263,7 +1254,7 @@ export default function GmailReceiptDocumentPage() {
                 startIcon={<Trash2 size={18} />}
                 onClick={handleBulkDelete}
                 size="small"
-                sx={{ textTransform: 'none', fontWeight: 500, borderRadius: 2 }}
+                sx={{ textTransform: 'none', fontWeight: 500 }}
               >
                 Delete
               </Button>
@@ -1279,7 +1270,6 @@ export default function GmailReceiptDocumentPage() {
         sx={{
           border: '1px solid',
           borderColor: 'divider',
-          borderRadius: 2,
           overflow: 'hidden',
         }}
       >
@@ -1308,7 +1298,6 @@ export default function GmailReceiptDocumentPage() {
                 fontWeight: 600,
                 borderColor: 'grey.300',
                 color: 'text.secondary',
-                borderRadius: 1.5,
                 '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
               }}
             >
@@ -1323,7 +1312,6 @@ export default function GmailReceiptDocumentPage() {
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                borderRadius: 1.5,
                 boxShadow: 'none',
                 '&:hover': { boxShadow: 'none' },
               }}

@@ -153,7 +153,7 @@ export default function TransactionDocumentViewer({
           width: '100%',
           maxWidth: '100%',
           margin: '0 auto',
-          bgcolor: '#ffffff',
+          bgcolor: 'background.paper',
           minHeight: '100vh',
           px: { xs: 2, sm: 3, lg: 4 },
           py: 4,

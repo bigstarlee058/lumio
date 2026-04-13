@@ -259,9 +259,9 @@ export function ReceiptDetailPanel({
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: '#f8fafc', p: 2.5 }}>
+          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'action.hover', p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ bgcolor: '#fff', p: 1.5, color: '#475569' }}>
+              <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: '#475569' }}>
                 {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
               </Box>
               <Box sx={{ minWidth: 0 }}>
@@ -285,7 +285,7 @@ export function ReceiptDetailPanel({
           <Box
             sx={{
               border: '2px dashed #cbd5e1',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               px: 2.5,
               py: 4,
               textAlign: 'center',
@@ -317,7 +317,7 @@ export function ReceiptDetailPanel({
             )}
           </Box>
 
-          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: '#fff', p: 2.5 }}>
+          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'background.paper', p: 2.5 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: '#475569' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                 <Typography style={{ fontSize: 14, color: '#475569' }}>Status</Typography>

@@ -41,7 +41,7 @@ export default function SupportedBanksPage() {
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
-      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
           <Box sx={{ bgcolor: 'primary.main', p: 1.5, color: '#fff', display: 'inline-flex' }}>
             <Building2 size={24} />
@@ -75,7 +75,7 @@ export default function SupportedBanksPage() {
             component="article"
             key={bank.id}
             data-supported-bank={bank.id}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, bgcolor: '#f9fafb' }}>

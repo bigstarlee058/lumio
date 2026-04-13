@@ -67,7 +67,7 @@ export function AuditEventDrawer({ event, open, onClose, onRollback }: AuditEven
             </Box>
           </Box>
 
-          <details style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 12 }}>
+          <details style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12 }}>
             <summary style={{ cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#111827' }}>
               Metadata
             </summary>

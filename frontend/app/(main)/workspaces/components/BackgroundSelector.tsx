@@ -67,7 +67,7 @@ const BackgroundCard = memo(function BackgroundCard({
           <Box
             sx={{
               borderRadius: '50%',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               p: 0.5,
               display: 'flex',
               alignItems: 'center',

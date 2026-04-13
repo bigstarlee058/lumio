@@ -79,7 +79,7 @@ export function TopMerchantsCard({
                         flexShrink: 0,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: 'action.hover',
+                        bgcolor: 'var(--muted)',
                         color: '#334155',
                         border: '1px solid #E8E8E8',
                       }}
@@ -108,7 +108,7 @@ export function TopMerchantsCard({
                     {formatAmount(merchant.amount)}
                   </Typography>
                 </Box>
-                <Box sx={{ height: 8, overflow: 'hidden', bgcolor: 'action.hover' }}>
+                <Box sx={{ height: 8, overflow: 'hidden', bgcolor: 'var(--muted)' }}>
                   <Box
                     sx={{ height: '100%', bgcolor: '#0284c7', transition: 'width 300ms' }}
                     style={{ width: `${width}%` }}

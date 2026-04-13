@@ -143,7 +143,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
             <Box
               sx={{
                 borderRadius: '50%',
-                bgcolor: '#fff',
+                bgcolor: 'background.paper',
                 p: 2,
                 color: 'primary.main',
               }}
@@ -223,7 +223,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     border: '1px solid #e2e8f0',
-                    bgcolor: '#fff',
+                    bgcolor: 'background.paper',
                     px: 2,
                     py: 1.5,
                   }}

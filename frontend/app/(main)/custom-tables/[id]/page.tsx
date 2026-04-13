@@ -290,7 +290,7 @@ export default function CustomTableDetailPage() {
       const toastId = toast.custom(
         toastProps => (
           <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5, boxShadow: 3, opacity: toastProps.visible ? 1 : 0 }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5, boxShadow: 3, opacity: toastProps.visible ? 1 : 0 }}
           >
             <Typography style={{ fontSize: 14, color: '#1f2937' }}>
               {tx(t, ['paste', 'addedPrefix'], 'Added ')}
@@ -511,7 +511,7 @@ export default function CustomTableDetailPage() {
   if (!user || !table) {
     return (
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, fontSize: 14, color: '#4b5563' }}>
           {!user ? t.auth.loginRequired : t.errors.notFound}
         </Box>
       </Box>
@@ -527,7 +527,7 @@ export default function CustomTableDetailPage() {
   return (
     <Box
       sx={isFullscreen
-        ? { height: '100vh', width: '100vw', bgcolor: '#fff', overflow: isPrintMode ? 'visible' : 'hidden' }
+        ? { height: '100vh', width: '100vw', bgcolor: 'background.paper', overflow: isPrintMode ? 'visible' : 'hidden' }
         : {}}
       className={isFullscreen ? undefined : 'container-shared'}
       style={isFullscreen ? { paddingTop: isPrintMode ? '0' : '80px' } : { padding: '32px 16px' }}
@@ -540,7 +540,7 @@ export default function CustomTableDetailPage() {
               left: 0,
               right: 0,
               zIndex: 50,
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               px: { xs: 2, sm: 3 },
               pt: 2.5,
               borderLeft: '1px solid #e5e7eb',
@@ -669,7 +669,7 @@ export default function CustomTableDetailPage() {
                     placeholder={tx(t, ['actions', 'searchPlaceholder'], 'Search')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    style={{ paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8, fontSize: 14, width: 192, border: '1px solid #e5e7eb', background: '#fff', outline: 'none' }}
+                    style={{ paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8, fontSize: 14, width: 192, border: '1px solid #e5e7eb', background: 'var(--card-bg)', outline: 'none' }}
                   />
                 </Box>
               </Box>
@@ -706,8 +706,8 @@ export default function CustomTableDetailPage() {
       >
         <Box
           sx={isFullscreen
-            ? { height: '100%', width: '100%', bgcolor: '#fff', maxWidth: 1920, mx: 'auto' }
-            : { border: '1px solid #e5e7eb', bgcolor: '#fff' }}
+            ? { height: '100%', width: '100%', bgcolor: 'background.paper', maxWidth: 1920, mx: 'auto' }
+            : { border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}
         >
           {normalizedActiveTabId !== columnsTabId && (
             <CustomTableTanStack
@@ -755,7 +755,7 @@ export default function CustomTableDetailPage() {
             component="button"
             onClick={() => loadRows({ filtersParam: combinedFiltersParam })}
             disabled={!hasMore || loadingRows}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
           >
             {loadingRows ? t.grid.loadingMore : hasMore ? t.grid.loadMore : t.grid.noMore}
           </Box>

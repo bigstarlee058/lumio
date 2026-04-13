@@ -50,7 +50,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
                   <span>{labels[labelKey]}</span>
                   <Box
                     component="span"
-                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: 'action.hover', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: 'var(--muted)', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
                   >
                     <Icon size={16} />
                   </Box>

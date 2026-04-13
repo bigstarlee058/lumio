@@ -152,7 +152,7 @@ export default function TransactionDuplicatesPage() {
         )}
 
         {/* Summary Card */}
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 3, mb: 3 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Box>
@@ -197,12 +197,12 @@ export default function TransactionDuplicatesPage() {
 
       {/* Duplicate Groups */}
       {loading ? (
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 6, textAlign: 'center' }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 6, textAlign: 'center' }}>
           <Spinner size={24} />
           <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>Loading duplicates...</Typography>
         </Box>
       ) : duplicateGroups.length === 0 ? (
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 6, textAlign: 'center' }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 6, textAlign: 'center' }}>
           <CheckCircle2 size={48} style={{ color: '#10b981', margin: '0 auto 16px' }} />
           <Typography variant="h6" sx={{ mb: 1 }}>No Duplicates Found</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>

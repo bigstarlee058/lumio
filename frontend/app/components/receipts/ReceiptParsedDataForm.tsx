@@ -142,12 +142,12 @@ export function ReceiptParsedDataForm({
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 border: '1px solid #e2e8f0',
-                bgcolor: '#fff',
+                bgcolor: 'background.paper',
                 px: 1.5,
                 py: 1,
                 fontSize: 14,
                 cursor: 'pointer',
-                '&:hover': { bgcolor: '#f8fafc' },
+                '&:hover': { bgcolor: 'action.hover' },
               }}
             >
               <Box component="span" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -260,7 +260,7 @@ export function ReceiptParsedDataForm({
             </MuiButton>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e2e8f0', bgcolor: '#f8fafc', p: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e2e8f0', bgcolor: 'action.hover', p: 2 }}>
             {value.lineItems.map((lineItem, index) => (
               <Box key={lineItem.id} sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', md: 'minmax(0,1fr) 120px 44px' } }}>
                 <Input
@@ -348,7 +348,7 @@ export function ReceiptParsedDataForm({
                 style={{
                   width: '100%',
                   border: '1px solid #e2e8f0',
-                  background: '#fff',
+                  background: 'var(--card-bg)',
                   padding: '12px 16px 12px 40px',
                   fontSize: 14,
                   outline: 'none',
@@ -366,7 +366,7 @@ export function ReceiptParsedDataForm({
                   width: '100%',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  bgcolor: '#f1f5f9',
+                  bgcolor: 'action.hover',
                   px: 2,
                   py: 2,
                   textAlign: 'left',
@@ -402,7 +402,7 @@ export function ReceiptParsedDataForm({
                         border: 'none',
                         bgcolor: 'transparent',
                         cursor: 'pointer',
-                        '&:hover': { bgcolor: '#f1f5f9' },
+                        '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
                       <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
@@ -433,14 +433,14 @@ export function ReceiptParsedDataForm({
                         border: 'none',
                         bgcolor: 'transparent',
                         cursor: 'pointer',
-                        '&:hover': { bgcolor: '#f1f5f9' },
+                        '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
                       <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
                     </Box>
                   ))
                 ) : (
-                  <Typography sx={{ bgcolor: '#f1f5f9', p: 1.5, fontSize: 14, color: '#94a3b8' }}>
+                  <Typography sx={{ bgcolor: 'action.hover', p: 1.5, fontSize: 14, color: '#94a3b8' }}>
                     No currencies found
                   </Typography>
                 )}

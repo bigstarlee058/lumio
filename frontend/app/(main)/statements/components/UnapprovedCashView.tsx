@@ -590,8 +590,8 @@ export default function UnapprovedCashView() {
     return item.date.toLocaleDateString();
   };
 
-  const inputStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, color: '#111827', outline: 'none', borderRadius: 0 };
-  const summaryCardStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: '#fff', padding: 12, borderRadius: 0 };
+  const inputStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, color: '#111827', outline: 'none', borderRadius: 0 };
+  const summaryCardStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, borderRadius: 0 };
 
   return (
     <div
@@ -608,7 +608,7 @@ export default function UnapprovedCashView() {
           <button
             type="button"
             onClick={() => void loadQueueData(true)}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0, transition: 'background 0.15s' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0, transition: 'background 0.15s' }}
             disabled={refreshing || loading}
           >
             {refreshing || loading ? (
@@ -651,7 +651,7 @@ export default function UnapprovedCashView() {
           </div>
         </div>
 
-        <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 12, borderRadius: 0 }}>
+        <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, borderRadius: 0 }}>
           <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(7, 1fr)' }}>
             <div style={{ position: 'relative', gridColumn: 'span 2' }}>
               <Search style={{ pointerEvents: 'none', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
@@ -727,7 +727,7 @@ export default function UnapprovedCashView() {
             <button
               type="button"
               onClick={resetFilters}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
             >
               <X style={{ width: 16, height: 16 }} />
               {labels.filters.reset}
@@ -764,7 +764,7 @@ export default function UnapprovedCashView() {
               <button
                 type="button"
                 onClick={toggleSelectAllVisible}
-                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--primary)', cursor: 'pointer', borderRadius: 0 }}
+                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--primary)', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.selectAllVisible}
               </button>
@@ -772,7 +772,7 @@ export default function UnapprovedCashView() {
               <button
                 type="button"
                 onClick={handleIgnoreSelected}
-                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
+                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.ignore}
               </button>
@@ -780,7 +780,7 @@ export default function UnapprovedCashView() {
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 'auto', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
+                style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 'auto', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.clearSelection}
               </button>
@@ -789,7 +789,7 @@ export default function UnapprovedCashView() {
         ) : null}
       </div>
 
-      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid #e5e7eb', background: '#fff', borderRadius: 0 }}>
+      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: 0 }}>
         {loading ? (
           <div style={{ display: 'flex', height: '100%', minHeight: 280, alignItems: 'center', justifyContent: 'center' }}>
             <Spinner size={80} />
@@ -806,7 +806,7 @@ export default function UnapprovedCashView() {
           <>
             <div className="lumio-unapproved__desktop-table">
               <table style={{ minWidth: '100%', tableLayout: 'fixed', fontSize: 14 }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', textAlign: 'left' }}>
+                <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--card-bg)', textAlign: 'left' }}>
                   <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                     <th style={{ width: 48, padding: '12px 16px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>
                       <Checkbox
@@ -883,7 +883,7 @@ export default function UnapprovedCashView() {
                             <button
                               type="button"
                               onClick={() => handleReview(item)}
-                              style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
+                              style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
                             >
                               {labels.actions.reviewFix}
                             </button>
@@ -945,7 +945,7 @@ export default function UnapprovedCashView() {
                         <button
                           type="button"
                           onClick={() => handleReview(item)}
-                          style={{ border: '1px solid #e5e7eb', background: '#fff', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
+                          style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
                         >
                           {labels.actions.reviewFix}
                         </button>

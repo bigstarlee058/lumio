@@ -117,11 +117,11 @@ export function RecentActivity({
                       <Link
                         key={activity.id}
                         href={activity.href}
-                        style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '4px 8px', transition: 'all 150ms', textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.4)', border: '1px solid transparent' }}
+                        style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '4px 8px', transition: 'all 150ms', textDecoration: 'none', backgroundColor: 'transparent', border: '1px solid transparent' }}
                       >
                         <Box
                           component="span"
-                          sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: 'action.hover', color: '#475569', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                          sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: 'var(--muted)', color: '#475569', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
                         >
                           <Icon size={16} />
                         </Box>

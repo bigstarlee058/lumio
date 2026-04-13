@@ -667,7 +667,7 @@ export default function TopCategoriesView() {
             <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
             <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.subtitle}</p>
           </div>
-          <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: '#fff', padding: 4, borderRadius: 0 }}>
+          <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 4, borderRadius: 0 }}>
             <button
               type="button"
               style={{
@@ -849,7 +849,7 @@ export default function TopCategoriesView() {
             <Spinner style={{ height: 80, width: 80, color: "var(--primary)" }} />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
-          <div style={{ border: '1px dashed #d1d5db', background: '#fff', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 0 }}>
+          <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 0 }}>
             {labels.noData}
           </div>
         ) : (
@@ -908,7 +908,7 @@ export default function TopCategoriesView() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
-              <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0, gridColumn: 'span 2' }}>
+              <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 0, gridColumn: 'span 2' }}>
                 <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{trendTitle}</h3>
                 </div>
@@ -920,7 +920,7 @@ export default function TopCategoriesView() {
                   theme={chartTheme}
                 />
               </div>
-              <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+              <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 0 }}>
                 <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{labels.sourceSplit}</h3>
                 </div>
@@ -934,7 +934,7 @@ export default function TopCategoriesView() {
               </div>
             </div>
 
-            <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+            <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 0 }}>
               <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{categoriesTitle}</h3>
               </div>
@@ -947,7 +947,7 @@ export default function TopCategoriesView() {
               />
             </div>
 
-            <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+            <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 0 }}>
               <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{leaderboardTitle}</h3>
@@ -1083,7 +1083,7 @@ export default function TopCategoriesView() {
 
       {selectedRow ? (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', padding: 16 }}>
-          <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: '#fff', borderRadius: 0 }}>
+          <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e5e7eb', padding: '12px 20px' }}>
               <div>
                 <h4 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>

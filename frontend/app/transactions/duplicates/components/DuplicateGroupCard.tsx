@@ -73,7 +73,7 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
   };
 
   return (
-    <Box sx={{ border: selected ? '2px solid var(--primary)' : '1px solid #e5e7eb', bgcolor: 'white', p: 3, transition: 'border-color 200ms' }}>
+    <Box sx={{ border: selected ? '2px solid var(--primary)' : '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, transition: 'border-color 200ms' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
         <Checkbox checked={selected} onChange={onToggle} sx={{ mt: 0.5, p: 0 }} />
 

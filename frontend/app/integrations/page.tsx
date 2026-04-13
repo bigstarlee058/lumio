@@ -521,7 +521,7 @@ export default function IntegrationsPage() {
               width: '100%',
               border: '1px solid #e5e7eb',
               borderRadius: 0,
-              background: '#fff',
+              background: 'var(--card-bg)',
               padding: '8px 16px 8px 40px',
               fontSize: 14,
               color: '#111827',

@@ -66,7 +66,7 @@ export function EntityHistoryTimeline({ events, onSelect }: EntityHistoryTimelin
               alignItems: 'flex-start',
               gap: 12,
               border: '1px solid #e5e7eb',
-              background: '#fff',
+              background: 'var(--card-bg)',
               padding: 12,
               textAlign: 'left',
               cursor: 'pointer',

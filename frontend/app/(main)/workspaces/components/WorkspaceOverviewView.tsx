@@ -494,7 +494,7 @@ export default function WorkspaceOverviewView() {
                   alignItems: 'center',
                   gap: 8,
                   border: '1px solid rgba(239,68,68,0.3)',
-                  background: '#fff',
+                  background: 'var(--card-bg)',
                   padding: '8px 16px',
                   fontSize: 14,
                   fontWeight: 500,
