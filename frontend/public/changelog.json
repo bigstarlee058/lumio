@@ -1,13 +1,1349 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "21d724edea5a9f1b16a98f39b292fb2ea83b6d7c"
+      "main": "1b427965a1f86e8204d0f65fa911f7f2e51f9a72"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-11T13:30:10.224Z",
+    "lastGeneratedAt": "2026-04-13T20:09:03.715Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-13-1b42796",
+      "version": "main-1b42796",
+      "branch": "main",
+      "date": "2026-04-13T20:09:03.715Z",
+      "title": "Release update - April 13, 2026",
+      "summary": "This release includes 5 features, 61 improvements, and 18 fixes.",
+      "markdown": "## Features\n- **frontend**: Add @mui/x-date-pickers\n- **frontend**: Add BEM design tokens in tokens.css\n- **frontend**: Set borderRadius:0 overrides in MUI theme\n- **frontend**: Import tokens.css and base.css into globals\n- **frontend**: Wrap app in MUI LocalizationProvider\n\n## Improvements\n- **frontend**: Migrate Button primitive to MUI\n- **frontend**: Migrate Input primitive to MUI\n- **frontend**: Migrate Select primitive to MUI\n- **frontend**: Migrate Checkbox primitive to MUI\n- **frontend**: Migrate Card primitive to MUI\n- **frontend**: Migrate ModalShell primitive to MUI\n- **frontend**: Migrate DrawerShell primitive to MUI\n- **frontend**: Migrate DropdownMenu primitive to MUI\n- **frontend**: Migrate AppPagination primitive to MUI\n- **frontend**: Migrate Badge primitive to MUI\n- **frontend**: Migrate Alert primitive to MUI\n- **frontend**: Migrate Separator primitive to MUI\n- **frontend**: Migrate Spinner primitive to MUI\n- **frontend**: Migrate Label primitive to MUI\n- **frontend**: Migrate FilterChipButton primitive to MUI\n- **frontend**: Migrate DetailActionButton primitive to MUI\n- **frontend**: Remove residual Tailwind classes from ui/ primitives\n- **frontend**: Migrate PDFThumbnail to MUI — replace Tailwind with inline styles\n- **frontend**: Migrate TransactionsView pagination footer to MUI sx\n- **frontend**: Migrate ExportDropdown to MUI Button — replace Tailwind\n- **frontend**: Migrate NotificationDropdown to BEM block lumio-notification-dropdown\n- **frontend**: Migrate PDFPreviewModal to BEM block lumio-pdf-preview-modal\n- **frontend**: Migrate Navigation render section to BEM — extend lumio-navigation.css\n- **frontend**: Remove residual Tailwind classes from Stage 2 components\n- **frontend**: Migrate admin pages to MUI\n- **frontend**: Migrate auth pages to MUI\n- **frontend**: Migrate statements filters to MUI\n- **frontend**: Migrate statements list components to MUI\n- **frontend**: Migrate statements drawers to MUI\n- **frontend**: Migrate statements side panel and upload menu to MUI\n- **frontend**: Migrate statements edit page and parsing warnings to MUI\n- **frontend**: Replace @heroui, @mui/icons-material, @iconify with MUI/lucide (workspaces/settings/storage/shared)\n- **frontend**: Remove HeroUI/Mantine providers and finish icon/modal migration (custom-tables + root)\n- **frontend**: Replace tailwind-merge with clsx in cn() utility\n- **frontend**: Delete hero.ts and mantine-theme.ts\n- **frontend**: Purge Tailwind directives from globals.css\n- **frontend**: Remove legacy UI dependencies from package.json\n- **frontend**: Remove Tailwind from dashboard components\n- **frontend**: Remove Tailwind from transaction components\n- **frontend**: Remove Tailwind from statements components (Этап 4)\n- **frontend**: Final cleanup — remove react-select, fix TS errors (Этап 10)\n- **frontend**: Add lumio-statements BEM block styles\n- **frontend**: Migrate settings to MUI — remove Tailwind\n- **frontend**: Migrate integrations + onboarding to MUI — remove Tailwind\n- **frontend**: Migrate transaction duplicates pages to MUI\n- **frontend**: Migrate side-panel components to MUI\n- **frontend**: Migrate dashboard page and components to MUI\n- **frontend**: Migrate reports + audit + workspaces to MUI — remove Tailwind\n- **frontend**: Fix remaining Tailwind class remnants in components\n- **frontend**: Complete UnapprovedCashView migration to MUI inline styles\n- **frontend**: Migrate storage + receipts + custom-tables to MUI — remove Tailwind\n- **frontend**: Unify primary color to LinkedIn blue #0a66c2\n- **frontend**: Replace hardcoded white in integrations pages with theme tokens\n- **frontend**: Replace hardcoded white in dashboard components with theme tokens\n- **frontend**: Remove all non-circular border-radius from CSS block files\n- **frontend**: Replace hardcoded white in storage pages with theme tokens\n- **frontend**: Replace hardcoded white in shared components, audit, admin, transactions\n- **frontend**: Replace hardcoded white in CSS block files with design tokens\n- **frontend**: Replace hardcoded white in statements, workspaces, custom-tables\n- **frontend**: Remove all non-circular border-radius from inline styles\n- **frontend**: Use theme tokens in navigation CSS\n\n## Fixes\n- **frontend**: Add missing dark mode surface tokens in tokens.css\n- **frontend**: Quality fixes in ui/ primitives — z-index, prop forwarding, state sync\n- **frontend**: Quality fixes in Stage 2 components — deps, placeholder, CSS, dark mode\n- **frontend**: Remove dead import and Tailwind classes in auth animation components\n- **frontend**: Align useEditableCell ref type with React 19\n- **frontend**: Fix DrawerShell sx prop typing, surface-glow color, hardcoded white\n- **frontend**: Fix token misuse and missed white backgrounds in dashboard/integrations\n- **frontend**: Restore unread dot circle shape, fix breadcrumbs var-based radius\n- **frontend**: Fix missed whites and wrong action.hover token in shared components\n- **frontend**: Fix #fff fallbacks in lumio-statements.css CSS vars\n- **frontend**: Fix conditional #fff backgrounds in StoragePageContent\n- **frontend**: Fix remaining hardcoded whites in statements components\n- **frontend**: Add semantic warning/error surface tokens, fix hover state token in receipts\n- **frontend**: Fix remaining conditional and isDark white backgrounds in custom-tables, workspaces, statements\n- **frontend**: Remove redundant borderRadius: 0 from mobile checkbox\n- **frontend**: Fix ModalShell className prop, PDF modal whites, build error\n- **frontend**: Add contentClassName prop to ModalShellProps\n- Get ridd of any type in the whole production code base an",
+      "commits": [
+        {
+          "sha": "f28cd1d52267f3eccd981c6bf279b6f0c26d5c26",
+          "shortSha": "f28cd1d",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-11T13:30:10Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "17d3e6ce26cb35a5fca2dea8b55ab6d711ebfebd",
+          "shortSha": "17d3e6c",
+          "subject": "chore(frontend): capture MUI/BEM refactor baseline audit",
+          "author": "symonbaikov",
+          "date": "2026-04-11T17:53:01+03:00",
+          "files": [
+            "docs/superpowers/plans/2026-04-11-mui-bem-refactor-audit.txt"
+          ]
+        },
+        {
+          "sha": "d6713acbdafe44ba988d7db857a29fc68de4f88e",
+          "shortSha": "d6713ac",
+          "subject": "feat(frontend): add @mui/x-date-pickers",
+          "author": "symonbaikov",
+          "date": "2026-04-11T17:53:11+03:00",
+          "files": [
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
+        },
+        {
+          "sha": "6581939cbf123c5c0c31457c68e9b1b4deb86d3e",
+          "shortSha": "6581939",
+          "subject": "feat(frontend): add BEM design tokens in tokens.css",
+          "author": "symonbaikov",
+          "date": "2026-04-11T17:54:02+03:00",
+          "files": [
+            "frontend/app/styles/base.css",
+            "frontend/app/styles/blocks/.gitkeep",
+            "frontend/app/styles/tokens.css"
+          ]
+        },
+        {
+          "sha": "8de01857b35878ee3959e86f076d816833491bfe",
+          "shortSha": "8de0185",
+          "subject": "feat(frontend): set borderRadius:0 overrides in MUI theme",
+          "author": "symonbaikov",
+          "date": "2026-04-11T17:56:21+03:00",
+          "files": [
+            "frontend/app/theme.ts"
+          ]
+        },
+        {
+          "sha": "ee58aee80d7ff10911bd3060ba67882cb5029132",
+          "shortSha": "ee58aee",
+          "subject": "feat(frontend): import tokens.css and base.css into globals",
+          "author": "symonbaikov",
+          "date": "2026-04-11T17:56:45+03:00",
+          "files": [
+            "frontend/app/globals.css"
+          ]
+        },
+        {
+          "sha": "6dc4a0ceacc63b2d2fa78fbdfbb48c7f0373aef1",
+          "shortSha": "6dc4a0c",
+          "subject": "feat(frontend): wrap app in MUI LocalizationProvider",
+          "author": "symonbaikov",
+          "date": "2026-04-11T18:00:46+03:00",
+          "files": [
+            "frontend/app/providers.tsx"
+          ]
+        },
+        {
+          "sha": "2b73f263671474a44466033d30249dfea797b4ae",
+          "shortSha": "2b73f26",
+          "subject": "fix(frontend): add missing dark mode surface tokens in tokens.css",
+          "author": "symonbaikov",
+          "date": "2026-04-11T18:06:02+03:00",
+          "files": [
+            "frontend/app/styles/tokens.css"
+          ]
+        },
+        {
+          "sha": "52ef9c07675a3d2d34936e9acfa72ea8e5e77e5b",
+          "shortSha": "52ef9c0",
+          "subject": "refactor(frontend): migrate Button primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T18:55:32+03:00",
+          "files": [
+            "frontend/app/components/ui/button.tsx"
+          ]
+        },
+        {
+          "sha": "2bed20f8ef9f28cda978f528da54e057cd9184fd",
+          "shortSha": "2bed20f",
+          "subject": "refactor(frontend): migrate Input primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T18:58:54+03:00",
+          "files": [
+            "frontend/app/components/ui/input.tsx"
+          ]
+        },
+        {
+          "sha": "424affdcc25bd78b4a028a8cd4e27bead5bcb617",
+          "shortSha": "424affd",
+          "subject": "refactor(frontend): migrate Select primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:00:13+03:00",
+          "files": [
+            "frontend/app/components/ui/select.tsx"
+          ]
+        },
+        {
+          "sha": "a355f26c7a2c1f90356b2726beb80026e9b653d7",
+          "shortSha": "a355f26",
+          "subject": "refactor(frontend): migrate Checkbox primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:03:01+03:00",
+          "files": [
+            "frontend/app/components/ui/checkbox.tsx"
+          ]
+        },
+        {
+          "sha": "4de9912a339810e4f6b82531486dd6fc0686978a",
+          "shortSha": "4de9912",
+          "subject": "refactor(frontend): migrate Card primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:04:07+03:00",
+          "files": [
+            "frontend/app/components/ui/card.tsx"
+          ]
+        },
+        {
+          "sha": "c2126bfd7d061d833e932168c3902c725e8c5a9f",
+          "shortSha": "c2126bf",
+          "subject": "refactor(frontend): migrate ModalShell primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:07:57+03:00",
+          "files": [
+            "frontend/app/components/ui/modal-shell.test.tsx",
+            "frontend/app/components/ui/modal-shell.tsx"
+          ]
+        },
+        {
+          "sha": "4e3aa298def84c1b1729c2dcb85a6c56b0e616d8",
+          "shortSha": "4e3aa29",
+          "subject": "refactor(frontend): migrate DrawerShell primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:09:04+03:00",
+          "files": [
+            "frontend/app/components/ui/drawer-shell.tsx"
+          ]
+        },
+        {
+          "sha": "230129ba2a0d2a6e4d6f377085052f2197102874",
+          "shortSha": "230129b",
+          "subject": "refactor(frontend): migrate DropdownMenu primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:11:52+03:00",
+          "files": [
+            "frontend/app/components/ui/dropdown-menu.tsx"
+          ]
+        },
+        {
+          "sha": "71db2db6b198dab4eb2c81f8850afc875eaf5ce6",
+          "shortSha": "71db2db",
+          "subject": "refactor(frontend): migrate AppPagination primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:13:09+03:00",
+          "files": [
+            "frontend/app/components/ui/pagination.test.tsx",
+            "frontend/app/components/ui/pagination.tsx"
+          ]
+        },
+        {
+          "sha": "76369e124fa02d3f3bc5b2de10fe9dfe9caf0f25",
+          "shortSha": "76369e1",
+          "subject": "refactor(frontend): migrate Badge primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:15:14+03:00",
+          "files": [
+            "frontend/app/components/ui/badge.tsx"
+          ]
+        },
+        {
+          "sha": "9493b93a2527cb4de47af6cf66f74055bc2a1b2b",
+          "shortSha": "9493b93",
+          "subject": "refactor(frontend): migrate Alert primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:16:15+03:00",
+          "files": [
+            "frontend/app/components/ui/alert.tsx"
+          ]
+        },
+        {
+          "sha": "4b36899749d7c4f753325f164d2db14e88785229",
+          "shortSha": "4b36899",
+          "subject": "refactor(frontend): migrate Separator primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:17:19+03:00",
+          "files": [
+            "frontend/app/components/ui/separator.tsx"
+          ]
+        },
+        {
+          "sha": "b0b54357cf109c3cb475fe58dd7f97644962406e",
+          "shortSha": "b0b5435",
+          "subject": "refactor(frontend): migrate Spinner primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:19:38+03:00",
+          "files": [
+            "frontend/app/components/ui/spinner.tsx"
+          ]
+        },
+        {
+          "sha": "7f57c118150d4c688725dd7167351f9c6c6444c8",
+          "shortSha": "7f57c11",
+          "subject": "refactor(frontend): migrate Label primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:21:55+03:00",
+          "files": [
+            "frontend/app/components/ui/label.tsx"
+          ]
+        },
+        {
+          "sha": "91a2b8a331ce44e86ca5016b8139c6e6ec6cb5b0",
+          "shortSha": "91a2b8a",
+          "subject": "refactor(frontend): migrate FilterChipButton primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:25:34+03:00",
+          "files": [
+            "frontend/app/components/ui/filter-chip-button.tsx"
+          ]
+        },
+        {
+          "sha": "8ae15e59b6f79fda411c2eb1d3a1f3fbaf38c6b7",
+          "shortSha": "8ae15e5",
+          "subject": "refactor(frontend): migrate DetailActionButton primitive to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:26:41+03:00",
+          "files": [
+            "frontend/app/components/ui/detail-action-button.tsx"
+          ]
+        },
+        {
+          "sha": "35b73c7b01c57c62db1e7654c94391c47a439d90",
+          "shortSha": "35b73c7",
+          "subject": "refactor(frontend): remove residual Tailwind classes from ui/ primitives",
+          "author": "symonbaikov",
+          "date": "2026-04-11T19:38:14+03:00",
+          "files": [
+            "frontend/app/components/ui/CurrencyFilterDropdown.tsx",
+            "frontend/app/components/ui/drawer-shell.tsx",
+            "frontend/app/components/ui/dropdown-menu.tsx",
+            "frontend/app/components/ui/modal-shell.tsx"
+          ]
+        },
+        {
+          "sha": "8f3282d8eb4c2d220e4347e509d55359027e7cff",
+          "shortSha": "8f3282d",
+          "subject": "fix(frontend): quality fixes in ui/ primitives — z-index, prop forwarding, state sync",
+          "author": "symonbaikov",
+          "date": "2026-04-11T20:03:50+03:00",
+          "files": [
+            "frontend/app/components/ui/CurrencyFilterDropdown.tsx",
+            "frontend/app/components/ui/button.tsx",
+            "frontend/app/components/ui/dropdown-menu.tsx",
+            "frontend/app/components/ui/modal-shell.tsx"
+          ]
+        },
+        {
+          "sha": "32e01bbd46c0f70d565a35a492f7f02676d9bc2f",
+          "shortSha": "32e01bb",
+          "subject": "refactor(frontend): migrate PDFThumbnail to MUI — replace Tailwind with inline styles",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:00+03:00",
+          "files": [
+            "frontend/app/components/PDFThumbnail.test.tsx",
+            "frontend/app/components/PDFThumbnail.tsx"
+          ]
+        },
+        {
+          "sha": "ef5e8368d5019407b0c923e3c861f33c325cec50",
+          "shortSha": "ef5e836",
+          "subject": "refactor(frontend): migrate TransactionsView pagination footer to MUI sx",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:03+03:00",
+          "files": [
+            "frontend/app/components/TransactionsView.tsx"
+          ]
+        },
+        {
+          "sha": "878fd1d2f9574080f813b11ec9b8ee2e5d819722",
+          "shortSha": "878fd1d",
+          "subject": "refactor(frontend): migrate ExportDropdown to MUI Button — replace Tailwind",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:06+03:00",
+          "files": [
+            "frontend/app/components/dashboard/ExportDropdown.test.tsx",
+            "frontend/app/components/dashboard/ExportDropdown.tsx"
+          ]
+        },
+        {
+          "sha": "282b38c62d991f2127a54822bb07b8bc4eb31132",
+          "shortSha": "282b38c",
+          "subject": "refactor(frontend): migrate NotificationDropdown to BEM block lumio-notification-dropdown",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:10+03:00",
+          "files": [
+            "frontend/app/components/NotificationDropdown.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/styles/blocks/lumio-notification-dropdown.css"
+          ]
+        },
+        {
+          "sha": "e9f9d3bb0bdf0e985954ed1ad63a298e7d3f515c",
+          "shortSha": "e9f9d3b",
+          "subject": "refactor(frontend): migrate PDFPreviewModal to BEM block lumio-pdf-preview-modal",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:13+03:00",
+          "files": [
+            "frontend/app/components/PDFPreviewModal.test.tsx",
+            "frontend/app/components/PDFPreviewModal.tsx",
+            "frontend/app/styles/blocks/lumio-pdf-preview-modal.css"
+          ]
+        },
+        {
+          "sha": "ce71dec52688b9cedf7c2ef13021a22994e2dc4d",
+          "shortSha": "ce71dec",
+          "subject": "refactor(frontend): migrate Navigation render section to BEM — extend lumio-navigation.css",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:22:19+03:00",
+          "files": [
+            "frontend/app/components/Navigation.tsx",
+            "frontend/app/styles/blocks/lumio-navigation.css"
+          ]
+        },
+        {
+          "sha": "8bcd3562ae190d27e90cc8e07e0b9139ef1e1584",
+          "shortSha": "8bcd356",
+          "subject": "refactor(frontend): remove residual Tailwind classes from Stage 2 components",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:28:53+03:00",
+          "files": [
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/Breadcrumbs.tsx",
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/GlobalBreadcrumbs.tsx",
+            "frontend/app/components/GoogleSheetsPickerButton.tsx",
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx",
+            "frontend/app/components/side-panel/examples/SidePanelPageLayout.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/styles/blocks/lumio-breadcrumbs.css",
+            "frontend/app/styles/blocks/lumio-language-switcher.css"
+          ]
+        },
+        {
+          "sha": "dd35127e6e0f2b1781977e36beaabd9ce4198cb4",
+          "shortSha": "dd35127",
+          "subject": "fix(frontend): quality fixes in Stage 2 components — deps, placeholder, CSS, dark mode",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:32:34+03:00",
+          "files": [
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/CustomDatePicker.tsx",
+            "frontend/app/components/Navigation.tsx",
+            "frontend/app/styles/blocks/lumio-navigation.css"
+          ]
+        },
+        {
+          "sha": "44c88408168e8006881122cc6befde07de8d4822",
+          "shortSha": "44c8840",
+          "subject": "refactor(frontend): migrate admin pages to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:36:08+03:00",
+          "files": [
+            "frontend/app/admin/page.tsx",
+            "frontend/app/admin/users/page.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/styles/blocks/lumio-audit-panel.css"
+          ]
+        },
+        {
+          "sha": "af23717372b32eb89f35416948d3c681e7bfbbf6",
+          "shortSha": "af23717",
+          "subject": "refactor(frontend): migrate auth pages to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:36:13+03:00",
+          "files": [
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx"
+          ]
+        },
+        {
+          "sha": "6e0dc11ac2ab57001342a01fe068514e2140b383",
+          "shortSha": "6e0dc11",
+          "subject": "fix(frontend): remove dead import and Tailwind classes in auth animation components",
+          "author": "symonbaikov",
+          "date": "2026-04-12T20:38:49+03:00",
+          "files": [
+            "frontend/app/(auth)/BuildingBackground.tsx",
+            "frontend/app/(auth)/MoneyAnimation.tsx",
+            "frontend/app/admin/users/page.tsx"
+          ]
+        },
+        {
+          "sha": "e111e8196f7e9a03485f2980d8b07fdb8c375242",
+          "shortSha": "e111e81",
+          "subject": "refactor(frontend): migrate statements filters to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:15:20+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.test.tsx",
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterOptionRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FiltersDrawer.tsx"
+          ]
+        },
+        {
+          "sha": "3721e8bbb1c440b737feac4157f4d24b271e82c5",
+          "shortSha": "3721e8b",
+          "subject": "refactor(frontend): migrate statements list components to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:15:27+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx"
+          ]
+        },
+        {
+          "sha": "53bae53d97405808c8386539d3578ff2055b1879",
+          "shortSha": "53bae53",
+          "subject": "refactor(frontend): migrate statements drawers to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:15:33+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx"
+          ]
+        },
+        {
+          "sha": "9df46de50bf0f9eb3fe23dd21150fad087a6fabf",
+          "shortSha": "9df46de",
+          "subject": "refactor(frontend): migrate statements side panel and upload menu to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:15:43+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx",
+            "frontend/app/(main)/statements/components/StatementsSidePanel.test.tsx",
+            "frontend/app/(main)/statements/components/StatementsSidePanel.tsx"
+          ]
+        },
+        {
+          "sha": "629ce98d60f6be06d4b0db8dddd1bc98828acdcd",
+          "shortSha": "629ce98",
+          "subject": "refactor(frontend): migrate statements edit page and parsing warnings to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:15:50+03:00",
+          "files": [
+            "frontend/app/(main)/statements/[id]/edit/ParsingWarningsPanel.test.tsx",
+            "frontend/app/(main)/statements/[id]/edit/ParsingWarningsPanel.tsx",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx"
+          ]
+        },
+        {
+          "sha": "054873d62373ec274824f7a613d748923638b1d8",
+          "shortSha": "054873d",
+          "subject": "refactor(frontend): replace @heroui, @mui/icons-material, @iconify with MUI/lucide (workspaces/settings/storage/shared)",
+          "author": "symonbaikov",
+          "date": "2026-04-12T21:52:00+03:00",
+          "files": [
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.test.tsx",
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceMembersView.tsx",
+            "frontend/app/components/BankLogoAvatar.tsx",
+            "frontend/app/components/LogoAvatar.tsx",
+            "frontend/app/components/PermissionsPanel.tsx",
+            "frontend/app/components/ShareDialog.tsx",
+            "frontend/app/components/TransactionDocumentViewer.tsx",
+            "frontend/app/settings/profile/components/SessionsSection.tsx",
+            "frontend/app/settings/profile/page.tsx",
+            "frontend/app/settings/profile/profileHelpers.ts",
+            "frontend/app/settings/telegram/page.tsx",
+            "frontend/app/shared/[token]/page.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/page.tsx",
+            "frontend/app/storage/receipts/[id]/page.test.tsx",
+            "frontend/app/storage/receipts/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "e3ab28e7837edf64c96d3f917bd0883a6d250790",
+          "shortSha": "e3ab28e",
+          "subject": "refactor(frontend): remove HeroUI/Mantine providers and finish icon/modal migration (custom-tables + root)",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:10:25+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableDateCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/headers/EditableHeader.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.tsx",
+            "frontend/app/(main)/custom-tables/page.test.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/layout.tsx",
+            "frontend/app/providers.test.tsx",
+            "frontend/app/providers.tsx"
+          ]
+        },
+        {
+          "sha": "10dbe3929131c9794a1efe5b210343f15ad09e92",
+          "shortSha": "10dbe39",
+          "subject": "refactor(frontend): replace tailwind-merge with clsx in cn() utility",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:14:25+03:00",
+          "files": [
+            "frontend/app/lib/utils.ts"
+          ]
+        },
+        {
+          "sha": "7f8d8d0ef75a64beb5118081d65869daf493fdf6",
+          "shortSha": "7f8d8d0",
+          "subject": "refactor(frontend): delete hero.ts and mantine-theme.ts",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:15:41+03:00",
+          "files": [
+            "frontend/app/hero.ts",
+            "frontend/app/mantine-theme.ts",
+            "frontend/app/theme.ts"
+          ]
+        },
+        {
+          "sha": "ae6a827c050bf86f4cac7561469d0faa610f840f",
+          "shortSha": "ae6a827",
+          "subject": "refactor(frontend): purge Tailwind directives from globals.css",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:18:40+03:00",
+          "files": [
+            "frontend/app/globals.css"
+          ]
+        },
+        {
+          "sha": "d4f91af2892b152b087cbdb47583683198e019aa",
+          "shortSha": "d4f91af",
+          "subject": "refactor(frontend): remove legacy UI dependencies from package.json",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:20:50+03:00",
+          "files": [
+            "frontend/package-lock.json",
+            "frontend/package.json",
+            "frontend/postcss.config.mjs"
+          ]
+        },
+        {
+          "sha": "5c93641a2645e8e93b11d3919690d667407d1e96",
+          "shortSha": "5c93641",
+          "subject": "chore(frontend): stop tracking storybook-static build artifact",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:21:03+03:00",
+          "files": [
+            "frontend/.gitignore",
+            "frontend/storybook-static/favicon.svg",
+            "frontend/storybook-static/file.svg",
+            "frontend/storybook-static/globe.svg",
+            "frontend/storybook-static/icons/dropbox-icon.png",
+            "frontend/storybook-static/icons/gmail.png",
+            "frontend/storybook-static/icons/google-drive-icon.png",
+            "frontend/storybook-static/icons/icons8-google-sheets-48.png",
+            "frontend/storybook-static/icons/icons8-telegram-48.png",
+            "frontend/storybook-static/icons/open-folder.png",
+            "frontend/storybook-static/images/bank-logo/bank.png",
+            "frontend/storybook-static/images/bank-logo/bereke-bank.png",
+            "frontend/storybook-static/images/bank-logo/kaspi.png",
+            "frontend/storybook-static/images/pdf.png",
+            "frontend/storybook-static/index.html",
+            "frontend/storybook-static/index.json",
+            "frontend/storybook-static/next.svg",
+            "frontend/storybook-static/nunito-sans-bold-italic.woff2",
+            "frontend/storybook-static/nunito-sans-bold.woff2",
+            "frontend/storybook-static/nunito-sans-italic.woff2",
+            "frontend/storybook-static/nunito-sans-regular.woff2",
+            "frontend/storybook-static/project.json",
+            "frontend/storybook-static/sb-addons/a11y-9/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-actions-2/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-backgrounds-4/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-controls-1/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-docs-3/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-measure-7/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-outline-8/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-toolbars-6/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/essentials-viewport-5/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/links-10/manager-bundle.js",
+            "frontend/storybook-static/sb-addons/storybook-core-core-server-presets-0/common-manager-bundle.js",
+            "frontend/storybook-static/sb-common-assets/favicon.svg",
+            "frontend/storybook-static/sb-common-assets/nunito-sans-bold-italic.woff2",
+            "frontend/storybook-static/sb-common-assets/nunito-sans-bold.woff2",
+            "frontend/storybook-static/sb-common-assets/nunito-sans-italic.woff2",
+            "frontend/storybook-static/sb-common-assets/nunito-sans-regular.woff2",
+            "frontend/storybook-static/sb-manager/globals-module-info.js",
+            "frontend/storybook-static/sb-manager/globals-runtime.js",
+            "frontend/storybook-static/sb-manager/globals.js",
+            "frontend/storybook-static/sb-manager/runtime.js",
+            "frontend/storybook-static/sb-preview/globals.js",
+            "frontend/storybook-static/sb-preview/runtime.js",
+            "frontend/storybook-static/vercel.svg",
+            "frontend/storybook-static/window.svg",
+            "frontend/storybook-static/workspace-backgrounds/adrien-olichon-QRtym77B6xk-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/azhar-j-t2hgHV1R7_g-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/bart-ros-DjKUvKNl1XM-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/daria-krav-myMCB0MDAYU-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/daria-nepriakhina-LZkbXfzJK4M-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/daria-nepriakhina-MUR3s5FezJc-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/e-mens-yEpUny1hxoE-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/ferdinand-stohr-W1FIkdPAB7E-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/johny-goerend-McSOHojERSI-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/lightscape-LtnPejWDSAY-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/michael-fousert-0962p7mcux4-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/michael-fousert-lE5-z4nTCTQ-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/mikita-karasiou--67uQbVmZ-A-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/miltiadis-fragkidis-5h49XwUVIMw-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/nazar-haponov-wrkxbVTOvO8-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/obv-_design--YGqltMewrI-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/pascal-debrunner-LKOuYT5_dyw-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/polina-rytova-1dGMs4hhcVA-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/redcharlie-rDJYMootbXQ-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/thomas-bormans-kNmlCjM3apA-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/valdemaras-d-khbjgGAerPU-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/vidar-nordli-mathisen-641pLhGEEyg-unsplash.jpg",
+            "frontend/storybook-static/workspace-backgrounds/vidar-nordli-mathisen-Oeatf3IQp7w-unsplash.jpg"
+          ]
+        },
+        {
+          "sha": "121f054a30b806b0f5447e8a738418f8e1974e3c",
+          "shortSha": "121f054",
+          "subject": "fix(frontend): align useEditableCell ref type with React 19",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:27:56+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/cells/useEditableCell.ts"
+          ]
+        },
+        {
+          "sha": "87a6a13bf970d8edbbe3472530ff7c74f7132a46",
+          "shortSha": "87a6a13",
+          "subject": "refactor(frontend): remove Tailwind from dashboard components",
+          "author": "symonbaikov",
+          "date": "2026-04-12T22:57:10+03:00",
+          "files": [
+            "frontend/app/components/dashboard/ActionRequired.tsx",
+            "frontend/app/components/dashboard/CashFlowChart.tsx",
+            "frontend/app/components/dashboard/CashFlowMini.tsx",
+            "frontend/app/components/dashboard/DataHealthTab.tsx",
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/FinlabBalanceStatCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCategoryCard.tsx",
+            "frontend/app/components/dashboard/FinlabIncomeCard.tsx",
+            "frontend/app/components/dashboard/FinlabTransactionCard.tsx",
+            "frontend/app/components/dashboard/OverviewTab.tsx",
+            "frontend/app/components/dashboard/PeriodDropdown.tsx",
+            "frontend/app/components/dashboard/QuickActions.tsx",
+            "frontend/app/components/dashboard/QuickActionsBar.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TopCategoriesCard.tsx",
+            "frontend/app/components/dashboard/TopMerchantsCard.tsx",
+            "frontend/app/components/dashboard/TransactionTab.tsx",
+            "frontend/app/components/dashboard/TrendsTab.tsx"
+          ]
+        },
+        {
+          "sha": "ba44af36293030daf0a251ef69673678068f2b07",
+          "shortSha": "ba44af3",
+          "subject": "refactor(frontend): remove Tailwind from transaction components",
+          "author": "symonbaikov",
+          "date": "2026-04-12T23:06:01+03:00",
+          "files": [
+            "frontend/app/components/transactions/CategoryDropdown.tsx",
+            "frontend/app/components/transactions/DetailsDrawer.tsx",
+            "frontend/app/components/transactions/ExportModal.tsx",
+            "frontend/app/components/transactions/SummaryBar.tsx",
+            "frontend/app/components/transactions/TransactionDesktopTable.tsx",
+            "frontend/app/components/transactions/TransactionDetailsTab.tsx",
+            "frontend/app/components/transactions/TransactionExpandedRow.tsx",
+            "frontend/app/components/transactions/TransactionFiltersBar.tsx",
+            "frontend/app/components/transactions/TransactionHistoryTab.tsx",
+            "frontend/app/components/transactions/TransactionMobileCard.tsx",
+            "frontend/app/components/transactions/TransactionMobileList.tsx",
+            "frontend/app/components/transactions/TransactionPagination.tsx",
+            "frontend/app/components/transactions/TransactionRow.tsx",
+            "frontend/app/components/transactions/TransactionsPageView.tsx",
+            "frontend/app/components/transactions/TransactionsTable.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/styles/blocks/lumio-transaction-table.css"
+          ]
+        },
+        {
+          "sha": "99a50b55e3068c1a6a19536dcf0da96be9ed21ef",
+          "shortSha": "99a50b5",
+          "subject": "refactor(frontend): remove Tailwind from statements components (Этап 4)",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:14:00+03:00",
+          "files": [
+            "frontend/app/(main)/statements/[id]/edit/ParsingWarningsPanel.tsx",
+            "frontend/app/(main)/statements/[id]/edit/StatementCategoryDrawer.tsx",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx",
+            "frontend/app/(main)/statements/[id]/view/page.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/TrashListItem.tsx",
+            "frontend/app/(main)/statements/components/TrashListView.tsx",
+            "frontend/app/(main)/statements/components/columns/ColumnsDrawer.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterActions.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterSection.tsx",
+            "frontend/app/(main)/statements/components/filters/FromFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/GroupByFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/StatusFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/TypeFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/ViewFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/payables/CreatePayableDrawer.tsx",
+            "frontend/app/(main)/statements/components/payables/PayableFiltersBar.tsx",
+            "frontend/app/(main)/statements/components/payables/PayableSummaryCards.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesList.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesView.tsx",
+            "frontend/app/(main)/statements/helpers/analytics-filter-labels.ts",
+            "frontend/app/(main)/statements/transactions/page.tsx",
+            "frontend/app/globals.css"
+          ]
+        },
+        {
+          "sha": "1b8d5a76936a3218443bec89c081aa1f9997ca8e",
+          "shortSha": "1b8d5a7",
+          "subject": "refactor(frontend): final cleanup — remove react-select, fix TS errors (Этап 10)",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:14:07+03:00",
+          "files": [
+            "frontend/app/(onboarding)/onboarding/steps/LanguageStep.test.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/LanguageStep.tsx",
+            "frontend/app/integrations/components/IntegrationStatusCard.tsx",
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
+        },
+        {
+          "sha": "6253c57667dbc20671618d69696740267514c1b3",
+          "shortSha": "6253c57",
+          "subject": "refactor(frontend): add lumio-statements BEM block styles",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:14:21+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
+        },
+        {
+          "sha": "75f75acf61781dc70eeb8628c8cda346d77eeb2f",
+          "shortSha": "75f75ac",
+          "subject": "refactor(frontend): migrate settings to MUI — remove Tailwind",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:23:00+03:00",
+          "files": [
+            "frontend/app/settings/notifications/page.tsx",
+            "frontend/app/settings/profile/components/AppearanceSection.tsx",
+            "frontend/app/settings/profile/components/ChangelogSection.tsx",
+            "frontend/app/settings/profile/components/EmailSection.tsx",
+            "frontend/app/settings/profile/components/NotificationsSection.tsx",
+            "frontend/app/settings/profile/components/PasswordSection.tsx",
+            "frontend/app/settings/profile/components/ProfileSection.tsx",
+            "frontend/app/settings/profile/components/SessionsSection.tsx",
+            "frontend/app/settings/profile/page.tsx"
+          ]
+        },
+        {
+          "sha": "e7e767f027a21977b39e9dc85697ce019bad2bcd",
+          "shortSha": "e7e767f",
+          "subject": "refactor(frontend): migrate integrations + onboarding to MUI — remove Tailwind",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:28:19+03:00",
+          "files": [
+            "frontend/app/(onboarding)/layout.tsx",
+            "frontend/app/(onboarding)/onboarding/components/OnboardingNavigation.tsx",
+            "frontend/app/(onboarding)/onboarding/components/OnboardingProgress.tsx",
+            "frontend/app/(onboarding)/onboarding/page.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/CompletionStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/IntegrationsStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/WelcomeStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/WorkspaceStep.tsx",
+            "frontend/app/integrations/components/IntegrationStatusCard.tsx",
+            "frontend/app/integrations/dropbox/page.tsx",
+            "frontend/app/integrations/gmail/page.tsx",
+            "frontend/app/integrations/google-drive/page.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/integrations/page.tsx"
+          ]
+        },
+        {
+          "sha": "53632b1b8be2c66f1b89be627c82332f240a6aab",
+          "shortSha": "53632b1",
+          "subject": "refactor(frontend): migrate transaction duplicates pages to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:28:53+03:00",
+          "files": [
+            "frontend/app/transactions/duplicates/components/DuplicateGroupCard.tsx",
+            "frontend/app/transactions/duplicates/page.tsx"
+          ]
+        },
+        {
+          "sha": "bed6831acfec4a8cec4ddca022c171858cb4abb4",
+          "shortSha": "bed6831",
+          "subject": "refactor(frontend): migrate side-panel components to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:30:52+03:00",
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx",
+            "frontend/app/components/side-panel/SidePanel.tsx",
+            "frontend/app/components/side-panel/sections/index.tsx",
+            "frontend/app/components/side-panel/types.ts"
+          ]
+        },
+        {
+          "sha": "60fedd1e6d27f65bba09a6c85830e53cb2ada5e0",
+          "shortSha": "60fedd1",
+          "subject": "refactor(frontend): migrate dashboard page and components to MUI",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:30:56+03:00",
+          "files": [
+            "frontend/app/(main)/dashboard/page.tsx",
+            "frontend/app/components/dashboard/OverviewTab.tsx",
+            "frontend/app/components/dashboard/TopMerchantsCard.tsx",
+            "frontend/app/components/dashboard/TransactionTab.tsx",
+            "frontend/app/components/dashboard/TrendsTab.tsx"
+          ]
+        },
+        {
+          "sha": "b588951069468e8de8a77f47bb8a3b8c3c0a9e1a",
+          "shortSha": "b588951",
+          "subject": "refactor(frontend): migrate reports + audit + workspaces to MUI — remove Tailwind",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:36:46+03:00",
+          "files": [
+            "frontend/app/(main)/reports/components/BalanceSheet.tsx",
+            "frontend/app/(main)/reports/components/ReportGenerator.tsx",
+            "frontend/app/(main)/reports/components/ReportHistory.tsx",
+            "frontend/app/(main)/reports/components/ReportTemplateCard.tsx",
+            "frontend/app/(main)/reports/page.tsx",
+            "frontend/app/(main)/workspaces/components/BackgroundSelector.tsx",
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/CurrencySelector.tsx",
+            "frontend/app/(main)/workspaces/components/ServiceIntegrationSuggestions.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCard.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceMembersView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceTabShell.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspacesListContent.tsx",
+            "frontend/app/audit/components/AuditEventDrawer.tsx",
+            "frontend/app/audit/components/AuditEventTable.tsx",
+            "frontend/app/audit/components/DiffViewer.tsx",
+            "frontend/app/audit/components/EntityHistoryTimeline.tsx",
+            "frontend/app/audit/page.tsx"
+          ]
+        },
+        {
+          "sha": "5f041f2c5a71c905fa807f2eeab798d8a331909f",
+          "shortSha": "5f041f2",
+          "subject": "refactor(frontend): fix remaining Tailwind class remnants in components",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:37:01+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx",
+            "frontend/app/(main)/statements/components/TablesReportsView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx",
+            "frontend/app/(main)/supported-banks/page.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/IntegrationsStep.tsx",
+            "frontend/app/components/AppChrome.tsx",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/BaseStorageWidget.tsx",
+            "frontend/app/components/BrandLogoAvatar.tsx",
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/ConfirmModal.tsx",
+            "frontend/app/components/GoogleAuthButton.tsx",
+            "frontend/app/components/dashboard/ActionRequired.tsx",
+            "frontend/app/components/receipts/ReceiptCameraCapture.tsx",
+            "frontend/app/components/receipts/ReceiptCard.tsx",
+            "frontend/app/components/receipts/ReceiptDetailPanel.tsx",
+            "frontend/app/components/receipts/ReceiptFilters.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/components/receipts/ReceiptUploadModal.tsx",
+            "frontend/app/components/receipts/ReceiptsList.tsx",
+            "frontend/app/components/ui/modal-shell.tsx",
+            "frontend/app/google-sheets/callback/page.tsx",
+            "frontend/app/integrations/components/IntegrationStatusCard.tsx",
+            "frontend/app/integrations/dropbox/page.tsx",
+            "frontend/app/integrations/gmail/page.tsx",
+            "frontend/app/integrations/google-drive/page.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/invite/[token]/page.tsx",
+            "frontend/app/layout.tsx",
+            "frontend/app/settings/telegram/page.tsx",
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/[id]/page.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/components/DraggableModalFileItem.tsx",
+            "frontend/app/storage/gmail-receipts/components/ReceiptPreviewModal.tsx",
+            "frontend/app/storage/receipts/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "0005a89719485549e83e9191d2591680ff7bfb3b",
+          "shortSha": "0005a89",
+          "subject": "refactor(frontend): complete UnapprovedCashView migration to MUI inline styles",
+          "author": "symonbaikov",
+          "date": "2026-04-13T07:40:25+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx"
+          ]
+        },
+        {
+          "sha": "fb61581ef595174d3810da8114f339bde0f0567b",
+          "shortSha": "fb61581",
+          "subject": "refactor(frontend): migrate storage + receipts + custom-tables to MUI — remove Tailwind",
+          "author": "symonbaikov",
+          "date": "2026-04-13T08:42:46+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/CustomTableTanStack.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/AddColumnModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/ColumnsVisibilityPanel.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/PastePreviewModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/RowDrawer.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableBooleanCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableDateCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableNumberCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableSelectCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableTextCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/headers/EditableHeader.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesCircularMenu.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesFiltersDrawer.tsx",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx",
+            "frontend/app/components/receipts/ReceiptCameraCapture.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/components/DroppableFolderButton.tsx"
+          ]
+        },
+        {
+          "sha": "2ac1d72d9035520aab71e2f9dd4e3fa83865aae6",
+          "shortSha": "2ac1d72",
+          "subject": "refactor(frontend): unify primary color to LinkedIn blue #0a66c2",
+          "author": "symonbaikov",
+          "date": "2026-04-13T15:54:18+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/cells/useEditableCell.ts",
+            "frontend/app/(main)/statements/components/columns/ColumnsDrawer.tsx",
+            "frontend/app/(main)/statements/components/filters/FiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/payables/CreatePayableDrawer.tsx",
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/globals.css",
+            "frontend/app/styles/tokens.css",
+            "frontend/app/theme.ts",
+            "frontend/docs/plans/2026-04-13-theme-cleanup.md"
+          ]
+        },
+        {
+          "sha": "552ccff2d15cb56736557639291baf62696e3c32",
+          "shortSha": "552ccff",
+          "subject": "fix(frontend): fix DrawerShell sx prop typing, surface-glow color, hardcoded white",
+          "author": "symonbaikov",
+          "date": "2026-04-13T15:58:20+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/payables/CreatePayableDrawer.tsx",
+            "frontend/app/components/ui/drawer-shell.tsx",
+            "frontend/app/globals.css"
+          ]
+        },
+        {
+          "sha": "743efa3c01c091213639f6fad70a33d6cc606fca",
+          "shortSha": "743efa3",
+          "subject": "refactor(frontend): replace hardcoded white in integrations pages with theme tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-13T15:59:58+03:00",
+          "files": [
+            "frontend/app/integrations/components/IntegrationStatusCard.tsx",
+            "frontend/app/integrations/dropbox/page.tsx",
+            "frontend/app/integrations/gmail/page.tsx",
+            "frontend/app/integrations/google-drive/page.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/integrations/page.tsx"
+          ]
+        },
+        {
+          "sha": "fbe250f6793dd5ae3e77ac5019149c68c91d05b7",
+          "shortSha": "fbe250f",
+          "subject": "refactor(frontend): replace hardcoded white in dashboard components with theme tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-13T16:00:25+03:00",
+          "files": [
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/FinlabBalanceStatCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCategoryCard.tsx",
+            "frontend/app/components/dashboard/FinlabIncomeCard.tsx",
+            "frontend/app/components/dashboard/FinlabTransactionCard.tsx",
+            "frontend/app/components/dashboard/OverviewTab.tsx",
+            "frontend/app/components/dashboard/PeriodDropdown.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TopMerchantsCard.tsx",
+            "frontend/app/components/dashboard/TransactionTab.tsx"
+          ]
+        },
+        {
+          "sha": "efd054efed9f304758635da4530f9b6d0bf41a14",
+          "shortSha": "efd054e",
+          "subject": "refactor(frontend): remove all non-circular border-radius from CSS block files",
+          "author": "symonbaikov",
+          "date": "2026-04-13T16:01:30+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-navigation.css",
+            "frontend/app/styles/blocks/lumio-notification-dropdown.css",
+            "frontend/app/styles/blocks/lumio-pdf-preview-modal.css",
+            "frontend/app/styles/blocks/lumio-statements.css",
+            "frontend/app/styles/blocks/lumio-transaction-table.css",
+            "frontend/app/tours/tour-theme.css"
+          ]
+        },
+        {
+          "sha": "982a971f2dbb4279a8ccdd96241a15a1cec97915",
+          "shortSha": "982a971",
+          "subject": "refactor(frontend): replace hardcoded white in storage pages with theme tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-13T16:02:35+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/[id]/page.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/page.tsx",
+            "frontend/app/storage/gmail-receipts/components/ReceiptPreviewModal.tsx",
+            "frontend/app/storage/receipts/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "e313a23e74dcfed110fe2a8c5919b2037b985ef7",
+          "shortSha": "e313a23",
+          "subject": "fix(frontend): fix token misuse and missed white backgrounds in dashboard/integrations",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:07:18+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx",
+            "frontend/app/(main)/dashboard/page.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesView.tsx",
+            "frontend/app/(main)/supported-banks/page.tsx",
+            "frontend/app/(main)/workspaces/components/BackgroundSelector.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspacesListContent.tsx",
+            "frontend/app/audit/components/AuditEventDrawer.tsx",
+            "frontend/app/audit/components/EntityHistoryTimeline.tsx",
+            "frontend/app/audit/page.tsx",
+            "frontend/app/components/PDFThumbnail.tsx",
+            "frontend/app/components/TransactionDocumentViewer.tsx",
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TopMerchantsCard.tsx",
+            "frontend/app/components/receipts/ReceiptDetailPanel.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/components/receipts/ReceiptUploadModal.tsx",
+            "frontend/app/components/side-panel/SidePanel.tsx",
+            "frontend/app/components/side-panel/sections/index.tsx",
+            "frontend/app/global-error.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/integrations/page.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/page.tsx",
+            "frontend/app/styles/blocks/lumio-statements.css",
+            "frontend/app/transactions/duplicates/components/DuplicateGroupCard.tsx",
+            "frontend/app/transactions/duplicates/page.tsx"
+          ]
+        },
+        {
+          "sha": "873ca211189ac9ab4e4844f679773c6988b3c0b5",
+          "shortSha": "873ca21",
+          "subject": "refactor(frontend): replace hardcoded white in shared components, audit, admin, transactions",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:08:27+03:00",
+          "files": [
+            "frontend/app/admin/page.tsx",
+            "frontend/app/global-error.tsx"
+          ]
+        },
+        {
+          "sha": "b53a7978c363e9537f5d14a6f52e8dd09a1d8a56",
+          "shortSha": "b53a797",
+          "subject": "fix(frontend): restore unread dot circle shape, fix breadcrumbs var-based radius",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:09:52+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-breadcrumbs.css",
+            "frontend/app/styles/blocks/lumio-notification-dropdown.css"
+          ]
+        },
+        {
+          "sha": "518aa6bb20aa467d5e260f655315775ef5b1e8c6",
+          "shortSha": "518aa6b",
+          "subject": "refactor(frontend): replace hardcoded white in CSS block files with design tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:10:21+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
+        },
+        {
+          "sha": "225cf13f2959cd17b103d03523fb6764cb253799",
+          "shortSha": "225cf13",
+          "subject": "fix(frontend): fix missed whites and wrong action.hover token in shared components",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:10:41+03:00",
+          "files": [
+            "frontend/app/components/BaseStorageWidget.tsx",
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/receipts/ReceiptDetailPanel.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/components/transactions/TransactionHistoryTab.tsx"
+          ]
+        },
+        {
+          "sha": "c536fd8aef0b5961bbf1d658361fdda46249e82f",
+          "shortSha": "c536fd8",
+          "subject": "fix(frontend): fix #fff fallbacks in lumio-statements.css CSS vars",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:11:52+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
+        },
+        {
+          "sha": "22c1b556f83a45b9d7278cd250ea8e04536e826e",
+          "shortSha": "22c1b55",
+          "subject": "refactor(frontend): replace hardcoded white in statements, workspaces, custom-tables",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:13:30+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/CustomTableTanStack.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/AddColumnModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/ColumnsVisibilityPanel.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/PastePreviewModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/RowDrawer.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableDateCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableSelectCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/headers/EditableHeader.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesCircularMenu.tsx",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx"
+          ]
+        },
+        {
+          "sha": "06603a509de3dcba412709c7de7932cd96958d40",
+          "shortSha": "06603a5",
+          "subject": "fix(frontend): fix conditional #fff backgrounds in StoragePageContent",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:14:07+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx"
+          ]
+        },
+        {
+          "sha": "e88a5c647d6f4be65c6125f0609745f42e37b54a",
+          "shortSha": "e88a5c6",
+          "subject": "fix(frontend): fix remaining hardcoded whites in statements components",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:15:15+03:00",
+          "files": [
+            "frontend/app/(main)/statements/[id]/edit/ParsingWarningsPanel.tsx",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/TablesReportsView.tsx",
+            "frontend/app/(main)/statements/components/columns/ColumnsDrawer.tsx",
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterActions.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterOptionRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesView.tsx"
+          ]
+        },
+        {
+          "sha": "57d6d3cf866ddea435e8aa44c6b145f34cdae85e",
+          "shortSha": "57d6d3c",
+          "subject": "fix(frontend): add semantic warning/error surface tokens, fix hover state token in receipts",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:21:11+03:00",
+          "files": [
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/styles/blocks/lumio-statements.css",
+            "frontend/app/styles/tokens.css"
+          ]
+        },
+        {
+          "sha": "5726f3b2d238338ec7346592dde7f63eb5fd29a8",
+          "shortSha": "5726f3b",
+          "subject": "fix(frontend): fix remaining conditional and isDark white backgrounds in custom-tables, workspaces, statements",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:23:44+03:00",
+          "files": [
+            "frontend/app/(auth)/BuildingBackground.tsx",
+            "frontend/app/(auth)/MoneyAnimation.tsx",
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/CustomTableTanStack.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesFiltersDrawer.tsx",
+            "frontend/app/(main)/dashboard/page.tsx",
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/TablesReportsView.tsx",
+            "frontend/app/(main)/statements/components/TrashListView.tsx",
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time.chart.ts",
+            "frontend/app/(main)/statements/components/top-categories.chart.ts",
+            "frontend/app/(main)/statements/components/top-merchants.chart.ts",
+            "frontend/app/(main)/statements/components/top-spenders.chart.ts",
+            "frontend/app/(main)/workspaces/components/CurrencySelector.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspacesListContent.tsx",
+            "frontend/app/components/BankLogoAvatar.tsx",
+            "frontend/app/components/NotificationDropdown.tsx",
+            "frontend/app/components/PDFThumbnail.tsx",
+            "frontend/app/components/ShareDialog.tsx",
+            "frontend/app/components/TransactionDocumentViewer.tsx",
+            "frontend/app/components/TransactionsView.tsx",
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/FinlabIncomeCard.tsx",
+            "frontend/app/components/dashboard/QuickActions.tsx",
+            "frontend/app/components/dashboard/QuickActionsBar.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/side-panel/SidePanel.tsx",
+            "frontend/app/components/side-panel/sections/index.tsx",
+            "frontend/app/components/transactions/TransactionDetailsTab.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/page.tsx",
+            "frontend/app/tours/components/TourProgress.tsx"
+          ]
+        },
+        {
+          "sha": "a3236e309837d57b34af196260e42e954bd4b88d",
+          "shortSha": "a3236e3",
+          "subject": "refactor(frontend): remove all non-circular border-radius from inline styles",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:28:04+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterOptionRow.tsx",
+            "frontend/app/components/PDFThumbnail.tsx",
+            "frontend/app/components/side-panel/SidePanel.tsx",
+            "frontend/app/components/side-panel/sections/index.tsx",
+            "frontend/app/components/ui/dropdown-menu.tsx",
+            "frontend/app/storage/storageHelpers.ts"
+          ]
+        },
+        {
+          "sha": "a5ba48f214d80f404d55cfb26b0688589297e776",
+          "shortSha": "a5ba48f",
+          "subject": "fix(frontend): remove redundant borderRadius: 0 from mobile checkbox",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:31:18+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx"
+          ]
+        },
+        {
+          "sha": "95d13c81c255f925e9a462cdca609a134c226fd4",
+          "shortSha": "95d13c8",
+          "subject": "refactor(frontend): use theme tokens in navigation CSS",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:32:57+03:00",
+          "files": [
+            "frontend/app/styles/blocks/lumio-navigation.css"
+          ]
+        },
+        {
+          "sha": "1a29dcbcc26e0eb6b3bf198e7ad3a08be9ba4806",
+          "shortSha": "1a29dcb",
+          "subject": "fix(frontend): fix ModalShell className prop, PDF modal whites, build error",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:36:50+03:00",
+          "files": [
+            "frontend/app/components/PDFPreviewModal.tsx",
+            "frontend/app/components/ui/modal-shell.tsx",
+            "frontend/app/styles/blocks/lumio-pdf-preview-modal.css"
+          ]
+        },
+        {
+          "sha": "8331927eb2daaacd989e3e9c907d21f858b7a006",
+          "shortSha": "8331927",
+          "subject": "fix(frontend): add contentClassName prop to ModalShellProps",
+          "author": "symonbaikov",
+          "date": "2026-04-13T17:38:21+03:00",
+          "files": [
+            "frontend/app/components/ui/modal-shell.tsx"
+          ]
+        },
+        {
+          "sha": "1b427965a1f86e8204d0f65fa911f7f2e51f9a72",
+          "shortSha": "1b42796",
+          "subject": "fix: get ridd of any type in the whole production code base an",
+          "author": "symonbaikov",
+          "date": "2026-04-13T23:07:57+03:00",
+          "files": [
+            "docs/superpowers/plans/2026-04-11-mui-bem-refactor.md",
+            "docs/superpowers/specs/2026-04-11-mui-bem-refactor-design.md"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-11-21d724e",
       "version": "main-21d724e",
