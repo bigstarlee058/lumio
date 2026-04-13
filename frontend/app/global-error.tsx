@@ -28,7 +28,7 @@ export default function GlobalError({
               onClick={reset}
               style={{
                 padding: '10px 16px',
-                borderRadius: 8,
+                borderRadius: 0,
                 border: '1px solid #e2e8f0',
                 background: 'var(--card-bg)',
                 cursor: 'pointer',

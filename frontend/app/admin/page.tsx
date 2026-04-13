@@ -220,7 +220,6 @@ export default function AdminPage() {
                 p: 2,
                 bgcolor: 'error.light',
                 color: 'error.contrastText',
-                borderRadius: 1,
               }}
             >
               {statementsError}
@@ -486,7 +485,6 @@ export default function AdminPage() {
                         p: 2,
                         bgcolor: 'error.light',
                         color: 'error.contrastText',
-                        borderRadius: 1,
                       }}
                     >
                       {auditError}
