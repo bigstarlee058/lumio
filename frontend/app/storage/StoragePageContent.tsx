@@ -842,7 +842,7 @@ function StoragePageContent({
     fontSize: 14,
     fontWeight: 600,
     cursor: 'pointer',
-    bgcolor: isActive ? 'rgba(79,70,229,0.1)' : '#fff',
+    bgcolor: isActive ? 'rgba(79,70,229,0.1)' : 'background.paper',
     color: isActive ? 'primary.main' : '#4b5563',
     borderColor: isActive ? 'rgba(79,70,229,0.3)' : '#e5e7eb',
     '&:hover': isActive ? {} : { bgcolor: '#f9fafb' },
@@ -1042,7 +1042,7 @@ function StoragePageContent({
                   fontWeight: 500,
                   cursor: 'pointer',
                   border: 'none',
-                  bgcolor: selectedStorageProvider === 'google' ? '#fff' : 'transparent',
+                  bgcolor: selectedStorageProvider === 'google' ? 'background.paper' : 'transparent',
                 }}
               >
                 <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={18} height={18} />
@@ -1062,7 +1062,7 @@ function StoragePageContent({
                   fontWeight: 500,
                   cursor: 'pointer',
                   border: 'none',
-                  bgcolor: selectedStorageProvider === 'dropbox' ? '#fff' : 'transparent',
+                  bgcolor: selectedStorageProvider === 'dropbox' ? 'background.paper' : 'transparent',
                 }}
               >
                 <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={18} height={18} />
