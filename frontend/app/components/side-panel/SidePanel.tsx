@@ -1,7 +1,6 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
-import { cn } from '@/app/lib/utils';
 import {
   AlertCircle,
   ChevronLeft,
@@ -54,7 +53,7 @@ export function SidePanel({
   enabledSections,
   permissions,
   config,
-  className,
+  style: propStyle,
   showCollapseToggle = true,
   collapseTogglePosition = 'header',
   loading = false,
@@ -116,20 +115,23 @@ export function SidePanel({
   // Don't render if not visible or no permission
   if (!visible || !canViewPanel) return null;
 
-  // Position classes
-  const positionClasses = position === 'left' ? 'border-r' : 'border-l';
-
   return (
     <aside
-      className={cn(
-        'relative flex flex-col bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 transition-all duration-300 ease-in-out',
-        'shadow-sm overflow-visible',
-        positionClasses,
-        className,
-      )}
       style={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: '#fff',
+        borderColor: '#e5e7eb',
+        transition: 'width 300ms ease-in-out',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+        overflow: 'visible',
         width: isCollapsed ? collapsedWidth : widthValue,
         minWidth: isCollapsed ? collapsedWidth : widthValue,
+        ...(position === 'left'
+          ? { borderRight: '1px solid #e5e7eb' }
+          : { borderLeft: '1px solid #e5e7eb' }),
+        ...propStyle,
       }}
       data-side-panel
       data-position={position}
@@ -137,16 +139,12 @@ export function SidePanel({
     >
       {/* Collapsed state - just show toggle button */}
       {isCollapsed ? (
-        <div className="flex flex-col items-center py-4">
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0' }}>
           {showCollapseToggle && (
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              className={cn(
-                'p-2 rounded-[12px] text-gray-500 hover:text-gray-700 hover:bg-gray-100',
-                'dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800',
-                'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20',
-              )}
+              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12 }}
               aria-label="Expand panel"
             >
               {position === 'left' ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -156,24 +154,24 @@ export function SidePanel({
       ) : (
         <>
           {topContent ? (
-            <div className="shrink-0 border-b border-gray-200 px-4 py-3 dark:border-gray-800">
+            <div style={{ flexShrink: 0, borderBottom: '1px solid #e5e7eb', padding: '12px 16px' }}>
               {topContent}
             </div>
           ) : null}
 
           {/* Header */}
           {(config?.header || showCollapseToggle) && (
-            <div className="flex items-center justify-between px-6 pt-5 pb-2 shrink-0">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 8px', flexShrink: 0 }}>
               {config?.header && (
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
                   {config.header.icon && (
-                    <div className="p-2 rounded-[12px] bg-primary/10 shrink-0">
-                      <RenderIcon icon={config.header.icon} size={18} className="text-primary" />
+                    <div style={{ padding: 8, backgroundColor: 'rgba(var(--primary-rgb),0.1)', flexShrink: 0 }}>
+                      <RenderIcon icon={config.header.icon} size={18} />
                     </div>
                   )}
-                  <div className="min-w-0">
+                  <div style={{ minWidth: 0 }}>
                     {config.header.title && (
-                      <h2 className="text-[18px] font-medium text-gray-900 dark:text-gray-100 truncate">
+                      <h2 style={{ fontSize: 18, fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
                         {config.header.title}
                       </h2>
                     )}
@@ -181,7 +179,7 @@ export function SidePanel({
                 </div>
               )}
 
-              <div className="flex items-center gap-1 shrink-0">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                 {/* Header actions */}
                 {config?.header?.actions?.map(action => (
                   <button
@@ -190,15 +188,10 @@ export function SidePanel({
                     onClick={action.onClick}
                     disabled={action.disabled || action.loading}
                     title={action.tooltip || action.label}
-                    className={cn(
-                      'p-2 rounded-[12px] text-gray-500 hover:text-gray-700 hover:bg-gray-100',
-                      'dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800',
-                      'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20',
-                      'disabled:opacity-50 disabled:cursor-not-allowed',
-                    )}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
                   >
                     {action.loading ? (
-                      <Spinner className="h-4 w-4" />
+                      <Spinner size={16} />
                     ) : (
                       <RenderIcon icon={action.icon} size={16} />
                     )}
@@ -210,11 +203,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={handleToggleCollapsed}
-                    className={cn(
-                      'p-2 rounded-[12px] text-gray-500 hover:text-gray-700 hover:bg-gray-100',
-                      'dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800',
-                      'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20',
-                    )}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 12 }}
                     aria-label="Collapse panel"
                   >
                     {position === 'left' ? (
@@ -229,28 +218,24 @@ export function SidePanel({
           )}
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }}>
             {loading ? (
-              <div className="flex flex-col items-center justify-center h-full py-12">
-                <Spinner className="mb-3 h-8 w-8 text-primary" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}>
+                <Spinner size={32} />
+                <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Loading...</p>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center justify-center h-full py-12 px-4">
-                <AlertCircle className="h-10 w-10 text-red-500 mb-3" />
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 text-center mb-1">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
+                <AlertCircle size={40} style={{ color: '#ef4444', marginBottom: 12 }} />
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#111827', textAlign: 'center', margin: '0 0 4px' }}>
                   Error loading content
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-4">{error}</p>
+                <p style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
                 {onRetry && (
                   <button
                     type="button"
                     onClick={onRetry}
-                    className={cn(
-                      'inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-[12px]',
-                      'text-primary bg-primary/10 hover:bg-primary/20 transition-colors',
-                      'focus:outline-none focus:ring-2 focus:ring-primary/20',
-                    )}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: 12 }}
                   >
                     <RefreshCw size={14} />
                     Retry
@@ -258,8 +243,8 @@ export function SidePanel({
                 )}
               </div>
             ) : filteredSections.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full py-12 px-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
+                <p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', margin: 0 }}>
                   No content available
                 </p>
               </div>
@@ -272,27 +257,36 @@ export function SidePanel({
 
           {/* Footer */}
           {config?.footer && (
-            <div className="px-4 py-3 shrink-0 overflow-visible">
+            <div style={{ padding: '12px 16px', flexShrink: 0, overflow: 'visible' }}>
               {config.footer.content}
               {config.footer.actions && config.footer.actions.length > 0 && (
-                <div className="flex items-center gap-2 mt-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
                   {config.footer.actions.map(action => (
                     <button
                       key={action.id}
                       type="button"
                       onClick={action.onClick}
                       disabled={action.disabled || action.loading}
-                      className={cn(
-                        'flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-[14px]',
-                        'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20',
-                        'disabled:opacity-50 disabled:cursor-not-allowed',
-                        action.variant === 'primary'
-                          ? 'bg-primary text-white hover:bg-primary-hover'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
-                      )}
+                      style={{
+                        flex: 1,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        padding: '8px 12px',
+                        fontSize: 14,
+                        fontWeight: 500,
+                        border: 'none',
+                        cursor: 'pointer',
+                        borderRadius: 14,
+                        opacity: (action.disabled || action.loading) ? 0.5 : 1,
+                        ...(action.variant === 'primary'
+                          ? { backgroundColor: 'var(--primary)', color: 'white' }
+                          : { backgroundColor: '#f3f4f6', color: '#374151' }),
+                      }}
                     >
                       {action.loading ? (
-                        <Spinner className="h-[14px] w-[14px]" />
+                        <Spinner size={14} />
                       ) : (
                         action.icon && <RenderIcon icon={action.icon} size={14} />
                       )}
@@ -309,14 +303,19 @@ export function SidePanel({
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              className={cn(
-                'absolute top-1/2 -translate-y-1/2 p-1 rounded-full',
-                'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
-                'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
-                'shadow-sm hover:shadow transition-all',
-                'focus:outline-none focus:ring-2 focus:ring-primary/20',
-                position === 'left' ? '-right-3' : '-left-3',
-              )}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                padding: 4,
+                borderRadius: '50%',
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                color: '#6b7280',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                cursor: 'pointer',
+                ...(position === 'left' ? { right: -12 } : { left: -12 }),
+              }}
               aria-label="Collapse panel"
             >
               {position === 'left' ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}

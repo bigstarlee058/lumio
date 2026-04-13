@@ -169,16 +169,6 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }, [mobilePanelDragX]);
 
-  const containerClassName = isStatementsPage
-    ? 'flex min-h-[calc(100vh-var(--global-nav-height,0px))] h-[calc(100vh-var(--global-nav-height,0px))] overflow-hidden'
-    : 'flex min-h-[calc(100vh-var(--global-nav-height,0px))]';
-
-  const sidePanelWrapperClassName = isStatementsPage
-    ? 'hidden lg:flex shrink-0 h-full'
-    : 'hidden lg:flex shrink-0';
-
-  const contentClassName = isStatementsPage ? 'flex-1 h-full overflow-hidden' : 'flex-1';
-
   const mobileFooterContent = React.useMemo(() => {
     const content = config?.footer?.content;
     if (!content) {
@@ -210,16 +200,30 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   }, [config]);
 
   return (
-    <div className={containerClassName}>
+    <div
+      style={{
+        display: 'flex',
+        minHeight: 'calc(100vh - var(--global-nav-height,0px))',
+        ...(isStatementsPage
+          ? { height: 'calc(100vh - var(--global-nav-height,0px))', overflow: 'hidden' }
+          : {}),
+      }}
+    >
       {config ? (
         <>
-          <div className={sidePanelWrapperClassName}>
+          <Box
+            sx={{
+              display: { xs: 'none', lg: 'flex' },
+              flexShrink: 0,
+              ...(isStatementsPage ? { height: '100%' } : {}),
+            }}
+          >
             <SidePanel
               config={config}
               showCollapseToggle={false}
-              className={isStatementsPage ? 'h-full' : undefined}
+              style={isStatementsPage ? { height: '100%' } : undefined}
             />
-          </div>
+          </Box>
 
           {!globalMobileMenuOpen ? (
             <MuiButton
@@ -244,37 +248,63 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
           ) : null}
         </>
       ) : null}
-      <div className={contentClassName}>{children}</div>
+      <div style={{ flex: 1, ...(isStatementsPage ? { height: '100%', overflow: 'hidden' } : {}) }}>
+        {children}
+      </div>
 
       {mobileDialogConfig && mobileSidePanelMounted ? (
-        <div
-          className={`fixed inset-0 z-[80] lg:hidden ${mobileSidePanelVisible ? '' : 'pointer-events-none'}`}
+        <Box
+          sx={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 80,
+            display: { lg: 'none' },
+            ...(mobileSidePanelVisible ? {} : { pointerEvents: 'none' }),
+          }}
           data-testid="mobile-side-panel-dialog"
         >
           <button
             type="button"
-            className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
-              mobileSidePanelVisible ? 'opacity-100' : 'opacity-0'
-            }`}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              backgroundColor: 'rgba(0,0,0,0.4)',
+              opacity: mobileSidePanelVisible ? 1 : 0,
+              transition: 'opacity 300ms',
+              border: 'none',
+              cursor: 'pointer',
+              width: '100%',
+            }}
             aria-label="Close side panel"
             onClick={() => setMobileSidePanelOpen(false)}
           />
 
           <dialog
-            className={`absolute inset-y-0 left-0 m-0 h-screen w-[88vw] max-w-sm border-r border-border bg-card p-0 text-card-foreground shadow-2xl transform-gpu will-change-transform ${
-              mobilePanelDragX !== 0
-                ? 'transition-none'
-                : 'transition-transform duration-300 ease-out'
-            } ${mobileSidePanelVisible ? 'translate-x-0' : '-translate-x-full'}`}
             open
             aria-modal="true"
-            style={
-              mobilePanelDragX !== 0
-                ? {
-                    transform: `translateX(${mobilePanelDragX}px)`,
-                  }
-                : undefined
-            }
+            style={{
+              position: 'absolute',
+              inset: 'auto auto auto 0',
+              top: 0,
+              bottom: 0,
+              margin: 0,
+              height: '100vh',
+              width: '88vw',
+              maxWidth: 384,
+              padding: 0,
+              borderRight: '1px solid var(--border)',
+              backgroundColor: 'var(--card)',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+              transform:
+                mobilePanelDragX !== 0
+                  ? `translateX(${mobilePanelDragX}px)`
+                  : mobileSidePanelVisible
+                    ? 'translateX(0)'
+                    : 'translateX(-100%)',
+              transition: mobilePanelDragX !== 0 ? 'none' : 'transform 300ms ease-out',
+              willChange: 'transform',
+              border: 'none',
+            }}
             onCancel={event => {
               event.preventDefault();
               setMobileSidePanelOpen(false);
@@ -308,26 +338,33 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
                 </IconButton>
               </Box>
 
-              <div className="h-[calc(100vh-57px)] overflow-hidden">
+              <div style={{ height: 'calc(100vh - 57px)', overflow: 'hidden' }}>
                 <SidePanel
                   config={mobileDialogConfig}
                   width={320}
                   showCollapseToggle={false}
-                  className="h-full border-0 shadow-none"
+                  style={{ height: '100%', border: 'none', boxShadow: 'none' }}
                 />
               </div>
             </Box>
           </dialog>
-        </div>
+        </Box>
       ) : null}
 
       {mobileFooterContent && !mobileSidePanelOpen && !globalMobileMenuOpen ? (
-        <div
-          className="fixed bottom-0 left-0 z-[72] pointer-events-none lg:hidden"
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            zIndex: 72,
+            pointerEvents: 'none',
+            display: { lg: 'none' },
+          }}
           data-testid="mobile-side-panel-floating-footer"
         >
-          <div className="pointer-events-auto">{mobileFooterContent}</div>
-        </div>
+          <div style={{ pointerEvents: 'auto' }}>{mobileFooterContent}</div>
+        </Box>
       ) : null}
     </div>
   );

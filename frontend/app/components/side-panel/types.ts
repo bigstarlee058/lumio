@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 // ============================================================================
 // Core Configuration Types
@@ -279,6 +279,8 @@ export interface SidePanelProps {
   config: SidePanelPageConfig;
   /** Additional CSS class */
   className?: string;
+  /** Additional inline styles */
+  style?: CSSProperties;
   /** Whether to show collapse toggle button */
   showCollapseToggle?: boolean;
   /** Custom collapse toggle position */
