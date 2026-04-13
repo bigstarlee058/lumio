@@ -404,14 +404,14 @@ export function ParsingWarningsPanel({
       <Alert
         severity="warning"
         variant="outlined"
-        sx={{ mt: 3, borderRadius: 2, alignItems: 'flex-start' }}
+        sx={{ mt: 3, alignItems: 'flex-start' }}
       >
         <AlertTitle sx={{ mb: 0.5 }}>{title}</AlertTitle>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
           {helperText}
         </Typography>
         {warnings.length > 0 && (
-          <Box sx={{ borderRadius: 1.5, bgcolor: 'warning.50', px: 1.5, py: 0.5 }}>
+          <Box sx={{ bgcolor: 'warning.50', px: 1.5, py: 0.5 }}>
             <List dense disablePadding>
               {warnings.map((warning, index) => (
                 <ListItem key={`${index}-${warning}`} disableGutters alignItems="flex-start">
@@ -454,7 +454,6 @@ export function ParsingWarningsPanel({
                             mx: -1,
                             minWidth: 0,
                             width: 'calc(100% + 16px)',
-                            borderRadius: 1,
                             color: 'warning.dark',
                             textTransform: 'none',
                             cursor: 'pointer',
@@ -643,7 +642,7 @@ export function ParsingWarningsPanel({
               <button
                 type="button"
                 onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}
+                style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 0, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}
               >
                 <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>
                   {selectedCurrencyItem.label}
@@ -661,7 +660,7 @@ export function ParsingWarningsPanel({
                       key={`recent-${item.code}`}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
+                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 0, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
                       <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
                     </button>
@@ -679,13 +678,13 @@ export function ParsingWarningsPanel({
                       key={item.code}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
+                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 0, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
                       <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
                     </button>
                   ))
                 ) : (
-                  <p style={{ borderRadius: 12, background: '#fff', padding: '12px', fontSize: 14, color: '#6b7280' }}>
+                  <p style={{ borderRadius: 0, background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: '#6b7280' }}>
                     No currencies found
                   </p>
                 )}

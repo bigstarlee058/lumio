@@ -415,7 +415,6 @@ export default function EditStatementPage() {
             color: 'text.secondary',
             textTransform: 'none',
             fontWeight: 500,
-            borderRadius: 2,
             '&:hover': { bgcolor: 'action.hover' },
           }}
         >
@@ -452,7 +451,6 @@ export default function EditStatementPage() {
                 style={{ border: '1px solid #e5e7eb', backgroundColor: '#f9fafb', color: '#6b7280' }}
                 sx={{
                   fontWeight: 500,
-                  borderRadius: 1.5,
                   '& .MuiChip-icon': { color: 'text.secondary' },
                 }}
               />
@@ -495,7 +493,6 @@ export default function EditStatementPage() {
                 sx={{
                   textTransform: 'none',
                   fontWeight: 700,
-                  borderRadius: 2,
                   minWidth: 0,
                   maxWidth: { xs: '100%', md: 280 },
                   overflow: 'hidden',
@@ -573,7 +570,6 @@ export default function EditStatementPage() {
                         sx={{
                           textTransform: 'none',
                           fontWeight: 600,
-                          borderRadius: 2,
                           boxShadow: 'none',
                           '&:hover': { boxShadow: 'none' },
                         }}
@@ -674,7 +670,7 @@ export default function EditStatementPage() {
       >
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             {labels.period?.value || 'Period'}
@@ -687,7 +683,7 @@ export default function EditStatementPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             {labels.balanceStart?.value || 'Opening balance'}
@@ -702,7 +698,7 @@ export default function EditStatementPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             {labels.expenses?.value || 'Expenses'}
@@ -713,7 +709,7 @@ export default function EditStatementPage() {
         </Paper>
         <Paper
           elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', borderRadius: 2, p: 2 }}
+          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
         >
           <Typography variant="caption" color="text.secondary">
             {labels.income?.value || 'Income'}
@@ -731,7 +727,6 @@ export default function EditStatementPage() {
         elevation={0}
         sx={{
           mb: 4,
-          borderRadius: 2,
           border: '1px solid',
           borderColor: 'divider',
           '&:before': { display: 'none' },
@@ -974,7 +969,7 @@ export default function EditStatementPage() {
           <button
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            style={{ borderRadius: 6, border: '1px solid #e5e7eb', background: '#fff', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
+            style={{ borderRadius: 0, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
           >
             {t.labels.cancel.value}
           </button>
@@ -985,7 +980,7 @@ export default function EditStatementPage() {
               handleExportToCustomTable();
             }}
             disabled={exportingToTable || !transactions.length}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: 6, background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: 0, background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
           >
             {exportingToTable ? <Spinner style={{ height: 16, width: 16, color: '#fff' }} /> : null}
             {t.labels.exportConfirmConfirm.value}
@@ -1018,7 +1013,6 @@ export default function EditStatementPage() {
             bgcolor: 'primary.50',
             border: '1px solid',
             borderColor: 'primary.200',
-            borderRadius: 2,
           }}
         >
           <Box
@@ -1051,7 +1045,6 @@ export default function EditStatementPage() {
                   fontWeight: 500,
                   borderColor: 'primary.300',
                   color: 'primary.700',
-                  borderRadius: 2,
                   '&:hover': {
                     borderColor: 'primary.400',
                     bgcolor: 'primary.100',
@@ -1069,7 +1062,6 @@ export default function EditStatementPage() {
                 sx={{
                   textTransform: 'none',
                   fontWeight: 600,
-                  borderRadius: 2,
                   boxShadow: 'none',
                 }}
               >
@@ -1090,7 +1082,6 @@ export default function EditStatementPage() {
                 sx={{
                   textTransform: 'none',
                   fontWeight: 500,
-                  borderRadius: 2,
                 }}
               >
                 {labels.delete?.value || 'Delete'}
@@ -1107,7 +1098,6 @@ export default function EditStatementPage() {
         sx={{
           border: '1px solid',
           borderColor: 'divider',
-          borderRadius: 2,
           overflow: 'hidden',
         }}
       >
@@ -1430,7 +1420,6 @@ export default function EditStatementPage() {
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 2,
             boxShadow: 'none',
             border: '1px solid',
             borderColor: 'grey.200',
@@ -1495,7 +1484,6 @@ export default function EditStatementPage() {
             sx={{
               textTransform: 'none',
               fontWeight: 600,
-              borderRadius: 2,
               boxShadow: 'none',
               '&:hover': {
                 boxShadow: 'none',

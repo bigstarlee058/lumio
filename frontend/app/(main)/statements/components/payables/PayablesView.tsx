@@ -459,7 +459,7 @@ export function PayablesView() {
   if (!user) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 12, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: 0, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.loginRequired}
         </div>
       </div>
@@ -469,7 +469,7 @@ export function PayablesView() {
   if (!currentWorkspace) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 12, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: 0, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.noWorkspace}
         </div>
       </div>

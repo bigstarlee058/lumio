@@ -41,7 +41,7 @@ export function FilterOptionRow({
         justifyContent: 'center',
         width: 24,
         height: 24,
-        borderRadius: variant === 'checkbox' ? 1 : '50%',
+        borderRadius: variant === 'checkbox' ? 0 : '50%',
         bgcolor: selected ? 'primary.main' : 'grey.100',
         color: selected ? 'primary.contrastText' : 'transparent',
         flexShrink: 0,
@@ -72,7 +72,7 @@ export function FilterOptionRow({
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          borderRadius: 12,
+          borderRadius: 0,
           transition: 'background 0.15s',
         }}
         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}

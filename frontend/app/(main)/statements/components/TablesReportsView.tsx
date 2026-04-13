@@ -237,8 +237,8 @@ export default function TablesReportsView() {
 
   const selectedTablesCount = selectedTableIds.length;
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
-  const panelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: '#fff', padding: 16, borderRadius: 0 };
-  const subtlePanelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: '#fff', padding: '8px 16px', fontSize: 14, color: '#334155', borderRadius: 0, cursor: 'pointer' };
+  const panelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 16, borderRadius: 0 };
+  const subtlePanelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#334155', borderRadius: 0, cursor: 'pointer' };
 
   return (
     <div
@@ -314,7 +314,7 @@ export default function TablesReportsView() {
             value={searchInput}
             onChange={event => setSearchInput(event.target.value)}
             placeholder="Search counterparties, categories, tables..."
-            style={{ width: '100%', border: '1px solid #e2e8f0', background: '#fff', padding: '8px 16px', fontSize: 14, color: '#0f172a', outline: 'none', borderRadius: 0 }}
+            style={{ width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#0f172a', outline: 'none', borderRadius: 0 }}
           />
           <div style={{ position: 'relative' }} ref={tableDropdownRef}>
             <button
@@ -327,7 +327,7 @@ export default function TablesReportsView() {
             </button>
 
             {tableDropdownOpen ? (
-              <div style={{ position: 'absolute', right: 0, zIndex: 20, marginTop: 8, width: 288, border: '1px solid #e2e8f0', background: '#fff', padding: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: 0 }}>
+              <div style={{ position: 'absolute', right: 0, zIndex: 20, marginTop: 8, width: 288, border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: 0 }}>
                 <button
                   type="button"
                   onClick={() => setSelectedTableIds([])}
@@ -492,7 +492,7 @@ export default function TablesReportsView() {
               ))}
             </div>
 
-            <div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#fff', borderRadius: 0 }}>
+            <div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #e2e8f0', background: 'var(--card-bg)', borderRadius: 0 }}>
               <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: 12, color: '#64748b' }}>
@@ -558,7 +558,7 @@ export default function TablesReportsView() {
                 aria-hidden="true"
               >
                 <div
-                  style={{ maxHeight: '80vh', width: '100%', maxWidth: 768, overflow: 'hidden', background: '#fff', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', borderRadius: 0 }}
+                  style={{ maxHeight: '80vh', width: '100%', maxWidth: 768, overflow: 'hidden', background: 'var(--card-bg)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', borderRadius: 0 }}
                   aria-modal="true"
                   onClick={event => event.stopPropagation()}
                   onKeyDown={event => event.stopPropagation()}

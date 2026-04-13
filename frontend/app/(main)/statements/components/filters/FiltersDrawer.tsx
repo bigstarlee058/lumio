@@ -151,9 +151,9 @@ export function FiltersDrawer({
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    borderRadius: 12,
+    borderRadius: 0,
     border: '1px solid #e5e7eb',
-    background: '#fff',
+    background: 'var(--card-bg)',
     padding: '8px 12px',
     fontSize: 14,
     color: '#111827',
@@ -251,7 +251,6 @@ export function FiltersDrawer({
             {filters.date?.mode ? (
               <Box
                 sx={{
-                  borderRadius: 3,
                   border: '1px solid',
                   borderColor: 'divider',
                   bgcolor: 'rgba(249,250,251,0.6)',
@@ -286,7 +285,6 @@ export function FiltersDrawer({
         return (
           <Box
             sx={{
-              borderRadius: 4,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -494,7 +492,6 @@ export function FiltersDrawer({
         return (
           <Box
             sx={{
-              borderRadius: 4,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -740,7 +737,7 @@ export function FiltersDrawer({
           </Box>
         ) : (
           <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2.5, pb: 10 }}>
-            <Box sx={{ borderRadius: 4, bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
+            <Box sx={{ bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
           </Box>
         )}
 

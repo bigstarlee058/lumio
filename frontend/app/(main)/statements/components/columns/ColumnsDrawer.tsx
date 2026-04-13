@@ -152,7 +152,7 @@ export function ColumnsDrawer({
           </DndContext>
         </div>
         <div className="lumio-col-drawer__footer">
-          <MuiButton variant="contained" sx={{ width: '100%', borderRadius: 9999 }} size="large" onClick={onSave}>
+          <MuiButton variant="contained" sx={{ width: '100%' }} size="large" onClick={onSave}>
             {labels.save}
           </MuiButton>
         </div>

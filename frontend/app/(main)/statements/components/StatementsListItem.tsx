@@ -491,7 +491,7 @@ export function StatementsListItem({
                         zIndex: 140,
                         borderRadius: 12,
                         border: '1px solid #e5e7eb',
-                        background: '#fff',
+                        background: 'var(--card-bg)',
                         padding: 8,
                         boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
                         top: previewPosition.top,
