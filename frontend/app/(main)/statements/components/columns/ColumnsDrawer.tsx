@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import MuiButton from '@mui/material/Button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import {
   DndContext,
@@ -117,7 +117,7 @@ export function ColumnsDrawer({
       position="right"
       width="sm"
       showCloseButton={false}
-      className="border-l-0 bg-card"
+      sx={{ borderLeft: 0, bgcolor: 'background.paper' }}
       title={
         <div className="lumio-payable-drawer__title-wrap">
           <button
@@ -152,9 +152,9 @@ export function ColumnsDrawer({
           </DndContext>
         </div>
         <div className="lumio-col-drawer__footer">
-          <Button style={{ width: '100%', borderRadius: 9999 }} size="lg" onClick={onSave}>
+          <MuiButton variant="contained" sx={{ width: '100%', borderRadius: 9999 }} size="large" onClick={onSave}>
             {labels.save}
-          </Button>
+          </MuiButton>
         </div>
       </div>
     </DrawerShell>

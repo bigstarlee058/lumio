@@ -519,7 +519,6 @@ export default function WorkspaceOverviewView() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
@@ -565,7 +564,6 @@ export default function WorkspaceOverviewView() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
@@ -777,8 +775,7 @@ export default function WorkspaceOverviewView() {
         closeOnBackdropClick={!deleting}
         closeOnEscape={!deleting}
         title="Delete workspace?"
-        className="rounded-3xl border border-border bg-card shadow-2xl"
-        contentClassName="space-y-4"
+        paperSx={{ borderRadius: 0, border: '1px solid var(--border)', bgcolor: 'var(--card)', boxShadow: 24 }}
         footer={
           <ModalFooter
             onCancel={closeDeleteModal}

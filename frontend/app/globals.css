@@ -22,8 +22,8 @@
   --radius-2xl: 0rem;
   --radius-3xl: 0rem;
   --radius-full: 9999px;
-  --primary: #e42313;
-  --primary-hover: #c11b0e;
+  --primary: #0a66c2;
+  --primary-hover: #084e96;
   --primary-foreground: #ffffff;
   --secondary: #475569;
   --secondary-foreground: #ffffff;
@@ -33,7 +33,7 @@
   --card-foreground: #0f172a;
   --border-color: #d7e2ef;
   --input: #c8d7e7;
-  --ring: #38bdf8;
+  --ring: #3b82c4;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --surface-glow: rgba(2, 132, 199, 0.14);

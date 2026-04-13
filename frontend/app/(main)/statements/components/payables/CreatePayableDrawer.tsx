@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { Input } from '@/app/components/ui/input';
+import MuiButton from '@mui/material/Button';
 import type {
   CreatePayableInput,
   Payable,
@@ -126,7 +126,7 @@ export function CreatePayableDrawer({
       position="right"
       width="lg"
       showCloseButton={false}
-      className="max-w-full border-l-0 bg-white sm:max-w-lg"
+      sx={{ maxWidth: '100%', borderLeft: 0, bgcolor: '#fff', '@media (min-width:600px)': { maxWidth: 512 } }}
       title={
         <div className="lumio-payable-drawer__title-wrap">
           <button
@@ -252,16 +252,17 @@ export function CreatePayableDrawer({
         </div>
 
         <div className="lumio-payable-drawer__footer">
-          <Button variant="outline" style={{ flex: 1 }} onClick={onClose}>
+          <MuiButton variant="outlined" sx={{ flex: 1 }} onClick={onClose}>
             {labels.cancel}
-          </Button>
-          <Button
-            style={{ flex: 1 }}
+          </MuiButton>
+          <MuiButton
+            variant="contained"
+            sx={{ flex: 1 }}
             onClick={() => void handleSubmit()}
             disabled={!canSubmit || saving}
           >
             {saving ? labels.saving : labels.save}
-          </Button>
+          </MuiButton>
         </div>
       </div>
     </DrawerShell>

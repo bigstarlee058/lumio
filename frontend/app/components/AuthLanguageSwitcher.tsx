@@ -87,7 +87,7 @@ export function AuthLanguageSwitcher() {
               className="lumio-language-switcher__back-btn"
               aria-label="Close language drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
             <span>{languageModal.title}</span>
           </div>
@@ -122,7 +122,7 @@ export function AuthLanguageSwitcher() {
                       className={`lumio-language-switcher__lang-btn${selected ? ' lumio-language-switcher__lang-btn--selected' : ''}`}
                     >
                       <span className="lumio-language-switcher__lang-label">{lang.label}</span>
-                      {selected ? <Check className="h-5 w-5 text-primary" /> : null}
+                      {selected ? <Check size={20} style={{ color: 'var(--primary)' }} /> : null}
                     </button>
                   );
                 })

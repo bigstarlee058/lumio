@@ -62,7 +62,7 @@ export function useEditableCell<T extends CustomTableCellValue>({
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(() => toInputString(initialValue));
   const [isSaving, setIsSaving] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Focus and select text when entering edit mode.
   useEffect(() => {

@@ -7,7 +7,7 @@ type AppSurfaceTokens = {
 };
 
 const SURFACE_TOKENS: Record<ThemeMode, AppSurfaceTokens> = {
-  light: { primary: '#0284c7' },
+  light: { primary: '#0a66c2' },
   dark: { primary: '#5B9BD5' },
 };
 
@@ -83,9 +83,9 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
   light: {
     mode: 'light',
     primary: {
-      main: '#0284c7',
-      light: '#38bdf8',
-      dark: '#0369a1',
+      main: '#0a66c2',
+      light: '#3b82c4',
+      dark: '#084e96',
       contrastText: '#ffffff',
     },
     secondary: {

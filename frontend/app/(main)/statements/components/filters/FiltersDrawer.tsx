@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import MuiButton from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -536,7 +536,7 @@ export function FiltersDrawer({
   };
 
   const viewResultsButton = (
-    <Button className="w-full" size="lg" onClick={onViewResults}>
+    <MuiButton variant="contained" sx={{ width: '100%' }} size="large" onClick={onViewResults}>
       {labels.viewResults}
       {activeCount > 0 ? (
         <Box
@@ -557,7 +557,7 @@ export function FiltersDrawer({
           {activeCount}
         </Box>
       ) : null}
-    </Button>
+    </MuiButton>
   );
 
   return (
@@ -757,9 +757,9 @@ export function FiltersDrawer({
               bgcolor: 'background.paper',
             }}
           >
-            <Button variant="secondary" className="w-full" size="lg" disabled>
+            <MuiButton variant="outlined" sx={{ width: '100%' }} size="large" disabled>
               {labels.saveSearch}
-            </Button>
+            </MuiButton>
             {viewResultsButton}
           </Box>
         ) : (

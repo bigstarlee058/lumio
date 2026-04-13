@@ -307,7 +307,6 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
