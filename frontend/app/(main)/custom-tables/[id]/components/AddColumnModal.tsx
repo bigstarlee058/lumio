@@ -47,7 +47,7 @@ export function AddColumnModal({
             component="button"
             type="button"
             onClick={handleClose}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
           >
             {tx(t, ['addColumn', 'cancel'], 'Cancel')}
           </Box>
@@ -83,7 +83,7 @@ export function AddColumnModal({
               }
             }}
             placeholder={tx(t, ['addColumn', 'titlePlaceholder'], '')}
-            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
           />
         </Box>
         <Box>
@@ -102,7 +102,7 @@ export function AddColumnModal({
                 type: e.target.value as ColumnType,
               }))
             }
-            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px', fontSize: 14, color: '#1f2937', outline: 'none' }}
+            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: '#1f2937', outline: 'none' }}
           >
             {columnTypes.map(typeItem => (
               <option key={typeItem.value} value={typeItem.value}>

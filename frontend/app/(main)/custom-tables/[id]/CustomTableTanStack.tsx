@@ -321,7 +321,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 4,
+              borderRadius: 0,
               padding: 4,
               color: '#9ca3af',
               background: 'none',
@@ -340,7 +340,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 4,
+              borderRadius: 0,
               padding: 4,
               color: '#9ca3af',
               background: 'none',
@@ -643,7 +643,6 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           style={{
             position: 'relative',
             overflowY: 'auto',
-            borderRadius: 12,
             border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
             backgroundColor: isDark ? '#111827' : '#fff',
             height: props.isFullscreen ? 'calc(100vh - 150px)' : '600px',
@@ -691,7 +690,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  borderRadius: 999,
+                  borderRadius: 0,
                   border: '1px dashed #d1d5db',
                   padding: '6px 12px',
                   fontSize: '0.75rem',
@@ -718,7 +717,6 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                     key={row.id}
                     data-testid={`custom-table-mobile-card-${row.id}`}
                     style={{
-                      borderRadius: 8,
                       border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
                       backgroundColor: isDark ? '#111827' : '#fff',
                       padding: 12,
@@ -750,7 +748,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             type="button"
                             onClick={() => props.onViewRow?.(row.id)}
                             style={{
-                              borderRadius: 6,
+                              borderRadius: 0,
                               border: '1px solid #e5e7eb',
                               padding: '4px 8px',
                               fontSize: '0.75rem',
@@ -770,7 +768,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             type="button"
                             onClick={() => props.onEditRow?.(row.id)}
                             style={{
-                              borderRadius: 6,
+                              borderRadius: 0,
                               border: '1px solid #e5e7eb',
                               padding: '4px 8px',
                               fontSize: '0.75rem',
@@ -792,7 +790,7 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 4,
-                            borderRadius: 6,
+                            borderRadius: 0,
                             border: '1px solid #fecaca',
                             padding: '4px 8px',
                             fontSize: '0.75rem',
@@ -880,9 +878,8 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 8,
-                  borderRadius: 8,
                   border: '1px dashed #d1d5db',
-                  backgroundColor: '#fff',
+                  backgroundColor: 'var(--card-bg)',
                   padding: '8px 16px',
                   fontSize: '0.875rem',
                   fontWeight: 500,
@@ -959,7 +956,6 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
               sx: {
                 p: 1.5,
                 mt: 1,
-                borderRadius: '16px',
                 border: '1px solid',
                 borderColor: 'divider',
                 boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
@@ -1193,9 +1189,9 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 8,
-                  borderRadius: 999,
+                  borderRadius: 0,
                   border: '1px dashed #d1d5db',
-                  backgroundColor: '#fff',
+                  backgroundColor: 'var(--card-bg)',
                   padding: '8px 16px',
                   fontSize: '0.875rem',
                   fontWeight: 500,

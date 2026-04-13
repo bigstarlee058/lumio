@@ -1234,7 +1234,7 @@ export default function CustomTablesPage() {
         maxWidth="lg"
         fullWidth
         scroll="paper"
-        PaperProps={{ sx: { borderRadius: 3, border: '1px solid', borderColor: 'divider' } }}
+        PaperProps={{ sx: { border: '1px solid', borderColor: 'divider' } }}
       >
         <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', px: 3, py: 2.5 }}>
           <Typography style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>
@@ -1596,7 +1596,6 @@ export default function CustomTablesPage() {
                               width: 16,
                               height: 16,
                               bgcolor: c.color,
-                              borderRadius: 0.5,
                             }}
                           />
                           {c.name}

@@ -114,7 +114,7 @@ export function EditableSelectCell({
       </button>
 
       {isOpen && (
-        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, width: '100%', minWidth: 200, background: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 20, maxHeight: 240, overflowY: 'auto' }}>
+        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, width: '100%', minWidth: 200, background: 'var(--card-bg)', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 20, maxHeight: 240, overflowY: 'auto' }}>
           {options.length === 0 ? (
             <div style={{ padding: '8px 12px', fontSize: 14, color: '#6b7280' }}>No options available</div>
           ) : (

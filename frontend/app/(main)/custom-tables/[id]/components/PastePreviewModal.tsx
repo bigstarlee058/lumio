@@ -89,7 +89,7 @@ export function PastePreviewModal({
       {!pasteParsing && pastePreview && (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {pastePreview.hasErrors && (
-            <Box sx={{ flexShrink: 0, px: 3, py: 1.5, borderBottom: '1px solid #f3f4f6', bgcolor: '#fff' }}>
+            <Box sx={{ flexShrink: 0, px: 3, py: 1.5, borderBottom: '1px solid #f3f4f6', bgcolor: 'background.paper' }}>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, border: '1px solid #fcd34d', bgcolor: '#fffbeb', p: 1.5 }}>
                 <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#92400e', whiteSpace: 'nowrap', paddingTop: 2 }}>
                   {tx(t, ['paste', 'errorsTitle'], 'Errors')}
@@ -119,7 +119,7 @@ export function PastePreviewModal({
             ) : (
               <Box sx={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
                 <table style={{ minWidth: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-                  <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', borderBottom: '1px solid #e5e7eb' }}>
+                  <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--card-bg)', borderBottom: '1px solid #e5e7eb' }}>
                     <tr>
                       {pastePreview.columns.map(col => (
                         <th
@@ -131,7 +131,7 @@ export function PastePreviewModal({
                       ))}
                     </tr>
                   </thead>
-                  <tbody style={{ background: '#fff' }}>
+                  <tbody style={{ background: 'var(--card-bg)' }}>
                     {pastePreview.previewRows.map(row => (
                       <tr key={row.id} style={{ borderBottom: '1px solid #f9fafb' }}>
                         {row.cells.map((cell, index) => (

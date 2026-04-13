@@ -27,7 +27,7 @@ export function ColumnsVisibilityPanel({
   return (
     <Box sx={{ width: '100%', px: { xs: 1, sm: 2 }, py: 2 }}>
       <Box sx={{ mx: 'auto', width: '100%', maxWidth: 768, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+        <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
           <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
             {(columnOrder.length ? columnOrder : orderedColumns.map(c => c.key)).map(key => {
               const col = orderedColumns.find(c => c.key === key);

@@ -103,7 +103,7 @@ export default function CustomTablesCircularMenu({
     justifyContent: 'center',
     borderRadius: '50%',
     border: '1px solid rgba(255,255,255,0.8)',
-    backgroundColor: '#fff',
+    backgroundColor: 'var(--card-bg)',
     cursor: 'pointer',
     transition: 'transform 0.3s ease-out',
   };
@@ -115,7 +115,7 @@ export default function CustomTablesCircularMenu({
     zIndex: 40,
     transform: 'translateY(-50%)',
     whiteSpace: 'nowrap',
-    borderRadius: 999,
+    borderRadius: 0,
     backgroundColor: 'rgba(255,255,255,0.95)',
     padding: '4px 10px',
     fontSize: 11,

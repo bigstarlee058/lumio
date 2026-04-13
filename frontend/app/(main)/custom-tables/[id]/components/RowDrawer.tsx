@@ -228,7 +228,7 @@ export function RowDrawer({
                   component="button"
                   type="button"
                   onClick={() => onModeChange?.('edit')}
-                  sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
+                  sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   Edit
                 </Box>
@@ -240,7 +240,7 @@ export function RowDrawer({
                     setDraft(baseData);
                     onModeChange?.('view');
                   }}
-                  sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
+                  sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
                 >
                   Cancel
                 </Box>
@@ -253,7 +253,7 @@ export function RowDrawer({
                 const options = getColumnOptions(col);
 
                 return (
-                  <Box key={col.key} sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+                  <Box key={col.key} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
                     <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                       {col.title || col.key}
                     </Typography>
@@ -366,7 +366,7 @@ export function RowDrawer({
             </Box>
 
             {mode === 'edit' && (
-              <Box sx={{ position: 'sticky', bottom: 0, mx: -3, mb: -3, borderTop: '1px solid #e5e7eb', bgcolor: '#fff', px: 3, py: 2 }}>
+              <Box sx={{ position: 'sticky', bottom: 0, mx: -3, mb: -3, borderTop: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 3, py: 2 }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
                   <Box
                     component="button"
@@ -382,7 +382,7 @@ export function RowDrawer({
                     type="button"
                     onClick={() => applySave('close')}
                     disabled={saving}
-                    sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', color: '#374151', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                    sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', color: '#374151', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                   >
                     Save & close
                   </Box>
@@ -391,7 +391,7 @@ export function RowDrawer({
                     type="button"
                     onClick={() => applySave('next')}
                     disabled={saving}
-                    sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', color: '#374151', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                    sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', color: '#374151', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                   >
                     Apply & next
                   </Box>
@@ -404,7 +404,7 @@ export function RowDrawer({
         {activeTab === 'history' && (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {historyLoading ? (
-              <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+              <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
                 <Typography style={{ fontSize: 14, color: '#6b7280' }}>Loading history...</Typography>
               </Box>
             ) : (

@@ -79,7 +79,7 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
   if (isEditing) {
     return (
       <div style={{ position: 'relative', zIndex: 20, minWidth: 220, ...style }}>
-        <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+        <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
           <DatePicker
             value={toDate(selectedValue)}
             onChange={date => {

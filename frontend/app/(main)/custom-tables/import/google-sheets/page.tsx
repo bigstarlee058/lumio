@@ -302,7 +302,7 @@ export default function GoogleSheetsImportPage() {
     marginTop: 4,
     width: '100%',
     border: '1px solid #e5e7eb',
-    background: '#fff',
+    background: 'var(--card-bg)',
     padding: '8px 12px',
     fontSize: 14,
     outline: 'none',
@@ -320,7 +320,7 @@ export default function GoogleSheetsImportPage() {
   if (!user) {
     return (
       <Box sx={{ maxWidth: 900, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, fontSize: 14, color: '#4b5563' }}>
           {t.auth.loginRequired}
         </Box>
       </Box>
@@ -355,7 +355,7 @@ export default function GoogleSheetsImportPage() {
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 2fr' }, gap: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-source-card"
           >
             <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.source.title}</Typography>
@@ -487,7 +487,7 @@ export default function GoogleSheetsImportPage() {
           </Box>
 
           <Box
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-result-card"
           >
             <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.result.title}</Typography>
@@ -585,7 +585,7 @@ export default function GoogleSheetsImportPage() {
               {jobId ? t.result.importRunning : t.result.importButton}
             </Box>
             {jobId ? (
-              <Box sx={{ mt: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', p: 1.5 }}>
+              <Box sx={{ mt: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                   <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                     {t.result.progressTitle}
@@ -594,7 +594,7 @@ export default function GoogleSheetsImportPage() {
                     {Math.round(jobProgress)}%
                   </Typography>
                 </Box>
-                <Box sx={{ mt: 1, height: 8, width: '100%', bgcolor: '#f3f4f6', overflow: 'hidden' }}>
+                <Box sx={{ mt: 1, height: 8, width: '100%', bgcolor: 'action.hover', overflow: 'hidden' }}>
                   <Box
                     sx={{ height: '100%', bgcolor: 'primary.main', width: `${Math.max(0, Math.min(100, jobProgress))}%` }}
                   />
@@ -617,7 +617,7 @@ export default function GoogleSheetsImportPage() {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-preview-panel"
           >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
@@ -691,7 +691,7 @@ export default function GoogleSheetsImportPage() {
           </Box>
 
           <Box
-            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
+            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-columns-panel"
           >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
@@ -759,7 +759,7 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
                           />
                         </td>
                         <td style={{ padding: '8px 12px' }}>
@@ -777,7 +777,7 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, outline: 'none' }}
+                            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, outline: 'none' }}
                           >
                             <option value="text">{t.columns.types.text}</option>
                             <option value="number">{t.columns.types.number}</option>
