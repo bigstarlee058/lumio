@@ -3,6 +3,7 @@
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import type { SxProps, Theme } from '@mui/material/styles';
 import { X } from 'lucide-react';
 import * as React from 'react';
 
@@ -32,6 +33,8 @@ export interface DrawerShellProps {
   className?: string;
   /** Whether to lock body scroll when open */
   lockScroll?: boolean;
+  /** Additional sx styles forwarded to the Drawer Paper */
+  sx?: SxProps<Theme>;
 }
 
 const widthMap: Record<DrawerWidth, number | string> = {
@@ -62,6 +65,7 @@ export function DrawerShell({
   closeOnEscape = true,
   className,
   lockScroll: _lockScroll = true,
+  sx,
 }: DrawerShellProps) {
   const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
     if (reason === 'backdropClick' && !closeOnBackdropClick) return;
@@ -78,12 +82,15 @@ export function DrawerShell({
       anchor={position}
       className={className}
       PaperProps={{
-        sx: {
-          width: drawerWidth,
-          borderRadius: 0,
-          display: 'flex',
-          flexDirection: 'column',
-        },
+        sx: [
+          {
+            width: drawerWidth,
+            borderRadius: 0,
+            display: 'flex',
+            flexDirection: 'column',
+          },
+          ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+        ],
       }}
     >
       {(title || showCloseButton) && (

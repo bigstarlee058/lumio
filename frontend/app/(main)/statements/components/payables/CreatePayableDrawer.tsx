@@ -126,7 +126,7 @@ export function CreatePayableDrawer({
       position="right"
       width="lg"
       showCloseButton={false}
-      sx={{ maxWidth: '100%', borderLeft: 0, bgcolor: '#fff', '@media (min-width:600px)': { maxWidth: 512 } }}
+      sx={{ maxWidth: '100%', borderLeft: 0, bgcolor: 'background.paper', '@media (min-width:600px)': { maxWidth: 512 } }}
       title={
         <div className="lumio-payable-drawer__title-wrap">
           <button
