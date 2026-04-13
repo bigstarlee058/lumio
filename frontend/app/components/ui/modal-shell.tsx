@@ -37,6 +37,8 @@ export interface ModalShellProps {
   contentSx?: SxProps<Theme>;
   /** className forwarded to the Paper element */
   className?: string;
+  /** className forwarded to the DialogContent element */
+  contentClassName?: string;
 }
 
 const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
@@ -69,6 +71,7 @@ export function ModalShell({
   paperSx,
   contentSx,
   className,
+  contentClassName,
 }: ModalShellProps) {
   const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
     if (reason === 'backdropClick' && !closeOnBackdropClick) return;
@@ -105,7 +108,7 @@ export function ModalShell({
           )}
         </DialogTitle>
       )}
-      <DialogContent sx={contentSx}>{children}</DialogContent>
+      <DialogContent className={contentClassName} sx={contentSx}>{children}</DialogContent>
       {footer && (
         <div
           style={{
