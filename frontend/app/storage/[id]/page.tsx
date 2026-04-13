@@ -344,7 +344,7 @@ export default function FileDetailsPage() {
   if (!details) {
     return (
       <Box className="container-shared" sx={{ px: 2, py: 6 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3 }}>
           <Typography style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 8 }}>
             {t.notFound}
           </Typography>
@@ -421,7 +421,7 @@ export default function FileDetailsPage() {
             sx={{
               borderRadius: '50%',
               border: '1px solid #e5e7eb',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               p: 1,
               color: '#4b5563',
               cursor: 'pointer',
@@ -472,7 +472,7 @@ export default function FileDetailsPage() {
               alignItems: 'center',
               gap: 1,
               border: '1px solid #e5e7eb',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               px: 1.5,
               py: 1,
               fontSize: 14,
@@ -524,7 +524,7 @@ export default function FileDetailsPage() {
             { label: t.cards.uploadedAt, value: formatDate(statement.createdAt) },
             { label: t.cards.account, value: statement.metadata?.accountNumber || t.cards.dash.value },
           ].map((card, idx) => (
-            <Box key={idx} sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+            <Box key={idx} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
               <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                 {card.label}
               </Typography>
@@ -535,7 +535,7 @@ export default function FileDetailsPage() {
           ))}
         </Box>
 
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: '#111827' }}>
               <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #4f46e5)' }} />
@@ -552,7 +552,7 @@ export default function FileDetailsPage() {
                   alignItems: 'center',
                   gap: 1,
                   border: '1px solid #e5e7eb',
-                  bgcolor: '#fff',
+                  bgcolor: 'background.paper',
                   px: 1.5,
                   py: 0.75,
                   fontSize: 12,
@@ -576,7 +576,7 @@ export default function FileDetailsPage() {
                     alignItems: 'center',
                     gap: 1,
                     border: '1px solid #e5e7eb',
-                    bgcolor: '#fff',
+                    bgcolor: 'background.paper',
                     px: 1.5,
                     py: 0.75,
                     fontSize: 12,
@@ -601,7 +601,7 @@ export default function FileDetailsPage() {
             )}
 
             {!previewLoading && previewError && (
-              <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: '#fff', px: 2, textAlign: 'center' }}>
+              <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: 'background.paper', px: 2, textAlign: 'center' }}>
                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#fef2f2', px: 1.5, py: 0.5, fontSize: 14, color: '#b91c1c' }}>
                   {previewError}
                 </Box>
@@ -634,12 +634,12 @@ export default function FileDetailsPage() {
               <iframe
                 src={previewUrl}
                 title={t.preview.iframeTitle.value}
-                style={{ height: 420, width: '100%', border: 'none', background: '#fff', display: 'block' }}
+                style={{ height: 420, width: '100%', border: 'none', background: 'var(--card-bg)', display: 'block' }}
               />
             )}
 
             {!previewLoading && !previewError && !previewUrl && (
-              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: '#fff', px: 2, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
+              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.paper', px: 2, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
                 {t.preview.empty}
               </Box>
             )}
@@ -647,7 +647,7 @@ export default function FileDetailsPage() {
         </Box>
       </Box>
 
-      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, borderBottom: '1px solid #f3f4f6', px: 2, py: 1.5 }}>
           {tabs.map(tab => {
             const isActive = tab.key === currentTab;
@@ -680,7 +680,7 @@ export default function FileDetailsPage() {
 
         <Box sx={{ p: 2 }}>
           {currentTab === 'transactions' && (
-            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: '#fff' }}>
+            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: 'background.paper' }}>
               <TransactionsView transactions={transactions} />
             </Box>
           )}
@@ -722,7 +722,7 @@ export default function FileDetailsPage() {
               ) : (
                 <Box sx={{ display: 'grid', gap: 1.5 }}>
                   {sharedLinks.map(link => (
-                    <Box key={link.id} sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5 }}>
+                    <Box key={link.id} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5 }}>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: '#111827' }}>
@@ -757,7 +757,7 @@ export default function FileDetailsPage() {
                               alignItems: 'center',
                               gap: 1,
                               border: '1px solid #e5e7eb',
-                              bgcolor: '#fff',
+                              bgcolor: 'background.paper',
                               px: 1.5,
                               py: 0.75,
                               fontSize: 12,
@@ -778,7 +778,7 @@ export default function FileDetailsPage() {
                               alignItems: 'center',
                               gap: 1,
                               border: '1px solid #e5e7eb',
-                              bgcolor: '#fff',
+                              bgcolor: 'background.paper',
                               px: 1.5,
                               py: 0.75,
                               fontSize: 12,
@@ -800,7 +800,7 @@ export default function FileDetailsPage() {
           )}
 
           {currentTab === 'permissions' && isOwner && (
-            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: '#fff' }}>
+            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: 'background.paper' }}>
               <PermissionsPanel
                 fileId={fileId}
                 permissions={permissions}

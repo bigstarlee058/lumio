@@ -559,7 +559,7 @@ export default function GmailReceiptDocumentPage() {
       <Container maxWidth="xl" sx={{ mt: 4 }}>
         <Paper
           elevation={0}
-          sx={{ p: 6, border: '1px solid', borderColor: 'grey.200', borderRadius: 2 }}
+          sx={{ p: 6, border: '1px solid', borderColor: 'grey.200' }}
         >
           <Typography variant="body1" fontWeight={600}>
             Receipt not found
@@ -591,7 +591,6 @@ export default function GmailReceiptDocumentPage() {
             color: 'text.secondary',
             textTransform: 'none',
             fontWeight: 500,
-            borderRadius: 2,
             '&:hover': { bgcolor: 'action.hover' },
           }}
         >
@@ -632,7 +631,6 @@ export default function GmailReceiptDocumentPage() {
                   border: '1px solid',
                   borderColor: 'grey.200',
                   fontWeight: 500,
-                  borderRadius: 1.5,
                   '& .MuiChip-icon': { color: 'text.secondary' },
                 }}
               />
@@ -645,7 +643,6 @@ export default function GmailReceiptDocumentPage() {
                   border: '1px solid',
                   borderColor: 'primary.200',
                   fontWeight: 600,
-                  borderRadius: 1.5,
                 }}
               />
               {hasCategoryIssues && (
@@ -677,7 +674,6 @@ export default function GmailReceiptDocumentPage() {
               sx={{
                 textTransform: 'none',
                 fontWeight: 700,
-                borderRadius: 2,
                 minWidth: 0,
                 maxWidth: { xs: '100%', md: 280 },
                 overflow: 'hidden',
@@ -726,7 +722,6 @@ export default function GmailReceiptDocumentPage() {
                   sx={{
                     textTransform: 'none',
                     fontWeight: 600,
-                    borderRadius: 2,
                     borderColor: 'grey.300',
                     color: 'text.secondary',
                     '&:hover': {
@@ -748,7 +743,6 @@ export default function GmailReceiptDocumentPage() {
               sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                borderRadius: 2,
                 borderColor: 'grey.300',
                 color: 'text.secondary',
                 '&:hover': {

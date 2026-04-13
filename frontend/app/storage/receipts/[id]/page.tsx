@@ -546,7 +546,7 @@ export default function ReceiptDocumentPage() {
                 flexDirection: 'column',
                 overflow: 'hidden',
                 border: '1px solid #e2e8f0',
-                bgcolor: '#fff',
+                bgcolor: 'background.paper',
               }}
             >
               <Box sx={{ borderBottom: '1px solid #e2e8f0', px: 2.5, py: 2 }}>
@@ -568,7 +568,7 @@ export default function ReceiptDocumentPage() {
                     <iframe
                       src={previewUrl}
                       title={receipt.subject}
-                      style={{ height: '100%', minHeight: 760, width: '100%', border: '1px solid #e2e8f0', background: '#fff', display: 'block' }}
+                      style={{ height: '100%', minHeight: 760, width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', display: 'block' }}
                     />
                   ) : (
                     <Box sx={{ display: 'flex', minHeight: '100%', minWidth: '100%', justifyContent: 'center' }}>
@@ -588,7 +588,7 @@ export default function ReceiptDocumentPage() {
             </Box>
           </Box>
 
-          <Box component="section" sx={{ height: '100%', border: '1px solid #e2e8f0', bgcolor: '#fff', p: 3 }}>
+          <Box component="section" sx={{ height: '100%', border: '1px solid #e2e8f0', bgcolor: 'background.paper', p: 3 }}>
             <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, borderBottom: '1px solid #e2e8f0', pb: 2 }}>
               <Box>
                 <Typography style={{ fontSize: 18, fontWeight: 600, color: '#020617' }}>
@@ -630,7 +630,7 @@ export default function ReceiptDocumentPage() {
             onClick={() => setExportConfirmOpen(false)}
             sx={{
               border: '1px solid #e5e7eb',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               px: 3,
               py: 1.25,
               fontSize: 16,

@@ -252,7 +252,7 @@ export const DraggableFileRow = React.memo(
                 minWidth: 160,
                 borderRadius: 0,
                 border: '1px solid #e5e7eb',
-                background: '#fff',
+                background: 'var(--card-bg)',
                 padding: '8px 12px',
                 fontSize: 14,
                 color: '#111827',

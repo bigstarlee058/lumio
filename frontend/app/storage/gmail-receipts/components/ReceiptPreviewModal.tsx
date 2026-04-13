@@ -92,7 +92,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
             const dataUrl = `data:${attachment.mimeType};base64,${base64Data}`;
 
             return (
-              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', borderRadius: 0 }}>
+              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 0 }}>
                 <Box sx={{ p: 1.5, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb' }}>
                   <Typography style={{ fontSize: 14, fontWeight: 500 }}>{attachment.filename}</Typography>
                 </Box>
@@ -125,7 +125,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
 
     if (preview.emailBody) {
       return (
-        <Box sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', borderRadius: 0, overflow: 'hidden' }}>
+        <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 0, overflow: 'hidden' }}>
           <iframe
             title="Receipt email preview"
             style={{ width: '100%', height: 600, border: 'none' }}
@@ -168,7 +168,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
         sx={{
           position: 'fixed',
           inset: 16,
-          bgcolor: '#fff',
+          bgcolor: 'background.paper',
           borderRadius: 0,
           zIndex: 50,
           display: 'flex',

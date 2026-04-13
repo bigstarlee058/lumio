@@ -816,7 +816,7 @@ function StoragePageContent({
     gap: 0.5,
     border: '1px solid',
     borderColor: isActive ? 'rgba(79,70,229,0.3)' : '#e5e7eb',
-    borderRadius: '50px',
+    borderRadius: 0,
     px: 1,
     py: 0.25,
     fontSize: 11,
@@ -895,7 +895,7 @@ function StoragePageContent({
         {!isTrashView && (
           <Box
             sx={{
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               border: '1px solid #e5e7eb',
               p: 3,
               mb: 3,
@@ -985,7 +985,7 @@ function StoragePageContent({
                   <select
                     value={sortKey}
                     onChange={e => handleSortChange(e.target.value)}
-                    style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 40px 8px 12px', fontSize: 14, color: '#111827', outline: 'none', appearance: 'auto' }}
+                    style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 40px 8px 12px', fontSize: 14, color: '#111827', outline: 'none', appearance: 'auto' }}
                   >
                     <option value="createdAt:desc">{t.sort.newest}</option>
                     <option value="createdAt:asc">{t.sort.oldest}</option>
@@ -1018,7 +1018,7 @@ function StoragePageContent({
                   >
                     <Filter style={{ width: 20, height: 20 }} />
                     {t.filters.button}
-                    {filtersApplied && <Box sx={{ ml: 1, width: 8, height: 8, borderRadius: '50%', bgcolor: '#fff' }} />}
+                    {filtersApplied && <Box sx={{ ml: 1, width: 8, height: 8, borderRadius: '50%', bgcolor: 'background.paper' }} />}
                   </Box>
                 </Box>
               </Box>
@@ -1078,7 +1078,7 @@ function StoragePageContent({
           )}
         </Box>
         {!isTrashView && (
-          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2, mb: 3 }}>
+          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, mb: 3 }}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Box sx={{ p: 1, bgcolor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1144,7 +1144,7 @@ function StoragePageContent({
           </Box>
         )}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', overflow: 'visible' }}>
+          <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', overflow: 'visible' }}>
             <Box sx={{ px: 3, py: 2, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
                 {isTrashView ? t.trash.title : t.subtitle}
@@ -1213,7 +1213,7 @@ function StoragePageContent({
                         alignItems: 'center',
                         gap: 0.75,
                         border: '1px solid #e5e7eb',
-                        bgcolor: '#fff',
+                        bgcolor: 'background.paper',
                         px: 1.5,
                         py: 0.75,
                         fontSize: 12,
@@ -1299,7 +1299,7 @@ function StoragePageContent({
                       </th>
                     </tr>
                   </thead>
-                  <tbody style={{ background: '#fff' }}>
+                  <tbody style={{ background: 'var(--card-bg)' }}>
                     {paginatedFiles.map((file, index) => (
                       <DraggableFileRow
                         key={file.id}
@@ -1384,7 +1384,7 @@ function StoragePageContent({
         </Box>
         <DragOverlay style={{ pointerEvents: 'none' }}>
           {draggingFile ? (
-            <Box sx={{ bgcolor: '#fff', p: 2, border: '1px solid rgba(79,70,229,0.5)', opacity: 0.9, width: 300 }}>
+            <Box sx={{ bgcolor: 'background.paper', p: 2, border: '1px solid rgba(79,70,229,0.5)', opacity: 0.9, width: 300 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Box sx={{ p: 1, bgcolor: '#f9fafb' }}>
                   <DocumentTypeIcon
@@ -1419,7 +1419,7 @@ function StoragePageContent({
               }}
             />
             <Box sx={{ position: 'fixed', inset: 0, zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-              <Box sx={{ display: 'flex', width: '100%', maxWidth: 1380, minHeight: '70vh', maxHeight: '90vh', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+              <Box sx={{ display: 'flex', width: '100%', maxWidth: 1380, minHeight: '70vh', maxHeight: '90vh', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f3f4f6', px: 3, py: 2 }}>
                   <Box>
                     <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
@@ -1951,9 +1951,9 @@ function StoragePageContent({
               sx={{ position: 'fixed', inset: 0, zIndex: 50, bgcolor: 'rgba(0,0,0,0.4)' }}
             />
             <Box sx={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2, pointerEvents: 'none' }}>
-              <Box sx={{ width: '100%', maxWidth: 896, bgcolor: '#fff', boxShadow: 24, pointerEvents: 'auto', display: 'flex', flexDirection: 'column', maxHeight: '85vh', overflow: 'hidden', border: '1px solid #f3f4f6' }}>
+              <Box sx={{ width: '100%', maxWidth: 896, bgcolor: 'background.paper', boxShadow: 24, pointerEvents: 'auto', display: 'flex', flexDirection: 'column', maxHeight: '85vh', overflow: 'hidden', border: '1px solid #f3f4f6' }}>
                 {/* Header */}
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: '1px solid #f3f4f6', flexShrink: 0, bgcolor: '#fff' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: '1px solid #f3f4f6', flexShrink: 0, bgcolor: 'background.paper' }}>
                   <Typography style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>
                     {t.filters.title}
                   </Typography>
@@ -1968,7 +1968,7 @@ function StoragePageContent({
 
                 <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                   {/* Left: Filters */}
-                  <Box sx={{ flex: 1, overflowY: 'auto', p: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', bgcolor: '#fff' }}>
+                  <Box sx={{ flex: 1, overflowY: 'auto', p: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', bgcolor: 'background.paper' }}>
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                         <label
@@ -2129,7 +2129,7 @@ function StoragePageContent({
                           }
                           disabled={viewSaving || !viewName.trim()}
                           title={t.views.saveTooltip.value}
-                          sx={{ border: '1px solid #e5e7eb', borderRadius: 0, color: 'primary.main', bgcolor: '#fff', '&:hover': { bgcolor: 'primary.main', color: '#fff' }, '&:disabled': { opacity: 0.5 } }}
+                          sx={{ border: '1px solid #e5e7eb', borderRadius: 0, color: 'primary.main', bgcolor: 'background.paper', '&:hover': { bgcolor: 'primary.main', color: '#fff' }, '&:disabled': { opacity: 0.5 } }}
                         >
                           <Save size={18} />
                         </IconButton>
@@ -2327,7 +2327,7 @@ function StoragePageContent({
               minWidth: 200,
               overflow: 'hidden',
               border: '1px solid #e5e7eb',
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               boxShadow: 24,
             }}
             style={{
