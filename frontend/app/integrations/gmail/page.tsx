@@ -163,7 +163,7 @@ export default function GmailIntegrationPage() {
           sx={{
             borderRadius: 0,
             border: '1px solid #e5e7eb',
-            bgcolor: '#fff',
+            bgcolor: 'background.paper',
             p: 3,
             boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
             textAlign: 'center',
@@ -246,7 +246,7 @@ export default function GmailIntegrationPage() {
               sx={{
                 borderRadius: 0,
                 border: '1px solid #e5e7eb',
-                bgcolor: '#fff',
+                bgcolor: 'background.paper',
                 p: 3,
                 boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
               }}
@@ -375,7 +375,7 @@ export default function GmailIntegrationPage() {
           sx={{
             borderRadius: 0,
             border: '1px solid #e5e7eb',
-            bgcolor: '#fff',
+            bgcolor: 'background.paper',
             p: 2,
             boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
             height: 'fit-content',

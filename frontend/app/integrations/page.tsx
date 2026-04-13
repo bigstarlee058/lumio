@@ -273,7 +273,7 @@ export default function IntegrationsPage() {
         border: '1px solid #e5e7eb',
         borderRadius: 0,
         p: 2,
-        bgcolor: '#fff',
+        bgcolor: 'background.paper',
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
         cursor:
           item.primaryAction?.href && !item.primaryAction.external ? 'pointer' : 'default',
@@ -458,7 +458,7 @@ export default function IntegrationsPage() {
           py: 0.5,
           border: '1px solid #e5e7eb',
           borderRadius: 0,
-          bgcolor: '#fff',
+          bgcolor: 'background.paper',
         }}
       >
         {label}
