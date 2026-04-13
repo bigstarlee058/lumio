@@ -2,10 +2,11 @@
 
 import { ArrowRight, Calendar, DollarSign, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { Badge, type BadgeVariant } from '../../../components/ui/badge';
-import { Button } from '../../../components/ui/button';
-import { Card } from '../../../components/ui/card';
-import { Checkbox } from '../../../components/ui/checkbox';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 
 interface DuplicateTransaction {
   id: string;
@@ -50,13 +51,13 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
     }).format(amount);
   };
 
-  const getConfidenceVariant = (confidence: number): BadgeVariant => {
+  const getConfidenceColor = (confidence: number): 'success' | 'warning' | 'error' => {
     if (confidence >= 0.95) return 'success';
     if (confidence >= 0.85) return 'warning';
-    return 'destructive';
+    return 'error';
   };
 
-  const getMatchTypeVariant = (matchType?: string): BadgeVariant => {
+  const getMatchTypeColor = (matchType?: string): 'success' | 'info' | 'warning' | 'default' => {
     switch (matchType) {
       case 'exact':
         return 'success';
@@ -67,113 +68,116 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
       case 'semantic':
         return 'default';
       default:
-        return 'outline';
+        return 'default';
     }
   };
 
   return (
-    <Card className={`p-6 transition-all ${selected ? 'ring-2 ring-primary' : ''}`}>
-      <div className="flex items-start gap-4">
-        <Checkbox checked={selected} onCheckedChange={onToggle} className="mt-1" />
+    <Box sx={{ border: selected ? '2px solid var(--primary)' : '1px solid #e5e7eb', bgcolor: 'white', p: 3, transition: 'border-color 200ms' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+        <Checkbox checked={selected} onChange={onToggle} sx={{ mt: 0.5, p: 0 }} />
 
-        <div className="flex-1">
+        <Box sx={{ flex: 1 }}>
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Badge variant={getConfidenceVariant(group.confidence)}>
-                {Math.round(group.confidence * 100)}% Match
-              </Badge>
-              <span className="text-sm text-muted-foreground">
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={`${Math.round(group.confidence * 100)}% Match`}
+                size="small"
+                color={getConfidenceColor(group.confidence)}
+              />
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {group.duplicates.length} duplicate{group.duplicates.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => setExpanded(!expanded)}>
+              </Typography>
+            </Box>
+            <Button variant="text" size="small" onClick={() => setExpanded(!expanded)}>
               {expanded ? 'Hide' : 'Show'} Details
             </Button>
-          </div>
+          </Box>
 
           {/* Master Transaction */}
-          <div className="bg-emerald-50 dark:bg-emerald-950/20 p-4 rounded-xl mb-4 border border-emerald-100 dark:border-emerald-900/30">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] tracking-wider font-bold text-emerald-700 dark:text-emerald-400 uppercase">
+          <Box sx={{ bgcolor: '#ecfdf5', p: 2, mb: 2, border: '1px solid #a7f3d0' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: '#065f46', textTransform: 'uppercase' }}>
                 MASTER
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm">{formatDate(group.master.date)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-semibold">{formatAmount(group.master.amount)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm truncate">{group.master.counterparty}</span>
-              </div>
-              <div className="text-sm text-muted-foreground truncate">{group.master.purpose}</div>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Calendar size={16} style={{ color: '#6b7280' }} />
+                <Typography variant="body2">{formatDate(group.master.date)}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <DollarSign size={16} style={{ color: '#6b7280' }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatAmount(group.master.amount)}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <User size={16} style={{ color: '#6b7280' }} />
+                <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.master.counterparty}</Typography>
+              </Box>
+              <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.master.purpose}</Typography>
+            </Box>
+          </Box>
 
           {/* Duplicate Transactions */}
-          <div className="space-y-2">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {group.duplicates.slice(0, expanded ? undefined : 2).map((duplicate, index) => (
-              <div
+              <Box
                 key={duplicate.id}
-                className="bg-card dark:bg-muted/30 p-4 rounded-xl border border-border transition-colors hover:border-destructive/30"
+                sx={{ bgcolor: '#f9fafb', p: 2, border: '1px solid #e5e7eb' }}
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[10px] tracking-wider font-bold text-destructive dark:text-destructive-foreground uppercase">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: '#dc2626', textTransform: 'uppercase' }}>
                     DUPLICATE {index + 1}
-                  </span>
+                  </Typography>
                   {duplicate.matchType && (
-                    <Badge variant={getMatchTypeVariant(duplicate.matchType)}>
-                      {duplicate.matchType}
-                    </Badge>
+                    <Chip
+                      label={duplicate.matchType}
+                      size="small"
+                      color={getMatchTypeColor(duplicate.matchType)}
+                      variant={duplicate.matchType === 'semantic' || !['exact', 'hybrid', 'fuzzy', 'semantic'].includes(duplicate.matchType) ? 'outlined' : 'filled'}
+                    />
                   )}
                   {duplicate.similarity && (
-                    <span className="text-xs text-muted-foreground">
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                       {Math.round(duplicate.similarity * 100)}% similar
-                    </span>
+                    </Typography>
                   )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm">{formatDate(duplicate.date)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">{formatAmount(duplicate.amount)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm truncate">{duplicate.counterparty}</span>
-                  </div>
-                  <div className="text-sm text-muted-foreground truncate">{duplicate.purpose}</div>
-                </div>
+                </Box>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Calendar size={16} style={{ color: '#6b7280' }} />
+                    <Typography variant="body2">{formatDate(duplicate.date)}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <DollarSign size={16} style={{ color: '#6b7280' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatAmount(duplicate.amount)}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <User size={16} style={{ color: '#6b7280' }} />
+                    <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{duplicate.counterparty}</Typography>
+                  </Box>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{duplicate.purpose}</Typography>
+                </Box>
                 {expanded && duplicate.matchedFields && duplicate.matchedFields.length > 0 && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">Matched fields:</span>
+                  <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>Matched fields:</Typography>
                     {duplicate.matchedFields.map(field => (
-                      <Badge key={field} variant="outline" className="text-xs">
-                        {field}
-                      </Badge>
+                      <Chip key={field} label={field} size="small" variant="outlined" />
                     ))}
-                  </div>
+                  </Box>
                 )}
-              </div>
+              </Box>
             ))}
             {!expanded && group.duplicates.length > 2 && (
-              <div className="text-center text-sm text-muted-foreground py-2">
+              <Typography variant="body2" sx={{ textAlign: 'center', color: 'text.secondary', py: 1 }}>
                 +{group.duplicates.length - 2} more duplicate
                 {group.duplicates.length - 2 !== 1 ? 's' : ''}
-              </div>
+              </Typography>
             )}
-          </div>
-        </div>
-      </div>
-    </Card>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }

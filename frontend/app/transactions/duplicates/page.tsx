@@ -1,12 +1,13 @@
 'use client';
 
-import { Alert, AlertDescription } from '@/app/components/ui/alert';
-import { Button } from '@/app/components/ui/button';
-import { Card } from '@/app/components/ui/card';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react';
+import { CheckCircle2, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import DuplicateGroupCard from './components/DuplicateGroupCard';
 
@@ -119,113 +120,97 @@ export default function TransactionDuplicatesPage() {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <Box sx={{ maxWidth: 1280, mx: 'auto', px: 2, py: 4 }}>
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold">Duplicate Transactions</h1>
-            <p className="text-muted-foreground mt-2">
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>Duplicate Transactions</Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
               Review and manage duplicate transactions detected across statements
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleDetect} disabled={detecting}>
-              {detecting ? (
-                <>
-                  <Spinner className="mr-2 h-4 w-4" />
-                  Detecting...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Re-detect
-                </>
-              )}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              onClick={handleDetect}
+              disabled={detecting}
+              startIcon={detecting ? <Spinner size={16} /> : <RefreshCw size={16} />}
+            >
+              {detecting ? 'Detecting...' : 'Re-detect'}
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
 
         {/* Alerts */}
         {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
         )}
 
         {success && (
-          <Alert variant="success" className="mb-4">
-            <CheckCircle2 className="h-4 w-4" />
-            <AlertDescription>{success}</AlertDescription>
-          </Alert>
+          <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>
         )}
 
         {/* Summary Card */}
-        <Card className="p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Groups</p>
-                <p className="text-2xl font-bold">
-                  {loading ? <Spinner className="size-4" /> : duplicateGroups.length}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Selected</p>
-                <p className="text-2xl font-bold">
-                  {loading ? <Spinner className="size-4" /> : selectedGroups.size}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total Duplicates</p>
-                <p className="text-2xl font-bold">
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 3, mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+              <Box>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Total Groups</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  {loading ? <Spinner size={16} /> : duplicateGroups.length}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Selected</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                  {loading ? <Spinner size={16} /> : selectedGroups.size}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Total Duplicates</Typography>
+                <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {loading ? (
-                    <Spinner className="size-4" />
+                    <Spinner size={16} />
                   ) : (
                     duplicateGroups.reduce((sum, g) => sum + g.duplicates.length, 0)
                   )}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSelectAll}>
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" onClick={handleSelectAll}>
                 {selectedGroups.size === duplicateGroups.length ? 'Deselect All' : 'Select All'}
               </Button>
               <Button
+                variant="contained"
                 onClick={handleMarkDuplicates}
                 disabled={selectedGroups.size === 0 || marking}
+                startIcon={marking ? <Spinner size={16} /> : undefined}
               >
-                {marking ? (
-                  <>
-                    <Spinner className="mr-2 h-4 w-4" />
-                    Marking...
-                  </>
-                ) : (
-                  `Mark ${selectedGroups.size} Group${selectedGroups.size !== 1 ? 's' : ''} as Duplicate`
-                )}
+                {marking ? 'Marking...' : `Mark ${selectedGroups.size} Group${selectedGroups.size !== 1 ? 's' : ''} as Duplicate`}
               </Button>
-            </div>
-          </div>
-        </Card>
-      </div>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Duplicate Groups */}
       {loading ? (
-        <Card className="p-12 text-center">
-          <Spinner className="size-6 text-primary" />
-          <h3 className="mt-4 text-sm font-medium text-muted-foreground">Loading duplicates...</h3>
-        </Card>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 6, textAlign: 'center' }}>
+          <Spinner size={24} />
+          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>Loading duplicates...</Typography>
+        </Box>
       ) : duplicateGroups.length === 0 ? (
-        <Card className="p-12 text-center">
-          <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-green-500" />
-          <h3 className="text-xl font-semibold mb-2">No Duplicates Found</h3>
-          <p className="text-muted-foreground">
-            All transactions appear to be unique. Click "Re-detect" to scan again.
-          </p>
-        </Card>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'white', p: 6, textAlign: 'center' }}>
+          <CheckCircle2 size={48} style={{ color: '#10b981', margin: '0 auto 16px' }} />
+          <Typography variant="h6" sx={{ mb: 1 }}>No Duplicates Found</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            All transactions appear to be unique. Click &quot;Re-detect&quot; to scan again.
+          </Typography>
+        </Box>
       ) : (
-        <div className="space-y-4">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {duplicateGroups.map(group => (
             <DuplicateGroupCard
               key={group.master.id}
@@ -234,8 +219,8 @@ export default function TransactionDuplicatesPage() {
               onToggle={() => handleToggleGroup(group.master.id)}
             />
           ))}
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
