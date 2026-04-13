@@ -7,7 +7,7 @@
 .driver-popover {
   background-color: var(--card-bg);
   color: var(--foreground);
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px
     color-mix(in srgb, var(--border-color) 60%, transparent);
   max-width: 400px;
@@ -68,7 +68,7 @@
 .driver-popover-next-btn,
 .driver-popover-prev-btn,
 .driver-popover-close-btn {
-  border-radius: 6px;
+  border-radius: 0;
   padding: 8px 16px;
   font-weight: 500;
   font-size: 14px;
@@ -117,7 +117,7 @@
   padding: 4px;
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,7 +251,7 @@
   right: 0;
   height: 3px;
   background-color: hsl(var(--muted));
-  border-radius: 12px 12px 0 0;
+  border-radius: 0;
   overflow: hidden;
 }
 

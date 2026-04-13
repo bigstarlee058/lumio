@@ -4,7 +4,7 @@
 .lumio-tx-table {
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
 }
 .lumio-tx-table__scroll {
   overflow-x: auto;
@@ -138,7 +138,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  background: white;
+  background: var(--lumio-color-surface);
   padding: 16px;
   font-size: 12px;
   border: 1px solid #f3f4f6;
@@ -159,7 +159,7 @@
 .lumio-tx-mobile {
   overflow: hidden;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
 }
 .lumio-tx-mobile__header {
   display: flex;
@@ -315,7 +315,7 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 12px 16px;
 }
 .lumio-tx-pagination__left {
@@ -371,7 +371,7 @@
 .lumio-tx-filters__search {
   width: 100%;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 16px 8px 40px;
   font-size: 14px;
   outline: none;
@@ -402,7 +402,7 @@
   font-size: 14px;
   font-weight: 600;
   transition: border-color 150ms, color 150ms;
-  background: white;
+  background: var(--lumio-color-surface);
   color: #4b5563;
   cursor: pointer;
 }
@@ -451,7 +451,7 @@
 .lumio-tx-filters__select {
   width: 100%;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 12px;
   font-size: 14px;
   outline: none;
@@ -462,7 +462,7 @@
 .lumio-tx-filters__clear-btn {
   margin-top: auto;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -478,7 +478,7 @@
 /* Summary bar */
 .lumio-tx-summary {
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 24px;
 }
 .lumio-tx-summary__grid {
@@ -547,13 +547,13 @@
 .lumio-tx-summary__badge--parsed .lumio-tx-summary__badge-dot { background-color: #16a34a; }
 .lumio-tx-summary__badge--warnings {
   border-color: #fde68a;
-  background-color: #fffbeb;
+  background-color: var(--lumio-color-surface-muted);
   color: #b45309;
 }
 .lumio-tx-summary__badge--warnings .lumio-tx-summary__badge-dot { background-color: #d97706; }
 .lumio-tx-summary__badge--errors {
   border-color: #fecaca;
-  background-color: #fff1f2;
+  background-color: var(--lumio-color-surface-muted);
   color: #b91c1c;
 }
 .lumio-tx-summary__badge--errors .lumio-tx-summary__badge-dot { background-color: #dc2626; }
@@ -676,7 +676,7 @@
   padding: 8px;
 }
 .lumio-tx-detail__icon--white {
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px;
   border: 1px solid #f3f4f6;
 }
@@ -765,7 +765,7 @@
 .lumio-tx-detail__ignore-btn {
   width: 100%;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -863,7 +863,7 @@
   height: 6px;
   width: 6px;
   border-radius: 50%;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
 }
 
 /* Transactions page view (bulk toolbar) */
@@ -903,7 +903,7 @@
   flex: 1;
   max-width: 320px;
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 12px;
   font-size: 14px;
   outline: none;
@@ -924,7 +924,7 @@
 }
 .lumio-tx-bulk__clear-btn {
   border: 1px solid #e5e7eb;
-  background-color: white;
+  background-color: var(--lumio-color-surface);
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
