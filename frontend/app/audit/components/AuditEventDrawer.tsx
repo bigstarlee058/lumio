@@ -2,6 +2,8 @@
 
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { AuditEvent } from '@/lib/api/audit';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import React from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { DiffViewer } from './DiffViewer';
@@ -20,83 +22,92 @@ export function AuditEventDrawer({ event, open, onClose, onRollback }: AuditEven
 
   return (
     <DrawerShell isOpen={open} onClose={onClose} title="Audit Event" position="right" width="lg">
-      <div data-testid="audit-event-drawer-scroll" className="min-h-0 flex-1 overflow-y-auto pr-1">
-        <div className="space-y-6 pb-6">
-          <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
-            <div className="text-sm font-semibold text-blue-900">{formatted.description}</div>
-          </div>
+      <Box data-testid="audit-event-drawer-scroll" sx={{ minHeight: 0, flex: 1, overflowY: 'auto', pr: 0.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pb: 3 }}>
+          <Box sx={{ border: '1px solid #bfdbfe', bgcolor: '#eff6ff', p: 2 }}>
+            <Typography variant="body2" fontWeight={600} style={{ color: '#1e3a5f' }}>
+              {formatted.description}
+            </Typography>
+          </Box>
 
-          <div className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Timestamp</span>
-              <span className="font-semibold text-gray-900">
-                {new Date(event.createdAt).toLocaleString()}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Actor</span>
-              <span className="font-semibold text-gray-900">{event.actorLabel}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Action</span>
-              <span className="font-semibold text-gray-900">{formatted.actionLabel}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Entity</span>
-              <span className="font-semibold text-gray-900">{formatted.objectLabel}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Entity ID</span>
-              <span className="font-mono text-xs text-gray-800">{event.entityId}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">Severity</span>
-              <span className="font-semibold text-gray-900">{event.severity}</span>
-            </div>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 2, fontSize: 14 }}>
+            {[
+              { label: 'Timestamp', value: new Date(event.createdAt).toLocaleString() },
+              { label: 'Actor', value: event.actorLabel },
+              { label: 'Action', value: formatted.actionLabel },
+              { label: 'Entity', value: formatted.objectLabel },
+            ].map(row => (
+              <Box key={row.label} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: '#4b5563', fontSize: 14 }}>{row.label}</span>
+                <span style={{ fontWeight: 600, color: '#111827', fontSize: 14 }}>{row.value}</span>
+              </Box>
+            ))}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#4b5563', fontSize: 14 }}>Entity ID</span>
+              <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#1f2937' }}>{event.entityId}</span>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#4b5563', fontSize: 14 }}>Severity</span>
+              <span style={{ fontWeight: 600, color: '#111827', fontSize: 14 }}>{event.severity}</span>
+            </Box>
             {event.batchId && (
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Batch</span>
-                <span className="font-mono text-xs text-gray-800">{event.batchId}</span>
-              </div>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: '#4b5563', fontSize: 14 }}>Batch</span>
+                <span style={{ fontFamily: 'monospace', fontSize: 12, color: '#1f2937' }}>{event.batchId}</span>
+              </Box>
             )}
-          </div>
+          </Box>
 
-          <div>
-            <div className="text-sm font-semibold text-gray-900">Diff</div>
-            <div className="mt-2">
+          <Box>
+            <Typography variant="body2" fontWeight={600} style={{ color: '#111827' }}>
+              Diff
+            </Typography>
+            <Box sx={{ mt: 1 }}>
               <DiffViewer diff={event.diff} />
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <details className="rounded-lg border border-gray-200 bg-white p-3">
-            <summary className="cursor-pointer text-sm font-semibold text-gray-900">
+          <details style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 12 }}>
+            <summary style={{ cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#111827' }}>
               Metadata
             </summary>
-            <div className="mt-2 text-xs text-gray-700">
-              <pre className="whitespace-pre-wrap">
+            <Box sx={{ mt: 1, fontSize: 12, color: '#374151' }}>
+              <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
                 {event.meta ? JSON.stringify(event.meta, null, 2) : 'No metadata'}
               </pre>
-            </div>
+            </Box>
           </details>
 
           {event.meta?.rollbackOf && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5, fontSize: 14, color: '#374151' }}>
               Related event (rollback of):
-              <span className="ml-2 font-mono text-xs text-gray-900">{event.meta.rollbackOf}</span>
-            </div>
+              <span style={{ marginLeft: 8, fontFamily: 'monospace', fontSize: 12, color: '#111827' }}>
+                {event.meta.rollbackOf}
+              </span>
+            </Box>
           )}
 
           {event.isUndoable && (
             <button
               type="button"
               onClick={() => onRollback?.(event)}
-              className="w-full rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+              style={{
+                width: '100%',
+                border: '1px solid #fecaca',
+                background: '#fef2f2',
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#b91c1c',
+                cursor: 'pointer',
+                borderRadius: 0,
+              }}
             >
               Откатить изменение
             </button>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     </DrawerShell>
   );
 }

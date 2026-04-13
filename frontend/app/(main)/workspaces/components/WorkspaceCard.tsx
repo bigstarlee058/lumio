@@ -1,6 +1,7 @@
 'use client';
 
 import { api } from '@/app/lib/api';
+import Box from '@mui/material/Box';
 import { Star } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -55,62 +56,122 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
     : '/workspace-backgrounds/vidar-nordli-mathisen-641pLhGEEyg-unsplash.jpg';
 
   return (
-    <div
+    <Box
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative rounded-lg overflow-hidden aspect-video hover:shadow-xl transition-all duration-300"
+      sx={{
+        position: 'relative',
+        overflow: 'hidden',
+        aspectRatio: '16/9',
+        transition: 'box-shadow 0.3s',
+        '&:hover': { boxShadow: 6 },
+      }}
     >
       <button
         type="button"
         onClick={onClick}
-        className="relative h-full w-full cursor-pointer text-left"
+        style={{ position: 'relative', height: '100%', width: '100%', cursor: 'pointer', border: 'none', padding: 0, background: 'none', display: 'block' }}
       >
         {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transition: 'transform 0.5s',
+            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+          }}
         />
 
         {/* Darkening Overlay */}
-        <div
-          className={`absolute inset-0 transition-all duration-500 ${isHovered ? 'bg-black/60 backdrop-blur-[2px]' : 'bg-black/20'}`}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            transition: 'background-color 0.5s',
+            bgcolor: isHovered ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.2)',
+          }}
         />
 
         {/* Static Content (Visible by default) */}
-        <div
-          className={`absolute inset-0 flex flex-col justify-end p-4 transition-opacity duration-300 ${isHovered ? 'opacity-40' : 'opacity-100'}`}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            p: 2,
+            transition: 'opacity 0.3s',
+            opacity: isHovered ? 0.4 : 1,
+          }}
         >
-          <h3 className="text-lg font-bold text-white drop-shadow-md truncate">{workspace.name}</h3>
-        </div>
+          <Box
+            component="h3"
+            sx={{
+              fontSize: 18,
+              fontWeight: 700,
+              color: '#fff',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              m: 0,
+              textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+            }}
+          >
+            {workspace.name}
+          </Box>
+        </Box>
 
         {/* Animated Description (Slides in on hover) */}
-        <div className="absolute inset-0 flex items-center p-6 pointer-events-none">
-          <div
-            className={`transition-all duration-500 transform ease-out max-w-[80%] ${
-              isHovered ? 'translate-x-0 opacity-100' : '-translate-x-8 opacity-0'
-            }`}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            p: 3,
+            pointerEvents: 'none',
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: '80%',
+              transition: 'all 0.5s ease-out',
+              transform: isHovered ? 'translateX(0)' : 'translateX(-32px)',
+              opacity: isHovered ? 1 : 0,
+            }}
           >
-            <p className="text-white text-sm font-medium leading-relaxed drop-shadow-lg italic">
+            <p style={{ color: '#fff', fontSize: 14, fontWeight: 500, lineHeight: 1.6, fontStyle: 'italic', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.7)' }}>
               {workspace.description || 'No description provided'}
             </p>
-          </div>
-        </div>
+          </Box>
+        </Box>
       </button>
 
       {/* Star Button (Top Right) */}
       <button
         type="button"
         onClick={handleFavoriteClick}
-        className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${
-          isHovered || isFavorite ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-        } ${
-          isFavorite
-            ? 'bg-yellow-500 text-white'
-            : 'bg-white/20 backdrop-blur-sm text-white hover:bg-white/30'
-        }`}
+        style={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+          padding: 8,
+          borderRadius: '50%',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'opacity 0.2s',
+          opacity: isHovered || isFavorite ? 1 : 0,
+          background: isFavorite ? '#eab308' : 'rgba(255,255,255,0.2)',
+          backdropFilter: isFavorite ? undefined : 'blur(4px)',
+          color: '#fff',
+        }}
       >
-        <Star size={18} className={isFavorite ? 'fill-current' : ''} />
+        <Star size={18} style={{ fill: isFavorite ? 'currentColor' : 'none' }} />
       </button>
-    </div>
+    </Box>
   );
 }

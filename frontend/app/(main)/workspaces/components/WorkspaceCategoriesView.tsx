@@ -1,17 +1,16 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
-import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
-import { cn } from '@/app/lib/utils';
 import { Check, ChevronRight, FolderOpen, Lock, Plus, Search as SearchIcon, Tag } from 'lucide-react';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -40,10 +39,10 @@ interface Category {
   parentId?: string;
 }
 
-const SOURCE_BADGE_STYLES: Record<NonNullable<Category['source']>, string> = {
-  system: 'bg-blue-50 text-blue-700 ring-blue-700/10',
-  parsing: 'bg-amber-50 text-amber-700 ring-amber-700/10',
-  user: 'bg-slate-100 text-slate-600 ring-slate-500/10',
+const SOURCE_BADGE_COLORS: Record<NonNullable<Category['source']>, { bg: string; color: string; border: string }> = {
+  system: { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
+  parsing: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
+  user: { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' },
 };
 
 interface CategoryUsageCount {
@@ -130,7 +129,6 @@ export default function WorkspaceCategoriesView() {
   const [uploadingIcon, setUploadingIcon] = useState(false);
   const iconInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -152,19 +150,12 @@ export default function WorkspaceCategoriesView() {
     return null;
   };
 
-  const getCategoryBadgeClassName = (category: Category) => {
-    if (category.source === 'parsing') {
-      return SOURCE_BADGE_STYLES.parsing;
-    }
-
-    if (category.isSystem || category.source === 'system') {
-      return SOURCE_BADGE_STYLES.system;
-    }
-
+  const getCategoryBadgeSource = (category: Category): NonNullable<Category['source']> | null => {
+    if (category.source === 'parsing') return 'parsing';
+    if (category.isSystem || category.source === 'system') return 'system';
     return null;
   };
 
-  // Form state
   const [formData, setFormData] = useState({
     name: '',
     type: 'expense' as 'income' | 'expense',
@@ -193,8 +184,8 @@ export default function WorkspaceCategoriesView() {
       ]);
       setCategories(categoriesRes.data);
       setUsageCounts(usageRes.data);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
+    } catch (err) {
+      console.error('Failed to load categories:', err);
       toast.error(t.toasts.loadFailed.value);
     } finally {
       setLoading(false);
@@ -253,8 +244,8 @@ export default function WorkspaceCategoriesView() {
 
       await loadCategories();
       handleCloseDialog();
-    } catch (error) {
-      console.error('Failed to save category:', error);
+    } catch (err) {
+      console.error('Failed to save category:', err);
       toast.error(t.toasts.saveFailed.value);
     }
   };
@@ -268,8 +259,8 @@ export default function WorkspaceCategoriesView() {
       setCategories(prev =>
         prev.map(item => (item.id === category.id ? { ...item, isEnabled: nextEnabled } : item)),
       );
-    } catch (error) {
-      console.error('Failed to toggle category state:', error);
+    } catch (err) {
+      console.error('Failed to toggle category state:', err);
       toast.error(t.toasts.saveFailed.value);
     } finally {
       setTogglingIds(prev => {
@@ -296,8 +287,8 @@ export default function WorkspaceCategoriesView() {
           setDisableConfirm({ category, usage });
           return;
         }
-      } catch (error) {
-        console.error('Failed to get category usage count:', error);
+      } catch (err) {
+        console.error('Failed to get category usage count:', err);
       }
     }
 
@@ -332,8 +323,8 @@ export default function WorkspaceCategoriesView() {
       toast.success(enable ? 'Categories enabled' : 'Categories disabled');
       await loadCategories();
       setSelectedIds(new Set());
-    } catch (error) {
-      console.error('Failed to bulk toggle categories:', error);
+    } catch (err) {
+      console.error('Failed to bulk toggle categories:', err);
       toast.error(t.toasts.saveFailed.value);
     }
   };
@@ -348,8 +339,8 @@ export default function WorkspaceCategoriesView() {
       toast.success('Categories deleted');
       await loadCategories();
       setSelectedIds(new Set());
-    } catch (error) {
-      console.error('Failed to delete categories:', error);
+    } catch (err) {
+      console.error('Failed to delete categories:', err);
       toast.error('Failed to delete some categories');
     }
   };
@@ -374,8 +365,8 @@ export default function WorkspaceCategoriesView() {
         setFormData(prev => ({ ...prev, icon: url, withoutIcon: false }));
         toast.success(t.toasts.iconUploaded.value);
       }
-    } catch (error) {
-      console.error('Failed to upload icon:', error);
+    } catch (err) {
+      console.error('Failed to upload icon:', err);
       toast.error(t.toasts.iconUploadFailed.value);
     } finally {
       setUploadingIcon(false);
@@ -386,36 +377,74 @@ export default function WorkspaceCategoriesView() {
   };
 
   return (
-    <div className="container-shared px-4 py-12 sm:px-6 lg:px-8">
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <FolderOpen size={22} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground">{t.title}</h1>
-              <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t.subtitle}</p>
-            </div>
-          </div>
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
 
-          <div className="flex flex-wrap items-center gap-2">
+        {/* Page header */}
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: { lg: 'flex-start' }, justifyContent: { lg: 'space-between' }, gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 44,
+                height: 44,
+                borderRadius: 0,
+                bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                color: 'var(--primary)',
+                flexShrink: 0,
+              }}
+            >
+              <FolderOpen size={22} />
+            </Box>
+            <Box>
+              <Typography variant="h5" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                {t.title}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.5, maxWidth: 672, color: 'var(--muted-foreground)' }}>
+                {t.subtitle}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
             <button
+              type="button"
               onClick={() => handleOpenDialog()}
               data-tour-id="categories-add-button"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/20"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                border: 'none',
+                background: 'var(--primary)',
+                padding: '8px 16px',
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#fff',
+                cursor: 'pointer',
+                borderRadius: 0,
+              }}
             >
               <Plus size={16} />
               {t.add}
             </button>
-          </div>
-        </div>
+          </Box>
+        </Box>
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full max-w-md">
+        {/* Search + bulk actions */}
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: { lg: 'center' }, justifyContent: { lg: 'space-between' }, gap: 2 }}>
+          <Box sx={{ position: 'relative', width: '100%', maxWidth: 448 }}>
             <SearchIcon
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              style={{
+                position: 'absolute',
+                left: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--muted-foreground)',
+              }}
             />
             <input
               type="text"
@@ -423,111 +452,150 @@ export default function WorkspaceCategoriesView() {
               onChange={e => setSearchQuery(e.target.value)}
               data-tour-id="categories-search"
               placeholder={tx(['searchPlaceholder'], 'Find category')}
-              className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={{
+                width: '100%',
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '10px 16px 10px 40px',
+                fontSize: 14,
+                color: 'var(--foreground)',
+                outline: 'none',
+                borderRadius: 0,
+                boxSizing: 'border-box',
+              }}
             />
-          </div>
+          </Box>
           {selectedIds.size > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="mr-2 text-sm font-medium text-muted-foreground">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" fontWeight={500} sx={{ mr: 1, color: 'var(--muted-foreground)' }}>
                 {selectedIds.size} selected
-              </span>
+              </Typography>
               <button
+                type="button"
                 onClick={() => handleBulkEnable(true)}
-                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
               >
                 Enable
               </button>
               <button
+                type="button"
                 onClick={() => handleBulkEnable(false)}
-                className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
               >
                 Disable
               </button>
               <button
+                type="button"
                 onClick={handleBulkDelete}
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100"
+                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: '#b91c1c', cursor: 'pointer', borderRadius: 0 }}
               >
                 Delete Custom
               </button>
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
 
-        <div className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm text-primary">
+        {/* Info banner */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)', px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
           Disabling a category will hide it from statements and reports.
-        </div>
+        </Box>
 
-        <div
-          className="rounded-3xl border border-border bg-card p-2 shadow-sm"
-          data-tour-id="categories-list"
-        >
-          <div className="flex items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            <div className="flex items-center gap-3">
+        {/* Category list */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 1 }} data-tour-id="categories-list">
+          {/* Table header */}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--muted-foreground)' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Checkbox
                 aria-label="Select all categories"
-                className="h-4 w-4 rounded border-border"
                 checked={
                   selectedIds.size === filteredCategories.length && filteredCategories.length > 0
                 }
                 onCheckedChange={handleToggleSelectAll}
               />
               <span>{tx(['columns', 'name'], 'Name')}</span>
-            </div>
+            </Box>
             <span>{tx(['enabled'], 'Enabled')}</span>
-          </div>
+          </Box>
 
           {loading ? (
-            <div className="flex justify-center py-20">
-              <Spinner className="h-8 w-8 text-primary" />
-            </div>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+              <CircularProgress size={32} />
+            </Box>
           ) : filteredCategories.length === 0 ? (
-            <div className="text-center py-16 px-4">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <Box sx={{ textAlign: 'center', py: 8, px: 2 }}>
+              <Box
+                sx={{
+                  mx: 'auto',
+                  mb: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 64,
+                  height: 64,
+                  borderRadius: '50%',
+                  bgcolor: 'var(--muted)',
+                  color: 'var(--muted-foreground)',
+                }}
+              >
                 <SearchIcon size={32} />
-              </div>
-              <h3 className="text-lg font-medium text-foreground">
+              </Box>
+              <Typography variant="h6" fontWeight={500} sx={{ color: 'var(--foreground)', mb: 3 }}>
                 {tx(['noData'], 'No categories')}
-              </h3>
-              <div className="mt-6">
-                <button
-                  onClick={() => handleOpenDialog()}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
-                >
-                  <Plus size={16} />
-                  {t.add}
-                </button>
-              </div>
-            </div>
+              </Typography>
+              <button
+                type="button"
+                onClick={() => handleOpenDialog()}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
+              >
+                <Plus size={16} />
+                {t.add}
+              </button>
+            </Box>
           ) : (
-            <div className="space-y-3 px-2 pb-4">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, px: 1, pb: 2 }}>
               {filteredCategories.map((category, index) => {
                 const categoryColor = category.color || '#2196F3';
                 const hasIcon = Boolean(category.icon?.trim());
                 const iconUrl = resolveIconUrl(category.icon);
                 const iconTint = alpha(categoryColor, category.isEnabled === false ? 0.12 : 0.16);
                 const badgeLabel = getCategoryBadgeLabel(category);
-                const badgeClassName = getCategoryBadgeClassName(category);
+                const badgeSource = getCategoryBadgeSource(category);
+                const badgeColors = badgeSource ? SOURCE_BADGE_COLORS[badgeSource] : null;
+                const isEnabled = category.isEnabled !== false;
+                const isToggling = togglingIds.has(category.id);
 
                 return (
-                  <div
+                  <Box
                     key={category.id}
-                    className={cn(
-                      'flex items-center justify-between rounded-2xl border border-border px-4 py-4 transition-colors',
-                      index % 2 === 0 ? 'bg-card' : 'bg-muted/40',
-                    )}
-                    style={{ borderLeft: `3px solid ${categoryColor}` }}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      border: '1px solid var(--border)',
+                      borderLeft: `3px solid ${categoryColor}`,
+                      px: 2,
+                      py: 2,
+                      bgcolor: index % 2 === 0 ? 'var(--card)' : 'rgba(var(--muted-rgb,243,244,246),0.4)',
+                    }}
                   >
-                    <div className="flex items-center gap-3">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Checkbox
                         aria-label={category.name}
-                        className="h-4 w-4 rounded border-border"
                         checked={selectedIds.has(category.id)}
                         onCheckedChange={() => handleToggleSelect(category.id)}
                       />
                       {!category.isSystem && hasIcon ? (
-                        <div
-                          className="flex h-8 w-8 items-center justify-center rounded-lg"
-                          style={{ backgroundColor: iconTint, color: categoryColor }}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: 0,
+                            bgcolor: iconTint,
+                            color: categoryColor,
+                          }}
                         >
                           {iconUrl ? (
                             <Box
@@ -539,35 +607,45 @@ export default function WorkspaceCategoriesView() {
                           ) : (
                             <Tag size={16} />
                           )}
-                        </div>
+                        </Box>
                       ) : null}
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-semibold text-foreground">
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                             {getCategoryDisplayName(category, locale)}
-                          </span>
-                          {badgeLabel && badgeClassName && (
-                            <span
-                              className={cn(
-                                'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
-                                badgeClassName,
-                              )}
+                          </Typography>
+                          {badgeLabel && badgeColors && (
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                px: 1,
+                                py: 0.25,
+                                fontSize: 12,
+                                fontWeight: 500,
+                                bgcolor: badgeColors.bg,
+                                color: badgeColors.color,
+                                border: `1px solid ${badgeColors.border}`,
+                                borderRadius: 0,
+                              }}
                             >
                               {badgeLabel}
-                            </span>
+                            </Box>
                           )}
-                        </div>
-                        <div className="mt-0.5 text-sm text-muted-foreground">
+                        </Box>
+                        <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', mt: 0.25 }}>
                           {usageCounts[category.id]?.total ? (
                             <span>Used in {usageCounts[category.id].total} transactions</span>
                           ) : (
                             <span>Not used yet</span>
                           )}
-                        </div>
-                      </div>
-                    </div>
+                        </Typography>
+                      </Box>
+                    </Box>
 
-                    <div className="flex items-center gap-3">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      {/* Toggle switch */}
                       <button
                         type="button"
                         data-tour-id={index === 0 ? 'category-toggle' : undefined}
@@ -575,42 +653,81 @@ export default function WorkspaceCategoriesView() {
                           event.stopPropagation();
                           handleToggleEnabled(category);
                         }}
-                        disabled={togglingIds.has(category.id)}
-                        className={cn(
-                          'relative inline-flex h-8 w-[54px] items-center rounded-full transition-colors',
-                          category.isEnabled === false ? 'bg-muted-foreground/40' : 'bg-primary',
-                          togglingIds.has(category.id) ? 'opacity-60' : 'opacity-100',
-                        )}
+                        disabled={isToggling}
+                        style={{
+                          position: 'relative',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          width: 54,
+                          height: 32,
+                          borderRadius: 9999,
+                          border: 'none',
+                          background: isEnabled ? 'var(--primary)' : 'rgba(107,114,128,0.4)',
+                          cursor: isToggling ? 'default' : 'pointer',
+                          opacity: isToggling ? 0.6 : 1,
+                          transition: 'background 0.2s',
+                          padding: 0,
+                        }}
                       >
                         <span
-                          className={cn(
-                            'inline-block h-6 w-6 transform rounded-full bg-card shadow transition-transform',
-                            category.isEnabled === false ? 'translate-x-1' : 'translate-x-7',
-                          )}
+                          style={{
+                            position: 'absolute',
+                            display: 'inline-block',
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            background: 'var(--card)',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                            transition: 'transform 0.2s',
+                            transform: isEnabled ? 'translateX(28px)' : 'translateX(4px)',
+                          }}
                         />
                       </button>
+
                       {category.isSystem ? (
-                        <div className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/60">
+                        <Box
+                          sx={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            color: 'rgba(107,114,128,0.6)',
+                          }}
+                        >
                           <Lock size={16} />
-                        </div>
+                        </Box>
                       ) : (
                         <button
                           type="button"
                           onClick={() => handleOpenDialog(category)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
+                            color: 'var(--muted-foreground)',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                          }}
                         >
                           <ChevronRight size={16} />
                         </button>
                       )}
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
                 );
               })}
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
+      {/* Edit/Create dialog */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ fontWeight: 600 }}>
           {editingCategory ? t.dialog.editTitle : t.dialog.createTitle}
@@ -666,7 +783,7 @@ export default function WorkspaceCategoriesView() {
                   p: 1,
                   border: '1px solid',
                   borderColor: 'divider',
-                  borderRadius: 1,
+                  borderRadius: 0,
                 }}
               >
                 {PREDEFINED_ICONS.map(iconName => (
@@ -679,7 +796,7 @@ export default function WorkspaceCategoriesView() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 1,
+                      borderRadius: 0,
                       cursor: 'pointer',
                       bgcolor:
                         formData.icon === iconName ? alpha(formData.color, 0.2) : 'transparent',
@@ -699,7 +816,7 @@ export default function WorkspaceCategoriesView() {
                 ))}
               </Box>
               <Box sx={{ mt: 1.5 }}>
-                <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                <label style={{ display: 'inline-flex', cursor: 'pointer', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--foreground)' }}>
                   <input
                     type="checkbox"
                     checked={formData.withoutIcon}
@@ -729,7 +846,7 @@ export default function WorkspaceCategoriesView() {
                       sx={{
                         width: 32,
                         height: 32,
-                        borderRadius: 1,
+                        borderRadius: 0,
                         objectFit: 'contain',
                         border: '1px solid',
                         borderColor: 'divider',
@@ -749,7 +866,7 @@ export default function WorkspaceCategoriesView() {
               </Box>
             </Box>
 
-            {/* Color Picker (Preset colors) */}
+            {/* Color Picker */}
             <Box>
               <Typography variant="subtitle2" gutterBottom>
                 {t.dialog.chooseColor}
@@ -781,13 +898,13 @@ export default function WorkspaceCategoriesView() {
               </Box>
             </Box>
 
-            {/* Preview Section */}
+            {/* Preview */}
             <Box
               sx={{
                 mt: 2,
                 p: 2,
                 bgcolor: 'background.default',
-                borderRadius: 2,
+                borderRadius: 0,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 2,
@@ -800,7 +917,7 @@ export default function WorkspaceCategoriesView() {
                 sx={{
                   width: 48,
                   height: 48,
-                  borderRadius: 2,
+                  borderRadius: 0,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -835,6 +952,7 @@ export default function WorkspaceCategoriesView() {
         </DialogActions>
       </Dialog>
 
+      {/* Disable confirm dialog */}
       <Dialog
         open={Boolean(disableConfirm)}
         onClose={() => setDisableConfirm(null)}
@@ -879,6 +997,6 @@ export default function WorkspaceCategoriesView() {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 }

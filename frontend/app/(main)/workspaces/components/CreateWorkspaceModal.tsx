@@ -3,12 +3,15 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { api } from '@/app/lib/api';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import React, { useEffect, useId, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -154,46 +157,53 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
         scroll="paper"
       >
         <DialogTitle sx={{ px: 4, pt: 3, pb: 1 }}>
-          <div className="flex flex-col gap-3">
-            <div className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Typography
+              variant="caption"
+              sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--primary)' }}
+            >
               Workspace setup
-            </div>
-            <div>
-              <h2 id={dialogTitleId} className="text-2xl font-semibold text-gray-900">
+            </Typography>
+            <Box>
+              <Typography id={dialogTitleId} variant="h5" fontWeight={600} style={{ color: '#111827' }}>
                 Create New Workspace
-              </h2>
-              <p className="text-sm text-gray-500">
+              </Typography>
+              <Typography variant="body2" style={{ color: '#6b7280' }}>
                 Create a dedicated space for your documents, receipts, and reports.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm text-gray-400">Step {step} of 3</div>
-              <nav aria-label="Workspace setup steps" className="flex flex-wrap gap-2">
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+              <Typography variant="body2" style={{ color: '#9ca3af' }}>Step {step} of 3</Typography>
+              <nav aria-label="Workspace setup steps" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {[
                   { id: 1, label: 'Basic Info' },
                   { id: 2, label: 'Customization' },
                   { id: 3, label: 'Integrations' },
                 ].map(item => (
-                  <div
+                  <Box
                     key={item.id}
-                    className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
-                      item.id === step
-                        ? 'border-primary bg-primary/10 text-primary'
-                        : 'border-gray-200 text-gray-500'
-                    }`}
+                    sx={{
+                      border: item.id === step ? '1px solid var(--primary)' : '1px solid #e5e7eb',
+                      px: 1.5,
+                      py: 0.5,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: item.id === step ? 'var(--primary)' : '#6b7280',
+                      bgcolor: item.id === step ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : 'transparent',
+                    }}
                     aria-current={item.id === step ? 'step' : undefined}
                   >
                     {item.label}
-                  </div>
+                  </Box>
                 ))}
               </nav>
-            </div>
-          </div>
+            </Box>
+          </Box>
         </DialogTitle>
 
         <DialogContent dividers sx={{ px: 4, py: 4 }}>
           {step === 1 && (
-            <div className="space-y-6">
+            <Stack spacing={3}>
               <TextField
                 label="Workspace Name"
                 required
@@ -214,11 +224,11 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
                 fullWidth
               />
               {/* Icon selection removed — feature not used. */}
-            </div>
+            </Stack>
           )}
 
           {step === 2 && (
-            <div className="space-y-8">
+            <Stack spacing={4}>
               <CurrencySelector
                 selectedCurrency={selectedCurrency}
                 onSelect={setSelectedCurrency}
@@ -231,15 +241,17 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
                 }}
               />
 
-              <div>
-                <p className="mb-3 text-sm font-medium text-gray-700">Background Image</p>
+              <Box>
+                <Typography variant="body2" fontWeight={500} sx={{ mb: 1.5, color: '#374151' }}>
+                  Background Image
+                </Typography>
                 <BackgroundSelector
                   selectedBackground={selectedBackground}
                   onSelect={setSelectedBackground}
                   backgrounds={AVAILABLE_BACKGROUNDS}
                 />
-              </div>
-            </div>
+              </Box>
+            </Stack>
           )}
 
           {step === 3 && (
@@ -251,14 +263,14 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
         </DialogContent>
 
         <DialogActions sx={{ px: 4, py: 3, justifyContent: 'space-between' }}>
-          <div>
+          <Box>
             {step > 1 && (
               <Button type="button" variant="outlined" onClick={handleBack} startIcon={<ChevronLeft size={16} />}>
                 Back
               </Button>
             )}
-          </div>
-          <div className="flex items-center gap-3">
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             {step === 1 && (
               <Button type="button" variant="contained" onClick={handleNext} endIcon={<ChevronRight size={16} />}>
                 Next
@@ -286,7 +298,7 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
                 </Button>
               </>
             )}
-          </div>
+          </Box>
         </DialogActions>
       </Dialog>
       <DrawerShell
@@ -297,21 +309,23 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
         showCloseButton={false}
         className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
-          <div className="flex items-center gap-3">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
               type="button"
               onClick={() => setCurrencyDrawerOpen(false)}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              style={{ borderRadius: '50%', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
               aria-label="Close currency drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-foreground">Select a currency</span>
-          </div>
+            <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+              Select a currency
+            </Typography>
+          </Box>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 overflow-y-auto pb-4">
+        <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
             <CurrencySelector
               selectedCurrency={selectedCurrency}
               onSelect={currency => {
@@ -326,8 +340,8 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
               minimal={false}
               showPanelHeader={false}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </DrawerShell>
     </>
   );

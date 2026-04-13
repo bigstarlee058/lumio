@@ -10,6 +10,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import { ChevronDown, ChevronRight, Cpu, Plug, User } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
@@ -39,18 +42,18 @@ type AuditTableRow =
       createdAt: string;
     };
 
-const severityClasses: Record<string, string> = {
-  info: 'bg-blue-50 text-blue-700',
-  warn: 'bg-yellow-50 text-yellow-700',
-  critical: 'bg-red-50 text-red-700',
+const severityColors: Record<string, { bg: string; color: string }> = {
+  info: { bg: '#eff6ff', color: '#1d4ed8' },
+  warn: { bg: '#fefce8', color: '#a16207' },
+  critical: { bg: '#fef2f2', color: '#b91c1c' },
 };
 
-const actionToneClasses: Record<string, string> = {
-  info: 'bg-blue-50 text-blue-700',
-  warn: 'bg-yellow-50 text-yellow-700',
-  critical: 'bg-red-50 text-red-700',
-  primary: 'bg-indigo-50 text-indigo-700',
-  success: 'bg-emerald-50 text-emerald-700',
+const actionToneColors: Record<string, { bg: string; color: string }> = {
+  info: { bg: '#eff6ff', color: '#1d4ed8' },
+  warn: { bg: '#fefce8', color: '#a16207' },
+  critical: { bg: '#fef2f2', color: '#b91c1c' },
+  primary: { bg: '#eef2ff', color: '#4338ca' },
+  success: { bg: '#ecfdf5', color: '#065f46' },
 };
 
 export function AuditEventTable({
@@ -132,26 +135,32 @@ export function AuditEventTable({
               <button
                 type="button"
                 onClick={() => toggleBatch(data.batchId)}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: '#1f2937', background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 {expandedBatches.has(data.batchId) ? (
-                  <ChevronDown className="h-4 w-4" />
+                  <ChevronDown size={16} />
                 ) : (
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight size={16} />
                 )}
                 Batch {data.batchId.slice(0, 8)}
               </button>
             );
           }
           const formatted = formatAuditEvent(data.event);
+          const colors = actionToneColors[formatted.actionTone] || { bg: '#f3f4f6', color: '#374151' };
           return (
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
-                actionToneClasses[formatted.actionTone] || 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {formatted.actionLabel}
-            </span>
+            <Chip
+              label={formatted.actionLabel}
+              size="small"
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                bgcolor: colors.bg,
+                color: colors.color,
+                borderRadius: 0,
+                height: 24,
+              }}
+            />
           );
         },
       },
@@ -161,10 +170,10 @@ export function AuditEventTable({
         cell: ({ row }) => {
           const data = row.original;
           if (data.type === 'group') {
-            return <span className="text-sm text-gray-500">{data.count} events</span>;
+            return <Typography variant="body2" style={{ color: '#6b7280' }}>{data.count} events</Typography>;
           }
           const formatted = formatAuditEvent(data.event);
-          return <div className="text-sm text-gray-800">{formatted.objectLabel}</div>;
+          return <Typography variant="body2" style={{ color: '#1f2937' }}>{formatted.objectLabel}</Typography>;
         },
       },
       {
@@ -172,9 +181,9 @@ export function AuditEventTable({
         header: 'Description',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <span className="text-sm text-gray-500">—</span>;
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
           const formatted = formatAuditEvent(data.event);
-          return <div className="text-sm text-gray-700">{formatted.description}</div>;
+          return <Typography variant="body2" style={{ color: '#374151' }}>{formatted.description}</Typography>;
         },
       },
       {
@@ -182,7 +191,7 @@ export function AuditEventTable({
         header: 'User',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <span className="text-sm text-gray-500">—</span>;
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
           const Icon =
             data.event.actorType === 'integration'
               ? Plug
@@ -190,8 +199,8 @@ export function AuditEventTable({
                 ? Cpu
                 : User;
           return (
-            <span className="inline-flex items-center gap-2 text-sm text-gray-800">
-              <Icon className="h-4 w-4 text-gray-500" />
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#1f2937' }}>
+              <Icon size={16} style={{ color: '#6b7280' }} />
               {data.event.actorLabel}
             </span>
           );
@@ -203,7 +212,9 @@ export function AuditEventTable({
         cell: ({ row }) => {
           const data = row.original;
           return (
-            <div className="text-sm text-gray-700">{new Date(data.createdAt).toLocaleString()}</div>
+            <Typography variant="body2" style={{ color: '#374151' }}>
+              {new Date(data.createdAt).toLocaleString()}
+            </Typography>
           );
         },
       },
@@ -212,15 +223,21 @@ export function AuditEventTable({
         header: 'Severity',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <span className="text-sm text-gray-500">—</span>;
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
+          const colors = severityColors[data.event.severity] || { bg: '#f3f4f6', color: '#374151' };
           return (
-            <span
-              className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                severityClasses[data.event.severity] || 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {data.event.severity}
-            </span>
+            <Chip
+              label={data.event.severity}
+              size="small"
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                bgcolor: colors.bg,
+                color: colors.color,
+                borderRadius: 0,
+                height: 24,
+              }}
+            />
           );
         },
       },
@@ -240,16 +257,16 @@ export function AuditEventTable({
   const totalPages = Math.max(Math.ceil(total / limit), 1);
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-hidden rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+        <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
+          <thead style={{ background: '#f9fafb' }}>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-xs font-semibold text-gray-500"
+                    style={{ padding: '12px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #e5e7eb' }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -259,15 +276,17 @@ export function AuditEventTable({
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody>
             {table.getRowModel().rows.map(row => {
               const data = row.original;
               return (
                 <tr
                   key={row.id}
-                  className={
-                    data.type === 'event' ? 'cursor-pointer hover:bg-gray-50' : 'bg-gray-50'
-                  }
+                  style={{
+                    background: data.type === 'event' ? '#fff' : '#f9fafb',
+                    cursor: data.type === 'event' ? 'pointer' : undefined,
+                    borderBottom: '1px solid #e5e7eb',
+                  }}
                   role={data.type === 'event' ? 'button' : undefined}
                   tabIndex={data.type === 'event' ? 0 : undefined}
                   onClick={() => {
@@ -282,7 +301,7 @@ export function AuditEventTable({
                   }}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className="px-4 py-3 align-top">
+                    <td key={cell.id} style={{ padding: '12px 16px', verticalAlign: 'top' }}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -293,7 +312,7 @@ export function AuditEventTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-6 text-center text-sm text-gray-500"
+                  style={{ padding: '24px 16px', textAlign: 'center', fontSize: 14, color: '#6b7280' }}
                 >
                   No events found.
                 </td>
@@ -301,14 +320,14 @@ export function AuditEventTable({
             )}
           </tbody>
         </table>
-      </div>
+      </Box>
 
-      <div className="flex items-center justify-between text-sm text-gray-600">
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: '#4b5563' }}>
         <div>
           Page {page} of {totalPages}
         </div>
         <AppPagination page={page} total={totalPages} onChange={onPageChange} />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

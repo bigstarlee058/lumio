@@ -1,9 +1,17 @@
 'use client';
 
-import { Badge } from '@/app/components/ui/badge';
-import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
 import { Download, FileText } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -27,10 +35,10 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-const FORMAT_BADGE_CLASSES: Record<string, string> = {
-  excel: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  pdf: 'bg-rose-100 text-rose-700 border-rose-200',
-  csv: 'bg-sky-100 text-sky-700 border-sky-200',
+const FORMAT_CHIP_COLORS: Record<string, { bg: string; color: string }> = {
+  excel: { bg: '#d1fae5', color: '#065f46' },
+  pdf: { bg: '#fee2e2', color: '#991b1b' },
+  csv: { bg: '#e0f2fe', color: '#0c4a6e' },
 };
 
 export function ReportHistory() {
@@ -84,88 +92,104 @@ export function ReportHistory() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <Spinner className="h-8 w-8 text-primary" />
-      </div>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
+        <CircularProgress size={32} />
+      </Box>
     );
   }
 
   if (!history.length) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 gap-3">
-        <FileText className="h-10 w-10 text-muted-foreground/40" />
-        <p className="text-sm font-semibold text-muted-foreground">
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8, gap: 1.5 }}>
+        <FileText size={40} style={{ color: 'var(--muted-foreground)', opacity: 0.4 }} />
+        <Typography variant="body2" fontWeight={600} sx={{ color: 'var(--muted-foreground)' }}>
           {text('historyEmpty', 'No reports generated yet')}
-        </p>
-        <p className="text-xs text-muted-foreground/80">
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', opacity: 0.8 }}>
           {text('historyEmptyHint', 'Select a template and generate your first report.')}
-        </p>
-      </div>
+        </Typography>
+      </Box>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm dark:bg-card">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-muted/60">
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historyReport', 'Report')}
-            </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historyPeriod', 'Period')}
-            </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historyFormat', 'Format')}
-            </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historyGenerated', 'Generated')}
-            </th>
-            <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historySize', 'Size')}
-            </th>
-            <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-              {text('historyDownload', 'Download')}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {history.map(item => (
-            <tr key={item.id} className="transition-colors hover:bg-muted/50">
-              <td className="px-5 py-3.5">
-                <span className="font-medium text-foreground">{item.templateName}</span>
-              </td>
-              <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                {item.dateFrom} – {item.dateTo}
-              </td>
-              <td className="px-5 py-3.5">
-                <Badge
-                  className={`text-[10px] font-semibold uppercase border px-2 py-0.5 ${FORMAT_BADGE_CLASSES[item.format] ?? 'bg-slate-100 text-slate-600'}`}
-                >
-                  {item.format}
-                </Badge>
-              </td>
-              <td className="px-5 py-3.5 whitespace-nowrap text-xs text-muted-foreground">
-                {getRelativeTime(item.generatedAt)}
-              </td>
-              <td className="px-5 py-3.5 text-xs text-muted-foreground/80">
-                {formatFileSize(item.fileSize)}
-              </td>
-              <td className="px-5 py-3.5 text-right">
-                <button
-                  type="button"
-                  onClick={() => void handleDownload(item)}
-                  aria-label={`Re-download ${item.templateName}`}
-                  title={`Re-download ${item.templateName}`}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full text-primary transition-colors hover:bg-primary/10 hover:text-primary"
-                >
-                  <Download className="h-4 w-4" />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Box sx={{ overflow: 'hidden', border: '1px solid var(--border)', bgcolor: 'var(--card)' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow sx={{ bgcolor: 'var(--muted)' }}>
+            {[
+              text('historyReport', 'Report'),
+              text('historyPeriod', 'Period'),
+              text('historyFormat', 'Format'),
+              text('historyGenerated', 'Generated'),
+              text('historySize', 'Size'),
+              text('historyDownload', 'Download'),
+            ].map((label, i) => (
+              <TableCell
+                key={label}
+                align={i === 5 ? 'right' : 'left'}
+                sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--muted-foreground)' }}
+              >
+                {label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {history.map(item => {
+            const chipColors = FORMAT_CHIP_COLORS[item.format];
+            return (
+              <TableRow key={item.id} hover>
+                <TableCell>
+                  <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
+                    {item.templateName}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                    {item.dateFrom} – {item.dateTo}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Chip
+                    label={item.format.toUpperCase()}
+                    size="small"
+                    sx={{
+                      fontSize: 10,
+                      fontWeight: 600,
+                      bgcolor: chipColors?.bg || '#f1f5f9',
+                      color: chipColors?.color || '#475569',
+                      height: 20,
+                      borderRadius: 0,
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', whiteSpace: 'nowrap' }}>
+                    {getRelativeTime(item.generatedAt)}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                    {formatFileSize(item.fileSize)}
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    size="small"
+                    onClick={() => void handleDownload(item)}
+                    aria-label={`Re-download ${item.templateName}`}
+                    title={`Re-download ${item.templateName}`}
+                    sx={{ color: 'var(--primary)' }}
+                  >
+                    <Download size={16} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </Box>
   );
 }

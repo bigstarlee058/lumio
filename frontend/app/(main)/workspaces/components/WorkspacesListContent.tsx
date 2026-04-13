@@ -3,6 +3,9 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useIntlayer } from '@/app/i18n';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 import {
   Building2,
   ChevronRight,
@@ -93,161 +96,184 @@ export default function WorkspacesListContent({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Spinner className="h-[100px] w-[100px] text-primary" />
-          <p className="text-gray-600 dark:text-gray-400 mt-4">{content.loading}</p>
-        </div>
-      </div>
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress size={100} />
+          <Typography variant="body2" sx={{ mt: 2, color: '#4b5563' }}>{content.loading}</Typography>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div
-      className={`h-[calc(100vh-var(--global-nav-height,0px))] overflow-hidden ${
-        embedded ? 'pt-4' : ''
-      }`}
+    <Box
+      sx={{
+        height: 'calc(100vh - var(--global-nav-height, 0px))',
+        overflow: 'hidden',
+        pt: embedded ? 2 : 0,
+      }}
     >
-      <div className="container max-w-full px-6 py-8">
+      <Box sx={{ maxWidth: '100%', px: 3, py: 4 }}>
         {workspaces.length > 0 ? (
-          <div className="mb-8 space-y-3">
-            <div className="relative flex-1" data-tour-id="search-bar">
-              <Search className="h-4 w-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <Box sx={{ mb: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box sx={{ position: 'relative', flex: 1 }} data-tour-id="search-bar">
+              <Search
+                size={16}
+                style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}
+              />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={event => setSearchQuery(event.target.value)}
                 placeholder={searchPlaceholder}
                 aria-label={searchPlaceholder}
-                className="w-full rounded-md border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+                style={{
+                  width: '100%',
+                  border: '1px solid #e5e7eb',
+                  background: '#fff',
+                  padding: '12px 16px 12px 44px',
+                  fontSize: 14,
+                  color: '#111827',
+                  outline: 'none',
+                  borderRadius: 0,
+                  boxSizing: 'border-box',
+                }}
               />
-            </div>
+            </Box>
 
             {!embedded ? (
-              <div className="flex justify-end gap-2">
-                <div className="relative">
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                <Box sx={{ position: 'relative' }}>
                   <button
                     type="button"
                     onClick={() => setShowSortMenu(!showSortMenu)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      showSortMenu
-                        ? 'bg-primary/10 dark:bg-primary/20 text-primary'
-                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    } border border-gray-300 dark:border-gray-600`}
+                    style={{
+                      padding: 8,
+                      border: '1px solid #d1d5db',
+                      background: showSortMenu ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : '#fff',
+                      color: showSortMenu ? 'var(--primary)' : '#4b5563',
+                      cursor: 'pointer',
+                      borderRadius: 0,
+                    }}
                     title="Sort options"
                   >
                     <SortAsc size={20} />
                   </button>
                   {showSortMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-10">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSortOption('favorites');
-                          setShowSortMenu(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          sortOption === 'favorites'
-                            ? 'font-semibold text-primary'
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        Favorites First
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSortOption('alphabetical');
-                          setShowSortMenu(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          sortOption === 'alphabetical'
-                            ? 'font-semibold text-primary'
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        Alphabetical
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSortOption('recent');
-                          setShowSortMenu(false);
-                        }}
-                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                          sortOption === 'recent'
-                            ? 'font-semibold text-primary'
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}
-                      >
-                        Recently Created
-                      </button>
-                    </div>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        right: 0,
+                        mt: 0.5,
+                        width: 192,
+                        bgcolor: '#fff',
+                        border: '1px solid #e5e7eb',
+                        boxShadow: 3,
+                        zIndex: 10,
+                      }}
+                    >
+                      {[
+                        { key: 'favorites' as SortOption, label: 'Favorites First' },
+                        { key: 'alphabetical' as SortOption, label: 'Alphabetical' },
+                        { key: 'recent' as SortOption, label: 'Recently Created' },
+                      ].map(opt => (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          onClick={() => { setSortOption(opt.key); setShowSortMenu(false); }}
+                          style={{
+                            display: 'block',
+                            width: '100%',
+                            padding: '8px 16px',
+                            textAlign: 'left',
+                            fontSize: 14,
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontWeight: sortOption === opt.key ? 600 : 400,
+                            color: sortOption === opt.key ? 'var(--primary)' : '#374151',
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </Box>
                   )}
-                </div>
+                </Box>
 
-                <button
-                  type="button"
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'grid'
-                      ? 'bg-primary/10 dark:bg-primary/20 text-primary'
-                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  } border border-gray-300 dark:border-gray-600`}
-                  title="Grid view"
-                >
-                  <Grid size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    viewMode === 'list'
-                      ? 'bg-primary/10 dark:bg-primary/20 text-primary'
-                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  } border border-gray-300 dark:border-gray-600`}
-                  title="List view"
-                >
-                  <List size={20} />
-                </button>
-              </div>
+                {[
+                  { mode: 'grid' as ViewMode, Icon: Grid, title: 'Grid view' },
+                  { mode: 'list' as ViewMode, Icon: List, title: 'List view' },
+                ].map(({ mode, Icon, title }) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setViewMode(mode)}
+                    style={{
+                      padding: 8,
+                      border: '1px solid #d1d5db',
+                      background: viewMode === mode ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : '#fff',
+                      color: viewMode === mode ? 'var(--primary)' : '#4b5563',
+                      cursor: 'pointer',
+                      borderRadius: 0,
+                    }}
+                    title={title}
+                  >
+                    <Icon size={20} />
+                  </button>
+                ))}
+              </Box>
             ) : null}
-          </div>
+          </Box>
         ) : null}
 
         {workspaces.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">
+          <Box sx={{ textAlign: 'center', py: 6 }}>
+            <Box sx={{ fontSize: 48, mb: 2 }}>
               <Building2 size={48} />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            </Box>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: '#111827' }}>
               {content.noWorkspaces}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, color: '#4b5563' }}>
               Create your first workspace to get started
-            </p>
+            </Typography>
             <button
               type="button"
               onClick={handleCreateWorkspace}
-              className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors"
+              style={{ padding: '12px 24px', background: 'var(--primary)', color: '#fff', fontWeight: 500, fontSize: 14, border: 'none', cursor: 'pointer', borderRadius: 0 }}
             >
               {content.createWorkspace}
             </button>
-          </div>
+          </Box>
         ) : filteredAndSortedWorkspaces.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">
+          <Box sx={{ textAlign: 'center', py: 6 }}>
+            <Box sx={{ mb: 2 }}>
               <Search size={48} />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            </Box>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: '#111827' }}>
               No workspaces found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">Try adjusting your search query</p>
-          </div>
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 3, color: '#4b5563' }}>
+              Try adjusting your search query
+            </Typography>
+          </Box>
         ) : (
           <>
             {viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mb-8">
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: {
+                    xs: '1fr',
+                    sm: 'repeat(2, 1fr)',
+                    lg: 'repeat(3, 1fr)',
+                    xl: 'repeat(4, 1fr)',
+                  },
+                  gap: 3,
+                  mb: 4,
+                }}
+              >
                 {filteredAndSortedWorkspaces.map(workspace => (
                   <WorkspaceCard
                     key={workspace.id}
@@ -259,78 +285,136 @@ export default function WorkspacesListContent({
                 <button
                   type="button"
                   onClick={handleCreateWorkspace}
-                  className="flex h-full w-full aspect-video cursor-pointer flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-colors duration-200 hover:border-primary/40 hover:bg-gray-50"
+                  style={{
+                    display: 'flex',
+                    height: '100%',
+                    width: '100%',
+                    aspectRatio: '16/9',
+                    cursor: 'pointer',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #e5e7eb',
+                    background: '#fff',
+                    padding: 24,
+                    borderRadius: 0,
+                    transition: 'border-color 0.2s',
+                  }}
                 >
-                  <Plus className="mb-3 text-primary" size={30} strokeWidth={2.25} />
-                  <h3 className="text-center text-lg font-semibold text-gray-900">
+                  <Plus size={30} strokeWidth={2.25} style={{ marginBottom: 12, color: 'var(--primary)' }} />
+                  <Typography variant="h6" fontWeight={600} style={{ textAlign: 'center', color: '#111827' }}>
                     {content.createWorkspace}
-                  </h3>
+                  </Typography>
                 </button>
-              </div>
+              </Box>
             ) : (
               <>
-                <div className="mb-8 overflow-hidden rounded-xl border border-border bg-card">
-                  <div className="grid grid-cols-[minmax(240px,1.4fr)_minmax(180px,1fr)_minmax(160px,0.8fr)_auto] items-center border-b border-border bg-muted/40 px-6 py-3 text-sm text-muted-foreground">
+                <Box
+                  sx={{
+                    mb: 4,
+                    overflow: 'hidden',
+                    border: '1px solid var(--border)',
+                    bgcolor: 'var(--card)',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(240px, 1.4fr) minmax(180px, 1fr) minmax(160px, 0.8fr) auto',
+                      alignItems: 'center',
+                      borderBottom: '1px solid var(--border)',
+                      bgcolor: 'var(--muted)',
+                      px: 3,
+                      py: 1.5,
+                      fontSize: 14,
+                      color: 'var(--muted-foreground)',
+                    }}
+                  >
                     <span>Workspace name</span>
                     <span>Owner</span>
                     <span>Workspace type</span>
                     <span className="sr-only">Actions</span>
-                  </div>
+                  </Box>
 
-                  <div className="divide-y divide-border">
+                  <Box>
                     {filteredAndSortedWorkspaces.map(workspace => (
                       <button
                         key={workspace.id}
                         type="button"
                         onClick={() => handleWorkspaceClick(workspace.id)}
-                        className="grid w-full grid-cols-[minmax(240px,1.4fr)_minmax(180px,1fr)_minmax(160px,0.8fr)_auto] items-center gap-3 px-6 py-4 text-left transition-colors hover:bg-muted/40"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'minmax(240px, 1.4fr) minmax(180px, 1fr) minmax(160px, 0.8fr) auto',
+                          alignItems: 'center',
+                          gap: 12,
+                          width: '100%',
+                          padding: '16px 24px',
+                          textAlign: 'left',
+                          background: 'none',
+                          border: 'none',
+                          borderBottom: '1px solid var(--border)',
+                          cursor: 'pointer',
+                          borderRadius: 0,
+                        }}
                       >
-                        <div className="flex min-w-0 items-center">
-                          <span className="truncate text-base font-semibold text-foreground">
+                        <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center' }}>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
                             {workspace.name}
                           </span>
-                        </div>
+                        </Box>
 
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-foreground">You</p>
-                          <p className="truncate text-xs text-muted-foreground">Current member</p>
-                        </div>
+                        <Box sx={{ minWidth: 0 }}>
+                          <p style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>You</p>
+                          <p style={{ margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>Current member</p>
+                        </Box>
 
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
+                        <Box>
+                          <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                             {workspace.memberRole || 'Workspace'}
                           </p>
                           {currentWorkspace?.id === workspace.id && (
-                            <span className="mt-1 inline-flex rounded-md border border-emerald-500/70 bg-emerald-500/10 px-2 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                            <span style={{ display: 'inline-flex', marginTop: 4, border: '1px solid rgba(16,185,129,0.7)', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: '#047857', borderRadius: 0 }}>
                               Default
                             </span>
                           )}
-                        </div>
+                        </Box>
 
-                        <div className="flex items-center justify-end gap-2 text-muted-foreground">
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, color: 'var(--muted-foreground)' }}>
                           <MoreVertical size={18} />
                           <ChevronRight size={18} />
-                        </div>
+                        </Box>
                       </button>
                     ))}
-                  </div>
-                </div>
+                  </Box>
+                </Box>
 
-                <div className="flex justify-center">
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                   <button
                     type="button"
                     onClick={handleCreateWorkspace}
-                    className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '12px 24px',
+                      background: 'var(--primary)',
+                      color: '#fff',
+                      fontWeight: 500,
+                      fontSize: 14,
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: 0,
+                    }}
                   >
                     <Plus size={14} />
                     {content.createWorkspace}
                   </button>
-                </div>
+                </Box>
               </>
             )}
           </>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

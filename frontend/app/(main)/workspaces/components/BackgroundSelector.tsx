@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import { Check } from 'lucide-react';
 import Image from 'next/image';
 import React, { memo } from 'react';
@@ -28,13 +29,16 @@ const BackgroundCard = memo(function BackgroundCard({
     <button
       type="button"
       onClick={() => onSelect(background)}
-      className={`relative overflow-hidden rounded-lg border-2 transition-all hover:scale-[1.01] ${
-        compact ? 'aspect-[2.35/1]' : 'aspect-video'
-      } ${
-        selected
-          ? 'border-primary ring-2 ring-primary/20 dark:ring-primary/30'
-          : 'border-gray-300 hover:border-primary/60 dark:border-gray-600'
-      }`}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        border: selected ? '2px solid var(--primary)' : '2px solid #d1d5db',
+        borderRadius: 0,
+        aspectRatio: compact ? '2.35/1' : '16/9',
+        cursor: 'pointer',
+        padding: 0,
+        background: 'none',
+      }}
     >
       <Image
         src={`/workspace-backgrounds/${background}`}
@@ -47,14 +51,32 @@ const BackgroundCard = memo(function BackgroundCard({
         }
         quality={50}
         loading="lazy"
-        className="object-cover"
+        style={{ objectFit: 'cover' }}
       />
       {selected ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/45">
-          <div className="rounded-full bg-white p-1 dark:bg-gray-800">
-            <Check className="h-5 w-5 text-primary" />
-          </div>
-        </div>
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: 'rgba(0,0,0,0.45)',
+          }}
+        >
+          <Box
+            sx={{
+              borderRadius: '50%',
+              bgcolor: '#fff',
+              p: 0.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Check size={20} style={{ color: 'var(--primary)' }} />
+          </Box>
+        </Box>
       ) : null}
     </button>
   );
@@ -69,8 +91,8 @@ export const BackgroundSelector = memo(function BackgroundSelector({
   const minColumnWidth = compact ? 150 : 220;
 
   return (
-    <div
-      className={`grid ${compact ? 'gap-2' : 'gap-3'}`}
+    <Box
+      sx={{ display: 'grid', gap: compact ? 1 : 1.5 }}
       style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${minColumnWidth}px, 1fr))` }}
     >
       {backgrounds.map(background => (
@@ -82,7 +104,7 @@ export const BackgroundSelector = memo(function BackgroundSelector({
           onSelect={onSelect}
         />
       ))}
-    </div>
+    </Box>
   );
 });
 

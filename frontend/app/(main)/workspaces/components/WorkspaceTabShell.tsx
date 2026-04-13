@@ -1,8 +1,9 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import type { WorkspaceTabId } from '@/app/lib/workspace-tabs';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 import { useState } from 'react';
@@ -27,9 +28,9 @@ export default function WorkspaceTabShell({ activeItem, children }: Props) {
 
   if (loading || !currentWorkspace) {
     return (
-      <div className="min-h-[calc(100vh-var(--global-nav-height,0px))] flex items-center justify-center">
-        <Spinner className="h-20 w-20 text-primary" />
-      </div>
+      <Box sx={{ minHeight: 'calc(100vh - var(--global-nav-height, 0px))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <CircularProgress size={80} />
+      </Box>
     );
   }
 

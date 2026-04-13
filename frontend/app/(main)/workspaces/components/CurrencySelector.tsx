@@ -4,6 +4,8 @@ import {
   type CurrencySearchItem,
   buildCurrencySearchIndex,
 } from '@/app/lib/statement-expense-drawer';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -96,136 +98,218 @@ export function CurrencySelector({
   };
 
   const panel = (
-    <div
-      className={`w-full ${minimal ? 'bg-transparent p-0 shadow-none' : 'rounded-2xl border border-border bg-card p-5 shadow-xl'}`}
+    <Box
+      sx={
+        minimal
+          ? { width: '100%' }
+          : { width: '100%', border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2.5 }
+      }
     >
       {!minimal && showPanelHeader ? (
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+          <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+            {title}
+          </Typography>
           <button
             type="button"
             onClick={() => {
               setOpenState(false);
               setSearch('');
             }}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            style={{ borderRadius: '50%', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
             aria-label="Close currency picker"
           >
-            <X className="h-4 w-4" />
+            <X size={16} />
           </button>
-        </div>
+        </Box>
       ) : null}
 
-      <div className={minimal ? 'relative mb-2 mt-2' : 'relative mb-3'}>
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Box sx={{ position: 'relative', mb: minimal ? 1 : 1.5, mt: minimal ? 1 : 0 }}>
+        <Search
+          size={16}
+          style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-foreground)', pointerEvents: 'none' }}
+        />
         <input
           type="text"
           value={search}
           onChange={event => setSearch(event.target.value)}
           placeholder="Search"
-          className={`w-full rounded-xl py-2.5 pl-10 pr-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-            minimal ? 'border border-transparent bg-white' : 'border border-border bg-card'
-          }`}
+          style={{
+            width: '100%',
+            border: minimal ? '1px solid transparent' : '1px solid var(--border)',
+            background: minimal ? '#fff' : 'var(--card)',
+            padding: '10px 12px 10px 40px',
+            fontSize: 14,
+            color: 'var(--foreground)',
+            outline: 'none',
+            borderRadius: 0,
+            boxSizing: 'border-box',
+          }}
         />
-      </div>
+      </Box>
 
-      <div
-        className={`overflow-y-auto pr-1 ${minimal ? 'max-h-[34vh] space-y-1.5 md:max-h-[40vh]' : 'max-h-[72vh] space-y-3'}`}
+      <Box
+        sx={{
+          overflowY: 'auto',
+          pr: 0.5,
+          maxHeight: minimal ? '34vh' : '72vh',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: minimal ? 0.75 : 1.5,
+        }}
       >
         {selectedCurrencyItem && selectedMatchesSearch ? (
           <button
             type="button"
             onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-            className={`flex w-full items-center justify-between bg-primary/10 text-left ${
-              minimal ? 'rounded-lg px-3 py-2' : 'rounded-xl px-3 py-3'
-            }`}
+            style={{
+              display: 'flex',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+              border: 'none',
+              padding: minimal ? '8px 12px' : '12px',
+              cursor: 'pointer',
+              textAlign: 'left',
+              borderRadius: 0,
+            }}
           >
-            <span className="text-sm font-semibold text-primary">{selectedCurrencyItem.label}</span>
-            <Check className="h-4 w-4 text-primary" />
+            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--primary)' }}>
+              {selectedCurrencyItem.label}
+            </span>
+            <Check size={16} style={{ color: 'var(--primary)' }} />
           </button>
         ) : null}
 
         {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
-          <div>
+          <Box>
             {!minimal ? (
-              <p className="px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              <Typography
+                variant="caption"
+                sx={{ px: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted-foreground)' }}
+              >
                 Recents
-              </p>
+              </Typography>
             ) : null}
-            <div className={minimal ? 'mt-1.5 space-y-1' : 'mt-2 space-y-1'}>
+            <Box sx={{ mt: minimal ? 0.75 : 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {recentCurrencyItems.map(item => (
                 <button
                   key={`recent-${item.code}`}
                   type="button"
                   onClick={() => handleSelectCurrency(item.code)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 text-left transition-colors hover:bg-muted ${
-                    minimal ? 'py-2' : 'py-2.5'
-                  }`}
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'none',
+                    border: 'none',
+                    padding: minimal ? '8px 12px' : '10px 12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    borderRadius: 0,
+                  }}
                 >
-                  <span className="text-sm font-medium text-foreground">{item.label}</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+                    {item.label}
+                  </span>
                 </button>
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
         ) : null}
 
-        <div>
+        <Box>
           {!minimal ? (
-            <p className="px-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <Typography
+              variant="caption"
+              sx={{ px: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted-foreground)' }}
+            >
               All
-            </p>
+            </Typography>
           ) : null}
-          <div className={minimal ? 'mt-1.5 space-y-1' : 'mt-2 space-y-1'}>
+          <Box sx={{ mt: minimal ? 0.75 : 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {allCurrencyItems.length > 0 ? (
               allCurrencyItems.map(item => (
                 <button
                   key={item.code}
                   type="button"
                   onClick={() => handleSelectCurrency(item.code)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 text-left transition-colors hover:bg-muted ${
-                    minimal ? 'py-2' : 'py-2.5'
-                  }`}
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'none',
+                    border: 'none',
+                    padding: minimal ? '8px 12px' : '10px 12px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    borderRadius: 0,
+                  }}
                 >
-                  <span className="text-sm font-medium text-foreground">{item.label}</span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+                    {item.label}
+                  </span>
                 </button>
               ))
             ) : (
-              <p className="rounded-lg bg-muted px-3 py-2.5 text-sm text-muted-foreground">
-                No currencies found
-              </p>
+              <Box sx={{ bgcolor: 'var(--muted)', px: 1.5, py: 1.25 }}>
+                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+                  No currencies found
+                </Typography>
+              </Box>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 
   return (
-    <div>
+    <Box>
       {showLabel ? (
-        <p className="mb-2 block text-sm font-medium text-foreground">Currency</p>
+        <Typography variant="body2" fontWeight={500} sx={{ mb: 1, color: 'var(--foreground)' }}>
+          Currency
+        </Typography>
       ) : null}
 
       {showTrigger ? (
         <button
           type="button"
           onClick={() => setOpenState(true)}
-          className="flex w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-muted"
+          style={{
+            display: 'flex',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            border: '1px solid var(--border)',
+            background: 'var(--card)',
+            padding: '10px 12px',
+            fontSize: 14,
+            color: 'var(--foreground)',
+            cursor: 'pointer',
+            textAlign: 'left',
+            borderRadius: 0,
+          }}
         >
-          <span className="truncate">{selectedCurrencyItem?.label || 'Select a currency'}</span>
-          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {selectedCurrencyItem?.label || 'Select a currency'}
+          </span>
+          <ChevronDown size={16} style={{ color: 'var(--muted-foreground)', flexShrink: 0 }} />
         </button>
       ) : null}
 
       {isOpen ? (
         mode === 'inline' ? (
-          <div className={minimal ? 'mt-1' : 'mt-3'}>{panel}</div>
+          <Box sx={{ mt: minimal ? 0.5 : 1.5 }}>{panel}</Box>
         ) : (
-          <div className="fixed inset-0 z-[90] flex items-center justify-center bg-transparent p-4">
-            <div className="w-full max-w-4xl">{panel}</div>
-          </div>
+          <Box sx={{ position: 'fixed', inset: 0, zIndex: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+            <Box sx={{ width: '100%', maxWidth: 896 }}>{panel}</Box>
+          </Box>
         )
       ) : null}
-    </div>
+    </Box>
   );
 }

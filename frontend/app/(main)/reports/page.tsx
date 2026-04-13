@@ -2,8 +2,10 @@
 
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
 import { BarChart3, DollarSign, PieChart, Scale } from 'lucide-react';
 import { useState } from 'react';
 import BalanceSheet from './components/BalanceSheet';
@@ -86,36 +88,38 @@ export default function ReportsPage() {
 
   if (showBalanceSheet) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="px-8 pt-8 pb-6">
+      <Box sx={{ minHeight: '100vh' }}>
+        <Box sx={{ px: 4, pt: 4, pb: 3 }}>
           <button
             type="button"
             onClick={() => setShowBalanceSheet(false)}
-            className="mb-4 text-sm font-medium text-primary transition-colors hover:opacity-80"
+            style={{ marginBottom: 16, fontSize: 14, fontWeight: 500, color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer' }}
           >
             ← {text('backToTemplates', 'Back to templates')}
           </button>
-          <h1 className="text-2xl font-bold text-foreground">
+          <Typography variant="h5" fontWeight={700}>
             {text('balanceSheetTitle', 'Balance Sheet')}
-          </h1>
-        </div>
-        <div className="px-8 pb-8">
+          </Typography>
+        </Box>
+        <Box sx={{ px: 4, pb: 4 }}>
           <BalanceSheet />
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="px-8 pt-8 pb-0">
-        <h1 className="text-2xl font-bold text-foreground">{text('title', 'Reports')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+    <Box sx={{ minHeight: '100vh' }}>
+      <Box sx={{ px: 4, pt: 4, pb: 0 }}>
+        <Typography variant="h5" fontWeight={700}>
+          {text('title', 'Reports')}
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 0.5, color: 'var(--muted-foreground)' }}>
           {text('subtitle', 'Generate financial reports and export documents')}
-        </p>
-      </div>
+        </Typography>
+      </Box>
 
-      <div className="mt-4 border-b border-border px-8">
+      <Box sx={{ mt: 2, borderBottom: '1px solid var(--border)', px: 4 }}>
         <Tabs
           data-tour-id="reports-tabs"
           value={tab}
@@ -142,13 +146,17 @@ export default function ReportsPage() {
             data-tour-id="reports-history-tab"
           />
         </Tabs>
-      </div>
+      </Box>
 
-      <div className="px-8 py-6">
+      <Box sx={{ px: 4, py: 3 }}>
         {tab === 'templates' && (
           <>
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                gap: 2,
+              }}
               data-tour-id="reports-templates-grid"
             >
               {templates.map(tmpl => (
@@ -159,7 +167,7 @@ export default function ReportsPage() {
                   isSelected={selectedTemplate?.id === tmpl.id}
                 />
               ))}
-            </div>
+            </Box>
             {selectedTemplate && (
               <ReportGenerator
                 template={selectedTemplate}
@@ -170,7 +178,7 @@ export default function ReportsPage() {
           </>
         )}
         {tab === 'history' && <ReportHistory />}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

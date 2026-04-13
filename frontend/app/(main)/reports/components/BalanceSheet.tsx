@@ -1,8 +1,11 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
 import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
@@ -156,8 +159,8 @@ function BalanceSheet() {
           }
           return merged;
         });
-      } catch (error: unknown) {
-        setError(getApiErrorMessage(error, t.errors.loadReport.value));
+      } catch (err: unknown) {
+        setError(getApiErrorMessage(err, t.errors.loadReport.value));
       } finally {
         setLoading(false);
       }
@@ -195,8 +198,8 @@ function BalanceSheet() {
 
         setSaveHint(text('balanceSaved', 'Balance saved'));
         await loadSheet(effectiveDate);
-      } catch (error: unknown) {
-        setError(getApiErrorMessage(error, t.errors.loadReport.value));
+      } catch (err: unknown) {
+        setError(getApiErrorMessage(err, t.errors.loadReport.value));
         setSaveHint('');
       } finally {
         setSavingAccountId(null);
@@ -238,8 +241,8 @@ function BalanceSheet() {
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
-      } catch (error: unknown) {
-        setError(getApiErrorMessage(error, t.errors.loadReport.value));
+      } catch (err: unknown) {
+        setError(getApiErrorMessage(err, t.errors.loadReport.value));
       } finally {
         setExportingFormat(null);
       }
@@ -262,46 +265,66 @@ function BalanceSheet() {
       const isSection = level === 0;
 
       return (
-        <div key={account.id} className="border-b border-border last:border-b-0">
-          <div className="flex items-center justify-between gap-3 py-3">
-            <div
-              className="flex min-w-0 items-center gap-2"
+        <Box key={account.id} sx={{ borderBottom: '1px solid var(--border)', '&:last-child': { borderBottom: 'none' } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, py: 1.5 }}>
+            <Box
+              sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1 }}
               style={{ paddingLeft: `${level * 18}px` }}
             >
               {canToggle ? (
                 <button
                   type="button"
-                  className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 20,
+                    height: 20,
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--muted-foreground)',
+                    flexShrink: 0,
+                  }}
                   onClick={() => toggleExpanded(account.id)}
                 >
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
+                  {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                 </button>
               ) : (
-                <span className="h-5 w-5" />
+                <span style={{ width: 20, height: 20, flexShrink: 0, display: 'inline-block' }} />
               )}
 
               <span
-                className={`truncate ${
-                  isSection
-                    ? 'text-base font-semibold text-foreground'
-                    : 'text-sm text-muted-foreground'
-                }`}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: isSection ? 16 : 14,
+                  fontWeight: isSection ? 600 : 400,
+                  color: 'var(--foreground)',
+                }}
               >
                 {account.name}
               </span>
-            </div>
+            </Box>
 
-            <div className="shrink-0">
+            <Box sx={{ flexShrink: 0 }}>
               {account.isEditable ? (
-                <div className="flex items-center gap-2">
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <input
                     type="number"
                     step="0.01"
-                    className="w-28 rounded-md border border-border bg-muted/60 px-2 py-1 text-right text-sm text-foreground outline-none focus:border-primary"
+                    style={{
+                      width: 112,
+                      border: '1px solid var(--border)',
+                      background: 'var(--muted)',
+                      padding: '4px 8px',
+                      textAlign: 'right',
+                      fontSize: 14,
+                      color: 'var(--foreground)',
+                      outline: 'none',
+                      borderRadius: 0,
+                    }}
                     value={editableValues[account.id] ?? '0.00'}
                     onChange={event =>
                       setEditableValues(prev => ({
@@ -318,29 +341,31 @@ function BalanceSheet() {
                     disabled={savingAccountId === account.id}
                     aria-label={account.name}
                   />
-                  <span className="text-sm font-medium text-muted-foreground">₸</span>
-                  {savingAccountId === account.id && <Spinner className="h-4 w-4 text-primary" />}
-                </div>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--muted-foreground)' }}>₸</span>
+                  {savingAccountId === account.id && <CircularProgress size={16} sx={{ color: 'var(--primary)' }} />}
+                </Box>
               ) : (
                 <span
-                  className={`text-sm ${
-                    isSection ? 'font-semibold text-foreground' : 'font-medium text-foreground'
-                  }`}
+                  style={{
+                    fontSize: 14,
+                    fontWeight: isSection ? 600 : 500,
+                    color: 'var(--foreground)',
+                  }}
                 >
                   {formatCurrency(account.amount)}
                 </span>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {hasChildren && isExpanded && (
-            <div>
+            <Box>
               {account.children
                 .sort((a, b) => a.position - b.position)
                 .map(child => renderAccount(child, level + 1))}
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
       );
     },
     [editableValues, expanded, formatCurrency, saveSnapshot, savingAccountId, toggleExpanded],
@@ -352,126 +377,178 @@ function BalanceSheet() {
   }, [formatCurrency, sheet]);
 
   return (
-    <div className="space-y-4" data-tour-id="reports-balance">
-      <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground dark:bg-card">
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }} data-tour-id="reports-balance">
+      <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: { md: 'space-between' }, gap: 1.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                border: '1px solid var(--border)',
+                bgcolor: 'var(--card)',
+                px: 1.5,
+                py: 1,
+                fontSize: 14,
+                color: 'var(--foreground)',
+              }}
+            >
+              <CalendarDays size={16} style={{ color: 'var(--muted-foreground)' }} />
               <select
-                className="border-none bg-transparent text-sm text-foreground outline-none"
+                style={{ border: 'none', background: 'transparent', fontSize: 14, color: 'var(--foreground)', outline: 'none' }}
                 value={filterMode}
                 onChange={event => setFilterMode(event.target.value as 'now' | 'date')}
               >
                 <option value="now">{text('asOfNow', 'As of now')}</option>
                 <option value="date">{text('asOfDate', 'As of date')}</option>
               </select>
-            </div>
+            </Box>
 
             {filterMode === 'date' && (
               <input
                 type="date"
                 value={selectedDate}
                 onChange={event => setSelectedDate(event.target.value)}
-                className="rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-primary dark:bg-card"
+                style={{
+                  border: '1px solid var(--border)',
+                  padding: '8px 12px',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                  outline: 'none',
+                  borderRadius: 0,
+                  background: 'var(--card)',
+                }}
               />
             )}
 
             <button
               type="button"
               onClick={() => loadSheet(effectiveDate)}
-              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-muted-foreground hover:border-primary dark:bg-card"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '8px 12px',
+                fontSize: 14,
+                color: 'var(--muted-foreground)',
+                cursor: 'pointer',
+                borderRadius: 0,
+              }}
             >
-              <RefreshCcw className="h-4 w-4" />
+              <RefreshCcw size={16} />
               {text('refresh', 'Refresh')}
             </button>
-          </div>
+          </Box>
 
-          <div className="relative">
+          <Box sx={{ position: 'relative' }}>
             <button
               type="button"
               onClick={() => setExportMenuOpen(open => !open)}
-              className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground hover:border-primary dark:bg-card"
               disabled={!!exportingFormat}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                border: '1px solid var(--border)',
+                background: 'var(--card)',
+                padding: '8px 12px',
+                fontSize: 14,
+                color: 'var(--foreground)',
+                cursor: 'pointer',
+                borderRadius: 0,
+              }}
             >
-              {exportingFormat ? <Spinner className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+              {exportingFormat ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : <Download size={16} />}
               {text('exportBalance', 'Export balance')}
             </button>
 
             {exportMenuOpen && (
-              <div className="absolute right-0 z-10 mt-2 w-36 rounded-md border border-border bg-card p-1 shadow-sm dark:bg-card">
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: 0,
+                  zIndex: 10,
+                  mt: 0.5,
+                  width: 144,
+                  border: '1px solid var(--border)',
+                  bgcolor: 'var(--card)',
+                  p: 0.5,
+                  boxShadow: 1,
+                }}
+              >
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
+                  style={{ display: 'block', width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
                   onClick={() => downloadExport('excel')}
                 >
                   {text('exportExcel', 'Excel')}
                 </button>
                 <button
                   type="button"
-                  className="block w-full rounded px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
+                  style={{ display: 'block', width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
                   onClick={() => downloadExport('pdf')}
                 >
                   {text('exportPdf', 'PDF')}
                 </button>
-              </div>
+              </Box>
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
 
-        {saveHint && <p className="mt-2 text-xs text-muted-foreground">{saveHint}</p>}
-      </div>
+        {saveHint && (
+          <Typography variant="caption" sx={{ mt: 1, display: 'block', color: 'var(--muted-foreground)' }}>
+            {saveHint}
+          </Typography>
+        )}
+      </Box>
 
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+      {error && <Alert severity="error" sx={{ borderRadius: 0 }}>{error}</Alert>}
 
-      {balanceWarning && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          {balanceWarning}
-        </div>
-      )}
+      {balanceWarning && <Alert severity="warning" sx={{ borderRadius: 0 }}>{balanceWarning}</Alert>}
 
       {loading ? (
-        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground dark:bg-card">
-          {text('loadingEllipsis', 'Loading...')}
-        </div>
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', px: 2, py: 5, display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress size={24} />
+        </Box>
       ) : sheet ? (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-2xl font-semibold text-foreground">
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, 1fr)' }, gap: 2 }}>
+          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
+            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                 {text('assets', 'Assets')} {formatCurrency(sheet.assets.total)}
-              </h3>
-            </div>
-            <div>
+              </Typography>
+            </Box>
+            <Box>
               {sheet.assets.sections
                 .sort((a, b) => a.position - b.position)
                 .map(section => renderAccount(section))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div className="rounded-lg border border-border bg-card p-4 dark:bg-card">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-2xl font-semibold text-foreground">
+          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
+            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                 {text('liabilities', 'Liabilities')} {formatCurrency(sheet.liabilities.total)}
-              </h3>
-            </div>
-            <div>
+              </Typography>
+            </Box>
+            <Box>
               {sheet.liabilities.sections
                 .sort((a, b) => a.position - b.position)
                 .map(section => renderAccount(section))}
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       ) : (
-        <div className="rounded-lg border border-border bg-card px-4 py-10 text-center text-sm text-muted-foreground dark:bg-card">
-          {text('noData', 'No data')}
-        </div>
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', px: 2, py: 5, textAlign: 'center' }}>
+          <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+            {text('noData', 'No data')}
+          </Typography>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

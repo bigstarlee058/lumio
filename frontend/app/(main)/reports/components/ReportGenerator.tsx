@@ -1,9 +1,11 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
-import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import { Download, X } from 'lucide-react';
 import { useState } from 'react';
 import type { ReportTemplate } from './ReportTemplateCard';
@@ -55,108 +57,146 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
   };
 
   return (
-    <Card
-      className="mt-6 rounded-[20px] border border-primary/20 bg-card shadow-md dark:bg-card"
+    <Paper
+      elevation={0}
       data-tour-id="reports-generator"
+      sx={{
+        mt: 3,
+        borderRadius: 0,
+        border: '1px solid var(--border)',
+        bgcolor: 'var(--card)',
+        p: 3,
+      }}
     >
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-5">
-          <div>
-            <h2 className="text-base font-semibold text-foreground">{template.name}</h2>
-            <p className="mt-0.5 text-sm text-muted-foreground">{template.description}</p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2.5 }}>
+        <Box>
+          <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+            {template.name}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 0.25, color: 'var(--muted-foreground)' }}>
+            {template.description}
+          </Typography>
+        </Box>
+        <button
+          type="button"
+          onClick={onClose}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 4,
+            color: 'var(--muted-foreground)',
+          }}
+        >
+          <X size={16} />
+        </button>
+      </Box>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+          gap: 2,
+          mb: 2.5,
+        }}
+      >
+        {/* Date from */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+          <label
+            htmlFor="date-from"
+            style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+            {text('dateFrom', 'Date from')}
+          </label>
+          <input
+            id="date-from"
+            type="date"
+            value={dateFrom}
+            onChange={e => setDateFrom(e.target.value)}
+            style={{
+              height: 36,
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              padding: '0 12px',
+              fontSize: 14,
+              color: 'var(--foreground)',
+              outline: 'none',
+              borderRadius: 0,
+            }}
+          />
+        </Box>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-          {/* Date from */}
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="date-from"
-              className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]"
-            >
-              {text('dateFrom', 'Date from')}
-            </label>
-            <input
-              id="date-from"
-              type="date"
-              value={dateFrom}
-              onChange={e => setDateFrom(e.target.value)}
-              className="h-9 rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/10"
-            />
-          </div>
-
-          {/* Date to */}
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="date-to"
-              className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]"
-            >
-              {text('dateTo', 'Date to')}
-            </label>
-            <input
-              id="date-to"
-              type="date"
-              value={dateTo}
-              onChange={e => setDateTo(e.target.value)}
-              className="h-9 rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/10"
-            />
-          </div>
-
-          {/* Format */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.08em]">
-              {text('format', 'Format')}
-            </span>
-            <div className="flex gap-2" data-tour-id="reports-format">
-              {availableFormats.map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setFormat(opt.value)}
-                  className={`flex-1 h-9 rounded-lg border text-xs font-semibold transition-colors ${
-                    format === opt.value
-                      ? 'bg-primary text-white border-primary'
-                      : 'border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary'
-                  }`}
-                >
-                  {opt.value.toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="gap-2"
-            data-tour-id="reports-generate-button"
+        {/* Date to */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+          <label
+            htmlFor="date-to"
+            style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
           >
-            {generating ? (
-              <>
-                <Spinner className="h-4 w-4" />
-                {text('generating', 'Generating…')}
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4" />
-                {text('generateAndDownload', 'Generate & Download')}
-              </>
-            )}
-          </Button>
-          <Button variant="ghost" onClick={onClose} disabled={generating}>
-            {text('cancel', 'Cancel')}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+            {text('dateTo', 'Date to')}
+          </label>
+          <input
+            id="date-to"
+            type="date"
+            value={dateTo}
+            onChange={e => setDateTo(e.target.value)}
+            style={{
+              height: 36,
+              border: '1px solid var(--border)',
+              background: 'var(--card)',
+              padding: '0 12px',
+              fontSize: 14,
+              color: 'var(--foreground)',
+              outline: 'none',
+              borderRadius: 0,
+            }}
+          />
+        </Box>
+
+        {/* Format */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}>
+            {text('format', 'Format')}
+          </span>
+          <Box sx={{ display: 'flex', gap: 1 }} data-tour-id="reports-format">
+            {availableFormats.map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setFormat(opt.value)}
+                style={{
+                  flex: 1,
+                  height: 36,
+                  border: format === opt.value ? '1px solid var(--primary)' : '1px solid var(--border)',
+                  background: format === opt.value ? 'var(--primary)' : 'var(--card)',
+                  color: format === opt.value ? '#fff' : 'var(--muted-foreground)',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  borderRadius: 0,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {opt.value.toUpperCase()}
+              </button>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Button
+          variant="contained"
+          onClick={handleGenerate}
+          disabled={generating}
+          startIcon={generating ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : <Download size={16} />}
+          data-tour-id="reports-generate-button"
+        >
+          {generating ? text('generating', 'Generating…') : text('generateAndDownload', 'Generate & Download')}
+        </Button>
+        <Button variant="text" onClick={onClose} disabled={generating}>
+          {text('cancel', 'Cancel')}
+        </Button>
+      </Box>
+    </Paper>
   );
 }

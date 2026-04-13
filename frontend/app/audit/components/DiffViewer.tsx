@@ -2,6 +2,8 @@
 
 import { getRecord } from '@/app/lib/side-panel-utils';
 import type { AuditEventDiff } from '@/lib/api/audit';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import React from 'react';
 
 const TECHNICAL_FIELDS = new Set(['id', 'createdAt', 'updatedAt', 'workspaceId', 'userId']);
@@ -29,29 +31,29 @@ const formatValue = (value: unknown) => {
 
 export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
   if (!diff) {
-    return <div className="text-sm text-gray-500">No diff available.</div>;
+    return <Typography variant="body2" style={{ color: '#6b7280' }}>No diff available.</Typography>;
   }
 
   if (Array.isArray(diff)) {
     return (
-      <div className="space-y-2">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         {diff.map((op, idx) => {
           const key = `${op.op}-${op.path}-${idx}`;
 
           return (
-            <div key={key} className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm">
-              <div className="font-semibold text-gray-800">
+            <Box key={key} sx={{ border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5, fontSize: 14 }}>
+              <Typography variant="body2" fontWeight={600} style={{ color: '#1f2937' }}>
                 {op.op.toUpperCase()} {op.path}
-              </div>
+              </Typography>
               {op.value !== undefined && (
-                <pre className="mt-2 whitespace-pre-wrap text-xs text-gray-600">
+                <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap', fontSize: 12, color: '#4b5563', margin: '8px 0 0' }}>
                   {formatValue(op.value)}
                 </pre>
               )}
-            </div>
+            </Box>
           );
         })}
-      </div>
+      </Box>
     );
   }
 
@@ -62,44 +64,65 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }) {
   ).filter(key => !TECHNICAL_FIELDS.has(key));
 
   if (keys.length === 0) {
-    return <div className="text-sm text-gray-500">No user-facing changes available.</div>;
+    return <Typography variant="body2" style={{ color: '#6b7280' }}>No user-facing changes available.</Typography>;
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200">
-      <div className="grid grid-cols-3 gap-0 bg-gray-50 text-xs font-semibold uppercase text-gray-500">
-        <div className="px-3 py-2">Field</div>
-        <div className="px-3 py-2">Before</div>
-        <div className="px-3 py-2">After</div>
-      </div>
-      <div className="divide-y divide-gray-200">
+    <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          bgcolor: '#f9fafb',
+          fontSize: 12,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          color: '#6b7280',
+        }}
+      >
+        <Box sx={{ px: 1.5, py: 1 }}>Field</Box>
+        <Box sx={{ px: 1.5, py: 1 }}>Before</Box>
+        <Box sx={{ px: 1.5, py: 1 }}>After</Box>
+      </Box>
+      <Box>
         {keys.map(key => {
           const beforeValue = getRecord(before)?.[key];
           const afterValue = getRecord(after)?.[key];
           const hadBefore = Object.prototype.hasOwnProperty.call(before, key);
           const hadAfter = Object.prototype.hasOwnProperty.call(after, key);
           const changed = JSON.stringify(beforeValue) !== JSON.stringify(afterValue);
-          const rowClass =
+          const rowBg =
             hadBefore && !hadAfter
-              ? 'bg-red-50'
+              ? '#fef2f2'
               : !hadBefore && hadAfter
-                ? 'bg-green-50'
+                ? '#f0fdf4'
                 : changed
-                  ? 'bg-yellow-50'
-                  : '';
+                  ? '#fefce8'
+                  : 'transparent';
           return (
-            <div key={key} className={`grid grid-cols-3 gap-0 text-sm ${rowClass}`}>
-              <div className="px-3 py-2 font-medium text-gray-700">{FIELD_LABELS[key] ?? key}</div>
-              <div className="px-3 py-2 text-gray-600">
-                <pre className="whitespace-pre-wrap text-xs">{formatValue(beforeValue)}</pre>
-              </div>
-              <div className="px-3 py-2 text-gray-600">
-                <pre className="whitespace-pre-wrap text-xs">{formatValue(afterValue)}</pre>
-              </div>
-            </div>
+            <Box
+              key={key}
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                fontSize: 14,
+                bgcolor: rowBg,
+                borderTop: '1px solid #e5e7eb',
+              }}
+            >
+              <Box sx={{ px: 1.5, py: 1, fontWeight: 500, color: '#374151' }}>
+                {FIELD_LABELS[key] ?? key}
+              </Box>
+              <Box sx={{ px: 1.5, py: 1, color: '#4b5563' }}>
+                <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, margin: 0 }}>{formatValue(beforeValue)}</pre>
+              </Box>
+              <Box sx={{ px: 1.5, py: 1, color: '#4b5563' }}>
+                <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, margin: 0 }}>{formatValue(afterValue)}</pre>
+              </Box>
+            </Box>
           );
         })}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

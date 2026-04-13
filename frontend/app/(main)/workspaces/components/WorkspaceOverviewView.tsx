@@ -8,6 +8,8 @@ import {
   type CurrencySearchItem,
   buildCurrencySearchIndex,
 } from '@/app/lib/statement-expense-drawer';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import {
   Building2,
   Check,
@@ -136,8 +138,8 @@ export default function WorkspaceOverviewView() {
       });
       await refreshWorkspaces();
       toast.success('Workspace updated');
-    } catch (error) {
-      console.error('Failed to update workspace:', error);
+    } catch (err) {
+      console.error('Failed to update workspace:', err);
       toast.error('Failed to update workspace');
     } finally {
       setSaving(false);
@@ -157,8 +159,8 @@ export default function WorkspaceOverviewView() {
       setDeleteModalOpen(false);
       setDeleteConfirmationName('');
       router.replace('/workspaces/list');
-    } catch (error) {
-      console.error('Failed to delete workspace:', error);
+    } catch (err) {
+      console.error('Failed to delete workspace:', err);
       toast.error('Failed to delete workspace');
     } finally {
       setDeleting(false);
@@ -206,70 +208,147 @@ export default function WorkspaceOverviewView() {
   if (!currentWorkspace) return null;
 
   return (
-    <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-      <div
-        className="container max-w-5xl px-5 py-4 space-y-3"
+    <Box
+      sx={{
+        height: 'calc(100vh - var(--global-nav-height, 0px))',
+        overflowY: 'auto',
+        bgcolor: 'var(--background)',
+      }}
+    >
+      <Box
+        sx={{ maxWidth: 1024, px: { xs: 2.5, sm: 3 }, py: 2 }}
         data-tour-id="workspace-side-panel"
       >
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-lg font-semibold text-primary">
+        {/* Header card */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2, mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 44,
+                height: 44,
+                borderRadius: 0,
+                bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                color: 'var(--primary)',
+                fontSize: 18,
+                fontWeight: 600,
+                flexShrink: 0,
+              }}
+            >
               {getInitials(currentWorkspace.name) || <Building2 size={24} />}
-            </div>
-            <div className="space-y-1">
-              <h1 className="text-xl font-semibold text-foreground">Overview</h1>
-              <p className="text-xs text-muted-foreground">
+            </Box>
+            <Box>
+              <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                Overview
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
                 Manage workspace profile, defaults, and billing details.
-              </p>
-            </div>
-          </div>
-        </div>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
 
-        <div
-          className="rounded-2xl border border-border bg-card p-4 space-y-3"
+        {/* Background section */}
+        <Box
+          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2, mb: 1.5 }}
           data-tour-id="workspace-background"
         >
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="space-y-1">
-              <h2 className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <ImageIcon size={15} className="text-muted-foreground" />
-                Workspace background
-              </h2>
-              <p className="text-xs text-muted-foreground">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { sm: 'flex-start' },
+              justifyContent: { sm: 'space-between' },
+              gap: 1.5,
+              mb: 1.5,
+            }}
+          >
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <ImageIcon size={15} style={{ color: 'var(--muted-foreground)' }} />
+                <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
+                  Workspace background
+                </Typography>
+              </Box>
+              <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
                 Choose a background image for your workspace card
-              </p>
-            </div>
+              </Typography>
+            </Box>
             <button
               type="button"
               data-testid="workspace-background-trigger"
               onClick={() => setShowBackgroundPicker(true)}
               disabled={savingBackground}
-              className="inline-flex items-center justify-center gap-1 self-start rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-60"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+                alignSelf: 'flex-start',
+                border: '1px solid var(--border)',
+                background: 'none',
+                padding: '6px 12px',
+                fontSize: 14,
+                fontWeight: 500,
+                color: 'var(--foreground)',
+                cursor: 'pointer',
+                borderRadius: 0,
+                opacity: savingBackground ? 0.6 : 1,
+              }}
             >
               Change
               <ChevronDown size={14} />
             </button>
-          </div>
+          </Box>
 
-          <div className="relative aspect-[2.8/1] w-full overflow-hidden rounded-lg border border-border sm:max-w-[320px]">
+          <Box
+            sx={{
+              position: 'relative',
+              aspectRatio: '2.8/1',
+              width: '100%',
+              maxWidth: 320,
+              overflow: 'hidden',
+              border: '1px solid var(--border)',
+              borderRadius: 0,
+            }}
+          >
             {resolveBackgroundSrc(currentWorkspace.backgroundImage) ? (
               <img
                 src={resolveBackgroundSrc(currentWorkspace.backgroundImage) || ''}
                 alt="Current workspace background"
-                className="h-full w-full object-cover"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-muted px-4 text-center">
-                <p className="text-xs text-muted-foreground">No background selected</p>
-              </div>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  bgcolor: 'var(--muted)',
+                  px: 2,
+                  textAlign: 'center',
+                }}
+              >
+                <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                  No background selected
+                </Typography>
+              </Box>
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
 
-        <div className="space-y-3">
-          <div className="rounded-2xl border border-border bg-card p-4 space-y-3">
-            <div className="space-y-1.5">
-              <label htmlFor="workspace-name" className="text-sm font-medium text-foreground">
+        {/* Settings section */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
+            {/* Workspace name */}
+            <Box sx={{ mb: 1.5 }}>
+              <label
+                htmlFor="workspace-name"
+                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
+              >
                 Workspace name
               </label>
               <input
@@ -278,14 +357,25 @@ export default function WorkspaceOverviewView() {
                 type="text"
                 value={name}
                 onChange={event => setName(event.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                style={{
+                  width: '100%',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
+                  padding: '8px 12px',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                  outline: 'none',
+                  borderRadius: 0,
+                  boxSizing: 'border-box',
+                }}
               />
-            </div>
+            </Box>
 
-            <div className="space-y-1.5">
+            {/* Description */}
+            <Box sx={{ mb: 1.5 }}>
               <label
                 htmlFor="workspace-description"
-                className="text-sm font-medium text-foreground"
+                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
               >
                 Description
               </label>
@@ -294,14 +384,27 @@ export default function WorkspaceOverviewView() {
                 value={description}
                 onChange={event => setDescription(event.target.value)}
                 rows={2}
-                className="min-h-20 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                style={{
+                  width: '100%',
+                  minHeight: 80,
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
+                  padding: '8px 12px',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                  outline: 'none',
+                  borderRadius: 0,
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                }}
               />
-            </div>
+            </Box>
 
-            <div className="space-y-1.5">
+            {/* Currency */}
+            <Box sx={{ mb: 1.5 }}>
               <label
                 htmlFor="workspace-currency-trigger"
-                className="text-sm font-medium text-foreground"
+                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
               >
                 Default currency
               </label>
@@ -311,57 +414,105 @@ export default function WorkspaceOverviewView() {
                 data-tour-id="workspace-currency"
                 type="button"
                 onClick={() => setCurrencyDrawerOpen(true)}
-                className="flex w-full items-center justify-between rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
+                  padding: '8px 12px',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                  cursor: 'pointer',
+                  borderRadius: 0,
+                  boxSizing: 'border-box',
+                }}
               >
-                <span className="truncate">{selectedCurrencyItem?.label || notSelectedLabel}</span>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {selectedCurrencyItem?.label || notSelectedLabel}
+                </span>
+                <ChevronDown size={16} style={{ color: 'var(--muted-foreground)', flexShrink: 0 }} />
               </button>
-            </div>
+            </Box>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            {/* Save button */}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5, pt: 0.5 }}>
               <button
                 type="button"
                 onClick={handleSave}
                 disabled={!isDirty || saving}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  border: 'none',
+                  background: 'var(--primary)',
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: '#fff',
+                  cursor: !isDirty || saving ? 'not-allowed' : 'pointer',
+                  borderRadius: 0,
+                  opacity: !isDirty || saving ? 0.6 : 1,
+                }}
               >
                 <Save size={16} />
                 {saving ? 'Saving...' : 'Save changes'}
               </button>
 
               {isDirty && (
-                <span className="text-sm font-medium text-amber-600 transition-opacity dark:text-amber-500">
+                <Typography variant="body2" fontWeight={500} sx={{ color: '#d97706' }}>
                   Unsaved changes
-                </span>
+                </Typography>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
+          {/* Danger zone */}
           {currentWorkspace.memberRole === 'owner' && (
-            <div className="rounded-2xl border border-red-200 bg-red-50/50 p-4 space-y-3 dark:border-red-900/50 dark:bg-red-950/20">
-              <div className="space-y-1">
-                <h2 className="flex items-center gap-2 text-sm font-medium text-red-900 dark:text-red-200">
-                  Danger Zone
-                </h2>
-                <p className="text-xs text-red-700 dark:text-red-300/80">
-                  This will permanently delete the workspace and all related data. This action
-                  cannot be undone.
-                </p>
-              </div>
+            <Box
+              sx={{
+                border: '1px solid rgba(239,68,68,0.3)',
+                bgcolor: 'rgba(254,242,242,0.5)',
+                p: 2,
+              }}
+            >
+              <Typography variant="body2" fontWeight={500} sx={{ color: '#7f1d1d', mb: 0.5 }}>
+                Danger Zone
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#b91c1c', display: 'block', mb: 1.5 }}>
+                This will permanently delete the workspace and all related data. This action cannot
+                be undone.
+              </Typography>
               <button
                 type="button"
                 onClick={openDeleteModal}
                 disabled={deleting}
-                className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900 dark:bg-red-950 dark:text-red-200 dark:hover:bg-red-900"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  border: '1px solid rgba(239,68,68,0.3)',
+                  background: '#fff',
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: '#b91c1c',
+                  cursor: deleting ? 'not-allowed' : 'pointer',
+                  borderRadius: 0,
+                  opacity: deleting ? 0.6 : 1,
+                }}
               >
                 <Trash2 size={16} />
                 {deleting ? 'Deleting...' : 'Delete workspace'}
               </button>
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
+      {/* Background picker drawer */}
       <DrawerShell
         isOpen={showBackgroundPicker}
         onClose={() => setShowBackgroundPicker(false)}
@@ -370,36 +521,41 @@ export default function WorkspaceOverviewView() {
         showCloseButton={false}
         className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
-          <div className="flex items-center gap-3">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
               type="button"
               onClick={() => setShowBackgroundPicker(false)}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              style={{ borderRadius: '50%', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
               aria-label="Close background drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-foreground">
+            <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
               Select workspace background
-            </span>
-          </div>
+            </Typography>
+          </Box>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 space-y-3 overflow-y-auto pb-4">
-            <p className="text-sm text-muted-foreground">
+        <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
+            <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', mb: 1.5 }}>
               Choose the image shown on your workspace card.
-            </p>
-            {savingBackground && <p className="text-xs text-muted-foreground">Saving...</p>}
+            </Typography>
+            {savingBackground && (
+              <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                Saving...
+              </Typography>
+            )}
             <BackgroundSelector
               selectedBackground={currentWorkspace.backgroundImage}
               onSelect={handleBackgroundChange}
               backgrounds={AVAILABLE_BACKGROUNDS}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </DrawerShell>
 
+      {/* Currency drawer */}
       <DrawerShell
         isOpen={currencyDrawerOpen}
         onClose={() => {
@@ -411,89 +567,168 @@ export default function WorkspaceOverviewView() {
         showCloseButton={false}
         className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
-          <div className="flex items-center gap-3">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <button
               type="button"
               onClick={() => {
                 setCurrencyDrawerOpen(false);
                 setCurrencySearch('');
               }}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              style={{ borderRadius: '50%', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
               aria-label="Close currency drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-foreground">Select a currency</span>
-          </div>
+            <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+              Select a currency
+            </Typography>
+          </Box>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 space-y-3 overflow-y-auto pb-4">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', pb: 2 }}>
+            {/* Search input */}
+            <Box sx={{ position: 'relative', mb: 1.5 }}>
+              <Search
+                size={16}
+                style={{
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--muted-foreground)',
+                  pointerEvents: 'none',
+                }}
+              />
               <input
                 type="text"
                 value={currencySearch}
                 onChange={event => setCurrencySearch(event.target.value)}
                 placeholder="Search"
-                className="w-full rounded-2xl border border-border bg-background py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                style={{
+                  width: '100%',
+                  border: '1px solid var(--border)',
+                  background: 'var(--background)',
+                  padding: '10px 16px 10px 40px',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                  outline: 'none',
+                  borderRadius: 0,
+                  boxSizing: 'border-box',
+                }}
               />
-            </div>
+            </Box>
 
+            {/* Not-selected option */}
             {!currency && notSelectedMatchesSearch ? (
               <button
                 type="button"
                 onClick={() => handleSelectCurrency('')}
-                className="flex w-full items-center justify-between rounded-2xl bg-muted px-4 py-4 text-left"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'var(--muted)',
+                  border: 'none',
+                  padding: '16px',
+                  cursor: 'pointer',
+                  borderRadius: 0,
+                  marginBottom: 8,
+                }}
               >
-                <span className="text-base font-semibold text-foreground">{notSelectedLabel}</span>
-                <Check className="h-5 w-5 text-primary" />
+                <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                  {notSelectedLabel}
+                </Typography>
+                <Check size={20} style={{ color: 'var(--primary)' }} />
               </button>
             ) : null}
 
+            {/* Selected currency */}
             {selectedCurrencyItem && selectedMatchesSearch ? (
               <button
                 type="button"
                 onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                className="flex w-full items-center justify-between rounded-2xl bg-muted px-4 py-4 text-left"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'var(--muted)',
+                  border: 'none',
+                  padding: '16px',
+                  cursor: 'pointer',
+                  borderRadius: 0,
+                  marginBottom: 8,
+                }}
               >
-                <span className="text-base font-semibold text-foreground">
+                <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                   {selectedCurrencyItem.label}
-                </span>
-                <Check className="h-5 w-5 text-primary" />
+                </Typography>
+                <Check size={20} style={{ color: 'var(--primary)' }} />
               </button>
             ) : null}
 
+            {/* Recents */}
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
-              <div>
-                <p className="px-1 text-sm text-muted-foreground">Recents</p>
-                <div className="mt-2 space-y-2">
+              <Box sx={{ mb: 1.5 }}>
+                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', px: 0.5, mb: 1 }}>
+                  Recents
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {recentCurrencyItems.map(item => (
                     <button
                       key={`recent-${item.code}`}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                      style={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: 'none',
+                        border: 'none',
+                        padding: '12px',
+                        cursor: 'pointer',
+                        borderRadius: 0,
+                        textAlign: 'left',
+                      }}
                     >
-                      <span className="text-base font-semibold text-foreground">{item.label}</span>
+                      <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                        {item.label}
+                      </Typography>
                     </button>
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
             ) : null}
 
-            <div>
-              <p className="px-1 text-sm text-muted-foreground">All</p>
-              <div className="mt-2 space-y-1">
+            {/* All currencies */}
+            <Box>
+              <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', px: 0.5, mb: 1 }}>
+                All
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {notSelectedMatchesSearch && currency ? (
                   <button
                     type="button"
                     onClick={() => handleSelectCurrency('')}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: 'none',
+                      border: 'none',
+                      padding: '12px',
+                      cursor: 'pointer',
+                      borderRadius: 0,
+                      textAlign: 'left',
+                    }}
                   >
-                    <span className="text-base font-semibold text-foreground">
+                    <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                       {notSelectedLabel}
-                    </span>
+                    </Typography>
                   </button>
                 ) : null}
 
@@ -503,22 +738,38 @@ export default function WorkspaceOverviewView() {
                       key={item.code}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                      style={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: 'none',
+                        border: 'none',
+                        padding: '12px',
+                        cursor: 'pointer',
+                        borderRadius: 0,
+                        textAlign: 'left',
+                      }}
                     >
-                      <span className="text-base font-semibold text-foreground">{item.label}</span>
+                      <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                        {item.label}
+                      </Typography>
                     </button>
                   ))
                 ) : (
-                  <p className="rounded-xl bg-muted px-3 py-3 text-sm text-muted-foreground">
-                    No currencies found
-                  </p>
+                  <Box sx={{ bgcolor: 'var(--muted)', p: 1.5 }}>
+                    <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+                      No currencies found
+                    </Typography>
+                  </Box>
                 )}
-              </div>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </DrawerShell>
 
+      {/* Delete modal */}
       <ModalShell
         isOpen={deleteModalOpen}
         onClose={closeDeleteModal}
@@ -540,15 +791,15 @@ export default function WorkspaceOverviewView() {
           />
         }
       >
-        <div className="space-y-4">
-          <p className="text-sm leading-6 text-muted-foreground">
-            This will permanently delete the workspace and all related data. Type the
-            workspace name to confirm deletion.
-          </p>
-          <div className="space-y-2">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Typography variant="body2" sx={{ lineHeight: 1.75, color: 'var(--muted-foreground)' }}>
+            This will permanently delete the workspace and all related data. Type the workspace name
+            to confirm deletion.
+          </Typography>
+          <Box>
             <label
               htmlFor="delete-workspace-name"
-              className="text-sm font-medium text-foreground"
+              style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
             >
               Workspace name
             </label>
@@ -559,11 +810,21 @@ export default function WorkspaceOverviewView() {
               onChange={event => setDeleteConfirmationName(event.target.value)}
               placeholder={currentWorkspace.name}
               autoComplete="off"
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              style={{
+                width: '100%',
+                border: '1px solid var(--border)',
+                background: 'var(--background)',
+                padding: '10px 12px',
+                fontSize: 14,
+                color: 'var(--foreground)',
+                outline: 'none',
+                borderRadius: 0,
+                boxSizing: 'border-box',
+              }}
             />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </ModalShell>
-    </div>
+    </Box>
   );
 }

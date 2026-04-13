@@ -4,6 +4,7 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -11,6 +12,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import { Send as SendIcon } from 'lucide-react';
 import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -93,11 +95,11 @@ const PERMISSION_LABELS: Record<keyof InvitePermissions, string> = {
   canShareFiles: 'File sharing & access',
 };
 
-const ROLE_STYLES: Record<string, string> = {
-  owner: 'bg-primary/10 text-primary border-primary/20',
-  admin: 'bg-sky-50 text-sky-700 border-sky-200',
-  member: 'bg-gray-50 text-gray-700 border-gray-200',
-  viewer: 'bg-gray-50 text-gray-700 border-gray-200',
+const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
+  owner: { bg: 'rgba(var(--primary-rgb,99,102,241),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,99,102,241),0.2)' },
+  admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
+  member: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
+  viewer: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -122,9 +124,9 @@ const getInitials = (value?: string) =>
     .map(part => part[0]?.toUpperCase() ?? '')
     .join('');
 
-const getApiMessage = (error: unknown, fallback: string) => {
-  if (!error || typeof error !== 'object') return fallback;
-  const response = (error as { response?: { data?: { message?: string } } }).response;
+const getApiMessage = (err: unknown, fallback: string) => {
+  if (!err || typeof err !== 'object') return fallback;
+  const response = (err as { response?: { data?: { message?: string } } }).response;
   return response?.data?.message ?? fallback;
 };
 
@@ -194,8 +196,8 @@ export default function WorkspaceMembersView() {
       setFetchError(null);
       const response = await apiClient.get<WorkspaceOverview>('/workspaces/me');
       setOverview(response.data);
-    } catch (error) {
-      setFetchError(getApiMessage(error, 'Failed to load workspace members'));
+    } catch (err) {
+      setFetchError(getApiMessage(err, 'Failed to load workspace members'));
     } finally {
       setLoading(false);
     }
@@ -249,8 +251,8 @@ export default function WorkspaceMembersView() {
       setInviteEmail('');
       toast.success('Invitation sent');
       await loadOverview();
-    } catch (error) {
-      toast.error(getApiMessage(error, 'Failed to send invitation'));
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to send invitation'));
     } finally {
       setInviteLoading(false);
     }
@@ -278,8 +280,8 @@ export default function WorkspaceMembersView() {
       });
       toast.success('Role updated');
       await loadOverview();
-    } catch (error) {
-      toast.error(getApiMessage(error, 'Failed to update role'));
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to update role'));
     } finally {
       setUpdatingRoleMemberId(null);
     }
@@ -293,8 +295,8 @@ export default function WorkspaceMembersView() {
       await apiClient.delete(`/workspaces/${overview.workspace.id}/members/${memberId}`);
       toast.success('Member removed');
       await loadOverview();
-    } catch (error) {
-      toast.error(getApiMessage(error, 'Failed to remove member'));
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to remove member'));
     } finally {
       setRemovingMemberId(null);
     }
@@ -312,8 +314,8 @@ export default function WorkspaceMembersView() {
       });
       toast.success('Invitation resent');
       await loadOverview();
-    } catch (error) {
-      toast.error(getApiMessage(error, 'Failed to resend invitation'));
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to resend invitation'));
     } finally {
       setResendingInvitationId(null);
     }
@@ -328,8 +330,8 @@ export default function WorkspaceMembersView() {
       await apiClient.delete(`/workspaces/${overview.workspace.id}/invitations/${invitationId}`);
       toast.success('Invitation revoked');
       await loadOverview();
-    } catch (error) {
-      toast.error(getApiMessage(error, 'Failed to revoke invitation'));
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to revoke invitation'));
     } finally {
       setRevokingInvitationId(null);
     }
@@ -363,42 +365,46 @@ export default function WorkspaceMembersView() {
 
   if (loading) {
     return (
-      <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-        <div className="container max-w-5xl px-6 py-8">
-          <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
+      <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+        <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
+          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, fontSize: 14, color: 'var(--muted-foreground)' }}>
             Loading members...
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 
   if (!overview) {
     return (
-      <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-        <div className="container max-w-5xl px-6 py-8">
-          <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+      <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+        <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
+          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: '#fef2f2', p: 3, fontSize: 14, color: '#b91c1c' }}>
             {fetchError || 'Failed to load workspace members'}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="h-[calc(100vh-var(--global-nav-height,0px))] overflow-y-auto bg-background">
-      <div className="container max-w-5xl px-6 py-8 space-y-6">
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-                <Users size={20} />
-                Members
-              </h1>
-              <p className="text-sm text-muted-foreground">
+    <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+      <Box sx={{ maxWidth: 1024, px: 3, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+
+        {/* Header */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                <Users size={20} style={{ color: 'var(--foreground)' }} />
+                <Typography variant="h5" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                  Members
+                </Typography>
+              </Box>
+              <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
                 {overview.members.length} total member{overview.members.length === 1 ? '' : 's'}
-              </p>
-            </div>
+              </Typography>
+            </Box>
             <Button
               variant="contained"
               size="small"
@@ -407,17 +413,29 @@ export default function WorkspaceMembersView() {
             >
               Invite member
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
 
+        {/* Invite form */}
         {showInviteForm && (
-          <form
+          <Box
+            component="form"
             onSubmit={handleInvite}
-            className="rounded-2xl border border-border bg-card p-6 space-y-4"
+            sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2 sm:col-span-2">
-                <label htmlFor="invite-email" className="text-sm font-medium text-foreground">
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                gap: 2,
+              }}
+            >
+              {/* Email */}
+              <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' }, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                <label
+                  htmlFor="invite-email"
+                  style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}
+                >
                   Email
                 </label>
                 <input
@@ -427,12 +445,28 @@ export default function WorkspaceMembersView() {
                   onChange={event => setInviteEmail(event.target.value)}
                   required
                   disabled={!isOwnerOrAdmin}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{
+                    width: '100%',
+                    border: '1px solid var(--border)',
+                    background: 'var(--background)',
+                    padding: '8px 12px',
+                    fontSize: 14,
+                    color: 'var(--foreground)',
+                    outline: 'none',
+                    borderRadius: 0,
+                    boxSizing: 'border-box',
+                    opacity: !isOwnerOrAdmin ? 0.6 : 1,
+                    cursor: !isOwnerOrAdmin ? 'not-allowed' : 'auto',
+                  }}
                 />
-              </div>
+              </Box>
 
-              <div className="space-y-2">
-                <label htmlFor="invite-role" className="text-sm font-medium text-foreground">
+              {/* Role */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                <label
+                  htmlFor="invite-role"
+                  style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}
+                >
                   Role
                 </label>
                 <select
@@ -440,24 +474,35 @@ export default function WorkspaceMembersView() {
                   value={inviteRole}
                   onChange={event => setInviteRole(event.target.value as WorkspaceRole)}
                   disabled={!isOwnerOrAdmin}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{
+                    width: '100%',
+                    border: '1px solid var(--border)',
+                    background: 'var(--background)',
+                    padding: '8px 12px',
+                    fontSize: 14,
+                    color: 'var(--foreground)',
+                    outline: 'none',
+                    borderRadius: 0,
+                    opacity: !isOwnerOrAdmin ? 0.6 : 1,
+                    cursor: !isOwnerOrAdmin ? 'not-allowed' : 'auto',
+                  }}
                 >
                   <option value="member">Member</option>
                   <option value="viewer">Viewer</option>
                   <option value="admin">Admin</option>
                 </select>
-              </div>
-            </div>
+              </Box>
+            </Box>
 
+            {/* Permissions */}
             {inviteRole === 'member' && (
-              <div className="space-y-3">
-                <p className="text-sm font-medium text-foreground">Access permissions</p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
+                  Access permissions
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1 }}>
                   {(Object.keys(PERMISSION_LABELS) as Array<keyof InvitePermissions>).map(key => (
-                    <div
-                      key={key}
-                      className="inline-flex items-center gap-2 text-sm text-foreground"
-                    >
+                    <Box key={key} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'var(--foreground)' }}>
                       <Checkbox
                         checked={invitePermissions[key]}
                         onCheckedChange={checked =>
@@ -467,22 +512,21 @@ export default function WorkspaceMembersView() {
                           }))
                         }
                         disabled={!isOwnerOrAdmin}
-                        className="h-4 w-4 rounded border-border"
                       />
                       {PERMISSION_LABELS[key]}
-                    </div>
+                    </Box>
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
             )}
 
             {!isOwnerOrAdmin && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+              <Box sx={{ border: '1px solid #fbbf24', bgcolor: '#fffbeb', p: 1.5, fontSize: 14, color: '#92400e', borderRadius: 0 }}>
                 Only owner or admin can invite new members.
-              </p>
+              </Box>
             )}
 
-            <div className="flex justify-end">
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 type="submit"
                 variant="contained"
@@ -492,12 +536,13 @@ export default function WorkspaceMembersView() {
               >
                 {inviteLoading ? 'Sending...' : 'Send invitation'}
               </Button>
-            </div>
-          </form>
+            </Box>
+          </Box>
         )}
 
-        <div className="rounded-2xl border border-border bg-card p-4 space-y-3 sm:p-6">
-          <div className="flex flex-wrap items-center gap-3">
+        {/* Search & Filter */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
             <TextField
               aria-label="Search members by email"
               placeholder="Search by email"
@@ -505,11 +550,11 @@ export default function WorkspaceMembersView() {
               onChange={e => setSearchEmail(e.target.value)}
               size="small"
               variant="outlined"
-              className="w-full sm:max-w-sm"
+              sx={{ width: { xs: '100%', sm: 320 } }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search size={16} className="text-muted-foreground" />
+                    <Search size={16} style={{ color: 'var(--muted-foreground)' }} />
                   </InputAdornment>
                 ),
               }}
@@ -567,56 +612,86 @@ export default function WorkspaceMembersView() {
                 </MenuItem>
               ))}
             </Menu>
-          </div>
+          </Box>
 
-          <p className="text-xs text-muted-foreground">
+          <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
             Showing {visibleMembers.length} of {overview.members.length} members.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+        {/* Members list */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {visibleMembers.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No members match current filters.</p>
+            <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
+              No members match current filters.
+            </Typography>
           ) : (
             visibleMembers.map(member => {
               const canRemove = canRemoveMember(member);
               const roleTargets = getAllowedRoleTargets(member);
               const canManageRole = roleTargets.length > 0;
               const roleUpdating = updatingRoleMemberId === member.id;
+              const roleStyle = ROLE_COLORS[member.role] || ROLE_COLORS.member;
 
               return (
-                <div
+                <Box
                   key={member.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-background px-4 py-3"
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
+                    border: '1px solid var(--border)',
+                    bgcolor: 'var(--background)',
+                    px: 2,
+                    py: 1.5,
+                  }}
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-semibold">
+                  {/* Avatar + info */}
+                  <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        flexShrink: 0,
+                        overflow: 'hidden',
+                        borderRadius: '50%',
+                        bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                        color: 'var(--primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 600,
+                      }}
+                    >
                       {normalizeAvatarUrl(member.avatarUrl) ? (
                         <img
                           src={normalizeAvatarUrl(member.avatarUrl) as string}
                           alt={member.name || member.email || 'Member avatar'}
-                          className="h-full w-full object-cover"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : (
                         getInitials(member.name || member.email)
                       )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-foreground">
+                    </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {member.name || member.email}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">{member.email}</p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {member.email}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         Timezone: {member.timeZone || 'Auto'}
-                      </p>
-                    </div>
-                  </div>
+                      </Typography>
+                    </Box>
+                  </Box>
 
-                  <div className="flex items-center gap-2">
-                    <Tooltip
-                      title={ROLE_TOOLTIPS[member.role] || 'Workspace role'}
-                      placement="top"
-                    >
+                  {/* Role + actions */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Tooltip title={ROLE_TOOLTIPS[member.role] || 'Workspace role'} placement="top">
                       <span>
                         {canManageRole ? (
                           <>
@@ -624,7 +699,20 @@ export default function WorkspaceMembersView() {
                               type="button"
                               disabled={roleUpdating}
                               onClick={e => setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))}
-                              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-opacity ${ROLE_STYLES[member.role] || ROLE_STYLES.member} ${roleUpdating ? 'opacity-60' : ''}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                borderRadius: 0,
+                                border: `1px solid ${roleStyle.border}`,
+                                background: roleStyle.bg,
+                                color: roleStyle.color,
+                                padding: '2px 10px',
+                                fontSize: 12,
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                opacity: roleUpdating ? 0.6 : 1,
+                              }}
                             >
                               {roleUpdating ? 'Updating...' : getRoleLabel(member.role)}
                               <ChevronDown size={12} />
@@ -651,7 +739,15 @@ export default function WorkspaceMembersView() {
                           </>
                         ) : (
                           <span
-                            className={`rounded-full border px-2.5 py-1 text-xs font-medium ${ROLE_STYLES[member.role] || ROLE_STYLES.member}`}
+                            style={{
+                              borderRadius: 0,
+                              border: `1px solid ${roleStyle.border}`,
+                              background: roleStyle.bg,
+                              color: roleStyle.color,
+                              padding: '2px 10px',
+                              fontSize: 12,
+                              fontWeight: 500,
+                            }}
                           >
                             {getRoleLabel(member.role)}
                           </span>
@@ -695,25 +791,29 @@ export default function WorkspaceMembersView() {
                         {removingMemberId === member.id ? 'Removing...' : 'Remove from workspace'}
                       </MenuItem>
                     </Menu>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               );
             })
           )}
-        </div>
+        </Box>
 
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        {/* Pending invitations */}
+        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Typography
+            variant="caption"
+            sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
+          >
             Pending invitations
-          </h2>
-          <p className="text-xs text-muted-foreground">
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
             Invitations expire in {INVITATION_EXPIRY_DAYS} days.
-          </p>
+          </Typography>
 
           {overview.invitations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
               No active invitations. New invites will appear here with resend and revoke actions.
-            </p>
+            </Typography>
           ) : (
             overview.invitations.map(invite => {
               const isResending = resendingInvitationId === invite.id;
@@ -721,22 +821,32 @@ export default function WorkspaceMembersView() {
               const isActionBusy = isResending || isRevoking;
 
               return (
-                <div
+                <Box
                   key={invite.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border px-4 py-3"
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
+                    border: '1px dashed var(--border)',
+                    px: 2,
+                    py: 1.5,
+                  }}
                 >
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium text-foreground">{invite.email}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <Box>
+                    <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
+                      {invite.email}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block' }}>
                       Role: {getRoleLabel(invite.role)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Invited {formatDate(invite.createdAt)} · Expires{' '}
-                      {formatDate(invite.expiresAt)}
-                    </p>
-                  </div>
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block' }}>
+                      Invited {formatDate(invite.createdAt)} · Expires {formatDate(invite.expiresAt)}
+                    </Typography>
+                  </Box>
 
-                  <div className="flex items-center gap-2">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Button
                       size="small"
                       variant="outlined"
@@ -762,13 +872,13 @@ export default function WorkspaceMembersView() {
                     >
                       Copy link
                     </Button>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               );
             })
           )}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

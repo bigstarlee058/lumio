@@ -1,6 +1,8 @@
 'use client';
 
-import { Card, CardContent } from '@/app/components/ui/card';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import type { LucideIcon } from 'lucide-react';
 
 export interface ReportTemplate {
@@ -20,36 +22,79 @@ interface ReportTemplateCardProps {
 
 export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps) {
   return (
-    <Card
+    <Paper
       data-tour-id={template.id === 'pnl' ? 'reports-template-pnl' : undefined}
-      className={`group cursor-pointer rounded-[20px] border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-card ${
-        isSelected
-          ? 'border-primary/40 ring-2 ring-primary/20 shadow-md'
-          : 'hover:border-primary/20'
-      }`}
       onClick={() => onSelect(template)}
+      elevation={0}
+      sx={{
+        cursor: 'pointer',
+        borderRadius: 0,
+        border: isSelected
+          ? '1px solid var(--primary)'
+          : '1px solid var(--border)',
+        bgcolor: 'var(--card)',
+        p: 2.5,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+        transition: 'box-shadow 0.2s',
+        '&:hover': {
+          boxShadow: 3,
+        },
+      }}
     >
-      <CardContent className="p-5 flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-            <template.icon className="h-5 w-5" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-foreground leading-tight">{template.name}</h3>
-            <p className="mt-0.5 text-xs leading-snug text-muted-foreground">{template.description}</p>
-          </div>
-        </div>
-        <div className="flex gap-1.5 flex-wrap">
-          {template.formats.map(f => (
-            <span
-              key={f}
-              className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground"
-            >
-              {f}
-            </span>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 0,
+            bgcolor: 'var(--primary-light, rgba(var(--primary-rgb, 99,102,241),0.1))',
+            color: 'var(--primary)',
+            flexShrink: 0,
+          }}
+        >
+          <template.icon size={20} />
+        </Box>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography
+            variant="body2"
+            fontWeight={600}
+            sx={{ color: 'var(--foreground)', lineHeight: 1.3 }}
+          >
+            {template.name}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ color: 'var(--muted-foreground)', lineHeight: 1.4, display: 'block', mt: 0.25 }}
+          >
+            {template.description}
+          </Typography>
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
+        {template.formats.map(f => (
+          <Box
+            key={f}
+            component="span"
+            sx={{
+              bgcolor: 'var(--muted)',
+              color: 'var(--muted-foreground)',
+              px: 1,
+              py: 0.25,
+              fontSize: 10,
+              fontWeight: 500,
+              textTransform: 'uppercase',
+              borderRadius: 0,
+            }}
+          >
+            {f}
+          </Box>
+        ))}
+      </Box>
+    </Paper>
   );
 }

@@ -1,5 +1,9 @@
 'use client';
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -44,61 +48,67 @@ export function ServiceIntegrationSuggestions({
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+    <Stack spacing={2}>
+      <Box>
+        <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)', mb: 1 }}>
           Connect Your Services
-        </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
           Enhance your workspace by connecting external services. You can always do this later.
-        </p>
-      </div>
+        </Typography>
+      </Box>
 
-      <div className="grid grid-cols-1 gap-3">
+      <Stack spacing={1.5}>
         {INTEGRATIONS.map(integration => (
-          <div
+          <Box
             key={integration.id}
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow"
+            sx={{
+              border: '1px solid var(--border)',
+              p: 2,
+              transition: 'box-shadow 0.2s',
+              '&:hover': { boxShadow: 2 },
+            }}
           >
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 relative">
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+              <Box sx={{ flexShrink: 0, width: 48, height: 48, position: 'relative' }}>
                 <Image
                   src={integration.icon}
                   alt={integration.name}
                   width={48}
                   height={48}
-                  className="object-contain"
+                  style={{ objectFit: 'contain' }}
                 />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-base font-semibold text-gray-900 dark:text-white mb-1">
+              </Box>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)', mb: 0.5 }}>
                   {integration.name}
-                </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', mb: 1.5 }}>
                   {integration.description}
-                </p>
-                <button
-                  type="button"
+                </Typography>
+                <Button
+                  variant="outlined"
+                  size="small"
                   onClick={() => handleConnect(integration.path)}
-                  className="px-4 py-2 text-sm font-medium text-primary border border-primary rounded-lg hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
+                  sx={{ borderRadius: 0 }}
                 >
                   Connect
-                </button>
-              </div>
-            </div>
-          </div>
+                </Button>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </div>
+      </Stack>
 
-      <div className="flex justify-center pt-4">
-        <button
-          type="button"
+      <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+        <Button
+          variant="text"
           onClick={onSkip}
-          className="px-6 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          sx={{ color: 'var(--muted-foreground)' }}
         >
           Skip for now
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Stack>
   );
 }
