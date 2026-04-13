@@ -1,11 +1,14 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import { Badge } from '@/app/components/ui/badge';
-import { Button } from '@/app/components/ui/button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { type UserSession, getSessionIcon } from '@/app/settings/profile/profileHelpers';
 import { LogOut } from 'lucide-react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   t: {
@@ -38,7 +41,7 @@ export function SessionsSection({
   handleLogoutAll,
 }: Props) {
   return (
-    <div className="space-y-5">
+    <Stack spacing={2.5}>
       {sessionsMessage && <Alert variant="success">{sessionsMessage}</Alert>}
       {sessionsError && <Alert variant="error">{sessionsError}</Alert>}
       <Alert variant="warning">
@@ -48,87 +51,158 @@ export function SessionsSection({
         )}
       </Alert>
 
-      <div className="rounded-xl border border-border bg-muted/60 px-4 py-3 text-sm text-muted-foreground">
-        <span className="font-medium text-foreground">{t.sessionsCard.lastLoginLabel.value}:</span>{' '}
+      <Box
+        sx={{
+          borderRadius: 0,
+          border: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'action.hover',
+          px: 2,
+          py: 1.5,
+          fontSize: 14,
+          color: 'text.secondary',
+        }}
+      >
+        <Typography component="span" sx={{ fontWeight: 500, color: 'text.primary', fontSize: 14 }}>
+          {t.sessionsCard.lastLoginLabel.value}:
+        </Typography>{' '}
         {userLastLogin ? new Date(userLastLogin).toLocaleString() : '—'}
-      </div>
+      </Box>
 
-      <div className="space-y-3">
-        <div className="text-sm font-semibold text-foreground">
+      <Stack spacing={1.5}>
+        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
           {tx(['sessionsCard', 'activeSessionsLabel'], 'Active devices')}
-        </div>
+        </Typography>
 
         {sessionsLoading ? (
-          <div className="flex items-center gap-2 rounded-xl border border-border px-4 py-5 text-sm text-muted-foreground">
-            <Spinner className="h-[18px] w-[18px] text-inherit" />
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              borderRadius: 0,
+              border: '1px solid',
+              borderColor: 'divider',
+              px: 2,
+              py: 2.5,
+              fontSize: 14,
+              color: 'text.secondary',
+            }}
+          >
+            <Spinner size={18} />
             {tx(['sessionsCard', 'loadingLabel'], 'Loading sessions...')}
-          </div>
+          </Box>
         ) : sessions.length ? (
-          <div className="space-y-2">
+          <Stack spacing={1}>
             {sessions.map(session => {
               const SessionIcon = getSessionIcon(session.device);
               const isLogoutLoading = logoutSessionLoadingId === session.id;
 
               return (
-                <div
+                <Box
                   key={session.id}
-                  className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 px-4 py-4 md:flex-row md:items-start md:justify-between"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    gap: 2,
+                    borderRadius: 0,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: 'background.paper',
+                    px: 2,
+                    py: 2,
+                    alignItems: { md: 'flex-start' },
+                    justifyContent: { md: 'space-between' },
+                  }}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        mt: 0.5,
+                        display: 'flex',
+                        height: 40,
+                        width: 40,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 0,
+                        bgcolor: 'primary.light',
+                        color: 'primary.main',
+                        flexShrink: 0,
+                      }}
+                    >
                       <SessionIcon size={20} />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-foreground">
-                        <span>{`${session.device} · ${session.browser}`}</span>
+                    </Box>
+                    <Stack spacing={0.5}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                          {`${session.device} · ${session.browser}`}
+                        </Typography>
                         {session.isCurrent && (
-                          <Badge variant="info">
-                            {tx(['sessionsCard', 'currentSessionBadge'], 'This device')}
-                          </Badge>
+                          <Chip
+                            label={tx(['sessionsCard', 'currentSessionBadge'], 'This device')}
+                            color="info"
+                            size="small"
+                            variant="outlined"
+                          />
                         )}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
+                      </Box>
+                      <Typography variant="body2" color="text.secondary">
                         {session.os}
                         {session.ipAddress
                           ? ` · ${tx(['sessionsCard', 'ipLabel'], 'IP')}: ${session.ipAddress}`
                           : ''}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
                         {tx(['sessionsCard', 'lastActiveLabel'], 'Last active')}:{' '}
                         {new Date(session.lastUsedAt).toLocaleString()}
-                      </div>
-                    </div>
-                  </div>
+                      </Typography>
+                    </Stack>
+                  </Box>
 
-                  <div className="flex justify-end">
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Button
-                      variant={session.isCurrent ? 'destructive' : 'outline'}
+                      variant={session.isCurrent ? 'contained' : 'outlined'}
+                      color={session.isCurrent ? 'error' : 'primary'}
                       onClick={() => handleLogoutSession(session)}
                       disabled={isLogoutLoading}
-                      className="gap-2"
+                      startIcon={isLogoutLoading ? <Spinner size={14} /> : <LogOut size={18} />}
+                      size="small"
                     >
-                      {isLogoutLoading && <Spinner className="h-[14px] w-[14px] text-inherit" />}
-                      <LogOut size={18} />
                       {tx(['sessionsCard', 'logoutSessionButton'], 'Log out')}
                     </Button>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               );
             })}
-          </div>
+          </Stack>
         ) : (
-          <div className="rounded-xl border border-dashed border-border bg-muted/60 px-4 py-6 text-sm text-muted-foreground">
+          <Box
+            sx={{
+              borderRadius: 0,
+              border: '1px dashed',
+              borderColor: 'divider',
+              bgcolor: 'action.hover',
+              px: 2,
+              py: 3,
+              fontSize: 14,
+              color: 'text.secondary',
+            }}
+          >
             {tx(['sessionsCard', 'emptySessionsLabel'], 'No active sessions found.')}
-          </div>
+          </Box>
         )}
-      </div>
+      </Stack>
 
-      <div className="flex justify-end">
-        <Button variant="destructive" onClick={handleLogoutAll} className="gap-2">
-          <LogOut size={18} />
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleLogoutAll}
+          startIcon={<LogOut size={18} />}
+        >
           {t.sessionsCard.logoutAllButton.value}
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Stack>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -10,5 +11,5 @@ export default function NotificationSettingsRedirectPage() {
     router.replace('/settings/profile#notifications');
   }, [router]);
 
-  return <div className="container-shared py-6" />;
+  return <Box className="container-shared" sx={{ py: 3 }} />;
 }

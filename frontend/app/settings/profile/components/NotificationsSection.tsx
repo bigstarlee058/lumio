@@ -2,18 +2,16 @@
 
 import { Alert } from '@/app/components/ui/alert';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/app/components/ui/card';
-import { Checkbox } from '@/app/components/ui/checkbox';
-import {
   type NotificationPreferences,
   systemNotificationSettings,
   workspaceNotificationSettings,
 } from '@/app/settings/profile/profileHelpers';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Checkbox from '@mui/material/Checkbox';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type NotificationKey = keyof NotificationPreferences;
 type NotificationItem = { label: string; description: string };
@@ -44,21 +42,42 @@ function NotificationSettingRow({
 }) {
   const inputId = `pref-${settingKey}`;
   return (
-    <div className="flex items-start justify-between gap-4 rounded-xl border border-border p-3">
-      <div className="space-y-1">
-        <label htmlFor={inputId} className="text-sm font-medium text-foreground">
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 2,
+        borderRadius: 0,
+        border: '1px solid',
+        borderColor: 'divider',
+        p: 1.5,
+      }}
+    >
+      <Stack spacing={0.25}>
+        <Typography
+          component="label"
+          htmlFor={inputId}
+          variant="body2"
+          sx={{ fontWeight: 500, color: 'text.primary', cursor: 'pointer' }}
+        >
           {item.label}
-        </label>
-        <p className="text-xs text-muted-foreground">{item.description}</p>
-      </div>
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {item.description}
+        </Typography>
+      </Stack>
       <Checkbox
         id={inputId}
         checked={checked}
-        onCheckedChange={value => void onToggle(settingKey, value === true)}
+        onChange={(_e, val) => void onToggle(settingKey, val)}
         disabled={saving}
         aria-label={item.label}
+        size="small"
+        color="primary"
+        sx={{ mt: -0.5 }}
       />
-    </div>
+    </Box>
   );
 }
 
@@ -101,55 +120,78 @@ export function NotificationsSection({
   };
 
   return (
-    <div className="space-y-4">
+    <Stack spacing={2}>
       {notificationError ? <Alert variant="error">{notificationError}</Alert> : null}
       {notificationMessage ? <Alert variant="success">{notificationMessage}</Alert> : null}
 
       {notificationsLoading ? (
-        <div className="rounded-xl border border-border bg-card/60 px-4 py-5 text-sm text-muted-foreground">
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            px: 2,
+            py: 2.5,
+            fontSize: 14,
+            color: 'text.secondary',
+          }}
+        >
           {labels.loading}
-        </div>
+        </Box>
       ) : (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle>{labels.workspaceTitle}</CardTitle>
-              <CardDescription>{labels.workspaceDescription}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {workspaceNotificationSettings.map(setting => (
-                <NotificationSettingRow
-                  key={setting.key}
-                  settingKey={setting.key}
-                  item={labels.items[setting.key]}
-                  checked={notificationPreferences[setting.key]}
-                  saving={notificationSavingKey === setting.key}
-                  onToggle={toggleNotificationPreference}
-                />
-              ))}
+          <Card variant="outlined">
+            <Box sx={{ px: 2, pt: 2, pb: 0 }}>
+              <Typography variant="subtitle1" fontWeight={600}>
+                {labels.workspaceTitle}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {labels.workspaceDescription}
+              </Typography>
+            </Box>
+            <CardContent>
+              <Stack spacing={2}>
+                {workspaceNotificationSettings.map(setting => (
+                  <NotificationSettingRow
+                    key={setting.key}
+                    settingKey={setting.key}
+                    item={labels.items[setting.key]}
+                    checked={notificationPreferences[setting.key]}
+                    saving={notificationSavingKey === setting.key}
+                    onToggle={toggleNotificationPreference}
+                  />
+                ))}
+              </Stack>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{labels.systemTitle}</CardTitle>
-              <CardDescription>{labels.systemDescription}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {systemNotificationSettings.map(setting => (
-                <NotificationSettingRow
-                  key={setting.key}
-                  settingKey={setting.key}
-                  item={labels.items[setting.key]}
-                  checked={notificationPreferences[setting.key]}
-                  saving={notificationSavingKey === setting.key}
-                  onToggle={toggleNotificationPreference}
-                />
-              ))}
+          <Card variant="outlined">
+            <Box sx={{ px: 2, pt: 2, pb: 0 }}>
+              <Typography variant="subtitle1" fontWeight={600}>
+                {labels.systemTitle}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {labels.systemDescription}
+              </Typography>
+            </Box>
+            <CardContent>
+              <Stack spacing={2}>
+                {systemNotificationSettings.map(setting => (
+                  <NotificationSettingRow
+                    key={setting.key}
+                    settingKey={setting.key}
+                    item={labels.items[setting.key]}
+                    checked={notificationPreferences[setting.key]}
+                    saving={notificationSavingKey === setting.key}
+                    onToggle={toggleNotificationPreference}
+                  />
+                ))}
+              </Stack>
             </CardContent>
           </Card>
         </>
       )}
-    </div>
+    </Stack>
   );
 }

@@ -2,6 +2,10 @@
 
 import { type ChangelogEntry, ChangelogModal } from '@/app/components/ChangelogModal';
 import { CalendarDays, Clock3, FileText } from 'lucide-react';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   tx: (path: string[], fallback: string) => string;
@@ -40,55 +44,124 @@ export function ChangelogSection({
   });
 
   return (
-    <div className="space-y-4">
+    <Stack spacing={2}>
       {changelogLoading ? (
-        <div className="rounded-2xl border border-border bg-card px-5 py-8 text-sm text-muted-foreground">
+        <Box
+          sx={{
+            borderRadius: 0,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            px: 2.5,
+            py: 4,
+            fontSize: 14,
+            color: 'text.secondary',
+          }}
+        >
           {loadingText}
-        </div>
+        </Box>
       ) : formattedEntries.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card px-5 py-14 text-center">
-          <FileText className="mb-3 h-8 w-8 text-muted-foreground" />
-          <p className="text-sm font-medium text-foreground">{emptyText}</p>
-        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 0,
+            border: '1px dashed',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            px: 2.5,
+            py: 7,
+            textAlign: 'center',
+          }}
+        >
+          <FileText style={{ marginBottom: 12, width: 32, height: 32, color: '#9ca3af' }} />
+          <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
+            {emptyText}
+          </Typography>
+        </Box>
       ) : (
-        <div className="space-y-3">
+        <Stack spacing={1.5}>
           {formattedEntries.map(entry => (
-            <button
+            <Box
+              component="button"
               key={entry.id}
               type="button"
               onClick={() => setChangelogSelectedEntry(entry)}
-              className="w-full rounded-2xl border border-border bg-card px-5 py-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/50"
+              sx={{
+                width: '100%',
+                borderRadius: 0,
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                px: 2.5,
+                py: 2.5,
+                textAlign: 'left',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                '&:hover': {
+                  borderColor: 'primary.light',
+                  bgcolor: 'action.hover',
+                  transform: 'translateY(-2px)',
+                },
+              }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 className="line-clamp-2 text-lg font-semibold leading-snug text-foreground">
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 600,
+                      lineHeight: 1.3,
+                      color: 'text.primary',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
                     {entry.title}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mt: 1,
+                      lineHeight: 1.75,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                    }}
+                  >
                     {entry.summary}
-                  </p>
-                </div>
+                  </Typography>
+                </Box>
 
                 {entry.version ? (
-                  <span className="shrink-0 rounded-full border border-border bg-muted px-3 py-1 text-xs font-semibold text-foreground">
-                    {entry.version}
-                  </span>
+                  <Chip
+                    label={entry.version}
+                    size="small"
+                    variant="outlined"
+                    sx={{ flexShrink: 0, fontWeight: 600 }}
+                  />
                 ) : null}
-              </div>
+              </Box>
 
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <CalendarDays className="h-3.5 w-3.5" />
+              <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, fontSize: 12, color: 'text.secondary' }}>
+                  <CalendarDays style={{ width: 14, height: 14 }} />
                   {entry.dateLabel}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Clock3 className="h-3.5 w-3.5" />
+                </Box>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, fontSize: 12, color: 'text.secondary' }}>
+                  <Clock3 style={{ width: 14, height: 14 }} />
                   {openDetailsText}
-                </span>
-              </div>
-            </button>
+                </Box>
+              </Box>
+            </Box>
           ))}
-        </div>
+        </Stack>
       )}
 
       <ChangelogModal
@@ -98,6 +171,6 @@ export function ChangelogSection({
         releaseLabel={releaseLabelText}
         closeLabel={closeLabelText}
       />
-    </div>
+    </Stack>
   );
 }

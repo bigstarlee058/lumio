@@ -1,12 +1,14 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { TimeZoneOption } from '@/app/settings/profile/profileHelpers';
 import type { FormEvent } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   t: {
@@ -51,14 +53,17 @@ export function ProfileSection({
   selectedTimeZoneOption,
 }: Props) {
   return (
-    <form className="space-y-5" onSubmit={handleProfileSubmit}>
+    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handleProfileSubmit}>
       {profileMessage && <Alert variant="success">{profileMessage}</Alert>}
       {profileError && <Alert variant="error">{profileError}</Alert>}
 
-      <div className="space-y-2">
-        <Label htmlFor="profile-name">{t.profileCard.nameLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="profile-name" variant="body2" fontWeight={600}>
+          {t.profileCard.nameLabel.value}
+        </Typography>
+        <TextField
           id="profile-name"
+          size="small"
           value={profileName}
           onChange={e => {
             setProfileName(e.target.value);
@@ -66,12 +71,16 @@ export function ProfileSection({
             setProfileError(null);
           }}
           required
+          fullWidth
         />
-      </div>
+      </Stack>
 
-      <div className="space-y-2">
-        <Label htmlFor="profile-timezone">{t.profileCard.timeZoneLabel.value}</Label>
-        <button
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="profile-timezone-trigger" variant="body2" fontWeight={600}>
+          {t.profileCard.timeZoneLabel.value}
+        </Typography>
+        <Box
+          component="button"
           id="profile-timezone-trigger"
           data-testid="profile-timezone-trigger"
           type="button"
@@ -79,26 +88,50 @@ export function ProfileSection({
             setIsTimeZoneModalOpen(true);
             setTimeZoneSearch('');
           }}
-          className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors hover:border-primary"
           aria-haspopup="dialog"
           aria-expanded={isTimeZoneModalOpen}
+          sx={{
+            display: 'flex',
+            height: 40,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderRadius: 0,
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+            px: 1.5,
+            py: 1,
+            fontSize: 14,
+            color: 'text.primary',
+            cursor: 'pointer',
+            transition: 'border-color 0.2s',
+            '&:hover': { borderColor: 'primary.main' },
+          }}
         >
           <span>{selectedTimeZoneOption.label}</span>
-          <span className="text-muted-foreground">v</span>
-        </button>
-        <p className="text-xs text-muted-foreground">{t.profileCard.timeZoneHelp.value}</p>
-      </div>
+          <Typography component="span" color="text.secondary" sx={{ fontSize: 12 }}>v</Typography>
+        </Box>
+        <Typography variant="caption" color="text.secondary">
+          {t.profileCard.timeZoneHelp.value}
+        </Typography>
+      </Stack>
 
       {hasProfileChanges && (
         <Alert variant="warning">{tx(['profileCard', 'unsavedChanges'], 'Unsaved changes')}</Alert>
       )}
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={profileLoading || !hasProfileChanges} className="gap-2">
-          {profileLoading && <Spinner className="h-4 w-4 text-inherit" />}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={profileLoading || !hasProfileChanges}
+          startIcon={profileLoading ? <Spinner size={16} /> : undefined}
+        >
           {t.profileCard.submit.value}
         </Button>
-      </div>
-    </form>
+      </Box>
+    </Box>
   );
 }

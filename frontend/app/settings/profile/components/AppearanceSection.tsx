@@ -1,16 +1,14 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/app/components/ui/card';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { ThemePreference } from '@/app/lib/theme-preference';
 import { ModeToggle } from '@/components/mode-toggle';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   t: {
@@ -41,37 +39,45 @@ export function AppearanceSection({
   handleThemePreferenceChange,
 }: Props) {
   return (
-    <div className="space-y-5">
+    <Stack spacing={2.5}>
       {appearanceMessage ? <Alert variant="success">{appearanceMessage}</Alert> : null}
       {appearanceError ? <Alert variant="error">{appearanceError}</Alert> : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t.appearanceCard.themeLabel.value}</CardTitle>
-          <CardDescription>{t.appearanceCard.themeHelp.value}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <ModeToggle
-            value={themePreference}
-            onThemeChange={handleThemePreferenceChange}
-            showPreview={false}
-            labels={{
-              light: t.appearanceCard.light.value,
-              dark: t.appearanceCard.dark.value,
-              auto: tx(['appearanceCard', 'auto'], 'Auto'),
-              active: t.appearanceCard.active.value,
-              followsSystem: t.appearanceCard.followsSystem.value,
-            }}
-          />
-          <p className="text-xs text-muted-foreground">{t.appearanceCard.followsSystem.value}</p>
-          {appearanceLoading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Spinner className="h-4 w-4 text-inherit" />
-              <span>{t.appearanceCard.active.value}</span>
-            </div>
-          ) : null}
+      <Card variant="outlined">
+        <Box sx={{ px: 2, pt: 2, pb: 0 }}>
+          <Typography variant="subtitle1" fontWeight={600}>
+            {t.appearanceCard.themeLabel.value}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t.appearanceCard.themeHelp.value}
+          </Typography>
+        </Box>
+        <CardContent>
+          <Stack spacing={2}>
+            <ModeToggle
+              value={themePreference}
+              onThemeChange={handleThemePreferenceChange}
+              showPreview={false}
+              labels={{
+                light: t.appearanceCard.light.value,
+                dark: t.appearanceCard.dark.value,
+                auto: tx(['appearanceCard', 'auto'], 'Auto'),
+                active: t.appearanceCard.active.value,
+                followsSystem: t.appearanceCard.followsSystem.value,
+              }}
+            />
+            <Typography variant="caption" color="text.secondary">
+              {t.appearanceCard.followsSystem.value}
+            </Typography>
+            {appearanceLoading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'text.secondary' }}>
+                <Spinner size={16} />
+                <span>{t.appearanceCard.active.value}</span>
+              </Box>
+            ) : null}
+          </Stack>
         </CardContent>
       </Card>
-    </div>
+    </Stack>
   );
 }

@@ -1,11 +1,13 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { FormEvent } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   t: {
@@ -38,39 +40,54 @@ export function EmailSection({
   handleEmailSubmit,
 }: Props) {
   return (
-    <form className="space-y-5" onSubmit={handleEmailSubmit}>
+    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handleEmailSubmit}>
       {emailMessage && <Alert variant="success">{emailMessage}</Alert>}
       {emailError && <Alert variant="error">{emailError}</Alert>}
 
-      <div className="space-y-2">
-        <Label htmlFor="email-next">{t.emailCard.newEmailLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="email-next" variant="body2" fontWeight={600}>
+          {t.emailCard.newEmailLabel.value}
+        </Typography>
+        <TextField
           id="email-next"
           type="email"
+          size="small"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
+          fullWidth
         />
-      </div>
+      </Stack>
 
-      <div className="space-y-2">
-        <Label htmlFor="email-password">{t.emailCard.currentPasswordLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="email-password" variant="body2" fontWeight={600}>
+          {t.emailCard.currentPasswordLabel.value}
+        </Typography>
+        <TextField
           id="email-password"
           type="password"
+          size="small"
           value={emailPassword}
           onChange={e => setEmailPassword(e.target.value)}
           required
+          fullWidth
         />
-        <p className="text-xs text-muted-foreground">{t.emailCard.currentPasswordHelp.value}</p>
-      </div>
+        <Typography variant="caption" color="text.secondary">
+          {t.emailCard.currentPasswordHelp.value}
+        </Typography>
+      </Stack>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={emailLoading} className="gap-2">
-          {emailLoading && <Spinner className="h-4 w-4 text-inherit" />}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={emailLoading}
+          startIcon={emailLoading ? <Spinner size={16} /> : undefined}
+        >
           {t.emailCard.submit.value}
         </Button>
-      </div>
-    </form>
+      </Box>
+    </Box>
   );
 }

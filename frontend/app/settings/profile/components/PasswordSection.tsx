@@ -1,12 +1,14 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Separator } from '@/app/components/ui/separator';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { FormEvent } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 type Passwords = { current: string; next: string; confirm: string };
 
@@ -40,7 +42,7 @@ export function PasswordSection({
   handlePasswordSubmit,
 }: Props) {
   return (
-    <form className="space-y-5" onSubmit={handlePasswordSubmit}>
+    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handlePasswordSubmit}>
       {passwordMessage && <Alert variant="success">{passwordMessage}</Alert>}
       {passwordError && <Alert variant="error">{passwordError}</Alert>}
       <Alert variant="warning">
@@ -50,48 +52,67 @@ export function PasswordSection({
         )}
       </Alert>
 
-      <div className="space-y-2">
-        <Label htmlFor="password-current">{t.passwordCard.currentPasswordLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="password-current" variant="body2" fontWeight={600}>
+          {t.passwordCard.currentPasswordLabel.value}
+        </Typography>
+        <TextField
           id="password-current"
           type="password"
+          size="small"
           value={passwords.current}
           onChange={e => setPasswords({ ...passwords, current: e.target.value })}
           required
+          fullWidth
         />
-      </div>
+      </Stack>
 
-      <Separator />
+      <Divider />
 
-      <div className="space-y-2">
-        <Label htmlFor="password-next">{t.passwordCard.newPasswordLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="password-next" variant="body2" fontWeight={600}>
+          {t.passwordCard.newPasswordLabel.value}
+        </Typography>
+        <TextField
           id="password-next"
           type="password"
+          size="small"
           value={passwords.next}
           onChange={e => setPasswords({ ...passwords, next: e.target.value })}
           required
+          fullWidth
         />
-        <p className="text-xs text-muted-foreground">{t.passwordCard.newPasswordHelp.value}</p>
-      </div>
+        <Typography variant="caption" color="text.secondary">
+          {t.passwordCard.newPasswordHelp.value}
+        </Typography>
+      </Stack>
 
-      <div className="space-y-2">
-        <Label htmlFor="password-confirm">{t.passwordCard.confirmPasswordLabel.value}</Label>
-        <Input
+      <Stack spacing={0.5}>
+        <Typography component="label" htmlFor="password-confirm" variant="body2" fontWeight={600}>
+          {t.passwordCard.confirmPasswordLabel.value}
+        </Typography>
+        <TextField
           id="password-confirm"
           type="password"
+          size="small"
           value={passwords.confirm}
           onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
           required
+          fullWidth
         />
-      </div>
+      </Stack>
 
-      <div className="flex justify-end">
-        <Button type="submit" variant="secondary" disabled={passwordLoading} className="gap-2">
-          {passwordLoading && <Spinner className="h-4 w-4 text-inherit" />}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="secondary"
+          disabled={passwordLoading}
+          startIcon={passwordLoading ? <Spinner size={16} /> : undefined}
+        >
           {t.passwordCard.submit.value}
         </Button>
-      </div>
-    </form>
+      </Box>
+    </Box>
   );
 }

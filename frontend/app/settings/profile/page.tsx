@@ -1,15 +1,7 @@
 'use client';
 
 import { Alert } from '@/app/components/ui/alert';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/app/components/ui/card';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { Label } from '@/app/components/ui/label';
 import { Select as UiSelect } from '@/app/components/ui/select';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
@@ -17,7 +9,6 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
-import { cn } from '@/app/lib/utils';
 import { AppearanceSection } from '@/app/settings/profile/components/AppearanceSection';
 import { ChangelogSection } from '@/app/settings/profile/components/ChangelogSection';
 import { EmailSection } from '@/app/settings/profile/components/EmailSection';
@@ -41,6 +32,10 @@ import {
   resolveTimeZoneOptions,
   sections,
 } from '@/app/settings/profile/profileHelpers';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
@@ -232,19 +227,19 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="container-shared flex justify-center px-4 py-16">
-        <Spinner className="h-8 w-8 text-primary" />
-      </div>
+      <Box className="container-shared" sx={{ display: 'flex', justifyContent: 'center', px: 2, py: 8 }}>
+        <Spinner size={32} />
+      </Box>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="container-shared px-4 py-10">
-        <Alert className="max-w-xl" variant="default">
+      <Box className="container-shared" sx={{ px: 2, py: 5 }}>
+        <Alert style={{ maxWidth: 576 }} variant="default">
           {t.authRequired.value}
         </Alert>
-      </div>
+      </Box>
     );
   }
 
@@ -381,112 +376,195 @@ export default function ProfileSettingsPage() {
   const avatarUrl = normalizeAvatarUrl(user?.avatarUrl);
 
   return (
-    <div className="container-shared px-4 py-8">
-      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-        <aside className="hidden lg:block">
-          <div className="sticky top-24">
-            <Card className="border-border bg-card shadow-sm dark:bg-card">
-              <CardHeader className="pb-3">
-                <div className="flex flex-col items-center gap-2 pb-3">
-                  <div className="group relative">
-                    <button
+    <Box className="container-shared" sx={{ px: 2, py: 4 }}>
+      <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { lg: '260px 1fr' } }}>
+        {/* Sidebar — desktop */}
+        <Box component="aside" sx={{ display: { xs: 'none', lg: 'block' } }}>
+          <Box sx={{ position: 'sticky', top: 96 }}>
+            <Card variant="outlined">
+              <Box sx={{ px: 2, pt: 2, pb: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pb: 1.5 }}>
+                  <Box sx={{ position: 'relative' }}>
+                    <Box
+                      component="button"
                       type="button"
-                      className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-primary text-base font-semibold"
                       onClick={() => avatarInputRef.current?.click()}
                       disabled={avatarUploading}
+                      sx={{
+                        display: 'flex',
+                        height: 80,
+                        width: 80,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                        borderRadius: '50%',
+                        bgcolor: 'primary.light',
+                        color: 'primary.main',
+                        fontSize: 16,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: 'none',
+                        p: 0,
+                      }}
                     >
                       {avatarUrl && !avatarError ? (
                         <img
                           src={avatarUrl}
                           alt={displayName}
-                          className="h-full w-full object-cover"
+                          style={{ height: '100%', width: '100%', objectFit: 'cover' }}
                           onError={() => setAvatarError(true)}
                         />
                       ) : (
                         initials
                       )}
-                    </button>
-                    <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-xs font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border border-border bg-card shadow">
-                      <Pencil size={14} className="text-muted-foreground" />
-                    </div>
+                    </Box>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: -4,
+                        right: -4,
+                        display: 'flex',
+                        height: 28,
+                        width: 28,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        bgcolor: 'background.paper',
+                        boxShadow: 1,
+                      }}
+                    >
+                      <Pencil size={14} style={{ color: '#9ca3af' }} />
+                    </Box>
                     <input
                       ref={avatarInputRef}
                       type="file"
                       accept="image/*"
                       onChange={handleAvatarSelect}
-                      className="hidden"
+                      style={{ display: 'none' }}
                     />
-                  </div>
+                  </Box>
                   {avatarMessage && <Alert variant="success">{avatarMessage}</Alert>}
                   {avatarErrorMessage && <Alert variant="error">{avatarErrorMessage}</Alert>}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
+                </Box>
+              </Box>
+              <CardContent sx={{ pt: 0 }}>
                 {sections.map(id => {
                   const Icon = sectionMeta[id].icon;
                   const isActive = id === activeSection;
                   return (
-                    <button
+                    <Box
+                      component="button"
                       key={id}
                       type="button"
                       onClick={() => setActiveSection(id)}
-                      className={cn(
-                        'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-foreground transition-all hover:bg-muted',
-                        isActive && 'font-semibold',
-                      )}
+                      sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        borderRadius: 0,
+                        px: 1.5,
+                        py: 1.25,
+                        textAlign: 'left',
+                        fontSize: 14,
+                        fontWeight: isActive ? 600 : 500,
+                        color: 'text.primary',
+                        bgcolor: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s',
+                        '&:hover': { bgcolor: 'action.hover' },
+                      }}
                     >
-                      <span
-                        className={cn(
-                          'flex h-8 w-8 items-center justify-center rounded-lg text-[18px]',
-                          isActive ? 'text-primary' : 'text-muted-foreground',
-                        )}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          height: 32,
+                          width: 32,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: 0,
+                          color: isActive ? 'primary.main' : 'text.secondary',
+                        }}
                       >
                         <Icon size={18} />
-                      </span>
+                      </Box>
                       <span>{sectionMeta[id].title}</span>
-                    </button>
+                    </Box>
                   );
                 })}
               </CardContent>
             </Card>
-          </div>
-        </aside>
+          </Box>
+        </Box>
 
-        <main className="space-y-4">
-          <div className="lg:hidden">
-            <Card className="border-border bg-card shadow-sm dark:bg-card">
-              <CardContent className="space-y-2">
-                <div className="flex justify-center pb-2">
-                  <div className="group relative">
-                    <button
+        {/* Main content */}
+        <Box component="main" sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* Mobile section picker */}
+          <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
+            <Card variant="outlined">
+              <CardContent>
+                <Box sx={{ display: 'flex', justifyContent: 'center', pb: 1 }}>
+                  <Box sx={{ position: 'relative' }}>
+                    <Box
+                      component="button"
                       type="button"
-                      className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-primary text-base font-semibold"
                       onClick={() => avatarInputRef.current?.click()}
                       disabled={avatarUploading}
+                      sx={{
+                        display: 'flex',
+                        height: 48,
+                        width: 48,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                        borderRadius: '50%',
+                        bgcolor: 'primary.light',
+                        color: 'primary.main',
+                        fontSize: 16,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        border: 'none',
+                        p: 0,
+                      }}
                     >
                       {avatarUrl && !avatarError ? (
                         <img
                           src={avatarUrl}
                           alt={displayName}
-                          className="h-full w-full object-cover"
+                          style={{ height: '100%', width: '100%', objectFit: 'cover' }}
                           onError={() => setAvatarError(true)}
                         />
                       ) : (
                         initials
                       )}
-                    </button>
-                    <div className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-3 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {tx(['profileCard', 'editPhotoLabel'], 'Edit photo')}
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border border-border bg-card shadow">
-                      <Pencil size={14} className="text-muted-foreground" />
-                    </div>
-                  </div>
-                </div>
-                <Label htmlFor="profile-section">{t.navigation.sectionLabel.value}</Label>
+                    </Box>
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        bottom: -4,
+                        right: -4,
+                        display: 'flex',
+                        height: 24,
+                        width: 24,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        bgcolor: 'background.paper',
+                        boxShadow: 1,
+                      }}
+                    >
+                      <Pencil size={14} style={{ color: '#9ca3af' }} />
+                    </Box>
+                  </Box>
+                </Box>
+                <Typography component="label" htmlFor="profile-section" variant="body2" fontWeight={600}>
+                  {t.navigation.sectionLabel.value}
+                </Typography>
                 <UiSelect
                   id="profile-section"
                   value={activeSection}
@@ -500,30 +578,52 @@ export default function ProfileSettingsPage() {
                 </UiSelect>
               </CardContent>
             </Card>
-          </div>
+          </Box>
 
-          <Card className="border-border bg-card shadow-sm dark:bg-card">
-            <CardHeader className="border-b border-border bg-muted/60 dark:bg-muted/60">
-              <div className="flex items-start gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                  <ActiveIcon size={20} />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-foreground">
-                    {activeMeta.title}
-                  </CardTitle>
-                  {activeMeta.description && (
-                    <CardDescription className="mt-1 text-sm text-muted-foreground">
-                      {activeMeta.description}
-                    </CardDescription>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6 lg:p-8">{sectionContent[activeSection]}</CardContent>
+          {/* Active section card */}
+          <Card variant="outlined">
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1.5,
+                px: 2,
+                py: 2,
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'action.hover',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  height: 44,
+                  width: 44,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 0,
+                  bgcolor: 'primary.light',
+                  color: 'primary.main',
+                  flexShrink: 0,
+                }}
+              >
+                <ActiveIcon size={20} />
+              </Box>
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontSize: 18, fontWeight: 600, color: 'text.primary' }}>
+                  {activeMeta.title}
+                </Typography>
+                {activeMeta.description && (
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {activeMeta.description}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+            <CardContent sx={{ p: { xs: 3, lg: 4 } }}>{sectionContent[activeSection]}</CardContent>
           </Card>
-        </main>
-      </div>
+        </Box>
+      </Box>
 
       <DrawerShell
         isOpen={isTimeZoneModalOpen}
@@ -535,53 +635,102 @@ export default function ProfileSettingsPage() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 space-y-4 overflow-y-auto">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
+        <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
+            <Box sx={{ position: 'relative' }}>
+              <Search
+                style={{
+                  pointerEvents: 'none',
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 16,
+                  height: 16,
+                  color: '#9ca3af',
+                }}
+              />
+              <Box
+                component="input"
                 id="profile-timezone"
                 type="text"
                 value={timeZoneSearch}
-                onChange={event => setTimeZoneSearch(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setTimeZoneSearch(event.target.value)}
                 placeholder={t.profileCard.timeZones.auto.value}
-                className="w-full rounded-xl border border-border bg-card py-3 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary"
+                sx={{
+                  width: '100%',
+                  borderRadius: 0,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  bgcolor: 'background.paper',
+                  py: 1.5,
+                  pl: 5,
+                  pr: 2,
+                  fontSize: 14,
+                  color: 'text.primary',
+                  outline: 'none',
+                  '&:focus': { borderColor: 'primary.main' },
+                  boxSizing: 'border-box',
+                }}
               />
-            </div>
+            </Box>
 
-            <div className="space-y-1">
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
               {filteredTimeZoneSelectOptions.length > 0 ? (
                 filteredTimeZoneSelectOptions.map(option => {
                   const isSelected = option.value === selectedTimeZoneOption.value;
                   return (
-                    <button
+                    <Box
+                      component="button"
                       key={option.value || '__auto'}
                       type="button"
                       onClick={() => handleTimeZoneChange(option.value)}
-                      className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors ${
-                        isSelected ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
-                      }`}
+                      sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderRadius: 0,
+                        px: 1.5,
+                        py: 1.5,
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        border: 'none',
+                        bgcolor: isSelected ? 'primary.light' : 'transparent',
+                        color: isSelected ? 'primary.main' : 'text.primary',
+                        '&:hover': { bgcolor: isSelected ? 'primary.light' : 'action.hover' },
+                        transition: 'background-color 0.15s',
+                      }}
                     >
-                      <span className="font-medium">{option.label}</span>
-                      {isSelected ? <Check className="h-4 w-4" /> : null}
-                    </button>
+                      <Typography component="span" sx={{ fontWeight: 500, fontSize: 14 }}>
+                        {option.label}
+                      </Typography>
+                      {isSelected ? <Check style={{ width: 16, height: 16 }} /> : null}
+                    </Box>
                   );
                 })
               ) : (
-                <p className="rounded-xl bg-card px-3 py-3 text-sm text-muted-foreground">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ borderRadius: 0, bgcolor: 'background.paper', px: 1.5, py: 1.5 }}
+                >
                   No time zones found
-                </p>
+                </Typography>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <p className="mt-4 border-t border-border pt-4 text-xs text-muted-foreground">
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}
+          >
             {t.profileCard.timeZoneHelp.value}
-          </p>
-        </div>
+          </Typography>
+        </Box>
       </DrawerShell>
-    </div>
+    </Box>
   );
 }
