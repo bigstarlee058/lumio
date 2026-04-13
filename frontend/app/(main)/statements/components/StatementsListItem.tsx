@@ -341,7 +341,7 @@ export function StatementsListItem({
               <Checkbox
                 checked={selected}
                 onCheckedChange={onToggleSelect}
-                style={{ height: 16, width: 16, borderRadius: 0 }}
+                style={{ height: 16, width: 16 }}
               />
             )}
           </div>
