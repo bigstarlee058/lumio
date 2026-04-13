@@ -707,7 +707,7 @@ export default function UnapprovedCashView() {
                 }))
               }
               placeholder={labels.filters.amountFrom}
-              className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={inputStyle}
             />
 
             <input
@@ -721,20 +721,20 @@ export default function UnapprovedCashView() {
                 }))
               }
               placeholder={labels.filters.amountTo}
-              className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={inputStyle}
             />
 
             <button
               type="button"
               onClick={resetFilters}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
             >
-              <X className="h-4 w-4" />
+              <X style={{ width: 16, height: 16 }} />
               {labels.filters.reset}
             </button>
           </div>
 
-          <div className="mt-2 grid gap-2 md:grid-cols-2">
+          <div style={{ marginTop: 8, display: 'grid', gap: 8, gridTemplateColumns: 'repeat(2, 1fr)' }}>
             <DatePicker
               label={labels.filters.dateFrom}
               value={toCalendarDate(filters.dateFrom)}
@@ -755,16 +755,16 @@ export default function UnapprovedCashView() {
         </div>
 
         {selectedCount > 0 ? (
-          <div className="rounded-lg border border-primary/30 bg-primary/5 p-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-white">
+          <div style={{ border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: 'rgba(var(--primary-rgb,0,0,0),0.05)', padding: 12, borderRadius: 0 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--primary)', padding: '4px 10px', fontSize: 12, fontWeight: 600, color: '#fff', borderRadius: 9999 }}>
                 {formatTemplate(labels.actions.selected, { count: selectedCount })}
               </span>
 
               <button
                 type="button"
                 onClick={toggleSelectAllVisible}
-                className="inline-flex items-center rounded-md border border-primary/30 bg-white px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-primary/5"
+                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--primary)', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.selectAllVisible}
               </button>
@@ -772,7 +772,7 @@ export default function UnapprovedCashView() {
               <button
                 type="button"
                 onClick={handleIgnoreSelected}
-                className="inline-flex items-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.ignore}
               </button>
@@ -780,7 +780,7 @@ export default function UnapprovedCashView() {
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="ml-auto inline-flex items-center rounded-md border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 'auto', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
               >
                 {labels.actions.clearSelection}
               </button>
@@ -789,37 +789,37 @@ export default function UnapprovedCashView() {
         ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto rounded-lg border border-gray-200 bg-white">
+      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid #e5e7eb', background: '#fff', borderRadius: 0 }}>
         {loading ? (
-          <div className="flex h-full min-h-[280px] items-center justify-center">
-            <Spinner className="h-20 w-20 text-primary" />
+          <div style={{ display: 'flex', height: '100%', minHeight: 280, alignItems: 'center', justifyContent: 'center' }}>
+            <Spinner size={80} />
           </div>
         ) : filteredQueue.length === 0 ? (
-          <div className="flex h-full min-h-[280px] flex-col items-center justify-center px-6 text-center">
-            <div className="rounded-full bg-emerald-100 p-2 text-emerald-700">
-              <Check className="h-5 w-5" />
+          <div style={{ display: 'flex', height: '100%', minHeight: 280, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px', textAlign: 'center' }}>
+            <div style={{ borderRadius: '50%', background: '#d1fae5', padding: 8, color: '#065f46' }}>
+              <Check style={{ width: 20, height: 20 }} />
             </div>
-            <h2 className="mt-3 text-sm font-semibold text-gray-900">{labels.empty.title}</h2>
-            <p className="mt-1 text-sm text-gray-500">{labels.empty.description}</p>
+            <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: '#111827' }}>{labels.empty.title}</h2>
+            <p style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>{labels.empty.description}</p>
           </div>
         ) : (
           <>
-            <div className="hidden md:block">
-              <table className="min-w-full table-fixed text-sm">
-                <thead className="sticky top-0 z-10 bg-white text-left text-xs uppercase tracking-wide text-gray-500">
-                  <tr className="border-b border-gray-200">
-                    <th className="w-12 px-4 py-3">
+            <div className="lumio-unapproved__desktop-table">
+              <table style={{ minWidth: '100%', tableLayout: 'fixed', fontSize: 14 }}>
+                <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: '#fff', textAlign: 'left' }}>
+                  <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    <th style={{ width: 48, padding: '12px 16px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>
                       <Checkbox
                         checked={allVisibleSelected}
                         onCheckedChange={toggleSelectAllVisible}
                       />
                     </th>
-                    <th className="px-2 py-3">{labels.table.merchant}</th>
-                    <th className="w-32 px-2 py-3">{labels.table.date}</th>
-                    <th className="w-44 px-2 py-3">{labels.table.amount}</th>
-                    <th className="w-72 px-2 py-3">{labels.table.reason}</th>
-                    <th className="w-24 px-2 py-3">{labels.table.source}</th>
-                    <th className="w-48 px-2 py-3">{labels.table.actions}</th>
+                    <th style={{ padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.merchant}</th>
+                    <th style={{ width: 128, padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.date}</th>
+                    <th style={{ width: 176, padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.amount}</th>
+                    <th style={{ width: 288, padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.reason}</th>
+                    <th style={{ width: 96, padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.source}</th>
+                    <th style={{ width: 192, padding: '12px 8px', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', fontWeight: 600 }}>{labels.table.actions}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -833,57 +833,57 @@ export default function UnapprovedCashView() {
                     );
 
                     return (
-                      <tr key={statementId} className="border-b border-gray-100 last:border-b-0">
-                        <td className="px-4 py-3 align-top">
+                      <tr key={statementId} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '12px 16px', verticalAlign: 'top' }}>
                           <Checkbox
                             checked={selected}
                             onCheckedChange={() => toggleSelect(statementId)}
                           />
                         </td>
-                        <td className="px-2 py-3 align-top">
-                          <p className="font-medium text-gray-900">
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
+                          <p style={{ fontWeight: 500, color: '#111827' }}>
                             {item.statement.fileName?.trim() ||
                               item.statement.bankName?.trim() ||
                               '—'}
                           </p>
-                          <p className="mt-1 text-xs text-gray-500">
+                          <p style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
                             {item.statement.bankName?.trim() || `#${statementId.slice(0, 8)}`}
                           </p>
                         </td>
-                        <td className="px-2 py-3 align-top text-gray-700">{formatDate(item)}</td>
-                        <td className="px-2 py-3 align-top font-medium text-gray-900">
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top', color: '#374151' }}>{formatDate(item)}</td>
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top', fontWeight: 500, color: '#111827' }}>
                           {formatAmount(item)}
                         </td>
-                        <td className="px-2 py-3 align-top">
-                          <div className="flex flex-wrap gap-1">
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                             {reasonPreview.map(reason => (
                               <span
                                 key={reason}
-                                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${REASON_BADGE_CLASSNAME[reason]}`}
+                                style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
                               >
                                 {reasonLabelById[reason]}
                               </span>
                             ))}
                             {hiddenReasonCount > 0 ? (
-                              <span className="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+                              <span style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#f9fafb', color: '#4b5563', padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}>
                                 +{hiddenReasonCount}
                               </span>
                             ) : null}
                           </div>
                         </td>
-                        <td className="px-2 py-3 align-top">
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
                           <span
-                            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${SOURCE_BADGE_CLASSNAME[item.source]}`}
+                            style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
                           >
                             {sourceLabelById[item.source]}
                           </span>
                         </td>
-                        <td className="px-2 py-3 align-top">
-                          <div className="flex flex-wrap gap-2">
+                        <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                             <button
                               type="button"
                               onClick={() => handleReview(item)}
-                              className="inline-flex items-center rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-50"
+                              style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: '#fff', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
                             >
                               {labels.actions.reviewFix}
                             </button>
@@ -896,56 +896,56 @@ export default function UnapprovedCashView() {
               </table>
             </div>
 
-            <div className="space-y-3 p-3 md:hidden">
+            <div className="lumio-unapproved__mobile-cards" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 12 }}>
               {filteredQueue.map(item => {
                 const statementId = item.id;
                 const selected = selectedIds.includes(statementId);
 
                 return (
-                  <article key={statementId} className="rounded-lg border border-gray-200 p-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start gap-2">
+                  <article key={statementId} style={{ border: '1px solid #e5e7eb', padding: 12, borderRadius: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                         <Checkbox
                           checked={selected}
                           onCheckedChange={() => toggleSelect(statementId)}
                         />
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">
+                          <p style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                             {item.statement.fileName?.trim() ||
                               item.statement.bankName?.trim() ||
                               '—'}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p style={{ fontSize: 12, color: '#6b7280' }}>
                             {item.statement.bankName?.trim() || formatDate(item)}
                           </p>
                         </div>
                       </div>
-                      <p className="text-sm font-semibold text-gray-900">{formatAmount(item)}</p>
+                      <p style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{formatAmount(item)}</p>
                     </div>
 
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                       {item.reasons.map(reason => (
                         <span
                           key={reason}
-                          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${REASON_BADGE_CLASSNAME[reason]}`}
+                          style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${REASON_BADGE_STYLE[reason].borderColor}`, background: REASON_BADGE_STYLE[reason].background, color: REASON_BADGE_STYLE[reason].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
                         >
                           {reasonLabelById[reason]}
                         </span>
                       ))}
                     </div>
 
-                    <div className="mt-2 flex items-center justify-between">
+                    <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span
-                        className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${SOURCE_BADGE_CLASSNAME[item.source]}`}
+                        style={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${SOURCE_BADGE_STYLE[item.source].borderColor}`, background: SOURCE_BADGE_STYLE[item.source].background, color: SOURCE_BADGE_STYLE[item.source].color, padding: '2px 8px', fontSize: 11, fontWeight: 500, borderRadius: 9999 }}
                       >
                         {sourceLabelById[item.source]}
                       </span>
 
-                      <div className="flex gap-2">
+                      <div style={{ display: 'flex', gap: 8 }}>
                         <button
                           type="button"
                           onClick={() => handleReview(item)}
-                          className="rounded-md border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-700"
+                          style={{ border: '1px solid #e5e7eb', background: '#fff', padding: '4px 10px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0 }}
                         >
                           {labels.actions.reviewFix}
                         </button>
