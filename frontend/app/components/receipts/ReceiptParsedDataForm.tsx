@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { Button } from '@/app/components/ui/button';
+import MuiButton from '@mui/material/Button';
 import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { Input } from '@/app/components/ui/input';
 import { Select } from '@/app/components/ui/select';
@@ -238,9 +238,10 @@ export function ReceiptParsedDataForm({
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
             <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Line items</Typography>
-            <Button
-              variant="ghost"
-              size="sm"
+            <MuiButton
+              variant="text"
+              size="small"
+              startIcon={<Plus size={16} />}
               onClick={() =>
                 onChange({
                   ...value,
@@ -255,9 +256,8 @@ export function ReceiptParsedDataForm({
                 })
               }
             >
-              <Plus className="h-4 w-4" />
               Add item
-            </Button>
+            </MuiButton>
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e2e8f0', bgcolor: '#f8fafc', p: 2 }}>
@@ -292,10 +292,9 @@ export function ReceiptParsedDataForm({
                     })
                   }
                 />
-                <Button
-                  variant="ghost"
-                  size="icon"
+                <IconButton
                   aria-label={`Remove line item ${lineItem.description || index + 1}`}
+                  size="small"
                   onClick={() =>
                     onChange({
                       ...value,
@@ -303,8 +302,8 @@ export function ReceiptParsedDataForm({
                     })
                   }
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                  <Trash2 size={16} />
+                </IconButton>
               </Box>
             ))}
           </Box>
@@ -441,7 +440,7 @@ export function ReceiptParsedDataForm({
                     </Box>
                   ))
                 ) : (
-                  <Typography style={{ bgcolor: '#f1f5f9', padding: '12px', fontSize: 14, color: '#94a3b8' }}>
+                  <Typography sx={{ bgcolor: '#f1f5f9', p: 1.5, fontSize: 14, color: '#94a3b8' }}>
                     No currencies found
                   </Typography>
                 )}

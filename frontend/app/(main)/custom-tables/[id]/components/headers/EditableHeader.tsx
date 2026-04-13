@@ -89,39 +89,37 @@ export function EditableHeader({
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         disabled={isSaving}
-        className="w-full px-2 py-1 text-sm border border-blue-500 rounded focus:outline-none bg-white dark:bg-gray-800"
+        style={{ width: '100%', padding: '4px 8px', fontSize: 14, border: '1px solid #3b82f6', background: '#fff', outline: 'none', boxSizing: 'border-box' }}
       />
     );
   }
 
   return (
-    <div className="flex items-center justify-between gap-2 w-full">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, width: '100%' }}>
       <div
         onDoubleClick={() => !isSystemColumn && setIsEditing(true)}
-        className={`flex items-center gap-2 flex-1 min-w-0 ${
-          !isSystemColumn ? 'cursor-pointer' : ''
-        }`}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0, cursor: !isSystemColumn ? 'pointer' : 'default' }}
         title={!isSystemColumn ? 'Double-click to rename' : undefined}
       >
         {icon && (
-          <span className="shrink-0">
+          <span style={{ flexShrink: 0 }}>
             {icon.startsWith('http://') ||
             icon.startsWith('https://') ||
             icon.startsWith('/uploads/') ? (
-              <img src={icon} alt="" className="h-4 w-4 object-contain" />
+              <img src={icon} alt="" className="h-4 w-4" style={{ objectFit: 'contain' }} />
             ) : (
               <Tag size={16} />
             )}
           </span>
         )}
-        <span className="truncate">{title}</span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</span>
       </div>
 
       {!isSystemColumn && onDelete && (
         <button
           type="button"
           onClick={handleDelete}
-          className="shrink-0 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+          style={{ flexShrink: 0, padding: 4, border: 'none', background: 'transparent', cursor: 'pointer', color: '#9ca3af', lineHeight: 0 }}
           title="Delete column"
         >
           <X className="h-3 w-3" />

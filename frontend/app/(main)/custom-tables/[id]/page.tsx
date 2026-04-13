@@ -3,6 +3,7 @@
 import ConfirmModal from '@/app/components/ConfirmModal';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { Box, Typography } from '@mui/material';
 import { enUS, kk, ru } from 'date-fns/locale';
 import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -288,17 +289,16 @@ export default function CustomTableDetailPage() {
       }, undoWindowMs);
       const toastId = toast.custom(
         toastProps => (
-          <div
-            className={`${
-              toastProps.visible ? 'animate-enter' : 'animate-leave'
-            } flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-lg`}
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5, boxShadow: 3, opacity: toastProps.visible ? 1 : 0 }}
           >
-            <span className="text-sm text-gray-800">
+            <Typography style={{ fontSize: 14, color: '#1f2937' }}>
               {tx(t, ['paste', 'addedPrefix'], 'Added ')}
               {createdCount}
               {tx(t, ['paste', 'addedSuffix'], ' rows')}
-            </span>
-            <button
+            </Typography>
+            <Box
+              component="button"
               type="button"
               onClick={() => {
                 if (undoExpired) return;
@@ -307,11 +307,11 @@ export default function CustomTableDetailPage() {
                 toast.dismiss(toastId);
                 onUndo();
               }}
-              className="text-sm font-semibold text-primary hover:text-primary-hover"
+              sx={{ fontSize: 14, fontWeight: 600, color: 'primary.main', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: 'primary.dark' } }}
             >
               {tx(t, ['paste', 'undo'], 'Undo')}
-            </button>
-          </div>
+            </Box>
+          </Box>
         ),
         { duration: undoWindowMs },
       );
@@ -503,165 +503,178 @@ export default function CustomTableDetailPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-gray-500">
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
         {t.auth.loading}
-      </div>
+      </Box>
     );
   }
   if (!user || !table) {
     return (
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
           {!user ? t.auth.loginRequired : t.errors.notFound}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
   if (!mounted)
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-gray-500">
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
         {t.auth.loading}
-      </div>
+      </Box>
     );
 
   return (
-    <div
-      className={
-        isFullscreen
-          ? `h-screen w-screen bg-white ${isPrintMode ? 'overflow-visible' : 'overflow-hidden'}`
-          : 'container-shared px-4 sm:px-6 lg:px-8 py-8'
-      }
-      style={isFullscreen ? { paddingTop: isPrintMode ? '0' : '80px' } : undefined}
+    <Box
+      sx={isFullscreen
+        ? { height: '100vh', width: '100vw', bgcolor: '#fff', overflow: isPrintMode ? 'visible' : 'hidden' }
+        : {}}
+      className={isFullscreen ? undefined : 'container-shared'}
+      style={isFullscreen ? { paddingTop: isPrintMode ? '0' : '80px' } : { padding: '32px 16px' }}
     >
-      <div
-        className={
-          isFullscreen
-            ? `fixed top-0 left-0 right-0 z-50 bg-white px-4 sm:px-6 pt-5 border-x border-t border-gray-200 rounded-t-xl ${
-                normalizedActiveTabId === columnsTabId ? 'bottom-0 overflow-y-auto pb-6' : 'pb-0'
-              } ${isPrintMode ? 'custom-table-print-controls' : ''}`
-            : `mb-0 flex flex-col gap-0 ${isPrintMode ? 'custom-table-print-controls' : ''}`
-        }
+      <Box
+        sx={isFullscreen
+          ? {
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 50,
+              bgcolor: '#fff',
+              px: { xs: 2, sm: 3 },
+              pt: 2.5,
+              borderLeft: '1px solid #e5e7eb',
+              borderRight: '1px solid #e5e7eb',
+              borderTop: '1px solid #e5e7eb',
+              ...(normalizedActiveTabId === columnsTabId ? { bottom: 0, overflowY: 'auto', pb: 3 } : { pb: 0 }),
+            }
+          : { mb: 0, display: 'flex', flexDirection: 'column', gap: 0 }}
+        className={isPrintMode ? 'custom-table-print-controls' : undefined}
       >
         {/* Row 1: Tabs */}
-        <div className="flex w-full items-end justify-between gap-3 border-b border-gray-100 px-2">
-          <button
+        <Box sx={{ display: 'flex', width: '100%', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5, borderBottom: '1px solid #f3f4f6', px: 1 }}>
+          <Box
+            component="button"
             type="button"
             onClick={handleBackNavigation}
-            className="inline-flex shrink-0 items-center gap-1.5 pb-3 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+            sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: 0.75, pb: 1.5, fontSize: 14, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: '#111827' } }}
           >
             <ArrowBackIcon size={16} />
             <span>{t.nav.back.value}</span>
-          </button>
+          </Box>
 
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-5 overflow-x-auto">
+          <Box sx={{ display: 'flex', minWidth: 0, flex: 1, alignItems: 'center', justifyContent: 'flex-end', gap: 2.5, overflowX: 'auto' }}>
             {quickTabs.map(tab => {
               const isActive = normalizedActiveTabId === tab.id;
               return (
-                <button
+                <Box
                   key={tab.id}
+                  component="button"
                   onClick={() => {
                     if (normalizedActiveTabId === tab.id) return;
                     setActiveTabId(tab.id);
                   }}
-                  className={`relative shrink-0 whitespace-nowrap pb-3 text-sm font-medium transition-all ${isActive ? 'text-primary' : 'text-gray-500 hover:text-gray-900'}`}
+                  sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isActive ? 'primary.main' : '#6b7280', '&:hover': { color: isActive ? 'primary.main' : '#111827' } }}
                 >
                   {tab.label}
                   {typeof tab.count === 'number' && (
-                    <span
-                      className={`ml-2 text-xs py-0.5 px-2 rounded-full ${isActive ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-500'}`}
+                    <Box
+                      component="span"
+                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(79,70,229,0.1)' : '#f3f4f6', color: isActive ? 'primary.main' : '#6b7280' }}
                     >
                       {tab.count}
-                    </span>
+                    </Box>
                   )}
                   {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
+                    <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, bgcolor: 'primary.main' }} />
                   )}
-                </button>
+                </Box>
               );
             })}
-            <button
+            <Box
+              component="button"
               type="button"
               onClick={() => {
                 if (normalizedActiveTabId === columnsTabId) return;
                 setActiveTabId(columnsTabId);
               }}
-              className={`relative shrink-0 whitespace-nowrap pb-3 text-sm font-medium transition-all ${
-                normalizedActiveTabId === columnsTabId
-                  ? 'text-primary'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
+              sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#6b7280', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#111827' } }}
             >
               {tx(t, ['actions', 'columns'], 'Columns')}
               {normalizedActiveTabId === columnsTabId && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full" />
+                <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, bgcolor: 'primary.main' }} />
               )}
-            </button>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
 
         {normalizedActiveTabId !== columnsTabId && (
-          <div className="mt-3 w-full px-2 pb-3">
-            <div className="flex items-center justify-between gap-2 overflow-x-auto sm:overflow-visible">
-              <div className="flex min-w-0 flex-nowrap items-center gap-1.5 sm:gap-2">
-                <button
+          <Box sx={{ mt: 1.5, width: '100%', px: 1, pb: 1.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, overflowX: 'auto' }}>
+              <Box sx={{ display: 'flex', minWidth: 0, flexWrap: 'nowrap', alignItems: 'center', gap: { xs: 0.75, sm: 1 } }}>
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => markSelectedRowsPaid(true)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium transition-colors sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs ${selectedRowIds.length > 0 && bulkMarking === null ? 'text-gray-600 hover:bg-gray-50 hover:text-green-600' : 'text-gray-400'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : '#9ca3af', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <CheckCircle
-                    className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${selectedRowIds.length > 0 && bulkMarking === null ? 'text-green-500' : 'text-green-500/50'}`}
+                    style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#22c55e' : 'rgba(34,197,94,0.5)' }}
                   />
                   <span>
                     {bulkMarking === 'paid'
                       ? tx(t, ['actions', 'markingPaid'], 'Marking paid')
                       : tx(t, ['actions', 'markPaid'], 'Mark paid')}
                   </span>
-                </button>
-                <button
+                </Box>
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => markSelectedRowsPaid(false)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium transition-colors sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs ${selectedRowIds.length > 0 && bulkMarking === null ? 'text-gray-600 hover:bg-gray-50 hover:text-red-500' : 'text-gray-400'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : '#9ca3af', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <XCircle
-                    className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${selectedRowIds.length > 0 && bulkMarking === null ? 'text-red-500' : 'text-red-500/50'}`}
+                    style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#ef4444' : 'rgba(239,68,68,0.5)' }}
                   />
                   <span>
                     {bulkMarking === 'unpaid'
                       ? tx(t, ['actions', 'markingUnpaid'], 'Marking unpaid')
                       : tx(t, ['actions', 'markUnpaid'], 'Mark unpaid')}
                   </span>
-                </button>
-                <button
+                </Box>
+                <Box
+                  component="button"
                   onClick={handlePrintTable}
-                  className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb', color: '#111827' } }}
                 >
-                  <Printer className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <Printer className="h-3.5 w-3.5" />
                   <span>{tx(t, ['actions', 'print'], 'Print')}</span>
-                </button>
-                <button
+                </Box>
+                <Box
+                  component="button"
                   onClick={() => openBulkDeleteModal(selectedRowIds)}
                   disabled={selectedRowIds.length === 0}
-                  className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-medium text-gray-600 transition-colors hover:border-red-100 hover:bg-red-50 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed sm:gap-2 sm:px-4 sm:py-1.5 sm:text-xs"
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#fecaca', bgcolor: '#fef2f2', color: '#dc2626' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
-                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <Trash2 className="h-3.5 w-3.5" />
                   <span>{tx(t, ['actions', 'delete'], 'Delete')}</span>
-                </button>
-              </div>
-              <div className="hidden sm:flex flex-col items-end gap-2">
-                <div className="relative group">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
+                </Box>
+              </Box>
+              <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                <Box sx={{ position: 'relative' }}>
+                  <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
                   <input
                     placeholder={tx(t, ['actions', 'searchPlaceholder'], 'Search')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 text-sm w-48 lg:w-80 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                    style={{ paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8, fontSize: 14, width: 192, border: '1px solid #e5e7eb', background: '#fff', outline: 'none' }}
                   />
-                </div>
-              </div>
-            </div>
-          </div>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         )}
 
         {normalizedActiveTabId === columnsTabId && (
@@ -685,15 +698,16 @@ export default function CustomTableDetailPage() {
           createColumn={createColumn}
           columnTypes={columnTypes}
         />
-      </div>
+      </Box>
 
-      <div className={isFullscreen ? 'h-full w-full pt-0 custom-table-print-target' : 'mt-0'}>
-        <div
-          className={
-            isFullscreen
-              ? 'h-full w-full bg-white transition-all duration-300 max-w-[1920px] mx-auto'
-              : 'rounded-xl border border-gray-200 bg-white'
-          }
+      <Box
+        sx={isFullscreen ? { height: '100%', width: '100%', pt: 0 } : { mt: 0 }}
+        className={isFullscreen ? 'custom-table-print-target' : undefined}
+      >
+        <Box
+          sx={isFullscreen
+            ? { height: '100%', width: '100%', bgcolor: '#fff', maxWidth: 1920, mx: 'auto' }
+            : { border: '1px solid #e5e7eb', bgcolor: '#fff' }}
         >
           {normalizedActiveTabId !== columnsTabId && (
             <CustomTableTanStack
@@ -729,21 +743,23 @@ export default function CustomTableDetailPage() {
               isPrintMode={isPrintMode}
             />
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {normalizedActiveTabId !== columnsTabId && (
-        <div
-          className={`mt-4 flex items-center justify-center ${isPrintMode ? 'custom-table-print-controls' : ''}`}
+        <Box
+          sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          className={isPrintMode ? 'custom-table-print-controls' : undefined}
         >
-          <button
+          <Box
+            component="button"
             onClick={() => loadRows({ filtersParam: combinedFiltersParam })}
             disabled={!hasMore || loadingRows}
-            className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
           >
             {loadingRows ? t.grid.loadingMore : hasMore ? t.grid.loadMore : t.grid.noMore}
-          </button>
-        </div>
+          </Box>
+        </Box>
       )}
 
       <style jsx global>{`
@@ -869,6 +885,6 @@ export default function CustomTableDetailPage() {
         isLoading={false}
         isDestructive
       />
-    </div>
+    </Box>
   );
 }

@@ -9,6 +9,7 @@ interface DroppableFolderButtonProps {
   active?: boolean;
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   onClick?: (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => void;
   onContextMenu?: (e: React.MouseEvent) => void;
 }
@@ -20,6 +21,7 @@ export const DroppableFolderButton = React.memo(
     active: _active,
     children,
     className,
+    style,
     onClick,
     onContextMenu,
   }: DroppableFolderButtonProps) => {
@@ -43,6 +45,7 @@ export const DroppableFolderButton = React.memo(
           tabIndex={onClick ? 0 : -1}
           role={onClick ? 'button' : 'presentation'}
           className={className}
+          style={style}
         >
           {children}
         </div>

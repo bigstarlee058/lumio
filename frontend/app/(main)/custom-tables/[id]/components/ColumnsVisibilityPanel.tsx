@@ -1,6 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { Box, Typography } from '@mui/material';
 import { tx } from '../utils/tableHelpers';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
 
@@ -24,42 +25,79 @@ export function ColumnsVisibilityPanel({
   resetColumns,
 }: ColumnsVisibilityPanelProps) {
   return (
-    <div className="w-full px-2 pb-4 pt-4 sm:px-4">
-      <div className="mx-auto w-full max-w-3xl space-y-4 sm:space-y-5">
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-          <ul className="divide-y divide-gray-200">
+    <Box sx={{ width: '100%', px: { xs: 1, sm: 2 }, py: 2 }}>
+      <Box sx={{ mx: 'auto', width: '100%', maxWidth: 768, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+          <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
             {(columnOrder.length ? columnOrder : orderedColumns.map(c => c.key)).map(key => {
               const col = orderedColumns.find(c => c.key === key);
               if (!col) return null;
               const isHidden = hiddenColumnKeys.includes(col.key);
               return (
-                <li key={col.key} className="list-none">
-                  <div
-                    className={`flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm transition-colors sm:px-5 sm:py-3.5 sm:text-base ${
-                      isHidden ? 'text-gray-400' : 'text-gray-800 hover:bg-gray-50'
-                    }`}
+                <Box
+                  component="li"
+                  key={col.key}
+                  sx={{ borderBottom: '1px solid #e5e7eb', '&:last-child': { borderBottom: 'none' } }}
+                >
+                  <Box
+                    onClick={() => toggleColumnHidden(col.key)}
+                    sx={{
+                      display: 'flex',
+                      cursor: 'pointer',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: 1.5,
+                      px: { xs: 2, sm: 2.5 },
+                      py: { xs: 1.5, sm: 1.75 },
+                      color: isHidden ? '#9ca3af' : '#1f2937',
+                      '&:hover': { bgcolor: isHidden ? 'transparent' : '#f9fafb' },
+                    }}
                   >
-                    <span className="truncate font-medium">{col.title || col.key}</span>
+                    <Typography
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {col.title || col.key}
+                    </Typography>
                     <Checkbox
                       checked={!isHidden}
                       onCheckedChange={() => toggleColumnHidden(col.key)}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20 sm:h-5 sm:w-5"
+                      className="h-4 w-4"
                     />
-                  </div>
-                </li>
+                  </Box>
+                </Box>
               );
             })}
-          </ul>
-        </div>
-        <button
+          </Box>
+        </Box>
+        <Box
+          component="button"
           type="button"
           onClick={resetColumns}
           disabled={isColumnsDefault}
-          className="w-full rounded-xl border border-primary bg-primary/10 px-5 py-3.5 text-sm font-semibold text-primary hover:bg-primary/15 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary/10"
+          sx={{
+            width: '100%',
+            border: '1px solid',
+            borderColor: 'primary.main',
+            bgcolor: 'rgba(79,70,229,0.1)',
+            px: 2.5,
+            py: 1.75,
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'primary.main',
+            cursor: 'pointer',
+            '&:hover': { bgcolor: 'rgba(79,70,229,0.15)' },
+            '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+          }}
         >
           {tx(t, ['actions', 'columnsReset'], 'Reset columns')}
-        </button>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

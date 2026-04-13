@@ -32,11 +32,21 @@ export function EditableBooleanCell({
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center px-2 py-1" style={style}>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '4px 8px',
+        ...style,
+      }}
+    >
       <Checkbox
         checked={checked}
         onCheckedChange={handleChange}
-        className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary/20 cursor-pointer"
+        className="h-5 w-5"
       />
     </div>
   );

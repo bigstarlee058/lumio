@@ -7,6 +7,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
+import { Box, Typography } from '@mui/material';
 import { Sparkles, Tag as CategoryIconFallback } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -297,28 +298,39 @@ export default function GoogleSheetsImportPage() {
     };
   }, [jobId, router]);
 
+  const inputStyle: CSSProperties = {
+    marginTop: 4,
+    width: '100%',
+    border: '1px solid #e5e7eb',
+    background: '#fff',
+    padding: '8px 12px',
+    fontSize: 14,
+    outline: 'none',
+    boxSizing: 'border-box',
+  };
+
   if (authLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center text-gray-500">
+      <Box sx={{ display: 'flex', minHeight: '60vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
         <Spinner className="h-6 w-6" />
-      </div>
+      </Box>
     );
   }
 
   if (!user) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <Box sx={{ maxWidth: 900, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
           {t.auth.loginRequired}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-start gap-3 mb-6" data-tour-id="gs-import-header">
-        <div className="p-2 rounded-full bg-primary/10 text-primary">
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }} data-tour-id="gs-import-header">
+        <Box sx={{ p: 1, bgcolor: 'primary.50', color: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Image
             src="/icons/icons8-google-sheets-48.png"
             alt="Google Sheets"
@@ -326,29 +338,29 @@ export default function GoogleSheetsImportPage() {
             height={24}
             className="h-6 w-6"
           />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900">{t.header.title}</h1>
-          <p className="text-secondary mt-1">{t.header.subtitle}</p>
-        </div>
+        </Box>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{t.header.title}</Typography>
+          <Typography style={{ fontSize: 14, color: '#6b7280', marginTop: 4 }}>{t.header.subtitle}</Typography>
+        </Box>
         <Link
           href="/custom-tables"
-          className="text-sm text-gray-600 hover:text-gray-900"
+          style={{ fontSize: 14, color: '#4b5563', textDecoration: 'none' }}
           data-tour-id="gs-import-back"
         >
           {t.header.back}
         </Link>
-      </div>
+      </Box>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-1 space-y-4">
-          <div
-            className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1fr 2fr' }, gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
             data-tour-id="gs-import-source-card"
           >
-            <div className="text-sm font-semibold text-gray-900 mb-3">{t.source.title}</div>
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.source.connectionLabel}</span>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.source.title}</Typography>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.connectionLabel}</span>
               <select
                 value={googleSheetId}
                 onChange={e => {
@@ -359,7 +371,7 @@ export default function GoogleSheetsImportPage() {
                   setWorksheetName('');
                 }}
                 data-tour-id="gs-import-connection"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={inputStyle}
               >
                 <option value="">{t.source.selectPlaceholder}</option>
                 {connections.map(c => (
@@ -372,21 +384,21 @@ export default function GoogleSheetsImportPage() {
             </label>
 
             {!connections.length && !loadingConnections ? (
-              <div className="mb-3 rounded-lg border border-dashed border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
+              <Box sx={{ mb: 1.5, border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 1.5, fontSize: 12, color: '#4b5563' }}>
                 {t.source.emptyHint}{' '}
-                <Link href="/integrations/google-sheets" className="text-primary hover:underline">
+                <Link href="/integrations/google-sheets" style={{ color: 'var(--mui-palette-primary-main)', textDecoration: 'none' }}>
                   {t.source.emptyAction}
                 </Link>
-              </div>
+              </Box>
             ) : null}
 
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.source.worksheetLabel}</span>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.worksheetLabel}</span>
               <select
                 value={worksheetName}
                 onChange={e => setWorksheetName(e.target.value)}
                 data-tour-id="gs-import-worksheet"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={{ ...inputStyle, opacity: (!selectedConnection || loadingWorksheets) ? 0.6 : 1 }}
                 disabled={!selectedConnection || loadingWorksheets}
               >
                 <option value="">
@@ -398,23 +410,23 @@ export default function GoogleSheetsImportPage() {
                   </option>
                 ))}
               </select>
-              <div className="mt-1 text-xs text-gray-500">{t.source.worksheetHelp}</div>
+              <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b7280' }}>{t.source.worksheetHelp}</span>
             </label>
 
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.source.rangeLabel}</span>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.rangeLabel}</span>
               <input
                 value={range}
                 onChange={e => setRange(e.target.value)}
                 data-tour-id="gs-import-range"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={inputStyle}
                 placeholder={t.source.rangePlaceholder.value}
               />
             </label>
 
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <label className="block">
-                <span className="text-sm font-medium text-gray-700">
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, mb: 1.5 }}>
+              <label style={{ display: 'block' }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>
                   {t.source.headerOffsetLabel}
                 </span>
                 <input
@@ -423,71 +435,88 @@ export default function GoogleSheetsImportPage() {
                   value={headerRowIndex}
                   onChange={e => setHeaderRowIndex(Number(e.target.value))}
                   data-tour-id="gs-import-header-offset"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                  style={inputStyle}
                 />
-                <div className="mt-1 text-xs text-gray-500">{t.source.headerOffsetHelp}</div>
+                <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b7280' }}>{t.source.headerOffsetHelp}</span>
               </label>
 
-              <label className="block">
-                <span className="text-sm font-medium text-gray-700">{t.source.layoutLabel}</span>
+              <label style={{ display: 'block' }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.layoutLabel}</span>
                 <select
                   value={layoutType}
                   onChange={e => setLayoutType(e.target.value as LayoutType)}
                   data-tour-id="gs-import-layout"
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                  style={inputStyle}
                 >
                   <option value="auto">{t.source.layoutAuto}</option>
                   <option value="flat">{t.source.layoutFlat}</option>
                   <option value="matrix">{t.source.layoutMatrix}</option>
                 </select>
               </label>
-            </div>
+            </Box>
 
-            <button
+            <Box
+              component="button"
               onClick={handlePreview}
               disabled={!canPreview || loadingPreview || loadingConnections}
               data-tour-id="gs-import-preview-button"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-70"
+              sx={{
+                display: 'inline-flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 1,
+                bgcolor: 'primary.main',
+                color: '#fff',
+                px: 2,
+                py: 1,
+                fontSize: 14,
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                '&:hover': { bgcolor: 'primary.dark' },
+                '&:disabled': { opacity: 0.7, cursor: 'not-allowed' },
+              }}
             >
               {(loadingPreview || loadingConnections) && <Spinner className="h-4 w-4" />}
               {loadingConnections ? t.source.previewButtonLoading : t.source.previewButton}
-            </button>
+            </Box>
             {loadingConnections && (
-              <div className="mt-2 text-xs text-gray-500">{t.source.loadingConnections}</div>
+              <Typography style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>{t.source.loadingConnections}</Typography>
             )}
-          </div>
+          </Box>
 
-          <div
-            className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+          <Box
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
             data-tour-id="gs-import-result-card"
           >
-            <div className="text-sm font-semibold text-gray-900 mb-3">{t.result.title}</div>
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.result.tableNameLabel}</span>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.result.title}</Typography>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.tableNameLabel}</span>
               <input
                 value={tableName}
                 onChange={e => setTableName(e.target.value)}
                 data-tour-id="gs-import-table-name"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={inputStyle}
                 placeholder={t.result.tableNamePlaceholder.value}
               />
             </label>
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.result.descriptionLabel}</span>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.descriptionLabel}</span>
               <input
                 value={tableDescription}
                 onChange={e => setTableDescription(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={inputStyle}
               />
             </label>
 
-            <label className="block mb-3">
-              <span className="text-sm font-medium text-gray-700">{t.result.categoryLabel}</span>
+            <label style={{ display: 'block', marginBottom: 12 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.categoryLabel}</span>
               <select
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value)}
                 data-tour-id="gs-import-category"
-                className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                style={inputStyle}
               >
                 <option value="">{t.result.noCategory}</option>
                 {categories.map(c => (
@@ -497,18 +526,14 @@ export default function GoogleSheetsImportPage() {
                 ))}
               </select>
               {categoryId && (
-                <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                  <span
-                    className="inline-flex h-6 w-6 items-center justify-center rounded-lg border border-gray-200"
-                    style={{
-                      backgroundColor:
-                        categories.find(c => c.id === categoryId)?.color || '#f3f4f6',
-                    }}
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: '#4b5563' }}>
+                  <Box
+                    sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', bgcolor: categories.find(c => c.id === categoryId)?.color || '#f3f4f6' }}
                   >
                     {(() => {
                       const selected = categories.find(c => c.id === categoryId);
                       return selected?.icon ? (
-                        <CategoryIconFallback size={16} className="text-gray-900" />
+                        <CategoryIconFallback size={16} />
                       ) : (
                         <Image
                           src="/icons/icons8-google-sheets-48.png"
@@ -519,182 +544,198 @@ export default function GoogleSheetsImportPage() {
                         />
                       );
                     })()}
-                  </span>
+                  </Box>
                   <span>{t.result.categoryHint}</span>
-                </div>
+                </Box>
               )}
             </label>
 
-            <div
-              className="flex items-center gap-2 text-sm text-gray-700 mb-4"
+            <Box
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: '#374151', mb: 2 }}
               data-tour-id="gs-import-import-data"
             >
               <Checkbox checked={importData} onCheckedChange={setImportData} className="h-5 w-5" />
               {t.result.importDataCheckbox}
-            </div>
+            </Box>
 
-            <button
+            <Box
+              component="button"
               onClick={handleCommit}
               disabled={!canCommit || committing || Boolean(jobId)}
               data-tour-id="gs-import-commit-button"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+              sx={{
+                display: 'inline-flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 1,
+                bgcolor: '#059669',
+                color: '#fff',
+                px: 2,
+                py: 1,
+                fontSize: 14,
+                fontWeight: 600,
+                border: 'none',
+                cursor: 'pointer',
+                '&:hover': { bgcolor: '#047857' },
+                '&:disabled': { opacity: 0.7, cursor: 'not-allowed' },
+              }}
             >
               {committing ? <Spinner className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
               {jobId ? t.result.importRunning : t.result.importButton}
-            </button>
+            </Box>
             {jobId ? (
-              <div className="mt-3 rounded-lg border border-gray-200 bg-white p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-sm font-semibold text-gray-900">
+              <Box sx={{ mt: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', p: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                  <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                     {t.result.progressTitle}
-                  </div>
-                  <div className="text-sm font-semibold text-gray-700">
+                  </Typography>
+                  <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
                     {Math.round(jobProgress)}%
-                  </div>
-                </div>
-                <div className="mt-2 h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-full bg-primary"
-                    style={{
-                      width: `${Math.max(0, Math.min(100, jobProgress))}%`,
-                    }}
+                  </Typography>
+                </Box>
+                <Box sx={{ mt: 1, height: 8, width: '100%', bgcolor: '#f3f4f6', overflow: 'hidden' }}>
+                  <Box
+                    sx={{ height: '100%', bgcolor: 'primary.main', width: `${Math.max(0, Math.min(100, jobProgress))}%` }}
                   />
-                </div>
-                <div className="mt-2 text-xs text-gray-600">
+                </Box>
+                <Typography style={{ marginTop: 8, fontSize: 12, color: '#4b5563' }}>
                   {t.result.statusLabel.value}:{' '}
-                  <span className="font-medium">{jobStatus || t.result.dash.value}</span>{' '}
-                  {jobStage ? <span className="text-gray-500">({jobStage})</span> : null}
-                </div>
+                  <span style={{ fontWeight: 500 }}>{jobStatus || t.result.dash.value}</span>{' '}
+                  {jobStage ? <span style={{ color: '#6b7280' }}>({jobStage})</span> : null}
+                </Typography>
                 {jobError ? (
-                  <div className="mt-2 text-xs text-red-600 wrap-break-word">{jobError}</div>
+                  <Typography style={{ marginTop: 8, fontSize: 12, color: '#dc2626', overflowWrap: 'break-word' }}>{jobError}</Typography>
                 ) : null}
-              </div>
+              </Box>
             ) : null}
             {!preview && (
-              <div className="mt-2 text-xs text-gray-500">{t.result.needPreviewHint}</div>
+              <Typography style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>{t.result.needPreviewHint}</Typography>
             )}
-          </div>
-        </div>
+          </Box>
+        </Box>
 
-        <div className="lg:col-span-2 space-y-4">
-          <div
-            className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
             data-tour-id="gs-import-preview-panel"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">{t.preview.title}</div>
-                <div className="text-xs text-gray-500 mt-1">{t.preview.subtitle}</div>
-              </div>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+              <Box>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.preview.title}</Typography>
+                <Typography style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>{t.preview.subtitle}</Typography>
+              </Box>
               {preview && (
-                <div className="text-xs text-gray-500 text-right">
+                <Box style={{ fontSize: 12, color: '#6b7280', textAlign: 'right' }}>
                   <div>{preview.usedRange.a1}</div>
                   <div>
                     {preview.usedRange.rowsCount}×{preview.usedRange.colsCount},{' '}
                     {t.preview.layoutPrefix.value}: {preview.layoutSuggested}
                   </div>
-                </div>
+                </Box>
               )}
-            </div>
+            </Box>
 
             {!preview ? (
-              <div className="mt-4 rounded-lg border border-dashed border-gray-200 bg-gray-50 p-6 text-sm text-gray-600">
+              <Box sx={{ mt: 2, border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 3, fontSize: 14, color: '#4b5563' }}>
                 {t.preview.hint}
-              </div>
+              </Box>
             ) : (
-              <div className="mt-4 overflow-x-auto">
-                <table className="min-w-full text-xs">
+              <Box sx={{ mt: 2, overflowX: 'auto' }}>
+                <table style={{ minWidth: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="px-2 py-2 text-left font-semibold text-gray-700">
+                    <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: '#374151' }}>
                         {t.preview.rowHeader}
                       </th>
                       {preview.columns.slice(0, 12).map(c => (
                         <th
                           key={c.index}
-                          className="px-2 py-2 text-left font-semibold text-gray-700"
+                          style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: '#374151' }}
                         >
                           {c.title}
                         </th>
                       ))}
                       {preview.columns.length > 12 && (
-                        <th className="px-2 py-2 text-left font-semibold text-gray-500">…</th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: '#6b7280' }}>…</th>
                       )}
                     </tr>
                   </thead>
                   <tbody>
                     {preview.sampleRows.map(r => (
-                      <tr key={r.rowNumber} className="border-b border-gray-100 last:border-0">
-                        <td className="px-2 py-1 text-gray-500">{r.rowNumber}</td>
+                      <tr key={r.rowNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '4px 8px', color: '#6b7280' }}>{r.rowNumber}</td>
                         {r.values.slice(0, 12).map((v, idx) => {
                           const style = r.styles?.[idx] || null;
                           const css = sheetStyleToCss(style || {});
+                          const { color: cssColor, ...cssRest } = css;
+                          const tdStyle: CSSProperties = { padding: '4px 8px', color: cssColor ?? '#374151', ...cssRest };
                           return (
                             <td
                               key={`${r.rowNumber}-${idx}`}
-                              className="px-2 py-1 text-gray-700"
-                              style={css}
+                              style={tdStyle}
                             >
                               {v ?? '—'}
                             </td>
                           );
                         })}
                         {preview.columns.length > 12 && (
-                          <td className="px-2 py-1 text-gray-500">…</td>
+                          <td style={{ padding: '4px 8px', color: '#6b7280' }}>…</td>
                         )}
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </Box>
             )}
-          </div>
+          </Box>
 
-          <div
-            className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+          <Box
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}
             data-tour-id="gs-import-columns-panel"
           >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-sm font-semibold text-gray-900">{t.columns.title}</div>
-                <div className="text-xs text-gray-500 mt-1">{t.columns.subtitle}</div>
-              </div>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+              <Box>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.columns.title}</Typography>
+                <Typography style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>{t.columns.subtitle}</Typography>
+              </Box>
               {preview && (
-                <button
+                <Box
+                  component="button"
                   onClick={() => setColumns(prev => prev.map(c => ({ ...c, include: true })))}
                   data-tour-id="gs-import-enable-all"
-                  className="text-xs text-primary hover:text-primary-hover"
+                  sx={{ fontSize: 12, color: 'primary.main', border: 'none', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { color: 'primary.dark' } }}
                 >
                   {t.columns.enableAll}
-                </button>
+                </Box>
               )}
-            </div>
+            </Box>
 
             {!preview ? (
-              <div className="mt-4 rounded-lg border border-dashed border-gray-200 bg-gray-50 p-6 text-sm text-gray-600">
+              <Box sx={{ mt: 2, border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 3, fontSize: 14, color: '#4b5563' }}>
                 {t.columns.appearAfterPreview}
-              </div>
+              </Box>
             ) : (
-              <div className="mt-4 overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-200">
+              <Box sx={{ mt: 2, overflowX: 'auto' }}>
+                <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
+                  <thead style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                     <tr>
-                      <th className="px-3 py-2 text-left font-semibold text-gray-700 w-[84px]">
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#374151', width: 84 }}>
                         {t.columns.tableHeaders.enabled}
                       </th>
-                      <th className="px-3 py-2 text-left font-semibold text-gray-700 w-20">A1</th>
-                      <th className="px-3 py-2 text-left font-semibold text-gray-700">
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#374151', width: 80 }}>A1</th>
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#374151' }}>
                         {t.columns.tableHeaders.name}
                       </th>
-                      <th className="px-3 py-2 text-left font-semibold text-gray-700 w-[180px]">
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: '#374151', width: 180 }}>
                         {t.columns.tableHeaders.type}
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {columns.map(c => (
-                      <tr key={c.index} className="border-b border-gray-100 last:border-0">
-                        <td className="px-3 py-2">
+                    {columns.map((c, idx) => (
+                      <tr key={c.index} style={{ borderBottom: idx < columns.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
+                        <td style={{ padding: '8px 12px' }}>
                           <Checkbox
                             checked={c.include}
                             onCheckedChange={checked =>
@@ -707,8 +748,8 @@ export default function GoogleSheetsImportPage() {
                             className="h-5 w-5"
                           />
                         </td>
-                        <td className="px-3 py-2 text-gray-500">{c.a1}</td>
-                        <td className="px-3 py-2">
+                        <td style={{ padding: '8px 12px', color: '#6b7280' }}>{c.a1}</td>
+                        <td style={{ padding: '8px 12px' }}>
                           <input
                             value={c.title}
                             onChange={e =>
@@ -718,10 +759,10 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
                           />
                         </td>
-                        <td className="px-3 py-2">
+                        <td style={{ padding: '8px 12px' }}>
                           <select
                             value={c.suggestedType}
                             onChange={e =>
@@ -736,7 +777,7 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, outline: 'none' }}
                           >
                             <option value="text">{t.columns.types.text}</option>
                             <option value="number">{t.columns.types.number}</option>
@@ -750,12 +791,12 @@ export default function GoogleSheetsImportPage() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </Box>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 }
 // Minimal style -> CSS mapper for preview

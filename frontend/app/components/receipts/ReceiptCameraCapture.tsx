@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
+import MuiButton from '@mui/material/Button';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { receiptsApi } from '@/app/lib/api';
 import { Box, Typography } from '@mui/material';
@@ -122,18 +122,18 @@ export function ReceiptCameraCapture({
         ) : null}
 
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            size="lg"
-            className="min-w-44"
+          <MuiButton
+            variant="contained"
+            sx={{ minWidth: 176 }}
             onClick={() => {
               void handleCapture();
             }}
             disabled={submitting}
             aria-label="Capture photo"
+            startIcon={<Camera size={16} />}
           >
-            <Camera className="h-4 w-4" />
             Capture photo
-          </Button>
+          </MuiButton>
         </Box>
       </Box>
     </ModalShell>

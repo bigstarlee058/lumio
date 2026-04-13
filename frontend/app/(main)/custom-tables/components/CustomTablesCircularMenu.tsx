@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
 import { FileSpreadsheet, Plus, Table as TableIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
@@ -27,22 +26,24 @@ const ACTION_OFFSETS = [
 
 const ARC_SIZES = {
   panel: {
-    height: 'h-[232px]',
-    width: 'w-[272px]',
-    radius: 'rounded-tr-[232px]',
-    buttonLeft: 'left-4',
-    bottom: 'bottom-5',
+    height: 232,
+    width: 272,
+    radius: '232px',
+    buttonLeft: 16,
+    bottom: 20,
     closedOffset: 'translate(16px, -6px)',
-    container: '-mx-4 -mb-3 h-52',
+    containerHeight: 208,
+    containerWidth: undefined as number | undefined,
   },
   floating: {
-    height: 'h-60',
-    width: 'w-[320px]',
-    radius: 'rounded-tr-[240px]',
-    buttonLeft: 'left-6',
-    bottom: 'bottom-6',
+    height: 240,
+    width: 320,
+    radius: '240px',
+    buttonLeft: 24,
+    bottom: 24,
     closedOffset: 'translate(8px, -6px)',
-    container: 'h-60 w-[320px]',
+    containerHeight: 240,
+    containerWidth: 320,
   },
 } as const;
 
@@ -86,7 +87,7 @@ export default function CustomTablesCircularMenu({
     };
   }, [isOpen]);
 
-  const styles = ARC_SIZES[placement];
+  const sizes = ARC_SIZES[placement];
   const text = {
     importGoogleSheets: labels?.importGoogleSheets ?? 'Google Sheets',
     fromStatement: labels?.fromStatement ?? 'From statement',
@@ -94,33 +95,82 @@ export default function CustomTablesCircularMenu({
     openMenu: labels?.openMenu ?? 'Open table actions',
   };
 
+  const actionButtonStyle: React.CSSProperties = {
+    display: 'flex',
+    height: 44,
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    border: '1px solid rgba(255,255,255,0.8)',
+    backgroundColor: '#fff',
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease-out',
+  };
+
+  const actionLabelStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: 48,
+    top: '50%',
+    zIndex: 40,
+    transform: 'translateY(-50%)',
+    whiteSpace: 'nowrap',
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    padding: '4px 10px',
+    fontSize: 11,
+    fontWeight: 600,
+    color: 'var(--color-primary)',
+  };
+
   const menu = (
     <div
-      className={cn(
-        'relative overflow-visible',
-        styles.container,
-        placement === 'floating' && 'fixed bottom-0 left-0 z-[140] pointer-events-auto',
-      )}
+      style={{
+        position: 'relative',
+        overflow: 'visible',
+        height: sizes.containerHeight,
+        width: sizes.containerWidth,
+        ...(placement === 'panel' ? { marginLeft: -16, marginRight: -16, marginBottom: -12 } : {}),
+        ...(placement === 'floating'
+          ? {
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              zIndex: 140,
+              pointerEvents: 'auto',
+            }
+          : {}),
+      }}
     >
+      {/* Arc background */}
       <div
-        className={cn(
-          'pointer-events-none absolute bottom-0 left-0 bg-primary transition-all duration-300 ease-out',
-          isOpen
-            ? `${styles.height} ${styles.width} ${styles.radius} opacity-100`
-            : 'h-0 w-0 rounded-tr-none opacity-0',
-        )}
+        style={{
+          pointerEvents: 'none',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          backgroundColor: 'var(--color-primary)',
+          transition: 'all 0.3s ease-out',
+          height: isOpen ? sizes.height : 0,
+          width: isOpen ? sizes.width : 0,
+          borderTopRightRadius: isOpen ? sizes.radius : 0,
+          opacity: isOpen ? 1 : 0,
+        }}
       />
 
+      {/* Action: Google Sheets */}
       <div
-        className={cn(
-          'absolute left-0 z-20 transition-all duration-300 ease-out',
-          styles.bottom,
-          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        )}
         style={{
+          position: 'absolute',
+          left: 0,
+          bottom: sizes.bottom,
+          zIndex: 20,
+          transition: 'all 0.3s ease-out',
           transform: isOpen
             ? `translate(${ACTION_OFFSETS[0].x}px, ${ACTION_OFFSETS[0].y}px)`
-            : styles.closedOffset,
+            : sizes.closedOffset,
+          pointerEvents: isOpen ? 'auto' : 'none',
+          opacity: isOpen ? 1 : 0,
         }}
       >
         <button
@@ -131,7 +181,7 @@ export default function CustomTablesCircularMenu({
             setIsOpen(false);
           }}
           title={text.importGoogleSheets}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+          style={actionButtonStyle}
         >
           <Image
             src="/icons/icons8-google-sheets-48.png"
@@ -139,23 +189,26 @@ export default function CustomTablesCircularMenu({
             width={18}
             height={18}
           />
-          <span className="sr-only">{text.importGoogleSheets}</span>
+          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+            {text.importGoogleSheets}
+          </span>
         </button>
-        <span className="absolute left-[48px] top-1/2 z-40 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-primary">
-          {text.importGoogleSheets}
-        </span>
+        <span style={actionLabelStyle}>{text.importGoogleSheets}</span>
       </div>
 
+      {/* Action: From Statement */}
       <div
-        className={cn(
-          'absolute left-0 z-20 transition-all duration-300 ease-out',
-          styles.bottom,
-          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        )}
         style={{
+          position: 'absolute',
+          left: 0,
+          bottom: sizes.bottom,
+          zIndex: 20,
+          transition: 'all 0.3s ease-out',
           transform: isOpen
             ? `translate(${ACTION_OFFSETS[1].x}px, ${ACTION_OFFSETS[1].y}px)`
-            : styles.closedOffset,
+            : sizes.closedOffset,
+          pointerEvents: isOpen ? 'auto' : 'none',
+          opacity: isOpen ? 1 : 0,
         }}
       >
         <button
@@ -166,26 +219,29 @@ export default function CustomTablesCircularMenu({
             setIsOpen(false);
           }}
           title={text.fromStatement}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+          style={actionButtonStyle}
         >
-          <FileSpreadsheet size={18} className="text-primary" />
-          <span className="sr-only">{text.fromStatement}</span>
+          <FileSpreadsheet size={18} style={{ color: 'var(--color-primary)' }} />
+          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+            {text.fromStatement}
+          </span>
         </button>
-        <span className="absolute left-[48px] top-1/2 z-40 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-primary">
-          {text.fromStatement}
-        </span>
+        <span style={actionLabelStyle}>{text.fromStatement}</span>
       </div>
 
+      {/* Action: Create Table */}
       <div
-        className={cn(
-          'absolute left-0 z-20 transition-all duration-300 ease-out',
-          styles.bottom,
-          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        )}
         style={{
+          position: 'absolute',
+          left: 0,
+          bottom: sizes.bottom,
+          zIndex: 20,
+          transition: 'all 0.3s ease-out',
           transform: isOpen
             ? `translate(${ACTION_OFFSETS[2].x}px, ${ACTION_OFFSETS[2].y}px)`
-            : styles.closedOffset,
+            : sizes.closedOffset,
+          pointerEvents: isOpen ? 'auto' : 'none',
+          opacity: isOpen ? 1 : 0,
         }}
       >
         <button
@@ -196,30 +252,46 @@ export default function CustomTablesCircularMenu({
             setIsOpen(false);
           }}
           title={text.createTable}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+          style={actionButtonStyle}
         >
-          <TableIcon size={18} className="text-primary" />
-          <span className="sr-only">{text.createTable}</span>
+          <TableIcon size={18} style={{ color: 'var(--color-primary)' }} />
+          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+            {text.createTable}
+          </span>
         </button>
-        <span className="absolute left-[48px] top-1/2 z-40 -translate-y-1/2 whitespace-nowrap rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-primary">
-          {text.createTable}
-        </span>
+        <span style={actionLabelStyle}>{text.createTable}</span>
       </div>
 
+      {/* FAB toggle button */}
       <button
         data-custom-tables-fab-interactive="true"
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className={cn(
-          'absolute z-30 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition hover:bg-primary-hover',
-          styles.buttonLeft,
-          styles.bottom,
-        )}
+        style={{
+          position: 'absolute',
+          zIndex: 30,
+          display: 'flex',
+          height: 56,
+          width: 56,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          backgroundColor: 'var(--color-primary)',
+          color: '#fff',
+          border: 'none',
+          cursor: 'pointer',
+          transition: 'background-color 0.2s',
+          left: sizes.buttonLeft,
+          bottom: sizes.bottom,
+        }}
         aria-label={text.openMenu}
       >
         <Plus
           size={24}
-          className={cn('transition-transform duration-300', isOpen ? 'rotate-45' : 'rotate-0')}
+          style={{
+            transition: 'transform 0.3s',
+            transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+          }}
         />
       </button>
     </div>

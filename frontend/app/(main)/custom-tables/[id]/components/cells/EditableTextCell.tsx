@@ -44,8 +44,15 @@ export function EditableTextCell({ row, column, onUpdateCell, style }: EditableT
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
         disabled={isSaving}
-        className="w-full h-full px-2 py-1 border-2 border-blue-500 rounded focus:outline-none bg-blue-50 dark:bg-blue-900/20"
-        style={style}
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: '4px 8px',
+          border: '2px solid #3b82f6',
+          outline: 'none',
+          background: '#eff6ff',
+          ...style,
+        }}
       />
     );
   }
@@ -53,11 +60,19 @@ export function EditableTextCell({ row, column, onUpdateCell, style }: EditableT
   return (
     <div
       onDoubleClick={() => setIsEditing(true)}
-      className="w-full h-full px-2 py-1 cursor-text hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded truncate"
-      style={style}
+      style={{
+        width: '100%',
+        height: '100%',
+        padding: '4px 8px',
+        cursor: 'text',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        ...style,
+      }}
       title="Double-click to edit"
     >
-      {inputValue || <span className="text-gray-400 dark:text-gray-600">—</span>}
+      {inputValue || <span style={{ color: '#9ca3af' }}>—</span>}
     </div>
   );
 }

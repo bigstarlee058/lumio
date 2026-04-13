@@ -788,19 +788,19 @@ export default function CustomTablesPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-gray-500">
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
         {t.auth.loading}
-      </div>
+      </Box>
     );
   }
 
   if (!user) {
     return (
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-10">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3, fontSize: 14, color: '#4b5563' }}>
           {t.auth.loginRequired}
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
@@ -841,70 +841,66 @@ export default function CustomTablesPage() {
         }}
         activeCount={activeFilterCount}
       />
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-6 space-y-4">
-          <div className="rounded-2xl border border-border bg-card px-5 py-5 sm:px-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="min-w-0">
-                <h1 className="text-2xl font-semibold text-foreground">{headerTitle}</h1>
-                <p className="mt-2 max-w-3xl text-sm text-muted-foreground">{headerSubtitle}</p>
-              </div>
-              <div className="flex shrink-0 flex-wrap items-center gap-2">
-                <button
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
+        <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: { xs: 2.5, sm: 3 }, py: 2.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: { md: 'center' }, justifyContent: { md: 'space-between' } }}>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="h1" style={{ fontSize: 24, fontWeight: 600, color: '#111827' }}>{headerTitle}</Typography>
+                <Typography style={{ marginTop: 8, maxWidth: 672, fontSize: 14, color: '#6b7280' }}>{headerSubtitle}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => void openCreateFromStatements()}
                   data-tour-id="custom-tables-create-export"
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
+                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', color: '#fff', px: 2.5, py: 1.25, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' } }}
                 >
                   <FileSpreadsheet className="h-4 w-4" />
                   {createExportTableLabel}
-                </button>
+                </Box>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button
+                    <Box
+                      component="button"
                       type="button"
                       data-tour-id="custom-tables-create-dropdown"
-                      className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition hover:border-primary hover:text-primary"
+                      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.25, fontSize: 14, fontWeight: 500, color: '#111827', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
                     >
                       <TableIcon className="h-4 w-4" />
                       {createLabel}
                       <ChevronDown className="h-4 w-4" />
-                    </button>
+                    </Box>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-[240px]">
-                    <DropdownMenuItem
-                      onClick={() => handleTableAction('import-google-sheets')}
-                      className="cursor-pointer"
-                    >
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleTableAction('import-google-sheets')}>
                       <FileSpreadsheet className="h-4 w-4" />
                       {importGoogleSheetsLabel}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleTableAction('create-empty')}
-                      className="cursor-pointer"
-                    >
+                    <DropdownMenuItem onClick={() => handleTableAction('create-empty')}>
                       <TableIcon className="h-4 w-4" />
                       {createBlankTableLabel}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">{ctaDescriptionLabel}</p>
-          </div>
+              </Box>
+            </Box>
+            <Typography style={{ marginTop: 12, fontSize: 12, color: '#6b7280' }}>{ctaDescriptionLabel}</Typography>
+          </Box>
 
-          <div className="relative" data-tour-id="search-bar">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Box sx={{ position: 'relative' }} data-tour-id="search-bar">
+            <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              className="w-full rounded-md border border-border bg-card py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px 12px 44px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
             />
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
+          </Box>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
             <FilterDropdown
               open={sourceDropdownOpen}
               onOpenChange={setSourceDropdownOpen}
@@ -921,7 +917,7 @@ export default function CustomTablesPage() {
                 </FilterChipButton>
               }
             >
-              <div className="max-h-[320px] space-y-1 overflow-y-auto pr-1">
+              <Box sx={{ maxHeight: 320, display: 'flex', flexDirection: 'column', gap: 0.5, overflowY: 'auto', pr: 0.5 }}>
                 {sourceOptions.map(option => (
                   <FilterOptionRow
                     key={option.value}
@@ -931,7 +927,7 @@ export default function CustomTablesPage() {
                     variant="radio"
                   />
                 ))}
-              </div>
+              </Box>
               <FilterActions
                 onReset={resetSourceFilters}
                 onApply={applySourceFilters}
@@ -950,7 +946,7 @@ export default function CustomTablesPage() {
                 </FilterChipButton>
               }
             >
-              <div className="max-h-[320px] space-y-1 overflow-y-auto pr-1">
+              <Box sx={{ maxHeight: 320, display: 'flex', flexDirection: 'column', gap: 0.5, overflowY: 'auto', pr: 0.5 }}>
                 {sortOptions.map(option => (
                   <FilterOptionRow
                     key={option.value}
@@ -960,7 +956,7 @@ export default function CustomTablesPage() {
                     variant="radio"
                   />
                 ))}
-              </div>
+              </Box>
               <FilterActions
                 onReset={resetSortFilters}
                 onApply={applySortFilters}
@@ -969,77 +965,83 @@ export default function CustomTablesPage() {
               />
             </FilterDropdown>
 
-            <button type="button" className={filterLinkClassName} onClick={handleOpenFiltersDrawer}>
+            <Box
+              component="button"
+              type="button"
+              onClick={handleOpenFiltersDrawer}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1.5, py: 0.75, fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
+            >
               <SlidersHorizontal className="h-3.5 w-3.5" />
               {filterLabels.filters}
               {activeFilterCount > 0 ? (
-                <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                <Box component="span" sx={{ ml: 0.5, display: 'inline-flex', width: 20, height: 20, alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(79,70,229,0.1)', fontSize: 12, fontWeight: 600, color: 'primary.main' }}>
                   {activeFilterCount}
-                </span>
+                </Box>
               ) : null}
-            </button>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
 
-        <div data-tour-id="tables-list">
+        <Box data-tour-id="tables-list">
           {loading ? (
-            <div className="flex justify-center items-center h-64">
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}>
               <Spinner className="h-20 w-20 text-primary" />
-            </div>
+            </Box>
           ) : filteredCount === 0 ? (
-            <div className="rounded-2xl border border-border bg-card px-6 py-10 sm:px-10 sm:py-12">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: { xs: 3, sm: 5 }, py: { xs: 5, sm: 6 } }}>
+              <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', bgcolor: '#f3f4f6', color: '#9ca3af' }}>
                 <TableIcon className="h-8 w-8" />
-              </div>
-              <h3 className="text-center text-lg font-semibold text-foreground">
+              </Box>
+              <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: '#111827' }}>
                 {emptyLabels.title}
-              </h3>
-              <p className="mt-2 text-center text-sm text-muted-foreground">
+              </Typography>
+              <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
                 {emptyLabels.description}
-              </p>
-              <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-border bg-muted/60 p-4 text-left">
-                <ol className="space-y-2 text-sm text-foreground">
+              </Typography>
+              <Box sx={{ mt: 2.5, mx: 'auto', maxWidth: 672, border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 2 }}>
+                <Box component="ol" sx={{ m: 0, pl: 2, display: 'flex', flexDirection: 'column', gap: 1, fontSize: 14, color: '#111827' }}>
                   <li>{emptyLabels.step1}</li>
                   <li>{emptyLabels.step2}</li>
                   <li>{emptyLabels.step3}</li>
                   <li>{emptyLabels.step4}</li>
-                </ol>
-              </div>
-              <div className="mt-6 flex justify-center">
-                <button
+                </Box>
+              </Box>
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => void openCreateFromStatements()}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-hover"
+                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', color: '#fff', px: 2.5, py: 1.25, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' } }}
                 >
                   <FileSpreadsheet className="h-4 w-4" />
                   {createFirstExportTableLabel}
-                </button>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
           ) : (
             <>
               {shouldShowGrowthHint ? (
-                <div className="mb-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary-700">
+                <Box sx={{ mb: 1.5, border: '1px solid rgba(79,70,229,0.2)', bgcolor: 'rgba(79,70,229,0.05)', px: 2, py: 1.5, fontSize: 14, color: '#4338ca' }}>
                   {growthHintLabel}
-                </div>
+                </Box>
               ) : null}
 
-              <div className="space-y-3">
-                <div className="hidden md:flex items-center gap-3 px-4 text-xs font-medium uppercase tracking-wide text-gray-500">
-                  <div className="w-4" />
-                  <div className="w-11" />
-                  <div className="w-3" />
-                  <div className="min-w-[260px] flex-1">{columnLabels.name}</div>
-                  <div className="w-44">{columnLabels.purpose}</div>
-                  <div className="w-40">{columnLabels.source}</div>
-                  <div className="w-24 text-right">{columnLabels.rows}</div>
-                  <div className="w-28 text-right">{columnLabels.updatedAt}</div>
-                  <div className="w-[360px] text-right">{columnLabels.actions}</div>
-                </div>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.5, px: 2, fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                  <Box sx={{ width: 16 }} />
+                  <Box sx={{ width: 44 }} />
+                  <Box sx={{ width: 12 }} />
+                  <Box sx={{ minWidth: 260, flex: 1 }}>{columnLabels.name}</Box>
+                  <Box sx={{ width: 176 }}>{columnLabels.purpose}</Box>
+                  <Box sx={{ width: 160 }}>{columnLabels.source}</Box>
+                  <Box sx={{ width: 96, textAlign: 'right' }}>{columnLabels.rows}</Box>
+                  <Box sx={{ width: 112, textAlign: 'right' }}>{columnLabels.updatedAt}</Box>
+                  <Box sx={{ width: 360, textAlign: 'right' }}>{columnLabels.actions}</Box>
+                </Box>
                 {registryItems.map(table => (
-                  <div
+                  <Box
                     key={table.id}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 transition-colors hover:bg-gray-50"
+                    sx={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5, '&:hover': { bgcolor: '#f9fafb' } }}
                     onClick={() => router.push(`/custom-tables/${table.id}`)}
                     onKeyDown={event => {
                       if (event.target !== event.currentTarget) {
@@ -1055,11 +1057,13 @@ export default function CustomTablesPage() {
                     <Checkbox
                       aria-label={table.name}
                       onClick={(event: { stopPropagation: () => void }) => event.stopPropagation()}
-                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary shrink-0"
+                      className="h-4 w-4"
+                      style={{ flexShrink: 0 }}
                     />
-                    <button
+                    <Box
+                      component="button"
                       type="button"
-                      className="w-11 shrink-0 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                      sx={{ width: 44, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', bgcolor: 'transparent', border: 'none', '&:hover': { opacity: 0.8 } }}
                       onClick={event => {
                         event.stopPropagation();
                         router.push(`/custom-tables/${table.id}`);
@@ -1067,60 +1071,60 @@ export default function CustomTablesPage() {
                       title={openLabel}
                     >
                       {table.category?.icon ? (
-                        <CategoryIcon size={20} className="text-gray-700" />
+                        <CategoryIcon size={20} style={{ color: '#374151' }} />
                       ) : (
-                        <TableIcon className="h-5 w-5 text-gray-600" />
+                        <TableIcon className="h-5 w-5" style={{ color: '#4b5563' }} />
                       )}
-                    </button>
-                    <div className="w-3 shrink-0" />
-                    <div className="min-w-[260px] flex-1">
-                      <div className="text-sm font-semibold text-gray-900 truncate">
+                    </Box>
+                    <Box sx={{ width: 12, flexShrink: 0 }} />
+                    <Box sx={{ minWidth: 260, flex: 1 }}>
+                      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {table.displayName}
-                      </div>
-                      <div className="mt-1 text-xs text-gray-500 truncate">
+                      </Typography>
+                      <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {fromLabel}: {table.sourceDescriptor} · {columnLabels.rows}:{' '}
                         {table.rowsCountLabel} · {columnLabels.updatedAt}:{' '}
                         {formatUpdatedDate(table.updatedAt)}
-                      </div>
+                      </Typography>
                       {table.createdFromBadge ? (
-                        <div className="mt-1 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                        <Box sx={{ mt: 0.5, display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(79,70,229,0.2)', bgcolor: 'rgba(79,70,229,0.1)', px: 1, py: 0.25, fontSize: 11, fontWeight: 500, color: 'primary.main' }}>
                           {table.createdFromBadge}
-                        </div>
+                        </Box>
                       ) : table.description ? (
-                        <div className="text-xs text-gray-500 truncate">{table.description}</div>
+                        <Typography style={{ fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{table.description}</Typography>
                       ) : null}
-                    </div>
-                    <span className="hidden w-44 shrink-0 text-xs font-semibold text-gray-700 md:inline-block">
+                    </Box>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 176, flexShrink: 0, fontSize: 12, fontWeight: 600, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {table.purpose}
-                    </span>
-                    <span className="hidden w-40 shrink-0 text-xs font-semibold uppercase tracking-wide text-gray-500 md:inline-block">
+                    </Box>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 160, flexShrink: 0, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {table.sourceSummary}
-                    </span>
-                    <span className="hidden w-24 shrink-0 text-right text-sm font-semibold tabular-nums text-gray-900 md:inline-block">
+                    </Box>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 96, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#111827' }}>
                       {table.rowsCountLabel}
-                    </span>
-                    <span className="hidden w-28 shrink-0 text-right text-sm font-semibold tabular-nums text-gray-900 md:inline-block">
+                    </Box>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 112, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#111827' }}>
                       {table.updatedLabel}
-                    </span>
-                    <div className="flex items-center justify-end gap-2 md:w-[360px] md:shrink-0">
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, width: { md: 360 }, flexShrink: { md: 0 } }}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button
+                          <Box
+                            component="button"
                             type="button"
                             disabled={exportingTableId === table.id}
                             onClick={event => event.stopPropagation()}
-                            className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50"
+                            sx={{ display: 'inline-flex', alignItems: 'center', bgcolor: 'primary.main', color: '#fff', px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { opacity: 0.5 } }}
                           >
                             {exportLabel}
-                          </button>
+                          </Box>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="min-w-[180px]" align="end">
+                        <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={event => {
                               event.stopPropagation();
                               void handleExportTable(table, 'csv');
                             }}
-                            className="cursor-pointer"
                           >
                             {exportCsvLabel}
                           </DropdownMenuItem>
@@ -1129,27 +1133,28 @@ export default function CustomTablesPage() {
                               event.stopPropagation();
                               void handleExportTable(table, 'xlsx');
                             }}
-                            className="cursor-pointer"
                           >
                             {exportXlsxLabel}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <button
+                      <Box
+                        component="button"
                         type="button"
-                        className="inline-flex items-center rounded-md border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary"
+                        sx={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: '#374151', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
                         onClick={event => {
                           event.stopPropagation();
                           router.push(`/custom-tables/${table.id}`);
                         }}
                       >
                         {openLabel}
-                      </button>
+                      </Box>
 
-                      <button
+                      <Box
+                        component="button"
                         type="button"
-                        className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50"
+                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: '#6b7280', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: '#111827' }, '&:disabled': { opacity: 0.5 } }}
                         disabled={updatingTableId === table.id}
                         onClick={event => {
                           event.stopPropagation();
@@ -1158,46 +1163,49 @@ export default function CustomTablesPage() {
                       >
                         <RefreshCcw className="h-3.5 w-3.5" />
                         {updateDataLabel}
-                      </button>
+                      </Box>
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button
+                          <Box
+                            component="button"
                             type="button"
-                            className="inline-flex items-center justify-center rounded-md border border-gray-200 p-1.5 text-gray-600 hover:border-gray-300 hover:text-gray-900"
+                            sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', p: 0.75, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#d1d5db', color: '#111827' } }}
                             onClick={event => event.stopPropagation()}
                             aria-label="More actions"
                           >
                             <Ellipsis className="h-4 w-4" />
-                          </button>
+                          </Box>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="min-w-[180px]" align="end">
+                        <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={event => {
                               event.stopPropagation();
                               confirmDelete(table);
                             }}
-                            className="cursor-pointer text-red-600 focus:text-red-700"
+                            style={{ color: '#dc2626' }}
                           >
-                            <span className="inline-flex items-center gap-2">
+                            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                               <Trash2 className="h-4 w-4" />
                               {deleteLabel}
-                            </span>
+                            </Box>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
 
-                      <ChevronRight className="hidden h-5 w-5 text-gray-400 md:block" />
-                    </div>
-                  </div>
+                      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                        <ChevronRight className="h-5 w-5" style={{ color: '#9ca3af' }} />
+                      </Box>
+                    </Box>
+                  </Box>
                 ))}
-              </div>
+              </Box>
 
-              <div
-                className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-4"
+              <Box
+                sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 1.5, pt: 2 }}
                 data-tour-id="pagination"
               >
-                <div className="text-sm text-gray-600">
+                <Typography style={{ fontSize: 14, color: '#4b5563' }}>
                   {filteredCount === 0
                     ? emptyLabels.title
                     : formatPaginationLabel(paginationLabels.shown, {
@@ -1205,21 +1213,21 @@ export default function CustomTablesPage() {
                         to: rangeEnd,
                         count: filteredCount,
                       })}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600 min-w-[120px] text-center">
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
                     {formatPaginationLabel(paginationLabels.pageOf, {
                       page,
                       count: totalPages || 1,
                     })}
-                  </span>
+                  </Typography>
                   <AppPagination page={page} total={totalPages || 1} onChange={setPage} />
-                </div>
-              </div>
+                </Box>
+              </Box>
             </>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
       <Dialog
         open={createFromStatementsOpen}
         onClose={closeCreateFromStatements}
@@ -1229,41 +1237,51 @@ export default function CustomTablesPage() {
         PaperProps={{ sx: { borderRadius: 3, border: '1px solid', borderColor: 'divider' } }}
       >
         <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', px: 3, py: 2.5 }}>
-          <div className="text-3xl font-semibold text-gray-900">
+          <Typography style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>
             {createFromStatementsLabels.title}
-          </div>
-          <div className="mt-1 text-sm text-gray-500">
+          </Typography>
+          <Typography style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>
             {formatPaginationLabel(createFromStatementsLabels.stepCounter, {
               current: createFromStatementsStep,
               total: 2,
             })}
-          </div>
+          </Typography>
         </DialogTitle>
 
         <DialogContent dividers sx={{ px: 3, py: 2.5 }}>
-              <div className="grid grid-cols-2 gap-2">
-                <div
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium ${
-                    createFromStatementsStep === 1
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 text-gray-500'
-                  }`}
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1 }}>
+                <Box
+                  sx={{
+                    border: '1px solid',
+                    borderColor: createFromStatementsStep === 1 ? 'primary.main' : '#e5e7eb',
+                    bgcolor: createFromStatementsStep === 1 ? 'primary.50' : 'transparent',
+                    px: 1.5,
+                    py: 1,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: createFromStatementsStep === 1 ? 'primary.main' : '#6b7280',
+                  }}
                 >
                   {createFromStatementsLabels.step1}
-                </div>
-                <div
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium ${
-                    createFromStatementsStep === 2
-                      ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 text-gray-500'
-                  }`}
+                </Box>
+                <Box
+                  sx={{
+                    border: '1px solid',
+                    borderColor: createFromStatementsStep === 2 ? 'primary.main' : '#e5e7eb',
+                    bgcolor: createFromStatementsStep === 2 ? 'primary.50' : 'transparent',
+                    px: 1.5,
+                    py: 1,
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: createFromStatementsStep === 2 ? 'primary.main' : '#6b7280',
+                  }}
                 >
                   {createFromStatementsLabels.step2}
-                </div>
-              </div>
+                </Box>
+              </Box>
 
               {createFromStatementsStep === 1 ? (
-                <div className="space-y-3">
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {createFromStatementsLabels.step1Description}
                   </Typography>
@@ -1313,7 +1331,7 @@ export default function CustomTablesPage() {
                     </Grid>
                   </Grid>
 
-                  <div className="max-h-[360px] space-y-3 overflow-y-auto rounded-lg border border-gray-200 p-2">
+                  <Box sx={{ maxHeight: 360, overflowY: 'auto', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column', gap: 1.5, p: 1 }}>
                     {statementsLoading ? (
                       <Typography variant="caption">
                         {createFromStatementsLabels.statementsLoading}
@@ -1328,19 +1346,20 @@ export default function CustomTablesPage() {
                       </Typography>
                     ) : (
                       groupedStatementSelectionOptions.map(group => (
-                        <div key={group.key} className="rounded-md border border-gray-200">
-                          <div className="border-b border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-semibold text-gray-600">
+                        <Box key={group.key} sx={{ border: '1px solid #e5e7eb' }}>
+                          <Box sx={{ borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#4b5563' }}>
                             {group.label} ({group.options.length})
-                          </div>
-                          <div className="divide-y divide-gray-100">
-                            {group.options.map(option => {
+                          </Box>
+                          <Box>
+                            {group.options.map((option, idx) => {
                               const checked = selectedStatementIds.includes(
                                 option.representativeId,
                               );
 
                               return (
-                                <button
+                                <Box
                                   key={option.representativeId}
+                                  component="button"
                                   type="button"
                                   disabled={option.disabled}
                                   onClick={() => {
@@ -1350,59 +1369,69 @@ export default function CustomTablesPage() {
                                         : [...prev, option.representativeId],
                                     );
                                   }}
-                                  className={`flex w-full items-start gap-3 px-3 py-2 text-left transition ${
-                                    option.disabled
-                                      ? 'cursor-not-allowed opacity-50'
-                                      : 'hover:bg-gray-50'
-                                  }`}
+                                  sx={{
+                                    display: 'flex',
+                                    width: '100%',
+                                    alignItems: 'flex-start',
+                                    gap: 1.5,
+                                    px: 1.5,
+                                    py: 1,
+                                    textAlign: 'left',
+                                    border: 'none',
+                                    borderTop: idx > 0 ? '1px solid #f3f4f6' : 'none',
+                                    bgcolor: 'transparent',
+                                    cursor: option.disabled ? 'not-allowed' : 'pointer',
+                                    opacity: option.disabled ? 0.5 : 1,
+                                    '&:hover': { bgcolor: option.disabled ? 'transparent' : '#f9fafb' },
+                                  }}
                                 >
-                                  <Checkbox checked={checked} className="mt-1 h-4 w-4" />
-                                  <div className="min-w-0 flex-1">
-                                    <div className="truncate text-sm font-semibold text-gray-900">
+                                  <Checkbox checked={checked} className="h-4 w-4" style={{ marginTop: 2, flexShrink: 0 }} />
+                                  <Box sx={{ minWidth: 0, flex: 1 }}>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#111827' }}>
                                       {option.title}
-                                    </div>
-                                    <div className="truncate text-xs text-gray-500">
+                                    </Box>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
                                       {createFromStatementsLabels.sourceLabel}: {option.sourceLabel}{' '}
                                       - {createFromStatementsLabels.periodLabel}:{' '}
                                       {option.periodLabel}
-                                    </div>
-                                    <div className="truncate text-xs text-gray-500">
+                                    </Box>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
                                       {createFromStatementsLabels.fileLabel}: {option.fileLabel}
-                                    </div>
+                                    </Box>
                                     {option.duplicateCount > 1 ? (
-                                      <div className="text-xs text-amber-700">
+                                      <Box style={{ fontSize: 12, color: '#92400e' }}>
                                         {formatPaginationLabel(
                                           createFromStatementsLabels.duplicateUploads,
                                           {
                                             count: option.duplicateCount,
                                           },
                                         )}
-                                      </div>
+                                      </Box>
                                     ) : null}
-                                  </div>
-                                  <div className="shrink-0 text-xs font-semibold text-gray-700">
+                                  </Box>
+                                  <Box style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, color: '#374151' }}>
                                     {option.rowsLabel}
-                                  </div>
-                                </button>
+                                  </Box>
+                                </Box>
                               );
                             })}
-                          </div>
-                        </div>
+                          </Box>
+                        </Box>
                       ))
                     )}
-                  </div>
+                  </Box>
 
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#6b7280' }}>
                     <span>{createFromStatementsLabels.hint}</span>
                     <span>
                       {formatPaginationLabel(createFromStatementsLabels.selectedLabel, {
                         count: selectedStatementSummary.selectedCount,
                       })}
                     </span>
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               ) : (
-                <div className="space-y-4">
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     {createFromStatementsLabels.step2Description}
                   </Typography>
@@ -1441,39 +1470,39 @@ export default function CustomTablesPage() {
                     </Grid>
                   </Grid>
 
-                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-                    <div className="text-sm font-semibold text-gray-900">
+                  <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5 }}>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                       {createFromStatementsLabels.previewTitle}
-                    </div>
-                    <div className="mt-1 text-sm text-gray-700">
+                    </Typography>
+                    <Typography style={{ marginTop: 4, fontSize: 14, color: '#374151' }}>
                       {formatPaginationLabel(createFromStatementsLabels.previewSummary, {
                         statements: selectedStatementSummary.selectedCount,
                       })}
-                    </div>
-                    <div className="text-sm font-semibold text-gray-900">
+                    </Typography>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                       {formatPaginationLabel(createFromStatementsLabels.previewRows, {
                         rows: selectedStatementSummary.totalRows,
                       })}
-                    </div>
-                    <div className="mt-1 text-xs text-gray-500">
+                    </Typography>
+                    <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
                       {createFromStatementsLabels.previewEditable}
-                    </div>
+                    </Typography>
 
-                    <div className="mt-3 max-h-32 space-y-1 overflow-y-auto">
+                    <Box sx={{ mt: 1.5, maxHeight: 128, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                       {selectedStatementPreviewItems.map(option => (
-                        <div
+                        <Box
                           key={option.representativeId}
-                          className="flex items-center justify-between rounded border border-gray-200 bg-white px-2 py-1"
+                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e5e7eb', bgcolor: '#fff', px: 1, py: 0.5 }}
                         >
-                          <span className="truncate text-xs text-gray-700">{option.title}</span>
-                          <span className="text-xs font-medium text-gray-900">
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#374151' }}>{option.title}</span>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: '#111827', flexShrink: 0, marginLeft: 8 }}>
                             {option.rowsLabel}
                           </span>
-                        </div>
+                        </Box>
                       ))}
-                    </div>
-                  </div>
-                </div>
+                    </Box>
+                  </Box>
+                </Box>
               )}
         </DialogContent>
 

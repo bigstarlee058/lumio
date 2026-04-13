@@ -180,10 +180,9 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       {
         id: '__select',
         header: ({ table }) => (
-          <div className="flex items-center justify-center">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Checkbox
               aria-label="Select all rows"
-              className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/30"
               checked={table.getIsAllRowsSelected()}
               indeterminate={table.getIsSomeRowsSelected()}
               onChange={table.getToggleAllRowsSelectedHandler()}
@@ -196,10 +195,9 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
         enableResizing: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <div className="flex items-center justify-center">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Checkbox
               aria-label={`Select row ${row.original.rowNumber}`}
-              className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/30"
               checked={row.getIsSelected()}
               disabled={!row.getCanSelect()}
               onChange={row.getToggleSelectedHandler()}
@@ -217,7 +215,15 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
         enableResizing: false,
         enableSorting: false,
         cell: ({ row }) => (
-          <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.875rem',
+              color: '#6b7280',
+            }}
+          >
             {row.original.rowNumber}
           </div>
         ),
@@ -292,7 +298,13 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
     cols.push({
       id: '__actions',
       header: () => (
-        <div className="text-center font-semibold text-gray-600">
+        <div
+          style={{
+            textAlign: 'center',
+            fontWeight: 600,
+            color: '#4b5563',
+          }}
+        >
           {getTranslationValue(t, ['actions', 'actionsHeader'], 'Actions')}
         </div>
       ),
@@ -301,22 +313,44 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       maxSize: 150,
       enableResizing: false,
       cell: ({ row }) => (
-        <div className="flex items-center justify-center gap-3">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <button
             type="button"
             onClick={event => openColorPickerForRow(row.original.id, event)}
-            className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-700"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 4,
+              padding: 4,
+              color: '#9ca3af',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s, color 0.2s',
+            }}
             title={t.fill.colorTooltip.value}
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil size={16} />
           </button>
           <button
             onClick={() => props.onDeleteRow(row.original.id)}
             type="button"
-            className="rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 4,
+              padding: 4,
+              color: '#9ca3af',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s, color 0.2s',
+            }}
             title={getTranslationValue(t, ['actions', 'delete'], 'Delete')}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 size={16} />
           </button>
         </div>
       ),
@@ -328,10 +362,21 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       header: () => (
         <button
           onClick={props.onAddColumnClick}
-          className="flex h-full w-full items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+          style={{
+            display: 'flex',
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#9ca3af',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s, color 0.2s',
+          }}
           title="Add Column"
         >
-          <Plus className="h-4 w-4" />
+          <Plus size={16} />
         </button>
       ),
       size: 50,
@@ -595,18 +640,42 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
         <div
           ref={tableContainerRef}
           onScroll={handleScroll}
-          className="relative overflow-y-auto rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900"
           style={{
+            position: 'relative',
+            overflowY: 'auto',
+            borderRadius: 12,
+            border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+            backgroundColor: isDark ? '#111827' : '#fff',
             height: props.isFullscreen ? 'calc(100vh - 150px)' : '600px',
           }}
         >
-          <div className="sticky top-0 z-20 flex items-center justify-between border-b border-gray-200 bg-white px-3 py-2 dark:border-gray-700 dark:bg-gray-900">
-            <div className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+          <div
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 20,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+              backgroundColor: isDark ? '#111827' : '#fff',
+              padding: '8px 12px',
+            }}
+          >
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                color: isDark ? '#e5e7eb' : '#374151',
+              }}
+            >
               <Checkbox
                 checked={allRowsSelectedMobile}
                 indeterminate={someRowsSelectedMobile && !allRowsSelectedMobile}
                 onCheckedChange={handleMobileSelectAll}
-                className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/30"
                 aria-label="Select all rows"
               />
               <span>
@@ -618,16 +687,29 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
               <button
                 type="button"
                 onClick={() => props.onCreateRow?.()}
-                className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-primary hover:text-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  borderRadius: 999,
+                  border: '1px dashed #d1d5db',
+                  padding: '6px 12px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: '#4b5563',
+                  background: 'none',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus size={14} />
                 {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             ) : null}
           </div>
 
           {props.rows.length > 0 ? (
-            <div className="space-y-3 p-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 12 }}>
               {props.rows.map(row => {
                 const rowStyle = getRowStyle(row);
 
@@ -635,26 +717,49 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   <article
                     key={row.id}
                     data-testid={`custom-table-mobile-card-${row.id}`}
-                    className="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-900"
-                    style={rowStyle}
+                    style={{
+                      borderRadius: 8,
+                      border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                      backgroundColor: isDark ? '#111827' : '#fff',
+                      padding: 12,
+                      ...rowStyle,
+                    }}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                      <div
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          color: isDark ? '#e5e7eb' : '#374151',
+                        }}
+                      >
                         <Checkbox
                           checked={selectedRowsSet.has(row.id)}
                           onCheckedChange={checked => handleMobileSelectRow(row.id, checked)}
-                          className="h-5 w-5 rounded border-gray-300 text-primary focus:ring-primary/30"
                           aria-label={`Select row ${row.rowNumber}`}
                         />
                         <span>#{row.rowNumber}</span>
                       </div>
 
-                      <div className="flex items-center gap-1">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                         {props.onViewRow ? (
                           <button
                             type="button"
                             onClick={() => props.onViewRow?.(row.id)}
-                            className="rounded-md border border-gray-200 px-2 py-1 text-xs font-medium text-gray-700 transition hover:border-primary hover:text-primary"
+                            style={{
+                              borderRadius: 6,
+                              border: '1px solid #e5e7eb',
+                              padding: '4px 8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              color: '#374151',
+                              background: 'none',
+                              cursor: 'pointer',
+                              transition: 'border-color 0.2s, color 0.2s',
+                            }}
                           >
                             {viewLabel}
                           </button>
@@ -664,7 +769,17 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                           <button
                             type="button"
                             onClick={() => props.onEditRow?.(row.id)}
-                            className="rounded-md border border-gray-200 px-2 py-1 text-xs font-medium text-gray-700 transition hover:border-primary hover:text-primary"
+                            style={{
+                              borderRadius: 6,
+                              border: '1px solid #e5e7eb',
+                              padding: '4px 8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              color: '#374151',
+                              background: 'none',
+                              cursor: 'pointer',
+                              transition: 'border-color 0.2s, color 0.2s',
+                            }}
                           >
                             {editLabel}
                           </button>
@@ -673,24 +788,49 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                         <button
                           type="button"
                           onClick={() => props.onDeleteRow(row.id)}
-                          className="inline-flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 transition hover:border-red-400 hover:text-red-700"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            borderRadius: 6,
+                            border: '1px solid #fecaca',
+                            padding: '4px 8px',
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            color: '#dc2626',
+                            background: 'none',
+                            cursor: 'pointer',
+                            transition: 'border-color 0.2s, color 0.2s',
+                          }}
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Trash2 size={14} />
                           {deleteLabel}
                         </button>
                       </div>
                     </div>
 
-                    <dl className="mt-3 space-y-2">
+                    <dl style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {orderedColumns.map(column => (
                         <div
                           key={`${row.id}-${column.id}`}
-                          className="grid grid-cols-[112px_1fr] gap-2 text-sm"
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '112px 1fr',
+                            gap: 8,
+                            fontSize: '0.875rem',
+                          }}
                         >
-                          <dt className="truncate text-gray-500 dark:text-gray-400">
+                          <dt
+                            style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              color: isDark ? '#9ca3af' : '#6b7280',
+                            }}
+                          >
                             {column.title}
                           </dt>
-                          <dd className="text-gray-900 dark:text-gray-100">
+                          <dd style={{ color: isDark ? '#f3f4f6' : '#111827' }}>
                             {formatMobileCellValue(column, row)}
                           </dd>
                         </div>
@@ -703,31 +843,71 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           ) : null}
 
           {!props.loadingRows && props.rows.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-              <GripVertical className="mb-4 h-12 w-12 opacity-20" />
-              <p className="text-lg font-medium">
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '64px 0',
+                color: '#6b7280',
+              }}
+            >
+              <GripVertical size={48} style={{ marginBottom: 16, opacity: 0.2 }} />
+              <p style={{ fontSize: '1.125rem', fontWeight: 500 }}>
                 {getTranslationValue(t, ['grid', 'emptyTitle'], 'No rows yet')}
               </p>
-              <p className="text-sm">{getTranslationValue(t, ['grid', 'emptySubtitle'], '')}</p>
+              <p style={{ fontSize: '0.875rem' }}>
+                {getTranslationValue(t, ['grid', 'emptySubtitle'], '')}
+              </p>
             </div>
           )}
 
           {props.showAddRow !== false && props.rows.length > 0 && (
-            <div className="border-t border-gray-200 bg-gray-50 px-3 py-3 dark:border-gray-700 dark:bg-gray-800">
+            <div
+              style={{
+                borderTop: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                backgroundColor: isDark ? '#1f2937' : '#f9fafb',
+                padding: 12,
+              }}
+            >
               <button
                 type="button"
                 onClick={() => props.onCreateRow?.()}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition hover:border-primary hover:text-primary"
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  borderRadius: 8,
+                  border: '1px dashed #d1d5db',
+                  backgroundColor: '#fff',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#4b5563',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
               >
-                <Plus className="h-4 w-4" />
+                <Plus size={16} />
                 {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             </div>
           )}
 
           {props.loadingRows && (
-            <div className="flex items-center justify-center py-8 text-gray-500">
-              <Spinner className="mr-2 h-5 w-5" />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '32px 0',
+                color: '#6b7280',
+              }}
+            >
+              <Spinner size={20} style={{ marginRight: 8 }} />
               <span>{t.grid.loadingMore.value}</span>
             </div>
           )}
@@ -741,8 +921,14 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
       <div
         ref={tableContainerRef}
         onScroll={handleScroll}
-        className="relative overflow-y-auto overflow-x-auto border-x border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 pt-1"
         style={{
+          position: 'relative',
+          overflowY: props.isPrintMode ? 'visible' : 'auto',
+          overflowX: props.isPrintMode ? 'visible' : 'auto',
+          border: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+          borderTop: 'none',
+          backgroundColor: isDark ? '#111827' : '#fff',
+          paddingTop: 4,
           height: props.isPrintMode ? 'auto' : props.isFullscreen ? 'calc(100vh - 150px)' : '600px',
           overflow: props.isPrintMode ? 'visible' : undefined,
         }}
@@ -809,24 +995,39 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           />
         </Popover>
         <table
-          className="w-full border-collapse"
-          style={{ minWidth: props.isPrintMode ? undefined : table.getTotalSize() }}
+          style={{ width: '100%', borderCollapse: 'collapse', minWidth: props.isPrintMode ? undefined : table.getTotalSize() }}
         >
           <thead
-            className={`${props.isPrintMode ? '' : 'sticky top-0 z-10'} bg-gray-50 dark:bg-gray-800`}
+            style={{
+              position: props.isPrintMode ? 'static' : 'sticky',
+              top: 0,
+              zIndex: props.isPrintMode ? 'auto' : 10,
+              backgroundColor: isDark ? '#1f2937' : '#f9fafb',
+            }}
           >
             {table.getHeaderGroups().map(headerGroup => (
               <tr
                 key={headerGroup.id}
-                className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
+                style={{
+                  borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb',
+                  backgroundColor: isDark ? '#1f2937' : '#f9fafb',
+                }}
               >
                 {headerGroup.headers.map(header => {
                   const isResizing = header.column.getIsResizing();
                   return (
                     <th
                       key={header.id}
-                      className="relative px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800"
                       style={{
+                        position: 'relative',
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: isDark ? '#d1d5db' : '#374151',
+                        backgroundColor: isDark ? '#1f2937' : '#f9fafb',
                         width: header.getSize(),
                         minWidth: header.column.columnDef.minSize,
                         maxWidth: header.column.columnDef.maxSize,
@@ -846,12 +1047,20 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                             setResizingColumnId(header.column.id);
                             header.getResizeHandler()(event);
                           }}
-                          className={`absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none ${
-                            isResizing
-                              ? 'bg-blue-500'
-                              : 'bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500'
-                          }`}
                           style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: 0,
+                            height: '100%',
+                            width: 4,
+                            cursor: 'col-resize',
+                            userSelect: 'none',
+                            touchAction: 'none',
+                            backgroundColor: isResizing
+                              ? '#3b82f6'
+                              : isDark
+                                ? '#4b5563'
+                                : '#d1d5db',
                             transform: isResizing ? 'scaleX(2)' : undefined,
                           }}
                         />
@@ -880,20 +1089,23 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   return (
                     <tr
                       key={row.id}
-                      className={`group border-b border-gray-200 dark:border-gray-800 ${
-                        hasRowFill ? 'row-fill' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                      }`}
-                      style={rowStyle}
+                      style={{
+                        borderBottom: isDark ? '1px solid #1f2937' : '1px solid #e5e7eb',
+                        ...rowStyle,
+                      }}
                     >
                       {row.getVisibleCells().map(cell => (
                         <td
                           key={cell.id}
-                          className={`px-4 py-3 text-sm text-gray-900 dark:text-gray-100 ${
-                            hasRowFill
-                              ? ''
-                              : 'bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/50'
-                          }`}
                           style={{
+                            padding: '12px 16px',
+                            fontSize: '0.875rem',
+                            color: isDark ? '#f3f4f6' : '#111827',
+                            ...(hasRowFill
+                              ? {}
+                              : {
+                                  backgroundColor: isDark ? '#111827' : '#fff',
+                                }),
                             ...(rowBackground ? { backgroundColor: rowBackground } : {}),
                             ...getStickyStyle(cell.column.id, false, rowBackground),
                           }}
@@ -915,10 +1127,8 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                   return (
                     <tr
                       key={row.id}
-                      className={`group border-b border-gray-200 dark:border-gray-800 ${
-                        hasRowFill ? 'row-fill' : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                      }`}
                       style={{
+                        borderBottom: isDark ? '1px solid #1f2937' : '1px solid #e5e7eb',
                         height: `${virtualRow.size}px`,
                         ...rowStyle,
                       }}
@@ -926,13 +1136,16 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
                       {row.getVisibleCells().map(cell => (
                         <td
                           key={cell.id}
-                          className={`px-4 py-3 text-sm text-gray-900 dark:text-gray-100 ${
-                            hasRowFill
-                              ? ''
-                              : 'bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/50'
-                          }`}
                           style={{
+                            padding: '12px 16px',
+                            fontSize: '0.875rem',
+                            color: isDark ? '#f3f4f6' : '#111827',
                             width: cell.column.getSize(),
+                            ...(hasRowFill
+                              ? {}
+                              : {
+                                  backgroundColor: isDark ? '#111827' : '#fff',
+                                }),
                             ...(rowBackground ? { backgroundColor: rowBackground } : {}),
                             ...getStickyStyle(cell.column.id, false, rowBackground),
                           }}
@@ -962,15 +1175,37 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
           <div
             ref={addRowFooterRef}
             data-testid="custom-table-add-row"
-            className="sticky left-0 z-10 w-full border-t border-gray-200 bg-gray-50 py-3"
+            style={{
+              position: 'sticky',
+              left: 0,
+              zIndex: 10,
+              width: '100%',
+              borderTop: '1px solid #e5e7eb',
+              backgroundColor: isDark ? '#1f2937' : '#f9fafb',
+              padding: '12px 0',
+            }}
           >
-            <div className="flex w-full justify-center">
+            <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
               <button
                 type="button"
                 onClick={() => props.onCreateRow?.()}
-                className="flex items-center gap-2 rounded-full border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:border-primary hover:text-primary shadow-sm"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  borderRadius: 999,
+                  border: '1px dashed #d1d5db',
+                  backgroundColor: '#fff',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  color: '#4b5563',
+                  cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
               >
-                <Plus className="h-4 w-4" />
+                <Plus size={16} />
                 {getTranslationValue(t, ['grid', 'addRowLabel'], 'Add row')}
               </button>
             </div>
@@ -979,20 +1214,39 @@ export function CustomTableTanStack(props: CustomTableTanStackProps) {
 
         {/* Loading indicator */}
         {props.loadingRows && !props.isPrintMode && (
-          <div className="flex items-center justify-center py-8 text-gray-500">
-            <Spinner className="mr-2 h-5 w-5" />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '32px 0',
+              color: '#6b7280',
+            }}
+          >
+            <Spinner size={20} style={{ marginRight: 8 }} />
             <span>{t.grid.loadingMore.value}</span>
           </div>
         )}
 
         {/* Empty state */}
         {!props.loadingRows && props.rows.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-            <GripVertical className="h-12 w-12 mb-4 opacity-20" />
-            <p className="text-lg font-medium">
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '64px 0',
+              color: '#6b7280',
+            }}
+          >
+            <GripVertical size={48} style={{ marginBottom: 16, opacity: 0.2 }} />
+            <p style={{ fontSize: '1.125rem', fontWeight: 500 }}>
               {getTranslationValue(t, ['grid', 'emptyTitle'], 'No rows yet')}
             </p>
-            <p className="text-sm">{getTranslationValue(t, ['grid', 'emptySubtitle'], '')}</p>
+            <p style={{ fontSize: '0.875rem' }}>
+              {getTranslationValue(t, ['grid', 'emptySubtitle'], '')}
+            </p>
           </div>
         )}
       </div>

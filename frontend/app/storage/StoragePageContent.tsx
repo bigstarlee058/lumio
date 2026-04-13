@@ -10,7 +10,7 @@ import {
   closestCenter,
   pointerWithin,
 } from '@dnd-kit/core';
-import { Box, Chip, IconButton, Popover, TextField, Typography } from '@mui/material';
+import { Box, Chip, Divider, IconButton, Popover, TextField, Typography } from '@mui/material';
 import {
   Bookmark,
   Check,
@@ -810,8 +810,24 @@ function StoragePageContent({
       (result, [key, value]) => result.replace(`{${key}}`, String(value)),
       template,
     );
+  const tagChipSx = (isActive: boolean) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 0.5,
+    border: '1px solid',
+    borderColor: isActive ? 'rgba(79,70,229,0.3)' : '#e5e7eb',
+    borderRadius: '50px',
+    px: 1,
+    py: 0.25,
+    fontSize: 11,
+    fontWeight: 600,
+    bgcolor: isActive ? 'rgba(79,70,229,0.1)' : '#f9fafb',
+    color: isActive ? '#4f46e5' : '#374151',
+    cursor: 'pointer',
+  });
+  // Keep string version for child component prop compatibility
   const tagChipClass = (isActive: boolean) =>
-    `inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
+    `inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold ${
       isActive
         ? 'bg-primary/10 text-primary border-primary/30'
         : 'bg-gray-50 text-gray-700 border-gray-200'
@@ -1390,8 +1406,8 @@ function StoragePageContent({
         </DragOverlay>
         {activeModal === 'folders' && (
           <>
-            <div
-              className="fixed inset-0 z-70 bg-black/30"
+            <Box
+              sx={{ position: 'fixed', inset: 0, zIndex: 70, bgcolor: 'rgba(0,0,0,0.3)' }}
               role="button"
               tabIndex={0}
               onClick={closeModal}
@@ -1402,139 +1418,168 @@ function StoragePageContent({
                 }
               }}
             />
-            <div className="fixed inset-0 z-80 flex items-center justify-center p-4">
-              <div className="flex w-full max-w-[1380px] min-h-[70vh] max-h-[90vh] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-2xl">
-                <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 px-6 py-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <Box sx={{ position: 'fixed', inset: 0, zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+              <Box sx={{ display: 'flex', width: '100%', maxWidth: 1380, minHeight: '70vh', maxHeight: '90vh', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f3f4f6', px: 3, py: 2 }}>
+                  <Box>
+                    <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
                       {t.modals.foldersTitle}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    </Typography>
+                    <Typography style={{ fontSize: 14, color: '#6b7280' }}>
                       {t.modals.foldersSubtitle}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="rounded-full p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-800"
-                  >
+                    </Typography>
+                  </Box>
+                  <IconButton size="small" onClick={closeModal} sx={{ borderRadius: 0 }}>
                     <X size={18} />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  </IconButton>
+                </Box>
+                <Box sx={{ flex: 1, overflowY: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {folderMoveFeedback && (
-                    <div
+                    <Box
                       role={folderMoveFeedback.tone === 'error' ? 'alert' : 'status'}
-                      className={`rounded-lg border px-3 py-2 text-sm ${
-                        folderMoveFeedback.tone === 'success'
-                          ? 'border-green-200 bg-green-50 text-green-700 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-100'
-                          : 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-100'
-                      }`}
+                      sx={{
+                        border: '1px solid',
+                        px: 1.5,
+                        py: 1,
+                        fontSize: 14,
+                        ...(folderMoveFeedback.tone === 'success'
+                          ? { borderColor: '#a7f3d0', bgcolor: '#ecfdf5', color: '#065f46' }
+                          : { borderColor: '#fecaca', bgcolor: '#fef2f2', color: '#b91c1c' }),
+                      }}
                     >
                       {folderMoveFeedback.message}
-                    </div>
+                    </Box>
                   )}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex flex-1 items-center gap-2 min-w-[220px]">
-                      <input
-                        type="text"
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
+                    <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', gap: 1, minWidth: 220 }}>
+                      <TextField
+                        size="small"
                         value={newFolderName}
                         onChange={event =>
                           setNewFolderName(clampFolderName(event.target.value, newFolderName))
                         }
                         placeholder={t.folders.createPlaceholder.value}
-                        className="flex-1 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
                       />
-                      <button
-                        type="button"
+                      <IconButton
                         onClick={handleCreateFolder}
                         disabled={!newFolderName.trim()}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-sm hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300 dark:disabled:bg-gray-600"
                         title={t.folders.createTooltip.value}
+                        sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: '50%', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { bgcolor: '#d1d5db', cursor: 'not-allowed' } }}
                       >
                         <Plus size={18} />
-                      </button>
-                    </div>
+                      </IconButton>
+                    </Box>
                     {draggingFile && (
-                      <div className="text-xs text-primary">{t.dragDrop.subtitle}</div>
+                      <Typography style={{ fontSize: 12, color: 'var(--color-primary, #4f46e5)' }}>{t.dragDrop.subtitle}</Typography>
                     )}
-                  </div>
+                  </Box>
 
-                  <div className="grid gap-6 lg:grid-cols-[550px_1fr]">
-                    <div className="space-y-4">
-                      <div className="rounded-xl border border-gray-200 dark:border-slate-700/60 p-3">
-                        <div className="flex items-center justify-between px-1">
-                          <div className="flex flex-col">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', lg: '550px 1fr' } }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <Box sx={{ border: '1px solid #e5e7eb', p: 1.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 0.5 }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                               {t.modals.folderListTitle}
-                            </h4>
+                            </Typography>
                             {pickedFolderId && (
-                              <span className="mt-0.5 text-xs font-bold text-primary animate-pulse tracking-tight">
+                              <Typography style={{ marginTop: 2, fontSize: 12, fontWeight: 700, color: 'var(--color-primary, #4f46e5)', letterSpacing: '-0.025em' }}>
                                 {t.scrollHint.value}
-                              </span>
+                              </Typography>
                             )}
-                          </div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          </Box>
+                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                             {folders.length}
-                          </span>
-                        </div>
-                        <div className="mt-3 px-1 space-y-3 max-h-[45vh] overflow-y-auto">
-                          <button
+                          </Typography>
+                        </Box>
+                        <Box sx={{ mt: 1.5, px: 0.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxHeight: '45vh', overflowY: 'auto' }}>
+                          <Box
+                            component="button"
                             type="button"
                             onClick={() => setActiveFolderId('')}
-                            className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm font-medium ${
-                              activeFolderId === ''
-                                ? 'border-primary/40 bg-primary/10 text-primary'
-                                : 'border-gray-100 dark:border-slate-800 text-gray-700 dark:text-gray-200'
-                            }`}
+                            sx={{
+                              display: 'flex',
+                              width: '100%',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              border: '1px solid',
+                              px: 2,
+                              py: 1.5,
+                              fontSize: 14,
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              bgcolor: activeFolderId === '' ? 'rgba(79,70,229,0.1)' : 'transparent',
+                              color: activeFolderId === '' ? 'primary.main' : '#374151',
+                              borderColor: activeFolderId === '' ? 'rgba(79,70,229,0.4)' : '#f3f4f6',
+                            }}
                           >
-                            <span>{t.folders.all}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <Box component="span">{t.folders.all}</Box>
+                            <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                               {files.length}
-                            </span>
-                          </button>
+                            </Typography>
+                          </Box>
                           <DroppableFolderButton
                             isNoFolder
                             active={activeFolderId === NO_FOLDER}
                             onClick={() => setActiveFolderId(NO_FOLDER)}
-                            className={`flex w-full items-center justify-between px-4 py-3 text-sm font-medium ${
-                              activeFolderId === NO_FOLDER
-                                ? 'bg-primary/5 text-primary' // Highlight handled by wrapper
-                                : 'text-gray-700 dark:text-gray-200'
-                            }`}
+                            style={{
+                              display: 'flex',
+                              width: '100%',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '12px 16px',
+                              fontSize: 14,
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              background: activeFolderId === NO_FOLDER ? 'rgba(79,70,229,0.05)' : 'transparent',
+                              color: activeFolderId === NO_FOLDER ? '#4f46e5' : '#374151',
+                              border: 'none',
+                            }}
                           >
-                            <div className="flex w-full items-center justify-between">
-                              <span>{t.folders.none}</span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <Box component="span">{t.folders.none}</Box>
+                              <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                                 {folderCounts.noFolder}
-                              </span>
-                            </div>
+                              </Typography>
+                            </Box>
                           </DroppableFolderButton>
                           {folders.length === 0 ? (
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                               {t.modals.folderListEmpty}
-                            </p>
+                            </Typography>
                           ) : (
-                            folders.map((folder, index) => (
-                              <div key={folder.id} className="space-y-2">
-                                {/* Droppable wrapper around the folder item */}
+                            folders.map((folder) => (
+                              <Box key={folder.id} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 <DroppableFolderButton
                                   folderId={folder.id}
                                   active={activeFolderId === folder.id}
                                   onClick={() => setActiveFolderId(folder.id)}
                                   onContextMenu={e => handleFolderContextMenu(e, folder)}
-                                  className={`group relative flex items-center gap-2 rounded-lg border px-4 py-3 ${
-                                    pickedFolderId === folder.id
-                                      ? 'border-primary ring-2 ring-primary/20 bg-primary/5 cursor-ns-resize shadow-md z-10'
+                                  style={{
+                                    position: 'relative',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '12px 16px',
+                                    border: '1px solid',
+                                    borderColor: pickedFolderId === folder.id
+                                      ? '#4f46e5'
                                       : activeFolderId === folder.id
-                                        ? 'border-primary/30 bg-primary/5'
-                                        : 'border-gray-100 dark:border-slate-800'
-                                  }`}
+                                        ? 'rgba(79,70,229,0.3)'
+                                        : '#f3f4f6',
+                                    background: (pickedFolderId === folder.id || activeFolderId === folder.id)
+                                      ? 'rgba(79,70,229,0.05)'
+                                      : 'transparent',
+                                    cursor: pickedFolderId === folder.id ? 'ns-resize' : 'pointer',
+                                    boxShadow: pickedFolderId === folder.id ? '0 4px 6px -1px rgba(0,0,0,0.1)' : 'none',
+                                    zIndex: pickedFolderId === folder.id ? 10 : undefined,
+                                  }}
                                 >
                                   {editingFolderId === folder.id ? (
-                                    <div className="flex flex-1 items-center gap-2">
-                                      <input
-                                        type="text"
+                                    <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', gap: 1 }}>
+                                      <TextField
+                                        size="small"
                                         value={editingFolderName}
                                         onChange={event =>
                                           setEditingFolderName(
@@ -1542,58 +1587,70 @@ function StoragePageContent({
                                           )
                                         }
                                         onClick={event => event.stopPropagation()}
-                                        className="flex-1 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100"
+                                        sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
                                       />
-                                      <button
-                                        type="button"
+                                      <IconButton
+                                        size="small"
                                         onClick={event => {
                                           event.stopPropagation();
                                           handleRenameFolder(folder.id);
                                         }}
-                                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
+                                        sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: '50%', '&:hover': { bgcolor: 'primary.dark' } }}
                                       >
                                         <Check size={16} />
-                                      </button>
-                                      <button
-                                        type="button"
+                                      </IconButton>
+                                      <IconButton
+                                        size="small"
                                         onClick={event => {
                                           event.stopPropagation();
                                           handleCancelEditFolder();
                                         }}
-                                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800"
+                                        sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
                                       >
                                         <X size={16} />
-                                      </button>
-                                    </div>
+                                      </IconButton>
+                                    </Box>
                                   ) : (
                                     <>
-                                      <div className="flex flex-1 items-center justify-between gap-2 text-left">
-                                        <div className="flex items-center gap-2 min-w-0">
+                                      <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', gap: 1, textAlign: 'left' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                                           <Folder
-                                            className="h-4 w-4 text-gray-400"
                                             style={{
-                                              color: folder.tag?.color ?? undefined,
+                                              width: 16,
+                                              height: 16,
+                                              color: folder.tag?.color ?? '#9ca3af',
                                             }}
                                           />
-                                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                          <Typography
+                                            style={{
+                                              fontSize: 14,
+                                              fontWeight: 500,
+                                              color: '#111827',
+                                              overflow: 'hidden',
+                                              textOverflow: 'ellipsis',
+                                              whiteSpace: 'nowrap',
+                                            }}
+                                          >
                                             {folder.name}
-                                          </span>
-                                        </div>
-                                      </div>
-                                      <div className="flex items-center gap-2">
+                                          </Typography>
+                                        </Box>
+                                      </Box>
+                                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         {pickedFolderId === null ? (
-                                          <button
+                                          <Box
+                                            component="button"
                                             type="button"
                                             onClick={e => {
                                               e.stopPropagation();
                                               setPickedFolderId(folder.id);
                                             }}
-                                            className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-gray-400 hover:text-primary hover:bg-primary/5 transition-all opacity-0 group-hover:opacity-100"
+                                            sx={{ ml: 'auto', display: 'inline-flex', alignItems: 'center', gap: 0.5, px: 1, py: 0.5, fontSize: 12, fontWeight: 500, color: '#9ca3af', border: 'none', bgcolor: 'transparent', cursor: 'pointer', opacity: 0, '.group:hover &': { opacity: 1 }, '&:hover': { color: 'primary.main', bgcolor: 'rgba(79,70,229,0.05)' } }}
                                           >
                                             {t.dragAndDrop.value}
-                                          </button>
+                                          </Box>
                                         ) : pickedFolderId === folder.id ? (
-                                          <button
+                                          <Box
+                                            component="button"
                                             type="button"
                                             onClick={e => {
                                               e.stopPropagation();
@@ -1602,98 +1659,97 @@ function StoragePageContent({
                                                 `${tx(['toasts', 'fileMovedTo'], 'File moved to folder')} "${folder.name}"`,
                                               );
                                             }}
-                                            className="ml-auto inline-flex items-center gap-1 rounded-lg bg-primary text-white px-3 py-1 text-xs font-semibold shadow-sm hover:bg-primary/90 transition-all scale-105"
+                                            sx={{ ml: 'auto', display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'primary.main', color: '#fff', px: 1.5, py: 0.5, fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' } }}
                                           >
                                             {t.done.value}
-                                          </button>
+                                          </Box>
                                         ) : null}
                                         {canEditFolder(folder) && (
-                                          <div className="flex items-center">
-                                            <button
-                                              type="button"
+                                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <IconButton
+                                              size="small"
                                               onClick={e => {
                                                 e.stopPropagation();
                                                 handleFolderContextMenu(e, folder);
                                               }}
-                                              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800"
+                                              sx={{ color: '#9ca3af', borderRadius: '50%', '&:hover': { bgcolor: '#f3f4f6' } }}
                                             >
                                               <MoreVertical size={16} />
-                                            </button>
-                                          </div>
+                                            </IconButton>
+                                          </Box>
                                         )}
-                                      </div>
+                                      </Box>
                                     </>
                                   )}
                                 </DroppableFolderButton>
                                 {folderTagPickerId === folder.id && canEditFolder(folder) && (
-                                  <div
-                                    className="rounded-lg border border-gray-100 dark:border-slate-800 p-2"
+                                  <Box
+                                    sx={{ border: '1px solid #f3f4f6', p: 1 }}
                                     onClick={event => event.stopPropagation()}
                                     onKeyDown={event => event.stopPropagation()}
                                   >
-                                    <div className="flex flex-wrap gap-2">
-                                      <button
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                      <Box
+                                        component="button"
                                         type="button"
                                         onClick={() => handleUpdateFolderTag(folder.id, null)}
-                                        className="text-xs font-medium text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                                        sx={{ fontSize: 12, fontWeight: 500, color: '#6b7280', border: 'none', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { color: '#111827' } }}
                                       >
                                         {t.tags.clear}
-                                      </button>
+                                      </Box>
                                       {tags.map(tag => {
                                         const isActive = folder.tag?.id === tag.id;
                                         return (
-                                          <button
+                                          <Box
                                             key={tag.id}
+                                            component="button"
                                             type="button"
                                             onClick={() => handleUpdateFolderTag(folder.id, tag.id)}
-                                            className={tagChipClass(isActive)}
+                                            sx={tagChipSx(isActive)}
                                             style={getTagChipStyle(tag)}
                                           >
                                             {tag.name}
-                                          </button>
+                                          </Box>
                                         );
                                       })}
-                                    </div>
-                                  </div>
+                                    </Box>
+                                  </Box>
                                 )}
-                              </div>
+                              </Box>
                             ))
                           )}
-                        </div>
-                      </div>
+                        </Box>
+                      </Box>
 
-                      <div className="rounded-xl border border-gray-200 dark:border-slate-700/60 p-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <Box sx={{ border: '1px solid #e5e7eb', p: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                             {t.tags.title}
-                          </h4>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          </Typography>
+                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                             {tags.length}
-                          </span>
-                        </div>
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                          <input
-                            type="text"
+                          </Typography>
+                        </Box>
+                        <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                          <TextField
+                            size="small"
                             value={newTagName}
                             onChange={event => setNewTagName(event.target.value)}
                             placeholder={t.tags.createPlaceholder.value}
-                            className="flex-1 min-w-40 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            sx={{ flex: 1, minWidth: 160, '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
                           />
-                          <div className="relative">
-                            <button
-                              type="button"
+                          <Box sx={{ position: 'relative' }}>
+                            <IconButton
+                              size="small"
                               onClick={event => {
                                 setNewTagAnchorEl(event.currentTarget);
                                 setNewTagPickerOpen(prev => !prev);
                               }}
-                              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-1"
                               aria-label={t.tagColor.value}
+                              sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', p: 0.5 }}
                             >
-                              <span
-                                className="h-6 w-6 rounded-full"
-                                style={{ backgroundColor: newTagColor }}
-                              />
-                            </button>
+                              <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: newTagColor }} />
+                            </IconButton>
                             <Popover
                               open={newTagPickerOpen}
                               anchorEl={newTagAnchorEl}
@@ -1701,67 +1757,55 @@ function StoragePageContent({
                                 setNewTagPickerOpen(false);
                                 setNewTagAnchorEl(null);
                               }}
-                              anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'right',
-                              }}
-                              transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                              }}
+                              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                               slotProps={colorPickerPopoverSlotProps}
                             >
                               <HexColorPicker color={newTagColor} onChange={setNewTagColor} />
                             </Popover>
-                          </div>
-                          <button
-                            type="button"
+                          </Box>
+                          <IconButton
                             onClick={handleCreateTag}
-                            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-sm hover:bg-primary-hover"
                             title={t.tags.createTooltip.value}
+                            sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: '50%', '&:hover': { bgcolor: 'primary.dark' } }}
                           >
                             <Plus size={18} />
-                          </button>
-                        </div>
-                        <div className="mt-4 space-y-2 max-h-[30vh] overflow-y-auto min-h-[200px] pb-52">
+                          </IconButton>
+                        </Box>
+                        <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1, maxHeight: '30vh', overflowY: 'auto', minHeight: 200, pb: 13 }}>
                           {tags.length === 0 ? (
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                               {t.tags.empty}
-                            </p>
+                            </Typography>
                           ) : (
                             tags.map(tag => (
-                              <div
+                              <Box
                                 key={tag.id}
-                                className="flex items-center justify-between gap-2 rounded-lg border border-gray-100 dark:border-slate-800 px-3 py-2"
+                                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, border: '1px solid #f3f4f6', px: 1.5, py: 1 }}
                               >
                                 {editingTagId === tag.id ? (
-                                  <div className="flex flex-1 flex-col gap-2">
-                                    <div className="flex items-center gap-2">
-                                      <input
-                                        type="text"
+                                  <Box sx={{ display: 'flex', flex: 1, flexDirection: 'column', gap: 1 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                      <TextField
+                                        size="small"
                                         value={editingTagName}
                                         onChange={event => setEditingTagName(event.target.value)}
-                                        className="flex-1 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100"
+                                        sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
                                       />
-                                      <div className="relative">
-                                        <button
-                                          type="button"
+                                      <Box sx={{ position: 'relative' }}>
+                                        <IconButton
+                                          size="small"
                                           onClick={event => {
                                             setEditingTagAnchorEl(event.currentTarget);
                                             setEditingTagPickerId(prev =>
                                               prev === tag.id ? null : tag.id,
                                             );
                                           }}
-                                          className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-1"
                                           aria-label={t.tagColor.value}
+                                          sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', p: 0.5 }}
                                         >
-                                          <span
-                                            className="h-4 w-4 rounded-full"
-                                            style={{
-                                              backgroundColor: editingTagColor || '#4f46e5',
-                                            }}
-                                          />
-                                        </button>
+                                          <Box sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: editingTagColor || '#4f46e5' }} />
+                                        </IconButton>
                                         <Popover
                                           open={editingTagPickerId === tag.id}
                                           anchorEl={editingTagAnchorEl}
@@ -1769,14 +1813,8 @@ function StoragePageContent({
                                             setEditingTagPickerId(null);
                                             setEditingTagAnchorEl(null);
                                           }}
-                                          anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'right',
-                                          }}
-                                          transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                          }}
+                                          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                                           slotProps={colorPickerPopoverSlotProps}
                                         >
                                           <HexColorPicker
@@ -1784,104 +1822,101 @@ function StoragePageContent({
                                             onChange={setEditingTagColor}
                                           />
                                         </Popover>
-                                      </div>
-                                      <button
-                                        type="button"
+                                      </Box>
+                                      <IconButton
+                                        size="small"
                                         onClick={() => handleRenameTag(tag.id)}
-                                        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white"
+                                        sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: '50%', '&:hover': { bgcolor: 'primary.dark' } }}
                                       >
                                         <Check size={16} />
-                                      </button>
-                                      <button
-                                        type="button"
+                                      </IconButton>
+                                      <IconButton
+                                        size="small"
                                         onClick={handleCancelEditTag}
-                                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800"
+                                        sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
                                       >
                                         <X size={16} />
-                                      </button>
-                                    </div>
-                                  </div>
+                                      </IconButton>
+                                    </Box>
+                                  </Box>
                                 ) : (
                                   <>
-                                    <div className="flex items-center gap-2 min-w-0">
-                                      <span
-                                        className="h-2.5 w-2.5 rounded-full"
-                                        style={{
-                                          backgroundColor: tag.color || '#cbd5f5',
-                                        }}
-                                      />
-                                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                                      <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: tag.color || '#cbd5f5', flexShrink: 0 }} />
+                                      <Typography
+                                        style={{ fontSize: 14, fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                      >
                                         {tag.name}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                                      </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                      <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                                         {tagCounts[tag.id] ?? 0}
-                                      </span>
+                                      </Typography>
                                       {canEditTag(tag) && (
                                         <>
-                                          <button
-                                            type="button"
+                                          <IconButton
+                                            size="small"
                                             onClick={() => handleStartEditTag(tag)}
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800"
                                             title={t.tags.renameTooltip.value}
+                                            sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
                                           >
                                             <PencilLine size={16} />
-                                          </button>
-                                          <button
-                                            type="button"
+                                          </IconButton>
+                                          <IconButton
+                                            size="small"
                                             onClick={() => confirmDeleteTag(tag)}
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 dark:border-slate-700/60 text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10"
                                             title={t.tags.deleteTooltip.value}
+                                            sx={{ border: '1px solid #e5e7eb', borderRadius: '50%', color: '#6b7280', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
                                           >
                                             <Trash2 size={16} />
-                                          </button>
+                                          </IconButton>
                                         </>
                                       )}
-                                    </div>
+                                    </Box>
                                   </>
                                 )}
-                              </div>
+                              </Box>
                             ))
                           )}
-                        </div>
-                      </div>
-                    </div>
+                        </Box>
+                      </Box>
+                    </Box>
 
-                    <div className="rounded-xl border border-gray-200 dark:border-slate-700/60 p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    <Box sx={{ border: '1px solid #e5e7eb', p: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                        <Box>
+                          <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                             {activeFolderLabel}
-                          </h4>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          </Typography>
+                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                             {t.modals.filesLabel} · {folderModalFiles.length}
-                          </p>
-                        </div>
+                          </Typography>
+                        </Box>
                         {draggingFile && (
-                          <span className="text-xs text-primary">{t.dragDrop.title}</span>
+                          <Typography style={{ fontSize: 12, color: 'var(--color-primary, #4f46e5)' }}>{t.dragDrop.title}</Typography>
                         )}
-                      </div>
-                      <div className="relative mt-3">
-                        <Search className="h-4 w-4 text-gray-400 absolute left-3 top-3" />
-                        <input
-                          type="text"
+                      </Box>
+                      <Box sx={{ position: 'relative', mt: 1.5 }}>
+                        <Search style={{ width: 16, height: 16, color: '#9ca3af', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                        <TextField
+                          size="small"
                           value={folderFileQuery}
                           onChange={event => setFolderFileQuery(event.target.value)}
                           placeholder={t.modals.fileSearchPlaceholder.value}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          sx={{ width: '100%', '& .MuiOutlinedInput-root': { borderRadius: 0, pl: 4 } }}
                         />
-                      </div>
-                      <div className="mt-3 max-h-[50vh] overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800 rounded-lg border border-gray-100 dark:border-slate-800">
+                      </Box>
+                      <Box sx={{ mt: 1.5, maxHeight: '50vh', overflowY: 'auto', border: '1px solid #f3f4f6' }}>
                         {folderModalFiles.length === 0 ? (
-                          <div className="px-6 py-12 text-center">
-                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-50 dark:bg-slate-800 text-gray-300 dark:text-slate-600">
+                          <Box sx={{ px: 3, py: 6, textAlign: 'center' }}>
+                            <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', bgcolor: '#f9fafb', color: '#d1d5db' }}>
                               <FileX size={32} />
-                            </div>
-                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                            </Box>
+                            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#6b7280' }}>
                               {t.modals.filesEmpty}
-                            </p>
-                          </div>
+                            </Typography>
+                          </Box>
                         ) : (
                           folderModalFiles.map(file => (
                             <DraggableModalFileItem
@@ -1893,18 +1928,17 @@ function StoragePageContent({
                             />
                           ))
                         )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
           </>
         )}
         {filterOpen && (
           <>
-            <div
-              className="fixed inset-0 z-50 bg-black/40 transition-opacity duration-300"
+            <Box
               role="button"
               tabIndex={0}
               onClick={() => setFilterOpen(false)}
@@ -1914,31 +1948,32 @@ function StoragePageContent({
                   setFilterOpen(false);
                 }
               }}
+              sx={{ position: 'fixed', inset: 0, zIndex: 50, bgcolor: 'rgba(0,0,0,0.4)' }}
             />
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-              <div className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl pointer-events-auto flex flex-col max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-slate-800">
+            <Box sx={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2, pointerEvents: 'none' }}>
+              <Box sx={{ width: '100%', maxWidth: 896, bgcolor: '#fff', boxShadow: 24, pointerEvents: 'auto', display: 'flex', flexDirection: 'column', maxHeight: '85vh', overflow: 'hidden', border: '1px solid #f3f4f6' }}>
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: '1px solid #f3f4f6', flexShrink: 0, bgcolor: '#fff' }}>
+                  <Typography style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>
                     {t.filters.title}
-                  </h3>
-                  <button
-                    type="button"
+                  </Typography>
+                  <IconButton
+                    size="small"
                     onClick={() => setFilterOpen(false)}
-                    className="rounded-full p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                    sx={{ color: '#9ca3af', borderRadius: '50%', '&:hover': { bgcolor: '#f3f4f6', color: '#374151' } }}
                   >
                     <X size={20} />
-                  </button>
-                </div>
+                  </IconButton>
+                </Box>
 
-                <div className="flex-1 overflow-hidden flex flex-col md:flex-row text-left">
+                <Box sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
                   {/* Left: Filters */}
-                  <div className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col bg-white dark:bg-slate-900">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
-                      <div className="flex flex-col gap-1.5">
+                  <Box sx={{ flex: 1, overflowY: 'auto', p: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column', bgcolor: '#fff' }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                         <label
                           htmlFor="storage-filter-status"
-                          className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                          style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}
                         >
                           {t.filters.status}
                         </label>
@@ -1946,7 +1981,7 @@ function StoragePageContent({
                           id="storage-filter-status"
                           value={stagedFilters.status}
                           onChange={e => handleFilterChange('status', e.target.value)}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all hover:bg-gray-100 dark:hover:bg-slate-800"
+                          style={{ width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)', padding: '10px 12px', fontSize: 14, color: '#111827', outline: 'none' }}
                         >
                           <option value="">{t.filters.all}</option>
                           {statusOptions.map(status => (
@@ -1955,12 +1990,12 @@ function StoragePageContent({
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </Box>
 
-                      <div className="flex flex-col gap-1.5">
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                         <label
                           htmlFor="storage-filter-bank"
-                          className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                          style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}
                         >
                           {t.filters.bank}
                         </label>
@@ -1968,7 +2003,7 @@ function StoragePageContent({
                           id="storage-filter-bank"
                           value={stagedFilters.bank}
                           onChange={e => handleFilterChange('bank', e.target.value)}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all hover:bg-gray-100 dark:hover:bg-slate-800"
+                          style={{ width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)', padding: '10px 12px', fontSize: 14, color: '#111827', outline: 'none' }}
                         >
                           <option value="">{t.filters.all}</option>
                           {bankOptions.map(bank => (
@@ -1977,12 +2012,12 @@ function StoragePageContent({
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </Box>
 
-                      <div className="flex flex-col gap-1.5">
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                         <label
                           htmlFor="storage-filter-category"
-                          className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                          style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}
                         >
                           {t.filters.category}
                         </label>
@@ -1990,7 +2025,7 @@ function StoragePageContent({
                           id="storage-filter-category"
                           value={stagedFilters.categoryId}
                           onChange={e => handleFilterChange('categoryId', e.target.value)}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all hover:bg-gray-100 dark:hover:bg-slate-800"
+                          style={{ width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)', padding: '10px 12px', fontSize: 14, color: '#111827', outline: 'none' }}
                         >
                           <option value="">{t.filters.all}</option>
                           {categories.map(cat => (
@@ -1999,12 +2034,12 @@ function StoragePageContent({
                             </option>
                           ))}
                         </select>
-                      </div>
+                      </Box>
 
-                      <div className="flex flex-col gap-1.5">
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                         <label
                           htmlFor="storage-filter-ownership"
-                          className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                          style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}
                         >
                           {t.filters.accessType}
                         </label>
@@ -2012,18 +2047,18 @@ function StoragePageContent({
                           id="storage-filter-ownership"
                           value={stagedFilters.ownership}
                           onChange={e => handleFilterChange('ownership', e.target.value)}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all hover:bg-gray-100 dark:hover:bg-slate-800"
+                          style={{ width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)', padding: '10px 12px', fontSize: 14, color: '#111827', outline: 'none' }}
                         >
                           <option value="">{t.filters.all}</option>
                           <option value="owned">{t.filters.owned}</option>
                           <option value="shared">{t.filters.shared}</option>
                         </select>
-                      </div>
+                      </Box>
 
-                      <div className="flex flex-col gap-1.5 sm:col-span-2">
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, gridColumn: { sm: 'span 2' } }}>
                         <label
                           htmlFor="storage-filter-folder"
-                          className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                          style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}
                         >
                           {t.filters.folder}
                         </label>
@@ -2031,7 +2066,7 @@ function StoragePageContent({
                           id="storage-filter-folder"
                           value={stagedFilters.folderId}
                           onChange={e => handleFilterChange('folderId', e.target.value)}
-                          className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all hover:bg-gray-100 dark:hover:bg-slate-800"
+                          style={{ width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)', padding: '10px 12px', fontSize: 14, color: '#111827', outline: 'none' }}
                         >
                           <option value="">{t.filters.all}</option>
                           <option value={NO_FOLDER}>{t.folders.none}</option>
@@ -2041,119 +2076,132 @@ function StoragePageContent({
                             </option>
                           ))}
                         </select>
-                      </div>
-                    </div>
+                      </Box>
+                    </Box>
 
-                    <div className="mt-auto pt-8 flex items-center justify-between">
-                      <button
+                    <Box sx={{ mt: 'auto', pt: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Box
+                        component="button"
                         onClick={handleResetFilters}
-                        className="text-sm font-medium text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors px-2 py-1"
+                        sx={{ fontSize: 14, fontWeight: 500, color: '#6b7280', bgcolor: 'transparent', border: 'none', cursor: 'pointer', px: 1, py: 0.5, '&:hover': { color: '#1f2937' } }}
                       >
                         {t.filters.reset}
-                      </button>
-                      <button
+                      </Box>
+                      <Box
+                        component="button"
                         onClick={handleApplyFilters}
-                        className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-primary/40 focus:outline-none focus:ring-4 focus:ring-primary/20 transition-all active:scale-95"
+                        sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'primary.main', color: '#fff', px: 4, py: 1.25, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' } }}
                       >
                         {t.filters.apply}
-                      </button>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
 
                   {/* Right: Views */}
-                  <div className="w-full md:w-80 border-l border-gray-100 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/50 flex flex-col">
-                    <div className="p-6 flex-1 overflow-y-auto">
-                      <h4 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                        <Bookmark className="h-4 w-4 text-primary" />
-                        {t.modals.viewCreateTitle.value.replace(':', '')}
-                      </h4>
+                  <Box sx={{ width: { xs: '100%', md: 320 }, borderLeft: '1px solid #f3f4f6', bgcolor: '#f9fafb', display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                        <Bookmark style={{ width: 16, height: 16, color: '#4f46e5' }} />
+                        <Typography style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>
+                          {t.modals.viewCreateTitle.value.replace(':', '')}
+                        </Typography>
+                      </Box>
 
                       {/* Save View Input */}
-                      <div className="mb-6 group relative">
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={viewName}
-                            onChange={event => setViewName(event.target.value)}
-                            placeholder={t.views.namePlaceholder.value}
-                            className="flex-1 min-w-0 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleSaveView({
-                                searchQuery,
-                                filterOpen,
-                                filters,
-                                stagedFilters,
-                                sort,
-                              })
-                            }
-                            disabled={viewSaving || !viewName.trim()}
-                            className="inline-flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-3 text-primary hover:bg-primary hover:text-white hover:border-primary transition-all disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-primary"
-                            title={t.views.saveTooltip.value}
-                          >
-                            <Save size={18} />
-                          </button>
-                        </div>
-                      </div>
+                      <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
+                        <TextField
+                          size="small"
+                          value={viewName}
+                          onChange={event => setViewName(event.target.value)}
+                          placeholder={t.views.namePlaceholder.value}
+                          sx={{ flex: 1, '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
+                        />
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            handleSaveView({
+                              searchQuery,
+                              filterOpen,
+                              filters,
+                              stagedFilters,
+                              sort,
+                            })
+                          }
+                          disabled={viewSaving || !viewName.trim()}
+                          title={t.views.saveTooltip.value}
+                          sx={{ border: '1px solid #e5e7eb', borderRadius: 0, color: 'primary.main', bgcolor: '#fff', '&:hover': { bgcolor: 'primary.main', color: '#fff' }, '&:disabled': { opacity: 0.5 } }}
+                        >
+                          <Save size={18} />
+                        </IconButton>
+                      </Box>
 
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-2">
-                          <span>{t.views.title}</span>
-                          <span>{views.length}</span>
-                        </div>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                            {t.views.title}
+                          </Typography>
+                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>{views.length}</Typography>
+                        </Box>
 
                         {viewsLoading ? (
-                          <div className="flex justify-center py-4">
+                          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
                             <Spinner className="h-5 w-5 text-gray-400" />
-                          </div>
+                          </Box>
                         ) : views.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic text-center py-4">
+                          <Typography style={{ fontSize: 14, color: '#9ca3af', fontStyle: 'italic', textAlign: 'center', padding: '16px 0' }}>
                             {t.views.empty}
-                          </p>
+                          </Typography>
                         ) : (
                           views.map(view => (
-                            <div
+                            <Box
                               key={view.id}
-                              className={`group flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5 transition-all ${
-                                activeViewId === view.id
-                                  ? 'border-primary/30 bg-primary/5 shadow-sm'
-                                  : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-primary/30 hover:shadow-sm'
-                              }`}
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: 1,
+                                border: '1px solid',
+                                borderColor: activeViewId === view.id ? 'rgba(79,70,229,0.3)' : '#e5e7eb',
+                                bgcolor: activeViewId === view.id ? 'rgba(79,70,229,0.05)' : '#fff',
+                                px: 1.5,
+                                py: 1.25,
+                                '&:hover .view-delete-btn': { opacity: 1 },
+                              }}
                             >
-                              <button
+                              <Box
+                                component="button"
                                 type="button"
                                 onClick={() => {
                                   applyView(view);
                                   setFilterOpen(false);
                                 }}
-                                className="flex items-center gap-2.5 min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200"
+                                sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flex: 1, fontSize: 14, fontWeight: 500, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}
                               >
                                 {activeViewId === view.id && (
-                                  <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+                                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'primary.main', flexShrink: 0 }} />
                                 )}
-                                <span className="truncate group-hover:text-primary transition-colors">
+                                <Typography style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                   {view.name}
-                                </span>
-                              </button>
-                              <button
-                                type="button"
+                                </Typography>
+                              </Box>
+                              <IconButton
+                                size="small"
+                                className="view-delete-btn"
                                 onClick={() => handleDeleteView(view.id)}
-                                className="text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
                                 title={t.views.delete.value}
+                                sx={{ color: '#d1d5db', opacity: 0, borderRadius: 0, '&:hover': { color: '#ef4444', bgcolor: 'transparent' } }}
                               >
                                 <X size={14} />
-                              </button>
-                            </div>
+                              </IconButton>
+                            </Box>
                           ))
                         )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
           </>
         )}
         <ConfirmModal
@@ -2163,23 +2211,23 @@ function StoragePageContent({
           title={t.folders.deleteTitle.value}
           message={
             folderToDelete ? (
-              <div className="space-y-3">
-                <p className="text-gray-600 leading-relaxed">
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Typography style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.6 }}>
                   {t.folders.deleteMessagePrefix.value}
                   {folderToDelete.name}
                   {t.folders.deleteMessageSuffix.value}
-                </p>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: '#4b5563' }}>
                   <Checkbox
                     checked={deleteFolderWithContents}
                     onCheckedChange={setDeleteFolderWithContents}
-                    className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    className="h-4 w-4"
                   />
                   {t.folders.deleteWithContents}
-                </div>
-              </div>
+                </Box>
+              </Box>
             ) : (
-              <p className="text-gray-600 leading-relaxed">{t.folders.deleteMessageFallback}</p>
+              <Typography style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.6 }}>{t.folders.deleteMessageFallback}</Typography>
             )
           }
           confirmText={t.folders.deleteConfirm.value}
@@ -2272,8 +2320,16 @@ function StoragePageContent({
         )}
         {/* Folder Context Menu */}
         {folderContextMenu && (
-          <div
-            className="fixed z-100 min-w-[200px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-slate-700/60 dark:bg-slate-900"
+          <Box
+            sx={{
+              position: 'fixed',
+              zIndex: 100,
+              minWidth: 200,
+              overflow: 'hidden',
+              border: '1px solid #e5e7eb',
+              bgcolor: '#fff',
+              boxShadow: 24,
+            }}
             style={{
               top:
                 typeof window !== 'undefined' && folderContextMenu.y + 160 > window.innerHeight
@@ -2288,45 +2344,48 @@ function StoragePageContent({
             onKeyDown={e => e.stopPropagation()}
             role="presentation"
           >
-            <div className="p-1.5 flex flex-col">
-              <button
+            <Box sx={{ p: 0.75, display: 'flex', flexDirection: 'column' }}>
+              <Box
+                component="button"
                 type="button"
                 onClick={() => {
                   setFolderTagPickerId(folderContextMenu.folder.id);
                   setFolderContextMenu(null);
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-slate-800 transition-colors"
+                sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#f9fafb' } }}
               >
-                <Tag size={16} className="text-gray-400" />
+                <Tag size={16} style={{ color: '#9ca3af' }} />
                 <span>{t.tags.title.value}</span>
-              </button>
-              <button
+              </Box>
+              <Box
+                component="button"
                 type="button"
                 onClick={() => {
                   handleStartEditFolder(folderContextMenu.folder);
                   setFolderContextMenu(null);
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-slate-800 transition-colors"
+                sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#f9fafb' } }}
               >
-                <PencilLine size={16} className="text-gray-400" />
+                <PencilLine size={16} style={{ color: '#9ca3af' }} />
                 <span>{t.folders.renameTooltip.value}</span>
-              </button>
-              <div className="my-1 h-px bg-gray-100 dark:bg-slate-800" />
-              <button
+              </Box>
+              <Divider sx={{ my: 0.5 }} />
+              <Box
+                component="button"
                 type="button"
                 onClick={() => {
                   confirmDeleteFolder(folderContextMenu.folder);
                   setFolderContextMenu(null);
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10 transition-colors"
+                sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#dc2626', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#fef2f2' } }}
               >
                 <Trash2 size={16} />
                 <span>{t.folders.deleteTooltip.value}</span>
-              </button>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
     </DndContext>
   );
 }

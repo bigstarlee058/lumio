@@ -78,8 +78,8 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
 
   if (isEditing) {
     return (
-      <div className="relative z-20 min-w-[220px]" style={style}>
-        <div className="rounded-lg border border-gray-200 bg-white p-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+      <div style={{ position: 'relative', zIndex: 20, minWidth: 220, ...style }}>
+        <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
           <DatePicker
             value={toDate(selectedValue)}
             onChange={date => {
@@ -102,11 +102,11 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
               },
             }}
           />
-          <div className="mt-2 flex justify-end gap-2 border-t border-gray-200 pt-2 dark:border-gray-700">
+          <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid #e5e7eb', paddingTop: 8 }}>
             <button
               type="button"
               onClick={handleCancel}
-              className="rounded px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              style={{ padding: '4px 12px', fontSize: 14, color: '#374151', background: 'transparent', border: 'none', cursor: 'pointer' }}
             >
               Cancel
             </button>
@@ -120,8 +120,19 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
     <button
       type="button"
       onClick={handleOpenEditor}
-      className="w-full h-full px-2 py-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded text-left truncate"
-      style={style}
+      style={{
+        width: '100%',
+        height: '100%',
+        padding: '4px 8px',
+        cursor: 'pointer',
+        background: 'transparent',
+        border: 'none',
+        textAlign: 'left',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        ...style,
+      }}
       title="Click to select date"
       aria-label="Select date"
     >

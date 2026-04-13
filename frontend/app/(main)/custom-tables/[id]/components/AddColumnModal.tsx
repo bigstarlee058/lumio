@@ -1,6 +1,7 @@
 'use client';
 
 import { ModalShell } from '@/app/components/ui/modal-shell';
+import { Box, Typography } from '@mui/material';
 import { Save } from 'lucide-react';
 import type { ColumnType } from '../utils/stylingUtils';
 import { tx } from '../utils/tableHelpers';
@@ -39,33 +40,34 @@ export function AddColumnModal({
       isOpen={isOpen}
       onClose={handleClose}
       size="xl"
-      className="rounded-2xl"
       title={tx(t, ['addColumn', 'modalTitle'], tx(t, ['addColumn', 'titleLabel'], ''))}
       footer={
-        <div className="flex w-full items-center justify-between">
-          <button
+        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box
+            component="button"
             type="button"
             onClick={handleClose}
-            className="rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}
           >
             {tx(t, ['addColumn', 'cancel'], 'Cancel')}
-          </button>
-          <button
+          </Box>
+          <Box
+            component="button"
             type="button"
             onClick={createColumn}
             disabled={!newColumn.title.trim()}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', color: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 500, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
           >
             <Save className="h-4 w-4" />
             {tx(t, ['addColumn', 'save'], 'Save')}
-          </button>
-        </div>
+          </Box>
+        </Box>
       }
     >
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-        <div className="md:col-span-4">
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '4fr 2fr' }, gap: 2, alignItems: 'flex-end' }}>
+        <Box>
           <label
-            className="block text-sm font-semibold text-gray-700 mb-2"
+            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 8 }}
             htmlFor="new-column-title"
           >
             {tx(t, ['addColumn', 'titleLabel'], 'Column title')}
@@ -81,12 +83,12 @@ export function AddColumnModal({
               }
             }}
             placeholder={tx(t, ['addColumn', 'titlePlaceholder'], '')}
-            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition shadow-sm"
+            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
           />
-        </div>
-        <div className="md:col-span-2">
+        </Box>
+        <Box>
           <label
-            className="block text-sm font-semibold text-gray-700 mb-2"
+            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 8 }}
             htmlFor="new-column-type"
           >
             {tx(t, ['addColumn', 'typeLabel'], 'Type')}
@@ -100,7 +102,7 @@ export function AddColumnModal({
                 type: e.target.value as ColumnType,
               }))
             }
-            className="w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition"
+            style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '12px 16px', fontSize: 14, color: '#1f2937', outline: 'none' }}
           >
             {columnTypes.map(typeItem => (
               <option key={typeItem.value} value={typeItem.value}>
@@ -108,8 +110,8 @@ export function AddColumnModal({
               </option>
             ))}
           </select>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </ModalShell>
   );
 }

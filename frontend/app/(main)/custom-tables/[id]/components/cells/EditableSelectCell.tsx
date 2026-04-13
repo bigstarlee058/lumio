@@ -90,22 +90,33 @@ export function EditableSelectCell({
     : selectedValue || '—';
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%' }}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full h-full px-2 py-1 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded flex items-center justify-between text-left"
-        style={style}
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: '4px 8px',
+          cursor: 'pointer',
+          background: 'transparent',
+          border: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          textAlign: 'left',
+          ...style,
+        }}
         aria-label="Open select options"
       >
-        <span className="truncate">{displayValue}</span>
-        <ChevronDown className="h-4 w-4 text-gray-400 shrink-0 ml-2" />
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayValue}</span>
+        <ChevronDown className="h-4 w-4" style={{ color: '#9ca3af', flexShrink: 0, marginLeft: 8 }} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-full min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 max-h-60 overflow-auto">
+        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, width: '100%', minWidth: 200, background: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 20, maxHeight: 240, overflowY: 'auto' }}>
           {options.length === 0 ? (
-            <div className="px-3 py-2 text-sm text-gray-500">No options available</div>
+            <div style={{ padding: '8px 12px', fontSize: 14, color: '#6b7280' }}>No options available</div>
           ) : (
             options.map(option => {
               const isSelected = multiple
@@ -117,19 +128,26 @@ export function EditableSelectCell({
                   type="button"
                   key={option}
                   onClick={() => handleSelect(option)}
-                  className={`w-full text-left px-3 py-2 text-sm cursor-pointer transition-colors ${
-                    isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100'
-                  }`}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '8px 12px',
+                    fontSize: 14,
+                    cursor: 'pointer',
+                    background: isSelected ? '#eff6ff' : 'transparent',
+                    color: isSelected ? '#1d4ed8' : '#111827',
+                    border: 'none',
+                    display: 'block',
+                  }}
                   aria-pressed={isSelected}
                 >
-                  <div className="flex items-center gap-2">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     {multiple && (
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => {}}
-                        className="h-5 w-5 rounded border-gray-300 text-primary pointer-events-none"
+                        className="h-5 w-5"
+                        style={{ pointerEvents: 'none' }}
                       />
                     )}
                     <span>{option}</span>
