@@ -179,7 +179,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
               key={key}
               sx={{
                 border: '1px solid var(--border)',
-                bgcolor: 'white',
+                bgcolor: 'background.paper',
                 height: 72,
                 boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
               }}
@@ -244,7 +244,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           sx={{
             gridColumn: 'span 4',
             border: '1px solid var(--border)',
-            bgcolor: 'white',
+            bgcolor: 'background.paper',
             minHeight: 320,
             boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
           }}
@@ -285,7 +285,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           sx={{
             gridColumn: 'span 8',
             border: '1px solid var(--border)',
-            bgcolor: 'white',
+            bgcolor: 'background.paper',
             minHeight: 320,
             boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',
           }}

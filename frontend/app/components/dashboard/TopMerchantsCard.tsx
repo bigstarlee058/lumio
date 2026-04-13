@@ -19,7 +19,7 @@ export function TopMerchantsCard({
 }: TopMerchantsCardProps) {
   if (!merchants.length) {
     return (
-      <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'white' }}>
+      <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'background.paper' }}>
         <Box
           sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}
         >
@@ -32,7 +32,7 @@ export function TopMerchantsCard({
   const maxAmount = Math.max(...merchants.map(m => m.amount));
 
   return (
-    <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'white' }}>
+    <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'background.paper' }}>
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
@@ -79,7 +79,7 @@ export function TopMerchantsCard({
                         flexShrink: 0,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        bgcolor: '#f8fafc',
+                        bgcolor: 'action.hover',
                         color: '#334155',
                         border: '1px solid #E8E8E8',
                       }}
@@ -108,7 +108,7 @@ export function TopMerchantsCard({
                     {formatAmount(merchant.amount)}
                   </Typography>
                 </Box>
-                <Box sx={{ height: 8, overflow: 'hidden', bgcolor: '#f1f5f9' }}>
+                <Box sx={{ height: 8, overflow: 'hidden', bgcolor: 'action.hover' }}>
                   <Box
                     sx={{ height: '100%', bgcolor: '#0284c7', transition: 'width 300ms' }}
                     style={{ width: `${width}%` }}

@@ -46,7 +46,7 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
             mt: 0.5,
             width: 140,
             border: '1px solid #E8E8E8',
-            bgcolor: 'white',
+            bgcolor: 'background.paper',
             zIndex: 10,
           }}
         >

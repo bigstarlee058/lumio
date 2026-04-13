@@ -70,7 +70,7 @@ export function FinlabIncomeCard({
   return (
     <Box
       sx={{
-        bgcolor: 'white',
+        bgcolor: 'background.paper',
         p: 2,
         height: '100%',
         display: 'flex',

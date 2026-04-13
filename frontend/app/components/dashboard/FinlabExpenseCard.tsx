@@ -84,7 +84,7 @@ export function FinlabExpenseCard({
   return (
     <Box
       sx={{
-        bgcolor: 'white',
+        bgcolor: 'background.paper',
         p: 3,
         height: '100%',
         display: 'flex',

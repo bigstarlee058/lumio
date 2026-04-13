@@ -42,7 +42,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
         return (
           <Card
             key={key}
-            style={{ border: '1px solid #E8E8E8', background: 'white', boxShadow: 'none', borderRadius: 0 }}
+            style={{ border: '1px solid #E8E8E8', background: 'var(--card-bg)', boxShadow: 'none', borderRadius: 0 }}
           >
             <CardContent style={{ padding: 20, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               <div>
@@ -50,7 +50,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
                   <span>{labels[labelKey]}</span>
                   <Box
                     component="span"
-                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: 'action.hover', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
                   >
                     <Icon size={16} />
                   </Box>

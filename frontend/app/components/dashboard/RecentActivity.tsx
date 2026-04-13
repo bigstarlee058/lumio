@@ -91,7 +91,7 @@ export function RecentActivity({
   const groups = groupActivities(activities);
 
   return (
-    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: 0, backgroundColor: 'white', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
+    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: 0, backgroundColor: 'var(--card-bg)', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
       <CardContent style={{ height: '100%', padding: '32px', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
         {activities.length === 0 ? (
           <Box sx={{ display: 'flex', height: 128, alignItems: 'center', justifyContent: 'center' }}>
@@ -121,7 +121,7 @@ export function RecentActivity({
                       >
                         <Box
                           component="span"
-                          sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: '#f8fafc', color: '#475569', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                          sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: 'action.hover', color: '#475569', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
                         >
                           <Icon size={16} />
                         </Box>
@@ -139,7 +139,7 @@ export function RecentActivity({
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 borderRadius: 9999,
-                                backgroundColor: '#f1f5f9',
+                                backgroundColor: 'var(--muted)',
                                 padding: '2px 8px',
                                 fontSize: 10,
                                 fontWeight: 600,

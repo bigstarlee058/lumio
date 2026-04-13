@@ -54,7 +54,7 @@ export function FinlabExpenseCategoryCard({
   return (
     <Box
       sx={{
-        bgcolor: 'white',
+        bgcolor: 'background.paper',
         p: 3,
         height: '100%',
         border: '1px solid #E8E8E8',

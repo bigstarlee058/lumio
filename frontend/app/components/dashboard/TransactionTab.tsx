@@ -157,7 +157,7 @@ export function TransactionTab() {
             <select
               value={bulkCategoryId}
               onChange={e => setBulkCategoryId(e.target.value)}
-              style={{ flex: 1, maxWidth: 320, border: '1px solid #e5e7eb', backgroundColor: 'white', padding: '8px 12px', fontSize: 14, outline: 'none' }}
+              style={{ flex: 1, maxWidth: 320, border: '1px solid #e5e7eb', backgroundColor: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, outline: 'none' }}
             >
               <option value="">{t.selectCategory?.value || 'Select category...'}</option>
               {categories
@@ -192,7 +192,7 @@ export function TransactionTab() {
           <button
             type="button"
             onClick={() => setSelectedIds([])}
-            style={{ border: '1px solid #e5e7eb', backgroundColor: 'white', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer', transition: 'background-color 150ms' }}
+            style={{ border: '1px solid #e5e7eb', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer', transition: 'background-color 150ms' }}
           >
             {t.clearSelection?.value || 'Clear selection'}
           </button>
