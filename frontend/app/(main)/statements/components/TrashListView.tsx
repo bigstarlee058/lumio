@@ -412,52 +412,52 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   const confirmDeleteMessage = (
-    <div className="space-y-2">
-      <p className="text-gray-600 leading-relaxed">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <p style={{ color: '#4b5563', lineHeight: 1.6 }}>
         {labels.confirmDeleteMessage.replace('{count}', String(pendingDeleteIds.length))}
       </p>
-      <p className="text-sm font-semibold text-red-600">{labels.irreversibleWarning}</p>
+      <p style={{ fontSize: 14, fontWeight: 600, color: '#dc2626' }}>{labels.irreversibleWarning}</p>
     </div>
   );
 
   const confirmEmptyMessage = (
-    <div className="space-y-2">
-      <p className="text-gray-600 leading-relaxed">{labels.confirmEmptyMessage}</p>
-      <p className="text-sm font-semibold text-red-600">{labels.irreversibleWarning}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <p style={{ color: '#4b5563', lineHeight: 1.6 }}>{labels.confirmEmptyMessage}</p>
+      <p style={{ fontSize: 14, fontWeight: 600, color: '#dc2626' }}>{labels.irreversibleWarning}</p>
     </div>
   );
 
   return (
-    <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 shrink-0 space-y-3">
-        <div className="space-y-1">
-          <h1 className="text-xl font-semibold text-gray-900">{labels.title}</h1>
-          <p className="text-sm text-gray-500">{labels.retentionPolicy}</p>
+    <div className="container-shared lumio-trash-list">
+      <div className="lumio-trash-list__header">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
+          <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.retentionPolicy}</p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div className="lumio-trash-list__search-row">
+          <div className="lumio-trash-list__search">
+            <Search className="lumio-trash-list__search-icon" size={16} />
             <input
               type="text"
               value={searchInput}
               onChange={event => setSearchInput(event.target.value)}
               placeholder={labels.searchPlaceholder}
               aria-label={labels.searchPlaceholder}
-              className="w-full rounded-md border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="lumio-trash-list__search-input"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-gray-500">{selectedLabel}</span>
+        <div className="lumio-trash-list__actions-row">
+          <span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>{selectedLabel}</span>
           <button
             type="button"
             onClick={() => void handleBulkRestore()}
             disabled={selectedCount === 0}
-            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 px-2.5 py-1.5 text-[13px] font-medium text-emerald-700 transition hover:border-emerald-400 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="lumio-trash-list__restore-btn"
           >
-            <RotateCcw className="h-3.5 w-3.5" />
+            <RotateCcw size={14} />
             {labels.restore}
           </button>
 
@@ -465,9 +465,9 @@ export default function TrashListView({ onCountChange }: Props) {
             type="button"
             onClick={() => openDeleteConfirm(selectedIds)}
             disabled={selectedCount === 0}
-            className="inline-flex items-center gap-1.5 rounded-md border border-red-200 px-2.5 py-1.5 text-[13px] font-medium text-red-700 transition hover:border-red-400 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="lumio-trash-list__delete-btn"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 size={14} />
             {labels.delete}
           </button>
 
@@ -475,62 +475,62 @@ export default function TrashListView({ onCountChange }: Props) {
             type="button"
             onClick={() => setEmptyConfirmOpen(true)}
             disabled={files.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1.5 text-[13px] font-medium text-gray-700 transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="lumio-trash-list__empty-btn"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 size={14} />
             {labels.emptyTrash}
           </button>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="lumio-trash-list__body">
         {loading ? (
-          <div className="flex h-64 items-center justify-center">
-            <Spinner className="h-20 w-20 text-primary" />
+          <div className="lumio-trash-list__loading">
+            <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
           </div>
         ) : filteredFiles.length === 0 ? (
-          <div className="px-4 py-20 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 text-gray-300">
-              <Trash2 className="h-8 w-8" />
+          <div className="lumio-trash-list__empty-state">
+            <div className="lumio-trash-list__empty-icon">
+              <Trash2 size={32} />
             </div>
-            <h3 className="text-lg font-medium text-gray-900">{labels.emptyTitle}</h3>
-            <p className="mt-1 text-gray-500">{labels.emptyDescription}</p>
+            <h3 style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{labels.emptyTitle}</h3>
+            <p style={{ marginTop: 4, color: '#6b7280' }}>{labels.emptyDescription}</p>
           </div>
         ) : (
           <>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 px-4 md:hidden">
+            <div className="lumio-trash-list__items">
+              <div className="lumio-trash-list__select-all-mobile">
                 <Checkbox
                   checked={allVisibleSelected}
                   indeterminate={selectedIds.length > 0 && !allVisibleSelected}
                   onCheckedChange={checked =>
                     setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                   }
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  style={{ height: 16, width: 16, borderRadius: 4 }}
                   aria-label={labels.selectAll}
                 />
-                <span className="text-sm font-medium text-gray-600">{labels.selectAll}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>{labels.selectAll}</span>
               </div>
 
-              <div className="hidden items-center gap-3 px-4 text-xs font-medium uppercase tracking-wide text-gray-500 md:flex">
-                <div className="w-4">
+              <div className="lumio-trash-list__thead">
+                <div style={{ width: 16 }}>
                   <Checkbox
                     checked={allVisibleSelected}
                     indeterminate={selectedIds.length > 0 && !allVisibleSelected}
                     onCheckedChange={checked =>
                       setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                     }
-                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    style={{ height: 16, width: 16, borderRadius: 4 }}
                     aria-label={labels.selectAll}
                   />
                 </div>
-                <div className="w-44">{labels.typeHeader}</div>
-                <div className="w-[440px] grid grid-cols-2 gap-3">
+                <div style={{ width: 176 }}>{labels.typeHeader}</div>
+                <div style={{ width: 440, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <span>{labels.deletedAtHeader}</span>
                   <span>{labels.autoDeleteHeader}</span>
                 </div>
-                <div className="flex-1">{labels.nameHeader}</div>
-                <div className="w-36 text-right">{labels.actionsHeader}</div>
+                <div style={{ flex: 1 }}>{labels.nameHeader}</div>
+                <div style={{ width: 144, textAlign: 'right' }}>{labels.actionsHeader}</div>
               </div>
 
               {paginatedFiles.map(file => {
@@ -568,10 +568,10 @@ export default function TrashListView({ onCountChange }: Props) {
               })}
             </div>
 
-            <div className="mt-6 flex flex-col items-center justify-between gap-4 md:flex-row">
-              <div className="text-sm text-gray-500">{shownLabel}</div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 min-w-[120px] text-center">
+            <div className="lumio-trash-list__pagination">
+              <div style={{ fontSize: 14, color: '#6b7280' }}>{shownLabel}</div>
+              <div className="lumio-trash-list__pagination-info">
+                <span style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
                   {pageOfLabel}
                 </span>
                 <AppPagination page={currentPage} total={totalPagesCount} onChange={setPage} />

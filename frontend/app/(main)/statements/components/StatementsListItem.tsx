@@ -52,56 +52,98 @@ export type StatementListItem = {
 type DuplicateRole = 'primary' | 'suspected';
 type DuplicateGroupTone = 'sky' | 'blue' | 'indigo' | 'slate' | 'zinc' | 'stone';
 
-const DUPLICATE_GROUP_STYLES: Record<
-  DuplicateGroupTone,
-  {
-    row: string;
-    line: string;
-    badge: string;
-    button: string;
-  }
-> = {
+type DuplicateGroupStyle = {
+  rowBorderColor: string;
+  rowBg: string;
+  lineColor: string;
+  badgeBg: string;
+  badgeColor: string;
+  buttonBorder: string;
+  buttonBg: string;
+  buttonColor: string;
+  buttonHoverBorder: string;
+  buttonHoverBg: string;
+  buttonHoverColor: string;
+};
+
+const DUPLICATE_GROUP_STYLES: Record<DuplicateGroupTone, DuplicateGroupStyle> = {
   blue: {
-    row: 'border-blue-100 bg-blue-50/10',
-    line: 'bg-blue-300/90',
-    badge: 'bg-blue-100 text-blue-700',
-    button:
-      'border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100 hover:text-blue-800',
+    rowBorderColor: '#dbeafe',
+    rowBg: 'rgba(239,246,255,0.1)',
+    lineColor: 'rgba(147,197,253,0.9)',
+    badgeBg: '#dbeafe',
+    badgeColor: '#1d4ed8',
+    buttonBorder: '#bfdbfe',
+    buttonBg: '#eff6ff',
+    buttonColor: '#1d4ed8',
+    buttonHoverBorder: '#93c5fd',
+    buttonHoverBg: '#dbeafe',
+    buttonHoverColor: '#1e40af',
   },
   sky: {
-    row: 'border-sky-100 bg-sky-50/10',
-    line: 'bg-sky-300/90',
-    badge: 'bg-sky-100 text-sky-700',
-    button:
-      'border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-300 hover:bg-sky-100 hover:text-sky-800',
+    rowBorderColor: '#e0f2fe',
+    rowBg: 'rgba(240,249,255,0.1)',
+    lineColor: 'rgba(125,211,252,0.9)',
+    badgeBg: '#e0f2fe',
+    badgeColor: '#0369a1',
+    buttonBorder: '#bae6fd',
+    buttonBg: '#f0f9ff',
+    buttonColor: '#0369a1',
+    buttonHoverBorder: '#7dd3fc',
+    buttonHoverBg: '#e0f2fe',
+    buttonHoverColor: '#075985',
   },
   indigo: {
-    row: 'border-indigo-100 bg-indigo-50/10',
-    line: 'bg-indigo-300/90',
-    badge: 'bg-indigo-100 text-indigo-700',
-    button:
-      'border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-300 hover:bg-indigo-100 hover:text-indigo-800',
+    rowBorderColor: '#e0e7ff',
+    rowBg: 'rgba(238,242,255,0.1)',
+    lineColor: 'rgba(165,180,252,0.9)',
+    badgeBg: '#e0e7ff',
+    badgeColor: '#4338ca',
+    buttonBorder: '#c7d2fe',
+    buttonBg: '#eef2ff',
+    buttonColor: '#4338ca',
+    buttonHoverBorder: '#a5b4fc',
+    buttonHoverBg: '#e0e7ff',
+    buttonHoverColor: '#3730a3',
   },
   slate: {
-    row: 'border-slate-200 bg-slate-50/30',
-    line: 'bg-slate-300/85',
-    badge: 'bg-slate-100 text-slate-700',
-    button:
-      'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-800',
+    rowBorderColor: '#e2e8f0',
+    rowBg: 'rgba(248,250,252,0.3)',
+    lineColor: 'rgba(148,163,184,0.85)',
+    badgeBg: '#f1f5f9',
+    badgeColor: '#475569',
+    buttonBorder: '#e2e8f0',
+    buttonBg: '#f8fafc',
+    buttonColor: '#475569',
+    buttonHoverBorder: '#cbd5e1',
+    buttonHoverBg: '#f1f5f9',
+    buttonHoverColor: '#334155',
   },
   zinc: {
-    row: 'border-zinc-200 bg-zinc-50/30',
-    line: 'bg-zinc-300/85',
-    badge: 'bg-zinc-100 text-zinc-700',
-    button:
-      'border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-100 hover:text-zinc-800',
+    rowBorderColor: '#e4e4e7',
+    rowBg: 'rgba(250,250,250,0.3)',
+    lineColor: 'rgba(161,161,170,0.85)',
+    badgeBg: '#f4f4f5',
+    badgeColor: '#52525b',
+    buttonBorder: '#e4e4e7',
+    buttonBg: '#fafafa',
+    buttonColor: '#52525b',
+    buttonHoverBorder: '#d4d4d8',
+    buttonHoverBg: '#f4f4f5',
+    buttonHoverColor: '#3f3f46',
   },
   stone: {
-    row: 'border-stone-200 bg-stone-50/30',
-    line: 'bg-stone-300/85',
-    badge: 'bg-stone-100 text-stone-700',
-    button:
-      'border-stone-200 bg-stone-50 text-stone-700 hover:border-stone-300 hover:bg-stone-100 hover:text-stone-800',
+    rowBorderColor: '#e7e5e4',
+    rowBg: 'rgba(250,250,249,0.3)',
+    lineColor: 'rgba(168,162,158,0.85)',
+    badgeBg: '#f5f5f4',
+    badgeColor: '#57534e',
+    buttonBorder: '#e7e5e4',
+    buttonBg: '#fafaf9',
+    buttonColor: '#57534e',
+    buttonHoverBorder: '#d6d3d1',
+    buttonHoverBg: '#f5f5f4',
+    buttonHoverColor: '#44403c',
   },
 };
 
@@ -138,23 +180,13 @@ function StatusBadge({
   errorMessage,
 }: { status: string; isProcessing: boolean; errorMessage?: string | null }) {
   if (errorMessage || status === 'error') {
-    return (
-      <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-inset ring-red-600/20 whitespace-nowrap">
-        Error
-      </span>
-    );
+    return <span className="lumio-stmt-badge lumio-stmt-badge--error">Error</span>;
   }
   if (isProcessing || status === 'processing' || status === 'uploaded') {
-    return (
-      <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-0.5 text-[11px] font-semibold text-yellow-800 ring-1 ring-inset ring-yellow-600/30 whitespace-nowrap animate-pulse">
-        Pending
-      </span>
-    );
+    return <span className="lumio-stmt-badge lumio-stmt-badge--pending">Pending</span>;
   }
   if (status === 'completed' || status === 'parsed' || status === 'validated') {
-    return (
-      <span className="text-[11px] font-medium text-gray-400 whitespace-nowrap">Completed</span>
-    );
+    return <span className="lumio-stmt-badge lumio-stmt-badge--completed">Completed</span>;
   }
   return null;
 }
@@ -261,14 +293,14 @@ export function StatementsListItem({
     : null;
   const duplicateTooltipText = duplicateReason || 'Same merchant · same date · same amount';
   const actionLabel = isPossibleDuplicate ? duplicateActionLabel || 'Review' : viewLabel;
-  const duplicateRoleBadgeClass =
+  const duplicateRoleBadgeStyle: React.CSSProperties =
     resolvedDuplicateRole === 'primary'
-      ? 'font-bold ring-1 ring-inset ring-current/30 shadow-sm'
-      : 'font-medium border border-dashed border-current/25 bg-white/70 text-current/80';
-  const duplicateRoleButtonClass =
+      ? { fontWeight: 700, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.15)' }
+      : { fontWeight: 500, border: '1px dashed rgba(0,0,0,0.15)', background: 'rgba(255,255,255,0.7)', opacity: 0.8 };
+  const duplicateRoleButtonStyle: React.CSSProperties =
     resolvedDuplicateRole === 'primary'
-      ? 'font-semibold shadow-sm'
-      : 'font-medium border-dashed opacity-90';
+      ? { fontWeight: 600, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }
+      : { fontWeight: 500, borderStyle: 'dashed', opacity: 0.9 };
   const handleView = () => {
     if (viewDisabled) {
       return;
@@ -276,31 +308,40 @@ export function StatementsListItem({
     onView();
   };
 
+  // Row styles based on duplicate/error/selected state
+  const rowStyle: React.CSSProperties = isPossibleDuplicate
+    ? { borderColor: duplicateStyle.rowBorderColor, backgroundColor: duplicateStyle.rowBg }
+    : hasError
+      ? { borderColor: '#fecaca', backgroundColor: 'rgba(255,241,242,0.4)' }
+      : selected
+        ? {}
+        : {};
+
   return (
     <div
       data-tour-id={dataTourId}
-      className={`group/statement relative overflow-hidden rounded-lg border bg-white p-3 transition hover:border-primary/30 md:py-2.5 md:px-4 md:hover:z-40 ${
-        selected ? 'border-primary/60 bg-primary/5' : 'border-gray-200'
-      } ${hasError ? 'border-red-200 bg-red-50/40' : ''} ${isPossibleDuplicate ? duplicateStyle.row : ''}`}
+      className={`lumio-stmt-list-item${selected ? ' lumio-stmt-list-item--selected' : ''}${hasError && !isPossibleDuplicate ? ' lumio-stmt-list-item--error' : ''}`}
+      style={rowStyle}
     >
       {isPossibleDuplicate ? (
         <span
           aria-hidden
-          className={`absolute left-0 top-2 bottom-2 w-0.5 rounded-r ${duplicateStyle.line}`}
+          className="lumio-stmt-list-item__accent"
+          style={{ backgroundColor: duplicateStyle.lineColor }}
         />
       ) : null}
 
       {/* Mobile Layout */}
-      <div data-testid={`statement-item-mobile-${statement.id}`} className="md:hidden">
-        <div className="flex items-center gap-3">
-          <div className="shrink-0">
+      <div data-testid={`statement-item-mobile-${statement.id}`} className="lumio-stmt-list-item__mobile">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ flexShrink: 0 }}>
             {selectionDisabled ? (
-              <span className="inline-flex h-4 w-4" />
+              <span style={{ display: 'inline-flex', height: 16, width: 16 }} />
             ) : (
               <Checkbox
                 checked={selected}
                 onCheckedChange={onToggleSelect}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                style={{ height: 16, width: 16, borderRadius: 4 }}
               />
             )}
           </div>
@@ -309,35 +350,45 @@ export function StatementsListItem({
             type="button"
             data-testid={`statement-item-mobile-card-${statement.id}`}
             onClick={handleView}
-            className="w-full rounded-md text-left focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="lumio-stmt-list-item__mobile-btn"
             aria-label={actionLabel}
             aria-disabled={viewDisabled}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 shrink-0">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 40, flexShrink: 0, color: '#ef4444' }}>
                 <DocumentTypeIcon
                   fileType={isReceipt ? 'pdf' : statement.fileType}
                   fileName={statement.fileName}
                   fileId={statement.id}
                   source={previewSource}
                   size={34}
-                  className="text-red-500"
                 />
               </div>
 
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="truncate text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#111827', display: 'flex', alignItems: 'center', gap: 6 }}>
                     {isProcessing ? 'Processing...' : merchantLabel}
                     {isPossibleDuplicate && (
                       <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
                         <span
-                          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${duplicateStyle.badge} ${duplicateRoleBadgeClass}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            borderRadius: 4,
+                            padding: '2px 6px',
+                            fontSize: 10,
+                            letterSpacing: '0.05em',
+                            backgroundColor: duplicateStyle.badgeBg,
+                            color: duplicateStyle.badgeColor,
+                            ...duplicateRoleBadgeStyle,
+                          }}
                         >
                           {resolvedDuplicateRole === 'primary' ? (
-                            <CheckCircle2 className="h-3 w-3" />
+                            <CheckCircle2 size={12} />
                           ) : (
-                            <CircleHelp className="h-3 w-3" />
+                            <CircleHelp size={12} />
                           )}
                           {duplicateGroupShort}
                           {resolvedDuplicateRole === 'primary' ? 'P' : 'S'}
@@ -347,13 +398,21 @@ export function StatementsListItem({
                     )}
                   </p>
                   <p
-                    className={`shrink-0 text-right text-[15px] font-black tabular-nums tracking-tight ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950 dark:text-primary'}`}
+                    style={{
+                      flexShrink: 0,
+                      textAlign: 'right',
+                      fontSize: 15,
+                      fontWeight: 900,
+                      letterSpacing: '-0.025em',
+                      fontVariantNumeric: 'tabular-nums',
+                      color: isNegativeAmount || hasError || isMissingAmount ? '#dc2626' : '#030712',
+                    }}
                   >
-                    {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
+                    {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: '#9ca3af' }} /> : amountLabel}
                   </p>
                 </div>
-                <div className="flex items-center justify-between mt-0.5">
-                  <p className="text-xs text-gray-500">{dateLabel}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 }}>
+                  <p style={{ fontSize: 12, color: '#6b7280' }}>{dateLabel}</p>
                   <StatusBadge
                     status={statement.status}
                     isProcessing={isProcessing}
@@ -369,39 +428,40 @@ export function StatementsListItem({
       <button
         type="button"
         onClick={handleView}
-        className="absolute inset-0 hidden rounded-lg md:block z-0"
+        className="lumio-stmt-list-item__desktop-overlay"
         aria-label={viewLabel}
         aria-disabled={viewDisabled}
       />
 
-      {/* Desktop Layout - Rebuilt Hierarchy */}
+      {/* Desktop Layout */}
       <div
         data-testid={`statement-item-desktop-${statement.id}`}
-        className="pointer-events-none relative z-10 hidden min-w-0 w-full items-center gap-4 md:flex"
+        className="lumio-stmt-list-item__desktop"
+        style={{ pointerEvents: 'none' }}
       >
         {/* Left Side: Secondary actions, Context (Merchant) */}
-        <div className="flex items-center flex-1 min-w-0">
+        <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
           {/* Secondary Controls: Checkbox and Thumbnail */}
-          <div className="flex items-center gap-3 shrink-0 mr-4">
-            <div className="w-4 flex justify-center opacity-70 group-hover/statement:opacity-100 transition-opacity">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0, marginRight: 16 }}>
+            <div style={{ width: 16, display: 'flex', justifyContent: 'center', opacity: 0.7, transition: 'opacity 0.15s' }}>
               {selectionDisabled ? (
-                <span className="inline-flex h-4 w-4" />
+                <span style={{ display: 'inline-flex', height: 16, width: 16 }} />
               ) : (
                 <Checkbox
                   checked={selected}
                   onCheckedChange={onToggleSelect}
                   onClick={(event: { stopPropagation: () => void }) => event.stopPropagation()}
-                  className="pointer-events-auto h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  style={{ pointerEvents: 'auto', height: 16, width: 16, borderRadius: 4 }}
                 />
               )}
             </div>
 
-            <div className="group/thumbnail relative pointer-events-auto">
+            <div style={{ position: 'relative', pointerEvents: 'auto' }}>
               <button
                 type="button"
                 ref={thumbnailButtonRef}
                 data-testid={`statement-thumbnail-trigger-${statement.id}`}
-                className="w-8 flex items-center justify-center transition hover:opacity-80"
+                style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'opacity 0.15s', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 onClick={event => {
                   event.stopPropagation();
                   onIconClick();
@@ -410,22 +470,30 @@ export function StatementsListItem({
                 onMouseLeave={() => setPreviewVisible(false)}
                 aria-label={statement.fileName}
               >
-                <DocumentTypeIcon
-                  fileType={isReceipt ? 'pdf' : statement.fileType}
-                  fileName={statement.fileName}
-                  fileId={statement.id}
-                  source={previewSource}
-                  size={28}
-                  className="text-gray-400 opacity-60 group-hover/statement:opacity-100 transition-opacity"
-                />
+                <span style={{ color: '#9ca3af', opacity: 0.6, transition: 'opacity 0.15s', display: 'contents' }}>
+                  <DocumentTypeIcon
+                    fileType={isReceipt ? 'pdf' : statement.fileType}
+                    fileName={statement.fileName}
+                    fileId={statement.id}
+                    source={previewSource}
+                    size={28}
+                  />
+                </span>
               </button>
 
               {hasHoverPreview && previewVisible && previewPosition
                 ? createPortal(
                     <div
                       data-testid="statement-hover-preview"
-                      className="pointer-events-none fixed z-[140] rounded-xl border border-gray-200 bg-white p-2 shadow-2xl"
                       style={{
+                        pointerEvents: 'none',
+                        position: 'fixed',
+                        zIndex: 140,
+                        borderRadius: 12,
+                        border: '1px solid #e5e7eb',
+                        background: '#fff',
+                        padding: 8,
+                        boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
                         top: previewPosition.top,
                         left: previewPosition.left,
                         width: PREVIEW_WIDTH,
@@ -449,17 +517,17 @@ export function StatementsListItem({
           </div>
 
           {/* Main Context: Merchant Name & Date */}
-          <div className="flex flex-col min-w-0 pointer-events-auto">
-            <div className="flex items-center gap-2">
+          <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, pointerEvents: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {/* Weakened Merchant Icon */}
-              <div className="shrink-0 opacity-60">
+              <div style={{ flexShrink: 0, opacity: 0.6 }}>
                 {isGmailReceipt ? (
                   <img
                     src="/icons/gmail.png"
                     alt="Gmail"
                     width={16}
                     height={16}
-                    className="rounded-full object-contain"
+                    style={{ borderRadius: '50%', objectFit: 'contain' }}
                   />
                 ) : isLocalReceipt ? (
                   <Receipt
@@ -473,22 +541,34 @@ export function StatementsListItem({
               </div>
 
               {/* Main Merchant Name */}
-              <span className="truncate font-semibold text-gray-900 text-[15px]">
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: '#111827', fontSize: 15 }}>
                 {isProcessing ? 'Processing...' : merchantLabel}
               </span>
 
               {/* Weakened Type / Error micro-signal */}
               {hasError ? (
-                <AlertCircle className="h-4 w-4 text-red-500 ml-1" />
+                <AlertCircle size={16} style={{ color: '#ef4444', marginLeft: 4 }} />
               ) : isPossibleDuplicate ? (
                 <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
                   <div
-                    className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide ml-1 ${duplicateStyle.badge} ${duplicateRoleBadgeClass}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      padding: '2px 6px',
+                      borderRadius: 4,
+                      fontSize: 10,
+                      letterSpacing: '0.05em',
+                      marginLeft: 4,
+                      backgroundColor: duplicateStyle.badgeBg,
+                      color: duplicateStyle.badgeColor,
+                      ...duplicateRoleBadgeStyle,
+                    }}
                   >
                     {resolvedDuplicateRole === 'primary' ? (
-                      <CheckCircle2 className="h-3 w-3" />
+                      <CheckCircle2 size={12} />
                     ) : (
-                      <CircleHelp className="h-3 w-3" />
+                      <CircleHelp size={12} />
                     )}
                     {duplicateBadgeLabel}
                   </div>
@@ -497,29 +577,40 @@ export function StatementsListItem({
                 <CreditCard
                   data-testid="manual-expense-type-icon"
                   size={14}
-                  className="text-gray-500 opacity-50 ml-1"
+                  style={{ color: '#6b7280', opacity: 0.5, marginLeft: 4 }}
                 />
               ) : (
-                <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 bg-gray-100 rounded px-1.5 py-0.5 ml-1 opacity-70">
+                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: 4, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
                   {resolvedTypeLabel === 'PDF' ? 'PDF' : resolvedTypeLabel}
                 </span>
               )}
             </div>
             {/* Weakened Date */}
-            <div className="text-[11px] font-medium text-gray-400 mt-0.5 ml-6">{dateLabel}</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', marginTop: 2, marginLeft: 24 }}>{dateLabel}</div>
           </div>
         </div>
 
         {/* Right Side: Primary Info & Actions (Strictly right-aligned) */}
-        <div className="flex items-center justify-end gap-6 shrink-0 w-[420px] pointer-events-auto pl-4">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 24, flexShrink: 0, width: 420, pointerEvents: 'auto', paddingLeft: 16 }}>
           {/* Amount as the main visual anchor, strict right alignment */}
-          <div className="w-36 flex flex-col items-end justify-center h-full">
+          <div style={{ width: 144, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
             <span
-              className={`block truncate text-[19px] leading-none font-black tracking-tight tabular-nums ${isNegativeAmount || hasError || isMissingAmount ? 'text-red-600' : 'text-gray-950 dark:text-primary'}`}
+              style={{
+                display: 'block',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                fontSize: 19,
+                lineHeight: 1,
+                fontWeight: 900,
+                letterSpacing: '-0.025em',
+                fontVariantNumeric: 'tabular-nums',
+                color: isNegativeAmount || hasError || isMissingAmount ? '#dc2626' : '#030712',
+              }}
             >
-              {showAmountLoader ? <Spinner className="size-4 text-gray-400" /> : amountLabel}
+              {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: '#9ca3af' }} /> : amountLabel}
             </span>
-            <div className="mt-0.5 flex items-center justify-end">
+            <div style={{ marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
               <StatusBadge
                 status={statement.status}
                 isProcessing={isProcessing}
@@ -528,7 +619,7 @@ export function StatementsListItem({
             </div>
           </div>
 
-          <div className="w-36 flex items-center justify-end">
+          <div style={{ width: 144, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             <button
               data-testid="statement-view-icon"
               type="button"
@@ -536,11 +627,17 @@ export function StatementsListItem({
                 event.stopPropagation();
                 handleView();
               }}
-              className={`inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-xs font-semibold transition shadow-sm ${
+              className="lumio-stmt-list-item__view-btn"
+              style={
                 isPossibleDuplicate
-                  ? `${duplicateStyle.button} ${duplicateRoleButtonClass}`
-                  : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900'
-              }`}
+                  ? {
+                      borderColor: duplicateStyle.buttonBorder,
+                      backgroundColor: duplicateStyle.buttonBg,
+                      color: duplicateStyle.buttonColor,
+                      ...duplicateRoleButtonStyle,
+                    }
+                  : {}
+              }
               aria-label={actionLabel}
               disabled={viewDisabled}
             >

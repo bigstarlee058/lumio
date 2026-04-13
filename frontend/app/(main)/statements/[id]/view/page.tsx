@@ -187,9 +187,9 @@ export default function ViewStatementPage({
 
   if (loading) {
     return (
-      <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex h-full min-h-[320px] items-center justify-center">
-          <Spinner className="h-20 w-20 text-primary" />
+      <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
+        <div style={{ display: 'flex', height: '100%', minHeight: 320, alignItems: 'center', justifyContent: 'center' }}>
+          <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
         </div>
       </div>
     );
@@ -197,15 +197,16 @@ export default function ViewStatementPage({
 
   if (error || !statement) {
     return (
-      <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-600 mb-4">
+      <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
+        <div className="lumio-stmt-view__error-box">
           {error || t.statementNotFound.value}
         </div>
         <button
+          type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
+          className="lumio-stmt-view__back-btn-primary"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft size={16} />
           {t.back.value}
         </button>
       </div>
@@ -213,14 +214,15 @@ export default function ViewStatementPage({
   }
 
   return (
-    <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
+    <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
       {/* Back Button */}
-      <div className="mb-6">
+      <div style={{ marginBottom: 24 }}>
         <button
+          type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-muted"
+          className="lumio-stmt-view__back-btn"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft size={16} />
           {t.backToStatements.value}
         </button>
       </div>

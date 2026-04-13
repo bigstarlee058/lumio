@@ -287,9 +287,9 @@ export default function EditStatementPage() {
       <Container
         maxWidth="xl"
         data-testid="statement-edit-loading"
-        className="flex min-h-[60vh] items-center justify-center"
+        style={{ display: 'flex', minHeight: '60vh', alignItems: 'center', justifyContent: 'center' }}
       >
-        <Spinner className="size-10 text-primary" />
+        <Spinner style={{ width: 40, height: 40, color: "var(--primary)" }} />
       </Container>
     );
   }
@@ -449,7 +449,7 @@ export default function EditStatementPage() {
                 label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`}
                 size="small"
                 data-testid="statement-transactions-chip"
-                className="border border-gray-200 bg-gray-50 text-gray-500 dark:border-slate-700/60 dark:bg-[#111827] dark:text-slate-300"
+                style={{ border: '1px solid #e5e7eb', backgroundColor: '#f9fafb', color: '#6b7280' }}
                 sx={{
                   fontWeight: 500,
                   borderRadius: 1.5,
@@ -487,7 +487,7 @@ export default function EditStatementPage() {
               <Button
                 variant="outlined"
                 startIcon={
-                  statementCategorySaving ? <Spinner className="size-[18px]" /> : <Layers size={18} />
+                  statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />
                 }
                 onClick={() => setStatementCategoryDrawerOpen(true)}
                 disabled={statementCategorySaving || optionsLoading}
@@ -530,10 +530,10 @@ export default function EditStatementPage() {
                 onClick={() => setStatementCategoryDrawerOpen(true)}
                 disabled={statementCategorySaving || optionsLoading}
                 title={selectedStatementCategoryName}
-                className="min-w-0 max-w-full md:max-w-[280px] justify-start px-4 py-2 font-bold"
+                style={{ minWidth: 0, maxWidth: '100%', justifyContent: 'flex-start', padding: '8px 16px', fontWeight: 700 }}
               >
-                {statementCategorySaving ? <Spinner className="size-[18px]" /> : <Layers size={18} />}
-                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />}
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {selectedStatementCategoryName}
                 </span>
               </DetailActionButton>
@@ -543,7 +543,7 @@ export default function EditStatementPage() {
               disabled={exportingToTable || !transactions.length}
             >
               {exportingToTable ? (
-                <Spinner className="size-[18px]" />
+                <Spinner size={18} />
               ) : (
                 <Table2 size={18} />
               )}
@@ -565,7 +565,7 @@ export default function EditStatementPage() {
                     {isPrimary ? (
                       <Button
                         variant="contained"
-                        startIcon={isLoading ? <Spinner className="size-[18px]" /> : <Check />}
+                        startIcon={isLoading ? <Spinner size={18} /> : <Check />}
                         onClick={() =>
                           handleStageAction(action, stageActionToasts, missingCategoryCount)
                         }
@@ -588,7 +588,7 @@ export default function EditStatementPage() {
                         disabled={isDisabled}
                       >
                         {isLoading ? (
-                          <Spinner className="size-[18px]" />
+                          <Spinner size={18} />
                         ) : action.id === 'unapprove' || action.id === 'rollbackToApprove' ? (
                           <ArrowLeft size={18} />
                         ) : (
@@ -740,7 +740,7 @@ export default function EditStatementPage() {
       >
         <AccordionSummary
           expandIcon={<ChevronDown size={20} />}
-          className="bg-[#f8fafc] dark:bg-[#18222d]"
+          
           sx={{
             bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
           }}
@@ -785,7 +785,7 @@ export default function EditStatementPage() {
               }
             />
             <div data-testid="statement-metadata-field-opening-balance">
-              <span className="text-xs text-gray-500 block mb-1 font-medium ml-1">
+              <span style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>
                 {labels.openingBalance?.value || 'Opening balance'}
               </span>
               <TextField
@@ -811,7 +811,7 @@ export default function EditStatementPage() {
               />
             </div>
             <div data-testid="statement-metadata-field-closing-balance">
-              <span className="text-xs text-gray-500 block mb-1 font-medium ml-1">
+              <span style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>
                 {labels.balanceEnd?.value || 'Closing balance'}
               </span>
               <TextField
@@ -974,7 +974,7 @@ export default function EditStatementPage() {
           <button
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            className="rounded-md border border-gray-200 bg-white px-6 py-2.5 text-base font-medium text-gray-600 hover:border-primary hover:text-primary"
+            style={{ borderRadius: 6, border: '1px solid #e5e7eb', background: '#fff', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
           >
             {t.labels.cancel.value}
           </button>
@@ -985,9 +985,9 @@ export default function EditStatementPage() {
               handleExportToCustomTable();
             }}
             disabled={exportingToTable || !transactions.length}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: 6, background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
           >
-            {exportingToTable ? <Spinner className="h-4 w-4 text-white" /> : null}
+            {exportingToTable ? <Spinner style={{ height: 16, width: 16, color: '#fff' }} /> : null}
             {t.labels.exportConfirmConfirm.value}
           </button>
         </DialogActions>
@@ -1064,7 +1064,7 @@ export default function EditStatementPage() {
                 variant="contained"
                 onClick={handleBulkUpdate}
                 disabled={saving}
-                startIcon={saving ? <Spinner className="size-5" /> : <Save size={18} />}
+                startIcon={saving ? <Spinner size={20} /> : <Save size={18} />}
                 size="small"
                 sx={{
                   textTransform: 'none',
@@ -1114,7 +1114,7 @@ export default function EditStatementPage() {
         <Table size="small">
           <TableHead>
             <TableRow
-              className="bg-[#f8fafc] dark:bg-[#18222d]"
+              
               sx={{
                 bgcolor: theme =>
                   theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50],
@@ -1489,7 +1489,7 @@ export default function EditStatementPage() {
           </Button>
           <Button
             variant="contained"
-            startIcon={saving ? <Spinner className="size-[18px]" /> : <CheckCircle2 size={18} />}
+            startIcon={saving ? <Spinner size={18} /> : <CheckCircle2 size={18} />}
             onClick={handleApplyBulkCategory}
             disabled={saving || !bulkCategoryId}
             sx={{

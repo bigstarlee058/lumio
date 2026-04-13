@@ -697,8 +697,8 @@ export default function TopSpendersView() {
 
     if (sourceChannel === 'gmail') {
       return (
-        <span className="inline-flex items-center gap-1.5 text-gray-600">
-          <Mail className="h-3.5 w-3.5" />
+        <span className="lumio-view-page__source-chip">
+          <Mail size={14} />
           {label}
         </span>
       );
@@ -706,23 +706,23 @@ export default function TopSpendersView() {
 
     if (sourceChannel === 'receipt') {
       return (
-        <span className="inline-flex items-center gap-1.5 text-gray-600">
-          <Receipt className="h-3.5 w-3.5" />
+        <span className="lumio-view-page__source-chip">
+          <Receipt size={14} />
           {label}
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center gap-1.5 text-gray-600">
-        <Landmark className="h-3.5 w-3.5" />
+      <span className="lumio-view-page__source-chip">
+        <Landmark size={14} />
         {label}
       </span>
     );
   };
 
   return (
-    <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
+    <div className="container-shared lumio-view-page">
       <div className="mb-5 shrink-0 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -764,7 +764,7 @@ export default function TopSpendersView() {
               onChange={event => setSearchInput(event.target.value)}
               placeholder={labels.searchPlaceholder}
               aria-label={labels.searchPlaceholder}
-              className="w-full rounded-md border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="lumio-view-page__search-input"
             />
           </div>
           <div className="sm:w-60">
@@ -775,7 +775,7 @@ export default function TopSpendersView() {
               id="top-spenders-workspace-filter"
               value={workspaceFilter}
               onChange={event => setWorkspaceFilter(event.target.value)}
-              className="w-full rounded-md border border-gray-200 bg-white px-3 py-3 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="lumio-view-page__workspace-filter"
             >
               <option value="current">{labels.currentWorkspace}</option>
               <option value="all">{labels.allWorkspaces}</option>
@@ -788,7 +788,7 @@ export default function TopSpendersView() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
           <TypeFilterDropdown
             open={typeDropdownOpen}
             onOpenChange={setTypeDropdownOpen}
@@ -803,7 +803,7 @@ export default function TopSpendersView() {
                   ? typeOptions.find(option => option.value === draftFilters.type)?.label ||
                     labels.type
                   : labels.type}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -823,7 +823,7 @@ export default function TopSpendersView() {
                 {draftFilters.statuses.length > 0
                   ? `${labels.status} (${draftFilters.statuses.length})`
                   : labels.status}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -846,7 +846,7 @@ export default function TopSpendersView() {
                   : draftFilters.date?.mode
                     ? dateModes.find(option => option.value === draftFilters.date?.mode)?.label
                     : labels.date}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -866,7 +866,7 @@ export default function TopSpendersView() {
                 {draftFilters.from.length > 0
                   ? `${labels.from} (${draftFilters.from.length})`
                   : labels.from}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -882,7 +882,7 @@ export default function TopSpendersView() {
               setFiltersDrawerOpen(true);
             }}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <SlidersHorizontal size={14} />
             {labels.filters}
             {activeFilterCount > 0 ? (
               <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
@@ -893,10 +893,10 @@ export default function TopSpendersView() {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="lumio-view-page__body">
         {loading ? (
-          <div className="flex h-64 items-center justify-center">
-            <Spinner className="h-20 w-20 text-primary" />
+          <div className="lumio-view-page__loading">
+            <Spinner style={{ height: 80, width: 80, color: "var(--primary)" }} />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
           <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center text-sm text-gray-500">
@@ -905,15 +905,15 @@ export default function TopSpendersView() {
         ) : (
           <div className="space-y-4 pb-6">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="lumio-view-page__stat-card">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-wider text-gray-500">
                     {primaryMetricLabel}
                   </span>
                   {isIncomeView ? (
-                    <ArrowUp className="h-4 w-4 text-emerald-500" />
+                    <ArrowUp size={16} color="#10b981" />
                   ) : (
-                    <ArrowDown className="h-4 w-4 text-red-500" />
+                    <ArrowDown size={16} color="#ef4444" />
                   )}
                 </div>
                 <div
@@ -925,31 +925,31 @@ export default function TopSpendersView() {
                 </div>
                 {renderComparisonLine(comparison?.total || null)}
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="lumio-view-page__stat-card">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-wider text-gray-500">
                     {labels.statementsSpend}
                   </span>
-                  <ChartPie className="h-4 w-4 text-primary" />
+                  <ChartPie size={16} color="var(--primary)" />
                 </div>
                 <div className="mt-2 text-lg font-semibold text-primary">
                   {formatMoney(totals.statementTotal, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.statementTotal || null)}
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="lumio-view-page__stat-card">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-wider text-gray-500">
                     {labels.receiptsSpend}
                   </span>
-                  <ArrowUp className="h-4 w-4 text-emerald-500" />
+                  <ArrowUp size={16} color="#10b981" />
                 </div>
                 <div className="mt-2 text-lg font-semibold text-emerald-600">
                   {formatMoney(totals.receiptTotal, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.receiptTotal || null)}
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
+              <div className="lumio-view-page__stat-card">
                 <div className="flex items-center justify-between">
                   <span className="text-xs uppercase tracking-wider text-gray-500">
                     {labels.totalOperations}
@@ -1161,7 +1161,7 @@ export default function TopSpendersView() {
                 onClick={() => setSelectedRowId(null)}
                 aria-label={labels.close}
               >
-                <X className="h-4 w-4" />
+                <X size={16} />
               </button>
             </div>
 

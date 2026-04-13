@@ -9,6 +9,7 @@
 @import "./styles/blocks/lumio-breadcrumbs.css";
 @import "./styles/blocks/lumio-audit-panel.css";
 @import "./styles/blocks/lumio-transaction-table.css";
+@import "./styles/blocks/lumio-statements.css";
 
 :root {
   --background: #ffffff;

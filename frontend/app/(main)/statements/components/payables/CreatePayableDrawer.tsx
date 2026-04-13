@@ -87,9 +87,6 @@ const toFormState = (
   };
 };
 
-const selectClassName =
-  'h-10 rounded-lg border border-border bg-white px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30';
-
 export function CreatePayableDrawer({
   open,
   payable,
@@ -131,25 +128,25 @@ export function CreatePayableDrawer({
       showCloseButton={false}
       className="max-w-full border-l-0 bg-white sm:max-w-lg"
       title={
-        <div className="flex items-center gap-3">
+        <div className="lumio-payable-drawer__title-wrap">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
+            className="lumio-payable-drawer__back-btn"
             aria-label={labels.cancel}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft size={20} />
           </button>
-          <span className="text-lg font-semibold text-[#0f3428]">
+          <span style={{ fontSize: 18, fontWeight: 600, color: '#0f3428' }}>
             {payable ? labels.editTitle : labels.createTitle}
           </span>
         </div>
       }
     >
-      <div className="flex h-full flex-col gap-4">
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <label className="text-sm font-medium text-slate-700" htmlFor="payable-vendor">
+      <div className="lumio-payable-drawer__body">
+        <div style={{ display: 'grid', gap: 16 }}>
+          <div className="lumio-payable-drawer__field-group">
+            <label className="lumio-payable-drawer__field-label" htmlFor="payable-vendor">
               {labels.vendor}
             </label>
             <Input
@@ -159,9 +156,9 @@ export function CreatePayableDrawer({
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-700" htmlFor="payable-amount">
+          <div className="lumio-payable-drawer__2col">
+            <div className="lumio-payable-drawer__field-group">
+              <label className="lumio-payable-drawer__field-label" htmlFor="payable-amount">
                 {labels.amount}
               </label>
               <Input
@@ -173,8 +170,8 @@ export function CreatePayableDrawer({
                 onChange={event => setForm(prev => ({ ...prev, amount: event.target.value }))}
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-700" htmlFor="payable-currency">
+            <div className="lumio-payable-drawer__field-group">
+              <label className="lumio-payable-drawer__field-label" htmlFor="payable-currency">
                 {labels.currency}
               </label>
               <Input
@@ -188,9 +185,9 @@ export function CreatePayableDrawer({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-700" htmlFor="payable-due-date">
+          <div className="lumio-payable-drawer__2col">
+            <div className="lumio-payable-drawer__field-group">
+              <label className="lumio-payable-drawer__field-label" htmlFor="payable-due-date">
                 {labels.dueDate}
               </label>
               <Input
@@ -200,13 +197,13 @@ export function CreatePayableDrawer({
                 onChange={event => setForm(prev => ({ ...prev, dueDate: event.target.value }))}
               />
             </div>
-            <div className="grid gap-2">
-              <label className="text-sm font-medium text-slate-700" htmlFor="payable-source">
+            <div className="lumio-payable-drawer__field-group">
+              <label className="lumio-payable-drawer__field-label" htmlFor="payable-source">
                 {labels.source}
               </label>
               <select
                 id="payable-source"
-                className={selectClassName}
+                className="lumio-payable-drawer__select"
                 value={form.source}
                 onChange={event =>
                   setForm(prev => ({ ...prev, source: event.target.value as PayableSource }))
@@ -221,13 +218,13 @@ export function CreatePayableDrawer({
             </div>
           </div>
 
-          <div className="grid gap-2">
-            <label className="text-sm font-medium text-slate-700" htmlFor="payable-status">
+          <div className="lumio-payable-drawer__field-group">
+            <label className="lumio-payable-drawer__field-label" htmlFor="payable-status">
               {labels.status}
             </label>
             <select
               id="payable-status"
-              className={selectClassName}
+              className="lumio-payable-drawer__select"
               value={form.status}
               onChange={event =>
                 setForm(prev => ({ ...prev, status: event.target.value as PayableStatus }))
@@ -241,25 +238,25 @@ export function CreatePayableDrawer({
             </select>
           </div>
 
-          <div className="grid gap-2">
-            <label className="text-sm font-medium text-slate-700" htmlFor="payable-comment">
+          <div className="lumio-payable-drawer__field-group">
+            <label className="lumio-payable-drawer__field-label" htmlFor="payable-comment">
               {labels.comment}
             </label>
             <textarea
               id="payable-comment"
               value={form.comment}
               onChange={event => setForm(prev => ({ ...prev, comment: event.target.value }))}
-              className="min-h-[120px] rounded-lg border border-border bg-white px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className="lumio-payable-drawer__textarea"
             />
           </div>
         </div>
 
-        <div className="mt-auto flex gap-3 pt-4">
-          <Button variant="outline" className="flex-1" onClick={onClose}>
+        <div className="lumio-payable-drawer__footer">
+          <Button variant="outline" style={{ flex: 1 }} onClick={onClose}>
             {labels.cancel}
           </Button>
           <Button
-            className="flex-1"
+            style={{ flex: 1 }}
             onClick={() => void handleSubmit()}
             disabled={!canSubmit || saving}
           >

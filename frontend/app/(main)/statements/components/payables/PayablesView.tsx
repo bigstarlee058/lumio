@@ -450,16 +450,16 @@ export function PayablesView() {
 
   if (authLoading || workspaceLoading || loading) {
     return (
-      <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 items-center justify-center px-4 py-6 sm:px-6 lg:px-8">
-        <Spinner className="h-20 w-20 text-primary" />
+      <div className="container-shared lumio-stmt-list" style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="container-shared px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <div className="container-shared" style={{ padding: '40px 16px' }}>
+        <div style={{ borderRadius: 12, border: '1px solid #e5e7eb', background: '#fff', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.loginRequired}
         </div>
       </div>
@@ -468,8 +468,8 @@ export function PayablesView() {
 
   if (!currentWorkspace) {
     return (
-      <div className="container-shared px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <div className="container-shared" style={{ padding: '40px 16px' }}>
+        <div style={{ borderRadius: 12, border: '1px solid #e5e7eb', background: '#fff', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.noWorkspace}
         </div>
       </div>
@@ -478,45 +478,47 @@ export function PayablesView() {
 
   return (
     <>
-      <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-900">{labels.title}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-600">{labels.subtitle}</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => void loadData({ silent: true })}
-              disabled={refreshing}
-            >
-              <RefreshCcw className="h-4 w-4" />
-              {labels.refresh}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => void handleExport('csv')}
-              disabled={exporting !== null}
-            >
-              <Download className="h-4 w-4" />
-              {labels.exportCsv}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => void handleExport('excel')}
-              disabled={exporting !== null}
-            >
-              <Download className="h-4 w-4" />
-              {labels.exportXlsx}
-            </Button>
-            <Button onClick={openCreateDrawer}>
-              <Plus className="h-4 w-4" />
-              {labels.add}
-            </Button>
+      <div className="container-shared lumio-stmt-list">
+        <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h1 style={{ fontSize: 24, fontWeight: 600, color: '#0f172a' }}>{labels.title}</h1>
+              <p style={{ marginTop: 8, maxWidth: 768, fontSize: 14, color: '#475569' }}>{labels.subtitle}</p>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+              <Button
+                variant="outline"
+                onClick={() => void loadData({ silent: true })}
+                disabled={refreshing}
+              >
+                <RefreshCcw size={16} />
+                {labels.refresh}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => void handleExport('csv')}
+                disabled={exporting !== null}
+              >
+                <Download size={16} />
+                {labels.exportCsv}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => void handleExport('excel')}
+                disabled={exporting !== null}
+              >
+                <Download size={16} />
+                {labels.exportXlsx}
+              </Button>
+              <Button onClick={openCreateDrawer}>
+                <Plus size={16} />
+                {labels.add}
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-2">
+        <div style={{ display: 'flex', minHeight: 0, flex: 1, flexDirection: 'column', gap: 16, overflowY: 'auto', paddingBottom: 8 }}>
           <PayableSummaryCards
             summary={summary}
             locale={locale}

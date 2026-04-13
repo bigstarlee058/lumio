@@ -80,9 +80,9 @@ function PayablesList({
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white px-6 py-12 text-center">
-        <h3 className="text-lg font-semibold text-slate-900">{emptyTitle}</h3>
-        <p className="mt-2 text-sm text-slate-500">{emptyDescription}</p>
+      <div className="lumio-payable-list__empty">
+        <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>{emptyTitle}</h3>
+        <p style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>{emptyDescription}</p>
       </div>
     );
   }
@@ -96,7 +96,7 @@ function PayablesList({
     const canMarkPaid = payable.status !== 'paid' && payable.status !== 'archived';
 
     return (
-      <div className="flex items-center justify-end gap-2">
+      <div className="lumio-payable-list__actions">
         {canMarkPaid ? (
           <Button
             size="sm"
@@ -108,16 +108,16 @@ function PayablesList({
           </Button>
         ) : null}
         <Button size="sm" variant="ghost" onClick={() => onEdit(payable)}>
-          <Edit3 className="h-4 w-4" />
+          <Edit3 size={16} />
           {labels.edit}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="icon" variant="ghost" aria-label={labels.actions}>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal size={16} />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[180px]">
+          <DropdownMenuContent align="end" style={{ minWidth: 180 }}>
             <DropdownMenuItem onClick={() => onArchive(payable)}>{labels.archive}</DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDelete(payable)}>{labels.delete}</DropdownMenuItem>
           </DropdownMenuContent>
@@ -127,17 +127,17 @@ function PayablesList({
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white">
+    <div className="lumio-payable-list">
       {isMobile ? (
-        <div className="divide-y divide-gray-100">
+        <div className="lumio-payable-list__mobile-rows">
           {items.map(payable => {
             const overdue = isPayableOverdue(payable);
             return (
-              <div key={payable.id} className="space-y-4 p-4">
-                <div className="flex items-start justify-between gap-3">
+              <div key={payable.id} className="lumio-payable-list__mobile-row">
+                <div className="lumio-payable-list__mobile-row-top">
                   <div>
-                    <div className="text-base font-semibold text-slate-900">{payable.vendor}</div>
-                    <div className="mt-1 text-sm text-slate-500">
+                    <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>{payable.vendor}</div>
+                    <div style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
                       {labels.dueDate}: {formatPayableDate(payable.dueDate, locale)}
                     </div>
                   </div>
@@ -145,15 +145,15 @@ function PayablesList({
                     {labels.statusLabels[overdue ? 'overdue' : payable.status] || payable.status}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between gap-3 text-sm">
-                  <span className="text-slate-500">{labels.amount}</span>
-                  <span className="font-semibold text-slate-900">
+                <div className="lumio-payable-list__mobile-row-data">
+                  <span style={{ color: '#64748b' }}>{labels.amount}</span>
+                  <span style={{ fontWeight: 600, color: '#0f172a' }}>
                     {formatMoney(payable.amount, payable.currency, locale)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-3 text-sm">
-                  <span className="text-slate-500">{labels.source}</span>
-                  <span className="font-medium text-slate-700">
+                <div className="lumio-payable-list__mobile-row-data">
+                  <span style={{ color: '#64748b' }}>{labels.source}</span>
+                  <span style={{ fontWeight: 500, color: '#334155' }}>
                     {labels.sourceLabels[payable.source] || payable.source}
                   </span>
                 </div>
@@ -163,41 +163,41 @@ function PayablesList({
           })}
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-100 text-sm">
-            <thead>
-              <tr className="text-left text-xs font-semibold uppercase tracking-[0.12em] text-slate-400">
-                <th className="px-5 py-4">{labels.vendor}</th>
-                <th className="px-5 py-4">{labels.dueDate}</th>
-                <th className="px-5 py-4">{labels.source}</th>
-                <th className="px-5 py-4">{labels.status}</th>
-                <th className="px-5 py-4 text-right">{labels.amount}</th>
-                <th className="px-5 py-4 text-right">{labels.actions}</th>
+        <div className="lumio-payable-list__table-wrap">
+          <table className="lumio-payable-list__table">
+            <thead className="lumio-payable-list__thead">
+              <tr>
+                <th className="lumio-payable-list__th">{labels.vendor}</th>
+                <th className="lumio-payable-list__th">{labels.dueDate}</th>
+                <th className="lumio-payable-list__th">{labels.source}</th>
+                <th className="lumio-payable-list__th">{labels.status}</th>
+                <th className="lumio-payable-list__th lumio-payable-list__th--right">{labels.amount}</th>
+                <th className="lumio-payable-list__th lumio-payable-list__th--right">{labels.actions}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="lumio-payable-list__tbody">
               {items.map(payable => {
                 const overdue = isPayableOverdue(payable);
 
                 return (
-                  <tr key={payable.id} className="align-middle">
-                    <td className="px-5 py-4 font-medium text-slate-900">{payable.vendor}</td>
-                    <td className="px-5 py-4 text-slate-600">
+                  <tr key={payable.id}>
+                    <td className="lumio-payable-list__td" style={{ fontWeight: 500, color: '#0f172a' }}>{payable.vendor}</td>
+                    <td className="lumio-payable-list__td" style={{ color: '#475569' }}>
                       {formatPayableDate(payable.dueDate, locale)}
                     </td>
-                    <td className="px-5 py-4 text-slate-600">
+                    <td className="lumio-payable-list__td" style={{ color: '#475569' }}>
                       {labels.sourceLabels[payable.source] || payable.source}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="lumio-payable-list__td">
                       <Badge variant={getPayableStatusVariant(payable.status, overdue)}>
                         {labels.statusLabels[overdue ? 'overdue' : payable.status] ||
                           payable.status}
                       </Badge>
                     </td>
-                    <td className="px-5 py-4 text-right font-semibold text-slate-900">
+                    <td className="lumio-payable-list__td" style={{ textAlign: 'right', fontWeight: 600, color: '#0f172a' }}>
                       {formatMoney(payable.amount, payable.currency, locale)}
                     </td>
-                    <td className="px-5 py-4">{renderActions(payable)}</td>
+                    <td className="lumio-payable-list__td">{renderActions(payable)}</td>
                   </tr>
                 );
               })}
@@ -206,8 +206,8 @@ function PayablesList({
         </div>
       )}
 
-      <div className="flex flex-col gap-4 border-t border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-slate-500">
+      <div className="lumio-payable-list__pagination-row">
+        <div style={{ fontSize: 14, color: '#64748b' }}>
           {fillTemplate(labels.pageShown, {
             from: safeRangeStart,
             to: rangeEnd,

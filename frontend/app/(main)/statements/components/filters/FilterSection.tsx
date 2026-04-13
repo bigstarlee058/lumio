@@ -1,19 +1,17 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
-
 type FilterSectionProps = {
   title: string;
   children: React.ReactNode;
-  className?: string;
+  style?: React.CSSProperties;
 };
 
-export function FilterSection({ title, children, className }: FilterSectionProps) {
+export function FilterSection({ title, children, style }: FilterSectionProps) {
   return (
-    <section className={cn('space-y-3', className)}>
-      <div className="text-sm font-semibold text-gray-900">{title}</div>
-      <div className="rounded-2xl bg-transparent p-0">
-        <div className="space-y-2">{children}</div>
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 12, ...style }}>
+      <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{title}</div>
+      <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{children}</div>
       </div>
     </section>
   );

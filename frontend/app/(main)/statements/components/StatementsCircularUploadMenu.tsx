@@ -150,7 +150,7 @@ export default function StatementsCircularUploadMenu({
 
   const renderActionIcon = (item: (typeof menuItems)[number]) => {
     if (item.id === 'scan') {
-      return <ScanLine size={18} className="text-primary" />;
+      return <ScanLine size={18} color="var(--primary)" />;
     }
 
     if (item.id === 'cloud-import') {
@@ -164,14 +164,14 @@ export default function StatementsCircularUploadMenu({
         );
       }
 
-      return <Cloud size={18} className="text-primary" />;
+      return <Cloud size={18} color="var(--primary)" />;
     }
 
     if (item.id === 'gmail') {
       return <Image src="/icons/gmail.png" alt="Gmail" width={18} height={18} />;
     }
 
-    return <Receipt size={18} className="text-muted-foreground" />;
+    return <Receipt size={18} color="var(--muted-foreground)" />;
   };
 
   const styles = ARC_SIZES[placement];
@@ -295,7 +295,9 @@ export default function StatementsCircularUploadMenu({
     return createPortal(
       <>
         {backdrop}
-        <div className="fixed bottom-0 left-0 z-[320] pointer-events-none lg:hidden">{menu}</div>
+        <div style={{ position: 'fixed', bottom: 0, left: 0, zIndex: 320, pointerEvents: 'none' }}
+          data-mobile-only="true"
+        >{menu}</div>
       </>,
       portalTarget,
     );

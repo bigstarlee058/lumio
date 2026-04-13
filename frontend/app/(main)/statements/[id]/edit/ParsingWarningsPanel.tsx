@@ -610,83 +610,82 @@ export function ParsingWarningsPanel({
         position="right"
         width="sm"
         showCloseButton={false}
-        className="border-l-0 bg-white dark:bg-[#111827]"
         title={
-          <div className="flex items-center gap-3">
+          <div className="lumio-payable-drawer__title-wrap">
             <button
               type="button"
               onClick={handleCloseCurrencyPicker}
-              className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white"
+              className="lumio-col-drawer__back-btn"
               aria-label="Select a currency"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">Select a currency</span>
+            <span style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>Select a currency</span>
           </div>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="border-b border-gray-100 pb-4 dark:border-white/10">
-            <label className="relative block">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
+        <div className="lumio-cat-drawer">
+          <div className="lumio-cat-drawer__search">
+            <label className="lumio-cat-drawer__search-label">
+              <Search size={20} className="lumio-cat-drawer__search-icon" />
               <input
                 type="text"
                 value={currencySearch}
                 onChange={event => setCurrencySearch(event.target.value)}
                 placeholder="Search"
-                className="h-14 w-full rounded-2xl border border-primary bg-white pl-12 pr-4 text-base text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-[#0f172a] dark:text-white dark:placeholder:text-gray-500"
+                className="lumio-cat-drawer__search-input"
               />
             </label>
           </div>
 
-          <div className="flex-1 overflow-y-auto pb-24">
+          <div className="lumio-cat-drawer__list">
             {selectedCurrencyItem && selectedMatchesSearch ? (
               <button
                 type="button"
                 onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                className="mt-5 flex w-full items-center justify-between rounded-2xl bg-[#ebe8e2] px-4 py-4 text-left"
+                style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 16, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}
               >
-                <span className="text-base font-semibold text-[#0f3428]">
+                <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>
                   {selectedCurrencyItem.label}
                 </span>
-                <Check className="h-5 w-5 text-primary" />
+                <Check size={20} color="var(--primary)" />
               </button>
             ) : null}
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
-              <div className="mt-6">
-                <p className="px-1 text-sm text-gray-500 dark:text-gray-400">Recents</p>
-                <div className="mt-2 space-y-2">
+              <div style={{ marginTop: 24 }}>
+                <p style={{ padding: '0 4px', fontSize: 14, color: '#6b7280' }}>Recents</p>
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {recentCurrencyItems.map(item => (
                     <button
                       key={`recent-${item.code}`}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea] dark:hover:bg-white/5"
+                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
-                      <span className="text-base font-semibold text-[#0f3428] dark:text-white">{item.label}</span>
+                      <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
             ) : null}
 
-            <div className="mt-6">
-              <p className="px-1 text-sm text-gray-500 dark:text-gray-400">All</p>
-              <div className="mt-2 space-y-1">
+            <div style={{ marginTop: 24 }}>
+              <p style={{ padding: '0 4px', fontSize: 14, color: '#6b7280' }}>All</p>
+              <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
                 {allCurrencyItems.length > 0 ? (
                   allCurrencyItems.map(item => (
                     <button
                       key={item.code}
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f1efea] dark:hover:bg-white/5"
+                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 12, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer' }}
                     >
-                      <span className="text-base font-semibold text-[#0f3428] dark:text-white">{item.label}</span>
+                      <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
                     </button>
                   ))
                 ) : (
-                  <p className="rounded-xl bg-white px-3 py-3 text-sm text-gray-500 dark:bg-[#0f172a] dark:text-gray-400">
+                  <p style={{ borderRadius: 12, background: '#fff', padding: '12px', fontSize: 14, color: '#6b7280' }}>
                     No currencies found
                   </p>
                 )}

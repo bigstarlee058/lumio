@@ -64,53 +64,49 @@ export default function StatementCategoryDrawer({
       showCloseButton={false}
       className={className}
       title={
-        <div className="flex items-center gap-3">
+        <div className="lumio-payable-drawer__title-wrap">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="lumio-col-drawer__back-btn"
             aria-label={labels.title}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft size={20} />
           </button>
-          <span className="text-lg font-semibold text-foreground">{labels.title}</span>
+          <span style={{ fontSize: 18, fontWeight: 600 }}>{labels.title}</span>
         </div>
       }
     >
-      <div className="flex h-full flex-col">
-        <div className="border-b border-border pb-4">
-          <label className="relative block">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+      <div className="lumio-cat-drawer">
+        <div className="lumio-cat-drawer__search">
+          <label className="lumio-cat-drawer__search-label">
+            <Search size={20} className="lumio-cat-drawer__search-icon" />
             <input
               type="text"
               value={searchQuery}
               onChange={event => setSearchQuery(event.target.value)}
               placeholder={labels.searchPlaceholder}
-              className="h-14 w-full rounded-2xl border border-border bg-card pl-12 pr-4 text-base text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="lumio-cat-drawer__search-input"
             />
           </label>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-24">
-          <div className="divide-y divide-transparent">
+        <div className="lumio-cat-drawer__list">
+          <div>
             {showAllOption ? (
               <button
                 type="button"
                 disabled={selecting}
                 onClick={() => onSelect('')}
-                className={`flex w-full items-center justify-between px-4 py-5 text-left text-base font-semibold transition-colors ${
-                  selectedCategoryId === ''
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-foreground hover:bg-muted'
-                }`}
+                className={`lumio-cat-drawer__option${selectedCategoryId === '' ? ' lumio-cat-drawer__option--selected' : ''}`}
               >
                 <span>{labels.allOption}</span>
-                {selectedCategoryId === '' ? <Check className="h-6 w-6 text-primary" /> : null}
+                {selectedCategoryId === '' ? <Check size={24} color="var(--primary)" /> : null}
               </button>
             ) : null}
 
             {filteredCategories.length === 0 ? (
-              <div className="px-4 py-8 text-base text-muted-foreground">{labels.noResults}</div>
+              <div className="lumio-cat-drawer__no-results">{labels.noResults}</div>
             ) : (
               filteredCategories.map(category => {
                 const isSelected = selectedCategoryId === category.id;
@@ -120,12 +116,10 @@ export default function StatementCategoryDrawer({
                     type="button"
                     disabled={selecting}
                     onClick={() => onSelect(category.id)}
-                    className={`flex w-full items-center justify-between px-4 py-5 text-left text-base font-semibold transition-colors ${
-                      isSelected ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
-                    }`}
+                    className={`lumio-cat-drawer__option${isSelected ? ' lumio-cat-drawer__option--selected' : ''}`}
                   >
                     <span>{category.name}</span>
-                    {isSelected ? <Check className="h-6 w-6 text-primary" /> : null}
+                    {isSelected ? <Check size={24} color="var(--primary)" /> : null}
                   </button>
                 );
               })

@@ -11,7 +11,6 @@ import {
   type TaxRateOption,
   sanitizeManualAmountInput,
 } from '@/app/lib/statement-expense-drawer';
-import { cn } from '@/app/lib/utils';
 import {
   Calendar,
   Check,
@@ -121,18 +120,18 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
+        
         title={
-          <div className="flex items-center gap-3">
+          <div className="lumio-payable-drawer__title-wrap">
             <button
               type="button"
               onClick={handleBackClick}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="lumio-col-drawer__back-btn"
               aria-label="Close create expense drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-foreground">
+            <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
               {currencyPickerOpen
                 ? 'Select a currency'
                 : mode === 'manual' && manualStep === 'details'
@@ -142,9 +141,9 @@ export default function CreateExpenseDrawer({
           </div>
         }
       >
-        <div className="flex h-full flex-col">
+        <div className="lumio-expense-drawer">
           {!currencyPickerOpen ? (
-            <div className="mb-5 grid grid-cols-2 gap-3 rounded-full border border-border bg-muted/60 p-1.5">
+            <div className="lumio-expense-drawer__tabs">
               <button
                 type="button"
                 onClick={() => {
@@ -152,14 +151,9 @@ export default function CreateExpenseDrawer({
                   setManualStep('amount');
                   setCurrencyPickerOpen(false);
                 }}
-                className={cn(
-                  'inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors',
-                  mode === 'manual'
-                    ? 'bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                )}
+                className={`lumio-expense-drawer__tab${mode === 'manual' ? ' lumio-expense-drawer__tab--active' : ''}`}
               >
-                <PencilLine className="h-4 w-4" />
+                <PencilLine size={16} />
                 Manual
               </button>
               <button
@@ -168,30 +162,25 @@ export default function CreateExpenseDrawer({
                   setMode('scan');
                   setCurrencyPickerOpen(false);
                 }}
-                className={cn(
-                  'inline-flex items-center justify-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors',
-                  mode === 'scan'
-                    ? 'bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                )}
+                className={`lumio-expense-drawer__tab${mode === 'scan' ? ' lumio-expense-drawer__tab--active' : ''}`}
               >
-                <ScanLine className="h-4 w-4" />
+                <ScanLine size={16} />
                 Scan
               </button>
             </div>
           ) : null}
 
-          <div className="flex-1 overflow-y-auto space-y-3 pb-4">
+          <div className="lumio-expense-drawer__content">
             {currencyPickerOpen ? (
               <>
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="lumio-expense-drawer__search">
+                  <Search size={16} className="lumio-expense-drawer__search-icon" />
                   <input
                     type="text"
                     value={currencySearch}
                     onChange={event => setCurrencySearch(event.target.value)}
                     placeholder="Search"
-                    className="w-full rounded-2xl border border-border bg-card py-3 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary"
+                    className="lumio-expense-drawer__search-input"
                   />
                 </div>
 
@@ -199,27 +188,27 @@ export default function CreateExpenseDrawer({
                   <button
                     type="button"
                     onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                    className="flex w-full items-center justify-between rounded-2xl border border-border bg-muted px-4 py-4 text-left"
+                    className="lumio-expense-drawer__currency-selected"
                   >
-                    <span className="text-base font-semibold text-foreground">
+                    <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
                       {selectedCurrencyItem.label}
                     </span>
-                    <Check className="h-5 w-5 text-primary" />
+                    <Check size={20} style={{ color: 'var(--primary)' }} />
                   </button>
                 ) : null}
 
                 {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
-                  <div>
-                    <p className="px-1 text-sm text-muted-foreground">Recents</p>
-                    <div className="mt-2 space-y-2">
+                  <div className="lumio-expense-drawer__section">
+                    <p className="lumio-expense-drawer__label">Recents</p>
+                    <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {recentCurrencyItems.map(item => (
                         <button
                           key={`recent-${item.code}`}
                           type="button"
                           onClick={() => handleSelectCurrency(item.code)}
-                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                          className="lumio-expense-drawer__currency-item"
                         >
-                          <span className="text-base font-semibold text-foreground">
+                          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
                             {item.label}
                           </span>
                         </button>
@@ -228,24 +217,24 @@ export default function CreateExpenseDrawer({
                   </div>
                 ) : null}
 
-                <div>
-                  <p className="px-1 text-sm text-muted-foreground">All</p>
-                  <div className="mt-2 space-y-1">
+                <div className="lumio-expense-drawer__section">
+                  <p className="lumio-expense-drawer__label">All</p>
+                  <div className="lumio-expense-drawer__all-list">
                     {allCurrencyItems.length > 0 ? (
                       allCurrencyItems.map(item => (
                         <button
                           key={item.code}
                           type="button"
                           onClick={() => handleSelectCurrency(item.code)}
-                          className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                          className="lumio-expense-drawer__currency-item"
                         >
-                          <span className="text-base font-semibold text-foreground">
+                          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
                             {item.label}
                           </span>
                         </button>
                       ))
                     ) : (
-                      <p className="rounded-xl border border-border bg-card px-3 py-3 text-sm text-muted-foreground">
+                      <p className="lumio-expense-drawer__no-result">
                         No currencies found
                       </p>
                     )}
@@ -254,13 +243,13 @@ export default function CreateExpenseDrawer({
               </>
             ) : mode === 'scan' ? (
               <>
-                <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-muted/60 px-6 py-12 text-center">
+                <label style={{ display: 'flex', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 16, border: '2px dashed', borderColor: 'color-mix(in srgb, var(--primary) 40%, transparent)', background: 'rgba(0,0,0,0.04)', padding: '48px 24px', textAlign: 'center' }}>
                   <Receipt size={56} style={{ color: 'var(--muted-foreground)' }} />
-                  <p className="mt-6 text-[30px] font-semibold leading-none text-foreground">
+                  <p style={{ marginTop: 24, fontSize: 30, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
                     Upload receipts
                   </p>
-                  <p className="mt-2 text-sm text-muted-foreground">or drag and drop them here</p>
-                  <span className="mt-6 inline-flex rounded-full bg-primary px-7 py-2.5 text-sm font-semibold text-white">
+                  <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>or drag and drop them here</p>
+                  <span style={{ marginTop: 24, display: 'inline-flex', borderRadius: 9999, background: 'var(--primary)', padding: '10px 28px', fontSize: 14, fontWeight: 600, color: '#fff' }}>
                     Choose files
                   </span>
                   <input
@@ -268,23 +257,22 @@ export default function CreateExpenseDrawer({
                     type="file"
                     accept="image/*,.pdf"
                     capture="environment"
-                    className="hidden"
+                    style={{ display: 'none' }}
                     multiple
                     onChange={event => handleFilesSelected(event.target.files)}
                   />
                 </label>
               </>
             ) : manualStep === 'amount' ? (
-              <div className="flex min-h-full flex-col justify-between">
-                <div className="flex flex-1 flex-col items-center justify-center">
+              <div style={{ display: 'flex', minHeight: '100%', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                   <label htmlFor="expense-manual-amount" className="sr-only">
                     Amount
                   </label>
-                  <div className="mx-auto w-[290px] max-w-full">
-                    <div className="flex h-24 w-full items-end justify-center gap-2">
+                  <div style={{ margin: '0 auto', width: 290, maxWidth: '100%' }}>
+                    <div style={{ display: 'flex', height: 96, width: '100%', alignItems: 'flex-end', justifyContent: 'center', gap: 8 }}>
                       <span
-                        className="shrink-0 leading-none font-semibold text-foreground"
-                        style={{ fontSize: manualAmountFontSize }}
+                        style={{ flexShrink: 0, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)', fontSize: manualAmountFontSize }}
                       >
                         {selectedCurrencySymbol}
                       </span>
@@ -300,66 +288,67 @@ export default function CreateExpenseDrawer({
                           }))
                         }
                         placeholder="0"
-                        className="min-w-0 flex-1 border-0 bg-transparent p-0 leading-none font-semibold text-foreground placeholder:text-muted-foreground focus:outline-none"
-                        style={{ fontSize: manualAmountFontSize }}
+                        style={{ minWidth: 0, flex: 1, border: 0, background: 'transparent', padding: 0, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)', outline: 'none', fontSize: manualAmountFontSize }}
                       />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setCurrencyPickerOpen(true)}
-                      className="mt-12 inline-flex h-16 w-full items-center justify-center gap-2 rounded-full border border-border bg-muted px-6 text-lg font-semibold text-foreground"
+                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 9999, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
                     >
                       {manualDraft.currency}
-                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                      <ChevronDown size={20} style={{ color: 'var(--muted-foreground)' }} />
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
               <>
-                <label className="relative flex cursor-pointer items-center justify-center rounded-3xl border border-border bg-muted/60 px-6 py-8 text-center">
-                  <FileText className="h-14 w-14 text-muted-foreground/60" />
-                  <span className="absolute left-1/2 top-1/2 flex h-10 w-10 translate-x-2 translate-y-1 items-center justify-center rounded-full bg-primary text-white">
-                    <Plus className="h-5 w-5" />
+                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: 24, border: '1px solid var(--border-color, #d7e2ef)', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
+                  <FileText size={56} style={{ color: 'color-mix(in srgb, var(--muted-foreground) 60%, transparent)' }} />
+                  <span style={{ position: 'absolute', left: '50%', top: '50%', display: 'flex', height: 40, width: 40, transform: 'translate(8px, 4px)', alignItems: 'center', justifyContent: 'center', borderRadius: 9999, background: 'var(--primary)', color: '#fff' }}>
+                    <Plus size={20} />
                   </span>
                   <input
                     type="file"
                     accept="image/*,.pdf,.csv,.xlsx,.xls"
                     capture="environment"
-                    className="hidden"
+                    style={{ display: 'none' }}
                     multiple
                     onChange={event => handleFilesSelected(event.target.files)}
                   />
                 </label>
 
-                <div className="overflow-hidden rounded-3xl border border-border bg-card">
+                <div style={{ overflow: 'hidden', borderRadius: 24, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)' }}>
                   <button
                     type="button"
                     onClick={() => setManualStep('amount')}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
+                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
                   >
                     <div>
-                      <p className="text-sm text-muted-foreground">Amount</p>
-                      <p className="mt-1 text-[30px] leading-none font-semibold text-foreground">
+                      <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Amount</p>
+                      <p style={{ marginTop: 4, fontSize: 30, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)' }}>
                         {selectedCurrencySymbol}
                         {manualDraft.amount || '0.00'}
                       </p>
                     </div>
-                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                    <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div className="h-px bg-border" />
+                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
 
-                  <div className="px-4 py-3">
-                    <div className="flex items-center justify-between">
+                  <div style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <label
                         htmlFor="expense-manual-description"
-                        className="text-sm text-muted-foreground"
+                        style={{ fontSize: 14, color: 'var(--muted-foreground)' }}
                       >
                         Description
                       </label>
-                      <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                      <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                     </div>
                     <input
                       id="expense-manual-description"
@@ -371,21 +360,21 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Optional"
-                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-foreground placeholder:text-muted-foreground focus:outline-none"
+                      style={{ marginTop: 6, width: '100%', border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
                     />
                   </div>
 
-                  <div className="h-px bg-border" />
+                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
 
-                  <div className="px-4 py-3">
-                    <div className="flex items-center justify-between">
+                  <div style={{ padding: '12px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <label
                         htmlFor="expense-manual-merchant"
-                        className="text-sm text-muted-foreground"
+                        style={{ fontSize: 14, color: 'var(--muted-foreground)' }}
                       >
                         Merchant
                       </label>
-                      <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                      <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                     </div>
                     <input
                       id="expense-manual-merchant"
@@ -397,84 +386,88 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Required"
-                      className="mt-1.5 w-full border-0 bg-transparent p-0 text-[24px] leading-none text-foreground placeholder:text-muted-foreground focus:outline-none"
+                      style={{ marginTop: 6, width: '100%', border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
                     />
                     {!manualValidation.merchant ? (
-                      <p className="mt-1 text-xs text-red-500">This field is required</p>
+                      <p style={{ marginTop: 4, fontSize: 12, color: '#ef4444' }}>This field is required</p>
                     ) : null}
                   </div>
 
-                  <div className="h-px bg-border" />
+                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
 
                   <button
                     type="button"
                     onClick={() => setCategoryDrawerOpen(true)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
+                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
                   >
-                    <div className="min-w-0">
-                      <p className="text-sm text-muted-foreground">Category</p>
-                      <p className="mt-1.5 truncate text-[24px] leading-none text-foreground">
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Category</p>
+                      <p style={{ marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 24, lineHeight: 1, color: 'var(--foreground)' }}>
                         {selectedCategoryName || 'Required'}
                       </p>
                       {!manualValidation.category ? (
-                        <p className="mt-1 text-xs text-red-500">This field is required</p>
+                        <p style={{ marginTop: 4, fontSize: 12, color: '#ef4444' }}>This field is required</p>
                       ) : null}
                     </div>
-                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                    <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div className="h-px bg-border" />
+                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
 
-                  <div className="px-4 py-3">
-                    <label htmlFor="expense-manual-date" className="text-sm text-muted-foreground">
+                  <div style={{ padding: '12px 16px' }}>
+                    <label htmlFor="expense-manual-date" style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
                       Date
                     </label>
-                    <div className="mt-1.5 flex items-center justify-between">
+                    <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <input
                         id="expense-manual-date"
                         type="date"
                         value={manualDate}
                         onChange={event => setManualDate(event.target.value)}
-                        className="border-0 bg-transparent p-0 text-[24px] leading-none text-foreground focus:outline-none"
+                        style={{ border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
                       />
-                      <Calendar className="h-5 w-5 text-muted-foreground" />
+                      <Calendar size={20} style={{ color: 'var(--muted-foreground)' }} />
                     </div>
                   </div>
 
-                  <div className="h-px bg-border" />
+                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
 
                   <button
                     type="button"
                     onClick={() => setTaxRateDrawerOpen(true)}
-                    className="flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted"
+                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
                   >
-                    <div className="min-w-0">
-                      <p className="text-sm text-muted-foreground">Tax</p>
-                      <p className="mt-1.5 truncate text-[24px] leading-none text-foreground">
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Tax</p>
+                      <p style={{ marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 24, lineHeight: 1, color: 'var(--foreground)' }}>
                         {selectedTaxRate
                           ? `${selectedTaxRate.name} (${Number(selectedTaxRate.rate || 0).toFixed(0)}%)${selectedTaxRate.isDefault ? ' - Default' : ''}`
                           : 'Optional'}
                       </p>
                     </div>
-                    <ChevronRight className="h-6 w-6 text-muted-foreground" />
+                    <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
                 </div>
               </>
             )}
 
             {files.length > 0 && !currencyPickerOpen ? (
-              <div className="rounded-2xl border border-border bg-card px-3 py-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div style={{ borderRadius: 16, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)', padding: '12px' }}>
+                <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
                   Selected files
                 </p>
-                <div className="mt-2 space-y-2">
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {files.map(file => (
                     <div
                       key={`${file.name}-${file.size}`}
-                      className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 8, border: '1px solid var(--border-color, #d7e2ef)', padding: '8px 12px', fontSize: 14 }}
                     >
-                      <span className="truncate text-foreground">{file.name}</span>
-                      <span className="text-xs text-muted-foreground">
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--foreground)' }}>{file.name}</span>
+                      <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </span>
                     </div>
@@ -484,20 +477,17 @@ export default function CreateExpenseDrawer({
             ) : null}
 
             {error ? (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div style={{ borderRadius: 12, border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: '#b91c1c' }}>
                 {error}
               </div>
             ) : null}
           </div>
 
-          <div className="pt-4">
+          <div style={{ paddingTop: 16 }}>
             <Button
               type="button"
               size="lg"
-              className={cn(
-                'w-full rounded-full',
-                mode === 'manual' ? 'bg-primary hover:bg-primary-hover' : '',
-              )}
+              style={{ width: '100%', borderRadius: 9999 }}
               disabled={
                 submitting ||
                 currencyPickerOpen ||
@@ -546,7 +536,7 @@ export default function CreateExpenseDrawer({
           noResults: 'No categories found',
         }}
         width="lg"
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
+        
         showAllOption={false}
       />
 
@@ -556,56 +546,52 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
+        
         title={
-          <div className="flex items-center gap-3">
+          <div className="lumio-payable-drawer__title-wrap">
             <button
               type="button"
               onClick={() => setTaxRateDrawerOpen(false)}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="lumio-col-drawer__back-btn"
               aria-label="Close tax rate drawer"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft size={20} />
             </button>
-            <span className="text-lg font-semibold text-foreground">Tax rate</span>
+            <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>Tax rate</span>
           </div>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 overflow-y-auto">
-            <div className="divide-y divide-transparent">
-              {enabledTaxRates.map(taxRate => {
-                const isSelected = manualDraft.taxRateId
-                  ? manualDraft.taxRateId === taxRate.id
-                  : defaultTaxRate?.id === taxRate.id;
+        <div className="lumio-cat-drawer">
+          <div className="lumio-cat-drawer__list">
+            {enabledTaxRates.map(taxRate => {
+              const isSelected = manualDraft.taxRateId
+                ? manualDraft.taxRateId === taxRate.id
+                : defaultTaxRate?.id === taxRate.id;
 
-                return (
-                  <button
-                    key={taxRate.id}
-                    type="button"
-                    onClick={() => {
-                      setManualDraft(prev => ({
-                        ...prev,
-                        taxRateId: taxRate.id,
-                      }));
-                      setTaxRateDrawerOpen(false);
-                    }}
-                    className={`flex w-full items-center justify-between px-4 py-5 text-left text-base font-semibold transition-colors ${
-                      isSelected ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
-                    }`}
-                  >
-                    <span>
-                      {taxRate.name} ({Number(taxRate.rate || 0).toFixed(0)}%)
-                      {taxRate.isDefault ? ' - Default' : ''}
-                    </span>
-                    {isSelected ? <Check className="h-6 w-6 text-primary" /> : null}
-                  </button>
-                );
-              })}
-              {enabledTaxRates.length === 0 ? (
-                <div className="px-4 py-8 text-base text-muted-foreground">No tax rates found</div>
-              ) : null}
-            </div>
+              return (
+                <button
+                  key={taxRate.id}
+                  type="button"
+                  onClick={() => {
+                    setManualDraft(prev => ({
+                      ...prev,
+                      taxRateId: taxRate.id,
+                    }));
+                    setTaxRateDrawerOpen(false);
+                  }}
+                  className={`lumio-cat-drawer__option${isSelected ? ' lumio-cat-drawer__option--selected' : ''}`}
+                >
+                  <span>
+                    {taxRate.name} ({Number(taxRate.rate || 0).toFixed(0)}%)
+                    {taxRate.isDefault ? ' - Default' : ''}
+                  </span>
+                  {isSelected ? <Check size={24} style={{ color: 'var(--primary)' }} /> : null}
+                </button>
+              );
+            })}
+            {enabledTaxRates.length === 0 ? (
+              <div className="lumio-cat-drawer__no-results">No tax rates found</div>
+            ) : null}
           </div>
         </div>
       </DrawerShell>

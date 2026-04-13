@@ -1,30 +1,40 @@
 'use client';
 
-import { cn } from '@/app/lib/utils';
 import { ChevronRight } from 'lucide-react';
 
 type FilterRowProps = {
   label: string;
   value?: string | null;
   onClick: () => void;
-  className?: string;
+  style?: React.CSSProperties;
 };
 
-export function FilterRow({ label, value, onClick, className }: FilterRowProps) {
+export function FilterRow({ label, value, onClick, style }: FilterRowProps) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        'flex w-full items-center justify-between gap-4 rounded-xl px-4 py-4 text-left transition hover:bg-gray-50',
-        className,
-      )}
+      style={{
+        display: 'flex',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 16,
+        borderRadius: 12,
+        padding: '16px',
+        textAlign: 'left',
+        transition: 'background-color 0.15s',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        ...style,
+      }}
     >
       <div>
-        <div className="text-sm font-medium text-gray-500">{label}</div>
-        {value ? <div className="text-base font-semibold text-gray-900">{value}</div> : null}
+        <div style={{ fontSize: 14, fontWeight: 500, color: '#6b7280' }}>{label}</div>
+        {value ? <div style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>{value}</div> : null}
       </div>
-      <ChevronRight className="h-5 w-5 text-gray-400" />
+      <ChevronRight size={20} color="#9ca3af" />
     </button>
   );
 }

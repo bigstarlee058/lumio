@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import type { PayableSource, PayableStatus } from '@/app/lib/payables-api';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Button } from '@/app/components/ui/button';
 import type { PayablesFiltersState, PayablesSortOption } from './payables-utils';
 
 interface PayableFiltersBarProps {
@@ -26,9 +26,6 @@ interface PayableFiltersBarProps {
   };
 }
 
-const selectClassName =
-  'h-10 rounded-lg border border-border bg-white px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30';
-
 function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps) {
   const update = <K extends keyof PayablesFiltersState>(
     key: K,
@@ -38,22 +35,22 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-4">
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
-        <div className="relative min-w-0 flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+    <div className="lumio-payable-filters">
+      <div className="lumio-payable-filters__inner">
+        <div className="lumio-payable-filters__search">
+          <Search size={16} className="lumio-payable-filters__search-icon" />
           <Input
             value={value.search}
             onChange={event => update('search', event.target.value)}
             placeholder={labels.searchPlaceholder}
-            className="pl-9"
+            style={{ paddingLeft: 36 }}
             aria-label={labels.searchPlaceholder}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5 xl:items-center">
+        <div className="lumio-payable-filters__grid">
           <select
-            className={selectClassName}
+            className="lumio-payable-filters__select"
             value={value.status}
             onChange={event => update('status', event.target.value as PayableStatus | 'all')}
             aria-label={labels.status}
@@ -67,7 +64,7 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
           </select>
 
           <select
-            className={selectClassName}
+            className="lumio-payable-filters__select"
             value={value.source}
             onChange={event => update('source', event.target.value as PayableSource | 'all')}
             aria-label={labels.source}
@@ -95,7 +92,7 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
           />
 
           <select
-            className={selectClassName}
+            className="lumio-payable-filters__select"
             value={value.sort}
             onChange={event => update('sort', event.target.value as PayablesSortOption)}
             aria-label={labels.sort}
@@ -108,13 +105,13 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
           </select>
         </div>
 
-        <Button variant="ghost" onClick={onReset} className="shrink-0">
-          <X className="h-4 w-4" />
+        <Button variant="ghost" onClick={onReset} style={{ flexShrink: 0 }}>
+          <X size={16} />
           {labels.reset}
         </Button>
       </div>
-      <div className="mt-3 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
-        <SlidersHorizontal className="h-3.5 w-3.5" />
+      <div className="lumio-payable-filters__sort-label">
+        <SlidersHorizontal size={14} />
         <span>{labels.sort}</span>
       </div>
     </div>

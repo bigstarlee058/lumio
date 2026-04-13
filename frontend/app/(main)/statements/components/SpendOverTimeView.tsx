@@ -598,22 +598,22 @@ export default function SpendOverTimeView() {
     isMoney = true,
   ) => {
     if (!item) {
-      return <p className="mt-1 text-xs text-gray-400">{labels.comparisonNoData}</p>;
+      return <p style={{ marginTop: 4, fontSize: 12, color: '#9ca3af' }}>{labels.comparisonNoData}</p>;
     }
 
     const deltaColor =
       item.trend === 'up'
-        ? 'text-emerald-600'
+        ? '#059669'
         : item.trend === 'down'
-          ? 'text-red-600'
-          : 'text-gray-500';
+          ? '#dc2626'
+          : '#6b7280';
     const prefix = item.delta > 0 ? '+' : item.delta < 0 ? '-' : '';
     const deltaValue = isMoney
       ? formatMoney(Math.abs(item.delta), workspaceCurrency)
       : Math.abs(Math.round(item.delta)).toString();
 
     return (
-      <p className={`mt-1 text-xs ${deltaColor}`}>
+      <p style={{ marginTop: 4, fontSize: 12, color: deltaColor }}>
         {formatPercentage(item.percentage)} ({prefix}
         {deltaValue}) {labels.vsPreviousPeriod}
       </p>
@@ -629,8 +629,8 @@ export default function SpendOverTimeView() {
 
     if (sourceChannel === 'gmail') {
       return (
-        <span className="inline-flex items-center gap-1.5 text-gray-600">
-          <Mail className="h-3.5 w-3.5" />
+        <span className="lumio-view-page__source-chip">
+          <Mail size={14} />
           {label}
         </span>
       );
@@ -638,48 +638,40 @@ export default function SpendOverTimeView() {
 
     if (sourceChannel === 'receipt') {
       return (
-        <span className="inline-flex items-center gap-1.5 text-gray-600">
-          <Receipt className="h-3.5 w-3.5" />
+        <span className="lumio-view-page__source-chip">
+          <Receipt size={14} />
           {label}
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center gap-1.5 text-gray-600">
-        <Landmark className="h-3.5 w-3.5" />
+      <span className="lumio-view-page__source-chip">
+        <Landmark size={14} />
         {label}
       </span>
     );
   };
 
   return (
-    <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-5 shrink-0 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="container-shared lumio-view-page">
+      <div className="lumio-view-page__header">
+        <div className="lumio-view-page__title-row">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">{labels.title}</h1>
-            <p className="text-sm text-gray-500">{labels.subtitle}</p>
+            <h1 className="lumio-view-page__title">{labels.title}</h1>
+            <p className="lumio-view-page__subtitle">{labels.subtitle}</p>
           </div>
-          <div className="inline-flex rounded-md border border-gray-200 bg-white p-1">
+          <div className="lumio-view-page__period-tabs">
             <button
               type="button"
-              className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                activeFlowType === 'expense'
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              className={`lumio-view-page__period-tab${activeFlowType === 'expense' ? ' lumio-view-page__period-tab--active' : ''}`}
               onClick={() => setActiveFlowType('expense')}
             >
               {labels.tabExpense}
             </button>
             <button
               type="button"
-              className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                activeFlowType === 'income'
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              className={`lumio-view-page__period-tab${activeFlowType === 'income' ? ' lumio-view-page__period-tab--active' : ''}`}
               onClick={() => setActiveFlowType('income')}
             >
               {labels.tabIncome}
@@ -687,19 +679,19 @@ export default function SpendOverTimeView() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div className="lumio-view-page__search-filter-row">
+          <div className="lumio-view-page__search">
+            <Search size={16} className="lumio-view-page__search-icon" />
             <input
               type="text"
               value={searchInput}
               onChange={event => setSearchInput(event.target.value)}
               placeholder={labels.searchPlaceholder}
               aria-label={labels.searchPlaceholder}
-              className="w-full rounded-md border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="lumio-view-page__search-input"
             />
           </div>
-          <div className="sm:w-60">
+          <div>
             <label htmlFor="spend-over-time-workspace-filter" className="sr-only">
               {labels.workspace}
             </label>
@@ -707,7 +699,7 @@ export default function SpendOverTimeView() {
               id="spend-over-time-workspace-filter"
               value={workspaceFilter}
               onChange={event => setWorkspaceFilter(event.target.value)}
-              className="w-full rounded-md border border-gray-200 bg-white px-3 py-3 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              className="lumio-view-page__workspace-filter"
             >
               <option value="current">{labels.currentWorkspace}</option>
               <option value="all">{labels.allWorkspaces}</option>
@@ -720,7 +712,7 @@ export default function SpendOverTimeView() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
           <GroupByFilterDropdown
             open={groupByDropdownOpen}
             onOpenChange={setGroupByDropdownOpen}
@@ -735,7 +727,7 @@ export default function SpendOverTimeView() {
             trigger={
               <FilterChipButton active>
                 Group by: {groupByOptions.find(option => option.value === draftGroupBy)?.label}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -756,7 +748,7 @@ export default function SpendOverTimeView() {
             trigger={
               <FilterChipButton active>
                 View: {viewOptions.find(option => option.value === draftViewType)?.label}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -776,7 +768,7 @@ export default function SpendOverTimeView() {
                 {draftFilters.statuses.length > 0
                   ? `${labels.status} (${draftFilters.statuses.length})`
                   : labels.status}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -799,7 +791,7 @@ export default function SpendOverTimeView() {
                   : draftFilters.date?.mode
                     ? dateModes.find(option => option.value === draftFilters.date?.mode)?.label
                     : labels.date}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -819,7 +811,7 @@ export default function SpendOverTimeView() {
                 {draftFilters.from.length > 0
                   ? `${labels.from} (${draftFilters.from.length})`
                   : labels.from}
-                <ChevronDown className="h-3.5 w-3.5" />
+                <ChevronDown size={14} />
               </FilterChipButton>
             }
             applyLabel={labels.apply}
@@ -837,37 +829,35 @@ export default function SpendOverTimeView() {
               setFiltersDrawerOpen(true);
             }}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
+            <SlidersHorizontal size={14} />
             {labels.filters}
             {activeFilterCount > 0 ? (
-              <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {activeFilterCount}
-              </span>
+              <span className="lumio-view-page__filter-badge">{activeFilterCount}</span>
             ) : null}
           </button>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="lumio-view-page__body">
         {loading ? (
-          <div className="flex h-64 items-center justify-center">
-            <Spinner className="h-20 w-20 text-primary" />
+          <div className="lumio-view-page__loading">
+            <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
-            <p className="text-base font-semibold text-gray-900">{labels.emptyStateTitle}</p>
-            <p className="mt-1 text-sm text-gray-500">{labels.emptyStateDescription}</p>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <div className="lumio-view-page__empty">
+            <p style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>{labels.emptyStateTitle}</p>
+            <p style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>{labels.emptyStateDescription}</p>
+            <div className="lumio-view-page__empty-actions">
               <button
                 type="button"
-                className="inline-flex items-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/90"
+                className="lumio-view-page__empty-cta-primary"
                 onClick={() => router.push('/statements/submit')}
               >
                 {labels.emptyStateUploadCta}
               </button>
               <button
                 type="button"
-                className="inline-flex items-center rounded-full border border-primary px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/5"
+                className="lumio-view-page__empty-cta-secondary"
                 onClick={resetAllFilters}
               >
                 {labels.emptyStateResetCta}
@@ -875,23 +865,22 @@ export default function SpendOverTimeView() {
             </div>
           </div>
         ) : (
-          <div className="space-y-4 pb-6">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
+          <div className="lumio-view-page__content">
+            <div className="lumio-view-page__stat-grid">
+              <div className="lumio-view-page__stat-card">
+                <div className="lumio-view-page__stat-header">
+                  <span className="lumio-view-page__stat-label">
                     {activeFlowType === 'income' ? labels.totalIncome : labels.totalSpend}
                   </span>
                   {activeFlowType === 'income' ? (
-                    <ArrowUp className="h-4 w-4 text-emerald-500" />
+                    <ArrowUp size={16} color="#10b981" />
                   ) : (
-                    <ArrowDown className="h-4 w-4 text-red-500" />
+                    <ArrowDown size={16} color="#ef4444" />
                   )}
                 </div>
                 <div
-                  className={`mt-2 text-lg font-semibold ${
-                    activeFlowType === 'income' ? 'text-emerald-600' : 'text-red-600'
-                  }`}
+                  className="lumio-view-page__stat-value"
+                  style={{ color: activeFlowType === 'income' ? '#059669' : '#dc2626' }}
                 >
                   {formatMoney(
                     activeFlowType === 'income' ? report.totals.income : report.totals.expense,
@@ -901,113 +890,97 @@ export default function SpendOverTimeView() {
                 {renderComparisonLine(comparison?.total || null)}
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
-                    {labels.statementsAmount}
-                  </span>
-                  <ChartPie className="h-4 w-4 text-primary" />
+              <div className="lumio-view-page__stat-card">
+                <div className="lumio-view-page__stat-header">
+                  <span className="lumio-view-page__stat-label">{labels.statementsAmount}</span>
+                  <ChartPie size={16} color="var(--primary)" />
                 </div>
-                <div className="mt-2 text-lg font-semibold text-primary">
+                <div className="lumio-view-page__stat-value" style={{ color: 'var(--primary)' }}>
                   {formatMoney(report.totals.statementAmount, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.statementsAmount || null)}
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
-                    {labels.receiptsAmount}
-                  </span>
-                  <Mail className="h-4 w-4 text-emerald-500" />
+              <div className="lumio-view-page__stat-card">
+                <div className="lumio-view-page__stat-header">
+                  <span className="lumio-view-page__stat-label">{labels.receiptsAmount}</span>
+                  <Mail size={16} color="#10b981" />
                 </div>
-                <div className="mt-2 text-lg font-semibold text-emerald-600">
+                <div className="lumio-view-page__stat-value" style={{ color: '#059669' }}>
                   {formatMoney(report.totals.gmailAmount, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.receiptsAmount || null)}
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
-                    {labels.totalOperations}
-                  </span>
-                  <span className="text-xs font-medium text-gray-500">#</span>
+              <div className="lumio-view-page__stat-card">
+                <div className="lumio-view-page__stat-header">
+                  <span className="lumio-view-page__stat-label">{labels.totalOperations}</span>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>#</span>
                 </div>
-                <div className="mt-2 text-lg font-semibold text-gray-900">
+                <div className="lumio-view-page__stat-value" style={{ color: '#111827' }}>
                   {report.totals.count}
                 </div>
                 {renderComparisonLine(comparison?.operations || null, false)}
               </div>
 
-              <div className="rounded-lg border border-gray-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
-                    {labels.avgPerPeriod}
-                  </span>
-                  <span className="text-xs font-medium text-gray-500">AVG</span>
+              <div className="lumio-view-page__stat-card">
+                <div className="lumio-view-page__stat-header">
+                  <span className="lumio-view-page__stat-label">{labels.avgPerPeriod}</span>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>AVG</span>
                 </div>
-                <div className="mt-2 text-lg font-semibold text-gray-900">
+                <div className="lumio-view-page__stat-value" style={{ color: '#111827' }}>
                   {formatMoney(report.totals.avgPerPeriod, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.avgPerPeriod || null)}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              <div className="rounded-lg border border-gray-200 bg-white p-5 lg:col-span-2">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">{labels.trendTitle}</h3>
+            <div className="lumio-view-page__chart-grid">
+              <div className="lumio-view-page__chart-card--wide">
+                <div className="lumio-view-page__chart-header">
+                  <h3 className="lumio-view-page__chart-title">{labels.trendTitle}</h3>
                 </div>
                 <ReactECharts style={{ height: 300 }} option={trendChart} theme={chartTheme} />
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">{labels.sourceSplit}</h3>
+              <div className="lumio-view-page__chart-card">
+                <div className="lumio-view-page__chart-header">
+                  <h3 className="lumio-view-page__chart-title">{labels.sourceSplit}</h3>
                 </div>
                 <ReactECharts style={{ height: 300 }} option={sourceChart} theme={chartTheme} />
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 bg-white p-5">
-              <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900">{labels.periodChart}</h3>
+            <div className="lumio-view-page__chart-card">
+              <div className="lumio-view-page__chart-header">
+                <h3 className="lumio-view-page__chart-title">{labels.periodChart}</h3>
               </div>
               <ReactECharts style={{ height: 320 }} option={periodsChart} theme={chartTheme} />
             </div>
 
-            <div className="rounded-lg border border-gray-200 bg-white p-5">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-gray-900">{labels.leaderboard}</h3>
-                  <span className="text-xs text-gray-500">{rows.length}</span>
+            <div className="lumio-view-page__leaderboard-card">
+              <div className="lumio-view-page__leaderboard-header">
+                <div className="lumio-view-page__leaderboard-title-row">
+                  <h3 className="lumio-view-page__leaderboard-title">{labels.leaderboard}</h3>
+                  <span className="lumio-view-page__leaderboard-count">{rows.length}</span>
                 </div>
-                <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-1">
+                <div className="lumio-view-page__sort-tabs">
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'amount' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
-                    }`}
+                    className={`lumio-view-page__sort-btn${sortKey === 'amount' ? ' lumio-view-page__sort-btn--active' : ''}`}
                     onClick={() => setSortKey('amount')}
                   >
                     {labels.sortByAmount}
                   </button>
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'average' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
-                    }`}
+                    className={`lumio-view-page__sort-btn${sortKey === 'average' ? ' lumio-view-page__sort-btn--active' : ''}`}
                     onClick={() => setSortKey('average')}
                   >
                     {labels.sortByAverage}
                   </button>
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'operations'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600'
-                    }`}
+                    className={`lumio-view-page__sort-btn${sortKey === 'operations' ? ' lumio-view-page__sort-btn--active' : ''}`}
                     onClick={() => setSortKey('operations')}
                   >
                     {labels.sortByOperations}
@@ -1015,40 +988,40 @@ export default function SpendOverTimeView() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
+              <div className="lumio-view-page__table-wrap">
+                <table className="lumio-view-page__table">
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-                      <th className="py-2 pr-4">{labels.period}</th>
-                      <th className="py-2 pr-4 text-right">{labels.operations}</th>
-                      <th className="py-2 pr-4 text-right">{labels.average}</th>
-                      <th className="py-2 pr-4 text-right">{labels.amount}</th>
-                      <th className="py-2 text-right">{labels.lastOperation}</th>
+                    <tr>
+                      <th>{labels.period}</th>
+                      <th style={{ textAlign: 'right' }}>{labels.operations}</th>
+                      <th style={{ textAlign: 'right' }}>{labels.average}</th>
+                      <th style={{ textAlign: 'right' }}>{labels.amount}</th>
+                      <th style={{ textAlign: 'right' }}>{labels.lastOperation}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+                  <tbody>
                     {rows.slice(0, 60).map(row => {
                       const total = activeFlowType === 'income' ? row.income : row.expense;
                       const average = row.count > 0 ? total / row.count : 0;
                       return (
-                        <tr key={row.period} className="text-gray-700">
-                          <td className="py-2 pr-4 font-medium text-gray-900">
+                        <tr key={row.period}>
+                          <td style={{ fontWeight: 500, color: '#111827' }}>
                             <button
                               type="button"
-                              className="text-left text-primary hover:underline"
+                              className="lumio-view-page__table-link"
                               onClick={() => setSelectedPeriod(row.period)}
                             >
                               {row.label}
                             </button>
                           </td>
-                          <td className="py-2 pr-4 text-right">{row.count}</td>
-                          <td className="py-2 pr-4 text-right">
+                          <td style={{ textAlign: 'right' }}>{row.count}</td>
+                          <td style={{ textAlign: 'right' }}>
                             {formatMoney(average, workspaceCurrency)}
                           </td>
-                          <td className="py-2 pr-4 text-right font-semibold text-gray-900">
+                          <td style={{ textAlign: 'right', fontWeight: 600, color: '#111827' }}>
                             {formatMoney(total, workspaceCurrency)}
                           </td>
-                          <td className="py-2 text-right text-gray-500">{row.label}</td>
+                          <td style={{ textAlign: 'right', color: '#6b7280' }}>{row.label}</td>
                         </tr>
                       );
                     })}
@@ -1117,55 +1090,55 @@ export default function SpendOverTimeView() {
       />
 
       {selectedPoint ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 p-4">
-          <div className="max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white">
-            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
+        <div className="lumio-view-page__drill-backdrop">
+          <div className="lumio-view-page__drill-modal">
+            <div className="lumio-view-page__drill-header">
               <div>
-                <h4 className="text-sm font-semibold text-gray-900">
+                <h4 className="lumio-view-page__drill-title">
                   {selectedPoint.label} - {labels.drillDown}
                 </h4>
-                <p className="text-xs text-gray-500">{groupBy}</p>
+                <p className="lumio-view-page__drill-subtitle">{groupBy}</p>
               </div>
               <button
                 type="button"
-                className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                className="lumio-view-page__drill-close"
                 onClick={() => setSelectedPeriod(null)}
                 aria-label={labels.close}
               >
-                <X className="h-4 w-4" />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="max-h-[65vh] overflow-y-auto px-5 py-4">
+            <div className="lumio-view-page__drill-body">
               {drillDownRecords.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+                <div className="lumio-view-page__drill-empty">
                   {labels.noOperations}
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
+                <table className="lumio-view-page__table">
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-                      <th className="py-2 pr-4">{labels.lastOperation}</th>
-                      <th className="py-2 pr-4">{labels.source}</th>
-                      <th className="py-2 pr-4">{labels.workspace}</th>
-                      <th className="py-2 pr-4">Merchant</th>
-                      <th className="py-2 text-right">{labels.amount}</th>
+                    <tr>
+                      <th>{labels.lastOperation}</th>
+                      <th>{labels.source}</th>
+                      <th>{labels.workspace}</th>
+                      <th>Merchant</th>
+                      <th style={{ textAlign: 'right' }}>{labels.amount}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+                  <tbody>
                     {drillDownRecords.slice(0, 120).map(record => (
-                      <tr key={record.id} className="text-gray-700">
-                        <td className="py-2 pr-4 text-gray-600">
+                      <tr key={record.id}>
+                        <td style={{ color: '#4b5563' }}>
                           {record.dateValue && !Number.isNaN(new Date(record.dateValue).getTime())
                             ? new Date(record.dateValue).toLocaleDateString()
                             : '-'}
                         </td>
-                        <td className="py-2 pr-4">{renderSourceBadge(record.sourceChannel)}</td>
-                        <td className="py-2 pr-4 text-gray-600">{record.workspaceName || '-'}</td>
-                        <td className="py-2 pr-4 text-gray-600">
+                        <td>{renderSourceBadge(record.sourceChannel)}</td>
+                        <td style={{ color: '#4b5563' }}>{record.workspaceName || '-'}</td>
+                        <td style={{ color: '#4b5563' }}>
                           {record.merchant || record.sender || record.subject || '-'}
                         </td>
-                        <td className="py-2 text-right font-medium text-gray-900">
+                        <td style={{ textAlign: 'right', fontWeight: 500, color: '#111827' }}>
                           {formatMoney(record.amount, workspaceCurrency)}
                         </td>
                       </tr>

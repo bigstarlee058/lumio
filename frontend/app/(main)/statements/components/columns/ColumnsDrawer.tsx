@@ -3,7 +3,6 @@
 import { Button } from '@/app/components/ui/button';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { cn } from '@/app/lib/utils';
 import {
   DndContext,
   type DragEndEvent,
@@ -61,28 +60,20 @@ function SortableColumnItem({ column, onToggle }: SortableColumnItemProps) {
         transform: CSS.Transform.toString(transform),
         transition,
       }}
-      className={cn(
-        'flex items-center justify-between gap-3 border-b border-border px-4 py-4 transition-colors hover:bg-muted/60 last:border-b-0',
-        isDragging && 'z-10 bg-card shadow-sm',
-      )}
+      className={`lumio-col-drawer__col-item${isDragging ? ' lumio-col-drawer__col-item--dragging' : ''}`}
     >
-      <div className="flex items-center gap-3">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <button
           type="button"
           ref={setActivatorNodeRef}
-          className="-ml-1 cursor-grab touch-none rounded p-1 text-muted-foreground/70 transition-colors hover:text-foreground active:cursor-grabbing"
+          className="lumio-col-drawer__grip"
           aria-label={`Reorder ${column.label}`}
           {...attributes}
           {...listeners}
         >
-          <GripVertical className="h-5 w-5" />
+          <GripVertical size={20} />
         </button>
-        <span
-          className={cn(
-            'text-base font-semibold',
-            column.visible ? 'text-foreground' : 'text-muted-foreground',
-          )}
-        >
+        <span className={`lumio-col-drawer__col-label${column.visible ? '' : ' lumio-col-drawer__col-label--hidden'}`}>
           {column.label}
         </span>
       </div>
@@ -128,21 +119,21 @@ export function ColumnsDrawer({
       showCloseButton={false}
       className="border-l-0 bg-card"
       title={
-        <div className="flex items-center gap-3">
+        <div className="lumio-payable-drawer__title-wrap">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="lumio-col-drawer__back-btn"
             aria-label={labels.title}
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft size={20} />
           </button>
-          <span className="text-lg font-semibold text-foreground">{labels.title}</span>
+          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground, #0f172a)' }}>{labels.title}</span>
         </div>
       }
     >
-      <div className="flex h-full flex-col">
-        <div className="flex-1 overflow-y-auto">
+      <div className="lumio-col-drawer">
+        <div className="lumio-col-drawer__list">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -152,7 +143,7 @@ export function ColumnsDrawer({
               items={columns.map(column => column.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="flex flex-col">
+              <div className="lumio-col-drawer__col-list">
                 {columns.map(column => (
                   <SortableColumnItem key={column.id} column={column} onToggle={onToggle} />
                 ))}
@@ -160,8 +151,8 @@ export function ColumnsDrawer({
             </SortableContext>
           </DndContext>
         </div>
-        <div className="sticky bottom-0 bg-card pb-2 pt-4">
-          <Button className="w-full rounded-full" size="lg" onClick={onSave}>
+        <div className="lumio-col-drawer__footer">
+          <Button style={{ width: '100%', borderRadius: 9999 }} size="lg" onClick={onSave}>
             {labels.save}
           </Button>
         </div>

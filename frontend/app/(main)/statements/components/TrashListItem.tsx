@@ -32,7 +32,7 @@ type Props = {
   deleteLabel: string;
 };
 
-const ENTITY_ICON_BY_TYPE: Record<TrashEntityType, React.ComponentType<{ className?: string }>> = {
+const ENTITY_ICON_BY_TYPE: Record<TrashEntityType, React.ComponentType<{ size?: number; color?: string }>> = {
   statement: FileText,
   table: Table2,
   workspace: BriefcaseBusiness,
@@ -56,56 +56,52 @@ export function TrashListItem({
   const TypeIcon = ENTITY_ICON_BY_TYPE[item.entityType ?? 'statement'] ?? FileText;
 
   return (
-    <div className="relative rounded-lg border border-gray-200 bg-white p-4 transition hover:border-primary/30">
-      <div className="relative z-10 flex flex-col gap-3 md:flex-row md:items-center md:gap-3">
-        <div className="flex items-start gap-3 md:w-44 md:shrink-0 md:items-center">
+    <div className="lumio-trash-item">
+      <div className="lumio-trash-item__inner">
+        <div className="lumio-trash-item__type-col">
           <Checkbox
             checked={selected}
             onCheckedChange={onToggleSelect}
-            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+            style={{ height: 16, width: 16 }}
           />
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <TypeIcon className="h-4 w-4 text-gray-500" />
+          <div className="lumio-trash-item__type-label">
+            <TypeIcon size={16} color="#6b7280" />
             <span>{typeLabel}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 text-sm text-gray-600 sm:grid-cols-2 md:w-[440px] md:shrink-0">
-          <div className="flex flex-col">
-            <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
-              {deletedAtCaption}
-            </span>
-            <span className="tabular-nums">{deletedAtLabel}</span>
+        <div className="lumio-trash-item__dates-col">
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="lumio-trash-item__date-label">{deletedAtCaption}</span>
+            <span style={{ fontVariantNumeric: 'tabular-nums' }}>{deletedAtLabel}</span>
           </div>
-          <div className="flex flex-col">
-            <span className="text-[11px] font-medium uppercase tracking-wide text-gray-400">
-              {autoDeleteAtCaption}
-            </span>
-            <span className="tabular-nums">{autoDeleteAtLabel}</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="lumio-trash-item__date-label">{autoDeleteAtCaption}</span>
+            <span style={{ fontVariantNumeric: 'tabular-nums' }}>{autoDeleteAtLabel}</span>
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-1 items-center gap-2 text-sm text-gray-900">
+        <div className="lumio-trash-item__file-col">
           <BankLogoAvatar bankName={item.bankName} size={20} />
-          <div className="min-w-0">
-            <p className="truncate font-semibold text-gray-900">{item.fileName}</p>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: '#111827' }}>{item.fileName}</p>
             {bankDisplayName ? (
-              <p className="truncate text-xs text-gray-500">{bankDisplayName}</p>
+              <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>{bankDisplayName}</p>
             ) : null}
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center justify-end gap-2 md:w-36">
+        <div className="lumio-trash-item__actions">
           <button
             type="button"
             onClick={event => {
               event.stopPropagation();
               onRestore();
             }}
-            className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 px-2.5 py-1 text-xs font-medium text-emerald-700 transition hover:border-emerald-400 hover:bg-emerald-50"
+            className="lumio-trash-item__restore-btn"
             title={restoreLabel}
           >
-            <RotateCcw className="h-3.5 w-3.5" />
+            <RotateCcw size={14} />
             {restoreLabel}
           </button>
           <button
@@ -114,10 +110,10 @@ export function TrashListItem({
               event.stopPropagation();
               onDelete();
             }}
-            className="inline-flex items-center justify-center rounded-md border border-red-200 p-1.5 text-red-400 transition hover:border-red-400 hover:bg-red-50 hover:text-red-600"
+            className="lumio-trash-item__delete-btn"
             title={deleteLabel}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 size={14} />
           </button>
         </div>
       </div>

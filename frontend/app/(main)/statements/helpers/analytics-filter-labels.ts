@@ -112,5 +112,4 @@ export function buildAnalyticsFilterOptions(labels: AnalyticsFilterOptionLabels)
   return { typeOptions, statusOptions, datePresets, dateModes, groupByOptions, hasOptions };
 }
 
-export const filterLinkClassName =
-  'inline-flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[13px] font-medium text-primary';
+export const filterLinkClassName = 'lumio-view-page__filter-link';

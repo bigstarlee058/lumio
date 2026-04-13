@@ -41,7 +41,7 @@ export function FromFilterDropdown({
   const selected = new Set(values);
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
-      <div className="max-h-[260px] space-y-1 overflow-y-auto pr-1">
+      <div style={{ maxHeight: 260, overflowY: 'auto', paddingRight: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
         {options.map(option => {
           const isSelected = selected.has(option.id);
           return (
