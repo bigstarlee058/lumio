@@ -51,7 +51,7 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  background-color: #0a66c2;
+  background-color: var(--lumio-color-primary);
   border-radius: 0;
   border: 2px solid white;
   flex-shrink: 0;
