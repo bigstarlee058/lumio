@@ -2,8 +2,9 @@
 
 import { Select } from '@/app/components/ui/select';
 import { useIntlayer } from '@/app/i18n';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import { useMemo } from 'react';
-import ReactSelect, { type StylesConfig } from 'react-select';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 
@@ -106,70 +107,13 @@ export function LanguageStep({
     { value: 'kk', label: text(['language', 'localeOptions', 'kk'], 'Kazakh') },
   ];
 
-  const timezoneSelectStyles = useMemo<StylesConfig<TimeZoneOption, false>>(
-    () => ({
-      control: (base, state) => ({
-        ...base,
-        minHeight: 40,
-        borderRadius: 8,
-        borderColor: state.isFocused ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-        backgroundColor: 'hsl(var(--card))',
-        boxShadow: state.isFocused ? 'inset 0 0 0 2px hsl(var(--primary) / 0.28)' : '0 0 #0000',
-        ':hover': {
-          borderColor: 'hsl(var(--primary))',
-        },
-      }),
-      valueContainer: base => ({
-        ...base,
-        padding: '0 12px',
-      }),
-      placeholder: base => ({
-        ...base,
-        color: 'hsl(var(--muted-foreground))',
-      }),
-      singleValue: base => ({
-        ...base,
-        color: 'hsl(var(--foreground))',
-      }),
-      indicatorSeparator: () => ({
-        display: 'none',
-      }),
-      menu: base => ({
-        ...base,
-        position: 'static',
-        marginTop: 8,
-        borderRadius: 12,
-        border: '1px solid hsl(var(--border))',
-        backgroundColor: 'hsl(var(--card))',
-        boxShadow: 'none',
-      }),
-      menuList: base => ({
-        ...base,
-        maxHeight: 'min(24vh, 180px)',
-        padding: 4,
-      }),
-      option: (base, state) => ({
-        ...base,
-        borderRadius: 8,
-        backgroundColor: state.isSelected
-          ? 'hsl(var(--primary) / 0.12)'
-          : state.isFocused
-            ? 'hsl(var(--muted))'
-            : 'transparent',
-        color: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--foreground))',
-        cursor: 'pointer',
-      }),
-    }),
-    [],
-  );
-
   return (
-    <section className="space-y-6">
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div>
-        <h2 className="text-2xl font-semibold text-foreground sm:text-3xl">
+        <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
           {text(['language', 'title'], 'Language and timezone')}
         </h2>
-        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+        <p style={{ marginTop: 8, fontSize: 14, color: 'var(--lumio-text-secondary)' }}>
           {text(
             ['language', 'subtitle'],
             'Choose your preferred interface language and timezone for accurate report timestamps.',
@@ -177,9 +121,15 @@ export function LanguageStep({
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <label
-          className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: 'var(--lumio-text-secondary)',
+          }}
           htmlFor="onboarding-locale"
         >
           {text(['language', 'localeLabel'], 'Language')}
@@ -197,30 +147,38 @@ export function LanguageStep({
         </Select>
       </div>
 
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <label
-          className="text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: 'var(--lumio-text-secondary)',
+          }}
           htmlFor="onboarding-timezone-select"
         >
           {text(['language', 'timeZoneLabel'], 'Timezone')}
         </label>
 
-        <ReactSelect<TimeZoneOption, false>
-          inputId="onboarding-timezone-select"
+        <Autocomplete<TimeZoneOption, false>
           options={timezoneSelectOptions}
           value={selectedTimeZoneOption}
-          onChange={option => onTimeZoneChange(option?.value || null)}
-          placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
-          noOptionsMessage={() =>
-            text(['language', 'timeZoneNoOptions'], 'No matching timezones found')
-          }
-          isSearchable
-          menuPlacement="auto"
-          menuShouldScrollIntoView={false}
-          styles={timezoneSelectStyles}
+          onChange={(_event, option) => onTimeZoneChange(option?.value ?? null)}
+          getOptionLabel={option => option.label}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          noOptionsText={text(['language', 'timeZoneNoOptions'], 'No matching timezones found')}
+          renderInput={params => (
+            <TextField
+              {...params}
+              inputProps={{ ...params.inputProps, id: 'onboarding-timezone-select' }}
+              size="small"
+              placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
+            />
+          )}
         />
 
-        <p className="text-sm text-muted-foreground">
+        <p style={{ fontSize: 14, color: 'var(--lumio-text-secondary)', margin: 0 }}>
           {text(
             ['language', 'timeZoneHint'],
             'You can always change this later in profile settings.',

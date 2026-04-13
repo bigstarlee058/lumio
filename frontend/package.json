@@ -50,7 +50,6 @@
     "react-intlayer": "^7.5.11",
     "react-markdown": "^10.1.0",
     "react-pdf": "^10.3.0",
-    "react-select": "^5.10.2",
     "socket.io-client": "^4.8.3",
     "xlsx": "^0.18.5"
   },

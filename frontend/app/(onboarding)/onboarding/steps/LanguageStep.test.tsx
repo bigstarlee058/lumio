@@ -1,8 +1,20 @@
 // @vitest-environment jsdom
-import { renderToStaticMarkup } from 'react-dom/server';
+import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { LanguageStep } from './LanguageStep';
 
-vi.mock('next-intlayer', () => ({
+vi.mock('@mui/material/Autocomplete', () => ({
+  default: ({ renderInput, inputId }: { renderInput: (p: { inputProps: { id: string } }) => unknown; inputId?: string }) =>
+    renderInput({ inputProps: { id: inputId ?? 'autocomplete' } }),
+}));
+
+vi.mock('@mui/material/TextField', () => ({
+  default: ({ inputProps }: { inputProps?: { id?: string } }) => (
+    <input id={inputProps?.id} />
+  ),
+}));
+
+vi.mock('react-intlayer', () => ({
   useIntlayer: () => ({
     language: {
       title: 'Language and timezone',
@@ -22,10 +34,8 @@ vi.mock('next-intlayer', () => ({
 }));
 
 describe('LanguageStep', () => {
-  it('renders timezone as react-select instead of native select', async () => {
-    const { LanguageStep } = await import('./LanguageStep');
-
-    const html = renderToStaticMarkup(
+  it('renders timezone autocomplete with onboarding-timezone-select id', () => {
+    render(
       <LanguageStep
         locale="en"
         timeZone="Asia/Almaty"
@@ -34,7 +44,6 @@ describe('LanguageStep', () => {
       />,
     );
 
-    expect(html).toContain('onboarding-timezone-select');
-    expect(html).not.toContain('id="onboarding-timezone"');
+    expect(document.getElementById('onboarding-timezone-select')).not.toBeNull();
   });
 });

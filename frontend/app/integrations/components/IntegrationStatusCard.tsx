@@ -7,17 +7,17 @@ import type { IntegrationStatus } from '../types';
 
 type IntegrationStatusCardProps = {
   status: IntegrationStatus | null;
-  title: string;
-  statusLabel: string;
+  title: ReactNode;
+  statusLabel: ReactNode;
   saving: boolean;
   syncing: boolean;
   onConnect: () => void;
   onDisconnect: () => void;
   onSync: () => void;
-  connectLabel: string;
-  reconnectLabel: string;
-  syncLabel: string;
-  disconnectLabel: string;
+  connectLabel: ReactNode;
+  reconnectLabel: ReactNode;
+  syncLabel: ReactNode;
+  disconnectLabel: ReactNode;
   /** Optional hint shown below the buttons when not connected */
   disconnectedHint?: string;
   /** Optional extra actions rendered after the sync/disconnect buttons */
