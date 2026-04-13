@@ -109,7 +109,7 @@ export function ChangelogModal({
       onClose={onClose}
       size="full"
       showCloseButton={false}
-      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: '22px', border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
+      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: 0, border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
       contentSx={{ height: '100%', p: 0 }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'background.paper' }}>
@@ -143,7 +143,7 @@ export function ChangelogModal({
           <IconButton
             onClick={onClose}
             aria-label={closeLabel}
-            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'var(--muted)', color: 'text.primary' } }}
+            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}
           >
             <X size={30} strokeWidth={2.4} />
           </IconButton>

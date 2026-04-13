@@ -19,6 +19,8 @@
   --lumio-color-bg: #ffffff;
   --lumio-color-surface: #ffffff;
   --lumio-color-surface-muted: #f1f5f9;
+  --lumio-color-surface-warning: #fffbeb;
+  --lumio-color-surface-error: #fff1f2;
   --lumio-color-text-primary: #0f172a;
   --lumio-color-text-secondary: #4b5563;
   --lumio-color-border: #d7e2ef;
@@ -81,6 +83,8 @@
   --lumio-color-bg: #0F1419;
   --lumio-color-surface: #151C24;
   --lumio-color-surface-muted: #1E2A3A;
+  --lumio-color-surface-warning: rgba(245, 158, 11, 0.12);
+  --lumio-color-surface-error: rgba(239, 68, 68, 0.12);
   --lumio-color-text-primary: #e2e8f0;
   --lumio-color-text-secondary: #8899AA;
   --lumio-color-border: #1E2A3A;

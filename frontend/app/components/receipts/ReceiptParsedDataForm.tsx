@@ -147,7 +147,7 @@ export function ReceiptParsedDataForm({
                 py: 1,
                 fontSize: 14,
                 cursor: 'pointer',
-                '&:hover': { bgcolor: 'var(--muted)' },
+                '&:hover': { bgcolor: 'action.hover' },
               }}
             >
               <Box component="span" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -402,7 +402,7 @@ export function ReceiptParsedDataForm({
                         border: 'none',
                         bgcolor: 'transparent',
                         cursor: 'pointer',
-                        '&:hover': { bgcolor: 'var(--muted)' },
+                        '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
                       <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
@@ -433,7 +433,7 @@ export function ReceiptParsedDataForm({
                         border: 'none',
                         bgcolor: 'transparent',
                         cursor: 'pointer',
-                        '&:hover': { bgcolor: 'var(--muted)' },
+                        '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
                       <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>

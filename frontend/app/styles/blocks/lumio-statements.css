@@ -161,7 +161,7 @@
   white-space: nowrap;
 }
 .lumio-status-chip--error {
-  background-color: var(--lumio-color-surface-muted);
+  background-color: var(--lumio-color-surface-error);
   color: #b91c1c;
   box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.2) inset;
 }
@@ -539,7 +539,7 @@
   background: #f8fbff;
 }
 .lumio-stmt-desktop-actions__item--danger:hover {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
 }
 .lumio-stmt-desktop-actions__item-label {
   display: flex;
@@ -1630,11 +1630,11 @@
   font-weight: 600;
 }
 .lumio-warnings__badge--warning {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-warning);
   color: #92400e;
 }
 .lumio-warnings__badge--error {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
   color: #991b1b;
 }
 
@@ -1659,7 +1659,7 @@
 .lumio-stmt-view__error-box {
   border-radius: 0;
   border: 1px solid #fecaca;
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
   padding: 16px;
   color: #dc2626;
   margin-bottom: 16px;
@@ -1910,7 +1910,7 @@
   white-space: nowrap;
 }
 .lumio-stmt-badge--error {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
   color: #b91c1c;
   box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.2);
 }
@@ -2145,7 +2145,7 @@
   color: #dc2626;
 }
 .lumio-stmt-list-view__bulk-action-btn--danger:hover {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
   border-color: #fecaca;
 }
 .lumio-stmt-list-view__sort-btn {
@@ -2290,7 +2290,7 @@
   background: #f9fafb;
 }
 .lumio-stmt-list-view__bulk-menu-btn--danger:hover {
-  background: var(--lumio-color-surface-muted);
+  background: var(--lumio-color-surface-error);
 }
 .lumio-stmt-list-view__bulk-menu-divider {
   height: 1px;
