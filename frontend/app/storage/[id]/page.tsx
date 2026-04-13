@@ -21,6 +21,7 @@ import TransactionsView, {
   type Transaction as StatementTransaction,
 } from '../../components/TransactionsView';
 import api from '../../lib/api';
+import { Box, Chip, Typography } from '@mui/material';
 
 type FileAvailabilityStatus = 'both' | 'disk' | 'db' | 'missing';
 
@@ -312,49 +313,65 @@ export default function FileDetailsPage() {
   const renderAvailabilityBadge = (availability?: FileAvailability) => {
     if (!availability) return null;
     const status = availability.status;
-    const colorClasses =
+    const chipSx =
       status === 'missing'
-        ? 'bg-red-50 text-red-700 border-red-200'
+        ? { bgcolor: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }
         : status === 'both'
-          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-          : 'bg-blue-50 text-blue-700 border-blue-200';
+          ? { bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }
+          : { bgcolor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' };
 
     return (
-      <span
-        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold ${colorClasses}`}
+      <Chip
+        label={getAvailabilityLabel(status)}
+        size="small"
         title={getAvailabilityTooltip(status)}
-      >
-        {getAvailabilityLabel(status)}
-      </span>
+        sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, ...chipSx }}
+      />
     );
   };
 
   if (loading) {
     return (
-      <div className="container-shared px-4 py-16">
-        <div className="flex flex-col items-center gap-3 text-gray-600">
+      <Box className="container-shared" sx={{ px: 2, py: 8 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, color: '#4b5563' }}>
           <Spinner className="h-20 w-20 text-primary" />
-          <span>{t.loading}</span>
-        </div>
-      </div>
+          <Typography style={{ fontSize: 14 }}>{t.loading}</Typography>
+        </Box>
+      </Box>
     );
   }
 
   if (!details) {
     return (
-      <div className="container-shared px-4 py-12">
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <p className="text-gray-900 font-semibold mb-2">{t.notFound}</p>
-          <button
+      <Box className="container-shared" sx={{ px: 2, py: 6 }}>
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 3 }}>
+          <Typography style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 8 }}>
+            {t.notFound}
+          </Typography>
+          <Box
+            component="button"
             type="button"
             onClick={() => router.push('/statements')}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              border: '1px solid #e5e7eb',
+              px: 1.5,
+              py: 1,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#374151',
+              bgcolor: 'transparent',
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f9fafb' },
+            }}
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft style={{ width: 16, height: 16 }} />
             {t.tabs.transactions.value}
-          </button>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     );
   }
 
@@ -385,283 +402,414 @@ export default function FileDetailsPage() {
   ];
 
   return (
-    <div className="container-shared px-4 py-8 space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <button
+    <Box className="container-shared" sx={{ px: 2, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2,
+          alignItems: { sm: 'center' },
+          justifyContent: { sm: 'space-between' },
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+          <Box
+            component="button"
             type="button"
             onClick={() => router.push('/statements')}
-            className="rounded-full border border-gray-200 bg-white p-2 text-gray-600 shadow-sm transition hover:bg-gray-50"
             aria-label="Back to storage"
+            sx={{
+              borderRadius: '50%',
+              border: '1px solid #e5e7eb',
+              bgcolor: '#fff',
+              p: 1,
+              color: '#4b5563',
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f9fafb' },
+            }}
           >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl font-bold text-gray-900 break-all">{statement.fileName}</h1>
-            </div>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-primary">
-                {getBankDisplayName(statement.bankName)}
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
-                {getStatusLabel(statement.status)}
-              </span>
+            <ArrowLeft style={{ width: 20, height: 20 }} />
+          </Box>
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Typography
+                component="h1"
+                style={{ fontSize: 20, fontWeight: 700, color: '#111827', wordBreak: 'break-all' }}
+              >
+                {statement.fileName}
+              </Typography>
+            </Box>
+            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={getBankDisplayName(statement.bankName)}
+                size="small"
+                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main', border: '1px solid rgba(79,70,229,0.2)' }}
+              />
+              <Chip
+                label={getStatusLabel(statement.status)}
+                size="small"
+                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
+              />
               {renderAvailabilityBadge(fileAvailability)}
-              <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-gray-700">
-                {isOwner ? <ShieldCheck className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                {isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
-              </span>
-            </div>
-          </div>
-        </div>
+              <Chip
+                icon={isOwner ? <ShieldCheck style={{ width: 16, height: 16 }} /> : <Shield style={{ width: 16, height: 16 }} />}
+                label={isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
+                size="small"
+                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
+              />
+            </Box>
+          </Box>
+        </Box>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+          <Box
+            component="button"
             type="button"
             onClick={handleDownload}
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm transition hover:bg-gray-50"
             title={t.actions.downloadTooltip.value}
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              border: '1px solid #e5e7eb',
+              bgcolor: '#fff',
+              px: 1.5,
+              py: 1,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#1f2937',
+              cursor: 'pointer',
+              '&:hover': { bgcolor: '#f9fafb' },
+            }}
           >
-            <Download className="h-4 w-4" />
+            <Download style={{ width: 16, height: 16 }} />
             {t.actions.download}
-          </button>
+          </Box>
           {(isOwner || userPermission === 'editor') && (
-            <button
+            <Box
+              component="button"
               type="button"
               onClick={() => {
                 setCurrentTab('links');
                 setShareDialogOpen(true);
               }}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
               title={t.actions.shareTooltip.value}
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                bgcolor: 'primary.main',
+                px: 2,
+                py: 1,
+                fontSize: 14,
+                fontWeight: 600,
+                color: '#fff',
+                cursor: 'pointer',
+                border: 'none',
+                '&:hover': { bgcolor: 'primary.dark' },
+              }}
             >
-              <Share2 className="h-4 w-4" />
+              <Share2 style={{ width: 16, height: 16 }} />
               {t.actions.share}
-            </button>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="grid gap-4 lg:grid-cols-[1.05fr_1.4fr]">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{t.cards.size}</p>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
-              {formatFileSize(statement.fileSize)}
-            </p>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{t.cards.transactions}</p>
-            <p className="mt-1 text-lg font-semibold text-gray-900">{transactions.length}</p>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{t.cards.uploadedAt}</p>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
-              {formatDate(statement.createdAt)}
-            </p>
-          </div>
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{t.cards.account}</p>
-            <p className="mt-1 text-lg font-semibold text-gray-900">
-              {statement.metadata?.accountNumber || t.cards.dash.value}
-            </p>
-          </div>
-        </div>
+      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', lg: '1.05fr 1.4fr' } }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 1.5 }}>
+          {[
+            { label: t.cards.size, value: formatFileSize(statement.fileSize) },
+            { label: t.cards.transactions, value: transactions.length },
+            { label: t.cards.uploadedAt, value: formatDate(statement.createdAt) },
+            { label: t.cards.account, value: statement.metadata?.accountNumber || t.cards.dash.value },
+          ].map((card, idx) => (
+            <Box key={idx} sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+              <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                {card.label}
+              </Typography>
+              <Typography style={{ marginTop: 4, fontSize: 18, fontWeight: 600, color: '#111827' }}>
+                {card.value}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-gray-900 font-semibold">
-              <RefreshCcw className="h-4 w-4 text-primary" />
-              {t.preview.title}
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
+        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: '#111827' }}>
+              <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #4f46e5)' }} />
+              <Typography style={{ fontWeight: 600, color: '#111827' }}>{t.preview.title}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+              <Box
+                component="button"
                 type="button"
                 onClick={() => loadPreview()}
                 disabled={previewLoading}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  border: '1px solid #e5e7eb',
+                  bgcolor: '#fff',
+                  px: 1.5,
+                  py: 0.75,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: '#374151',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: '#f9fafb' },
+                  '&:disabled': { opacity: 0.5 },
+                }}
               >
-                {previewLoading && <Spinner className="h-4 w-4" />}
-                {!previewLoading && <RefreshCcw className="h-4 w-4" />}
+                {previewLoading ? <Spinner className="h-4 w-4" /> : <RefreshCcw style={{ width: 16, height: 16 }} />}
                 {t.preview.refresh}
-              </button>
+              </Box>
               {previewUrl && (
-                <button
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => previewUrl && window.open(previewUrl, '_blank')}
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    border: '1px solid #e5e7eb',
+                    bgcolor: '#fff',
+                    px: 1.5,
+                    py: 0.75,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: '#374151',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: '#f9fafb' },
+                  }}
                 >
-                  <ExternalLink className="h-4 w-4" />
+                  <ExternalLink style={{ width: 16, height: 16 }} />
                   {t.preview.openNewTab}
-                </button>
+                </Box>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          <div className="mt-3 overflow-hidden rounded-lg border border-dashed border-gray-200 bg-gray-50/60">
+          <Box sx={{ mt: 1.5, overflow: 'hidden', border: '1px dashed #e5e7eb', bgcolor: 'rgba(249,250,251,0.6)' }}>
             {previewLoading && (
-              <div className="flex min-h-[360px] items-center justify-center text-gray-500">
+              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
                 <Spinner className="h-6 w-6" />
-              </div>
+              </Box>
             )}
 
             {!previewLoading && previewError && (
-              <div className="flex min-h-[360px] flex-col items-center justify-center gap-3 bg-white px-4 text-center text-sm text-gray-700">
-                <div className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-red-700">
+              <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: '#fff', px: 2, textAlign: 'center' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#fef2f2', px: 1.5, py: 0.5, fontSize: 14, color: '#b91c1c' }}>
                   {previewError}
-                </div>
-                <button
+                </Box>
+                <Box
+                  component="button"
                   type="button"
                   onClick={() => loadPreview()}
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    bgcolor: 'primary.main',
+                    px: 2,
+                    py: 1,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#fff',
+                    cursor: 'pointer',
+                    border: 'none',
+                    '&:hover': { bgcolor: 'primary.dark' },
+                  }}
                 >
-                  <RefreshCcw className="h-4 w-4" />
+                  <RefreshCcw style={{ width: 16, height: 16 }} />
                   {t.preview.retry}
-                </button>
-              </div>
+                </Box>
+              </Box>
             )}
 
             {!previewLoading && !previewError && previewUrl && (
               <iframe
                 src={previewUrl}
                 title={t.preview.iframeTitle.value}
-                className="h-[420px] w-full border-0 bg-white"
+                style={{ height: 420, width: '100%', border: 'none', background: '#fff', display: 'block' }}
               />
             )}
 
             {!previewLoading && !previewError && !previewUrl && (
-              <div className="flex min-h-[360px] items-center justify-center bg-white px-4 text-center text-sm text-gray-600">
+              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: '#fff', px: 2, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
                 {t.preview.empty}
-              </div>
+              </Box>
             )}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-4 py-3">
+      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, borderBottom: '1px solid #f3f4f6', px: 2, py: 1.5 }}>
           {tabs.map(tab => {
             const isActive = tab.key === currentTab;
             return (
-              <button
+              <Box
                 key={tab.key}
+                component="button"
                 type="button"
                 onClick={() => setCurrentTab(tab.key)}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  isActive
-                    ? 'bg-primary text-white shadow-sm'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                }`}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 2,
+                  py: 1,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: 'none',
+                  bgcolor: isActive ? 'primary.main' : '#f9fafb',
+                  color: isActive ? '#fff' : '#374151',
+                  '&:hover': isActive ? {} : { bgcolor: '#f3f4f6' },
+                }}
               >
                 {tab.label}
-              </button>
+              </Box>
             );
           })}
-        </div>
+        </Box>
 
-        <div className="p-4">
+        <Box sx={{ p: 2 }}>
           {currentTab === 'transactions' && (
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: '#fff' }}>
               <TransactionsView transactions={transactions} />
-            </div>
+            </Box>
           )}
 
           {currentTab === 'links' && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-lg font-semibold text-gray-900">{t.tabs.links.value}</div>
-                <div className="flex gap-2">
-                  <button
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{t.tabs.links.value}</Typography>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Box
+                    component="button"
                     type="button"
                     onClick={() => setShareDialogOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-hover"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      bgcolor: 'primary.main',
+                      px: 1.5,
+                      py: 1,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: '#fff',
+                      cursor: 'pointer',
+                      border: 'none',
+                      '&:hover': { bgcolor: 'primary.dark' },
+                    }}
                   >
-                    <Share2 className="h-4 w-4" />
+                    <Share2 style={{ width: 16, height: 16 }} />
                     {t.actions.share}
-                  </button>
-                </div>
-              </div>
+                  </Box>
+                </Box>
+              </Box>
 
               {sharedLinks.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-sm text-gray-600">
+                <Box sx={{ border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', px: 2, py: 3, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
                   {t.tabs.links.value} — {t.preview.empty}
-                </div>
+                </Box>
               ) : (
-                <div className="grid gap-3">
+                <Box sx={{ display: 'grid', gap: 1.5 }}>
                   {sharedLinks.map(link => (
-                    <div
-                      key={link.id}
-                      className="rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="space-y-1">
-                          <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-gray-900">
-                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
-                              {link.permission}
-                            </span>
-                            <span
-                              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                                link.status === 'active'
-                                  ? 'bg-emerald-50 text-emerald-700'
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}
-                            >
-                              {link.status}
-                            </span>
+                    <Box key={link.id} sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', px: 2, py: 1.5 }}>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                            <Chip label={link.permission} size="small" sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
+                            <Chip
+                              label={link.status}
+                              size="small"
+                              sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
+                            />
                             {link.expiresAt && (
-                              <span className="inline-flex items-center rounded-full bg-gray-50 px-2.5 py-1 text-xs font-semibold text-gray-700">
-                                {formatDate(link.expiresAt)}
-                              </span>
+                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
                             )}
-                          </div>
+                          </Box>
                           {link.description && (
-                            <p className="text-sm text-gray-700">{link.description}</p>
+                            <Typography style={{ fontSize: 14, color: '#374151' }}>{link.description}</Typography>
                           )}
-                          <p className="text-xs text-gray-500">
-                            {t.cards.uploadedAt}: {formatDate(link.createdAt)} •{' '}
-                            {t.cards.transactions}: {link.accessCount}
-                          </p>
-                        </div>
+                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+                            {t.cards.uploadedAt}: {formatDate(link.createdAt)} · {t.cards.transactions}: {link.accessCount}
+                          </Typography>
+                        </Box>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                          <button
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                          <Box
+                            component="button"
                             type="button"
                             onClick={() => {
                               const shareUrl = `${window.location.origin}/shared/${link.token}`;
                               navigator.clipboard.writeText(shareUrl).catch(() => undefined);
                             }}
-                            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 1,
+                              border: '1px solid #e5e7eb',
+                              bgcolor: '#fff',
+                              px: 1.5,
+                              py: 0.75,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: '#374151',
+                              cursor: 'pointer',
+                              '&:hover': { bgcolor: '#f9fafb' },
+                            }}
                           >
                             {t.actions.share}
-                          </button>
-                          <button
+                          </Box>
+                          <Box
+                            component="button"
                             type="button"
                             onClick={() => setShareDialogOpen(true)}
-                            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                            sx={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 1,
+                              border: '1px solid #e5e7eb',
+                              bgcolor: '#fff',
+                              px: 1.5,
+                              py: 0.75,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              color: '#374151',
+                              cursor: 'pointer',
+                              '&:hover': { bgcolor: '#f9fafb' },
+                            }}
                           >
                             {t.preview.refresh}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
                   ))}
-                </div>
+                </Box>
               )}
-            </div>
+            </Box>
           )}
 
           {currentTab === 'permissions' && isOwner && (
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm">
+            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: '#fff' }}>
               <PermissionsPanel
                 fileId={fileId}
                 permissions={permissions}
                 onPermissionsUpdate={loadFileDetails}
               />
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       <ShareDialog
         open={shareDialogOpen}
@@ -670,6 +818,6 @@ export default function FileDetailsPage() {
         sharedLinks={sharedLinks}
         onLinksUpdate={loadFileDetails}
       />
-    </div>
+    </Box>
   );
 }

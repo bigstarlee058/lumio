@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReceiptRecord } from '@/app/lib/api';
+import { Box, Typography } from '@mui/material';
 import { ReceiptCard } from './ReceiptCard';
 
 export interface ReceiptsListProps {
@@ -21,33 +22,50 @@ const SKELETON_KEYS = [
 export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: ReceiptsListProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' } }}>
         {SKELETON_KEYS.map(key => (
-          <div
+          <Box
             key={key}
-            className="h-44 animate-pulse rounded-2xl border border-slate-200 bg-slate-100"
+            sx={{
+              height: 176,
+              border: '1px solid #e2e8f0',
+              bgcolor: '#f1f5f9',
+              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              '@keyframes pulse': {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.5 },
+              },
+            }}
           />
         ))}
-      </div>
+      </Box>
     );
   }
 
   if (receipts.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-16 text-center">
-        <h2 className="text-lg font-semibold text-slate-900">No receipts yet</h2>
-        <p className="mt-2 text-sm text-slate-500">
+      <Box
+        sx={{
+          border: '2px dashed #cbd5e1',
+          bgcolor: '#f8fafc',
+          px: 3,
+          py: 8,
+          textAlign: 'center',
+        }}
+      >
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>No receipts yet</Typography>
+        <Typography style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>
           Upload a receipt or scan one with your camera to start reviewing extracted data.
-        </p>
-      </div>
+        </Typography>
+      </Box>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' } }}>
       {receipts.map(receipt => (
         <ReceiptCard key={receipt.id} receipt={receipt} onOpen={onOpenReceipt} />
       ))}
-    </div>
+    </Box>
   );
 }

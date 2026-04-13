@@ -9,6 +9,7 @@ import {
   type CurrencySearchItem,
   buildCurrencySearchIndex,
 } from '@/app/lib/statement-expense-drawer';
+import { Box, IconButton, Typography } from '@mui/material';
 import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { EditableReceiptParsedData, ReceiptCategoryOption } from './receipt-types';
@@ -83,144 +84,160 @@ export function ReceiptParsedDataForm({
 
   return (
     <>
-      <div className="space-y-5">
-        <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <label htmlFor="receipt-vendor" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Vendor
-          </label>
-          <Input
-            id="receipt-vendor"
-            aria-label="Vendor"
-            value={value.vendor}
-            onChange={event => onChange({ ...value, vendor: event.target.value })}
-          />
-        </div>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
+          <Box>
+            <label htmlFor="receipt-vendor" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Vendor
+            </label>
+            <Input
+              id="receipt-vendor"
+              aria-label="Vendor"
+              value={value.vendor}
+              onChange={event => onChange({ ...value, vendor: event.target.value })}
+            />
+          </Box>
 
-        <div className="space-y-2">
-          <CustomDatePicker
-            value={value.date}
-            onChange={date => onChange({ ...value, date })}
-            label="Date"
-            containerTestId="receipt-date-picker"
-          />
-        </div>
+          <Box>
+            <CustomDatePicker
+              value={value.date}
+              onChange={date => onChange({ ...value, date })}
+              label="Date"
+              containerTestId="receipt-date-picker"
+            />
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-amount" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Amount
-          </label>
-          <Input
-            id="receipt-amount"
-            aria-label="Amount"
-            type="number"
-            value={value.amount}
-            onChange={event =>
-              onChange({
-                ...value,
-                amount: event.target.value === '' ? '' : Number(event.target.value),
-              })
-            }
-          />
-        </div>
+          <Box>
+            <label htmlFor="receipt-amount" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Amount
+            </label>
+            <Input
+              id="receipt-amount"
+              aria-label="Amount"
+              type="number"
+              value={value.amount}
+              onChange={event =>
+                onChange({
+                  ...value,
+                  amount: event.target.value === '' ? '' : Number(event.target.value),
+                })
+              }
+            />
+          </Box>
 
-          <div className="space-y-2">
-            <label htmlFor="receipt-currency-trigger" className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <Box>
+            <label htmlFor="receipt-currency-trigger" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
               Currency
             </label>
-            <button
+            <Box
+              component="button"
               id="receipt-currency-trigger"
               aria-label="Currency"
               type="button"
               onClick={() => setCurrencyDrawerOpen(true)}
-              className="flex h-10 w-full items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              sx={{
+                display: 'flex',
+                height: 40,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '1px solid #e2e8f0',
+                bgcolor: '#fff',
+                px: 1.5,
+                py: 1,
+                fontSize: 14,
+                cursor: 'pointer',
+                '&:hover': { bgcolor: '#f8fafc' },
+              }}
             >
-              <span className="truncate">{selectedCurrencyItem?.code || value.currency || 'Select a currency'}</span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </button>
-          </div>
+              <Box component="span" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {selectedCurrencyItem?.code || value.currency || 'Select a currency'}
+              </Box>
+              <ChevronDown style={{ width: 16, height: 16, color: '#94a3b8' }} />
+            </Box>
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-tax" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Tax
-          </label>
-          <Input
-            id="receipt-tax"
-            aria-label="Tax"
-            type="number"
-            value={value.tax}
-            onChange={event =>
-              onChange({
-                ...value,
-                tax: event.target.value === '' ? '' : Number(event.target.value),
-              })
-            }
-          />
-        </div>
+          <Box>
+            <label htmlFor="receipt-tax" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Tax
+            </label>
+            <Input
+              id="receipt-tax"
+              aria-label="Tax"
+              type="number"
+              value={value.tax}
+              onChange={event =>
+                onChange({
+                  ...value,
+                  tax: event.target.value === '' ? '' : Number(event.target.value),
+                })
+              }
+            />
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-payment-method" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Payment method
-          </label>
-          <Select
-            id="receipt-payment-method"
-            aria-label="Payment method"
-            value={value.paymentMethod}
-            onChange={event => onChange({ ...value, paymentMethod: event.target.value })}
-          >
-            <option value="">Select payment method</option>
-            <option value="card">Card</option>
-            <option value="cash">Cash</option>
-            <option value="bank_transfer">Bank transfer</option>
-            <option value="other">Other</option>
-          </Select>
-        </div>
+          <Box>
+            <label htmlFor="receipt-payment-method" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Payment method
+            </label>
+            <Select
+              id="receipt-payment-method"
+              aria-label="Payment method"
+              value={value.paymentMethod}
+              onChange={event => onChange({ ...value, paymentMethod: event.target.value })}
+            >
+              <option value="">Select payment method</option>
+              <option value="card">Card</option>
+              <option value="cash">Cash</option>
+              <option value="bank_transfer">Bank transfer</option>
+              <option value="other">Other</option>
+            </Select>
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-transaction-type" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Transaction type
-          </label>
-          <Select
-            id="receipt-transaction-type"
-            aria-label="Transaction type"
-            value={value.transactionType}
-            onChange={event =>
-              onChange({
-                ...value,
-                transactionType: event.target.value as EditableReceiptParsedData['transactionType'],
-              })
-            }
-          >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-            <option value="transfer">Transfer</option>
-            <option value="unknown">Unknown</option>
-          </Select>
-        </div>
+          <Box>
+            <label htmlFor="receipt-transaction-type" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Transaction type
+            </label>
+            <Select
+              id="receipt-transaction-type"
+              aria-label="Transaction type"
+              value={value.transactionType}
+              onChange={event =>
+                onChange({
+                  ...value,
+                  transactionType: event.target.value as EditableReceiptParsedData['transactionType'],
+                })
+              }
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+              <option value="transfer">Transfer</option>
+              <option value="unknown">Unknown</option>
+            </Select>
+          </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-category" className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Category
-          </label>
-          <Select
-            id="receipt-category"
-            aria-label="Category"
-            value={value.categoryId}
-            onChange={event => onChange({ ...value, categoryId: event.target.value })}
-          >
-            <option value="">Select category</option>
-            {enabledCategories.map(category => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-        </div>
+          <Box>
+            <label htmlFor="receipt-category" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+              Category
+            </label>
+            <Select
+              id="receipt-category"
+              aria-label="Category"
+              value={value.categoryId}
+              onChange={event => onChange({ ...value, categoryId: event.target.value })}
+            >
+              <option value="">Select category</option>
+              {enabledCategories.map(category => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </Select>
+          </Box>
+        </Box>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Line items</h3>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Line items</Typography>
             <Button
               variant="ghost"
               size="sm"
@@ -241,11 +258,11 @@ export function ReceiptParsedDataForm({
               <Plus className="h-4 w-4" />
               Add item
             </Button>
-          </div>
+          </Box>
 
-          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-700/60 dark:bg-slate-900/60">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e2e8f0', bgcolor: '#f8fafc', p: 2 }}>
             {value.lineItems.map((lineItem, index) => (
-              <div key={lineItem.id} className="grid gap-3 md:grid-cols-[minmax(0,1fr)_120px_44px]">
+              <Box key={lineItem.id} sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', md: 'minmax(0,1fr) 120px 44px' } }}>
                 <Input
                   aria-label={index === 0 ? 'Line item description' : undefined}
                   value={lineItem.description}
@@ -288,11 +305,11 @@ export function ReceiptParsedDataForm({
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              </div>
+              </Box>
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
       <DrawerShell
         isOpen={currencyDrawerOpen}
@@ -303,91 +320,135 @@ export function ReceiptParsedDataForm({
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
         title={
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <IconButton
+              size="small"
               onClick={() => {
                 setCurrencyDrawerOpen(false);
                 setCurrencySearch('');
               }}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               aria-label="Close currency drawer"
+              sx={{ borderRadius: 0 }}
             >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <span className="text-lg font-semibold text-foreground">Select a currency</span>
-          </div>
+              <ChevronLeft style={{ width: 20, height: 20 }} />
+            </IconButton>
+            <Typography style={{ fontSize: 18, fontWeight: 600 }}>Select a currency</Typography>
+          </Box>
         }
       >
-        <div className="flex h-full flex-col">
-          <div className="flex-1 space-y-3 overflow-y-auto pb-4">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', pb: 2 }}>
+            <Box sx={{ position: 'relative' }}>
+              <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#94a3b8', pointerEvents: 'none' }} />
               <input
                 type="text"
                 value={currencySearch}
                 onChange={event => setCurrencySearch(event.target.value)}
                 placeholder="Search"
-                className="w-full rounded-2xl border border-border bg-background py-3 pl-10 pr-4 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                style={{
+                  width: '100%',
+                  border: '1px solid #e2e8f0',
+                  background: '#fff',
+                  padding: '12px 16px 12px 40px',
+                  fontSize: 14,
+                  outline: 'none',
+                }}
               />
-            </div>
+            </Box>
 
             {selectedCurrencyItem && selectedMatchesSearch ? (
-              <button
+              <Box
+                component="button"
                 type="button"
                 onClick={() => handleSelectCurrency(selectedCurrencyItem.code)}
-                className="flex w-full items-center justify-between rounded-2xl bg-muted px-4 py-4 text-left"
+                sx={{
+                  display: 'flex',
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  bgcolor: '#f1f5f9',
+                  px: 2,
+                  py: 2,
+                  textAlign: 'left',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
               >
-                <span className="text-base font-semibold text-foreground">
+                <Typography style={{ fontSize: 16, fontWeight: 600 }}>
                   {selectedCurrencyItem.label}
-                </span>
-                <Check className="h-5 w-5 text-primary" />
-              </button>
+                </Typography>
+                <Check style={{ width: 20, height: 20, color: 'var(--color-primary, #4f46e5)' }} />
+              </Box>
             ) : null}
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
-              <div>
-                <p className="px-1 text-sm text-muted-foreground">Recents</p>
-                <div className="mt-2 space-y-2">
+              <Box>
+                <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>Recents</Typography>
+                <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {recentCurrencyItems.map(item => (
-                    <button
+                    <Box
                       key={`recent-${item.code}`}
+                      component="button"
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                      sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        px: 1.5,
+                        py: 1.5,
+                        textAlign: 'left',
+                        border: 'none',
+                        bgcolor: 'transparent',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#f1f5f9' },
+                      }}
                     >
-                      <span className="text-base font-semibold text-foreground">{item.label}</span>
-                    </button>
+                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
+                    </Box>
                   ))}
-                </div>
-              </div>
+                </Box>
+              </Box>
             ) : null}
 
-            <div>
-              <p className="px-1 text-sm text-muted-foreground">All</p>
-              <div className="mt-2 space-y-1">
+            <Box>
+              <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>All</Typography>
+              <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {allCurrencyItems.length > 0 ? (
                   allCurrencyItems.map(item => (
-                    <button
+                    <Box
                       key={item.code}
+                      component="button"
                       type="button"
                       onClick={() => handleSelectCurrency(item.code)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted"
+                      sx={{
+                        display: 'flex',
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        px: 1.5,
+                        py: 1.5,
+                        textAlign: 'left',
+                        border: 'none',
+                        bgcolor: 'transparent',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#f1f5f9' },
+                      }}
                     >
-                      <span className="text-base font-semibold text-foreground">{item.label}</span>
-                    </button>
+                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
+                    </Box>
                   ))
                 ) : (
-                  <p className="rounded-xl bg-muted px-3 py-3 text-sm text-muted-foreground">
+                  <Typography style={{ bgcolor: '#f1f5f9', padding: '12px', fontSize: 14, color: '#94a3b8' }}>
                     No currencies found
-                  </p>
+                  </Typography>
                 )}
-              </div>
-            </div>
-          </div>
-        </div>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </DrawerShell>
     </>
   );

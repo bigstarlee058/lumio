@@ -124,7 +124,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                 size="small"
                 onClick={() => onConnect(card.key)}
                 disabled={card.connected || card.loading}
-                startIcon={card.loading ? <Spinner className="h-3.5 w-3.5" /> : undefined}
+                startIcon={card.loading ? <Spinner size={14} /> : undefined}
                 sx={{
                   mt: 2,
                   borderRadius: 0,

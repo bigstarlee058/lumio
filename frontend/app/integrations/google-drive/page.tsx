@@ -121,7 +121,7 @@ export default function GoogleDriveIntegrationPage() {
           color: '#6b7280',
         }}
       >
-        <Spinner className="h-6 w-6" />
+        <Spinner size={24} />
       </Box>
     );
   }

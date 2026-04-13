@@ -95,12 +95,12 @@ export function AuthLanguageSwitcher() {
         position="right"
         width="lg"
         showCloseButton={false}
-        className="max-w-full border-l-0 bg-card sm:max-w-lg"
+        className="lumio-language-switcher__shell"
       >
         <div className="lumio-language-switcher__body">
           <div className="lumio-language-switcher__scroll-area">
             <div className="lumio-language-switcher__search-wrapper">
-              <Search className="lumio-language-switcher__search-icon h-5 w-5" />
+              <Search className="lumio-language-switcher__search-icon" style={{ width: 20, height: 20 }} />
               <input
                 type="text"
                 value={languageSearch}
@@ -119,7 +119,7 @@ export function AuthLanguageSwitcher() {
                       key={lang.code}
                       type="button"
                       onClick={() => handleLanguageSelect(lang.code)}
-                      className={`lumio-language-switcher__lang-btn${selected ? ' lumio-language-switcher__lang-btn--selected bg-muted' : ''}`}
+                      className={`lumio-language-switcher__lang-btn${selected ? ' lumio-language-switcher__lang-btn--selected' : ''}`}
                     >
                       <span className="lumio-language-switcher__lang-label">{lang.label}</span>
                       {selected ? <Check className="h-5 w-5 text-primary" /> : null}

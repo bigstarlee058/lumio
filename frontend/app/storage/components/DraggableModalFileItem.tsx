@@ -2,6 +2,7 @@
 
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { useDraggable } from '@dnd-kit/core';
+import { Box, Typography } from '@mui/material';
 import { GripVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -24,44 +25,70 @@ export const DraggableModalFileItem = React.memo(
     });
 
     return (
-      <div className="px-3 py-2">
-        <div
-          className={`flex items-center gap-1 ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
+      <Box sx={{ px: 1.5, py: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            cursor: canEditFile(file) ? 'grab' : 'default',
+          }}
           {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
         >
           {canEditFile(file) && (
-            <div className="text-gray-300 dark:text-slate-600 pointer-events-none">
+            <Box sx={{ color: '#d1d5db', pointerEvents: 'none' }}>
               <GripVertical size={16} />
-            </div>
+            </Box>
           )}
-          <button
+          <Box
+            component="button"
             ref={setNodeRef}
             type="button"
             onClick={() => router.push(`/statements/${file.id}/view`)}
             title={canEditFile(file) ? rowHintLabel : undefined}
-            className={`flex min-w-0 flex-1 items-center gap-3 text-left hover:text-primary ${
-              isDragging ? 'opacity-50' : ''
-            } ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
+            sx={{
+              display: 'flex',
+              minWidth: 0,
+              flex: 1,
+              alignItems: 'center',
+              gap: 1.5,
+              textAlign: 'left',
+              background: 'none',
+              border: 'none',
+              cursor: canEditFile(file) ? 'grab' : 'default',
+              opacity: isDragging ? 0.5 : 1,
+              p: 0,
+              '&:hover': { color: 'primary.main' },
+            }}
           >
-            <div className="flex items-center justify-center">
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <DocumentTypeIcon
                 fileType={file.fileType}
                 fileName={file.fileName}
                 fileId={file.id}
                 size={32}
               />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+            </Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Typography
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: '#111827',
+                }}
+              >
                 {file.fileName}
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              </Typography>
+              <Typography style={{ fontSize: 12, color: '#6b7280' }}>
                 {tableFromLabel} {file.bankName}
-              </p>
-            </div>
-          </button>
-        </div>
-      </div>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
     );
   },
 );

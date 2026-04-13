@@ -54,9 +54,9 @@ export default function ConfirmModal({
       closeOnBackdropClick={!isLoading}
       closeOnEscape={!isLoading}
       title={
-        <div className="flex items-center gap-3">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
-            className={`p-2 rounded-full ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}
+            style={{ padding: 8, borderRadius: '50%', background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
           >
             {icon ?? <AlertTriangle size={20} />}
           </div>
@@ -76,7 +76,7 @@ export default function ConfirmModal({
       }
     >
       {typeof message === 'string' ? (
-        <p className="text-gray-600 leading-relaxed">{message}</p>
+        <p style={{ color: '#4b5563', lineHeight: 1.625 }}>{message}</p>
       ) : (
         message
       )}

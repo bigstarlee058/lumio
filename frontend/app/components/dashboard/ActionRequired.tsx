@@ -50,7 +50,6 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
           <Link
             key={action.type}
             href={action.href}
-            className="group"
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', transition: 'opacity 150ms', textDecoration: 'none' }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>

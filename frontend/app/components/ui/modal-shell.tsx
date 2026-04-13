@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import { X } from 'lucide-react';
+import type { SxProps, Theme } from '@mui/material';
 import * as React from 'react';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
@@ -30,10 +31,10 @@ export interface ModalShellProps {
   closeOnBackdropClick?: boolean;
   /** Whether pressing ESC closes the modal */
   closeOnEscape?: boolean;
-  /** Additional className for the modal container */
-  className?: string;
-  /** Additional className for the content wrapper */
-  contentClassName?: string;
+  /** sx props forwarded to the Paper element */
+  paperSx?: SxProps<Theme>;
+  /** sx props forwarded to the DialogContent element */
+  contentSx?: SxProps<Theme>;
 }
 
 const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
@@ -63,8 +64,8 @@ export function ModalShell({
   showCloseButton = true,
   closeOnBackdropClick = true,
   closeOnEscape = true,
-  className,
-  contentClassName,
+  paperSx,
+  contentSx,
 }: ModalShellProps) {
   const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
     if (reason === 'backdropClick' && !closeOnBackdropClick) return;
@@ -79,7 +80,7 @@ export function ModalShell({
       maxWidth={sizeToMaxWidth[size]}
       fullWidth
       fullScreen={size === 'full'}
-      className={className}
+      PaperProps={paperSx ? { sx: paperSx } : undefined}
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       {(title || showCloseButton) && (
@@ -101,7 +102,7 @@ export function ModalShell({
           )}
         </DialogTitle>
       )}
-      <DialogContent className={contentClassName}>{children}</DialogContent>
+      <DialogContent sx={contentSx}>{children}</DialogContent>
       {footer && (
         <div
           style={{

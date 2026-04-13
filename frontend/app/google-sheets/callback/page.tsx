@@ -67,7 +67,7 @@ function CallbackContent() {
           </Alert>
         ) : null}
 
-        {!error && !success ? <Spinner className="h-5 w-5 text-primary" /> : null}
+        {!error && !success ? <Spinner size={20} /> : null}
       </Paper>
     </Container>
   );
@@ -78,7 +78,7 @@ export default function GoogleSheetsCallbackPage() {
     <Suspense
       fallback={
         <Container maxWidth="sm" sx={{ mt: 6, textAlign: 'center' }}>
-          <Spinner className="h-10 w-10 text-primary" />
+          <Spinner size={40} />
         </Container>
       }
     >

@@ -1,22 +1,21 @@
 'use client';
 
 import type { ReceiptRecord } from '@/app/lib/api';
-import { Badge } from '@/app/components/ui/badge';
-import { Card, CardContent } from '@/app/components/ui/card';
+import { Box, Chip, Paper, Typography } from '@mui/material';
 import { Camera, FileImage, FileText, Mail, UploadCloud } from 'lucide-react';
 
-const statusVariantMap = {
-  approved: 'success',
-  needs_review: 'warning',
-  failed: 'destructive',
-  parsed: 'info',
-  new: 'outline',
-  draft: 'outline',
-  reviewed: 'info',
-  rejected: 'destructive',
-} as const;
+const statusColorMap: Record<string, { bgcolor: string; color: string }> = {
+  approved: { bgcolor: '#dcfce7', color: '#166534' },
+  needs_review: { bgcolor: '#fef9c3', color: '#854d0e' },
+  failed: { bgcolor: '#fee2e2', color: '#991b1b' },
+  parsed: { bgcolor: '#dbeafe', color: '#1e40af' },
+  new: { bgcolor: '#f3f4f6', color: '#374151' },
+  draft: { bgcolor: '#f3f4f6', color: '#374151' },
+  reviewed: { bgcolor: '#dbeafe', color: '#1e40af' },
+  rejected: { bgcolor: '#fee2e2', color: '#991b1b' },
+};
 
-type ReceiptStatusKey = keyof typeof statusVariantMap;
+type ReceiptStatusKey = keyof typeof statusColorMap;
 
 function formatAmount(amount?: number, currency?: string) {
   if (!Number.isFinite(amount)) {
@@ -34,13 +33,13 @@ function formatAmount(amount?: number, currency?: string) {
 function getSourceIcon(source: string) {
   switch (source) {
     case 'scan':
-      return <Camera className="h-4 w-4" />;
+      return <Camera style={{ width: 16, height: 16 }} />;
     case 'gmail':
-      return <Mail className="h-4 w-4" />;
+      return <Mail style={{ width: 16, height: 16 }} />;
     case 'upload':
-      return <UploadCloud className="h-4 w-4" />;
+      return <UploadCloud style={{ width: 16, height: 16 }} />;
     default:
-      return <FileImage className="h-4 w-4" />;
+      return <FileImage style={{ width: 16, height: 16 }} />;
   }
 }
 
@@ -52,46 +51,90 @@ export interface ReceiptCardProps {
 export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
   const attachment = receipt.metadata?.attachments?.[0];
   const isPdf = attachment?.mimeType === 'application/pdf';
-  const badgeVariant =
-    statusVariantMap[receipt.status as ReceiptStatusKey] ?? statusVariantMap.draft;
+  const statusColors = statusColorMap[receipt.status as ReceiptStatusKey] ?? statusColorMap.draft;
 
   return (
-    <button
+    <Box
+      component="button"
       type="button"
       onClick={() => onOpen?.(receipt)}
       aria-label={`Open receipt ${receipt.parsedData?.vendor || 'Unknown vendor'}`}
-      className="w-full cursor-pointer text-left"
+      sx={{
+        width: '100%',
+        cursor: 'pointer',
+        textAlign: 'left',
+        background: 'none',
+        border: 'none',
+        p: 0,
+      }}
     >
-      <Card className="h-full border-slate-200 shadow-sm transition-colors hover:border-slate-300">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="rounded-2xl bg-slate-100 p-3 text-slate-600">
-                {isPdf ? <FileText className="h-5 w-5" /> : <FileImage className="h-5 w-5" />}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">
+      <Paper
+        elevation={0}
+        sx={{
+          height: '100%',
+          border: '1px solid #e2e8f0',
+          borderRadius: 0,
+          '&:hover': { borderColor: '#cbd5e1' },
+          transition: 'border-color 0.15s',
+        }}
+      >
+        <Box sx={{ p: 2.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+            <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ bgcolor: '#f1f5f9', p: 1.5, color: '#475569' }}>
+                {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#0f172a',
+                  }}
+                >
                   {receipt.parsedData?.vendor || 'Unknown vendor'}
-                </p>
-                <p className="truncate text-sm text-slate-500">{receipt.subject}</p>
-              </div>
-            </div>
-            <Badge variant={badgeVariant}>{receipt.status}</Badge>
-          </div>
+                </Typography>
+                <Typography
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    fontSize: 14,
+                    color: '#64748b',
+                  }}
+                >
+                  {receipt.subject}
+                </Typography>
+              </Box>
+            </Box>
+            <Chip
+              label={receipt.status}
+              size="small"
+              sx={{
+                borderRadius: 0,
+                fontSize: 12,
+                bgcolor: statusColors.bgcolor,
+                color: statusColors.color,
+              }}
+            />
+          </Box>
 
-          <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+          <Box sx={{ mt: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: '#64748b' }}>
             <span>{new Date(receipt.receivedAt).toLocaleDateString()}</span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-slate-600">
+            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, bgcolor: '#f1f5f9', px: 1.25, py: 0.5, color: '#475569' }}>
               {getSourceIcon(receipt.source)}
               {receipt.source}
-            </span>
-          </div>
+            </Box>
+          </Box>
 
-          <div className="mt-4 text-lg font-semibold text-slate-900">
+          <Typography style={{ marginTop: 16, fontSize: 18, fontWeight: 600, color: '#0f172a' }}>
             {formatAmount(receipt.parsedData?.amount, receipt.parsedData?.currency)}
-          </div>
-        </CardContent>
-      </Card>
-    </button>
+          </Typography>
+        </Box>
+      </Paper>
+    </Box>
   );
 }

@@ -60,7 +60,8 @@ export default async function RootLayout({
   return (
     <html lang={resolvedLocale} dir={direction} suppressHydrationWarning>
       <body
-        className={`${manrope.variable} ${nunito.variable} ${ibmPlexSans.variable} ${inter.variable} ${spaceGrotesk.variable} bg-background text-foreground antialiased font-sans`}
+        className={`${manrope.variable} ${nunito.variable} ${ibmPlexSans.variable} ${inter.variable} ${spaceGrotesk.variable}`}
+        style={{ background: 'var(--lumio-bg-page)', color: 'var(--lumio-text-primary)', WebkitFontSmoothing: 'antialiased', fontFamily: 'var(--font-manrope, sans-serif)' }}
       >
         <IntlayerServerProvider>
           <ThemeProvider
@@ -73,8 +74,8 @@ export default async function RootLayout({
               <DynamicPageTitle />
               <AppChrome />
               <main>{children}</main>
-              <div id="fab-portal" className="fixed inset-0 z-[300] pointer-events-none">
-                <div className="relative h-full w-full" />
+              <div id="fab-portal" style={{ position: 'fixed', inset: 0, zIndex: 300, pointerEvents: 'none' }}>
+                <div style={{ position: 'relative', height: '100%', width: '100%' }} />
               </div>
             </Providers>
           </ThemeProvider>

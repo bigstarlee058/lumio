@@ -249,7 +249,7 @@ export default function GoogleSheetsIntegrationPage() {
           color: '#6b7280',
         }}
       >
-        <Spinner className="h-6 w-6" />
+        <Spinner size={24} />
       </Box>
     );
   }
@@ -412,7 +412,7 @@ export default function GoogleSheetsIntegrationPage() {
                       opacity: connectingAccount ? 0.7 : 1,
                     }}
                   >
-                    {connectingAccount ? <Spinner className="h-4 w-4" /> : null}
+                    {connectingAccount ? <Spinner size={16} /> : null}
                     {authStatus.connected
                       ? copy.step1.reconnectButton
                       : copy.step1.connectAccountButton}
@@ -562,7 +562,7 @@ export default function GoogleSheetsIntegrationPage() {
                   width: 'fit-content',
                 }}
               >
-                {submitting ? <Spinner className="h-4 w-4" /> : null}
+                {submitting ? <Spinner size={16} /> : null}
                 {t.step1.connectButton}
               </button>
 
@@ -882,7 +882,7 @@ export default function GoogleSheetsIntegrationPage() {
                           }}
                         >
                           {syncingId === item.id ? (
-                            <Spinner className="h-4 w-4" />
+                            <Spinner size={16} />
                           ) : (
                             <RefreshCcw style={{ height: 16, width: 16 }} />
                           )}
@@ -910,7 +910,7 @@ export default function GoogleSheetsIntegrationPage() {
                           }}
                         >
                           {removingId === item.id ? (
-                            <Spinner className="h-4 w-4" />
+                            <Spinner size={16} />
                           ) : (
                             <Trash2 style={{ height: 16, width: 16 }} />
                           )}

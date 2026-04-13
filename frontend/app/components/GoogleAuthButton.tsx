@@ -136,7 +136,7 @@ export function GoogleAuthButton({
             mt: 1,
           }}
         >
-          <Spinner className="h-4 w-4 text-primary" />
+          <Spinner size={16} />
         </Box>
       )}
     </Box>

@@ -4,6 +4,7 @@ import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useDraggable } from '@dnd-kit/core';
+import { Box, Chip, IconButton, Tooltip, Typography } from '@mui/material';
 import { Download, Eye, Folder, GripVertical, RotateCcw, Share2, Trash2 } from 'lucide-react';
 import React from 'react';
 import type { CSSProperties } from 'react';
@@ -106,31 +107,44 @@ export const DraggableFileRow = React.memo(
         ref={setNodeRef}
         data-tour-id={dataTourId}
         style={style}
-        className={`transition-all duration-150 hover:bg-gray-50 dark:hover:bg-slate-700/40 ${isDragging ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
       >
         {isTrashView && (
-          <td className="px-6 py-5">
+          <td style={{ padding: '20px 24px' }}>
             <Checkbox
               checked={selectedTrashIds.includes(file.id)}
               onCheckedChange={() => toggleTrashSelection(file.id)}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               aria-label={trashSelectRowLabel}
             />
           </td>
         )}
-        <td className="px-6 py-5">
-          <div
-            className={`flex items-center gap-1 ${canEditFile(file) ? 'cursor-grab active:cursor-grabbing' : ''}`}
+        <td style={{ padding: '20px 24px' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              cursor: canEditFile(file) ? 'grab' : 'default',
+            }}
             {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
             title={canEditFile(file) ? dragDropRowHintLabel : undefined}
           >
             {canEditFile(file) && (
-              <div className="p-1 text-gray-300 dark:text-slate-600 pointer-events-none">
+              <Box sx={{ p: 0.5, color: '#d1d5db', pointerEvents: 'none' }}>
                 <GripVertical size={20} />
-              </div>
+              </Box>
             )}
-            <button
-              className="flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 bg-transparent border-0 p-0"
+            <Box
+              component="button"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                p: 0,
+                '&:hover': { opacity: 0.8 },
+              }}
               onClick={() => {
                 setPreviewFileId(file.id);
                 setPreviewFileName(file.fileName);
@@ -143,12 +157,26 @@ export const DraggableFileRow = React.memo(
                 fileName={file.fileName}
                 fileId={file.id}
                 size={40}
-                className="text-red-500 dark:text-red-400"
               />
-            </button>
-            <div className="min-w-0 flex-1">
-              <button
-                className="text-base font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors bg-transparent border-0 p-0 text-left w-full"
+            </Box>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <Box
+                component="button"
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: '#111827',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  background: 'none',
+                  border: 'none',
+                  p: 0,
+                  textAlign: 'left',
+                  width: '100%',
+                  '&:hover': { color: '#2563eb' },
+                }}
                 title={file.fileName}
                 onClick={() => {
                   setPreviewFileId(file.id);
@@ -157,61 +185,61 @@ export const DraggableFileRow = React.memo(
                 }}
               >
                 {truncateFileNameForDisplay(file.fileName)}
-              </button>
-              <div className="mt-1 flex items-center gap-2 flex-wrap text-xs text-gray-500 dark:text-gray-300">
+              </Box>
+              <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                 {file.folder?.name && (
-                  <span className="inline-flex items-center gap-1 text-gray-500 dark:text-gray-300">
-                    <Folder className="h-3.5 w-3.5" />
+                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: '#6b7280' }}>
+                    <Folder style={{ width: 14, height: 14 }} />
                     {file.folder.name}
-                  </span>
+                  </Box>
                 )}
                 {isTrashView && renderTrashExpiryBadge(file.deletedAt)}
                 {file.sharedLinksCount > 0 && (
-                  <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-300">
+                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: '#2563eb' }}>
                     <Share2 size={12} />
                     {file.sharedLinksCount} {sharedLinksShortLabel}
-                  </span>
+                  </Box>
                 )}
                 {renderAvailabilityChip(file.fileAvailability)}
-              </div>
+              </Box>
               {file.tags && file.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
+                <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {file.tags.map(tag => (
                     <span key={tag.id} className={tagChipClass(false)} style={getTagChipStyle(tag)}>
                       {tag.name}
                     </span>
                   ))}
-                </div>
+                </Box>
               )}
-            </div>
-          </div>
+            </Box>
+          </Box>
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap">
-          <div className="flex items-center gap-2">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <BankLogoAvatar bankName={file.bankName} size={28} />
-            <span className="text-sm font-medium text-gray-800 dark:text-gray-100">
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#1f2937' }}>
               {getBankDisplayName(file.bankName)}
-            </span>
-          </div>
+            </Typography>
+          </Box>
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap">
-          <span className="text-sm font-mono text-gray-600 dark:text-gray-300">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
+          <Typography component="span" style={{ fontSize: 14, fontFamily: 'monospace', color: '#4b5563' }}>
             {file.metadata?.accountNumber ? `••••${file.metadata.accountNumber.slice(-4)}` : '—'}
-          </span>
+          </Typography>
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
           {formatFileSize(file.fileSize)}
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
           {renderStatusBadge(file.status)}
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          <div className="space-y-1">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <select
               value={file.categoryId || ''}
               onChange={e => handleCategoryChange(file.id, e.target.value)}
@@ -220,7 +248,15 @@ export const DraggableFileRow = React.memo(
                 categoriesLoading ||
                 (!file.isOwner && file.permissionType !== 'editor')
               }
-              className="min-w-40 rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-slate-800/60 disabled:text-gray-400 dark:disabled:text-gray-500"
+              style={{
+                minWidth: 160,
+                borderRadius: 0,
+                border: '1px solid #e5e7eb',
+                background: '#fff',
+                padding: '8px 12px',
+                fontSize: 14,
+                color: '#111827',
+              }}
             >
               <option value="">{categoryNoneLabel}</option>
               {categories
@@ -232,80 +268,93 @@ export const DraggableFileRow = React.memo(
                 ))}
             </select>
             {file.category?.isEnabled === false ? (
-              <p className="text-xs font-medium text-red-600">
+              <Typography style={{ fontSize: 12, fontWeight: 500, color: '#dc2626' }}>
                 {file.category.name} - choose category
-              </p>
+              </Typography>
             ) : null}
-          </div>
+          </Box>
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-sm">
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-              file.isOwner
-                ? 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-slate-600'
-                : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-100 border border-indigo-100 dark:border-indigo-500/30'
-            }`}
-          >
-            {file.isOwner ? ownerLabel : getPermissionLabel(file.permissionType)}
-          </span>
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14 }}>
+          <Chip
+            label={file.isOwner ? ownerLabel : getPermissionLabel(file.permissionType)}
+            size="small"
+            sx={{
+              borderRadius: 0,
+              fontSize: 12,
+              fontWeight: 600,
+              bgcolor: file.isOwner ? '#f3f4f6' : '#eef2ff',
+              color: file.isOwner ? '#1f2937' : '#4338ca',
+              border: `1px solid ${file.isOwner ? '#e5e7eb' : '#c7d2fe'}`,
+            }}
+          />
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-          <div className="flex flex-col leading-tight">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <span>
               {formatDate(isTrashView && file.deletedAt ? file.deletedAt : file.createdAt)}
             </span>
-          </div>
+          </Box>
         </td>
 
-        <td className="px-6 py-5 whitespace-nowrap text-right text-sm">
-          <div className="relative inline-flex items-center justify-end gap-1">
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', textAlign: 'right', fontSize: 14 }}>
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
             {isTrashView ? (
               <>
-                <button
-                  onClick={() => handleRestoreFromTrash(file)}
-                  className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 hover:text-emerald-700 dark:hover:text-emerald-200 transition-colors"
-                  title={trashRestoreActionLabel}
-                >
-                  <RotateCcw size={18} />
-                </button>
-                <button
-                  onClick={() => confirmPermanentDelete(file)}
-                  className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                  title={trashDeleteActionLabel}
-                >
-                  <Trash2 size={18} />
-                </button>
+                <Tooltip title={trashRestoreActionLabel}>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleRestoreFromTrash(file)}
+                    sx={{ color: '#059669', bgcolor: '#ecfdf5', borderRadius: 0, '&:hover': { bgcolor: '#d1fae5' } }}
+                  >
+                    <RotateCcw size={18} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={trashDeleteActionLabel}>
+                  <IconButton
+                    size="small"
+                    onClick={() => confirmPermanentDelete(file)}
+                    sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                  >
+                    <Trash2 size={18} />
+                  </IconButton>
+                </Tooltip>
               </>
             ) : (
               <>
-                <button
-                  onClick={() => handleView(file.id)}
-                  className="p-2 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-emerald-500/20 hover:text-blue-700 dark:hover:text-blue-200 transition-colors"
-                  title={viewTooltipLabel}
-                >
-                  <Eye size={18} />
-                </button>
-                <button
-                  onClick={() => handleDownload(file.id, file.fileName)}
-                  className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700/60 transition-colors"
-                  title={downloadTooltipLabel}
-                >
-                  <Download size={18} />
-                </button>
-                {canEditFile(file) && (
-                  <button
-                    onClick={() => confirmDelete(file)}
-                    className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-                    title={deleteActionLabel}
+                <Tooltip title={viewTooltipLabel}>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleView(file.id)}
+                    sx={{ color: '#2563eb', bgcolor: '#eff6ff', borderRadius: 0, '&:hover': { bgcolor: '#dbeafe' } }}
                   >
-                    <Trash2 size={18} />
-                  </button>
+                    <Eye size={18} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={downloadTooltipLabel}>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDownload(file.id, file.fileName)}
+                    sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#374151', bgcolor: '#f3f4f6' } }}
+                  >
+                    <Download size={18} />
+                  </IconButton>
+                </Tooltip>
+                {canEditFile(file) && (
+                  <Tooltip title={deleteActionLabel}>
+                    <IconButton
+                      size="small"
+                      onClick={() => confirmDelete(file)}
+                      sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                    >
+                      <Trash2 size={18} />
+                    </IconButton>
+                  </Tooltip>
                 )}
               </>
             )}
-          </div>
+          </Box>
         </td>
       </tr>
     );

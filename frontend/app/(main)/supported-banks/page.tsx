@@ -2,6 +2,9 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import { Building2, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -37,72 +40,71 @@ export default function SupportedBanksPage() {
   ];
 
   return (
-    <div className="container-shared px-4 py-8 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex items-start gap-4">
-          <div className="rounded-xl bg-primary/10 p-3 text-primary">
-            <Building2 className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+    <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <Box sx={{ bgcolor: 'primary.main', p: 1.5, color: '#fff', display: 'inline-flex' }}>
+            <Building2 size={24} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: '#111827' }}>
               {resolveLabel(getNestedValue(t, ['title']), 'Supported banks')}
-            </h1>
-            <p className="mt-2 text-sm text-gray-500">
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: '#6b7280' }}>
               {resolveLabel(
                 getNestedValue(t, ['subtitle']),
                 'List of banks currently available for automatic statement parsing.',
               )}
-            </p>
-          </div>
-        </div>
+            </Typography>
+          </Box>
+        </Box>
 
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-          <CheckCircle2 className="h-3.5 w-3.5" />
-          {resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
-        </div>
-      </div>
+        <Box sx={{ mt: 2.5 }}>
+          <Chip
+            icon={<CheckCircle2 size={14} />}
+            label={resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
+            size="small"
+            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: 0 }}
+          />
+        </Box>
+      </Box>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <Box sx={{ mt: 3, display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
         {banks.map(bank => (
-          <article
+          <Box
+            component="article"
             key={bank.id}
             data-supported-bank={bank.id}
-            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+            sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
           >
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-50">
-                <Image
-                  src={bank.logo}
-                  alt={bank.name}
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">{bank.name}</h2>
-                <p className="text-sm text-gray-500">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, bgcolor: '#f9fafb' }}>
+                <Image src={bank.logo} alt={bank.name} width={32} height={32} style={{ objectFit: 'contain' }} />
+              </Box>
+              <Box>
+                <Typography sx={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{bank.name}</Typography>
+                <Typography variant="body2" sx={{ color: '#6b7280' }}>
                   {resolveLabel(getNestedValue(t, ['statusLabel']), 'Status')}:{' '}
                   {resolveLabel(getNestedValue(t, ['supported']), 'Supported')}
-                </p>
-              </div>
-            </div>
+                </Typography>
+              </Box>
+            </Box>
 
-            <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/70 px-3 py-2 text-sm text-gray-700">
-              <span className="font-medium text-gray-800">
+            <Box sx={{ mt: 2, border: '1px solid #f3f4f6', bgcolor: 'rgba(249,250,251,0.7)', px: 1.5, py: 1, fontSize: 14, color: '#374151' }}>
+              <Box component="span" sx={{ fontWeight: 500, color: '#1f2937', mr: 0.5 }}>
                 {resolveLabel(getNestedValue(t, ['formatsLabel']), 'Supported format')}:
-              </span>
+              </Box>
               {resolveLabel(getNestedValue(t, ['pdfStatements']), 'PDF statements')}
-            </div>
+            </Box>
 
-            <p className="mt-3 text-sm text-gray-600">{bank.notes}</p>
-          </article>
+            <Typography variant="body2" sx={{ mt: 1.5, color: '#4b5563' }}>{bank.notes}</Typography>
+          </Box>
         ))}
-      </div>
+      </Box>
 
-      <p className="mt-6 text-sm font-medium text-gray-500">
+      <Typography variant="body2" sx={{ mt: 3, fontWeight: 500, color: '#6b7280' }}>
         {resolveLabel(getNestedValue(t, ['comingSoon']), 'More banks are coming soon')}
-      </p>
-    </div>
+      </Typography>
+    </Box>
   );
 }

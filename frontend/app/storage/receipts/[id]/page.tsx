@@ -10,6 +10,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Box, Typography } from '@mui/material';
 import { ArrowLeft, Download, Table } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -439,25 +440,25 @@ export default function ReceiptDocumentPage() {
 
   if (loading) {
     return (
-      <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex h-full min-h-[320px] items-center justify-center">
+      <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+        <Box sx={{ display: 'flex', height: '100%', minHeight: 320, alignItems: 'center', justifyContent: 'center' }}>
           <Spinner className="h-20 w-20 text-primary" />
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
 
   if (error || !receipt) {
     return (
-      <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-600">
+      <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+        <Box sx={{ mb: 2, border: '1px solid #fecaca', bgcolor: '#fef2f2', p: 2, color: '#dc2626' }}>
           {error || 'Receipt not found'}
-        </div>
+        </Box>
         <DetailActionButton type="button" onClick={() => router.push('/statements')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to statements
         </DetailActionButton>
-      </div>
+      </Box>
     );
   }
 
@@ -466,105 +467,147 @@ export default function ReceiptDocumentPage() {
   const canExportToTable = Boolean(receipt);
 
   return (
-    <div className="container-shared h-full overflow-y-auto overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex w-full flex-col gap-6">
-        <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 dark:border-slate-700/60 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-3">
+    <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+      <Box sx={{ display: 'flex', width: '100%', flexDirection: 'column', gap: 3 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: 2,
+            borderBottom: '1px solid #e2e8f0',
+            pb: 3,
+            alignItems: { sm: 'center' },
+            justifyContent: { sm: 'space-between' },
+          }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             <DetailActionButton type="button" onClick={() => router.push('/statements')}>
               <ArrowLeft className="h-4 w-4" />
               Back to statements
             </DetailActionButton>
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
+            <Box>
+              <Typography
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.2em',
+                  color: '#64748b',
+                }}
+              >
                 Receipt details
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 dark:text-white">
+              </Typography>
+              <Typography
+                component="h1"
+                style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: '#020617' }}
+              >
                 {receipt.subject}
-              </h1>
-              <p className="mt-2 text-sm text-slate-600">
+              </Typography>
+              <Typography style={{ marginTop: 8, fontSize: 14, color: '#475569' }}>
                 {receipt.source} · {new Date(receipt.receivedAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+          </Box>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <DetailActionButton type="button" onClick={handleDownload}>
-            <Download className="h-4 w-4" />
-            Download
-          </DetailActionButton>
-          <DetailActionButton
-            type="button"
-            onClick={() => setExportConfirmOpen(true)}
-            disabled={exportingToTable || !canExportToTable}
-          >
-            <Table className="h-4 w-4" />
-            Export to table
-          </DetailActionButton>
-          <DetailActionButton type="button" onClick={handleApprove} disabled={saving}>
-            {saving ? <Spinner className="size-[18px]" /> : null}
-            Approve receipt
-          </DetailActionButton>
-          </div>
-        </div>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
+            <DetailActionButton type="button" onClick={handleDownload}>
+              <Download className="h-4 w-4" />
+              Download
+            </DetailActionButton>
+            <DetailActionButton
+              type="button"
+              onClick={() => setExportConfirmOpen(true)}
+              disabled={exportingToTable || !canExportToTable}
+            >
+              <Table className="h-4 w-4" />
+              Export to table
+            </DetailActionButton>
+            <DetailActionButton type="button" onClick={handleApprove} disabled={saving}>
+              {saving ? <Spinner className="size-[18px]" /> : null}
+              Approve receipt
+            </DetailActionButton>
+          </Box>
+        </Box>
 
-        <div className="grid items-stretch gap-6 xl:grid-cols-[minmax(360px,0.95fr)_minmax(0,1.05fr)]">
-          <section className="flex h-full min-h-0 flex-col">
-            <div className="flex h-full min-h-[420px] flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-700/60 dark:bg-slate-900">
-              <div className="border-b border-slate-200 px-5 py-4 dark:border-slate-700/60">
-                <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Original document</h2>
-              </div>
-              <div className="flex-1 overflow-auto bg-slate-50 p-4 dark:bg-slate-950">
+        <Box
+          sx={{
+            display: 'grid',
+            alignItems: 'stretch',
+            gap: 3,
+            gridTemplateColumns: { xs: '1fr', xl: 'minmax(360px, 0.95fr) minmax(0, 1.05fr)' },
+          }}
+        >
+          <Box component="section" sx={{ display: 'flex', height: '100%', minHeight: 0, flexDirection: 'column' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                height: '100%',
+                minHeight: 420,
+                flexDirection: 'column',
+                overflow: 'hidden',
+                border: '1px solid #e2e8f0',
+                bgcolor: '#fff',
+              }}
+            >
+              <Box sx={{ borderBottom: '1px solid #e2e8f0', px: 2.5, py: 2 }}>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                  Original document
+                </Typography>
+              </Box>
+              <Box sx={{ flex: 1, overflow: 'auto', bgcolor: '#f8fafc', p: 2 }}>
                 {previewLoading ? (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
                     Preparing preview...
-                  </div>
+                  </Box>
                 ) : previewError ? (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
                     {previewError}
-                  </div>
+                  </Box>
                 ) : previewUrl ? (
                   isPdf ? (
                     <iframe
                       src={previewUrl}
                       title={receipt.subject}
-                      className="h-full min-h-[760px] w-full rounded-2xl border border-slate-200 bg-white dark:border-slate-700/60 dark:bg-slate-900"
+                      style={{ height: '100%', minHeight: 760, width: '100%', border: '1px solid #e2e8f0', background: '#fff', display: 'block' }}
                     />
                   ) : (
-                    <div className="flex min-h-full min-w-full justify-center">
+                    <Box sx={{ display: 'flex', minHeight: '100%', minWidth: '100%', justifyContent: 'center' }}>
                       <img
                         src={previewUrl}
                         alt={receipt.subject}
-                        className="h-auto min-h-0 w-[180%] min-w-[720px] max-w-none rounded-2xl object-contain"
+                        style={{ height: 'auto', minHeight: 0, width: '180%', minWidth: 720, maxWidth: 'none', objectFit: 'contain' }}
                       />
-                    </div>
+                    </Box>
                   )
                 ) : (
-                  <div className="flex h-full min-h-[388px] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
                     Preview unavailable
-                  </div>
+                  </Box>
                 )}
-              </div>
-            </div>
-          </section>
+              </Box>
+            </Box>
+          </Box>
 
-          <section className="h-full rounded-3xl border border-slate-200 bg-white p-6 dark:border-slate-700/60 dark:bg-slate-900">
-            <div className="mb-5 flex items-center justify-between gap-4 border-b border-slate-200 pb-4 dark:border-slate-700/60">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-950 dark:text-slate-100">Parsed fields</h2>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <Box component="section" sx={{ height: '100%', border: '1px solid #e2e8f0', bgcolor: '#fff', p: 3 }}>
+            <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, borderBottom: '1px solid #e2e8f0', pb: 2 }}>
+              <Box>
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: '#020617' }}>
+                  Parsed fields
+                </Typography>
+                <Typography style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
                   Review and correct the extracted receipt data before approval.
-                </p>
-              </div>
-            </div>
+                </Typography>
+              </Box>
+            </Box>
 
             <ReceiptParsedDataForm
               value={formValue}
               categories={categories}
               onChange={handleFormChange}
             />
-          </section>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
       <Dialog
         open={exportConfirmOpen}
@@ -576,34 +619,58 @@ export default function ReceiptDocumentPage() {
           Confirm export
         </DialogTitle>
         <DialogContent dividers>
-          <p className="text-base leading-8 text-gray-700">
+          <Typography style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>
             Are you sure you want to export this statement to a custom table?
-          </p>
+          </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
-          <button
+          <Box
+            component="button"
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            className="rounded-md border border-gray-200 bg-white px-6 py-2.5 text-base font-medium text-gray-600 hover:border-primary hover:text-primary"
+            sx={{
+              border: '1px solid #e5e7eb',
+              bgcolor: '#fff',
+              px: 3,
+              py: 1.25,
+              fontSize: 16,
+              fontWeight: 500,
+              color: '#4b5563',
+              cursor: 'pointer',
+              '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+            }}
           >
             Cancel
-          </button>
-          <button
+          </Box>
+          <Box
+            component="button"
             type="button"
             onClick={() => {
               setExportConfirmOpen(false);
               void handleExportToTable();
             }}
             disabled={exportingToTable || !canExportToTable}
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-2.5 text-base font-medium text-white shadow-none hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              bgcolor: 'primary.main',
+              px: 3,
+              py: 1.25,
+              fontSize: 16,
+              fontWeight: 500,
+              color: '#fff',
+              cursor: 'pointer',
+              border: 'none',
+              '&:hover': { bgcolor: 'primary.dark' },
+              '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+            }}
           >
-            {exportingToTable ? (
-              <Spinner className="h-4 w-4" />
-            ) : null}
+            {exportingToTable ? <Spinner className="h-4 w-4" /> : null}
             Export
-          </button>
+          </Box>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 }

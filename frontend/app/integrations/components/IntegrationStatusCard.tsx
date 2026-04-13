@@ -77,7 +77,7 @@ export function IntegrationStatusCard({
                   disabled={saving || syncing}
                   startIcon={
                     syncing ? (
-                      <Spinner className="h-4 w-4" />
+                      <Spinner size={16} />
                     ) : (
                       <RefreshCcw style={{ height: 16, width: 16 }} />
                     )
@@ -102,7 +102,7 @@ export function IntegrationStatusCard({
                   disabled={saving}
                   startIcon={
                     saving ? (
-                      <Spinner className="h-4 w-4" />
+                      <Spinner size={16} />
                     ) : (
                       <Link2Off style={{ height: 16, width: 16 }} />
                     )
@@ -128,7 +128,7 @@ export function IntegrationStatusCard({
                 disabled={saving}
                 startIcon={
                   saving ? (
-                    <Spinner className="h-4 w-4" />
+                    <Spinner size={16} />
                   ) : (
                     <RefreshCcw style={{ height: 16, width: 16 }} />
                   )

@@ -1,11 +1,10 @@
 'use client';
 
 import { Button } from '@/app/components/ui/button';
-import { Card, CardContent } from '@/app/components/ui/card';
 import { Input } from '@/app/components/ui/input';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { Select } from '@/app/components/ui/select';
-import { cn } from '@/app/lib/utils';
+import { Box, IconButton, Typography } from '@mui/material';
 import { FileImage, FileText, UploadCloud, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -120,41 +119,68 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
         </>
       }
     >
-      <div className="space-y-5">
-        <Card className="border-dashed border-slate-300 bg-slate-50/80 shadow-none">
-          <CardContent className="p-0">
-            <label
-              htmlFor="receipt-upload-input"
-              className="flex cursor-pointer flex-col items-center gap-3 px-6 py-10 text-center"
-            >
-              <div className="rounded-full bg-white p-4 text-primary shadow-sm">
-                <UploadCloud className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-base font-semibold text-slate-900">
-                  Drop receipt images or PDFs here
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Up to 5 files, 10 MB each. JPG, PNG, WEBP, BMP, TIFF, and PDF supported.
-                </p>
-              </div>
-            </label>
-            <Input
-              id="receipt-upload-input"
-              className="sr-only"
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,application/pdf"
-              multiple
-              aria-label="Select receipt files"
-              onChange={event => {
-                validateAndStoreFiles(Array.from(event.target.files ?? []));
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box
+          sx={{
+            border: '1px dashed #cbd5e1',
+            bgcolor: 'rgba(248, 250, 252, 0.8)',
+          }}
+        >
+          <Box
+            component="label"
+            htmlFor="receipt-upload-input"
+            sx={{
+              display: 'flex',
+              cursor: 'pointer',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 1.5,
+              px: 3,
+              py: 5,
+              textAlign: 'center',
+            }}
+          >
+            <Box
+              sx={{
+                borderRadius: '50%',
+                bgcolor: '#fff',
+                p: 2,
+                color: 'primary.main',
               }}
-            />
-          </CardContent>
-        </Card>
+            >
+              <UploadCloud style={{ width: 24, height: 24 }} />
+            </Box>
+            <Box>
+              <Typography style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>
+                Drop receipt images or PDFs here
+              </Typography>
+              <Typography style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
+                Up to 5 files, 10 MB each. JPG, PNG, WEBP, BMP, TIFF, and PDF supported.
+              </Typography>
+            </Box>
+          </Box>
+          <Input
+            id="receipt-upload-input"
+            style={{
+              position: 'absolute',
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+            }}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/bmp,image/tiff,application/pdf"
+            multiple
+            aria-label="Select receipt files"
+            onChange={event => {
+              validateAndStoreFiles(Array.from(event.target.files ?? []));
+            }}
+          />
+        </Box>
 
-        <div className="space-y-2">
-          <label htmlFor="receipt-language" className="text-sm font-medium text-slate-700">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <label htmlFor="receipt-language" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
             OCR language
           </label>
           <Select
@@ -169,61 +195,87 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
               </option>
             ))}
           </Select>
-        </div>
+        </Box>
 
         {visibleError ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {visibleError}
-          </div>
+          <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fef2f2', px: 2, py: 1.5 }}>
+            <Typography style={{ fontSize: 14, color: '#b91c1c' }}>{visibleError}</Typography>
+          </Box>
         ) : null}
 
         {uploading ? (
-          <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
-            Uploading... {progress}%
-          </div>
+          <Box sx={{ border: '1px solid #bfdbfe', bgcolor: '#eff6ff', px: 2, py: 1.5 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#1d4ed8' }}>
+              Uploading... {progress}%
+            </Typography>
+          </Box>
         ) : null}
 
         {files.length > 0 ? (
-          <div className="space-y-2">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             {files.map(file => {
               const isPdf = file.type === 'application/pdf';
               return (
-                <div
+                <Box
                   key={`${file.name}-${file.size}`}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    border: '1px solid #e2e8f0',
+                    bgcolor: '#fff',
+                    px: 2,
+                    py: 1.5,
+                  }}
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="rounded-full bg-slate-100 p-2 text-slate-600">
-                      {isPdf ? <FileText className="h-4 w-4" /> : <FileImage className="h-4 w-4" />}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-slate-900">{file.name}</p>
-                      <p className="text-xs text-slate-500">
+                  <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
+                    <Box sx={{ borderRadius: '50%', bgcolor: '#f1f5f9', p: 1, color: '#475569' }}>
+                      {isPdf ? (
+                        <FileText style={{ width: 16, height: 16 }} />
+                      ) : (
+                        <FileImage style={{ width: 16, height: 16 }} />
+                      )}
+                    </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: '#0f172a',
+                        }}
+                      >
+                        {file.name}
+                      </Typography>
+                      <Typography style={{ fontSize: 12, color: '#64748b' }}>
                         {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <IconButton
+                    size="small"
                     aria-label={`Remove ${file.name}`}
-                    className={cn(
-                      'inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-slate-400 transition-colors',
-                      'hover:bg-slate-100 hover:text-slate-700',
-                    )}
                     onClick={() => {
                       setFiles(currentFiles =>
                         currentFiles.filter(currentFile => currentFile !== file),
                       );
                     }}
+                    sx={{
+                      color: '#94a3b8',
+                      '&:hover': { bgcolor: '#f1f5f9', color: '#334155' },
+                      borderRadius: 0,
+                    }}
                   >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
+                    <X style={{ width: 16, height: 16 }} />
+                  </IconButton>
+                </Box>
               );
             })}
-          </div>
+          </Box>
         ) : null}
-      </div>
+      </Box>
     </ModalShell>
   );
 }

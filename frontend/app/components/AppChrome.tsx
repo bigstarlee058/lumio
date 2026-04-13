@@ -33,7 +33,7 @@ export default function AppChrome() {
   return (
     <>
       <GlobalNavHeight />
-      <div className="fixed top-0 inset-x-0 z-50" data-global-nav>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }} data-global-nav>
         <Navigation />
       </div>
       <div

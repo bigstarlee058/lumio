@@ -109,8 +109,8 @@ export function ChangelogModal({
       onClose={onClose}
       size="full"
       showCloseButton={false}
-      className="h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-none overflow-hidden rounded-[22px] border border-[#d4e3d6] shadow-[0_24px_80px_rgba(16,24,40,0.16)]"
-      contentClassName="!h-full !p-0"
+      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: '22px', border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
+      contentSx={{ height: '100%', p: 0 }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'background.paper' }}>
         <Box

@@ -136,18 +136,18 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
         : pt?.status?.disconnected?.value || pt?.status?.disconnected || 'Disconnected';
 
   return (
-    <div className="rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-4 shadow-sm">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
+    <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ padding: 8, borderRadius: '50%', background: 'rgba(var(--lumio-primary-rgb,99,102,241),0.1)', color: 'var(--lumio-primary,#6366f1)' }}>
             <Image src={provider.logoSrc} alt={provider.logoAlt} width={20} height={20} />
           </div>
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-300">
+            <p style={{ fontSize: 14, color: '#6b7280' }}>
               {pt?.title?.value || pt?.title || `${provider.providerName} Sync`}
             </p>
-            <p className="font-semibold text-gray-900 dark:text-white">{statusLabel}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-300">
+            <p style={{ fontWeight: 600, color: '#111827' }}>{statusLabel}</p>
+            <p style={{ fontSize: 12, color: '#6b7280' }}>
               {loading
                 ? pt?.loading?.value || pt?.loading || 'Loading...'
                 : (pt?.lastSync?.value || 'Last sync: {time}').replace(
@@ -157,25 +157,25 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {status?.connected ? (
             <>
               <button
                 type="button"
                 onClick={handleImport}
                 disabled={working}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--lumio-primary,#6366f1)', color: '#fff', border: 'none', padding: '8px 16px', fontSize: 14, fontWeight: 600, cursor: working ? 'not-allowed' : 'pointer', opacity: working ? 0.7 : 1 }}
               >
-                <UploadCloud className="h-4 w-4" />
+                <UploadCloud size={16} />
                 {pt?.actions?.import?.value || pt?.actions?.import || 'Import'}
               </button>
               <button
                 type="button"
                 onClick={handleSyncNow}
                 disabled={working}
-                className="inline-flex items-center gap-2 rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'transparent', color: 'var(--lumio-primary,#6366f1)', border: '1px solid var(--lumio-primary,#6366f1)', padding: '8px 16px', fontSize: 14, fontWeight: 600, cursor: working ? 'not-allowed' : 'pointer', opacity: working ? 0.7 : 1 }}
               >
-                <RefreshCcw className="h-4 w-4" />
+                <RefreshCcw size={16} />
                 {pt?.actions?.syncNow?.value || pt?.actions?.syncNow || 'Sync Now'}
               </button>
             </>
@@ -184,17 +184,17 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
               type="button"
               onClick={handleConnect}
               disabled={working}
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--lumio-primary,#6366f1)', color: '#fff', border: 'none', padding: '8px 16px', fontSize: 14, fontWeight: 600, cursor: working ? 'not-allowed' : 'pointer', opacity: working ? 0.7 : 1 }}
             >
-              <RefreshCcw className="h-4 w-4" />
+              <RefreshCcw size={16} />
               {pt?.actions?.connect?.value || pt?.actions?.connect || 'Connect'}
             </button>
           )}
           <Link
             href={provider.settingsHref}
-            className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-slate-600 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', textDecoration: 'none' }}
           >
-            <Settings className="h-4 w-4" />
+            <Settings size={16} />
             {pt?.actions?.settings?.value || pt?.actions?.settings || 'Settings'}
           </Link>
         </div>

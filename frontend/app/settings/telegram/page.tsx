@@ -157,7 +157,7 @@ export default function TelegramSettingsPage() {
         className="container-shared"
         sx={{ mt: 8, display: 'flex', justifyContent: 'center' }}
       >
-        <Spinner className="h-10 w-10 text-primary" />
+        <Spinner size={40} />
       </Container>
     );
   }

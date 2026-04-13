@@ -10,7 +10,7 @@ import {
   closestCenter,
   pointerWithin,
 } from '@dnd-kit/core';
-import { Popover } from '@mui/material';
+import { Box, Chip, IconButton, Popover, TextField, Typography } from '@mui/material';
 import {
   Bookmark,
   Check,
@@ -477,20 +477,20 @@ function StoragePageContent({
       const label = isExpired
         ? t.trash.expiresToday.value
         : t.trash.expiresIn.value.replace('{days}', String(daysLeft));
-      const toneClass = isExpired
-        ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-100 dark:border-red-500/30'
+      const chipSx = isExpired
+        ? { bgcolor: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }
         : isSoon
-          ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-100 dark:border-amber-500/30'
-          : 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700/60';
+          ? { bgcolor: '#fffbeb', color: '#92400e', border: '1px solid #fde68a' }
+          : { bgcolor: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0' };
       return (
-        <span
-          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold ${toneClass}`}
+        <Chip
+          label={label}
+          size="small"
           title={info.expiresAt.toLocaleDateString(
             locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US',
           )}
-        >
-          {label}
-        </span>
+          sx={{ borderRadius: 0, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx }}
+        />
       );
     },
     [getTrashExpiryInfo, locale, t],
@@ -604,14 +604,30 @@ function StoragePageContent({
     (availability?: FileAvailability) => {
       if (!availability) return null;
       const status = availability.status;
+      const dotColor =
+        status === 'both'
+          ? '#22c55e'
+          : status === 'missing'
+            ? '#ef4444'
+            : '#3b82f6';
+      const chipSx =
+        status === 'missing'
+          ? { bgcolor: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }
+          : status === 'both'
+            ? { bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }
+            : { bgcolor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' };
       return (
-        <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${getAvailabilityColor(status)}`}
+        <Chip
+          label={
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dotColor, flexShrink: 0 }} />
+              {getAvailabilityLabel(status)}
+            </Box>
+          }
+          size="small"
           title={getAvailabilityTooltip(status)}
-        >
-          <span className={`h-2 w-2 rounded-full ${getAvailabilityDot(status)}`} />
-          {getAvailabilityLabel(status)}
-        </span>
+          sx={{ borderRadius: 0, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx }}
+        />
       );
     },
     [getAvailabilityTooltip, getAvailabilityLabel],
@@ -798,43 +814,55 @@ function StoragePageContent({
     `inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${
       isActive
         ? 'bg-primary/10 text-primary border-primary/30'
-        : 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-slate-800/60 dark:text-gray-200 dark:border-slate-700/60'
+        : 'bg-gray-50 text-gray-700 border-gray-200'
     }`;
-  const listToggleClass = (isActive: boolean) =>
-    `inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-      isActive
-        ? 'bg-primary/10 text-primary border-primary/30'
-        : 'bg-white dark:bg-slate-900 text-gray-600 dark:text-gray-200 border-gray-200 dark:border-slate-700/60 hover:bg-gray-50 dark:hover:bg-slate-800'
-    }`;
+  const listToggleSx = (isActive: boolean) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 1,
+    border: '1px solid',
+    px: 2,
+    py: 1,
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: 'pointer',
+    bgcolor: isActive ? 'rgba(79,70,229,0.1)' : '#fff',
+    color: isActive ? 'primary.main' : '#4b5563',
+    borderColor: isActive ? 'rgba(79,70,229,0.3)' : '#e5e7eb',
+    '&:hover': isActive ? {} : { bgcolor: '#f9fafb' },
+    '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+  });
   const renderStatusBadge = useCallback(
     (status: string) => {
       const tone = getStatusTone(status);
-      const toneClass =
+      const dotColor =
         tone === 'success'
-          ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/10 dark:text-green-100 dark:border-green-500/30'
+          ? '#22c55e'
           : tone === 'warning'
-            ? 'bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-amber-500/10 dark:text-amber-100 dark:border-amber-500/30'
+            ? '#eab308'
             : tone === 'error'
-              ? 'bg-red-100 text-red-800 border-red-200 dark:bg-red-500/10 dark:text-red-100 dark:border-red-500/30'
-              : 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-slate-800/70 dark:text-gray-100 dark:border-slate-700/60';
+              ? '#ef4444'
+              : '#9ca3af';
+      const chipSx =
+        tone === 'success'
+          ? { bgcolor: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0' }
+          : tone === 'warning'
+            ? { bgcolor: '#fefce8', color: '#854d0e', border: '1px solid #fef08a' }
+            : tone === 'error'
+              ? { bgcolor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca' }
+              : { bgcolor: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb' };
 
       return (
-        <span
-          className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${toneClass}`}
-        >
-          <span
-            className={`h-2 w-2 rounded-full ${
-              tone === 'success'
-                ? 'bg-green-500'
-                : tone === 'warning'
-                  ? 'bg-yellow-500'
-                  : tone === 'error'
-                    ? 'bg-red-500'
-                    : 'bg-gray-400'
-            }`}
-          />
-          {getStatusLabel(status)}
-        </span>
+        <Chip
+          label={
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dotColor, flexShrink: 0 }} />
+              {getStatusLabel(status)}
+            </Box>
+          }
+          size="small"
+          sx={{ borderRadius: 0, fontSize: 12, fontWeight: 500, height: 'auto', py: 0.5, ...chipSx }}
+        />
       );
     },
     [getStatusLabel],
@@ -847,23 +875,35 @@ function StoragePageContent({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="container-shared px-4 sm:px-6 lg:px-8 py-8">
+      <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
         {!isTrashView && (
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700/60 p-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="p-2 rounded-full bg-primary/10 text-primary">
-                  <Folder className="h-6 w-6" />
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.title}</h1>
-              </div>
-              <p className="text-gray-500 dark:text-gray-300">{t.subtitle}</p>
-            </div>
-            <div className="flex w-full flex-col gap-3 md:w-auto">
-              <div className="flex flex-col md:flex-row md:items-center gap-3 w-full md:w-auto relative">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-2 rounded-full border border-gray-200 dark:border-slate-700/60 bg-gray-50 dark:bg-slate-900 p-1">
-                    <div className="relative">
+          <Box
+            sx={{
+              bgcolor: '#fff',
+              border: '1px solid #e5e7eb',
+              p: 3,
+              mb: 3,
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              alignItems: { md: 'center' },
+              justifyContent: 'space-between',
+              gap: 2,
+            }}
+          >
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                <Box sx={{ p: 1, borderRadius: '50%', bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main' }}>
+                  <Folder style={{ width: 24, height: 24 }} />
+                </Box>
+                <Typography component="h1" style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{t.title}</Typography>
+              </Box>
+              <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.subtitle}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', width: { xs: '100%', md: 'auto' }, flexDirection: 'column', gap: 1.5 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, gap: 1.5, position: 'relative' }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 0.5 }}>
+                    <Box sx={{ position: 'relative' }}>
                       <DroppableHeaderTrigger
                         onDragOver={() => {
                           if (activeModal !== 'folders') {
@@ -872,59 +912,64 @@ function StoragePageContent({
                           }
                         }}
                       >
-                        <button
+                        <Box
+                          component="button"
                           type="button"
                           onClick={() => {
                             setFolderModalFromDrag(false);
                             openModal('folders');
                           }}
                           disabled={isTrashView}
-                          className={`${listToggleClass(isFolderActive)} ${
-                            draggingFile
-                              ? 'ring-2 ring-primary/30 ring-offset-2 ring-offset-white dark:ring-offset-slate-900'
-                              : ''
-                          }`}
                           title={t.folders.title.value}
+                          sx={{
+                            ...listToggleSx(isFolderActive),
+                            ...(draggingFile ? { outline: '2px solid rgba(79,70,229,0.3)', outlineOffset: 2 } : {}),
+                          }}
                         >
-                          <Folder className="h-4 w-4" />
+                          <Folder style={{ width: 16, height: 16 }} />
                           {t.folders.title}
-                        </button>
+                        </Box>
                       </DroppableHeaderTrigger>
-                    </div>
-                    <button
+                    </Box>
+                    <Box
+                      component="button"
                       type="button"
                       onClick={() => handleListChange('active')}
-                      className={listToggleClass(!isTrashView)}
+                      sx={listToggleSx(!isTrashView)}
                     >
-                      <FileText className="h-4 w-4" />
+                      <FileText style={{ width: 16, height: 16 }} />
                       {t.tabs.all}
-                    </button>
-                    <button
+                    </Box>
+                    <Box
+                      component="button"
                       type="button"
                       onClick={() => handleListChange('trash')}
-                      className={listToggleClass(isTrashView)}
+                      sx={listToggleSx(isTrashView)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 style={{ width: 16, height: 16 }} />
                       {t.tabs.trash}
-                    </button>
-                  </div>
-                </div>
-                <div className="relative w-full md:w-80" data-tour-id="file-search">
-                  <Search className="h-4 w-4 text-gray-400 dark:text-gray-500 absolute left-3 top-3" />
-                  <input
-                    type="text"
+                    </Box>
+                  </Box>
+                </Box>
+                <Box sx={{ position: 'relative', width: { xs: '100%', md: 320 } }} data-tour-id="file-search">
+                  <Search style={{ width: 16, height: 16, color: '#9ca3af', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+                  <TextField
+                    size="small"
                     value={searchQuery}
                     onChange={e => handleSearchChange(e.target.value)}
                     placeholder={t.searchPlaceholder.value}
                     aria-label={t.searchFiles.value}
-                    className="w-full rounded-full border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 py-2.5 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    sx={{
+                      width: '100%',
+                      '& .MuiOutlinedInput-root': { borderRadius: 0, pl: 4 },
+                    }}
                   />
-                </div>
-                <div className="relative w-full md:w-56">
+                </Box>
+                <Box sx={{ position: 'relative', width: { xs: '100%', md: 224 } }}>
                   <select
                     value={sortKey}
                     onChange={e => handleSortChange(e.target.value)}
-                    className="w-full rounded-full border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 py-2.5 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    style={{ width: '100%', border: '1px solid #e5e7eb', background: '#fff', padding: '8px 40px 8px 12px', fontSize: 14, color: '#111827', outline: 'none', appearance: 'auto' }}
                   >
                     <option value="createdAt:desc">{t.sort.newest}</option>
                     <option value="createdAt:asc">{t.sort.oldest}</option>
@@ -933,176 +978,270 @@ function StoragePageContent({
                     <option value="bankName:asc">{t.sort.bankAsc}</option>
                     <option value="bankName:desc">{t.sort.bankDesc}</option>
                   </select>
-                </div>
-                <div className="relative">
-                  <button
+                </Box>
+                <Box sx={{ position: 'relative' }}>
+                  <Box
+                    component="button"
                     onClick={() => setFilterOpen(true)}
                     data-tour-id="filters-button"
-                    className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      px: 2,
+                      py: 1,
+                      border: 'none',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: '#fff',
+                      bgcolor: 'primary.main',
+                      cursor: 'pointer',
+                      gap: 1,
+                      '&:hover': { bgcolor: 'primary.dark' },
+                    }}
                   >
-                    <Filter className="-ml-1 mr-2 h-5 w-5" />
+                    <Filter style={{ width: 20, height: 20 }} />
                     {t.filters.button}
-                    {filtersApplied && <span className="ml-2 h-2 w-2 rounded-full bg-white" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                    {filtersApplied && <Box sx={{ ml: 1, width: 8, height: 8, borderRadius: '50%', bgcolor: '#fff' }} />}
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         )}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="inline-flex rounded-full bg-gray-100 dark:bg-slate-800 p-1">
-              <button
+        <Box sx={{ mb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <Box sx={{ display: 'inline-flex', bgcolor: '#f3f4f6', p: 0.5 }}>
+              <Box
+                component="button"
                 type="button"
                 onClick={() => setSelectedStorageProvider('google')}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  selectedStorageProvider === 'google'
-                    ? 'bg-white dark:bg-slate-700 shadow-sm'
-                    : 'bg-transparent'
-                }`}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 1.5,
+                  py: 0.75,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  border: 'none',
+                  bgcolor: selectedStorageProvider === 'google' ? '#fff' : 'transparent',
+                }}
               >
-                <Image
-                  src="/icons/google-drive-icon.png"
-                  alt="Google Drive"
-                  width={18}
-                  height={18}
-                />
-                <span className="whitespace-nowrap">Google Drive</span>
-              </button>
-              <button
+                <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={18} height={18} />
+                <Box component="span" sx={{ whiteSpace: 'nowrap' }}>Google Drive</Box>
+              </Box>
+              <Box
+                component="button"
                 type="button"
                 onClick={() => setSelectedStorageProvider('dropbox')}
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  selectedStorageProvider === 'dropbox'
-                    ? 'bg-white dark:bg-slate-700 shadow-sm'
-                    : 'bg-transparent'
-                }`}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 1.5,
+                  py: 0.75,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  border: 'none',
+                  bgcolor: selectedStorageProvider === 'dropbox' ? '#fff' : 'transparent',
+                }}
               >
                 <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={18} height={18} />
-                <span className="whitespace-nowrap">Dropbox</span>
-              </button>
-            </div>
-          </div>
+                <Box component="span" sx={{ whiteSpace: 'nowrap' }}>Dropbox</Box>
+              </Box>
+            </Box>
+          </Box>
 
           {selectedStorageProvider === 'google' ? (
             <GoogleDriveStorageWidget locale={locale} />
           ) : (
             <DropboxStorageWidget locale={locale} />
           )}
-        </div>
-        )
+        </Box>
         {!isTrashView && (
-          <div className="rounded-lg border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-4 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-red-100 dark:bg-red-900/20 text-red-600 rounded-lg flex items-center justify-center">
+          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#fff', p: 2, mb: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ p: 1, bgcolor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Image src="/icons/gmail.png" alt="Gmail" width={20} height={20} />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-300">Gmail Receipts</p>
-                  <p className="font-semibold text-gray-900 dark:text-white">
+                </Box>
+                <Box>
+                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>Gmail Receipts</Typography>
+                  <Typography style={{ fontWeight: 600, color: '#111827' }}>
                     Auto-imported receipts from Gmail
-                  </p>
-                </div>
-              </div>
+                  </Typography>
+                </Box>
+              </Box>
 
-              <div className="flex flex-wrap gap-2">
-                {/** View button disabled when Gmail not connected */}
-                <button
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                <Box
+                  component="button"
                   onClick={() => router.push('/statements')}
                   disabled={!(gmailStatus?.connected === true) || gmailLoading}
-                  aria-disabled={!(gmailStatus?.connected === true) || gmailLoading}
-                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                    gmailStatus?.connected === true && !gmailLoading
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-blue-600 text-white opacity-50 cursor-not-allowed'
-                  }`}
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 2,
+                    py: 1,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    bgcolor: '#2563eb',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    border: 'none',
+                    opacity: gmailStatus?.connected === true && !gmailLoading ? 1 : 0.5,
+                    '&:disabled': { cursor: 'not-allowed' },
+                    '&:hover': { bgcolor: '#1d4ed8' },
+                  }}
                 >
                   {tx(['gmail', 'viewReceipts'], 'View Receipts')}
-                </button>
+                </Box>
 
-                <button
+                <Box
+                  component="button"
                   onClick={() => router.push('/integrations/gmail')}
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 dark:border-slate-600 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    border: '1px solid #e5e7eb',
+                    px: 2,
+                    py: 1,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#374151',
+                    bgcolor: 'transparent',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: '#f9fafb' },
+                  }}
                 >
                   {gmailStatus?.connected === true
                     ? tx(['gmail', 'settings'], 'Settings')
                     : tx(['gmail', 'connect'], 'Connect')}
-                </button>
-              </div>
-            </div>
-          </div>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         )}
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700/60 overflow-visible">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700/60 bg-gray-50 dark:bg-slate-900 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', overflow: 'visible' }}>
+            <Box sx={{ px: 3, py: 2, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
                 {isTrashView ? t.trash.title : t.subtitle}
-              </h2>
-              <div className="flex flex-wrap items-center justify-end gap-2">
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
                 {isTrashView && (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                    <Typography style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>
                       {t.trash.selectedLabel.value.replace('{count}', String(selectedTrashCount))}
-                    </span>
-                    <button
+                    </Typography>
+                    <Box
+                      component="button"
                       type="button"
                       onClick={() => handleBulkRestore(selectedTrashIds)}
                       disabled={selectedTrashCount === 0}
-                      className="inline-flex items-center gap-2 rounded-full border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-100 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        border: '1px solid #a7f3d0',
+                        bgcolor: '#ecfdf5',
+                        px: 1.5,
+                        py: 0.75,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#065f46',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#d1fae5' },
+                        '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                      }}
                     >
                       <RotateCcw size={14} />
                       {t.trash.restoreSelected.value}
-                    </button>
-                    <button
+                    </Box>
+                    <Box
+                      component="button"
                       type="button"
                       onClick={() => setBulkDeleteModalOpen(true)}
                       disabled={selectedTrashCount === 0}
-                      className="inline-flex items-center gap-2 rounded-full border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-700 dark:text-red-100 hover:bg-red-100 dark:hover:bg-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        border: '1px solid #fecaca',
+                        bgcolor: '#fef2f2',
+                        px: 1.5,
+                        py: 0.75,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#b91c1c',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#fee2e2' },
+                        '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                      }}
                     >
                       <Trash2 size={14} />
                       {t.trash.deleteSelected.value}
-                    </button>
-                    <button
+                    </Box>
+                    <Box
+                      component="button"
                       type="button"
                       onClick={() => setEmptyTrashModalOpen(true)}
                       disabled={files.length === 0}
-                      className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-semibold text-gray-600 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        border: '1px solid #e5e7eb',
+                        bgcolor: '#fff',
+                        px: 1.5,
+                        py: 0.75,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#374151',
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#f9fafb' },
+                        '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                      }}
                     >
                       <Trash2 size={14} />
                       {t.trash.emptyAction.value}
-                    </button>
-                  </div>
+                    </Box>
+                  </Box>
                 )}
                 {filtersApplied && (
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <Typography style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>
                     {t.filters.title} · {t.filters.button}
-                  </span>
+                  </Typography>
                 )}
-              </div>
-            </div>
+              </Box>
+            </Box>
 
             {loading ? (
-              <div className="flex justify-center items-center h-64">
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}>
                 <Spinner className="h-8 w-8 text-primary" />
-              </div>
+              </Box>
             ) : filteredFiles.length === 0 ? (
-              <div className="text-center py-16 px-6">
-                <div className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500 mb-4 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                  {isTrashView ? <Trash2 className="h-8 w-8" /> : <Search className="h-8 w-8" />}
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              <Box sx={{ textAlign: 'center', py: 8, px: 3 }}>
+                <Box sx={{ mx: 'auto', width: 64, height: 64, color: '#9ca3af', mb: 2, bgcolor: '#f3f4f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {isTrashView ? <Trash2 style={{ width: 32, height: 32 }} /> : <Search style={{ width: 32, height: 32 }} />}
+                </Box>
+                <Typography style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>
                   {emptyStateTitle}
-                </h3>
-                <p className="mt-1 text-gray-600 dark:text-gray-300">{emptyStateSubtitle}</p>
-              </div>
+                </Typography>
+                <Typography style={{ marginTop: 4, color: '#4b5563' }}>{emptyStateSubtitle}</Typography>
+              </Box>
             ) : (
-              <div className="overflow-x-auto overflow-y-visible" data-tour-id="storage-table">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700/60">
-                  <thead className="bg-gray-50 dark:bg-slate-800/40">
+              <Box sx={{ overflowX: 'auto', overflowY: 'visible' }} data-tour-id="storage-table">
+                <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
+                  <thead style={{ background: '#f9fafb' }}>
                     <tr>
                       {isTrashView && (
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider w-12">
+                        <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', width: 48 }}>
                           <Checkbox
                             checked={allTrashSelected}
                             indeterminate={
@@ -1110,41 +1249,41 @@ function StoragePageContent({
                               selectedTrashIdsInView.length < selectableTrashIds.length
                             }
                             onCheckedChange={toggleSelectAllTrash}
-                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                            className="h-4 w-4"
                             aria-label={t.trash.selectAll.value}
                           />
                         </th>
                       )}
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.fileName}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.bank}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.account}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.size}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.status}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.category}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {t.table.access}
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {isTrashView ? t.table.deletedAt : t.table.createdAt}
                       </th>
-                      <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">
+                      <th style={{ padding: '16px 24px', textAlign: 'right', fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', width: 96 }}>
                         {t.table.actions}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700/60">
+                  <tbody style={{ background: '#fff' }}>
                     {paginatedFiles.map((file, index) => (
                       <DraggableFileRow
                         key={file.id}
@@ -1190,14 +1329,23 @@ function StoragePageContent({
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </Box>
             )}
 
-            <div
-              className="flex flex-col md:flex-row md:items-center justify-between gap-3 px-6 py-4 border-t border-gray-200"
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: { md: 'center' },
+                justifyContent: 'space-between',
+                gap: 1.5,
+                px: 3,
+                py: 2,
+                borderTop: '1px solid #e5e7eb',
+              }}
               data-tour-id="pagination"
             >
-              <div className="text-sm text-gray-600">
+              <Typography style={{ fontSize: 14, color: '#4b5563' }}>
                 {totalItems === 0
                   ? emptyStateTitle
                   : formatPaginationLabel(paginationLabels.shown, {
@@ -1205,39 +1353,39 @@ function StoragePageContent({
                       to: rangeEnd,
                       count: totalItems,
                     })}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 min-w-[120px] text-center">
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
                   {formatPaginationLabel(paginationLabels.pageOf, {
                     page: currentPage,
                     count: totalPagesCount,
                   })}
-                </span>
+                </Typography>
                 <AppPagination page={currentPage} total={totalPagesCount} onChange={setPage} />
-              </div>
-            </div>
-          </div>
-        </div>
-        <DragOverlay className="pointer-events-none">
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+        <DragOverlay style={{ pointerEvents: 'none' }}>
           {draggingFile ? (
-            <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-xl border border-primary/50 opacity-90 w-[300px]">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-50 dark:bg-slate-700 rounded-md">
+            <Box sx={{ bgcolor: '#fff', p: 2, border: '1px solid rgba(79,70,229,0.5)', opacity: 0.9, width: 300 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ p: 1, bgcolor: '#f9fafb' }}>
                   <DocumentTypeIcon
                     fileType={draggingFile.fileType}
                     fileName={draggingFile.fileName}
                     fileId={draggingFile.id}
                     size={24}
                   />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-sm truncate">{draggingFile.fileName}</div>
-                  <div className="text-xs text-gray-500">
+                </Box>
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Box style={{ fontWeight: 600, fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{draggingFile.fileName}</Box>
+                  <Box style={{ fontSize: 12, color: '#6b7280' }}>
                     {formatFileSize(draggingFile.fileSize)}
-                  </div>
-                </div>
-              </div>
-            </div>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
           ) : null}
         </DragOverlay>
         {activeModal === 'folders' && (

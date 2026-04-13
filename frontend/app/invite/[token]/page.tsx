@@ -172,7 +172,7 @@ export default function AcceptInvitePage() {
 
             {invitationLoading && (
               <Box display="flex" justifyContent="center" py={2}>
-                <Spinner className="h-10 w-10 text-primary" />
+                <Spinner size={40} />
               </Box>
             )}
 
@@ -205,7 +205,7 @@ export default function AcceptInvitePage() {
 
             <Stack direction="row" spacing={1} justifyContent="flex-end">
               {authLoading ? (
-                <Spinner className="h-5 w-5 text-primary" />
+                <Spinner size={20} />
               ) : !user ? (
                 <>
                   <Button variant="outlined" onClick={() => router.push(loginHref)}>
@@ -229,7 +229,7 @@ export default function AcceptInvitePage() {
                   variant="contained"
                   onClick={handleAccept}
                   disabled={accepting}
-                  startIcon={accepting ? <Spinner className="h-4 w-4 text-inherit" /> : null}
+                  startIcon={accepting ? <Spinner size={16} /> : null}
                 >
                   {t.actions.accept}
                 </Button>

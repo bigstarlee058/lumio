@@ -1,6 +1,7 @@
 'use client';
 
 import { gmailReceiptsApi } from '@/app/lib/api';
+import { Box, IconButton, Typography } from '@mui/material';
 import { X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -66,24 +67,24 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
   const renderPreviewContent = () => {
     if (loading) {
       return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-gray-500">Loading preview...</div>
-        </div>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <Typography style={{ color: '#6b7280' }}>Loading preview...</Typography>
+        </Box>
       );
     }
 
     if (!preview) {
       return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-gray-500">Failed to load preview</div>
-        </div>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <Typography style={{ color: '#6b7280' }}>Failed to load preview</Typography>
+        </Box>
       );
     }
 
     const attachments = preview.attachmentData ?? [];
     if (attachments.length > 0) {
       return (
-        <div className="space-y-4">
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {attachments.map((attachment, idx) => {
             const isPdf = attachment.mimeType === 'application/pdf';
             const isImage = attachment.mimeType?.startsWith('image/');
@@ -91,62 +92,67 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
             const dataUrl = `data:${attachment.mimeType};base64,${base64Data}`;
 
             return (
-              <div key={`${attachment.filename}-${idx}`} className="bg-white border rounded-lg">
-                <div className="p-3 border-b bg-gray-50">
-                  <span className="text-sm font-medium">{attachment.filename}</span>
-                </div>
-                <div className="p-4">
+              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', borderRadius: 0 }}>
+                <Box sx={{ p: 1.5, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb' }}>
+                  <Typography style={{ fontSize: 14, fontWeight: 500 }}>{attachment.filename}</Typography>
+                </Box>
+                <Box sx={{ p: 2 }}>
                   {isPdf ? (
                     <iframe
                       src={dataUrl}
-                      className="w-full h-[600px] border rounded"
+                      style={{ width: '100%', height: 600, border: '1px solid #e5e7eb', borderRadius: 0 }}
                       title={attachment.filename}
                     />
                   ) : isImage ? (
                     <img
                       src={dataUrl}
                       alt={attachment.filename}
-                      className="max-w-full h-auto rounded"
+                      style={{ maxWidth: '100%', height: 'auto', borderRadius: 0 }}
                     />
                   ) : (
-                    <div className="text-center text-gray-500 py-8">
-                      <p>Preview not available for this file type</p>
-                      <p className="text-sm mt-2">{attachment.mimeType}</p>
-                    </div>
+                    <Box sx={{ textAlign: 'center', color: '#6b7280', py: 4 }}>
+                      <Typography>Preview not available for this file type</Typography>
+                      <Typography style={{ fontSize: 14, marginTop: 8 }}>{attachment.mimeType}</Typography>
+                    </Box>
                   )}
-                </div>
-              </div>
+                </Box>
+              </Box>
             );
           })}
-        </div>
+        </Box>
       );
     }
 
     if (preview.emailBody) {
       return (
-        <div className="bg-white border rounded-lg overflow-hidden">
+        <Box sx={{ bgcolor: '#fff', border: '1px solid #e5e7eb', borderRadius: 0, overflow: 'hidden' }}>
           <iframe
             title="Receipt email preview"
-            className="w-full h-[600px]"
+            style={{ width: '100%', height: 600, border: 'none' }}
             sandbox="allow-same-origin"
             srcDoc={preview.emailBody}
           />
-        </div>
+        </Box>
       );
     }
 
     return (
-      <div className="text-center text-gray-500 py-8">
-        <p>No preview available</p>
-        {preview.snippet ? <p className="mt-2 text-sm">{preview.snippet}</p> : null}
-      </div>
+      <Box sx={{ textAlign: 'center', color: '#6b7280', py: 4 }}>
+        <Typography>No preview available</Typography>
+        {preview.snippet ? <Typography style={{ marginTop: 8, fontSize: 14 }}>{preview.snippet}</Typography> : null}
+      </Box>
     );
   };
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black bg-opacity-75 z-50"
+      <Box
+        sx={{
+          position: 'fixed',
+          inset: 0,
+          bgcolor: 'rgba(0,0,0,0.75)',
+          zIndex: 50,
+        }}
         role="button"
         tabIndex={0}
         onClick={onClose}
@@ -158,44 +164,39 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
         }}
         aria-label="Close receipt preview"
       />
-      <div className="fixed inset-4 bg-white rounded-lg z-50 flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-bold">Receipt Preview</h2>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleZoomOut}
-              className="p-2 hover:bg-gray-100 rounded-lg"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-5 h-5" />
-            </button>
-            <span className="text-sm text-gray-600">{zoom}%</span>
-            <button
-              type="button"
-              onClick={handleZoomIn}
-              className="p-2 hover:bg-gray-100 rounded-lg"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg ml-4"
-              title="Close"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+      <Box
+        sx={{
+          position: 'fixed',
+          inset: 16,
+          bgcolor: '#fff',
+          borderRadius: 0,
+          zIndex: 50,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: '1px solid #e5e7eb' }}>
+          <Typography style={{ fontSize: 18, fontWeight: 700 }}>Receipt Preview</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: 0 }}>
+              <ZoomOut style={{ width: 20, height: 20 }} />
+            </IconButton>
+            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{zoom}%</Typography>
+            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: 0 }}>
+              <ZoomIn style={{ width: 20, height: 20 }} />
+            </IconButton>
+            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: 0 }}>
+              <X style={{ width: 20, height: 20 }} />
+            </IconButton>
+          </Box>
+        </Box>
 
-        <div className="flex-1 overflow-auto p-4">
+        <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
           <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top left' }}>
             {renderPreviewContent()}
           </div>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </>
   );
 }

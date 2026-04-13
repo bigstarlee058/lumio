@@ -48,22 +48,24 @@ type StatementApiItem = {
 
 const IGNORED_STORAGE_KEY = 'lumio-unapproved-cash-ignored';
 
-const REASON_BADGE_CLASSNAME: Record<UnapprovedReasonId, string> = {
-  'missing-category': 'border-amber-200 bg-amber-50 text-amber-700',
-  'duplicate-detected': 'border-red-200 bg-red-50 text-red-700',
-  'unknown-merchant': 'border-slate-200 bg-slate-100 text-slate-700',
-  'missing-type': 'border-blue-200 bg-blue-50 text-blue-700',
-  'missing-currency': 'border-cyan-200 bg-cyan-50 text-cyan-700',
-  'ocr-issues': 'border-rose-200 bg-rose-50 text-rose-700',
-  'requires-confirmation': 'border-gray-200 bg-gray-100 text-gray-700',
+type BadgeStyle = { borderColor: string; background: string; color: string };
+
+const REASON_BADGE_STYLE: Record<UnapprovedReasonId, BadgeStyle> = {
+  'missing-category': { borderColor: '#fcd34d', background: '#fffbeb', color: '#b45309' },
+  'duplicate-detected': { borderColor: '#fca5a5', background: '#fff1f2', color: '#b91c1c' },
+  'unknown-merchant': { borderColor: '#e2e8f0', background: '#f1f5f9', color: '#334155' },
+  'missing-type': { borderColor: '#93c5fd', background: '#eff6ff', color: '#1d4ed8' },
+  'missing-currency': { borderColor: '#67e8f9', background: '#ecfeff', color: '#0e7490' },
+  'ocr-issues': { borderColor: '#fda4af', background: '#fff1f2', color: '#be123c' },
+  'requires-confirmation': { borderColor: '#e5e7eb', background: '#f3f4f6', color: '#374151' },
 };
 
-const SOURCE_BADGE_CLASSNAME: Record<UnapprovedSource, string> = {
-  gmail: 'border-orange-200 bg-orange-50 text-orange-700',
-  pdf: 'border-sky-200 bg-sky-50 text-sky-700',
-  bank: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  manual: 'border-indigo-200 bg-indigo-50 text-indigo-700',
-  unknown: 'border-gray-200 bg-gray-100 text-gray-700',
+const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
+  gmail: { borderColor: '#fdba74', background: '#fff7ed', color: '#c2410c' },
+  pdf: { borderColor: '#7dd3fc', background: '#f0f9ff', color: '#0369a1' },
+  bank: { borderColor: '#6ee7b7', background: '#ecfdf5', color: '#065f46' },
+  manual: { borderColor: '#a5b4fc', background: '#eef2ff', color: '#3730a3' },
+  unknown: { borderColor: '#e5e7eb', background: '#f3f4f6', color: '#374151' },
 };
 
 const formatTemplate = (template: string, values: Record<string, string | number>) =>
@@ -588,77 +590,83 @@ export default function UnapprovedCashView() {
     return item.date.toLocaleDateString();
   };
 
+  const inputStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, color: '#111827', outline: 'none', borderRadius: 0 };
+  const summaryCardStyle: React.CSSProperties = { border: '1px solid #e5e7eb', background: '#fff', padding: 12, borderRadius: 0 };
+
   return (
-    <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-4 shrink-0 space-y-4">
-        <div className="flex items-start justify-between gap-3">
+    <div
+      className="container-shared"
+      style={{ display: 'flex', height: 'calc(100vh - var(--global-nav-height,0px))', minHeight: 0, flexDirection: 'column', overflow: 'hidden', padding: '24px 16px' }}
+    >
+      <div style={{ marginBottom: 16, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">{labels.title}</h1>
-            <p className="mt-1 text-sm text-gray-500">{labels.subtitle}</p>
+            <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
+            <p style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>{labels.subtitle}</p>
           </div>
 
           <button
             type="button"
             onClick={() => void loadQueueData(true)}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', background: '#fff', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: 0, transition: 'background 0.15s' }}
             disabled={refreshing || loading}
           >
             {refreshing || loading ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner size={16} />
             ) : (
-              <RefreshCcw className="h-4 w-4" />
+              <RefreshCcw style={{ width: 16, height: 16 }} />
             )}
             {labels.actions.refresh}
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-lg border border-gray-200 bg-white p-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">{labels.summary.total}</p>
-            <p className="mt-1 text-xl font-semibold text-gray-900">{queueWithoutIgnored.length}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div style={summaryCardStyle}>
+            <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>{labels.summary.total}</p>
+            <p style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#111827' }}>{queueWithoutIgnored.length}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
+          <div style={summaryCardStyle}>
+            <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
               {labels.summary.missingCategory}
             </p>
-            <p className="mt-1 text-xl font-semibold text-gray-900">
+            <p style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#111827' }}>
               {reasonCounts['missing-category']}
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
+          <div style={summaryCardStyle}>
+            <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
               {labels.summary.duplicates}
             </p>
-            <p className="mt-1 text-xl font-semibold text-gray-900">
+            <p style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#111827' }}>
               {reasonCounts['duplicate-detected']}
             </p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">
+          <div style={summaryCardStyle}>
+            <p style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
               {labels.summary.confirmation}
             </p>
-            <p className="mt-1 text-xl font-semibold text-gray-900">
+            <p style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#111827' }}>
               {reasonCounts['requires-confirmation']}
             </p>
           </div>
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-3">
-          <div className="grid gap-2 md:grid-cols-7">
-            <div className="relative md:col-span-2">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 12, borderRadius: 0 }}>
+          <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(7, 1fr)' }}>
+            <div style={{ position: 'relative', gridColumn: 'span 2' }}>
+              <Search style={{ pointerEvents: 'none', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
               <input
                 value={filters.search}
                 onChange={event => setFilters(prev => ({ ...prev, search: event.target.value }))}
                 placeholder={labels.searchPlaceholder}
-                className="w-full rounded-md border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+                style={{ ...inputStyle, width: '100%', paddingLeft: 36, paddingRight: 12 }}
               />
             </div>
 
             <select
               value={filters.reasons[0] || 'all'}
               onChange={event => setReasonFilter(event.target.value)}
-              className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={inputStyle}
               aria-label={labels.filters.reason}
             >
               <option value="all">{`${labels.filters.reason}: ${labels.filters.allReasons}`}</option>
@@ -677,7 +685,7 @@ export default function UnapprovedCashView() {
                   source: event.target.value as UnapprovedQueueFilters['source'],
                 }))
               }
-              className="rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
+              style={inputStyle}
               aria-label={labels.filters.source}
             >
               <option value="all">{`${labels.filters.source}: ${labels.filters.allSources}`}</option>

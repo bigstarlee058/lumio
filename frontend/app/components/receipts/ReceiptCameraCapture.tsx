@@ -3,6 +3,7 @@
 import { Button } from '@/app/components/ui/button';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { receiptsApi } from '@/app/lib/api';
+import { Box, Typography } from '@mui/material';
 import { Camera, ImageUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -64,31 +65,49 @@ export function ReceiptCameraCapture({
 
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} title="Scan receipt" size="lg">
-      <div className="space-y-5">
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-950">
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box sx={{ overflow: 'hidden', border: '1px solid #e2e8f0', bgcolor: '#020617' }}>
           <video
             ref={videoRef}
             autoPlay
             muted
             playsInline
-            className="aspect-[4/3] w-full object-cover"
+            style={{ aspectRatio: '4/3', width: '100%', objectFit: 'cover', display: 'block' }}
           />
-        </div>
+        </Box>
 
         {error ? (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            <p className="font-medium">Use your camera or choose a photo instead.</p>
-            <p className="mt-1">{error}</p>
-          </div>
+          <Box sx={{ border: '1px solid #fcd34d', bgcolor: '#fffbeb', px: 2, py: 1.5 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#92400e' }}>
+              Use your camera or choose a photo instead.
+            </Typography>
+            <Typography style={{ fontSize: 14, color: '#92400e', marginTop: 4 }}>{error}</Typography>
+          </Box>
         ) : null}
 
         {!isCameraAvailable ? (
-          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary">
-            <ImageUp className="h-4 w-4" />
+          <Box
+            component="label"
+            sx={{
+              display: 'flex',
+              cursor: 'pointer',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              border: '1px solid #cbd5e1',
+              px: 2,
+              py: 1.5,
+              fontSize: 14,
+              fontWeight: 600,
+              color: '#334155',
+              '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+            }}
+          >
+            <ImageUp style={{ width: 16, height: 16 }} />
             Choose photo
             <input
               type="file"
-              className="sr-only"
+              style={{ display: 'none' }}
               accept="image/*"
               capture="environment"
               aria-label="Upload receipt photo"
@@ -99,10 +118,10 @@ export function ReceiptCameraCapture({
                 }
               }}
             />
-          </label>
+          </Box>
         ) : null}
 
-        <div className="flex justify-center">
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <Button
             size="lg"
             className="min-w-44"
@@ -115,8 +134,8 @@ export function ReceiptCameraCapture({
             <Camera className="h-4 w-4" />
             Capture photo
           </Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </ModalShell>
   );
 }

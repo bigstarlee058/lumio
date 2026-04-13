@@ -5,10 +5,9 @@ import {
   type ConnectedCloudProviders,
   buildStatementUploadMenuModel,
 } from '@/app/lib/statement-upload-actions';
-import { cn } from '@/app/lib/utils';
 import { Cloud, Plus, Receipt, ScanLine, Scan } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 type Props = {
@@ -29,24 +28,22 @@ const ACTION_OFFSETS = [
 
 const ARC_SIZES = {
   panel: {
-    height: 'h-[232px]',
-    width: 'w-[320px]',
-    radius: 'rounded-tr-[232px]',
-    buttonLeft: 'left-4',
-    bottom: 'bottom-5',
-    scanBottom: 'bottom-[84px]',
+    heightPx: 232,
+    widthPx: 320,
+    buttonLeftPx: 16,
+    bottomPx: 20,
+    scanBottomPx: 84,
     closedOffset: 'translate(16px, -6px)',
-    container: '-mx-4 -mb-3 h-24',
+    containerStyle: { marginLeft: -16, marginRight: -16, marginBottom: -12, height: 96 } as React.CSSProperties,
   },
   floating: {
-    height: 'h-60',
-    width: 'w-[320px]',
-    radius: 'rounded-tr-[240px]',
-    buttonLeft: 'left-6',
-    bottom: 'bottom-6',
-    scanBottom: 'bottom-[88px]',
+    heightPx: 240,
+    widthPx: 320,
+    buttonLeftPx: 24,
+    bottomPx: 24,
+    scanBottomPx: 88,
     closedOffset: 'translate(8px, -6px)',
-    container: 'h-60 w-[320px]',
+    containerStyle: { height: 240, width: 320 } as React.CSSProperties,
   },
 } as const;
 
@@ -183,10 +180,17 @@ export default function StatementsCircularUploadMenu({
           type="button"
           aria-label="Close upload actions"
           onClick={() => setIsOpen(false)}
-          className={cn(
-            'fixed inset-0 z-[300] bg-black/45 transition-opacity duration-300 ease-out',
-            isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-          )}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 300,
+            background: 'rgba(0,0,0,0.45)',
+            transition: 'opacity 0.3s ease-out',
+            border: 'none',
+            cursor: 'pointer',
+            pointerEvents: isOpen ? 'auto' : 'none',
+            opacity: isOpen ? 1 : 0,
+          }}
         />,
         document.body,
       )
@@ -194,20 +198,29 @@ export default function StatementsCircularUploadMenu({
 
   const menu = (
     <div
-      className={cn(
-        'relative overflow-visible',
-        styles.container,
-        isOpen && 'z-[310]',
-        placement === 'floating' && 'pointer-events-none',
-      )}
+      style={{
+        position: 'relative',
+        overflow: 'visible',
+        zIndex: isOpen ? 310 : undefined,
+        pointerEvents: placement === 'floating' ? 'none' : undefined,
+        ...styles.containerStyle,
+      }}
     >
       <div
-        className={cn(
-          'pointer-events-none absolute bottom-0 left-0 z-30 bg-primary/0 transition-all duration-300 ease-out',
-          isOpen
-            ? `${styles.height} ${styles.width} ${styles.radius} opacity-100 bg-primary/5 dark:bg-primary/10 backdrop-blur-sm`
-            : 'h-0 w-0 rounded-tr-none opacity-0',
-        )}
+        style={{
+          pointerEvents: 'none',
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          zIndex: 30,
+          transition: 'all 0.3s ease-out',
+          height: isOpen ? styles.heightPx : 0,
+          width: isOpen ? styles.widthPx : 0,
+          borderTopRightRadius: isOpen ? styles.heightPx : 0,
+          opacity: isOpen ? 1 : 0,
+          background: isOpen ? 'rgba(var(--primary-rgb, 0,0,0),0.05)' : 'transparent',
+          backdropFilter: isOpen ? 'blur(4px)' : undefined,
+        }}
       />
 
       {menuItems.map((item, index) => {
@@ -217,13 +230,15 @@ export default function StatementsCircularUploadMenu({
         return (
           <div
             key={item.id}
-            className={cn(
-              'absolute left-0 z-40 transition-all duration-300 ease-out',
-              styles.bottom,
-              isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-            )}
             style={{
+              position: 'absolute',
+              left: 0,
+              bottom: styles.bottomPx,
+              zIndex: 40,
+              transition: 'all 0.3s ease-out',
               transform: isOpen ? `translate(${offset.x}px, ${offset.y}px)` : styles.closedOffset,
+              pointerEvents: isOpen ? 'auto' : 'none',
+              opacity: isOpen ? 1 : 0,
             }}
           >
             <button
@@ -232,19 +247,43 @@ export default function StatementsCircularUploadMenu({
               disabled={item.disabled}
               onClick={() => handleActionClick(item.id, item.provider)}
               title={item.label}
-              className={cn(
-                'pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-all duration-300 ease-out',
-                item.disabled ? 'cursor-not-allowed opacity-45' : 'hover:scale-105 active:scale-95',
-              )}
+              style={{
+                pointerEvents: 'auto',
+                display: 'flex',
+                height: 44,
+                width: 44,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                border: '1px solid var(--border-color, #e5e7eb)',
+                background: 'var(--card-bg, #fff)',
+                color: 'var(--foreground)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                transition: 'all 0.3s ease-out',
+                cursor: item.disabled ? 'not-allowed' : 'pointer',
+                opacity: item.disabled ? 0.45 : 1,
+              }}
             >
               {renderActionIcon(item)}
-              <span className="sr-only">{item.label}</span>
+              <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>{item.label}</span>
             </button>
             <span
-              className={cn(
-                'absolute left-[48px] top-1/2 z-50 -translate-y-1/2 whitespace-nowrap rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold shadow-sm',
-                item.id === 'local-upload' ? 'text-foreground' : 'text-primary',
-              )}
+              style={{
+                position: 'absolute',
+                left: 48,
+                top: '50%',
+                zIndex: 50,
+                transform: 'translateY(-50%)',
+                whiteSpace: 'nowrap',
+                borderRadius: 9999,
+                border: '1px solid var(--border-color, #e5e7eb)',
+                background: 'var(--card-bg, #fff)',
+                padding: '4px 10px',
+                fontSize: 11,
+                fontWeight: 600,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                color: item.id === 'local-upload' ? 'var(--foreground)' : 'var(--primary)',
+              }}
             >
               {item.label}
             </span>
@@ -259,12 +298,25 @@ export default function StatementsCircularUploadMenu({
           onScan();
           setIsOpen(false);
         }}
-        className={cn(
-          'absolute flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white transition-all duration-200 hover:bg-primary-hover',
-          styles.buttonLeft,
-          styles.scanBottom,
-          isOpen ? 'z-10 pointer-events-none opacity-0' : 'z-20 pointer-events-auto opacity-100',
-        )}
+        style={{
+          position: 'absolute',
+          display: 'flex',
+          height: 56,
+          width: 56,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          background: 'var(--primary)',
+          color: '#fff',
+          transition: 'all 0.2s',
+          border: 'none',
+          cursor: 'pointer',
+          left: styles.buttonLeftPx,
+          bottom: styles.scanBottomPx,
+          zIndex: isOpen ? 10 : 20,
+          pointerEvents: isOpen ? 'none' : 'auto',
+          opacity: isOpen ? 0 : 1,
+        }}
         aria-label="Scan"
       >
         <Scan size={24} />
@@ -275,16 +327,33 @@ export default function StatementsCircularUploadMenu({
         data-tour-id={uploadTriggerTourId}
         type="button"
         onClick={() => setIsOpen(prev => !prev)}
-        className={cn(
-          'pointer-events-auto absolute z-60 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-md transition hover:bg-muted hover:text-foreground',
-          styles.buttonLeft,
-          styles.bottom,
-        )}
+        style={{
+          pointerEvents: 'auto',
+          position: 'absolute',
+          zIndex: 60,
+          display: 'flex',
+          height: 56,
+          width: 56,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          border: '1px solid var(--border-color, #e5e7eb)',
+          background: 'var(--card-bg, #fff)',
+          color: 'var(--muted-foreground)',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          cursor: 'pointer',
+          left: styles.buttonLeftPx,
+          bottom: styles.bottomPx,
+          transition: 'background 0.15s, color 0.15s',
+        }}
         aria-label="Open upload actions"
       >
         <Plus
           size={24}
-          className={cn('transition-transform duration-300', isOpen ? 'rotate-45' : 'rotate-0')}
+          style={{
+            transition: 'transform 0.3s',
+            transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+          }}
         />
       </button>
     </div>

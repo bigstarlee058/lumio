@@ -6,6 +6,7 @@ import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
+import { Box, Divider, Typography } from '@mui/material';
 import { FileImage, FileText } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -248,21 +249,48 @@ export function ReceiptDetailPanel({
 
   return (
     <DrawerShell isOpen={isOpen} onClose={onClose} title="Receipt details" width="xl">
-      <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.1fr)]">
-        <div className="space-y-4">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-            <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-white p-3 text-slate-600 shadow-sm">
-                {isPdf ? <FileText className="h-5 w-5" /> : <FileImage className="h-5 w-5" />}
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-slate-900">{receipt.subject}</p>
-                <p className="text-sm text-slate-500">{receipt.source}</p>
-              </div>
-            </div>
-          </div>
+      <Box
+        sx={{
+          display: 'grid',
+          minHeight: 0,
+          flex: 1,
+          gap: 3,
+          gridTemplateColumns: { xs: '1fr', lg: 'minmax(260px, 0.9fr) minmax(0, 1.1fr)' },
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: '#f8fafc', p: 2.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ bgcolor: '#fff', p: 1.5, color: '#475569' }}>
+                {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    color: '#0f172a',
+                  }}
+                >
+                  {receipt.subject}
+                </Typography>
+                <Typography style={{ fontSize: 14, color: '#64748b' }}>{receipt.source}</Typography>
+              </Box>
+            </Box>
+          </Box>
 
-          <div className="rounded-3xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center">
+          <Box
+            sx={{
+              border: '2px dashed #cbd5e1',
+              bgcolor: '#fff',
+              px: 2.5,
+              py: 4,
+              textAlign: 'center',
+            }}
+          >
             {isPdf ? (
               <PDFPreviewModal
                 isOpen={true}
@@ -275,47 +303,65 @@ export function ReceiptDetailPanel({
               <img
                 src={previewUrl}
                 alt={receipt.subject}
-                className="mx-auto max-h-[320px] rounded-2xl object-contain"
+                style={{ display: 'block', margin: '0 auto', maxHeight: 320, objectFit: 'contain' }}
               />
             ) : (
-              <div>
-                <p className="text-sm font-medium text-slate-900">Original document preview</p>
-                <p className="mt-2 text-sm text-slate-500">Preparing image preview...</p>
-              </div>
+              <Box>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                  Original document preview
+                </Typography>
+                <Typography style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>
+                  Preparing image preview...
+                </Typography>
+              </Box>
             )}
-          </div>
+          </Box>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-5">
-            <div className="grid gap-3 text-sm text-slate-600">
-              <div className="flex justify-between gap-4">
-                <span>Status</span>
-                <span className="font-medium text-slate-900">{receipt.status}</span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>Received</span>
-                <span className="font-medium text-slate-900">
+          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: '#fff', p: 2.5 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: '#475569' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                <Typography style={{ fontSize: 14, color: '#475569' }}>Status</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                  {receipt.status}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                <Typography style={{ fontSize: 14, color: '#475569' }}>Received</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
                   {new Date(receipt.receivedAt).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span>Language</span>
-                <span className="font-medium text-slate-900">{receipt.language || 'Auto'}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                <Typography style={{ fontSize: 14, color: '#475569' }}>Language</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                  {receipt.language || 'Auto'}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
 
-        <div className="flex min-h-0 flex-col">
-          <div className="flex-1 overflow-y-auto pr-1">
+        <Box sx={{ display: 'flex', minHeight: 0, flexDirection: 'column' }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', pr: 0.5 }}>
             <ReceiptParsedDataForm
               value={formValue}
               categories={categories}
               onChange={handleFormChange}
               onCurrencyChange={handleCurrencyChange}
             />
-          </div>
+          </Box>
 
-          <div className="mt-6 flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+          <Box
+            sx={{
+              mt: 3,
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              justifyContent: { sm: 'flex-end' },
+              gap: 1.5,
+              borderTop: '1px solid #e2e8f0',
+              pt: 2.5,
+            }}
+          >
             <Button variant="ghost" onClick={handleReject} disabled={saving}>
               Reject receipt
             </Button>
@@ -325,9 +371,9 @@ export function ReceiptDetailPanel({
             <Button onClick={handleApprove} disabled={saving}>
               Approve receipt
             </Button>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     </DrawerShell>
   );
 }

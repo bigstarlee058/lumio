@@ -3,7 +3,7 @@
 import apiClient from '@/app/lib/api';
 import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   type AvailableTable,
   DEFAULT_TABLES_REPORTS_FILTERS,
@@ -237,82 +237,101 @@ export default function TablesReportsView() {
 
   const selectedTablesCount = selectedTableIds.length;
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
-  const panelClass =
-    'rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/70 dark:bg-slate-900/60';
-  const subtlePanelClass =
-    'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition-colors dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200';
+  const panelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: '#fff', padding: 16, borderRadius: 0 };
+  const subtlePanelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: '#fff', padding: '8px 16px', fontSize: 14, color: '#334155', borderRadius: 0, cursor: 'pointer' };
 
   return (
-    <div className="container-shared flex h-[calc(100vh-var(--global-nav-height,0px))] min-h-0 flex-col overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-5 shrink-0">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      className="container-shared"
+      style={{ display: 'flex', height: 'calc(100vh - var(--global-nav-height,0px))', minHeight: 0, flexDirection: 'column', overflow: 'hidden', padding: '24px 16px' }}
+    >
+      <div style={{ marginBottom: 20, flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Tables reports</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <h1 style={{ fontSize: 24, fontWeight: 600, color: '#0f172a' }}>Tables reports</h1>
+            <p style={{ fontSize: 14, color: '#64748b' }}>
               Aggregated insights from your custom tables
             </p>
           </div>
-          <div className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-100/80 p-1 dark:border-slate-700 dark:bg-slate-900/70">
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #e2e8f0', background: '#f1f5f9', padding: 4, borderRadius: 9999 }}>
             <button
               type="button"
               onClick={() => setActiveFlowType('all')}
-              className={
-                activeFlowType === 'all'
-                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
-                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
-              }
+              style={{
+                borderRadius: 9999,
+                background: activeFlowType === 'all' ? '#fff' : 'transparent',
+                padding: '6px 12px',
+                fontSize: 14,
+                fontWeight: activeFlowType === 'all' ? 600 : 400,
+                color: activeFlowType === 'all' ? '#0284c7' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: activeFlowType === 'all' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              }}
             >
               All
             </button>
             <button
               type="button"
               onClick={() => setActiveFlowType('expense')}
-              className={
-                activeFlowType === 'expense'
-                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
-                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
-              }
+              style={{
+                borderRadius: 9999,
+                background: activeFlowType === 'expense' ? '#fff' : 'transparent',
+                padding: '6px 12px',
+                fontSize: 14,
+                fontWeight: activeFlowType === 'expense' ? 600 : 400,
+                color: activeFlowType === 'expense' ? '#0284c7' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: activeFlowType === 'expense' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              }}
             >
               Expenses
             </button>
             <button
               type="button"
               onClick={() => setActiveFlowType('income')}
-              className={
-                activeFlowType === 'income'
-                  ? 'rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-sky-600 shadow-sm dark:bg-slate-800 dark:text-sky-300'
-                  : 'rounded-full px-3 py-1.5 text-sm text-slate-500 dark:text-slate-400'
-              }
+              style={{
+                borderRadius: 9999,
+                background: activeFlowType === 'income' ? '#fff' : 'transparent',
+                padding: '6px 12px',
+                fontSize: 14,
+                fontWeight: activeFlowType === 'income' ? 600 : 400,
+                color: activeFlowType === 'income' ? '#0284c7' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: activeFlowType === 'income' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              }}
             >
               Income
             </button>
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+        <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input
             type="search"
             value={searchInput}
             onChange={event => setSearchInput(event.target.value)}
             placeholder="Search counterparties, categories, tables..."
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-sky-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:placeholder:text-slate-500"
+            style={{ width: '100%', border: '1px solid #e2e8f0', background: '#fff', padding: '8px 16px', fontSize: 14, color: '#0f172a', outline: 'none', borderRadius: 0 }}
           />
-          <div className="relative" ref={tableDropdownRef}>
+          <div style={{ position: 'relative' }} ref={tableDropdownRef}>
             <button
               type="button"
               onClick={() => setTableDropdownOpen(open => !open)}
-              className={subtlePanelClass}
+              style={subtlePanelStyle}
             >
               Tables
               {selectedTablesCount > 0 ? ` (${selectedTablesCount})` : ''}
             </button>
 
             {tableDropdownOpen ? (
-              <div className="absolute right-0 z-20 mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg shadow-slate-200/60 dark:border-slate-700 dark:bg-slate-900 dark:shadow-black/30">
+              <div style={{ position: 'absolute', right: 0, zIndex: 20, marginTop: 8, width: 288, border: '1px solid #e2e8f0', background: '#fff', padding: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: 0 }}>
                 <button
                   type="button"
                   onClick={() => setSelectedTableIds([])}
-                  className="mb-1 w-full rounded-xl px-3 py-2 text-left text-sm text-sky-700 transition-colors hover:bg-sky-50 dark:text-sky-300 dark:hover:bg-slate-800"
+                  style={{ marginBottom: 4, width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: '#0369a1', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 0 }}
                 >
                   All tables
                 </button>
@@ -321,7 +340,7 @@ export default function TablesReportsView() {
                   return (
                     <label
                       key={table.id}
-                      className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                      style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 8, padding: '8px 12px', fontSize: 14, color: '#334155', borderRadius: 0 }}
                     >
                       <input
                         type="checkbox"
@@ -335,8 +354,8 @@ export default function TablesReportsView() {
                           )
                         }
                       />
-                      <span className="flex-1 truncate">{table.name}</span>
-                      <span className="text-xs text-slate-400 dark:text-slate-500">
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{table.name}</span>
+                      <span style={{ fontSize: 12, color: '#94a3b8' }}>
                         {getSourceLabel(table.source)}
                       </span>
                     </label>
@@ -345,11 +364,11 @@ export default function TablesReportsView() {
               </div>
             ) : null}
           </div>
-            <select
-              value={selectedDays}
-              onChange={event => setSelectedDays(Number(event.target.value))}
-              className={`${subtlePanelClass} appearance-none pr-9`}
-            >
+          <select
+            value={selectedDays}
+            onChange={event => setSelectedDays(Number(event.target.value))}
+            style={{ ...subtlePanelStyle, appearance: 'none', paddingRight: 36 }}
+          >
             <option value={7}>Last 7 days</option>
             <option value={30}>Last 30 days</option>
             <option value={90}>Last 90 days</option>
@@ -358,7 +377,7 @@ export default function TablesReportsView() {
           </select>
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500 dark:text-slate-400">
+        <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 12, color: '#64748b' }}>
           {availableTables.map(table => (
             <button
               key={table.id}
@@ -370,11 +389,15 @@ export default function TablesReportsView() {
                     : [...current, table.id],
                 )
               }
-              className={
-                selectedTableIds.includes(table.id)
-                  ? 'rounded-full bg-sky-100 px-3 py-1 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300'
-                  : 'rounded-full bg-slate-100 px-3 py-1 dark:bg-slate-800 dark:text-slate-300'
-              }
+              style={{
+                borderRadius: 9999,
+                background: selectedTableIds.includes(table.id) ? '#e0f2fe' : '#f1f5f9',
+                padding: '4px 12px',
+                color: selectedTableIds.includes(table.id) ? '#0369a1' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 12,
+              }}
             >
               {table.name} · {getSourceLabel(table.source)}
             </button>
@@ -382,54 +405,54 @@ export default function TablesReportsView() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div style={{ flex: 1, overflowY: 'auto' }}>
         {loading ? (
-          <div className="py-10 text-sm text-slate-500 dark:text-slate-400">Loading...</div>
+          <div style={{ padding: '40px 0', fontSize: 14, color: '#64748b' }}>Loading...</div>
         ) : !report || report.totals.operations === 0 ? (
-          <div className="py-10 text-sm text-slate-500 dark:text-slate-400">
+          <div style={{ padding: '40px 0', fontSize: 14, color: '#64748b' }}>
             No data found for the selected period.
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <div className={panelClass}>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Total</div>
-                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+              <div style={panelStyle}>
+                <div style={{ fontSize: 12, color: '#64748b' }}>Total</div>
+                <div style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#0f172a' }}>
                   {formatAmount(report.totals.total)}
                 </div>
-                <div className={`mt-1 text-xs ${getComparisonColor(report.comparison.totalTrend)}`}>
+                <div style={{ marginTop: 4, fontSize: 12, color: getComparisonColor(report.comparison.totalTrend).includes('emerald') ? '#059669' : getComparisonColor(report.comparison.totalTrend).includes('red') ? '#dc2626' : '#6b7280' }}>
                   {getComparisonArrow(report.comparison.totalTrend)} {report.comparison.totalPercentage}%
                 </div>
               </div>
-              <div className={panelClass}>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Manual tables</div>
-                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <div style={panelStyle}>
+                <div style={{ fontSize: 12, color: '#64748b' }}>Manual tables</div>
+                <div style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#0f172a' }}>
                   {formatAmount(report.totals.manualTotal)}
                 </div>
               </div>
-              <div className={panelClass}>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Google Sheets</div>
-                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <div style={panelStyle}>
+                <div style={{ fontSize: 12, color: '#64748b' }}>Google Sheets</div>
+                <div style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#0f172a' }}>
                   {formatAmount(report.totals.googleSheetsTotal)}
                 </div>
               </div>
-              <div className={panelClass}>
-                <div className="text-xs text-slate-500 dark:text-slate-400">Operations</div>
-                <div className="mt-1 text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <div style={panelStyle}>
+                <div style={{ fontSize: 12, color: '#64748b' }}>Operations</div>
+                <div style={{ marginTop: 4, fontSize: 20, fontWeight: 600, color: '#0f172a' }}>
                   {report.totals.operations}
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-              <div className={`${panelClass} lg:col-span-2`}>
-                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">Trend</div>
+            <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
+              <div style={{ ...panelStyle, gridColumn: 'span 2' }}>
+                <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 500, color: '#334155' }}>Trend</div>
                 {trendChartOption ? (
                   <ReactECharts option={trendChartOption} style={{ height: 220 }} theme={chartTheme} />
                 ) : null}
               </div>
-              <div className={panelClass}>
-                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">
+              <div style={panelStyle}>
+                <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 500, color: '#334155' }}>
                   Source split
                 </div>
                 {sourceSplitOption ? (
@@ -439,49 +462,54 @@ export default function TablesReportsView() {
             </div>
 
             {topRowsBarOption ? (
-              <div className={`mt-6 ${panelClass}`}>
-                <div className="mb-3 text-sm font-medium text-slate-700 dark:text-slate-200">
+              <div style={{ marginTop: 24, ...panelStyle }}>
+                <div style={{ marginBottom: 12, fontSize: 14, fontWeight: 500, color: '#334155' }}>
                   Top counterparties
                 </div>
                 <ReactECharts option={topRowsBarOption} style={{ height: 320 }} theme={chartTheme} />
               </div>
             ) : null}
 
-            <div className="mt-6 flex gap-2">
+            <div style={{ marginTop: 24, display: 'flex', gap: 8 }}>
               {(['amount', 'average', 'operations'] as TablesReportSortKey[]).map(key => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => setSortKey(key)}
-                  className={
-                    sortKey === key
-                      ? 'rounded-full bg-sky-100 px-3 py-1 text-xs font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-300'
-                      : 'rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                  }
+                  style={{
+                    borderRadius: 9999,
+                    background: sortKey === key ? '#e0f2fe' : '#f1f5f9',
+                    padding: '4px 12px',
+                    fontSize: 12,
+                    fontWeight: sortKey === key ? 500 : 400,
+                    color: sortKey === key ? '#0369a1' : '#64748b',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
                 >
                   {key === 'amount' ? 'Amount' : key === 'average' ? 'Average' : 'Operations'}
                 </button>
               ))}
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700/70 dark:bg-slate-900/60">
-              <table className="w-full text-sm">
+            <div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #e2e8f0', background: '#fff', borderRadius: 0 }}>
+              <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
-                    <th className="px-4 py-3">Counterparty</th>
-                    <th className="px-4 py-3">Source</th>
-                    <th className="px-4 py-3">Table</th>
-                    <th className="px-4 py-3 text-right">Operations</th>
-                    <th className="px-4 py-3 text-right">Average</th>
-                    <th className="px-4 py-3 text-right">Amount</th>
-                    <th className="px-4 py-3 text-right">Last operation</th>
+                  <tr style={{ borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: 12, color: '#64748b' }}>
+                    <th style={{ padding: '12px 16px' }}>Counterparty</th>
+                    <th style={{ padding: '12px 16px' }}>Source</th>
+                    <th style={{ padding: '12px 16px' }}>Table</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Operations</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Average</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Last operation</th>
                   </tr>
                 </thead>
                 <tbody>
                   {report.aggregatedRows.map((row, index) => (
                     <tr
                       key={`${row.counterparty}-${row.source}-${index}`}
-                      className="cursor-pointer border-b border-slate-100 text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800/70"
+                      style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9', color: '#334155' }}
                       tabIndex={0}
                       onClick={() => void handleDrillDown(row.counterparty)}
                       onKeyDown={event => {
@@ -491,27 +519,31 @@ export default function TablesReportsView() {
                         }
                       }}
                     >
-                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                      <td style={{ padding: '12px 16px', fontWeight: 500, color: '#0f172a' }}>
                         {row.counterparty}
                       </td>
-                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
+                      <td style={{ padding: '12px 16px', color: '#64748b' }}>
                         <span
-                          className={
-                            row.source === 'google_sheets_import'
-                              ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
-                              : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                          }
+                          style={{
+                            display: 'inline-flex',
+                            borderRadius: 9999,
+                            background: row.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
+                            padding: '2px 8px',
+                            fontSize: 12,
+                            fontWeight: 500,
+                            color: row.source === 'google_sheets_import' ? '#065f46' : '#475569',
+                          }}
                         >
                           {getSourceLabel(row.source)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{row.tableName}</td>
-                      <td className="px-4 py-3 text-right">{row.count}</td>
-                      <td className="px-4 py-3 text-right">{formatAmount(row.average)}</td>
-                      <td className="px-4 py-3 text-right font-medium text-slate-900 dark:text-slate-100">
+                      <td style={{ padding: '12px 16px', color: '#64748b' }}>{row.tableName}</td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>{row.count}</td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>{formatAmount(row.average)}</td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 500, color: '#0f172a' }}>
                         {formatAmount(row.total)}
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">
+                      <td style={{ padding: '12px 16px', textAlign: 'right', color: '#64748b' }}>
                         {row.lastDate || '-'}
                       </td>
                     </tr>
@@ -522,17 +554,17 @@ export default function TablesReportsView() {
 
             {selectedCounterparty ? (
               <div
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+                style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', padding: '0 16px' }}
                 aria-hidden="true"
               >
                 <div
-                  className="max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
+                  style={{ maxHeight: '80vh', width: '100%', maxWidth: 768, overflow: 'hidden', background: '#fff', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', borderRadius: 0 }}
                   aria-modal="true"
                   onClick={event => event.stopPropagation()}
                   onKeyDown={event => event.stopPropagation()}
                 >
-                  <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700/70">
-                    <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', padding: '16px 24px' }}>
+                    <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>
                       {`${drillDown?.counterparty || selectedCounterparty} — Drill-down`}
                     </h2>
                     <button
@@ -541,45 +573,49 @@ export default function TablesReportsView() {
                         setSelectedCounterparty(null);
                         setDrillDown(null);
                       }}
-                      className="text-slate-500 dark:text-slate-400"
+                      style={{ color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14 }}
                     >
                       Close
                     </button>
                   </div>
 
-                  <div className="max-h-[calc(80vh-72px)] overflow-y-auto">
+                  <div style={{ maxHeight: 'calc(80vh - 72px)', overflowY: 'auto' }}>
                     {drillDown?.items?.length ? (
-                      <table className="w-full text-sm">
+                      <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                         <thead>
-                          <tr className="border-b border-slate-200 text-left text-xs text-slate-500 dark:border-slate-700/70 dark:text-slate-400">
-                            <th className="px-4 py-3">Date</th>
-                            <th className="px-4 py-3">Source</th>
-                            <th className="px-4 py-3">Table</th>
-                            <th className="px-4 py-3">Category</th>
-                            <th className="px-4 py-3 text-right">Amount</th>
+                          <tr style={{ borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: 12, color: '#64748b' }}>
+                            <th style={{ padding: '12px 16px' }}>Date</th>
+                            <th style={{ padding: '12px 16px' }}>Source</th>
+                            <th style={{ padding: '12px 16px' }}>Table</th>
+                            <th style={{ padding: '12px 16px' }}>Category</th>
+                            <th style={{ padding: '12px 16px', textAlign: 'right' }}>Amount</th>
                           </tr>
                         </thead>
                         <tbody>
                           {drillDown.items.map(item => (
                             <tr
                               key={item.rowId}
-                              className="border-b border-slate-100 text-slate-700 dark:border-slate-800 dark:text-slate-300"
+                              style={{ borderBottom: '1px solid #f1f5f9', color: '#334155' }}
                             >
-                              <td className="px-4 py-3">{item.date || '-'}</td>
-                              <td className="px-4 py-3">
+                              <td style={{ padding: '12px 16px' }}>{item.date || '-'}</td>
+                              <td style={{ padding: '12px 16px' }}>
                                 <span
-                                  className={
-                                    item.source === 'google_sheets_import'
-                                      ? 'inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
-                                      : 'inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300'
-                                  }
+                                  style={{
+                                    display: 'inline-flex',
+                                    borderRadius: 9999,
+                                    background: item.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
+                                    padding: '2px 8px',
+                                    fontSize: 12,
+                                    fontWeight: 500,
+                                    color: item.source === 'google_sheets_import' ? '#065f46' : '#475569',
+                                  }}
                                 >
                                   {getSourceLabel(item.source)}
                                 </span>
                               </td>
-                              <td className="px-4 py-3">{item.tableName}</td>
-                              <td className="px-4 py-3">{item.category || '-'}</td>
-                              <td className="px-4 py-3 text-right">
+                              <td style={{ padding: '12px 16px' }}>{item.tableName}</td>
+                              <td style={{ padding: '12px 16px' }}>{item.category || '-'}</td>
+                              <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                                 {formatAmount(item.amount, item.currency)}
                               </td>
                             </tr>
@@ -587,7 +623,7 @@ export default function TablesReportsView() {
                         </tbody>
                       </table>
                     ) : (
-                      <div className="px-6 py-8 text-sm text-slate-500 dark:text-slate-400">
+                      <div style={{ padding: '32px 24px', fontSize: 14, color: '#64748b' }}>
                         No records found
                       </div>
                     )}

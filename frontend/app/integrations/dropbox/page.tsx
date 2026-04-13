@@ -116,7 +116,7 @@ export default function DropboxIntegrationPage() {
           color: '#6b7280',
         }}
       >
-        <Spinner className="h-6 w-6" />
+        <Spinner size={24} />
       </Box>
     );
   }

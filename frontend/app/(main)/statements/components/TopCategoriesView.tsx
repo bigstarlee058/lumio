@@ -604,22 +604,22 @@ export default function TopCategoriesView() {
     isMoney = true,
   ) => {
     if (!item) {
-      return <p className="mt-1 text-xs text-gray-400">{labels.comparisonNoData}</p>;
+      return <p style={{ marginTop: 4, fontSize: 12, color: '#9ca3af' }}>{labels.comparisonNoData}</p>;
     }
 
     const deltaColor =
       item.trend === 'up'
-        ? 'text-emerald-600'
+        ? '#059669'
         : item.trend === 'down'
-          ? 'text-red-600'
-          : 'text-gray-500';
+          ? '#dc2626'
+          : '#6b7280';
     const prefix = item.delta > 0 ? '+' : item.delta < 0 ? '-' : '';
     const deltaValue = isMoney
       ? formatMoney(Math.abs(item.delta), workspaceCurrency)
       : Math.abs(Math.round(item.delta)).toString();
 
     return (
-      <p className={`mt-1 text-xs ${deltaColor}`}>
+      <p style={{ marginTop: 4, fontSize: 12, color: deltaColor }}>
         {formatPercentage(item.percentage)} ({prefix}
         {deltaValue}) {labels.vsPreviousPeriod}
       </p>
@@ -661,31 +661,43 @@ export default function TopCategoriesView() {
 
   return (
     <div className="container-shared lumio-view-page">
-      <div className="mb-5 shrink-0 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">{labels.title}</h1>
-            <p className="text-sm text-gray-500">{labels.subtitle}</p>
+            <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
+            <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.subtitle}</p>
           </div>
-          <div className="inline-flex rounded-md border border-gray-200 bg-white p-1">
+          <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: '#fff', padding: 4, borderRadius: 0 }}>
             <button
               type="button"
-              className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                activeFlowType === 'spend'
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              style={{
+                borderRadius: 0,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 500,
+                background: activeFlowType === 'spend' ? 'var(--primary)' : 'transparent',
+                color: activeFlowType === 'spend' ? '#fff' : '#4b5563',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 0.15s',
+              }}
               onClick={() => setActiveFlowType('spend')}
             >
               {labels.tabSpenders}
             </button>
             <button
               type="button"
-              className={`rounded px-3 py-1.5 text-xs font-medium transition ${
-                activeFlowType === 'income'
-                  ? 'bg-primary text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
+              style={{
+                borderRadius: 0,
+                padding: '6px 12px',
+                fontSize: 12,
+                fontWeight: 500,
+                background: activeFlowType === 'income' ? 'var(--primary)' : 'transparent',
+                color: activeFlowType === 'income' ? '#fff' : '#4b5563',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 0.15s',
+              }}
               onClick={() => setActiveFlowType('income')}
             >
               {labels.tabIncomeSenders}
@@ -693,9 +705,9 @@ export default function TopCategoriesView() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af', pointerEvents: 'none' }} />
             <input
               type="text"
               value={searchInput}
@@ -705,8 +717,8 @@ export default function TopCategoriesView() {
               className="lumio-view-page__search-input"
             />
           </div>
-          <div className="sm:w-60">
-            <label htmlFor="top-categories-workspace-filter" className="sr-only">
+          <div style={{ width: 240 }}>
+            <label htmlFor="top-categories-workspace-filter" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
               {labels.workspace}
             </label>
             <select
@@ -823,7 +835,7 @@ export default function TopCategoriesView() {
             <SlidersHorizontal size={14} />
             {labels.filters}
             {activeFilterCount > 0 ? (
-              <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+              <span className="lumio-view-page__filter-badge">
                 {activeFilterCount}
               </span>
             ) : null}
@@ -837,15 +849,15 @@ export default function TopCategoriesView() {
             <Spinner style={{ height: 80, width: 80, color: "var(--primary)" }} />
           </div>
         ) : flowFilteredRecords.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-gray-300 bg-white p-12 text-center text-sm text-gray-500">
+          <div style={{ border: '1px dashed #d1d5db', background: '#fff', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 0 }}>
             {labels.noData}
           </div>
         ) : (
-          <div className="space-y-4 pb-6">
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: 24 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
               <div className="lumio-view-page__stat-card">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                     {primaryMetricLabel}
                   </span>
                   {isIncomeView ? (
@@ -854,55 +866,51 @@ export default function TopCategoriesView() {
                     <ArrowDown size={16} color="#ef4444" />
                   )}
                 </div>
-                <div
-                  className={`mt-2 text-lg font-semibold ${
-                    isIncomeView ? 'text-emerald-600' : 'text-red-600'
-                  }`}
-                >
+                <div style={{ marginTop: 8, fontSize: 18, fontWeight: 600, color: isIncomeView ? '#059669' : '#dc2626' }}>
                   {formatMoney(totals.total, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.total || null)}
               </div>
               <div className="lumio-view-page__stat-card">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                     {labels.statementsSpend}
                   </span>
                   <ChartPie size={16} color="var(--primary)" />
                 </div>
-                <div className="mt-2 text-lg font-semibold text-primary">
+                <div style={{ marginTop: 8, fontSize: 18, fontWeight: 600, color: 'var(--primary)' }}>
                   {formatMoney(totals.statementTotal, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.statementTotal || null)}
               </div>
               <div className="lumio-view-page__stat-card">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                     {labels.receiptsSpend}
                   </span>
                   <ArrowUp size={16} color="#10b981" />
                 </div>
-                <div className="mt-2 text-lg font-semibold text-emerald-600">
+                <div style={{ marginTop: 8, fontSize: 18, fontWeight: 600, color: '#059669' }}>
                   {formatMoney(totals.receiptTotal, workspaceCurrency)}
                 </div>
                 {renderComparisonLine(comparison?.receiptTotal || null)}
               </div>
               <div className="lumio-view-page__stat-card">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs uppercase tracking-wider text-gray-500">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
                     {labels.totalOperations}
                   </span>
-                  <span className="text-xs font-medium text-gray-500">#</span>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>#</span>
                 </div>
-                <div className="mt-2 text-lg font-semibold text-gray-900">{totals.operations}</div>
+                <div style={{ marginTop: 8, fontSize: 18, fontWeight: 600, color: '#111827' }}>{totals.operations}</div>
                 {renderComparisonLine(comparison?.operations || null, false)}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              <div className="rounded-lg border border-gray-200 bg-white p-5 lg:col-span-2">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">{trendTitle}</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
+              <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0, gridColumn: 'span 2' }}>
+                <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{trendTitle}</h3>
                 </div>
                 <ReactECharts
                   style={{ height: 300 }}
@@ -912,9 +920,9 @@ export default function TopCategoriesView() {
                   theme={chartTheme}
                 />
               </div>
-              <div className="rounded-lg border border-gray-200 bg-white p-5">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900">{labels.sourceSplit}</h3>
+              <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+                <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{labels.sourceSplit}</h3>
                 </div>
                 <ReactECharts
                   style={{ height: 300 }}
@@ -926,9 +934,9 @@ export default function TopCategoriesView() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 bg-white p-5">
-              <div className="mb-2 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900">{categoriesTitle}</h3>
+            <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+              <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{categoriesTitle}</h3>
               </div>
               <ReactECharts
                 style={{ height: 320 }}
@@ -939,38 +947,30 @@ export default function TopCategoriesView() {
               />
             </div>
 
-            <div className="rounded-lg border border-gray-200 bg-white p-5">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-semibold text-gray-900">{leaderboardTitle}</h3>
-                  <span className="text-xs text-gray-500">{sortedAggregatedRows.length}</span>
+            <div style={{ border: '1px solid #e5e7eb', background: '#fff', padding: 20, borderRadius: 0 }}>
+              <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{leaderboardTitle}</h3>
+                  <span style={{ fontSize: 12, color: '#6b7280' }}>{sortedAggregatedRows.length}</span>
                 </div>
-                <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 p-1">
+                <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: '#f9fafb', padding: 4, borderRadius: 0 }}>
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'amount' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
-                    }`}
+                    style={{ borderRadius: 0, padding: '4px 10px', fontSize: 12, fontWeight: 500, background: sortKey === 'amount' ? '#fff' : 'transparent', color: sortKey === 'amount' ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: sortKey === 'amount' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}
                     onClick={() => setSortKey('amount')}
                   >
                     {labels.sortByAmount}
                   </button>
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'average' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'
-                    }`}
+                    style={{ borderRadius: 0, padding: '4px 10px', fontSize: 12, fontWeight: 500, background: sortKey === 'average' ? '#fff' : 'transparent', color: sortKey === 'average' ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: sortKey === 'average' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}
                     onClick={() => setSortKey('average')}
                   >
                     {labels.sortByAverage}
                   </button>
                   <button
                     type="button"
-                    className={`rounded px-2.5 py-1 text-xs font-medium ${
-                      sortKey === 'operations'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600'
-                    }`}
+                    style={{ borderRadius: 0, padding: '4px 10px', fontSize: 12, fontWeight: 500, background: sortKey === 'operations' ? '#fff' : 'transparent', color: sortKey === 'operations' ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: sortKey === 'operations' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}
                     onClick={() => setSortKey('operations')}
                   >
                     {labels.sortByOperations}
@@ -978,39 +978,39 @@ export default function TopCategoriesView() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-                      <th className="py-2 pr-4">{labels.category}</th>
-                      <th className="py-2 pr-4">{labels.source}</th>
-                      <th className="py-2 pr-4 text-right">{labels.operations}</th>
-                      <th className="py-2 pr-4 text-right">{labels.average}</th>
-                      <th className="py-2 pr-4 text-right">{labels.amount}</th>
-                      <th className="py-2 text-right">{labels.lastOperation}</th>
+                    <tr style={{ textAlign: 'left', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                      <th style={{ padding: '8px 16px 8px 0' }}>{labels.category}</th>
+                      <th style={{ padding: '8px 16px 8px 0' }}>{labels.source}</th>
+                      <th style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{labels.operations}</th>
+                      <th style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{labels.average}</th>
+                      <th style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{labels.amount}</th>
+                      <th style={{ padding: '8px 0', textAlign: 'right' }}>{labels.lastOperation}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+                  <tbody>
                     {sortedAggregatedRows.slice(0, 60).map(row => (
-                      <tr key={row.id} className="text-gray-700">
-                        <td className="py-2 pr-4 font-medium text-gray-900">
+                      <tr key={row.id} style={{ color: '#374151', borderTop: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 16px 8px 0', fontWeight: 500, color: '#111827' }}>
                           <button
                             type="button"
-                            className="text-left text-primary hover:underline"
+                            style={{ textAlign: 'left', color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontSize: 14 }}
                             onClick={() => setSelectedRowId(row.id)}
                           >
                             {row.category}
                           </button>
                         </td>
-                        <td className="py-2 pr-4">{renderSourceBadge(row.sourceChannel)}</td>
-                        <td className="py-2 pr-4 text-right">{row.count}</td>
-                        <td className="py-2 pr-4 text-right">
+                        <td style={{ padding: '8px 16px 8px 0' }}>{renderSourceBadge(row.sourceChannel)}</td>
+                        <td style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{row.count}</td>
+                        <td style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>
                           {formatMoney(row.average, workspaceCurrency)}
                         </td>
-                        <td className="py-2 pr-4 text-right font-semibold text-gray-900">
+                        <td style={{ padding: '8px 16px 8px 0', textAlign: 'right', fontWeight: 600, color: '#111827' }}>
                           {formatMoney(row.total, workspaceCurrency)}
                         </td>
-                        <td className="py-2 text-right text-gray-500">
+                        <td style={{ padding: '8px 0', textAlign: 'right', color: '#6b7280' }}>
                           {row.lastDate && !Number.isNaN(new Date(row.lastDate).getTime())
                             ? new Date(row.lastDate).toLocaleDateString()
                             : '-'}
@@ -1082,20 +1082,20 @@ export default function TopCategoriesView() {
       />
 
       {selectedRow ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 p-4">
-          <div className="max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white">
-            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', padding: 16 }}>
+          <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: '#fff', borderRadius: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e5e7eb', padding: '12px 20px' }}>
               <div>
-                <h4 className="text-sm font-semibold text-gray-900">
+                <h4 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
                   {selectedRow.category} - {labels.drillDown}
                 </h4>
-                <p className="text-xs text-gray-500">
+                <p style={{ fontSize: 12, color: '#6b7280' }}>
                   {renderSourceBadge(selectedRow.sourceChannel)}
                 </p>
               </div>
               <button
                 type="button"
-                className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                style={{ borderRadius: 0, padding: 6, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}
                 onClick={() => setSelectedRowId(null)}
                 aria-label={labels.close}
               >
@@ -1103,36 +1103,36 @@ export default function TopCategoriesView() {
               </button>
             </div>
 
-            <div className="max-h-[65vh] overflow-y-auto px-5 py-4">
+            <div style={{ maxHeight: '65vh', overflowY: 'auto', padding: '16px 20px' }}>
               {drillDownRecords.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+                <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 0 }}>
                   {labels.noOperations}
                 </div>
               ) : (
-                <table className="min-w-full divide-y divide-gray-100 text-sm dark:divide-slate-700/60">
+                <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-                      <th className="py-2 pr-4">{labels.lastOperation}</th>
-                      <th className="py-2 pr-4">{labels.source}</th>
-                      <th className="py-2 pr-4">{labels.workspace}</th>
-                      <th className="py-2 pr-4">Merchant</th>
-                      <th className="py-2 text-right">{labels.amount}</th>
+                    <tr style={{ textAlign: 'left', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                      <th style={{ padding: '8px 16px 8px 0' }}>{labels.lastOperation}</th>
+                      <th style={{ padding: '8px 16px 8px 0' }}>{labels.source}</th>
+                      <th style={{ padding: '8px 16px 8px 0' }}>{labels.workspace}</th>
+                      <th style={{ padding: '8px 16px 8px 0' }}>Merchant</th>
+                      <th style={{ padding: '8px 0', textAlign: 'right' }}>{labels.amount}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-slate-700/60">
+                  <tbody>
                     {drillDownRecords.slice(0, 120).map(record => (
-                      <tr key={record.id} className="text-gray-700">
-                        <td className="py-2 pr-4 text-gray-600">
+                      <tr key={record.id} style={{ color: '#374151', borderTop: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 16px 8px 0', color: '#4b5563' }}>
                           {record.dateValue && !Number.isNaN(new Date(record.dateValue).getTime())
                             ? new Date(record.dateValue).toLocaleDateString()
                             : '-'}
                         </td>
-                        <td className="py-2 pr-4">{renderSourceBadge(record.sourceChannel)}</td>
-                        <td className="py-2 pr-4 text-gray-600">{record.workspaceName || '-'}</td>
-                        <td className="py-2 pr-4 text-gray-600">
+                        <td style={{ padding: '8px 16px 8px 0' }}>{renderSourceBadge(record.sourceChannel)}</td>
+                        <td style={{ padding: '8px 16px 8px 0', color: '#4b5563' }}>{record.workspaceName || '-'}</td>
+                        <td style={{ padding: '8px 16px 8px 0', color: '#4b5563' }}>
                           {record.counterpartyName || record.sender || record.subject || '-'}
                         </td>
-                        <td className="py-2 text-right font-medium text-gray-900">
+                        <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500, color: '#111827' }}>
                           {formatMoney(record.amount, workspaceCurrency)}
                         </td>
                       </tr>
