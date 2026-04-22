@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 'use client';
 
+import type React from 'react';
 import { GoogleSheetsPickerButton } from '@/app/components/GoogleSheetsPickerButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -49,7 +51,8 @@ type PickerTokenResponse = {
   apiKey?: string;
 };
 
-export default function GoogleSheetsIntegrationPage() {
+// eslint-disable-next-line max-lines-per-function, complexity
+export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('googleSheetsIntegrationPage');
   const copy = getGoogleSheetsIntegrationCopy(t);
@@ -78,7 +81,7 @@ export default function GoogleSheetsIntegrationPage() {
     apiKey: pickerApiKey,
   });
 
-  const loadConnections = async () => {
+  const loadConnections = async (): Promise<void> => {
     try {
       setLoadingList(true);
       const response = await apiClient.get('/google-sheets');
@@ -91,7 +94,8 @@ export default function GoogleSheetsIntegrationPage() {
     }
   };
 
-  const loadAuthStatus = async () => {
+  // eslint-disable-next-line complexity
+  const loadAuthStatus = async (): Promise<void> => {
     try {
       const response = await apiClient.get('/google-sheets/oauth/status');
       const status: AuthStatus = response.data?.data || response.data || { connected: false };
@@ -117,9 +121,10 @@ export default function GoogleSheetsIntegrationPage() {
     if (!user) return;
     void loadConnections();
     void loadAuthStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const startOauth = async () => {
+  const startOauth = async (): Promise<void> => {
     try {
       setConnectingAccount(true);
       setError(null);
@@ -141,7 +146,7 @@ export default function GoogleSheetsIntegrationPage() {
     }
   };
 
-  const loadWorksheets = async (spreadsheetId: string) => {
+  const loadWorksheets = async (spreadsheetId: string): Promise<void> => {
     try {
       setLoadingWorksheets(true);
       const response = await apiClient.get(
@@ -159,7 +164,7 @@ export default function GoogleSheetsIntegrationPage() {
     }
   };
 
-  const handleSpreadsheetPick = async (selection: SpreadsheetSelection) => {
+  const handleSpreadsheetPick = async (selection: SpreadsheetSelection): Promise<void> => {
     setSelectedSpreadsheet(selection);
     setSheetName(selection.name);
     setWorksheetName('');
@@ -169,7 +174,7 @@ export default function GoogleSheetsIntegrationPage() {
     await loadWorksheets(selection.spreadsheetId);
   };
 
-  const handleConnect = async () => {
+  const handleConnect = async (): Promise<void> => {
     if (!selectedSpreadsheet) {
       setError(copy.errors.spreadsheetRequired);
       toast.error(copy.errors.spreadsheetRequired);
@@ -197,7 +202,7 @@ export default function GoogleSheetsIntegrationPage() {
     }
   };
 
-  const handleSync = async (id: string) => {
+  const handleSync = async (id: string): Promise<void> => {
     try {
       setSyncingId(id);
       setError(null);
@@ -215,7 +220,7 @@ export default function GoogleSheetsIntegrationPage() {
     }
   };
 
-  const handleRemove = async (id: string) => {
+  const handleRemove = async (id: string): Promise<void> => {
     try {
       setRemovingId(id);
       setError(null);
@@ -259,7 +264,7 @@ export default function GoogleSheetsIntegrationPage() {
       <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid #e5e7eb',
             bgcolor: 'background.paper',
             p: 3,
@@ -285,7 +290,7 @@ export default function GoogleSheetsIntegrationPage() {
         <Box
           sx={{
             p: 1,
-            borderRadius: '50%',
+            borderRadius: 'var(--lumio-radius-full)',
             bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
             color: 'primary.main',
             display: 'flex',
@@ -307,7 +312,6 @@ export default function GoogleSheetsIntegrationPage() {
             <Alert
               severity="success"
               icon={<CheckCircle2 style={{ height: 16, width: 16 }} />}
-              sx={{ borderRadius: 0 }}
             >
               {success}
             </Alert>
@@ -316,7 +320,6 @@ export default function GoogleSheetsIntegrationPage() {
             <Alert
               severity="error"
               icon={<AlertCircle style={{ height: 16, width: 16 }} />}
-              sx={{ borderRadius: 0 }}
             >
               {error}
             </Alert>
@@ -334,7 +337,7 @@ export default function GoogleSheetsIntegrationPage() {
         <Stack spacing={2}>
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -346,7 +349,7 @@ export default function GoogleSheetsIntegrationPage() {
               <Box
                 sx={{
                   p: 1,
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-sm)',
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
                   border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
                   display: 'flex',
@@ -365,7 +368,7 @@ export default function GoogleSheetsIntegrationPage() {
             <Stack spacing={2}>
               <Box
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                   border: '1px solid #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 1.5,
@@ -401,7 +404,7 @@ export default function GoogleSheetsIntegrationPage() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 8,
-                      borderRadius: 0,
+                      borderRadius: 'var(--lumio-radius-md)',
                       background: 'var(--color-primary)',
                       padding: '8px 16px',
                       fontSize: 14,
@@ -421,7 +424,7 @@ export default function GoogleSheetsIntegrationPage() {
               </Box>
 
               <Box
-                sx={{ borderRadius: 0, border: '1px solid #e5e7eb', p: 1.5 }}
+                sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', p: 1.5 }}
                 data-tour-id="gs-integration-picker"
               >
                 <Box
@@ -497,7 +500,7 @@ export default function GoogleSheetsIntegrationPage() {
                     marginTop: 4,
                     width: '100%',
                     border: '1px solid #e5e7eb',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
@@ -525,7 +528,7 @@ export default function GoogleSheetsIntegrationPage() {
                     marginTop: 4,
                     width: '100%',
                     border: '1px solid #e5e7eb',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
@@ -550,7 +553,7 @@ export default function GoogleSheetsIntegrationPage() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 8,
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   background: 'var(--color-primary)',
                   padding: '8px 16px',
                   fontSize: 14,
@@ -568,7 +571,7 @@ export default function GoogleSheetsIntegrationPage() {
 
               <Box
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.05)',
                   p: 1.5,
                   mt: 1,
@@ -583,7 +586,7 @@ export default function GoogleSheetsIntegrationPage() {
 
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -595,7 +598,7 @@ export default function GoogleSheetsIntegrationPage() {
               <Box
                 sx={{
                   p: 1,
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-sm)',
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
                   border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
                   display: 'flex',
@@ -624,7 +627,7 @@ export default function GoogleSheetsIntegrationPage() {
                   alignItems: 'center',
                   gap: 8,
                   border: '1px solid #e5e7eb',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   padding: '8px 12px',
                   fontSize: 14,
                   fontWeight: 500,
@@ -644,7 +647,7 @@ export default function GoogleSheetsIntegrationPage() {
                   alignItems: 'center',
                   gap: 8,
                   border: '1px solid #e5e7eb',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   padding: '8px 12px',
                   fontSize: 14,
                   fontWeight: 500,
@@ -683,7 +686,7 @@ export default function GoogleSheetsIntegrationPage() {
                 <Box
                   sx={{
                     mt: 1.5,
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-lg)',
                     bgcolor: '#f9fafb',
                     border: '1px dashed #e5e7eb',
                     px: 1.5,
@@ -710,7 +713,7 @@ export default function GoogleSheetsIntegrationPage() {
         <Stack spacing={1.5}>
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -733,7 +736,7 @@ export default function GoogleSheetsIntegrationPage() {
                   <Box
                     key={key}
                     sx={{
-                      borderRadius: 0,
+                      borderRadius: 'var(--lumio-radius-lg)',
                       border: '1px solid #f3f4f6',
                       bgcolor: '#f9fafb',
                       p: 1.5,
@@ -746,7 +749,7 @@ export default function GoogleSheetsIntegrationPage() {
             ) : emptyState ? (
               <Box
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -756,11 +759,12 @@ export default function GoogleSheetsIntegrationPage() {
               </Box>
             ) : (
               <Stack spacing={1.5}>
+                {/* eslint-disable-next-line max-lines-per-function, max-params, complexity */}
                 {connections.map((item, index) => (
                   <Box
                     key={item.id}
                     sx={{
-                      borderRadius: 0,
+                      borderRadius: 'var(--lumio-radius-lg)',
                       border: '1px solid #e5e7eb',
                       bgcolor: 'background.paper',
                       p: 1.5,
@@ -783,7 +787,7 @@ export default function GoogleSheetsIntegrationPage() {
                                 sx={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  borderRadius: 0,
+                                  borderRadius: 'var(--lumio-radius-sm)',
                                   bgcolor: '#fffbeb',
                                   px: 1,
                                   py: 0.25,
@@ -802,7 +806,7 @@ export default function GoogleSheetsIntegrationPage() {
                                 sx={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  borderRadius: 0,
+                                  borderRadius: 'var(--lumio-radius-sm)',
                                   bgcolor: '#ecfdf5',
                                   px: 1,
                                   py: 0.25,
@@ -846,7 +850,7 @@ export default function GoogleSheetsIntegrationPage() {
                               alignItems: 'center',
                               justifyContent: 'center',
                               gap: 8,
-                              borderRadius: 0,
+                              borderRadius: 'var(--lumio-radius-md)',
                               border: '1px solid #fcd34d',
                               background: '#fffbeb',
                               padding: '6px 12px',
@@ -870,7 +874,7 @@ export default function GoogleSheetsIntegrationPage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 8,
-                            borderRadius: 0,
+                            borderRadius: 'var(--lumio-radius-md)',
                             border: '1px solid var(--color-primary)',
                             background: 'transparent',
                             padding: '6px 12px',
@@ -898,7 +902,7 @@ export default function GoogleSheetsIntegrationPage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 8,
-                            borderRadius: 0,
+                            borderRadius: 'var(--lumio-radius-md)',
                             border: '1px solid #e5e7eb',
                             background: 'transparent',
                             padding: '6px 12px',

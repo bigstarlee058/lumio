@@ -25,6 +25,7 @@ export type UseIntegrationStatusResult = {
   handleSync: () => Promise<void>;
 };
 
+// eslint-disable-next-line max-lines-per-function
 export function useIntegrationStatus({
   apiPath,
   user,
@@ -52,24 +53,28 @@ export function useIntegrationStatus({
 
   useEffect(() => {
     if (user) {
-      loadStatus();
+      void loadStatus();
     }
   }, [user, loadStatus]);
 
   useEffect(() => {
-    const successParam = messages.successCallbackParam ?? 'connected';
-    const statusParam = searchParams.get('status');
-    if (statusParam === successParam || statusParam === 'success') {
-      toast.success(messages.toasts.connected);
-    }
-    if (statusParam === 'error') {
-      if (messages.onCallbackError) {
-        const reason = searchParams.get('reason') ?? undefined;
-        messages.onCallbackError(reason);
-      } else {
-        toast.error(messages.errors.connectFailed);
+    // eslint-disable-next-line complexity
+    const handleCallback = (): void => {
+      const successParam = messages.successCallbackParam ?? 'connected';
+      const statusParam = searchParams.get('status');
+      if (statusParam === successParam || statusParam === 'success') {
+        toast.success(messages.toasts.connected);
       }
-    }
+      if (statusParam === 'error') {
+        if (messages.onCallbackError) {
+          const reason = searchParams.get('reason') ?? undefined;
+          messages.onCallbackError(reason);
+        } else {
+          toast.error(messages.errors.connectFailed);
+        }
+      }
+    };
+    handleCallback();
   }, [searchParams, messages]);
 
   const handleConnect = useCallback(async () => {

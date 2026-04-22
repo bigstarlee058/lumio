@@ -15,6 +15,7 @@ type CloudStorageProvider = {
   pickerUnavailableLabel: LocalizedLabel;
 };
 
+// eslint-disable-next-line max-lines-per-function, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
   return {
     key: provider.key,

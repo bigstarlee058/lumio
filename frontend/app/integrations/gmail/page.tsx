@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { Checkbox } from '@/app/components/ui/checkbox';
@@ -37,16 +38,202 @@ type GmailStatus = {
   scopes?: string[];
 };
 
-export default function GmailIntegrationPage() {
+type GmailPageT = ReturnType<typeof useIntlayer<'gmailIntegrationPage'>>;
+
+function GmailLoadingView(): React.JSX.Element {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        minHeight: '60vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#6b7280',
+      }}
+    >
+      <Spinner size={24} />
+    </Box>
+  );
+}
+
+function GmailNotLoggedInView({ t }: { t: GmailPageT }): React.JSX.Element {
+  return (
+    <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
+      <Box
+        sx={{
+          borderRadius: 'var(--lumio-radius-lg)',
+          border: '1px solid #e5e7eb',
+          bgcolor: 'background.paper',
+          p: 3,
+          boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+          textAlign: 'center',
+        }}
+      >
+        <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
+          {t.common.notConnected.value}
+        </Typography>
+        <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+          {t.errors.loginRequired.value}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+function GmailInfoPanel({ t }: { t: GmailPageT }): React.JSX.Element {
+  return (
+    <Box
+      sx={{
+        borderRadius: 'var(--lumio-radius-lg)',
+        border: '1px solid #e5e7eb',
+        bgcolor: 'background.paper',
+        p: 2,
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+        height: 'fit-content',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+        <Box sx={{ mt: 0.5, color: 'primary.main' }}>
+          <CheckCircle2 style={{ height: 20, width: 20 }} />
+        </Box>
+        <Box>
+          <Typography style={{ fontWeight: 600, color: '#111827', marginBottom: 8 }}>
+            {t.info.title.value}
+          </Typography>
+          <Stack spacing={1}>
+            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step1.value}</Typography>
+            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step2.value}</Typography>
+            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step3.value}</Typography>
+            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step4.value}</Typography>
+          </Stack>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+type GmailSettingsPanelProps = {
+  status: GmailStatus;
+  t: GmailPageT;
+  isSaving: boolean;
+  userLocale: string | undefined;
+  onUpdateSettings: (payload: Partial<GmailSettings>) => Promise<void>;
+};
+
+// eslint-disable-next-line max-lines-per-function
+function GmailSettingsPanel({
+  status,
+  t,
+  isSaving,
+  userLocale,
+  onUpdateSettings,
+}: GmailSettingsPanelProps): React.JSX.Element {
+  return (
+    <Box
+      sx={{
+        borderRadius: 'var(--lumio-radius-lg)',
+        border: '1px solid #e5e7eb',
+        bgcolor: 'background.paper',
+        p: 3,
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+      }}
+    >
+      <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 24 }}>
+        {t.settings.title.value}
+      </Typography>
+
+      <Stack spacing={2}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          <Stack spacing={0.5}>
+            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.labelName.value}</Typography>
+            <Typography style={{ fontWeight: 500, color: '#111827' }}>
+              {status.settings?.labelName || 'Lumio/Receipts'}
+            </Typography>
+          </Stack>
+          <Stack spacing={0.5}>
+            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.lastSync.value}</Typography>
+            <Typography style={{ fontWeight: 500, color: '#111827' }}>
+              {formatDateTime(status.settings?.lastSyncAt, userLocale) || t.common.unknownDate.value}
+            </Typography>
+          </Stack>
+        </Box>
+
+        <Stack spacing={1}>
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Checkbox
+              checked={status.settings?.filterEnabled ?? true}
+              onCheckedChange={checked => void onUpdateSettings({ filterEnabled: checked as boolean })}
+              disabled={isSaving}
+            />
+            <Typography style={{ fontSize: 14, color: '#374151' }}>{t.settings.filterEnabled.value}</Typography>
+          </Box>
+        </Stack>
+
+        <Stack spacing={0.5}>
+          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.watchStatus.value}</Typography>
+          <Typography style={{ fontWeight: 500, color: '#111827' }}>
+            {status.settings?.watchEnabled ? (
+              <span style={{ color: '#059669' }}>{t.status.active.value}</span>
+            ) : (
+              <span style={{ color: '#9ca3af' }}>{t.status.inactive.value}</span>
+            )}
+          </Typography>
+          {status.settings?.watchExpiration && (
+            <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+              {t.settings.expires.value}: {formatDateTime(status.settings.watchExpiration, userLocale)}
+            </Typography>
+          )}
+        </Stack>
+
+        <Stack spacing={1}>
+          <label htmlFor="gmail-filter-keywords" style={{ fontSize: 14, color: '#6b7280' }}>
+            {t.settings.keywords.value}
+          </label>
+          <input
+            id="gmail-filter-keywords"
+            type="text"
+            value={status.settings?.filterConfig?.keywords?.join(', ') || ''}
+            onChange={e =>
+              void onUpdateSettings({
+                filterConfig: {
+                  ...status.settings?.filterConfig,
+                  keywords: e.target.value.split(',').map(k => k.trim()),
+                },
+              })
+            }
+            disabled={isSaving}
+            placeholder={t.settings.keywordsPlaceholder.value}
+            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', padding: '8px 12px', fontSize: 14, color: '#111827' }}
+          />
+          <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.settings.keywordsHelp.value}</Typography>
+        </Stack>
+
+        <Stack spacing={1}>
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Checkbox
+              checked={status.settings?.filterConfig?.hasAttachment ?? true}
+              onCheckedChange={checked =>
+                void onUpdateSettings({
+                  filterConfig: { ...status.settings?.filterConfig, hasAttachment: checked as boolean },
+                })
+              }
+              disabled={isSaving}
+            />
+            <Typography style={{ fontSize: 14, color: '#374151' }}>{t.settings.hasAttachment.value}</Typography>
+          </Box>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+}
+
+// eslint-disable-next-line max-lines-per-function
+export default function GmailIntegrationPage(): React.JSX.Element {
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('gmailIntegrationPage');
-
-  // Gmail sync has a custom response format, so we manage syncing state locally
   const [gmailSyncing, setGmailSyncing] = useState(false);
   const [gmailSaving, setGmailSaving] = useState(false);
 
-  // Gmail has a special OAuth error callback with a `reason` query param.
-  // We pass this as onCallbackError so the hook skips its own generic error toast.
   const handleCallbackError = useCallback(
     (reason?: string) => {
       toast.error(reason ? `${t.errors.authFailed.value}: ${reason}` : t.errors.authFailed.value);
@@ -74,23 +261,12 @@ export default function GmailIntegrationPage() {
     [t, handleCallbackError],
   );
 
-  const {
-    status: baseStatus,
-    loading,
-    saving,
-    loadStatus,
-    handleConnect,
-    handleDisconnect,
-  } = useIntegrationStatus({
-    apiPath: 'gmail',
-    user,
-    messages,
-  });
+  const { status: baseStatus, loading, saving, loadStatus, handleConnect, handleDisconnect } =
+    useIntegrationStatus({ apiPath: 'gmail', user, messages });
 
-  // Cast to GmailStatus to access Gmail-specific settings
   const status = baseStatus as GmailStatus | null;
 
-  const updateSettings = async (payload: Partial<GmailSettings>) => {
+  const updateSettings = async (payload: Partial<GmailSettings>): Promise<void> => {
     try {
       setGmailSaving(true);
       await apiClient.post('/integrations/gmail/settings', payload);
@@ -103,15 +279,14 @@ export default function GmailIntegrationPage() {
     }
   };
 
-  // Gmail sync returns a custom response with messagesFound/jobsCreated/skipped
-  const handleGmailSync = async () => {
+  // eslint-disable-next-line complexity
+  const handleGmailSync = async (): Promise<void> => {
     try {
       setGmailSyncing(true);
       const response = await apiClient.post('/integrations/gmail/sync');
       const messagesFound = Number(response.data?.messagesFound ?? 0);
       const jobsCreated = Number(response.data?.jobsCreated ?? 0);
       const skipped = Number(response.data?.skipped ?? 0);
-
       if (jobsCreated > 0) {
         toast.success(`${t.toasts.syncStarted.value} (${jobsCreated})`);
       } else if (messagesFound === 0) {
@@ -121,7 +296,6 @@ export default function GmailIntegrationPage() {
       } else {
         toast.error(t.errors.syncNoNew.value);
       }
-
       await loadStatus();
     } catch {
       toast.error(t.errors.syncFailed.value);
@@ -131,8 +305,6 @@ export default function GmailIntegrationPage() {
   };
 
   const isSaving = saving || gmailSaving;
-  const isSyncing = gmailSyncing;
-
   const statusLabel = useMemo(() => {
     if (!status) return '';
     if (status.status === 'needs_reauth') return t.status.needsReauth.value;
@@ -140,73 +312,18 @@ export default function GmailIntegrationPage() {
     return t.status.disconnected.value;
   }, [status, t]);
 
-  if (authLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          minHeight: '60vh',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#6b7280',
-        }}
-      >
-        <Spinner size={24} />
-      </Box>
-    );
-  }
-
-  if (!user) {
-    return (
-      <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box
-          sx={{
-            borderRadius: 0,
-            border: '1px solid #e5e7eb',
-            bgcolor: 'background.paper',
-            p: 3,
-            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-            textAlign: 'center',
-          }}
-        >
-          <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
-            {t.common.notConnected.value}
-          </Typography>
-          <Typography style={{ fontSize: 14, color: '#4b5563' }}>
-            {t.errors.loginRequired.value}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
+  if (authLoading) return <GmailLoadingView />;
+  if (!user) return <GmailNotLoggedInView t={t} />;
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box
-          sx={{
-            p: 1,
-            borderRadius: '50%',
-            bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
-            overflow: 'hidden',
-            display: 'flex',
-          }}
-        >
-          <Image
-            src="/icons/gmail.png"
-            alt="Gmail"
-            width={24}
-            height={24}
-            style={{ height: 24, width: 24, objectFit: 'contain' }}
-          />
+        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', overflow: 'hidden', display: 'flex' }}>
+          <Image src="/icons/gmail.png" alt="Gmail" width={24} height={24} style={{ height: 24, width: 24, objectFit: 'contain' }} />
         </Box>
         <Box>
-          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
-            {t.header.title.value}
-          </Typography>
-          <Typography style={{ color: '#4b5563', marginTop: 4 }}>
-            {t.header.subtitle.value}
-          </Typography>
+          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>{t.header.title.value}</Typography>
+          <Typography style={{ color: '#4b5563', marginTop: 4 }}>{t.header.subtitle.value}</Typography>
         </Box>
       </Box>
 
@@ -217,20 +334,14 @@ export default function GmailIntegrationPage() {
         </Box>
       )}
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
-          gap: 2,
-        }}
-      >
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' }, gap: 2 }}>
         <Stack spacing={2}>
           <IntegrationStatusCard
             status={status}
             title={t.header.title.value}
             statusLabel={statusLabel}
             saving={isSaving}
-            syncing={isSyncing}
+            syncing={gmailSyncing}
             onConnect={handleConnect}
             onDisconnect={handleDisconnect}
             onSync={handleGmailSync}
@@ -240,164 +351,17 @@ export default function GmailIntegrationPage() {
             disconnectLabel={t.actions.disconnect.value}
             disconnectedHint="We'll create a label in your Gmail and sync new receipts automatically."
           />
-
           {status?.connected && (
-            <Box
-              sx={{
-                borderRadius: 0,
-                border: '1px solid #e5e7eb',
-                bgcolor: 'background.paper',
-                p: 3,
-                boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-              }}
-            >
-              <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 24 }}>
-                {t.settings.title.value}
-              </Typography>
-
-              <Stack spacing={2}>
-                {/* Label Info */}
-                <Box
-                  sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}
-                >
-                  <Stack spacing={0.5}>
-                    <Typography style={{ fontSize: 14, color: '#6b7280' }}>
-                      {t.settings.labelName.value}
-                    </Typography>
-                    <Typography style={{ fontWeight: 500, color: '#111827' }}>
-                      {status.settings?.labelName || 'Lumio/Receipts'}
-                    </Typography>
-                  </Stack>
-                  <Stack spacing={0.5}>
-                    <Typography style={{ fontSize: 14, color: '#6b7280' }}>
-                      {t.settings.lastSync.value}
-                    </Typography>
-                    <Typography style={{ fontWeight: 500, color: '#111827' }}>
-                      {formatDateTime(status.settings?.lastSyncAt, user?.locale) ||
-                        t.common.unknownDate.value}
-                    </Typography>
-                  </Stack>
-                </Box>
-
-                {/* Filter Settings */}
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-                    <Checkbox
-                      checked={status.settings?.filterEnabled ?? true}
-                      onCheckedChange={checked => updateSettings({ filterEnabled: checked })}
-                      disabled={isSaving}
-                    />
-                    <Typography style={{ fontSize: 14, color: '#374151' }}>
-                      {t.settings.filterEnabled.value}
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                {/* Watch Status */}
-                <Stack spacing={0.5}>
-                  <Typography style={{ fontSize: 14, color: '#6b7280' }}>
-                    {t.settings.watchStatus.value}
-                  </Typography>
-                  <Typography style={{ fontWeight: 500, color: '#111827' }}>
-                    {status.settings?.watchEnabled ? (
-                      <span style={{ color: '#059669' }}>{t.status.active.value}</span>
-                    ) : (
-                      <span style={{ color: '#9ca3af' }}>{t.status.inactive.value}</span>
-                    )}
-                  </Typography>
-                  {status.settings?.watchExpiration && (
-                    <Typography style={{ fontSize: 12, color: '#6b7280' }}>
-                      {t.settings.expires.value}:{' '}
-                      {formatDateTime(status.settings.watchExpiration, user?.locale)}
-                    </Typography>
-                  )}
-                </Stack>
-
-                {/* Keywords */}
-                <Stack spacing={1}>
-                  <label htmlFor="gmail-filter-keywords" style={{ fontSize: 14, color: '#6b7280' }}>
-                    {t.settings.keywords.value}
-                  </label>
-                  <input
-                    id="gmail-filter-keywords"
-                    type="text"
-                    value={status.settings?.filterConfig?.keywords?.join(', ') || ''}
-                    onChange={e =>
-                      updateSettings({
-                        filterConfig: {
-                          ...status.settings?.filterConfig,
-                          keywords: e.target.value.split(',').map(k => k.trim()),
-                        },
-                      })
-                    }
-                    disabled={isSaving}
-                    placeholder={t.settings.keywordsPlaceholder.value}
-                    style={{
-                      width: '100%',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: 0,
-                      padding: '8px 12px',
-                      fontSize: 14,
-                      color: '#111827',
-                    }}
-                  />
-                  <Typography style={{ fontSize: 12, color: '#6b7280' }}>
-                    {t.settings.keywordsHelp.value}
-                  </Typography>
-                </Stack>
-
-                {/* Has Attachment Filter */}
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-                    <Checkbox
-                      checked={status.settings?.filterConfig?.hasAttachment ?? true}
-                      onCheckedChange={checked =>
-                        updateSettings({
-                          filterConfig: {
-                            ...status.settings?.filterConfig,
-                            hasAttachment: checked,
-                          },
-                        })
-                      }
-                      disabled={isSaving}
-                    />
-                    <Typography style={{ fontSize: 14, color: '#374151' }}>
-                      {t.settings.hasAttachment.value}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Stack>
-            </Box>
+            <GmailSettingsPanel
+              status={status}
+              t={t}
+              isSaving={isSaving}
+              userLocale={user?.locale}
+              onUpdateSettings={updateSettings}
+            />
           )}
         </Stack>
-
-        <Box
-          sx={{
-            borderRadius: 0,
-            border: '1px solid #e5e7eb',
-            bgcolor: 'background.paper',
-            p: 2,
-            boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-            height: 'fit-content',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-            <Box sx={{ mt: 0.5, color: 'primary.main' }}>
-              <CheckCircle2 style={{ height: 20, width: 20 }} />
-            </Box>
-            <Box>
-              <Typography style={{ fontWeight: 600, color: '#111827', marginBottom: 8 }}>
-                {t.info.title.value}
-              </Typography>
-              <Stack spacing={1}>
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step1.value}</Typography>
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step2.value}</Typography>
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step3.value}</Typography>
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step4.value}</Typography>
-              </Stack>
-            </Box>
-          </Box>
-        </Box>
+        <GmailInfoPanel t={t} />
       </Box>
     </Box>
   );

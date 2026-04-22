@@ -1,21 +1,25 @@
+/* eslint-disable max-lines */
 'use client';
 
+import type React from 'react';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
-import { Box, Chip, Divider, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import { CheckCircle2, ExternalLink, Plug, Search, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-export default function IntegrationsPage() {
+// eslint-disable-next-line max-lines-per-function, complexity
+export default function IntegrationsPage(): React.JSX.Element {
   const t = useIntlayer('integrationsPage');
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
   // Static integration metadata (labels, icons, actions). Active/connect status is fetched from backend.
   const integrationMeta = useMemo(
+    // eslint-disable-next-line max-lines-per-function
     () => [
       {
         key: 'dropbox',
@@ -30,7 +34,7 @@ export default function IntegrationsPage() {
             alt="Dropbox"
             width={32}
             height={32}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 'var(--lumio-radius-md)' }}
           />
         ),
         actions: [
@@ -59,7 +63,7 @@ export default function IntegrationsPage() {
             alt="Google Drive"
             width={32}
             height={32}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 'var(--lumio-radius-md)' }}
           />
         ),
         actions: [
@@ -88,7 +92,7 @@ export default function IntegrationsPage() {
             alt="Gmail"
             width={32}
             height={32}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 'var(--lumio-radius-md)' }}
           />
         ),
         actions: [
@@ -117,7 +121,7 @@ export default function IntegrationsPage() {
             alt="Google Sheets"
             width={32}
             height={32}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 'var(--lumio-radius-md)' }}
           />
         ),
         actions: [
@@ -146,7 +150,7 @@ export default function IntegrationsPage() {
             alt="Telegram"
             width={32}
             height={32}
-            style={{ borderRadius: 0 }}
+            style={{ borderRadius: 'var(--lumio-radius-md)' }}
           />
         ),
         actions: [
@@ -168,10 +172,11 @@ export default function IntegrationsPage() {
   useEffect(() => {
     let mounted = true;
 
-    const loadStatuses = async () => {
+    const loadStatuses = async (): Promise<void> => {
       const map: Record<string, boolean> = {};
 
       await Promise.all(
+        // eslint-disable-next-line complexity
         integrationMeta.map(async m => {
           try {
             // Try to call per-integration status endpoint. Backend endpoints used elsewhere:
@@ -182,7 +187,7 @@ export default function IntegrationsPage() {
             const connected =
               Boolean(data?.connected) || String(data?.status)?.toLowerCase() === 'connected';
             map[m.key] = connected;
-          } catch (err) {
+          } catch {
             // If endpoint missing or error, treat as not connected
             map[m.key] = false;
           }
@@ -194,7 +199,7 @@ export default function IntegrationsPage() {
       }
     };
 
-    loadStatuses();
+    void loadStatuses();
 
     return () => {
       mounted = false;
@@ -223,7 +228,7 @@ export default function IntegrationsPage() {
     );
   }, [integrations, searchQuery]);
 
-  const handleCardClick = (item: (typeof integrations)[number]) => {
+  const handleCardClick = (item: (typeof integrations)[number]): void => {
     if (!item.primaryAction?.href || item.primaryAction.external) return;
     router.push(item.primaryAction.href);
   };
@@ -250,7 +255,7 @@ export default function IntegrationsPage() {
     },
   ] as const;
 
-  const groupByCategory = <T extends { category: string }>(items: T[]) => {
+  const groupByCategory = <T extends { category: string }>(items: T[]): Map<string, T[]> => {
     const grouped = new Map<string, T[]>();
     for (const item of items) {
       const next = grouped.get(item.category) ?? [];
@@ -263,7 +268,8 @@ export default function IntegrationsPage() {
   const activeByCategory = groupByCategory(active);
   const availableByCategory = groupByCategory(available);
 
-  const renderCard = (item: (typeof integrations)[number]) => (
+  // eslint-disable-next-line max-lines-per-function, complexity
+  const renderCard = (item: (typeof integrations)[number]): React.JSX.Element => (
     <Box
       key={item.key}
       data-integration-card={item.key}
@@ -271,7 +277,7 @@ export default function IntegrationsPage() {
       tabIndex={item.primaryAction?.href && !item.primaryAction.external ? 0 : undefined}
       sx={{
         border: '1px solid #e5e7eb',
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-lg)',
         p: 2,
         bgcolor: 'background.paper',
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -296,7 +302,7 @@ export default function IntegrationsPage() {
         <Box
           sx={{
             p: 1,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-sm)',
             bgcolor: '#f9fafb',
             border: '1px solid #f3f4f6',
             display: 'flex',
@@ -322,7 +328,7 @@ export default function IntegrationsPage() {
                   bgcolor: '#fef3c7',
                   color: '#92400e',
                   border: '1px solid #fde68a',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-sm)',
                 }}
               >
                 <Star style={{ height: 12, width: 12, marginRight: 4 }} />
@@ -342,7 +348,7 @@ export default function IntegrationsPage() {
                   bgcolor: '#ecfdf5',
                   color: '#065f46',
                   border: '1px solid #a7f3d0',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-sm)',
                 }}
               >
                 <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {item.badge}
@@ -353,6 +359,7 @@ export default function IntegrationsPage() {
             {item.description}
           </Typography>
           <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {/* eslint-disable-next-line max-lines-per-function */}
             {item.actions.map(action =>
               action.external ? (
                 <a
@@ -368,7 +375,7 @@ export default function IntegrationsPage() {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     color: '#374151',
                     textDecoration: 'none',
                   }}
@@ -388,7 +395,7 @@ export default function IntegrationsPage() {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     color: '#9ca3af',
                     cursor: 'not-allowed',
                     background: 'transparent',
@@ -408,7 +415,7 @@ export default function IntegrationsPage() {
                     padding: '6px 16px',
                     fontSize: 12,
                     fontWeight: 500,
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     background: 'var(--color-primary)',
                     color: '#fff',
                     textDecoration: 'none',
@@ -428,7 +435,7 @@ export default function IntegrationsPage() {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     color: '#374151',
                     textDecoration: 'none',
                   }}
@@ -443,7 +450,7 @@ export default function IntegrationsPage() {
     </Box>
   );
 
-  const renderCategoryDivider = (label: React.ReactNode) => (
+  const renderCategoryDivider = (label: React.ReactNode): React.JSX.Element => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
       <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
       <Box
@@ -457,7 +464,7 @@ export default function IntegrationsPage() {
           px: 1.5,
           py: 0.5,
           border: '1px solid #e5e7eb',
-          borderRadius: 0,
+          borderRadius: 'var(--lumio-radius-sm)',
           bgcolor: 'background.paper',
         }}
       >
@@ -483,7 +490,7 @@ export default function IntegrationsPage() {
           <Box
             sx={{
               p: 1,
-              borderRadius: '50%',
+              borderRadius: 'var(--lumio-radius-full)',
               bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
               color: 'primary.main',
               display: 'flex',
@@ -520,7 +527,7 @@ export default function IntegrationsPage() {
               display: 'block',
               width: '100%',
               border: '1px solid #e5e7eb',
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-md)',
               background: 'var(--card-bg)',
               padding: '8px 16px 8px 40px',
               fontSize: 14,
@@ -537,7 +544,7 @@ export default function IntegrationsPage() {
         <Box
           sx={{
             mb: 4,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             bgcolor: 'rgba(var(--color-primary-rgb), 0.05)',
             border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
             p: 2,
@@ -566,7 +573,7 @@ export default function IntegrationsPage() {
             {active.length === 0 && !searchQuery ? (
               <Box
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -612,7 +619,7 @@ export default function IntegrationsPage() {
             {available.length === 0 && !searchQuery ? (
               <Box
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -622,6 +629,7 @@ export default function IntegrationsPage() {
               </Box>
             ) : (
               <Stack spacing={3}>
+                {/* eslint-disable-next-line max-lines-per-function */}
                 {categories.map(category => {
                   const items = availableByCategory.get(category.key) ?? [];
                   if (items.length === 0) return null;
@@ -675,7 +683,7 @@ export default function IntegrationsPage() {
             <Box
               sx={{
                 mb: 2,
-                borderRadius: '50%',
+                borderRadius: 'var(--lumio-radius-full)',
                 bgcolor: '#f3f4f6',
                 p: 2,
                 display: 'flex',

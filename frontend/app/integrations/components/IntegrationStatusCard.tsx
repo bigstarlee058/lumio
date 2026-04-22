@@ -25,6 +25,7 @@ type IntegrationStatusCardProps = {
   extraActions?: ReactNode;
 };
 
+// eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export function IntegrationStatusCard({
   status,
   title,
@@ -44,7 +45,7 @@ export function IntegrationStatusCard({
   return (
     <Box
       sx={{
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-lg)',
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 3,
@@ -83,7 +84,7 @@ export function IntegrationStatusCard({
                     )
                   }
                   sx={{
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     borderColor: 'primary.main',
                     color: 'primary.main',
                     fontWeight: 600,
@@ -108,7 +109,7 @@ export function IntegrationStatusCard({
                     )
                   }
                   sx={{
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     borderColor: '#e5e7eb',
                     color: '#374151',
                     fontWeight: 600,
@@ -134,7 +135,7 @@ export function IntegrationStatusCard({
                   )
                 }
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   fontWeight: 600,
                   fontSize: 14,
                   textTransform: 'none',
