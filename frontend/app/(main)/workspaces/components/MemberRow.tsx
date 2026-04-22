@@ -12,7 +12,7 @@ import { useState } from 'react';
 import type { WorkspaceMember, WorkspaceRole } from './hooks/useMemberManagement';
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
-  owner: { bg: 'rgba(var(--primary-rgb,99,102,241),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,99,102,241),0.2)' },
+  owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
   admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
   member: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
   viewer: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
@@ -49,7 +49,7 @@ type MemberAvatarProps = {
 function MemberAvatar({ avatarUrl, name, email }: MemberAvatarProps): React.ReactElement {
   const label = name || email || 'Member avatar';
   return (
-    <Box sx={{ width: 36, height: 36, flexShrink: 0, overflow: 'hidden', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>
+    <Box sx={{ width: 36, height: 36, flexShrink: 0, overflow: 'hidden', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>
       {avatarUrl ? (
         <img src={avatarUrl} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (

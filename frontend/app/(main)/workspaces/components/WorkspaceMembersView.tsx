@@ -96,7 +96,7 @@ const PERMISSION_LABELS: Record<keyof InvitePermissions, string> = {
 };
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
-  owner: { bg: 'rgba(var(--primary-rgb,99,102,241),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,99,102,241),0.2)' },
+  owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
   admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
   member: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
   viewer: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
@@ -657,7 +657,7 @@ export default function WorkspaceMembersView() {
                         flexShrink: 0,
                         overflow: 'hidden',
                         borderRadius: 'var(--lumio-radius-full)',
-                        bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                        bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                         color: 'var(--primary)',
                         display: 'flex',
                         alignItems: 'center',

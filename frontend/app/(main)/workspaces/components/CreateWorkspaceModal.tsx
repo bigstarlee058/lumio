@@ -63,7 +63,7 @@ function StepBadges({ step }: { step: number }): React.JSX.Element {
   return (
     <nav aria-label="Workspace setup steps" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
       {items.map(item => (
-        <Box key={item.id} sx={{ border: item.id === step ? '1px solid var(--primary)' : '1px solid #e5e7eb', px: 1.5, py: 0.5, fontSize: 12, fontWeight: 600, color: item.id === step ? 'var(--primary)' : '#6b7280', bgcolor: item.id === step ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : 'transparent' }} aria-current={item.id === step ? 'step' : undefined}>{item.label}</Box>
+        <Box key={item.id} sx={{ border: item.id === step ? '1px solid var(--primary)' : '1px solid #e5e7eb', px: 1.5, py: 0.5, fontSize: 12, fontWeight: 600, color: item.id === step ? 'var(--primary)' : '#6b7280', bgcolor: item.id === step ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'transparent' }} aria-current={item.id === step ? 'step' : undefined}>{item.label}</Box>
       ))}
     </nav>
   );

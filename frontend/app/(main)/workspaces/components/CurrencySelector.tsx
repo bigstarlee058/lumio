@@ -66,7 +66,7 @@ function useCurrencySearch({ selectedCurrency, setOpenState }: { selectedCurrenc
 type CurrencyItemBtnProps = { item: CurrencySearchItem; minimal: boolean; onSelect: (code: string) => void; isSelected?: boolean };
 function CurrencyItemButton({ item, minimal, onSelect, isSelected }: CurrencyItemBtnProps): React.JSX.Element {
   return (
-    <button type="button" onClick={() => onSelect(item.code)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', background: isSelected ? 'rgba(var(--primary-rgb,99,102,241),0.1)' : 'none', border: 'none', padding: minimal ? '8px 12px' : '10px 12px', cursor: 'pointer', textAlign: 'left', borderRadius: 'var(--lumio-radius-md)' }}>
+    <button type="button" onClick={() => onSelect(item.code)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', background: isSelected ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'none', border: 'none', padding: minimal ? '8px 12px' : '10px 12px', cursor: 'pointer', textAlign: 'left', borderRadius: 'var(--lumio-radius-md)' }}>
       <span style={{ fontSize: 14, fontWeight: isSelected ? 600 : 500, color: isSelected ? 'var(--primary)' : 'var(--foreground)' }}>{item.label}</span>
       {isSelected && <Check size={16} style={{ color: 'var(--primary)' }} />}
     </button>

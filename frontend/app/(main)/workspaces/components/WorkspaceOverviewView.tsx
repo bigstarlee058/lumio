@@ -230,7 +230,7 @@ export default function WorkspaceOverviewView() {
                 width: 44,
                 height: 44,
                 borderRadius: 'var(--lumio-radius-sm)',
-                bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                 color: 'var(--primary)',
                 fontSize: 18,
                 fontWeight: 600,
