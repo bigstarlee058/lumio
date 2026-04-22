@@ -140,12 +140,12 @@ export function CustomTablesListView({
         <Box
           sx={{
             mb: 1.5,
-            border: '1px solid rgba(79,70,229,0.2)',
-            bgcolor: 'rgba(79,70,229,0.05)',
+            border: '1px solid rgba(22,129,24,0.2)',
+            bgcolor: 'rgba(22,129,24,0.05)',
             px: 2,
             py: 1.5,
             fontSize: 14,
-            color: '#4338ca',
+            color: '#157811',
           }}
         >
           {labels.growthHintLabel}
@@ -439,8 +439,8 @@ function TableListRow({
               mt: 0.5,
               display: 'inline-flex',
               alignItems: 'center',
-              border: '1px solid rgba(79,70,229,0.2)',
-              bgcolor: 'rgba(79,70,229,0.1)',
+              border: '1px solid rgba(22,129,24,0.2)',
+              bgcolor: 'rgba(22,129,24,0.1)',
               px: 1,
               py: 0.25,
               fontSize: 11,

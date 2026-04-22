@@ -84,14 +84,14 @@ export function ColumnsVisibilityPanel({
             width: '100%',
             border: '1px solid',
             borderColor: 'primary.main',
-            bgcolor: 'rgba(79,70,229,0.1)',
+            bgcolor: 'rgba(22,129,24,0.1)',
             px: 2.5,
             py: 1.75,
             fontSize: 14,
             fontWeight: 600,
             color: 'primary.main',
             cursor: 'pointer',
-            '&:hover': { bgcolor: 'rgba(79,70,229,0.15)' },
+            '&:hover': { bgcolor: 'rgba(22,129,24,0.15)' },
             '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
           }}
         >

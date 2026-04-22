@@ -974,7 +974,7 @@ export default function CustomTablesPage() {
               <SlidersHorizontal className="h-3.5 w-3.5" />
               {filterLabels.filters}
               {activeFilterCount > 0 ? (
-                <Box component="span" sx={{ ml: 0.5, display: 'inline-flex', width: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(79,70,229,0.1)', fontSize: 12, fontWeight: 600, color: 'primary.main' }}>
+                <Box component="span" sx={{ ml: 0.5, display: 'inline-flex', width: 20, height: 20, alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(22,129,24,0.1)', fontSize: 12, fontWeight: 600, color: 'primary.main' }}>
                   {activeFilterCount}
                 </Box>
               ) : null}
@@ -1021,7 +1021,7 @@ export default function CustomTablesPage() {
           ) : (
             <>
               {shouldShowGrowthHint ? (
-                <Box sx={{ mb: 1.5, border: '1px solid rgba(79,70,229,0.2)', borderRadius: 'var(--lumio-radius-lg)', bgcolor: 'rgba(79,70,229,0.05)', px: 2, py: 1.5, fontSize: 14, color: '#4338ca' }}>
+                <Box sx={{ mb: 1.5, border: '1px solid rgba(22,129,24,0.2)', borderRadius: 'var(--lumio-radius-lg)', bgcolor: 'rgba(22,129,24,0.05)', px: 2, py: 1.5, fontSize: 14, color: '#157811' }}>
                   {growthHintLabel}
                 </Box>
               ) : null}
@@ -1087,7 +1087,7 @@ export default function CustomTablesPage() {
                         {formatUpdatedDate(table.updatedAt)}
                       </Typography>
                       {table.createdFromBadge ? (
-                        <Box sx={{ mt: 0.5, display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(79,70,229,0.2)', borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'rgba(79,70,229,0.1)', px: 1, py: 0.25, fontSize: 11, fontWeight: 500, color: 'primary.main' }}>
+                        <Box sx={{ mt: 0.5, display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(22,129,24,0.2)', borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'rgba(22,129,24,0.1)', px: 1, py: 0.25, fontSize: 11, fontWeight: 500, color: 'primary.main' }}>
                           {table.createdFromBadge}
                         </Box>
                       ) : table.description ? (

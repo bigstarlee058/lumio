@@ -42,7 +42,7 @@ function canBulkMarkRows({ selectedIds, bulkMarking }: BulkMarkParams): boolean 
 interface QuickTabButtonProps { tab: QuickTab; isActive: boolean; setActiveTabId: (id: string) => void; }
 function QuickTabButton({ tab, isActive, setActiveTabId }: QuickTabButtonProps): React.JSX.Element {
   const color = isActive ? 'primary.main' : '#6b7280';
-  const countBg = isActive ? 'rgba(79,70,229,0.1)' : '#f3f4f6';
+  const countBg = isActive ? 'rgba(22,129,24,0.1)' : '#f3f4f6';
   return (
     <Box component="button" onClick={() => { if (!isActive) setActiveTabId(tab.id); }} sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color, '&:hover': { color: isActive ? 'primary.main' : '#111827' } }}>
       {tab.label}

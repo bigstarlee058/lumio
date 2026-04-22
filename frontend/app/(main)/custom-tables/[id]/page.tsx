@@ -574,7 +574,7 @@ export default function CustomTableDetailPage() {
                   {typeof tab.count === 'number' && (
                     <Box
                       component="span"
-                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(79,70,229,0.1)' : '#f3f4f6', color: isActive ? 'primary.main' : '#6b7280' }}
+                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(22,129,24,0.1)' : '#f3f4f6', color: isActive ? 'primary.main' : '#6b7280' }}
                     >
                       {tab.count}
                     </Box>

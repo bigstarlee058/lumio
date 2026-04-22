@@ -71,7 +71,7 @@ function TableNameCell({ table, labels }: TableNameCellProps): React.JSX.Element
         {labels.fromLabel}: {table.sourceDescriptor} · {labels.columnLabels.rows}: {table.rowsCountLabel} · {labels.columnLabels.updatedAt}: {formatUpdatedDate(table.updatedAt)}
       </Typography>
       {table.createdFromBadge ? (
-        <Box sx={{ mt: 0.5, display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(79,70,229,0.2)', bgcolor: 'rgba(79,70,229,0.1)', px: 1, py: 0.25, fontSize: 11, fontWeight: 500, color: 'primary.main' }}>{table.createdFromBadge}</Box>
+        <Box sx={{ mt: 0.5, display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(22,129,24,0.2)', bgcolor: 'rgba(22,129,24,0.1)', px: 1, py: 0.25, fontSize: 11, fontWeight: 500, color: 'primary.main' }}>{table.createdFromBadge}</Box>
       ) : table.description ? (
         <Typography style={{ fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{table.description}</Typography>
       ) : null}
