@@ -262,12 +262,12 @@ function LoginPageContent(): React.JSX.Element {
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',
-            boxShadow: '0 4px 14px 0 rgba(0,118,255,0.39)',
-            background: 'linear-gradient(45deg, #0a66c2 30%, #42a5f5 90%)',
+            boxShadow: '0 4px 14px 0 rgba(5,150,105,0.45)',
+            background: 'linear-gradient(45deg, #059669 30%, #0891b2 90%)',
             transition: 'transform 0.2s',
             '&:hover': {
               transform: 'scale(1.02)',
-              boxShadow: '0 6px 20px rgba(0,118,255,0.23)',
+              boxShadow: '0 6px 20px rgba(5,150,105,0.3)',
             },
           }}
           disabled={loading}

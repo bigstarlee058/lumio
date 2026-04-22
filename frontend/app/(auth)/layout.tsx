@@ -10,15 +10,15 @@ export default function AuthRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Deep blue palette
-  const darkBlue = '#011e3c';
+  // Deep green palette
+  const darkGreen = '#021a0e';
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
         width: '100vw',
-        background: `linear-gradient(180deg, ${darkBlue} 0%, #003366 100%)`,
+        background: `linear-gradient(180deg, ${darkGreen} 0%, #0a3d20 100%)`,
         position: 'relative',
         overflow: 'hidden',
       }}
