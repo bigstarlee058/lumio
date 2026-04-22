@@ -4,13 +4,13 @@
  */
 
 :root {
-  /* Brand — Indigo */
-  --lumio-color-primary:         #4f46e5;
-  --lumio-color-primary-hover:   #4338ca;
-  --lumio-color-primary-dark:    #3730a3;
-  --lumio-color-primary-50:      #eef0ff;
-  --lumio-color-primary-100:     #e0e3ff;
-  --lumio-color-primary-200:     #c7cbff;
+  /* Brand — Money Green */
+  --lumio-color-primary:         #168118;
+  --lumio-color-primary-hover:   #157811;
+  --lumio-color-primary-dark:    #036704;
+  --lumio-color-primary-50:      #edf7ed;
+  --lumio-color-primary-100:     #d4edd4;
+  --lumio-color-primary-200:     #a8d5a8;
   --lumio-color-primary-contrast: #ffffff;
 
   /* Ink neutrals */
@@ -117,12 +117,12 @@
 
 .dark {
   /* Brand */
-  --lumio-color-primary:       #818cf8;
-  --lumio-color-primary-hover: #6366f1;
-  --lumio-color-primary-dark:  #4f46e5;
-  --lumio-color-primary-50:    rgba(79, 70, 229, 0.1);
-  --lumio-color-primary-100:   rgba(79, 70, 229, 0.2);
-  --lumio-color-primary-200:   rgba(79, 70, 229, 0.35);
+  --lumio-color-primary:       #5cc462;
+  --lumio-color-primary-hover: #3e9c35;
+  --lumio-color-primary-dark:  #168118;
+  --lumio-color-primary-50:    rgba(62, 156, 53, 0.1);
+  --lumio-color-primary-100:   rgba(62, 156, 53, 0.2);
+  --lumio-color-primary-200:   rgba(62, 156, 53, 0.35);
 
   /* Ink neutrals (inverted for dark) */
   --lumio-color-ink-900: #f0f0f5;
@@ -130,13 +130,13 @@
   --lumio-color-ink-700: #a8a8b8;
   --lumio-color-ink-600: #7c7c8e;
   --lumio-color-ink-500: #5c5c6e;
-  --lumio-color-ink-400: #3e3e50;
-  --lumio-color-ink-300: #2c2c3a;
-  --lumio-color-ink-200: #222230;
-  --lumio-color-ink-150: #1e1e2c;
-  --lumio-color-ink-100: #181824;
-  --lumio-color-ink-50:  #12121c;
-  --lumio-color-white:   #1e1e2c;
+  --lumio-color-ink-400: #3e4240;
+  --lumio-color-ink-300: #2c302d;
+  --lumio-color-ink-200: #222622;
+  --lumio-color-ink-150: #1e221f;
+  --lumio-color-ink-100: #181c19;
+  --lumio-color-ink-50:  #121513;
+  --lumio-color-white:   #1e221f;
 
   /* Semantic */
   --lumio-color-success:      #34d399;
@@ -149,9 +149,9 @@
   --lumio-color-info-soft:    rgba(56, 189, 248, 0.12);
 
   /* Surface / background */
-  --lumio-color-bg:            #0f0f19;
-  --lumio-color-surface:       #16162a;
-  --lumio-color-surface-muted: #1c1c30;
+  --lumio-color-bg:            #0f1210;
+  --lumio-color-surface:       #161b17;
+  --lumio-color-surface-muted: #1c211d;
   --lumio-color-surface-warning: rgba(251, 191, 36, 0.12);
   --lumio-color-surface-error:   rgba(251, 113, 133, 0.12);
 
@@ -160,8 +160,8 @@
   --lumio-color-text-secondary: #a0a0b4;
 
   /* Borders */
-  --lumio-color-border:        #252538;
-  --lumio-color-border-strong: #333348;
+  --lumio-color-border:        #252b26;
+  --lumio-color-border-strong: #333b34;
 
   /* Shadows (more visible on dark) */
   --lumio-shadow-xs: 0 1px 0 0 rgba(0, 0, 0, 0.2);

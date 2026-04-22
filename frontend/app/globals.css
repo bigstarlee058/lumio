@@ -16,8 +16,8 @@
   /* Core colors — map to lumio tokens */
   --background:         #f8f8f9;
   --foreground:         #0b0b10;
-  --primary:            #4f46e5;
-  --primary-hover:      #4338ca;
+  --primary:            #168118;
+  --primary-hover:      #157811;
   --primary-foreground: #ffffff;
   --secondary:          var(--lumio-color-ink-600);
   --secondary-foreground: #ffffff;
@@ -30,13 +30,13 @@
   --ring:               var(--lumio-color-primary);
   --destructive:        var(--lumio-color-danger);
   --destructive-foreground: #ffffff;
-  --surface-glow:         rgba(79, 70, 229, 0.14);
+  --surface-glow:         rgba(22, 129, 24, 0.14);
   --surface-success-glow: rgba(16, 185, 129, 0.12);
 
   /* Dashboard palette */
-  --ff-dash-primary:       #4f46e5;
-  --ff-dash-primary-soft:  #c7cbff;
-  --ff-dash-cta:           #8b5cf6;
+  --ff-dash-primary:       #168118;
+  --ff-dash-primary-soft:  #a8d5a8;
+  --ff-dash-cta:           #084f09;
   --ff-dash-surface:       #ffffff;
   --ff-dash-foreground:    #0b0b10;
   --ff-dash-muted:         #f2f2f4;
@@ -64,27 +64,27 @@
 
 .dark {
   color-scheme: dark;
-  --background:         #0f0f19;
+  --background:         #0f1210;
   --foreground:         #e8e8f0;
-  --primary:            #818cf8;
-  --primary-hover:      #6366f1;
+  --primary:            #5cc462;
+  --primary-hover:      #3e9c35;
   --primary-foreground: #ffffff;
-  --secondary:          #252538;
+  --secondary:          #252b26;
   --secondary-foreground: #e8e8f0;
-  --muted:              #1c1c30;
+  --muted:              #1c211d;
   --muted-foreground:   #a0a0b4;
-  --card-bg:            #16162a;
+  --card-bg:            #161b17;
   --card-foreground:    #e8e8f0;
-  --border-color:       #252538;
-  --input:              #252538;
-  --ring:               #818cf8;
+  --border-color:       #252b26;
+  --input:              #252b26;
+  --ring:               #5cc462;
   --destructive:        #fb7185;
   --destructive-foreground: #ffffff;
-  --surface-glow:         rgba(129, 140, 248, 0.24);
+  --surface-glow:         rgba(92, 196, 98, 0.24);
   --surface-success-glow: rgba(52, 211, 153, 0.2);
-  --accent: #0f0f19;
+  --accent: #0f1210;
   --accent-foreground: #e8e8f0;
-  --popover: #16162a;
+  --popover: #161b17;
   --popover-foreground: #e8e8f0;
   --color-error-foreground:   #fb7185;
   --color-info-foreground:    #38bdf8;
@@ -92,19 +92,19 @@
   --color-warning-foreground: #fbbf24;
 
   /* Dashboard palette (dark adjustments) */
-  --ff-dash-primary:       #818cf8;
-  --ff-dash-primary-soft:  #4f46e5;
-  --ff-dash-cta:           #a78bfa;
-  --ff-dash-surface:       #16162a;
+  --ff-dash-primary:       #5cc462;
+  --ff-dash-primary-soft:  #168118;
+  --ff-dash-cta:           #3e9c35;
+  --ff-dash-surface:       #161b17;
   --ff-dash-foreground:    #e8e8f0;
-  --ff-dash-muted:         #1c1c30;
-  --ff-dash-border:        #252538;
+  --ff-dash-muted:         #1c211d;
+  --ff-dash-border:        #252b26;
   --ff-dash-critical:      #fb7185;
   --ff-dash-warning:       #fbbf24;
   --ff-dash-info:          #38bdf8;
   --ff-dash-success:       #34d399;
-  --ff-dashboard-card:           #16162a;
-  --ff-dashboard-card-border:    #252538;
+  --ff-dashboard-card:           #161b17;
+  --ff-dashboard-card-border:    #252b26;
   --ff-dashboard-card-foreground:#e8e8f0;
 }
 

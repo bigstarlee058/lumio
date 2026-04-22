@@ -7,8 +7,8 @@ type AppSurfaceTokens = {
 };
 
 const SURFACE_TOKENS: Record<ThemeMode, AppSurfaceTokens> = {
-  light: { primary: '#4f46e5' },
-  dark: { primary: '#818cf8' },
+  light: { primary: '#168118' },
+  dark: { primary: '#5cc462' },
 };
 
 const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> = {
@@ -174,9 +174,9 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
   light: {
     mode: 'light',
     primary: {
-      main: '#4f46e5',
-      light: '#818cf8',
-      dark: '#4338ca',
+      main: '#168118',
+      light: '#3e9c35',
+      dark: '#036704',
       contrastText: '#ffffff',
     },
     secondary: {
@@ -222,15 +222,15 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
   dark: {
     mode: 'dark',
     primary: {
-      main: '#818cf8',
-      light: '#a5b4fc',
-      dark: '#4f46e5',
+      main: '#5cc462',
+      light: '#7dd687',
+      dark: '#168118',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#252538',
-      light: '#333348',
-      dark: '#1c1c30',
+      main: '#252b26',
+      light: '#333b34',
+      dark: '#1c211d',
       contrastText: '#e8e8f0',
     },
     error: {
@@ -258,14 +258,14 @@ const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
       contrastText: '#0b0b10',
     },
     background: {
-      default: '#0f0f19',
-      paper: '#16162a',
+      default: '#0f1210',
+      paper: '#161b17',
     },
     text: {
       primary: '#e8e8f0',
       secondary: '#a0a0b4',
     },
-    divider: '#252538',
+    divider: '#252b26',
   },
 };
 
