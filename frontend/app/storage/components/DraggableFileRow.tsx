@@ -250,7 +250,7 @@ export const DraggableFileRow = React.memo(
               }
               style={{
                 minWidth: 160,
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 border: '1px solid #e5e7eb',
                 background: 'var(--card-bg)',
                 padding: '8px 12px',
@@ -280,7 +280,7 @@ export const DraggableFileRow = React.memo(
             label={file.isOwner ? ownerLabel : getPermissionLabel(file.permissionType)}
             size="small"
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-sm)',
               fontSize: 12,
               fontWeight: 600,
               bgcolor: file.isOwner ? '#f3f4f6' : '#eef2ff',
@@ -306,7 +306,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleRestoreFromTrash(file)}
-                    sx={{ color: '#059669', bgcolor: '#ecfdf5', borderRadius: 0, '&:hover': { bgcolor: '#d1fae5' } }}
+                    sx={{ color: '#059669', bgcolor: '#ecfdf5', borderRadius: 'var(--lumio-radius-sm)', '&:hover': { bgcolor: '#d1fae5' } }}
                   >
                     <RotateCcw size={18} />
                   </IconButton>
@@ -315,7 +315,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => confirmPermanentDelete(file)}
-                    sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                    sx={{ color: '#6b7280', borderRadius: 'var(--lumio-radius-sm)', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
                   >
                     <Trash2 size={18} />
                   </IconButton>
@@ -327,7 +327,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleView(file.id)}
-                    sx={{ color: '#2563eb', bgcolor: '#eff6ff', borderRadius: 0, '&:hover': { bgcolor: '#dbeafe' } }}
+                    sx={{ color: '#2563eb', bgcolor: '#eff6ff', borderRadius: 'var(--lumio-radius-sm)', '&:hover': { bgcolor: '#dbeafe' } }}
                   >
                     <Eye size={18} />
                   </IconButton>
@@ -336,7 +336,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleDownload(file.id, file.fileName)}
-                    sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#374151', bgcolor: '#f3f4f6' } }}
+                    sx={{ color: '#6b7280', borderRadius: 'var(--lumio-radius-sm)', '&:hover': { color: '#374151', bgcolor: '#f3f4f6' } }}
                   >
                     <Download size={18} />
                   </IconButton>
@@ -346,7 +346,7 @@ export const DraggableFileRow = React.memo(
                     <IconButton
                       size="small"
                       onClick={() => confirmDelete(file)}
-                      sx={{ color: '#6b7280', borderRadius: 0, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                      sx={{ color: '#6b7280', borderRadius: 'var(--lumio-radius-sm)', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
                     >
                       <Trash2 size={18} />
                     </IconButton>

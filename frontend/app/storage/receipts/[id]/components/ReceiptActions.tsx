@@ -1,0 +1,156 @@
+'use client';
+
+import { Spinner } from '@/app/components/ui/spinner';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
+import type { ReceiptRecord } from '@/app/lib/api';
+import type { EditableReceiptParsedData } from '@/app/components/receipts/receipt-types';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { Box, Typography } from '@mui/material';
+import { ArrowLeft, Download, Table } from 'lucide-react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { buildExportData, createExportTable } from './export-helpers';
+
+interface ExportConfirmDialogProps {
+  open: boolean;
+  exportingToTable: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+function ExportConfirmDialog({ open, exportingToTable, onClose, onConfirm }: ExportConfirmDialogProps): React.ReactElement {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>Confirm export</DialogTitle>
+      <DialogContent dividers>
+        <Typography style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>
+          Are you sure you want to export this statement to a custom table?
+        </Typography>
+      </DialogContent>
+      <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
+        <Box component="button" type="button" onClick={onClose} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
+          Cancel
+        </Box>
+        <Box component="button" type="button" onClick={onConfirm} disabled={exportingToTable} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { cursor: 'not-allowed', opacity: 0.5 } }}>
+          {exportingToTable ? <Spinner className="h-4 w-4" /> : null}
+          Export
+        </Box>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+interface ReceiptActionsProps {
+  receipt: ReceiptRecord;
+  formValue: EditableReceiptParsedData;
+  saving: boolean;
+  onApprove: () => Promise<void>;
+  onDownload: () => Promise<void>;
+}
+
+function useExportToTable({ receipt, formValue }: { receipt: ReceiptRecord; formValue: EditableReceiptParsedData }): {
+  exportingToTable: boolean;
+  exportConfirmOpen: boolean;
+  setExportConfirmOpen: (v: boolean) => void;
+  handleExportToTable: () => Promise<void>;
+} {
+  const router = useRouter();
+  const [exportConfirmOpen, setExportConfirmOpen] = useState(false);
+  const [exportingToTable, setExportingToTable] = useState(false);
+
+  const handleExportToTable = async (): Promise<void> => {
+    setExportingToTable(true);
+    try {
+      const exportData = buildExportData({ receipt, formValue });
+      if (!exportData.columns.length || !exportData.rows.length) {
+        toast.error('There are no parsed receipt fields to export yet');
+        return;
+      }
+      await createExportTable({ receipt, exportData, router });
+    } catch {
+      toast.error('Failed to export to table');
+    } finally {
+      setExportingToTable(false);
+    }
+  };
+
+  return { exportingToTable, exportConfirmOpen, setExportConfirmOpen, handleExportToTable };
+}
+
+export function ReceiptActions({ receipt, formValue, saving, onApprove, onDownload }: ReceiptActionsProps): React.ReactElement {
+  const { exportingToTable, exportConfirmOpen, setExportConfirmOpen, handleExportToTable } = useExportToTable({ receipt, formValue });
+
+  return (
+    <>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
+        <DetailActionButton type="button" onClick={onDownload}>
+          <Download className="h-4 w-4" />
+          Download
+        </DetailActionButton>
+        <DetailActionButton type="button" onClick={() => setExportConfirmOpen(true)} disabled={exportingToTable}>
+          <Table className="h-4 w-4" />
+          Export to table
+        </DetailActionButton>
+        <DetailActionButton type="button" onClick={onApprove} disabled={saving}>
+          {saving ? <Spinner className="size-[18px]" /> : null}
+          Approve receipt
+        </DetailActionButton>
+      </Box>
+      <ExportConfirmDialog
+        open={exportConfirmOpen}
+        exportingToTable={exportingToTable}
+        onClose={() => setExportConfirmOpen(false)}
+        onConfirm={() => { setExportConfirmOpen(false); void handleExportToTable(); }}
+      />
+    </>
+  );
+}
+
+function ReceiptHeaderTitle({ receipt }: { receipt: ReceiptRecord }): React.ReactElement {
+  return (
+    <Box>
+      <Typography style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#64748b' }}>
+        Receipt details
+      </Typography>
+      <Typography component="h1" style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: '#020617' }}>
+        {receipt.subject}
+      </Typography>
+      <Typography style={{ marginTop: 8, fontSize: 14, color: '#475569' }}>
+        {receipt.source} · {new Date(receipt.receivedAt).toLocaleDateString()}
+      </Typography>
+    </Box>
+  );
+}
+
+interface ReceiptPageHeaderProps {
+  receipt: ReceiptRecord;
+  formValue: EditableReceiptParsedData;
+  saving: boolean;
+  onApprove: () => Promise<void>;
+  onDownload: () => Promise<void>;
+}
+
+export function ReceiptPageHeader({ receipt, formValue, saving, onApprove, onDownload }: ReceiptPageHeaderProps): React.ReactElement {
+  const router = useRouter();
+  return (
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, borderBottom: '1px solid #e2e8f0', pb: 3, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' } }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box
+          component="button"
+          type="button"
+          onClick={() => router.back()}
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Box>
+        <ReceiptHeaderTitle receipt={receipt} />
+      </Box>
+      <ReceiptActions receipt={receipt} formValue={formValue} saving={saving} onApprove={onApprove} onDownload={onDownload} />
+    </Box>
+  );
+}

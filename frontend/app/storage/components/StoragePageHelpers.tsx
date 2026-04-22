@@ -1,0 +1,110 @@
+'use client';
+
+import { Box, Typography } from '@mui/material';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React from 'react';
+import { DropboxStorageWidget } from '../../components/DropboxStorageWidget';
+import { GoogleDriveStorageWidget } from '../../components/GoogleDriveStorageWidget';
+import type { FolderOption } from '../storageHelpers';
+
+// ─── StorageProviderSelector ──────────────────────────────────────────────────
+
+export interface StorageProviderSelectorProps {
+  selectedStorageProvider: 'google' | 'dropbox';
+  onSelect: (p: 'google' | 'dropbox') => void;
+  locale: string;
+}
+
+export function StorageProviderSelector({ selectedStorageProvider, onSelect, locale }: StorageProviderSelectorProps): React.JSX.Element {
+  return (
+    <Box sx={{ mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <Box sx={{ display: 'inline-flex', bgcolor: '#f3f4f6', p: 0.5 }}>
+          <Box component="button" type="button" onClick={() => onSelect('google')} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, cursor: 'pointer', border: 'none', bgcolor: selectedStorageProvider === 'google' ? 'background.paper' : 'transparent' }}>
+            <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={18} height={18} />
+            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>Google Drive</Box>
+          </Box>
+          <Box component="button" type="button" onClick={() => onSelect('dropbox')} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, cursor: 'pointer', border: 'none', bgcolor: selectedStorageProvider === 'dropbox' ? 'background.paper' : 'transparent' }}>
+            <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={18} height={18} />
+            <Box component="span" sx={{ whiteSpace: 'nowrap' }}>Dropbox</Box>
+          </Box>
+        </Box>
+      </Box>
+      {selectedStorageProvider === 'google' ? <GoogleDriveStorageWidget locale={locale} /> : <DropboxStorageWidget locale={locale} />}
+    </Box>
+  );
+}
+
+// ─── GmailSection ─────────────────────────────────────────────────────────────
+
+// eslint-disable-next-line max-params
+export type TxFn = (path: string[], fallback: string) => string;
+
+export interface GmailSectionProps {
+  gmailStatus: { connected?: boolean } | null;
+  gmailLoading: boolean;
+  router: ReturnType<typeof useRouter>;
+  tx: TxFn;
+}
+
+export function GmailSection({ gmailStatus, gmailLoading, router, tx }: GmailSectionProps): React.JSX.Element {
+  const isConnected = gmailStatus?.connected === true;
+  return (
+    <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, mb: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ p: 1, bgcolor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Image src="/icons/gmail.png" alt="Gmail" width={20} height={20} />
+          </Box>
+          <Box>
+            <Typography style={{ fontSize: 14, color: '#6b7280' }}>Gmail Receipts</Typography>
+            <Typography style={{ fontWeight: 600, color: '#111827' }}>Auto-imported receipts from Gmail</Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          <Box component="button" onClick={() => router.push('/statements')} disabled={!isConnected || gmailLoading} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 2, py: 1, fontSize: 14, fontWeight: 600, bgcolor: '#2563eb', color: '#fff', cursor: 'pointer', border: 'none', opacity: isConnected && !gmailLoading ? 1 : 0.5, '&:disabled': { cursor: 'not-allowed' }, '&:hover': { bgcolor: '#1d4ed8' } }}>
+            {tx(['gmail', 'viewReceipts'], 'View Receipts')}
+          </Box>
+          <Box component="button" onClick={() => router.push('/integrations/gmail')} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', px: 2, py: 1, fontSize: 14, fontWeight: 600, color: '#374151', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' } }}>
+            {isConnected ? tx(['gmail', 'settings'], 'Settings') : tx(['gmail', 'connect'], 'Connect')}
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+// ─── FolderContextMenu ────────────────────────────────────────────────────────
+
+export interface FolderContextMenuProps {
+  folderContextMenu: { x: number; y: number; folder: FolderOption } | null;
+  setFolderContextMenu: React.Dispatch<React.SetStateAction<{ x: number; y: number; folder: FolderOption } | null>>;
+  setFolderTagPickerId: (id: string | null) => void;
+  handleStartEditFolder: (folder: FolderOption) => void;
+  confirmDeleteFolder: (folder: FolderOption) => void;
+  tagsTitle: string;
+  renameTooltip: string;
+  deleteTooltip: string;
+}
+
+export function FolderContextMenu({ folderContextMenu, setFolderContextMenu, setFolderTagPickerId, handleStartEditFolder, confirmDeleteFolder, tagsTitle, renameTooltip, deleteTooltip }: FolderContextMenuProps): React.JSX.Element | null {
+  if (!folderContextMenu) return null;
+  const topOffset = typeof window !== 'undefined' && folderContextMenu.y + 160 > window.innerHeight ? folderContextMenu.y - 160 : folderContextMenu.y;
+  const leftOffset = typeof window !== 'undefined' && folderContextMenu.x + 200 > window.innerWidth ? folderContextMenu.x - 200 : folderContextMenu.x;
+  return (
+    <Box sx={{ position: 'fixed', zIndex: 100, minWidth: 200, overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: 'background.paper', boxShadow: 24 }} style={{ top: topOffset, left: leftOffset }} onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()} role="presentation">
+      <Box sx={{ p: 0.75, display: 'flex', flexDirection: 'column' }}>
+        <Box component="button" type="button" onClick={() => { setFolderTagPickerId(folderContextMenu.folder.id); setFolderContextMenu(null); }} sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#f9fafb' } }}>
+          <span>{tagsTitle}</span>
+        </Box>
+        <Box component="button" type="button" onClick={() => { handleStartEditFolder(folderContextMenu.folder); setFolderContextMenu(null); }} sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#f9fafb' } }}>
+          <span>{renameTooltip}</span>
+        </Box>
+        <Box component="button" type="button" onClick={() => { confirmDeleteFolder(folderContextMenu.folder); setFolderContextMenu(null); }} sx={{ display: 'flex', width: '100%', alignItems: 'center', gap: 1, px: 1.5, py: 1, fontSize: 14, color: '#dc2626', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', '&:hover': { bgcolor: '#fef2f2' } }}>
+          <span>{deleteTooltip}</span>
+        </Box>
+      </Box>
+    </Box>
+  );
+}

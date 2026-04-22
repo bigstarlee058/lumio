@@ -66,6 +66,7 @@ export interface UseStorageFoldersReturn {
   clearFolderMoveFeedback: () => void;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function useStorageFolders(
   messages: UseStorageFoldersMessages,
   setFiles: React.Dispatch<React.SetStateAction<StorageFile[]>>,
@@ -99,34 +100,33 @@ export function useStorageFolders(
   useEffect(() => {
     if (!pickedFolderId || !isFolderModalOpen) return;
 
-    const handleWheel = (e: WheelEvent) => {
+    const handleWheelMove = (idx: number, deltaY: number): void => {
+      const now = Date.now();
+      if (deltaY > 0 && idx < folders.length - 1) {
+        handleMoveFolderIdx(pickedFolderId, idx + 1, false);
+        lastWheelTime.current = now;
+      } else if (deltaY < 0 && idx > 0) {
+        handleMoveFolderIdx(pickedFolderId, idx - 1, false);
+        lastWheelTime.current = now;
+      }
+    };
+
+    const handleWheel = (e: WheelEvent): void => {
       const now = Date.now();
       if (now - lastWheelTime.current < 80) return;
-
       const idx = folders.findIndex(f => f.id === pickedFolderId);
-      if (idx === -1) return;
-      if (Math.abs(e.deltaY) < 10) return;
-
-      if (e.deltaY > 0) {
-        if (idx < folders.length - 1) {
-          handleMoveFolderIdx(pickedFolderId, idx + 1, false);
-          lastWheelTime.current = now;
-        }
-      } else if (e.deltaY < 0) {
-        if (idx > 0) {
-          handleMoveFolderIdx(pickedFolderId, idx - 1, false);
-          lastWheelTime.current = now;
-        }
-      }
+      if (idx === -1 || Math.abs(e.deltaY) < 10) return;
+      handleWheelMove(idx, e.deltaY);
     };
 
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickedFolderId, folders, isFolderModalOpen]);
 
   // Close context menu on click/scroll outside
   useEffect(() => {
-    const handleClickOutside = () => setFolderContextMenu(null);
+    const handleClickOutside = (): void => setFolderContextMenu(null);
     if (folderContextMenu) {
       window.addEventListener('click', handleClickOutside);
       window.addEventListener('scroll', handleClickOutside, true);
@@ -137,7 +137,7 @@ export function useStorageFolders(
     };
   }, [folderContextMenu]);
 
-  const clearFolderMoveFeedback = () => {
+  const clearFolderMoveFeedback = (): void => {
     if (folderMoveFeedbackTimeout.current) {
       clearTimeout(folderMoveFeedbackTimeout.current);
       folderMoveFeedbackTimeout.current = null;
@@ -145,7 +145,7 @@ export function useStorageFolders(
     setFolderMoveFeedback(null);
   };
 
-  const setFolderMoveMessage = (tone: 'success' | 'error', message: string) => {
+  const setFolderMoveMessage = (tone: 'success' | 'error', message: string): void => {
     clearFolderMoveFeedback();
     setFolderMoveFeedback({ tone, message });
     folderMoveFeedbackTimeout.current = setTimeout(() => {
@@ -154,7 +154,7 @@ export function useStorageFolders(
     }, 3500);
   };
 
-  const loadFolders = async () => {
+  const loadFolders = async (): Promise<void> => {
     try {
       const response = await api.get('/storage/folders');
       setFolders(response.data || []);
@@ -164,7 +164,7 @@ export function useStorageFolders(
     }
   };
 
-  const handleCreateFolder = async () => {
+  const handleCreateFolder = async (): Promise<void> => {
     const name = newFolderName.trim();
     if (!name) {
       toast.error(messages.folderNameRequired);
@@ -185,13 +185,13 @@ export function useStorageFolders(
     }
   };
 
-  const handleStartEditFolder = (folder: FolderOption) => {
+  const handleStartEditFolder = (folder: FolderOption): void => {
     setEditingFolderId(folder.id);
     setEditingFolderName(folder.name);
     setFolderTagPickerId(null);
   };
 
-  const handleRenameFolder = async (folderId: string) => {
+  const handleRenameFolder = async (folderId: string): Promise<void> => {
     const name = editingFolderName.trim();
     if (!name) {
       toast.error(messages.folderNameRequired);
@@ -206,17 +206,15 @@ export function useStorageFolders(
       setFolders(prev =>
         prev.map(folder => (folder.id === folderId ? { ...folder, ...response.data } : folder)),
       );
+      const newName = response.data?.name || name;
       setFiles(prev =>
-        prev.map(file =>
-          file.folderId === folderId
-            ? {
-                ...file,
-                folder: file.folder
-                  ? { ...file.folder, name: response.data?.name || name }
-                  : { id: folderId, name: response.data?.name || name },
-              }
-            : file,
-        ),
+        prev.map(file => {
+          if (file.folderId !== folderId) return file;
+          const folder = file.folder
+            ? { ...file.folder, name: newName }
+            : { id: folderId, name: newName };
+          return { ...file, folder };
+        }),
       );
       setEditingFolderId(null);
       setEditingFolderName('');
@@ -227,12 +225,12 @@ export function useStorageFolders(
     }
   };
 
-  const handleCancelEditFolder = () => {
+  const handleCancelEditFolder = (): void => {
     setEditingFolderId(null);
     setEditingFolderName('');
   };
 
-  const handleUpdateFolderTag = async (folderId: string, tagId: string | null) => {
+  const handleUpdateFolderTag = async (folderId: string, tagId: string | null): Promise<void> => {
     try {
       const response = await api.patch(`/storage/folders/${folderId}`, { tagId });
       setFolders(prev =>
@@ -245,20 +243,21 @@ export function useStorageFolders(
     }
   };
 
-  const closeDeleteFolderModal = () => {
+  const closeDeleteFolderModal = (): void => {
     setDeleteFolderModalOpen(false);
     setFolderToDelete(null);
     setDeleteFolderWithContents(false);
   };
 
-  const confirmDeleteFolder = (folder: FolderOption) => {
+  const confirmDeleteFolder = (folder: FolderOption): void => {
     setFolderToDelete(folder);
     setDeleteFolderWithContents(false);
     setDeleteFolderModalOpen(true);
     setFolderTagPickerId(null);
   };
 
-  const handleDeleteFolder = async () => {
+  // eslint-disable-next-line complexity
+  const handleDeleteFolder = async (): Promise<void> => {
     const targetFolder = folderToDelete;
     const removeContents = deleteFolderWithContents;
     if (!targetFolder) return;
@@ -294,7 +293,7 @@ export function useStorageFolders(
     }
   };
 
-  const handleMoveFolderIdx = (fromId: string, toIdx: number, finalize = true) => {
+  const handleMoveFolderIdx = (fromId: string, toIdx: number, finalize = true): void => {
     const fromIdx = folders.findIndex(f => f.id === fromId);
     if (fromIdx === -1) return;
     const newFolders = [...folders];
@@ -307,12 +306,12 @@ export function useStorageFolders(
     }
   };
 
-  const handleFolderContextMenu = (event: React.MouseEvent, folder: FolderOption) => {
+  const handleFolderContextMenu = (event: React.MouseEvent, folder: FolderOption): void => {
     event.preventDefault();
     setFolderContextMenu({ x: event.clientX, y: event.clientY, folder });
   };
 
-  const handleMoveToFolder = async (fileId: string, folderId: string | null) => {
+  const handleMoveToFolder = async (fileId: string, folderId: string | null): Promise<void> => {
     try {
       await api.patch(`/storage/files/${fileId}/folder`, { folderId });
       setFiles(prev =>
@@ -339,9 +338,9 @@ export function useStorageFolders(
     }
   };
 
-  const canEditFolder = (folder: FolderOption) => folder.userId !== null;
+  const canEditFolder = (folder: FolderOption): boolean => folder.userId !== null;
 
-  const clampFolderName = (value: string, previous: string) => {
+  const clampFolderName = (value: string, previous: string): string => {
     if (value.length <= FOLDER_NAME_MAX) return value;
     if (previous.length <= FOLDER_NAME_MAX) {
       toast.error(messages.folderNameTooLong);

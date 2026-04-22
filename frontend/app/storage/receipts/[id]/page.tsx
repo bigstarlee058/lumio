@@ -454,10 +454,15 @@ export default function ReceiptDocumentPage() {
         <Box sx={{ mb: 2, border: '1px solid #fecaca', bgcolor: '#fef2f2', p: 2, color: '#dc2626' }}>
           {error || 'Receipt not found'}
         </Box>
-        <DetailActionButton type="button" onClick={() => router.push('/statements')}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to statements
-        </DetailActionButton>
+        <Box
+          component="button"
+          type="button"
+          onClick={() => router.back()}
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Box>
       </Box>
     );
   }
@@ -481,10 +486,15 @@ export default function ReceiptDocumentPage() {
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            <DetailActionButton type="button" onClick={() => router.push('/statements')}>
-              <ArrowLeft className="h-4 w-4" />
-              Back to statements
-            </DetailActionButton>
+            <Box
+              component="button"
+              type="button"
+              onClick={() => router.back()}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back
+            </Box>
             <Box>
               <Typography
                 style={{

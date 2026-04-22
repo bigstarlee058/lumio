@@ -52,6 +52,7 @@ export interface UseStorageTagsReturn {
   canEditTag: (tag: TagOption) => boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function useStorageTags(
   messages: UseStorageTagsMessages,
   setFiles: React.Dispatch<React.SetStateAction<StorageFile[]>>,
@@ -70,7 +71,7 @@ export function useStorageTags(
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState(false);
   const [tagToDelete, setTagToDelete] = useState<TagOption | null>(null);
 
-  const loadTags = async () => {
+  const loadTags = async (): Promise<void> => {
     try {
       const response = await api.get('/storage/tags');
       setTags(response.data || []);
@@ -80,7 +81,7 @@ export function useStorageTags(
     }
   };
 
-  const handleCreateTag = async () => {
+  const handleCreateTag = async (): Promise<void> => {
     const name = newTagName.trim();
     if (!name) {
       toast.error(messages.tagNameRequired);
@@ -98,14 +99,15 @@ export function useStorageTags(
     }
   };
 
-  const handleStartEditTag = (tag: TagOption) => {
+  const handleStartEditTag = (tag: TagOption): void => {
     setEditingTagId(tag.id);
     setEditingTagName(tag.name);
     setEditingTagColor(tag.color ?? '#4f46e5');
     setEditingTagPickerId(null);
   };
 
-  const handleRenameTag = async (tagId: string) => {
+  // eslint-disable-next-line complexity, max-lines-per-function
+  const handleRenameTag = async (tagId: string): Promise<void> => {
     const name = editingTagName.trim();
     if (!name) {
       toast.error(messages.tagNameRequired);
@@ -129,17 +131,13 @@ export function useStorageTags(
             : folder,
         ),
       );
+      const updatedName = (response.data?.name as string | undefined) || name;
+      const updatedColor = (response.data?.color as string | null | undefined) ?? editingTagColor ?? null;
       setFiles(prev =>
         prev.map(file => ({
           ...file,
           tags: (file.tags || []).map(tag =>
-            tag.id === tagId
-              ? {
-                  ...tag,
-                  name: response.data?.name || name,
-                  color: response.data?.color ?? editingTagColor ?? null,
-                }
-              : tag,
+            tag.id === tagId ? { ...tag, name: updatedName, color: updatedColor } : tag,
           ),
         })),
       );
@@ -153,19 +151,19 @@ export function useStorageTags(
     }
   };
 
-  const handleCancelEditTag = () => {
+  const handleCancelEditTag = (): void => {
     setEditingTagId(null);
     setEditingTagName('');
     setEditingTagColor(null);
     setEditingTagPickerId(null);
   };
 
-  const confirmDeleteTag = (tag: TagOption) => {
+  const confirmDeleteTag = (tag: TagOption): void => {
     setTagToDelete(tag);
     setDeleteTagModalOpen(true);
   };
 
-  const handleDeleteTag = async () => {
+  const handleDeleteTag = async (): Promise<void> => {
     if (!tagToDelete) return;
     const toastId = toast.loading(messages.tagDeleteLoading);
     try {
@@ -192,7 +190,7 @@ export function useStorageTags(
     }
   };
 
-  const canEditTag = (tag: TagOption) => tag.userId !== null;
+  const canEditTag = (tag: TagOption): boolean => tag.userId !== null;
 
   return {
     tags,

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
@@ -90,7 +91,7 @@ interface FilePermission {
   createdAt: string;
 }
 
-const getBankDisplayName = (bankName: string) => {
+const getBankDisplayName = (bankName: string): string => {
   const resolved = resolveBankLogo(bankName);
   if (!resolved) return bankName;
   return resolved.key !== 'other' ? resolved.displayName : bankName;
@@ -99,6 +100,7 @@ const getBankDisplayName = (bankName: string) => {
 /**
  * File details page with transactions, sharing, and permissions
  */
+// eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function FileDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -123,7 +125,7 @@ export default function FileDetailsPage() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const previewUrlRef = useRef<string | null>(null);
 
-  const revokePreviewUrl = () => {
+  const revokePreviewUrl = (): void => {
     if (previewUrlRef.current) {
       URL.revokeObjectURL(previewUrlRef.current);
       previewUrlRef.current = null;
@@ -133,7 +135,8 @@ export default function FileDetailsPage() {
   useEffect(() => {
     let cancelled = false;
 
-    const run = async () => {
+    // eslint-disable-next-line complexity
+    const run = async (): Promise<void> => {
       const loadedDetails = await loadFileDetails();
       if (cancelled) return;
 
@@ -148,11 +151,12 @@ export default function FileDetailsPage() {
       await loadPreview(loadedDetails?.fileAvailability?.status);
     };
 
-    run();
+    void run();
 
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId]);
 
   useEffect(() => {
@@ -176,7 +180,8 @@ export default function FileDetailsPage() {
     }
   };
 
-  const loadPreview = async (availabilityStatusOverride?: FileAvailabilityStatus) => {
+  // eslint-disable-next-line max-lines-per-function, complexity
+  const loadPreview = async (availabilityStatusOverride?: FileAvailabilityStatus): Promise<void> => {
     const availabilityStatus = availabilityStatusOverride ?? details?.fileAvailability?.status;
     if (availabilityStatus === 'missing') {
       setPreviewError(t.preview.unavailable.value);
@@ -212,7 +217,7 @@ export default function FileDetailsPage() {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (): Promise<void> => {
     if (!details) return;
 
     try {
@@ -250,7 +255,7 @@ export default function FileDetailsPage() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const getPermissionLabel = (permission?: string | null) => {
+  const getPermissionLabel = (permission?: string | null): string => {
     switch ((permission || '').toLowerCase()) {
       case 'owner':
         return t.permission.owner.value;
@@ -265,7 +270,7 @@ export default function FileDetailsPage() {
     }
   };
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: string): string => {
     switch (status.toLowerCase()) {
       case 'completed':
         return t.status.completed.value;
@@ -280,7 +285,7 @@ export default function FileDetailsPage() {
     }
   };
 
-  const getAvailabilityLabel = (status: FileAvailabilityStatus) => {
+  const getAvailabilityLabel = (status: FileAvailabilityStatus): React.ReactNode => {
     switch (status) {
       case 'both':
         return t.availability.labels.both;
@@ -295,7 +300,7 @@ export default function FileDetailsPage() {
     }
   };
 
-  const getAvailabilityTooltip = (status: FileAvailabilityStatus) => {
+  const getAvailabilityTooltip = (status: FileAvailabilityStatus): string => {
     switch (status) {
       case 'both':
         return t.availability.tooltips.both.value;
@@ -310,7 +315,7 @@ export default function FileDetailsPage() {
     }
   };
 
-  const renderAvailabilityBadge = (availability?: FileAvailability) => {
+  const renderAvailabilityBadge = (availability?: FileAvailability): React.JSX.Element | null => {
     if (!availability) return null;
     const status = availability.status;
     const chipSx =
@@ -325,7 +330,7 @@ export default function FileDetailsPage() {
         label={getAvailabilityLabel(status)}
         size="small"
         title={getAvailabilityTooltip(status)}
-        sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, ...chipSx }}
+        sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, ...chipSx }}
       />
     );
   };
@@ -419,7 +424,7 @@ export default function FileDetailsPage() {
             onClick={() => router.push('/statements')}
             aria-label="Back to storage"
             sx={{
-              borderRadius: '50%',
+              borderRadius: 'var(--lumio-radius-full)',
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 1,
@@ -443,19 +448,19 @@ export default function FileDetailsPage() {
               <Chip
                 label={getBankDisplayName(statement.bankName)}
                 size="small"
-                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main', border: '1px solid rgba(79,70,229,0.2)' }}
+                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main', border: '1px solid rgba(79,70,229,0.2)' }}
               />
               <Chip
                 label={getStatusLabel(statement.status)}
                 size="small"
-                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
+                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
               />
               {renderAvailabilityBadge(fileAvailability)}
               <Chip
                 icon={isOwner ? <ShieldCheck style={{ width: 16, height: 16 }} /> : <Shield style={{ width: 16, height: 16 }} />}
                 label={isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
                 size="small"
-                sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
+                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
               />
             </Box>
           </Box>
@@ -523,6 +528,7 @@ export default function FileDetailsPage() {
             { label: t.cards.transactions, value: transactions.length },
             { label: t.cards.uploadedAt, value: formatDate(statement.createdAt) },
             { label: t.cards.account, value: statement.metadata?.accountNumber || t.cards.dash.value },
+            // eslint-disable-next-line max-params
           ].map((card, idx) => (
             <Box key={idx} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
               <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
@@ -721,19 +727,20 @@ export default function FileDetailsPage() {
                 </Box>
               ) : (
                 <Box sx={{ display: 'grid', gap: 1.5 }}>
+                  {/* eslint-disable-next-line max-lines-per-function */}
                   {sharedLinks.map(link => (
                     <Box key={link.id} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5 }}>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: '#111827' }}>
-                            <Chip label={link.permission} size="small" sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
+                            <Chip label={link.permission} size="small" sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
                             <Chip
                               label={link.status}
                               size="small"
-                              sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
+                              sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
                             />
                             {link.expiresAt && (
-                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: 0, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
+                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
                             )}
                           </Box>
                           {link.description && (

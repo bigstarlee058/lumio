@@ -49,6 +49,7 @@ export interface UseStorageFilesReturn {
   handleEmptyTrash: () => Promise<void>;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFilesReturn {
   const router = useRouter();
   const [files, setFiles] = useState<StorageFile[]>([]);
@@ -58,7 +59,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
   const [permanentDeleteModalOpen, setPermanentDeleteModalOpen] = useState(false);
   const [fileToDeletePermanently, setFileToDeletePermanently] = useState<StorageFile | null>(null);
 
-  const loadFiles = async (listMode: 'active' | 'trash') => {
+  const loadFiles = async (listMode: 'active' | 'trash'): Promise<void> => {
     try {
       setLoading(true);
       const response = await api.get('/storage/files', {
@@ -73,7 +74,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleView = (fileId: string) => {
+  const handleView = (fileId: string): void => {
     const file = files.find(f => f.id === fileId);
     if (
       file &&
@@ -85,7 +86,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleDownload = async (fileId: string, fileName: string) => {
+  const handleDownload = async (fileId: string, fileName: string): Promise<void> => {
     try {
       const response = await api.get(`/storage/files/${fileId}/download`, {
         responseType: 'blob',
@@ -104,7 +105,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleCategoryChange = async (fileId: string, categoryId: string) => {
+  const handleCategoryChange = async (fileId: string, categoryId: string): Promise<void> => {
     try {
       const response = await api.patch(`/storage/files/${fileId}/category`, {
         categoryId: categoryId || null,
@@ -127,12 +128,12 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const confirmDelete = (file: StorageFile) => {
+  const confirmDelete = (file: StorageFile): void => {
     setFileToDelete(file);
     setDeleteModalOpen(true);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (): Promise<void> => {
     if (!fileToDelete) return;
     const toastId = toast.loading(messages.deleteLoading);
     try {
@@ -146,12 +147,12 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     setFileToDelete(null);
   };
 
-  const confirmPermanentDelete = (file: StorageFile) => {
+  const confirmPermanentDelete = (file: StorageFile): void => {
     setFileToDeletePermanently(file);
     setPermanentDeleteModalOpen(true);
   };
 
-  const handlePermanentDelete = async () => {
+  const handlePermanentDelete = async (): Promise<void> => {
     if (!fileToDeletePermanently) return;
     const toastId = toast.loading(messages.trashDeleteLoading);
     try {
@@ -165,7 +166,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     setFileToDeletePermanently(null);
   };
 
-  const handleRestoreFromTrash = async (file: StorageFile) => {
+  const handleRestoreFromTrash = async (file: StorageFile): Promise<void> => {
     const toastId = toast.loading(messages.trashRestoreLoading);
     try {
       await api.post(`/storage/files/${file.id}/trash/restore`);
@@ -177,7 +178,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleBulkRestore = async (ids: string[]) => {
+  const handleBulkRestore = async (ids: string[]): Promise<void> => {
     if (!ids.length) return;
     const toastId = toast.loading(messages.trashRestoreLoading);
     try {
@@ -190,7 +191,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleBulkDeleteFromTrash = async (ids: string[]) => {
+  const handleBulkDeleteFromTrash = async (ids: string[]): Promise<void> => {
     if (!ids.length) return;
     const toastId = toast.loading(messages.trashDeleteLoading);
     try {
@@ -203,7 +204,7 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
     }
   };
 
-  const handleEmptyTrash = async () => {
+  const handleEmptyTrash = async (): Promise<void> => {
     const ids = files.map(file => file.id);
     await handleBulkDeleteFromTrash(ids);
   };

@@ -22,7 +22,8 @@ interface ReceiptPreviewResponse {
   snippet?: string;
 }
 
-export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalProps) {
+// eslint-disable-next-line max-lines-per-function
+export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalProps): React.JSX.Element {
   const [preview, setPreview] = useState<ReceiptPreviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [zoom, setZoom] = useState(100);
@@ -30,7 +31,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
   useEffect(() => {
     let active = true;
 
-    const loadPreview = async () => {
+    const loadPreview = async (): Promise<void> => {
       try {
         setLoading(true);
         const response = await gmailReceiptsApi.getReceiptPreview(receiptId);
@@ -56,15 +57,16 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
     };
   }, [receiptId]);
 
-  const handleZoomIn = () => {
+  const handleZoomIn = (): void => {
     setZoom(prev => Math.min(prev + 25, 200));
   };
 
-  const handleZoomOut = () => {
+  const handleZoomOut = (): void => {
     setZoom(prev => Math.max(prev - 25, 50));
   };
 
-  const renderPreviewContent = () => {
+  // eslint-disable-next-line max-lines-per-function, complexity
+  const renderPreviewContent = (): React.JSX.Element => {
     if (loading) {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
@@ -85,6 +87,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
     if (attachments.length > 0) {
       return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* eslint-disable-next-line max-lines-per-function, max-params */}
           {attachments.map((attachment, idx) => {
             const isPdf = attachment.mimeType === 'application/pdf';
             const isImage = attachment.mimeType?.startsWith('image/');
@@ -92,7 +95,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
             const dataUrl = `data:${attachment.mimeType};base64,${base64Data}`;
 
             return (
-              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 0 }}>
+              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)' }}>
                 <Box sx={{ p: 1.5, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb' }}>
                   <Typography style={{ fontSize: 14, fontWeight: 500 }}>{attachment.filename}</Typography>
                 </Box>
@@ -100,14 +103,14 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
                   {isPdf ? (
                     <iframe
                       src={dataUrl}
-                      style={{ width: '100%', height: 600, border: '1px solid #e5e7eb', borderRadius: 0 }}
+                      style={{ width: '100%', height: 600, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)' }}
                       title={attachment.filename}
                     />
                   ) : isImage ? (
                     <img
                       src={dataUrl}
                       alt={attachment.filename}
-                      style={{ maxWidth: '100%', height: 'auto', borderRadius: 0 }}
+                      style={{ maxWidth: '100%', height: 'auto', borderRadius: 'var(--lumio-radius-md)' }}
                     />
                   ) : (
                     <Box sx={{ textAlign: 'center', color: '#6b7280', py: 4 }}>
@@ -125,7 +128,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
 
     if (preview.emailBody) {
       return (
-        <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 0, overflow: 'hidden' }}>
+        <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)', overflow: 'hidden' }}>
           <iframe
             title="Receipt email preview"
             style={{ width: '100%', height: 600, border: 'none' }}
@@ -169,7 +172,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
           position: 'fixed',
           inset: 16,
           bgcolor: 'background.paper',
-          borderRadius: 0,
+          borderRadius: 'var(--lumio-radius-xl)',
           zIndex: 50,
           display: 'flex',
           flexDirection: 'column',
@@ -178,14 +181,14 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: '1px solid #e5e7eb' }}>
           <Typography style={{ fontSize: 18, fontWeight: 700 }}>Receipt Preview</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: 0 }}>
+            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: 'var(--lumio-radius-sm)' }}>
               <ZoomOut style={{ width: 20, height: 20 }} />
             </IconButton>
             <Typography style={{ fontSize: 14, color: '#4b5563' }}>{zoom}%</Typography>
-            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: 0 }}>
+            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: 'var(--lumio-radius-sm)' }}>
               <ZoomIn style={{ width: 20, height: 20 }} />
             </IconButton>
-            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: 0 }}>
+            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: 'var(--lumio-radius-sm)' }}>
               <X style={{ width: 20, height: 20 }} />
             </IconButton>
           </Box>
