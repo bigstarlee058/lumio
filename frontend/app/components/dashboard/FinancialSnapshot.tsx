@@ -42,7 +42,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
         return (
           <Card
             key={key}
-            style={{ border: '1px solid #E8E8E8', background: 'var(--card-bg)', boxShadow: 'none', borderRadius: 0 }}
+            style={{ border: '1px solid #E8E8E8', background: 'var(--card-bg)', boxShadow: 'none', borderRadius: 'var(--lumio-radius-lg)' }}
           >
             <CardContent style={{ padding: 20, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               <div>
@@ -70,7 +70,7 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
                       alignItems: 'center',
                       gap: 4,
                       padding: '2px 8px',
-                      borderRadius: 0,
+                      borderRadius: 'var(--lumio-radius-sm)',
                       fontSize: 11,
                       fontWeight: 600,
                       border: '1px solid',

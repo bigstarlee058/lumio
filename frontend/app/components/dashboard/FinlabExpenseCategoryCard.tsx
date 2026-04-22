@@ -110,7 +110,7 @@ export function FinlabExpenseCategoryCard({
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                     <Box
-                      sx={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
+                      sx={{ width: 10, height: 10, borderRadius: 'var(--lumio-radius-full)', flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
                     />
                     <Typography
                       component="span"

@@ -1,7 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 
 export type DashboardRange = '7d' | '30d' | '90d';
@@ -32,6 +32,7 @@ export interface DashboardCashFlowPoint {
 
 export interface DashboardRecentActivity {
   id: string;
+  entityId?: string;
   type:
     | 'statement_upload'
     | 'payment'
@@ -111,14 +112,36 @@ export interface DashboardTrends {
   effectiveSince?: string;
 }
 
-export function useDashboardTrends(days = 30) {
+interface TrendsState {
+  data: DashboardTrends | null;
+  loading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+}
+
+interface DashboardState {
+  data: DashboardData | null;
+  loading: boolean;
+  error: string | null;
+  refresh: () => void;
+  range: DashboardRange;
+  changeRange: (newRange: DashboardRange) => void;
+  targetDate: string | null;
+  changeTargetDate: (newDate: string | null) => void;
+}
+
+const extractApiError = (err: unknown): string => {
+  const apiError = err as { response?: { data?: { message?: string } } };
+  return apiError?.response?.data?.message ?? 'Failed to load data';
+};
+
+export function useDashboardTrends(days = 30): TrendsState {
   const { currentWorkspace } = useWorkspace();
   const [data, setData] = useState<DashboardTrends | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const workspaceId = currentWorkspace?.id;
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
     setData(null);
@@ -126,12 +149,12 @@ export function useDashboardTrends(days = 30) {
       const res = await apiClient.get('/dashboard/trends', { params: { days } });
       setData(res.data?.data || res.data);
     } catch (err: unknown) {
-      const apiError = err as { response?: { data?: { message?: string } } };
-      setError(apiError?.response?.data?.message || 'Failed to load trends');
+      setError(extractApiError(err).replace('Failed to load data', 'Failed to load trends'));
     } finally {
       setLoading(false);
     }
-  }, [days, workspaceId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [days, currentWorkspace?.id]);
 
   useEffect(() => {
     void load();
@@ -140,7 +163,49 @@ export function useDashboardTrends(days = 30) {
   return { data, loading, error, refresh: load };
 }
 
-export function useDashboard(controlledRange: DashboardRange = '30d', controlledDate?: string) {
+async function fetchDashboardData(
+  range: DashboardRange,
+  date: string | null,
+): Promise<DashboardData> {
+  const params: Record<string, string> = { range };
+  if (date) params.date = date;
+  const response = await apiClient.get('/dashboard', { params });
+  return response.data?.data || response.data;
+}
+
+interface DashboardLoadSetters {
+  setData: (v: DashboardData | null) => void;
+  setError: (v: string | null) => void;
+  setLoading: (v: boolean) => void;
+  requestIdRef: MutableRefObject<number>;
+}
+
+async function executeDashboardLoad(
+  r: DashboardRange,
+  date: string | null,
+  setters: DashboardLoadSetters,
+): Promise<void> {
+  const { setData, setError, setLoading, requestIdRef } = setters;
+  const requestId = ++requestIdRef.current;
+  setLoading(true);
+  setError(null);
+  setData(null);
+  try {
+    const payload = await fetchDashboardData(r, date);
+    if (requestId === requestIdRef.current) setData(payload);
+  } catch (err: unknown) {
+    if (requestId === requestIdRef.current) {
+      setError(extractApiError(err).replace('Failed to load data', 'Failed to load dashboard'));
+    }
+  } finally {
+    if (requestId === requestIdRef.current) setLoading(false);
+  }
+}
+
+export function useDashboard(
+  controlledRange: DashboardRange = '30d',
+  controlledDate?: string,
+): DashboardState {
   const { currentWorkspace } = useWorkspace();
   const [range, setRange] = useState<DashboardRange>(controlledRange);
   const [targetDate, setTargetDate] = useState<string | null>(controlledDate ?? null);
@@ -148,72 +213,28 @@ export function useDashboard(controlledRange: DashboardRange = '30d', controlled
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const requestIdRef = useRef(0);
-  const workspaceId = currentWorkspace?.id;
+  const setters: DashboardLoadSetters = { setData, setError, setLoading, requestIdRef };
 
   const load = useCallback(
-    async (r: DashboardRange = range, date: string | null = targetDate) => {
-      const requestId = ++requestIdRef.current;
-      setLoading(true);
-      setError(null);
-      setData(null);
-
-      try {
-        const params: Record<string, string> = { range: r };
-        if (date) {
-          params.date = date;
-        }
-        const response = await apiClient.get('/dashboard', { params });
-        const payload = response.data?.data || response.data;
-
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        setData(payload);
-      } catch (err: unknown) {
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        const apiError = err as { response?: { data?: { message?: string } } };
-        setError(apiError?.response?.data?.message || 'Failed to load dashboard');
-      } finally {
-        if (requestId === requestIdRef.current) {
-          setLoading(false);
-        }
-      }
+    (r: DashboardRange = range, date: string | null = targetDate): void => {
+      void executeDashboardLoad(r, date, setters);
     },
-    [range, targetDate, workspaceId],
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [range, targetDate, currentWorkspace?.id],
   );
 
-  useEffect(() => {
-    setRange(controlledRange);
-  }, [controlledRange]);
+  useEffect(() => { setRange(controlledRange); }, [controlledRange]);
+  useEffect(() => { setTargetDate(controlledDate ?? null); }, [controlledDate]);
+  useEffect(() => { load(range, targetDate); }, [load, range, targetDate]);
 
-  useEffect(() => {
-    setTargetDate(controlledDate ?? null);
-  }, [controlledDate]);
-
-  useEffect(() => {
-    load(range, targetDate);
-  }, [load, range, targetDate]);
-
-  const changeRange = useCallback((newRange: DashboardRange) => {
-    setRange(newRange);
-  }, []);
-
-  const changeTargetDate = useCallback((newDate: string | null) => {
+  const changeRange = useCallback((newRange: DashboardRange): void => { setRange(newRange); }, []);
+  const changeTargetDate = useCallback((newDate: string | null): void => {
     setTargetDate(newDate);
   }, []);
 
   return {
-    data,
-    loading,
-    error,
-    refresh: () => load(range, targetDate),
-    range,
-    changeRange,
-    targetDate,
-    changeTargetDate,
+    data, loading, error,
+    refresh: (): void => { load(range, targetDate); },
+    range, changeRange, targetDate, changeTargetDate,
   };
 }

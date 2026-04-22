@@ -55,7 +55,7 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
               <Box
                 component="span"
-                sx={{ height: 6, width: 6, borderRadius: 0, flexShrink: 0, backgroundColor: dotColor, display: 'inline-block' }}
+                sx={{ height: 6, width: 6, borderRadius: 'var(--lumio-radius-full)', flexShrink: 0, backgroundColor: dotColor, display: 'inline-block' }}
               />
               <Typography
                 component="span"

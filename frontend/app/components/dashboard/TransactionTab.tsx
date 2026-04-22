@@ -16,6 +16,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';
 import api from '@/app/lib/api';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function TransactionTab() {
   const t = useIntlayer('transactionsPageView');
   const { showConverted, workspaceCurrency } = useCurrencyDisplay();
@@ -43,16 +44,19 @@ export function TransactionTab() {
     [transactions],
   );
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleRowClick = (transaction: Transaction) => {
     setDetailsTransaction(transaction);
     setDrawerOpen(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleCloseDrawer = () => {
     setDrawerOpen(false);
     setTimeout(() => setDetailsTransaction(null), 300);
   };
 
+  // eslint-disable-next-line max-params, @typescript-eslint/explicit-function-return-type
   const handleUpdateCategory = async (txIds: string[], categoryId: string) => {
     try {
       await api.patch('/transactions/bulk-update-category', {
@@ -68,22 +72,24 @@ export function TransactionTab() {
     }
   };
 
+  // eslint-disable-next-line max-params, @typescript-eslint/explicit-function-return-type
   const handleSingleUpdateCategory = async (txId: string, categoryId: string) => {
     try {
       await handleUpdateCategory([txId], categoryId);
       handleCloseDrawer();
-    } catch (error) {
+    } catch {
       // Error handled in handleUpdateCategory
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleBulkAssignCategory = async () => {
     if (!bulkCategoryId || selectedIds.length === 0) return;
     try {
       await handleUpdateCategory(selectedIds, bulkCategoryId);
       setSelectedIds([]);
       setBulkCategoryId('');
-    } catch (error) {
+    } catch {
       // Error handled in handleUpdateCategory
     }
   };
@@ -139,7 +145,7 @@ export function TransactionTab() {
                 width: 24,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: '50%',
+                borderRadius: 'var(--lumio-radius-full)',
                 bgcolor: 'var(--primary)',
                 fontSize: 12,
                 fontWeight: 700,

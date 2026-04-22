@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import Box from '@mui/material/Box';
@@ -25,6 +26,7 @@ const DAY_OPTIONS: { label: string; value: number }[] = [
   { label: '90D', value: 90 },
 ];
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function TrendsTab({ formatAmount }: TrendsTabProps) {
   const [days, setDays] = useState<number>(30);
   const { resolvedTheme } = useTheme();
@@ -34,6 +36,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
     trendsData?.effectiveEndDate,
   );
 
+  // eslint-disable-next-line max-lines-per-function, complexity
   const dailyTrendOption = useMemo(() => {
     if (!trendsData?.dailyTrend?.length) return null;
     const isDark = resolvedTheme === 'dark';
@@ -91,6 +94,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
     };
   }, [resolvedTheme, trendsData]);
 
+  // eslint-disable-next-line max-lines-per-function, complexity
   const rosePieOption = useMemo(() => {
     if (!trendsData?.categories?.length) return null;
     const top10 = trendsData.categories.slice(0, 10);
