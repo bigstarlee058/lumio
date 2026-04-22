@@ -54,7 +54,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
             width: 40,
             height: 40,
             borderRadius: 'var(--lumio-radius-sm)',
-            bgcolor: 'var(--primary-light, rgba(var(--primary-rgb, 99,102,241),0.1))',
+            bgcolor: 'var(--primary-light, rgba(var(--primary-rgb, 22,129,24),0.1))',
             color: 'var(--primary)',
             flexShrink: 0,
           }}

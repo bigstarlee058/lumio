@@ -56,7 +56,7 @@ function NavigationContent({
           {/* Logo */}
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-linear-to-br from-green-600 to-green-800 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">FF</span>
               </div>
               <span className="text-lg font-bold text-gray-900">Lumio</span>
@@ -99,7 +99,7 @@ function NavigationContent({
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-linear-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-linear-to-br from-green-600 to-green-800 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
                       {user.name.charAt(0).toUpperCase()}
                     </span>

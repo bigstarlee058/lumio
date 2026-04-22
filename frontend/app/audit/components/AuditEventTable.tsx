@@ -52,7 +52,7 @@ const actionToneColors: Record<string, { bg: string; color: string }> = {
   info: { bg: '#eff6ff', color: '#1d4ed8' },
   warn: { bg: '#fefce8', color: '#a16207' },
   critical: { bg: '#fef2f2', color: '#b91c1c' },
-  primary: { bg: '#eef2ff', color: '#4338ca' },
+  primary: { bg: '#edf7ed', color: '#157811' },
   success: { bg: '#ecfdf5', color: '#065f46' },
 };
 

@@ -21,7 +21,7 @@ const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
   gmail: { borderColor: '#fdba74', background: '#fff7ed', color: '#c2410c' },
   pdf: { borderColor: '#7dd3fc', background: '#f0f9ff', color: '#0369a1' },
   bank: { borderColor: '#6ee7b7', background: '#ecfdf5', color: '#065f46' },
-  manual: { borderColor: '#a5b4fc', background: '#eef2ff', color: '#3730a3' },
+  manual: { borderColor: '#a8d5a8', background: '#edf7ed', color: '#036704' },
   unknown: { borderColor: '#e5e7eb', background: '#f3f4f6', color: '#374151' },
 };
 

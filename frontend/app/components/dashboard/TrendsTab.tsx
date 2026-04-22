@@ -131,7 +131,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%', pb: '40px' }}>
       {effectivePeriod ? (
         <Box
-          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
+          sx={{ border: '1px solid var(--border)', borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
         >
           Showing latest available period: {effectivePeriod}
         </Box>
@@ -160,6 +160,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               transition: 'background-color 150ms, color 150ms',
               cursor: 'pointer',
               border: days === opt.value ? 'none' : '1px solid var(--border)',
+              borderRadius: 'var(--lumio-radius-xs)',
               backgroundColor: days === opt.value ? 'var(--primary)' : 'var(--card)',
               color: days === opt.value ? 'var(--primary-foreground)' : 'var(--muted-foreground)',
               fontFamily: 'var(--font-dashboard-mono)',
@@ -218,6 +219,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                   flexDirection: 'column',
                   gap: 1.5,
                   border: '1px solid var(--border)',
+                  borderRadius: 'var(--lumio-radius-sm)',
                   bgcolor: 'var(--card)',
                   p: 3,
                   backdropFilter: 'blur(24px)',
@@ -260,6 +262,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                   flexDirection: 'column',
                   gap: 1.5,
                   border: '1px solid var(--border)',
+                  borderRadius: 'var(--lumio-radius-sm)',
                   bgcolor: 'var(--card)',
                   p: 3,
                   backdropFilter: 'blur(24px)',
@@ -307,6 +310,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                   flexDirection: 'column',
                   gap: 1.5,
                   border: '1px solid var(--border)',
+                  borderRadius: 'var(--lumio-radius-sm)',
                   bgcolor: 'var(--card)',
                   p: 3,
                   backdropFilter: 'blur(24px)',

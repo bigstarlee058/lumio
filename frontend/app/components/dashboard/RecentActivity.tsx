@@ -32,7 +32,7 @@ type ActivityBucket = 'Today' | 'Yesterday' | 'This week' | 'Earlier';
 const typeConfig: Record<string, { icon: React.ElementType; label: string; tone: string }> = {
   statement_upload: { icon: FileUp, label: 'Statement uploaded', tone: 'text-blue-700 bg-blue-50' },
   payment: { icon: Receipt, label: 'Payment recorded', tone: 'text-amber-700 bg-amber-50' },
-  categorization: { icon: Tag, label: 'Category updated', tone: 'text-purple-700 bg-purple-50' },
+  categorization: { icon: Tag, label: 'Category updated', tone: 'text-teal-700 bg-teal-50' },
   transaction: { icon: Receipt, label: 'Transaction updated', tone: 'text-gray-700 bg-gray-50' },
   import: { icon: Inbox, label: 'Import completed', tone: 'text-emerald-700 bg-emerald-50' },
   delete: { icon: ShieldOff, label: 'Item deleted', tone: 'text-rose-700 bg-rose-50' },

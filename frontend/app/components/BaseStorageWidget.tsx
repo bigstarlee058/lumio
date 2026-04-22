@@ -93,14 +93,14 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
   })();
 
   const btnBase = { display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 14, fontWeight: 600, cursor: working ? 'not-allowed' : 'pointer', opacity: working ? 0.7 : 1 } as const;
-  const primaryBtn = { ...btnBase, background: 'var(--lumio-primary,#6366f1)', color: '#fff', border: 'none' };
-  const outlineBtn = { ...btnBase, background: 'transparent', color: 'var(--lumio-primary,#6366f1)', border: '1px solid var(--lumio-primary,#6366f1)' };
+  const primaryBtn = { ...btnBase, background: 'var(--lumio-primary,#3e9c35)', color: '#fff', border: 'none' };
+  const outlineBtn = { ...btnBase, background: 'transparent', color: 'var(--lumio-primary,#3e9c35)', border: '1px solid var(--lumio-primary,#3e9c35)' };
 
   return (
     <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ padding: 8, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(var(--lumio-primary-rgb,99,102,241),0.1)', color: 'var(--lumio-primary,#6366f1)' }}>
+          <div style={{ padding: 8, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(var(--lumio-primary-rgb,22,129,24),0.1)', color: 'var(--lumio-primary,#3e9c35)' }}>
             <Image src={provider.logoSrc} alt={provider.logoAlt} width={20} height={20} />
           </div>
           <div>

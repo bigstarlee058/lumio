@@ -92,7 +92,7 @@ export function CurrencyDrawer({
               <Typography style={{ fontSize: 16, fontWeight: 600 }}>
                 {selectedCurrencyItem.label}
               </Typography>
-              <Check style={{ width: 20, height: 20, color: 'var(--color-primary, #4f46e5)' }} />
+              <Check style={{ width: 20, height: 20, color: 'var(--color-primary, #168118)' }} />
             </Box>
           ) : null}
 

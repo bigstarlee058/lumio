@@ -1,5 +1,5 @@
 const AVATAR_COLORS = [
-  '#4f46e5', // brand indigo
+  '#168118', // brand green
   '#10b981', // emerald
   '#f59e0b', // amber
   '#0ea5e9', // sky
@@ -26,5 +26,5 @@ export function getInitials(label: string): string {
 
 export function getAvatarColor(label: string): string {
   const index = hashString(label) % AVATAR_COLORS.length;
-  return AVATAR_COLORS[index] ?? '#4f46e5';
+  return AVATAR_COLORS[index] ?? '#168118';
 }
