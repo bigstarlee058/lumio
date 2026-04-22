@@ -87,7 +87,7 @@
 
 .lumio-language-switcher__back-btn {
   padding: 0.5rem;
-  border-radius: 50%;
+  border-radius: var(--lumio-radius-full);
   background: transparent;
   border: none;
   cursor: pointer;

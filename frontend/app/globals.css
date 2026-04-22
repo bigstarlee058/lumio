@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap");
 @import "./styles/tokens.css";
 @import "./styles/base.css";
 @import "./tours/tour-theme.css";
+@import "./styles/blocks/lumio-sidebar.css";
 @import "./styles/blocks/lumio-navigation.css";
 @import "./styles/blocks/lumio-notification-dropdown.css";
 @import "./styles/blocks/lumio-pdf-preview-modal.css";
@@ -10,157 +10,117 @@
 @import "./styles/blocks/lumio-audit-panel.css";
 @import "./styles/blocks/lumio-transaction-table.css";
 @import "./styles/blocks/lumio-statements.css";
+@import "./styles/blocks/lumio-dashboard.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --radius: 0rem;
-  --radius-sm: 0rem;
-  --radius-md: 0rem;
-  --radius-lg: 0rem;
-  --radius-xl: 0rem;
-  --radius-2xl: 0rem;
-  --radius-3xl: 0rem;
-  --radius-full: 9999px;
-  --primary: #0a66c2;
-  --primary-hover: #084e96;
+  /* Core colors — map to lumio tokens */
+  --background:         #f8f8f9;
+  --foreground:         #0b0b10;
+  --primary:            #4f46e5;
+  --primary-hover:      #4338ca;
   --primary-foreground: #ffffff;
-  --secondary: #475569;
+  --secondary:          var(--lumio-color-ink-600);
   --secondary-foreground: #ffffff;
-  --muted: #edf3fb;
-  --muted-foreground: #4b5563;
-  --card-bg: #ffffff;
-  --card-foreground: #0f172a;
-  --border-color: #d7e2ef;
-  --input: #c8d7e7;
-  --ring: #3b82c4;
-  --destructive: #dc2626;
+  --muted:              var(--lumio-color-ink-100);
+  --muted-foreground:   var(--lumio-color-ink-500);
+  --card-bg:            #ffffff;
+  --card-foreground:    var(--lumio-color-ink-900);
+  --border-color:       var(--lumio-color-ink-150);
+  --input:              var(--lumio-color-ink-200);
+  --ring:               var(--lumio-color-primary);
+  --destructive:        var(--lumio-color-danger);
   --destructive-foreground: #ffffff;
-  --surface-glow: rgba(10, 102, 194, 0.14);
-  --surface-success-glow: rgba(34, 197, 94, 0.12);
+  --surface-glow:         rgba(79, 70, 229, 0.14);
+  --surface-success-glow: rgba(16, 185, 129, 0.12);
+
   /* Dashboard palette */
-  --ff-dash-primary: #f59e0b;
-  --ff-dash-primary-soft: #fbbf24;
-  --ff-dash-cta: #8b5cf6;
-  --ff-dash-surface: #ffffff;
-  --ff-dash-foreground: #0f172a;
-  --ff-dash-muted: #e2e8f0;
-  --ff-dash-border: #e5e7eb;
-  --ff-dash-critical: #ef4444;
-  --ff-dash-warning: #f59e0b;
-  --ff-dash-info: #2563eb;
-  --ff-dash-success: #10b981;
-  --ff-dashboard-card: #ffffff;
-  --ff-dashboard-card-border: #e5e7eb;
-  --ff-dashboard-card-foreground: #0f172a;
-  --font-dashboard-sans: "Inter", var(--font-inter), sans-serif;
-  --font-dashboard-mono: "Space Grotesk", var(--font-space-grotesk), monospace;
-  --font-family-sans: var(--font-inter), "Inter", "Helvetica Neue", Arial, Helvetica, sans-serif !important;
-  --font-family-mono: var(--font-space-grotesk), "Space Grotesk", ui-monospace, SFMono-Regular, SF
-    Mono, Menlo, Consolas, Liberation Mono, monospace !important;
-  --global-nav-height: 104px;
+  --ff-dash-primary:       #4f46e5;
+  --ff-dash-primary-soft:  #c7cbff;
+  --ff-dash-cta:           #8b5cf6;
+  --ff-dash-surface:       #ffffff;
+  --ff-dash-foreground:    #0b0b10;
+  --ff-dash-muted:         #f2f2f4;
+  --ff-dash-border:        #ececef;
+  --ff-dash-critical:      #e11d48;
+  --ff-dash-warning:       #f59e0b;
+  --ff-dash-info:          #0ea5e9;
+  --ff-dash-success:       #10b981;
+  --ff-dashboard-card:           #ffffff;
+  --ff-dashboard-card-border:    #ececef;
+  --ff-dashboard-card-foreground:#0b0b10;
+  --font-dashboard-sans: var(--font-geist), "Geist", system-ui, sans-serif;
+  --font-dashboard-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+  --font-family-sans:    var(--font-geist), "Geist", system-ui, sans-serif;
+  --font-family-mono:    var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+
+  /* TopBar height (sticky, inside content column) */
+  --global-nav-height: 52px;
 
   /* Dashboard typographic helpers */
-  --dash-title: 0.75rem;
-  --dash-label: 0.875rem;
+  --dash-title:  0.75rem;
+  --dash-label:  0.875rem;
   --dash-metric: 1.5rem;
 }
 
 .dark {
   color-scheme: dark;
-  --background: #0f1419;
-  --foreground: #e2e8f0;
-  --radius: 0rem;
-  --radius-sm: 0rem;
-  --radius-md: 0rem;
-  --radius-lg: 0rem;
-  --radius-xl: 0rem;
-  --radius-2xl: 0rem;
-  --radius-3xl: 0rem;
-  --radius-full: 9999px;
-  --primary: #5b9bd5;
-  --primary-hover: #4a8bc5;
-  --primary-foreground: #0f1419;
-  --secondary: #1a2332;
-  --secondary-foreground: #e2e8f0;
-  --muted: #1a2332;
-  --muted-foreground: #8899aa;
-  --card-bg: #151c24;
-  --card-foreground: #e2e8f0;
-  --border-color: #1e2a3a;
-  --input: #1e2a3a;
-  --ring: #5b9bd5;
-  --destructive: #ef4444;
-  --destructive-foreground: #0f1419;
-  --surface-glow: rgba(91, 155, 213, 0.24);
-  --surface-success-glow: rgba(34, 197, 94, 0.2);
-  --accent: #0f1419;
-  --accent-foreground: #e2e8f0;
-  --popover: #151c24;
-  --popover-foreground: #e2e8f0;
-  --sidebar: #0d1117;
-  --sidebar-accent: #1a2332;
-  --sidebar-accent-foreground: #e2e8f0;
-  --sidebar-border: #1e2a3a;
-  --sidebar-foreground: #8899aa;
-  --sidebar-primary: #e2e8f0;
-  --sidebar-primary-foreground: #0f1419;
-  --sidebar-ring: #5b9bd5;
-  --color-error: #1a1215;
-  --color-error-foreground: #f87171;
-  --color-info: #111827;
-  --color-info-foreground: #93c5fd;
-  --color-success: #0f1a14;
-  --color-success-foreground: #6ee7b7;
-  --color-warning: #1a1610;
+  --background:         #0f0f19;
+  --foreground:         #e8e8f0;
+  --primary:            #818cf8;
+  --primary-hover:      #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary:          #252538;
+  --secondary-foreground: #e8e8f0;
+  --muted:              #1c1c30;
+  --muted-foreground:   #a0a0b4;
+  --card-bg:            #16162a;
+  --card-foreground:    #e8e8f0;
+  --border-color:       #252538;
+  --input:              #252538;
+  --ring:               #818cf8;
+  --destructive:        #fb7185;
+  --destructive-foreground: #ffffff;
+  --surface-glow:         rgba(129, 140, 248, 0.24);
+  --surface-success-glow: rgba(52, 211, 153, 0.2);
+  --accent: #0f0f19;
+  --accent-foreground: #e8e8f0;
+  --popover: #16162a;
+  --popover-foreground: #e8e8f0;
+  --color-error-foreground:   #fb7185;
+  --color-info-foreground:    #38bdf8;
+  --color-success-foreground: #34d399;
   --color-warning-foreground: #fbbf24;
+
   /* Dashboard palette (dark adjustments) */
-  --ff-dash-primary: #5b9bd5;
-  --ff-dash-primary-soft: #4a8bc5;
-  --ff-dash-cta: #5b9bd5;
-  --ff-dash-surface: #151c24;
-  --ff-dash-foreground: #e2e8f0;
-  --ff-dash-muted: #1a2332;
-  --ff-dash-border: #1e2a3a;
-  --ff-dash-critical: #f87171;
-  --ff-dash-warning: #fbbf24;
-  --ff-dash-info: #93c5fd;
-  --ff-dash-success: #34d399;
-  --ff-dashboard-card: #151c24;
-  --ff-dashboard-card-border: #1e2a3a;
-  --ff-dashboard-card-foreground: #e2e8f0;
+  --ff-dash-primary:       #818cf8;
+  --ff-dash-primary-soft:  #4f46e5;
+  --ff-dash-cta:           #a78bfa;
+  --ff-dash-surface:       #16162a;
+  --ff-dash-foreground:    #e8e8f0;
+  --ff-dash-muted:         #1c1c30;
+  --ff-dash-border:        #252538;
+  --ff-dash-critical:      #fb7185;
+  --ff-dash-warning:       #fbbf24;
+  --ff-dash-info:          #38bdf8;
+  --ff-dash-success:       #34d399;
+  --ff-dashboard-card:           #16162a;
+  --ff-dashboard-card-border:    #252538;
+  --ff-dashboard-card-foreground:#e8e8f0;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family:
-    var(--font-inter),
-    "Inter",
-    -apple-system,
-    system-ui,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    "Fira Sans",
-    Ubuntu,
-    Oxygen,
-    "Oxygen Sans",
-    Cantarell,
-    "Droid Sans",
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Lucida Grande",
-    Helvetica,
-    Arial,
-    sans-serif;
+  font-family: var(--font-geist), "Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv11";
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
   transition: background-color 220ms ease, color 220ms ease;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .ff-dashboard-sans {
@@ -181,9 +141,9 @@ body {
   background-color: var(--muted) !important;
 }
 
-/* MUI hover effects in light mode */
-:not(.dark) .MuiButtonBase-root:hover,
-:not(.dark) .MuiButton-root:hover,
+/* MUI hover effects in light mode — excluded for contained buttons (they manage their own hover) */
+:not(.dark) .MuiButtonBase-root:not(.MuiButton-contained):hover,
+:not(.dark) .MuiButton-root:not(.MuiButton-contained):hover,
 :not(.dark) .MuiIconButton-root:hover,
 :not(.dark) .MuiMenuItem-root:hover,
 :not(.dark) .MuiListItem-root:hover,
@@ -202,29 +162,11 @@ body {
   }
 }
 
-/* Global radius normalization for Tailwind utilities */
-.rounded,
-.rounded-sm,
-.rounded-md,
-.rounded-lg,
-.rounded-xl,
-.rounded-2xl,
-.rounded-3xl {
-  border-radius: var(--radius-md) !important;
-}
-
-/* MUI radius normalization */
-.MuiPaper-root,
-.MuiCard-root,
-.MuiButton-root,
-.MuiOutlinedInput-root,
-.MuiDialog-paper,
-.MuiPopover-paper,
-.MuiMenu-paper,
-.MuiAccordion-root,
-.MuiChip-root,
-.MuiTableContainer-root {
-  border-radius: var(--radius-md) !important;
+/* Focus rings — use brand color */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--lumio-radius-xs);
 }
 
 .bg-white {
@@ -418,24 +360,36 @@ body {
   --rdp-accent-background-color: color-mix(in srgb, var(--primary) 18%, transparent);
 }
 
+/* Scroll lock via CSS class (see useLockBodyScroll). Class-based approach avoids
+   interfering with MUI's inline-style scroll management. */
+body.body-scroll-locked {
+  overflow: hidden;
+  padding-right: var(--scroll-lock-scrollbar-width, 0px);
+}
+
 /* Custom Tables: in-app fullscreen mode (hides global navigation/breadcrumbs). */
 body.ff-table-fullscreen {
   overflow: hidden;
 }
 
-body.ff-table-fullscreen > [data-global-nav] {
+body.ff-table-fullscreen .lumio-topbar {
   display: none;
 }
 
-body.ff-table-fullscreen > [data-global-nav-spacer] {
+body.ff-table-fullscreen .lumio-shell__sidebar {
   display: none;
+}
+
+body.ff-table-fullscreen .lumio-shell__content > main {
+  height: 100vh;
+  overflow: hidden;
 }
 
 body.ff-table-fullscreen.ff-table-columns-scroll {
   overflow: auto;
 }
 
-body.ff-table-fullscreen.ff-table-columns-scroll > main {
+body.ff-table-fullscreen.ff-table-columns-scroll .lumio-shell__content > main {
   height: auto;
   overflow: visible;
 }
@@ -449,11 +403,6 @@ body.ff-table-fullscreen.ff-table-columns-scroll > main {
 .custom-table-container tr.row-fill td select,
 .custom-table-container tr.row-fill td textarea {
   background-color: transparent;
-}
-
-body.ff-table-fullscreen > main {
-  height: 100vh;
-  overflow: hidden;
 }
 
 /* Custom Tables: disable selection while resizing columns. */
@@ -474,31 +423,8 @@ body.ff-col-resizing {
   align-items: center;
 }
 
-/* Disable all shadows globally */
-.shadow-sm,
-.shadow,
-.shadow-md,
-.shadow-lg,
-.shadow-xl,
-.shadow-2xl,
-.shadow-inner,
-.hover\:shadow-sm:hover,
-.hover\:shadow-md:hover,
-.hover\:shadow-lg:hover,
-.hover\:shadow-xl:hover,
-.drop-shadow,
-.drop-shadow-sm,
-.drop-shadow-md,
-.drop-shadow-lg,
-.drop-shadow-xl,
-.drop-shadow-2xl,
-.dark .shadow-sm,
-.dark .shadow,
-.dark .shadow-md,
-.dark .shadow-lg,
-.dark .shadow-xl,
-.dark .shadow-2xl,
-.dark .shadow-inner {
-  box-shadow: none !important;
-  filter: none !important;
-}
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--lumio-color-ink-200); border-radius: var(--lumio-radius-md); border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--lumio-color-ink-300); background-clip: padding-box; border: 2px solid transparent; }
+::-webkit-scrollbar-track { background: transparent; }

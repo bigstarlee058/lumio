@@ -1,0 +1,501 @@
+/* BEM block: lumio-dashboard */
+
+/* ── Stat grid ── */
+.lumio-dashboard__stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1280px) {
+  .lumio-dashboard__stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .lumio-dashboard__stat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lumio-dashboard__stat {
+  position: relative;
+  padding: 18px 20px 16px;
+  background: var(--lumio-color-surface);
+  border: 1px solid var(--lumio-color-ink-150);
+  border-radius: var(--lumio-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--lumio-shadow-sm);
+}
+
+.lumio-dashboard__stat-label {
+  font-size: 11.5px;
+  color: var(--lumio-color-ink-500);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lumio-dashboard__stat-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--lumio-color-ink-900);
+  letter-spacing: -0.015em;
+  margin-top: 6px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.lumio-dashboard__stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.lumio-dashboard__stat-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: var(--lumio-radius-xs);
+  font-weight: 500;
+}
+
+.lumio-dashboard__stat-delta--up {
+  background: var(--lumio-color-success-soft);
+  color: #047857;
+}
+
+.lumio-dashboard__stat-delta--down {
+  background: var(--lumio-color-danger-soft);
+  color: #be123c;
+}
+
+.lumio-dashboard__stat-delta--flat {
+  background: var(--lumio-color-ink-100);
+  color: var(--lumio-color-ink-600);
+}
+
+.lumio-dashboard__stat-sub {
+  color: var(--lumio-color-ink-500);
+}
+
+.lumio-dashboard__stat-spark {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* ── Main 2fr/1fr grid ── */
+.lumio-dashboard__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .lumio-dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+  .lumio-dashboard__cashflow,
+  .lumio-dashboard__categories,
+  .lumio-dashboard__activity,
+  .lumio-dashboard__actions,
+  .lumio-dashboard__upload {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+}
+
+.lumio-dashboard__cashflow  { grid-column: 1; grid-row: 1; }
+.lumio-dashboard__categories{ grid-column: 2; grid-row: 1; }
+.lumio-dashboard__activity  { grid-column: 1; grid-row: 2 / span 2; }
+.lumio-dashboard__actions   { grid-column: 2; grid-row: 2; }
+.lumio-dashboard__upload    { grid-column: 2; grid-row: 3; }
+
+/* ── Card (padded) ── */
+.lumio-dashboard__card {
+  background: var(--lumio-color-surface);
+  border: 1px solid var(--lumio-color-ink-150);
+  border-radius: var(--lumio-radius-lg);
+  padding: 20px;
+  box-shadow: var(--lumio-shadow-sm);
+}
+
+/* Card shell — provides border/radius/shadow but no padding (used for components with self-managed padding) */
+.lumio-dashboard__card-shell {
+  background: var(--lumio-color-surface);
+  border: 1px solid var(--lumio-color-ink-150);
+  border-radius: var(--lumio-radius-lg);
+  box-shadow: var(--lumio-shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lumio-dashboard__card-shell-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 20px 0;
+  flex-shrink: 0;
+}
+
+.lumio-dashboard__card-shell-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Card header (for padded cards) ── */
+.lumio-dashboard__card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.lumio-dashboard__card-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.lumio-dashboard__card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lumio-color-ink-900);
+  letter-spacing: -0.01em;
+}
+
+.lumio-dashboard__card-sub {
+  font-size: 12.5px;
+  color: var(--lumio-color-ink-500);
+  margin-top: 4px;
+}
+
+.lumio-dashboard__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--lumio-color-ink-500);
+}
+
+.lumio-dashboard__legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--lumio-radius-xs);
+  flex-shrink: 0;
+}
+
+.lumio-dashboard__card-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--lumio-color-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--lumio-radius-xs);
+  transition: background-color 150ms;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lumio-dashboard__card-link-btn:hover {
+  background-color: var(--lumio-color-primary-50);
+}
+
+/* ── Cash flow chart area ── */
+.lumio-dashboard__cf-chart {
+  height: 260px;
+  position: relative;
+}
+
+/* ── Top categories area ── */
+.lumio-dashboard__cat-chart {
+  height: 260px;
+  position: relative;
+}
+
+/* ── Quick actions ── */
+.lumio-dashboard__action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lumio-dashboard__action-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: var(--lumio-radius-sm);
+  cursor: pointer;
+  transition: background-color 120ms;
+  text-align: left;
+  background: none;
+  border: none;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.lumio-dashboard__action-row:hover {
+  background: var(--lumio-color-ink-50);
+}
+
+.lumio-dashboard__action-ico {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--lumio-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lumio-dashboard__action-ico--warning {
+  background: var(--lumio-color-warning-soft);
+  color: var(--lumio-color-warning);
+}
+
+.lumio-dashboard__action-ico--info {
+  background: var(--lumio-color-info-soft);
+  color: var(--lumio-color-info);
+}
+
+.lumio-dashboard__action-ico--success {
+  background: var(--lumio-color-success-soft);
+  color: var(--lumio-color-success);
+}
+
+.lumio-dashboard__action-ico--neutral {
+  background: var(--lumio-color-ink-100);
+  color: var(--lumio-color-ink-600);
+}
+
+.lumio-dashboard__action-ico--critical {
+  background: var(--lumio-color-danger-soft);
+  color: var(--lumio-color-danger);
+}
+
+.lumio-dashboard__action-body {
+  min-width: 0;
+}
+
+.lumio-dashboard__action-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lumio-color-ink-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lumio-dashboard__action-sub {
+  font-size: 11.5px;
+  color: var(--lumio-color-ink-500);
+  margin-top: 2px;
+}
+
+.lumio-dashboard__action-chevron {
+  color: var(--lumio-color-ink-300);
+  flex-shrink: 0;
+}
+
+/* ── Upload zone ── */
+.lumio-dashboard__upload-zone {
+  border: 1.5px dashed var(--lumio-color-ink-200);
+  border-radius: var(--lumio-radius-md);
+  padding: 24px;
+  text-align: center;
+  transition: border-color 120ms, background-color 120ms;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+}
+
+.lumio-dashboard__upload-zone:hover {
+  border-color: var(--lumio-color-primary);
+  background: var(--lumio-color-primary-50);
+}
+
+.lumio-dashboard__upload-ico {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--lumio-radius-md);
+  background: var(--lumio-color-primary-50);
+  color: var(--lumio-color-primary);
+}
+
+.lumio-dashboard__upload-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lumio-color-ink-900);
+}
+
+.lumio-dashboard__upload-sub {
+  font-size: 12px;
+  color: var(--lumio-color-ink-500);
+  margin-top: 4px;
+}
+
+.lumio-dashboard__upload-formats {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.lumio-dashboard__format-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--lumio-radius-xs);
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--lumio-color-ink-100);
+  color: var(--lumio-color-ink-600);
+}
+
+/* ── Empty state ── */
+.lumio-dashboard__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 16px;
+  text-align: center;
+}
+
+.lumio-dashboard__empty-icon {
+  margin-bottom: 24px;
+  display: flex;
+  width: 80px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--lumio-radius-lg);
+  border: 1px solid var(--lumio-color-border);
+  background: var(--lumio-color-surface);
+  box-shadow: var(--lumio-shadow-md);
+}
+
+.lumio-dashboard__empty-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--lumio-color-ink-900);
+}
+
+.lumio-dashboard__empty-desc {
+  margin: 0 0 32px;
+  max-width: 448px;
+  font-size: 14px;
+  color: var(--lumio-color-ink-500);
+  line-height: 1.6;
+}
+
+.lumio-dashboard__empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--lumio-color-primary);
+  color: #fff;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--lumio-radius-md);
+  text-decoration: none;
+  transition: background-color 150ms;
+}
+
+.lumio-dashboard__empty-cta:hover {
+  background-color: var(--lumio-color-primary-hover);
+}
+
+/* ── Period banner ── */
+.lumio-dashboard__period-banner {
+  border: 1px solid var(--lumio-color-border);
+  background: var(--lumio-color-surface-muted);
+  padding: 10px 16px;
+  border-radius: var(--lumio-radius-sm);
+  font-size: 12px;
+  color: var(--lumio-color-ink-500);
+  margin-bottom: 16px;
+}
+
+/* ── Page header ── */
+.lumio-dashboard-header {
+  padding: 32px 32px 0;  /* matches DashboardTabContent px:4 = 32px */
+}
+
+.lumio-dashboard-header__greet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--lumio-color-ink-500);
+  margin-bottom: 8px;
+}
+
+.lumio-dashboard-header__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--lumio-color-ink-900);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.lumio-dashboard-header__subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--lumio-color-ink-500);
+}
+
+.lumio-dashboard-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lumio-dashboard-header__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .lumio-dashboard-header {
+    padding: 24px 16px 0;
+  }
+  .lumio-dashboard-header__actions {
+    flex-wrap: wrap;
+  }
+}
