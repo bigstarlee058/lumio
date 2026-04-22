@@ -157,7 +157,7 @@ export function AuditEventTable({
                 fontWeight: 600,
                 bgcolor: colors.bg,
                 color: colors.color,
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-full)',
                 height: 24,
               }}
             />
@@ -234,7 +234,7 @@ export function AuditEventTable({
                 fontWeight: 600,
                 bgcolor: colors.bg,
                 color: colors.color,
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-full)',
                 height: 24,
               }}
             />

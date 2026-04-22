@@ -32,6 +32,20 @@ const ENTITY_LABELS: Record<EntityType, string> = {
   custom_table_column: 'Custom Table Column',
 };
 
+const ACTION_VERBS: Record<AuditAction, string> = {
+  create: 'created',
+  update: 'updated',
+  delete: 'deleted',
+  import: 'imported',
+  link: 'linked',
+  unlink: 'unlinked',
+  match: 'merged',
+  unmatch: 'unmatched',
+  apply_rule: 'categorized',
+  rollback: 'rolled back',
+  export: 'exported',
+};
+
 const ACTION_TONES: Record<AuditAction, ActionTone> = {
   create: 'success',
   update: 'primary',
@@ -52,7 +66,7 @@ const SEVERITY_TONES: Record<Severity, ActionTone> = {
   critical: 'critical',
 };
 
-const formatValue = (value: unknown) => {
+const _formatValue = (value: unknown): string => {
   if (value === null || value === undefined) return '—';
   if (typeof value === 'string') return value;
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
@@ -72,6 +86,15 @@ const buildFallbackDescription = (
   const trimmedId = typeof entityId === 'string' ? entityId.trim() : '';
   if (!trimmedId) return baseLabel;
   return `${baseLabel} ${trimmedId}`;
+};
+
+const formatDiffKeys = (keys: string[]): string => {
+  if (keys.length === 1) return `Field: ${keys[0]}`;
+  const displayedKeys = keys.slice(0, 3);
+  const remainingCount = keys.length - displayedKeys.length;
+  return remainingCount
+    ? `Fields: ${displayedKeys.join(', ')} +${remainingCount} more`
+    : `Fields: ${displayedKeys.join(', ')}`;
 };
 
 const extractDescription = (
@@ -96,19 +119,14 @@ const extractDescription = (
     return buildFallbackDescription(actionLabel, objectLabel, event.entityId);
   }
 
-  if (keys.length === 1) {
-    return `Field: ${keys[0]}`;
-  }
-
-  const displayedKeys = keys.slice(0, 3);
-  const remainingCount = keys.length - displayedKeys.length;
-  return remainingCount
-    ? `Fields: ${displayedKeys.join(', ')} +${remainingCount} more`
-    : `Fields: ${displayedKeys.join(', ')}`;
+  return formatDiffKeys(keys);
 };
 
-export const formatAuditEvent = (event: AuditEvent) => {
+export const formatAuditEvent = (
+  event: AuditEvent,
+): { actionLabel: string; actionVerb: string; objectLabel: string; description: string; severity: string; actionTone: ActionTone } => {
   const actionLabel = ACTION_LABELS[event.action] ?? event.action;
+  const actionVerb = ACTION_VERBS[event.action] ?? event.action;
   const objectLabel = ENTITY_LABELS[event.entityType] ?? event.entityType;
   const description = extractDescription(event, actionLabel, objectLabel);
   const actionTone =
@@ -118,6 +136,7 @@ export const formatAuditEvent = (event: AuditEvent) => {
 
   return {
     actionLabel,
+    actionVerb,
     objectLabel,
     description,
     severity: event.severity,

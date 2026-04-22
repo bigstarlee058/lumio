@@ -1,6 +1,6 @@
 import type { RollbackResponse } from '@/lib/api/audit';
 
-export const assertRollbackSucceeded = (result: RollbackResponse) => {
+export const assertRollbackSucceeded = (result: RollbackResponse): void => {
   if (!result.success) {
     throw new Error(result.message || 'Rollback failed');
   }
