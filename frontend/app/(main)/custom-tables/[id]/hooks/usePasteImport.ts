@@ -112,14 +112,14 @@ export function usePasteImport({
         window.clearTimeout(pastePreviewTimerRef.current);
       }
       pastePreviewTimerRef.current = window.setTimeout(() => {
-        const result = buildPastePreview(
-          rows,
+        const result = buildPastePreview({
+          rawRows: rows,
           useHeaders,
           orderedColumns,
           mappingSelection,
           edits,
-          pasteDefaults,
-        );
+          defaults: pasteDefaults,
+        });
         setPastePreview(result.preview);
         setPasteMapping(result.mapping);
         setPasteParsing(false);
@@ -139,17 +139,17 @@ export function usePasteImport({
       setPasteParsing(true);
       setPasteEdits({});
       window.setTimeout(() => {
-        const initial = buildPastePreview(rows, false, orderedColumns, null, {}, pasteDefaults);
+        const initial = buildPastePreview({ rawRows: rows, useHeaders: false, orderedColumns, mappingSelection: null, edits: {}, defaults: pasteDefaults });
         const shouldUseHeaders = initial.preview.headersDetected;
         if (shouldUseHeaders) {
-          const withHeaders = buildPastePreview(
-            rows,
-            true,
+          const withHeaders = buildPastePreview({
+            rawRows: rows,
+            useHeaders: true,
             orderedColumns,
-            null,
-            {},
-            pasteDefaults,
-          );
+            mappingSelection: null,
+            edits: {},
+            defaults: pasteDefaults,
+          });
           setPasteUseHeaders(true);
           setPastePreview(withHeaders.preview);
           setPasteMapping(withHeaders.mapping);

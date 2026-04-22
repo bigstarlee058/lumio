@@ -191,15 +191,9 @@ export default function CustomTableDetailPage() {
     return col?.key || null;
   }, [orderedColumns]);
 
-  const stickyLeftColumnIds = useMemo(
-    () =>
-      ['__select', dateColKey || undefined, counterpartyColKey || undefined].filter(
-        Boolean,
-      ) as string[],
-    [dateColKey, counterpartyColKey],
-  );
+  const stickyLeftColumnIds = useMemo(() => [], []);
 
-  const stickyRightColumnIds = useMemo(() => ['__actions'], []);
+  const stickyRightColumnIds = useMemo(() => [], []);
 
   const quickTabs = useMemo<QuickTab[]>(() => {
     return buildQuickTabs({
@@ -530,7 +524,7 @@ export default function CustomTableDetailPage() {
         ? { height: '100vh', width: '100vw', bgcolor: 'background.paper', overflow: isPrintMode ? 'visible' : 'hidden' }
         : {}}
       className={isFullscreen ? undefined : 'container-shared'}
-      style={isFullscreen ? { paddingTop: isPrintMode ? '0' : '80px' } : { padding: '32px 16px' }}
+      style={isFullscreen ? { paddingTop: isPrintMode ? '0' : '150px' } : { padding: '32px 16px' }}
     >
       <Box
         sx={isFullscreen
