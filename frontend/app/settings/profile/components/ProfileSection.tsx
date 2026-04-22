@@ -96,7 +96,7 @@ export function ProfileSection({
             width: '100%',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-md)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

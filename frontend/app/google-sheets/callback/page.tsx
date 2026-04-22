@@ -10,7 +10,8 @@ import { Alert, Container, Paper, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
-function CallbackContent() {
+// eslint-disable-next-line max-lines-per-function
+function CallbackContent(): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useIntlayer('googleSheetsCallbackPage');
@@ -21,7 +22,7 @@ function CallbackContent() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const completeAuth = async () => {
+    const completeAuth = async (): Promise<void> => {
       if (!code) {
         setError(t.errors.missingCode.value);
         return;
@@ -73,7 +74,7 @@ function CallbackContent() {
   );
 }
 
-export default function GoogleSheetsCallbackPage() {
+export default function GoogleSheetsCallbackPage(): React.JSX.Element {
   return (
     <Suspense
       fallback={

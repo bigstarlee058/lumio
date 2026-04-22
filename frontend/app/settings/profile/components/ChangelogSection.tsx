@@ -48,7 +48,7 @@ export function ChangelogSection({
       {changelogLoading ? (
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -67,7 +67,7 @@ export function ChangelogSection({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px dashed',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -91,7 +91,7 @@ export function ChangelogSection({
               onClick={() => setChangelogSelectedEntry(entry)}
               sx={{
                 width: '100%',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-lg)',
                 border: '1px solid',
                 borderColor: 'divider',
                 bgcolor: 'background.paper',

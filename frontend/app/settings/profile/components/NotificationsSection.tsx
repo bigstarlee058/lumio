@@ -48,7 +48,7 @@ function NotificationSettingRow({
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         gap: 2,
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-lg)',
         border: '1px solid',
         borderColor: 'divider',
         p: 1.5,
@@ -127,7 +127,7 @@ export function NotificationsSection({
       {notificationsLoading ? (
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

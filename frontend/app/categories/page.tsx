@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function CategoriesPageRedirect() {
+export default function CategoriesPageRedirect(): null {
   const router = useRouter();
 
   useEffect(() => {

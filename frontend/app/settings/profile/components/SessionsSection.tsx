@@ -53,7 +53,7 @@ export function SessionsSection({
 
       <Box
         sx={{
-          borderRadius: 0,
+          borderRadius: 'var(--lumio-radius-lg)',
           border: '1px solid',
           borderColor: 'divider',
           bgcolor: 'action.hover',
@@ -80,7 +80,7 @@ export function SessionsSection({
               display: 'flex',
               alignItems: 'center',
               gap: 1,
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid',
               borderColor: 'divider',
               px: 2,
@@ -105,7 +105,7 @@ export function SessionsSection({
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     gap: 2,
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-lg)',
                     border: '1px solid',
                     borderColor: 'divider',
                     bgcolor: 'background.paper',
@@ -124,7 +124,7 @@ export function SessionsSection({
                         width: 40,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: 0,
+                        borderRadius: 'var(--lumio-radius-sm)',
                         bgcolor: 'primary.light',
                         color: 'primary.main',
                         flexShrink: 0,
@@ -178,7 +178,7 @@ export function SessionsSection({
         ) : (
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px dashed',
               borderColor: 'divider',
               bgcolor: 'action.hover',

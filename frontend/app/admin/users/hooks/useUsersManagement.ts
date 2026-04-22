@@ -1,0 +1,159 @@
+'use client';
+
+import { useCallback, useEffect, useState } from 'react';
+import apiClient from '../../../lib/api';
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  isActive: boolean;
+  permissions: string[] | null;
+  createdAt: string;
+}
+
+interface ErrorResponse {
+  response?: { data?: { message?: string } };
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
+export function useUsersManagement(errorMessages: {
+  loadUsers: string;
+  loadPermissions: string;
+  savePermissions: string;
+  resetPermissions: string;
+  updateRole: string;
+  updateStatus: string;
+}) {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  const loadUsers = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get<{ data: User[] }>('/users');
+      setUsers(response.data.data || []);
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.loadUsers);
+    } finally {
+      setLoading(false);
+    }
+  }, [errorMessages.loadUsers]);
+
+  useEffect(() => {
+    void loadUsers();
+  }, [loadUsers]);
+
+  const handleEditPermissions = async (user: User): Promise<void> => {
+    try {
+      const response = await apiClient.get(`/users/${user.id}/permissions`);
+      setSelectedPermissions(response.data.customPermissions || []);
+      setEditingUser(user);
+      setPermissionsDialogOpen(true);
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.loadPermissions);
+    }
+  };
+
+  const handleSavePermissions = async (): Promise<void> => {
+    if (!editingUser) return;
+    setSaving(true);
+    try {
+      await apiClient.put(`/users/${editingUser.id}/permissions`, {
+        permissions: selectedPermissions,
+      });
+      setPermissionsDialogOpen(false);
+      setEditingUser(null);
+      void loadUsers();
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.savePermissions);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleResetPermissions = async (): Promise<void> => {
+    if (!editingUser) return;
+    setSaving(true);
+    try {
+      await apiClient.post(`/users/${editingUser.id}/permissions/reset`);
+      setPermissionsDialogOpen(false);
+      setEditingUser(null);
+      void loadUsers();
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.resetPermissions);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleTogglePermission = (permission: string): void => {
+    setSelectedPermissions(prev =>
+      prev.includes(permission) ? prev.filter(p => p !== permission) : [...prev, permission],
+    );
+  };
+
+  const handleUpdateRole = async (userId: string, newRole: string): Promise<void> => {
+    try {
+      await apiClient.put(`/users/${userId}`, { role: newRole });
+      void loadUsers();
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.updateRole);
+    }
+  };
+
+  const handleToggleActive = async (user: User): Promise<void> => {
+    try {
+      await apiClient.put(`/users/${user.id}`, { isActive: !user.isActive });
+      void loadUsers();
+    } catch (err: unknown) {
+      const e = err as ErrorResponse;
+      setError(e.response?.data?.message ?? errorMessages.updateStatus);
+    }
+  };
+
+  const closePermissionsDialog = (): void => {
+    setPermissionsDialogOpen(false);
+    setEditingUser(null);
+  };
+
+  const filteredUsers = users.filter(
+    u =>
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  return {
+    users,
+    loading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    editingUser,
+    permissionsDialogOpen,
+    selectedPermissions,
+    saving,
+    filteredUsers,
+    loadUsers,
+    handleEditPermissions,
+    handleSavePermissions,
+    handleResetPermissions,
+    handleTogglePermission,
+    handleUpdateRole,
+    handleToggleActive,
+    closePermissionsDialog,
+  };
+}

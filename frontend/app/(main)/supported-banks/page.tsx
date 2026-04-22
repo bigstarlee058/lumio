@@ -1,7 +1,7 @@
 'use client';
 
 import { useIntlayer } from '@/app/i18n';
-import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
@@ -15,7 +15,8 @@ type SupportedBankCard = {
   notes: string;
 };
 
-export default function SupportedBanksPage() {
+// eslint-disable-next-line max-lines-per-function
+export default function SupportedBanksPage(): React.JSX.Element {
   const t = useIntlayer('supportedBanksPage');
 
   const banks: SupportedBankCard[] = [
@@ -64,7 +65,7 @@ export default function SupportedBanksPage() {
             icon={<CheckCircle2 size={14} />}
             label={resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
             size="small"
-            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: 0 }}
+            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: 'var(--lumio-radius-full)' }}
           />
         </Box>
       </Box>

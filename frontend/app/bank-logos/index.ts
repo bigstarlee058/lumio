@@ -18,7 +18,7 @@ const DISPLAY_NAME_BY_KEY: Record<BankLogoKey, string> = {
   other: 'Bank',
 };
 
-const normalize = (value: string) =>
+const normalize = (value: string): string =>
   value
     .trim()
     .toLowerCase()
@@ -28,6 +28,7 @@ const normalize = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 
+// eslint-disable-next-line complexity
 const resolveKeyFromName = (bankName: string): BankLogoKey => {
   const n = normalize(bankName);
 

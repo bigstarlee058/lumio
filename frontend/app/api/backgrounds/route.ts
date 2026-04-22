@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const backgroundsDirectory = path.join(process.cwd(), 'public/workspace-backgrounds');
 
   try {

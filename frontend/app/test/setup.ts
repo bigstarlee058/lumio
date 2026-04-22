@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 
 vi.mock('next/image', () => ({
   default: (props: { alt?: string; unoptimized?: boolean } & Record<string, unknown>) => {
-    const { alt = '', unoptimized, ...rest } = props;
+    const { alt = '', unoptimized: _unoptimized, ...rest } = props;
     return React.createElement('img', { alt, ...rest });
   },
 }));
