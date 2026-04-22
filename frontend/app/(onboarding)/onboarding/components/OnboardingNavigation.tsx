@@ -46,7 +46,7 @@ export function OnboardingNavigation({
           onClick={onBack}
           disabled={disableBack}
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-md)',
             borderColor: 'divider',
             bgcolor: 'background.paper',
             color: 'text.primary',
@@ -69,7 +69,7 @@ export function OnboardingNavigation({
               onClick={onSkip}
               disabled={isSubmitting}
               sx={{
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 color: 'text.secondary',
                 fontWeight: 600,
                 fontSize: 14,
@@ -89,7 +89,7 @@ export function OnboardingNavigation({
             onClick={onNext}
             disabled={isSubmitting}
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-md)',
               fontWeight: 600,
               fontSize: 14,
               textTransform: 'none',

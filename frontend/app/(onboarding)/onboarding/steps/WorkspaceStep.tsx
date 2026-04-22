@@ -71,7 +71,7 @@ export function WorkspaceStep({
                 variant="outlined"
                 onClick={() => setCurrencyPickerOpen(false)}
                 sx={{
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   borderColor: 'divider',
                   bgcolor: 'background.paper',
                   color: 'text.primary',
@@ -146,7 +146,7 @@ export function WorkspaceStep({
               style={{
                 width: '100%',
                 border: '1px solid var(--mui-palette-divider)',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 background: 'var(--mui-palette-background-paper)',
                 padding: '10px 12px',
                 fontSize: 14,
@@ -211,7 +211,7 @@ export function WorkspaceStep({
               style={{
                 width: '100%',
                 border: '1px solid var(--mui-palette-divider)',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 background: 'var(--mui-palette-background-paper)',
                 padding: '10px 12px',
                 fontSize: 14,

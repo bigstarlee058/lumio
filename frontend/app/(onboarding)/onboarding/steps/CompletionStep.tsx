@@ -47,7 +47,7 @@ export function CompletionStep({
         <Box
           sx={{
             display: 'inline-flex',
-            borderRadius: '50%',
+            borderRadius: 'var(--lumio-radius-full)',
             border: '1px solid',
             borderColor: 'primary.light',
             bgcolor: 'primary.50',
@@ -78,7 +78,7 @@ export function CompletionStep({
 
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -155,7 +155,7 @@ export function CompletionStep({
                       width: 36,
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: '50%',
+                      borderRadius: 'var(--lumio-radius-full)',
                       border: '1px solid',
                       borderColor: 'divider',
                       bgcolor: 'action.hover',
@@ -167,7 +167,7 @@ export function CompletionStep({
                       alt={integration.title}
                       width={18}
                       height={18}
-                      style={{ borderRadius: 0 }}
+                      style={{ borderRadius: 'var(--lumio-radius-md)' }}
                     />
                   </Box>
                 ))}

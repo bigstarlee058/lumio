@@ -41,7 +41,7 @@ export function WelcomeStep() {
         >
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -55,7 +55,7 @@ export function WelcomeStep() {
           </Box>
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -69,7 +69,7 @@ export function WelcomeStep() {
           </Box>
           <Box
             sx={{
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-lg)',
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -85,7 +85,7 @@ export function WelcomeStep() {
 
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

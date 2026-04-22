@@ -18,14 +18,14 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
           height: 8,
           width: '100%',
           overflow: 'hidden',
-          borderRadius: 0,
+          borderRadius: 'var(--lumio-radius-full)',
           bgcolor: 'action.hover',
         }}
       >
         <Box
           sx={{
             height: '100%',
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-full)',
             bgcolor: 'primary.main',
             transition: 'width 300ms ease',
             width: `${progress}%`,
@@ -47,7 +47,7 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
             <Box
               key={label}
               sx={{
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 border: '1px solid',
                 px: 1.5,
                 py: 1,

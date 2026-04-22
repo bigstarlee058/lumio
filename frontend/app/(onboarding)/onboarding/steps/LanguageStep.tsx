@@ -18,7 +18,7 @@ const COMMON_TIMEZONES = [
   'America/New_York',
 ];
 
-const resolveTimeZoneOptions = () => {
+const resolveTimeZoneOptions = (): string[] => {
   const supportedValuesOf = (
     globalThis.Intl as unknown as {
       supportedValuesOf?: (key: string) => string[];
@@ -51,37 +51,23 @@ type TimeZoneOption = {
   label: string;
 };
 
-function toText(token: unknown, fallback = ''): string {
-  if (typeof token === 'string') {
-    return token;
-  }
+// eslint-disable-next-line max-params
+type TextFn = (path: string[], fallback?: string) => string;
 
-  if (token && typeof token === 'object' && 'value' in token) {
-    const value = (token as { value?: unknown }).value;
-    if (typeof value === 'string') {
-      return value;
-    }
-  }
-
-  if (token !== null && token !== undefined) {
-    const stringified = String(token);
-    if (stringified && stringified !== '[object Object]') {
-      return stringified;
-    }
-  }
-
-  return fallback;
+interface LanguageStepData {
+  text: TextFn;
+  timezoneSelectOptions: TimeZoneOption[];
+  selectedTimeZoneOption: TimeZoneOption | null;
+  languageOptions: Array<{ value: SupportedLocale; label: string }>;
 }
 
-export function LanguageStep({
-  locale,
-  timeZone,
-  onLocaleChange,
-  onTimeZoneChange,
-}: LanguageStepProps) {
+function useLanguageStepData(props: LanguageStepProps): LanguageStepData {
+  const { locale, timeZone } = props;
   const t = useIntlayer('onboardingPage');
-  const text = (path: string[], fallback = '') =>
+  // eslint-disable-next-line max-params
+  const text: TextFn = (path, fallback = '') =>
     resolveOnboardingText(getNestedOnboardingValue(t, path), fallback, locale);
+
   const timeZoneOptions = useMemo(resolveTimeZoneOptions, []);
   const timezoneSelectOptions = useMemo<TimeZoneOption[]>(
     () => timeZoneOptions.map(zone => ({ value: zone, label: zone })),
@@ -89,16 +75,9 @@ export function LanguageStep({
   );
 
   const selectedTimeZoneOption = useMemo<TimeZoneOption | null>(() => {
-    if (!timeZone) {
-      return null;
-    }
-
+    if (!timeZone) return null;
     const match = timezoneSelectOptions.find(option => option.value === timeZone);
-    if (match) {
-      return match;
-    }
-
-    return { value: timeZone, label: timeZone };
+    return match ?? { value: timeZone, label: timeZone };
   }, [timeZone, timezoneSelectOptions]);
 
   const languageOptions: Array<{ value: SupportedLocale; label: string }> = [
@@ -107,84 +86,137 @@ export function LanguageStep({
     { value: 'kk', label: text(['language', 'localeOptions', 'kk'], 'Kazakh') },
   ];
 
+  return { text, timezoneSelectOptions, selectedTimeZoneOption, languageOptions };
+}
+
+const labelStyle = {
+  fontSize: 12,
+  fontWeight: 600,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.14em',
+  color: 'var(--lumio-text-secondary)',
+};
+
+function LanguageHeader({ text }: { text: TextFn }): React.ReactElement {
+  return (
+    <div>
+      <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
+        {text(['language', 'title'], 'Language and timezone')}
+      </h2>
+      <p style={{ marginTop: 8, fontSize: 14, color: 'var(--lumio-text-secondary)' }}>
+        {text(
+          ['language', 'subtitle'],
+          'Choose your preferred interface language and timezone for accurate report timestamps.',
+        )}
+      </p>
+    </div>
+  );
+}
+
+interface LocaleSelectorProps {
+  locale: SupportedLocale;
+  onLocaleChange: (locale: SupportedLocale) => void;
+  languageOptions: Array<{ value: SupportedLocale; label: string }>;
+  label: string;
+}
+
+function LocaleSelector(props: LocaleSelectorProps): React.ReactElement {
+  const { locale, onLocaleChange, languageOptions, label } = props;
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    onLocaleChange(event.target.value as SupportedLocale);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <label style={labelStyle} htmlFor="onboarding-locale">{label}</label>
+      <Select id="onboarding-locale" value={locale} onChange={handleChange}>
+        {languageOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
+    </div>
+  );
+}
+
+interface TimeZoneSelectorProps {
+  selectedTimeZoneOption: TimeZoneOption | null;
+  timezoneSelectOptions: TimeZoneOption[];
+  onTimeZoneChange: (timeZone: string | null) => void;
+  label: string;
+  noOptionsText: string;
+  placeholder: string;
+  hint: string;
+}
+
+function buildRenderInput(placeholder: string): (params: object) => React.ReactElement {
+  return (params: object): React.ReactElement => {
+    const p = params as React.ComponentProps<typeof TextField>;
+    return (
+      <TextField
+        {...p}
+        inputProps={{ ...(p.inputProps as object), id: 'onboarding-timezone-select' }}
+        size="small"
+        placeholder={placeholder}
+      />
+    );
+  };
+}
+
+function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
+  const { selectedTimeZoneOption, timezoneSelectOptions, onTimeZoneChange, label, noOptionsText, placeholder, hint } = props;
+
+  // eslint-disable-next-line max-params
+  const handleChange = (_event: React.SyntheticEvent, option: TimeZoneOption | null): void => {
+    onTimeZoneChange(option?.value ?? null);
+  };
+
+  const getOptionLabel = (option: TimeZoneOption): string => option.label;
+  // eslint-disable-next-line max-params
+  const isOptionEqualToValue = (a: TimeZoneOption, b: TimeZoneOption): boolean => a.value === b.value;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <label style={labelStyle} htmlFor="onboarding-timezone-select">{label}</label>
+      <Autocomplete<TimeZoneOption, false>
+        options={timezoneSelectOptions}
+        value={selectedTimeZoneOption}
+        onChange={handleChange}
+        getOptionLabel={getOptionLabel}
+        isOptionEqualToValue={isOptionEqualToValue}
+        noOptionsText={noOptionsText}
+        renderInput={buildRenderInput(placeholder)}
+      />
+      <p style={{ fontSize: 14, color: 'var(--lumio-text-secondary)', margin: 0 }}>{hint}</p>
+    </div>
+  );
+}
+
+export function LanguageStep(props: LanguageStepProps): React.ReactElement {
+  const { locale, onLocaleChange, onTimeZoneChange } = props;
+  const { text, timezoneSelectOptions, selectedTimeZoneOption, languageOptions } =
+    useLanguageStepData(props);
+
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div>
-        <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
-          {text(['language', 'title'], 'Language and timezone')}
-        </h2>
-        <p style={{ marginTop: 8, fontSize: 14, color: 'var(--lumio-text-secondary)' }}>
-          {text(
-            ['language', 'subtitle'],
-            'Choose your preferred interface language and timezone for accurate report timestamps.',
-          )}
-        </p>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <label
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.14em',
-            color: 'var(--lumio-text-secondary)',
-          }}
-          htmlFor="onboarding-locale"
-        >
-          {text(['language', 'localeLabel'], 'Language')}
-        </label>
-        <Select
-          id="onboarding-locale"
-          value={locale}
-          onChange={event => onLocaleChange(event.target.value as SupportedLocale)}
-        >
-          {languageOptions.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <label
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.14em',
-            color: 'var(--lumio-text-secondary)',
-          }}
-          htmlFor="onboarding-timezone-select"
-        >
-          {text(['language', 'timeZoneLabel'], 'Timezone')}
-        </label>
-
-        <Autocomplete<TimeZoneOption, false>
-          options={timezoneSelectOptions}
-          value={selectedTimeZoneOption}
-          onChange={(_event, option) => onTimeZoneChange(option?.value ?? null)}
-          getOptionLabel={option => option.label}
-          isOptionEqualToValue={(option, value) => option.value === value.value}
-          noOptionsText={text(['language', 'timeZoneNoOptions'], 'No matching timezones found')}
-          renderInput={params => (
-            <TextField
-              {...params}
-              inputProps={{ ...params.inputProps, id: 'onboarding-timezone-select' }}
-              size="small"
-              placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
-            />
-          )}
-        />
-
-        <p style={{ fontSize: 14, color: 'var(--lumio-text-secondary)', margin: 0 }}>
-          {text(
-            ['language', 'timeZoneHint'],
-            'You can always change this later in profile settings.',
-          )}
-        </p>
-      </div>
+      <LanguageHeader text={text} />
+      <LocaleSelector
+        locale={locale}
+        onLocaleChange={onLocaleChange}
+        languageOptions={languageOptions}
+        label={text(['language', 'localeLabel'], 'Language')}
+      />
+      <TimeZoneSelector
+        selectedTimeZoneOption={selectedTimeZoneOption}
+        timezoneSelectOptions={timezoneSelectOptions}
+        onTimeZoneChange={onTimeZoneChange}
+        label={text(['language', 'timeZoneLabel'], 'Timezone')}
+        noOptionsText={text(['language', 'timeZoneNoOptions'], 'No matching timezones found')}
+        placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
+        hint={text(['language', 'timeZoneHint'], 'You can always change this later in profile settings.')}
+      />
     </section>
   );
 }

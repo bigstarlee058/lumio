@@ -661,7 +661,7 @@ export default function OnboardingPage() {
 
         <Box
           sx={{
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-xl)',
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -675,7 +675,7 @@ export default function OnboardingPage() {
           {error ? (
             <Alert
               severity="error"
-              sx={{ mt: 2, borderRadius: 0 }}
+              sx={{ mt: 2 }}
             >
               {error}
             </Alert>
@@ -746,7 +746,6 @@ export default function OnboardingPage() {
                     sx={{
                       position: 'absolute',
                       inset: 0,
-                      borderRadius: 0,
                       bgcolor: 'background.paper',
                     }}
                   />
