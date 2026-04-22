@@ -160,7 +160,7 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
           top: 12,
           right: 12,
           padding: 8,
-          borderRadius: '50%',
+          borderRadius: 'var(--lumio-radius-full)',
           border: 'none',
           cursor: 'pointer',
           transition: 'opacity 0.2s',

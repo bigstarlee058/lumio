@@ -90,7 +90,7 @@ export function ServiceIntegrationSuggestions({
                   variant="outlined"
                   size="small"
                   onClick={() => handleConnect(integration.path)}
-                  sx={{ borderRadius: 0 }}
+                  sx={{ borderRadius: 'var(--lumio-radius-md)' }}
                 >
                   Connect
                 </Button>

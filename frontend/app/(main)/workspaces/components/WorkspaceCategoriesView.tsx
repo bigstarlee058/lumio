@@ -390,7 +390,7 @@ export default function WorkspaceCategoriesView() {
                 justifyContent: 'center',
                 width: 44,
                 height: 44,
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-sm)',
                 bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
                 color: 'var(--primary)',
                 flexShrink: 0,
@@ -424,7 +424,7 @@ export default function WorkspaceCategoriesView() {
                 fontWeight: 600,
                 color: '#fff',
                 cursor: 'pointer',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
               }}
             >
               <Plus size={16} />
@@ -460,7 +460,7 @@ export default function WorkspaceCategoriesView() {
                 fontSize: 14,
                 color: 'var(--foreground)',
                 outline: 'none',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-md)',
                 boxSizing: 'border-box',
               }}
             />
@@ -473,21 +473,21 @@ export default function WorkspaceCategoriesView() {
               <button
                 type="button"
                 onClick={() => handleBulkEnable(true)}
-                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
+                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
               >
                 Enable
               </button>
               <button
                 type="button"
                 onClick={() => handleBulkEnable(false)}
-                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
+                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
               >
                 Disable
               </button>
               <button
                 type="button"
                 onClick={handleBulkDelete}
-                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: '#b91c1c', cursor: 'pointer', borderRadius: 0 }}
+                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: '#b91c1c', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
               >
                 Delete Custom
               </button>
@@ -532,7 +532,7 @@ export default function WorkspaceCategoriesView() {
                   justifyContent: 'center',
                   width: 64,
                   height: 64,
-                  borderRadius: '50%',
+                  borderRadius: 'var(--lumio-radius-full)',
                   bgcolor: 'var(--muted)',
                   color: 'var(--muted-foreground)',
                 }}
@@ -545,7 +545,7 @@ export default function WorkspaceCategoriesView() {
               <button
                 type="button"
                 onClick={() => handleOpenDialog()}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 0 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
               >
                 <Plus size={16} />
                 {t.add}
@@ -592,7 +592,7 @@ export default function WorkspaceCategoriesView() {
                             justifyContent: 'center',
                             width: 32,
                             height: 32,
-                            borderRadius: 0,
+                            borderRadius: 'var(--lumio-radius-sm)',
                             bgcolor: iconTint,
                             color: categoryColor,
                           }}
@@ -627,7 +627,7 @@ export default function WorkspaceCategoriesView() {
                                 bgcolor: badgeColors.bg,
                                 color: badgeColors.color,
                                 border: `1px solid ${badgeColors.border}`,
-                                borderRadius: 0,
+                                borderRadius: 'var(--lumio-radius-sm)',
                               }}
                             >
                               {badgeLabel}
@@ -660,7 +660,7 @@ export default function WorkspaceCategoriesView() {
                           alignItems: 'center',
                           width: 54,
                           height: 32,
-                          borderRadius: 0,
+                          borderRadius: 'var(--lumio-radius-full)',
                           border: 'none',
                           background: isEnabled ? 'var(--primary)' : 'rgba(107,114,128,0.4)',
                           cursor: isToggling ? 'default' : 'pointer',
@@ -675,7 +675,7 @@ export default function WorkspaceCategoriesView() {
                             display: 'inline-block',
                             width: 24,
                             height: 24,
-                            borderRadius: '50%',
+                            borderRadius: 'var(--lumio-radius-full)',
                             background: 'var(--card)',
                             boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                             transition: 'transform 0.2s',
@@ -692,7 +692,7 @@ export default function WorkspaceCategoriesView() {
                             justifyContent: 'center',
                             width: 32,
                             height: 32,
-                            borderRadius: '50%',
+                            borderRadius: 'var(--lumio-radius-full)',
                             color: 'rgba(107,114,128,0.6)',
                           }}
                         >
@@ -708,7 +708,7 @@ export default function WorkspaceCategoriesView() {
                             justifyContent: 'center',
                             width: 32,
                             height: 32,
-                            borderRadius: '50%',
+                            borderRadius: 'var(--lumio-radius-full)',
                             color: 'var(--muted-foreground)',
                             background: 'none',
                             border: 'none',
@@ -783,7 +783,7 @@ export default function WorkspaceCategoriesView() {
                   p: 1,
                   border: '1px solid',
                   borderColor: 'divider',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-lg)',
                 }}
               >
                 {PREDEFINED_ICONS.map(iconName => (
@@ -796,7 +796,7 @@ export default function WorkspaceCategoriesView() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 0,
+                      borderRadius: 'var(--lumio-radius-sm)',
                       cursor: 'pointer',
                       bgcolor:
                         formData.icon === iconName ? alpha(formData.color, 0.2) : 'transparent',
@@ -846,7 +846,7 @@ export default function WorkspaceCategoriesView() {
                       sx={{
                         width: 32,
                         height: 32,
-                        borderRadius: 0,
+                        borderRadius: 'var(--lumio-radius-sm)',
                         objectFit: 'contain',
                         border: '1px solid',
                         borderColor: 'divider',
@@ -879,7 +879,7 @@ export default function WorkspaceCategoriesView() {
                     sx={{
                       width: 32,
                       height: 32,
-                      borderRadius: '50%',
+                      borderRadius: 'var(--lumio-radius-full)',
                       bgcolor: color,
                       cursor: 'pointer',
                       display: 'flex',
@@ -904,7 +904,7 @@ export default function WorkspaceCategoriesView() {
                 mt: 2,
                 p: 2,
                 bgcolor: 'background.default',
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-lg)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 2,
@@ -917,7 +917,7 @@ export default function WorkspaceCategoriesView() {
                 sx={{
                   width: 48,
                   height: 48,
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-sm)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
