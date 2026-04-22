@@ -145,8 +145,13 @@ export function useGmailReceiptData({
       const nextReceipt = receiptResponse.data.receipt as GmailReceipt;
       const parsedAmount = parseAmountValue(nextReceipt.parsedData?.amount ?? null) ?? 0;
       const nextLineItems = normalizeReceiptLineItems(nextReceipt.parsedData);
+      const lineItemsSum = nextLineItems.reduce((sum, item) => sum + item.amount, 0);
+      const lineItemsMismatch =
+        parsedAmount > 0 &&
+        nextLineItems.length > 0 &&
+        Math.abs(lineItemsSum - parsedAmount) > 0.01;
       const editableLineItems =
-        nextLineItems.length > 0
+        nextLineItems.length > 0 && !lineItemsMismatch
           ? nextLineItems.map(item => ({ id: createLineItemId(), ...item }))
           : [
               {

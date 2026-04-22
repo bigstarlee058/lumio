@@ -11,7 +11,7 @@ import type { StatementFilters } from '@/app/(main)/statements/components/filter
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal } from 'lucide-react';
-import type { JSX } from 'react';
+import type { ComponentPropsWithoutRef, JSX } from 'react';
 import { StatementsBulkActions } from './StatementsBulkActions';
 
 interface FilterOption {
@@ -157,16 +157,18 @@ function TypeChipLabel({
   draftFilters,
   typeOptions,
   fallbackLabel,
+  ...rest
 }: {
   draftFilters: StatementFilters;
   typeOptions: FilterOption[];
   fallbackLabel: string;
+  [key: string]: unknown;
 }): JSX.Element {
   const label = draftFilters.type
     ? (typeOptions.find(o => o.value === draftFilters.type)?.label ?? fallbackLabel)
     : fallbackLabel;
   return (
-    <FilterChipButton active={Boolean(draftFilters.type)}>
+    <FilterChipButton active={Boolean(draftFilters.type)} {...(rest as ComponentPropsWithoutRef<typeof FilterChipButton>)}>
       {label}
       <ChevronDown size={14} />
     </FilterChipButton>
@@ -178,11 +180,13 @@ function DateChipLabel({
   datePresets,
   dateModes,
   fallbackLabel,
+  ...rest
 }: {
   draftFilters: StatementFilters;
   datePresets: DatePreset[];
   dateModes: DateMode[];
   fallbackLabel: string;
+  [key: string]: unknown;
 }): JSX.Element {
   const label = draftFilters.date?.preset
     ? (datePresets.find(o => o.value === draftFilters.date?.preset)?.label ?? fallbackLabel)
@@ -190,7 +194,7 @@ function DateChipLabel({
       ? (dateModes.find(o => o.value === draftFilters.date?.mode)?.label ?? fallbackLabel)
       : fallbackLabel;
   return (
-    <FilterChipButton active={Boolean(draftFilters.date)}>
+    <FilterChipButton active={Boolean(draftFilters.date)} {...(rest as ComponentPropsWithoutRef<typeof FilterChipButton>)}>
       {label}
       <ChevronDown size={14} />
     </FilterChipButton>
