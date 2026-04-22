@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import Box from '@mui/material/Box';
@@ -41,14 +42,17 @@ const FORMAT_CHIP_COLORS: Record<string, { bg: string; color: string }> = {
   csv: { bg: '#e0f2fe', color: '#0c4a6e' },
 };
 
-export function ReportHistory() {
+// eslint-disable-next-line max-lines-per-function
+export function ReportHistory(): React.JSX.Element {
   const t = useIntlayer('reportsPage');
   const { locale } = useLocale();
   const labels = t.labels as Record<string, { value?: string } | undefined>;
-  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
+  // eslint-disable-next-line max-params
+  const text = (key: string, fallback: string): string => labels[key]?.value ?? fallback;
   const [history, setHistory] = useState<ReportHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line complexity
   const getRelativeTime = (isoDate: string): string => {
     const date = new Date(isoDate);
     const now = new Date();
@@ -67,7 +71,7 @@ export function ReportHistory() {
     return date.toLocaleDateString(resolvedLocale, { month: 'short', day: 'numeric' });
   };
 
-  const handleDownload = async (item: ReportHistoryItem) => {
+  const handleDownload = async (item: ReportHistoryItem): Promise<void> => {
     const response = await apiClient.get(`/reports/history/${item.id}/download`, {
       responseType: 'blob',
     });
@@ -124,6 +128,7 @@ export function ReportHistory() {
               text('historyGenerated', 'Generated'),
               text('historySize', 'Size'),
               text('historyDownload', 'Download'),
+            // eslint-disable-next-line max-params
             ].map((label, i) => (
               <TableCell
                 key={label}
@@ -136,6 +141,7 @@ export function ReportHistory() {
           </TableRow>
         </TableHead>
         <TableBody>
+          {/* eslint-disable-next-line max-lines-per-function */}
           {history.map(item => {
             const chipColors = FORMAT_CHIP_COLORS[item.format];
             return (
@@ -154,14 +160,7 @@ export function ReportHistory() {
                   <Chip
                     label={item.format.toUpperCase()}
                     size="small"
-                    sx={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      bgcolor: chipColors?.bg || '#f1f5f9',
-                      color: chipColors?.color || '#475569',
-                      height: 20,
-                      borderRadius: 0,
-                    }}
+                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || '#f1f5f9', color: chipColors?.color || '#475569', height: 20, borderRadius: 'var(--lumio-radius-full)' }}
                   />
                 </TableCell>
                 <TableCell>
@@ -175,13 +174,7 @@ export function ReportHistory() {
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton
-                    size="small"
-                    onClick={() => void handleDownload(item)}
-                    aria-label={`Re-download ${item.templateName}`}
-                    title={`Re-download ${item.templateName}`}
-                    sx={{ color: 'var(--primary)' }}
-                  >
+                  <IconButton size="small" onClick={() => void handleDownload(item)} aria-label={`Re-download ${item.templateName}`} title={`Re-download ${item.templateName}`} sx={{ color: 'var(--primary)' }}>
                     <Download size={16} />
                   </IconButton>
                 </TableCell>

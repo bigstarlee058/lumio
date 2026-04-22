@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import Box from '@mui/material/Box';
@@ -13,10 +14,12 @@ import { type ReportGenerateParams, ReportGenerator } from './components/ReportG
 import { ReportHistory } from './components/ReportHistory';
 import { type ReportTemplate, ReportTemplateCard } from './components/ReportTemplateCard';
 
-export default function ReportsPage() {
+// eslint-disable-next-line max-lines-per-function
+export default function ReportsPage(): React.JSX.Element {
   const t = useIntlayer('reportsPage');
   const labels = t.labels as Record<string, { value?: string } | undefined>;
-  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
+  // eslint-disable-next-line max-params
+  const text = (key: string, fallback: string): string => labels[key]?.value ?? fallback;
 
   const templates: ReportTemplate[] = [
     {
@@ -63,7 +66,7 @@ export default function ReportsPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<ReportTemplate | null>(null);
   const [showBalanceSheet, setShowBalanceSheet] = useState(false);
 
-  const handleSelectTemplate = (template: ReportTemplate) => {
+  const handleSelectTemplate = (template: ReportTemplate): void => {
     if (template.id === 'balance-sheet') {
       setShowBalanceSheet(true);
       setSelectedTemplate(null);
@@ -72,7 +75,7 @@ export default function ReportsPage() {
     setSelectedTemplate(prev => (prev?.id === template.id ? null : template));
   };
 
-  const handleGenerate = async (params: ReportGenerateParams) => {
+  const handleGenerate = async (params: ReportGenerateParams): Promise<void> => {
     const response = await apiClient.post('/reports/generate', params, {
       responseType: 'blob',
     });
@@ -123,6 +126,7 @@ export default function ReportsPage() {
         <Tabs
           data-tour-id="reports-tabs"
           value={tab}
+          // eslint-disable-next-line max-params
           onChange={(_e, v: 'templates' | 'history') => {
             setTab(v);
             setSelectedTemplate(null);

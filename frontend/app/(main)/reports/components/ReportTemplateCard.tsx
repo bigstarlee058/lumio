@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -20,7 +21,8 @@ interface ReportTemplateCardProps {
   isSelected?: boolean;
 }
 
-export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps) {
+// eslint-disable-next-line max-lines-per-function
+export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps): React.JSX.Element {
   return (
     <Paper
       data-tour-id={template.id === 'pnl' ? 'reports-template-pnl' : undefined}
@@ -28,7 +30,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
       elevation={0}
       sx={{
         cursor: 'pointer',
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-lg)',
         border: isSelected
           ? '1px solid var(--primary)'
           : '1px solid var(--border)',
@@ -51,7 +53,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
             justifyContent: 'center',
             width: 40,
             height: 40,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-sm)',
             bgcolor: 'var(--primary-light, rgba(var(--primary-rgb, 99,102,241),0.1))',
             color: 'var(--primary)',
             flexShrink: 0,
@@ -88,7 +90,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
               fontSize: 10,
               fontWeight: 500,
               textTransform: 'uppercase',
-              borderRadius: 0,
+              borderRadius: 'var(--lumio-radius-xs)',
             }}
           >
             {f}

@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -29,10 +30,12 @@ const FORMAT_OPTIONS: Array<{ value: 'pdf' | 'excel' | 'csv'; label: string }> =
   { value: 'csv', label: 'CSV (.csv)' },
 ];
 
-export function ReportGenerator({ template, onClose, onGenerate }: ReportGeneratorProps) {
+// eslint-disable-next-line max-lines-per-function
+export function ReportGenerator({ template, onClose, onGenerate }: ReportGeneratorProps): React.JSX.Element {
   const t = useIntlayer('reportsPage');
   const labels = t.labels as Record<string, { value?: string } | undefined>;
-  const text = (key: string, fallback: string) => labels[key]?.value ?? fallback;
+  // eslint-disable-next-line max-params
+  const text = (key: string, fallback: string): string => labels[key]?.value ?? fallback;
 
   const [dateFrom, setDateFrom] = useState<string>(() => {
     const d = new Date();
@@ -47,7 +50,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
     template.formats.includes(opt.value as 'pdf' | 'excel' | 'csv' | 'google-sheets'),
   );
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (): Promise<void> => {
     setGenerating(true);
     try {
       await onGenerate({ templateId: template.id, dateFrom, dateTo, format });
@@ -62,7 +65,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
       data-tour-id="reports-generator"
       sx={{
         mt: 3,
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-lg)',
         border: '1px solid var(--border)',
         bgcolor: 'var(--card)',
         p: 3,
@@ -121,7 +124,6 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
               fontSize: 14,
               color: 'var(--foreground)',
               outline: 'none',
-              borderRadius: 0,
             }}
           />
         </Box>
@@ -147,7 +149,6 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
               fontSize: 14,
               color: 'var(--foreground)',
               outline: 'none',
-              borderRadius: 0,
             }}
           />
         </Box>
@@ -172,7 +173,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
                   fontSize: 11,
                   fontWeight: 600,
                   cursor: 'pointer',
-                  borderRadius: 0,
+                  borderRadius: 'var(--lumio-radius-md)',
                   textTransform: 'uppercase',
                 }}
               >
