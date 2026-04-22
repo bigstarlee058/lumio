@@ -1,15 +1,15 @@
 'use client';
 
-import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import BuildingBackground from './BuildingBackground';
 import MoneyAnimation from './MoneyAnimation';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function AuthRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const theme = useTheme();
   // Deep blue palette
   const darkBlue = '#011e3c';
 

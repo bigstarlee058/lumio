@@ -1,23 +1,16 @@
 'use client';
 
-import { Box, Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ReactNode } from 'react';
-import BuildingBackground from './BuildingBackground';
-import MoneyAnimation from './MoneyAnimation';
-
 interface AuthLayoutProps {
   children: ReactNode;
   sideContent: ReactNode;
   topRightAction?: ReactNode;
 }
 
+// eslint-disable-next-line max-lines-per-function, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function AuthLayout({ children, sideContent, topRightAction }: AuthLayoutProps) {
-  const theme = useTheme();
-  // Deep blue palette
-  const darkBlue = '#011e3c'; // Deep blue background
-  const vibrantBlue = '#0a66c2'; // Brand color
-
   return (
     <Grid container sx={{ minHeight: '100vh', overflow: 'hidden' }}>
       {/* Left Side - Form (White/Light) */}

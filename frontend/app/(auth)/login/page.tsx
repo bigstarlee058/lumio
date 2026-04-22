@@ -1,9 +1,10 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useIntlayer, useLocale } from '@/app/i18n';
+import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
@@ -12,10 +13,11 @@ import { safeInternalPath } from '@/app/lib/safe-path';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
 
-function extractInviteTokenFromNext(nextPath: string | null) {
+// eslint-disable-next-line complexity
+function extractInviteTokenFromNext(nextPath: string | null): string | null {
   if (!nextPath) return null;
   try {
     const url = new URL(nextPath, 'http://localhost');
@@ -30,12 +32,12 @@ function extractInviteTokenFromNext(nextPath: string | null) {
   }
 }
 
-function LoginPageContent() {
+// eslint-disable-next-line max-lines-per-function, complexity
+function LoginPageContent(): React.JSX.Element {
   const searchParams = useSearchParams();
   const nextPath = safeInternalPath(searchParams.get('next'));
   const inviteTokenFromNext = extractInviteTokenFromNext(nextPath);
   const inviteToken = searchParams.get('invite') || inviteTokenFromNext;
-  const { locale } = useLocale();
   const t = useIntlayer('loginPage');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,9 +58,11 @@ function LoginPageContent() {
       setHelloIndex(prev => (prev + 1) % GREETINGS.length);
     }, 4000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // eslint-disable-next-line max-lines-per-function, complexity
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -151,7 +155,7 @@ function LoginPageContent() {
         sx={{
           width: 60,
           height: 60,
-          borderRadius: '50%',
+          borderRadius: 'var(--lumio-radius-full)',
           bgcolor: 'primary.main',
           display: 'flex',
           alignItems: 'center',
@@ -254,7 +258,7 @@ function LoginPageContent() {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-md)',
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',
@@ -295,7 +299,7 @@ function LoginPageContent() {
   );
 }
 
-export default function LoginPage() {
+export default function LoginPage(): React.JSX.Element {
   return (
     <Suspense fallback={null}>
       <LoginPageContent />

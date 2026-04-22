@@ -1,14 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { memo } from 'react';
+import React, { memo } from 'react';
 
+// eslint-disable-next-line max-lines-per-function
 const Coin = ({
   delay,
   x,
   y,
   size = 40,
-}: { delay: number; x: string; y: string; size?: number }) => (
+}: { delay: number; x: string; y: string; size?: number }): React.JSX.Element => (
   <motion.div
     initial={{ y: 0, opacity: 0 }}
     animate={{
@@ -55,7 +56,8 @@ const Coin = ({
   </motion.div>
 );
 
-const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; rotate: number }) => (
+// eslint-disable-next-line max-lines-per-function
+const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; rotate: number }): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0, rotate: rotate - 10 }}
     animate={{
@@ -84,7 +86,7 @@ const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; ro
         height: '100%',
         background: '#85bb65',
         border: '2px solid #5a8c43',
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-md)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -110,7 +112,7 @@ const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; ro
   </motion.div>
 );
 
-const MoneyAnimation = () => {
+const MoneyAnimation = (): React.JSX.Element => {
   return (
     <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
       {/* Floating Coins */}

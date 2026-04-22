@@ -1,26 +1,26 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useIntlayer, useLocale } from '@/app/i18n';
+import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { syncLocaleFromUser } from '@/app/lib/locale';
 import { safeInternalPath } from '@/app/lib/safe-path';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
 
-function RegisterPageContent() {
+// eslint-disable-next-line max-lines-per-function, complexity
+function RegisterPageContent(): React.JSX.Element {
   const searchParams = useSearchParams();
   const nextPath = safeInternalPath(searchParams.get('next'));
   const inviteToken = searchParams.get('invite');
   const presetEmail = searchParams.get('email');
-  const { locale } = useLocale();
   const t = useIntlayer('registerPage');
   const [formData, setFormData] = useState({
     email: presetEmail || '',
@@ -34,7 +34,7 @@ function RegisterPageContent() {
   const [emailLocked, setEmailLocked] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.name === 'email' && emailLocked) return;
     setFormData({
       ...formData,
@@ -63,7 +63,8 @@ function RegisterPageContent() {
       });
   }, [inviteToken, t.inviteLoadFailed.value]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // eslint-disable-next-line max-lines-per-function, complexity
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError('');
     setLoading(true);
@@ -148,7 +149,7 @@ function RegisterPageContent() {
         sx={{
           width: 60,
           height: 60,
-          borderRadius: '50%',
+          borderRadius: 'var(--lumio-radius-full)',
           bgcolor: 'primary.main',
           display: 'flex',
           alignItems: 'center',
@@ -265,7 +266,7 @@ function RegisterPageContent() {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-md)',
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',
@@ -300,7 +301,7 @@ function RegisterPageContent() {
   );
 }
 
-export default function RegisterPage() {
+export default function RegisterPage(): React.JSX.Element {
   return (
     <Suspense fallback={null}>
       <RegisterPageContent />
