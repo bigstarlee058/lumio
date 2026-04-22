@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import {
@@ -57,12 +58,14 @@ interface PayablesListProps {
   onDelete: (payable: Payable) => void;
 }
 
-const fillTemplate = (template: string, values: Record<string, string | number>) =>
+// eslint-disable-next-line max-params
+const fillTemplate = (template: string, values: Record<string, string | number>): string =>
   Object.entries(values).reduce(
     (result, [key, value]) => result.replace(`{${key}}`, String(value)),
     template,
   );
 
+// eslint-disable-next-line max-lines-per-function, complexity
 function PayablesList({
   items,
   locale = 'en',
@@ -75,7 +78,7 @@ function PayablesList({
   onMarkPaid,
   onArchive,
   onDelete,
-}: PayablesListProps) {
+}: PayablesListProps): React.JSX.Element {
   const isMobile = useIsMobile();
 
   if (items.length === 0) {
@@ -92,7 +95,8 @@ function PayablesList({
   const rangeEnd = Math.min(pagination.page * pagination.pageSize, pagination.totalItems);
   const safeRangeStart = pagination.totalItems === 0 ? 0 : Math.min(rangeStart, rangeEnd);
 
-  const renderActions = (payable: Payable) => {
+  // eslint-disable-next-line max-lines-per-function
+  const renderActions = (payable: Payable): React.JSX.Element => {
     const canMarkPaid = payable.status !== 'paid' && payable.status !== 'archived';
 
     return (

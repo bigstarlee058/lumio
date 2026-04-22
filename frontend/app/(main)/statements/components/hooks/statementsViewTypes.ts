@@ -1,0 +1,129 @@
+import type { StatementExpenseMode } from '@/app/lib/statement-expense-drawer';
+import type { StatementStage } from '@/app/lib/statement-workflow';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
+import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import type { ReadonlyURLSearchParams } from 'next/navigation';
+import type { RefObject } from 'react';
+import type { useManualExpenseOptions } from './useManualExpenseOptions';
+import type { useStatementPreview } from './useStatementPreview';
+import type { useStatementsDuplicates } from './useStatementsDuplicates';
+import type { useStatementsFilterState } from './useStatementsFilterState';
+import type { useStatementsListData } from './useStatementsListData';
+
+export interface StatementsStatement {
+  id: string;
+  source?: 'statement' | 'gmail' | 'scan';
+  receiptSource?: string;
+  fileName: string;
+  subject?: string;
+  sender?: string;
+  status: string;
+  totalTransactions: number;
+  totalDebit?: number | string | null;
+  totalCredit?: number | string | null;
+  exported?: boolean | null;
+  paid?: boolean | null;
+  createdAt: string;
+  processedAt?: string;
+  statementDateFrom?: string | null;
+  statementDateTo?: string | null;
+  bankName: string;
+  fileType: string;
+  currency?: string | null;
+  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
+  errorMessage?: string | null;
+  parsingDetails?: {
+    logEntries?: Array<{ timestamp: string; level: string; message: string }>;
+    detectedBy?: string;
+    parserUsed?: string;
+    importPreview?: { source?: string; merchant?: string; attachments?: number };
+    metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } };
+  };
+  gmailMessageId?: string;
+  receivedAt?: string;
+  parsedData?: { amount?: number; currency?: string; vendor?: string; date?: string };
+}
+
+export interface UseStatementsViewParams {
+  stage: StatementStage;
+  router: AppRouterInstance;
+  searchParams: ReadonlyURLSearchParams;
+}
+
+export const STATEMENTS_PAGE_SIZE = 30;
+
+export interface StatementsViewState {
+  page: number;
+  setPage: (p: number) => void;
+  searchInput: string;
+  setSearchInput: (v: string) => void;
+  search: string;
+  dateSortDirection: 'asc' | 'desc';
+  setDateSortDirection: (d: 'asc' | 'desc') => void;
+  expenseDrawerOpen: boolean;
+  setExpenseDrawerOpen: (v: boolean) => void;
+  expenseDrawerMode: StatementExpenseMode;
+  listScrollRef: RefObject<HTMLDivElement | null>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: any;
+  filterLabels: Record<string, string>;
+  filterOptionLabels: Record<string, string>;
+  listHeaderLabels: Record<string, string>;
+  paginationLabels: Record<string, string>;
+  uploadLabels: Record<string, string>;
+  typeOptions: Array<{ value: string; label: string }>;
+  statusOptions: Array<{ value: string; label: string }>;
+  datePresets: Array<{ value: 'thisMonth' | 'lastMonth' | 'yearToDate'; label: string }>;
+  dateModes: Array<{ value: 'on' | 'after' | 'before'; label: string }>;
+  groupByOptions: Array<{ value: string; label: string }>;
+  hasOptions: Array<{ value: string; label: string }>;
+  filterState: ReturnType<typeof useStatementsFilterState>;
+  manualExpenseCategories: ReturnType<typeof useManualExpenseOptions>['manualExpenseCategories'];
+  manualExpenseTaxRates: ReturnType<typeof useManualExpenseOptions>['manualExpenseTaxRates'];
+  loadManualExpenseOptions: ReturnType<typeof useManualExpenseOptions>['loadManualExpenseOptions'];
+  preview: ReturnType<typeof useStatementPreview>['preview'];
+  openPreview: ReturnType<typeof useStatementPreview>['openPreview'];
+  closePreview: ReturnType<typeof useStatementPreview>['closePreview'];
+  loading: boolean;
+  gmailSyncSkeletonKeys: string[];
+  loadStatements: ReturnType<typeof useStatementsListData>['loadStatements'];
+  loadGmailReceipts: ReturnType<typeof useStatementsListData>['loadGmailReceipts'];
+  refreshActiveStatements: ReturnType<typeof useStatementsListData>['refreshActiveStatements'];
+  displayStatements: StatementsStatement[];
+  paginatedDisplayStatements: StatementsStatement[];
+  sortedDisplayStatements: StatementsStatement[];
+  total: number;
+  totalPagesCount: number;
+  rangeStart: number;
+  rangeEnd: number;
+  duplicateMetaById: ReturnType<typeof useStatementsDuplicates>['duplicateMetaById'];
+  setDuplicateOverrides: ReturnType<typeof useStatementsDuplicates>['setDuplicateOverrides'];
+  selectedStatementIds: string[];
+  selectedActionsOpen: boolean;
+  setSelectedActionsOpen: (v: boolean | ((prev: boolean) => boolean)) => void;
+  allVisibleSelected: boolean;
+  selectedCount: number;
+  hasSelectedDuplicates: boolean;
+  duplicateStatementIds: string[];
+  handleToggleStatement: (id: string) => void;
+  handleToggleSelectAll: () => void;
+  handleExportSelected: () => Promise<void>;
+  handleDeleteSelected: () => Promise<void>;
+  handleMarkSelectedAsDuplicate: () => Promise<void>;
+  handleDismissSelectedDuplicates: () => Promise<void>;
+  handleSelectDetectedDuplicates: () => Promise<void>;
+  handleMergeSelectedDuplicates: () => Promise<void>;
+  pullToRefreshHandlers: ReturnType<typeof usePullToRefresh>['handlers'];
+  pullDistance: number;
+  pullRefreshing: boolean;
+  isReadyToRefresh: boolean;
+  activeFilterCount: number;
+  visibleFilterScreens: string[];
+  fromOptions: ReturnType<typeof useStatementsFilterState>['draftColumns'];
+  currencyOptions: string[];
+  columnsWithLabels: ReturnType<typeof useStatementsFilterState>['draftColumns'];
+  currentWorkspace: ReturnType<typeof useWorkspace>['currentWorkspace'];
+  isMobile: boolean;
+}

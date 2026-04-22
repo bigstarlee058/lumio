@@ -1,0 +1,116 @@
+import {
+  buildTopMerchantsBarChart,
+  buildTopMerchantsSourceChart,
+  buildTopMerchantsTrendChart,
+} from '@/app/(main)/statements/components/top-merchants.chart';
+import {
+  getComparisonDelta,
+  buildPreviousPeriodRange,
+  sortAggregateRows,
+} from '@/app/(main)/statements/components/top-merchants.utils';
+import type {
+  AggregateSortKey,
+  TopMerchantAggregateRow,
+  TopMerchantFlowType,
+  TopMerchantRecord,
+} from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
+import { getRecordDate, resolveCurrencyCode } from '@/app/lib/analytics-common';
+import { useMemo } from 'react';
+
+type Params = {
+  flowFilteredRecords: TopMerchantRecord[];
+  flowRecordsWithoutDateFilter: TopMerchantRecord[];
+  activeFlowType: TopMerchantFlowType;
+  sortKey: AggregateSortKey;
+  workspaceCurrency: string;
+  resolvedTheme: string | undefined;
+  sourceStatementLabel: string;
+  sourceGmailLabel: string;
+  totalIncomeLabel: string;
+  totalSpendLabel: string;
+};
+
+type Totals = { total: number; statementTotal: number; receiptTotal: number; operations: number };
+type PeriodRange = { start: Date; end: Date } | null;
+
+export type TopMerchantsAggregationReturn = {
+  sortedAggregatedRows: TopMerchantAggregateRow[];
+  totals: Totals;
+  comparison: { total: ReturnType<typeof getComparisonDelta>; statementTotal: ReturnType<typeof getComparisonDelta>; receiptTotal: ReturnType<typeof getComparisonDelta>; operations: ReturnType<typeof getComparisonDelta> } | null;
+  topMerchantsChart: unknown;
+  sourceChart: unknown;
+  trendChart: unknown;
+};
+
+const buildTotals = (records: TopMerchantRecord[]): Totals => ({
+  total:
+    records.filter(r => r.sourceType === 'statement').reduce((s, r) => s + r.amount, 0) +
+    records.filter(r => r.sourceType === 'gmail').reduce((s, r) => s + r.amount, 0),
+  statementTotal: records.filter(r => r.sourceType === 'statement').reduce((s, r) => s + r.amount, 0),
+  receiptTotal: records.filter(r => r.sourceType === 'gmail').reduce((s, r) => s + r.amount, 0),
+  operations: records.length,
+});
+
+const updateAggregateEntry = (existing: TopMerchantAggregateRow, record: TopMerchantRecord, date: string): void => {
+  existing.count += 1;
+  existing.total += record.amount;
+  existing.average = existing.total / existing.count;
+  existing.lastDate = new Date(date).getTime() > new Date(existing.lastDate || 0).getTime() ? date : existing.lastDate;
+};
+
+const computeAggregatedRows = (records: TopMerchantRecord[], workspaceCurrency: string): TopMerchantAggregateRow[] => {
+  const aggregate = new Map<string, TopMerchantAggregateRow>();
+  records.forEach(record => {
+    const normalizedMerchant = (record.merchant || '').trim() || 'Unknown';
+    const key = `${record.flowType}:${record.sourceChannel}:${normalizedMerchant.toLowerCase()}`;
+    const existing = aggregate.get(key);
+    const date = record.dateValue || record.createdAt || '';
+    if (!existing) {
+      aggregate.set(key, { id: key, merchant: normalizedMerchant, sourceType: record.sourceType, sourceChannel: record.sourceChannel, flowType: record.flowType, count: 1, total: record.amount, average: record.amount, lastDate: date, currency: resolveCurrencyCode(record.currencyValue, workspaceCurrency) });
+      return;
+    }
+    updateAggregateEntry(existing, record, date);
+  });
+  return Array.from(aggregate.values());
+};
+
+const computePeriodRange = (records: TopMerchantRecord[]): PeriodRange => {
+  const points = records.map(r => getRecordDate(r)).filter((d): d is Date => Boolean(d)).sort((a, b) => a.getTime() - b.getTime());
+  if (points.length === 0) return null;
+  return { start: points[0], end: points[points.length - 1] };
+};
+
+const computePreviousTotals = (range: PeriodRange, records: TopMerchantRecord[]): Totals | null => {
+  if (!range) return null;
+  const prev = buildPreviousPeriodRange(range.start, range.end);
+  if (!prev) return null;
+  const prevRecords = records.filter(r => { const d = getRecordDate(r); return d && d >= prev.start && d <= prev.end; });
+  return buildTotals(prevRecords);
+};
+
+export const useTopMerchantsAggregation = ({
+  flowFilteredRecords,
+  flowRecordsWithoutDateFilter,
+  activeFlowType,
+  sortKey,
+  workspaceCurrency,
+  resolvedTheme,
+  sourceStatementLabel,
+  sourceGmailLabel,
+  totalIncomeLabel,
+  totalSpendLabel,
+}: Params): TopMerchantsAggregationReturn => {
+  const aggregatedRows = useMemo(() => computeAggregatedRows(flowFilteredRecords, workspaceCurrency), [flowFilteredRecords, workspaceCurrency]);
+  const sortedAggregatedRows = useMemo(() => sortAggregateRows(aggregatedRows, sortKey), [aggregatedRows, sortKey]);
+  const totals = useMemo(() => buildTotals(flowFilteredRecords), [flowFilteredRecords]);
+  const currentPeriodRange = useMemo(() => computePeriodRange(flowFilteredRecords), [flowFilteredRecords]);
+  const previousPeriodTotals = useMemo(() => computePreviousTotals(currentPeriodRange, flowRecordsWithoutDateFilter), [currentPeriodRange, flowRecordsWithoutDateFilter]);
+  const comparison = useMemo(() => {
+    if (!previousPeriodTotals) return null;
+    return { total: getComparisonDelta(totals.total, previousPeriodTotals.total), statementTotal: getComparisonDelta(totals.statementTotal, previousPeriodTotals.statementTotal), receiptTotal: getComparisonDelta(totals.receiptTotal, previousPeriodTotals.receiptTotal), operations: getComparisonDelta(totals.operations, previousPeriodTotals.operations) };
+  }, [totals, previousPeriodTotals]);
+  const topMerchantsChart = useMemo(() => buildTopMerchantsBarChart(sortedAggregatedRows, resolvedTheme), [sortedAggregatedRows, resolvedTheme]);
+  const sourceChart = useMemo(() => buildTopMerchantsSourceChart(totals, { sourceStatement: sourceStatementLabel, sourceGmail: sourceGmailLabel }), [totals, sourceStatementLabel, sourceGmailLabel]);
+  const trendChart = useMemo(() => buildTopMerchantsTrendChart(flowFilteredRecords, activeFlowType, { totalIncome: totalIncomeLabel, totalSpend: totalSpendLabel }, resolvedTheme), [flowFilteredRecords, activeFlowType, totalIncomeLabel, totalSpendLabel, resolvedTheme]);
+  return { sortedAggregatedRows, totals, comparison, topMerchantsChart, sourceChart, trendChart };
+};

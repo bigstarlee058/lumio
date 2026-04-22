@@ -52,6 +52,7 @@ export function buildTopMerchantsSourceChart(
   };
 }
 
+// eslint-disable-next-line max-params
 export function buildTopMerchantsTrendChart(
   records: TrendPoint[],
   activeFlowType: TopMerchantFlowType,

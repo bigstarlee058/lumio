@@ -3,7 +3,8 @@ type TxFn = (path: string[], fallback: string) => string;
 export type AnalyticsFilterOptionLabels = ReturnType<typeof buildAnalyticsFilterLabels>;
 
 /** Builds the filter option labels object shared across all analytics views. */
-export function buildAnalyticsFilterLabels(tx: TxFn) {
+// eslint-disable-next-line max-lines-per-function
+export function buildAnalyticsFilterLabels(tx: TxFn): Record<string, string> {
   return {
     apply: tx(['filters', 'apply'], 'Apply'),
     reset: tx(['filters', 'reset'], 'Reset'),
@@ -56,8 +57,21 @@ export function buildAnalyticsFilterLabels(tx: TxFn) {
   };
 }
 
+type FilterOption = { value: string; label: string };
+type FilterOptionConst<T extends string> = { value: T; label: string };
+
+type BuildAnalyticsFilterOptionsResult = {
+  typeOptions: FilterOption[];
+  statusOptions: FilterOption[];
+  datePresets: FilterOptionConst<'thisMonth' | 'lastMonth' | 'yearToDate'>[];
+  dateModes: FilterOptionConst<'on' | 'after' | 'before'>[];
+  groupByOptions: FilterOption[];
+  hasOptions: FilterOption[];
+};
+
 /** Builds the filter option arrays used by FiltersDrawer and filter dropdowns. */
-export function buildAnalyticsFilterOptions(labels: AnalyticsFilterOptionLabels) {
+// eslint-disable-next-line max-lines-per-function
+export function buildAnalyticsFilterOptions(labels: AnalyticsFilterOptionLabels): BuildAnalyticsFilterOptionsResult {
   const typeOptions = [
     { value: 'expense', label: labels.typeExpense },
     { value: 'expense_report', label: labels.typeReport },

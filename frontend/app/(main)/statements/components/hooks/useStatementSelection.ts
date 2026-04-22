@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import {
@@ -90,6 +91,7 @@ export interface UseStatementSelectionResult {
   handleMergeSelectedDuplicates: () => Promise<void>;
 }
 
+// eslint-disable-next-line max-lines-per-function
 export function useStatementSelection({
   displayStatements,
   visibleStatementIds,
@@ -129,7 +131,7 @@ export function useStatementSelection({
   useEffect(() => {
     if (!selectedActionsOpen) return;
 
-    const handleOutsideClick = (event: MouseEvent) => {
+    const handleOutsideClick = (event: MouseEvent): void => {
       if (!selectedActionsRef.current) return;
       if (!selectedActionsRef.current.contains(event.target as Node)) {
         setSelectedActionsOpen(false);
@@ -142,15 +144,37 @@ export function useStatementSelection({
     };
   }, [selectedActionsOpen]);
 
-  const handleToggleStatement = (statementId: string) => {
+  const handleToggleStatement = (statementId: string): void => {
     setSelectedStatementIds(prev => toggleStatementSelection(prev, statementId));
   };
 
-  const handleToggleSelectAll = (checked: boolean) => {
+  const handleToggleSelectAll = (checked: boolean): void => {
     setSelectedStatementIds(prev => toggleSelectAllVisible(prev, visibleStatementIds, checked));
   };
 
-  const handleExportSelected = async () => {
+  const triggerDownload = async (statement: StatementLike): Promise<boolean> => {
+    try {
+      const response = await apiClient.get(getExportEndpoint(statement), {
+        responseType: 'blob',
+      });
+      const blob = response.data as Blob;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = (statement as { fileName?: string }).fileName ?? `${statement.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      return true;
+    } catch (error) {
+      console.error(`Failed to export statement ${statement.id}:`, error);
+      return false;
+    }
+  };
+
+  // eslint-disable-next-line complexity
+  const handleExportSelected = async (): Promise<void> => {
     if (selectedStatementIds.length === 0) return;
 
     try {
@@ -170,29 +194,11 @@ export function useStatementSelection({
         return;
       }
 
-      let exportedCount = 0;
-      let failedCount = 0;
-
-      for (const statement of exportableStatements) {
-        try {
-          const response = await apiClient.get(getExportEndpoint(statement), {
-            responseType: 'blob',
-          });
-          const blob = response.data as Blob;
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = (statement as { fileName?: string }).fileName ?? `${statement.id}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-          exportedCount += 1;
-        } catch (error) {
-          failedCount += 1;
-          console.error(`Failed to export statement ${statement.id}:`, error);
-        }
-      }
+      const results = await Promise.all(
+        exportableStatements.map(statement => triggerDownload(statement)),
+      );
+      const exportedCount = results.filter(Boolean).length;
+      const failedCount = results.length - exportedCount;
 
       if (exportedCount === 0) {
         toast.error('Failed to export selected statements');

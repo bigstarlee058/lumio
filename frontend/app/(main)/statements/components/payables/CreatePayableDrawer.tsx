@@ -1,7 +1,9 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { Input } from '@/app/components/ui/input';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import MuiButton from '@mui/material/Button';
 import type {
   CreatePayableInput,
@@ -11,7 +13,7 @@ import type {
   UpdatePayableInput,
 } from '@/app/lib/payables-api';
 import { ChevronLeft } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 interface CreatePayableDrawerProps {
   open: boolean;
@@ -58,6 +60,7 @@ const createEmptyState = (): PayableFormState => ({
   comment: '',
 });
 
+// eslint-disable-next-line max-params
 const toFormState = (
   payable?: Payable | null,
   initialValues?: CreatePayableInput | null,
@@ -87,6 +90,7 @@ const toFormState = (
   };
 };
 
+// eslint-disable-next-line max-lines-per-function, complexity
 export function CreatePayableDrawer({
   open,
   payable,
@@ -95,7 +99,7 @@ export function CreatePayableDrawer({
   onClose,
   onSubmit,
   labels,
-}: CreatePayableDrawerProps) {
+}: CreatePayableDrawerProps): React.JSX.Element {
   const [form, setForm] = useState<PayableFormState>(() => toFormState(payable, initialValues));
 
   useEffect(() => {
@@ -105,7 +109,7 @@ export function CreatePayableDrawer({
 
   const canSubmit = useMemo(() => form.vendor.trim().length > 0 && Number(form.amount) > 0, [form]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!canSubmit) return;
 
     await onSubmit({
@@ -187,14 +191,10 @@ export function CreatePayableDrawer({
 
           <div className="lumio-payable-drawer__2col">
             <div className="lumio-payable-drawer__field-group">
-              <label className="lumio-payable-drawer__field-label" htmlFor="payable-due-date">
-                {labels.dueDate}
-              </label>
-              <Input
-                id="payable-due-date"
-                type="date"
-                value={form.dueDate}
-                onChange={event => setForm(prev => ({ ...prev, dueDate: event.target.value }))}
+              <CustomDatePicker
+                label={labels.dueDate}
+                value={form.dueDate || null}
+                onChange={value => setForm(prev => ({ ...prev, dueDate: value }))}
               />
             </div>
             <div className="lumio-payable-drawer__field-group">

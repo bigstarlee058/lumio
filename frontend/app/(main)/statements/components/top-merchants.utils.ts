@@ -45,7 +45,7 @@ type ResolveSourceChannelInput = {
   fileType?: string | null;
 };
 
-export const resolveMerchantFlow = (input: ResolveMerchantFlowInput) => {
+export const resolveMerchantFlow = (input: ResolveMerchantFlowInput): { flowType: 'income' | 'spend'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.debit,
@@ -69,10 +69,10 @@ export const sortAggregateRows = (
   return sortAggregateRowsBase(rows, key);
 };
 
-export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date) => {
+export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date): { start: Date; end: Date } | null => {
   return buildPreviousPeriodRangeBase(currentStart, currentEnd);
 };
 
-export const getComparisonDelta = (current: number, previous: number) => {
+export const getComparisonDelta = (current: number, previous: number): { delta: number; percentage: number; trend: SharedComparisonTrend } => {
   return getComparisonDeltaBase(current, previous);
 };

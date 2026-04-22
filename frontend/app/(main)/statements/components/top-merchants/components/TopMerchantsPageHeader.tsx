@@ -1,0 +1,32 @@
+'use client';
+import type { JSX } from 'react';
+
+import { AnalyticsFlowToggle } from '@/app/(main)/statements/components/analytics/AnalyticsFlowToggle';
+import { TopMerchantsFilterChipsRow } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsFilterChipsRow';
+import { TopMerchantsSearchRow } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsSearchRow';
+import type { TopMerchantFlowType } from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
+import type { useTopMerchantsViewModel } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsViewModel';
+
+type Props = { vm: ReturnType<typeof useTopMerchantsViewModel> };
+
+export function TopMerchantsPageHeader({ vm }: Props): JSX.Element {
+  const { labels } = vm;
+  return (
+    <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <div>
+          <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
+          <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.subtitle}</p>
+        </div>
+        <AnalyticsFlowToggle
+          activeFlow={vm.activeFlowType}
+          spendLabel={labels.tabSpenders}
+          incomeLabel={labels.tabIncomeSenders}
+          onFlowChange={(flow) => vm.setActiveFlowType(flow as TopMerchantFlowType)}
+        />
+      </div>
+      <TopMerchantsSearchRow vm={vm} />
+      <TopMerchantsFilterChipsRow vm={vm} />
+    </div>
+  );
+}

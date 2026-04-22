@@ -114,7 +114,7 @@ export function DateFilterDropdown({
                     width: '100%',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderRadius: 0,
+                    borderRadius: 'var(--lumio-radius-md)',
                     padding: '12px 8px',
                     textAlign: 'left',
                     fontSize: 16,

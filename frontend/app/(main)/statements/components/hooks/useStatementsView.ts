@@ -1,0 +1,466 @@
+'use client';
+
+import { applyStatementsFilters } from '@/app/(main)/statements/components/filters/statement-filters';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
+import { useAuth } from '@/app/hooks/useAuth';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
+import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
+import { useIntlayer } from '@/app/i18n';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
+import {
+  type OpenExpenseDrawerEventDetail,
+  STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT,
+  resolveExpenseDrawerMode,
+} from '@/app/lib/statement-expense-drawer';
+import { STATEMENTS_GMAIL_SYNC_STORAGE_KEY } from '@/app/lib/statement-upload-actions';
+import { type StatementStage, getStatementStage } from '@/app/lib/statement-workflow';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  buildColumnLabels,
+  buildCurrencyOptions,
+  buildDateModes,
+  buildDatePresets,
+  buildFilterLabels,
+  buildFilterOptionLabels,
+  buildFromOptions,
+  buildGroupByOptions,
+  buildHasOptions,
+  buildListHeaderLabels,
+  buildPaginationLabels,
+  buildStatusOptions,
+  buildTypeOptions,
+  buildUploadLabels,
+  computeActiveFilterCount,
+  deriveVisibleFilterScreens,
+  isReceiptDerivedStatement,
+  paginateStatements,
+  resolveStatementSortDate,
+} from '../StatementsListView.utils';
+import { mapGmailReceiptsToStatements } from '../gmail-receipt-mapping';
+import { useManualExpenseOptions } from './useManualExpenseOptions';
+import { useStatementPreview } from './useStatementPreview';
+import { useStatementSelection } from './useStatementSelection';
+import { useStatementsDuplicates } from './useStatementsDuplicates';
+import { useStatementsFilterState } from './useStatementsFilterState';
+import { useStatementsListData } from './useStatementsListData';
+import {
+  type StatementsStatement as Statement,
+  type StatementsViewState,
+  type UseStatementsViewParams,
+  STATEMENTS_PAGE_SIZE as PAGE_SIZE,
+} from './statementsViewTypes';
+
+interface StagedStatementsParams {
+  statements: Statement[];
+  stage: StatementStage;
+  search: string;
+  receiptStatements: Statement[];
+}
+
+function matchesSearch(s: Statement, q: string): boolean {
+  return (
+    s.fileName.toLowerCase().includes(q) ||
+    (s.subject ?? '').toLowerCase().includes(q) ||
+    (s.sender ?? '').toLowerCase().includes(q) ||
+    (s.parsedData?.vendor ?? '').toLowerCase().includes(q)
+  );
+}
+
+function buildStagedStatements({
+  statements,
+  stage,
+  search,
+  receiptStatements,
+}: StagedStatementsParams): Statement[] {
+  const baseStatements = statements.filter(s => {
+    return getStatementStage(s.id) === stage && !isReceiptDerivedStatement(s);
+  });
+
+  if (stage !== 'submit') return baseStatements;
+
+  const q = search.trim().toLowerCase();
+  const receiptFiltered =
+    q.length > 0 ? receiptStatements.filter(s => matchesSearch(s, q)) : receiptStatements;
+
+  return [...receiptFiltered, ...baseStatements].sort(
+    (a, b) => resolveStatementSortDate(b) - resolveStatementSortDate(a),
+  );
+}
+
+function sortStatements(statements: Statement[], direction: 'asc' | 'desc'): Statement[] {
+  const factor = direction === 'asc' ? 1 : -1;
+  return [...statements].sort((l, r) => {
+    const diff = resolveStatementSortDate(l) - resolveStatementSortDate(r);
+    if (diff !== 0) return diff * factor;
+    return l.id.localeCompare(r.id) * factor;
+  });
+}
+
+// eslint-disable-next-line max-lines-per-function
+export function useStatementsView({ stage, router, searchParams }: UseStatementsViewParams): {
+  // state
+  page: number;
+  setPage: (p: number) => void;
+  searchInput: string;
+  setSearchInput: (v: string) => void;
+  search: string;
+  dateSortDirection: 'asc' | 'desc';
+  setDateSortDirection: (d: 'asc' | 'desc') => void;
+  expenseDrawerOpen: boolean;
+  setExpenseDrawerOpen: (v: boolean) => void;
+  expenseDrawerMode: StatementExpenseMode;
+  listScrollRef: React.RefObject<HTMLDivElement | null>;
+  // labels
+  t: ReturnType<typeof useIntlayer>;
+  filterLabels: Record<string, string>;
+  filterOptionLabels: Record<string, string>;
+  listHeaderLabels: Record<string, string>;
+  paginationLabels: Record<string, string>;
+  uploadLabels: Record<string, string>;
+  // options
+  typeOptions: Array<{ value: string; label: string }>;
+  statusOptions: Array<{ value: string; label: string }>;
+  datePresets: Array<{ value: 'thisMonth' | 'lastMonth' | 'yearToDate'; label: string }>;
+  dateModes: Array<{ value: 'on' | 'after' | 'before'; label: string }>;
+  groupByOptions: Array<{ value: string; label: string }>;
+  hasOptions: Array<{ value: string; label: string }>;
+  // hooks
+  filterState: ReturnType<typeof useStatementsFilterState>;
+  manualExpenseCategories: ReturnType<typeof useManualExpenseOptions>['manualExpenseCategories'];
+  manualExpenseTaxRates: ReturnType<typeof useManualExpenseOptions>['manualExpenseTaxRates'];
+  loadManualExpenseOptions: ReturnType<typeof useManualExpenseOptions>['loadManualExpenseOptions'];
+  preview: ReturnType<typeof useStatementPreview>['preview'];
+  openPreview: ReturnType<typeof useStatementPreview>['openPreview'];
+  closePreview: ReturnType<typeof useStatementPreview>['closePreview'];
+  // data
+  loading: boolean;
+  gmailSyncSkeletonKeys: string[];
+  loadStatements: ReturnType<typeof useStatementsListData>['loadStatements'];
+  loadGmailReceipts: ReturnType<typeof useStatementsListData>['loadGmailReceipts'];
+  refreshActiveStatements: ReturnType<typeof useStatementsListData>['refreshActiveStatements'];
+  // derived
+  displayStatements: Statement[];
+  paginatedDisplayStatements: Statement[];
+  sortedDisplayStatements: Statement[];
+  total: number;
+  totalPagesCount: number;
+  rangeStart: number;
+  rangeEnd: number;
+  duplicateMetaById: ReturnType<typeof useStatementsDuplicates>['duplicateMetaById'];
+  setDuplicateOverrides: ReturnType<typeof useStatementsDuplicates>['setDuplicateOverrides'];
+  // selection
+  selectedStatementIds: string[];
+  selectedActionsOpen: boolean;
+  setSelectedActionsOpen: (v: boolean | ((prev: boolean) => boolean)) => void;
+  allVisibleSelected: boolean;
+  selectedCount: number;
+  hasSelectedDuplicates: boolean;
+  duplicateStatementIds: string[];
+  handleToggleStatement: (id: string) => void;
+  handleToggleSelectAll: () => void;
+  handleExportSelected: () => Promise<void>;
+  handleDeleteSelected: () => Promise<void>;
+  handleMarkSelectedAsDuplicate: () => Promise<void>;
+  handleDismissSelectedDuplicates: () => Promise<void>;
+  handleSelectDetectedDuplicates: () => Promise<void>;
+  handleMergeSelectedDuplicates: () => Promise<void>;
+  // pull-to-refresh
+  pullToRefreshHandlers: ReturnType<typeof usePullToRefresh>['handlers'];
+  pullDistance: number;
+  pullRefreshing: boolean;
+  isReadyToRefresh: boolean;
+  // computed
+  activeFilterCount: number;
+  visibleFilterScreens: string[];
+  fromOptions: ReturnType<typeof buildFromOptions>;
+  currencyOptions: string[];
+  columnsWithLabels: ReturnType<typeof useStatementsFilterState>['draftColumns'];
+  // workspace
+  currentWorkspace: ReturnType<typeof useWorkspace>['currentWorkspace'];
+  isMobile: boolean;
+} {
+  const { user } = useAuth();
+  const { currentWorkspace } = useWorkspace();
+  const isMobile = useIsMobile();
+  const t = useIntlayer('statementsPage');
+
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [dateSortDirection, setDateSortDirection] = useState<'desc' | 'asc'>('desc');
+  const [expenseDrawerOpen, setExpenseDrawerOpen] = useState(false);
+  const [expenseDrawerMode, setExpenseDrawerMode] = useState<StatementExpenseMode>('scan');
+  const listScrollRef = useRef<HTMLDivElement | null>(null);
+
+  const tx = (path: string[], fallback: string): string =>
+    resolveLabel(getNestedValue(t, path), fallback);
+
+  const filterLabels = buildFilterLabels(t);
+  const filterOptionLabels = buildFilterOptionLabels(t, tx);
+  const listHeaderLabels = buildListHeaderLabels(t);
+  const paginationLabels = buildPaginationLabels(tx);
+  const uploadLabels = buildUploadLabels(t);
+
+  const typeOptions = buildTypeOptions(filterOptionLabels);
+  const statusOptions = buildStatusOptions(filterOptionLabels);
+  const datePresets = buildDatePresets(filterOptionLabels);
+  const dateModes = buildDateModes(filterOptionLabels);
+  const groupByOptions = buildGroupByOptions(filterOptionLabels);
+  const hasOptions = buildHasOptions(filterOptionLabels);
+
+  const filterState = useStatementsFilterState({ setPage });
+  const { manualExpenseCategories, manualExpenseTaxRates, loadManualExpenseOptions } =
+    useManualExpenseOptions();
+  const { preview, openPreview, closePreview } = useStatementPreview();
+
+  const {
+    statements,
+    gmailReceipts,
+    loading,
+    gmailSyncSkeletonKeys,
+    setGmailSyncSkeletonKeys,
+    loadStatements,
+    loadGmailReceipts,
+    refreshActiveStatements,
+  } = useStatementsListData<Statement>({
+    appliedFilters: filterState.appliedFilters,
+    search,
+    stage,
+    user,
+    page,
+    pageSize: PAGE_SIZE,
+    router,
+    loadListErrorLabel: resolveLabel(t.loadListError, 'Failed to load statements'),
+    refreshFailedLabel: resolveLabel(t.refreshFailed, 'Failed to refresh statements'),
+  });
+
+  // Search debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Load manual expense options when user is available
+  useEffect(() => {
+    if (!user) return;
+    void loadManualExpenseOptions();
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Init from storage
+  useEffect(() => {
+    filterState.initFromStorage();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Open expense drawer from event
+  useEffect(() => {
+    const handleOpen = (event: Event): void => {
+      const detail = (event as CustomEvent<OpenExpenseDrawerEventDetail>).detail;
+      setExpenseDrawerMode(resolveExpenseDrawerMode(detail?.mode));
+      setExpenseDrawerOpen(true);
+    };
+    window.addEventListener(STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT, handleOpen);
+    return () => window.removeEventListener(STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT, handleOpen);
+  }, []);
+
+  // Open expense drawer from URL params
+  useEffect(() => {
+    if (stage !== 'submit') return;
+    const requestedMode = searchParams.get('openExpenseDrawer');
+    if (!requestedMode) return;
+    setExpenseDrawerMode(resolveExpenseDrawerMode(requestedMode));
+    setExpenseDrawerOpen(true);
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete('openExpenseDrawer');
+    const nextQuery = nextParams.toString();
+    router.replace(nextQuery ? `/statements/submit?${nextQuery}` : '/statements/submit');
+  }, [stage, searchParams, router]);
+
+  // Clear Gmail sync skeletons
+  useEffect(() => {
+    if (stage !== 'submit' || gmailSyncSkeletonKeys.length === 0) return;
+    if (gmailReceipts.length === 0) return;
+    setGmailSyncSkeletonKeys([]);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
+    }
+  }, [stage, gmailReceipts.length, gmailSyncSkeletonKeys.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const receiptStatements = useMemo<Statement[]>(() => {
+    if (stage !== 'submit') return [];
+    return mapGmailReceiptsToStatements(gmailReceipts);
+  }, [gmailReceipts, stage]);
+
+  const stagedStatements = useMemo(
+    () => buildStagedStatements({ statements, stage, search, receiptStatements }),
+    [statements, stage, search, receiptStatements],
+  );
+
+  const displayStatements = useMemo(
+    () => applyStatementsFilters(stagedStatements, filterState.appliedFilters),
+    [stagedStatements, filterState.appliedFilters],
+  );
+
+  const sortedDisplayStatements = useMemo(
+    () => sortStatements(displayStatements, dateSortDirection),
+    [displayStatements, dateSortDirection],
+  );
+
+  const paginatedDisplayStatements = useMemo(
+    () => paginateStatements(sortedDisplayStatements, page, PAGE_SIZE),
+    [sortedDisplayStatements, page],
+  );
+
+  const total = sortedDisplayStatements.length;
+  const totalPagesCount = Math.max(1, Math.ceil(total / PAGE_SIZE) || 1);
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = total === 0 ? 0 : Math.min(total, page * PAGE_SIZE);
+
+  // Clamp page
+  useEffect(() => {
+    if (page > totalPagesCount) setPage(totalPagesCount);
+  }, [page, totalPagesCount]);
+
+  const { setDuplicateOverrides, duplicateMetaById } = useStatementsDuplicates({
+    displayStatements,
+    scanningLabel: listHeaderLabels.scanning,
+  });
+
+  const visibleStatementIds = useMemo(
+    () => paginatedDisplayStatements.map(s => s.id),
+    [paginatedDisplayStatements],
+  );
+
+  const {
+    selectedStatementIds,
+    selectedActionsOpen,
+    setSelectedActionsOpen,
+    allVisibleSelected,
+    selectedCount,
+    hasSelectedDuplicates,
+    duplicateStatementIds,
+    handleToggleStatement,
+    handleToggleSelectAll,
+    handleExportSelected,
+    handleDeleteSelected,
+    handleMarkSelectedAsDuplicate,
+    handleDismissSelectedDuplicates,
+    handleSelectDetectedDuplicates,
+    handleMergeSelectedDuplicates,
+  } = useStatementSelection({
+    displayStatements,
+    visibleStatementIds,
+    duplicateMetaById,
+    setDuplicateOverrides,
+    search,
+    stage,
+    onRefreshStatements: async opts => { await loadStatements({ ...opts }); },
+    onRefreshGmail: async opts => { await loadGmailReceipts({ ...opts }); },
+  });
+
+  const {
+    handlers: pullToRefreshHandlers,
+    pullDistance,
+    isRefreshing: pullRefreshing,
+    isReadyToRefresh,
+  } = usePullToRefresh({
+    enabled: isMobile,
+    isAtTop: () => !listScrollRef.current || listScrollRef.current.scrollTop <= 0,
+    onRefresh: refreshActiveStatements,
+  });
+
+  const activeFilterCount = useMemo(
+    () => computeActiveFilterCount(filterState.appliedFilters),
+    [filterState.appliedFilters],
+  );
+
+  const visibleFilterScreens = useMemo(
+    () => deriveVisibleFilterScreens(filterState.columns),
+    [filterState.columns],
+  );
+
+  const fromOptions = useMemo(() => buildFromOptions(stagedStatements), [stagedStatements]);
+  const currencyOptions = useMemo(() => buildCurrencyOptions(stagedStatements), [stagedStatements]);
+
+  const columnLabels = buildColumnLabels(filterOptionLabels);
+  const columnsWithLabels = useMemo(
+    () => filterState.draftColumns.map(col => ({ ...col, label: columnLabels[col.id] ?? col.label })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterState.draftColumns],
+  );
+
+  return {
+    page,
+    setPage,
+    searchInput,
+    setSearchInput,
+    search,
+    dateSortDirection,
+    setDateSortDirection,
+    expenseDrawerOpen,
+    setExpenseDrawerOpen,
+    expenseDrawerMode,
+    listScrollRef,
+    t,
+    filterLabels,
+    filterOptionLabels,
+    listHeaderLabels,
+    paginationLabels,
+    uploadLabels,
+    typeOptions,
+    statusOptions,
+    datePresets,
+    dateModes,
+    groupByOptions,
+    hasOptions,
+    filterState,
+    manualExpenseCategories,
+    manualExpenseTaxRates,
+    loadManualExpenseOptions,
+    preview,
+    openPreview,
+    closePreview,
+    loading,
+    gmailSyncSkeletonKeys,
+    loadStatements,
+    loadGmailReceipts,
+    refreshActiveStatements,
+    displayStatements,
+    paginatedDisplayStatements,
+    sortedDisplayStatements,
+    total,
+    totalPagesCount,
+    rangeStart,
+    rangeEnd,
+    duplicateMetaById,
+    setDuplicateOverrides,
+    selectedStatementIds,
+    selectedActionsOpen,
+    setSelectedActionsOpen,
+    allVisibleSelected,
+    selectedCount,
+    hasSelectedDuplicates,
+    duplicateStatementIds,
+    handleToggleStatement,
+    handleToggleSelectAll,
+    handleExportSelected,
+    handleDeleteSelected,
+    handleMarkSelectedAsDuplicate,
+    handleDismissSelectedDuplicates,
+    handleSelectDetectedDuplicates,
+    handleMergeSelectedDuplicates,
+    pullToRefreshHandlers,
+    pullDistance,
+    pullRefreshing,
+    isReadyToRefresh,
+    activeFilterCount,
+    visibleFilterScreens,
+    fromOptions,
+    currencyOptions,
+    columnsWithLabels,
+    currentWorkspace,
+    isMobile,
+  };
+}

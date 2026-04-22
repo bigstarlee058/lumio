@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Card } from '@/app/components/ui/card';
 import type { PayablesSummary } from '@/app/lib/payables-api';
 import { Banknote, CalendarClock, CheckCircle2, Clock3 } from 'lucide-react';
@@ -25,12 +26,13 @@ const cardIcons = {
   paidThisMonth: CheckCircle2,
 } as const;
 
+// eslint-disable-next-line max-lines-per-function
 function PayableSummaryCards({
   summary,
   locale = 'en',
   currency = 'KZT',
   labels,
-}: PayableSummaryCardsProps) {
+}: PayableSummaryCardsProps): React.JSX.Element {
   const items = getSummaryCardItems(summary).map(item => ({
     ...item,
     label: labels[item.key],

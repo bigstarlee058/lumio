@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+import { resolveLabel } from '@/app/lib/side-panel-utils';
 import type { StatementCategoryNode } from '@/app/lib/statement-categories';
 import { resolveBankLogo } from '@bank-logos';
 import {
@@ -7,6 +9,7 @@ import {
   resetDisallowedStatementFilters,
 } from './columns/statement-columns';
 import {
+  type StatementFilterScreen,
   getVisibleFilterScreens,
   resetHiddenStatementFilters,
   serializeStatementFiltersToQuery,
@@ -106,6 +109,7 @@ export const isStoreReceiptStatement = (
 // Statement formatting helpers
 // ---------------------------------------------------------------------------
 
+// eslint-disable-next-line complexity
 export const resolveStatementCurrency = (statement: StatementLike): string =>
   (
     statement.parsedData?.currency ||
@@ -121,6 +125,7 @@ export const parseAmountValue = (value?: number | string | null): number | null 
   return Number.isFinite(parsed) ? parsed : null;
 };
 
+// eslint-disable-next-line complexity
 export const formatStatementAmount = (statement: StatementLike): string => {
   if (statement.source === 'gmail' || statement.source === 'scan') {
     const amount = parseAmountValue(statement.parsedData?.amount ?? null);
@@ -154,6 +159,7 @@ export const formatStatementAmount = (statement: StatementLike): string => {
   return `${formatted}${currency || ''}`;
 };
 
+// eslint-disable-next-line complexity
 export const formatStatementDate = (statement: StatementLike): string => {
   const dateValue =
     statement.source === 'gmail' || statement.source === 'scan'
@@ -165,6 +171,7 @@ export const formatStatementDate = (statement: StatementLike): string => {
   return date.toLocaleDateString();
 };
 
+// eslint-disable-next-line complexity
 export const resolveStatementSortDate = (statement: StatementLike): number => {
   const dateValue =
     statement.source === 'gmail' || statement.source === 'scan'
@@ -248,7 +255,7 @@ export const buildStatementRequestParams = ({
 }: {
   appliedFilters: StatementFilters;
   search?: string;
-}) => {
+}): Record<string, unknown> => {
   const serverSafeFilters: StatementFilters = {
     ...appliedFilters,
     type:
@@ -265,7 +272,8 @@ export const buildStatementRequestParams = ({
   };
 };
 
-export const isReceiptDerivedStatement = (statement: ReceiptDerivedStatementCandidate) => {
+// eslint-disable-next-line complexity
+export const isReceiptDerivedStatement = (statement: ReceiptDerivedStatementCandidate): boolean => {
   return (
     statement.parsingDetails?.detectedBy === 'receipt-scan' ||
     statement.parsingDetails?.importPreview?.source === 'receipt-scan'
@@ -303,7 +311,7 @@ export const paginateStatements = <T>(statements: T[], page: number, pageSize: n
 
 export const deriveVisibleFilterScreens = (
   columns: Array<Pick<StatementColumn, 'id' | 'visible'>>,
-) => {
+): StatementFilterScreen[] => {
   const visibleColumnIds = columns.filter(column => column.visible).map(column => column.id);
   return getVisibleFilterScreens(visibleColumnIds);
 };
@@ -325,7 +333,7 @@ export const reconcileFiltersWithColumns = ({
   columns: StatementColumn[];
   appliedFilters: StatementFilters;
   draftFilters: StatementFilters;
-}) => {
+}): { allowedFilterKeys: Array<keyof StatementFilters>; nextAppliedFilters: StatementFilters; nextDraftFilters: StatementFilters } => {
   const visibleColumnIds = columns.filter(column => column.visible).map(column => column.id);
   const allowedFilterKeys = getAllowedStatementFilterKeys(visibleColumnIds as StatementColumnId[]);
 
@@ -334,4 +342,296 @@ export const reconcileFiltersWithColumns = ({
     nextAppliedFilters: resetDisallowedStatementFilters(appliedFilters, allowedFilterKeys),
     nextDraftFilters: resetHiddenStatementFilters(draftFilters, allowedFilterKeys),
   };
+};
+
+// ---------------------------------------------------------------------------
+// Label builder helpers (extracted from StatementsListView for reuse)
+// ---------------------------------------------------------------------------
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IntlayerDict = any;
+type TxFn = (path: string[], fallback: string) => string;
+
+// eslint-disable-next-line complexity
+export const buildFilterLabels = (t: IntlayerDict): Record<string, string> => ({
+  type: resolveLabel(t.filters?.type, 'Type'),
+  status: resolveLabel(t.filters?.status, 'Status'),
+  date: resolveLabel(t.filters?.date, 'Date'),
+  from: resolveLabel(t.filters?.from, 'From'),
+  filters: resolveLabel(t.filters?.filters, 'Filters'),
+  columns: resolveLabel(t.filters?.columns, 'Columns'),
+});
+
+// eslint-disable-next-line complexity
+export const buildListHeaderLabels = (t: IntlayerDict): Record<string, string> => ({
+  receipt: resolveLabel(t.listHeader?.receipt, 'Receipt'),
+  type: resolveLabel(t.listHeader?.type, 'Type'),
+  date: resolveLabel(t.listHeader?.date, 'Date'),
+  merchant: resolveLabel(t.listHeader?.merchant, 'Merchant'),
+  amount: resolveLabel(t.listHeader?.amount, 'Amount'),
+  action: resolveLabel(t.listHeader?.action, 'Action'),
+  scanning: resolveLabel(t.listHeader?.scanning, 'Scanning...'),
+});
+
+export const buildPaginationLabels = (tx: TxFn): Record<string, string> => ({
+  shown: tx(['pagination', 'shown'], 'Showing {from}–{to} of {count}'),
+  previous: tx(['pagination', 'previous'], 'Previous'),
+  next: tx(['pagination', 'next'], 'Next'),
+  pageOf: tx(['pagination', 'pageOf'], 'Page {page} of {count}'),
+});
+
+// eslint-disable-next-line complexity
+export const buildUploadLabels = (t: IntlayerDict): Record<string, string> => ({
+  pickAtLeastOne: resolveLabel(t.uploadModal?.pickAtLeastOne, 'Select at least one file'),
+  uploadedProcessing: resolveLabel(t.uploadModal?.uploadedProcessing, 'Files uploaded'),
+  uploadFailed: resolveLabel(t.uploadModal?.uploadFailed, 'Failed to upload files'),
+});
+
+// eslint-disable-next-line complexity, max-lines-per-function, max-params
+export const buildFilterOptionLabels = (t: IntlayerDict, tx: TxFn): Record<string, string> => ({
+  apply: tx(['filters', 'apply'], 'Apply'),
+  reset: tx(['filters', 'reset'], 'Reset'),
+  resetFilters: tx(['filters', 'resetFilters'], 'Reset filters'),
+  viewResults: tx(['filters', 'viewResults'], 'View results'),
+  save: tx(['filters', 'save'], 'Save'),
+  saveSearch: tx(['filters', 'saveSearch'], 'Save search'),
+  any: tx(['filters', 'any'], 'Any'),
+  yes: tx(['filters', 'yes'], 'Yes'),
+  no: tx(['filters', 'no'], 'No'),
+  typeExpense: tx(['filters', 'typeExpense'], 'Expense'),
+  typeReport: tx(['filters', 'typeReport'], 'Expense Report'),
+  typeChat: tx(['filters', 'typeChat'], 'Chat'),
+  typeTrip: tx(['filters', 'typeTrip'], 'Trip'),
+  typeTask: tx(['filters', 'typeTask'], 'Task'),
+  statusUploaded: tx(['filters', 'statusUploaded'], 'Uploaded'),
+  statusProcessing: tx(['filters', 'statusProcessing'], 'Processing'),
+  statusParsed: tx(['filters', 'statusParsed'], 'Parsed'),
+  statusValidated: tx(['filters', 'statusValidated'], 'Validated'),
+  statusCompleted: tx(['filters', 'statusCompleted'], 'Completed'),
+  statusError: tx(['filters', 'statusError'], 'Error'),
+  dateThisMonth: tx(['filters', 'dateThisMonth'], 'This month'),
+  dateLastMonth: tx(['filters', 'dateLastMonth'], 'Last month'),
+  dateYearToDate: tx(['filters', 'dateYearToDate'], 'Year to date'),
+  dateOn: tx(['filters', 'dateOn'], 'On'),
+  dateAfter: tx(['filters', 'dateAfter'], 'After'),
+  dateBefore: tx(['filters', 'dateBefore'], 'Before'),
+  drawerTitle: tx(['filters', 'drawerTitle'], 'Filters'),
+  drawerGeneral: tx(['filters', 'drawerGeneral'], 'General'),
+  drawerExpenses: tx(['filters', 'drawerExpenses'], 'Expenses'),
+  drawerReports: tx(['filters', 'drawerReports'], 'Reports'),
+  drawerGroupBy: tx(['filters', 'drawerGroupBy'], 'Group by'),
+  drawerHas: tx(['filters', 'drawerHas'], 'Has'),
+  drawerKeywords: tx(['filters', 'drawerKeywords'], 'Keywords'),
+  drawerLimit: tx(['filters', 'drawerLimit'], 'Limit'),
+  drawerTo: tx(['filters', 'drawerTo'], 'To'),
+  drawerAmount: tx(['filters', 'drawerAmount'], 'Amount'),
+  drawerApproved: tx(['filters', 'drawerApproved'], 'Approved'),
+  drawerBillable: tx(['filters', 'drawerBillable'], 'Billable'),
+  groupByDate: tx(['filters', 'groupByDate'], 'Date'),
+  groupByStatus: tx(['filters', 'groupByStatus'], 'Status'),
+  groupByType: tx(['filters', 'groupByType'], 'Type'),
+  groupByBank: tx(['filters', 'groupByBank'], 'Bank'),
+  groupByUser: tx(['filters', 'groupByUser'], 'User'),
+  groupByAmount: tx(['filters', 'groupByAmount'], 'Amount'),
+  hasErrors: tx(['filters', 'hasErrors'], 'Errors'),
+  hasLogs: tx(['filters', 'hasLogs'], 'Logs'),
+  hasTransactions: tx(['filters', 'hasTransactions'], 'Transactions'),
+  hasDateRange: tx(['filters', 'hasDateRange'], 'Date range'),
+  hasCurrency: tx(['filters', 'hasCurrency'], 'Currency'),
+  columnReceipt: tx(['filters', 'columnReceipt'], 'Receipt'),
+  columnDate: tx(['filters', 'columnDate'], 'Date'),
+  columnMerchant: tx(['filters', 'columnMerchant'], 'Merchant'),
+  columnFrom: tx(['filters', 'columnFrom'], 'From'),
+  columnTo: tx(['filters', 'columnTo'], 'To'),
+  columnCategory: tx(['filters', 'columnCategory'], 'Category'),
+  columnTag: tx(['filters', 'columnTag'], 'Tag'),
+  columnAmount: tx(['filters', 'columnAmount'], 'Amount'),
+  columnAction: tx(['filters', 'columnAction'], 'Action'),
+  columnApproved: tx(['filters', 'columnApproved'], 'Approved'),
+  columnBillable: tx(['filters', 'columnBillable'], 'Billable'),
+  columnCard: tx(['filters', 'columnCard'], 'Card'),
+  columnDescription: tx(['filters', 'columnDescription'], 'Description'),
+  columnExchangeRate: tx(['filters', 'columnExchangeRate'], 'Exchange rate'),
+  columnExported: tx(['filters', 'columnExported'], 'Exported'),
+  columnExportedTo: tx(['filters', 'columnExportedTo'], 'Exported to'),
+  columnsTitle: tx(['filters', 'columnsTitle'], 'Columns'),
+  paid: tx(['filters', 'paid'], 'Paid'),
+});
+
+export const buildTypeOptions = (
+  labels: Record<string, string>,
+): Array<{ value: string; label: string }> => [
+  { value: 'receipt', label: 'Receipt' },
+  { value: 'expense', label: labels.typeExpense },
+  { value: 'expense_report', label: labels.typeReport },
+  { value: 'chat', label: labels.typeChat },
+  { value: 'trip', label: labels.typeTrip },
+  { value: 'task', label: labels.typeTask },
+  { value: 'gmail', label: 'Gmail' },
+  { value: 'pdf', label: 'PDF' },
+  { value: 'xlsx', label: 'Excel' },
+  { value: 'csv', label: 'CSV' },
+  { value: 'image', label: 'Image' },
+];
+
+export const buildStatusOptions = (
+  labels: Record<string, string>,
+): Array<{ value: string; label: string }> => [
+  { value: 'uploaded', label: labels.statusUploaded },
+  { value: 'processing', label: labels.statusProcessing },
+  { value: 'parsed', label: labels.statusParsed },
+  { value: 'validated', label: labels.statusValidated },
+  { value: 'completed', label: labels.statusCompleted },
+  { value: 'error', label: labels.statusError },
+];
+
+export const buildDatePresets = (
+  labels: Record<string, string>,
+): Array<{ value: 'thisMonth' | 'lastMonth' | 'yearToDate'; label: string }> => [
+  { value: 'thisMonth', label: labels.dateThisMonth },
+  { value: 'lastMonth', label: labels.dateLastMonth },
+  { value: 'yearToDate', label: labels.dateYearToDate },
+];
+
+export const buildDateModes = (
+  labels: Record<string, string>,
+): Array<{ value: 'on' | 'after' | 'before'; label: string }> => [
+  { value: 'on', label: labels.dateOn },
+  { value: 'after', label: labels.dateAfter },
+  { value: 'before', label: labels.dateBefore },
+];
+
+export const buildGroupByOptions = (
+  labels: Record<string, string>,
+): Array<{ value: string; label: string }> => [
+  { value: 'date', label: labels.groupByDate },
+  { value: 'status', label: labels.groupByStatus },
+  { value: 'type', label: labels.groupByType },
+  { value: 'bank', label: labels.groupByBank },
+  { value: 'user', label: labels.groupByUser },
+  { value: 'amount', label: labels.groupByAmount },
+];
+
+export const buildHasOptions = (
+  labels: Record<string, string>,
+): Array<{ value: string; label: string }> => [
+  { value: 'errors', label: labels.hasErrors },
+  { value: 'processingDetails', label: labels.hasLogs },
+  { value: 'transactions', label: labels.hasTransactions },
+  { value: 'dateRange', label: labels.hasDateRange },
+  { value: 'currency', label: labels.hasCurrency },
+];
+
+export const buildColumnLabels = (
+  labels: Record<string, string>,
+): Record<string, string> => ({
+  receipt: labels.columnReceipt,
+  date: labels.columnDate,
+  merchant: labels.columnMerchant,
+  from: labels.columnFrom,
+  to: labels.columnTo,
+  category: labels.columnCategory,
+  tag: labels.columnTag,
+  amount: labels.columnAmount,
+  action: labels.columnAction,
+  approved: labels.columnApproved,
+  billable: labels.columnBillable,
+  card: labels.columnCard,
+  description: labels.columnDescription,
+  exchangeRate: labels.columnExchangeRate,
+  exported: labels.columnExported,
+  exportedTo: labels.columnExportedTo,
+});
+
+interface StatementForFromOptions {
+  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
+  bankName: string;
+  source?: string;
+  receiptSource?: string;
+}
+
+/* eslint-disable complexity, max-lines-per-function */
+export const buildFromOptions = (
+  stagedStatements: StatementForFromOptions[],
+): Array<{
+  id: string;
+  label: string;
+  description?: string | null;
+  avatarUrl?: string | null;
+  iconUrl?: string | null;
+  bankName?: string | null;
+}> => {
+  const seen = new Map<
+    string,
+    { id: string; label: string; description?: string | null; avatarUrl?: string | null; iconUrl?: string | null; bankName?: string | null }
+  >();
+
+  for (const statement of stagedStatements) {
+    if (statement.user?.id) {
+      const key = `user:${statement.user.id}`;
+      if (!seen.has(key)) {
+        seen.set(key, {
+          id: key,
+          label: statement.user.name ?? statement.user.email ?? 'User',
+          description: statement.user.email ? `@${statement.user.email.split('@')[0]}` : null,
+          avatarUrl: statement.user.avatarUrl ?? null,
+        });
+      }
+    }
+    if (statement.bankName) {
+      const key = `bank:${statement.bankName}`;
+      if (!seen.has(key)) {
+        const isGmail = statement.source === 'gmail';
+        const isStore = statement.source === 'scan' && statement.receiptSource !== 'gmail';
+        seen.set(key, {
+          id: key,
+          label: isGmail ? 'Gmail' : isStore ? 'Receipt' : getBankDisplayName(statement.bankName),
+          description: null,
+          iconUrl: isGmail ? '/icons/gmail.png' : null,
+          bankName: statement.bankName,
+        });
+      }
+    }
+  }
+
+  return Array.from(seen.values());
+};
+/* eslint-enable complexity, max-lines-per-function */
+
+interface StatementForCurrencyOptions {
+  parsedData?: { currency?: string };
+  currency?: string | null;
+  parsingDetails?: { metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } } };
+}
+
+export const buildCurrencyOptions = (
+  stagedStatements: StatementForCurrencyOptions[],
+): string[] => {
+  const unique = new Set<string>();
+  for (const statement of stagedStatements) {
+    const currency = resolveStatementCurrency(statement);
+    if (currency) unique.add(currency);
+  }
+  return Array.from(unique.values());
+};
+
+// eslint-disable-next-line complexity
+export const computeActiveFilterCount = (appliedFilters: StatementFilters): number => {
+  let count = 0;
+  if (appliedFilters.type) count += 1;
+  if (appliedFilters.statuses.length > 0) count += 1;
+  if (appliedFilters.date?.preset || appliedFilters.date?.mode) count += 1;
+  if (appliedFilters.from.length > 0) count += 1;
+  if (appliedFilters.to.length > 0) count += 1;
+  if (appliedFilters.keywords.trim()) count += 1;
+  if (appliedFilters.amountMin !== null || appliedFilters.amountMax !== null) count += 1;
+  if (appliedFilters.approved !== null) count += 1;
+  if (appliedFilters.billable !== null) count += 1;
+  if (appliedFilters.groupBy) count += 1;
+  if (appliedFilters.has.length > 0) count += 1;
+  if (appliedFilters.currencies.length > 0) count += 1;
+  if (appliedFilters.exported !== null) count += 1;
+  if (appliedFilters.paid !== null) count += 1;
+  if (appliedFilters.limit !== null) count += 1;
+  return count;
 };

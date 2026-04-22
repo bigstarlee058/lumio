@@ -19,10 +19,10 @@ export function FilterActions({
 }: FilterActionsProps) {
   return (
     <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, ...style }}>
-      <Button variant="secondary" size="lg" onClick={onReset} style={{ flex: 1, borderRadius: 0 }}>
+      <Button variant="secondary" size="lg" onClick={onReset} style={{ flex: 1, borderRadius: 'var(--lumio-radius-md)' }}>
         {resetLabel}
       </Button>
-      <Button size="lg" onClick={onApply} style={{ flex: 1, borderRadius: 0 }}>
+      <Button size="lg" onClick={onApply} style={{ flex: 1, borderRadius: 'var(--lumio-radius-md)' }}>
         {applyLabel}
       </Button>
     </div>

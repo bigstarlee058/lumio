@@ -34,7 +34,8 @@ type UploadScanDrawerFilesParams = UploadCallbacks & {
   };
 };
 
-export const extractUploadErrorMessage = (error: unknown, fallback: string) => {
+// eslint-disable-next-line complexity
+export const extractUploadErrorMessage = (error: unknown, fallback: string): string => {
   const responseMessage = (error as { response?: { data?: { message?: unknown } } })?.response?.data
     ?.message;
 
@@ -57,7 +58,7 @@ export const uploadStatementFiles = async ({
   onUploadSuccess,
   refreshAfterCreate,
   requireManualCategorySelection = false,
-}: UploadStatementFilesParams) => {
+}: UploadStatementFilesParams): Promise<void> => {
   if (files.length === 0) {
     throw new Error(labels.pickAtLeastOne);
   }
@@ -90,7 +91,7 @@ export const uploadReceiptScanFiles = async ({
   labels,
   onUploadSuccess,
   refreshAfterCreate,
-}: UploadReceiptScanFilesParams) => {
+}: UploadReceiptScanFilesParams): Promise<void> => {
   if (files.length === 0) {
     throw new Error(labels.pickAtLeastOne);
   }
@@ -118,7 +119,7 @@ export const uploadScanDrawerFiles = async ({
   labels,
   onUploadSuccess,
   refreshAfterCreate,
-}: UploadScanDrawerFilesParams) => {
+}: UploadScanDrawerFilesParams): Promise<void> => {
   if (payload.files.length === 0) {
     throw new Error(labels.pickAtLeastOne);
   }

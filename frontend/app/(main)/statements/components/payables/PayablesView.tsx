@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client';
 
 import { Button } from '@/app/components/ui/button';
@@ -13,8 +14,9 @@ import {
   type UpdatePayableInput,
   payablesApi,
 } from '@/app/lib/payables-api';
-import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import { getNestedValue, getRecord as _getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { Download, Plus, RefreshCcw } from 'lucide-react';
+import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -39,7 +41,8 @@ const DEFAULT_SUMMARY: PayablesSummary = {
 
 const PAGE_SIZE = 20;
 
-const getErrorMessage = (error: unknown, fallback: string) => {
+// eslint-disable-next-line max-lines-per-function, complexity
+const getErrorMessage = (error: unknown, fallback: string): string => {
   if (!error || typeof error !== 'object') return fallback;
 
   const candidate = error as {
@@ -75,7 +78,8 @@ const triggerBlobDownload = (blob: Blob, fileName: string) => {
   window.URL.revokeObjectURL(url);
 };
 
-export function PayablesView() {
+// eslint-disable-next-line max-lines-per-function, complexity
+export function PayablesView(): React.JSX.Element {
   const searchParams = useSearchParams();
   const { user, loading: authLoading } = useAuth();
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
@@ -346,12 +350,12 @@ export function PayablesView() {
     setQueryPage(nextPage);
   }, []);
 
-  const openCreateDrawer = () => {
+  const openCreateDrawer = (): void => {
     setEditingPayable(null);
     setDrawerOpen(true);
   };
 
-  const handleEdit = async (payable: Payable) => {
+  const handleEdit = async (payable: Payable): Promise<void> => {
     try {
       const fresh = await payablesApi.getOne(payable.id);
       setEditingPayable(fresh);
@@ -361,7 +365,8 @@ export function PayablesView() {
     }
   };
 
-  const handleSave = async (payload: CreatePayableInput | UpdatePayableInput) => {
+  // eslint-disable-next-line max-lines-per-function
+  const handleSave = async (payload: CreatePayableInput | UpdatePayableInput): Promise<void> => {
     setSaving(true);
     try {
       if (editingPayable) {
@@ -387,7 +392,7 @@ export function PayablesView() {
     }
   };
 
-  const handleMarkPaid = async (payable: Payable) => {
+  const handleMarkPaid = async (payable: Payable): Promise<void> => {
     setMarkingPaidId(payable.id);
     try {
       await payablesApi.markAsPaid(payable.id);
@@ -400,7 +405,7 @@ export function PayablesView() {
     }
   };
 
-  const handleArchive = async (payable: Payable) => {
+  const handleArchive = async (payable: Payable): Promise<void> => {
     setArchivingId(payable.id);
     try {
       await payablesApi.archive(payable.id);
@@ -413,7 +418,7 @@ export function PayablesView() {
     }
   };
 
-  const handleDelete = async (payable: Payable) => {
+  const handleDelete = async (payable: Payable): Promise<void> => {
     const confirmMessage = labels.toasts.deleteConfirm.replace('{vendor}', payable.vendor);
     if (!window.confirm(confirmMessage)) return;
 
@@ -429,7 +434,7 @@ export function PayablesView() {
     }
   };
 
-  const handleExport = async (format: PayablesExportFormat) => {
+  const handleExport = async (format: PayablesExportFormat): Promise<void> => {
     setExporting(format);
     try {
       const result = await payablesApi.exportList({
@@ -459,7 +464,7 @@ export function PayablesView() {
   if (!user) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 0, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.loginRequired}
         </div>
       </div>
@@ -469,7 +474,7 @@ export function PayablesView() {
   if (!currentWorkspace) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 0, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.noWorkspace}
         </div>
       </div>

@@ -1,0 +1,87 @@
+'use client';
+import type { JSX } from 'react';
+
+import { AnalyticsSourceBadge } from '@/app/(main)/statements/components/analytics/AnalyticsSourceBadge';
+import type { SpendOverTimePoint, SpendOverTimeRecord, SpendOverTimeSourceChannel } from '@/app/(main)/statements/components/spend-over-time.utils';
+import { formatMoney } from '@/app/lib/analytics-common';
+import { X } from 'lucide-react';
+
+type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
+
+type Props = {
+  selectedPoint: SpendOverTimePoint;
+  drillDownRecords: SpendOverTimeRecord[];
+  groupBy: string;
+  onClose: () => void;
+  currency: string;
+  sourceLabels: SourceLabels;
+  labels: { drillDown: string; close: string; noOperations: string; lastOperation: string; source: string; workspace: string; amount: string };
+};
+
+const getRecordMerchant = (record: SpendOverTimeRecord): string =>
+  record.merchant ?? record.sender ?? record.subject ?? '-';
+
+const formatDateValue = (dateValue: string | null | undefined): string => {
+  if (!dateValue) return '-';
+  const d = new Date(dateValue);
+  return Number.isNaN(d.getTime()) ? '-' : d.toLocaleDateString();
+};
+
+type TableProps = {
+  records: SpendOverTimeRecord[];
+  currency: string;
+  sourceLabels: SourceLabels;
+  labels: Pick<Props['labels'], 'lastOperation' | 'source' | 'workspace' | 'amount'>;
+};
+
+function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps): JSX.Element {
+  return (
+    <table className="lumio-view-page__table">
+      <thead>
+        <tr>
+          <th>{labels.lastOperation}</th>
+          <th>{labels.source}</th>
+          <th>{labels.workspace}</th>
+          <th>Merchant</th>
+          <th style={{ textAlign: 'right' }}>{labels.amount}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {records.slice(0, 120).map(record => (
+          <tr key={record.id}>
+            <td style={{ color: '#4b5563' }}>{formatDateValue(record.dateValue)}</td>
+            <td><AnalyticsSourceBadge sourceChannel={record.sourceChannel as SpendOverTimeSourceChannel} labels={sourceLabels} /></td>
+            <td style={{ color: '#4b5563' }}>{record.workspaceName ?? '-'}</td>
+            <td style={{ color: '#4b5563' }}>{getRecordMerchant(record)}</td>
+            <td style={{ textAlign: 'right', fontWeight: 500, color: '#111827' }}>{formatMoney(record.amount, currency)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export function SpendOverTimeDrillDown({ selectedPoint, drillDownRecords, groupBy, onClose, currency, sourceLabels, labels }: Props): JSX.Element {
+  return (
+    <div className="lumio-view-page__drill-backdrop">
+      <div className="lumio-view-page__drill-modal">
+        <div className="lumio-view-page__drill-header">
+          <div>
+            <h4 className="lumio-view-page__drill-title">{selectedPoint.label} - {labels.drillDown}</h4>
+            <p className="lumio-view-page__drill-subtitle">{groupBy}</p>
+          </div>
+          <button type="button" className="lumio-view-page__drill-close" onClick={onClose} aria-label={labels.close}>
+            <X size={16} />
+          </button>
+        </div>
+        <div className="lumio-view-page__drill-body">
+          {drillDownRecords.length === 0 ? (
+            <div className="lumio-view-page__drill-empty">{labels.noOperations}</div>
+          ) : (
+            <DrillDownTable records={drillDownRecords} currency={currency} sourceLabels={sourceLabels} labels={labels} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

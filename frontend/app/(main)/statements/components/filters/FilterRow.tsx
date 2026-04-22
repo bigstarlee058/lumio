@@ -20,7 +20,7 @@ export function FilterRow({ label, value, onClick, style }: FilterRowProps) {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 16,
-        borderRadius: 0,
+        borderRadius: 'var(--lumio-radius-md)',
         padding: '16px',
         textAlign: 'left',
         transition: 'background-color 0.15s',

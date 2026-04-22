@@ -151,7 +151,7 @@ export function FiltersDrawer({
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    borderRadius: 0,
+    borderRadius: 'var(--lumio-radius-md)',
     border: '1px solid #e5e7eb',
     background: 'var(--card-bg)',
     padding: '8px 12px',
@@ -545,7 +545,7 @@ export function FiltersDrawer({
             justifyContent: 'center',
             width: 24,
             height: 24,
-            borderRadius: '50%',
+            borderRadius: 'var(--lumio-radius-full)',
             bgcolor: 'rgba(255,255,255,0.2)',
             fontSize: 12,
             fontWeight: 600,

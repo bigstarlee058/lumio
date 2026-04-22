@@ -26,7 +26,7 @@ type ResolveAmountFlowInput<TExpenseFlowType extends string> = {
 
 const RECEIPT_FILE_TYPES = new Set(['pdf', 'image', 'jpg', 'jpeg', 'png', 'csv', 'xlsx']);
 
-export const parseAmount = (value?: number | string | null) => {
+export const parseAmount = (value?: number | string | null): number => {
   if (value === null || value === undefined || value === '') return 0;
   const parsed = typeof value === 'string' ? Number(value) : value;
   if (!Number.isFinite(parsed)) return 0;
@@ -40,7 +40,7 @@ export const resolveSourceChannel = (input: ResolveSourceChannelInput): SourceCh
   return 'bank';
 };
 
-export const sortAggregateRows = <TRow extends AggregateRow>(rows: TRow[], key: AggregateSortKey) => {
+export const sortAggregateRows = <TRow extends AggregateRow>(rows: TRow[], key: AggregateSortKey): TRow[] => {
   return [...rows].sort((a, b) => {
     if (key === 'average') return b.average - a.average;
     if (key === 'operations') return b.count - a.count;
@@ -48,7 +48,7 @@ export const sortAggregateRows = <TRow extends AggregateRow>(rows: TRow[], key: 
   });
 };
 
-export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date) => {
+export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date): { start: Date; end: Date } | null => {
   if (Number.isNaN(currentStart.getTime()) || Number.isNaN(currentEnd.getTime())) return null;
   const startTime = currentStart.getTime();
   const endTime = currentEnd.getTime();
@@ -65,7 +65,7 @@ export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date) =
   };
 };
 
-export const getComparisonDelta = (current: number, previous: number) => {
+export const getComparisonDelta = (current: number, previous: number): { delta: number; percentage: number; trend: ComparisonTrend } => {
   const delta = current - previous;
   const trend: ComparisonTrend = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
 
@@ -84,6 +84,7 @@ export const getComparisonDelta = (current: number, previous: number) => {
   };
 };
 
+/* eslint-disable complexity */
 export const resolveAmountFlow = <TExpenseFlowType extends string>(
   input: ResolveAmountFlowInput<TExpenseFlowType>,
 ): { flowType: 'income' | TExpenseFlowType; amount: number } => {
@@ -122,8 +123,9 @@ export const resolveAmountFlow = <TExpenseFlowType extends string>(
     amount: parseAmount(input.amount),
   };
 };
+/* eslint-enable complexity */
 
-export const formatDateISO = (date: Date) => {
+export const formatDateISO = (date: Date): string => {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');

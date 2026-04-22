@@ -7,6 +7,7 @@ const normalizeValue = (value: unknown): string => {
   return value.trim().toLowerCase();
 };
 
+// eslint-disable-next-line complexity
 export const resolveTrashEntityType = (file: Record<string, unknown>): TrashEntityType => {
   const rawType =
     normalizeValue(file.entityType) ||

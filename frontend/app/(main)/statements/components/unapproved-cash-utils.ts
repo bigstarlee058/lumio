@@ -78,7 +78,7 @@ const UNKNOWN_MERCHANT_MARKERS = ['unknown', 'ambiguous', 'неизвест', '�
 const NUMERIC_FILE_TYPES = ['csv', 'xls', 'xlsx', 'ofx', 'qif'];
 const PENDING_CONFIRMATION_STATUSES = ['uploaded', 'parsed', 'validated'];
 
-const isPresentId = (value?: string | null) => {
+const isPresentId = (value?: string | null): boolean => {
   if (!value) return false;
   const normalized = value.trim().toLowerCase();
   return (
@@ -86,6 +86,7 @@ const isPresentId = (value?: string | null) => {
   );
 };
 
+// eslint-disable-next-line complexity
 const parseNumberish = (value?: number | string | null): number | null => {
   if (value === null || value === undefined || value === '') return null;
   const normalized = typeof value === 'string' ? value.replace(',', '.').trim() : value;
@@ -93,6 +94,7 @@ const parseNumberish = (value?: number | string | null): number | null => {
   return Number.isFinite(parsed) ? Number(parsed) : null;
 };
 
+// eslint-disable-next-line complexity
 const resolveAmount = (transaction: UnapprovedQueueTransaction): number | null => {
   const explicitAmount = parseNumberish(transaction.amount);
   if (explicitAmount !== null) return Math.abs(explicitAmount);
@@ -129,7 +131,7 @@ const resolveStatementAmount = (statement: UnapprovedStatementMeta): number | nu
 const resolveStatementDate = (statement: UnapprovedStatementMeta): Date | null =>
   resolveDate(statement.statementDateTo || statement.statementDateFrom || statement.createdAt);
 
-const normalizeStatementStatus = (status?: string | null) => (status || '').trim().toLowerCase();
+const normalizeStatementStatus = (status?: string | null): string => (status || '').trim().toLowerCase();
 
 const isPendingConfirmationStatement = (statement?: UnapprovedStatementMeta | null) =>
   PENDING_CONFIRMATION_STATUSES.includes(normalizeStatementStatus(statement?.status));

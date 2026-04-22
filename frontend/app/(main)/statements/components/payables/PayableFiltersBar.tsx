@@ -1,7 +1,13 @@
 'use client';
 
+import React from 'react';
 import { Input } from '@/app/components/ui/input';
 import type { PayableSource, PayableStatus } from '@/app/lib/payables-api';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format, isValid, parseISO } from 'date-fns';
+
+const toDate = (s: string): Date | null => { if (!s) return null; const d = parseISO(s); return isValid(d) ? d : null; };
+const toStr = (d: Date | null): string => (d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import type { PayablesFiltersState, PayablesSortOption } from './payables-utils';
@@ -26,11 +32,13 @@ interface PayableFiltersBarProps {
   };
 }
 
-function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps) {
+// eslint-disable-next-line max-lines-per-function
+function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps): React.JSX.Element {
+  // eslint-disable-next-line max-params
   const update = <K extends keyof PayablesFiltersState>(
     key: K,
     nextValue: PayablesFiltersState[K],
-  ) => {
+  ): void => {
     onChange({ ...value, [key]: nextValue });
   };
 
@@ -77,18 +85,18 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
             ))}
           </select>
 
-          <Input
-            type="date"
-            value={value.dueDateFrom}
-            onChange={event => update('dueDateFrom', event.target.value)}
-            aria-label={labels.dueFrom}
+          <DatePicker
+            label={labels.dueFrom}
+            value={toDate(value.dueDateFrom)}
+            onChange={(d: Date | null) => update('dueDateFrom', toStr(d))}
+            slotProps={{ textField: { size: 'small' } as never }}
           />
 
-          <Input
-            type="date"
-            value={value.dueDateTo}
-            onChange={event => update('dueDateTo', event.target.value)}
-            aria-label={labels.dueTo}
+          <DatePicker
+            label={labels.dueTo}
+            value={toDate(value.dueDateTo)}
+            onChange={(d: Date | null) => update('dueDateTo', toStr(d))}
+            slotProps={{ textField: { size: 'small' } as never }}
           />
 
           <select

@@ -43,7 +43,7 @@ type ResolveSourceChannelInput = {
   fileType?: string | null;
 };
 
-export const resolveSpenderFlow = (input: ResolveSpenderFlowInput) => {
+export const resolveSpenderFlow = (input: ResolveSpenderFlowInput): { flowType: 'income' | 'spend'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.totalDebit,
@@ -65,15 +65,15 @@ export const sortAggregateRows = (
   return sortAggregateRowsBase(rows, key);
 };
 
-export const buildTopSpendersStatementsParams = (page: number, limit: number) => ({
+export const buildTopSpendersStatementsParams = (page: number, limit: number): { page: number; limit: number } => ({
   page,
   limit,
 });
 
-export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date) => {
+export const buildPreviousPeriodRange = (currentStart: Date, currentEnd: Date): { start: Date; end: Date } | null => {
   return buildPreviousPeriodRangeBase(currentStart, currentEnd);
 };
 
-export const getComparisonDelta = (current: number, previous: number) => {
+export const getComparisonDelta = (current: number, previous: number): { delta: number; percentage: number; trend: SharedComparisonTrend } => {
   return getComparisonDeltaBase(current, previous);
 };

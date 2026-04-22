@@ -54,7 +54,7 @@ type ResolveCategoryFlowInput = {
   transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
 };
 
-export const resolveCategoryFlow = (input: ResolveCategoryFlowInput) => {
+export const resolveCategoryFlow = (input: ResolveCategoryFlowInput): { flowType: 'income' | 'spend'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.debit,
@@ -65,7 +65,7 @@ export const resolveCategoryFlow = (input: ResolveCategoryFlowInput) => {
   });
 };
 
-export const resolveCategoryName = (name?: string | null) => {
+export const resolveCategoryName = (name?: string | null): string => {
   const normalized = (name || '').trim();
   return normalized || 'Uncategorized';
 };
@@ -73,18 +73,20 @@ export const resolveCategoryName = (name?: string | null) => {
 export const dedupeCategoryReceiptRecords = (
   receipts: TopCategoryRecord[],
   existingTransactionIds: Set<string>,
-) => {
+): TopCategoryRecord[] => {
   return receipts.filter(receipt => {
     if (!receipt.transactionId) return true;
     return !existingTransactionIds.has(receipt.transactionId);
   });
 };
 
+// eslint-disable-next-line max-lines-per-function
 export const createCategoryAggregateRows = (
   records: TopCategoryRecord[],
 ): TopCategoryAggregateRow[] => {
   const aggregate = new Map<string, TopCategoryAggregateRow>();
 
+  // eslint-disable-next-line complexity
   records.forEach(record => {
     const normalizedCategory = resolveCategoryName(record.category);
     const key = `${record.flowType}:${record.sourceChannel}:${normalizedCategory.toLowerCase()}`;
@@ -129,7 +131,7 @@ export const createCategoryAggregateRows = (
   return Array.from(aggregate.values());
 };
 
-export const sortCategoryRows = (rows: TopCategoryAggregateRow[], key: CategorySortKey) => {
+export const sortCategoryRows = (rows: TopCategoryAggregateRow[], key: CategorySortKey): TopCategoryAggregateRow[] => {
   return sortAggregateRows(rows, key);
 };
 

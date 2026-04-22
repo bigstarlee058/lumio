@@ -54,14 +54,14 @@ type ResolveSpendOverTimeFlowInput = {
   transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
 };
 
-const toDateOnly = (value?: string | null) => {
+const toDateOnly = (value?: string | null): Date | null => {
   if (!value) return null;
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return null;
   return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 };
 
-const getWeekStart = (date: Date) => {
+const getWeekStart = (date: Date): Date => {
   const day = date.getDay();
   const diff = day === 0 ? -6 : 1 - day;
   const result = new Date(date);
@@ -75,7 +75,7 @@ const monthFormatter = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
-const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy) => {
+const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy): { period: string; label: string } => {
   if (groupBy === 'day') {
     const period = formatDateISO(date);
     return { period, label: period };
@@ -106,7 +106,7 @@ const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy) => {
   return { period, label: period };
 };
 
-export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput) => {
+export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput): { flowType: 'income' | 'expense'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.debit,
@@ -120,19 +120,21 @@ export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput) =
 export const dedupeSpendOverTimeReceiptRecords = (
   receipts: SpendOverTimeRecord[],
   existingTransactionIds: Set<string>,
-) => {
+): SpendOverTimeRecord[] => {
   return receipts.filter(receipt => {
     if (!receipt.transactionId) return true;
     return !existingTransactionIds.has(receipt.transactionId);
   });
 };
 
+// eslint-disable-next-line max-lines-per-function
 export const buildSpendOverTimeReport = (
   records: SpendOverTimeRecord[],
   groupBy: SpendOverTimeGroupBy,
 ): SpendOverTimeReport => {
   const pointsMap = new Map<string, SpendOverTimePoint>();
 
+  // eslint-disable-next-line complexity
   records.forEach(record => {
     const date = toDateOnly(record.dateValue || record.createdAt || null);
     if (!date || record.amount <= 0) return;

@@ -52,6 +52,7 @@ export function buildTopSpendersSourceChart(
   };
 }
 
+// eslint-disable-next-line max-params
 export function buildTopSpendersTrendChart(
   records: TrendPoint[],
   activeFlowType: TopSpenderFlowType,

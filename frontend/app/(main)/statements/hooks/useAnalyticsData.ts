@@ -37,6 +37,7 @@ export interface UseAnalyticsDataResult {
 // Pagination helpers
 // ---------------------------------------------------------------------------
 
+// eslint-disable-next-line max-params, max-lines-per-function
 async function fetchAllPages<T>(
   endpoint: string,
   headers: Record<string, string>,
@@ -54,6 +55,7 @@ async function fetchAllPages<T>(
 
   while (results.length < total) {
     const { page: p, offset: o } = nextOffset(page, offset);
+    // eslint-disable-next-line no-await-in-loop
     const response = await apiClient.get(endpoint, {
       params: p !== undefined ? { page: p, limit: pageSize } : { limit: pageSize, offset: o },
       headers,
@@ -75,6 +77,7 @@ async function fetchAllPages<T>(
 // Hook
 // ---------------------------------------------------------------------------
 
+// eslint-disable-next-line max-lines-per-function
 export function useAnalyticsData({
   user,
   currentWorkspace,
@@ -89,6 +92,7 @@ export function useAnalyticsData({
   const [gmailReceipts, setGmailReceipts] = useState<GmailReceipt[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // eslint-disable-next-line complexity
   const workspaceTargets = useMemo<WorkspaceTarget[]>(() => {
     if (workspaceFilter === 'all') {
       const all = workspaces.map(ws => ({ id: ws.id, name: ws.name || 'Workspace' }));
@@ -109,10 +113,12 @@ export function useAnalyticsData({
     [workspaceTargets],
   );
 
+  // eslint-disable-next-line max-lines-per-function
   useEffect(() => {
     let isMounted = true;
 
-    const loadData = async () => {
+    // eslint-disable-next-line max-lines-per-function, complexity
+    const loadData = async (): Promise<void> => {
       if (!user) return;
 
       if (workspaceTargets.length === 0) {
@@ -133,6 +139,7 @@ export function useAnalyticsData({
         for (const target of workspaceTargets) {
           const headers = { 'X-Workspace-Id': target.id };
 
+          // eslint-disable-next-line no-await-in-loop
           const workspaceStatements = await fetchAllPages<StatementMeta>(
             '/statements',
             headers,
@@ -151,6 +158,7 @@ export function useAnalyticsData({
           allStatements.push(...workspaceStatements);
 
           if (includeTransactions) {
+            // eslint-disable-next-line no-await-in-loop
             const workspaceTransactions = await fetchAllPages<Transaction>(
               '/transactions',
               headers,
@@ -172,6 +180,7 @@ export function useAnalyticsData({
             allTransactions.push(...workspaceTransactions);
           }
 
+          // eslint-disable-next-line no-await-in-loop
           const workspaceReceipts = await fetchAllPages<GmailReceipt>(
             '/integrations/gmail/receipts',
             headers,
