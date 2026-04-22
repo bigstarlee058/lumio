@@ -29,6 +29,7 @@ export interface DashboardCashFlowPoint {
 
 export interface DashboardRecentActivity {
   id: string;
+  entityId?: string;
   type: 'statement_upload' | 'payment' | 'categorization' | 'transaction';
   title: string;
   description: string | null;

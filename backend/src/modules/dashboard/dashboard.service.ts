@@ -421,6 +421,7 @@ export class DashboardService {
 
       return {
         id: event.id,
+        entityId: event.entityId,
         type,
         title:
           (meta?.fileName as string) ||
@@ -468,6 +469,7 @@ export class DashboardService {
     for (const stmt of recentStatements) {
       activities.push({
         id: stmt.id,
+        entityId: stmt.id,
         type: 'statement_upload',
         title: stmt.fileName,
         description: `${stmt.totalTransactions} transactions · ${stmt.status}`,
