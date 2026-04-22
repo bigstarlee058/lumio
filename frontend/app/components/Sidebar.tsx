@@ -17,7 +17,7 @@ function WorkspaceSwitcher() {
   if (!currentWorkspace) return null;
 
   const initials = (currentWorkspace.name ?? '?').slice(0, 1).toUpperCase();
-  const color = currentWorkspace.color ?? '#4f46e5';
+  const color = currentWorkspace.color ?? '#168118';
   const role = currentWorkspace.memberRole;
 
   return (
@@ -58,7 +58,7 @@ function WorkspaceSwitcher() {
             >
               <div
                 className="lumio-sidebar__ws-chip"
-                style={{ background: ws.color ?? '#4f46e5' }}
+                style={{ background: ws.color ?? '#168118' }}
               >
                 {(ws.name ?? '?').slice(0, 1).toUpperCase()}
               </div>
@@ -79,7 +79,7 @@ type SidebarProps = {
 export function SidebarContent({ onNavClick }: SidebarProps) {
   const pathname = usePathname();
   const { hasPermission } = usePermissions();
-  const { nav } = useIntlayer('navigation');
+  const { nav, supportProject } = useIntlayer('navigation');
 
   const navItems = buildNavItems(nav as Parameters<typeof buildNavItems>[0]);
   const visibleNavItems = navItems.filter(item => hasPermission(item.permission));
@@ -133,17 +133,39 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
         })}
       </nav>
 
-      {/* Footer */}
       <div className="lumio-sidebar__footer">
-        <div className="lumio-sidebar__storage">
-          <div className="lumio-sidebar__storage-head">
-            <span className="lumio-sidebar__storage-label">Storage</span>
-            <span className="lumio-sidebar__storage-value">— / —</span>
-          </div>
-          <div className="lumio-sidebar__storage-bar">
-            <div className="lumio-sidebar__storage-fill" style={{ width: '0%' }} />
-          </div>
-        </div>
+        <a
+          href="https://github.com/sponsors/symonbaikov"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            width: '100%',
+            padding: '10px 14px',
+            borderRadius: 'var(--lumio-radius-md)',
+            background: 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)',
+            border: '1px solid rgba(5,150,105,0.25)',
+            color: 'var(--primary)',
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: 'none',
+            cursor: 'pointer',
+            transition: 'background 0.2s, border-color 0.2s',
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.22) 0%, rgba(8,145,178,0.22) 100%)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.45)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)';
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.25)';
+          }}
+        >
+          <span style={{ fontSize: 16 }}>💚</span>
+          {(supportProject as { value?: string })?.value ?? 'Support the project'}
+        </a>
       </div>
     </>
   );

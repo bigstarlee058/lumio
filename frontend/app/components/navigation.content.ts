@@ -281,6 +281,11 @@ const content = {
         },
       },
     },
+    supportProject: t({
+      ru: 'Поддержать проект',
+      en: 'Support the project',
+      kk: 'Жобаны қолдау',
+    }),
     languages: {
       ru: t({ ru: 'Русский', en: 'Русский', kk: 'Русский' }),
       en: t({ ru: 'English', en: 'English', kk: 'English' }),
