@@ -280,7 +280,7 @@ function TagEditRow({
             aria-label={tagColorLabel}
             sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', p: 0.5 }}
           >
-            <Box sx={{ width: 16, height: 16, borderRadius: 'var(--lumio-radius-full)', bgcolor: editingTagColor ?? '#4f46e5' }} />
+            <Box sx={{ width: 16, height: 16, borderRadius: 'var(--lumio-radius-full)', bgcolor: editingTagColor ?? '#168118' }} />
           </IconButton>
           <Popover
             open={editingTagPickerId === tag.id}
@@ -290,7 +290,7 @@ function TagEditRow({
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             slotProps={colorPickerPopoverSlotProps}
           >
-            <HexColorPicker color={editingTagColor ?? '#4f46e5'} onChange={onSetEditingTagColor} />
+            <HexColorPicker color={editingTagColor ?? '#168118'} onChange={onSetEditingTagColor} />
           </Popover>
         </Box>
         <IconButton

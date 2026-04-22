@@ -43,7 +43,7 @@ export function NewFolderInput({ newFolderName, folderCreatePlaceholder, folderC
         <AddFolderButton disabled={!newFolderName.trim()} onClick={onCreateFolder} title={folderCreateTooltip} />
       </Box>
       {draggingFile && (
-        <Typography style={{ fontSize: 12, color: 'var(--color-primary, #4f46e5)' }}>
+        <Typography style={{ fontSize: 12, color: 'var(--color-primary, #168118)' }}>
           {dragDropSubtitleLabel}
         </Typography>
       )}

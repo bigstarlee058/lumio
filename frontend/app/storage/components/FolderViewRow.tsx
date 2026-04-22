@@ -29,7 +29,7 @@ const dragBtnSx = {
   px: 1, py: 0.5, fontSize: 12, fontWeight: 500, color: '#9ca3af',
   border: 'none', bgcolor: 'transparent', cursor: 'pointer', opacity: 0,
   '.group:hover &': { opacity: 1 },
-  '&:hover': { color: 'primary.main', bgcolor: 'rgba(79,70,229,0.05)' },
+  '&:hover': { color: 'primary.main', bgcolor: 'rgba(22,129,24,0.05)' },
 };
 const menuBtnSx = { color: '#9ca3af', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: '#f3f4f6' } };
 const nameSx: React.CSSProperties = {

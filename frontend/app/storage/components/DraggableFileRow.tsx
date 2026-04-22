@@ -283,9 +283,9 @@ export const DraggableFileRow = React.memo(
               borderRadius: 'var(--lumio-radius-sm)',
               fontSize: 12,
               fontWeight: 600,
-              bgcolor: file.isOwner ? '#f3f4f6' : '#eef2ff',
-              color: file.isOwner ? '#1f2937' : '#4338ca',
-              border: `1px solid ${file.isOwner ? '#e5e7eb' : '#c7d2fe'}`,
+              bgcolor: file.isOwner ? '#f3f4f6' : '#edf7ed',
+              color: file.isOwner ? '#1f2937' : '#157811',
+              border: `1px solid ${file.isOwner ? '#e5e7eb' : '#a8d5a8'}`,
             }}
           />
         </td>

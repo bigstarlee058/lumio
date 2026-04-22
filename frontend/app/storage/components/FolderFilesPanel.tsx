@@ -63,7 +63,7 @@ function FilePanelHeader({ activeFolderLabel, modalsFilesLabel, folderModalFiles
         <Typography style={{ fontSize: 12, color: '#6b7280' }}>{modalsFilesLabel} · {folderModalFiles.length}</Typography>
       </Box>
       {draggingFile && (
-        <Typography style={{ fontSize: 12, color: 'var(--color-primary, #4f46e5)' }}>{dragDropTitleLabel}</Typography>
+        <Typography style={{ fontSize: 12, color: 'var(--color-primary, #168118)' }}>{dragDropTitleLabel}</Typography>
       )}
     </Box>
   );

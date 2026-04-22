@@ -56,7 +56,7 @@ function FolderListHeader({ folderListTitleLabel, pickedFolderId, scrollHintLabe
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{folderListTitleLabel}</Typography>
         {pickedFolderId && (
-          <Typography style={{ marginTop: 2, fontSize: 12, fontWeight: 700, color: 'var(--color-primary, #4f46e5)', letterSpacing: '-0.025em' }}>
+          <Typography style={{ marginTop: 2, fontSize: 12, fontWeight: 700, color: 'var(--color-primary, #168118)', letterSpacing: '-0.025em' }}>
             {scrollHintLabel}
           </Typography>
         )}
@@ -98,9 +98,9 @@ function FolderListBody(props: FolderListProps): React.JSX.Element {
     <Box sx={{ mt: 1.5, px: 0.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxHeight: '45vh', overflowY: 'auto' }}>
       <Box component="button" type="button" onClick={() => onSetActiveFolderId('')} sx={{
         ...allBtnBaseSx,
-        bgcolor: isAllActive ? 'rgba(79,70,229,0.1)' : 'transparent',
+        bgcolor: isAllActive ? 'rgba(22,129,24,0.1)' : 'transparent',
         color: isAllActive ? 'primary.main' : '#374151',
-        borderColor: isAllActive ? 'rgba(79,70,229,0.4)' : '#f3f4f6',
+        borderColor: isAllActive ? 'rgba(22,129,24,0.4)' : '#f3f4f6',
       }}>
         <Box component="span">{foldersAllLabel}</Box>
         <Typography style={{ fontSize: 12, color: '#6b7280' }}>{files.length}</Typography>
@@ -108,8 +108,8 @@ function FolderListBody(props: FolderListProps): React.JSX.Element {
       <DroppableFolderButton isNoFolder active={isNoFolderActive} onClick={() => onSetActiveFolderId(NO_FOLDER)}
         style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
           padding: '12px 16px', fontSize: 14, fontWeight: 500, cursor: 'pointer',
-          background: isNoFolderActive ? 'rgba(79,70,229,0.05)' : 'transparent',
-          color: isNoFolderActive ? '#4f46e5' : '#374151', border: 'none' }}>
+          background: isNoFolderActive ? 'rgba(22,129,24,0.05)' : 'transparent',
+          color: isNoFolderActive ? '#168118' : '#374151', border: 'none' }}>
         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box component="span">{foldersNoneLabel}</Box>
           <Typography style={{ fontSize: 12, color: '#6b7280' }}>{folderCounts.noFolder}</Typography>

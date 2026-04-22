@@ -18,7 +18,7 @@ export interface ColorPickerState {
 }
 
 export function useStorageColorPicker(): ColorPickerState {
-  const [newTagColor, setNewTagColor] = useState('#4f46e5');
+  const [newTagColor, setNewTagColor] = useState('#168118');
   const [newTagPickerOpen, setNewTagPickerOpen] = useState(false);
   const [newTagAnchorEl, setNewTagAnchorEl] = useState<HTMLElement | null>(null);
   const [editingTagPickerId, setEditingTagPickerId] = useState<string | null>(null);

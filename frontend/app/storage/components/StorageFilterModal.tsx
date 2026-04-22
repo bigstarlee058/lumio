@@ -234,7 +234,7 @@ function SavedViewsPanel({
     <Box sx={{ width: { xs: '100%', md: 320 }, borderLeft: '1px solid #f3f4f6', bgcolor: '#f9fafb', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 3, flex: 1, overflowY: 'auto' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <Bookmark style={{ width: 16, height: 16, color: '#4f46e5' }} />
+          <Bookmark style={{ width: 16, height: 16, color: '#168118' }} />
           <Typography style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{viewCreateTitle}</Typography>
         </Box>
         <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
@@ -290,7 +290,7 @@ interface ViewItemProps {
 function ViewItem({ view, activeViewId, viewDeleteLabel, onDeleteView, onApplyView }: ViewItemProps): React.JSX.Element {
   const isActive = activeViewId === view.id;
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, border: '1px solid', borderColor: isActive ? 'rgba(79,70,229,0.3)' : '#e5e7eb', bgcolor: isActive ? 'rgba(79,70,229,0.05)' : '#fff', px: 1.5, py: 1.25, '&:hover .view-delete-btn': { opacity: 1 } }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, border: '1px solid', borderColor: isActive ? 'rgba(22,129,24,0.3)' : '#e5e7eb', bgcolor: isActive ? 'rgba(22,129,24,0.05)' : '#fff', px: 1.5, py: 1.25, '&:hover .view-delete-btn': { opacity: 1 } }}>
       <Box component="button" type="button" onClick={() => onApplyView(view)} sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flex: 1, fontSize: 14, fontWeight: 500, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
         {isActive && <Box sx={{ width: 6, height: 6, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'primary.main', flexShrink: 0 }} />}
         <Typography style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{view.name}</Typography>

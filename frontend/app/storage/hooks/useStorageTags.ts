@@ -60,7 +60,7 @@ export function useStorageTags(
 ): UseStorageTagsReturn {
   const [tags, setTags] = useState<TagOption[]>([]);
   const [newTagName, setNewTagName] = useState('');
-  const [newTagColor, setNewTagColor] = useState('#4f46e5');
+  const [newTagColor, setNewTagColor] = useState('#168118');
   const [editingTagId, setEditingTagId] = useState<string | null>(null);
   const [editingTagName, setEditingTagName] = useState('');
   const [editingTagColor, setEditingTagColor] = useState<string | null>(null);
@@ -102,7 +102,7 @@ export function useStorageTags(
   const handleStartEditTag = (tag: TagOption): void => {
     setEditingTagId(tag.id);
     setEditingTagName(tag.name);
-    setEditingTagColor(tag.color ?? '#4f46e5');
+    setEditingTagColor(tag.color ?? '#168118');
     setEditingTagPickerId(null);
   };
 

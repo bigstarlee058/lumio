@@ -448,7 +448,7 @@ export default function FileDetailsPage() {
               <Chip
                 label={getBankDisplayName(statement.bankName)}
                 size="small"
-                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main', border: '1px solid rgba(79,70,229,0.2)' }}
+                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main', border: '1px solid rgba(22,129,24,0.2)' }}
               />
               <Chip
                 label={getStatusLabel(statement.status)}
@@ -544,7 +544,7 @@ export default function FileDetailsPage() {
         <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: '#111827' }}>
-              <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #4f46e5)' }} />
+              <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #168118)' }} />
               <Typography style={{ fontWeight: 600, color: '#111827' }}>{t.preview.title}</Typography>
             </Box>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>

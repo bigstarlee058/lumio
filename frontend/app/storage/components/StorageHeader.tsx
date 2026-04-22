@@ -85,7 +85,7 @@ export function StorageHeader({
     >
       <Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-          <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(79,70,229,0.1)', color: 'primary.main' }}>
+          <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main' }}>
             <Folder style={{ width: 24, height: 24 }} />
           </Box>
           <Typography component="h1" style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>
@@ -173,7 +173,7 @@ function StorageTabButtons({
               title={typeof foldersTitleLabel === 'string' ? foldersTitleLabel : undefined}
               sx={{
                 ...listToggleSx(isFolderActive),
-                ...(draggingFile ? { outline: '2px solid rgba(79,70,229,0.3)', outlineOffset: 2 } : {}),
+                ...(draggingFile ? { outline: '2px solid rgba(22,129,24,0.3)', outlineOffset: 2 } : {}),
               }}
             >
               <Folder style={{ width: 16, height: 16 }} />

@@ -41,11 +41,11 @@ const baseButtonStyle: React.CSSProperties = {
   padding: '12px 16px', border: '1px solid',
 };
 const pickedButtonStyle: React.CSSProperties = {
-  ...baseButtonStyle, borderColor: '#4f46e5', background: 'rgba(79,70,229,0.05)',
+  ...baseButtonStyle, borderColor: '#168118', background: 'rgba(22,129,24,0.05)',
   cursor: 'ns-resize', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 10,
 };
 const activeButtonStyle: React.CSSProperties = {
-  ...baseButtonStyle, borderColor: 'rgba(79,70,229,0.3)', background: 'rgba(79,70,229,0.05)',
+  ...baseButtonStyle, borderColor: 'rgba(22,129,24,0.3)', background: 'rgba(22,129,24,0.05)',
   cursor: 'pointer', boxShadow: 'none',
 };
 const inactiveButtonStyle: React.CSSProperties = {
