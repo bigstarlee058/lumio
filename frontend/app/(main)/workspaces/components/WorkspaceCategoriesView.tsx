@@ -391,7 +391,7 @@ export default function WorkspaceCategoriesView() {
                 width: 44,
                 height: 44,
                 borderRadius: 'var(--lumio-radius-sm)',
-                bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)',
+                bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                 color: 'var(--primary)',
                 flexShrink: 0,
               }}
@@ -496,7 +496,7 @@ export default function WorkspaceCategoriesView() {
         </Box>
 
         {/* Info banner */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,99,102,241),0.1)', px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
           Disabling a category will hide it from statements and reports.
         </Box>
 
@@ -676,8 +676,8 @@ export default function WorkspaceCategoriesView() {
                             width: 24,
                             height: 24,
                             borderRadius: 'var(--lumio-radius-full)',
-                            background: 'var(--card)',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                            background: 'white',
+                            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
                             transition: 'transform 0.2s',
                             transform: isEnabled ? 'translateX(28px)' : 'translateX(4px)',
                           }}
