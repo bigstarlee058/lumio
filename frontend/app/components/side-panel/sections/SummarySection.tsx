@@ -1,0 +1,114 @@
+'use client';
+
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
+import React, { useMemo } from 'react';
+import type { SummaryItem, SummarySection } from '../types';
+import { RenderIcon } from './components/RenderIcon';
+import { SectionWrapper } from './components/SectionWrapper';
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
+export function SummaryItemComponent({ item }: { item: SummaryItem }) {
+  // eslint-disable-next-line complexity
+  const formattedValue = useMemo(() => {
+    if (typeof item.value === 'string') return item.value;
+
+    let formatted: string;
+    switch (item.format) {
+      case 'currency':
+        formatted = new Intl.NumberFormat('ru-RU', {
+          style: 'currency',
+          currency: 'KZT',
+          minimumFractionDigits: 0,
+        }).format(item.value);
+        break;
+      case 'percentage':
+        formatted = `${item.value}%`;
+        break;
+      case 'number':
+        formatted = new Intl.NumberFormat('ru-RU').format(item.value);
+        break;
+      default:
+        formatted = String(item.value);
+    }
+
+    return `${item.prefix || ''}${formatted}${item.suffix || ''}`;
+  }, [item]);
+
+  return (
+    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: 'var(--lumio-radius-lg)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p
+            style={{
+              fontSize: 12,
+              color: '#6b7280',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              margin: 0,
+            }}
+          >
+            {item.label}
+          </p>
+          <p style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginTop: 4, marginBottom: 0 }}>
+            {formattedValue}
+          </p>
+          {item.change && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+              {item.change.type === 'increase' && <ArrowUp size={12} style={{ color: '#10b981' }} />}
+              {item.change.type === 'decrease' && <ArrowDown size={12} style={{ color: '#ef4444' }} />}
+              {item.change.type === 'neutral' && <Minus size={12} style={{ color: '#9ca3af' }} />}
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color:
+                    item.change.type === 'increase'
+                      ? '#059669'
+                      : item.change.type === 'decrease'
+                        ? '#dc2626'
+                        : '#6b7280',
+                }}
+              >
+                {item.change.value > 0 ? '+' : ''}
+                {item.change.value}%
+              </span>
+              {item.change.period && (
+                <span style={{ fontSize: 12, color: '#9ca3af' }}>{item.change.period}</span>
+              )}
+            </div>
+          )}
+        </div>
+        {item.icon && (
+          <div style={{ padding: 8, borderRadius: 'var(--lumio-radius-sm)', backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
+            <RenderIcon icon={item.icon} size={16} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
+export function SummarySectionRenderer({ section }: { section: SummarySection }) {
+  const gridStyle = useMemo((): React.CSSProperties => {
+    if (section.layout === 'list') {
+      return { display: 'flex', flexDirection: 'column', gap: 8 };
+    }
+    return {
+      display: 'grid',
+      gap: 8,
+      gridTemplateColumns: `repeat(${section.columns || 2}, 1fr)`,
+    };
+  }, [section.layout, section.columns]);
+
+  return (
+    <SectionWrapper section={section}>
+      <div style={gridStyle}>
+        {section.items.map(item => (
+          <SummaryItemComponent key={item.id} item={item} />
+        ))}
+      </div>
+    </SectionWrapper>
+  );
+}

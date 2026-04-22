@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { Copy, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import api from '../lib/api';
 
 interface SharedLink {
@@ -38,159 +37,156 @@ interface ShareDialogProps {
   onLinksUpdate: () => void;
 }
 
-const resolveDateLocale = (locale: string) => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
-  return 'en-US';
-};
+const DATE_LOCALE_MAP: Record<string, string> = { ru: 'ru-RU', kk: 'kk-KZ' };
+
+function resolveDateLocale(locale: string): string {
+  return DATE_LOCALE_MAP[locale] ?? 'en-US';
+}
+
+interface LinkPrimaryProps {
+  link: SharedLink;
+  untilPrefix: string;
+  formatDate: (d: string) => string;
+  permissionLabel: React.ReactNode;
+  statusLabel: React.ReactNode;
+}
+
+function LinkPrimary({ link, untilPrefix, formatDate, permissionLabel, statusLabel }: LinkPrimaryProps): React.JSX.Element {
+  return (
+    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
+      <Chip label={permissionLabel} size="small" color="primary" />
+      <Chip label={statusLabel} size="small" color={link.status === 'active' ? 'success' : 'error'} />
+      {link.expiresAt && <Chip label={`${untilPrefix} ${formatDate(link.expiresAt)}`} size="small" variant="outlined" />}
+    </Box>
+  );
+}
+
+interface LinkRowProps {
+  link: SharedLink;
+  copiedToken: string | null;
+  onCopy: (token: string) => void;
+  onDelete: (id: string) => void;
+  formatDate: (d: string) => string;
+  createdPrefix: string;
+  visitsPrefix: string;
+  untilPrefix: string;
+  copyTitle: string;
+  deleteTitle: string;
+  permissionLabel: React.ReactNode;
+  statusLabel: React.ReactNode;
+}
+
+function LinkRow({ link, copiedToken, onCopy, onDelete, formatDate, createdPrefix, visitsPrefix, untilPrefix, copyTitle, deleteTitle, permissionLabel, statusLabel }: LinkRowProps): React.JSX.Element {
+  return (
+    <ListItem sx={{ border: '1px solid', borderColor: 'divider', mb: 1 }}>
+      <ListItemText
+        primary={<LinkPrimary link={link} untilPrefix={untilPrefix} formatDate={formatDate} permissionLabel={permissionLabel} statusLabel={statusLabel} />}
+        secondary={
+          <Box>
+            {link.description && <Typography variant="body2" color="text.secondary">{link.description}</Typography>}
+            <Typography variant="caption" color="text.secondary">
+              {createdPrefix}: {formatDate(link.createdAt)} • {visitsPrefix}: {link.accessCount}
+            </Typography>
+          </Box>
+        }
+      />
+      <ListItemSecondaryAction>
+        <Tooltip title={copyTitle}>
+          <IconButton edge="end" onClick={() => onCopy(link.token)} color={copiedToken === link.token ? 'success' : 'default'}>
+            <Copy size={18} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={deleteTitle}>
+          <IconButton edge="end" onClick={() => onDelete(link.id)}><Trash2 size={18} /></IconButton>
+        </Tooltip>
+      </ListItemSecondaryAction>
+    </ListItem>
+  );
+}
+
+interface LinkListProps {
+  links: SharedLink[];
+  copiedToken: string | null;
+  onCopy: (token: string) => void;
+  onDelete: (id: string) => void;
+  formatDate: (d: string) => string;
+  t: ReturnType<typeof useIntlayer<'shareDialog'>>;
+  permissionLabels: Record<string, React.ReactNode>;
+  statusLabels: Record<string, React.ReactNode>;
+}
+
+function LinkList({ links, copiedToken, onCopy, onDelete, formatDate, t, permissionLabels, statusLabels }: LinkListProps): React.JSX.Element {
+  return (
+    <List>
+      {links.map(link => (
+        <LinkRow
+          key={link.id}
+          link={link}
+          copiedToken={copiedToken}
+          onCopy={onCopy}
+          onDelete={onDelete}
+          formatDate={formatDate}
+          createdPrefix={t.createdPrefix.value}
+          visitsPrefix={t.visitsPrefix.value}
+          untilPrefix={t.untilPrefix.value}
+          copyTitle={t.tooltips.copy.value}
+          deleteTitle={t.tooltips.delete.value}
+          permissionLabel={permissionLabels[link.permission] ?? link.permission}
+          statusLabel={statusLabels[link.status] ?? link.status}
+        />
+      ))}
+    </List>
+  );
+}
+
+interface CopyArgs { token: string; setCopied: (v: string | null) => void }
+async function copyTokenToClipboard({ token, setCopied }: CopyArgs): Promise<void> {
+  await navigator.clipboard.writeText(`${window.location.origin}/shared/${token}`);
+  setCopied(token);
+  setTimeout(() => setCopied(null), 2000);
+}
+
+interface DeleteArgs { linkId: string; onLinksUpdate: () => void }
+async function deleteLinkById({ linkId, onLinksUpdate }: DeleteArgs): Promise<void> {
+  try {
+    await api.delete(`/storage/shares/${linkId}`);
+    onLinksUpdate();
+  } catch (error) {
+    console.error('Failed to delete shared link:', error);
+  }
+}
 
 /**
  * Dialog for creating and managing shared links
  */
-export default function ShareDialog({
-  open,
-  onClose,
-  fileId,
-  sharedLinks,
-  onLinksUpdate,
-}: ShareDialogProps) {
-  // useLockBodyScroll(open);
+export default function ShareDialog({ sharedLinks, onLinksUpdate }: ShareDialogProps): React.JSX.Element {
   const t = useIntlayer('shareDialog');
   const { locale } = useLocale();
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
-  const handleCopyLink = async (token: string) => {
-    const shareUrl = `${window.location.origin}/shared/${token}`;
-    await navigator.clipboard.writeText(shareUrl);
-    setCopiedToken(token);
-    setTimeout(() => setCopiedToken(null), 2000);
-  };
+  const formatDate = (dateString: string): string =>
+    new Date(dateString).toLocaleDateString(resolveDateLocale(locale), { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const handleDeleteLink = async (linkId: string) => {
-    try {
-      await api.delete(`/storage/shares/${linkId}`);
-      onLinksUpdate();
-    } catch (error) {
-      console.error('Failed to delete shared link:', error);
-    }
-  };
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(resolveDateLocale(locale), {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const getPermissionLabel = (permissionValue: string) => {
-    switch (permissionValue) {
-      case 'view':
-        return t.permissionLabel.view;
-      case 'download':
-        return t.permissionLabel.download;
-      case 'edit':
-        return t.permissionLabel.edit;
-      default:
-        return permissionValue;
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'active':
-        return t.statusLabel.active;
-      case 'expired':
-        return t.statusLabel.expired;
-      default:
-        return status;
-    }
-  };
+  const PERMISSION_LABELS: Record<string, React.ReactNode> = { view: t.permissionLabel.view, download: t.permissionLabel.download, edit: t.permissionLabel.edit };
+  const STATUS_LABELS: Record<string, React.ReactNode> = { active: t.statusLabel.active, expired: t.statusLabel.expired };
 
   return (
     <Box>
-      {/* Existing links */}
       <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t.activeLinks.value} ({sharedLinks.length})
-        </Typography>
-
+        <Typography variant="h6" gutterBottom>{t.activeLinks.value} ({sharedLinks.length})</Typography>
         {sharedLinks.length === 0 ? (
           <Typography color="text.secondary">{t.noLinks}</Typography>
         ) : (
-          <List>
-            {sharedLinks.map(link => (
-              <ListItem
-                key={link.id}
-                sx={{
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  mb: 1,
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        mb: 1,
-                      }}
-                    >
-                      <Chip
-                        label={getPermissionLabel(link.permission)}
-                        size="small"
-                        color="primary"
-                      />
-                      <Chip
-                        label={getStatusLabel(link.status)}
-                        size="small"
-                        color={link.status === 'active' ? 'success' : 'error'}
-                      />
-                      {link.expiresAt && (
-                        <Chip
-                          label={`${t.untilPrefix.value} ${formatDate(link.expiresAt)}`}
-                          size="small"
-                          variant="outlined"
-                        />
-                      )}
-                    </Box>
-                  }
-                  secondary={
-                    <Box>
-                      {link.description && (
-                        <Typography variant="body2" color="text.secondary">
-                          {link.description}
-                        </Typography>
-                      )}
-                      <Typography variant="caption" color="text.secondary">
-                        {t.createdPrefix.value}: {formatDate(link.createdAt)} •{' '}
-                        {t.visitsPrefix.value}: {link.accessCount}
-                      </Typography>
-                    </Box>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <Tooltip title={t.tooltips.copy.value}>
-                    <IconButton
-                      edge="end"
-                      onClick={() => handleCopyLink(link.token)}
-                      color={copiedToken === link.token ? 'success' : 'default'}
-                    >
-                      <Copy size={18} />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title={t.tooltips.delete.value}>
-                    <IconButton edge="end" onClick={() => handleDeleteLink(link.id)}>
-                      <Trash2 size={18} />
-                    </IconButton>
-                  </Tooltip>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
+          <LinkList
+            links={sharedLinks}
+            copiedToken={copiedToken}
+            onCopy={(token) => { void copyTokenToClipboard({ token, setCopied: setCopiedToken }); }}
+            onDelete={(id) => { void deleteLinkById({ linkId: id, onLinksUpdate }); }}
+            formatDate={formatDate}
+            t={t}
+            permissionLabels={PERMISSION_LABELS}
+            statusLabels={STATUS_LABELS}
+          />
         )}
       </Paper>
     </Box>

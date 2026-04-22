@@ -40,70 +40,126 @@ interface WorkspaceContextType {
   clearWorkspace: () => void;
   refreshWorkspaces: () => Promise<void>;
   toggleFavorite: (workspaceId: string) => Promise<void>;
-  updateWorkspaceBackground: (workspaceId: string, backgroundImage: string) => Promise<void>;
+  updateWorkspaceBackground: (params: { workspaceId: string; backgroundImage: string }) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
+type SetState<T> = React.Dispatch<React.SetStateAction<T>>;
+
+interface WorkspaceSetters {
+  setWorkspaces: SetState<Workspace[]>;
+  setCurrentWorkspace: SetState<Workspace | null>;
+  setLoading: SetState<boolean>;
+  setError: SetState<string | null>;
+}
+
+async function fetchAndSetWorkspaces({
+  setWorkspaces,
+  setCurrentWorkspace,
+  setLoading,
+  setError,
+}: WorkspaceSetters): Promise<void> {
+  try {
+    setLoading(true);
+    setError(null);
+    const response = await api.get('/workspaces');
+    const data: Workspace[] = response.data;
+    setWorkspaces(data);
+    const storedId = localStorage.getItem('currentWorkspaceId');
+    const found = storedId ? data.find(w => w.id === storedId) : null;
+    const workspace = found ?? data[0] ?? null;
+    if (workspace) {
+      setCurrentWorkspace(workspace);
+      localStorage.setItem('currentWorkspaceId', workspace.id);
+    }
+  } catch (err) {
+    console.error('Failed to fetch workspaces:', err);
+    setError(getApiErrorMessage(err, 'Failed to load workspaces'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function apiSwitchWorkspace(
+  { workspaceId, refreshWorkspaces }: { workspaceId: string; refreshWorkspaces: () => Promise<void> },
+  workspaces: Workspace[],
+  setters: WorkspaceSetters,
+): Promise<void> {
+  try {
+    setters.setLoading(true);
+    setters.setError(null);
+    await api.post(`/workspaces/${workspaceId}/switch`);
+    const workspace = workspaces.find(w => w.id === workspaceId);
+    if (workspace) {
+      setters.setCurrentWorkspace(workspace);
+      localStorage.setItem('currentWorkspaceId', workspaceId);
+    } else {
+      await refreshWorkspaces();
+    }
+  } catch (err) {
+    setters.setError(getApiErrorMessage(err, 'Failed to switch workspace'));
+    throw err;
+  } finally {
+    setters.setLoading(false);
+  }
+}
+
+async function apiToggleFavorite(
+  { workspaceId }: { workspaceId: string },
+  setters: Pick<WorkspaceSetters, 'setWorkspaces' | 'setCurrentWorkspace'>,
+): Promise<void> {
+  try {
+    const response = await api.patch(`/workspaces/${workspaceId}/favorite`);
+    const isFavorite: boolean = response.data.isFavorite;
+    setters.setWorkspaces(prev => prev.map(w => (w.id === workspaceId ? { ...w, isFavorite } : w)));
+    setters.setCurrentWorkspace(prev => (prev?.id === workspaceId ? { ...prev, isFavorite } : prev));
+  } catch (err) {
+    console.error('Failed to toggle favorite:', err);
+    throw err;
+  }
+}
+
+async function apiUpdateBackground(
+  { workspaceId, backgroundImage }: { workspaceId: string; backgroundImage: string },
+  setters: Pick<WorkspaceSetters, 'setWorkspaces' | 'setCurrentWorkspace'>,
+): Promise<void> {
+  try {
+    await api.patch(`/workspaces/${workspaceId}`, { backgroundImage });
+    setters.setWorkspaces(prev =>
+      prev.map(w => (w.id === workspaceId ? { ...w, backgroundImage } : w)),
+    );
+    setters.setCurrentWorkspace(prev =>
+      prev?.id === workspaceId ? { ...prev, backgroundImage } : prev,
+    );
+  } catch (err) {
+    console.error('Failed to update background:', err);
+    throw err;
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace | null>(null);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshWorkspaces = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get('/workspaces');
-      setWorkspaces(response.data);
+  const setters: WorkspaceSetters = { setWorkspaces, setCurrentWorkspace, setLoading, setError };
+  const miniSetters = { setWorkspaces, setCurrentWorkspace };
 
-      // Get current workspace from localStorage or use the first one
-      const storedWorkspaceId = localStorage.getItem('currentWorkspaceId');
-      if (storedWorkspaceId) {
-        const workspace = response.data.find((w: Workspace) => w.id === storedWorkspaceId);
-        if (workspace) {
-          setCurrentWorkspace(workspace);
-        } else if (response.data.length > 0) {
-          setCurrentWorkspace(response.data[0]);
-          localStorage.setItem('currentWorkspaceId', response.data[0].id);
-        }
-      } else if (response.data.length > 0) {
-        setCurrentWorkspace(response.data[0]);
-        localStorage.setItem('currentWorkspaceId', response.data[0].id);
-      }
-    } catch (err) {
-      console.error('Failed to fetch workspaces:', err);
-      setError(getApiErrorMessage(err, 'Failed to load workspaces'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const refreshWorkspaces = useCallback(
+    async () => fetchAndSetWorkspaces(setters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const switchWorkspace = useCallback(
-    async (workspaceId: string) => {
-      try {
-        setLoading(true);
-        setError(null);
-        await api.post(`/workspaces/${workspaceId}/switch`);
-
-        const workspace = workspaces.find(w => w.id === workspaceId);
-        if (workspace) {
-          setCurrentWorkspace(workspace);
-          localStorage.setItem('currentWorkspaceId', workspaceId);
-        } else {
-          await refreshWorkspaces();
-        }
-      } catch (err) {
-        console.error('Failed to switch workspace:', err);
-        setError(getApiErrorMessage(err, 'Failed to switch workspace'));
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
+    async (workspaceId: string) =>
+      apiSwitchWorkspace({ workspaceId, refreshWorkspaces }, workspaces, setters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [workspaces, refreshWorkspaces],
   );
 
@@ -113,47 +169,22 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const toggleFavorite = useCallback(
-    async (workspaceId: string) => {
-      try {
-        const response = await api.patch(`/workspaces/${workspaceId}/favorite`);
-        const updatedWorkspaces = workspaces.map(w =>
-          w.id === workspaceId ? { ...w, isFavorite: response.data.isFavorite } : w,
-        );
-        setWorkspaces(updatedWorkspaces);
-        if (currentWorkspace?.id === workspaceId) {
-          setCurrentWorkspace({ ...currentWorkspace, isFavorite: response.data.isFavorite });
-        }
-      } catch (err) {
-        console.error('Failed to toggle favorite:', err);
-        throw err;
-      }
-    },
-    [workspaces, currentWorkspace],
+    async (workspaceId: string) => apiToggleFavorite({ workspaceId }, miniSetters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const updateWorkspaceBackground = useCallback(
-    async (workspaceId: string, backgroundImage: string) => {
-      try {
-        await api.patch(`/workspaces/${workspaceId}`, { backgroundImage });
-        const updatedWorkspaces = workspaces.map(w =>
-          w.id === workspaceId ? { ...w, backgroundImage } : w,
-        );
-        setWorkspaces(updatedWorkspaces);
-        if (currentWorkspace?.id === workspaceId) {
-          setCurrentWorkspace({ ...currentWorkspace, backgroundImage });
-        }
-      } catch (err) {
-        console.error('Failed to update background:', err);
-        throw err;
-      }
-    },
-    [workspaces, currentWorkspace],
+    async (params: { workspaceId: string; backgroundImage: string }) =>
+      apiUpdateBackground(params, miniSetters),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
     if (token) {
-      refreshWorkspaces();
+      void refreshWorkspaces();
     } else {
       setCurrentWorkspace(null);
       setWorkspaces([]);
@@ -177,7 +208,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
 }
 
-export function useWorkspace() {
+export function useWorkspace(): WorkspaceContextType {
   const context = useContext(WorkspaceContext);
   if (context === undefined) {
     throw new Error('useWorkspace must be used within a WorkspaceProvider');

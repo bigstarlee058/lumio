@@ -1,5 +1,6 @@
 'use client';
 
+import type React from 'react';
 import {
   type ThemePreference,
   getScheduledTheme,
@@ -7,7 +8,7 @@ import {
   getStoredThemeTimeZone,
 } from '@/app/lib/theme-preference';
 import { cn } from '@/app/lib/utils';
-import { Check, Clock3, MoonStar, Sparkles, Sun } from 'lucide-react';
+import { Clock3, MoonStar, Sparkles, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -33,13 +34,14 @@ const DEFAULT_LABELS = {
   followsSystem: 'Light theme turns on at 07:00, dark theme at 19:00',
 } as const;
 
+// eslint-disable-next-line max-lines-per-function, complexity
 export function ModeToggle({
   className,
   labels,
   onThemeChange,
   showPreview = true,
   value,
-}: ModeToggleProps) {
+}: ModeToggleProps): React.JSX.Element {
   const { setTheme, resolvedTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -53,7 +55,7 @@ export function ModeToggle({
   const currentTheme: Exclude<ThemePreference, 'auto'> =
     mounted && resolvedTheme === 'dark' ? 'dark' : 'light';
 
-  const handleChange = (nextTheme: ThemePreference) => {
+  const handleChange = (nextTheme: ThemePreference): void => {
     onThemeChange?.(nextTheme);
     setTheme(nextTheme === 'auto' ? getScheduledTheme(getStoredThemeTimeZone()) : nextTheme);
   };

@@ -44,6 +44,11 @@ const content = {
         en: 'Reports',
         kk: 'Есептер',
       }),
+      activityLog: t({
+        ru: 'Журнал активности',
+        en: 'Activity log',
+        kk: 'Белсенділік журналы',
+      }),
       categories: t({
         ru: 'Категории',
         en: 'Categories',

@@ -30,19 +30,12 @@ import {
 } from '@mui/material';
 import { Pencil, Trash2, UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
-import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import api from '../lib/api';
 
 interface Permission {
   id: string;
-  user: {
-    id: string;
-    email: string;
-  };
-  grantedBy: {
-    id: string;
-    email: string;
-  };
+  user: { id: string; email: string };
+  grantedBy: { id: string; email: string };
   permissionType: string;
   canReshare: boolean;
   expiresAt: string | null;
@@ -56,29 +49,128 @@ interface PermissionsPanelProps {
   onPermissionsUpdate: () => void;
 }
 
-const getApiMessage = (error: unknown, fallback: string) => {
+interface GetApiMessageArgs { error: unknown; fallback: string }
+// eslint-disable-next-line complexity
+function getApiMessage({ error, fallback }: GetApiMessageArgs): string {
   if (!error || typeof error !== 'object') return fallback;
   const response = (error as { response?: { data?: { error?: { message?: string } } } }).response;
-  return response?.data?.error?.message || fallback;
+  return response?.data?.error?.message ?? fallback;
+}
+
+const PERMISSION_COLOR_MAP: Record<string, 'success' | 'primary' | 'default' | 'info'> = {
+  owner: 'success',
+  editor: 'primary',
+  viewer: 'default',
+  downloader: 'info',
 };
+
+type IntlayerT = ReturnType<typeof useIntlayer<'permissionsPanel'>>;
+
+function getPermissionColor(type: string): 'success' | 'primary' | 'default' | 'info' {
+  return PERMISSION_COLOR_MAP[type] ?? 'default';
+}
+
+interface PermTableProps {
+  permissions: Permission[];
+  t: IntlayerT;
+  formatDate: (d: string) => string;
+  onEdit: (p: Permission) => void;
+  onRevoke: (id: string) => void;
+}
+
+interface PermRowProps {
+  permission: Permission;
+  labelMap: Record<string, string>;
+  t: IntlayerT;
+  formatDate: (d: string) => string;
+  onEdit: (p: Permission) => void;
+  onRevoke: (id: string) => void;
+}
+
+function PermRow({ permission, labelMap, t, formatDate, onEdit, onRevoke }: PermRowProps): React.JSX.Element {
+  return (
+    <TableRow key={permission.id}>
+      <TableCell>{permission.user.email}</TableCell>
+      <TableCell>
+        <Chip label={labelMap[permission.permissionType] ?? permission.permissionType} size="small" color={getPermissionColor(permission.permissionType)} />
+      </TableCell>
+      <TableCell>
+        <Chip label={permission.canReshare ? t.values.yes : t.values.no} size="small" color={permission.canReshare ? 'success' : 'default'} variant="outlined" />
+      </TableCell>
+      <TableCell>
+        {permission.expiresAt ? <Chip label={formatDate(permission.expiresAt)} size="small" variant="outlined" /> : t.values.forever}
+      </TableCell>
+      <TableCell>{permission.grantedBy.email}</TableCell>
+      <TableCell>{formatDate(permission.createdAt)}</TableCell>
+      <TableCell align="center">
+        <Tooltip title={t.tooltips.edit.value}><IconButton size="small" onClick={() => onEdit(permission)}><Pencil size={16} /></IconButton></Tooltip>
+        <Tooltip title={t.tooltips.revoke.value}><IconButton size="small" onClick={() => onRevoke(permission.id)}><Trash2 size={16} /></IconButton></Tooltip>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function PermTable({ permissions, t, formatDate, onEdit, onRevoke }: PermTableProps): React.JSX.Element {
+  const labelMap: Record<string, string> = { owner: t.permission.owner.value, editor: t.permission.editor.value, viewer: t.permission.viewer.value, downloader: t.permission.downloader.value };
+  return (
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>{t.table.user}</TableCell><TableCell>{t.table.rights}</TableCell>
+            <TableCell>{t.table.canReshare}</TableCell><TableCell>{t.table.expires}</TableCell>
+            <TableCell>{t.table.grantedBy}</TableCell><TableCell>{t.table.createdAt}</TableCell>
+            <TableCell align="center">{t.table.actions}</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {permissions.map(permission => (
+            <PermRow key={permission.id} permission={permission} labelMap={labelMap} t={t} formatDate={formatDate} onEdit={onEdit} onRevoke={onRevoke} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+}
+
+interface PermFormProps {
+  permissionType: string;
+  setPermissionType: (v: string) => void;
+  canReshare: boolean;
+  setCanReshare: (v: boolean) => void;
+  expiresAt: string;
+  setExpiresAt: (v: string) => void;
+  error: string | null;
+  t: IntlayerT;
+}
+
+function PermFormFields({ permissionType, setPermissionType, canReshare, setCanReshare, expiresAt, setExpiresAt, error, t }: PermFormProps): React.JSX.Element {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+      {error && <Alert severity="error">{error}</Alert>}
+      <FormControl fullWidth>
+        <InputLabel>{t.dialogs.accessLevel}</InputLabel>
+        <Select value={permissionType} label={t.dialogs.accessLevel.value} onChange={e => setPermissionType(e.target.value)}>
+          <MenuItem value="viewer">{t.permission.viewer}</MenuItem>
+          <MenuItem value="downloader">{t.permission.viewDownloadLong}</MenuItem>
+          <MenuItem value="editor">{t.permission.editorLong}</MenuItem>
+        </Select>
+      </FormControl>
+      <TextField fullWidth label={t.dialogs.expiresAt.value} type="datetime-local" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} InputLabelProps={{ shrink: true }} />
+      <FormControlLabel control={<Switch checked={canReshare} onChange={e => setCanReshare(e.target.checked)} />} label={t.dialogs.reshare.value} />
+    </Box>
+  );
+}
 
 /**
  * Panel for managing file permissions and access control
  */
-export default function PermissionsPanel({
-  fileId,
-  permissions,
-  onPermissionsUpdate,
-}: PermissionsPanelProps) {
+export default function PermissionsPanel({ fileId, permissions, onPermissionsUpdate }: PermissionsPanelProps): React.JSX.Element {
   const t = useIntlayer('permissionsPanel');
   const { locale } = useLocale();
   const [grantDialogOpen, setGrantDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-
-  // useLockBodyScroll(grantDialogOpen || editDialogOpen);
   const [selectedPermission, setSelectedPermission] = useState<Permission | null>(null);
-
-  // Grant form state
   const [userEmail, setUserEmail] = useState('');
   const [permissionType, setPermissionType] = useState('viewer');
   const [canReshare, setCanReshare] = useState(false);
@@ -86,318 +178,84 @@ export default function PermissionsPanel({
   const [granting, setGranting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGrantPermission = async () => {
+  const handleGrantPermission = async (): Promise<void> => {
     try {
       setGranting(true);
       setError(null);
-
-      // First, find user by email (you may need to add an endpoint for this)
-      // For now, we'll assume you have the userId
-      // In production, you'd want to add a user search endpoint
-
-      await api.post(`/storage/files/${fileId}/permissions`, {
-        userId: userEmail, // This should be userId, not email
-        permissionType,
-        canReshare,
-        expiresAt: expiresAt || undefined,
-      });
-
-      // Reset form
-      setUserEmail('');
-      setPermissionType('viewer');
-      setCanReshare(false);
-      setExpiresAt('');
+      await api.post(`/storage/files/${fileId}/permissions`, { userId: userEmail, permissionType, canReshare, expiresAt: expiresAt || undefined });
+      setUserEmail(''); setPermissionType('viewer'); setCanReshare(false); setExpiresAt('');
       setGrantDialogOpen(false);
-
-      // Reload permissions
       onPermissionsUpdate();
     } catch (err: unknown) {
-      setError(getApiMessage(err, t.errors.grantFailed.value));
-    } finally {
-      setGranting(false);
-    }
+      setError(getApiMessage({ error: err, fallback: t.errors.grantFailed.value }));
+    } finally { setGranting(false); }
   };
 
-  const handleUpdatePermission = async () => {
+  const handleUpdatePermission = async (): Promise<void> => {
     if (!selectedPermission) return;
-
     try {
-      setGranting(true);
-      setError(null);
-
-      await api.put(`/storage/permissions/${selectedPermission.id}`, {
-        permissionType,
-        canReshare,
-        expiresAt: expiresAt || null,
-      });
-
-      setEditDialogOpen(false);
-      setSelectedPermission(null);
+      setGranting(true); setError(null);
+      await api.put(`/storage/permissions/${selectedPermission.id}`, { permissionType, canReshare, expiresAt: expiresAt || null });
+      setEditDialogOpen(false); setSelectedPermission(null);
       onPermissionsUpdate();
     } catch (err: unknown) {
-      setError(getApiMessage(err, t.errors.updateFailed.value));
-    } finally {
-      setGranting(false);
-    }
+      setError(getApiMessage({ error: err, fallback: t.errors.updateFailed.value }));
+    } finally { setGranting(false); }
   };
 
-  const handleRevokePermission = async (permissionId: string) => {
-    if (!confirm(t.confirmRevoke.value)) {
-      return;
-    }
-
+  const handleRevokePermission = async (permissionId: string): Promise<void> => {
+    if (!confirm(t.confirmRevoke.value)) return;
     try {
       await api.delete(`/storage/permissions/${permissionId}`);
       onPermissionsUpdate();
-    } catch (error) {
-      console.error('Failed to revoke permission:', error);
-    }
+    } catch (err) { console.error('Failed to revoke permission:', err); }
   };
 
-  const handleEditClick = (permission: Permission) => {
-    setSelectedPermission(permission);
-    setPermissionType(permission.permissionType);
-    setCanReshare(permission.canReshare);
-    setExpiresAt(permission.expiresAt || '');
+  const handleEditClick = (permission: Permission): void => {
+    setSelectedPermission(permission); setPermissionType(permission.permissionType);
+    setCanReshare(permission.canReshare); setExpiresAt(permission.expiresAt || '');
     setEditDialogOpen(true);
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(
-      locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US',
-      {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      },
-    );
-  };
+  const LOCALE_MAP: Record<string, string> = { kk: 'kk-KZ', ru: 'ru-RU' };
+  const formatDate = (dateString: string): string =>
+    new Date(dateString).toLocaleDateString(LOCALE_MAP[locale] ?? 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const getPermissionLabel = (type: string): string => {
-    const labelMap: Record<string, string> = {
-      owner: t.permission.owner.value,
-      editor: t.permission.editor.value,
-      viewer: t.permission.viewer.value,
-      downloader: t.permission.downloader.value,
-    };
-    return labelMap[type] || type;
-  };
-
-  const getPermissionColor = (type: string) => {
-    const colors: Record<string, 'success' | 'primary' | 'default' | 'info'> = {
-      owner: 'success',
-      editor: 'primary',
-      viewer: 'default',
-      downloader: 'info',
-    };
-    return colors[type] || 'default';
-  };
+  const formProps: PermFormProps = { permissionType, setPermissionType, canReshare, setCanReshare, expiresAt, setExpiresAt, error, t };
 
   return (
     <Box>
       <Paper sx={{ p: 3 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 3,
-          }}
-        >
-          <Typography variant="h6">
-            {t.title.value} ({permissions.length})
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<UserPlus size={18} />}
-            onClick={() => setGrantDialogOpen(true)}
-          >
-            {t.grantAccess}
-          </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Typography variant="h6">{t.title.value} ({permissions.length})</Typography>
+          <Button variant="contained" startIcon={<UserPlus size={18} />} onClick={() => setGrantDialogOpen(true)}>{t.grantAccess}</Button>
         </Box>
-
-        {permissions.length === 0 ? (
-          <Alert severity="info">{t.empty}</Alert>
-        ) : (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t.table.user}</TableCell>
-                  <TableCell>{t.table.rights}</TableCell>
-                  <TableCell>{t.table.canReshare}</TableCell>
-                  <TableCell>{t.table.expires}</TableCell>
-                  <TableCell>{t.table.grantedBy}</TableCell>
-                  <TableCell>{t.table.createdAt}</TableCell>
-                  <TableCell align="center">{t.table.actions}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {permissions.map(permission => (
-                  <TableRow key={permission.id}>
-                    <TableCell>{permission.user.email}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={getPermissionLabel(permission.permissionType)}
-                        size="small"
-                        color={getPermissionColor(permission.permissionType)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={permission.canReshare ? t.values.yes : t.values.no}
-                        size="small"
-                        color={permission.canReshare ? 'success' : 'default'}
-                        variant="outlined"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {permission.expiresAt ? (
-                        <Chip
-                          label={formatDate(permission.expiresAt)}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ) : (
-                        t.values.forever
-                      )}
-                    </TableCell>
-                    <TableCell>{permission.grantedBy.email}</TableCell>
-                    <TableCell>{formatDate(permission.createdAt)}</TableCell>
-                    <TableCell align="center">
-                      <Tooltip title={t.tooltips.edit.value}>
-                        <IconButton size="small" onClick={() => handleEditClick(permission)}>
-                          <Pencil size={16} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title={t.tooltips.revoke.value}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRevokePermission(permission.id)}
-                        >
-                          <Trash2 size={16} />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        {permissions.length === 0 ? <Alert severity="info">{t.empty}</Alert> : (
+          <PermTable permissions={permissions} t={t} formatDate={formatDate} onEdit={handleEditClick} onRevoke={(id) => { void handleRevokePermission(id); }} />
         )}
       </Paper>
 
-      {/* Grant Permission Dialog */}
-      <Dialog
-        open={grantDialogOpen}
-        onClose={() => setGrantDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={grantDialogOpen} onClose={() => setGrantDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t.dialogs.grantTitle}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
             {error && <Alert severity="error">{error}</Alert>}
-
-            <TextField
-              fullWidth
-              label={t.dialogs.userIdOrEmail.value}
-              value={userEmail}
-              onChange={e => setUserEmail(e.target.value)}
-              helperText={t.dialogs.userIdOrEmailHelp.value}
-            />
-
-            <FormControl fullWidth>
-              <InputLabel>{t.dialogs.accessLevel}</InputLabel>
-              <Select
-                value={permissionType}
-                label={t.dialogs.accessLevel.value}
-                onChange={e => setPermissionType(e.target.value)}
-              >
-                <MenuItem value="viewer">{t.permission.viewer}</MenuItem>
-                <MenuItem value="downloader">{t.permission.viewDownloadLong}</MenuItem>
-                <MenuItem value="editor">{t.permission.editorLong}</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              fullWidth
-              label={t.dialogs.expiresAt.value}
-              type="datetime-local"
-              value={expiresAt}
-              onChange={e => setExpiresAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-              helperText={t.dialogs.expiresAtHelp.value}
-            />
-
-            <FormControlLabel
-              control={
-                <Switch checked={canReshare} onChange={e => setCanReshare(e.target.checked)} />
-              }
-              label={t.dialogs.reshare.value}
-            />
+            <TextField fullWidth label={t.dialogs.userIdOrEmail.value} value={userEmail} onChange={e => setUserEmail(e.target.value)} helperText={t.dialogs.userIdOrEmailHelp.value} />
+            <PermFormFields {...formProps} />
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setGrantDialogOpen(false)}>{t.dialogs.cancel}</Button>
-          <Button
-            variant="contained"
-            onClick={handleGrantPermission}
-            disabled={!userEmail || granting}
-          >
-            {t.dialogs.grant}
-          </Button>
+          <Button variant="contained" onClick={() => { void handleGrantPermission(); }} disabled={!userEmail || granting}>{t.dialogs.grant}</Button>
         </DialogActions>
       </Dialog>
 
-      {/* Edit Permission Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t.dialogs.editTitle}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-            {error && <Alert severity="error">{error}</Alert>}
-
-            <FormControl fullWidth>
-              <InputLabel>{t.dialogs.accessLevel}</InputLabel>
-              <Select
-                value={permissionType}
-                label={t.dialogs.accessLevel.value}
-                onChange={e => setPermissionType(e.target.value)}
-              >
-                <MenuItem value="viewer">{t.permission.viewer}</MenuItem>
-                <MenuItem value="downloader">{t.permission.viewDownloadLong}</MenuItem>
-                <MenuItem value="editor">{t.permission.editorLong}</MenuItem>
-              </Select>
-            </FormControl>
-
-            <TextField
-              fullWidth
-              label={t.dialogs.expiresAt.value}
-              type="datetime-local"
-              value={expiresAt}
-              onChange={e => setExpiresAt(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-
-            <FormControlLabel
-              control={
-                <Switch checked={canReshare} onChange={e => setCanReshare(e.target.checked)} />
-              }
-              label={t.dialogs.reshare.value}
-            />
-          </Box>
-        </DialogContent>
+        <DialogContent><PermFormFields {...formProps} /></DialogContent>
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>{t.dialogs.cancel}</Button>
-          <Button variant="contained" onClick={handleUpdatePermission} disabled={granting}>
-            {t.dialogs.save}
-          </Button>
+          <Button variant="contained" onClick={() => { void handleUpdatePermission(); }} disabled={granting}>{t.dialogs.save}</Button>
         </DialogActions>
       </Dialog>
     </Box>

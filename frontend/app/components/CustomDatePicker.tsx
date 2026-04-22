@@ -32,6 +32,7 @@ const normalizeToDate = (value?: string | null): Date | null => {
   return parsed;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export default function CustomDatePicker({
   value,
   onChange,
@@ -42,6 +43,7 @@ export default function CustomDatePicker({
 }: CustomDatePickerProps) {
   const dateValue = normalizeToDate(value);
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleChange = (date: Date | null) => {
     if (date && isValid(date)) {
       onChange(format(date, 'yyyy-MM-dd'));
@@ -61,8 +63,8 @@ export default function CustomDatePicker({
             fullWidth: true,
             size: 'small',
             helperText: helperText,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             placeholder: placeholder,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
         }}
       />

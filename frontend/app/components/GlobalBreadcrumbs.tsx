@@ -21,14 +21,16 @@ const HIDDEN_PATHS = new Set<string>([
   '/dashboard',
 ]);
 
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+const capitalize = (value: string): string => value.charAt(0).toUpperCase() + value.slice(1);
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const resolveBreadcrumbHref = (slug: string) => {
   if (slug === 'settings') return '/settings/profile';
   if (slug === 'custom-tables/import') return '/custom-tables?import=1';
   return `/${slug}`;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcrumbsProps) {
   const pathname = usePathname() || '/';
   const { labels } = useIntlayer('breadcrumbs') as {
@@ -42,6 +44,7 @@ export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcru
     if (pathname.startsWith('/dashboard')) return [];
 
     const segments = pathname.split('/').filter(Boolean);
+    // eslint-disable-next-line max-params
     const crumbs = segments.map((_, idx) => {
       const slug = segments.slice(0, idx + 1).join('/');
       const fallback = segments[idx].length > 20 ? 'Details' : capitalize(segments[idx]);

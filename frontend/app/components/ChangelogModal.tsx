@@ -83,7 +83,7 @@ const markdownComponents: Components = {
   code: ({ children }) => (
     <Box
       component="code"
-      sx={{ bgcolor: 'var(--muted)', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: 0 }}
+      sx={{ bgcolor: 'var(--muted)', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: 'var(--lumio-radius-xs)' }}
     >
       {children}
     </Box>
@@ -109,7 +109,7 @@ export function ChangelogModal({
       onClose={onClose}
       size="full"
       showCloseButton={false}
-      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: 0, border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
+      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: 'var(--lumio-radius-xl)', border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
       contentSx={{ height: '100%', p: 0 }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'background.paper' }}>

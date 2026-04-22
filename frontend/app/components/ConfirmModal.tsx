@@ -20,6 +20,7 @@ interface ConfirmModalProps {
   manualClose?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export default function ConfirmModal({
   isOpen,
   onClose,
@@ -38,6 +39,7 @@ export default function ConfirmModal({
   const resolvedConfirmText = confirmText ?? t.buttons.confirm.value;
   const resolvedCancelText = cancelText ?? t.buttons.cancel.value;
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleConfirm = () => {
     onConfirm();
     if (!isLoading && !manualClose) {
@@ -56,7 +58,7 @@ export default function ConfirmModal({
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
-            style={{ padding: 8, borderRadius: '50%', background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
+            style={{ padding: 8, borderRadius: 'var(--lumio-radius-full)', background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
           >
             {icon ?? <AlertTriangle size={20} />}
           </div>

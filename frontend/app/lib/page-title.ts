@@ -19,7 +19,7 @@ const TITLES_BY_PREFIX: Array<[string, string]> = [
   ['/settings', 'Lumio — Settings'],
 ];
 
-export const resolvePageTitle = (pathname: string) => {
+export const resolvePageTitle = (pathname: string): string => {
   const normalized = pathname.trim();
   if (!normalized || normalized === '/') return PRODUCT_TITLE;
 

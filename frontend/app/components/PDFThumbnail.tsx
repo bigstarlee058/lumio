@@ -27,26 +27,151 @@ const MAX_THUMBNAIL_WIDTH = 1600;
 
 const thumbnailCache = new Map<string, string>();
 
-export function PDFThumbnail({
-  fileId,
-  fileName,
-  source = 'statement',
-  size = 40,
-  width,
-  height,
-  className = '',
-  errorMessage,
-  preservePageAspect = false,
-}: PDFThumbnailProps) {
+const SOURCE_THUMBNAIL_URLS: Record<string, (fileId: string, w: number) => string> = {
+  gmail: (id, w) => `${apiBaseUrl}/integrations/gmail/receipts/${id}/thumbnail?width=${w}`,
+  receipt: (id, w) => `${apiBaseUrl}/integrations/gmail/receipts/${id}/thumbnail?width=${w}`,
+};
+
+function buildThumbnailUrl(source: string, fileId: string, requestedWidth: number): string {
+  const builder = SOURCE_THUMBNAIL_URLS[source];
+  if (builder) return builder(fileId, requestedWidth);
+  return `${apiBaseUrl}/statements/${fileId}/thumbnail?width=${requestedWidth}`;
+}
+
+function clampWidth(width: number | undefined): number {
+  return Math.max(MIN_THUMBNAIL_WIDTH, Math.min(MAX_THUMBNAIL_WIDTH, Math.round(width ?? DEFAULT_THUMBNAIL_WIDTH)));
+}
+
+interface FetchThumbnailParams {
+  cacheKey: string;
+  source: string;
+  fileId: string;
+  requestedWidth: number;
+  isMounted: () => boolean;
+  setThumbnailDataUrl: (v: string | null) => void;
+  setError: (v: boolean) => void;
+  setLoading: (v: boolean) => void;
+}
+
+async function fetchThumbnail(params: FetchThumbnailParams): Promise<void> {
+  const { cacheKey, source, fileId, requestedWidth, isMounted, setThumbnailDataUrl, setError, setLoading } = params;
+
+  if (thumbnailCache.has(cacheKey)) {
+    const cached = thumbnailCache.get(cacheKey);
+    if (isMounted()) {
+      if (cached) setThumbnailDataUrl(cached);
+      else setError(true);
+      setLoading(false);
+    }
+    return;
+  }
+
+  try {
+    const headers = getWorkspaceHeaders();
+    if (!headers.Authorization) {
+      setError(true);
+      setLoading(false);
+      return;
+    }
+
+    const thumbnailUrl = buildThumbnailUrl(source, fileId, requestedWidth);
+    const response = await fetch(thumbnailUrl, { method: 'GET', headers, credentials: 'include', cache: 'default' });
+
+    if (!response.ok) {
+      if (isMounted()) { setError(true); setLoading(false); }
+      return;
+    }
+
+    const blob = await response.blob();
+    const reader = new FileReader();
+    reader.onloadend = (): void => {
+      const base64data = reader.result as string;
+      thumbnailCache.set(cacheKey, base64data);
+      if (isMounted()) { setThumbnailDataUrl(base64data); setLoading(false); }
+    };
+    reader.readAsDataURL(blob);
+  } catch {
+    if (isMounted()) { setError(true); setLoading(false); }
+  }
+}
+
+function useImageAspectRatio(
+  thumbnailDataUrl: string | null,
+  preservePageAspect: boolean,
+  setImageAspectRatio: (v: number | null) => void,
+): void {
+  useEffect(() => {
+    if (!thumbnailDataUrl || !preservePageAspect) {
+      setImageAspectRatio(null);
+      return;
+    }
+    let cancelled = false;
+    const image = new Image();
+    image.onload = (): void => {
+      if (cancelled || image.naturalWidth <= 0 || image.naturalHeight <= 0) return;
+      setImageAspectRatio(image.naturalWidth / image.naturalHeight);
+    };
+    image.onerror = (): void => { if (!cancelled) setImageAspectRatio(null); };
+    image.src = thumbnailDataUrl;
+    return (): void => { cancelled = true; };
+  }, [thumbnailDataUrl, preservePageAspect, setImageAspectRatio]);
+}
+
+function useThumbnailFetch(
+  fileId: string,
+  source: string,
+  requestedWidth: number,
+  setThumbnailDataUrl: (v: string | null) => void,
+  setError: (v: boolean) => void,
+  setLoading: (v: boolean) => void,
+): void {
+  useEffect(() => {
+    let mounted = true;
+    const cacheKey = `${source}:${fileId}:${requestedWidth}`;
+    void fetchThumbnail({
+      cacheKey, source, fileId, requestedWidth,
+      isMounted: () => mounted,
+      setThumbnailDataUrl, setError, setLoading,
+    });
+    return (): void => { mounted = false; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileId, source, requestedWidth]);
+}
+
+interface PDFErrorViewProps {
+  frameWidth: number;
+  frameHeight: number;
+  fallbackIconSize: number;
+  errorMessage?: string;
+}
+
+function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
+  const { frameWidth, frameHeight, fallbackIconSize, errorMessage } = props;
+
+  if (errorMessage) {
+    return (
+      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
+        <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: '#9ca3af' }} />
+        <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{errorMessage}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ width: frameWidth, height: frameHeight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <FileText data-testid="pdf-thumbnail-fallback-icon" size={fallbackIconSize} style={{ color: '#9ca3af' }} />
+    </div>
+  );
+}
+
+export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
+  const { fileId, fileName, source = 'statement', size = 40, width, height, className = '', errorMessage, preservePageAspect = false } = props;
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState<string | null>(null);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
-  const requestedWidth = Math.max(
-    MIN_THUMBNAIL_WIDTH,
-    Math.min(MAX_THUMBNAIL_WIDTH, Math.round(width ?? DEFAULT_THUMBNAIL_WIDTH)),
-  );
 
+  const requestedWidth = clampWidth(width);
   const frameWidth = width ?? size;
   const maxFrameHeight = height ?? size;
   const resolvedFrameHeight =
@@ -54,180 +179,24 @@ export function PDFThumbnail({
       ? Math.min(maxFrameHeight, Math.round(frameWidth / imageAspectRatio))
       : maxFrameHeight;
 
-  useEffect(() => {
-    if (!thumbnailDataUrl || !preservePageAspect) {
-      setImageAspectRatio(null);
-      return;
-    }
+  useImageAspectRatio(thumbnailDataUrl, preservePageAspect, setImageAspectRatio);
+  useThumbnailFetch(fileId, source, requestedWidth, setThumbnailDataUrl, setError, setLoading);
 
-    let cancelled = false;
-    const image = new Image();
-    image.onload = () => {
-      if (cancelled || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
-        return;
-      }
-      setImageAspectRatio(image.naturalWidth / image.naturalHeight);
-    };
-    image.onerror = () => {
-      if (!cancelled) {
-        setImageAspectRatio(null);
-      }
-    };
-    image.src = thumbnailDataUrl;
-
-    return () => {
-      cancelled = true;
-    };
-  }, [thumbnailDataUrl, preservePageAspect]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const cacheKey = `${source}:${fileId}:${requestedWidth}`;
-
-    const fetchThumbnail = async () => {
-      // Check in-memory cache first
-      if (thumbnailCache.has(cacheKey)) {
-        const cached = thumbnailCache.get(cacheKey);
-        if (isMounted) {
-          if (cached) {
-            setThumbnailDataUrl(cached);
-          } else {
-            setError(true);
-          }
-          setLoading(false);
-        }
-        return;
-      }
-
-      try {
-        const headers = getWorkspaceHeaders();
-
-        if (!headers.Authorization) {
-          setError(true);
-          setLoading(false);
-          return;
-        }
-
-        const thumbnailUrl =
-          source === 'gmail'
-            ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/thumbnail?width=${requestedWidth}`
-            : source === 'receipt'
-              ? `${apiBaseUrl}/integrations/gmail/receipts/${fileId}/thumbnail?width=${requestedWidth}`
-            : `${apiBaseUrl}/statements/${fileId}/thumbnail?width=${requestedWidth}`;
-
-        const response = await fetch(thumbnailUrl, {
-          method: 'GET',
-          headers,
-          credentials: 'include',
-          cache: 'default',
-        });
-
-        if (!response.ok) {
-          if (isMounted) {
-            setError(true);
-            setLoading(false);
-          }
-          return;
-        }
-
-        const blob = await response.blob();
-
-        // Convert Blob to Base64 Data URL for safe caching
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64data = reader.result as string;
-          thumbnailCache.set(cacheKey, base64data);
-          if (isMounted) {
-            setThumbnailDataUrl(base64data);
-            setLoading(false);
-          }
-        };
-        reader.readAsDataURL(blob);
-      } catch (err) {
-        if (isMounted) {
-          setError(true);
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchThumbnail();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [fileId, source, requestedWidth]);
-
-  // If error occurred, show default PDF icon
   if (error) {
-    const fallbackIconSize = Math.max(14, Math.round(size * 0.8));
-    const frameHeight = maxFrameHeight;
-
-    if (errorMessage) {
-      return (
-        <div
-          style={{
-            width: frameWidth,
-            height: frameHeight,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 12,
-            border: '1px solid #e5e7eb',
-            borderRadius: 0,
-            backgroundColor: 'var(--card-bg)',
-            padding: 16,
-            textAlign: 'center',
-          }}
-        >
-          <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: '#9ca3af' }} />
-          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{errorMessage}</p>
-        </div>
-      );
-    }
-
     return (
-      <div
-        style={{
-          width: frameWidth,
-          height: frameHeight,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <FileText
-          data-testid="pdf-thumbnail-fallback-icon"
-          size={fallbackIconSize}
-          style={{ color: '#9ca3af' }}
-        />
-      </div>
+      <PDFErrorView
+        frameWidth={frameWidth}
+        frameHeight={maxFrameHeight}
+        fallbackIconSize={Math.max(14, Math.round(size * 0.8))}
+        errorMessage={errorMessage}
+      />
     );
   }
 
   return (
-    <div
-      data-testid="pdf-thumbnail-frame"
-      style={{
-        position: 'relative',
-        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-        borderRadius: 0,
-        overflow: 'hidden',
-        width: frameWidth,
-        height: resolvedFrameHeight,
-      }}
-    >
+    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: 'var(--lumio-radius-md)', overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
       {loading && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Spinner size={16} sx={{ color: '#4b5563' }} />
         </div>
       )}

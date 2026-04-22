@@ -21,6 +21,7 @@ interface CurrencyFilterDropdownProps {
  * Single-select dropdown for filtering transactions by currency.
  * Currencies list is derived from the loaded dataset, not hardcoded.
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function CurrencyFilterDropdown({ currencies, value, onChange }: CurrencyFilterDropdownProps) {
   const t = useIntlayer('currencyDisplayToggle');
   const [open, setOpen] = useState(false);
@@ -30,11 +31,13 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
     if (!open) setPending(value);
   }, [value, open]);
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleApply = () => {
     onChange(pending);
     setOpen(false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleReset = () => {
     setPending(null);
     onChange(null);

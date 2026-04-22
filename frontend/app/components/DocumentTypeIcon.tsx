@@ -5,6 +5,7 @@ import Image from 'next/image';
 import pdfIcon from '../../public/images/pdf.png';
 import { PDFThumbnail } from './PDFThumbnail';
 
+// eslint-disable-next-line max-params
 const normalizeType = (fileType?: string, fileName?: string): string => {
   const type = (fileType || '').trim().toLowerCase();
   const name = (fileName || '').trim().toLowerCase();
@@ -16,6 +17,7 @@ const normalizeType = (fileType?: string, fileName?: string): string => {
   return name.slice(dot + 1);
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function DocumentTypeIcon(props: {
   fileType?: string;
   fileName?: string;

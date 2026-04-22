@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  DEFAULT_THEME_PREFERENCE,
   THEME_STORAGE_EVENT,
   getStoredThemePreference,
   resolveThemePreference,
@@ -23,27 +22,25 @@ import { useHTMLLanguage } from './hooks/useHTMLLanguage';
 import { createAppTheme } from './theme';
 import { TourAutoStarter } from './tours/components/TourAutoStarter';
 
-function HTMLLanguageSync() {
+const SIDE_PANEL_PROPS = { defaultWidth: 'md' as const, defaultPosition: 'left' as const, defaultCollapsed: false, persistState: true, storageKey: 'lumio-side-panel' };
+const TOASTER_OPTS = { duration: 3000, style: { fontSize: '14px', background: 'var(--card-bg)', color: 'var(--foreground)', border: '1px solid var(--border-color)' } };
+
+function HTMLLanguageSync(): null {
   useHTMLLanguage();
   return null;
 }
 
-function ThemePreferenceSync() {
+function ThemePreferenceSync(): null {
   const [themePreference, setThemePreference] = useState(getStoredThemePreference);
 
   useEffect(() => {
-    const syncThemePreference = () => {
+    const syncThemePreference = (): void => {
       setThemePreference(resolveThemePreference(getStoredThemePreference()));
     };
-
-    const handleThemePreferenceEvent = () => {
-      syncThemePreference();
-    };
-
+    const handleThemePreferenceEvent = (): void => { syncThemePreference(); };
     window.addEventListener('storage', syncThemePreference);
     window.addEventListener(THEME_STORAGE_EVENT, handleThemePreferenceEvent);
-
-    return () => {
+    return (): void => {
       window.removeEventListener('storage', syncThemePreference);
       window.removeEventListener(THEME_STORAGE_EVENT, handleThemePreferenceEvent);
     };
@@ -53,88 +50,38 @@ function ThemePreferenceSync() {
   return null;
 }
 
-function WorkspaceScopedProviders({
-  children,
-  mounted,
-}: {
-  children: React.ReactNode;
-  mounted: boolean;
-}) {
+function WorkspaceScopedProviders({ children, mounted }: { children: React.ReactNode; mounted: boolean }): React.JSX.Element {
   const { currentWorkspace } = useWorkspace();
-
   return (
     <React.Fragment key={currentWorkspace?.id ?? 'no-workspace'}>
       <CurrencyDisplayProvider>
-      <NotificationProvider>
-        <SidePanelProvider
-          defaultWidth="md"
-          defaultPosition="left"
-          defaultCollapsed={false}
-          persistState={true}
-          storageKey="lumio-side-panel"
-        >
-          {mounted ? (
-            <Toaster
-              position="top-center"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  fontSize: '14px',
-                  background: 'var(--card-bg)',
-                  color: 'var(--foreground)',
-                  border: '1px solid var(--border-color)',
-                },
-              }}
-            />
-          ) : null}
-          {children}
-        </SidePanelProvider>
-      </NotificationProvider>
+        <NotificationProvider>
+          <SidePanelProvider {...SIDE_PANEL_PROPS}>
+            {mounted ? <Toaster position="top-center" toastOptions={TOASTER_OPTS} /> : null}
+            {children}
+          </SidePanelProvider>
+        </NotificationProvider>
       </CurrencyDisplayProvider>
     </React.Fragment>
   );
 }
 
-export function Providers({
-  children,
-  initialLocale,
-}: {
-  children: React.ReactNode;
-  initialLocale: AppLocale;
-}) {
+export function Providers({ children, initialLocale }: { children: React.ReactNode; initialLocale: AppLocale }): React.JSX.Element {
   const { resolvedTheme } = useNextTheme();
   const [mounted, setMounted] = useState(false);
   const [locale, setLocale] = useState<AppLocale>(() => readLocaleFromCookie() ?? initialLocale);
   const paletteMode = mounted && resolvedTheme === 'dark' ? 'dark' : 'light';
   const muiTheme = useMemo(() => createAppTheme(paletteMode), [paletteMode]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const cookieLocale = readLocaleFromCookie();
-    setLocale(cookieLocale ?? initialLocale);
-  }, [initialLocale]);
-
-  useEffect(() => {
-    persistLocaleToCookie(locale);
-  }, [locale]);
-
-  const handleLocaleChange = (nextLocale: string) => {
-    if (!isSupportedLocale(nextLocale)) {
-      return;
-    }
-
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { setLocale(readLocaleFromCookie() ?? initialLocale); }, [initialLocale]);
+  useEffect(() => { persistLocaleToCookie(locale); }, [locale]);
+  const handleLocaleChange = (nextLocale: string): void => {
+    if (!isSupportedLocale(nextLocale)) return;
     persistLocaleToCookie(nextLocale);
     setLocale(nextLocale);
   };
-
   return (
-    <IntlayerProviderContent
-      locale={locale}
-      setLocale={handleLocaleChange}
-    >
+    <IntlayerProviderContent locale={locale} setLocale={handleLocaleChange}>
       <HTMLLanguageSync />
       <ThemePreferenceSync />
       <TourAutoStarter />

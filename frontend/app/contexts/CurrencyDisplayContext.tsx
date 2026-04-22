@@ -17,7 +17,7 @@ interface CurrencyDisplayContextType {
 
 const CurrencyDisplayContext = createContext<CurrencyDisplayContextType | undefined>(undefined);
 
-export function CurrencyDisplayProvider({ children }: { children: React.ReactNode }) {
+export function CurrencyDisplayProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const { currentWorkspace } = useWorkspace();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
 

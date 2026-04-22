@@ -33,7 +33,7 @@ function CategoryMenuItems({ tx, categories, onUpdateCategory }: CategoryMenuIte
         .filter(cat => cat.isEnabled !== false)
         .map(cat => (
           <DropdownMenuItem key={cat.id} onClick={() => onUpdateCategory?.(tx.id, cat.id)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ height: 8, width: 8, borderRadius: '50%', display: 'inline-block', backgroundColor: cat.color }} />
+            <span style={{ height: 8, width: 8, borderRadius: 'var(--lumio-radius-full)', display: 'inline-block', backgroundColor: cat.color }} />
             {cat.name}
             {tx.category?.id === cat.id && <Check size={12} style={{ marginLeft: 'auto' }} />}
           </DropdownMenuItem>

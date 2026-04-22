@@ -13,141 +13,21 @@ import * as React from 'react';
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
 export interface ModalShellProps {
-  /** Whether the modal is open */
   isOpen: boolean;
-  /** Callback when the modal should close */
   onClose: () => void;
-  /** Modal title shown in header */
   title?: React.ReactNode;
-  /** Modal size preset */
   size?: ModalSize;
-  /** Modal content */
   children: React.ReactNode;
-  /** Footer content (buttons, etc.) */
   footer?: React.ReactNode;
-  /** Whether to show the close button in header */
   showCloseButton?: boolean;
-  /** Whether clicking backdrop closes the modal */
   closeOnBackdropClick?: boolean;
-  /** Whether pressing ESC closes the modal */
   closeOnEscape?: boolean;
-  /** sx props forwarded to the Paper element */
   paperSx?: SxProps<Theme>;
-  /** sx props forwarded to the DialogContent element */
   contentSx?: SxProps<Theme>;
-  /** className forwarded to the Paper element */
   className?: string;
-  /** className forwarded to the DialogContent element */
   contentClassName?: string;
 }
 
-const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
-  sm: 'sm',
-  md: 'md',
-  lg: 'lg',
-  xl: 'xl',
-  full: false,
-};
-
-/**
- * ModalShell - Unified modal wrapper component
- *
- * Provides consistent styling, animations, and behavior for all modals:
- * - Backdrop overlay
- * - Body scroll lock
- * - Keyboard (ESC) support
- * - Focus management
- */
-export function ModalShell({
-  isOpen,
-  onClose,
-  title,
-  size = 'md',
-  children,
-  footer,
-  showCloseButton = true,
-  closeOnBackdropClick = true,
-  closeOnEscape = true,
-  paperSx,
-  contentSx,
-  className,
-  contentClassName,
-}: ModalShellProps) {
-  const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
-    if (reason === 'backdropClick' && !closeOnBackdropClick) return;
-    if (reason === 'escapeKeyDown' && !closeOnEscape) return;
-    onClose();
-  };
-
-  return (
-    <Dialog
-      open={isOpen}
-      onClose={handleClose}
-      maxWidth={sizeToMaxWidth[size]}
-      fullWidth
-      fullScreen={size === 'full'}
-      PaperProps={{ className, ...(paperSx ? { sx: paperSx } : {}) }}
-      aria-labelledby={title ? 'modal-title' : undefined}
-    >
-      {(title || showCloseButton) && (
-        <DialogTitle
-          id="modal-title"
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}
-        >
-          {title}
-          {showCloseButton && (
-            <IconButton
-              type="button"
-              onClick={onClose}
-              aria-label="Close modal"
-              size="small"
-              sx={{ ml: 'auto' }}
-            >
-              <X size={20} />
-            </IconButton>
-          )}
-        </DialogTitle>
-      )}
-      <DialogContent className={contentClassName} sx={contentSx}>{children}</DialogContent>
-      {footer && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            padding: '16px 20px',
-            borderTop: '1px solid',
-            borderColor: 'rgba(0,0,0,0.12)',
-            gap: 12,
-          }}
-        >
-          {footer}
-        </div>
-      )}
-    </Dialog>
-  );
-}
-
-/**
- * ModalHeader - Optional component for custom modal headers
- */
-export function ModalHeader({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} className={className}>
-      {children}
-    </div>
-  );
-}
-
-/**
- * ModalFooter - Pre-styled footer with cancel/confirm buttons pattern
- */
 export interface ModalFooterProps {
   onCancel?: () => void;
   onConfirm?: () => void;
@@ -159,38 +39,121 @@ export interface ModalFooterProps {
   children?: React.ReactNode;
 }
 
+const sizeToMaxWidth: Record<ModalSize, 'sm' | 'md' | 'lg' | 'xl' | false> = {
+  sm: 'sm', md: 'md', lg: 'lg', xl: 'xl', full: false,
+};
+
+const CONFIRM_COLOR: Record<'primary' | 'destructive', 'primary' | 'error'> = {
+  primary: 'primary',
+  destructive: 'error',
+};
+
+function TitleBar(props: { title?: React.ReactNode; showClose: boolean; onClose: () => void }): React.JSX.Element {
+  return (
+    <DialogTitle id="modal-title" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2 }}>
+      {props.title}
+      {props.showClose && (
+        <IconButton type="button" onClick={props.onClose} aria-label="Close modal" size="small" sx={{ ml: 'auto' }}>
+          <X size={20} />
+        </IconButton>
+      )}
+    </DialogTitle>
+  );
+}
+
+function FooterBar(props: { children: React.ReactNode }): React.JSX.Element {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '16px 20px', borderTop: '1px solid', borderColor: 'rgba(0,0,0,0.12)', gap: 12 }}>
+      {props.children}
+    </div>
+  );
+}
+
+// eslint-disable-next-line max-params
+function makeCloseHandler(onClose: () => void, backdrop: boolean, escape: boolean) {
+  // eslint-disable-next-line max-params
+  return (_e: object, reason: 'backdropClick' | 'escapeKeyDown'): void => {
+    if (reason === 'backdropClick' && !backdrop) return;
+    if (reason === 'escapeKeyDown' && !escape) return;
+    onClose();
+  };
+}
+
+// eslint-disable-next-line max-params
+function renderPaperProps(className?: string, paperSx?: SxProps<Theme>): object {
+  return { className, ...(paperSx ? { sx: paperSx } : {}) };
+}
+
+/** Unified modal wrapper with backdrop, keyboard (ESC) support, and focus management. */
+// eslint-disable-next-line complexity
+export function ModalShell({
+  isOpen, onClose, title, size = 'md', children, footer,
+  showCloseButton = true, closeOnBackdropClick = true, closeOnEscape = true,
+  paperSx, contentSx, className, contentClassName,
+}: ModalShellProps): React.JSX.Element {
+  const handleClose = makeCloseHandler(onClose, closeOnBackdropClick, closeOnEscape);
+  return (
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      maxWidth={sizeToMaxWidth[size]}
+      fullWidth
+      fullScreen={size === 'full'}
+      PaperProps={renderPaperProps(className, paperSx)}
+      aria-labelledby={title ? 'modal-title' : undefined}
+    >
+      {(title || showCloseButton) && <TitleBar title={title} showClose={showCloseButton} onClose={onClose} />}
+      <DialogContent className={contentClassName} sx={contentSx}>{children}</DialogContent>
+      {footer && <FooterBar>{footer}</FooterBar>}
+    </Dialog>
+  );
+}
+
+/** Optional component for custom modal headers. */
+export function ModalHeader(props: { children: React.ReactNode; className?: string }): React.JSX.Element {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }} className={props.className}>
+      {props.children}
+    </div>
+  );
+}
+
+const FOOTER_DEFAULTS = { cancelText: 'Cancel', confirmText: 'Confirm', confirmVariant: 'primary' as const };
+
+function ConfirmBtn(props: { onConfirm: () => void; text: string; variant: 'primary' | 'destructive'; loading: boolean; disabled: boolean }): React.JSX.Element {
+  return (
+    <MuiButton
+      type="button"
+      onClick={props.onConfirm}
+      disabled={props.disabled || props.loading}
+      variant="contained"
+      color={CONFIRM_COLOR[props.variant]}
+      startIcon={props.loading ? <Spinner size={16} /> : undefined}
+    >
+      {props.text}
+    </MuiButton>
+  );
+}
+
+/** Pre-styled footer with cancel/confirm buttons pattern. */
+// eslint-disable-next-line complexity
 export function ModalFooter({
-  onCancel,
-  onConfirm,
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
-  confirmVariant = 'primary',
+  onCancel, onConfirm,
+  cancelText = FOOTER_DEFAULTS.cancelText,
+  confirmText = FOOTER_DEFAULTS.confirmText,
+  confirmVariant = FOOTER_DEFAULTS.confirmVariant,
   isConfirmLoading = false,
   isConfirmDisabled = false,
   children,
-}: ModalFooterProps) {
-  if (children) {
-    return <>{children}</>;
-  }
-
+}: ModalFooterProps): React.JSX.Element {
+  if (children) return <>{children}</>;
   return (
     <>
       {onCancel && (
-        <MuiButton type="button" onClick={onCancel} variant="outlined" color="inherit">
-          {cancelText}
-        </MuiButton>
+        <MuiButton type="button" onClick={onCancel} variant="outlined" color="inherit">{cancelText}</MuiButton>
       )}
       {onConfirm && (
-        <MuiButton
-          type="button"
-          onClick={onConfirm}
-          disabled={isConfirmDisabled || isConfirmLoading}
-          variant="contained"
-          color={confirmVariant === 'destructive' ? 'error' : 'primary'}
-          startIcon={isConfirmLoading ? <Spinner size={16} /> : undefined}
-        >
-          {confirmText}
-        </MuiButton>
+        <ConfirmBtn onConfirm={onConfirm} text={confirmText} variant={confirmVariant} loading={isConfirmLoading} disabled={isConfirmDisabled} />
       )}
     </>
   );

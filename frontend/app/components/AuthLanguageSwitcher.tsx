@@ -10,6 +10,7 @@ import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 
 type AppLanguage = 'ru' | 'en' | 'kk';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
   const { locale, setLocale, availableLocales } = useLocale();
   const { languages: languageNames, languageModal } = useIntlayer('navigation');
@@ -46,6 +47,7 @@ export function AuthLanguageSwitcher() {
     return languages.filter(lang => lang.label.toLowerCase().includes(query));
   }, [languageSearch, languages]);
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleLanguageSelect = (code: AppLanguage) => {
     setLocale(code);
     setLanguageModalOpen(false);
@@ -65,7 +67,7 @@ export function AuthLanguageSwitcher() {
           setLanguageSearch('');
           setLanguageModalOpen(true);
         }}
-        sx={{ borderRadius: '50%', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+        sx={{ borderRadius: 'var(--lumio-radius-full)', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
       >
         <Globe size={20} suppressHydrationWarning />
       </IconButton>

@@ -22,13 +22,11 @@ export function ReceiptFilters({ filters, onChange }: ReceiptFiltersProps) {
         value={filters.search}
         placeholder="Search receipts"
         onChange={event => onChange({ ...filters, page: 1, search: event.target.value })}
-        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 0 } }}
       />
       <Select
         size="small"
         value={filters.status}
         onChange={event => onChange({ ...filters, page: 1, status: event.target.value })}
-        sx={{ borderRadius: 0 }}
       >
         <MenuItem value="all">All statuses</MenuItem>
         <MenuItem value="new">New</MenuItem>
@@ -41,7 +39,6 @@ export function ReceiptFilters({ filters, onChange }: ReceiptFiltersProps) {
         size="small"
         value={filters.source}
         onChange={event => onChange({ ...filters, page: 1, source: event.target.value })}
-        sx={{ borderRadius: 0 }}
       >
         <MenuItem value="all">All sources</MenuItem>
         <MenuItem value="upload">Upload</MenuItem>

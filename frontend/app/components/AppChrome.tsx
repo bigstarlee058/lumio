@@ -1,9 +1,10 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
-import GlobalNavHeight from './GlobalNavHeight';
-import Navigation from './Navigation';
+import { useEffect, useState } from 'react';
+import Sidebar, { SidebarContent } from './Sidebar';
+
+const SIDEBAR_OPEN_EVENT = 'lumio-sidebar-open';
 
 function shouldHideChrome(pathname: string | null) {
   if (!pathname) return false;
@@ -19,28 +20,39 @@ function shouldHideChrome(pathname: string | null) {
 export default function AppChrome() {
   const pathname = usePathname();
   const hidden = shouldHideChrome(pathname);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (hidden) {
-      document.documentElement.style.setProperty('--global-nav-height', '0px');
-    }
-  }, [hidden]);
+    setMobileSidebarOpen(false);
+  }, [pathname]);
 
-  if (hidden) {
-    return null;
-  }
+  useEffect(() => {
+    const handler = () => setMobileSidebarOpen(true);
+    window.addEventListener(SIDEBAR_OPEN_EVENT, handler);
+    return () => window.removeEventListener(SIDEBAR_OPEN_EVENT, handler);
+  }, []);
+
+  if (hidden) return null;
 
   return (
     <>
-      <GlobalNavHeight />
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }} data-global-nav>
-        <Navigation />
-      </div>
+      {/* Desktop sidebar (sticky, hidden on mobile via CSS) */}
+      <Sidebar />
+
+      {/* Mobile sidebar overlay */}
       <div
+        className={`lumio-sidebar-overlay${mobileSidebarOpen ? ' lumio-sidebar-overlay--visible' : ''}`}
+        onClick={() => setMobileSidebarOpen(false)}
         aria-hidden="true"
-        data-global-nav-spacer
-        style={{ height: 'var(--global-nav-height, 0px)' }}
       />
+
+      {/* Mobile sidebar drawer */}
+      <aside
+        className={`lumio-shell__sidebar lumio-shell__sidebar--mobile${mobileSidebarOpen ? ' lumio-shell__sidebar--mobile-visible' : ''}`}
+        aria-label="Navigation"
+      >
+        <SidebarContent onNavClick={() => setMobileSidebarOpen(false)} />
+      </aside>
     </>
   );
 }

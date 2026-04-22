@@ -4,7 +4,7 @@ import { useLocale } from '@/app/i18n';
 import { getHTMLTextDir } from 'intlayer';
 import { useEffect } from 'react';
 
-export function useHTMLLanguage() {
+export function useHTMLLanguage(): void {
   const { locale } = useLocale();
 
   useEffect(() => {

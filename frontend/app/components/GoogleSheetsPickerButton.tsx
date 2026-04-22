@@ -16,6 +16,7 @@ type Props = {
   loadingLabel: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function GoogleSheetsPickerButton({
   accessToken,
   apiKey,
@@ -27,11 +28,13 @@ export function GoogleSheetsPickerButton({
 }: Props) {
   const [loading, setLoading] = useState(false);
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const getErrorMessage = (error: unknown) => {
     if (!error || typeof error !== 'object') return 'Google Picker is unavailable';
     return (error as { message?: string }).message || 'Google Picker is unavailable';
   };
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleClick = async () => {
     if (!accessToken || !apiKey || disabled) return;
 

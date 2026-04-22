@@ -73,7 +73,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
         sx={{
           height: '100%',
           border: '1px solid #e2e8f0',
-          borderRadius: 0,
+          borderRadius: 'var(--lumio-radius-lg)',
           '&:hover': { borderColor: '#cbd5e1' },
           transition: 'border-color 0.15s',
         }}
@@ -114,7 +114,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
               label={receipt.status}
               size="small"
               sx={{
-                borderRadius: 0,
+                borderRadius: 'var(--lumio-radius-full)',
                 fontSize: 12,
                 bgcolor: statusColors.bgcolor,
                 color: statusColors.color,

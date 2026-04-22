@@ -157,7 +157,7 @@ export function NotificationDropdown({
             mt: 1,
             p: 0,
             overflow: 'hidden',
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-lg)',
             border: '1px solid var(--border-color)',
             backgroundColor: 'var(--card-bg)',
             color: 'var(--card-foreground)',

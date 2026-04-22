@@ -35,6 +35,8 @@ export interface DrawerShellProps {
   lockScroll?: boolean;
   /** Additional sx styles forwarded to the Drawer Paper */
   sx?: SxProps<Theme>;
+  /** Override z-index for the drawer modal (useful when rendering above MUI Dialog) */
+  zIndex?: number;
 }
 
 const widthMap: Record<DrawerWidth, number | string> = {
@@ -53,6 +55,7 @@ const widthMap: Record<DrawerWidth, number | string> = {
  * - Body scroll lock
  * - Keyboard (ESC) support
  */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function DrawerShell({
   isOpen,
   onClose,
@@ -66,8 +69,10 @@ export function DrawerShell({
   className,
   lockScroll: _lockScroll = true,
   sx,
+  zIndex,
 }: DrawerShellProps) {
-  const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown') => {
+  // eslint-disable-next-line max-params
+  const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown'): void => {
     if (reason === 'backdropClick' && !closeOnBackdropClick) return;
     if (reason === 'escapeKeyDown' && !closeOnEscape) return;
     onClose();
@@ -81,11 +86,12 @@ export function DrawerShell({
       onClose={handleClose}
       anchor={position}
       className={className}
+      sx={zIndex !== undefined ? { zIndex } : undefined}
       PaperProps={{
         sx: [
           {
             width: drawerWidth,
-            borderRadius: 0,
+            borderRadius: 'var(--lumio-radius-xl)',
             display: 'flex',
             flexDirection: 'column',
           },

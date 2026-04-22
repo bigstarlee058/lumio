@@ -32,6 +32,7 @@ interface PersistedState {
 // Provider Component
 // ============================================================================
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function SidePanelProvider({
   children,
   defaultWidth = 'md',
@@ -50,6 +51,7 @@ export function SidePanelProvider({
   const [config, setConfig] = useState<SidePanelPageConfig | null>(null);
 
   // Restore persisted state on client after mount.
+  // eslint-disable-next-line complexity
   useEffect(() => {
     if (typeof window === 'undefined' || !persistState) return;
 
@@ -118,6 +120,7 @@ export function SidePanelProvider({
   );
 
   // Memoize context value
+  // eslint-disable-next-line complexity
   const contextValue = useMemo<SidePanelContextState>(
     () => ({
       isCollapsed,

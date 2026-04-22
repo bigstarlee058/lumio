@@ -1,6 +1,6 @@
+/* eslint-disable max-lines */
 'use client';
 
-import MuiCheckbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -47,7 +47,7 @@ interface DropdownMenuProps {
   defaultOpen?: boolean;
 }
 
-function DropdownMenu({ children, open: openProp, onOpenChange, defaultOpen = false }: DropdownMenuProps) {
+function DropdownMenu({ children, open: openProp, onOpenChange, defaultOpen = false }: DropdownMenuProps): React.JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
 
@@ -55,7 +55,7 @@ function DropdownMenu({ children, open: openProp, onOpenChange, defaultOpen = fa
   const open = isControlled ? openProp : internalOpen;
 
   const onOpen = React.useCallback(
-    (el: HTMLElement) => {
+    (el: HTMLElement): void => {
       setAnchorEl(el);
       if (!isControlled) setInternalOpen(true);
       onOpenChange?.(true);
@@ -63,7 +63,7 @@ function DropdownMenu({ children, open: openProp, onOpenChange, defaultOpen = fa
     [isControlled, onOpenChange],
   );
 
-  const onClose = React.useCallback(() => {
+  const onClose = React.useCallback((): void => {
     if (!isControlled) setInternalOpen(false);
     onOpenChange?.(false);
   }, [isControlled, onOpenChange]);
@@ -84,10 +84,10 @@ interface DropdownMenuTriggerProps {
   className?: string;
 }
 
-function DropdownMenuTrigger({ children, asChild }: DropdownMenuTriggerProps) {
+function DropdownMenuTrigger({ children, asChild }: DropdownMenuTriggerProps): React.JSX.Element {
   const { onOpen, open } = React.useContext(DropdownMenuContext);
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>): void => {
     onOpen(e.currentTarget);
   };
 
@@ -122,34 +122,33 @@ interface DropdownMenuContentProps {
   style?: React.CSSProperties;
 }
 
+const CONTENT_PAPER_SX = { minWidth: 220, boxShadow: 3, p: 0.5 };
+
+function resolveHorizontalOrigin(align: 'start' | 'center' | 'end'): 'left' | 'center' | 'right' {
+  if (align === 'end') return 'right';
+  if (align === 'center') return 'center';
+  return 'left';
+}
+
 function DropdownMenuContent({
   children,
   align = 'start',
   className,
   style,
-}: DropdownMenuContentProps) {
+}: DropdownMenuContentProps): React.JSX.Element {
   const { anchorEl, open, onClose } = React.useContext(DropdownMenuContext);
-
-  const horizontalOrigin = align === 'end' ? 'right' : align === 'center' ? 'center' : 'left';
-
+  const horizontalOrigin = resolveHorizontalOrigin(align);
+  const origin = { vertical: 'bottom' as const, horizontal: horizontalOrigin };
+  const transformOrigin = { vertical: 'top' as const, horizontal: horizontalOrigin };
   return (
     <Menu
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
-      className={className}
       style={style}
-      anchorOrigin={{ vertical: 'bottom', horizontal: horizontalOrigin }}
-      transformOrigin={{ vertical: 'top', horizontal: horizontalOrigin }}
-      slotProps={{
-        paper: {
-          sx: {
-            minWidth: 220,
-            boxShadow: 3,
-            p: 0.5,
-          },
-        },
-      }}
+      anchorOrigin={origin}
+      transformOrigin={transformOrigin}
+      slotProps={{ paper: { sx: CONTENT_PAPER_SX, className } }}
     >
       {children}
     </Menu>
@@ -166,10 +165,11 @@ interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLLIElement> {
 }
 
 const DropdownMenuItem = React.forwardRef<HTMLLIElement, DropdownMenuItemProps>(
-  ({ children, inset, disabled, onClick, onSelect, className, style, ...props }, ref) => {
+  // eslint-disable-next-line max-params
+  ({ children, inset, disabled, onClick, onSelect, className, style, ...props }, ref): React.JSX.Element => {
     const { onClose } = React.useContext(DropdownMenuContext);
 
-    const handleClick = (e: React.MouseEvent<HTMLLIElement>) => {
+    const handleClick = (e: React.MouseEvent<HTMLLIElement>): void => {
       onClick?.(e);
       onSelect?.();
       onClose();
@@ -201,7 +201,8 @@ interface DropdownMenuCheckboxItemProps extends React.HTMLAttributes<HTMLLIEleme
 }
 
 const DropdownMenuCheckboxItem = React.forwardRef<HTMLLIElement, DropdownMenuCheckboxItemProps>(
-  ({ children, checked, onCheckedChange, disabled, className, ...props }, ref) => (
+  // eslint-disable-next-line max-params
+  ({ children, checked, onCheckedChange, disabled, className, ...props }, ref): React.JSX.Element => (
     <MenuItem
       ref={ref}
       disabled={disabled}
@@ -232,12 +233,12 @@ function DropdownMenuRadioGroup({
   value: valueProp,
   defaultValue = '',
   onValueChange,
-}: DropdownMenuRadioGroupProps) {
+}: DropdownMenuRadioGroupProps): React.JSX.Element {
   const [internalValue, setInternalValue] = React.useState(defaultValue);
   const value = valueProp !== undefined ? valueProp : internalValue;
 
   const handleChange = React.useCallback(
-    (v: string) => {
+    (v: string): void => {
       if (valueProp === undefined) setInternalValue(v);
       onValueChange?.(v);
     },
@@ -260,7 +261,8 @@ interface DropdownMenuRadioItemProps extends React.HTMLAttributes<HTMLLIElement>
 }
 
 const DropdownMenuRadioItem = React.forwardRef<HTMLLIElement, DropdownMenuRadioItemProps>(
-  ({ children, value, disabled, className, ...props }, ref) => {
+  // eslint-disable-next-line max-params
+  ({ children, value, disabled, className, ...props }, ref): React.JSX.Element => {
     const radioCtx = React.useContext(RadioGroupContext);
 
     return (
@@ -294,7 +296,8 @@ interface DropdownMenuLabelProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const DropdownMenuLabel = React.forwardRef<HTMLDivElement, DropdownMenuLabelProps>(
-  ({ children, inset, className, style, ...props }, ref) => (
+  // eslint-disable-next-line max-params
+  ({ children, inset, className, style, ...props }, ref): React.JSX.Element => (
     <div
       ref={ref}
       className={className}
@@ -311,16 +314,19 @@ DropdownMenuLabel.displayName = 'DropdownMenuLabel';
 
 /* ─── DropdownMenuSeparator ─────────────────────────────────────────────── */
 
-interface DropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLHRElement> {}
+interface DropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLHRElement> {
+  _unused?: never;
+}
 
 const DropdownMenuSeparator = React.forwardRef<HTMLHRElement, DropdownMenuSeparatorProps>(
-  ({ className, ...props }, ref) => <Divider ref={ref} className={className} {...(props as object)} />,
+  // eslint-disable-next-line max-params
+  ({ className, ...props }, ref): React.JSX.Element => <Divider ref={ref} className={className} {...(props as object)} />,
 );
 DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';
 
 /* ─── DropdownMenuShortcut ──────────────────────────────────────────────── */
 
-const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element => (
   <span
     style={{ marginLeft: 'auto', fontSize: 12, opacity: 0.6 }}
     className={className}
@@ -331,21 +337,28 @@ DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
 
 /* ─── Sub-menu stubs (used only in stories) ─────────────────────────────── */
 
-const DropdownMenuGroup = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const DropdownMenuPortal = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-const DropdownMenuSub = ({ children }: { children: React.ReactNode }) => <>{children}</>;
+const DropdownMenuGroup = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
+const DropdownMenuPortal = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
+const DropdownMenuSub = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
 
 const DropdownMenuSubTrigger = React.forwardRef<
   HTMLLIElement,
   DropdownMenuItemProps & { inset?: boolean }
->(({ children, inset, className, ...props }, ref) => (
+>(
+  // eslint-disable-next-line max-params
+  ({ children, inset, className, ...props }, ref): React.JSX.Element => (
   <MenuItem ref={ref} className={className} style={{ paddingLeft: inset ? 32 : undefined }} {...(props as object)}>
     {children}
   </MenuItem>
 ));
 DropdownMenuSubTrigger.displayName = 'DropdownMenuSubTrigger';
 
-const DropdownMenuSubContent = ({ children, className }: { children?: React.ReactNode; className?: string }) => (
+interface DropdownMenuSubContentProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+const DropdownMenuSubContent = ({ children, className }: DropdownMenuSubContentProps): React.JSX.Element => (
   <div className={className}>{children}</div>
 );
 

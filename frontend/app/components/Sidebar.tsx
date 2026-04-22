@@ -1,0 +1,158 @@
+'use client';
+
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
+import { usePermissions } from '@/app/hooks/usePermissions';
+import { useIntlayer } from '@/app/i18n';
+import '@/app/styles/blocks/lumio-sidebar.css';
+import { Check, ChevronDown, Plus } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { buildNavItems, isNavItemActive } from './navigation/helpers/navigation-config';
+
+function WorkspaceSwitcher() {
+  const { currentWorkspace, workspaces, switchWorkspace } = useWorkspace();
+  const [open, setOpen] = useState(false);
+
+  if (!currentWorkspace) return null;
+
+  const initials = (currentWorkspace.name ?? '?').slice(0, 1).toUpperCase();
+  const color = currentWorkspace.color ?? '#4f46e5';
+  const role = currentWorkspace.memberRole;
+
+  return (
+    <div
+      className="lumio-sidebar__ws-switcher"
+      onClick={() => setOpen(prev => !prev)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setOpen(prev => !prev); }}
+      aria-expanded={open}
+    >
+      <div className="lumio-sidebar__ws-chip" style={{ background: color }}>
+        {initials}
+      </div>
+      <div className="lumio-sidebar__ws-info">
+        <div className="lumio-sidebar__ws-name">{currentWorkspace.name}</div>
+        {role && <div className="lumio-sidebar__ws-role">{role}</div>}
+      </div>
+      <ChevronDown
+        size={14}
+        className={`lumio-sidebar__ws-chevron${open ? ' lumio-sidebar__ws-chevron--open' : ''}`}
+      />
+
+      {open && (
+        <div
+          className="lumio-sidebar__ws-dropdown"
+          onClick={e => e.stopPropagation()}
+          role="menu"
+        >
+          <div className="lumio-sidebar__ws-dropdown-label">Switch workspace</div>
+          {workspaces.map(ws => (
+            <button
+              key={ws.id}
+              type="button"
+              className={`lumio-sidebar__ws-item${ws.id === currentWorkspace.id ? ' lumio-sidebar__ws-item--active' : ''}`}
+              onClick={() => { void switchWorkspace(ws.id); setOpen(false); }}
+              role="menuitem"
+            >
+              <div
+                className="lumio-sidebar__ws-chip"
+                style={{ background: ws.color ?? '#4f46e5' }}
+              >
+                {(ws.name ?? '?').slice(0, 1).toUpperCase()}
+              </div>
+              <span className="lumio-sidebar__ws-item-name">{ws.name}</span>
+              {ws.id === currentWorkspace.id && <Check size={13} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+type SidebarProps = {
+  onNavClick?: () => void;
+};
+
+export function SidebarContent({ onNavClick }: SidebarProps) {
+  const pathname = usePathname();
+  const { hasPermission } = usePermissions();
+  const { nav } = useIntlayer('navigation');
+
+  const navItems = buildNavItems(nav as Parameters<typeof buildNavItems>[0]);
+  const visibleNavItems = navItems.filter(item => hasPermission(item.permission));
+
+  return (
+    <>
+      {/* Brand */}
+      <div className="lumio-sidebar__brand">
+        <div className="lumio-sidebar__brand-mark">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </div>
+        <div className="lumio-sidebar__brand-name">Lumio</div>
+        <span className="lumio-sidebar__brand-meta">v2</span>
+      </div>
+
+      {/* Workspace switcher */}
+      <WorkspaceSwitcher />
+
+      {/* CTA */}
+      <Link
+        href="/statements?upload=1"
+        className="lumio-sidebar__cta"
+        onClick={onNavClick}
+      >
+        <span className="lumio-sidebar__cta-icon">
+          <Plus size={12} />
+        </span>
+        <span>New statement</span>
+        <span className="lumio-sidebar__kbd">⌘ N</span>
+      </Link>
+
+      {/* Navigation */}
+      <nav className="lumio-sidebar__nav" aria-label="Main navigation">
+        <div className="lumio-sidebar__section-label">Workspace</div>
+        {visibleNavItems.map(item => {
+          const active = isNavItemActive(pathname ?? '', item.path);
+          return (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`lumio-sidebar__nav-item${active ? ' lumio-sidebar__nav-item--active' : ''}`}
+              onClick={onNavClick}
+            >
+              <span className="lumio-sidebar__nav-icon">{item.icon}</span>
+              <span className="lumio-sidebar__nav-label">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="lumio-sidebar__footer">
+        <div className="lumio-sidebar__storage">
+          <div className="lumio-sidebar__storage-head">
+            <span className="lumio-sidebar__storage-label">Storage</span>
+            <span className="lumio-sidebar__storage-value">— / —</span>
+          </div>
+          <div className="lumio-sidebar__storage-bar">
+            <div className="lumio-sidebar__storage-fill" style={{ width: '0%' }} />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function Sidebar() {
+  return (
+    <aside className="lumio-shell__sidebar">
+      <SidebarContent />
+    </aside>
+  );
+}

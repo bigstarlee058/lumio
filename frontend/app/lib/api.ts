@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 
 type GmailReceiptParsedDataUpdate = {
   amount?: number;
@@ -63,45 +63,62 @@ apiClient.interceptors.request.use(
   },
 );
 
+async function handleForbiddenError(error: unknown): Promise<never> {
+  localStorage.removeItem('currentWorkspaceId');
+  window.location.href = '/workspaces';
+  return Promise.reject(error);
+}
+
+async function refreshAccessToken(originalRequest: Record<string, unknown>): Promise<unknown> {
+  const refreshToken = localStorage.getItem('refresh_token');
+  if (!refreshToken) return Promise.reject(new Error('No refresh token'));
+
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+    {},
+    { headers: { Authorization: `Bearer ${refreshToken}` } },
+  );
+
+  const { access_token } = response.data as { access_token: string };
+  localStorage.setItem('access_token', access_token);
+  (originalRequest.headers as Record<string, string>).Authorization = `Bearer ${access_token}`;
+
+  return apiClient(originalRequest);
+}
+
+function isForbiddenWorkspaceError(error: Record<string, unknown>): boolean {
+  const response = error.response as { status?: number; data?: { message?: string } } | undefined;
+  return (
+    response?.status === 403 &&
+    typeof response?.data?.message === 'string' &&
+    response.data.message.includes('workspace')
+  );
+}
+
+function isUnauthorizedRetryable(
+  error: Record<string, unknown>,
+  originalRequest: Record<string, unknown>,
+): boolean {
+  const response = error.response as { status?: number } | undefined;
+  return response?.status === 401 && !originalRequest._retry;
+}
+
 // Response interceptor for handling errors
 apiClient.interceptors.response.use(
   response => response,
-  async error => {
-    const originalRequest = error.config;
+  async (error: unknown) => {
+    const err = error as Record<string, unknown>;
+    const originalRequest = err.config as Record<string, unknown>;
 
-    // Handle 403 Forbidden - workspace access denied
-    if (error.response?.status === 403 && error.response?.data?.message?.includes('workspace')) {
-      // Clear current workspace and redirect to workspace selector
-      localStorage.removeItem('currentWorkspaceId');
-      window.location.href = '/workspaces';
-      return Promise.reject(error);
+    if (isForbiddenWorkspaceError(err)) {
+      return handleForbiddenError(error);
     }
 
-    // Handle 401 Unauthorized - refresh token
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (isUnauthorizedRetryable(err, originalRequest)) {
       originalRequest._retry = true;
-
       try {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (refreshToken) {
-          const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${refreshToken}`,
-              },
-            },
-          );
-
-          const { access_token } = response.data;
-          localStorage.setItem('access_token', access_token);
-          originalRequest.headers.Authorization = `Bearer ${access_token}`;
-
-          return apiClient(originalRequest);
-        }
+        return await refreshAccessToken(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, redirect to login
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         window.location.href = '/login';
@@ -115,26 +132,28 @@ apiClient.interceptors.response.use(
 
 // Gmail Receipts API
 export const gmailReceiptsApi = {
-  getReceipt: (id: string) => apiClient.get(`/integrations/gmail/receipts/${id}`),
+  getReceipt: (id: string): Promise<AxiosResponse> =>
+    apiClient.get(`/integrations/gmail/receipts/${id}`),
 
-  updateReceiptParsedData: (id: string, data: GmailReceiptParsedDataUpdate) =>
+  updateReceiptParsedData: (id: string, data: GmailReceiptParsedDataUpdate): Promise<AxiosResponse> =>
     apiClient.patch(`/integrations/gmail/receipts/${id}/parsed-data`, data),
 
-  markDuplicate: (id: string, originalId: string) =>
+  markDuplicate: (id: string, originalId: string): Promise<AxiosResponse> =>
     apiClient.post(`/integrations/gmail/receipts/${id}/mark-duplicate`, {
       originalReceiptId: originalId,
     }),
 
-  unmarkDuplicate: (id: string) =>
+  unmarkDuplicate: (id: string): Promise<AxiosResponse> =>
     apiClient.post(`/integrations/gmail/receipts/${id}/unmark-duplicate`),
 
-  bulkApproveReceipts: (receiptIds: string[], categoryId?: string) =>
+  bulkApproveReceipts: (receiptIds: string[], categoryId?: string): Promise<AxiosResponse> =>
     apiClient.post('/integrations/gmail/receipts/bulk-approve', { receiptIds, categoryId }),
 
-  exportReceiptsToSheets: (receiptIds: string[], spreadsheetId?: string) =>
+  exportReceiptsToSheets: (receiptIds: string[], spreadsheetId?: string): Promise<AxiosResponse> =>
     apiClient.post('/integrations/gmail/receipts/export-sheets', { receiptIds, spreadsheetId }),
 
-  getReceiptPreview: (id: string) => apiClient.get(`/integrations/gmail/receipts/${id}/preview`),
+  getReceiptPreview: (id: string): Promise<AxiosResponse> =>
+    apiClient.get(`/integrations/gmail/receipts/${id}/preview`),
 
   listReceipts: (params?: {
     status?: string;
@@ -143,15 +162,15 @@ export const gmailReceiptsApi = {
     includeInvalid?: boolean;
     hasAmount?: boolean;
     categoryId?: string;
-  }) => apiClient.get('/integrations/gmail/receipts', { params }),
+  }): Promise<AxiosResponse> => apiClient.get('/integrations/gmail/receipts', { params }),
 
-  approveReceipt: (id: string, data: ApproveReceiptPayload) =>
+  approveReceipt: (id: string, data: ApproveReceiptPayload): Promise<AxiosResponse> =>
     apiClient.post(`/integrations/gmail/receipts/${id}/approve`, data),
 
-  updateReceipt: (id: string, data: UpdateReceiptPayload) =>
+  updateReceipt: (id: string, data: UpdateReceiptPayload): Promise<AxiosResponse> =>
     apiClient.patch(`/integrations/gmail/receipts/${id}`, data),
 
-  getStatus: () => apiClient.get('/integrations/gmail/status'),
+  getStatus: (): Promise<AxiosResponse> => apiClient.get('/integrations/gmail/status'),
 };
 
 export interface ReceiptRecord {
@@ -202,34 +221,34 @@ export interface ReceiptListResponse {
 }
 
 export const receiptsApi = {
-  listReceipts: async (params?: ReceiptListFilters) => {
+  listReceipts: async (params?: ReceiptListFilters): Promise<ReceiptListResponse> => {
     const response = await apiClient.get('/receipts', { params });
     return response.data as ReceiptListResponse;
   },
 
-  getReceipt: async (id: string) => {
+  getReceipt: async (id: string): Promise<ReceiptRecord> => {
     const response = await apiClient.get(`/receipts/${id}`);
     return response.data as ReceiptRecord;
   },
 
-  updateReceipt: async (id: string, data: Partial<ReceiptRecord>) => {
+  updateReceipt: async (id: string, data: Partial<ReceiptRecord>): Promise<ReceiptRecord> => {
     const response = await apiClient.patch(`/receipts/${id}`, data);
     return response.data as ReceiptRecord;
   },
 
-  approveReceipt: async (id: string) => {
+  approveReceipt: async (id: string): Promise<{ receipt: ReceiptRecord; transaction: { id: string } }> => {
     const response = await apiClient.post(`/receipts/${id}/approve`);
     return response.data as { receipt: ReceiptRecord; transaction: { id: string } };
   },
 
-  uploadReceipts: async (formData: FormData) => {
+  uploadReceipts: async (formData: FormData): Promise<{ receipts: ReceiptRecord[] }> => {
     const response = await apiClient.post('/receipts/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data as { receipts: ReceiptRecord[] };
   },
 
-  scanReceipt: async (file: File, language?: string) => {
+  scanReceipt: async (file: File, language?: string): Promise<ReceiptRecord> => {
     const formData = new FormData();
     formData.append('file', file);
 

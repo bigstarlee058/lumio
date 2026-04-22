@@ -2,24 +2,21 @@
 
 import { useEffect, useState } from 'react';
 
+// CSS class approach avoids interfering with MUI's inline-style scroll management.
+// MUI Dialog/Drawer saves and restores body.style.overflow directly; if we also
+// write to body.style.overflow, MUI may restore a stale 'hidden' value after our
+// lock releases, permanently blocking scroll. Using a class + CSS variable keeps
+// our lock on a separate "channel" that MUI never touches.
+const LOCK_CLASS = 'body-scroll-locked';
+const SCROLLBAR_VAR = '--scroll-lock-scrollbar-width';
+
 let lockCount = 0;
-let savedOverflow = '';
-let savedPaddingRight = '';
 
 const lockBodyScroll = () => {
   if (lockCount === 0) {
-    const currentOverflow = document.body.style.overflow;
-    // Only save if it's not already hidden (e.g. by MUI)
-    if (currentOverflow !== 'hidden') {
-      savedOverflow = currentOverflow;
-      savedPaddingRight = document.body.style.paddingRight;
-    }
-
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0 && currentOverflow !== 'hidden') {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
+    document.documentElement.style.setProperty(SCROLLBAR_VAR, `${scrollbarWidth}px`);
+    document.body.classList.add(LOCK_CLASS);
   }
   lockCount += 1;
 };
@@ -27,11 +24,8 @@ const lockBodyScroll = () => {
 const unlockBodyScroll = () => {
   lockCount = Math.max(0, lockCount - 1);
   if (lockCount === 0) {
-    document.body.style.overflow = savedOverflow;
-    document.body.style.paddingRight = savedPaddingRight;
-    // Reset saved values
-    savedOverflow = '';
-    savedPaddingRight = '';
+    document.body.classList.remove(LOCK_CLASS);
+    document.documentElement.style.removeProperty(SCROLLBAR_VAR);
   }
 };
 
@@ -51,10 +45,8 @@ export const useIsAnyModalOpen = () => {
       setIsAnyModalOpen(lockCount > 0);
     };
 
-    // Check immediately
     checkModalState();
 
-    // Set up an interval to check for changes
     const interval = setInterval(checkModalState, 100);
 
     return () => clearInterval(interval);
