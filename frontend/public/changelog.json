@@ -1,13 +1,166 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "a8a48627d756b3f9f612d6496816b8e8cb30b88b"
+      "main": "5b71e9b255cbeaffd92b8bb6200f88971af26d5b"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-22T05:17:51.586Z",
+    "lastGeneratedAt": "2026-04-22T06:45:34.341Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-22-5b71e9b",
+      "version": "main-5b71e9b",
+      "branch": "main",
+      "date": "2026-04-22T06:45:34.341Z",
+      "title": "Release update - April 22, 2026",
+      "summary": "This release includes 1 feature, 6 improvements, and 2 fixes.",
+      "markdown": "## Features\n- **sidebar**: Replace storage widget with support project button\n\n## Improvements\n- **auth**: Change background to dark green and button to emerald gradient\n- **custom-tables**: Update components and views\n- **workspaces**: Update workspace components\n- **storage**: Update storage components and helpers\n- **shared**: Update shared components and audit utilities\n- Update global CSS tokens and MUI theme configuration\n\n## Fixes\n- **statements**: Fix filter dropdowns and Gmail receipt amount display\n- **categories**: Make toggle switch knob visibly white",
+      "commits": [
+        {
+          "sha": "863f81107d73900f201d2d51332fc2f10aec9842",
+          "shortSha": "863f811",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-22T05:17:52Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "cd2ad647e7ab9bc7d72815331f3eb73a2f57471a",
+          "shortSha": "cd2ad64",
+          "subject": "fix(statements): fix filter dropdowns and Gmail receipt amount display",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:43:59+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListHeader.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/hooks/useGmailReceiptData.ts"
+          ]
+        },
+        {
+          "sha": "2b4716bb5a44891d50b24a5e563545007b6f416e",
+          "shortSha": "2b4716b",
+          "subject": "style(auth): change background to dark green and button to emerald gradient",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:05+03:00",
+          "files": [
+            "frontend/app/(auth)/layout.tsx",
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx"
+          ]
+        },
+        {
+          "sha": "97992878c6a37234aff7afa2bf37436d91392d52",
+          "shortSha": "9799287",
+          "subject": "feat(sidebar): replace storage widget with support project button",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:11+03:00",
+          "files": [
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/components/navigation.content.ts"
+          ]
+        },
+        {
+          "sha": "0783e6061b76d67493a163181520a3f9ddbb959e",
+          "shortSha": "0783e60",
+          "subject": "fix(categories): make toggle switch knob visibly white",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:16+03:00",
+          "files": [
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx"
+          ]
+        },
+        {
+          "sha": "3fdd21b3c68034b3b421e77e2cc7f30ecc6824ee",
+          "shortSha": "3fdd21b",
+          "subject": "refactor(custom-tables): update components and views",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:22+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/ColumnsVisibilityPanel.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/TableToolbar.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesListView.tsx",
+            "frontend/app/(main)/custom-tables/components/TableListRow.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx"
+          ]
+        },
+        {
+          "sha": "2b08f9b533b8a7575615bfcfc9b77e6ee7dd20f0",
+          "shortSha": "2b08f9b",
+          "subject": "refactor(workspaces): update workspace components",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:29+03:00",
+          "files": [
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/CurrencySelector.tsx",
+            "frontend/app/(main)/workspaces/components/MemberRow.tsx",
+            "frontend/app/(main)/workspaces/components/MembersList.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceListFilters.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceMembersView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx"
+          ]
+        },
+        {
+          "sha": "429fecf015400df9f4ebedb277f741e973739e31",
+          "shortSha": "429fecf",
+          "subject": "refactor(storage): update storage components and helpers",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:36+03:00",
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx",
+            "frontend/app/storage/[id]/page.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/components/FolderFilesPanel.tsx",
+            "frontend/app/storage/components/FolderItem.tsx",
+            "frontend/app/storage/components/FolderList.tsx",
+            "frontend/app/storage/components/FolderViewRow.tsx",
+            "frontend/app/storage/components/NewFolderInput.tsx",
+            "frontend/app/storage/components/StorageFilterModal.tsx",
+            "frontend/app/storage/components/StorageHeader.tsx",
+            "frontend/app/storage/components/StorageTagsPanel.tsx",
+            "frontend/app/storage/helpers/storageStyling.ts",
+            "frontend/app/storage/hooks/useStorageColorPicker.ts",
+            "frontend/app/storage/hooks/useStorageTags.ts"
+          ]
+        },
+        {
+          "sha": "c70c8464dd83aa6b6c29af470fc0dcd9bf83afd0",
+          "shortSha": "c70c846",
+          "subject": "refactor(shared): update shared components and audit utilities",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:46+03:00",
+          "files": [
+            "frontend/app/(main)/reports/components/ReportTemplateCard.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashContent.tsx",
+            "frontend/app/audit/components/AuditEventTable.tsx",
+            "frontend/app/audit/utils/avatarUtils.ts",
+            "frontend/app/components/BaseStorageWidget.tsx",
+            "frontend/app/components/dashboard/DataHealthTab.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TrendsTab.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/components/receipts/components/CurrencyDrawer.tsx",
+            "frontend/app/stories/components/Navigation.stories.tsx",
+            "frontend/app/stories/components/PermissionsPanel.stories.tsx"
+          ]
+        },
+        {
+          "sha": "5b71e9b255cbeaffd92b8bb6200f88971af26d5b",
+          "shortSha": "5b71e9b",
+          "subject": "style: update global CSS tokens and MUI theme configuration",
+          "author": "symonbaikov",
+          "date": "2026-04-22T09:44:50+03:00",
+          "files": [
+            "frontend/app/globals.css",
+            "frontend/app/styles/tokens.css",
+            "frontend/app/theme.ts"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-22-a8a4862",
       "version": "main-a8a4862",
