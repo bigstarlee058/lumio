@@ -2,16 +2,13 @@ FROM prom/prometheus:v2.50.1
 
 USER root
 
-COPY observability/prometheus.railway.yml /etc/prometheus/prometheus.yml
+RUN apk add --no-cache gettext
+
+COPY observability/prometheus.railway.yml /etc/prometheus/prometheus.yml.tmpl
 COPY observability/prometheus/rules /etc/prometheus/rules
+COPY observability/prometheus/entrypoint.sh /entrypoint.sh
 
-RUN chown -R nobody:nobody /etc/prometheus /prometheus
+RUN chmod +x /entrypoint.sh && \
+    chown -R nobody:nobody /etc/prometheus /prometheus
 
-USER nobody
-
-ENTRYPOINT ["/bin/prometheus"]
-CMD ["--config.file=/etc/prometheus/prometheus.yml", \
-     "--config.expand-env", \
-     "--storage.tsdb.path=/prometheus", \
-     "--storage.tsdb.retention.time=15d", \
-     "--web.enable-lifecycle"]
+ENTRYPOINT ["/entrypoint.sh"]
