@@ -87,7 +87,7 @@ Lumio is a full-stack financial operations platform built for teams that need to
 - **OCR for Image Statements** — Tesseract.js text extraction from scanned documents and photos.
 - **Idempotent Uploads** — SHA-256 file hashing prevents duplicate imports.
 - **Transaction Deduplication** — Fingerprint-based duplicate detection with confidence scoring, merge, and mark-as-duplicate workflows.
-- **AI Auto-Categorization** — OpenAI / Gemini / OpenRouter-backed categorization with per-workspace learning rules.
+- **AI Auto-Categorization** — Gemini / OpenRouter-backed categorization with per-workspace learning rules.
 - **Multi-Tenant Workspaces** — Unlimited workspaces with invitation flows and per-workspace data isolation.
 - **Granular RBAC** — Roles: owner, admin, member, viewer. Per-user permission overrides.
 - **Dashboard & Reports** — Cash flow, top categories, trends, custom report builder with CSV/XLSX export.
@@ -101,7 +101,7 @@ Lumio is a full-stack financial operations platform built for teams that need to
 
 - **ML Categorization Rules** — `CategoryLearning` remembers per-workspace merchant→category patterns and applies them automatically on future imports.
 - **AI Financial Insights** — Automatically generated insights surfaced on the dashboard; dismissible per-user.
-- **Generic AI PDF Parser** — Gemini/OpenAI extracts structured transaction data from any PDF when no native parser matches.
+- **Generic AI PDF Parser** — Gemini / OpenRouter extracts structured transaction data from any PDF when no native parser matches.
 
 ### Integrations
 
@@ -124,6 +124,7 @@ Lumio is a full-stack financial operations platform built for teams that need to
 - **Manual Data Entry** — Record cash expenses, income, and receipts manually with custom fields and file attachments.
 - **Categories** — Hierarchical transaction categories with usage counts and enable/disable toggle.
 - **Reference Data** — Tax rates, branches, and wallets for enriching transactions.
+- **Exchange Rates** — Currency exchange rate tracking and management.
 
 ### Platform
 
@@ -159,7 +160,7 @@ Setting expectations upfront:
 | Bereke Bank (legacy format) | PDF | `BerekeOldParser` — native |
 | Any bank | CSV | `CsvParser` — generic delimiter detection |
 | Any bank | XLSX / XLS | `ExcelParser` — generic |
-| Any bank | PDF | `GenericPdfParser` — AI-assisted via Gemini / OpenAI |
+| Any bank | PDF | `GenericPdfParser` — AI-assisted via Gemini / OpenRouter |
 | Any bank | Image (PNG / JPG) | OCR pipeline via Tesseract.js |
 
 ---
@@ -175,9 +176,9 @@ Setting expectations upfront:
 | Database | [PostgreSQL 14](https://www.postgresql.org/) via [TypeORM 0.3](https://typeorm.io/) |
 | Cache | [Redis 7](https://redis.io/) via `cache-manager` |
 | Auth | JWT (access 1 h / refresh 30 d), Passport.js, bcrypt |
-| File Processing | pdf-parse, pdf-lib, pdf2table, tesseract.js, sharp, xlsx |
-| AI / LLM | OpenAI SDK v4, @google/generative-ai (Gemini), @openrouter/sdk |
-| Email | [Resend](https://resend.com/) + React Email templates |
+| File Processing | pdf-parse, pdf-lib, tesseract.js v5, sharp, xlsx |
+| AI / LLM | @google/generative-ai (Gemini), @openrouter/sdk |
+| Email | [Resend v6](https://resend.com/) + React Email templates |
 | Real-time | Socket.IO 4 + @nestjs/websockets |
 | Scheduling | @nestjs/schedule (cron jobs for Telegram reports, Gmail sync) |
 | Metrics | prom-client (Prometheus) |
@@ -192,9 +193,8 @@ Setting expectations upfront:
 | Framework | [Next.js 16](https://nextjs.org/) (App Router) |
 | Runtime | React 19 |
 | Language | TypeScript 5 |
-| Styling | TailwindCSS v4 |
-| UI Libraries | Mantine v8, MUI v7, HeroUI v2 |
-| Icons | Lucide React, MUI Icons, Iconify |
+| Styling | MUI v7 + Emotion |
+| Icons | Lucide React |
 | Tables | TanStack Table v8 + TanStack Virtual v3 |
 | Charts | ECharts v5 + echarts-for-react |
 | Drag & Drop | @dnd-kit/core + @dnd-kit/sortable |
@@ -203,7 +203,7 @@ Setting expectations upfront:
 | i18n | Intlayer v7 + next-intlayer (English, Russian, Kazakh) |
 | Onboarding | driver.js |
 | PDF Viewer | react-pdf v10 |
-| Animation | framer-motion |
+| Animation | framer-motion v12 |
 | Component Dev | Storybook v8 (webpack5) |
 | Tests | Vitest v2 |
 
@@ -213,7 +213,7 @@ Setting expectations upfront:
 |---|---|
 | Containerization | Docker + Docker Compose |
 | Monitoring | Prometheus + Grafana |
-| CI/CD | GitHub Actions (dependency-review, Trivy, Hadolint, SLSA, release-please) |
+| CI/CD | GitHub Actions (CI, CD, CodeQL, dependency-review, Scorecard, release-please, Storybook) |
 
 ---
 
@@ -223,7 +223,7 @@ Setting expectations upfront:
 lumio/
 ├── backend/                         # NestJS API server
 │   ├── src/
-│   │   ├── modules/                 # 27 feature modules
+│   │   ├── modules/                 # 30 feature modules
 │   │   │   ├── auth/                # JWT auth, refresh tokens, Google OAuth, session management
 │   │   │   ├── users/               # User CRUD, avatars, permission overrides
 │   │   │   ├── workspaces/          # Multi-tenant workspaces, RBAC, invitations
@@ -240,6 +240,7 @@ lumio/
 │   │   │   ├── google-drive/        # Google Drive OAuth & file import
 │   │   │   ├── google-sheets/       # Google Sheets two-way sync
 │   │   │   ├── dropbox/             # Dropbox OAuth & file import
+│   │   │   ├── exchange-rates/      # Currency exchange rate management
 │   │   │   ├── telegram/            # Telegram bot, scheduled reports
 │   │   │   ├── custom-tables/       # User-defined data structures
 │   │   │   ├── data-entry/          # Manual expense/income entry
@@ -250,11 +251,13 @@ lumio/
 │   │   │   ├── branches/            # Branch reference data
 │   │   │   ├── wallets/             # Wallet reference data
 │   │   │   ├── tax-rates/           # Tax rate reference data
+│   │   │   ├── payables/           # Accounts payable workflow
+│   │   │   ├── receipts/           # Receipt management & browser
 │   │   │   └── observability/       # Prometheus metrics endpoint
-│   │   ├── entities/                # 50 TypeORM entities
+│   │   ├── entities/                # 51 TypeORM entities
 │   │   ├── common/                  # Guards, decorators, interceptors, filters
 │   │   ├── config/                  # App configuration
-│   │   └── migrations/              # 64 database migrations (auto-applied on startup)
+│   │   └── migrations/              # 82 database migrations (auto-applied on startup)
 │   ├── scripts/                     # Admin, seed, parse debug, storage repair
 │   └── @tests/                      # Unit and E2E test suites
 ├── frontend/                        # Next.js application
@@ -283,7 +286,7 @@ lumio/
 │   │   └── stories/                 # Storybook stories (*.stories.tsx)
 │   └── public/                      # Static assets, bank logos
 ├── docs/
-│   ├── plans/                       # 24 feature design & implementation plans
+│   ├── plans/                       # 30 feature design & implementation plans
 │   ├── CI/                          # CI/CD pipeline documentation
 │   ├── security/                    # CVE allowlists, license exceptions
 │   └── statements-examples/         # Sample bank statement files for testing
@@ -428,7 +431,6 @@ Provide at least one key. The system will fall back to the next available provid
 
 ```bash
 # backend/.env
-OPENAI_API_KEY=sk-...
 GEMINI_API_KEY=your-gemini-api-key
 OPENROUTER_API_KEY=your-openrouter-key
 ```
@@ -601,7 +603,7 @@ make update            # Update npm dependencies
 
 ### Database Migrations
 
-Lumio uses TypeORM migrations exclusively (`synchronize: false`). Migrations run automatically on every startup unless `RUN_MIGRATIONS=false` is set. There are currently 64 migrations covering the entire schema history.
+Lumio uses TypeORM migrations exclusively (`synchronize: false`). Migrations run automatically on every startup unless `RUN_MIGRATIONS=false` is set. There are currently 82 migrations covering the entire schema history.
 
 ```bash
 # Apply all pending migrations (Docker)
@@ -700,7 +702,7 @@ make storybook-serve      # Serve the downloaded build locally
 
 Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming convention. Storybook is automatically built on every PR and push to `main` as a GitHub Actions artifact (7-day retention for PRs, 30-day for main).
 
-**Story categories:** Components, Pages, Transactions, Modals, Tables, Charts, Mock Data.
+**Story categories:** Components, Modals, Transactions, UI.
 
 ---
 
@@ -721,8 +723,8 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
 │                         │         │  - Gmail API                │
 │  - App Router           │         │  - Google Drive             │
 │  - React 19             │         │  - Dropbox                  │
-│  - TailwindCSS          │         │  - Telegram Bot             │
-│  - Real-time updates    │         │  - OpenAI / Gemini          │
+│  - MUI + Emotion        │         │  - Telegram Bot             │
+│  - Real-time updates    │         │  - Gemini / OpenRouter      │
 └────────────┬────────────┘         └─────────────────────────────┘
              │
              │ REST API (/api/v1)
@@ -759,8 +761,8 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
 ┌──────────▼────────────┐   ┌──────────▼────────────┐
 │   PostgreSQL 14       │   │     Redis 7           │
 │                       │   │                       │
-│  - 50 TypeORM entities│   │  - Session cache      │
-│  - 64 migrations      │   │  - Rate limiting      │
+│  - 51 TypeORM entities│   │  - Session cache      │
+│  - 82 migrations      │   │  - Rate limiting      │
 │  - Full-text search   │   │  - Bull queues        │
 └───────────────────────┘   └───────────────────────┘
 
@@ -791,7 +793,7 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
 - SHA-256 `fileHash` on statements for idempotent re-upload detection
 - `Idempotency-Key` header supported on upload endpoints (stored in `IdempotencyKey` entity)
 - Transaction fingerprinting for cross-statement duplicate detection
-- 50 TypeORM entities covering all domain objects (see `backend/src/entities/`)
+- 51 TypeORM entities covering all domain objects (see `backend/src/entities/`)
 
 ### Parsing Pipeline
 
@@ -804,7 +806,7 @@ Upload request
       ├── BerekeOldParser    (Bereke Bank legacy PDF)
       ├── ExcelParser        (XLSX / XLS)
       ├── CsvParser          (CSV)
-      ├── GenericPdfParser   (AI-assisted: Gemini / OpenAI)
+      ├── GenericPdfParser   (AI-assisted: Gemini / OpenRouter)
       └── OCR Pipeline       (Tesseract.js for images)
   → ImportSession created (status: processing)
   → Transactions persisted
@@ -904,7 +906,7 @@ See [RAILWAY.md](RAILWAY.md) for step-by-step instructions.
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community guidelines |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [RAILWAY.md](RAILWAY.md) | Railway deployment step-by-step |
-| [docs/plans/](docs/plans/) | 24 feature design and implementation plan documents |
+| [docs/plans/](docs/plans/) | 30 feature design and implementation plan documents |
 | [docs/CI/](docs/CI/) | CI/CD pipeline documentation |
 | [docs/security/](docs/security/) | CVE allowlists and license exceptions |
 
@@ -978,7 +980,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 Built on great open-source foundations:
 
-[NestJS](https://nestjs.com/) · [Next.js](https://nextjs.org/) · [PostgreSQL](https://www.postgresql.org/) · [TypeORM](https://typeorm.io/) · [Redis](https://redis.io/) · [TailwindCSS](https://tailwindcss.com/) · [Mantine](https://mantine.dev/) · [MUI](https://mui.com/) · [HeroUI](https://www.heroui.com/) · [TanStack Table](https://tanstack.com/table) · [ECharts](https://echarts.apache.org/) · [Tesseract.js](https://tesseract.projectnaptha.com/) · [Socket.IO](https://socket.io/) · [Intlayer](https://intlayer.org/) · [driver.js](https://driverjs.com/) · [Biome](https://biomejs.dev/) · [Storybook](https://storybook.js.org/) · [Resend](https://resend.com/) · and many more.
+[NestJS](https://nestjs.com/) · [Next.js](https://nextjs.org/) · [PostgreSQL](https://www.postgresql.org/) · [TypeORM](https://typeorm.io/) · [Redis](https://redis.io/) · [MUI](https://mui.com/) · [Emotion](https://emotion.sh/) · [TanStack Table](https://tanstack.com/table) · [ECharts](https://echarts.apache.org/) · [Tesseract.js](https://tesseract.projectnaptha.com/) · [Socket.IO](https://socket.io/) · [Intlayer](https://intlayer.org/) · [driver.js](https://driverjs.com/) · [Biome](https://biomejs.dev/) · [Storybook](https://storybook.js.org/) · [Resend](https://resend.com/) · and many more.
 
 ---
 
