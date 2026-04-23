@@ -1,13 +1,92 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "f8ca7b93fbf207a162c68c590d0b942c7676c379"
+      "main": "1cfe2aabe425172d0705fb63ee98559a035d5a2f"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-23T21:01:35.250Z",
+    "lastGeneratedAt": "2026-04-23T21:48:15.907Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-23-1cfe2aa",
+      "version": "main-1cfe2aa",
+      "branch": "main",
+      "date": "2026-04-23T21:48:15.907Z",
+      "title": "Release update - April 23, 2026",
+      "summary": "This release includes 1 feature and 2 fixes.",
+      "markdown": "## Features\n- **observability**: Add Prometheus + Grafana monitoring for Railway\n\n## Fixes\n- **observability**: Fix Railway deploy for Prometheus and Grafana\n- **observability**: Fix Prometheus envsubst and Grafana permissions",
+      "commits": [
+        {
+          "sha": "d6c09910b2e19f763a0c90a284e357fb4ddc1ab8",
+          "shortSha": "d6c0991",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-23T21:01:35Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "88538b147cac5798bfedd9acaeba769259d984c0",
+          "shortSha": "88538b1",
+          "subject": "Update README.md",
+          "author": "Symon Baikov",
+          "date": "2026-04-24T00:10:47+03:00",
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "sha": "c0b660b710a554cb357e102fbe9bf09af391bfc8",
+          "shortSha": "c0b660b",
+          "subject": "feat(observability): add Prometheus + Grafana monitoring for Railway",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:40:01+03:00",
+          "files": [
+            "backend/src/modules/observability/cache-metrics.service.ts",
+            "backend/src/modules/observability/db-metrics.collector.ts",
+            "backend/src/modules/observability/metrics.service.ts",
+            "backend/src/modules/observability/observability.module.ts",
+            "observability/grafana/Dockerfile",
+            "observability/grafana/dashboards/lumio-backend-business.json",
+            "observability/grafana/dashboards/lumio-backend-infra.json",
+            "observability/grafana/dashboards/lumio-backend-runtime.json",
+            "observability/grafana/provisioning/alerting/contactpoints.yml",
+            "observability/grafana/provisioning/alerting/policies.yml",
+            "observability/grafana/provisioning/datasources/datasources.yml",
+            "observability/prometheus.railway.yml",
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/rules/alerts.yml"
+          ]
+        },
+        {
+          "sha": "3dacc73ec1e37059f5ec9f77a83a499ce1672151",
+          "shortSha": "3dacc73",
+          "subject": "fix(observability): fix Railway deploy for Prometheus and Grafana",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:45:48+03:00",
+          "files": [
+            "observability/grafana/Dockerfile",
+            "observability/grafana/railway.json",
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/railway.json"
+          ]
+        },
+        {
+          "sha": "1cfe2aabe425172d0705fb63ee98559a035d5a2f",
+          "shortSha": "1cfe2aa",
+          "subject": "fix(observability): fix Prometheus envsubst and Grafana permissions",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:47:51+03:00",
+          "files": [
+            "observability/grafana/Dockerfile",
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/entrypoint.sh"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-23-f8ca7b9",
       "version": "main-f8ca7b9",
