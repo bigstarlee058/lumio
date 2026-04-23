@@ -14,7 +14,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 
 type VmProps = { vm: TopMerchantsViewModelReturn };
 
-function TopMerchantsBody({ vm }: VmProps): JSX.Element {
+function TopMerchantsBody({ vm }: VmProps): React.JSX.Element {
   if (vm.loading) {
     return (
       <div className="lumio-view-page__loading">
@@ -32,7 +32,7 @@ function TopMerchantsBody({ vm }: VmProps): JSX.Element {
   return <TopMerchantsContent vm={vm} />;
 }
 
-export default function TopMerchantsView(): JSX.Element {
+export default function TopMerchantsView(): React.JSX.Element {
   const vm = useTopMerchantsViewModel();
   return (
     <div className="container-shared lumio-view-page">

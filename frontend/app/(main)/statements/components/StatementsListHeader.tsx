@@ -163,7 +163,7 @@ function TypeChipLabel({
   typeOptions: FilterOption[];
   fallbackLabel: string;
   [key: string]: unknown;
-}): JSX.Element {
+}): React.JSX.Element {
   const label = draftFilters.type
     ? (typeOptions.find(o => o.value === draftFilters.type)?.label ?? fallbackLabel)
     : fallbackLabel;
@@ -187,7 +187,7 @@ function DateChipLabel({
   dateModes: DateMode[];
   fallbackLabel: string;
   [key: string]: unknown;
-}): JSX.Element {
+}): React.JSX.Element {
   const label = draftFilters.date?.preset
     ? (datePresets.find(o => o.value === draftFilters.date?.preset)?.label ?? fallbackLabel)
     : draftFilters.date?.mode
@@ -267,7 +267,7 @@ export function StatementsListHeader({
   onColumnsToggle,
   onColumnsReorder,
   onColumnsSave,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <div
       className="lumio-stmt-list-view__header"

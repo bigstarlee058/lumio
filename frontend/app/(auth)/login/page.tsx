@@ -231,7 +231,7 @@ function LoginPageContent(): React.JSX.Element {
           value={email}
           onChange={e => setEmail(e.target.value)}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 2 }}
         />
@@ -247,7 +247,7 @@ function LoginPageContent(): React.JSX.Element {
           value={password}
           onChange={e => setPassword(e.target.value)}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 3 }}
         />
@@ -258,7 +258,7 @@ function LoginPageContent(): React.JSX.Element {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: 0,
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',

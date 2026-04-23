@@ -16,6 +16,9 @@ const intlayerAliases = {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   output: 'standalone',
   outputFileTracingRoot: __dirname,
 

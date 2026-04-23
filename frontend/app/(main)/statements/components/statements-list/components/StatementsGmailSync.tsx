@@ -2,7 +2,7 @@
 
 import Skeleton from '@mui/material/Skeleton';
 
-function CheckboxPlaceholder(): JSX.Element {
+function CheckboxPlaceholder(): React.JSX.Element {
   return (
     <div
       style={{
@@ -16,7 +16,7 @@ function CheckboxPlaceholder(): JSX.Element {
   );
 }
 
-function MobileSkeletonContent(): JSX.Element {
+function MobileSkeletonContent(): React.JSX.Element {
   return (
     <div style={{ flex: 1 }}>
       <Skeleton variant="text" width="60%" height={16} />
@@ -35,7 +35,7 @@ function MobileSkeletonContent(): JSX.Element {
   );
 }
 
-function GmailSyncSkeletonRowMobile(): JSX.Element {
+function GmailSyncSkeletonRowMobile(): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
       <CheckboxPlaceholder />
@@ -47,7 +47,7 @@ function GmailSyncSkeletonRowMobile(): JSX.Element {
   );
 }
 
-function DesktopSkeletonRight(): JSX.Element {
+function DesktopSkeletonRight(): React.JSX.Element {
   return (
     <div
       style={{
@@ -70,7 +70,7 @@ function DesktopSkeletonRight(): JSX.Element {
   );
 }
 
-function DesktopSkeletonLeft(): JSX.Element {
+function DesktopSkeletonLeft(): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
       <div
@@ -99,7 +99,7 @@ function DesktopSkeletonLeft(): JSX.Element {
   );
 }
 
-function GmailSyncSkeletonRowDesktop(): JSX.Element {
+function GmailSyncSkeletonRowDesktop(): React.JSX.Element {
   return (
     <>
       <DesktopSkeletonLeft />
@@ -114,7 +114,7 @@ interface StatementsGmailSyncProps {
 
 export function StatementsGmailSync({
   gmailSyncSkeletonKeys,
-}: StatementsGmailSyncProps): JSX.Element | null {
+}: StatementsGmailSyncProps): React.JSX.Element | null {
   if (gmailSyncSkeletonKeys.length === 0) return null;
 
   return (

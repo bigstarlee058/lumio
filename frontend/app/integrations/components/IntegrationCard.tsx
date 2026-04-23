@@ -28,7 +28,7 @@ export interface IntegrationItem {
 
 const externalLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#374151', textDecoration: 'none' };
 
-function ExternalActionLink({ action }: { action: IntegrationAction }): JSX.Element {
+function ExternalActionLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
     <a href={action.href} target="_blank" rel="noreferrer" onClick={(e): void => e.stopPropagation()} style={externalLinkStyle}>
       {action.label}
@@ -37,7 +37,7 @@ function ExternalActionLink({ action }: { action: IntegrationAction }): JSX.Elem
   );
 }
 
-function DisabledPrimaryButton({ action }: { action: IntegrationAction }): JSX.Element {
+function DisabledPrimaryButton({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
     <button type="button" disabled style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#9ca3af', cursor: 'not-allowed', background: 'transparent' }} onClick={(e): void => e.stopPropagation()}>
       {action.label}
@@ -45,7 +45,7 @@ function DisabledPrimaryButton({ action }: { action: IntegrationAction }): JSX.E
   );
 }
 
-function PrimaryLink({ action }: { action: IntegrationAction }): JSX.Element {
+function PrimaryLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
     <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 16px', fontSize: 12, fontWeight: 500, borderRadius: 'var(--lumio-radius-md)', background: 'var(--color-primary)', color: '#fff', textDecoration: 'none' }}>
       {action.label}
@@ -53,7 +53,7 @@ function PrimaryLink({ action }: { action: IntegrationAction }): JSX.Element {
   );
 }
 
-function SecondaryLink({ action }: { action: IntegrationAction }): JSX.Element {
+function SecondaryLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
     <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#374151', textDecoration: 'none' }}>
       {action.label}
@@ -61,14 +61,14 @@ function SecondaryLink({ action }: { action: IntegrationAction }): JSX.Element {
   );
 }
 
-function ActionButton({ action, active }: { action: IntegrationAction; active: boolean }): JSX.Element {
+function ActionButton({ action, active }: { action: IntegrationAction; active: boolean }): React.JSX.Element {
   if (action.external) return <ExternalActionLink action={action} />;
   if (action.primary && active) return <DisabledPrimaryButton action={action} />;
   if (action.primary) return <PrimaryLink action={action} />;
   return <SecondaryLink action={action} />;
 }
 
-function IntegrationBadge({ recommended, badge }: { recommended: boolean; badge: React.ReactNode }): JSX.Element {
+function IntegrationBadge({ recommended, badge }: { recommended: boolean; badge: React.ReactNode }): React.JSX.Element {
   if (recommended) {
     return (
       <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 'var(--lumio-radius-sm)' }}>
@@ -88,7 +88,7 @@ interface IntegrationCardProps {
   onCardClick: (item: IntegrationItem) => void;
 }
 
-function IntegrationCardBody({ item }: { item: IntegrationItem }): JSX.Element {
+function IntegrationCardBody({ item }: { item: IntegrationItem }): React.JSX.Element {
   return (
     <Box sx={{ flex: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -111,7 +111,7 @@ function makeCardSx(clickable: boolean): object {
   return { border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)', p: 2, bgcolor: 'background.paper', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', cursor: clickable ? 'pointer' : 'default', '&:hover': { boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }, '&:focus-visible': { outline: '2px solid var(--color-primary)', outlineOffset: 2 } };
 }
 
-export function IntegrationCard({ item, onCardClick }: IntegrationCardProps): JSX.Element {
+export function IntegrationCard({ item, onCardClick }: IntegrationCardProps): React.JSX.Element {
   const clickable = isItemClickable(item);
   const handleKeyDown = (event: React.KeyboardEvent): void => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -135,7 +135,7 @@ export function IntegrationCard({ item, onCardClick }: IntegrationCardProps): JS
   );
 }
 
-export function CategoryDivider({ label }: { label: React.ReactNode }): JSX.Element {
+export function CategoryDivider({ label }: { label: React.ReactNode }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
       <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
@@ -145,6 +145,6 @@ export function CategoryDivider({ label }: { label: React.ReactNode }): JSX.Elem
   );
 }
 
-export function IntegrationIcon({ src, alt }: { src: string; alt: string }): JSX.Element {
+export function IntegrationIcon({ src, alt }: { src: string; alt: string }): React.JSX.Element {
   return <Image src={src} alt={alt} width={32} height={32} style={{ borderRadius: 'var(--lumio-radius-md)' }} />;
 }

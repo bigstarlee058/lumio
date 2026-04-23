@@ -35,17 +35,17 @@ function GridArea(p: P): React.JSX.Element {
             isFullscreen={p.isFullscreen} loadingRows={p.loadingRows} hasMore={p.hasMore}
             stickyLeftColumnIds={p.stickyLeftColumnIds} stickyRightColumnIds={p.stickyRightColumnIds}
             showAddRow={p.normalizedActiveTabId === 'all'} onLoadMore={p.loadRows}
-            onFiltersParamChange={({ filtersParam }) => p.onGridFiltersParamChange(filtersParam)}
-            onUpdateCell={({ rowId, columnKey, value }) => p.updateCellFromGrid(rowId, columnKey, value)}
-            onUpdateRowStyle={({ rowId, styles }) => p.updateRowStyle(rowId, styles)}
-            onCreateRow={p.createRow} onViewRow={({ rowId }) => p.openRowDrawer(rowId, 'view')}
-            onEditRow={({ rowId }) => p.openRowDrawer(rowId, 'edit')}
-            onDeleteRow={({ rowId }) => p.requestDeleteRow(p.rows, rowId)}
-            onPersistColumnWidth={({ columnKey, width }) => p.persistColumnWidth(columnKey, width)}
-            selectedColumnKeys={p.selectedColumnKeys} onSelectedColumnKeysChange={({ keys }) => p.setSelectedColumnKeys(keys)}
-            onRenameColumnTitle={({ columnKey, nextTitle }) => p.renameColumnTitleFromGrid(columnKey, nextTitle)}
-            onDeleteColumn={({ columnKey }) => { const col = p.orderedColumns.find(c => c.key === columnKey); if (col) p.openDeleteColumnModal(col); }}
-            onSelectedRowIdsChange={({ rowIds }) => p.setSelectedRowIds(rowIds)}
+            onFiltersParamChange={(filtersParam) => p.onGridFiltersParamChange(filtersParam)}
+            onUpdateCell={(rowId, columnKey, value) => p.updateCellFromGrid(rowId, columnKey, value)}
+            onUpdateRowStyle={(rowId, styles) => p.updateRowStyle(rowId, styles)}
+            onCreateRow={p.createRow} onViewRow={(rowId) => p.openRowDrawer(rowId, 'view')}
+            onEditRow={(rowId) => p.openRowDrawer(rowId, 'edit')}
+            onDeleteRow={(rowId) => p.requestDeleteRow(p.rows, rowId)}
+            onPersistColumnWidth={(columnKey, width) => p.persistColumnWidth(columnKey, width)}
+            selectedColumnKeys={p.selectedColumnKeys} onSelectedColumnKeysChange={(keys) => p.setSelectedColumnKeys(keys)}
+            onRenameColumnTitle={(columnKey, nextTitle) => p.renameColumnTitleFromGrid(columnKey, nextTitle)}
+            onDeleteColumn={(columnKey) => { const col = p.orderedColumns.find(c => c.key === columnKey); if (col) p.openDeleteColumnModal(col); }}
+            onSelectedRowIdsChange={(rowIds) => p.setSelectedRowIds(rowIds)}
             onAddColumnClick={() => p.setNewColumnOpen(true)} isPrintMode={p.isPrintMode}
           />
         )}

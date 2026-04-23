@@ -7,7 +7,7 @@ import { buildFiltersDrawerLabels } from '@/app/(main)/statements/helpers/buildF
 
 type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 
-export function SpendOverTimeFiltersDrawer({ vm }: Props): JSX.Element {
+export function SpendOverTimeFiltersDrawer({ vm }: Props): React.JSX.Element {
   const { labels, filterOptions, filterOptionLabels } = vm;
   const { typeOptions, statusOptions, datePresets, dateModes, groupByOptions, hasOptions } = filterOptions;
   const onClose = (): void => { vm.setFiltersDrawerOpen(false); vm.setFiltersDrawerScreen('root'); };

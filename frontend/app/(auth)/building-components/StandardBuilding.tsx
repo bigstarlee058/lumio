@@ -5,7 +5,7 @@ import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import type { BuildingProps } from './shared';
 
-export const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: BuildingProps): JSX.Element => (
+export const StandardBuilding = ({ delay, duration, w = 100, h = 250, ...pos }: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

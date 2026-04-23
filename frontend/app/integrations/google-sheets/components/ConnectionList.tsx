@@ -30,7 +30,7 @@ interface ConnectionListProps {
   onRemove: (id: string) => void;
 }
 
-function LoadingSkeleton(): JSX.Element {
+function LoadingSkeleton(): React.JSX.Element {
   return (
     <Stack spacing={1}>
       {[1, 2].map(key => (
@@ -41,7 +41,7 @@ function LoadingSkeleton(): JSX.Element {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export function ConnectionList({ connections, loadingList, emptyState, syncingId, removingId, locale, t, onAuthorize, onSync, onRemove }: ConnectionListProps): JSX.Element {
+export function ConnectionList({ connections, loadingList, emptyState, syncingId, removingId, locale, t, onAuthorize, onSync, onRemove }: ConnectionListProps): React.JSX.Element {
   return (
     <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-list">
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>

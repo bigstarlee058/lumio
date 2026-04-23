@@ -7,7 +7,7 @@ import type { ChangeEvent, ComponentType, JSX, RefObject } from 'react';
 type TIntl = Record<string, { value: string }>;
 
 type LoadingProps = { t: TIntl };
-function PDFLoadingOverlay({ t }: LoadingProps): JSX.Element {
+function PDFLoadingOverlay({ t }: LoadingProps): React.JSX.Element {
   return (
     <div className="lumio-pdf-preview-modal__loading-overlay">
       <div className="lumio-pdf-preview-modal__loading-body">
@@ -19,7 +19,7 @@ function PDFLoadingOverlay({ t }: LoadingProps): JSX.Element {
 }
 
 type ErrorActionsProps = { t: TIntl; onClose: () => void; attachingFile: boolean; attachInputRef: RefObject<HTMLInputElement | null>; onAttachClick: () => void; onAttachFile: (e: ChangeEvent<HTMLInputElement>) => void };
-function PDFErrorAttachActions({ t, onClose, attachingFile, attachInputRef, onAttachClick, onAttachFile }: ErrorActionsProps): JSX.Element {
+function PDFErrorAttachActions({ t, onClose, attachingFile, attachInputRef, onAttachClick, onAttachFile }: ErrorActionsProps): React.JSX.Element {
   return (
     <div className="lumio-pdf-preview-modal__error-actions">
       <input ref={attachInputRef} type="file" accept="application/pdf,image/*,.csv,.xlsx,.xls,.docx" onChange={onAttachFile} className="lumio-pdf-preview-modal__hidden-input" />
@@ -30,7 +30,7 @@ function PDFErrorAttachActions({ t, onClose, attachingFile, attachInputRef, onAt
 }
 
 type ErrorViewProps = { showAttachFallback: boolean; error: string; t: TIntl; onClose: () => void; attachingFile: boolean; attachInputRef: RefObject<HTMLInputElement | null>; onAttachClick: () => void; onAttachFile: (e: ChangeEvent<HTMLInputElement>) => void };
-function PDFErrorView({ showAttachFallback, error, t, onClose, attachingFile, attachInputRef, onAttachClick, onAttachFile }: ErrorViewProps): JSX.Element {
+function PDFErrorView({ showAttachFallback, error, t, onClose, attachingFile, attachInputRef, onAttachClick, onAttachFile }: ErrorViewProps): React.JSX.Element {
   return (
     <div className="lumio-pdf-preview-modal__error-overlay">
       <div className="lumio-pdf-preview-modal__error-body">
@@ -47,7 +47,7 @@ function PDFErrorView({ showAttachFallback, error, t, onClose, attachingFile, at
 }
 
 type ParsePromptProps = { t: TIntl; startingParsing: boolean; onDecline: () => void; onConfirm: () => void };
-function PDFParsePrompt({ t, startingParsing, onDecline, onConfirm }: ParsePromptProps): JSX.Element {
+function PDFParsePrompt({ t, startingParsing, onDecline, onConfirm }: ParsePromptProps): React.JSX.Element {
   return (
     <div className="lumio-pdf-preview-modal__parse-prompt-overlay">
       <div className="lumio-pdf-preview-modal__parse-prompt-card">
@@ -63,7 +63,7 @@ function PDFParsePrompt({ t, startingParsing, onDecline, onConfirm }: ParsePromp
 }
 
 type OverlaysProps = { loading: boolean; error: string | null; showParsePrompt: boolean; showAttachFallback: boolean; t: TIntl; onClose: () => void; attachingFile: boolean; startingParsing: boolean; attachInputRef: RefObject<HTMLInputElement | null>; onAttachClick: () => void; onAttachFile: (e: ChangeEvent<HTMLInputElement>) => void; onConfirmParse: () => void; onDeclineParse: () => void };
-function PDFOverlays({ loading, error, showParsePrompt, showAttachFallback, t, onClose, attachingFile, startingParsing, attachInputRef, onAttachClick, onAttachFile, onConfirmParse, onDeclineParse }: OverlaysProps): JSX.Element {
+function PDFOverlays({ loading, error, showParsePrompt, showAttachFallback, t, onClose, attachingFile, startingParsing, attachInputRef, onAttachClick, onAttachFile, onConfirmParse, onDeclineParse }: OverlaysProps): React.JSX.Element {
   return (
     <>
       {loading && <PDFLoadingOverlay t={t} />}
@@ -74,7 +74,7 @@ function PDFOverlays({ loading, error, showParsePrompt, showAttachFallback, t, o
 }
 
 type ImageViewProps = { viewportRef: RefObject<HTMLDivElement | null>; pdfObjectUrl: string; fileName: string; isReceiptImage: boolean };
-function PDFImageView({ viewportRef, pdfObjectUrl, fileName, isReceiptImage }: ImageViewProps): JSX.Element {
+function PDFImageView({ viewportRef, pdfObjectUrl, fileName, isReceiptImage }: ImageViewProps): React.JSX.Element {
   const cls = isReceiptImage ? 'lumio-pdf-preview-modal__image-preview lumio-pdf-preview-modal__image-preview--receipt' : 'lumio-pdf-preview-modal__image-preview';
   return (
     <div ref={viewportRef} className="lumio-pdf-preview-modal__viewport">
@@ -84,7 +84,7 @@ function PDFImageView({ viewportRef, pdfObjectUrl, fileName, isReceiptImage }: I
 }
 
 type PDFPagesViewProps = { viewportRef: RefObject<HTMLDivElement | null>; pdfObjectUrl: string; pageWidth: number; numPages: number; DocumentComponent: ComponentType<Record<string, unknown>>; PageComponent: ComponentType<Record<string, unknown>>; onSetNumPages: (n: number) => void; onPdfError: () => void };
-function PDFPagesView({ viewportRef, pdfObjectUrl, pageWidth, numPages, DocumentComponent, PageComponent, onSetNumPages, onPdfError }: PDFPagesViewProps): JSX.Element {
+function PDFPagesView({ viewportRef, pdfObjectUrl, pageWidth, numPages, DocumentComponent, PageComponent, onSetNumPages, onPdfError }: PDFPagesViewProps): React.JSX.Element {
   return (
     <div ref={viewportRef} className="lumio-pdf-preview-modal__viewport">
       <div className="lumio-pdf-preview-modal__pdf-wrapper">
@@ -101,7 +101,7 @@ function PDFPagesView({ viewportRef, pdfObjectUrl, pageWidth, numPages, Document
 }
 
 type ViewerAreaProps = { showImage: boolean; showPDF: boolean; pdfObjectUrl: string | null; viewportRef: RefObject<HTMLDivElement | null>; fileName: string; isReceiptImage: boolean; pageWidth: number; numPages: number; DocumentComponent: ComponentType<Record<string, unknown>> | undefined; PageComponent: ComponentType<Record<string, unknown>> | undefined; onSetNumPages: (n: number) => void; onPdfError: () => void };
-function PDFViewerArea({ showImage, showPDF, pdfObjectUrl, viewportRef, fileName, isReceiptImage, pageWidth, numPages, DocumentComponent, PageComponent, onSetNumPages, onPdfError }: ViewerAreaProps): JSX.Element {
+function PDFViewerArea({ showImage, showPDF, pdfObjectUrl, viewportRef, fileName, isReceiptImage, pageWidth, numPages, DocumentComponent, PageComponent, onSetNumPages, onPdfError }: ViewerAreaProps): React.JSX.Element {
   if (!pdfObjectUrl) return <></>;
   if (showImage) return <PDFImageView viewportRef={viewportRef} pdfObjectUrl={pdfObjectUrl} fileName={fileName} isReceiptImage={isReceiptImage} />;
   if (!showPDF || !DocumentComponent || !PageComponent) return <></>;
@@ -121,7 +121,7 @@ export type PDFPreviewContentProps = {
   onSetNumPages: (n: number) => void; onPdfError: () => void;
 };
 
-export function PDFPreviewContent({ loading, error, pdfObjectUrl, fileContentType, showParsePrompt, attachingFile, startingParsing, showAttachFallback, isReceiptImage, pageWidth, numPages, DocumentComponent, PageComponent, viewportRef, attachInputRef, t, fileName, onClose, onAttachClick, onAttachFile, onConfirmParse, onDeclineParse, onSetNumPages, onPdfError }: PDFPreviewContentProps): JSX.Element {
+export function PDFPreviewContent({ loading, error, pdfObjectUrl, fileContentType, showParsePrompt, attachingFile, startingParsing, showAttachFallback, isReceiptImage, pageWidth, numPages, DocumentComponent, PageComponent, viewportRef, attachInputRef, t, fileName, onClose, onAttachClick, onAttachFile, onConfirmParse, onDeclineParse, onSetNumPages, onPdfError }: PDFPreviewContentProps): React.JSX.Element {
   const isImagePreview = Boolean(fileContentType?.startsWith('image/'));
   const showImage = !error && Boolean(pdfObjectUrl) && isImagePreview;
   const showPDF = !error && Boolean(pdfObjectUrl) && !isImagePreview;

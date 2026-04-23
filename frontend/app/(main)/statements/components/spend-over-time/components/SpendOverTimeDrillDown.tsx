@@ -34,7 +34,7 @@ type TableProps = {
   labels: Pick<Props['labels'], 'lastOperation' | 'source' | 'workspace' | 'amount'>;
 };
 
-function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps): JSX.Element {
+function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps): React.JSX.Element {
   return (
     <table className="lumio-view-page__table">
       <thead>
@@ -61,7 +61,7 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
   );
 }
 
-export function SpendOverTimeDrillDown({ selectedPoint, drillDownRecords, groupBy, onClose, currency, sourceLabels, labels }: Props): JSX.Element {
+export function SpendOverTimeDrillDown({ selectedPoint, drillDownRecords, groupBy, onClose, currency, sourceLabels, labels }: Props): React.JSX.Element {
   return (
     <div className="lumio-view-page__drill-backdrop">
       <div className="lumio-view-page__drill-modal">

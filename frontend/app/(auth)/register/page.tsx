@@ -209,7 +209,7 @@ function RegisterPageContent(): React.JSX.Element {
           value={formData.name}
           onChange={handleChange}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 2 }}
         />
@@ -225,7 +225,7 @@ function RegisterPageContent(): React.JSX.Element {
           onChange={handleChange}
           disabled={emailLocked || inviteLoading}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 2 }}
         />
@@ -242,7 +242,7 @@ function RegisterPageContent(): React.JSX.Element {
           onChange={handleChange}
           helperText={t.passwordHelper.value}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 2 }}
         />
@@ -255,7 +255,7 @@ function RegisterPageContent(): React.JSX.Element {
           value={formData.company}
           onChange={handleChange}
           InputProps={{
-            sx: {},
+            sx: { borderRadius: 0 },
           }}
           sx={{ mb: 3 }}
         />
@@ -266,7 +266,7 @@ function RegisterPageContent(): React.JSX.Element {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: 0,
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',

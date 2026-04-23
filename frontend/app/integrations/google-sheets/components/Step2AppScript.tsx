@@ -23,7 +23,7 @@ interface Step2AppScriptProps {
   t: Step2Texts;
 }
 
-function TechnicalDetails({ t }: { t: Step2Texts }): JSX.Element {
+function TechnicalDetails({ t }: { t: Step2Texts }): React.JSX.Element {
   return (
     <Box sx={{ mt: 1.5, borderRadius: 'var(--lumio-radius-lg)', bgcolor: '#f9fafb', border: '1px dashed #e5e7eb', px: 1.5, py: 1 }}>
       <Typography style={{ fontSize: 12, color: '#4b5563' }}>
@@ -37,7 +37,7 @@ function TechnicalDetails({ t }: { t: Step2Texts }): JSX.Element {
 
 const linkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', textDecoration: 'none' };
 
-export function Step2AppScript({ t }: Step2AppScriptProps): JSX.Element {
+export function Step2AppScript({ t }: Step2AppScriptProps): React.JSX.Element {
   const [showDetails, setShowDetails] = useState(false);
 
   return (

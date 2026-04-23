@@ -24,7 +24,7 @@ const CONTAINER_STYLE: React.CSSProperties = {
 
 type VmProps = { vm: UnapprovedCashViewModel };
 
-function UnapprovedCashControls({ vm }: VmProps): JSX.Element {
+function UnapprovedCashControls({ vm }: VmProps): React.JSX.Element {
   const { labels, reasonOptions, sourceOptions } = vm;
   return (
     <div style={{ marginBottom: 16, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -36,7 +36,7 @@ function UnapprovedCashControls({ vm }: VmProps): JSX.Element {
   );
 }
 
-export default function UnapprovedCashView(): JSX.Element {
+export default function UnapprovedCashView(): React.JSX.Element {
   const vm = useUnapprovedCashViewModel();
   return (
     <div className="container-shared" style={CONTAINER_STYLE}>

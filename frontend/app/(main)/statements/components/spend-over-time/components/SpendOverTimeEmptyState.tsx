@@ -10,7 +10,7 @@ type Props = {
   onReset: () => void;
 };
 
-export function SpendOverTimeEmptyState({ titleLabel, descriptionLabel, uploadCtaLabel, resetCtaLabel, onUpload, onReset }: Props): JSX.Element {
+export function SpendOverTimeEmptyState({ titleLabel, descriptionLabel, uploadCtaLabel, resetCtaLabel, onUpload, onReset }: Props): React.JSX.Element {
   return (
     <div className="lumio-view-page__empty">
       <p style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>{titleLabel}</p>

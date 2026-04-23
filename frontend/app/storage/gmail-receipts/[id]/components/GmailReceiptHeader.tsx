@@ -3,22 +3,31 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import {
   ArrowLeft,
+  ChevronDown,
   CreditCard,
   Layers,
+  Mail,
   Receipt,
   Send,
   Share2,
+  Table,
   TriangleAlert,
 } from 'lucide-react';
 import {
   Box,
   Button,
+  ButtonGroup,
   Chip,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Tooltip,
   Typography,
 } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 import type { GmailReceipt, ReceiptCategoryOption } from '../hooks/useGmailReceiptData';
 
 interface GmailReceiptHeaderProps {
@@ -38,7 +47,8 @@ interface GmailReceiptHeaderProps {
   onOpenCategory: () => void;
   onSubmit: () => Promise<void>;
   onOpenPayable: () => void;
-  onExport: () => Promise<void>;
+  onExportToGmailDraft: () => Promise<void>;
+  onExportToSheets: () => Promise<void>;
 }
 
 function CategoryButton({
@@ -122,9 +132,12 @@ export function GmailReceiptHeader({
   onOpenCategory,
   onSubmit,
   onOpenPayable,
-  onExport,
+  onExportToGmailDraft,
+  onExportToSheets,
 }: GmailReceiptHeaderProps): React.ReactElement {
   const router = useRouter();
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const exportAnchorRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -192,15 +205,40 @@ export function GmailReceiptHeader({
               Pay
             </Button>
 
-            <Button
-              variant="outlined"
-              startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <Share2 size={18} />}
-              onClick={onExport}
-              disabled={exporting}
-              sx={sharedOutlinedSx}
+            <ButtonGroup variant="outlined" ref={exportAnchorRef} sx={{ ...sharedOutlinedSx, border: 'none' }}>
+              <Button
+                startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <Share2 size={18} />}
+                onClick={onExportToGmailDraft}
+                disabled={exporting}
+                sx={sharedOutlinedSx}
+              >
+                Export
+              </Button>
+              <Button
+                size="small"
+                onClick={() => setExportMenuOpen(prev => !prev)}
+                disabled={exporting}
+                sx={{ ...sharedOutlinedSx, minWidth: 28, px: 0.5 }}
+              >
+                <ChevronDown size={16} />
+              </Button>
+            </ButtonGroup>
+            <Menu
+              anchorEl={exportAnchorRef.current}
+              open={exportMenuOpen}
+              onClose={() => setExportMenuOpen(false)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-              Export
-            </Button>
+              <MenuItem onClick={() => { setExportMenuOpen(false); onExportToGmailDraft(); }}>
+                <ListItemIcon><Mail size={16} /></ListItemIcon>
+                <ListItemText>Export to Gmail Draft</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => { setExportMenuOpen(false); onExportToSheets(); }}>
+                <ListItemIcon><Table size={16} /></ListItemIcon>
+                <ListItemText>Export to Sheets</ListItemText>
+              </MenuItem>
+            </Menu>
 
             <Button
               variant="outlined"

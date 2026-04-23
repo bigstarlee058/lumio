@@ -119,7 +119,7 @@ function SearchBar({
   searchInput: string;
   searchPlaceholder: string;
   onSearchChange: (v: string) => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__search" data-tour-id="search-bar">
       <Search className="lumio-stmt-list-view__search-icon" size={16} />
@@ -143,7 +143,7 @@ function FiltersButton({
   filterLabels: FilterLabels;
   activeFilterCount: number;
   onOpenFiltersDrawer: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <button
       type="button"
@@ -194,7 +194,7 @@ function ColumnsButton({
 }: {
   label: string;
   onClick: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <button
       type="button"
@@ -276,7 +276,7 @@ function FilterChipsRow({
   onOpenFiltersDrawer,
   onColumnsOpen,
   onSelectDetectedDuplicates,
-}: FilterChipsRowProps): JSX.Element {
+}: FilterChipsRowProps): React.JSX.Element {
   const activeType = draftFilters.type;
   const activeStatuses = draftFilters.statuses;
   const activeDate = draftFilters.date;
@@ -438,7 +438,7 @@ export function StatementsListHeader({
   onMarkAsDuplicate,
   onExportSelected,
   onDeleteSelected,
-}: StatementsListHeaderProps): JSX.Element {
+}: StatementsListHeaderProps): React.JSX.Element {
   return (
     <div
       className="lumio-stmt-list-view__header"

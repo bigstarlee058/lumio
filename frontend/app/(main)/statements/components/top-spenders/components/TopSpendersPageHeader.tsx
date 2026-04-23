@@ -9,7 +9,7 @@ import type { useTopSpendersViewModel } from '@/app/(main)/statements/components
 
 type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
 
-export function TopSpendersPageHeader({ vm }: Props): JSX.Element {
+export function TopSpendersPageHeader({ vm }: Props): React.JSX.Element {
   const { labels } = vm;
   return (
     <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>

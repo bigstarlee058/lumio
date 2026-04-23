@@ -9,7 +9,7 @@ import type { useTopCategoriesViewModel } from '@/app/(main)/statements/componen
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
 
-export function TopCategoriesPageHeader({ vm }: Props): JSX.Element {
+export function TopCategoriesPageHeader({ vm }: Props): React.JSX.Element {
   const { labels } = vm;
   return (
     <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>

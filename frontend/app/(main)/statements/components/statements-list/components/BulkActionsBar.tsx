@@ -11,7 +11,7 @@ interface DuplicateActionsProps {
   onDismissDuplicates: () => void;
 }
 
-function MergeButton({ label, onClick }: { label: string; onClick: () => void }): JSX.Element {
+function MergeButton({ label, onClick }: { label: string; onClick: () => void }): React.JSX.Element {
   return (
     <button type="button" onClick={onClick} className="lumio-stmt-list-view__bulk-menu-btn">
       <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -25,7 +25,7 @@ function MergeButton({ label, onClick }: { label: string; onClick: () => void })
   );
 }
 
-function DismissButton({ label, onClick }: { label: string; onClick: () => void }): JSX.Element {
+function DismissButton({ label, onClick }: { label: string; onClick: () => void }): React.JSX.Element {
   return (
     <button type="button" onClick={onClick} className="lumio-stmt-list-view__bulk-menu-btn">
       <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -44,7 +44,7 @@ function DuplicateActions({
   dismissDuplicateLabel,
   onMergeDuplicates,
   onDismissDuplicates,
-}: DuplicateActionsProps): JSX.Element {
+}: DuplicateActionsProps): React.JSX.Element {
   return (
     <>
       <MergeButton label={mergeDuplicatesLabel} onClick={onMergeDuplicates} />
@@ -67,7 +67,7 @@ function StandardActions({
   onMarkAsDuplicate,
   onExportSelected,
   onDeleteSelected,
-}: StandardActionsProps): JSX.Element {
+}: StandardActionsProps): React.JSX.Element {
   return (
     <>
       <button
@@ -153,7 +153,7 @@ function MobileBulkActions({
   onMarkAsDuplicate,
   onExportSelected,
   onDeleteSelected,
-}: MobileBulkProps): JSX.Element {
+}: MobileBulkProps): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__mobile-bulk">
       <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>
@@ -254,7 +254,7 @@ function DesktopBulkMenu({
   onMarkAsDuplicate,
   onExportSelected,
   onDeleteSelected,
-}: DesktopMenuProps): JSX.Element {
+}: DesktopMenuProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const ref = useOutsideClick({ enabled: open, onClose: () => setOpen(false) });
 
@@ -302,7 +302,7 @@ export function BulkActionsBar({
   onMarkAsDuplicate,
   onExportSelected,
   onDeleteSelected,
-}: BulkActionsBarProps): JSX.Element {
+}: BulkActionsBarProps): React.JSX.Element {
   return (
     <>
       <DesktopBulkMenu

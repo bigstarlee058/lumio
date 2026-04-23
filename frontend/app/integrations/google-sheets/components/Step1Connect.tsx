@@ -62,7 +62,7 @@ interface Step1ConnectProps {
   onConnect: () => void;
 }
 
-function PickerReasonMessage({ reason }: { reason?: string }): JSX.Element {
+function PickerReasonMessage({ reason }: { reason?: string }): React.JSX.Element {
   const message =
     reason === 'missing_api_key'
       ? 'Google Picker API key is missing. Add NEXT_PUBLIC_GOOGLE_API_KEY to your frontend env and restart the frontend.'
@@ -73,7 +73,7 @@ function PickerReasonMessage({ reason }: { reason?: string }): JSX.Element {
 }
 
 // eslint-disable-next-line max-lines-per-function, complexity
-export function Step1Connect({ authStatus, pickerAccessToken, pickerApiKey, pickerState, selectedSpreadsheet, worksheets, worksheetName, sheetName, connectingAccount, loadingWorksheets, submitting, t, copy, setError, setWorksheetName, setSheetName, onStartOauth, onSpreadsheetPick, onConnect }: Step1ConnectProps): JSX.Element {
+export function Step1Connect({ authStatus, pickerAccessToken, pickerApiKey, pickerState, selectedSpreadsheet, worksheets, worksheetName, sheetName, connectingAccount, loadingWorksheets, submitting, t, copy, setError, setWorksheetName, setSheetName, onStartOauth, onSpreadsheetPick, onConnect }: Step1ConnectProps): React.JSX.Element {
   const cannotConnect = submitting || !selectedSpreadsheet;
 
   return (

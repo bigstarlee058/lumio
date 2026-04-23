@@ -7,7 +7,7 @@ import { buildFiltersDrawerLabels } from '@/app/(main)/statements/helpers/buildF
 
 type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
 
-export function TopSpendersFiltersDrawer({ vm }: Props): JSX.Element {
+export function TopSpendersFiltersDrawer({ vm }: Props): React.JSX.Element {
   const { labels, filterOptions, filterOptionLabels } = vm;
   const fs = vm.filterState;
   const onClose = (): void => { fs.setFiltersDrawerOpen(false); fs.setFiltersDrawerScreen('root'); };

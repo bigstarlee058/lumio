@@ -32,7 +32,7 @@ const getDateTriggerText = ({ date, presets, modes, label }: DateTriggerParams):
   return findOptionLabel({ options: presets, value: preset }) ?? findOptionLabel({ options: modes, value: mode }) ?? label;
 };
 
-export function SpendOverTimeFilterChipsRow({ vm }: Props): JSX.Element {
+export function SpendOverTimeFilterChipsRow({ vm }: Props): React.JSX.Element {
   const { labels, filterOptions, groupByOptions, viewOptions, defaultGroupBy, defaultView } = vm;
   const { statusOptions, datePresets, dateModes } = filterOptions;
   const { draftFilters, statusDropdownOpen, dateDropdownOpen, fromDropdownOpen, groupByDropdownOpen, viewDropdownOpen } = vm;

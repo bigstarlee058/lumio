@@ -25,7 +25,7 @@ const SORT_KEYS: AggregateSortKey[] = ['amount', 'average', 'operations'];
 
 type SortBtnProps = { label: string; active: boolean; onClick: () => void };
 
-function SortBtn({ label, active, onClick }: SortBtnProps): JSX.Element {
+function SortBtn({ label, active, onClick }: SortBtnProps): React.JSX.Element {
   return (
     <button type="button" style={{ borderRadius: 'var(--lumio-radius-sm)', padding: '4px 10px', fontSize: 12, fontWeight: 500, background: active ? '#fff' : 'transparent', color: active ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: active ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }} onClick={onClick}>
       {label}
@@ -35,7 +35,7 @@ function SortBtn({ label, active, onClick }: SortBtnProps): JSX.Element {
 
 type RowProps = { row: TopMerchantAggregateRow; currency: string; sourceLabels: SourceLabels; onRowClick: (id: string) => void };
 
-function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): JSX.Element {
+function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): React.JSX.Element {
   const lastDate = row.lastDate && !Number.isNaN(new Date(row.lastDate).getTime()) ? new Date(row.lastDate).toLocaleDateString() : '-';
   return (
     <tr style={{ color: '#374151', borderTop: '1px solid #f3f4f6' }}>
@@ -51,7 +51,7 @@ function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): 
   );
 }
 
-export function TopMerchantsLeaderboard({ rows, sortKey, onSortChange, onRowClick, title, currency, sourceLabels, sortLabels, columnLabels }: Props): JSX.Element {
+export function TopMerchantsLeaderboard({ rows, sortKey, onSortChange, onRowClick, title, currency, sourceLabels, sortLabels, columnLabels }: Props): React.JSX.Element {
   const sortKeyLabels: Record<AggregateSortKey, string> = { amount: sortLabels.sortByAmount, average: sortLabels.sortByAverage, operations: sortLabels.sortByOperations };
   return (
     <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 'var(--lumio-radius-lg)' }}>

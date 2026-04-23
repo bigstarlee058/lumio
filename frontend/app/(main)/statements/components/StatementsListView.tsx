@@ -99,7 +99,7 @@ function PullToRefreshIndicator({
   pullDistance,
   pullRefreshing,
   isReadyToRefresh,
-}: PullIndicatorProps): JSX.Element | null {
+}: PullIndicatorProps): React.JSX.Element | null {
   if (!isMobile || (pullDistance <= 0 && !pullRefreshing)) return null;
   const badgeClass = `lumio-stmt-list-view__pull-badge${isReadyToRefresh || pullRefreshing ? ' lumio-stmt-list-view__pull-badge--ready' : ''}`;
   const label = pullRefreshing
@@ -119,7 +119,7 @@ function PullToRefreshIndicator({
 
 // ---- Main component ----
 
-export default function StatementsListView({ stage }: Props): JSX.Element {
+export default function StatementsListView({ stage }: Props): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
   const v = useStatementsView({ stage, router, searchParams });

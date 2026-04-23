@@ -16,20 +16,20 @@ const handStyle = (rotation: string): React.CSSProperties => ({
   transform: `translate(-50%, -100%) rotate(${rotation})`,
 });
 
-const ClockFace = ({ size }: { size: number }): JSX.Element => (
+const ClockFace = ({ size }: { size: number }): React.JSX.Element => (
   <div style={{ width: size, height: size, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(255,255,255,0.15)', border: '3px solid rgba(255,255,255,0.3)', position: 'relative', boxShadow: '0 0 15px rgba(255,255,255,0.1)' }}>
     <div style={handStyle('45deg')} />
     <div style={handStyle('120deg')} />
   </div>
 );
 
-const ClockFaceBlock = ({ w }: { w: number }): JSX.Element => (
+const ClockFaceBlock = ({ w }: { w: number }): React.JSX.Element => (
   <Block w={w * 0.9} h={w * 0.9} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
     <ClockFace size={w * 0.5} />
   </Block>
 );
 
-export const ClockTower = ({ delay, duration, w = 120, h = 300, ...pos }: BuildingProps): JSX.Element => (
+export const ClockTower = ({ delay, duration, w = 120, h = 300, ...pos }: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

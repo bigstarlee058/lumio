@@ -10,7 +10,7 @@ const WINDOW_COUNT = 6;
 const WINDOW_NOISE_OFFSET = 1000;
 const WINDOW_NOISE_THRESHOLD = 0.7;
 
-const GothicSpire = (): JSX.Element => (
+const GothicSpire = (): React.JSX.Element => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
     <div style={{ width: 2, height: 30, background: 'rgba(255,255,255,0.4)' }} />
     <div
@@ -27,7 +27,7 @@ const GothicSpire = (): JSX.Element => (
   </div>
 );
 
-const GothicRoseWindow = (): JSX.Element => (
+const GothicRoseWindow = (): React.JSX.Element => (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: -10 }}>
     <div
       style={{
@@ -58,7 +58,7 @@ const GothicRoseWindow = (): JSX.Element => (
   </div>
 );
 
-const GothicArchWindows = ({ h }: { h: number }): JSX.Element => (
+const GothicArchWindows = ({ h }: { h: number }): React.JSX.Element => (
   <Block w={160} h={h} style={{ paddingTop: 20 }}>
     <div
       style={{
@@ -88,7 +88,7 @@ const GothicArchWindows = ({ h }: { h: number }): JSX.Element => (
   </Block>
 );
 
-export const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: BuildingProps): JSX.Element => (
+export const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

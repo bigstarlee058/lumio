@@ -28,7 +28,7 @@ function DesktopDuplicateActions({
   dismissDuplicateLabel: string;
   onMerge: () => void;
   onDismiss: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <>
       <button type="button" onClick={onMerge} className="lumio-stmt-list-view__bulk-menu-btn">
@@ -66,7 +66,7 @@ function MobileDuplicateActions({
   dismissDuplicateLabel: string;
   onMerge: () => void;
   onDismiss: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <>
       <button
@@ -102,7 +102,7 @@ export function StatementsBulkActions({
   onMarkDuplicate,
   onExport,
   onDelete,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <>
       <div className="lumio-stmt-list-view__bulk-desktop">

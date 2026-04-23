@@ -33,7 +33,7 @@ type T = {
 };
 
 type JobProgressProps = { jobStatus: string; jobProgress: number; jobStage: string; jobError: string; t: T };
-const JobProgress = ({ jobStatus, jobProgress, jobStage, jobError, t }: JobProgressProps): JSX.Element => (
+const JobProgress = ({ jobStatus, jobProgress, jobStage, jobError, t }: JobProgressProps): React.JSX.Element => (
   <Box sx={{ mt: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 1.5 }}>
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
       <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.result.progressTitle}</Typography>
@@ -51,7 +51,7 @@ const JobProgress = ({ jobStatus, jobProgress, jobStage, jobError, t }: JobProgr
 );
 
 type CategoryBadgeProps = { categoryId: string; categories: Category[]; hint: React.ReactNode };
-const CategoryBadge = ({ categoryId, categories, hint }: CategoryBadgeProps): JSX.Element | null => {
+const CategoryBadge = ({ categoryId, categories, hint }: CategoryBadgeProps): React.JSX.Element | null => {
   if (!categoryId) return null;
   const selected = categories.find(c => c.id === categoryId);
   return (
@@ -87,7 +87,7 @@ export type ResultCardProps = {
 };
 
 type TableFormProps = { tableName: string; setTableName: (v: string) => void; tableDescription: string; setTableDescription: (v: string) => void; categoryId: string; setCategoryId: (v: string) => void; categories: Category[]; t: T };
-const TableForm = ({ tableName, setTableName, tableDescription, setTableDescription, categoryId, setCategoryId, categories, t }: TableFormProps): JSX.Element => (
+const TableForm = ({ tableName, setTableName, tableDescription, setTableDescription, categoryId, setCategoryId, categories, t }: TableFormProps): React.JSX.Element => (
   <>
     <label style={{ display: 'block', marginBottom: 12 }}>
       <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.tableNameLabel}</span>
@@ -109,7 +109,7 @@ const TableForm = ({ tableName, setTableName, tableDescription, setTableDescript
 );
 
 type CommitButtonProps = { canCommit: boolean; committing: boolean; jobId: string; onCommit: () => void; t: T };
-const CommitButton = ({ canCommit, committing, jobId, onCommit, t }: CommitButtonProps): JSX.Element => (
+const CommitButton = ({ canCommit, committing, jobId, onCommit, t }: CommitButtonProps): React.JSX.Element => (
   <Box component="button" onClick={onCommit} disabled={!canCommit || committing || Boolean(jobId)}
     data-tour-id="gs-import-commit-button"
     sx={{ display: 'inline-flex', width: '100%', alignItems: 'center', justifyContent: 'center', gap: 1, bgcolor: '#059669', color: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: '#047857' }, '&:disabled': { opacity: 0.7, cursor: 'not-allowed' } }}
@@ -123,7 +123,7 @@ export const ResultCard = ({
   tableName, setTableName, tableDescription, setTableDescription,
   categoryId, setCategoryId, categories, importData, setImportData,
   canCommit, committing, jobId, jobStatus, jobProgress, jobStage, jobError, preview, onCommit, t: tRaw,
-}: ResultCardProps): JSX.Element => {
+}: ResultCardProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
     <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-result-card">

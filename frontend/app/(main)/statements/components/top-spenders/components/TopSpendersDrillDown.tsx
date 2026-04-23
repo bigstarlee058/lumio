@@ -23,7 +23,7 @@ type Props = {
 
 type HeaderProps = { selectedRow: TopSpenderAggregateRow; sourceLabels: SourceLabels; labels: Pick<Props['labels'], 'drillDown' | 'close'>; onClose: () => void };
 
-function DrillDownHeader({ selectedRow, sourceLabels, labels, onClose }: HeaderProps): JSX.Element {
+function DrillDownHeader({ selectedRow, sourceLabels, labels, onClose }: HeaderProps): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e5e7eb', padding: '12px 20px' }}>
       <div>
@@ -39,7 +39,7 @@ function DrillDownHeader({ selectedRow, sourceLabels, labels, onClose }: HeaderP
   );
 }
 
-export function TopSpendersDrillDown({ selectedRow, drillDownRecords, onClose, currency, sourceLabels, labels }: Props): JSX.Element {
+export function TopSpendersDrillDown({ selectedRow, drillDownRecords, onClose, currency, sourceLabels, labels }: Props): React.JSX.Element {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', padding: 16 }}>
       <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: 'var(--lumio-radius-xl)' }}>
@@ -65,7 +65,7 @@ type TableProps = {
   labels: Pick<Props['labels'], 'lastOperation' | 'source' | 'workspace' | 'amount'>;
 };
 
-function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps): JSX.Element {
+function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps): React.JSX.Element {
   return (
     <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
       <thead>

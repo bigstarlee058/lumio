@@ -147,7 +147,7 @@ function EmptyState({
   emptyLabels: EmptyLabels;
   stage: string;
   hasGmailReceipts: boolean;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__empty">
       <div
@@ -188,7 +188,7 @@ function TableHeader({
   dateSortDirection: 'asc' | 'desc';
   onToggleSelectAll: (checked: boolean) => void;
   onSortDate: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__desktop-header">
       <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
@@ -265,7 +265,7 @@ function PaginationBar({
   page: number;
   totalPagesCount: number;
   onPageChange: (page: number) => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
       <div style={{ fontSize: 14, color: '#6b7280' }}>
@@ -305,7 +305,7 @@ function StatementRow({
   onToggleStatement,
   onView,
   onIconClick,
-}: RowProps): JSX.Element {
+}: RowProps): React.JSX.Element {
   const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
   const merchantLabel = buildMerchantLabel({ statement, scanningLabel: listHeaderLabels.scanning });
   const amountLabel = formatStatementAmount(statement as Parameters<typeof formatStatementAmount>[0]);
@@ -375,7 +375,7 @@ export function StatementsListTable({
   onIconClick,
   onSortDate,
   onPageChange,
-}: StatementsListTableProps): JSX.Element {
+}: StatementsListTableProps): React.JSX.Element {
   if (loading && gmailSyncSkeletonKeys.length === 0) {
     return (
       <div className="lumio-stmt-list-view__loading">

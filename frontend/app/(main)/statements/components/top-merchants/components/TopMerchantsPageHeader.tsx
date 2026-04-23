@@ -9,7 +9,7 @@ import type { useTopMerchantsViewModel } from '@/app/(main)/statements/component
 
 type Props = { vm: ReturnType<typeof useTopMerchantsViewModel> };
 
-export function TopMerchantsPageHeader({ vm }: Props): JSX.Element {
+export function TopMerchantsPageHeader({ vm }: Props): React.JSX.Element {
   const { labels } = vm;
   return (
     <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>

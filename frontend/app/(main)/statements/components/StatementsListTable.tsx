@@ -135,7 +135,7 @@ function TableDesktopHeader({
   labels: TableLabels;
   onToggleSelectAll: () => void;
   onToggleSortDirection: () => void;
-}): JSX.Element {
+}): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__desktop-header">
       <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
@@ -247,7 +247,7 @@ export function StatementsListTable({
   onView,
   onIconClick,
   onPageChange,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   if (loading && gmailSyncSkeletonKeys.length === 0) {
     return (
       <div className="lumio-stmt-list-view__loading">

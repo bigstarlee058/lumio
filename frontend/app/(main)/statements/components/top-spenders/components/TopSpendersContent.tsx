@@ -8,7 +8,7 @@ import type { useTopSpendersViewModel } from '@/app/(main)/statements/components
 
 type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
 
-function TopSpendersChartsSection({ vm }: Props): JSX.Element {
+function TopSpendersChartsSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const chartTheme = vm.resolvedTheme === 'dark' ? 'dark' : 'light';
   const { labels } = vm;
@@ -25,7 +25,7 @@ function TopSpendersChartsSection({ vm }: Props): JSX.Element {
   );
 }
 
-function TopSpendersLeaderboardSection({ vm }: Props): JSX.Element {
+function TopSpendersLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   const sourceLabels = { sourceBank: labels.sourceBank, sourceReceipt: labels.sourceReceipt, sourceGmailInbox: labels.sourceGmailInbox };
@@ -46,7 +46,7 @@ function TopSpendersLeaderboardSection({ vm }: Props): JSX.Element {
   );
 }
 
-export function TopSpendersContent({ vm }: Props): JSX.Element {
+export function TopSpendersContent({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   return (

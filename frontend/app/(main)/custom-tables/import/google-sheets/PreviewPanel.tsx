@@ -29,7 +29,7 @@ type T = {
 };
 
 type PreviewRowCellProps = { value: string | null; rowNumber: number; idx: number; styles?: Array<import('./sheetStyleUtils').SheetCellStyle | null> };
-const PreviewRowCell = ({ value, rowNumber, idx, styles }: PreviewRowCellProps): JSX.Element => {
+const PreviewRowCell = ({ value, rowNumber, idx, styles }: PreviewRowCellProps): React.JSX.Element => {
   const style = styles?.[idx] || null;
   const css = sheetStyleToCss(style || {});
   const { color: cssColor, ...cssRest } = css;
@@ -39,7 +39,7 @@ const PreviewRowCell = ({ value, rowNumber, idx, styles }: PreviewRowCellProps):
 
 type PreviewSampleRow = PreviewResponse['sampleRows'][number];
 type SampleTableRowProps = { row: PreviewSampleRow; hasExtra: boolean };
-const SampleTableRow = ({ row, hasExtra }: SampleTableRowProps): JSX.Element => (
+const SampleTableRow = ({ row, hasExtra }: SampleTableRowProps): React.JSX.Element => (
   <tr style={{ borderBottom: '1px solid #f3f4f6' }}>
     <td style={{ padding: '4px 8px', color: '#6b7280' }}>{row.rowNumber}</td>
     {Array.from(row.values.slice(0, 12).entries()).map(([idx, v]) => {
@@ -51,7 +51,7 @@ const SampleTableRow = ({ row, hasExtra }: SampleTableRowProps): JSX.Element => 
 );
 
 type DataTableProps = { preview: PreviewResponse; t: T };
-const DataTable = ({ preview, t }: DataTableProps): JSX.Element => {
+const DataTable = ({ preview, t }: DataTableProps): React.JSX.Element => {
   const hasExtra = preview.columns.length > 12;
   return (
     <Box sx={{ mt: 2, overflowX: 'auto' }}>
@@ -74,7 +74,7 @@ const DataTable = ({ preview, t }: DataTableProps): JSX.Element => {
 };
 
 export type PreviewPanelProps = { preview: PreviewResponse | null; t: Record<string, unknown> };
-export const PreviewPanel = ({ preview, t: tRaw }: PreviewPanelProps): JSX.Element => {
+export const PreviewPanel = ({ preview, t: tRaw }: PreviewPanelProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
     <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-preview-panel">
@@ -101,7 +101,7 @@ type UpdateArgs = { index: number; patch: Partial<PreviewColumn> };
 type UpdateColumnFn = ({ index, patch }: UpdateArgs) => void;
 
 type ColumnRowProps = { col: PreviewColumn; isLast: boolean; onUpdate: UpdateColumnFn; t: T };
-const ColumnRow = ({ col, isLast, onUpdate, t }: ColumnRowProps): JSX.Element => (
+const ColumnRow = ({ col, isLast, onUpdate, t }: ColumnRowProps): React.JSX.Element => (
   <tr style={{ borderBottom: isLast ? 'none' : '1px solid #f3f4f6' }}>
     <td style={{ padding: '8px 12px' }}>
       <Checkbox checked={col.include} onCheckedChange={checked => onUpdate({ index: col.index, patch: { include: checked as boolean } })} className="h-5 w-5" />
@@ -124,7 +124,7 @@ const ColumnRow = ({ col, isLast, onUpdate, t }: ColumnRowProps): JSX.Element =>
 );
 
 type ColumnsTableProps = { columns: PreviewColumn[]; setColumns: React.Dispatch<React.SetStateAction<PreviewColumn[]>>; t: T };
-const ColumnsTable = ({ columns, setColumns, t }: ColumnsTableProps): JSX.Element => {
+const ColumnsTable = ({ columns, setColumns, t }: ColumnsTableProps): React.JSX.Element => {
   const updateColumn: UpdateColumnFn = ({ index, patch }) => {
     setColumns(prev => prev.map(x => (x.index === index ? { ...x, ...patch } : x)));
   };
@@ -154,7 +154,7 @@ export type ColumnsPanelProps = {
   setColumns: React.Dispatch<React.SetStateAction<PreviewColumn[]>>;
   t: Record<string, unknown>;
 };
-export const ColumnsPanel = ({ preview, columns, setColumns, t: tRaw }: ColumnsPanelProps): JSX.Element => {
+export const ColumnsPanel = ({ preview, columns, setColumns, t: tRaw }: ColumnsPanelProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
     <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-columns-panel">

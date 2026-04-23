@@ -71,7 +71,7 @@ export const SourceCard = ({
   worksheetName, setWorksheetName, worksheetOptions, loadingWorksheets, selectedConnection,
   range, setRange, headerRowIndex, setHeaderRowIndex, layoutType, setLayoutType,
   canPreview, loadingPreview, onPreview, t: tRaw,
-}: SourceCardProps): JSX.Element => {
+}: SourceCardProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
     <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-source-card">
@@ -101,7 +101,7 @@ const isPreviewDisabled = ({
 }: { canPreview: boolean; loadingPreview: boolean; loadingConnections: boolean }): boolean =>
   !canPreview || loadingPreview || loadingConnections;
 
-const PreviewButton = ({ canPreview, loadingPreview, loadingConnections, onPreview, t }: PreviewButtonProps): JSX.Element => {
+const PreviewButton = ({ canPreview, loadingPreview, loadingConnections, onPreview, t }: PreviewButtonProps): React.JSX.Element => {
   const disabled = isPreviewDisabled({ canPreview, loadingPreview, loadingConnections });
   const showSpinner = loadingPreview || loadingConnections;
   const label = loadingConnections ? t.source.previewButtonLoading : t.source.previewButton;
@@ -120,7 +120,7 @@ const PreviewButton = ({ canPreview, loadingPreview, loadingConnections, onPrevi
 
 const ConnectionSelect = ({
   connections, googleSheetId, onConnectionChange, loadingConnections, t,
-}: { connections: GoogleSheetConnection[]; googleSheetId: string; onConnectionChange: (id: string) => void; loadingConnections: boolean; t: T }): JSX.Element => (
+}: { connections: GoogleSheetConnection[]; googleSheetId: string; onConnectionChange: (id: string) => void; loadingConnections: boolean; t: T }): React.JSX.Element => (
   <label style={{ display: 'block', marginBottom: 12 }}>
     <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.connectionLabel}</span>
     <select value={googleSheetId} onChange={e => onConnectionChange(e.target.value)} data-tour-id="gs-import-connection" style={inputStyle}>
@@ -142,7 +142,7 @@ const ConnectionSelect = ({
 
 const WorksheetSelect = ({
   worksheetName, setWorksheetName, worksheetOptions, loadingWorksheets, selectedConnection, t,
-}: { worksheetName: string; setWorksheetName: (v: string) => void; worksheetOptions: WorksheetOption[]; loadingWorksheets: boolean; selectedConnection: GoogleSheetConnection | null; t: T }): JSX.Element => (
+}: { worksheetName: string; setWorksheetName: (v: string) => void; worksheetOptions: WorksheetOption[]; loadingWorksheets: boolean; selectedConnection: GoogleSheetConnection | null; t: T }): React.JSX.Element => (
   <label style={{ display: 'block', marginBottom: 12 }}>
     <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.worksheetLabel}</span>
     <select value={worksheetName} onChange={e => setWorksheetName(e.target.value)} data-tour-id="gs-import-worksheet"
@@ -158,7 +158,7 @@ const WorksheetSelect = ({
 
 const LayoutOptions = ({
   headerRowIndex, setHeaderRowIndex, layoutType, setLayoutType, t,
-}: { headerRowIndex: number; setHeaderRowIndex: (v: number) => void; layoutType: LayoutType; setLayoutType: (v: LayoutType) => void; t: T }): JSX.Element => (
+}: { headerRowIndex: number; setHeaderRowIndex: (v: number) => void; layoutType: LayoutType; setLayoutType: (v: LayoutType) => void; t: T }): React.JSX.Element => (
   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, mb: 1.5 }}>
     <label style={{ display: 'block' }}>
       <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.headerOffsetLabel}</span>

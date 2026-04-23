@@ -14,7 +14,7 @@ const STYLE_PRIMARY = { backgroundColor: 'var(--primary)', color: 'white' };
 const STYLE_SECONDARY = { backgroundColor: '#f3f4f6', color: '#374151' };
 
 type ToggleProps = { position: string; onToggle: () => void; label: string; size?: number };
-export function CollapseBtn({ position, onToggle, label, size = 16 }: ToggleProps): JSX.Element {
+export function CollapseBtn({ position, onToggle, label, size = 16 }: ToggleProps): React.JSX.Element {
   const Icon = size > 16
     ? (position === 'left' ? PanelLeftOpen : PanelLeftClose)
     : (position === 'left' ? PanelLeftClose : PanelLeftOpen);
@@ -22,7 +22,7 @@ export function CollapseBtn({ position, onToggle, label, size = 16 }: ToggleProp
 }
 
 type ContentProps = { loading: boolean; error: string | null; onRetry?: () => void; sections: SidePanelSection[] };
-export function PanelContent({ loading, error, onRetry, sections }: ContentProps): JSX.Element {
+export function PanelContent({ loading, error, onRetry, sections }: ContentProps): React.JSX.Element {
   if (loading) return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}><Spinner size={32} /><p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Loading...</p></div>;
   if (error) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
@@ -36,30 +36,30 @@ export function PanelContent({ loading, error, onRetry, sections }: ContentProps
   return <>{sections.map(s => <SectionRenderer key={s.id} section={s} />)}</>;
 }
 
-function HeaderActionBtn({ action: a }: { action: ActionItem }): JSX.Element {
+function HeaderActionBtn({ action: a }: { action: ActionItem }): React.JSX.Element {
   const isBusy = a.disabled ?? a.loading;
   return <button type="button" onClick={a.onClick} disabled={!!isBusy} title={a.tooltip ?? a.label} style={{ ...BTN_BASE, opacity: isBusy ? 0.5 : 1 }}>{a.loading ? <Spinner size={16} /> : <RenderIcon icon={a.icon} size={16} />}</button>;
 }
 
 type FooterBtnContent = { action: ActionItem };
-function FooterBtnLabel({ action: a }: FooterBtnContent): JSX.Element {
+function FooterBtnLabel({ action: a }: FooterBtnContent): React.JSX.Element {
   return <>{a.icon && <RenderIcon icon={a.icon} size={14} />}{a.label}</>;
 }
 
-function FooterActionBtn({ action: a }: { action: ActionItem }): JSX.Element {
+function FooterActionBtn({ action: a }: { action: ActionItem }): React.JSX.Element {
   const isBusy = a.disabled ?? a.loading;
   const colorStyle = a.variant === 'primary' ? STYLE_PRIMARY : STYLE_SECONDARY;
   return <button type="button" onClick={a.onClick} disabled={!!isBusy} style={{ ...BTN_FOOTER, opacity: isBusy ? 0.5 : 1, ...colorStyle }}>{a.loading ? <Spinner size={14} /> : <FooterBtnLabel action={a} />}</button>;
 }
 
 type ActionBtnProps = { action: ActionItem; size: number };
-function ActionBtn({ action, size }: ActionBtnProps): JSX.Element {
+function ActionBtn({ action, size }: ActionBtnProps): React.JSX.Element {
   if (size <= 16) return <HeaderActionBtn action={action} />;
   return <FooterActionBtn action={action} />;
 }
 
 type HeaderInfoProps = { header: NonNullable<NonNullable<SidePanelProps['config']>['header']> };
-function HeaderInfo({ header }: HeaderInfoProps): JSX.Element {
+function HeaderInfo({ header }: HeaderInfoProps): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
       {header.icon && <div style={{ padding: 8, backgroundColor: 'rgba(var(--primary-rgb),0.1)', flexShrink: 0 }}><RenderIcon icon={header.icon} size={18} /></div>}
@@ -69,7 +69,7 @@ function HeaderInfo({ header }: HeaderInfoProps): JSX.Element {
 }
 
 type HeaderActionsProps = { actions: ActionItem[] | undefined; position: string; showToggle: boolean; onToggle: () => void };
-function HeaderActions({ actions, position, showToggle, onToggle }: HeaderActionsProps): JSX.Element {
+function HeaderActions({ actions, position, showToggle, onToggle }: HeaderActionsProps): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
       {actions?.map(a => <ActionBtn key={a.id} action={a} size={16} />)}
@@ -79,7 +79,7 @@ function HeaderActions({ actions, position, showToggle, onToggle }: HeaderAction
 }
 
 type HeaderProps = { config: SidePanelProps['config']; position: string; showCollapseToggle: boolean; collapseTogglePosition: string; onToggle: () => void };
-export function PanelHeader({ config, position, showCollapseToggle, collapseTogglePosition, onToggle }: HeaderProps): JSX.Element {
+export function PanelHeader({ config, position, showCollapseToggle, collapseTogglePosition, onToggle }: HeaderProps): React.JSX.Element {
   const showToggle = showCollapseToggle && collapseTogglePosition === 'header';
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 8px', flexShrink: 0 }}>
@@ -90,7 +90,7 @@ export function PanelHeader({ config, position, showCollapseToggle, collapseTogg
 }
 
 type FooterProps = { footer: NonNullable<SidePanelProps['config']>['footer'] };
-export function PanelFooter({ footer }: FooterProps): JSX.Element {
+export function PanelFooter({ footer }: FooterProps): React.JSX.Element {
   if (!footer) return <></>;
   const actions = footer.actions ?? [];
   return (

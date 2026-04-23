@@ -24,13 +24,13 @@ type Props = {
   vsPreviousPeriodLabel: string;
 };
 
-type CardProps = { label: string; value: string; icon: JSX.Element; comparisonItem: ComparisonItem; currency: string; noDataLabel: string; vsPreviousPeriodLabel: string; isMoney?: boolean };
+type CardProps = { label: string; value: string; icon: React.JSX.Element; comparisonItem: ComparisonItem; currency: string; noDataLabel: string; vsPreviousPeriodLabel: string; isMoney?: boolean };
 
 type CmpKey = keyof NonNullable<Comparison>;
 type GetCmpParams = { c: Comparison; key: CmpKey };
 const getCmp = ({ c, key }: GetCmpParams): ComparisonItem => c?.[key] ?? null;
 
-function StatCard({ label, value, icon, comparisonItem, currency, noDataLabel, vsPreviousPeriodLabel, isMoney = true }: CardProps): JSX.Element {
+function StatCard({ label, value, icon, comparisonItem, currency, noDataLabel, vsPreviousPeriodLabel, isMoney = true }: CardProps): React.React.JSX.Element {
   return (
     <div className="lumio-view-page__stat-card">
       <div className="lumio-view-page__stat-header">
@@ -43,7 +43,7 @@ function StatCard({ label, value, icon, comparisonItem, currency, noDataLabel, v
   );
 }
 
-export function SpendOverTimeStatCards({ totals, comparison, isIncomeView, primaryMetricLabel, statementsLabel, receiptsLabel, operationsLabel, avgPerPeriodLabel, currency, noDataLabel, vsPreviousPeriodLabel }: Props): JSX.Element {
+export function SpendOverTimeStatCards({ totals, comparison, isIncomeView, primaryMetricLabel, statementsLabel, receiptsLabel, operationsLabel, avgPerPeriodLabel, currency, noDataLabel, vsPreviousPeriodLabel }: Props): React.React.JSX.Element {
   const cp = { currency, noDataLabel, vsPreviousPeriodLabel };
   const primaryValue = formatMoney(isIncomeView ? totals.income : totals.expense, currency);
   const primaryIcon = isIncomeView ? <ArrowUp size={16} color="#10b981" /> : <ArrowDown size={16} color="#ef4444" />;

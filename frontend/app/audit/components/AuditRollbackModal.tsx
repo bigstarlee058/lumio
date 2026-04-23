@@ -8,7 +8,7 @@ import type { JSX } from 'react';
 import type { RollbackState } from '../hooks/useAuditRollback';
 
 type MsgProps = { rollbackTarget: NonNullable<RollbackState['rollbackTarget']>; rollbackError: string | null };
-function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): JSX.Element {
+function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): React.JSX.Element {
   return (
     <Stack spacing={1.5}>
       <Typography variant="body2" style={{ color: '#4b5563' }}>
@@ -27,7 +27,7 @@ function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): JSX.Eleme
   );
 }
 
-export function AuditRollbackModal({ rollback }: { rollback: RollbackState }): JSX.Element {
+export function AuditRollbackModal({ rollback }: { rollback: RollbackState }): React.JSX.Element {
   return (
     <ConfirmModal
       isOpen={Boolean(rollback.rollbackTarget)}

@@ -31,7 +31,8 @@ export interface UseGmailReceiptActionsReturn {
   handleSaveChanges: () => Promise<void>;
   handleSubmitDocument: () => Promise<void>;
   handleCategorySelect: (categoryId: string) => Promise<void>;
-  handleExport: () => Promise<void>;
+  handleExportToGmailDraft: () => Promise<void>;
+  handleExportToSheets: () => Promise<void>;
   handleMarkDuplicate: (originalId: string) => Promise<void>;
   handleUnmarkDuplicate: () => Promise<void>;
   handleCreatePayable: () => Promise<void>;
@@ -150,14 +151,31 @@ export function useGmailReceiptActions({
     }
   };
 
-  const handleExport = async (): Promise<void> => {
+  const handleExportToGmailDraft = async (): Promise<void> => {
+    try {
+      setExporting(true);
+      const response = await gmailReceiptsApi.exportReceiptToDraft(receiptId);
+      const url = response.data?.data?.url;
+      if (url) {
+        window.open(url, '_blank');
+      }
+      toast.success('Gmail draft created');
+    } catch (error) {
+      console.error('Failed to create Gmail draft', error);
+      toast.error('Failed to create Gmail draft');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportToSheets = async (): Promise<void> => {
     try {
       setExporting(true);
       const response = await gmailReceiptsApi.exportReceiptsToSheets([receiptId]);
       if (response.data?.url) {
         window.open(response.data.url, '_blank');
       }
-      toast.success('Receipt exported');
+      toast.success('Receipt exported to Sheets');
     } catch (error) {
       console.error('Failed to export receipt', error);
       toast.error('Failed to export receipt');
@@ -207,7 +225,8 @@ export function useGmailReceiptActions({
     handleSaveChanges,
     handleSubmitDocument,
     handleCategorySelect,
-    handleExport,
+    handleExportToGmailDraft,
+    handleExportToSheets,
     handleMarkDuplicate,
     handleUnmarkDuplicate,
     handleCreatePayable,

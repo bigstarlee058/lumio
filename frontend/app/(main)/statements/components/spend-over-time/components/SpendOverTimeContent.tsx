@@ -8,7 +8,7 @@ import type { useSpendOverTimeViewModel } from '@/app/(main)/statements/componen
 
 type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 
-export function SpendOverTimeContent({ vm }: Props): JSX.Element {
+export function SpendOverTimeContent({ vm }: Props): React.JSX.Element {
   const { labels, workspaceCurrency, activeFlowType, resolvedTheme } = vm;
   const isIncomeView = activeFlowType === 'income';
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';

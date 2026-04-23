@@ -9,7 +9,7 @@ import type { useTopCategoriesViewModel } from '@/app/(main)/statements/componen
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
 
-function TopCategoriesChartsSection({ vm }: Props): JSX.Element {
+function TopCategoriesChartsSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const chartTheme = vm.resolvedTheme === 'dark' ? 'dark' : 'light';
   const { labels } = vm;
@@ -26,7 +26,7 @@ function TopCategoriesChartsSection({ vm }: Props): JSX.Element {
   );
 }
 
-function TopCategoriesLeaderboardSection({ vm }: Props): JSX.Element {
+function TopCategoriesLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   const sourceLabels = { sourceBank: labels.sourceBank, sourceReceipt: labels.sourceReceipt, sourceGmailInbox: labels.sourceGmailInbox };
@@ -47,7 +47,7 @@ function TopCategoriesLeaderboardSection({ vm }: Props): JSX.Element {
   );
 }
 
-export function TopCategoriesContent({ vm }: Props): JSX.Element {
+export function TopCategoriesContent({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   return (

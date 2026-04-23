@@ -22,7 +22,7 @@ const SORT_KEYS: SortKey[] = ['amount', 'average', 'operations'];
 
 type SortBtnProps = { label: string; active: boolean; onClick: () => void };
 
-function SortBtn({ label, active, onClick }: SortBtnProps): JSX.Element {
+function SortBtn({ label, active, onClick }: SortBtnProps): React.JSX.Element {
   return (
     <button type="button" className={`lumio-view-page__sort-btn${active ? ' lumio-view-page__sort-btn--active' : ''}`} onClick={onClick}>
       {label}
@@ -32,7 +32,7 @@ function SortBtn({ label, active, onClick }: SortBtnProps): JSX.Element {
 
 type RowProps = { row: SpendOverTimePoint; currency: string; activeFlowType: SpendOverTimeFlowType; onRowClick: (period: string) => void };
 
-function LeaderboardRow({ row, currency, activeFlowType, onRowClick }: RowProps): JSX.Element {
+function LeaderboardRow({ row, currency, activeFlowType, onRowClick }: RowProps): React.JSX.Element {
   const total = activeFlowType === 'income' ? row.income : row.expense;
   const average = row.count > 0 ? total / row.count : 0;
   return (
@@ -50,7 +50,7 @@ function LeaderboardRow({ row, currency, activeFlowType, onRowClick }: RowProps)
   );
 }
 
-export function SpendOverTimeLeaderboard({ rows, sortKey, onSortChange, onRowClick, activeFlowType, title, currency, sortLabels, columnLabels }: Props): JSX.Element {
+export function SpendOverTimeLeaderboard({ rows, sortKey, onSortChange, onRowClick, activeFlowType, title, currency, sortLabels, columnLabels }: Props): React.JSX.Element {
   const sortKeyLabels: Record<SortKey, string> = { amount: sortLabels.sortByAmount, average: sortLabels.sortByAverage, operations: sortLabels.sortByOperations };
   return (
     <div className="lumio-view-page__leaderboard-card">

@@ -152,6 +152,9 @@ export const gmailReceiptsApi = {
   exportReceiptsToSheets: (receiptIds: string[], spreadsheetId?: string): Promise<AxiosResponse> =>
     apiClient.post('/integrations/gmail/receipts/export-sheets', { receiptIds, spreadsheetId }),
 
+  exportReceiptToDraft: (receiptId: string): Promise<AxiosResponse> =>
+    apiClient.post(`/integrations/gmail/receipts/${receiptId}/export-draft`),
+
   getReceiptPreview: (id: string): Promise<AxiosResponse> =>
     apiClient.get(`/integrations/gmail/receipts/${id}/preview`),
 

@@ -5,7 +5,7 @@ import type { JSX, RefObject } from 'react';
 
 type HeaderProps = { menuOpen: boolean; onToggleMenu: () => void; onClose: () => void; onDownload: () => void; containerRef: RefObject<HTMLDivElement | null> };
 
-export function PDFPreviewHeader({ menuOpen, onToggleMenu, onClose, onDownload, containerRef }: HeaderProps): JSX.Element {
+export function PDFPreviewHeader({ menuOpen, onToggleMenu, onClose, onDownload, containerRef }: HeaderProps): React.JSX.Element {
   return (
     <div className="lumio-pdf-preview-modal__header" ref={containerRef}>
       <h2 className="lumio-pdf-preview-modal__title">Receipt</h2>

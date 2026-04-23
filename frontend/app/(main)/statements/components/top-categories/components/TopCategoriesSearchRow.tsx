@@ -6,7 +6,7 @@ import { Search } from 'lucide-react';
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
 
-export function TopCategoriesSearchRow({ vm }: Props): JSX.Element {
+export function TopCategoriesSearchRow({ vm }: Props): React.JSX.Element {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ position: 'relative', flex: 1 }}>

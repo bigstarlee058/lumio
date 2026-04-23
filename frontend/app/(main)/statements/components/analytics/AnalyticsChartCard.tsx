@@ -10,7 +10,7 @@ type Props = {
   spanColumns?: number;
 };
 
-export function AnalyticsChartCard({ title, children, spanColumns }: Props): JSX.Element {
+export function AnalyticsChartCard({ title, children, spanColumns }: Props): React.JSX.Element {
   const style: React.CSSProperties = {
     border: '1px solid #e5e7eb',
     background: 'var(--card-bg)',

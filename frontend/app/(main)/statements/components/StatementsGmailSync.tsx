@@ -7,7 +7,7 @@ interface Props {
   skeletonKeys: string[];
 }
 
-function GmailSyncSkeletonRowMobile(): JSX.Element {
+function GmailSyncSkeletonRowMobile(): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__skeleton-mobile">
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -42,7 +42,7 @@ function GmailSyncSkeletonRowMobile(): JSX.Element {
   );
 }
 
-function GmailSyncSkeletonRowDesktop(): JSX.Element {
+function GmailSyncSkeletonRowDesktop(): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__skeleton-desktop">
       <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
@@ -99,7 +99,7 @@ function GmailSyncSkeletonRowDesktop(): JSX.Element {
   );
 }
 
-export function StatementsGmailSync({ skeletonKeys }: Props): JSX.Element | null {
+export function StatementsGmailSync({ skeletonKeys }: Props): React.JSX.Element | null {
   if (skeletonKeys.length === 0) return null;
 
   return (

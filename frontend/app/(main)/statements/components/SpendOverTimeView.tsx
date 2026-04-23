@@ -43,7 +43,7 @@ function buildDrillLabels(labels: Record<string, string>): DrillLabels {
   };
 }
 
-function SpendOverTimeLoading(): JSX.Element {
+function SpendOverTimeLoading(): React.JSX.Element {
   return (
     <div className="lumio-view-page__loading">
       <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
@@ -51,7 +51,7 @@ function SpendOverTimeLoading(): JSX.Element {
   );
 }
 
-function SpendOverTimeEmptyWrapper({ vm }: VmProps): JSX.Element {
+function SpendOverTimeEmptyWrapper({ vm }: VmProps): React.JSX.Element {
   const router = useRouter();
   return (
     <SpendOverTimeEmptyState
@@ -65,13 +65,13 @@ function SpendOverTimeEmptyWrapper({ vm }: VmProps): JSX.Element {
   );
 }
 
-function SpendOverTimeBody({ vm }: VmProps): JSX.Element {
+function SpendOverTimeBody({ vm }: VmProps): React.JSX.Element {
   if (vm.loading) return <SpendOverTimeLoading />;
   if (vm.flowFilteredRecords.length === 0) return <SpendOverTimeEmptyWrapper vm={vm} />;
   return <SpendOverTimeContent vm={vm} />;
 }
 
-export default function SpendOverTimeView(): JSX.Element {
+export default function SpendOverTimeView(): React.JSX.Element {
   const vm = useSpendOverTimeViewModel();
   return (
     <div className="container-shared lumio-view-page">

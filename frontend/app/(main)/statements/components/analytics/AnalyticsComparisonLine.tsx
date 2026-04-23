@@ -33,7 +33,7 @@ export function AnalyticsComparisonLine({
   isMoney = true,
   noDataLabel,
   vsPreviousPeriodLabel,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   if (!item) {
     return <p style={{ marginTop: 4, fontSize: 12, color: '#9ca3af' }}>{noDataLabel}</p>;
   }

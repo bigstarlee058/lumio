@@ -34,7 +34,7 @@ function formatLastSync({ lastSync, locale }: { lastSync: string | null | undefi
   return new Date(lastSync).toLocaleString(LOCALE_MAP[locale] ?? 'en-US');
 }
 
-function ConnectionStatus({ oauthConnected, t }: { oauthConnected: boolean | undefined; t: ConnectionCardTexts }): JSX.Element {
+function ConnectionStatus({ oauthConnected, t }: { oauthConnected: boolean | undefined; t: ConnectionCardTexts }): React.JSX.Element {
   if (oauthConnected === false) {
     return (
       <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', borderRadius: 'var(--lumio-radius-sm)', bgcolor: '#fffbeb', px: 1, py: 0.25, fontSize: 11, fontWeight: 600, color: '#92400e', border: '1px solid #fde68a' }}>
@@ -50,7 +50,7 @@ function ConnectionStatus({ oauthConnected, t }: { oauthConnected: boolean | und
 }
 
 // eslint-disable-next-line max-lines-per-function, complexity
-export function ConnectionCard({ item, index, syncingId, removingId, locale, t, onAuthorize, onSync, onRemove }: ConnectionCardProps): JSX.Element {
+export function ConnectionCard({ item, index, syncingId, removingId, locale, t, onAuthorize, onSync, onRemove }: ConnectionCardProps): React.JSX.Element {
   const isSyncing = syncingId === item.id;
   const isRemoving = removingId === item.id;
   const isDisabled = isSyncing || item.oauthConnected === false;

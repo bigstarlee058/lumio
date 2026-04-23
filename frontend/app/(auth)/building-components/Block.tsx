@@ -10,7 +10,7 @@ interface BlockProps {
   style?: React.CSSProperties;
 }
 
-export const Block = ({ w, h, children, style = {} }: BlockProps): JSX.Element => (
+export const Block = ({ w, h, children, style = {} }: BlockProps): React.JSX.Element => (
   <div style={{ width: w, height: h, borderBottom: 'none', ...glassStyle, ...style }}>
     {children}
   </div>

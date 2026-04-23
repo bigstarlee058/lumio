@@ -8,7 +8,7 @@ import type { BuildingProps } from './shared';
 
 const PILLAR_COUNT = 6;
 
-const DomePillarRow = ({ w }: { w: number }): JSX.Element => (
+const DomePillarRow = ({ w }: { w: number }): React.JSX.Element => (
   <Block w={w * 0.8} h={40} style={{ display: 'flex', justifyContent: 'space-evenly', paddingTop: 4 }}>
     {[...Array(PILLAR_COUNT).keys()].map(i => (
       // biome-ignore lint/suspicious/noArrayIndexKey: pure visual decoration
@@ -17,7 +17,7 @@ const DomePillarRow = ({ w }: { w: number }): JSX.Element => (
   </Block>
 );
 
-export const DomeBuilding = ({ delay, duration, w = 180, h = 180, ...pos }: BuildingProps): JSX.Element => (
+export const DomeBuilding = ({ delay, duration, w = 180, h = 180, ...pos }: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

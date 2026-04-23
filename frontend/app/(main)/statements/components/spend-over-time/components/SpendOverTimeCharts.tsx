@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
 type ChartCardProps = { title: string; option: object; theme: string; height: number; wide?: boolean };
-function ChartCard({ title, option, theme, height, wide }: ChartCardProps): JSX.Element {
+function ChartCard({ title, option, theme, height, wide }: ChartCardProps): React.JSX.Element {
   return (
     <div className={wide ? 'lumio-view-page__chart-card--wide' : 'lumio-view-page__chart-card'}>
       <div className="lumio-view-page__chart-header">
@@ -27,7 +27,7 @@ type Props = {
   periodChartTitle: string;
 };
 
-export function SpendOverTimeCharts({ trendChart, sourceChart, periodsChart, chartTheme, trendTitle, sourceSplitTitle, periodChartTitle }: Props): JSX.Element {
+export function SpendOverTimeCharts({ trendChart, sourceChart, periodsChart, chartTheme, trendTitle, sourceSplitTitle, periodChartTitle }: Props): React.JSX.Element {
   return (
     <div className="lumio-view-page__chart-grid-wrapper">
       <div className="lumio-view-page__chart-grid">

@@ -14,7 +14,7 @@ type Props = {
   };
 };
 
-export function AnalyticsSourceBadge({ sourceChannel, labels }: Props): JSX.Element {
+export function AnalyticsSourceBadge({ sourceChannel, labels }: Props): React.JSX.Element {
   const label = getSourceLabel(sourceChannel, labels);
 
   if (sourceChannel === 'gmail') {

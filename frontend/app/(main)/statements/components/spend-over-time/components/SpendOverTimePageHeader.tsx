@@ -8,7 +8,7 @@ import { Search } from 'lucide-react';
 
 type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 
-export function SpendOverTimePageHeader({ vm }: Props): JSX.Element {
+export function SpendOverTimePageHeader({ vm }: Props): React.JSX.Element {
   const { labels } = vm;
   return (
     <div className="lumio-view-page__header">

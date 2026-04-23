@@ -12,7 +12,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 
 type VmProps = { vm: TopSpendersViewModelReturn };
 
-function TopSpendersBody({ vm }: VmProps): JSX.Element {
+function TopSpendersBody({ vm }: VmProps): React.JSX.Element {
   if (vm.loading) {
     return (
       <div className="lumio-view-page__loading">
@@ -30,7 +30,7 @@ function TopSpendersBody({ vm }: VmProps): JSX.Element {
   return <TopSpendersContent vm={vm} />;
 }
 
-export default function TopSpendersView(): JSX.Element {
+export default function TopSpendersView(): React.JSX.Element {
   const vm = useTopSpendersViewModel();
   return (
     <div className="container-shared lumio-view-page">

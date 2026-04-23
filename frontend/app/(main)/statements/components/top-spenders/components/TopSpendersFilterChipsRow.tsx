@@ -39,7 +39,7 @@ const getDateTriggerText = ({ date, presets, modes, label }: DateTriggerParams):
 const getFromTriggerText = ({ count, label }: { count: number; label: string }): string =>
   count > 0 ? `${label} (${count})` : label;
 
-export function TopSpendersFilterChipsRow({ vm }: Props): JSX.Element {
+export function TopSpendersFilterChipsRow({ vm }: Props): React.JSX.Element {
   const { labels, filterOptions, filterState: fs } = vm;
   const { typeOptions, statusOptions, datePresets, dateModes } = filterOptions;
   const { draftFilters, typeDropdownOpen, statusDropdownOpen, dateDropdownOpen, fromDropdownOpen } = fs;

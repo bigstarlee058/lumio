@@ -8,7 +8,7 @@ import type { useTopMerchantsViewModel } from '@/app/(main)/statements/component
 
 type Props = { vm: ReturnType<typeof useTopMerchantsViewModel> };
 
-function TopMerchantsChartsSection({ vm }: Props): JSX.Element {
+function TopMerchantsChartsSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const chartTheme = vm.resolvedTheme === 'dark' ? 'dark' : 'light';
   const { labels } = vm;
@@ -25,7 +25,7 @@ function TopMerchantsChartsSection({ vm }: Props): JSX.Element {
   );
 }
 
-function TopMerchantsLeaderboardSection({ vm }: Props): JSX.Element {
+function TopMerchantsLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   const sourceLabels = { sourceBank: labels.sourceBank, sourceReceipt: labels.sourceReceipt, sourceGmailInbox: labels.sourceGmailInbox };
@@ -46,7 +46,7 @@ function TopMerchantsLeaderboardSection({ vm }: Props): JSX.Element {
   );
 }
 
-export function TopMerchantsContent({ vm }: Props): JSX.Element {
+export function TopMerchantsContent({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
   return (

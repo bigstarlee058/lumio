@@ -24,7 +24,7 @@ export function TopMerchantsCharts({
   trendTitle,
   sourceSplitTitle,
   merchantsTitle,
-}: Props): JSX.Element {
+}: Props): React.JSX.Element {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>

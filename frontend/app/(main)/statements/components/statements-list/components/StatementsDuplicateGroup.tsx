@@ -15,7 +15,7 @@ export function StatementsDuplicateGroup({
   duplicateStatementIds,
   selectDuplicatesLabel,
   onSelectDetectedDuplicates,
-}: StatementsDuplicateGroupProps): JSX.Element | null {
+}: StatementsDuplicateGroupProps): React.JSX.Element | null {
   if (!loading && duplicateStatementIds.length === 0) return null;
 
   return (
