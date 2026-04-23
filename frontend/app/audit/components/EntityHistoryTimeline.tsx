@@ -15,7 +15,6 @@ import {
   Trash2,
   Unlink2,
 } from 'lucide-react';
-import React from 'react';
 
 interface EntityHistoryTimelineProps {
   events: AuditEvent[];
