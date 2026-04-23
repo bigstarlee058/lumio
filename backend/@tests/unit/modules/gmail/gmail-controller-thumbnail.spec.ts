@@ -90,13 +90,17 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
       id: 'receipt-1',
       userId: 'user-123',
       attachmentPaths: ['/tmp/not-a-pdf.txt'],
+      metadata: { attachments: [{ filename: 'not-a-pdf.txt', mimeType: 'text/plain', size: 1, id: 'att-1' }] },
     } as Receipt);
+    const accessSpy = jest.spyOn(fs.promises, 'access').mockResolvedValue(undefined);
     const res = createMockResponse();
 
     await (controller as any).getReceiptThumbnail(mockUser as User, 'receipt-1', undefined, res);
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({ error: 'No PDF attachment found' });
+
+    accessSpy.mockRestore();
   });
 
   it('returns 404 from file endpoint when receipt is not found', async () => {
@@ -114,7 +118,10 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
       id: 'receipt-1',
       userId: 'user-123',
       attachmentPaths: ['/tmp/not-a-pdf.txt'],
+      metadata: { attachments: [{ filename: 'not-a-pdf.txt', mimeType: 'text/plain', size: 1, id: 'att-1' }] },
     } as Receipt);
+    const accessSpy = jest.spyOn(fs.promises, 'access').mockResolvedValue(undefined);
+    const readFileSpy = jest.spyOn(fs.promises, 'readFile').mockRejectedValue(new Error('read failed'));
     const res = createMockResponse();
 
     await (controller as any).getReceiptFile(mockUser as User, 'receipt-1', res);
@@ -126,6 +133,9 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
         message: 'Failed to load receipt file',
       },
     });
+
+    accessSpy.mockRestore();
+    readFileSpy.mockRestore();
   });
 
   it('serves image attachments from file endpoint for scanned receipts', async () => {
@@ -144,8 +154,8 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
         ],
       },
     } as Receipt);
+    const accessSpy = jest.spyOn(fs.promises, 'access').mockResolvedValue(undefined);
     const readFileSpy = jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('image'));
-    const existsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     const res = createMockResponse();
 
     await (controller as any).getReceiptFile(mockUser as User, 'receipt-image-1', res);
@@ -159,8 +169,8 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
     );
     expect(res.send).toHaveBeenCalledWith(Buffer.from('image'));
 
+    accessSpy.mockRestore();
     readFileSpy.mockRestore();
-    existsSpy.mockRestore();
   });
 
   it('serves image attachments from thumbnail endpoint for scanned receipts', async () => {
@@ -179,10 +189,10 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
         ],
       },
     } as Receipt);
+    const accessSpy = jest.spyOn(fs.promises, 'access').mockResolvedValue(undefined);
     const readFileSpy = jest
       .spyOn(fs.promises, 'readFile')
       .mockResolvedValue(Buffer.from('thumbnail-image'));
-    const existsSpy = jest.spyOn(fs, 'existsSync').mockReturnValue(true);
     const res = createMockResponse();
 
     await (controller as any).getReceiptThumbnail(mockUser as User, 'receipt-thumb-1', '240', res);
@@ -190,7 +200,7 @@ describe('GmailController - Receipt Thumbnail Endpoint', () => {
     expect(res.setHeader).toHaveBeenCalledWith('Content-Type', 'image/jpeg');
     expect(res.send).toHaveBeenCalledWith(Buffer.from('thumbnail-image'));
 
+    accessSpy.mockRestore();
     readFileSpy.mockRestore();
-    existsSpy.mockRestore();
   });
 });

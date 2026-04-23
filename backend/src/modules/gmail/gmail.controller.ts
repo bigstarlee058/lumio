@@ -25,6 +25,7 @@ import { Response } from 'express';
 import { google } from 'googleapis';
 import type { gmail_v1 } from 'googleapis';
 import { Repository } from 'typeorm';
+import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import {
   Category,
@@ -121,6 +122,51 @@ export class GmailController {
     private readonly exportService: GmailReceiptExportService,
     private readonly merchantReparseService: GmailMerchantReparseService,
   ) {}
+
+  private resolveAttachmentPath(storedPath: string): string {
+    if (path.isAbsolute(storedPath)) return storedPath;
+    return path.join(resolveUploadsDir(), storedPath);
+  }
+
+  private async ensureAttachmentOnDisk(
+    receipt: Receipt,
+    userId: string,
+  ): Promise<string | null> {
+    const storedPath = (receipt.attachmentPaths || []).find(Boolean);
+    if (!storedPath) return null;
+
+    const resolvedPath = this.resolveAttachmentPath(storedPath);
+
+    try {
+      await fs.promises.access(resolvedPath, fs.constants.R_OK);
+      return resolvedPath;
+    } catch {
+      // File missing from disk — try to re-download from Gmail API
+    }
+
+    const attachmentMeta = receipt.metadata?.attachments?.[0];
+    if (!attachmentMeta?.id) {
+      this.logger.warn(`No attachment metadata to re-download for receipt ${receipt.id}`);
+      return null;
+    }
+
+    try {
+      const newPath = await this.gmailService.downloadAttachment(
+        userId,
+        receipt.gmailMessageId,
+        attachmentMeta.id,
+        attachmentMeta.filename,
+      );
+      // Update stored path so future requests don't need re-download
+      receipt.attachmentPaths = [newPath];
+      await this.receiptRepository.update(receipt.id, { attachmentPaths: [newPath] });
+      this.logger.log(`Re-downloaded attachment for receipt ${receipt.id} to ${newPath}`);
+      return newPath;
+    } catch (error) {
+      this.logger.error(`Failed to re-download attachment for receipt ${receipt.id}:`, error);
+      return null;
+    }
+  }
 
   private getValidationIssues(parsedData: Receipt['parsedData'] | null | undefined): string[] {
     return Array.isArray(parsedData?.validationIssues) ? parsedData.validationIssues : [];
@@ -621,6 +667,19 @@ export class GmailController {
     }
   }
 
+  @Post('receipts/:id/export-draft')
+  @ApiOperation({ summary: 'Export receipt as Gmail draft' })
+  async exportToDraft(@CurrentUser() user: User, @Param('id') id: string) {
+    try {
+      const result = await this.exportService.createGmailDraft(user.id, id);
+      return { success: true, data: result };
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to create Gmail draft: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   @Post('receipts/reparse-merchants')
   @ApiOperation({ summary: 'Reparse merchant names for existing receipts' })
   async reparseMerchants(@CurrentUser() user: User, @Body() dto: ReparseMerchantsDto) {
@@ -658,7 +717,7 @@ export class GmailController {
       return res.send(Buffer.from(cached, 'base64'));
     }
 
-    const attachmentPath = (receipt.attachmentPaths || []).find(Boolean);
+    const attachmentPath = await this.ensureAttachmentOnDisk(receipt, user.id);
 
     if (!attachmentPath) {
       res.setHeader('Cache-Control', 'public, max-age=60');
@@ -741,7 +800,7 @@ export class GmailController {
       return res.status(HttpStatus.NOT_FOUND).json({ error: 'Receipt not found' });
     }
 
-    const attachmentPath = (receipt.attachmentPaths || []).find(Boolean);
+    const attachmentPath = await this.ensureAttachmentOnDisk(receipt, user.id);
 
     if (!attachmentPath) {
       return res.status(HttpStatus.NOT_FOUND).json({ error: 'No attachment found' });
