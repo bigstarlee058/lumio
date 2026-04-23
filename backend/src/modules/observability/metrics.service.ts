@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Counter, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
+import { Counter, Gauge, Histogram, Registry, collectDefaultMetrics } from 'prom-client';
 
 @Injectable()
 export class MetricsService {
@@ -54,6 +54,51 @@ export class MetricsService {
     name: 'storage_file_access_errors_total',
     help: 'Storage file access errors by action and reason',
     labelNames: ['action', 'reason'] as const,
+    registers: [this.registry],
+  });
+
+  // --- Database pool metrics ---
+
+  readonly dbPoolActiveConnections = new Gauge({
+    name: 'db_pool_active_connections',
+    help: 'Number of active database connections',
+    registers: [this.registry],
+  });
+
+  readonly dbPoolIdleConnections = new Gauge({
+    name: 'db_pool_idle_connections',
+    help: 'Number of idle database connections',
+    registers: [this.registry],
+  });
+
+  readonly dbPoolWaitingQueries = new Gauge({
+    name: 'db_pool_waiting_queries',
+    help: 'Number of queries waiting for a connection',
+    registers: [this.registry],
+  });
+
+  readonly dbQueryDurationSeconds = new Histogram({
+    name: 'db_query_duration_seconds',
+    help: 'Database query duration in seconds',
+    labelNames: ['operation'] as const,
+    buckets: [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
+    registers: [this.registry],
+  });
+
+  // --- Redis / cache metrics ---
+
+  readonly redisCommandsTotal = new Counter({
+    name: 'redis_commands_total',
+    help: 'Total Redis commands by command and result',
+    labelNames: ['command', 'result'] as const,
+    registers: [this.registry],
+  });
+
+  readonly redisCommandDurationSeconds = new Histogram({
+    name: 'redis_command_duration_seconds',
+    help: 'Redis command duration in seconds',
+    labelNames: ['command'] as const,
+    buckets: [0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5],
     registers: [this.registry],
   });
 

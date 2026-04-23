@@ -2,10 +2,14 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
 scrape_configs:
   - job_name: lumio-backend
     metrics_path: /api/v1/metrics
+    authorization:
+      type: Bearer
+      credentials: "${METRICS_AUTH_TOKEN}"
     static_configs:
-      # Railway: выставь BACKEND_METRICS_TARGET в Prometheus service env
-      # Пример: "parse-ledger:4000" (внутренний порт API) или "<private-domain>:<port>"
       - targets: ["${BACKEND_METRICS_TARGET}"]
