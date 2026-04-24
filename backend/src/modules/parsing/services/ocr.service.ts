@@ -16,7 +16,7 @@ export interface OcrOptions {
 export interface SupportedLanguage {
   code: string;
   name: string;
-  script: 'Latin' | 'Cyrillic' | 'CJK' | 'Arabic' | 'Devanagari';
+  script: 'Latin' | 'Cyrillic' | 'CJK' | 'Arabic' | 'Devanagari' | 'Hebrew';
 }
 
 const SUPPORTED_IMAGE_EXTENSIONS = new Set([
@@ -45,6 +45,7 @@ export class OcrService {
     { code: 'jpn', name: 'Japanese', script: 'CJK' },
     { code: 'kor', name: 'Korean', script: 'CJK' },
     { code: 'ara', name: 'Arabic', script: 'Arabic' },
+    { code: 'heb', name: 'Hebrew', script: 'Hebrew' },
     { code: 'hin', name: 'Hindi', script: 'Devanagari' },
     { code: 'tur', name: 'Turkish', script: 'Latin' },
     { code: 'pol', name: 'Polish', script: 'Latin' },
@@ -86,6 +87,7 @@ export class OcrService {
       Cyrillic: 0,
       CJK: 0,
       Arabic: 0,
+      Hebrew: 0,
       Devanagari: 0,
     };
 
@@ -107,6 +109,8 @@ export class OcrService {
         counters.CJK += 1;
       } else if ((code >= 0x0600 && code <= 0x06ff) || (code >= 0x0750 && code <= 0x077f)) {
         counters.Arabic += 1;
+      } else if (code >= 0x0590 && code <= 0x05ff) {
+        counters.Hebrew += 1;
       } else if (code >= 0x0900 && code <= 0x097f) {
         counters.Devanagari += 1;
       }
@@ -135,6 +139,8 @@ export class OcrService {
         return ['chi_sim', 'jpn', 'kor'];
       case 'Arabic':
         return ['ara'];
+      case 'Hebrew':
+        return ['heb'];
       case 'Devanagari':
         return ['hin'];
       default:
