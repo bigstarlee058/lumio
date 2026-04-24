@@ -1,13 +1,126 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "1cfe2aabe425172d0705fb63ee98559a035d5a2f"
+      "main": "4468cea875f9729177368c970536b73ee7d852cc"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-23T21:48:15.907Z",
+    "lastGeneratedAt": "2026-04-24T11:23:38.788Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-24-4468cea",
+      "version": "main-4468cea",
+      "branch": "main",
+      "date": "2026-04-24T11:23:38.788Z",
+      "title": "Release update - April 24, 2026",
+      "summary": "This release includes 4 features and 3 fixes.",
+      "markdown": "## Features\n- **parsing**: Add Bank Hapoalim enum and DB migration\n- **parsing**: Add Hebrew language support to OCR service\n- **parsing**: Add DD/MM/YY date format support\n- **parsing**: Add Hapoalim parser with AI vision fallback\n\n## Fixes\n- **observability**: Remove alerting provisioning, fix Prometheus\n- **observability**: Use sed instead of envsubst for Prometheus\n- **observability**: Move dashboards outside volume mount path",
+      "commits": [
+        {
+          "sha": "126ed571ca859cc467945955af177f0b8090c302",
+          "shortSha": "126ed57",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-23T21:48:16Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "a749b7044612f3ffd86610aee6bd0555242b2d6c",
+          "shortSha": "a749b70",
+          "subject": "fix(observability): remove alerting provisioning, fix Prometheus",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:49:56+03:00",
+          "files": [
+            "observability/grafana/provisioning/alerting/contactpoints.yml",
+            "observability/grafana/provisioning/alerting/policies.yml",
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/entrypoint.sh"
+          ]
+        },
+        {
+          "sha": "4489ea98c4a68070bf82f5b32ada1d9263afcf46",
+          "shortSha": "4489ea9",
+          "subject": "fix(observability): use sed instead of envsubst for Prometheus",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:51:18+03:00",
+          "files": [
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/entrypoint.sh"
+          ]
+        },
+        {
+          "sha": "f5f8ce331338e70782a08a0082b981b384eeb5ab",
+          "shortSha": "f5f8ce3",
+          "subject": "fix(observability): move dashboards outside volume mount path",
+          "author": "symonbaikov",
+          "date": "2026-04-24T00:52:02+03:00",
+          "files": [
+            "observability/grafana/Dockerfile",
+            "observability/grafana/provisioning/dashboards/dashboards.yml"
+          ]
+        },
+        {
+          "sha": "e2953c69bf62064f05d748bd4199c5276329dd42",
+          "shortSha": "e2953c6",
+          "subject": "feat(parsing): add Bank Hapoalim enum and DB migration",
+          "author": "symonbaikov",
+          "date": "2026-04-24T14:21:27+03:00",
+          "files": [
+            "backend/src/entities/statement.entity.ts",
+            "backend/src/migrations/1764700000000-AddHapoalimBankName.ts"
+          ]
+        },
+        {
+          "sha": "0f139cb55f289894bca0dae607cf843ae3192f33",
+          "shortSha": "0f139cb",
+          "subject": "feat(parsing): add Hebrew language support to OCR service",
+          "author": "symonbaikov",
+          "date": "2026-04-24T14:21:42+03:00",
+          "files": [
+            "backend/src/modules/parsing/services/ocr.service.ts"
+          ]
+        },
+        {
+          "sha": "ae03e617f3a2328cb8fa77fa52ed6652e82e4d08",
+          "shortSha": "ae03e61",
+          "subject": "feat(parsing): add DD/MM/YY date format support",
+          "author": "symonbaikov",
+          "date": "2026-04-24T14:21:52+03:00",
+          "files": [
+            "backend/src/common/utils/number-normalizer.util.ts"
+          ]
+        },
+        {
+          "sha": "82d17bbcb212085837d4bf01b078d948f4ab7070",
+          "shortSha": "82d17bb",
+          "subject": "feat(parsing): add Hapoalim parser with AI vision fallback",
+          "author": "symonbaikov",
+          "date": "2026-04-24T14:22:49+03:00",
+          "files": [
+            "backend/src/modules/parsing/helpers/ai-hapoalim-extractor.helper.ts",
+            "backend/src/modules/parsing/parsers/hapoalim.parser.ts",
+            "backend/src/modules/parsing/services/parser-factory.service.ts",
+            "backend/src/modules/parsing/services/statement-processing.service.ts"
+          ]
+        },
+        {
+          "sha": "4468cea875f9729177368c970536b73ee7d852cc",
+          "shortSha": "4468cea",
+          "subject": "test(parsing): add Hapoalim parser tests and statement examples",
+          "author": "symonbaikov",
+          "date": "2026-04-24T14:23:02+03:00",
+          "files": [
+            "backend/@tests/integration/hapoalim-parser-test.spec.ts",
+            "backend/@tests/unit/modules/parsing/parsers/hapoalim.parser.spec.ts",
+            "docs/statements-examples/hapoalim/hapoalim-1.jpg",
+            "docs/statements-examples/hapoalim/hapoalim-2.jpg"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-23-1cfe2aa",
       "version": "main-1cfe2aa",
