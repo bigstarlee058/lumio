@@ -61,7 +61,7 @@ export function createStatementsTour(texts: {
         description:
           uploadStep?.description.value ??
           'Open the menu to add new statements from scan, local upload, email, or cloud sources.',
-        side: 'bottom',
+        side: 'top',
         align: 'start',
       },
       {

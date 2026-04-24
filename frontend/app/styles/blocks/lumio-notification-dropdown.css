@@ -12,12 +12,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 200ms;
 }
 
-.lumio-notification-dropdown__trigger:hover {
-  color: white;
-}
 
 .lumio-notification-dropdown__badge {
   position: absolute;

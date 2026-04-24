@@ -13,6 +13,7 @@ import { HelpCircle, X } from '@/app/components/icons';
 import '@/app/styles/blocks/lumio-navigation.css';
 import { useTheme } from 'next-themes';
 import { Nunito } from 'next/font/google';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -100,10 +101,7 @@ export default function Navigation() {
           <div className="lumio-navigation__brand">
             <Link href="/" className="lumio-navigation__logo-link" data-tour-id="brand">
               <div className="lumio-navigation__logo-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" role="img" aria-labelledby="lumioLogo">
-                  <title id="lumioLogo">Lumio Logo</title>
-                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
+                <Image src="/images/logo.jpg" alt="Lumio" width={32} height={32} style={{ borderRadius: 'var(--lumio-radius-sm)', display: 'block' }} />
               </div>
               <span className={`lumio-navigation__logo-text ${nunito.className}`}>LUMIO</span>
             </Link>
