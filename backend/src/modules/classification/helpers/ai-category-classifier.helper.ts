@@ -17,6 +17,11 @@ export type AiCategoryMatch = {
   categoryName: string;
   categoryId: string;
   confidence: number;
+  vendorNormalized?: string;
+  categoryHint?: string;
+  taxMentioned?: boolean;
+  taxRate?: number;
+  transactionNature?: string;
 };
 
 export type AiCategoryBatchResult = {
@@ -125,6 +130,11 @@ export class AiCategoryClassifier extends BaseAiHelper {
           categoryName,
           categoryId,
           confidence,
+          vendorNormalized: typeof item?.vendorNormalized === 'string' ? item.vendorNormalized.trim() : undefined,
+          categoryHint: typeof item?.categoryHint === 'string' ? item.categoryHint : undefined,
+          taxMentioned: typeof item?.taxMentioned === 'boolean' ? item.taxMentioned : undefined,
+          taxRate: typeof item?.taxRate === 'number' && Number.isFinite(item.taxRate) ? item.taxRate : undefined,
+          transactionNature: typeof item?.transactionNature === 'string' ? item.transactionNature : undefined,
         });
       }
 
@@ -150,14 +160,28 @@ export class AiCategoryClassifier extends BaseAiHelper {
 
     const categoryNames = categories.map(category => category.name);
 
-    return `You classify financial transactions into predefined categories.
-Return ONLY JSON with shape {"classifications":[{"index":number,"category":string,"confidence":number}]}
+    return `You classify and enrich financial transactions.
+Return ONLY JSON with shape:
+{"classifications":[{
+  "index": number,
+  "category": string,
+  "confidence": number,
+  "vendorNormalized": string | null,
+  "categoryHint": "food"|"transport"|"entertainment"|"shopping"|"utilities"|"health"|"education"|"travel"|"salary"|"rent"|"tax"|"insurance"|"subscription"|"other" | null,
+  "taxMentioned": boolean,
+  "taxRate": number | null,
+  "transactionNature": "goods"|"services"|"salary"|"tax"|"transfer"|"loan"|"commission"|"rent"|"subscription" | null
+}]}
 
 Rules:
 - Use ONLY category names from the provided list.
 - confidence must be between 0 and 1.
 - Use confidence >= 0.90 only for very certain classifications.
 - If uncertain, return lower confidence.
+- vendorNormalized: clean, short vendor name (e.g. "ТОО Магнум Кэш энд Кэрри" → "Magnum").
+- taxMentioned: true if purpose mentions НДС/VAT/tax. taxRate: numeric rate if present (e.g. 12 for "НДС 12%").
+- transactionNature: the nature of the operation based on counterparty and purpose.
+- Omit enrichment fields if not determinable.
 
 Available categories:
 ${JSON.stringify(categoryNames)}

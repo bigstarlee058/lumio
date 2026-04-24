@@ -118,6 +118,21 @@ export class Transaction {
   @Column({ name: 'activity_type', nullable: true })
   activityType: string | null;
 
+  @Column({ name: 'vendor_normalized', nullable: true })
+  vendorNormalized: string | null;
+
+  @Column({ name: 'category_hint', nullable: true })
+  categoryHint: string | null;
+
+  @Column({ name: 'transaction_nature', nullable: true })
+  transactionNature: string | null;
+
+  @Column({ name: 'tax_detected', default: false })
+  taxDetected: boolean;
+
+  @Column({ name: 'enrichment_confidence', type: 'decimal', precision: 3, scale: 2, nullable: true })
+  enrichmentConfidence: number | null;
+
   @Column({
     name: 'transaction_type',
     type: 'enum',

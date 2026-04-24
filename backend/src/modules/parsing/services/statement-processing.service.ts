@@ -22,6 +22,7 @@ import type {
 import { MetricsService } from '../../observability/metrics.service';
 import { CrossStatementDeduplicationService } from '../../transactions/services/cross-statement-deduplication.service';
 import { TransactionFingerprintService } from '../../transactions/services/transaction-fingerprint.service';
+import { extractTaxFromPurpose } from '../../classification/helpers/tax-extractor.util';
 import { AiParseValidator } from '../helpers/ai-parse-validator.helper';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
@@ -900,10 +901,10 @@ export class StatementProcessingService {
       `Processing ${deduped.length}/${parsedTransactions.length} parsed transactions after dedup (statement currency: ${statement.currency || 'N/A'})`,
     );
 
-    let aiCategoryByIndex = new Map<number, string>();
+    let aiBatchResults = new Map<number, { categoryId: string; enrichment?: import('../../classification/interfaces/transaction-enrichment.interface').TransactionEnrichment }>();
     if (!manualCategorySelectionRequired && statement.workspaceId && deduped.length > 0) {
       try {
-        aiCategoryByIndex = await this.classificationService.classifyTransactionsBatch(
+        aiBatchResults = await this.classificationService.classifyTransactionsBatch(
           deduped.map((parsed, index) => {
             const transactionType =
               parsed.debit && parsed.debit > 0
@@ -925,7 +926,7 @@ export class StatementProcessingService {
 
         log(
           'info',
-          `AI category matches: ${aiCategoryByIndex.size}/${deduped.length} transactions`,
+          `AI batch results: ${aiBatchResults.size}/${deduped.length} transactions classified and enriched`,
         );
       } catch (error) {
         log(
@@ -979,12 +980,13 @@ export class StatementProcessingService {
           classification.categoryId = undefined;
         }
 
+        const aiBatchResult = aiBatchResults.get(i);
         if (
           !manualCategorySelectionRequired &&
           !classification.categoryId &&
-          aiCategoryByIndex.has(i)
+          aiBatchResult
         ) {
-          classification.categoryId = aiCategoryByIndex.get(i);
+          classification.categoryId = aiBatchResult.categoryId;
         }
 
         const currency =
@@ -992,7 +994,12 @@ export class StatementProcessingService {
         const exchangeRate = parsed.exchangeRate ?? null;
         const amountForeign = parsed.amountForeign ?? null;
 
-        // Create transaction with classification
+        // Extract enrichment data from AI batch results, with regex tax fallback
+        const enrichment = aiBatchResult?.enrichment;
+        const regexTax = extractTaxFromPurpose(paymentPurpose);
+        const taxDetected = enrichment?.taxMentioned ?? regexTax.taxMentioned;
+
+        // Create transaction with classification and enrichment
         const transaction = this.transactionRepository.create({
           statementId: statement.id,
           workspaceId: statement.workspaceId,
@@ -1011,6 +1018,11 @@ export class StatementProcessingService {
           paymentPurpose,
           transactionType,
           ...classification,
+          vendorNormalized: enrichment?.vendorNormalized || null,
+          categoryHint: enrichment?.categoryHint || null,
+          transactionNature: enrichment?.transactionNature || null,
+          taxDetected,
+          enrichmentConfidence: enrichment?.confidence || null,
         });
 
         const saved = await this.transactionRepository.save(transaction);

@@ -21,6 +21,7 @@ import {
   ClassificationResult,
   type ClassificationRule,
 } from '../interfaces/classification-rule.interface';
+import type { TransactionEnrichment } from '../interfaces/transaction-enrichment.interface';
 
 type BatchTransactionClassificationInput = {
   index: number;
@@ -648,11 +649,11 @@ export class ClassificationService {
     transactions: BatchTransactionClassificationInput[],
     workspaceId: string,
     userId: string,
-  ): Promise<Map<number, string>> {
-    const categoryByIndex = new Map<number, string>();
+  ): Promise<Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>> {
+    const resultByIndex = new Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>();
 
     if (!transactions.length || !workspaceId || !this.aiCategoryClassifier.isAvailable()) {
-      return categoryByIndex;
+      return resultByIndex;
     }
 
     const incomeTransactions = transactions.filter(
@@ -676,7 +677,15 @@ export class ClassificationService {
     const transactionByIndex = new Map(transactions.map(tx => [tx.index, tx]));
 
     for (const match of matches) {
-      categoryByIndex.set(match.index, match.categoryId);
+      const enrichment: TransactionEnrichment = {
+        vendorNormalized: match.vendorNormalized,
+        categoryHint: match.categoryHint,
+        taxMentioned: match.taxMentioned,
+        taxRate: match.taxRate,
+        transactionNature: match.transactionNature,
+        confidence: match.confidence,
+      };
+      resultByIndex.set(match.index, { categoryId: match.categoryId, enrichment });
       const tx = transactionByIndex.get(match.index);
       if (!tx) {
         continue;
@@ -684,7 +693,7 @@ export class ClassificationService {
       await this.learnFromAiClassification(workspaceId, userId, tx, match);
     }
 
-    return categoryByIndex;
+    return resultByIndex;
   }
 
   private async classifyTransactionGroupWithAi(
