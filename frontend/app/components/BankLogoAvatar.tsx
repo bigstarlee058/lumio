@@ -1,7 +1,7 @@
 'use client';
 
 import { resolveBankLogo } from '@bank-logos';
-import { Landmark } from 'lucide-react';
+import { Landmark } from '@/app/components/icons';
 import React from 'react';
 
 import { LogoAvatar } from './LogoAvatar';

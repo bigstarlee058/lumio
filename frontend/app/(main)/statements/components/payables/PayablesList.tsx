@@ -12,7 +12,7 @@ import {
 import { AppPagination } from '@/app/components/ui/pagination';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import type { Payable } from '@/app/lib/payables-api';
-import { Edit3, MoreHorizontal } from 'lucide-react';
+import { Edit3, MoreHorizontal } from '@/app/components/icons';
 import {
   formatMoney,
   formatPayableDate,

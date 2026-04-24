@@ -6,7 +6,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { Circle, Disc } from 'lucide-react';
+import { Circle, Disc } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { cloneElement, isValidElement, useCallback, useState } from 'react';
 import type { MouseEvent, ReactElement, ReactNode } from 'react';

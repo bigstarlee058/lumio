@@ -14,7 +14,7 @@ import {
   toggleStatementSelection,
 } from '@/app/lib/statement-selection';
 import { resolveBankLogo } from '@bank-logos';
-import { RotateCcw, Search, Trash2 } from 'lucide-react';
+import { RotateCcw, Search, Trash2 } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { TrashListItem, type TrashListItemModel } from './TrashListItem';

@@ -6,7 +6,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import type { SxProps, Theme } from '@mui/material';
 import * as React from 'react';
 

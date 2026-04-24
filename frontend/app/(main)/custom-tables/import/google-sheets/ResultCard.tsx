@@ -3,7 +3,7 @@
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, Typography } from '@mui/material';
-import { Sparkles, Tag as CategoryIconFallback } from 'lucide-react';
+import { Sparkles, Tag as CategoryIconFallback } from '@/app/components/icons';
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import type { Category, PreviewResponse } from './types';

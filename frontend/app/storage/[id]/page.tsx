@@ -13,7 +13,7 @@ import {
   Share2,
   Shield,
   ShieldCheck,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import PermissionsPanel from '../../components/PermissionsPanel';

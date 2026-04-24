@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import { RotateCcw, Trash2 } from 'lucide-react';
+import { RotateCcw, Trash2 } from '@/app/components/icons';
 import React from 'react';
 
 const restoreSx = {

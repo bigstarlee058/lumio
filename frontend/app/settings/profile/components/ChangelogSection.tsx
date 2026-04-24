@@ -1,7 +1,7 @@
 'use client';
 
 import { type ChangelogEntry, ChangelogModal } from '@/app/components/ChangelogModal';
-import { CalendarDays, Clock3, FileText } from 'lucide-react';
+import { CalendarDays, Clock3, FileText } from '@/app/components/icons';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';

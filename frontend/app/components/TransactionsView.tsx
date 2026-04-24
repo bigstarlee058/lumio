@@ -15,7 +15,7 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import { Search as SearchIcon } from 'lucide-react';
+import { Search as SearchIcon } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
 
 export interface Transaction {

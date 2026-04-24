@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card } from '@/app/components/ui/card';
 import type { PayablesSummary } from '@/app/lib/payables-api';
-import { Banknote, CalendarClock, CheckCircle2, Clock3 } from 'lucide-react';
+import { Banknote, CalendarClock, CheckCircle2, Clock3 } from '@/app/components/icons';
 import { formatMoney, getSummaryCardItems } from './payables-utils';
 
 interface PayableSummaryCardsProps {

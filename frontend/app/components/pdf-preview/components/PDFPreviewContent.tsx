@@ -1,7 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import type { ChangeEvent, ComponentType, JSX, RefObject } from 'react';
 
 type TIntl = Record<string, { value: string }>;

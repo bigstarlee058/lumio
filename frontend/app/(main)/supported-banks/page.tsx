@@ -5,7 +5,7 @@ import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
-import { Building2, CheckCircle2 } from 'lucide-react';
+import { Building2, CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
 
 type SupportedBankCard = {

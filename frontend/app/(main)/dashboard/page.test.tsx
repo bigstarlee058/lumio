@@ -25,7 +25,7 @@ vi.mock('@mui/material', () => ({
   Tab: ({ label }: { label: React.ReactNode }) => <button type="button">{label}</button>,
 }));
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/app/components/icons', () => ({
   RefreshCcw: () => <span data-testid="refresh-icon" />,
 }));
 

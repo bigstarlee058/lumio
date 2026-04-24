@@ -7,7 +7,7 @@ import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CustomTableSortOrder, CustomTableSourceFilter } from '@/app/lib/custom-table-actions';
 import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@/app/components/icons';
 import React from 'react';
 
 type FilterOption<T extends string> = { value: T; label: string };

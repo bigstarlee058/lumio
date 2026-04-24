@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import { Card, CardContent } from '@/app/components/ui/card';
 import type { DashboardFinancialSnapshot } from '@/app/hooks/useDashboard';
-import { ArrowDownRight, ArrowUpRight, Banknote, Clock, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Banknote, Clock, TrendingUp, Wallet } from '@/app/components/icons';
 
 interface FinancialSnapshotProps {
   snapshot: DashboardFinancialSnapshot;

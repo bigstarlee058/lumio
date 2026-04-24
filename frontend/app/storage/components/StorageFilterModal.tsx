@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, IconButton, TextField, Typography } from '@mui/material';
-import { Bookmark, Save, X } from 'lucide-react';
+import { Bookmark, Save, X } from '@/app/components/icons';
 import React from 'react';
 import type { CategoryOption, FolderOption, StorageView, StorageViewPayload } from '../storageHelpers';
 import { DEFAULT_FILTERS, DEFAULT_SORT, NO_FOLDER } from '../storageHelpers';

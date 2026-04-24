@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, IconButton, TextField } from '@mui/material';
-import { Check, X } from 'lucide-react';
+import { Check, X } from '@/app/components/icons';
 import React from 'react';
 import type { FolderOption } from '../storageHelpers';
 

@@ -6,7 +6,7 @@ import { StatusFilterDropdown } from '@/app/(main)/statements/components/filters
 import { TypeFilterDropdown } from '@/app/(main)/statements/components/filters/TypeFilterDropdown';
 import type { StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
-import { ChevronDown, Columns2, Search, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, Columns2, Search, SlidersHorizontal } from '@/app/components/icons';
 import { BulkActionsBar } from './BulkActionsBar';
 import { StatementsDuplicateGroup } from './StatementsDuplicateGroup';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { FileImage, FileSpreadsheet, FileText } from 'lucide-react';
+import { FileImage, FileSpreadsheet, FileText } from '@/app/components/icons';
 import Image from 'next/image';
 import pdfIcon from '../../public/images/pdf.png';
 import { PDFThumbnail } from './PDFThumbnail';

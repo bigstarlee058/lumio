@@ -3,7 +3,7 @@
 
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { Download as DownloadIcon, Lock as LockIcon } from 'lucide-react';
+import { Download as DownloadIcon, Lock as LockIcon } from '@/app/components/icons';
 import {
   Alert,
   Box,

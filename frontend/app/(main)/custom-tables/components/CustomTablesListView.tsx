@@ -18,8 +18,8 @@ import {
   RefreshCcw,
   Table as TableIcon,
   Trash2,
-} from 'lucide-react';
-import { Tag as CategoryIcon } from 'lucide-react';
+} from '@/app/components/icons';
+import { Tag as CategoryIcon } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { formatUpdatedDate } from '../customTablesHelpers';
 

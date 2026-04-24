@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardActionItem } from '@/app/hooks/useDashboard';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from '@/app/components/icons';
 import Link from 'next/link';
 
 type ActionPriority = 'critical' | 'warning' | 'info' | 'success';

@@ -6,8 +6,8 @@ import { PDFThumbnail } from '@/app/components/PDFThumbnail';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import MuiTooltip from '@mui/material/Tooltip';
-import { CreditCard, Receipt } from 'lucide-react';
-import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from 'lucide-react';
+import { CreditCard, Receipt } from '@/app/components/icons';
+import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from '@/app/components/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 

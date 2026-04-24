@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { CalendarDays, Download, RefreshCcw } from 'lucide-react';
+import { CalendarDays, Download, RefreshCcw } from '@/app/components/icons';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
 

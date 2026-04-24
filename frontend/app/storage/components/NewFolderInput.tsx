@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, IconButton, TextField, Typography } from '@mui/material';
-import { Plus } from 'lucide-react';
+import { Plus } from '@/app/components/icons';
 import React from 'react';
 import type { StorageFile } from '../storageHelpers';
 

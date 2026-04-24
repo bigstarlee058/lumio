@@ -4,7 +4,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import * as React from 'react';
 
 export type DrawerPosition = 'left' | 'right';

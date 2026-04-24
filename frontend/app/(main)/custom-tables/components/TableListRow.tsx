@@ -4,8 +4,8 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { ChevronRight, Ellipsis, RefreshCcw, Table as TableIcon, Trash2 } from 'lucide-react';
-import { Tag as CategoryIcon } from 'lucide-react';
+import { ChevronRight, Ellipsis, RefreshCcw, Table as TableIcon, Trash2 } from '@/app/components/icons';
+import { Tag as CategoryIcon } from '@/app/components/icons';
 import React from 'react';
 import { formatUpdatedDate } from '../customTablesHelpers';
 

@@ -13,8 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { Send as SendIcon } from 'lucide-react';
-import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from 'lucide-react';
+import { Send as SendIcon } from '@/app/components/icons';
+import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import {

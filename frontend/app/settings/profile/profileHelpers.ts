@@ -1,7 +1,7 @@
 import type { ChangelogEntry } from '@/app/components/ChangelogModal';
 import type React from 'react';
-import type { LucideProps } from 'lucide-react';
-import { Bot, Monitor, Smartphone, Tablet } from 'lucide-react';
+import type { LucideProps } from '@/app/components/icons';
+import { Bot, Monitor, Smartphone, Tablet } from '@/app/components/icons';
 import type { AxiosError } from 'axios';
 
 export type ApiErrorResponse = { message?: string; error?: { message?: string } };

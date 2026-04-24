@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from '@/app/components/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
-import { FileUp, ListChecks } from 'lucide-react';
+import { FileUp, ListChecks } from '@/app/components/icons';
 import Link from 'next/link';
 
 const staticActions = [

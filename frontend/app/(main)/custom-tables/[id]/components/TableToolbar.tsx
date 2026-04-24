@@ -1,7 +1,7 @@
 'use client';
 
 import { Box } from '@mui/material';
-import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, XCircle } from 'lucide-react';
+import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, XCircle } from '@/app/components/icons';
 import type React from 'react';
 import type { QuickTab } from '../utils/quickTabs';
 import type { ColumnType } from '../utils/stylingUtils';

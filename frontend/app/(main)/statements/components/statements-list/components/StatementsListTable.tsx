@@ -20,7 +20,7 @@ import {
   getStatementMerchantLabel,
   isManualExpenseStatement,
 } from '@/app/lib/statement-status';
-import { ArrowDown, File } from 'lucide-react';
+import { ArrowDown, File } from '@/app/components/icons';
 import { StatementsGmailSync } from './StatementsGmailSync';
 
 // ---------------------------------------------------------------------------

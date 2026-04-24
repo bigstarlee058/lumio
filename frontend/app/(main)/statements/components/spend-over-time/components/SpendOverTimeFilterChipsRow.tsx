@@ -10,7 +10,7 @@ import type { SpendOverTimeGroupBy } from '@/app/(main)/statements/components/sp
 import { filterLinkClassName } from '@/app/(main)/statements/helpers/analytics-filter-labels';
 import type { useSpendOverTimeViewModel } from '@/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeViewModel';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
-import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 

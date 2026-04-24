@@ -2,7 +2,7 @@
 import type { JSX } from 'react';
 
 import type { useTopCategoriesViewModel } from '@/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel';
-import { Search } from 'lucide-react';
+import { Search } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
 

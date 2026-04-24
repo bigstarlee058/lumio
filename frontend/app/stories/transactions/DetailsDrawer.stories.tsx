@@ -1,7 +1,7 @@
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Building2, Calendar, FileText, Tag, TrendingDown, TrendingUp } from 'lucide-react';
+import { Building2, Calendar, FileText, Tag, TrendingDown, TrendingUp } from '@/app/components/icons';
 import { useState } from 'react';
 
 /**

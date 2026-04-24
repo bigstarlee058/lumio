@@ -12,7 +12,7 @@ import {
   Share2,
   Table,
   TriangleAlert,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import {
   Box,
   Button,

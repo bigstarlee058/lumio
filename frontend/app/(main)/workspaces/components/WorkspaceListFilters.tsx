@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { Grid, List, Search, SortAsc } from 'lucide-react';
+import { Grid, List, Search, SortAsc } from '@/app/components/icons';
 import React from 'react';
 
 type ViewMode = 'grid' | 'list';

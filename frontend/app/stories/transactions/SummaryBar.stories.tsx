@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Download, FileText, Share2, TrendingDown, TrendingUp } from 'lucide-react';
+import { Download, FileText, Share2, TrendingDown, TrendingUp } from '@/app/components/icons';
 
 /**
  * SummaryBarContent - Pure presentational component for statement summary

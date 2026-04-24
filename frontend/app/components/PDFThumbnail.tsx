@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import { AlertCircle, FileText } from 'lucide-react';
+import { AlertCircle, FileText } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 
 interface PDFThumbnailProps {

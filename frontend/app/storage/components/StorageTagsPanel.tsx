@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, IconButton, Popover, TextField, Typography } from '@mui/material';
-import { Check, PencilLine, Plus, Trash2, X } from 'lucide-react';
+import { Check, PencilLine, Plus, Trash2, X } from '@/app/components/icons';
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
 import type { TagOption } from '../storageHelpers';

@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import { ChevronDown, ChevronUp, ExternalLink, Plug } from 'lucide-react';
+import { ChevronDown, ChevronUp, ExternalLink, Plug } from '@/app/components/icons';
 import { useState } from 'react';
 import type React from 'react';
 

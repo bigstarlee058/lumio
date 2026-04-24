@@ -1,6 +1,6 @@
 'use client';
 
-import { FileSpreadsheet, Plus, Table as TableIcon } from 'lucide-react';
+import { FileSpreadsheet, Plus, Table as TableIcon } from '@/app/components/icons';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';

@@ -4,7 +4,7 @@ import MuiButton from '@mui/material/Button';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { receiptsApi } from '@/app/lib/api';
 import { Box, Typography } from '@mui/material';
-import { Camera, ImageUp } from 'lucide-react';
+import { Camera, ImageUp } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useCamera } from './hooks/useCamera';

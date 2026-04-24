@@ -2,7 +2,7 @@
 import React from 'react';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
-import { Check } from 'lucide-react';
+import { Check } from '@/app/components/icons';
 import type { UnapprovedReasonId, UnapprovedSource, UnapprovedStatementQueueItem } from '../../unapproved-cash-utils';
 
 type BadgeStyle = { borderColor: string; background: string; color: string };

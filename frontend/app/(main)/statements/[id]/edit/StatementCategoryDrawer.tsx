@@ -6,7 +6,7 @@ import {
   type StatementCategoryNode,
   filterStatementCategories,
 } from '@/app/lib/statement-categories';
-import { Check, ChevronLeft, Search } from 'lucide-react';
+import { Check, ChevronLeft, Search } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 
 type StatementCategoryDrawerLabels = {

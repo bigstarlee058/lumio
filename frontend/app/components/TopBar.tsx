@@ -12,8 +12,9 @@ import { TourMenu } from '@/app/tours/components/TourMenu';
 import { useTheme } from 'next-themes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { HelpCircle, Menu } from 'lucide-react';
+import { HelpCircle, Menu } from '@/app/components/icons';
 import toast from 'react-hot-toast';
+import { AiAssistantTopBarButton } from '@/app/plugins/ai-assistant/AiAssistantTopBarButton';
 import GlobalBreadcrumbs from './GlobalBreadcrumbs';
 import { LanguageDrawer } from './navigation/LanguageDrawer';
 import { useLanguageSelection } from './navigation/hooks/useLanguageSelection';
@@ -60,7 +61,6 @@ export default function TopBar() {
   const handleAction = useCallback((key: string): void => {
     const MAP: Record<string, () => void> = {
       settings:      () => { navigateFromUserMenu('/settings/profile'); },
-      integrations:  () => { navigateFromUserMenu('/integrations'); },
       trash:         () => { navigateFromUserMenu('/statements/trash'); },
       language:      () => { langProps.openLanguageMenu(); },
       admin:         () => { navigateFromUserMenu('/admin'); },
@@ -106,6 +106,7 @@ export default function TopBar() {
         </div>
 
         <div className="lumio-topbar__right">
+          <AiAssistantTopBarButton />
           <NotificationDropdown iconSize={18} />
           <TourMenu
             trigger={

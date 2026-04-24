@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { Building2, Calendar, FileText, Tag, TrendingDown, TrendingUp } from 'lucide-react';
+import { Building2, Calendar, FileText, Tag, TrendingDown, TrendingUp } from '@/app/components/icons';
 import React, { useState } from 'react';
 
 import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';

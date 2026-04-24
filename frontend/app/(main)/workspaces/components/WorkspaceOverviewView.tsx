@@ -19,7 +19,7 @@ import {
   Save,
   Search,
   Trash2,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

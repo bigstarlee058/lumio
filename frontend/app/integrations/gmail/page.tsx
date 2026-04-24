@@ -8,7 +8,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

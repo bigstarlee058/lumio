@@ -4,7 +4,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { Popover } from '@mui/material';
 import { type Cell, type Header, type Row, type Table, flexRender } from '@tanstack/react-table';
 import { type VirtualItem, type Virtualizer } from '@tanstack/react-virtual';
-import { GripVertical, Plus } from 'lucide-react';
+import { GripVertical, Plus } from '@/app/components/icons';
 import { type CSSProperties, useRef } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { solidifyBackground } from '../utils/colorUtils';

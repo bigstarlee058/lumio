@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Building2, Plus, Search } from 'lucide-react';
+import { Building2, Plus, Search } from '@/app/components/icons';
 import React from 'react';
 import { WorkspaceCard } from './WorkspaceCard';
 

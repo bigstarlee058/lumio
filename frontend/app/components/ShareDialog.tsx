@@ -13,7 +13,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Copy, Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from '@/app/components/icons';
 import React, { useState } from 'react';
 import api from '../lib/api';
 

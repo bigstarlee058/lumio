@@ -3,8 +3,8 @@
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import Box from '@mui/material/Box';
-import { Receipt } from 'lucide-react';
-import { Check } from 'lucide-react';
+import { Receipt } from '@/app/components/icons';
+import { Check } from '@/app/components/icons';
 
 type FilterOptionRowProps = {
   label: string;

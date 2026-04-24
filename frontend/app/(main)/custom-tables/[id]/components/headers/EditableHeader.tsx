@@ -1,7 +1,7 @@
 'use client';
 
 import type { Column, Table } from '@tanstack/react-table';
-import { Tag, X } from 'lucide-react';
+import { Tag, X } from '@/app/components/icons';
 import { useEffect, useRef, useState } from 'react';
 import type { CustomTableGridRow } from '../../utils/stylingUtils';
 

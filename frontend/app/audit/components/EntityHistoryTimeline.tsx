@@ -14,7 +14,7 @@ import {
   RotateCcw,
   Trash2,
   Unlink2,
-} from 'lucide-react';
+} from '@/app/components/icons';
 
 interface EntityHistoryTimelineProps {
   events: AuditEvent[];

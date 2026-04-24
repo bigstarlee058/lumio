@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from 'lucide-react';
+import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from '@/app/components/icons';
 import type { ReactNode } from 'react';
 import type { IntegrationStatus } from '../types';
 

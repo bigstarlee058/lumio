@@ -7,7 +7,7 @@ import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { Box, Divider, Typography } from '@mui/material';
-import { FileImage, FileText } from 'lucide-react';
+import { FileImage, FileText } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ReceiptParsedDataForm } from './ReceiptParsedDataForm';

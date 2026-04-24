@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { CheckCircle2, RefreshCw } from 'lucide-react';
+import { CheckCircle2, RefreshCw } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 import DuplicateGroupCard from './components/DuplicateGroupCard';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, TextField, Typography } from '@mui/material';
-import { FileText, Filter, Folder, Search, Trash2 } from 'lucide-react';
+import { FileText, Filter, Folder, Search, Trash2 } from '@/app/components/icons';
 import React from 'react';
 import { DroppableHeaderTrigger } from './DroppableHeaderTrigger';
 import { listToggleSx } from '../helpers/storageStyling';

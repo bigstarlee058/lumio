@@ -26,7 +26,7 @@ import {
   Trash2,
   TriangleAlert,
   XCircle,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useState } from 'react';
 import type {
   EditableLineItem,

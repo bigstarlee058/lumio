@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
-import { Info } from 'lucide-react';
+import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';

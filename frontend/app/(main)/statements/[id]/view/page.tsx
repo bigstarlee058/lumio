@@ -5,7 +5,7 @@ import type { Category, StatementDetails, Transaction } from '@/app/components/t
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import api from '@/app/lib/api';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';

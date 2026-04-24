@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { Pencil, ThumbsUp } from 'lucide-react';
+import { Pencil, ThumbsUp } from '@/app/components/icons';
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { describe, expect, it } from 'vitest';

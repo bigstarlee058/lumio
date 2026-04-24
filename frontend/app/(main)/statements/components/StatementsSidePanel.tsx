@@ -22,7 +22,7 @@ import {
   STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
 } from '@/app/lib/statement-upload-actions';
 import { countStatementStages, getStatementStageMap } from '@/app/lib/statement-workflow';
-import { Ban, Banknote, CalendarRange, Folder, Pencil, Send, ShoppingCart, Table2, ThumbsUp, User } from 'lucide-react';
+import { Ban, Banknote, CalendarRange, Folder, Pencil, Send, ShoppingCart, Table2, ThumbsUp, User } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

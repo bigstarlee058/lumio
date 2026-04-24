@@ -5,7 +5,7 @@
 'use client';
 
 import { Button } from '@mui/material';
-import { PlayCircle } from 'lucide-react';
+import { PlayCircle } from '@/app/components/icons';
 import { useTour } from '../../hooks/useTour';
 
 interface TourButtonProps {

@@ -1,7 +1,7 @@
 import { Button } from '@/app/components/ui/button';
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info } from '@/app/components/icons';
 import { useState } from 'react';
 
 const meta: Meta<typeof ModalShell> = {

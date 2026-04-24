@@ -11,7 +11,7 @@ import {
   buildCurrencySearchIndex,
 } from '@/app/lib/statement-expense-drawer';
 import { Box, IconButton, Typography } from '@mui/material';
-import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import type { EditableReceiptParsedData, ReceiptCategoryOption } from './receipt-types';
 

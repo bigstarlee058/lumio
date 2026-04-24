@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Calendar, DollarSign, User } from 'lucide-react';
+import { ArrowRight, Calendar, DollarSign, User } from '@/app/components/icons';
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';

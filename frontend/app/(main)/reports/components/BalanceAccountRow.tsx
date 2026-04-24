@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from '@/app/components/icons';
 import { sortedByPosition } from './balance-sheet-utils';
 
 export type BalanceAccountNode = {

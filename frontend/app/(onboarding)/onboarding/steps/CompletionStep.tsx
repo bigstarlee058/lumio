@@ -2,7 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';

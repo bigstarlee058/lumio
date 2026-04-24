@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw } from '@/app/components/icons';
 
 type DashboardErrorBannerProps = { error: string; onRefresh: () => void };
 

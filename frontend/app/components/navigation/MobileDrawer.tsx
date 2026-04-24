@@ -3,7 +3,7 @@
 import { NotificationDropdown } from '@/app/components/NotificationDropdown';
 import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { TourMenu } from '@/app/tours/components/TourMenu';
-import { Check, Clock3, Moon, PlayCircle, Sun, X } from 'lucide-react';
+import { Check, Clock3, Moon, PlayCircle, Sun, X } from '@/app/components/icons';
 import React from 'react';
 import { isNavItemActive } from './helpers/navigation-config';
 import { UserMenuTriggerAndDropdown } from './UserMenu';

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
+import { ArrowDown, ArrowUp, Minus } from '@/app/components/icons';
 import React, { useMemo } from 'react';
 import type { SummaryItem, SummarySection } from '../types';
 import { RenderIcon } from './components/RenderIcon';

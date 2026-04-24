@@ -1,7 +1,7 @@
 import { Button } from '@/app/components/ui/button';
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from '@/app/components/icons';
 import { useState } from 'react';
 
 /**

@@ -7,7 +7,7 @@ import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { Bot as TelegramIcon, CheckCircle, Clock, Send } from 'lucide-react';
+import { Bot as TelegramIcon, CheckCircle, Clock, Send } from '@/app/components/icons';
 import {
   Alert,
   Box,

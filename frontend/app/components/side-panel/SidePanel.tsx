@@ -8,7 +8,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   RefreshCw,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import React, { isValidElement, useCallback, useMemo, useState } from 'react';
 import { useSidePanel } from './SidePanelContext';
 import { SectionRenderer } from './sections';

@@ -5,7 +5,7 @@ import {
   type ConnectedCloudProviders,
   buildStatementUploadMenuModel,
 } from '@/app/lib/statement-upload-actions';
-import { Cloud, Plus, Receipt, ScanLine, Scan } from 'lucide-react';
+import { Cloud, Plus, Receipt, ScanLine, Scan } from '@/app/components/icons';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';

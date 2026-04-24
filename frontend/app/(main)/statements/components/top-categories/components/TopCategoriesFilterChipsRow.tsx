@@ -9,7 +9,7 @@ import type { StatementFilterDate } from '@/app/(main)/statements/components/fil
 import { filterLinkClassName } from '@/app/(main)/statements/helpers/analytics-filter-labels';
 import type { useTopCategoriesViewModel } from '@/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
-import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
 type Option = { value: string; label: string };

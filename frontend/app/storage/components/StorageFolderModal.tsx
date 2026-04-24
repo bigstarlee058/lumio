@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, IconButton, Typography } from '@mui/material';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import React from 'react';
 import type { FolderOption, StorageFile, TagOption } from '../storageHelpers';
 import { StorageFoldersSidebar, type StorageFoldersSidebarProps } from './StorageFoldersSidebar';

@@ -7,7 +7,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '@/app/components/icons';
 import type { RefObject } from 'react';
 import { buildHints, ignoreEventArg, labelValue } from '../editHelpers';
 import type { MetadataHints } from '../editHelpers';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Download, MoreVertical, X } from 'lucide-react';
+import { Download, MoreVertical, X } from '@/app/components/icons';
 import type { JSX, RefObject } from 'react';
 
 type HeaderProps = { menuOpen: boolean; onToggleMenu: () => void; onClose: () => void; onDownload: () => void; containerRef: RefObject<HTMLDivElement | null> };

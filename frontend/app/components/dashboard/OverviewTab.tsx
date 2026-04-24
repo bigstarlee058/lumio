@@ -11,7 +11,7 @@ import {
   Inbox,
   Receipt,
   Tag,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import Link from 'next/link';
 import type React from 'react';
 import { Spinner } from '../ui/spinner';

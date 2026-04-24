@@ -1,7 +1,7 @@
 import { Button } from '@/app/components/ui/button';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Download, ExternalLink, Printer, X } from 'lucide-react';
+import { Download, ExternalLink, Printer, X } from '@/app/components/icons';
 import { useState } from 'react';
 
 /**

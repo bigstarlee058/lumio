@@ -14,7 +14,7 @@ import {
   Receipt,
   ShieldOff,
   Tag,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import Link from 'next/link';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
