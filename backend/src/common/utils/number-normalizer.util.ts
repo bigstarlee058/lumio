@@ -120,6 +120,14 @@ export function normalizeDate(dateStr: string): Date | null {
     }
   }
 
+  // DD/MM/YY (2-digit year)
+  const shortYearMatch = trimmed.match(/(\d{2})\/(\d{2})\/(\d{2})(?!\d)/);
+  if (shortYearMatch) {
+    const [, dd, mm, yy] = shortYearMatch;
+    const year = Number(yy) <= 49 ? 2000 + Number(yy) : 1900 + Number(yy);
+    return new Date(year, Number(mm) - 1, Number(dd));
+  }
+
   // Try direct parsing
   const parsed = new Date(dateStr);
   if (!Number.isNaN(parsed.getTime())) {
