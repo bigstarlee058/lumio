@@ -26,6 +26,7 @@ import { AiParseValidator } from '../helpers/ai-parse-validator.helper';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
 import { MetadataExtractionService } from './metadata-extraction.service';
+import { OcrService } from './ocr.service';
 import { ParserFactoryService } from './parser-factory.service';
 
 interface StatementImportPreview {
@@ -486,6 +487,19 @@ export class StatementProcessingService {
           addLog(
             'warn',
             `PDF text extraction failed before detection: ${this.getErrorMessage(error)}`,
+          );
+        }
+      } else if (statement.fileType === FileType.IMAGE) {
+        try {
+          const imageBuffer = await fs.promises.readFile(processingFilePath);
+          const ocrService = new OcrService();
+          const ocrResult = await ocrService.extractTextFromImage(imageBuffer);
+          cachedText = ocrResult.text;
+          addLog('info', `OCR extracted ${ocrResult.text.length} chars (confidence: ${ocrResult.confidence.toFixed(2)})`);
+        } catch (error) {
+          addLog(
+            'warn',
+            `Image OCR failed before detection: ${this.getErrorMessage(error)}`,
           );
         }
       }

@@ -7,6 +7,7 @@ import { BerekeOldParser } from '../parsers/bereke-old.parser';
 import { CsvParser } from '../parsers/csv.parser';
 import { ExcelParser } from '../parsers/excel.parser';
 import { GenericPdfParser } from '../parsers/generic-pdf.parser';
+import { HapoalimParser } from '../parsers/hapoalim.parser';
 import { KaspiParser } from '../parsers/kaspi.parser';
 
 @Injectable()
@@ -18,6 +19,7 @@ export class ParserFactoryService {
       new BerekeNewParser(),
       new BerekeOldParser(),
       new KaspiParser(),
+      new HapoalimParser(),
       new GenericPdfParser(),
       new ExcelParser(),
       new CsvParser(),
@@ -52,18 +54,21 @@ export class ParserFactoryService {
     return Boolean(hasDate && hasAmount);
   }
 
-  private detectBankByName(text: string): { bank: 'kaspi' | 'bereke' | null; evidence: string[] } {
+  private detectBankByName(text: string): { bank: 'kaspi' | 'bereke' | 'hapoalim' | null; evidence: string[] } {
     const evidence: string[] = [];
-    let bank: 'kaspi' | 'bereke' | null = null;
+    let bank: 'kaspi' | 'bereke' | 'hapoalim' | null = null;
 
     const kaspiRegex = /\b(kaspi\s+bank|kaspi\.kz|каспи\s+банк|каспи)(?!\s+business)\b/i;
     const berekeRegex = /\b(bereke\s+bank|bereke\s+business|береке\s+банк|береке)\b/i;
+    const hapoalimRegex = /(בנק\s+הפועלים|hapoalim|bank\s+hapoalim|ישראכרט|isracard)/i;
 
     const kaspiIndex = text.search(kaspiRegex);
     const berekeIndex = text.search(berekeRegex);
+    const hapoalimIndex = text.search(hapoalimRegex);
 
     const kaspiFound = kaspiIndex >= 0;
     const berekeFound = berekeIndex >= 0;
+    const hapoalimFound = hapoalimIndex >= 0;
 
     if (kaspiFound) {
       evidence.push('name:kaspi');
@@ -71,8 +76,13 @@ export class ParserFactoryService {
     if (berekeFound) {
       evidence.push('name:bereke');
     }
+    if (hapoalimFound) {
+      evidence.push('name:hapoalim');
+    }
 
-    if (kaspiFound && berekeFound) {
+    if (hapoalimFound && !kaspiFound && !berekeFound) {
+      bank = 'hapoalim';
+    } else if (kaspiFound && berekeFound) {
       bank = kaspiIndex <= berekeIndex ? 'kaspi' : 'bereke';
       evidence.push('ambiguous:header-both');
     } else if (kaspiFound) {
@@ -84,7 +94,7 @@ export class ParserFactoryService {
     return { bank, evidence };
   }
 
-  private detectBankByBic(text: string): { bank: 'kaspi' | 'bereke' | null; evidence: string[] } {
+  private detectBankByBic(text: string): { bank: 'kaspi' | 'bereke' | 'hapoalim' | null; evidence: string[] } {
     const evidence: string[] = [];
     let bank: 'kaspi' | 'bereke' | null = null;
 
@@ -123,6 +133,9 @@ export class ParserFactoryService {
     }
     if (/\b(bereke\s+bank|bereke\s+business|береке\s+банк|береке)\b/i.test(text)) {
       mentions.push('Bereke Bank');
+    }
+    if (/(בנק\s+הפועלים|hapoalim|bank\s+hapoalim|ישראכרט|isracard)/i.test(text)) {
+      mentions.push('Bank Hapoalim');
     }
     return mentions;
   }
@@ -180,7 +193,7 @@ export class ParserFactoryService {
 
         let detectedBy: string | undefined;
         let detectedEvidence: string[] = [];
-        let detectedBase: 'kaspi' | 'bereke' | null = null;
+        let detectedBase: 'kaspi' | 'bereke' | 'hapoalim' | null = null;
 
         if (headerNameDetection.bank) {
           detectedBase = headerNameDetection.bank;
@@ -212,7 +225,9 @@ export class ParserFactoryService {
             ? 'Kaspi Bank'
             : detectedBase === 'bereke'
               ? 'Bereke Bank'
-              : null;
+              : detectedBase === 'hapoalim'
+                ? 'Bank Hapoalim'
+                : null;
 
         const headerSet = new Set(headerMentions);
         const bodyMentions = fullMentions.filter(mention => !headerSet.has(mention));
@@ -226,6 +241,16 @@ export class ParserFactoryService {
               otherBankMentions.push(mention);
             }
           });
+        }
+
+        if (detectedBase === 'hapoalim') {
+          console.log(`[ParserFactory] Detected: Bank Hapoalim (${detectedBy || 'unknown'})`);
+          return {
+            bankName: BankName.HAPOALIM,
+            detectedBy,
+            detectedEvidence,
+            otherBankMentions: otherBankMentions.length ? otherBankMentions : undefined,
+          };
         }
 
         if (detectedBase === 'kaspi') {
@@ -276,6 +301,20 @@ export class ParserFactoryService {
       }
     }
 
+    // For IMAGE files with cached OCR text, try name-based detection
+    if (fileType === FileType.IMAGE && cachedText) {
+      const textLower = cachedText.toLowerCase();
+      const nameDetection = this.detectBankByName(textLower);
+      if (nameDetection.bank === 'hapoalim') {
+        console.log(`[ParserFactory] Detected: Bank Hapoalim (image-ocr-name)`);
+        return {
+          bankName: BankName.HAPOALIM,
+          detectedBy: 'image-ocr-name',
+          detectedEvidence: nameDetection.evidence,
+        };
+      }
+    }
+
     // Fallback: Try each parser to detect bank and format
     for (const parser of this.parsers) {
       const parserName = parser.constructor.name;
@@ -288,6 +327,14 @@ export class ParserFactoryService {
       ) {
         console.log(`[ParserFactory] Detected: Kaspi Bank`);
         return { bankName: BankName.KASPI };
+      }
+
+      if (
+        parser instanceof HapoalimParser &&
+        (await parser.canParse(BankName.HAPOALIM, fileType, filePath, cachedText))
+      ) {
+        console.log(`[ParserFactory] Detected: Bank Hapoalim`);
+        return { bankName: BankName.HAPOALIM };
       }
 
       if (await parser.canParse(BankName.BEREKE_NEW, fileType, filePath, cachedText)) {
