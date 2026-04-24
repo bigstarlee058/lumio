@@ -35,6 +35,7 @@ export enum BankName {
   BEREKE_NEW = 'bereke_new',
   BEREKE_OLD = 'bereke_old',
   KASPI = 'kaspi',
+  HAPOALIM = 'hapoalim',
   OTHER = 'other',
 }
 
