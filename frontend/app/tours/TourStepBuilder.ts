@@ -99,7 +99,7 @@ function buildStepHandlers(
   return { onHighlighted, onDeselected };
 }
 
-function buildPopover(step: TourStep, advance: AdvanceCallback, movePrevious: () => void): DriveStep['popover'] {
+function buildPopover(step: TourStep, advance: AdvanceCallback, movePrevious: () => void, centered = false): DriveStep['popover'] {
   const onNextClick = (): void => {
     const result = step.onNext ? step.onNext() : undefined;
     if (result instanceof Promise) {
@@ -123,6 +123,7 @@ function buildPopover(step: TourStep, advance: AdvanceCallback, movePrevious: ()
     description: resolveText(step.description),
     side: step.side ?? 'bottom',
     align: step.align ?? 'start',
+    ...(centered ? { popoverClass: 'tour-popover tour-popover--centered' } : {}),
     ...(Array.isArray(step.showButtons) ? { showButtons: step.showButtons } : {}),
     onNextClick,
     onPrevClick,
@@ -145,10 +146,11 @@ export function buildDriveStep(step: TourStep, index: number, ctx: StepContext):
   };
   captureAdvance(advance);
 
+  const isCentered = !step.selector || step.selector === 'body';
   return {
-    element: step.selector,
+    ...(isCentered ? {} : { element: step.selector }),
     onHighlighted,
     onDeselected,
-    popover: buildPopover(step, advanceFn, ctx.movePrevious),
+    popover: buildPopover(step, advanceFn, ctx.movePrevious, isCentered),
   } as DriveStep;
 }

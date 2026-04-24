@@ -51,10 +51,9 @@
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  background-color: var(--lumio-color-primary);
-  border-radius: var(--lumio-radius-sm);
-  border: 2px solid white;
   flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--lumio-radius-sm);
 }
 
 .lumio-navigation__logo-text {

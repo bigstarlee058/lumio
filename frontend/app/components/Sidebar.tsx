@@ -5,6 +5,7 @@ import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer } from '@/app/i18n';
 import '@/app/styles/blocks/lumio-sidebar.css';
 import { Check, ChevronDown, Plus } from '@/app/components/icons';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -89,10 +90,7 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
       {/* Brand */}
       <div className="lumio-sidebar__brand">
         <div className="lumio-sidebar__brand-mark">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
+          <Image src="/images/logo.jpg" alt="Lumio" width={28} height={28} style={{ display: 'block', borderRadius: 'var(--lumio-radius-sm)' }} />
         </div>
         <div className="lumio-sidebar__brand-name">Lumio</div>
         <span className="lumio-sidebar__brand-meta">v2</span>

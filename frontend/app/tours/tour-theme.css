@@ -227,20 +227,30 @@
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-/* Special styles for centered popovers */
-.driver-popover.driver-popover-side-center {
+/* Centered popovers (welcome/completion steps with no target element) */
+.driver-popover.tour-popover--centered {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
   max-width: 500px;
   text-align: center;
 }
 
-.driver-popover.driver-popover-side-center .driver-popover-title {
+.driver-popover.tour-popover--centered .driver-popover-title {
   font-size: 24px;
   margin-bottom: 16px;
 }
 
-.driver-popover.driver-popover-side-center .driver-popover-description {
+.driver-popover.tour-popover--centered .driver-popover-description {
   font-size: 16px;
   margin-bottom: 24px;
+}
+
+.driver-popover.tour-popover--centered .driver-popover-arrow {
+  display: none;
 }
 
 /* Progress indicator */

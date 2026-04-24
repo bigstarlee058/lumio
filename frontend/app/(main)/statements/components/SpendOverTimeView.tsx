@@ -55,10 +55,10 @@ function SpendOverTimeEmptyWrapper({ vm }: VmProps): React.JSX.Element {
   const router = useRouter();
   return (
     <SpendOverTimeEmptyState
-      titleLabel={vm.labels.emptyTitle ?? ''}
-      descriptionLabel={vm.labels.emptyDescription ?? ''}
-      uploadCtaLabel={vm.labels.uploadCta ?? ''}
-      resetCtaLabel={vm.labels.resetCta ?? ''}
+      titleLabel={vm.labels.emptyStateTitle ?? ''}
+      descriptionLabel={vm.labels.emptyStateDescription ?? ''}
+      uploadCtaLabel={vm.labels.emptyStateUploadCta ?? ''}
+      resetCtaLabel={vm.labels.emptyStateResetCta ?? ''}
       onUpload={() => router.push('/statements')}
       onReset={() => vm.resetAllFilters()}
     />
