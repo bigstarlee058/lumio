@@ -1,13 +1,92 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "5969d55053d65ffba2f8a2e54049c912e7f9d6c4"
+      "main": "e797cd8bb08034b5e9f402e8684dcf86b27aa0c8"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-24T14:36:22.598Z",
+    "lastGeneratedAt": "2026-04-24T21:58:21.802Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-24-e797cd8",
+      "version": "main-e797cd8",
+      "branch": "main",
+      "date": "2026-04-24T21:58:21.802Z",
+      "title": "Release update - April 24, 2026",
+      "summary": "This release includes 1 fix.",
+      "markdown": "## Fixes\n- **frontend**: Fix UI bugs and replace logo with logo.jpg",
+      "commits": [
+        {
+          "sha": "3229424bc8bb075a41dfc6a6d977b838078ee1e4",
+          "shortSha": "3229424",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-24T14:36:23Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "84c625a49bc3e23b3f2d838f1d85a7a934c75d1d",
+          "shortSha": "84c625a",
+          "subject": "Update README.md",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T00:02:28+03:00",
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "sha": "43cc1b261baf1234ecd97c7be7b455c532cf4bb8",
+          "shortSha": "43cc1b2",
+          "subject": "Update README.md",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T00:04:19+03:00",
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "sha": "e7e7d71b84bb15f3f5aac9d77bffef97cc029deb",
+          "shortSha": "e7e7d71",
+          "subject": "Update README.md",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T00:55:20+03:00",
+          "files": [
+            "README.md"
+          ]
+        },
+        {
+          "sha": "85f9b6f801e8f590d4fc1132eb4d1a6df494ba35",
+          "shortSha": "85f9b6f",
+          "subject": "fix(frontend): fix UI bugs and replace logo with logo.jpg",
+          "author": "symonbaikov",
+          "date": "2026-04-25T00:57:09+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/SpendOverTimeView.tsx",
+            "frontend/app/components/Navigation.tsx",
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/styles/blocks/lumio-navigation.css",
+            "frontend/app/styles/blocks/lumio-notification-dropdown.css",
+            "frontend/app/styles/blocks/lumio-sidebar.css",
+            "frontend/app/tours/TourStepBuilder.ts",
+            "frontend/app/tours/statements-tour.ts",
+            "frontend/app/tours/tour-theme.css",
+            "frontend/public/images/logo.jpg",
+            "frontend/public/images/logo.svg"
+          ]
+        },
+        {
+          "sha": "e797cd8bb08034b5e9f402e8684dcf86b27aa0c8",
+          "shortSha": "e797cd8",
+          "subject": "Merge pull request #55 from symonbaikov/feat/mui-icons-migration",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T00:57:59+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-24-5969d55",
       "version": "main-5969d55",
