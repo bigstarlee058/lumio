@@ -36,23 +36,6 @@
 > Built for finance teams, accountants, and developers who need to process and analyze bank statement data without proprietary SaaS lock-in.
 
 ---
-
-## Screenshots
-
-| Upload | Tables | Dashboard |
-|--------|--------|-----------|
-| ![Upload flow](docs/screenshots/upload.png) | ![Tables](docs/screenshots/tables.png) | ![Dashboard](docs/screenshots/dashboard.png) |
-
-| Reports | Audit Log |
-|---------|-----------|
-| ![Reports](docs/screenshots/reports.png) | ![Audit Log](docs/screenshots/audit-log.png) |
-
-<div align="center" width="100" height="100">
-  
-![CleanShot 2026-03-06 at 12 32 23](https://github.com/user-attachments/assets/69a32ee9-aa97-4395-a25f-3b8158e5574d)
-  
-</div>
-
 > ⚠️ The demo GIF and screenshots are based on **v1** and will be updated soon.
 
 <p align="center">
