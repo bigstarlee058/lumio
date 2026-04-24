@@ -1,4 +1,3 @@
-
 <div align="center">
 <img alt="White and Blue Simple Gradient Business Profile LinkedIn Banner" src="https://github.com/user-attachments/assets/8d7eac20-fdb8-47f0-b6cc-87ee18ced773" />
 
@@ -15,7 +14,7 @@
 [Quick Start](#quick-start) • [Features](#features) • [Tech Stack](#tech-stack) • [Architecture](#architecture) • [Contributing](CONTRIBUTING.md)
 
 </div>
-<img width="3808" height="1908" alt="CleanShot 2026-03-06 at 00 19 20@2x" src="https://github.com/user-attachments/assets/1e94ba9a-39c1-4f67-9609-df099514456e" />
+<img alt="SCR-20260425-btbs" src="https://github.com/user-attachments/assets/acabdf9c-dc29-42f8-9235-b0a507d86a01" />
 
 ---
 
