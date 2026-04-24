@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '@/app/components/icons';
 import React from 'react';
 import { useSidePanel } from '../../SidePanelContext';
 import type { SidePanelSection } from '../../types';

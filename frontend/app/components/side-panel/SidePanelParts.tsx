@@ -1,7 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
-import { AlertCircle, PanelLeftClose, PanelLeftOpen, RefreshCw } from 'lucide-react';
+import { AlertCircle, PanelLeftClose, PanelLeftOpen, RefreshCw } from '@/app/components/icons';
 import React from 'react';
 import type { JSX } from 'react';
 import { SectionRenderer } from './sections';

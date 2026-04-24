@@ -5,7 +5,7 @@ import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useDraggable } from '@dnd-kit/core';
 import { Box, Chip, IconButton, Tooltip, Typography } from '@mui/material';
-import { Download, Eye, Folder, GripVertical, RotateCcw, Share2, Trash2 } from 'lucide-react';
+import { Download, Eye, Folder, GripVertical, RotateCcw, Share2, Trash2 } from '@/app/components/icons';
 import React from 'react';
 import type { CSSProperties } from 'react';
 import type { CategoryOption, FileAvailability, StorageFile, TagOption } from '../storageHelpers';

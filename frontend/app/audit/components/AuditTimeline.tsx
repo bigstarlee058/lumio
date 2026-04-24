@@ -2,7 +2,7 @@
 
 import { AppPagination } from '@/app/components/ui/pagination';
 import type { AuditEvent } from '@/lib/api/audit';
-import { ChevronDown, ChevronRight, Layers } from 'lucide-react';
+import { ChevronDown, ChevronRight, Layers } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
 import { buildGroupedData } from '../utils/audit-table-utils';
 import { ACTION_ICON_MAP } from '../utils/actionIconMap';

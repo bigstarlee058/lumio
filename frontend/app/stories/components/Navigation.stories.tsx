@@ -12,7 +12,7 @@ import {
   Sun,
   User,
   X,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useState } from 'react';
 
 /**

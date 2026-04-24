@@ -2,7 +2,7 @@ import { Button } from '@/app/components/ui/button';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Pencil, Plus, Trash2, User } from 'lucide-react';
+import { Pencil, Plus, Trash2, User } from '@/app/components/icons';
 import { useState } from 'react';
 
 /**

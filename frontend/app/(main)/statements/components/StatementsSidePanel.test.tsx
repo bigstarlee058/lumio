@@ -108,7 +108,7 @@ describe('StatementsSidePanel FAB navigation', () => {
   it('uses Ban icon for unapproved cash navigation item', async () => {
     const [{ default: StatementsSidePanel }, { Ban }] = await Promise.all([
       import('./StatementsSidePanel'),
-      import('lucide-react'),
+      import('@/app/components/icons'),
     ]);
     const container = document.createElement('div');
     const root = createRoot(container);

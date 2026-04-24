@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Plus } from 'lucide-react';
+import { Plus } from '@/app/components/icons';
 import { EditableBooleanCell } from '../components/cells/EditableBooleanCell';
 import { EditableDateCell } from '../components/cells/EditableDateCell';
 import { EditableNumberCell } from '../components/cells/EditableNumberCell';

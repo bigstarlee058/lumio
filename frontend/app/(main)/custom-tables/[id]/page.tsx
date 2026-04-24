@@ -5,7 +5,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { Box, Typography } from '@mui/material';
 import { enUS, kk, ru } from 'date-fns/locale';
-import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, X, XCircle } from 'lucide-react';
+import { ArrowLeft as ArrowBackIcon, CheckCircle, Printer, Search, Trash2, X, XCircle } from '@/app/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

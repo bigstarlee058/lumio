@@ -8,7 +8,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from 'lucide-react';
+import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from '@/app/components/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
 

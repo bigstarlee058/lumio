@@ -1,6 +1,6 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import type { ErrorItem, ErrorSection } from '../types';
 import { SectionWrapper } from './components/SectionWrapper';
 import { ERROR_BG, ERROR_BORDER, ERROR_ICON_COLOR, ERROR_ICONS } from './helpers/section-constants';

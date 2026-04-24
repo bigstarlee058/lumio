@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, TextField, Typography } from '@mui/material';
-import { FileX, Search } from 'lucide-react';
+import { FileX, Search } from '@/app/components/icons';
 import React from 'react';
 import type { StorageFile } from '../storageHelpers';
 import { DraggableModalFileItem } from './DraggableModalFileItem';

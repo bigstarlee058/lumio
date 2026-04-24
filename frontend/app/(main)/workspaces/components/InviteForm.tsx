@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/app/components/ui/checkbox';
 import Button from '@mui/material/Button';
-import { Send as SendIcon } from 'lucide-react';
+import { Send as SendIcon } from '@/app/components/icons';
 import React, { useState } from 'react';
 import type { InvitePermissions, WorkspaceRole } from './hooks/useMemberManagement';
 

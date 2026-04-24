@@ -3,7 +3,7 @@
 import React from 'react';
 import apiClient from '@/app/lib/api';
 import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { Download, FileSpreadsheet, FileText, FileType2 } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText, FileType2 } from '@/app/components/icons';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 

@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/app/components/ui/checkbox';
 import type { Column, Row, Table } from '@tanstack/react-table';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from '@/app/components/icons';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 

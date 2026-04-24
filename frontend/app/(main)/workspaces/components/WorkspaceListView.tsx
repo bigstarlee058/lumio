@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { ChevronRight, MoreVertical, Plus } from 'lucide-react';
+import { ChevronRight, MoreVertical, Plus } from '@/app/components/icons';
 import React from 'react';
 
 type WorkspaceItem = { id: string; name: string; memberRole?: string };

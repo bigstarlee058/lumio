@@ -5,7 +5,7 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import type { StorageStatus, StorageWidgetProvider } from '@/app/lib/storage-widget-types';
-import { RefreshCcw, Settings, UploadCloud } from 'lucide-react';
+import { RefreshCcw, Settings, UploadCloud } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

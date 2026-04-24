@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Search, X } from 'lucide-react';
+import { Search, X } from '@/app/components/icons';
 import type {
   UnapprovedQueueFilters,
   UnapprovedReasonId,

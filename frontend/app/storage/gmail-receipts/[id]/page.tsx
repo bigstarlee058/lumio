@@ -5,7 +5,7 @@ import { CreatePayableDrawer } from '@/app/(main)/statements/components/payables
 import { Spinner } from '@/app/components/ui/spinner';
 import { getFinancialDocumentStatusLabel, toFinancialDocumentStatus } from '@/app/lib/financial-document';
 import { Container, Paper, Button, Typography } from '@mui/material';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from '@/app/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { ReceiptPreviewModal } from '../components/ReceiptPreviewModal';

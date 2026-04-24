@@ -13,7 +13,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
-import { Check, Tag } from 'lucide-react';
+import { Check, Tag } from '@/app/components/icons';
 import React, { useRef } from 'react';
 import type { Category, CategoryFormData } from './hooks/useCategoryManagement';
 

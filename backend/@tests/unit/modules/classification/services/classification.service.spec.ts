@@ -427,8 +427,8 @@ describe('ClassificationService', () => {
         '1',
       );
 
-      expect(result.get(0)).toBe('expense-1');
-      expect(result.get(1)).toBe('income-1');
+      expect(result.get(0)?.categoryId).toBe('expense-1');
+      expect(result.get(1)?.categoryId).toBe('income-1');
       expect(categoriesService.findAll).toHaveBeenNthCalledWith(1, 'ws-1', CategoryType.INCOME);
       expect(categoriesService.findAll).toHaveBeenNthCalledWith(2, 'ws-1', CategoryType.EXPENSE);
       expect(categoryLearningRepository.save).toHaveBeenCalledWith(

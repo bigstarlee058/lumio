@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
-import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { GripVertical, Plus, Trash2 } from '@/app/components/icons';
 import type { CSSProperties } from 'react';
 import type { CustomTableColumn, CustomTableGridRow } from '../utils/stylingUtils';
 import { getRowStyle } from '../utils/stylingUtils';

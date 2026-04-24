@@ -6,7 +6,7 @@ import { Input } from '@/app/components/ui/input';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { Select } from '@/app/components/ui/select';
 import { Box, IconButton, Typography } from '@mui/material';
-import { FileImage, FileText, UploadCloud, X } from 'lucide-react';
+import { FileImage, FileText, UploadCloud, X } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useReceiptUpload } from './hooks/useReceiptUpload';

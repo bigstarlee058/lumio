@@ -3,7 +3,7 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
 import { Box, IconButton, Typography } from '@mui/material';
-import { Check, ChevronLeft, Search } from 'lucide-react';
+import { Check, ChevronLeft, Search } from '@/app/components/icons';
 
 interface CurrencyDrawerProps {
   isOpen: boolean;

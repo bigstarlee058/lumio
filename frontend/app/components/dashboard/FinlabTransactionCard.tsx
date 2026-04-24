@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import type { DashboardRange } from '@/app/hooks/useDashboard';
 import { gmailReceiptsApi } from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
-import { Info } from 'lucide-react';
+import { Info } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 import { BrandLogoAvatar } from '../BrandLogoAvatar';
 import { PeriodDropdown } from './PeriodDropdown';

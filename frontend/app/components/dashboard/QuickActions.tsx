@@ -2,7 +2,7 @@
 
 import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
-import { FileUp, Plus } from 'lucide-react';
+import { FileUp, Plus } from '@/app/components/icons';
 import Link from 'next/link';
 
 const actions = [

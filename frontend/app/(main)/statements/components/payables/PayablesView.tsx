@@ -15,7 +15,7 @@ import {
   payablesApi,
 } from '@/app/lib/payables-api';
 import { getNestedValue, getRecord as _getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
-import { Download, Plus, RefreshCcw } from 'lucide-react';
+import { Download, Plus, RefreshCcw } from '@/app/components/icons';
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

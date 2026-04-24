@@ -8,7 +8,7 @@ import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
 import { Box, Typography } from '@mui/material';
-import { Sparkles, Tag as CategoryIconFallback } from 'lucide-react';
+import { Sparkles, Tag as CategoryIconFallback } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { AnalyticsSourceBadge } from '@/app/(main)/statements/components/analytics/AnalyticsSourceBadge';
 import type { SpendOverTimePoint, SpendOverTimeRecord, SpendOverTimeSourceChannel } from '@/app/(main)/statements/components/spend-over-time.utils';
 import { formatMoney } from '@/app/lib/analytics-common';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 
 type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
 

@@ -9,7 +9,7 @@ import { TourMenu } from '@/app/tours/components/TourMenu';
 import 'driver.js/dist/driver.css';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { HelpCircle, X } from 'lucide-react';
+import { HelpCircle, X } from '@/app/components/icons';
 import '@/app/styles/blocks/lumio-navigation.css';
 import { useTheme } from 'next-themes';
 import { Nunito } from 'next/font/google';
@@ -67,7 +67,6 @@ export default function Navigation() {
   const handleAction = useCallback((key: string): void => {
     const MAP: Record<string, () => void> = {
       settings: () => { navigateFromUserMenu('/settings/profile'); },
-      integrations: () => { navigateFromUserMenu('/integrations'); },
       trash: () => { navigateFromUserMenu('/statements/trash'); },
       language: () => { langProps.openLanguageMenu(); },
       admin: () => { navigateFromUserMenu('/admin'); },

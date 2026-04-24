@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from '@/app/components/icons';
 import React from 'react';
 import { Spinner } from '../../ui/spinner';
 import type { NavigationItem, NavigationSection } from '../types';

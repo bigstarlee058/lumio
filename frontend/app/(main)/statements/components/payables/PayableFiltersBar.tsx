@@ -8,7 +8,7 @@ import { format, isValid, parseISO } from 'date-fns';
 
 const toDate = (s: string): Date | null => { if (!s) return null; const d = parseISO(s); return isValid(d) ? d : null; };
 const toStr = (d: Date | null): string => (d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
 import type { PayablesFiltersState, PayablesSortOption } from './payables-utils';
 

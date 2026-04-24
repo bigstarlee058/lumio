@@ -3,7 +3,7 @@
 import type { SidePanelPageConfig } from '@/app/components/side-panel';
 import type { TopBankSender } from '@/app/lib/statement-insights';
 import type { ConnectedCloudProviders } from '@/app/lib/statement-upload-actions';
-import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, Table2, ThumbsUp, User } from 'lucide-react';
+import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, Table2, ThumbsUp, User } from '@/app/components/icons';
 import StatementsCircularUploadMenu from './StatementsCircularUploadMenu';
 
 type ActiveItem =

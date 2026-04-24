@@ -27,6 +27,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@internationalized/date": "^3.11.0",
+    "@mui/icons-material": "^7.3.10",
     "@mui/material": "^7.3.5",
     "@mui/x-date-pickers": "^9.0.0",
     "@tanstack/react-table": "^8.21.3",
@@ -39,7 +40,7 @@
     "echarts-for-react": "^3.0.2",
     "framer-motion": "^12.34.3",
     "intlayer": "^7.5.11",
-    "lucide-react": "^0.561.0",
+
     "next": "^16.1.2",
     "next-intlayer": "^7.5.11",
     "next-themes": "^0.2.1",

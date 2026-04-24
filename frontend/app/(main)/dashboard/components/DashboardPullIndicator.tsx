@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw } from '@/app/components/icons';
 import { text } from '../helpers/dashboard-helpers';
 
 type PullIndicatorProps = {

@@ -18,7 +18,7 @@ import {
 import {
   CheckCircle2,
   ChevronDown,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import type { AuditEvent } from '@/lib/api/audit';
 import type {
   GmailReceipt,

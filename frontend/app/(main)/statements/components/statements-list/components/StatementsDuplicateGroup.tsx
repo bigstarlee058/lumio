@@ -1,7 +1,7 @@
 'use client';
 
 import { Spinner } from '@/app/components/ui/spinner';
-import { Copy } from 'lucide-react';
+import { Copy } from '@/app/components/icons';
 
 interface StatementsDuplicateGroupProps {
   loading: boolean;

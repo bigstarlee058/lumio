@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from '@/app/components/icons';
 import type { DeleteRowFn, OpenColorPickerFn } from '../../utils/columnDefinitions.types';
 
 const BTN_STYLE: React.CSSProperties = {

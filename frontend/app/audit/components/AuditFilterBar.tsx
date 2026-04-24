@@ -4,7 +4,7 @@ import { FilterActions } from '@/app/(main)/statements/components/filters/Filter
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import type { ActorType, AuditAction, AuditEventFilter } from '@/lib/api/audit';
-import { Search } from 'lucide-react';
+import { Search } from '@/app/components/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 type ActorTypeOption = { value: ActorType | ''; label: string };

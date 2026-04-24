@@ -2,7 +2,7 @@
 
 import { api } from '@/app/lib/api';
 import Box from '@mui/material/Box';
-import { Star } from 'lucide-react';
+import { Star } from '@/app/components/icons';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 

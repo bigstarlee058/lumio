@@ -3,7 +3,7 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { Pencil } from 'lucide-react';
+import { Pencil } from '@/app/components/icons';
 import {
   Alert,
   Box,

@@ -5,7 +5,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { formatAmount, formatDate } from '@/app/components/transactions/helpers/transactionFormatters';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
-import { Download, FileText, FileUp, TrendingDown, TrendingUp } from 'lucide-react';
+import { Download, FileText, FileUp, TrendingDown, TrendingUp } from '@/app/components/icons';
 import React, { useMemo } from 'react';
 import type { StatementDetails, Transaction } from './types';
 

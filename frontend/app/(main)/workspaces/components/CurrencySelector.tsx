@@ -3,7 +3,7 @@
 import { type CurrencySearchItem, buildCurrencySearchIndex } from '@/app/lib/statement-expense-drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Check, ChevronDown, Search, X } from 'lucide-react';
+import { Check, ChevronDown, Search, X } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
 
 interface CurrencySelectorProps {

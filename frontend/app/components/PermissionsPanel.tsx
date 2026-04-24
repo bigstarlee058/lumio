@@ -28,7 +28,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Pencil, Trash2, UserPlus } from 'lucide-react';
+import { Pencil, Trash2, UserPlus } from '@/app/components/icons';
 import React, { useState } from 'react';
 import api from '../lib/api';
 

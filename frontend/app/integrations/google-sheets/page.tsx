@@ -26,7 +26,7 @@ import {
   Plug,
   RefreshCcw,
   Trash2,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 

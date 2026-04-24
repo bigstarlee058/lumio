@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { ArrowLeft, Check, Layers, Receipt, Table2, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, Check, Layers, Receipt, Table2, TriangleAlert } from '@/app/components/icons';
 import { labelValue } from '../editHelpers';
 
 type Statement = { fileName?: string; totalTransactions?: number; categoryId?: string; category?: { id?: string; name?: string; source?: string; isSystem?: boolean; isEnabled?: boolean } };

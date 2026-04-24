@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { ModalShell } from './ui/modal-shell';
 

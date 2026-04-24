@@ -1,6 +1,6 @@
 import { Box, Button, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import { TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from '@/app/components/icons';
 
 interface EditableWarningEntry {
   key: string;

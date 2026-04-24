@@ -1,4 +1,4 @@
-import { BarChart2, Building2, FileText, LayoutDashboard, ScrollText, Table } from 'lucide-react';
+import { BarChart2, Building2, FileText, LayoutDashboard, Plug, Puzzle, ScrollText, Table } from '@/app/components/icons';
 import React, { type ReactNode } from 'react';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 
@@ -20,6 +20,8 @@ export function buildNavItems(nav: {
   workspaces: unknown;
   reports: unknown;
   activityLog: unknown;
+  integrations: unknown;
+  plugins: unknown;
 }): NavItem[] {
   return [
     {
@@ -51,6 +53,18 @@ export function buildNavItems(nav: {
       path: '/reports',
       icon: React.createElement(BarChart2, { size: 18 }),
       permission: 'statement.view',
+    },
+    {
+      label: nav.integrations as ReactNode,
+      path: '/integrations',
+      icon: React.createElement(Plug, { size: 18 }),
+      permission: 'google_sheet.view',
+    },
+    {
+      label: nav.plugins as ReactNode,
+      path: '/plugins',
+      icon: React.createElement(Puzzle, { size: 18 }),
+      permission: 'google_sheet.view',
     },
     {
       label: nav.activityLog as ReactNode,

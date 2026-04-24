@@ -9,7 +9,7 @@ import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { getPickerDocName, pickDriveFolder } from '@/app/lib/googleDrivePicker';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle } from '@/app/components/icons';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';

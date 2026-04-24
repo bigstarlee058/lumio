@@ -4,7 +4,7 @@ import type React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from '@/app/components/icons';
 
 export interface ReportTemplate {
   id: string;

@@ -2,7 +2,7 @@
 
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { Box, Typography } from '@mui/material';
-import { Save } from 'lucide-react';
+import { Save } from '@/app/components/icons';
 import type { ColumnType } from '../utils/stylingUtils';
 import { tx } from '../utils/tableHelpers';
 

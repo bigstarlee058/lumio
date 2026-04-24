@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, IconButton, Typography } from '@mui/material';
-import { Folder, MoreVertical } from 'lucide-react';
+import { Folder, MoreVertical } from '@/app/components/icons';
 import React from 'react';
 import toast from 'react-hot-toast';
 import type { FolderOption } from '../storageHelpers';

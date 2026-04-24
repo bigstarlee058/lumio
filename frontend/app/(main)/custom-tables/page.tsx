@@ -27,7 +27,7 @@ import {
   type CustomTableSourceFilter,
   type CustomTableViewEventDetail,
 } from '@/app/lib/custom-table-actions';
-import { Tag as CategoryIcon } from 'lucide-react';
+import { Tag as CategoryIcon } from '@/app/components/icons';
 import {
   Box,
   Button,
@@ -54,7 +54,7 @@ import {
   SlidersHorizontal,
   Table as TableIcon,
   Trash2,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';

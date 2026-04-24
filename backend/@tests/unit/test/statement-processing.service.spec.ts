@@ -65,7 +65,7 @@ describe('StatementProcessingService', () => {
 
   const classificationService = {
     classifyTransaction: jest.fn(async () => ({ categoryId: 'cat-1' })),
-    classifyTransactionsBatch: jest.fn(async () => new Map<number, string>()),
+    classifyTransactionsBatch: jest.fn(async () => new Map()),
     determineMajorityCategory: jest.fn(async () => ({
       categoryId: 'cat-1',
       type: 'expense' as any,
@@ -234,7 +234,7 @@ describe('StatementProcessingService', () => {
       .mockResolvedValueOnce({} as any)
       .mockResolvedValueOnce({ categoryId: 'cat-1' });
     classificationService.classifyTransactionsBatch.mockResolvedValueOnce(
-      new Map<number, string>([[0, 'cat-ai']]),
+      new Map([[0, { categoryId: 'cat-ai' }]]),
     );
 
     await service.processStatement(statement.id);
@@ -247,7 +247,7 @@ describe('StatementProcessingService', () => {
 
   it('does not assign one majority category to every uncategorized transaction', async () => {
     classificationService.classifyTransaction.mockResolvedValue({} as any);
-    classificationService.classifyTransactionsBatch.mockResolvedValue(new Map<number, string>());
+    classificationService.classifyTransactionsBatch.mockResolvedValue(new Map());
     classificationService.determineMajorityCategory.mockResolvedValue({
       categoryId: 'cat-majority',
       type: 'expense' as any,
@@ -267,7 +267,7 @@ describe('StatementProcessingService', () => {
     statement.categoryId = null;
     classificationService.classifyTransaction.mockResolvedValue({ categoryId: 'cat-1' });
     classificationService.classifyTransactionsBatch.mockResolvedValue(
-      new Map<number, string>([[0, 'cat-ai']]),
+      new Map([[0, { categoryId: 'cat-ai' }]]),
     );
     classificationService.determineMajorityCategory.mockResolvedValue({
       categoryId: 'cat-majority',

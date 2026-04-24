@@ -2,7 +2,7 @@
 
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { Checkbox } from '@/app/components/ui/checkbox';
-import { BriefcaseBusiness, FileText, RotateCcw, Table2, Trash2 } from 'lucide-react';
+import { BriefcaseBusiness, FileText, RotateCcw, Table2, Trash2 } from '@/app/components/icons';
 import type React from 'react';
 import type { TrashEntityType } from './trash-utils';
 

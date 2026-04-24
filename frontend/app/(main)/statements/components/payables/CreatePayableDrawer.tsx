@@ -12,7 +12,7 @@ import type {
   PayableStatus,
   UpdatePayableInput,
 } from '@/app/lib/payables-api';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@/app/components/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 
 interface CreatePayableDrawerProps {

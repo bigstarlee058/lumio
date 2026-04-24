@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Chip, TableCell, TableRow, Typography } from '@mui/material';
-import { Calendar } from 'lucide-react';
+import { Calendar } from '@/app/components/icons';
 import React from 'react';
 import type { Transaction } from './types';
 

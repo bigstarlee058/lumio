@@ -6,7 +6,7 @@ import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { safeInternalPath } from '@/app/lib/safe-path';
 import { Alert, Box, Button, Card, CardContent, Container, Stack, Typography } from '@mui/material';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from '@/app/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 

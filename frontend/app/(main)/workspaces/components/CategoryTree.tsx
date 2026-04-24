@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { ChevronRight, Lock, Plus, Search as SearchIcon, Tag } from 'lucide-react';
+import { ChevronRight, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
 import type { Category, CategoryUsageCount } from './hooks/useCategoryManagement';
 
 const SOURCE_BADGE_COLORS: Record<

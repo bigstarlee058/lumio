@@ -2,7 +2,7 @@
 
 import type { ReceiptRecord } from '@/app/lib/api';
 import { Box, Chip, Paper, Typography } from '@mui/material';
-import { Camera, FileImage, FileText, Mail, UploadCloud } from 'lucide-react';
+import { Camera, FileImage, FileText, Mail, UploadCloud } from '@/app/components/icons';
 
 const statusColorMap: Record<string, { bgcolor: string; color: string }> = {
   approved: { bgcolor: '#dcfce7', color: '#166534' },

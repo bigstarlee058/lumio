@@ -8,7 +8,7 @@ import type {
   TopSpenderSourceChannel,
 } from '@/app/(main)/statements/components/top-spenders/top-spenders.types';
 import { formatMoney } from '@/app/lib/analytics-common';
-import { X } from 'lucide-react';
+import { X } from '@/app/components/icons';
 
 type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
 

@@ -1,6 +1,6 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
-import { Check, ChevronLeft, Search } from 'lucide-react';
+import { Check, ChevronLeft, Search } from '@/app/components/icons';
 
 const CURRENCY_BTN_STYLE: React.CSSProperties = {
   display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',

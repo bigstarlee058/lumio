@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from '@/app/components/icons';
 import { Checkbox } from '../ui/checkbox';
 import { CategoryDropdown } from './CategoryDropdown';
 import type { TransactionRowFormatters, TransactionRowHandlers } from './TransactionRow';

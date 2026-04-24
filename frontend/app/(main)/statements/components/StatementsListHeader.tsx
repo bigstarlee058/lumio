@@ -10,7 +10,7 @@ import type { StatementColumn, StatementColumnId } from '@/app/(main)/statements
 import type { StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { Spinner } from '@/app/components/ui/spinner';
-import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal } from '@/app/components/icons';
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 import { StatementsBulkActions } from './StatementsBulkActions';
 

@@ -13,7 +13,7 @@ import {
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
-import { ChevronDown, ChevronRight, Cpu, Plug, User } from 'lucide-react';
+import { ChevronDown, ChevronRight, Cpu, Plug, User } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 

@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
-import { CheckCircle2, Layers, Save, Trash2 } from 'lucide-react';
+import { CheckCircle2, Layers, Save, Trash2 } from '@/app/components/icons';
 import type { CategoryOption } from '../editHelpers';
 import { formatLabel, labelValue } from '../editHelpers';
 

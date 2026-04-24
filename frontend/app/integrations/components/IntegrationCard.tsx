@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import { CheckCircle2, ExternalLink, Star } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Star } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';

@@ -2,7 +2,7 @@
 
 import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { Divider, ListItemIcon, ListItemText, Menu as MuiMenu, MenuItem } from '@mui/material';
-import { BookOpen, Globe, LogOut, Menu, Plug, Settings, Trash2, User } from 'lucide-react';
+import { BookOpen, Globe, LogOut, Menu, Settings, Trash2, User } from '@/app/components/icons';
 import React from 'react';
 
 type UserMenuProps = {
@@ -81,11 +81,7 @@ export function UserMenuTriggerAndDropdown({
           <ListItemIcon><Settings size={18} /></ListItemIcon>
           <ListItemText>{userMenu.settings as React.ReactNode}</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => { onAction('integrations'); }}>
-          <ListItemIcon><Plug size={18} /></ListItemIcon>
-          <ListItemText>{userMenu.integrations as React.ReactNode}</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={() => { onAction('trash'); }}>
+<MenuItem onClick={() => { onAction('trash'); }}>
           <ListItemIcon><Trash2 size={18} /></ListItemIcon>
           <ListItemText>{trashLabel}</ListItemText>
         </MenuItem>

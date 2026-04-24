@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from '@/app/components/icons';
 import type { CSSProperties, ReactNode } from 'react';
 
 // ============================================================================

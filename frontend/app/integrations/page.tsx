@@ -5,7 +5,7 @@ import type React from 'react';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2, ExternalLink, Plug, Search, Star } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Plug, Search, Star } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

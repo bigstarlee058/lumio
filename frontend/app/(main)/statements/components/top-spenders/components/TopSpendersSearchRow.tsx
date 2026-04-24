@@ -2,7 +2,7 @@
 import type { JSX } from 'react';
 
 import type { useTopSpendersViewModel } from '@/app/(main)/statements/components/top-spenders/hooks/useTopSpendersViewModel';
-import { Search } from 'lucide-react';
+import { Search } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
 

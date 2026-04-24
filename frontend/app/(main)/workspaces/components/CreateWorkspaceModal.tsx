@@ -12,7 +12,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from '@/app/components/icons';
 import React, { useId, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AVAILABLE_BACKGROUNDS } from '../constants';

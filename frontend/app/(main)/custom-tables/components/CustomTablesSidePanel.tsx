@@ -15,7 +15,7 @@ import {
   FileSpreadsheet,
   Pencil,
   Table as TableIcon,
-} from 'lucide-react';
+} from '@/app/components/icons';
 import { useMemo } from 'react';
 
 type Props = {

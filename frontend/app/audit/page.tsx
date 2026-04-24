@@ -1,6 +1,6 @@
 'use client';
 
-import { Download } from 'lucide-react';
+import { Download } from '@/app/components/icons';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { AuditEventDrawer } from './components/AuditEventDrawer';

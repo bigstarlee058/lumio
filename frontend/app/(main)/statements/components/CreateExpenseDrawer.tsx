@@ -25,7 +25,7 @@ import {
   ScanLine,
   Search,
   UploadCloud,
-} from 'lucide-react';
+} from '@/app/components/icons';
 
 type Props = {
   open: boolean;

@@ -3,7 +3,7 @@
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import { useDraggable } from '@dnd-kit/core';
 import { Box, Typography } from '@mui/material';
-import { GripVertical } from 'lucide-react';
+import { GripVertical } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import type { StorageFile } from '../storageHelpers';

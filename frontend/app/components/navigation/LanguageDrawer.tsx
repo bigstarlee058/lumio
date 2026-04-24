@@ -1,7 +1,7 @@
 'use client';
 
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { Check, ChevronLeft, Search } from 'lucide-react';
+import { Check, ChevronLeft, Search } from '@/app/components/icons';
 import React from 'react';
 
 type LanguageDrawerProps = {

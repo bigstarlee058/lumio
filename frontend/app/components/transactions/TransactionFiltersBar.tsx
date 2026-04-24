@@ -1,6 +1,6 @@
 'use client';
 
-import { Filter, Search, X } from 'lucide-react';
+import { Filter, Search, X } from '@/app/components/icons';
 import type { Category, FilterState } from './types';
 
 type FilterTranslations = {

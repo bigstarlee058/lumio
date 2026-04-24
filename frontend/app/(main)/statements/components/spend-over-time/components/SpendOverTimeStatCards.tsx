@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import { AnalyticsComparisonLine } from '@/app/(main)/statements/components/analytics/AnalyticsComparisonLine';
 import type { getComparisonDelta } from '@/app/(main)/statements/components/shared-analytics.utils';
 import { formatMoney } from '@/app/lib/analytics-common';
-import { ArrowDown, ArrowUp, ChartPie, Mail } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChartPie, Mail } from '@/app/components/icons';
 
 type ComparisonItem = ReturnType<typeof getComparisonDelta> | null;
 type Comparison = { total: ComparisonItem; statementsAmount: ComparisonItem; receiptsAmount: ComparisonItem; operations: ComparisonItem; avgPerPeriod: ComparisonItem } | null;

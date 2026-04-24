@@ -10,8 +10,8 @@ import {
   Trash2,
   Unlink2,
   Upload,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+} from '@/app/components/icons';
+import type { LucideIcon } from '@/app/components/icons';
 
 export const ACTION_ICON_MAP: Record<AuditAction, LucideIcon> = {
   create: PlusCircle,

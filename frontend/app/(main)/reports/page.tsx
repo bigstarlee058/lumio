@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-import { BarChart3, DollarSign, PieChart, Scale } from 'lucide-react';
+import { BarChart3, DollarSign, PieChart, Scale } from '@/app/components/icons';
 import { useState } from 'react';
 import BalanceSheet from './components/BalanceSheet';
 import { type ReportGenerateParams, ReportGenerator } from './components/ReportGenerator';

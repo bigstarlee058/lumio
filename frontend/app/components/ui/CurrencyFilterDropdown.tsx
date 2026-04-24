@@ -6,7 +6,7 @@ import { FilterOptionRow } from '@/app/(main)/statements/components/filters/Filt
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
-import { DollarSign } from 'lucide-react';
+import { DollarSign } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 
 interface CurrencyFilterDropdownProps {

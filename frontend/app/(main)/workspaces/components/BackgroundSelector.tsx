@@ -1,7 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import { Check } from 'lucide-react';
+import { Check } from '@/app/components/icons';
 import Image from 'next/image';
 import React, { memo } from 'react';
 

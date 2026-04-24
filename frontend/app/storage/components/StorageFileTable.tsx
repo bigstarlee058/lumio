@@ -4,7 +4,7 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { AppPagination } from '@/app/components/ui/pagination';
 import { Box, Chip, Typography } from '@mui/material';
-import { Search, Trash2 } from 'lucide-react';
+import { Search, Trash2 } from '@/app/components/icons';
 import React from 'react';
 import { Checkbox } from '../../components/ui/checkbox';
 import type { CategoryOption, StorageFile, TagOption } from '../storageHelpers';

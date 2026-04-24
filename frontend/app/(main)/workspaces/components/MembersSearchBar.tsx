@@ -7,7 +7,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search } from '@/app/components/icons';
 import React, { useState } from 'react';
 import type { MemberRoleFilter, MemberSortBy } from './workspace-members.utils';
 

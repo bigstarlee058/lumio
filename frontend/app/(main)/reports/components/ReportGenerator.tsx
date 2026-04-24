@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { Download, X } from 'lucide-react';
+import { Download, X } from '@/app/components/icons';
 import { useState } from 'react';
 import type { ReportTemplate } from './ReportTemplateCard';
 

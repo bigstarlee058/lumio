@@ -4,7 +4,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { useNotifications } from '@/app/hooks/useNotifications';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { Divider, Menu } from '@mui/material';
-import { AlertTriangle, Bell, CircleAlert, Info } from 'lucide-react';
+import { AlertTriangle, Bell, CircleAlert, Info } from '@/app/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';

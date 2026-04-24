@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronRight, Copy, Download, GitMerge, Trash2, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Copy, Download, GitMerge, Trash2, X } from '@/app/components/icons';
 import type { JSX } from 'react';
 
 interface Props {

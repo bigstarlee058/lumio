@@ -5,7 +5,7 @@ import MuiButton from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from '@/app/components/icons';
 import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
 import { FilterSection } from './FilterSection';

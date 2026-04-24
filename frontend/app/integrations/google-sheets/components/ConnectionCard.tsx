@@ -2,7 +2,7 @@
 
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, Stack, Typography } from '@mui/material';
-import { AlertCircle, CheckCircle2, Plug, RefreshCcw, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Plug, RefreshCcw, Trash2 } from '@/app/components/icons';
 import type React from 'react';
 import type { GoogleSheetConnection } from '../useGoogleSheetsPage';
 

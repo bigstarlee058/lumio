@@ -2,7 +2,7 @@
 import type { JSX } from 'react';
 
 import type { useTopMerchantsViewModel } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsViewModel';
-import { Search } from 'lucide-react';
+import { Search } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useTopMerchantsViewModel> };
 

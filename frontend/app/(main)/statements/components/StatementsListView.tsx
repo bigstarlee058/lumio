@@ -8,7 +8,7 @@ import { getApiErrorStatus } from '@/app/lib/api-error';
 import { resolveLabel } from '@/app/lib/side-panel-utils';
 import type { ManualExpenseDraft } from '@/app/lib/statement-expense-drawer';
 import type { StatementStage } from '@/app/lib/statement-workflow';
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw } from '@/app/components/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { JSX } from 'react';
 import toast from 'react-hot-toast';

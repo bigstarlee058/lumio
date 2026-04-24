@@ -2,7 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2, ShieldCheck, Sparkles, Workflow } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Sparkles, Workflow } from '@/app/components/icons';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 
 export function WelcomeStep() {

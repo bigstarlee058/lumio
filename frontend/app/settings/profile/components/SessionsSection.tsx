@@ -3,7 +3,7 @@
 import { Alert } from '@/app/components/ui/alert';
 import { Spinner } from '@/app/components/ui/spinner';
 import { type UserSession, getSessionIcon } from '@/app/settings/profile/profileHelpers';
-import { LogOut } from 'lucide-react';
+import { LogOut } from '@/app/components/icons';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';

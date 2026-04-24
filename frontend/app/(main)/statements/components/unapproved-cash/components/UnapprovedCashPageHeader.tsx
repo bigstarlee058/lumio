@@ -1,6 +1,6 @@
 import React from 'react';
 import { Spinner } from '@/app/components/ui/spinner';
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw } from '@/app/components/icons';
 
 interface UnapprovedCashPageHeaderProps {
   title: string;

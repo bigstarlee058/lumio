@@ -6,7 +6,7 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
-import { Check, ChevronRight, FolderOpen, Lock, Plus, Search as SearchIcon, Tag } from 'lucide-react';
+import { Check, ChevronRight, FolderOpen, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
 import {
   Box,
   Button,

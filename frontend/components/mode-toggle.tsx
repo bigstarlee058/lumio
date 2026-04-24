@@ -8,7 +8,7 @@ import {
   getStoredThemeTimeZone,
 } from '@/app/lib/theme-preference';
 import { cn } from '@/app/lib/utils';
-import { Clock3, MoonStar, Sparkles, Sun } from 'lucide-react';
+import { Clock3, MoonStar, Sparkles, Sun } from '@/app/components/icons';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 

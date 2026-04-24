@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from '@/app/components/icons';
 
 type FilterRowProps = {
   label: string;

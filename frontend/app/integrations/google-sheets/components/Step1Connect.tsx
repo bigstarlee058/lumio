@@ -3,7 +3,7 @@
 import { GoogleSheetsPickerButton } from '@/app/components/GoogleSheetsPickerButton';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, Stack, Typography } from '@mui/material';
-import { ExternalLink, FileSpreadsheet } from 'lucide-react';
+import { ExternalLink, FileSpreadsheet } from '@/app/components/icons';
 import type React from 'react';
 import toast from 'react-hot-toast';
 import type { SpreadsheetSelection, WorksheetOption } from '@/app/lib/googleSheetsSelection';

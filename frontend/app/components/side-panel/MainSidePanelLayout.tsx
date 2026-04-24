@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { PanelLeftOpen, X } from 'lucide-react';
+import { PanelLeftOpen, X } from '@/app/components/icons';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { SidePanel, SidePanelProvider, useCurrentSidePanelConfig, useSidePanel } from './index';

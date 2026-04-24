@@ -1,7 +1,7 @@
 'use client';
 
 import { Chip, FormControl, IconButton, MenuItem, Select, TableCell, TableRow } from '@mui/material';
-import { Pencil } from 'lucide-react';
+import { Pencil } from '@/app/components/icons';
 import React from 'react';
 
 interface User {

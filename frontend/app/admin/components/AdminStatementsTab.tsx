@@ -4,7 +4,7 @@ import {
   Box, Button, Chip, IconButton, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, TextField,
 } from '@mui/material';
-import { AlertCircle, RefreshCw, Trash2 } from 'lucide-react';
+import { AlertCircle, RefreshCw, Trash2 } from '@/app/components/icons';
 import React from 'react';
 
 interface Statement {

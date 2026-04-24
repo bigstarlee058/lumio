@@ -14,7 +14,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { Calendar, Landmark, Receipt, TrendingDown, TrendingUp } from 'lucide-react';
+import { Calendar, Landmark, Receipt, TrendingDown, TrendingUp } from '@/app/components/icons';
 import React from 'react';
 
 import { useIntlayer } from '@/app/i18n';

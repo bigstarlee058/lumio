@@ -37,7 +37,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from 'lucide-react';
+import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types

@@ -5,7 +5,7 @@ import { FilterDropdown } from '@/app/(main)/statements/components/filters/Filte
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { parseISO, isValid, format } from 'date-fns';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from '@/app/components/icons';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,

@@ -3,7 +3,7 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import { Download, MoreVertical, X } from 'lucide-react';
+import { Download, MoreVertical, X } from '@/app/components/icons';
 import { type ChangeEvent, type ComponentType, useEffect, useRef, useState } from 'react';
 import '@/app/styles/blocks/lumio-pdf-preview-modal.css';
 import { ModalShell } from './ui/modal-shell';

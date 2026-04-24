@@ -8,7 +8,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import RadioButton from '@mui/material/Radio';
 import Typography from '@mui/material/Typography';
-import { Check } from 'lucide-react';
+import { Check } from '@/app/components/icons';
 import * as React from 'react';
 
 /* ─── Context ────────────────────────────────────────────────────────────── */

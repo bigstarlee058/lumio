@@ -2,7 +2,7 @@
 
 import { gmailReceiptsApi } from '@/app/lib/api';
 import { Box, IconButton, Typography } from '@mui/material';
-import { X, ZoomIn, ZoomOut } from 'lucide-react';
+import { X, ZoomIn, ZoomOut } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 
 interface ReceiptPreviewModalProps {

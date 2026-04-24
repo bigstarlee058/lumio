@@ -4,7 +4,7 @@ import type { JSX } from 'react';
 import type { SpendOverTimeFlowType } from '@/app/(main)/statements/components/spend-over-time.utils';
 import { SpendOverTimeFilterChipsRow } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimeFilterChipsRow';
 import type { useSpendOverTimeViewModel } from '@/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeViewModel';
-import { Search } from 'lucide-react';
+import { Search } from '@/app/components/icons';
 
 type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 

@@ -19,7 +19,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ChevronLeft, GripVertical } from 'lucide-react';
+import { ChevronLeft, GripVertical } from '@/app/components/icons';
 import type { StatementColumn, StatementColumnId } from './statement-columns';
 
 type ColumnsDrawerLabels = {
