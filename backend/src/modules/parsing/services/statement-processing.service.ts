@@ -23,6 +23,7 @@ import { MetricsService } from '../../observability/metrics.service';
 import { CrossStatementDeduplicationService } from '../../transactions/services/cross-statement-deduplication.service';
 import { TransactionFingerprintService } from '../../transactions/services/transaction-fingerprint.service';
 import { extractTaxFromPurpose } from '../../classification/helpers/tax-extractor.util';
+import type { TransactionEnrichment } from '../../classification/interfaces/transaction-enrichment.interface';
 import { AiParseValidator } from '../helpers/ai-parse-validator.helper';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
@@ -901,7 +902,7 @@ export class StatementProcessingService {
       `Processing ${deduped.length}/${parsedTransactions.length} parsed transactions after dedup (statement currency: ${statement.currency || 'N/A'})`,
     );
 
-    let aiBatchResults = new Map<number, { categoryId: string; enrichment?: import('../../classification/interfaces/transaction-enrichment.interface').TransactionEnrichment }>();
+    let aiBatchResults = new Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>();
     if (!manualCategorySelectionRequired && statement.workspaceId && deduped.length > 0) {
       try {
         aiBatchResults = await this.classificationService.classifyTransactionsBatch(
