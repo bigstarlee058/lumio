@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Nunito } from 'next/font/google';
-import './globals.css';
+import './globals.scss';
 import { ThemeProvider } from '@/components/theme-provider';
 import { getLocale } from 'next-intlayer/server';
 import { getIntlayer } from 'react-intlayer';

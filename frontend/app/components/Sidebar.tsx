@@ -3,7 +3,6 @@
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer } from '@/app/i18n';
-import '@/app/styles/blocks/lumio-sidebar.css';
 import { Check, ChevronDown, Plus } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';

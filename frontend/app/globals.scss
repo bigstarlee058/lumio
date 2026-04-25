@@ -1,0 +1,10 @@
+// app/globals.scss
+// Entry point — replaces globals.css.
+// Order matters: abstracts first (no CSS output), then base, themes, layout, components, vendors, utils.
+@use 'styles/abstracts';
+@use 'styles/base';
+@use 'styles/themes';
+@use 'styles/layout';
+@use 'styles/components';
+@use 'styles/vendors';
+@use 'styles/utils';

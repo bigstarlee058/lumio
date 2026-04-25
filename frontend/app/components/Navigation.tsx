@@ -10,7 +10,6 @@ import 'driver.js/dist/driver.css';
 
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { HelpCircle, X } from '@/app/components/icons';
-import '@/app/styles/blocks/lumio-navigation.css';
 import { useTheme } from 'next-themes';
 import { Nunito } from 'next/font/google';
 import Image from 'next/image';

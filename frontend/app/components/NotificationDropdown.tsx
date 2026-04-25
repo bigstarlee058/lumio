@@ -8,7 +8,6 @@ import { AlertTriangle, Bell, CircleAlert, Info } from '@/app/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import '@/app/styles/blocks/lumio-notification-dropdown.css';
 
 type NotificationDropdownProps = {
   triggerClassName?: string;

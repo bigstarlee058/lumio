@@ -1,0 +1,10 @@
+// app/styles/components/_index.scss
+@forward 'breadcrumbs';
+@forward 'language-switcher';
+@forward 'notification-dropdown';
+@forward 'audit-panel';
+@forward 'pdf-preview-modal';
+@forward 'navigation';
+@forward 'dashboard';
+@forward 'transaction-table';
+@forward 'statements';
