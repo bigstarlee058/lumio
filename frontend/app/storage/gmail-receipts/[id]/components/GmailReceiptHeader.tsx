@@ -160,7 +160,7 @@ export function GmailReceiptHeader({
                 icon={<Receipt size={16} />}
                 label={`${Math.max(1, lineItemsCount)} line items`}
                 size="small"
-                sx={{ bgcolor: 'grey.50', color: 'text.secondary', border: '1px solid', borderColor: 'grey.200', fontWeight: 500, '& .MuiChip-icon': { color: 'text.secondary' } }}
+                sx={theme => ({ bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50', color: 'text.secondary', border: '1px solid', borderColor: 'divider', fontWeight: 500, '& .MuiChip-icon': { color: 'text.secondary' } })}
               />
               <Chip
                 label={statusLabel}

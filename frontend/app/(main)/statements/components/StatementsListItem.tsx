@@ -125,27 +125,27 @@ const DUPLICATE_GROUP_STYLES: Record<DuplicateGroupTone, DuplicateGroupStyle> = 
     rowBorderColor: 'var(--border-color)',
     rowBg: 'rgba(250,250,250,0.3)',
     lineColor: 'rgba(161,161,170,0.85)',
-    badgeBg: '#f4f4f5',
-    badgeColor: '#52525b',
+    badgeBg: 'var(--muted)',
+    badgeColor: 'var(--text-secondary)',
     buttonBorder: 'var(--border-color)',
-    buttonBg: '#fafafa',
-    buttonColor: '#52525b',
+    buttonBg: 'var(--muted)',
+    buttonColor: 'var(--text-secondary)',
     buttonHoverBorder: 'var(--border-color)',
-    buttonHoverBg: '#f4f4f5',
-    buttonHoverColor: '#3f3f46',
+    buttonHoverBg: 'var(--muted)',
+    buttonHoverColor: 'var(--text-primary)',
   },
   stone: {
     rowBorderColor: 'var(--border-color)',
     rowBg: 'rgba(250,250,249,0.3)',
     lineColor: 'rgba(168,162,158,0.85)',
-    badgeBg: '#f5f5f4',
-    badgeColor: '#57534e',
+    badgeBg: 'var(--muted)',
+    badgeColor: 'var(--text-secondary)',
     buttonBorder: 'var(--border-color)',
-    buttonBg: '#fafaf9',
-    buttonColor: '#57534e',
-    buttonHoverBorder: '#d6d3d1',
-    buttonHoverBg: '#f5f5f4',
-    buttonHoverColor: '#44403c',
+    buttonBg: 'var(--muted)',
+    buttonColor: 'var(--text-secondary)',
+    buttonHoverBorder: 'var(--border-color)',
+    buttonHoverBg: 'var(--muted)',
+    buttonHoverColor: 'var(--text-primary)',
   },
 };
 
@@ -300,7 +300,9 @@ export function StatementsListItem({
   const duplicateRoleBadgeStyle: React.CSSProperties =
     resolvedDuplicateRole === 'primary'
       ? { fontWeight: 700, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.15)' }
-      : { fontWeight: 500, border: '1px dashed rgba(0,0,0,0.15)', background: 'rgba(255,255,255,0.7)', opacity: 0.8 };
+      : resolvedTheme === 'dark'
+        ? { fontWeight: 500, border: '1px dashed rgba(255,255,255,0.18)', background: 'rgba(255,255,255,0.06)', opacity: 0.9 }
+        : { fontWeight: 500, border: '1px dashed rgba(0,0,0,0.15)', background: 'rgba(255,255,255,0.7)', opacity: 0.8 };
   const duplicateRoleButtonStyle: React.CSSProperties =
     resolvedDuplicateRole === 'primary'
       ? { fontWeight: 600, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }

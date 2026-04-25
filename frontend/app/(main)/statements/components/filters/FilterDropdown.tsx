@@ -32,7 +32,7 @@ export function FilterDropdown({
         align={align}
         sideOffset={8}
         className={cn(
-          'w-[320px] rounded-2xl border border-gray-200 dark:border-[var(--border)] bg-white dark:bg-[var(--card-bg)] p-4 shadow-xl',
+          'w-[320px] rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] p-4 shadow-xl',
           contentClassName,
         )}
       >
