@@ -28,8 +28,8 @@ export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: Rec
             key={key}
             sx={{
               height: 176,
-              border: '1px solid #e2e8f0',
-              bgcolor: '#f1f5f9',
+              border: '1px solid var(--border-color)',
+              bgcolor: 'var(--muted)',
               animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               '@keyframes pulse': {
                 '0%, 100%': { opacity: 1 },

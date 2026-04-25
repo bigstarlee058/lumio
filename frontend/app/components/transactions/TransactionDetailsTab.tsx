@@ -126,7 +126,7 @@ export function TransactionDetailsTab({
                   ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency ?? 'KZT', locale)
                   : formatAmount(transaction.debit, transaction.currency ?? 'KZT', locale)}
                 {showConverted && transaction.convertedAmount !== undefined && (
-                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: '#fca5a5' }}>
+                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: 'var(--color-error-soft-border)' }}>
                     {formatAmount(transaction.debit, transaction.currency ?? 'KZT', locale)}
                   </div>
                 )}
@@ -147,7 +147,7 @@ export function TransactionDetailsTab({
                   ? formatAmount(transaction.convertedAmount, transaction.convertedCurrency ?? 'KZT', locale)
                   : formatAmount(transaction.credit, transaction.currency ?? 'KZT', locale)}
                 {showConverted && transaction.convertedAmount !== undefined && (
-                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: '#6ee7b7' }}>
+                  <div style={{ marginTop: 2, fontSize: 12, fontWeight: 400, color: 'var(--color-success-soft-border)' }}>
                     {formatAmount(transaction.credit, transaction.currency ?? 'KZT', locale)}
                   </div>
                 )}
@@ -200,7 +200,7 @@ export function TransactionDetailsTab({
       {/* Parsing Metadata */}
       {(transaction.parsingConfidence || transaction.rawExtract) && (
         <div className="lumio-tx-detail__card lumio-tx-detail__card--blue">
-          <div className="lumio-tx-detail__label" style={{ color: '#1d4ed8', marginBottom: 8 }}>{t.parsingMetadata.value}</div>
+          <div className="lumio-tx-detail__label" style={{ color: 'var(--color-info-soft-text)', marginBottom: 8 }}>{t.parsingMetadata.value}</div>
 
           {transaction.parsingConfidence && (
             <div className="lumio-tx-detail__row">
@@ -233,7 +233,7 @@ export function TransactionDetailsTab({
             <span
               className="lumio-tx-detail__cat-badge"
               style={{
-                backgroundColor: transaction.category.isEnabled === false ? '#fee2e2' : transaction.category.color ? `${transaction.category.color}15` : c.ink150,
+                backgroundColor: transaction.category.isEnabled === false ? 'var(--color-error-soft-bg)' : transaction.category.color ? `${transaction.category.color}15` : c.ink150,
                 color: transaction.category.isEnabled === false ? '#b91c1c' : transaction.category.color || c.ink800,
               }}
             >

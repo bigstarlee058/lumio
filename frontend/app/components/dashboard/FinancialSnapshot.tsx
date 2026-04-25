@@ -76,8 +76,8 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
                       fontWeight: 600,
                       border: '1px solid',
                       ...(value >= 0
-                        ? { backgroundColor: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
-                        : { backgroundColor: '#fff1f2', color: '#be123c', borderColor: '#fecdd3' }),
+                        ? { backgroundColor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', borderColor: 'var(--color-success-soft-border)' }
+                        : { backgroundColor: 'var(--color-error-soft-bg)', color: '#be123c', borderColor: 'var(--color-error-soft-bg)' }),
                     }}
                   >
                     {value >= 0 ? (

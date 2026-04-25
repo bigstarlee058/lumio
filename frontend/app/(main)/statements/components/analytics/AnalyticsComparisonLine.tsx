@@ -18,7 +18,7 @@ type Props = {
 const TREND_COLORS: Record<string, string> = {
   up: '#059669',
   down: '#dc2626',
-  flat: '#6b7280',
+  flat: 'var(--muted-foreground)',
 };
 
 const resolveDeltaPrefix = (delta: number): string => {
@@ -38,7 +38,7 @@ export function AnalyticsComparisonLine({
     return <p style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{noDataLabel}</p>;
   }
 
-  const deltaColor = TREND_COLORS[item.trend] ?? '#6b7280';
+  const deltaColor = TREND_COLORS[item.trend] ?? 'var(--muted-foreground)';
   const prefix = resolveDeltaPrefix(item.delta);
   const deltaValue = isMoney
     ? formatMoney(Math.abs(item.delta), currency)

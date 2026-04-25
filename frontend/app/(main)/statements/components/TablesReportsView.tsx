@@ -333,7 +333,7 @@ export default function TablesReportsView() {
                 <button
                   type="button"
                   onClick={() => setSelectedTableIds([])}
-                  style={{ marginBottom: 4, width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: '#0369a1', background: 'none', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.sm }}
+                  style={{ marginBottom: 4, width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: 'var(--color-info-soft-text)', background: 'none', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.sm }}
                 >
                   All tables
                 </button>
@@ -393,9 +393,9 @@ export default function TablesReportsView() {
               }
               style={{
                 borderRadius: tokens.radius.full,
-                background: selectedTableIds.includes(table.id) ? '#e0f2fe' : c.ink50,
+                background: selectedTableIds.includes(table.id) ? 'var(--color-info-soft-bg)' : c.ink50,
                 padding: '4px 12px',
-                color: selectedTableIds.includes(table.id) ? '#0369a1' : c.ink500,
+                color: selectedTableIds.includes(table.id) ? 'var(--color-info-soft-text)' : c.ink500,
                 border: 'none',
                 cursor: 'pointer',
                 fontSize: 12,
@@ -480,11 +480,11 @@ export default function TablesReportsView() {
                   onClick={() => setSortKey(key)}
                   style={{
                     borderRadius: tokens.radius.full,
-                    background: sortKey === key ? '#e0f2fe' : c.ink50,
+                    background: sortKey === key ? 'var(--color-info-soft-bg)' : c.ink50,
                     padding: '4px 12px',
                     fontSize: 12,
                     fontWeight: sortKey === key ? 500 : 400,
-                    color: sortKey === key ? '#0369a1' : c.ink500,
+                    color: sortKey === key ? 'var(--color-info-soft-text)' : c.ink500,
                     border: 'none',
                     cursor: 'pointer',
                   }}
@@ -529,11 +529,11 @@ export default function TablesReportsView() {
                           style={{
                             display: 'inline-flex',
                             borderRadius: tokens.radius.sm,
-                            background: row.source === 'google_sheets_import' ? '#ecfdf5' : c.ink50,
+                            background: row.source === 'google_sheets_import' ? 'var(--color-success-soft-bg)' : c.ink50,
                             padding: '2px 8px',
                             fontSize: 12,
                             fontWeight: 500,
-                            color: row.source === 'google_sheets_import' ? '#065f46' : c.ink700,
+                            color: row.source === 'google_sheets_import' ? 'var(--color-success-soft-text)' : c.ink700,
                           }}
                         >
                           {getSourceLabel(row.source)}
@@ -605,11 +605,11 @@ export default function TablesReportsView() {
                                   style={{
                                     display: 'inline-flex',
                                     borderRadius: tokens.radius.sm,
-                                    background: item.source === 'google_sheets_import' ? '#ecfdf5' : c.ink50,
+                                    background: item.source === 'google_sheets_import' ? 'var(--color-success-soft-bg)' : c.ink50,
                                     padding: '2px 8px',
                                     fontSize: 12,
                                     fontWeight: 500,
-                                    color: item.source === 'google_sheets_import' ? '#065f46' : c.ink700,
+                                    color: item.source === 'google_sheets_import' ? 'var(--color-success-soft-text)' : c.ink700,
                                   }}
                                 >
                                   {getSourceLabel(item.source)}

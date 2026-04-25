@@ -14,9 +14,9 @@ const SOURCE_BADGE_COLORS: Record<
   NonNullable<Category['source']>,
   { bg: string; color: string; border: string }
 > = {
-  system: { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
-  parsing: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-  user: { bg: '#f8fafc', color: 'var(--text-secondary)', border: 'var(--border-color)' },
+  system: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
+  parsing: { bg: 'var(--color-warning-soft-bg)', color: '#d97706', border: 'var(--color-warning-soft-border)' },
+  user: { bg: 'var(--muted)', color: 'var(--text-secondary)', border: 'var(--border-color)' },
 };
 
 const resolveIconUrl = (iconValue?: string): string | null => {

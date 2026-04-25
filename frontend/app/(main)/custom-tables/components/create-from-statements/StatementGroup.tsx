@@ -28,7 +28,7 @@ function StatementOptionText({ option, labels, formatLabel }: StatementOptionTex
         {labels.fileLabel}: {option.fileLabel}
       </Box>
       {option.duplicateCount > 1 ? (
-        <Box style={{ fontSize: 12, color: '#92400e' }}>
+        <Box style={{ fontSize: 12, color: 'var(--color-warning-soft-text)' }}>
           {formatLabel({ template: labels.duplicateUploads, values: { count: option.duplicateCount } })}
         </Box>
       ) : null}
@@ -68,7 +68,7 @@ function StatementGroupItem({
         py: 1,
         textAlign: 'left',
         border: 'none',
-        borderTop: idx > 0 ? '1px solid #f3f4f6' : 'none',
+        borderTop: idx > 0 ? '1px solid var(--border-color)' : 'none',
         bgcolor: 'transparent',
         cursor: option.disabled ? 'not-allowed' : 'pointer',
         opacity: option.disabled ? 0.5 : 1,

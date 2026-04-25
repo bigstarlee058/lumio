@@ -69,7 +69,7 @@ export function GmailSection({ gmailStatus, gmailLoading, router, tx }: GmailSec
           </Box>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          <Box component="button" onClick={() => router.push('/statements')} disabled={!isConnected || gmailLoading} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 2, py: 1, fontSize: 14, fontWeight: 600, bgcolor: '#2563eb', color: '#fff', cursor: 'pointer', border: 'none', opacity: isConnected && !gmailLoading ? 1 : 0.5, '&:disabled': { cursor: 'not-allowed' }, '&:hover': { bgcolor: '#1d4ed8' } }}>
+          <Box component="button" onClick={() => router.push('/statements')} disabled={!isConnected || gmailLoading} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, px: 2, py: 1, fontSize: 14, fontWeight: 600, bgcolor: '#2563eb', color: '#fff', cursor: 'pointer', border: 'none', opacity: isConnected && !gmailLoading ? 1 : 0.5, '&:disabled': { cursor: 'not-allowed' }, '&:hover': { bgcolor: 'var(--color-info-soft-text)' } }}>
             {tx(['gmail', 'viewReceipts'], 'View Receipts')}
           </Box>
           <Box component="button" onClick={() => router.push('/integrations/gmail')} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: `1px solid ${c.ink150}`, px: 2, py: 1, fontSize: 14, fontWeight: 600, color: c.ink800, bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: c.ink50 } }}>

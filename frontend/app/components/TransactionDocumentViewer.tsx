@@ -309,7 +309,7 @@ export default function TransactionDocumentViewer({
                 transform: 'translateY(-2px)',
               },
               '@media print': {
-                backgroundColor: '#e8f5e9 !important',
+                backgroundColor: 'var(--color-success-soft-bg) !important',
                 border: '1px solid #81c784 !important',
                 WebkitPrintColorAdjust: 'exact',
                 printColorAdjust: 'exact',
@@ -341,8 +341,8 @@ export default function TransactionDocumentViewer({
                 transform: 'translateY(-2px)',
               },
               '@media print': {
-                backgroundColor: '#ffebee !important',
-                border: '1px solid #e57373 !important',
+                backgroundColor: 'var(--color-error-soft-bg) !important',
+                border: '1px solid var(--destructive) !important',
                 WebkitPrintColorAdjust: 'exact',
                 printColorAdjust: 'exact',
                 pageBreakInside: 'avoid',
@@ -400,7 +400,7 @@ export default function TransactionDocumentViewer({
             borderColor: 'grey.200',
             bgcolor: netChange >= 0 ? 'success.50' : 'error.50',
             '@media print': {
-              backgroundColor: netChange >= 0 ? '#e8f5e9 !important' : '#ffebee !important',
+              backgroundColor: netChange >= 0 ? 'var(--color-success-soft-bg) !important' : 'var(--color-error-soft-bg) !important',
               WebkitPrintColorAdjust: 'exact',
               printColorAdjust: 'exact',
               pageBreakInside: 'avoid',

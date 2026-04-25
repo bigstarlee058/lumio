@@ -32,7 +32,7 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
         itemWidth: 10,
         itemHeight: 10,
         textStyle: {
-          color: '#555555',
+          color: 'var(--muted-foreground)',
           fontSize: 12,
           fontWeight: 600,
           fontFamily: 'var(--font-dashboard-sans)',
@@ -77,12 +77,12 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
       <Box sx={{ pointerEvents: 'none', position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Box sx={{ textAlign: 'center', pb: 0.5, pr: '80px' }}>
           <Typography
-            sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', color: '#7A869B', fontFamily: 'var(--font-dashboard-mono)' }}
+            sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-mono)' }}
           >
             TOTAL
           </Typography>
           <Typography
-            sx={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', fontFamily: 'var(--font-dashboard-sans)' }}
+            sx={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
           >
             Categories
           </Typography>

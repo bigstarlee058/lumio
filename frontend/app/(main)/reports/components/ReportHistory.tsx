@@ -38,9 +38,9 @@ function formatFileSize(bytes: number): string {
 }
 
 const FORMAT_CHIP_COLORS: Record<string, { bg: string; color: string }> = {
-  excel: { bg: '#d1fae5', color: '#065f46' },
-  pdf: { bg: '#fee2e2', color: 'var(--destructive)' },
-  csv: { bg: '#e0f2fe', color: '#0c4a6e' },
+  excel: { bg: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' },
+  pdf: { bg: 'var(--color-error-soft-bg)', color: 'var(--destructive)' },
+  csv: { bg: 'var(--color-info-soft-bg)', color: '#0c4a6e' },
 };
 
 // eslint-disable-next-line max-lines-per-function
@@ -161,7 +161,7 @@ export function ReportHistory(): React.JSX.Element {
                   <Chip
                     label={item.format.toUpperCase()}
                     size="small"
-                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || '#f1f5f9', color: chipColors?.color || '#475569', height: 20, borderRadius: tokens.radius.full }}
+                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || 'var(--muted)', color: chipColors?.color || 'var(--muted-foreground)', height: 20, borderRadius: tokens.radius.full }}
                   />
                 </TableCell>
                 <TableCell>

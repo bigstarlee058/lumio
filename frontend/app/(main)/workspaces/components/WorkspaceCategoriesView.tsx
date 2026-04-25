@@ -41,9 +41,9 @@ interface Category {
 }
 
 const SOURCE_BADGE_COLORS: Record<NonNullable<Category['source']>, { bg: string; color: string; border: string }> = {
-  system: { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
-  parsing: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-  user: { bg: '#f8fafc', color: 'var(--text-secondary)', border: 'var(--border-color)' },
+  system: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
+  parsing: { bg: 'var(--color-warning-soft-bg)', color: '#d97706', border: 'var(--color-warning-soft-border)' },
+  user: { bg: 'var(--muted)', color: 'var(--text-secondary)', border: 'var(--border-color)' },
 };
 
 interface CategoryUsageCount {
@@ -488,7 +488,7 @@ export default function WorkspaceCategoriesView() {
               <button
                 type="button"
                 onClick={handleBulkDelete}
-                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--destructive)', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'var(--color-error-soft-bg)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--destructive)', cursor: 'pointer', borderRadius: tokens.radius.md }}
               >
                 Delete Custom
               </button>

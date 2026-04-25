@@ -65,7 +65,7 @@ export function TrashListItem({
             style={{ height: 16, width: 16 }}
           />
           <div className="lumio-trash-item__type-label">
-            <TypeIcon size={16} color="#6b7280" />
+            <TypeIcon size={16} color="var(--muted-foreground)" />
             <span>{typeLabel}</span>
           </div>
         </div>

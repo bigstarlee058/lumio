@@ -62,9 +62,9 @@ export function FinlabExpenseCategoryCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 16 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 16 }}>
           Expense Category
-          <Info size={16} color="#94a3b8" />
+          <Info size={16} color="var(--muted-foreground)" />
         </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
       </Box>
@@ -96,7 +96,7 @@ export function FinlabExpenseCategoryCard({
                 pointerEvents: 'none',
               }}
             >
-              <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#1e293b' }}>100%</Typography>
+              <Typography sx={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)' }}>100%</Typography>
               <Typography sx={{ fontSize: 10, color: 'var(--muted-foreground)', fontWeight: 500 }}>Data Recorded</Typography>
             </Box>
           </Box>
@@ -123,7 +123,7 @@ export function FinlabExpenseCategoryCard({
                   </Box>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 14, fontWeight: 700, color: '#1e293b', whiteSpace: 'nowrap' }}
+                    sx={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', whiteSpace: 'nowrap' }}
                   >
                     {formatAmount(cat.amount)}
                   </Typography>

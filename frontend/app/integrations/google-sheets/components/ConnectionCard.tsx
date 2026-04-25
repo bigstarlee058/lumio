@@ -38,13 +38,13 @@ function formatLastSync({ lastSync, locale }: { lastSync: string | null | undefi
 function ConnectionStatus({ oauthConnected, t }: { oauthConnected: boolean | undefined; t: ConnectionCardTexts }): React.JSX.Element {
   if (oauthConnected === false) {
     return (
-      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, bgcolor: '#fffbeb', px: 1, py: 0.25, fontSize: 11, fontWeight: 600, color: '#92400e', border: '1px solid #fde68a' }}>
+      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, bgcolor: 'var(--color-warning-soft-bg)', px: 1, py: 0.25, fontSize: 11, fontWeight: 600, color: 'var(--color-warning-soft-text)', border: '1px solid var(--color-warning-soft-border)' }}>
         <AlertCircle style={{ height: 12, width: 12, marginRight: 4 }} /> {t.list.badges.oauthNeeded}
       </Box>
     );
   }
   return (
-    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, bgcolor: '#ecfdf5', px: 1, py: 0.25, fontSize: 11, fontWeight: 600, color: '#065f46', border: '1px solid #d1fae5' }}>
+    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, bgcolor: 'var(--color-success-soft-bg)', px: 1, py: 0.25, fontSize: 11, fontWeight: 600, color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-bg)' }}>
       <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {t.list.badges.active}
     </Box>
   );
@@ -71,7 +71,7 @@ export function ConnectionCard({ item, index, syncingId, removingId, locale, t, 
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {item.oauthConnected === false && (
-            <button type="button" onClick={onAuthorize} data-tour-id={index === 0 ? 'gs-integration-authorize' : undefined} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid #fcd34d', background: '#fffbeb', padding: '6px 12px', fontSize: 12, fontWeight: 600, color: '#78350f', cursor: 'pointer' }}>
+            <button type="button" onClick={onAuthorize} data-tour-id={index === 0 ? 'gs-integration-authorize' : undefined} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--color-warning-soft-border)', background: 'var(--color-warning-soft-bg)', padding: '6px 12px', fontSize: 12, fontWeight: 600, color: 'var(--color-warning-soft-text)', cursor: 'pointer' }}>
               <Plug style={{ height: 16, width: 16 }} />{t.list.actions.authorize}
             </button>
           )}

@@ -204,14 +204,14 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
         </Box>
 
         {visibleError ? (
-          <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fef2f2', px: 2, py: 1.5 }}>
+          <Box sx={{ border: '1px solid #fecaca', bgcolor: 'var(--color-error-soft-bg)', px: 2, py: 1.5 }}>
             <Typography style={{ fontSize: 14, color: 'var(--destructive)' }}>{visibleError}</Typography>
           </Box>
         ) : null}
 
         {uploading ? (
-          <Box sx={{ border: '1px solid #bfdbfe', bgcolor: '#eff6ff', px: 2, py: 1.5 }}>
-            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#1d4ed8' }}>
+          <Box sx={{ border: '1px solid var(--color-info-soft-border)', bgcolor: 'var(--color-info-soft-bg)', px: 2, py: 1.5 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-info-soft-text)' }}>
               Uploading... {progress}%
             </Typography>
           </Box>
@@ -229,14 +229,14 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--border-color)',
                     bgcolor: 'background.paper',
                     px: 2,
                     py: 1.5,
                   }}
                 >
                   <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: '#f1f5f9', p: 1, color: 'var(--text-secondary)' }}>
+                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: 'var(--muted)', p: 1, color: 'var(--text-secondary)' }}>
                       {isPdf ? (
                         <FileText style={{ width: 16, height: 16 }} />
                       ) : (
@@ -271,7 +271,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                     }}
                     sx={{
                       color: 'var(--muted-foreground)',
-                      '&:hover': { bgcolor: '#f1f5f9', color: 'var(--text-secondary)' },
+                      '&:hover': { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' },
                       borderRadius: tokens.radius.md,
                     }}
                   >

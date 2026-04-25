@@ -63,7 +63,7 @@ export function CurrencyDrawer({
               placeholder="Search"
               style={{
                 width: '100%',
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border-color)',
                 background: 'var(--card-bg)',
                 padding: '12px 16px 12px 40px',
                 fontSize: 14,

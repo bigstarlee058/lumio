@@ -72,7 +72,7 @@ function DesktopColorPicker({ colorPickerRowId, colorPickerValue, colorPickerAnc
 
 interface ColumnResizerProps { columnId: string; isResizing: boolean; isDark: boolean; onResizeMouseDown: ResizeMouseDownFn; }
 function ColumnResizer({ columnId, isResizing, isDark, onResizeMouseDown }: ColumnResizerProps): React.JSX.Element {
-  const bg = isResizing ? '#3b82f6' : isDark ? '#4b5563' : '#d1d5db';
+  const bg = isResizing ? '#3b82f6' : isDark ? '#4b5563' : 'var(--border-color)';
   const transform = isResizing ? 'scaleX(2)' : undefined;
   return (<div onMouseDown={e => onResizeMouseDown(columnId, e)} onTouchStart={e => onResizeMouseDown(columnId, e)} style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: 4, cursor: 'col-resize', userSelect: 'none', touchAction: 'none', backgroundColor: bg, transform }} />);
 }

@@ -27,7 +27,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
               height: 36,
               alignItems: 'center',
               justifyContent: 'center',
-              color: item.active ? 'var(--primary)' : '#6b7280',
+              color: item.active ? 'var(--primary)' : 'var(--muted-foreground)',
             }}
           >
             <RenderIcon icon={item.icon} size={20} />

@@ -54,8 +54,8 @@ function DiffPatchView({ diff }: { diff: Extract<AuditEventDiff, unknown[]> }): 
 }
 
 function getRowBackground(hadBefore: boolean, hadAfter: boolean, changed: boolean): string {
-  if (hadBefore && !hadAfter) return '#fef2f2';
-  if (!hadBefore && hadAfter) return '#f0fdf4';
+  if (hadBefore && !hadAfter) return 'var(--color-error-soft-bg)';
+  if (!hadBefore && hadAfter) return 'var(--color-success-soft-bg)';
   if (changed) return '#fefce8';
   return 'transparent';
 }

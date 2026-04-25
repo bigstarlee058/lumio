@@ -54,6 +54,19 @@
   --font-dashboard-sans: #{$lumio-font-family};
   --font-dashboard-mono: #{$lumio-font-family-mono};
   --global-nav-height: #{$global-nav-height};
+
+  /* ── Semantic soft status palette (light) ── */
+  --color-warning-soft-bg:     #fffbeb;
+  --color-warning-soft-border: #fde68a;
+  --color-warning-soft-text:   #b45309;
+  --color-success-soft-bg:     #f0fdf4;
+  --color-success-soft-border: #bbf7d0;
+  --color-success-soft-text:   #15803d;
+  --color-error-soft-bg:       #fef2f2;
+  --color-error-soft-border:   #fca5a5;
+  --color-info-soft-bg:        #eff6ff;
+  --color-info-soft-border:    #bfdbfe;
+  --color-info-soft-text:      #1d4ed8;
 }
 
 .dark {
@@ -85,6 +98,19 @@
   --surface-success-glow: rgba(52, 211, 153, 0.2);
   --text-primary:       #{$lumio-color-text-primary-dk};
   --text-secondary:     #{$lumio-color-text-secondary-dk};
+
+  /* ── Semantic soft status palette (dark) ── */
+  --color-warning-soft-bg:     rgba(245, 158, 11, 0.12);
+  --color-warning-soft-border: rgba(245, 158, 11, 0.35);
+  --color-warning-soft-text:   #fbbf24;
+  --color-success-soft-bg:     rgba(52, 211, 153, 0.12);
+  --color-success-soft-border: rgba(52, 211, 153, 0.35);
+  --color-success-soft-text:   #34d399;
+  --color-error-soft-bg:       rgba(251, 113, 133, 0.12);
+  --color-error-soft-border:   rgba(251, 113, 133, 0.4);
+  --color-info-soft-bg:        rgba(56, 189, 248, 0.12);
+  --color-info-soft-border:    rgba(56, 189, 248, 0.35);
+  --color-info-soft-text:      #38bdf8;
 
   /* Dashboard palette (dark) */
   --ff-dash-primary:       #{$lumio-color-primary-dk};

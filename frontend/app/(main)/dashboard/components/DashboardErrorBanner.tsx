@@ -11,7 +11,7 @@ const REFRESH_BTN_STYLE: React.CSSProperties = { marginLeft: 'auto', padding: 4,
 export function DashboardErrorBanner({ error, onRefresh }: DashboardErrorBannerProps): React.JSX.Element {
   return (
     <Box sx={{ px: 8, pt: 6 }}>
-      <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fff1f2', p: 2 }}>
+      <Box sx={{ border: '1px solid #fecaca', bgcolor: 'var(--color-error-soft-bg)', p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 2, py: 1.5, fontSize: 14, color: '#be123c' }}>
           <span>{error}</span>
           <button type="button" onClick={onRefresh} style={REFRESH_BTN_STYLE}>

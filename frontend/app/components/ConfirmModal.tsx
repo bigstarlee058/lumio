@@ -59,7 +59,7 @@ export default function ConfirmModal({
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
-            style={{ padding: 8, borderRadius: tokens.radius.full, background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
+            style={{ padding: 8, borderRadius: tokens.radius.full, background: isDestructive ? 'var(--color-error-soft-bg)' : 'var(--color-info-soft-bg)', color: isDestructive ? '#dc2626' : '#2563eb' }}
           >
             {icon ?? <AlertTriangle size={20} />}
           </div>

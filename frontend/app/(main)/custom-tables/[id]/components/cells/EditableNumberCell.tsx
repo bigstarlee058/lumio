@@ -57,7 +57,7 @@ export function EditableNumberCell({ row, column, onUpdateCell, style }: Editabl
           padding: '4px 8px',
           border: '2px solid #3b82f6',
           outline: 'none',
-          background: '#eff6ff',
+          background: 'var(--color-info-soft-bg)',
           textAlign: 'right',
           ...style,
         }}

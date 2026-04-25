@@ -53,7 +53,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
         data: ['Income', 'Expense'],
         top: 0,
         right: 0,
-        textStyle: { color: isDark ? '#8899AA' : '#555555', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
+        textStyle: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
         icon: 'rect',
         itemWidth: 12,
         itemHeight: 6,
@@ -62,12 +62,12 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       xAxis: {
         type: 'category',
         data: trendsData.dailyTrend.map(p => p.date),
-        axisLabel: { color: isDark ? '#8899AA' : '#555555', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
+        axisLabel: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
         axisLine: { lineStyle: { color: isDark ? '#2A3442' : '#D1CCC4' } },
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: isDark ? '#8899AA' : '#555555', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
+        axisLabel: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
         splitLine: { lineStyle: { color: isDark ? '#2A3442' : '#D1CCC4' } },
       },
       series: [
@@ -110,7 +110,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       },
       legend: {
         bottom: 0,
-        textStyle: { color: isDark ? '#8899AA' : '#555555', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
+        textStyle: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
         itemWidth: 10,
         itemHeight: 10,
       },

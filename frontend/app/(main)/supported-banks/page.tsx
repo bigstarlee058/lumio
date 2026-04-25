@@ -66,7 +66,7 @@ export default function SupportedBanksPage(): React.JSX.Element {
             icon={<CheckCircle2 size={14} />}
             label={resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
             size="small"
-            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: tokens.radius.full }}
+            sx={{ bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)', fontWeight: 600, borderRadius: tokens.radius.full }}
           />
         </Box>
       </Box>

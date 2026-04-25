@@ -61,7 +61,7 @@ interface MobileRowFieldsProps {
   isDark: boolean; formatMobileCellValue: FormatMobileCellFn;
 }
 function MobileRowFields({ row, orderedColumns, isDark, formatMobileCellValue }: MobileRowFieldsProps): React.JSX.Element {
-  const dtColor = isDark ? '#9ca3af' : '#6b7280';
+  const dtColor = isDark ? '#9ca3af' : 'var(--muted-foreground)';
   const ddColor = isDark ? '#f3f4f6' : 'var(--foreground)';
   return (
     <dl style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>

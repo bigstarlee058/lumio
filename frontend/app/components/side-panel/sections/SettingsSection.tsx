@@ -61,7 +61,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
           cursor: item.disabled ? 'not-allowed' : 'pointer',
           transition: 'background-color 200ms',
           border: 'none',
-          backgroundColor: item.checked ? 'var(--primary)' : '#d1d5db',
+          backgroundColor: item.checked ? 'var(--primary)' : 'var(--border-color)',
           opacity: item.disabled ? 0.5 : 1,
           padding: 0,
         }}

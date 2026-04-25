@@ -272,7 +272,7 @@ function RegisterPageContent(): React.JSX.Element {
             fontWeight: 'bold',
             textTransform: 'none',
             boxShadow: '0 4px 14px 0 rgba(5,150,105,0.45)',
-            background: 'linear-gradient(45deg, #059669 30%, #0891b2 90%)',
+            background: 'linear-gradient(45deg, #059669 30%, var(--color-info-soft-text) 90%)',
             transition: 'transform 0.2s',
             '&:hover': {
               transform: 'scale(1.02)',

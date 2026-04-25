@@ -73,10 +73,10 @@ function CategoryButton({
   const issueSx = {
     borderColor: 'var(--destructive) !important',
     color: 'var(--destructive) !important',
-    bgcolor: '#fef2f2 !important',
+    bgcolor: 'var(--color-error-soft-bg) !important',
     borderWidth: '2px !important',
     '& .MuiButton-startIcon': { color: 'var(--destructive) !important' },
-    '&:hover': { bgcolor: '#fee2e2 !important', borderColor: 'var(--destructive) !important' },
+    '&:hover': { bgcolor: 'var(--color-error-soft-bg) !important', borderColor: 'var(--destructive) !important' },
   };
 
   const normalSx = {

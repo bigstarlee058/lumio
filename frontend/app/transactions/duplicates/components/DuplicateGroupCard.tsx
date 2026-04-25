@@ -96,9 +96,9 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
           </Box>
 
           {/* Master Transaction */}
-          <Box sx={{ bgcolor: '#ecfdf5', p: 2, mb: 2, border: '1px solid #a7f3d0' }}>
+          <Box sx={{ bgcolor: 'var(--color-success-soft-bg)', p: 2, mb: 2, border: '1px solid var(--color-success-soft-border)' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: '#065f46', textTransform: 'uppercase' }}>
+              <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: 'var(--color-success-soft-text)', textTransform: 'uppercase' }}>
                 MASTER
               </Typography>
             </Box>

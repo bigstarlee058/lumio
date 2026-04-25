@@ -94,7 +94,7 @@ export function TopMerchantsCard({
                           whiteSpace: 'nowrap',
                           fontSize: 14,
                           fontWeight: 600,
-                          color: '#1e293b',
+                          color: 'var(--foreground)',
                         }}
                       >
                         {merchant.name}

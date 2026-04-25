@@ -335,7 +335,7 @@ function TagViewRow({
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-        <Box sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, bgcolor: tag.color ?? '#cbd5f5', flexShrink: 0 }} />
+        <Box sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, bgcolor: tag.color ?? 'var(--muted-foreground)', flexShrink: 0 }} />
         <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {tag.name}
         </Typography>
@@ -356,7 +356,7 @@ function TagViewRow({
               size="small"
               onClick={() => onConfirmDeleteTag(tag)}
               title={tagsDeleteTooltip}
-              sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { color: 'var(--destructive)', bgcolor: '#fef2f2' } }}
+              sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { color: 'var(--destructive)', bgcolor: 'var(--color-error-soft-bg)' } }}
             >
               <Trash2 size={16} />
             </IconButton>

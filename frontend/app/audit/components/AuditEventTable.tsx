@@ -45,17 +45,17 @@ type AuditTableRow =
     };
 
 const severityColors: Record<string, { bg: string; color: string }> = {
-  info: { bg: '#eff6ff', color: '#1d4ed8' },
+  info: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
   warn: { bg: '#fefce8', color: '#a16207' },
-  critical: { bg: '#fef2f2', color: 'var(--destructive)' },
+  critical: { bg: 'var(--color-error-soft-bg)', color: 'var(--destructive)' },
 };
 
 const actionToneColors: Record<string, { bg: string; color: string }> = {
-  info: { bg: '#eff6ff', color: '#1d4ed8' },
+  info: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
   warn: { bg: '#fefce8', color: '#a16207' },
-  critical: { bg: '#fef2f2', color: 'var(--destructive)' },
-  primary: { bg: '#edf7ed', color: '#157811' },
-  success: { bg: '#ecfdf5', color: '#065f46' },
+  critical: { bg: 'var(--color-error-soft-bg)', color: 'var(--destructive)' },
+  primary: { bg: 'var(--color-success-soft-bg)', color: '#157811' },
+  success: { bg: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' },
 };
 
 export function AuditEventTable({

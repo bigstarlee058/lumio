@@ -9,20 +9,20 @@ import { tokens } from '@/lib/theme-tokens';
 type BadgeStyle = { borderColor: string; background: string; color: string };
 
 const REASON_BADGE_STYLE: Record<UnapprovedReasonId, BadgeStyle> = {
-  'missing-category': { borderColor: '#fcd34d', background: '#fffbeb', color: '#b45309' },
-  'duplicate-detected': { borderColor: '#fca5a5', background: '#fff1f2', color: 'var(--destructive)' },
-  'unknown-merchant': { borderColor: 'var(--border-color)', background: '#f1f5f9', color: 'var(--text-secondary)' },
-  'missing-type': { borderColor: '#93c5fd', background: '#eff6ff', color: '#1d4ed8' },
-  'missing-currency': { borderColor: '#67e8f9', background: '#ecfeff', color: '#0e7490' },
-  'ocr-issues': { borderColor: '#fda4af', background: '#fff1f2', color: '#be123c' },
+  'missing-category': { borderColor: 'var(--color-warning-soft-border)', background: 'var(--color-warning-soft-bg)', color: 'var(--color-warning-soft-text)' },
+  'duplicate-detected': { borderColor: 'var(--color-error-soft-border)', background: 'var(--color-error-soft-bg)', color: 'var(--destructive)' },
+  'unknown-merchant': { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--text-secondary)' },
+  'missing-type': { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
+  'missing-currency': { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
+  'ocr-issues': { borderColor: 'var(--color-error-soft-border)', background: 'var(--color-error-soft-bg)', color: '#be123c' },
   'requires-confirmation': { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
 };
 
 const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
-  gmail: { borderColor: '#fdba74', background: '#fff7ed', color: '#c2410c' },
-  pdf: { borderColor: '#7dd3fc', background: '#f0f9ff', color: '#0369a1' },
-  bank: { borderColor: '#6ee7b7', background: '#ecfdf5', color: '#065f46' },
-  manual: { borderColor: '#a8d5a8', background: '#edf7ed', color: '#036704' },
+  gmail: { borderColor: 'var(--color-warning-soft-border)', background: 'var(--color-warning-soft-bg)', color: 'var(--color-warning-soft-text)' },
+  pdf: { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
+  bank: { borderColor: 'var(--color-success-soft-border)', background: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' },
+  manual: { borderColor: 'var(--color-success-soft-border)', background: 'var(--color-success-soft-bg)', color: '#036704' },
   unknown: { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
 };
 
@@ -90,7 +90,7 @@ export function UnapprovedCashContent({
           textAlign: 'center',
         }}
       >
-        <div style={{ borderRadius: tokens.radius.full, background: '#d1fae5', padding: 8, color: '#065f46' }}>
+        <div style={{ borderRadius: tokens.radius.full, background: 'var(--color-success-soft-bg)', padding: 8, color: 'var(--color-success-soft-text)' }}>
           <Check style={{ width: 20, height: 20 }} />
         </div>
         <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>

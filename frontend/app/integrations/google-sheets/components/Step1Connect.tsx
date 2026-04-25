@@ -70,7 +70,7 @@ function PickerReasonMessage({ reason }: { reason?: string }): React.JSX.Element
       : reason === 'missing_access_token'
         ? 'Google Picker access token is missing. Reconnect Google account or reload the page after backend restart.'
         : 'Connect a Google account first.';
-  return <Typography style={{ marginTop: 8, fontSize: 12, color: '#92400e' }}>{message}</Typography>;
+  return <Typography style={{ marginTop: 8, fontSize: 12, color: 'var(--color-warning-soft-text)' }}>{message}</Typography>;
 }
 
 // eslint-disable-next-line max-lines-per-function, complexity

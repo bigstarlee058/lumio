@@ -502,7 +502,7 @@ export default function EditStatementPage(): React.JSX.Element {
                   overflow: 'hidden',
                   borderColor: 'var(--destructive) !important',
                   color: 'var(--destructive) !important',
-                  bgcolor: '#fef2f2 !important',
+                  bgcolor: 'var(--color-error-soft-bg) !important',
                   borderWidth: '2px !important',
                   '& .MuiButton-startIcon': {
                     color: 'var(--destructive) !important',

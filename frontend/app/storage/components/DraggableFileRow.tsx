@@ -332,7 +332,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleView(file.id)}
-                    sx={{ color: '#2563eb', bgcolor: '#eff6ff', borderRadius: tokens.radius.sm, '&:hover': { bgcolor: '#dbeafe' } }}
+                    sx={{ color: '#2563eb', bgcolor: 'var(--color-info-soft-bg)', borderRadius: tokens.radius.sm, '&:hover': { bgcolor: 'var(--color-info-soft-border)' } }}
                   >
                     <Eye size={18} />
                   </IconButton>
