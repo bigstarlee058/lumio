@@ -67,7 +67,7 @@ function TourMenuItem(props: {
         {isCompleted ? (
           <Disc size={20} style={{ color: '#3b82f6' }} />
         ) : (
-          <Circle size={20} style={{ color: '#9ca3af' }} />
+          <Circle size={20} style={{ color: 'var(--muted-foreground)' }} />
         )}
       </ListItemIcon>
       <ListItemText

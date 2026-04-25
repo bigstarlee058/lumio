@@ -186,7 +186,7 @@ function TransactionsTableContent({
                     <span
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                       style={{
-                        backgroundColor: tx.category.color ? `${tx.category.color}20` : '#e5e7eb',
+                        backgroundColor: tx.category.color ? `${tx.category.color}20` : 'var(--border-color)',
                         color: tx.category.color || '#374151',
                       }}
                     >

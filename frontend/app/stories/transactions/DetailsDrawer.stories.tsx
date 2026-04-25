@@ -203,7 +203,7 @@ function DetailsDrawerContent({
               style={{
                 backgroundColor: transaction.category.color
                   ? `${transaction.category.color}15`
-                  : '#e5e7eb',
+                  : 'var(--border-color)',
                 color: transaction.category.color || '#374151',
               }}
             >
@@ -288,7 +288,7 @@ const mockTransaction: Transaction = {
 const mockCategories: Category[] = [
   { id: 'cat-1', name: 'Операционные расходы', color: '#3b82f6' },
   { id: 'cat-2', name: 'Зарплата', color: '#10b981' },
-  { id: 'cat-3', name: 'Налоги', color: '#ef4444' },
+  { id: 'cat-3', name: 'Налоги', color: 'var(--destructive)' },
   { id: 'cat-4', name: 'Аренда', color: '#f59e0b' },
 ];
 
