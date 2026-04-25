@@ -23,7 +23,7 @@ type SortMenuProps = { sortOption: SortOption; showSortMenu: boolean; onToggle: 
 function SortMenu({ sortOption, showSortMenu, onToggle, onSelect }: SortMenuProps): React.JSX.Element {
   return (
     <Box sx={{ position: 'relative' }}>
-      <button type="button" onClick={onToggle} style={{ padding: 8, border: '1px solid #d1d5db', background: showSortMenu ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'var(--card-bg)', color: showSortMenu ? 'var(--primary)' : '#4b5563', cursor: 'pointer', borderRadius: tokens.radius.md }} title="Sort options">
+      <button type="button" onClick={onToggle} style={{ padding: 8, border: '1px solid var(--border-color)', background: showSortMenu ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'var(--card-bg)', color: showSortMenu ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', borderRadius: tokens.radius.md }} title="Sort options">
         <SortAsc size={20} />
       </button>
       {showSortMenu && (
@@ -46,7 +46,7 @@ function ViewToggle({ viewMode, onSelect }: ViewToggleProps): React.JSX.Element 
     <>
       {VIEW_MODES.map(({ mode, Icon, title }) => (
         <button key={mode} type="button" onClick={() => onSelect(mode)}
-          style={{ padding: 8, border: '1px solid #d1d5db', background: viewMode === mode ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'var(--card-bg)', color: viewMode === mode ? 'var(--primary)' : '#4b5563', cursor: 'pointer', borderRadius: tokens.radius.md }} title={title}>
+          style={{ padding: 8, border: '1px solid var(--border-color)', background: viewMode === mode ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'var(--card-bg)', color: viewMode === mode ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', borderRadius: tokens.radius.md }} title={title}>
           <Icon size={20} />
         </button>
       ))}

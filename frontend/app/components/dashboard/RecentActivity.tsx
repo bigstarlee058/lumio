@@ -97,7 +97,7 @@ function ActivityAmount({ amount, formatAmount }: ActivityAmountProps): React.JS
   const isPositive = amount >= 0;
   return (
     <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: 14, fontWeight: 600, flexShrink: 0, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.01em' }}>
-      {isPositive ? <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} /> : <ArrowDownRight size={16} color="#94a3b8" strokeWidth={2.5} />}
+      {isPositive ? <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} /> : <ArrowDownRight size={16} color="var(--muted-foreground)" strokeWidth={2.5} />}
       <span style={{ color: isPositive ? '#16a34a' : 'var(--text-secondary)' }}>{formatAmount(Math.abs(amount))}</span>
     </Box>
   );

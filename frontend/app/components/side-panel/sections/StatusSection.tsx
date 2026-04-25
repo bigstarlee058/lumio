@@ -23,7 +23,7 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
           height: 8,
           borderRadius: tokens.radius.full,
           flexShrink: 0,
-          backgroundColor: STATUS_COLOR_MAP[item.status] ?? '#9ca3af',
+          backgroundColor: STATUS_COLOR_MAP[item.status] ?? 'var(--muted-foreground)',
         }}
       />
       <div style={{ flex: 1, minWidth: 0 }}>

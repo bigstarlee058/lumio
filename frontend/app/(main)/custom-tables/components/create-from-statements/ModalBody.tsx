@@ -39,7 +39,7 @@ function StepIndicator({ label, active }: StepIndicatorProps): React.JSX.Element
         py: 1,
         fontSize: 12,
         fontWeight: 500,
-        color: active ? 'primary.main' : '#6b7280',
+        color: active ? 'primary.main' : 'var(--muted-foreground)',
       }}
     >
       {label}

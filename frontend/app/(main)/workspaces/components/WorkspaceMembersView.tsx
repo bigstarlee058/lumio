@@ -98,7 +98,7 @@ const PERMISSION_LABELS: Record<keyof InvitePermissions, string> = {
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
-  admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
+  admin: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
   member: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
   viewer: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
 };
@@ -380,7 +380,7 @@ export default function WorkspaceMembersView() {
     return (
       <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: '#fef2f2', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
+          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: 'var(--color-error-soft-bg)', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
             {fetchError || 'Failed to load workspace members'}
           </Box>
         </Box>
@@ -522,7 +522,7 @@ export default function WorkspaceMembersView() {
             )}
 
             {!isOwnerOrAdmin && (
-              <Box sx={{ border: '1px solid #fbbf24', bgcolor: '#fffbeb', p: 1.5, fontSize: 14, color: '#92400e', borderRadius: tokens.radius.md }}>
+              <Box sx={{ border: '1px solid #fbbf24', bgcolor: 'var(--color-warning-soft-bg)', p: 1.5, fontSize: 14, color: 'var(--color-warning-soft-text)', borderRadius: tokens.radius.md }}>
                 Only owner or admin can invite new members.
               </Box>
             )}

@@ -33,7 +33,7 @@ const BackgroundCard = memo(function BackgroundCard({
       style={{
         position: 'relative',
         overflow: 'hidden',
-        border: selected ? '2px solid var(--primary)' : '2px solid #d1d5db',
+        border: selected ? '2px solid var(--primary)' : '2px solid var(--border-color)',
         borderRadius: tokens.radius.md,
         aspectRatio: compact ? '2.35/1' : '16/9',
         cursor: 'pointer',

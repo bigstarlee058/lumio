@@ -20,6 +20,11 @@
     overflow-x: hidden;
     z-index: 40;
 
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-right-color: $lumio-color-border-dk;
+    }
+
     &--mobile {
       position: fixed;
       top: 0;
@@ -42,6 +47,10 @@
     flex-direction: column;
     min-width: 0;
     background: $lumio-color-bg;
+
+    @include dark {
+      background: $lumio-color-bg-dk;
+    }
   }
 }
 
@@ -69,6 +78,8 @@
     font-weight: 700;
     color: $lumio-color-text-primary;
     letter-spacing: -0.02em;
+
+    @include dark { color: $lumio-color-text-primary-dk; }
   }
 
   &-meta {
@@ -79,6 +90,11 @@
     border-radius: $lumio-radius-xs;
     padding: 1px 5px;
     letter-spacing: 0.02em;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+      background: $lumio-color-ink-200-dk;
+    }
   }
 }
 
@@ -131,6 +147,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @include dark { color: $lumio-color-text-primary-dk; }
 }
 
 .lumio-sidebar__ws-role {
@@ -139,10 +157,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @include dark { color: $lumio-color-text-secondary-dk; }
 }
 
 .lumio-sidebar__ws-chevron {
   color: $lumio-color-ink-400;
+
+  @include dark { color: $lumio-color-ink-400-dk; }
   flex-shrink: 0;
   transition: transform 0.15s;
 
@@ -164,6 +186,11 @@
   padding: 4px;
   z-index: 50;
 
+  @include dark {
+    background: $lumio-color-surface-dk;
+    border-color: $lumio-color-border-dk;
+  }
+
   &-label {
     font-size: 11px;
     font-weight: 600;
@@ -171,6 +198,8 @@
     padding: 4px 8px 6px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+
+    @include dark { color: $lumio-color-ink-400-dk; }
   }
 }
 
@@ -188,6 +217,8 @@
   color: $lumio-color-text-primary;
   text-align: left;
   transition: background 0.1s;
+
+  @include dark { color: $lumio-color-text-primary-dk; }
 
   &:hover {
     background: $lumio-color-ink-50;
@@ -279,6 +310,8 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding: 8px 8px 4px;
+
+  @include dark { color: $lumio-color-ink-400-dk; }
 }
 
 .lumio-sidebar__nav-item {
@@ -299,12 +332,15 @@
   transition: background 0.1s, color 0.1s;
   font-family: inherit;
 
+  @include dark { color: $lumio-color-text-secondary-dk; }
+
   &:hover {
     background: $lumio-color-ink-50;
     color: $lumio-color-text-primary;
 
     @include dark {
       background: $lumio-color-ink-100-dk;
+      color: $lumio-color-text-primary-dk;
     }
   }
 
@@ -348,6 +384,8 @@
   flex-shrink: 0;
   padding: 10px;
   border-top: 1px solid $lumio-color-border;
+
+  @include dark { border-top-color: $lumio-color-border-dk; }
 }
 
 .lumio-sidebar__storage {
@@ -355,9 +393,7 @@
   border-radius: $lumio-radius-md;
   background: $lumio-color-ink-50;
 
-  @include dark {
-    background: $lumio-color-ink-100-dk;
-  }
+  @include dark { background: $lumio-color-ink-100-dk; }
 
   &-head {
     display: flex;
@@ -366,6 +402,8 @@
     font-size: 12px;
     color: $lumio-color-text-secondary;
     margin-bottom: 6px;
+
+    @include dark { color: $lumio-color-text-secondary-dk; }
   }
 
   &-label {
@@ -382,6 +420,8 @@
     background: $lumio-color-border;
     overflow: hidden;
     margin-bottom: 8px;
+
+    @include dark { background: $lumio-color-border-dk; }
   }
 
   &-fill {
@@ -405,6 +445,11 @@
   top: 0;
   z-index: 30;
   flex-shrink: 0;
+
+  @include dark {
+    background: $lumio-color-surface-dk;
+    border-bottom-color: $lumio-color-border-dk;
+  }
 
   &__breadcrumbs {
     flex: 1;
@@ -432,9 +477,16 @@
     transition: background 0.1s, color 0.1s;
     font-family: inherit;
 
+    @include dark { color: $lumio-color-ink-500-dk; }
+
     &:hover {
       background: $lumio-color-ink-100;
       color: $lumio-color-text-primary;
+
+      @include dark {
+        background: $lumio-color-ink-100-dk;
+        color: $lumio-color-text-primary-dk;
+      }
     }
   }
 
@@ -487,8 +539,12 @@
     margin-right: 4px;
     flex-shrink: 0;
 
+    @include dark { color: $lumio-color-ink-500-dk; }
+
     &:hover {
       background: $lumio-color-ink-100;
+
+      @include dark { background: $lumio-color-ink-100-dk; }
     }
   }
 }

@@ -67,9 +67,9 @@ export function FinlabTransactionCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 17 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 17 }}>
           Last Transaction
-          <Info size={16} color="#94a3b8" />
+          <Info size={16} color="var(--muted-foreground)" />
         </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
       </Box>
@@ -102,7 +102,7 @@ export function FinlabTransactionCard({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <BrandLogoAvatar sender={receipt.sender} vendorName={vendorLabel} size={48} />
                   <div>
-                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: '#1e293b', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
                       {vendorLabel}
                     </Typography>
                     <Typography sx={{ fontSize: 13, color: 'var(--muted-foreground)', fontWeight: 500, mt: 0.5 }}>
@@ -113,7 +113,7 @@ export function FinlabTransactionCard({
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-                    <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#1e293b' }}>
+                    <Typography sx={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>
                       {hasValidReceivedAt
                         ? receivedAt?.toLocaleDateString('en-US', {
                             month: 'long',
@@ -133,7 +133,7 @@ export function FinlabTransactionCard({
                   </Box>
 
                   <Box sx={{ width: 96, textAlign: 'right' }}>
-                    <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, color: '#1e293b', display: 'block' }}>
+                    <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, color: 'var(--foreground)', display: 'block' }}>
                       {amount == null ? '—' : formatAmount(amount)}
                     </Typography>
                   </Box>
@@ -147,7 +147,7 @@ export function FinlabTransactionCard({
                         padding: '6px 16px',
                         fontSize: 13,
                         fontWeight: 700,
-                        backgroundColor: '#f0fdf4',
+                        backgroundColor: 'var(--color-success-soft-bg)',
                         color: '#16a34a',
                       }}
                     >

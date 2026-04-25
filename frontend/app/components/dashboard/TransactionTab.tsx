@@ -105,7 +105,7 @@ export function TransactionTab() {
 
   if (error && transactions.length === 0) {
     return (
-      <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fff1f2', p: 2, color: 'var(--destructive)', mb: 2 }}>
+      <Box sx={{ border: '1px solid #fecaca', bgcolor: 'var(--color-error-soft-bg)', p: 2, color: 'var(--destructive)', mb: 2 }}>
         {error}
       </Box>
     );

@@ -6,16 +6,16 @@ import React from 'react';
 
 const restoreSx = {
   display: 'inline-flex', alignItems: 'center', gap: 0.75,
-  border: '1px solid #a7f3d0', bgcolor: '#ecfdf5', px: 1.5, py: 0.75,
-  fontSize: 12, fontWeight: 600, color: '#065f46', cursor: 'pointer',
-  '&:hover': { bgcolor: '#d1fae5' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+  border: '1px solid var(--color-success-soft-border)', bgcolor: 'var(--color-success-soft-bg)', px: 1.5, py: 0.75,
+  fontSize: 12, fontWeight: 600, color: 'var(--color-success-soft-text)', cursor: 'pointer',
+  '&:hover': { bgcolor: 'var(--color-success-soft-bg)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
 };
 
 const deleteSx = {
   display: 'inline-flex', alignItems: 'center', gap: 0.75,
-  border: '1px solid #fecaca', bgcolor: '#fef2f2', px: 1.5, py: 0.75,
+  border: '1px solid #fecaca', bgcolor: 'var(--color-error-soft-bg)', px: 1.5, py: 0.75,
   fontSize: 12, fontWeight: 600, color: 'var(--destructive)', cursor: 'pointer',
-  '&:hover': { bgcolor: '#fee2e2' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+  '&:hover': { bgcolor: 'var(--color-error-soft-bg)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
 };
 
 const emptySx = {

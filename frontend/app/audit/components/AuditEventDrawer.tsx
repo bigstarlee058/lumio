@@ -62,7 +62,7 @@ function EventDrawerBody({ event, onRollback }: { event: AuditEvent; onRollback?
   const formatted = formatAuditEvent(event);
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pb: 3 }}>
-      <Box sx={{ border: '1px solid #bfdbfe', bgcolor: '#eff6ff', p: 2 }}>
+      <Box sx={{ border: '1px solid var(--color-info-soft-border)', bgcolor: 'var(--color-info-soft-bg)', p: 2 }}>
         <Typography variant="body2" fontWeight={600} style={{ color: '#1e3a5f' }}>
           {formatted.description}
         </Typography>

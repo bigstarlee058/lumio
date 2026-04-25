@@ -72,13 +72,13 @@ function ActionButton({ action, active }: { action: IntegrationAction; active: b
 function IntegrationBadge({ recommended, badge }: { recommended: boolean; badge: React.ReactNode }): React.JSX.Element {
   if (recommended) {
     return (
-      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: tokens.radius.sm }}>
+      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: 'var(--color-warning-soft-bg)', color: 'var(--color-warning-soft-text)', border: '1px solid var(--color-warning-soft-border)', borderRadius: tokens.radius.sm }}>
         <Star style={{ height: 12, width: 12, marginRight: 4 }} />{badge}
       </Box>
     );
   }
   return (
-    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', borderRadius: tokens.radius.sm }}>
+    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)', borderRadius: tokens.radius.sm }}>
       <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {badge}
     </Box>
   );

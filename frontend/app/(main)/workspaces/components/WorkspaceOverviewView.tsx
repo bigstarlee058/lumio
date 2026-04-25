@@ -474,12 +474,13 @@ export default function WorkspaceOverviewView() {
           {currentWorkspace.memberRole === 'owner' && (
             <Box
               sx={{
-                border: '1px solid rgba(239,68,68,0.3)',
-                bgcolor: 'rgba(254,242,242,0.5)',
+                border: '1px solid',
+                borderColor: 'var(--color-error-soft-border)',
+                bgcolor: 'var(--color-error-soft-bg)',
                 p: 2,
               }}
             >
-              <Typography variant="body2" fontWeight={500} sx={{ color: '#7f1d1d', mb: 0.5 }}>
+              <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--destructive)', mb: 0.5 }}>
                 Danger Zone
               </Typography>
               <Typography variant="caption" sx={{ color: 'var(--destructive)', display: 'block', mb: 1.5 }}>

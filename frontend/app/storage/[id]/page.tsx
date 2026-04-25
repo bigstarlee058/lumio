@@ -321,10 +321,10 @@ export default function FileDetailsPage() {
     const status = availability.status;
     const chipSx =
       status === 'missing'
-        ? { bgcolor: '#fef2f2', color: 'var(--destructive)', border: '1px solid #fecaca' }
+        ? { bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)', border: '1px solid #fecaca' }
         : status === 'both'
-          ? { bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }
-          : { bgcolor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' };
+          ? { bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)' }
+          : { bgcolor: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: '1px solid var(--color-info-soft-border)' };
 
     return (
       <Chip
@@ -454,7 +454,7 @@ export default function FileDetailsPage() {
               <Chip
                 label={getStatusLabel(statement.status)}
                 size="small"
-                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
+                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)' }}
               />
               {renderAvailabilityBadge(fileAvailability)}
               <Chip
@@ -609,7 +609,7 @@ export default function FileDetailsPage() {
 
             {!previewLoading && previewError && (
               <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: 'background.paper', px: 2, textAlign: 'center' }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#fef2f2', px: 1.5, py: 0.5, fontSize: 14, color: 'var(--destructive)' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'var(--color-error-soft-bg)', px: 1.5, py: 0.5, fontSize: 14, color: 'var(--destructive)' }}>
                   {previewError}
                 </Box>
                 <Box
@@ -734,11 +734,11 @@ export default function FileDetailsPage() {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
-                            <Chip label={link.permission} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
+                            <Chip label={link.permission} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' }} />
                             <Chip
                               label={link.status}
                               size="small"
-                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' }) }}
+                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' } : { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' }) }}
                             />
                             {link.expiresAt && (
                               <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--muted)', color: 'var(--foreground)' }} />

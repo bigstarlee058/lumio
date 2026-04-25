@@ -27,7 +27,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
               height: 36,
               alignItems: 'center',
               justifyContent: 'center',
-              color: item.active ? 'var(--primary)' : '#6b7280',
+              color: item.active ? 'var(--primary)' : 'var(--muted-foreground)',
             }}
           >
             <RenderIcon icon={item.icon} size={20} />
@@ -95,7 +95,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
         ? 'rgba(var(--primary-rgb),0.1)'
         : 'rgba(0,0,0,0.06)'
       : 'transparent',
-    color: item.active ? '#111827' : '#4b5563',
+    color: item.active ? 'var(--foreground)' : 'var(--text-secondary)',
     fontWeight: item.active ? 500 : 400,
     ...(depth > 0 ? { marginLeft: 24 } : {}),
   };

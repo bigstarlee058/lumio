@@ -68,7 +68,7 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
                       ? '#059669'
                       : item.change.type === 'decrease'
                         ? '#dc2626'
-                        : '#6b7280',
+                        : 'var(--muted-foreground)',
                 }}
               >
                 {item.change.value > 0 ? '+' : ''}

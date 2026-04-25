@@ -23,7 +23,7 @@ function TopSpendersBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
+      <div style={{ border: '1px dashed var(--border-color)', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
         {vm.labels.noData}
       </div>
     );

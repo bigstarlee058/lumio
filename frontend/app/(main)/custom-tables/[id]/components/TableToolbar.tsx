@@ -41,7 +41,7 @@ function canBulkMarkRows({ selectedIds, bulkMarking }: BulkMarkParams): boolean 
 
 interface QuickTabButtonProps { tab: QuickTab; isActive: boolean; setActiveTabId: (id: string) => void; }
 function QuickTabButton({ tab, isActive, setActiveTabId }: QuickTabButtonProps): React.JSX.Element {
-  const color = isActive ? 'primary.main' : '#6b7280';
+  const color = isActive ? 'primary.main' : 'var(--muted-foreground)';
   const countBg = isActive ? 'rgba(22,129,24,0.1)' : 'var(--muted)';
   return (
     <Box component="button" onClick={() => { if (!isActive) setActiveTabId(tab.id); }} sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color, '&:hover': { color: isActive ? 'primary.main' : 'var(--foreground)' } }}>
@@ -61,7 +61,7 @@ function TabsRow(p: P): React.JSX.Element {
       </Box>
       <Box sx={{ display: 'flex', minWidth: 0, flex: 1, alignItems: 'center', justifyContent: 'flex-end', gap: 2.5, overflowX: 'auto' }}>
         {p.quickTabs.map(tab => <QuickTabButton key={tab.id} tab={tab} isActive={p.normalizedActiveTabId === tab.id} setActiveTabId={p.setActiveTabId} />)}
-        <Box component="button" type="button" onClick={() => { if (colTabActive) return; p.setActiveTabId(p.columnsTabId); }} sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: colTabActive ? 'primary.main' : '#6b7280', '&:hover': { color: colTabActive ? 'primary.main' : 'var(--foreground)' } }}>
+        <Box component="button" type="button" onClick={() => { if (colTabActive) return; p.setActiveTabId(p.columnsTabId); }} sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: colTabActive ? 'primary.main' : 'var(--muted-foreground)', '&:hover': { color: colTabActive ? 'primary.main' : 'var(--foreground)' } }}>
           {tx(p.t, ['actions', 'columns'], 'Columns')}
           {colTabActive && <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, bgcolor: 'primary.main' }} />}
         </Box>
@@ -99,7 +99,7 @@ function BulkActionsRow(p: P): React.JSX.Element {
         <Box component="button" onClick={p.handlePrintTable} sx={{ ...BTN_BASE_SX, color: 'var(--text-secondary)', '&:hover': { bgcolor: 'var(--muted)', color: 'var(--foreground)' } }}>
           <Printer className="h-3.5 w-3.5" /><span>{tx(p.t, ['actions', 'print'], 'Print')}</span>
         </Box>
-        <Box component="button" onClick={() => p.openBulkDeleteModal(p.selectedRowIds)} disabled={p.selectedRowIds.length === 0} sx={{ ...BTN_BASE_SX, color: 'var(--text-secondary)', '&:hover': { borderColor: '#fecaca', bgcolor: '#fef2f2', color: 'var(--destructive)' } }}>
+        <Box component="button" onClick={() => p.openBulkDeleteModal(p.selectedRowIds)} disabled={p.selectedRowIds.length === 0} sx={{ ...BTN_BASE_SX, color: 'var(--text-secondary)', '&:hover': { borderColor: '#fecaca', bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)' } }}>
           <Trash2 className="h-3.5 w-3.5" /><span>{tx(p.t, ['actions', 'delete'], 'Delete')}</span>
         </Box>
       </Box>

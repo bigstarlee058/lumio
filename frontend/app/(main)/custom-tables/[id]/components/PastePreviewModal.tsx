@@ -90,8 +90,8 @@ export function PastePreviewModal({
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {pastePreview.hasErrors && (
             <Box sx={{ flexShrink: 0, px: 3, py: 1.5, borderBottom: '1px solid var(--muted)', bgcolor: 'background.paper' }}>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, border: '1px solid #fcd34d', bgcolor: '#fffbeb', p: 1.5 }}>
-                <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#92400e', whiteSpace: 'nowrap', paddingTop: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, border: '1px solid var(--color-warning-soft-border)', bgcolor: 'var(--color-warning-soft-bg)', p: 1.5 }}>
+                <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-warning-soft-text)', whiteSpace: 'nowrap', paddingTop: 2 }}>
                   {tx(t, ['paste', 'errorsTitle'], 'Errors')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, rowGap: 0.25 }}>
@@ -100,7 +100,7 @@ export function PastePreviewModal({
                     .map(key => (
                       <Box
                         key={key}
-                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(251,191,36,0.2)', px: 1, py: 0.25, fontSize: 12, fontWeight: 500, color: '#b45309' }}
+                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(251,191,36,0.2)', px: 1, py: 0.25, fontSize: 12, fontWeight: 500, color: 'var(--color-warning-soft-text)' }}
                       >
                         <span>{tx(t, ['paste', 'errors', key], key)}:</span>
                         <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>{pastePreview.errors[key]}</span>
@@ -137,7 +137,7 @@ export function PastePreviewModal({
                         {row.cells.map((cell, index) => (
                           <td
                             key={`${row.id}-${index}`}
-                            style={{ padding: '8px 12px', borderRight: '1px solid var(--muted)', background: cell.error ? '#fef2f2' : 'transparent', color: cell.error ? '#b91c1c' : 'var(--foreground)' }}
+                            style={{ padding: '8px 12px', borderRight: '1px solid var(--muted)', background: cell.error ? 'var(--color-error-soft-bg)' : 'transparent', color: cell.error ? '#b91c1c' : 'var(--foreground)' }}
                           >
                             {cell.sourceIndex !== null ? (
                               <input

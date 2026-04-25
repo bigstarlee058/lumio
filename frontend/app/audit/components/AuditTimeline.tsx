@@ -49,7 +49,7 @@ function AuditTimelineItem({
   const Icon = ACTION_ICON_MAP[event.action];
   const entityLabel = ENTITY_TYPE_LABELS[event.entityType] ?? event.entityType;
   const initials = getInitials(event.actorLabel);
-  const avatarColor = event.actorType === 'system' ? '#64748b' : getAvatarColor(event.actorLabel);
+  const avatarColor = event.actorType === 'system' ? 'var(--muted-foreground)' : getAvatarColor(event.actorLabel);
 
   return (
     <li className="audit-item">

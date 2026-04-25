@@ -76,7 +76,7 @@ export function FilterOptionRow({
           borderRadius: tokens.radius.md,
           transition: 'background 0.15s',
         }}
-        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)'; }}
         onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -157,7 +157,7 @@ export function FilterOptionRow({
         cursor: 'pointer',
         transition: 'background 0.15s',
       }}
-      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)'; }}
       onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
     >
       <span>{label}</span>

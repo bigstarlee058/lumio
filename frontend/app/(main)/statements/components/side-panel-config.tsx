@@ -52,7 +52,7 @@ const buildSections = (p: SidePanelConfigParams): SidePanelPageConfig['sections'
     id: 'work-queue', type: 'navigation',
     title: p.tx(['sidePanel', 'workQueueTitle'], p.tx(['sidePanel', 'todoTitle'], 'Work queue')),
     titleClassName: 'text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-gray-300',
-    className: 'rounded-2xl border border-gray-100 bg-white px-1 pt-1',
+    className: 'rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] px-1 pt-1',
     items: buildWorkQueueItems(p),
   },
   {

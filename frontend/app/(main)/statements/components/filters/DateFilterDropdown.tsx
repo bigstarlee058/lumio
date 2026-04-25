@@ -126,7 +126,7 @@ export function DateFilterDropdown({
                     cursor: 'pointer',
                     transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
                 >
                   <span>{option.label}</span>

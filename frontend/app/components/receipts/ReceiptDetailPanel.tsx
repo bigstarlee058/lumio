@@ -259,7 +259,7 @@ export function ReceiptDetailPanel({
         }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'var(--muted)', p: 2.5 }}>
+          <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'var(--muted)', p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: 'var(--text-secondary)' }}>
                 {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
@@ -317,7 +317,7 @@ export function ReceiptDetailPanel({
             )}
           </Box>
 
-          <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'background.paper', p: 2.5 }}>
+          <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2.5 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: 'var(--text-secondary)' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                 <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Status</Typography>
@@ -358,7 +358,7 @@ export function ReceiptDetailPanel({
               flexDirection: { xs: 'column', sm: 'row' },
               justifyContent: { sm: 'flex-end' },
               gap: 1.5,
-              borderTop: '1px solid #e2e8f0',
+              borderTop: '1px solid var(--border-color)',
               pt: 2.5,
             }}
           >

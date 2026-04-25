@@ -297,7 +297,7 @@ export default function CreateExpenseDrawer({
                     <button
                       type="button"
                       onClick={() => setCurrencyPickerOpen(true)}
-                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
+                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
                     >
                       {manualDraft.currency}
                       <ChevronDown size={20} style={{ color: 'var(--muted-foreground)' }} />
@@ -307,7 +307,7 @@ export default function CreateExpenseDrawer({
               </div>
             ) : (
               <>
-                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
+                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
                   <FileText size={56} style={{ color: 'color-mix(in srgb, var(--muted-foreground) 60%, transparent)' }} />
                   <span style={{ position: 'absolute', left: '50%', top: '50%', display: 'flex', height: 40, width: 40, transform: 'translate(8px, 4px)', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, background: 'var(--primary)', color: '#fff' }}>
                     <Plus size={20} />
@@ -322,7 +322,7 @@ export default function CreateExpenseDrawer({
                   />
                 </label>
 
-                <div style={{ overflow: 'hidden', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)' }}>
+                <div style={{ overflow: 'hidden', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--card-bg, #fff)' }}>
                   <button
                     type="button"
                     onClick={() => setManualStep('amount')}
@@ -340,7 +340,7 @@ export default function CreateExpenseDrawer({
                     <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
+                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
 
                   <div style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -366,7 +366,7 @@ export default function CreateExpenseDrawer({
                     />
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
+                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
 
                   <div style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -395,7 +395,7 @@ export default function CreateExpenseDrawer({
                     ) : null}
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
+                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
 
                   <button
                     type="button"
@@ -416,7 +416,7 @@ export default function CreateExpenseDrawer({
                     <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
+                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
 
                   <div style={{ padding: '12px 16px' }}>
                     <DatePicker
@@ -427,7 +427,7 @@ export default function CreateExpenseDrawer({
                     />
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, #d7e2ef)' }} />
+                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
 
                   <button
                     type="button"
@@ -451,7 +451,7 @@ export default function CreateExpenseDrawer({
             )}
 
             {files.length > 0 && !currencyPickerOpen ? (
-              <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)', padding: '12px' }}>
+              <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--card-bg, #fff)', padding: '12px' }}>
                 <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
                   Selected files
                 </p>
@@ -459,7 +459,7 @@ export default function CreateExpenseDrawer({
                   {files.map(file => (
                     <div
                       key={`${file.name}-${file.size}`}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.sm, border: '1px solid var(--border-color, #d7e2ef)', padding: '8px 12px', fontSize: 14 }}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.sm, border: '1px solid var(--border-color, var(--border-color))', padding: '8px 12px', fontSize: 14 }}
                     >
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--foreground)' }}>{file.name}</span>
                       <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
@@ -472,7 +472,7 @@ export default function CreateExpenseDrawer({
             ) : null}
 
             {error ? (
-              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: 'var(--destructive)' }}>
+              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: 'var(--color-error-soft-bg)', padding: '8px 12px', fontSize: 14, color: 'var(--destructive)' }}>
                 {error}
               </div>
             ) : null}

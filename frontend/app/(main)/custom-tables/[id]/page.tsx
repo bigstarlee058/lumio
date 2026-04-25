@@ -568,13 +568,13 @@ export default function CustomTableDetailPage() {
                     if (normalizedActiveTabId === tab.id) return;
                     setActiveTabId(tab.id);
                   }}
-                  sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isActive ? 'primary.main' : '#6b7280', '&:hover': { color: isActive ? 'primary.main' : 'var(--foreground)' } }}
+                  sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isActive ? 'primary.main' : 'var(--muted-foreground)', '&:hover': { color: isActive ? 'primary.main' : 'var(--foreground)' } }}
                 >
                   {tab.label}
                   {typeof tab.count === 'number' && (
                     <Box
                       component="span"
-                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(22,129,24,0.1)' : 'var(--muted)', color: isActive ? 'primary.main' : '#6b7280' }}
+                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(22,129,24,0.1)' : 'var(--muted)', color: isActive ? 'primary.main' : 'var(--muted-foreground)' }}
                     >
                       {tab.count}
                     </Box>
@@ -592,7 +592,7 @@ export default function CustomTableDetailPage() {
                 if (normalizedActiveTabId === columnsTabId) return;
                 setActiveTabId(columnsTabId);
               }}
-              sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#6b7280', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--foreground)' } }}
+              sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--muted-foreground)', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--foreground)' } }}
             >
               {tx(t, ['actions', 'columns'], 'Columns')}
               {normalizedActiveTabId === columnsTabId && (
@@ -611,7 +611,7 @@ export default function CustomTableDetailPage() {
                   type="button"
                   onClick={() => markSelectedRowsPaid(true)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? 'var(--text-secondary)' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <CheckCircle
                     style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#22c55e' : 'rgba(34,197,94,0.5)' }}
@@ -627,7 +627,7 @@ export default function CustomTableDetailPage() {
                   type="button"
                   onClick={() => markSelectedRowsPaid(false)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? 'var(--text-secondary)' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <XCircle
                     style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#ef4444' : 'rgba(239,68,68,0.5)' }}
@@ -650,7 +650,7 @@ export default function CustomTableDetailPage() {
                   component="button"
                   onClick={() => openBulkDeleteModal(selectedRowIds)}
                   disabled={selectedRowIds.length === 0}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: 'var(--text-secondary)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#fecaca', bgcolor: '#fef2f2', color: 'var(--destructive)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: 'var(--text-secondary)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#fecaca', bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>{tx(t, ['actions', 'delete'], 'Delete')}</span>

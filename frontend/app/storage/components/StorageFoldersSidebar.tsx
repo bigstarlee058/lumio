@@ -30,8 +30,8 @@ function FolderMoveFeedbackBanner({
 }): React.JSX.Element {
   const sx =
     folderMoveFeedback.tone === 'success'
-      ? { borderColor: '#a7f3d0', bgcolor: '#ecfdf5', color: '#065f46' }
-      : { borderColor: '#fecaca', bgcolor: '#fef2f2', color: 'var(--destructive)' };
+      ? { borderColor: 'var(--color-success-soft-border)', bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' }
+      : { borderColor: '#fecaca', bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)' };
   return (
     <Box
       role={folderMoveFeedback.tone === 'error' ? 'alert' : 'status'}

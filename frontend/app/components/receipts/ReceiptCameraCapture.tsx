@@ -69,7 +69,7 @@ export function ReceiptCameraCapture({
   return (
     <ModalShell isOpen={isOpen} onClose={onClose} title="Scan receipt" size="lg">
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <Box sx={{ overflow: 'hidden', border: '1px solid #e2e8f0', bgcolor: '#020617' }}>
+        <Box sx={{ overflow: 'hidden', border: '1px solid var(--border-color)', bgcolor: '#020617' }}>
           <video
             ref={videoRef}
             autoPlay
@@ -80,11 +80,11 @@ export function ReceiptCameraCapture({
         </Box>
 
         {error ? (
-          <Box sx={{ border: '1px solid #fcd34d', bgcolor: '#fffbeb', px: 2, py: 1.5 }}>
-            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#92400e' }}>
+          <Box sx={{ border: '1px solid var(--color-warning-soft-border)', bgcolor: 'var(--color-warning-soft-bg)', px: 2, py: 1.5 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-warning-soft-text)' }}>
               Use your camera or choose a photo instead.
             </Typography>
-            <Typography style={{ fontSize: 14, color: '#92400e', marginTop: 4 }}>{error}</Typography>
+            <Typography style={{ fontSize: 14, color: 'var(--color-warning-soft-text)', marginTop: 4 }}>{error}</Typography>
           </Box>
         ) : null}
 

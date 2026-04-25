@@ -83,7 +83,7 @@ export function FinlabIncomeCard({
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--text-secondary)', fontWeight: 500, fontSize: 14 }}>
             Income Analysis
-            <Info size={14} color="#94a3b8" />
+            <Info size={14} color="var(--muted-foreground)" />
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
@@ -99,8 +99,8 @@ export function FinlabIncomeCard({
                 fontSize: 11,
                 fontWeight: 700,
                 ...(pct >= 0
-                  ? { backgroundColor: '#f0fdf4', color: '#16a34a' }
-                  : { backgroundColor: '#fff1f2', color: 'var(--destructive)' }),
+                  ? { backgroundColor: 'var(--color-success-soft-bg)', color: '#16a34a' }
+                  : { backgroundColor: 'var(--color-error-soft-bg)', color: 'var(--destructive)' }),
               }}
             >
               ⬈ {pct > 0 ? '+' : ''}

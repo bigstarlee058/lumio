@@ -56,7 +56,7 @@ const CategoryBadge = ({ categoryId, categories, hint }: CategoryBadgeProps): Re
   const selected = categories.find(c => c.id === categoryId);
   return (
     <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: 'var(--text-secondary)' }}>
-      <Box sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-color)', bgcolor: selected?.color || '#f3f4f6' }}>
+      <Box sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-color)', bgcolor: selected?.color || 'var(--muted)' }}>
         {selected?.icon ? <CategoryIconFallback size={16} /> : <Image src="/icons/icons8-google-sheets-48.png" alt="Google Sheets" width={16} height={16} className="h-4 w-4" />}
       </Box>
       <span>{hint}</span>

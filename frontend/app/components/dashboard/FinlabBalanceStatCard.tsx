@@ -41,7 +41,7 @@ export function FinlabBalanceStatCard({
       tooltip: {
         trigger: 'axis',
         axisPointer: { type: 'shadow' },
-        backgroundColor: '#1e293b',
+        backgroundColor: 'var(--foreground)',
         borderWidth: 0,
         textStyle: { color: '#fff' },
         formatter: (params: ChartTooltipParam[]) => {
@@ -58,7 +58,7 @@ export function FinlabBalanceStatCard({
           const date = new Date(d.date);
           return date.toLocaleDateString('en-US', { month: 'short' });
         }),
-        axisLine: { show: true, lineStyle: { color: '#f1f5f9' } },
+        axisLine: { show: true, lineStyle: { color: 'var(--muted)' } },
         axisTick: { show: false },
         axisLabel: { color: 'var(--muted-foreground)', fontSize: 11, margin: 12 },
       },
@@ -81,7 +81,7 @@ export function FinlabBalanceStatCard({
           name: 'Income',
           type: 'bar',
           data: chartData.map(d => d.income),
-          itemStyle: { color: '#a7f3d0' },
+          itemStyle: { color: 'var(--color-success-soft-border)' },
           barGap: '20%',
           barWidth: '25%',
         },
@@ -109,9 +109,9 @@ export function FinlabBalanceStatCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#1e293b', fontWeight: 700, fontSize: 16 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 16 }}>
           Balance Statistics
-          <Info size={16} color="#94a3b8" />
+          <Info size={16} color="var(--muted-foreground)" />
         </Box>
         <PeriodDropdown value={range} onChange={onRangeChange} />
       </Box>

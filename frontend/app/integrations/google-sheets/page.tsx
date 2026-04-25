@@ -792,13 +792,13 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   borderRadius: tokens.radius.sm,
-                                  bgcolor: '#fffbeb',
+                                  bgcolor: 'var(--color-warning-soft-bg)',
                                   px: 1,
                                   py: 0.25,
                                   fontSize: 11,
                                   fontWeight: 600,
-                                  color: '#92400e',
-                                  border: '1px solid #fde68a',
+                                  color: 'var(--color-warning-soft-text)',
+                                  border: '1px solid var(--color-warning-soft-border)',
                                 }}
                               >
                                 <AlertCircle style={{ height: 12, width: 12, marginRight: 4 }} />{' '}
@@ -811,13 +811,13 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   borderRadius: tokens.radius.sm,
-                                  bgcolor: '#ecfdf5',
+                                  bgcolor: 'var(--color-success-soft-bg)',
                                   px: 1,
                                   py: 0.25,
                                   fontSize: 11,
                                   fontWeight: 600,
-                                  color: '#065f46',
-                                  border: '1px solid #d1fae5',
+                                  color: 'var(--color-success-soft-text)',
+                                  border: '1px solid var(--color-success-soft-bg)',
                                 }}
                               >
                                 <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} />{' '}
@@ -855,12 +855,12 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                               justifyContent: 'center',
                               gap: 8,
                               borderRadius: tokens.radius.md,
-                              border: '1px solid #fcd34d',
-                              background: '#fffbeb',
+                              border: '1px solid var(--color-warning-soft-border)',
+                              background: 'var(--color-warning-soft-bg)',
                               padding: '6px 12px',
                               fontSize: 12,
                               fontWeight: 600,
-                              color: '#78350f',
+                              color: 'var(--color-warning-soft-text)',
                               cursor: 'pointer',
                             }}
                           >

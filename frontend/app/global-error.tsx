@@ -33,7 +33,7 @@ export default function GlobalError({
               style={{
                 padding: '10px 16px',
                 borderRadius: tokens.radius.lg,
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border-color)',
                 background: 'var(--card-bg)',
                 cursor: 'pointer',
               }}

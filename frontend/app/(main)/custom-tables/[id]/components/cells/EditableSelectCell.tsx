@@ -134,8 +134,8 @@ export function EditableSelectCell({
                     padding: '8px 12px',
                     fontSize: 14,
                     cursor: 'pointer',
-                    background: isSelected ? '#eff6ff' : 'transparent',
-                    color: isSelected ? '#1d4ed8' : 'var(--foreground)',
+                    background: isSelected ? 'var(--color-info-soft-bg)' : 'transparent',
+                    color: isSelected ? 'var(--color-info-soft-text)' : 'var(--foreground)',
                     border: 'none',
                     display: 'block',
                   }}

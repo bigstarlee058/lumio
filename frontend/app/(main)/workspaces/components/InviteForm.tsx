@@ -49,7 +49,7 @@ function EmailRoleFields({
   onEmailChange,
   onRoleChange,
 }: EmailRoleFieldsProps): React.ReactElement {
-  const inputStyle: React.CSSProperties = { width: '100%', border: '1px solid #d1d5db', background: 'var(--card)', padding: '8px 12px', fontSize: 14, color: 'var(--foreground)', outline: 'none', borderRadius: tokens.radius.md, boxSizing: 'border-box', ...disabledStyle };
+  const inputStyle: React.CSSProperties = { width: '100%', border: '1px solid var(--border-color)', background: 'var(--card)', padding: '8px 12px', fontSize: 14, color: 'var(--foreground)', outline: 'none', borderRadius: tokens.radius.md, boxSizing: 'border-box', ...disabledStyle };
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
       <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -120,7 +120,7 @@ export function InviteForm({ isOwnerOrAdmin, onInvite }: InviteFormProps): React
     <form onSubmit={handleSubmit} style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
       <EmailRoleFields inviteEmail={inviteEmail} inviteRole={inviteRole} isOwnerOrAdmin={isOwnerOrAdmin} disabledStyle={disabledStyle} onEmailChange={setInviteEmail} onRoleChange={setInviteRole} />
       {inviteRole === 'member' && <PermissionsGrid invitePermissions={invitePermissions} isOwnerOrAdmin={isOwnerOrAdmin} onPermissionChange={handlePermissionChange} />}
-      {!isOwnerOrAdmin && <div style={{ border: '1px solid #fbbf24', background: '#fffbeb', padding: '10px 12px', fontSize: 14, color: '#92400e' }}>Only owner or admin can invite new members.</div>}
+      {!isOwnerOrAdmin && <div style={{ border: '1px solid #fbbf24', background: 'var(--color-warning-soft-bg)', padding: '10px 12px', fontSize: 14, color: 'var(--color-warning-soft-text)' }}>Only owner or admin can invite new members.</div>}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button type="submit" variant="contained" size="small" disabled={!isOwnerOrAdmin || inviteLoading} startIcon={<SendIcon size={16} />}>
           {inviteLoading ? 'Sending...' : 'Send invitation'}

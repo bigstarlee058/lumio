@@ -21,7 +21,7 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
     const isDark = resolvedTheme === 'dark';
     const tooltipBackground = isDark ? '#151C24' : '#1a1a1a';
     const tooltipText = isDark ? '#E2E8F0' : '#F5F3EF';
-    const mutedText = isDark ? '#8899AA' : '#7A869B';
+    const mutedText = isDark ? '#8899AA' : 'var(--muted-foreground)';
     const gridLine = isDark ? '#2A3442' : '#E8E4DC';
     const axisLine = isDark ? '#2A3442' : '#D1CCC4';
     const incomeLine = isDark ? '#34D399' : '#0D9568';
