@@ -4,6 +4,7 @@ import { X } from '@/app/components/icons';
 import type { ErrorItem, ErrorSection } from '../types';
 import { SectionWrapper } from './components/SectionWrapper';
 import { ERROR_BG, ERROR_BORDER, ERROR_ICON_COLOR, ERROR_ICONS } from './helpers/section-constants';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function
 function ErrorItemComponent({ item }: { item: ErrorItem }) {
@@ -16,7 +17,7 @@ function ErrorItemComponent({ item }: { item: ErrorItem }) {
         border: '1px solid',
         borderColor: ERROR_BORDER[item.severity],
         backgroundColor: ERROR_BG[item.severity],
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>

@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { tokens } from '@/lib/theme-tokens';
 
 const MIME_TYPES = [
   'application/pdf',
@@ -100,7 +101,7 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
     <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ padding: 8, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(var(--lumio-primary-rgb,22,129,24),0.1)', color: 'var(--lumio-primary,#3e9c35)' }}>
+          <div style={{ padding: 8, borderRadius: tokens.radius.full, background: 'rgba(var(--lumio-primary-rgb,22,129,24),0.1)', color: 'var(--lumio-primary,#3e9c35)' }}>
             <Image src={provider.logoSrc} alt={provider.logoAlt} width={20} height={20} />
           </div>
           <div>

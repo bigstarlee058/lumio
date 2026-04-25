@@ -4,6 +4,7 @@ import { gmailReceiptsApi } from '@/app/lib/api';
 import { Box, IconButton, Typography } from '@mui/material';
 import { X, ZoomIn, ZoomOut } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ReceiptPreviewModalProps {
   receiptId: string;
@@ -95,7 +96,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
             const dataUrl = `data:${attachment.mimeType};base64,${base64Data}`;
 
             return (
-              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)' }}>
+              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg }}>
                 <Box sx={{ p: 1.5, borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb' }}>
                   <Typography style={{ fontSize: 14, fontWeight: 500 }}>{attachment.filename}</Typography>
                 </Box>
@@ -103,14 +104,14 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
                   {isPdf ? (
                     <iframe
                       src={dataUrl}
-                      style={{ width: '100%', height: 600, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)' }}
+                      style={{ width: '100%', height: 600, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md }}
                       title={attachment.filename}
                     />
                   ) : isImage ? (
                     <img
                       src={dataUrl}
                       alt={attachment.filename}
-                      style={{ maxWidth: '100%', height: 'auto', borderRadius: 'var(--lumio-radius-md)' }}
+                      style={{ maxWidth: '100%', height: 'auto', borderRadius: tokens.radius.md }}
                     />
                   ) : (
                     <Box sx={{ textAlign: 'center', color: '#6b7280', py: 4 }}>
@@ -128,7 +129,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
 
     if (preview.emailBody) {
       return (
-        <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)', overflow: 'hidden' }}>
+        <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, overflow: 'hidden' }}>
           <iframe
             title="Receipt email preview"
             style={{ width: '100%', height: 600, border: 'none' }}
@@ -172,7 +173,7 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
           position: 'fixed',
           inset: 16,
           bgcolor: 'background.paper',
-          borderRadius: 'var(--lumio-radius-xl)',
+          borderRadius: tokens.radius.xl,
           zIndex: 50,
           display: 'flex',
           flexDirection: 'column',
@@ -181,14 +182,14 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: '1px solid #e5e7eb' }}>
           <Typography style={{ fontSize: 18, fontWeight: 700 }}>Receipt Preview</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: 'var(--lumio-radius-sm)' }}>
+            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: tokens.radius.sm }}>
               <ZoomOut style={{ width: 20, height: 20 }} />
             </IconButton>
             <Typography style={{ fontSize: 14, color: '#4b5563' }}>{zoom}%</Typography>
-            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: 'var(--lumio-radius-sm)' }}>
+            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: tokens.radius.sm }}>
               <ZoomIn style={{ width: 20, height: 20 }} />
             </IconButton>
-            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: 'var(--lumio-radius-sm)' }}>
+            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: tokens.radius.sm }}>
               <X style={{ width: 20, height: 20 }} />
             </IconButton>
           </Box>

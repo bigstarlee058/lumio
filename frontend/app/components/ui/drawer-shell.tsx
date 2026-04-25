@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { X } from '@/app/components/icons';
 import * as React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 export type DrawerPosition = 'left' | 'right';
 export type DrawerWidth = 'sm' | 'md' | 'lg' | 'xl';
@@ -91,7 +92,7 @@ export function DrawerShell({
         sx: [
           {
             width: drawerWidth,
-            borderRadius: 'var(--lumio-radius-xl)',
+            borderRadius: tokens.radius.xl,
             display: 'flex',
             flexDirection: 'column',
           },

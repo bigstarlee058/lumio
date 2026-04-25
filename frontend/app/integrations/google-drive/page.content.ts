@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'googleDriveIntegrationPage',
-  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive' },
+  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive', sk: 'Google Drive' },
   folderLabel: {
     ru: 'Папка в Drive',
     en: 'Drive folder',

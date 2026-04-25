@@ -8,6 +8,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
+import { tokens } from '@/lib/theme-tokens';
 
 interface WorkspaceStepProps {
   locale: SupportedLocale;
@@ -71,7 +72,7 @@ export function WorkspaceStep({
                 variant="outlined"
                 onClick={() => setCurrencyPickerOpen(false)}
                 sx={{
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   borderColor: 'divider',
                   bgcolor: 'background.paper',
                   color: 'text.primary',
@@ -146,7 +147,7 @@ export function WorkspaceStep({
               style={{
                 width: '100%',
                 border: '1px solid var(--mui-palette-divider)',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 background: 'var(--mui-palette-background-paper)',
                 padding: '10px 12px',
                 fontSize: 14,
@@ -211,7 +212,7 @@ export function WorkspaceStep({
               style={{
                 width: '100%',
                 border: '1px solid var(--mui-palette-divider)',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 background: 'var(--mui-palette-background-paper)',
                 padding: '10px 12px',
                 fontSize: 14,

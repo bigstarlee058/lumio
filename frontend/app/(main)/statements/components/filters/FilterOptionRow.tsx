@@ -5,6 +5,7 @@ import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import Box from '@mui/material/Box';
 import { Receipt } from '@/app/components/icons';
 import { Check } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 type FilterOptionRowProps = {
   label: string;
@@ -72,7 +73,7 @@ export function FilterOptionRow({
           background: 'none',
           border: 'none',
           cursor: 'pointer',
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           transition: 'background 0.15s',
         }}
         onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f9fafb'; }}
@@ -80,7 +81,7 @@ export function FilterOptionRow({
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           {iconUrl ? (
-            <img src={iconUrl} alt={label} style={{ width: 32, height: 32, borderRadius: 'var(--lumio-radius-full)', objectFit: 'contain' }} />
+            <img src={iconUrl} alt={label} style={{ width: 32, height: 32, borderRadius: tokens.radius.full, objectFit: 'contain' }} />
           ) : normalizedBankName === 'receipt' ? (
             <Box
               component="span"
@@ -90,7 +91,7 @@ export function FilterOptionRow({
                 justifyContent: 'center',
                 width: 32,
                 height: 32,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 bgcolor: 'grey.100',
                 color: 'text.secondary',
               }}
@@ -105,7 +106,7 @@ export function FilterOptionRow({
             <img
               src={resolvedAvatarUrl}
               alt={label}
-              style={{ width: 32, height: 32, borderRadius: 'var(--lumio-radius-full)', objectFit: 'cover' }}
+              style={{ width: 32, height: 32, borderRadius: tokens.radius.full, objectFit: 'cover' }}
             />
           ) : (
             <Box
@@ -115,7 +116,7 @@ export function FilterOptionRow({
                 justifyContent: 'center',
                 width: 32,
                 height: 32,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 bgcolor: 'grey.100',
                 fontSize: 12,
                 fontWeight: 600,

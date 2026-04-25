@@ -1,16 +1,17 @@
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
 import { Check, ChevronLeft, Search } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 const CURRENCY_BTN_STYLE: React.CSSProperties = {
   display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
-  borderRadius: 'var(--lumio-radius-md)', padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
+  borderRadius: tokens.radius.md, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
 };
 
 type CurrencyListProps = { items: CurrencySearchItem[]; onSelect: (code: string) => void };
 function CurrencyList({ items, onSelect }: CurrencyListProps): React.ReactElement {
   if (items.length === 0) {
-    return <p style={{ borderRadius: 'var(--lumio-radius-sm)', background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: '#6b7280' }}>No currencies found</p>;
+    return <p style={{ borderRadius: tokens.radius.sm, background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: '#6b7280' }}>No currencies found</p>;
   }
   return (
     <>
@@ -26,7 +27,7 @@ function CurrencyList({ items, onSelect }: CurrencyListProps): React.ReactElemen
 type SelectedCurrencyButtonProps = { item: CurrencySearchItem; onSelect: (code: string) => void };
 function SelectedCurrencyButton({ item, onSelect }: SelectedCurrencyButtonProps): React.ReactElement {
   return (
-    <button type="button" onClick={() => onSelect(item.code)} style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: 'var(--lumio-radius-md)', background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}>
+    <button type="button" onClick={() => onSelect(item.code)} style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.md, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}>
       <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
       <Check size={20} color="var(--primary)" />
     </button>

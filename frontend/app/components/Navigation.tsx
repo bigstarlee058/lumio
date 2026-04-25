@@ -28,6 +28,7 @@ import { useThemePreference } from './navigation/hooks/useThemePreference';
 import { LanguageDrawer } from './navigation/LanguageDrawer';
 import { MobileDrawer } from './navigation/MobileDrawer';
 import { UserMenuTriggerAndDropdown } from './navigation/UserMenu';
+import { tokens } from '@/lib/theme-tokens';
 
 const nunito = Nunito({ subsets: ['latin'], weight: ['800', '900'] });
 const HIDDEN_PATHS = ['/onboarding', '/login', '/register', '/shared', '/invite'];
@@ -100,7 +101,7 @@ export default function Navigation() {
           <div className="lumio-navigation__brand">
             <Link href="/" className="lumio-navigation__logo-link" data-tour-id="brand">
               <div className="lumio-navigation__logo-icon">
-                <Image src="/images/logo.jpg" alt="Lumio" width={32} height={32} style={{ borderRadius: 'var(--lumio-radius-sm)', display: 'block' }} />
+                <Image src="/images/logo.jpg" alt="Lumio" width={32} height={32} style={{ borderRadius: tokens.radius.sm, display: 'block' }} />
               </div>
               <span className={`lumio-navigation__logo-text ${nunito.className}`}>LUMIO</span>
             </Link>

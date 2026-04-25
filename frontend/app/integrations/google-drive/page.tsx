@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
+import { tokens } from '@/lib/theme-tokens';
 
 type DriveSettings = {
   folderId?: string | null;
@@ -44,7 +45,7 @@ function DriveLoadingView(): React.JSX.Element {
 function DriveNotLoggedInView({ t }: { t: DrivePageT }): React.JSX.Element {
   return (
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-      <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', textAlign: 'center' }}>
+      <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', textAlign: 'center' }}>
         <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>{t.status.disconnected.value}</Typography>
         <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.header.subtitle}</Typography>
       </Box>
@@ -64,14 +65,14 @@ type DriveSettingsPanelProps = {
 // eslint-disable-next-line max-lines-per-function
 function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpdateSettings }: DriveSettingsPanelProps): React.JSX.Element {
   return (
-    <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{t.settings.title}</Typography>
         <button
           type="button"
           onClick={onPickFolder}
           disabled={!status?.connected || saving}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--color-primary)', borderRadius: 'var(--lumio-radius-md)', padding: '6px 16px', fontSize: 14, fontWeight: 600, color: 'var(--color-primary)', background: 'transparent', cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--color-primary)', borderRadius: tokens.radius.md, padding: '6px 16px', fontSize: 14, fontWeight: 600, color: 'var(--color-primary)', background: 'transparent', cursor: 'pointer' }}
         >
           {t.actions.pickFolder}
         </button>
@@ -109,7 +110,7 @@ function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpd
             value={status?.settings?.syncTime || '03:00'}
             onChange={e => void onUpdateSettings({ syncTime: e.target.value })}
             disabled={!status?.connected || saving}
-            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', padding: '8px 12px', fontSize: 14, color: '#111827' }}
+            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: '#111827' }}
           />
         </Stack>
         <Stack spacing={0.5}>
@@ -123,7 +124,7 @@ function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpd
 
 function DriveInfoPanel({ t }: { t: DrivePageT }): React.JSX.Element {
   return (
-    <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', height: 'fit-content' }}>
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', height: 'fit-content' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
         <AlertCircle style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }} />
         <Stack spacing={1}>
@@ -207,7 +208,7 @@ export default function GoogleDriveIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', display: 'flex' }}>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', display: 'flex' }}>
           <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={24} height={24} />
         </Box>
         <Box>

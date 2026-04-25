@@ -10,6 +10,7 @@ import { AuditEventModal } from '../audit/components/AuditEventModal';
 import { AuditFilterBar } from '../audit/components/AuditFilterBar';
 import { AuditTimeline } from '../audit/components/AuditTimeline';
 import { assertRollbackSucceeded } from '../audit/utils/rollback-result';
+import { tokens } from '@/lib/theme-tokens';
 
 export default function AdminPage() {
   const t = useIntlayer('adminPage');
@@ -86,7 +87,7 @@ export default function AdminPage() {
         <AuditFilterBar filters={auditFilters} onFiltersChange={handleFiltersChange} />
 
         {auditError && (
-          <div style={{ padding: '10px 14px', marginBottom: 16, fontSize: 13, color: 'var(--lumio-color-danger)', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 'var(--lumio-radius-md)' }}>
+          <div style={{ padding: '10px 14px', marginBottom: 16, fontSize: 13, color: 'var(--lumio-color-danger)', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: tokens.radius.md }}>
             {auditError}
           </div>
         )}

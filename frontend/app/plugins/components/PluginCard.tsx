@@ -3,6 +3,7 @@
 import type React from 'react';
 import { Box, Typography } from '@mui/material';
 import { CheckCircle2 } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 interface PluginCardProps {
   icon: React.ReactNode;
@@ -20,7 +21,7 @@ export function PluginCard({ icon, name, description, enabled, enableLabel, disa
       sx={{
         border: '1px solid',
         borderColor: enabled ? 'rgba(5,150,105,0.4)' : 'var(--border-color, #e5e7eb)',
-        borderRadius: 'var(--lumio-radius-lg, 12px)',
+        borderRadius: tokens.radius.lg,
         p: 2.5,
         display: 'flex',
         flexDirection: 'column',
@@ -35,7 +36,7 @@ export function PluginCard({ icon, name, description, enabled, enableLabel, disa
           sx={{
             width: 40,
             height: 40,
-            borderRadius: 'var(--lumio-radius-md, 8px)',
+            borderRadius: tokens.radius.md,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -59,7 +60,7 @@ export function PluginCard({ icon, name, description, enabled, enableLabel, disa
               gap: 0.5,
               px: 1,
               py: 0.25,
-              borderRadius: 'var(--lumio-radius-sm, 6px)',
+              borderRadius: tokens.radius.sm,
               backgroundColor: 'rgba(5,150,105,0.1)',
               color: '#059669',
               fontSize: 11,
@@ -82,7 +83,7 @@ export function PluginCard({ icon, name, description, enabled, enableLabel, disa
         style={{
           marginTop: 'auto',
           padding: '8px 16px',
-          borderRadius: 'var(--lumio-radius-md, 8px)',
+          borderRadius: tokens.radius.md,
           border: enabled ? '1px solid #dc2626' : '1px solid var(--primary, #059669)',
           background: enabled ? 'transparent' : 'var(--primary, #059669)',
           color: enabled ? '#dc2626' : '#fff',

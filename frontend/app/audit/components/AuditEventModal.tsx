@@ -5,6 +5,7 @@ import type { AuditEvent } from '@/lib/api/audit';
 import React from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { relativeTime } from '../utils/relativeTime';
+import { tokens } from '@/lib/theme-tokens';
 
 interface AuditEventModalProps {
   event: AuditEvent | null;
@@ -69,7 +70,7 @@ export function AuditEventModal({ event, isOpen, onClose, onRollback, rollbackLo
             marginBottom: 12,
             background: 'var(--lumio-color-ink-50, #f8f8f9)',
             border: '1px solid var(--lumio-color-ink-150)',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             fontSize: 13,
             color: 'var(--lumio-color-ink-700)',
             lineHeight: 1.5,

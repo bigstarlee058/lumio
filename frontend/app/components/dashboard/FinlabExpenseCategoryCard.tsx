@@ -7,6 +7,7 @@ import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
+import { tokens } from '@/lib/theme-tokens';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -110,7 +111,7 @@ export function FinlabExpenseCategoryCard({
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                     <Box
-                      sx={{ width: 10, height: 10, borderRadius: 'var(--lumio-radius-full)', flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
+                      sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
                     />
                     <Typography
                       component="span"

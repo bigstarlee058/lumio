@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { buildNavItems, isNavItemActive } from './navigation/helpers/navigation-config';
+import { tokens } from '@/lib/theme-tokens';
 
 function WorkspaceSwitcher() {
   const { currentWorkspace, workspaces, switchWorkspace } = useWorkspace();
@@ -89,7 +90,7 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
       {/* Brand */}
       <div className="lumio-sidebar__brand">
         <div className="lumio-sidebar__brand-mark">
-          <Image src="/images/logo.jpg" alt="Lumio" width={28} height={28} style={{ display: 'block', borderRadius: 'var(--lumio-radius-sm)' }} />
+          <Image src="/images/logo.jpg" alt="Lumio" width={28} height={28} style={{ display: 'block', borderRadius: tokens.radius.sm }} />
         </div>
         <div className="lumio-sidebar__brand-name">Lumio</div>
         <span className="lumio-sidebar__brand-meta">v2</span>
@@ -141,7 +142,7 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
             gap: 8,
             width: '100%',
             padding: '10px 14px',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             background: 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)',
             border: '1px solid rgba(5,150,105,0.25)',
             color: 'var(--primary)',

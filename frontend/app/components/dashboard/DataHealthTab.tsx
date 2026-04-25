@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { cn } from '@/app/lib/utils';
 import Link from 'next/link';
+import { tokens } from '@/lib/theme-tokens';
 
 interface DataHealthTabProps {
   data: DashboardData;
@@ -152,7 +153,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
                   display: 'flex',
                   flexDirection: 'column',
                   border: '1px solid var(--border)',
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                   bgcolor: 'var(--card)',
                   p: '14px',
                   backdropFilter: 'blur(24px)',
@@ -204,7 +205,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
             flexDirection: 'column',
             height: 340,
             border: '1px solid var(--border)',
-            borderRadius: 'var(--lumio-radius-sm)',
+            borderRadius: tokens.radius.sm,
             bgcolor: 'var(--card)',
             p: '16px',
             backdropFilter: 'blur(24px)',
@@ -262,7 +263,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
           sx={{
             bgcolor: 'rgba(0,0,0,0.4)',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 'var(--lumio-radius-sm)',
+            borderRadius: tokens.radius.sm,
             backdropFilter: 'blur(24px)',
             boxShadow: '0 8px 32px 0 rgba(0,0,0,0.2)',
             p: '16px',
@@ -326,7 +327,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
               flexDirection: 'column',
               overflow: 'hidden',
               border: '1px solid var(--border)',
-              borderRadius: 'var(--lumio-radius-sm)',
+              borderRadius: tokens.radius.sm,
               bgcolor: 'var(--card)',
               backdropFilter: 'blur(24px)',
               boxShadow: '0 8px 32px 0 rgba(0,0,0,0.04)',

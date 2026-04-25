@@ -23,6 +23,7 @@ import {
 import { StatementsGmailSync } from './StatementsGmailSync';
 import { StatementsListItem } from './StatementsListItem';
 import type { DuplicateMeta } from './hooks/useStatementSelection';
+import { tokens } from '@/lib/theme-tokens';
 
 interface StatementForTable {
   id: string;
@@ -267,7 +268,7 @@ export function StatementsListTable({
             width: 64,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             background: '#f9fafb',
             color: '#d1d5db',
           }}

@@ -4,6 +4,7 @@ import { Box, IconButton, TextField, Typography } from '@mui/material';
 import { Plus } from '@/app/components/icons';
 import React from 'react';
 import type { StorageFile } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface NewFolderInputProps {
   newFolderName: string;
@@ -17,7 +18,7 @@ export interface NewFolderInputProps {
 }
 
 const addBtnSx = {
-  bgcolor: 'primary.main', color: '#fff', borderRadius: 'var(--lumio-radius-full)',
+  bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full,
   '&:hover': { bgcolor: 'primary.dark' },
   '&:disabled': { bgcolor: '#d1d5db', cursor: 'not-allowed' },
 };

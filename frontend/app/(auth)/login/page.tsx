@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line complexity
 function extractInviteTokenFromNext(nextPath: string | null): string | null {
@@ -155,7 +156,7 @@ function LoginPageContent(): React.JSX.Element {
         sx={{
           width: 60,
           height: 60,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           bgcolor: 'primary.main',
           display: 'flex',
           alignItems: 'center',

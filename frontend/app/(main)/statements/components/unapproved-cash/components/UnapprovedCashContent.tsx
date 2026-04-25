@@ -4,6 +4,7 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Check } from '@/app/components/icons';
 import type { UnapprovedReasonId, UnapprovedSource, UnapprovedStatementQueueItem } from '../../unapproved-cash-utils';
+import { tokens } from '@/lib/theme-tokens';
 
 type BadgeStyle = { borderColor: string; background: string; color: string };
 
@@ -89,7 +90,7 @@ export function UnapprovedCashContent({
           textAlign: 'center',
         }}
       >
-        <div style={{ borderRadius: 'var(--lumio-radius-full)', background: '#d1fae5', padding: 8, color: '#065f46' }}>
+        <div style={{ borderRadius: tokens.radius.full, background: '#d1fae5', padding: 8, color: '#065f46' }}>
           <Check style={{ width: 20, height: 20 }} />
         </div>
         <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: '#111827' }}>
@@ -239,7 +240,7 @@ function DesktopTable({
                           padding: '2px 8px',
                           fontSize: 11,
                           fontWeight: 500,
-                          borderRadius: 'var(--lumio-radius-xs)',
+                          borderRadius: tokens.radius.xs,
                         }}
                       >
                         +{hiddenReasonCount}
@@ -265,7 +266,7 @@ function DesktopTable({
                         fontWeight: 500,
                         color: '#374151',
                         cursor: 'pointer',
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                       }}
                     >
                       {reviewFixLabel}
@@ -316,7 +317,7 @@ function MobileCards({
         const selected = selectedIds.includes(statementId);
 
         return (
-          <article key={statementId} style={{ border: '1px solid #e5e7eb', padding: 12, borderRadius: 'var(--lumio-radius-lg)' }}>
+          <article key={statementId} style={{ border: '1px solid #e5e7eb', padding: 12, borderRadius: tokens.radius.lg }}>
             <div
               style={{
                 display: 'flex',
@@ -369,7 +370,7 @@ function MobileCards({
                     fontWeight: 500,
                     color: '#374151',
                     cursor: 'pointer',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                   }}
                 >
                   {reviewFixLabel}
@@ -402,7 +403,7 @@ function ReasonBadge({
         padding: '2px 8px',
         fontSize: 11,
         fontWeight: 500,
-        borderRadius: 'var(--lumio-radius-xs)',
+        borderRadius: tokens.radius.xs,
       }}
     >
       {label}
@@ -429,7 +430,7 @@ function SourceBadge({
         padding: '2px 8px',
         fontSize: 11,
         fontWeight: 500,
-        borderRadius: 'var(--lumio-radius-xs)',
+        borderRadius: tokens.radius.xs,
       }}
     >
       {label}

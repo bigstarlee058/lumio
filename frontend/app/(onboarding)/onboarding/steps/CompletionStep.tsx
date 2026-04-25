@@ -6,6 +6,7 @@ import { CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ConnectedIntegration {
   key: string;
@@ -47,7 +48,7 @@ export function CompletionStep({
         <Box
           sx={{
             display: 'inline-flex',
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             border: '1px solid',
             borderColor: 'primary.light',
             bgcolor: 'primary.50',
@@ -78,7 +79,7 @@ export function CompletionStep({
 
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -155,7 +156,7 @@ export function CompletionStep({
                       width: 36,
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: 'var(--lumio-radius-full)',
+                      borderRadius: tokens.radius.full,
                       border: '1px solid',
                       borderColor: 'divider',
                       bgcolor: 'action.hover',
@@ -167,7 +168,7 @@ export function CompletionStep({
                       alt={integration.title}
                       width={18}
                       height={18}
-                      style={{ borderRadius: 'var(--lumio-radius-md)' }}
+                      style={{ borderRadius: tokens.radius.md }}
                     />
                   </Box>
                 ))}

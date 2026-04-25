@@ -11,6 +11,7 @@ import {
   type TopCategoriesViewModelReturn,
 } from '@/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel';
 import { Spinner } from '@/app/components/ui/spinner';
+import { tokens } from '@/lib/theme-tokens';
 
 type VmProps = { vm: TopCategoriesViewModelReturn };
 
@@ -24,7 +25,7 @@ function TopCategoriesBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 'var(--lumio-radius-lg)' }}>
+      <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: tokens.radius.lg }}>
         {vm.labels.noData}
       </div>
     );

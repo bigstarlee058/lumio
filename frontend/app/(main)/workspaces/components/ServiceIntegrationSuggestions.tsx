@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ServiceIntegrationSuggestionsProps {
   onSkip: () => void;
@@ -90,7 +91,7 @@ export function ServiceIntegrationSuggestions({
                   variant="outlined"
                   size="small"
                   onClick={() => handleConnect(integration.path)}
-                  sx={{ borderRadius: 'var(--lumio-radius-md)' }}
+                  sx={{ borderRadius: tokens.radius.md }}
                 >
                   Connect
                 </Button>

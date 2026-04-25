@@ -6,6 +6,7 @@ import React from 'react';
 import { DroppableHeaderTrigger } from './DroppableHeaderTrigger';
 import { listToggleSx } from '../helpers/storageStyling';
 import type { StorageFile } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 type SortKey = string;
 
@@ -85,7 +86,7 @@ export function StorageHeader({
     >
       <Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-          <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main' }}>
+          <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main' }}>
             <Folder style={{ width: 24, height: 24 }} />
           </Box>
           <Typography component="h1" style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>
@@ -297,7 +298,7 @@ function StorageFilterButton({
         <Filter style={{ width: 20, height: 20 }} />
         {filtersButtonLabel}
         {filtersApplied && (
-          <Box sx={{ ml: 1, width: 8, height: 8, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'background.paper' }} />
+          <Box sx={{ ml: 1, width: 8, height: 8, borderRadius: tokens.radius.full, bgcolor: 'background.paper' }} />
         )}
       </Box>
     </Box>

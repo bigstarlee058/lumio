@@ -14,6 +14,7 @@ import { useSidePanel } from './SidePanelContext';
 import { SectionRenderer } from './sections';
 import type { ActionItem, SidePanelProps } from './types';
 import { getWidthValue } from './types';
+import { tokens } from '@/lib/theme-tokens';
 
 // ============================================================================
 // Helper Components
@@ -144,7 +145,7 @@ export function SidePanel({
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 'var(--lumio-radius-md)' }}
+              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md }}
               aria-label="Expand panel"
             >
               {position === 'left' ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -188,7 +189,7 @@ export function SidePanel({
                     onClick={action.onClick}
                     disabled={action.disabled || action.loading}
                     title={action.tooltip || action.label}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 'var(--lumio-radius-md)', opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
                   >
                     {action.loading ? (
                       <Spinner size={16} />
@@ -203,7 +204,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={handleToggleCollapsed}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 'var(--lumio-radius-md)' }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md }}
                     aria-label="Collapse panel"
                   >
                     {position === 'left' ? (
@@ -235,7 +236,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={onRetry}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}
                   >
                     <RefreshCw size={14} />
                     Retry
@@ -278,7 +279,7 @@ export function SidePanel({
                         fontWeight: 500,
                         border: 'none',
                         cursor: 'pointer',
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                         opacity: (action.disabled || action.loading) ? 0.5 : 1,
                         ...(action.variant === 'primary'
                           ? { backgroundColor: 'var(--primary)', color: 'white' }
@@ -308,7 +309,7 @@ export function SidePanel({
                 top: '50%',
                 transform: 'translateY(-50%)',
                 padding: 4,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 backgroundColor: 'var(--card-bg)',
                 border: '1px solid #e5e7eb',
                 color: '#6b7280',

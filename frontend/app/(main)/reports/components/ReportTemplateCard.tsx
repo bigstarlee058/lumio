@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import type { LucideIcon } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface ReportTemplate {
   id: string;
@@ -30,7 +31,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
       elevation={0}
       sx={{
         cursor: 'pointer',
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: isSelected
           ? '1px solid var(--primary)'
           : '1px solid var(--border)',
@@ -53,7 +54,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
             justifyContent: 'center',
             width: 40,
             height: 40,
-            borderRadius: 'var(--lumio-radius-sm)',
+            borderRadius: tokens.radius.sm,
             bgcolor: 'var(--primary-light, rgba(var(--primary-rgb, 22,129,24),0.1))',
             color: 'var(--primary)',
             flexShrink: 0,
@@ -90,7 +91,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
               fontSize: 10,
               fontWeight: 500,
               textTransform: 'uppercase',
-              borderRadius: 'var(--lumio-radius-xs)',
+              borderRadius: tokens.radius.xs,
             }}
           >
             {f}

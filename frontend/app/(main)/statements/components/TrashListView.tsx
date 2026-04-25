@@ -19,6 +19,7 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { TrashListItem, type TrashListItemModel } from './TrashListItem';
 import {
+import { tokens } from '@/lib/theme-tokens';
   type TrashEntityType,
   resolvePermanentDeletionDate,
   resolveTrashEntityType,
@@ -506,7 +507,7 @@ export default function TrashListView({ onCountChange }: Props) {
                   onCheckedChange={checked =>
                     setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                   }
-                  style={{ height: 16, width: 16, borderRadius: 'var(--lumio-radius-xs)' }}
+                  style={{ height: 16, width: 16, borderRadius: tokens.radius.xs }}
                   aria-label={labels.selectAll}
                 />
                 <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>{labels.selectAll}</span>
@@ -520,7 +521,7 @@ export default function TrashListView({ onCountChange }: Props) {
                     onCheckedChange={checked =>
                       setSelectedIds(prev => toggleSelectAllVisible(prev, visibleIds, checked))
                     }
-                    style={{ height: 16, width: 16, borderRadius: 'var(--lumio-radius-xs)' }}
+                    style={{ height: 16, width: 16, borderRadius: tokens.radius.xs }}
                     aria-label={labels.selectAll}
                   />
                 </div>

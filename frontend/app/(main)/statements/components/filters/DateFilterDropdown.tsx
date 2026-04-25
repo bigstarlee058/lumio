@@ -7,6 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { parseISO, isValid, format } from 'date-fns';
 import { ChevronRight } from '@/app/components/icons';
 import type {
+import { tokens } from '@/lib/theme-tokens';
   StatementFilterDate,
   StatementFilterDateMode,
   StatementFilterDatePreset,
@@ -114,7 +115,7 @@ export function DateFilterDropdown({
                     width: '100%',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     padding: '12px 8px',
                     textAlign: 'left',
                     fontSize: 16,

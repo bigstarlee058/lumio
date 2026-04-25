@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import {
+import { tokens } from '@/lib/theme-tokens';
   CheckCircle2,
   Edit3,
   FileDown,
@@ -45,9 +46,9 @@ function TimelineEventItem({ event, onSelect }: { event: AuditEvent; onSelect?: 
     <button
       type="button"
       onClick={() => onSelect?.(event)}
-      style={{ display: 'flex', width: '100%', alignItems: 'flex-start', gap: 12, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, textAlign: 'left', cursor: 'pointer', borderRadius: 'var(--lumio-radius-lg)' }}
+      style={{ display: 'flex', width: '100%', alignItems: 'flex-start', gap: 12, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, textAlign: 'left', cursor: 'pointer', borderRadius: tokens.radius.lg }}
     >
-      <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 'var(--lumio-radius-full)', bgcolor: '#f3f4f6', color: '#4b5563', flexShrink: 0 }}>
+      <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: tokens.radius.full, bgcolor: '#f3f4f6', color: '#4b5563', flexShrink: 0 }}>
         <Icon size={16} />
       </Box>
       <Box sx={{ flex: 1 }}>

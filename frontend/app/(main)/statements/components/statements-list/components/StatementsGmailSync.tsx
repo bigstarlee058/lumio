@@ -1,6 +1,7 @@
 'use client';
 
 import Skeleton from '@mui/material/Skeleton';
+import { tokens } from '@/lib/theme-tokens';
 
 function CheckboxPlaceholder(): React.JSX.Element {
   return (
@@ -8,7 +9,7 @@ function CheckboxPlaceholder(): React.JSX.Element {
       style={{
         height: 16,
         width: 16,
-        borderRadius: 'var(--lumio-radius-sm)',
+        borderRadius: tokens.radius.sm,
         border: '1px solid #e5e7eb',
         background: '#f3f4f6',
       }}

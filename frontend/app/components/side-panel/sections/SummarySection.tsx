@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import type { SummaryItem, SummarySection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function SummaryItemComponent({ item }: { item: SummaryItem }) {
@@ -35,7 +36,7 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
   }, [item]);
 
   return (
-    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: 'var(--lumio-radius-lg)' }}>
+    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: tokens.radius.lg }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p
@@ -80,7 +81,7 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
           )}
         </div>
         {item.icon && (
-          <div style={{ padding: 8, borderRadius: 'var(--lumio-radius-sm)', backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
+          <div style={{ padding: 8, borderRadius: tokens.radius.sm, backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
             <RenderIcon icon={item.icon} size={16} />
           </div>
         )}

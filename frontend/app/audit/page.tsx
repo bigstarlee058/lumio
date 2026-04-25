@@ -9,6 +9,7 @@ import { AuditRollbackModal } from './components/AuditRollbackModal';
 import { AuditTimeline } from './components/AuditTimeline';
 import { useAuditLoader } from './hooks/useAuditLoader';
 import { useAuditRollback } from './hooks/useAuditRollback';
+import { tokens } from '@/lib/theme-tokens';
 
 export default function AuditPage() {
   const loader = useAuditLoader();
@@ -54,7 +55,7 @@ export default function AuditPage() {
             color: 'var(--lumio-color-ink-700)',
             background: 'var(--card-bg)',
             border: '1px solid var(--lumio-color-ink-200)',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
@@ -78,7 +79,7 @@ export default function AuditPage() {
             color: 'var(--lumio-color-danger)',
             background: '#fff1f2',
             border: '1px solid #fecdd3',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
           }}
         >
           {loader.error}

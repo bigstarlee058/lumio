@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Check, ChevronDown, Search, X } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface CurrencySelectorProps {
   selectedCurrency: string | null;
@@ -66,7 +67,7 @@ function useCurrencySearch({ selectedCurrency, setOpenState }: { selectedCurrenc
 type CurrencyItemBtnProps = { item: CurrencySearchItem; minimal: boolean; onSelect: (code: string) => void; isSelected?: boolean };
 function CurrencyItemButton({ item, minimal, onSelect, isSelected }: CurrencyItemBtnProps): React.JSX.Element {
   return (
-    <button type="button" onClick={() => onSelect(item.code)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', background: isSelected ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'none', border: 'none', padding: minimal ? '8px 12px' : '10px 12px', cursor: 'pointer', textAlign: 'left', borderRadius: 'var(--lumio-radius-md)' }}>
+    <button type="button" onClick={() => onSelect(item.code)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', background: isSelected ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'none', border: 'none', padding: minimal ? '8px 12px' : '10px 12px', cursor: 'pointer', textAlign: 'left', borderRadius: tokens.radius.md }}>
       <span style={{ fontSize: 14, fontWeight: isSelected ? 600 : 500, color: isSelected ? 'var(--primary)' : 'var(--foreground)' }}>{item.label}</span>
       {isSelected && <Check size={16} style={{ color: 'var(--primary)' }} />}
     </button>
@@ -111,12 +112,12 @@ function CurrencyPanel({ minimal, showPanelHeader, title, search, selectedCurren
       {!minimal && showPanelHeader && (
         <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
           <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>{title}</Typography>
-          <button type="button" onClick={onClose} style={{ borderRadius: 'var(--lumio-radius-full)', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }} aria-label="Close currency picker"><X size={16} /></button>
+          <button type="button" onClick={onClose} style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }} aria-label="Close currency picker"><X size={16} /></button>
         </Box>
       )}
       <Box sx={{ position: 'relative', mb: minimal ? 1 : 1.5, mt: minimal ? 1 : 0 }}>
         <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted-foreground)', pointerEvents: 'none' }} />
-        <input type="text" value={search} onChange={e => onSearchChange(e.target.value)} placeholder="Search" style={{ width: '100%', border: minimal ? '1px solid transparent' : '1px solid var(--border)', background: minimal ? 'var(--card-bg)' : 'var(--card)', padding: '10px 12px 10px 40px', fontSize: 14, color: 'var(--foreground)', outline: 'none', borderRadius: 'var(--lumio-radius-md)', boxSizing: 'border-box' }} />
+        <input type="text" value={search} onChange={e => onSearchChange(e.target.value)} placeholder="Search" style={{ width: '100%', border: minimal ? '1px solid transparent' : '1px solid var(--border)', background: minimal ? 'var(--card-bg)' : 'var(--card)', padding: '10px 12px 10px 40px', fontSize: 14, color: 'var(--foreground)', outline: 'none', borderRadius: tokens.radius.md, boxSizing: 'border-box' }} />
       </Box>
       <Box sx={{ overflowY: 'auto', pr: 0.5, maxHeight: minimal ? '34vh' : '72vh', display: 'flex', flexDirection: 'column', gap: minimal ? 0.75 : 1.5 }}>
         {selectedCurrencyItem && selectedMatchesSearch && <CurrencyItemButton item={selectedCurrencyItem} minimal={minimal} onSelect={onSelect} isSelected />}
@@ -141,7 +142,7 @@ export function CurrencySelector({ selectedCurrency, onSelect, mode = 'modal', o
     <Box>
       {showLabel && <Typography variant="body2" fontWeight={500} sx={{ mb: 1, color: 'var(--foreground)' }}>Currency</Typography>}
       {showTrigger && (
-        <button type="button" onClick={() => setOpenState(true)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--border)', background: 'var(--card)', padding: '10px 12px', fontSize: 14, color: 'var(--foreground)', cursor: 'pointer', textAlign: 'left', borderRadius: 'var(--lumio-radius-md)' }}>
+        <button type="button" onClick={() => setOpenState(true)} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--border)', background: 'var(--card)', padding: '10px 12px', fontSize: 14, color: 'var(--foreground)', cursor: 'pointer', textAlign: 'left', borderRadius: tokens.radius.md }}>
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedCurrencyItem?.label || 'Select a currency'}</span>
           <ChevronDown size={16} style={{ color: 'var(--muted-foreground)', flexShrink: 0 }} />
         </button>

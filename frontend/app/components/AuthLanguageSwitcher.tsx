@@ -8,6 +8,7 @@ import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 import { type AppLocale as AppLanguage, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
@@ -66,7 +67,7 @@ export function AuthLanguageSwitcher() {
           setLanguageSearch('');
           setLanguageModalOpen(true);
         }}
-        sx={{ borderRadius: 'var(--lumio-radius-full)', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+        sx={{ borderRadius: tokens.radius.full, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
       >
         <Globe size={20} suppressHydrationWarning />
       </IconButton>

@@ -2,6 +2,7 @@
 import type { JSX } from 'react';
 
 import type { ReactNode } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   title: string;
@@ -15,7 +16,7 @@ export function AnalyticsChartCard({ title, children, spanColumns }: Props): Rea
     border: '1px solid #e5e7eb',
     background: 'var(--card-bg)',
     padding: 20,
-    borderRadius: 'var(--lumio-radius-lg)',
+    borderRadius: tokens.radius.lg,
   };
 
   if (spanColumns) {

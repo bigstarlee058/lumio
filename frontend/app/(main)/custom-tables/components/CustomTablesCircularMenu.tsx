@@ -4,6 +4,7 @@ import { FileSpreadsheet, Plus, Table as TableIcon } from '@/app/components/icon
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   onCreateEmpty: () => void;
@@ -101,7 +102,7 @@ export default function CustomTablesCircularMenu({
     width: 44,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 'var(--lumio-radius-full)',
+    borderRadius: tokens.radius.full,
     border: '1px solid rgba(255,255,255,0.8)',
     backgroundColor: 'var(--card-bg)',
     cursor: 'pointer',
@@ -115,7 +116,7 @@ export default function CustomTablesCircularMenu({
     zIndex: 40,
     transform: 'translateY(-50%)',
     whiteSpace: 'nowrap',
-    borderRadius: 'var(--lumio-radius-sm)',
+    borderRadius: tokens.radius.sm,
     backgroundColor: 'rgba(255,255,255,0.95)',
     padding: '4px 10px',
     fontSize: 11,
@@ -275,7 +276,7 @@ export default function CustomTablesCircularMenu({
           width: 56,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           backgroundColor: 'var(--color-primary)',
           color: '#fff',
           border: 'none',

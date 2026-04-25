@@ -68,6 +68,7 @@ import {
   resolveLocale,
 } from './editHelpers';
 import { useStatementEditForm } from './hooks/useStatementEditForm';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function EditStatementPage(): React.JSX.Element {
@@ -969,7 +970,7 @@ export default function EditStatementPage(): React.JSX.Element {
           <button
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            style={{ borderRadius: 'var(--lumio-radius-md)', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
+            style={{ borderRadius: tokens.radius.md, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
           >
             {t.labels.cancel.value}
           </button>
@@ -980,7 +981,7 @@ export default function EditStatementPage(): React.JSX.Element {
               void handleExportToCustomTable();
             }}
             disabled={exportingToTable || !transactions.length}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: 'var(--lumio-radius-md)', background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.md, background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
           >
             {exportingToTable ? <Spinner style={{ height: 16, width: 16, color: '#fff' }} /> : null}
             {t.labels.exportConfirmConfirm.value}

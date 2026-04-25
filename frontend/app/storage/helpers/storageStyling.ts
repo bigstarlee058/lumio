@@ -1,5 +1,6 @@
 // Styling helpers extracted from StoragePageContent
 import type { SxProps, Theme } from '@mui/material';
+import { tokens } from '@/lib/theme-tokens';
 
 export function tagChipSx(isActive: boolean): SxProps<Theme> {
   return {
@@ -8,7 +9,7 @@ export function tagChipSx(isActive: boolean): SxProps<Theme> {
     gap: 0.5,
     border: '1px solid',
     borderColor: isActive ? 'rgba(22,129,24,0.3)' : '#e5e7eb',
-    borderRadius: 'var(--lumio-radius-sm)',
+    borderRadius: tokens.radius.sm,
     px: 1,
     py: 0.25,
     fontSize: 11,

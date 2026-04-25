@@ -6,6 +6,7 @@ import React from 'react';
 import type { FolderOption, StorageFile, TagOption } from '../storageHelpers';
 import { StorageFoldersSidebar, type StorageFoldersSidebarProps } from './StorageFoldersSidebar';
 import { StorageTagsPanel, type StorageTagsPanelProps } from './StorageTagsPanel';
+import { tokens } from '@/lib/theme-tokens';
 
 type SidebarProps = Omit<StorageFoldersSidebarProps, never>;
 type TagsPanelProps = Omit<StorageTagsPanelProps, never>;
@@ -62,7 +63,7 @@ function ModalHeader({ title, subtitle, onClose }: ModalHeaderProps): React.JSX.
         <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{title}</Typography>
         <Typography style={{ fontSize: 14, color: '#6b7280' }}>{subtitle}</Typography>
       </Box>
-      <IconButton size="small" onClick={onClose} sx={{ borderRadius: 'var(--lumio-radius-sm)' }}><X size={18} /></IconButton>
+      <IconButton size="small" onClick={onClose} sx={{ borderRadius: tokens.radius.sm }}><X size={18} /></IconButton>
     </Box>
   );
 }

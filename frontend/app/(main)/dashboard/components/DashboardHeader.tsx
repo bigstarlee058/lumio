@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type React from 'react';
 import type { DashboardTabId } from '../hooks/useDashboardPage';
 import { DashboardTabs } from './DashboardTabs';
+import { tokens } from '@/lib/theme-tokens';
 
 type DashboardHeaderProps = {
   statusHeading: string;
@@ -37,7 +38,7 @@ export function DashboardHeader({ statusHeading, greetingSubtitle, activeTab, on
               padding: '10px 20px',
               fontSize: 14,
               fontWeight: 600,
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               textDecoration: 'none',
               transition: 'background-color 150ms',
             }}

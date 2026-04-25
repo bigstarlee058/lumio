@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import type { BuildingProps } from './shared';
+import { tokens } from '@/lib/theme-tokens';
 
 const handStyle = (rotation: string): React.CSSProperties => ({
   position: 'absolute',
@@ -17,7 +18,7 @@ const handStyle = (rotation: string): React.CSSProperties => ({
 });
 
 const ClockFace = ({ size }: { size: number }): React.JSX.Element => (
-  <div style={{ width: size, height: size, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(255,255,255,0.15)', border: '3px solid rgba(255,255,255,0.3)', position: 'relative', boxShadow: '0 0 15px rgba(255,255,255,0.1)' }}>
+  <div style={{ width: size, height: size, borderRadius: tokens.radius.full, background: 'rgba(255,255,255,0.15)', border: '3px solid rgba(255,255,255,0.3)', position: 'relative', boxShadow: '0 0 15px rgba(255,255,255,0.1)' }}>
     <div style={handStyle('45deg')} />
     <div style={handStyle('120deg')} />
   </div>

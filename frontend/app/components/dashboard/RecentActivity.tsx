@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { subtleBadge } from './common';
+import { tokens } from '@/lib/theme-tokens';
 
 interface RecentActivityProps {
   activities: DashboardRecentActivity[];
@@ -128,7 +129,7 @@ function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.
         </Typography>
         <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, mt: 0.5, color: '#64748b', fontWeight: 400 }}>
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatContext(activity)}</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 'var(--lumio-radius-sm)', backgroundColor: 'var(--muted)', padding: '2px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748b' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, backgroundColor: 'var(--muted)', padding: '2px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748b' }}>
             {new Date(activity.timestamp).toLocaleDateString()}
           </span>
         </Box>
@@ -162,7 +163,7 @@ export function RecentActivity({
   const groups = groupActivities(activities);
 
   return (
-    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: 'var(--lumio-radius-lg)', backgroundColor: 'var(--card-bg)', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
+    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: tokens.radius.lg, backgroundColor: 'var(--card-bg)', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
       <CardContent style={{ height: '100%', padding: '32px', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
         {activities.length === 0 ? (
           <Box sx={{ display: 'flex', height: 128, alignItems: 'center', justifyContent: 'center' }}>

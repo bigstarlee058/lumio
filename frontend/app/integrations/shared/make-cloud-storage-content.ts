@@ -14,6 +14,7 @@ type LocalizedLabel = {
   ar: string;
   pl: string;
   it: string;
+  sk: string;
 };
 
 type CloudStorageProvider = {

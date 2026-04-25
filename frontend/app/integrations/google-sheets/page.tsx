@@ -29,6 +29,7 @@ import {
 } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { tokens } from '@/lib/theme-tokens';
 
 interface GoogleSheetConnection {
   id: string;
@@ -264,7 +265,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
       <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid #e5e7eb',
             bgcolor: 'background.paper',
             p: 3,
@@ -290,7 +291,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
         <Box
           sx={{
             p: 1,
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
             color: 'primary.main',
             display: 'flex',
@@ -337,7 +338,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
         <Stack spacing={2}>
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -349,7 +350,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
               <Box
                 sx={{
                   p: 1,
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
                   border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
                   display: 'flex',
@@ -368,7 +369,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
             <Stack spacing={2}>
               <Box
                 sx={{
-                  borderRadius: 'var(--lumio-radius-lg)',
+                  borderRadius: tokens.radius.lg,
                   border: '1px solid #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 1.5,
@@ -404,7 +405,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: 8,
-                      borderRadius: 'var(--lumio-radius-md)',
+                      borderRadius: tokens.radius.md,
                       background: 'var(--color-primary)',
                       padding: '8px 16px',
                       fontSize: 14,
@@ -424,7 +425,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
               </Box>
 
               <Box
-                sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', p: 1.5 }}
+                sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', p: 1.5 }}
                 data-tour-id="gs-integration-picker"
               >
                 <Box
@@ -500,7 +501,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                     marginTop: 4,
                     width: '100%',
                     border: '1px solid #e5e7eb',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
@@ -528,7 +529,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                     marginTop: 4,
                     width: '100%',
                     border: '1px solid #e5e7eb',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     background: 'var(--card-bg)',
                     padding: '8px 12px',
                     fontSize: 14,
@@ -553,7 +554,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: 8,
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   background: 'var(--color-primary)',
                   padding: '8px 16px',
                   fontSize: 14,
@@ -571,7 +572,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
 
               <Box
                 sx={{
-                  borderRadius: 'var(--lumio-radius-lg)',
+                  borderRadius: tokens.radius.lg,
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.05)',
                   p: 1.5,
                   mt: 1,
@@ -586,7 +587,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
 
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -598,7 +599,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
               <Box
                 sx={{
                   p: 1,
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                   bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
                   border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
                   display: 'flex',
@@ -627,7 +628,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   alignItems: 'center',
                   gap: 8,
                   border: '1px solid #e5e7eb',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   padding: '8px 12px',
                   fontSize: 14,
                   fontWeight: 500,
@@ -647,7 +648,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   alignItems: 'center',
                   gap: 8,
                   border: '1px solid #e5e7eb',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   padding: '8px 12px',
                   fontSize: 14,
                   fontWeight: 500,
@@ -686,7 +687,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                 <Box
                   sx={{
                     mt: 1.5,
-                    borderRadius: 'var(--lumio-radius-lg)',
+                    borderRadius: tokens.radius.lg,
                     bgcolor: '#f9fafb',
                     border: '1px dashed #e5e7eb',
                     px: 1.5,
@@ -713,7 +714,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
         <Stack spacing={1.5}>
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 2,
@@ -736,7 +737,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   <Box
                     key={key}
                     sx={{
-                      borderRadius: 'var(--lumio-radius-lg)',
+                      borderRadius: tokens.radius.lg,
                       border: '1px solid #f3f4f6',
                       bgcolor: '#f9fafb',
                       p: 1.5,
@@ -749,7 +750,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
             ) : emptyState ? (
               <Box
                 sx={{
-                  borderRadius: 'var(--lumio-radius-lg)',
+                  borderRadius: tokens.radius.lg,
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -764,7 +765,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   <Box
                     key={item.id}
                     sx={{
-                      borderRadius: 'var(--lumio-radius-lg)',
+                      borderRadius: tokens.radius.lg,
                       border: '1px solid #e5e7eb',
                       bgcolor: 'background.paper',
                       p: 1.5,
@@ -787,7 +788,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                                 sx={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  borderRadius: 'var(--lumio-radius-sm)',
+                                  borderRadius: tokens.radius.sm,
                                   bgcolor: '#fffbeb',
                                   px: 1,
                                   py: 0.25,
@@ -806,7 +807,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                                 sx={{
                                   display: 'inline-flex',
                                   alignItems: 'center',
-                                  borderRadius: 'var(--lumio-radius-sm)',
+                                  borderRadius: tokens.radius.sm,
                                   bgcolor: '#ecfdf5',
                                   px: 1,
                                   py: 0.25,
@@ -850,7 +851,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                               alignItems: 'center',
                               justifyContent: 'center',
                               gap: 8,
-                              borderRadius: 'var(--lumio-radius-md)',
+                              borderRadius: tokens.radius.md,
                               border: '1px solid #fcd34d',
                               background: '#fffbeb',
                               padding: '6px 12px',
@@ -874,7 +875,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 8,
-                            borderRadius: 'var(--lumio-radius-md)',
+                            borderRadius: tokens.radius.md,
                             border: '1px solid var(--color-primary)',
                             background: 'transparent',
                             padding: '6px 12px',
@@ -902,7 +903,7 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: 8,
-                            borderRadius: 'var(--lumio-radius-md)',
+                            borderRadius: tokens.radius.md,
                             border: '1px solid #e5e7eb',
                             background: 'transparent',
                             padding: '6px 12px',

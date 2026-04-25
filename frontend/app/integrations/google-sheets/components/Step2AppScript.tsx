@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 import { ChevronDown, ChevronUp, ExternalLink, Plug } from '@/app/components/icons';
 import { useState } from 'react';
 import type React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface Step2Texts {
   step2: {
@@ -25,7 +26,7 @@ interface Step2AppScriptProps {
 
 function TechnicalDetails({ t }: { t: Step2Texts }): React.JSX.Element {
   return (
-    <Box sx={{ mt: 1.5, borderRadius: 'var(--lumio-radius-lg)', bgcolor: '#f9fafb', border: '1px dashed #e5e7eb', px: 1.5, py: 1 }}>
+    <Box sx={{ mt: 1.5, borderRadius: tokens.radius.lg, bgcolor: '#f9fafb', border: '1px dashed #e5e7eb', px: 1.5, py: 1 }}>
       <Typography style={{ fontSize: 12, color: '#4b5563' }}>
         {t.step2.webhookEndpointLabel.value}: <code style={{ fontFamily: 'monospace' }}>/api/v1/integrations/google-sheets/update</code>
         <br />
@@ -35,15 +36,15 @@ function TechnicalDetails({ t }: { t: Step2Texts }): React.JSX.Element {
   );
 }
 
-const linkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', textDecoration: 'none' };
+const linkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', textDecoration: 'none' };
 
 export function Step2AppScript({ t }: Step2AppScriptProps): React.JSX.Element {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-step2">
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-step2">
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', border: '1px solid rgba(var(--color-primary-rgb), 0.2)', display: 'flex' }}><Plug style={{ height: 20, width: 20, color: 'var(--color-primary)' }} /></Box>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.sm, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', border: '1px solid rgba(var(--color-primary-rgb), 0.2)', display: 'flex' }}><Plug style={{ height: 20, width: 20, color: 'var(--color-primary)' }} /></Box>
         <Box><Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.step2.label}</Typography><Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{t.step2.title}</Typography></Box>
       </Box>
       <Typography style={{ fontSize: 14, color: '#4b5563', marginBottom: 12 }}>{t.step2.description}</Typography>

@@ -2,6 +2,7 @@
 
 import Skeleton from '@mui/material/Skeleton';
 import type { JSX } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface Props {
   skeletonKeys: string[];
@@ -15,7 +16,7 @@ function GmailSyncSkeletonRowMobile(): React.JSX.Element {
           style={{
             height: 16,
             width: 16,
-            borderRadius: 'var(--lumio-radius-sm)',
+            borderRadius: tokens.radius.sm,
             border: '1px solid #e5e7eb',
             background: '#f3f4f6',
           }}
@@ -60,7 +61,7 @@ function GmailSyncSkeletonRowDesktop(): React.JSX.Element {
               style={{
                 height: 16,
                 width: 16,
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 border: '1px solid #e5e7eb',
                 background: '#f3f4f6',
               }}

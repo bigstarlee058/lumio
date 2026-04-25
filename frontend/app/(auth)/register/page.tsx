@@ -14,6 +14,7 @@ import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/m
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 function RegisterPageContent(): React.JSX.Element {
@@ -149,7 +150,7 @@ function RegisterPageContent(): React.JSX.Element {
         sx={{
           width: 60,
           height: 60,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           bgcolor: 'primary.main',
           display: 'flex',
           alignItems: 'center',

@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'dropboxIntegrationPage',
-  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox' },
+  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox', sk: 'Dropbox' },
   folderLabel: {
     ru: 'Папка в Dropbox',
     en: 'Dropbox folder',

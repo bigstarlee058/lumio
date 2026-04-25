@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
+import { tokens } from '@/lib/theme-tokens';
 
 type DropboxSettings = {
   folderId?: string | null;
@@ -54,7 +55,7 @@ function NotLoggedInView({ t }: { t: DropboxPageT }): React.JSX.Element {
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box
         sx={{
-          borderRadius: 'var(--lumio-radius-lg)',
+          borderRadius: tokens.radius.lg,
           border: '1px solid #e5e7eb',
           bgcolor: 'background.paper',
           p: 3,
@@ -94,7 +95,7 @@ function DropboxSettingsPanel({
   return (
     <Box
       sx={{
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 3,
@@ -116,7 +117,7 @@ function DropboxSettingsPanel({
             alignItems: 'center',
             gap: 8,
             border: '1px solid var(--color-primary)',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             padding: '6px 16px',
             fontSize: 14,
             fontWeight: 600,
@@ -180,7 +181,7 @@ function DropboxSettingsPanel({
             style={{
               width: '100%',
               border: '1px solid #e5e7eb',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               padding: '8px 12px',
               fontSize: 14,
               color: '#111827',
@@ -204,7 +205,7 @@ function DropboxInfoPanel({ t }: { t: DropboxPageT }): React.JSX.Element {
   return (
     <Box
       sx={{
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 3,
@@ -309,7 +310,7 @@ export default function DropboxIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'primary.main', color: '#fff', opacity: 0.1, display: 'flex' }}>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'primary.main', color: '#fff', opacity: 0.1, display: 'flex' }}>
           <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={24} height={24} />
         </Box>
         <Box>

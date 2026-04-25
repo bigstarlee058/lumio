@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { Block, BuildingProps, WindowGrid, motion } from './shared';
+import { tokens } from '@/lib/theme-tokens';
 
 const FACE_STYLE: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center' };
 const HAND_BASE: React.CSSProperties = { position: 'absolute', top: '50%', left: '50%', width: 2, background: 'white', transformOrigin: 'bottom' };
 
 function ClockFace({ w }: { w: number }): React.JSX.Element {
   const circleStyle: React.CSSProperties = {
-    width: w * 0.5, height: w * 0.5, borderRadius: 'var(--lumio-radius-full)',
+    width: w * 0.5, height: w * 0.5, borderRadius: tokens.radius.full,
     background: 'rgba(255,255,255,0.15)', border: '3px solid rgba(255,255,255,0.3)',
     position: 'relative', boxShadow: '0 0 15px rgba(255,255,255,0.1)',
   };

@@ -3,6 +3,7 @@
 import Box from '@mui/material/Box';
 import { ChevronRight, MoreVertical, Plus } from '@/app/components/icons';
 import React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 type WorkspaceItem = { id: string; name: string; memberRole?: string };
 
@@ -21,7 +22,7 @@ function WorkspaceListRow({ workspace, isDefault, onClick }: ListRowProps): Reac
       </Box>
       <Box>
         <p style={{ margin: 0, fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{workspace.memberRole || 'Workspace'}</p>
-        {isDefault && <span style={{ display: 'inline-flex', marginTop: 4, border: '1px solid rgba(16,185,129,0.7)', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: '#047857', borderRadius: 'var(--lumio-radius-sm)' }}>Default</span>}
+        {isDefault && <span style={{ display: 'inline-flex', marginTop: 4, border: '1px solid rgba(16,185,129,0.7)', background: 'rgba(16,185,129,0.1)', padding: '2px 8px', fontSize: 12, fontWeight: 600, color: '#047857', borderRadius: tokens.radius.sm }}>Default</span>}
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, color: 'var(--muted-foreground)' }}>
         <MoreVertical size={18} />
@@ -46,7 +47,7 @@ export function WorkspaceListView({ workspaces, currentWorkspaceId, createLabel,
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <button type="button" onClick={onCreateClick} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'var(--primary)', color: '#fff', fontWeight: 500, fontSize: 14, border: 'none', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}>
+        <button type="button" onClick={onCreateClick} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'var(--primary)', color: '#fff', fontWeight: 500, fontSize: 14, border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}>
           <Plus size={14} />
           {createLabel}
         </button>

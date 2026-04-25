@@ -9,6 +9,7 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 
 import { formatAmount, formatDate } from './helpers/transactionFormatters';
 import type { Category, Transaction } from './types';
+import { tokens } from '@/lib/theme-tokens';
 
 interface TransactionDetailsTabProps {
   transaction: Transaction;
@@ -210,7 +211,7 @@ export function TransactionDetailsTab({
           {transaction.rawExtract && (
             <div style={{ marginTop: 8 }}>
               <span style={{ fontSize: 12, color: '#2563eb' }}>{t.rawExtract.value}:</span>
-              <div style={{ marginTop: 4, maxHeight: 80, overflowY: 'auto', borderRadius: 'var(--lumio-radius-md)', backgroundColor: 'rgba(191, 219, 254, 0.8)', padding: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1e3a8a' }}>
+              <div style={{ marginTop: 4, maxHeight: 80, overflowY: 'auto', borderRadius: tokens.radius.md, backgroundColor: 'rgba(191, 219, 254, 0.8)', padding: 8, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1e3a8a' }}>
                 {transaction.rawExtract}
               </div>
             </div>

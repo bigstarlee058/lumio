@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function GlobalError({
@@ -31,7 +32,7 @@ export default function GlobalError({
               onClick={reset}
               style={{
                 padding: '10px 16px',
-                borderRadius: 'var(--lumio-radius-lg)',
+                borderRadius: tokens.radius.lg,
                 border: '1px solid #e2e8f0',
                 background: 'var(--card-bg)',
                 cursor: 'pointer',

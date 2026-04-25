@@ -14,6 +14,7 @@ import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
+import { tokens } from '@/lib/theme-tokens';
 
 type GmailSettings = {
   labelId?: string | null;
@@ -61,7 +62,7 @@ function GmailNotLoggedInView({ t }: { t: GmailPageT }): React.JSX.Element {
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box
         sx={{
-          borderRadius: 'var(--lumio-radius-lg)',
+          borderRadius: tokens.radius.lg,
           border: '1px solid #e5e7eb',
           bgcolor: 'background.paper',
           p: 3,
@@ -84,7 +85,7 @@ function GmailInfoPanel({ t }: { t: GmailPageT }): React.JSX.Element {
   return (
     <Box
       sx={{
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 2,
@@ -131,7 +132,7 @@ function GmailSettingsPanel({
   return (
     <Box
       sx={{
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 3,
@@ -203,7 +204,7 @@ function GmailSettingsPanel({
             }
             disabled={isSaving}
             placeholder={t.settings.keywordsPlaceholder.value}
-            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', padding: '8px 12px', fontSize: 14, color: '#111827' }}
+            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: '#111827' }}
           />
           <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.settings.keywordsHelp.value}</Typography>
         </Stack>
@@ -318,7 +319,7 @@ export default function GmailIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', overflow: 'hidden', display: 'flex' }}>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', overflow: 'hidden', display: 'flex' }}>
           <Image src="/icons/gmail.png" alt="Gmail" width={24} height={24} style={{ height: 24, width: 24, objectFit: 'contain' }} />
         </Box>
         <Box>

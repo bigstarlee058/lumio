@@ -5,6 +5,7 @@ import { AnalyticsSourceBadge } from '@/app/(main)/statements/components/analyti
 import type { TopCategoryAggregateRow, TopCategoryRecord, TopCategorySourceChannel } from '@/app/(main)/statements/components/top-categories.utils';
 import { formatMoney } from '@/app/lib/analytics-common';
 import { X } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
 
@@ -28,7 +29,7 @@ function DrillDownHeader({ selectedRow, sourceLabels, labels, onClose }: HeaderP
           <AnalyticsSourceBadge sourceChannel={selectedRow.sourceChannel as TopCategorySourceChannel} labels={sourceLabels} />
         </p>
       </div>
-      <button type="button" style={{ borderRadius: 'var(--lumio-radius-md)', padding: 6, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }} onClick={onClose} aria-label={labels.close}>
+      <button type="button" style={{ borderRadius: tokens.radius.md, padding: 6, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }} onClick={onClose} aria-label={labels.close}>
         <X size={16} />
       </button>
     </div>
@@ -74,11 +75,11 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
 export function TopCategoriesDrillDown({ selectedRow, drillDownRecords, onClose, currency, sourceLabels, labels }: Props): React.JSX.Element {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', padding: 16 }}>
-      <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: 'var(--lumio-radius-xl)' }}>
+      <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: tokens.radius.xl }}>
         <DrillDownHeader selectedRow={selectedRow} sourceLabels={sourceLabels} labels={labels} onClose={onClose} />
         <div style={{ maxHeight: '65vh', overflowY: 'auto', padding: '16px 20px' }}>
           {drillDownRecords.length === 0 ? (
-            <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 'var(--lumio-radius-lg)' }}>
+            <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: tokens.radius.lg }}>
               {labels.noOperations}
             </div>
           ) : (

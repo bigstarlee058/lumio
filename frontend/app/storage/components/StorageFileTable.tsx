@@ -12,6 +12,7 @@ import { formatFileSize, getTagChipStyle, getBankDisplayName, truncateFileNameFo
 import { DraggableFileRow } from './DraggableFileRow';
 import { formatPaginationLabel } from '../helpers/storageFormatters';
 import { getAvailabilityChipStyle, getStatusChipStyle } from '../helpers/storageStyling';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface StorageFileTableProps {
   loading: boolean;
@@ -226,7 +227,7 @@ interface EmptyStateProps {
 function EmptyState({ isTrashView, title, subtitle }: EmptyStateProps): React.JSX.Element {
   return (
     <Box sx={{ textAlign: 'center', py: 8, px: 3 }}>
-      <Box sx={{ mx: 'auto', width: 64, height: 64, color: '#9ca3af', mb: 2, bgcolor: '#f3f4f6', borderRadius: 'var(--lumio-radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ mx: 'auto', width: 64, height: 64, color: '#9ca3af', mb: 2, bgcolor: '#f3f4f6', borderRadius: tokens.radius.full, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {isTrashView ? <Trash2 style={{ width: 32, height: 32 }} /> : <Search style={{ width: 32, height: 32 }} />}
       </Box>
       <Typography style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{title}</Typography>

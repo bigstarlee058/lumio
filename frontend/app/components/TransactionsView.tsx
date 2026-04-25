@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface Transaction {
   id: string;
@@ -325,7 +326,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
                 setPage(0);
               }}
               style={{
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 border: '1px solid #e5e7eb',
                 padding: '2px 8px',
                 fontSize: 14,

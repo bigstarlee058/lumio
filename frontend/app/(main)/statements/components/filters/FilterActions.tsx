@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/app/components/ui/button';
+import { tokens } from '@/lib/theme-tokens';
 
 type FilterActionsProps = {
   onReset: () => void;
@@ -19,10 +20,10 @@ export function FilterActions({
 }: FilterActionsProps) {
   return (
     <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, ...style }}>
-      <Button variant="secondary" size="lg" onClick={onReset} style={{ flex: 1, borderRadius: 'var(--lumio-radius-md)' }}>
+      <Button variant="secondary" size="lg" onClick={onReset} style={{ flex: 1, borderRadius: tokens.radius.md }}>
         {resetLabel}
       </Button>
-      <Button size="lg" onClick={onApply} style={{ flex: 1, borderRadius: 'var(--lumio-radius-md)' }}>
+      <Button size="lg" onClick={onApply} style={{ flex: 1, borderRadius: tokens.radius.md }}>
         {applyLabel}
       </Button>
     </div>

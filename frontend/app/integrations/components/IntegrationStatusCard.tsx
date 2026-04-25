@@ -5,6 +5,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from '@/app/components/icons';
 import type { ReactNode } from 'react';
 import type { IntegrationStatus } from '../types';
+import { tokens } from '@/lib/theme-tokens';
 
 type IntegrationStatusCardProps = {
   status: IntegrationStatus | null;
@@ -45,7 +46,7 @@ export function IntegrationStatusCard({
   return (
     <Box
       sx={{
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid #e5e7eb',
         bgcolor: 'background.paper',
         p: 3,
@@ -84,7 +85,7 @@ export function IntegrationStatusCard({
                     )
                   }
                   sx={{
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     borderColor: 'primary.main',
                     color: 'primary.main',
                     fontWeight: 600,
@@ -109,7 +110,7 @@ export function IntegrationStatusCard({
                     )
                   }
                   sx={{
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     borderColor: '#e5e7eb',
                     color: '#374151',
                     fontWeight: 600,
@@ -135,7 +136,7 @@ export function IntegrationStatusCard({
                   )
                 }
                 sx={{
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   fontWeight: 600,
                   fontSize: 14,
                   textTransform: 'none',

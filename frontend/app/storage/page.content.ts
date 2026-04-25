@@ -14,8 +14,7 @@ const content = {
       zh: '存储',
       ar: 'التخزين',
       pl: 'Przechowywanie',
-      it: 'Archiviazione' }),
-      sk: 'Przechowywanie',
+      it: 'Archiviazione', sk: 'Przechowywanie' }),
     subtitle: t({
       ru: 'Управляйте загруженными файлами и документами',
       en: 'Manage uploaded files and documents',
@@ -29,7 +28,7 @@ const content = {
       zh: '管理上传的文件和文档',
       ar: 'إدارة الملفات والمستندات المرفوعة',
       pl: 'Zarządzaj przesłanymi plikami i dokumentami',
-      it: 'Gestisci i file e i documenti caricati'
+      it: 'Gestisci i file e i documenti caricati',
       sk: 'Zarządzaj przesłanymi plikami i dokumentami',
     }),
     driveSync: {
@@ -46,7 +45,7 @@ const content = {
       zh: 'Google Drive 同步',
       ar: 'مزامنة Google Drive',
       pl: 'Synchronizacja Google Drive',
-      it: 'Sincronizzazione Google Drive'
+      it: 'Sincronizzazione Google Drive',
       sk: 'Synchronizacja Google Drive',
       }),
       loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...',
@@ -59,8 +58,7 @@ const content = {
       zh: '加载中...',
       ar: 'جارٍ التحميل...',
       pl: 'Ładowanie...',
-      it: 'Caricamento...' }),
-      sk: 'Ładowanie...',
+      it: 'Caricamento...', sk: 'Ładowanie...' }),
       lastSync: t({
         ru: 'Последняя синхронизация: {time}',
         en: 'Last sync: {time}',
@@ -74,7 +72,7 @@ const content = {
       zh: '上次同步：{time}',
       ar: 'آخر مزامنة: {time}',
       pl: 'Ostatnia synchronizacja: {time}',
-      it: 'Ultima sincronizzazione: {time}'
+      it: 'Ultima sincronizzazione: {time}',
       sk: 'Ostatnia synchronizacja: {time}',
       }),
       status: {
@@ -88,8 +86,7 @@ const content = {
       zh: '已连接',
       ar: 'متصل',
       pl: 'Połączono',
-      it: 'Connesso' }),
-      sk: 'Połączono',
+      it: 'Connesso', sk: 'Połączono' }),
         disconnected: t({
           ru: 'Не подключено',
           en: 'Not connected',
@@ -103,7 +100,7 @@ const content = {
       zh: '未连接',
       ar: 'غير متصل',
       pl: 'Nie połączono',
-      it: 'Non connesso'
+      it: 'Non connesso',
       sk: 'Nie połączono',
         }),
         needsReauth: t({
@@ -119,7 +116,7 @@ const content = {
       zh: '需要重新授权',
       ar: 'إعادة التفويض مطلوبة',
       pl: 'Wymagana ponowna autoryzacja',
-      it: 'Riautorizzazione richiesta'
+      it: 'Riautorizzazione richiesta',
       sk: 'Wymagana ponowna autoryzacja',
         }),
       },
@@ -134,8 +131,7 @@ const content = {
       zh: '连接',
       ar: 'اتصال',
       pl: 'Połącz',
-      it: 'Connetti' }),
-      sk: 'Połącz',
+      it: 'Connetti', sk: 'Połącz' }),
         import: t({
           ru: 'Импортировать из Drive',
           en: 'Import from Drive',
@@ -149,7 +145,7 @@ const content = {
       zh: '从 Drive 导入',
       ar: 'استيراد من Drive',
       pl: 'Importuj z Drive',
-      it: 'Importa da Drive'
+      it: 'Importa da Drive',
       sk: 'Importuj z Drive',
         }),
         syncNow: t({
@@ -165,7 +161,7 @@ const content = {
       zh: '立即同步',
       ar: 'مزامنة الآن',
       pl: 'Synchronizuj teraz',
-      it: 'Sincronizza ora'
+      it: 'Sincronizza ora',
       sk: 'Synchronizuj teraz',
         }),
         settings: t({ ru: 'Настройки', en: 'Settings', kk: 'Баптаулар',
@@ -178,8 +174,7 @@ const content = {
       zh: '设置',
       ar: 'الإعدادات',
       pl: 'Ustawienia',
-      it: 'Impostazioni' }),
-      sk: 'Ustawienia',
+      it: 'Impostazioni', sk: 'Ustawienia' }),
       },
       toasts: {
         syncStarted: t({
@@ -195,7 +190,7 @@ const content = {
       zh: '同步已开始',
       ar: 'بدأت المزامنة',
       pl: 'Rozpoczęto synchronizację',
-      it: 'Sincronizzazione avviata'
+      it: 'Sincronizzazione avviata',
       sk: 'Rozpoczęto synchronizację',
         }),
         imported: t({
@@ -211,7 +206,7 @@ const content = {
       zh: '已导入文件：{count}',
       ar: 'الملفات المستوردة: {count}',
       pl: 'Zaimportowane pliki: {count}',
-      it: 'File importati: {count}'
+      it: 'File importati: {count}',
       sk: 'Zaimportowane pliki: {count}',
         }),
       },
@@ -229,7 +224,7 @@ const content = {
       zh: '无法加载 Google Drive 状态',
       ar: 'فشل تحميل حالة Google Drive',
       pl: 'Nie udało się załadować statusu Google Drive',
-      it: 'Impossibile caricare lo stato di Google Drive'
+      it: 'Impossibile caricare lo stato di Google Drive',
       sk: 'Nie udało się załadować statusu Google Drive',
         }),
         connectFailed: t({
@@ -245,7 +240,7 @@ const content = {
       zh: '无法连接 Google Drive',
       ar: 'فشل الاتصال بـ Google Drive',
       pl: 'Nie udało się połączyć z Google Drive',
-      it: 'Impossibile connettere Google Drive'
+      it: 'Impossibile connettere Google Drive',
       sk: 'Nie udało się połączyć z Google Drive',
         }),
         syncFailed: t({
@@ -261,7 +256,7 @@ const content = {
       zh: '同步失败',
       ar: 'فشل المزامنة',
       pl: 'Synchronizacja nie powiodła się',
-      it: 'Sincronizzazione non riuscita'
+      it: 'Sincronizzazione non riuscita',
       sk: 'Synchronizacja nie powiodła się',
         }),
         importFailed: t({
@@ -277,7 +272,7 @@ const content = {
       zh: '无法导入文件：{files}',
       ar: 'فشل استيراد الملفات: {files}',
       pl: 'Nie udało się zaimportować plików: {files}',
-      it: 'Impossibile importare i file: {files}'
+      it: 'Impossibile importare i file: {files}',
       sk: 'Nie udało się zaimportować plików: {files}',
         }),
         pickerUnavailable: t({
@@ -293,7 +288,7 @@ const content = {
       zh: 'Google Picker 不可用',
       ar: 'Google Picker غير متاح',
       pl: 'Google Picker jest niedostępny',
-      it: 'Google Picker non disponibile'
+      it: 'Google Picker non disponibile',
       sk: 'Google Picker jest niedostępny',
         }),
       },
@@ -312,7 +307,7 @@ const content = {
       zh: 'Dropbox 同步',
       ar: 'مزامنة Dropbox',
       pl: 'Synchronizacja Dropbox',
-      it: 'Sincronizzazione Dropbox'
+      it: 'Sincronizzazione Dropbox',
       sk: 'Synchronizacja Dropbox',
       }),
       loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...',
@@ -325,8 +320,7 @@ const content = {
       zh: '加载中...',
       ar: 'جارٍ التحميل...',
       pl: 'Ładowanie...',
-      it: 'Caricamento...' }),
-      sk: 'Ładowanie...',
+      it: 'Caricamento...', sk: 'Ładowanie...' }),
       lastSync: t({
         ru: 'Последняя синхронизация: {time}',
         en: 'Last sync: {time}',
@@ -340,7 +334,7 @@ const content = {
       zh: '上次同步：{time}',
       ar: 'آخر مزامنة: {time}',
       pl: 'Ostatnia synchronizacja: {time}',
-      it: 'Ultima sincronizzazione: {time}'
+      it: 'Ultima sincronizzazione: {time}',
       sk: 'Ostatnia synchronizacja: {time}',
       }),
       status: {
@@ -354,8 +348,7 @@ const content = {
       zh: '已连接',
       ar: 'متصل',
       pl: 'Połączono',
-      it: 'Connesso' }),
-      sk: 'Połączono',
+      it: 'Connesso', sk: 'Połączono' }),
         disconnected: t({
           ru: 'Не подключено',
           en: 'Not connected',
@@ -369,7 +362,7 @@ const content = {
       zh: '未连接',
       ar: 'غير متصل',
       pl: 'Nie połączono',
-      it: 'Non connesso'
+      it: 'Non connesso',
       sk: 'Nie połączono',
         }),
         needsReauth: t({
@@ -385,7 +378,7 @@ const content = {
       zh: '需要重新授权',
       ar: 'إعادة التفويض مطلوبة',
       pl: 'Wymagana ponowna autoryzacja',
-      it: 'Riautorizzazione richiesta'
+      it: 'Riautorizzazione richiesta',
       sk: 'Wymagana ponowna autoryzacja',
         }),
       },
@@ -400,8 +393,7 @@ const content = {
       zh: '连接',
       ar: 'اتصال',
       pl: 'Połącz',
-      it: 'Connetti' }),
-      sk: 'Połącz',
+      it: 'Connetti', sk: 'Połącz' }),
         import: t({
           ru: 'Импортировать из Dropbox',
           en: 'Import from Dropbox',
@@ -415,7 +407,7 @@ const content = {
       zh: '从 Dropbox 导入',
       ar: 'استيراد من Dropbox',
       pl: 'Importuj z Dropbox',
-      it: 'Importa da Dropbox'
+      it: 'Importa da Dropbox',
       sk: 'Importuj z Dropbox',
         }),
         syncNow: t({
@@ -431,7 +423,7 @@ const content = {
       zh: '立即同步',
       ar: 'مزامنة الآن',
       pl: 'Synchronizuj teraz',
-      it: 'Sincronizza ora'
+      it: 'Sincronizza ora',
       sk: 'Synchronizuj teraz',
         }),
         settings: t({ ru: 'Настройки', en: 'Settings', kk: 'Баптаулар',
@@ -444,8 +436,7 @@ const content = {
       zh: '设置',
       ar: 'الإعدادات',
       pl: 'Ustawienia',
-      it: 'Impostazioni' }),
-      sk: 'Ustawienia',
+      it: 'Impostazioni', sk: 'Ustawienia' }),
       },
       toasts: {
         syncStarted: t({
@@ -461,7 +452,7 @@ const content = {
       zh: '同步已开始',
       ar: 'بدأت المزامنة',
       pl: 'Rozpoczęto synchronizację',
-      it: 'Sincronizzazione avviata'
+      it: 'Sincronizzazione avviata',
       sk: 'Rozpoczęto synchronizację',
         }),
         imported: t({
@@ -477,7 +468,7 @@ const content = {
       zh: '已导入文件：{count}',
       ar: 'الملفات المستوردة: {count}',
       pl: 'Zaimportowane pliki: {count}',
-      it: 'File importati: {count}'
+      it: 'File importati: {count}',
       sk: 'Zaimportowane pliki: {count}',
         }),
       },
@@ -495,7 +486,7 @@ const content = {
       zh: '无法加载 Dropbox 状态',
       ar: 'فشل تحميل حالة Dropbox',
       pl: 'Nie udało się załadować statusu Dropbox',
-      it: 'Impossibile caricare lo stato di Dropbox'
+      it: 'Impossibile caricare lo stato di Dropbox',
       sk: 'Nie udało się załadować statusu Dropbox',
         }),
         connectFailed: t({
@@ -511,7 +502,7 @@ const content = {
       zh: '无法连接 Dropbox',
       ar: 'فشل الاتصال بـ Dropbox',
       pl: 'Nie udało się połączyć z Dropbox',
-      it: 'Impossibile connettere Dropbox'
+      it: 'Impossibile connettere Dropbox',
       sk: 'Nie udało się połączyć z Dropbox',
         }),
         syncFailed: t({
@@ -527,7 +518,7 @@ const content = {
       zh: '同步失败',
       ar: 'فشل المزامنة',
       pl: 'Synchronizacja nie powiodła się',
-      it: 'Sincronizzazione non riuscita'
+      it: 'Sincronizzazione non riuscita',
       sk: 'Synchronizacja nie powiodła się',
         }),
         importFailed: t({
@@ -543,7 +534,7 @@ const content = {
       zh: '无法导入文件：{files}',
       ar: 'فشل استيراد الملفات: {files}',
       pl: 'Nie udało się zaimportować plików: {files}',
-      it: 'Impossibile importare i file: {files}'
+      it: 'Impossibile importare i file: {files}',
       sk: 'Nie udało się zaimportować plików: {files}',
         }),
         pickerUnavailable: t({
@@ -559,7 +550,7 @@ const content = {
       zh: 'Dropbox Chooser 不可用',
       ar: 'Dropbox Chooser غير متاح',
       pl: 'Dropbox Chooser jest niedostępny',
-      it: 'Dropbox Chooser non disponibile'
+      it: 'Dropbox Chooser non disponibile',
       sk: 'Dropbox Chooser jest niedostępny',
         }),
       },
@@ -575,8 +566,7 @@ const content = {
       zh: '文件',
       ar: 'الملفات',
       pl: 'Pliki',
-      it: 'File' }),
-      sk: 'Pliki',
+      it: 'File', sk: 'Pliki' }),
       trash: t({ ru: 'Корзина', en: 'Trash', kk: 'Қоқыс',
       de: 'Papierkorb',
       fr: 'Corbeille',
@@ -587,8 +577,7 @@ const content = {
       zh: '回收站',
       ar: 'المهملات',
       pl: 'Kosz',
-      it: 'Cestino' }),
-      sk: 'Kosz',
+      it: 'Cestino', sk: 'Kosz' }),
     },
     pagination: {
       shown: t({
@@ -604,7 +593,7 @@ const content = {
       zh: '显示 {from}–{to}，共 {count}',
       ar: 'عرض {from}–{to} من {count}',
       pl: 'Wyświetlanie {from}–{to} z {count}',
-      it: 'Visualizzazione {from}–{to} di {count}'
+      it: 'Visualizzazione {from}–{to} di {count}',
       sk: 'Wyświetlanie {from}–{to} z {count}',
       }),
       previous: t({ ru: 'Предыдущая', en: 'Previous', kk: 'Алдыңғы',
@@ -617,8 +606,7 @@ const content = {
       zh: '上一页',
       ar: 'السابق',
       pl: 'Poprzednia',
-      it: 'Precedente' }),
-      sk: 'Poprzednia',
+      it: 'Precedente', sk: 'Poprzednia' }),
       next: t({ ru: 'Следующая', en: 'Next', kk: 'Келесі',
       de: 'Weiter',
       fr: 'Suivant',
@@ -629,8 +617,7 @@ const content = {
       zh: '下一页',
       ar: 'التالي',
       pl: 'Następna',
-      it: 'Avanti' }),
-      sk: 'Następna',
+      it: 'Avanti', sk: 'Następna' }),
       pageOf: t({
         ru: 'Страница {page} из {count}',
         en: 'Page {page} of {count}',
@@ -644,7 +631,7 @@ const content = {
       zh: '第 {page} 页，共 {count} 页',
       ar: 'الصفحة {page} من {count}',
       pl: 'Strona {page} z {count}',
-      it: 'Pagina {page} di {count}'
+      it: 'Pagina {page} di {count}',
       sk: 'Strona {page} z {count}',
       }),
     },
@@ -659,8 +646,7 @@ const content = {
       zh: '回收站',
       ar: 'المهملات',
       pl: 'Kosz',
-      it: 'Cestino' }),
-      sk: 'Kosz',
+      it: 'Cestino', sk: 'Kosz' }),
       selectedLabel: t({
         ru: 'Выбрано: {count}',
         en: 'Selected: {count}',
@@ -674,7 +660,7 @@ const content = {
       zh: '已选：{count}',
       ar: 'المحدد: {count}',
       pl: 'Zaznaczono: {count}',
-      it: 'Selezionati: {count}'
+      it: 'Selezionati: {count}',
       sk: 'Zaznaczono: {count}',
       }),
       restoreSelected: t({
@@ -690,7 +676,7 @@ const content = {
       zh: '恢复',
       ar: 'استعادة',
       pl: 'Przywróć',
-      it: 'Ripristina'
+      it: 'Ripristina',
       sk: 'Przywróć',
       }),
       deleteSelected: t({
@@ -706,7 +692,7 @@ const content = {
       zh: '删除',
       ar: 'حذف',
       pl: 'Usuń',
-      it: 'Elimina'
+      it: 'Elimina',
       sk: 'Usuń',
       }),
       emptyAction: t({
@@ -722,7 +708,7 @@ const content = {
       zh: '清空回收站',
       ar: 'إفراغ المهملات',
       pl: 'Opróżnij kosz',
-      it: 'Svuota cestino'
+      it: 'Svuota cestino',
       sk: 'Opróżnij kosz',
       }),
       selectAll: t({
@@ -738,7 +724,7 @@ const content = {
       zh: '选择回收站中的全部',
       ar: 'تحديد الكل في المهملات',
       pl: 'Zaznacz wszystko w koszu',
-      it: 'Seleziona tutto nel cestino'
+      it: 'Seleziona tutto nel cestino',
       sk: 'Zaznacz wszystko w koszu',
       }),
       selectRow: t({
@@ -754,7 +740,7 @@ const content = {
       zh: '选择文件',
       ar: 'تحديد الملف',
       pl: 'Wybierz plik',
-      it: 'Seleziona file'
+      it: 'Seleziona file',
       sk: 'Wybierz plik',
       }),
       expiresIn: t({
@@ -770,7 +756,7 @@ const content = {
       zh: '{days}天后删除',
       ar: 'يُحذف خلال {days}أيام',
       pl: 'Usunie się za {days}d',
-      it: 'Eliminato tra {days}g'
+      it: 'Eliminato tra {days}g',
       sk: 'Usunie się za {days}d',
       }),
       expiresToday: t({
@@ -786,7 +772,7 @@ const content = {
       zh: '今天删除',
       ar: 'يُحذف اليوم',
       pl: 'Usunie się dzisiaj',
-      it: 'Eliminato oggi'
+      it: 'Eliminato oggi',
       sk: 'Usunie się dzisiaj',
       }),
       empty: {
@@ -803,7 +789,7 @@ const content = {
       zh: '回收站为空',
       ar: 'المهملات فارغة',
       pl: 'Kosz jest pusty',
-      it: 'Il cestino è vuoto'
+      it: 'Il cestino è vuoto',
       sk: 'Kosz jest pusty',
         }),
         subtitle: t({
@@ -819,7 +805,7 @@ const content = {
       zh: '已删除的文件将显示在此处',
       ar: 'ستظهر الملفات المحذوفة هنا',
       pl: 'Usunięte pliki pojawią się tutaj',
-      it: 'I file eliminati appariranno qui'
+      it: 'I file eliminati appariranno qui',
       sk: 'Usunięte pliki pojawią się tutaj',
         }),
       },
@@ -836,7 +822,7 @@ const content = {
       zh: '恢复',
       ar: 'استعادة',
       pl: 'Przywróć',
-      it: 'Ripristina'
+      it: 'Ripristina',
       sk: 'Przywróć',
       }),
       deleteAction: t({
@@ -852,7 +838,7 @@ const content = {
       zh: '永久删除',
       ar: 'حذف نهائي',
       pl: 'Usuń na zawsze',
-      it: 'Elimina definitivamente'
+      it: 'Elimina definitivamente',
       sk: 'Usuń na zawsze',
       }),
       restoreLoading: t({
@@ -868,7 +854,7 @@ const content = {
       zh: '恢复中...',
       ar: 'جارٍ الاستعادة...',
       pl: 'Przywracanie...',
-      it: 'Ripristino in corso...'
+      it: 'Ripristino in corso...',
       sk: 'Przywracanie...',
       }),
       restoreSuccess: t({
@@ -884,7 +870,7 @@ const content = {
       zh: '文件已恢复',
       ar: 'تم استعادة الملف',
       pl: 'Plik przywrócony',
-      it: 'File ripristinato'
+      it: 'File ripristinato',
       sk: 'Plik przywrócony',
       }),
       restoreFailed: t({
@@ -900,7 +886,7 @@ const content = {
       zh: '无法恢复文件',
       ar: 'فشل استعادة الملف',
       pl: 'Nie udało się przywrócić pliku',
-      it: 'Impossibile ripristinare il file'
+      it: 'Impossibile ripristinare il file',
       sk: 'Nie udało się przywrócić pliku',
       }),
       deleteLoading: t({
@@ -916,7 +902,7 @@ const content = {
       zh: '永久删除中...',
       ar: 'جارٍ الحذف النهائي...',
       pl: 'Trwałe usuwanie...',
-      it: 'Eliminazione definitiva...'
+      it: 'Eliminazione definitiva...',
       sk: 'Trwałe usuwanie...',
       }),
       deleteSuccess: t({
@@ -932,7 +918,7 @@ const content = {
       zh: '文件已永久删除',
       ar: 'تم حذف الملف نهائياً',
       pl: 'Plik trwale usunięty',
-      it: 'File eliminato definitivamente'
+      it: 'File eliminato definitivamente',
       sk: 'Plik trwale usunięty',
       }),
       deleteFailed: t({
@@ -948,7 +934,7 @@ const content = {
       zh: '无法永久删除文件',
       ar: 'فشل الحذف النهائي للملف',
       pl: 'Nie udało się trwale usunąć pliku',
-      it: 'Impossibile eliminare il file definitivamente'
+      it: 'Impossibile eliminare il file definitivamente',
       sk: 'Nie udało się trwale usunąć pliku',
       }),
       bulkDeleteTitle: t({
@@ -964,7 +950,7 @@ const content = {
       zh: '删除选定的文件？',
       ar: 'هل تريد حذف الملفات المحددة؟',
       pl: 'Usunąć wybrane pliki?',
-      it: 'Eliminare i file selezionati?'
+      it: 'Eliminare i file selezionati?',
       sk: 'Usunąć wybrane pliki?',
       }),
       bulkDeleteMessage: t({
@@ -982,8 +968,7 @@ const content = {
       zh: '删除',
       ar: 'حذف',
       pl: 'Usuń',
-      it: 'Elimina' }),
-      sk: 'Usuń',
+      it: 'Elimina', sk: 'Usuń' }),
       bulkDeleteCancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау',
       de: 'Abbrechen',
       fr: 'Annuler',
@@ -994,8 +979,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
       emptyTitle: t({
         ru: 'Очистить корзину?',
         en: 'Empty trash?',
@@ -1009,7 +993,7 @@ const content = {
       zh: '清空回收站？',
       ar: 'هل تريد إفراغ المهملات؟',
       pl: 'Opróżnić kosz?',
-      it: 'Svuotare il cestino?'
+      it: 'Svuotare il cestino?',
       sk: 'Opróżnić kosz?',
       }),
       emptyMessage: t({
@@ -1025,7 +1009,7 @@ const content = {
       zh: '回收站中的所有文件将被永久删除。',
       ar: 'سيتم حذف جميع الملفات في المهملات نهائياً.',
       pl: 'Wszystkie pliki w koszu zostaną trwale usunięte.',
-      it: 'Tutti i file nel cestino verranno eliminati definitivamente.'
+      it: 'Tutti i file nel cestino verranno eliminati definitivamente.',
       sk: 'Wszystkie pliki w koszu zostaną trwale usunięte.',
       }),
       emptyConfirm: t({
@@ -1041,7 +1025,7 @@ const content = {
       zh: '清空',
       ar: 'إفراغ',
       pl: 'Opróżnij',
-      it: 'Svuota'
+      it: 'Svuota',
       sk: 'Opróżnij',
       }),
       emptyCancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау',
@@ -1054,8 +1038,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
     },
     searchPlaceholder: t({
       ru: 'Поиск по файлам...',
@@ -1070,7 +1053,7 @@ const content = {
       zh: '搜索文件...',
       ar: 'البحث في الملفات...',
       pl: 'Szukaj plików...',
-      it: 'Cerca file...'
+      it: 'Cerca file...',
       sk: 'Szukaj plików...',
     }),
     filters: {
@@ -1084,8 +1067,7 @@ const content = {
       zh: '筛选',
       ar: 'الفلاتر',
       pl: 'Filtry',
-      it: 'Filtri' }),
-      sk: 'Filtry',
+      it: 'Filtri', sk: 'Filtry' }),
       title: t({ ru: 'Фильтры', en: 'Filters', kk: 'Сүзгілер',
       de: 'Filter',
       fr: 'Filtres',
@@ -1096,8 +1078,7 @@ const content = {
       zh: '筛选',
       ar: 'الفلاتر',
       pl: 'Filtry',
-      it: 'Filtri' }),
-      sk: 'Filtry',
+      it: 'Filtri', sk: 'Filtry' }),
       reset: t({ ru: 'Сбросить', en: 'Reset', kk: 'Қалпына келтіру',
       de: 'Zurücksetzen',
       fr: 'Réinitialiser',
@@ -1108,8 +1089,7 @@ const content = {
       zh: '重置',
       ar: 'إعادة تعيين',
       pl: 'Resetuj',
-      it: 'Reimposta' }),
-      sk: 'Resetuj',
+      it: 'Reimposta', sk: 'Resetuj' }),
       apply: t({ ru: 'Применить', en: 'Apply', kk: 'Қолдану',
       de: 'Anwenden',
       fr: 'Appliquer',
@@ -1120,8 +1100,7 @@ const content = {
       zh: '应用',
       ar: 'تطبيق',
       pl: 'Zastosuj',
-      it: 'Applica' }),
-      sk: 'Zastosuj',
+      it: 'Applica', sk: 'Zastosuj' }),
       all: t({ ru: 'Все', en: 'All', kk: 'Барлығы',
       de: 'Alle',
       fr: 'Tous',
@@ -1132,8 +1111,7 @@ const content = {
       zh: '全部',
       ar: 'الكل',
       pl: 'Wszystkie',
-      it: 'Tutti' }),
-      sk: 'Wszystkie',
+      it: 'Tutti', sk: 'Wszystkie' }),
       status: t({ ru: 'Статус', en: 'Status', kk: 'Күйі',
       de: 'Status',
       fr: 'Statut',
@@ -1144,8 +1122,7 @@ const content = {
       zh: '状态',
       ar: 'الحالة',
       pl: 'Status',
-      it: 'Stato' }),
-      sk: 'Status',
+      it: 'Stato', sk: 'Status' }),
       bank: t({ ru: 'Банк', en: 'Bank', kk: 'Банк',
       de: 'Bank',
       fr: 'Banque',
@@ -1156,8 +1133,7 @@ const content = {
       zh: '银行',
       ar: 'البنك',
       pl: 'Bank',
-      it: 'Banca' }),
-      sk: 'Bank',
+      it: 'Banca', sk: 'Bank' }),
       category: t({ ru: 'Категория', en: 'Category', kk: 'Санат',
       de: 'Kategorie',
       fr: 'Catégorie',
@@ -1168,8 +1144,7 @@ const content = {
       zh: '分类',
       ar: 'الفئة',
       pl: 'Kategoria',
-      it: 'Categoria' }),
-      sk: 'Kategoria',
+      it: 'Categoria', sk: 'Kategoria' }),
       folder: t({ ru: 'Папка', en: 'Folder', kk: 'Қапшық',
       de: 'Ordner',
       fr: 'Dossier',
@@ -1180,8 +1155,7 @@ const content = {
       zh: '文件夹',
       ar: 'مجلد',
       pl: 'Folder',
-      it: 'Cartella' }),
-      sk: 'Folder',
+      it: 'Cartella', sk: 'Folder' }),
       tags: t({ ru: 'Теги', en: 'Tags', kk: 'Тегтер',
       de: 'Tags',
       fr: 'Étiquettes',
@@ -1192,8 +1166,7 @@ const content = {
       zh: '标签',
       ar: 'العلامات',
       pl: 'Tagi',
-      it: 'Tag' }),
-      sk: 'Tagi',
+      it: 'Tag', sk: 'Tagi' }),
       accessType: t({
         ru: 'Тип доступа',
         en: 'Access type',
@@ -1207,7 +1180,7 @@ const content = {
       zh: '访问类型',
       ar: 'نوع الوصول',
       pl: 'Typ dostępu',
-      it: 'Tipo di accesso'
+      it: 'Tipo di accesso',
       sk: 'Typ dostępu',
       }),
       owned: t({ ru: 'Мои файлы', en: 'My files', kk: 'Менің файлдарым',
@@ -1220,8 +1193,7 @@ const content = {
       zh: '我的文件',
       ar: 'ملفاتي',
       pl: 'Moje pliki',
-      it: 'I miei file' }),
-      sk: 'Moje pliki',
+      it: 'I miei file', sk: 'Moje pliki' }),
       shared: t({
         ru: 'Доступные мне',
         en: 'Shared with me',
@@ -1235,7 +1207,7 @@ const content = {
       zh: '与我共享',
       ar: 'مشاركة معي',
       pl: 'Udostępnione dla mnie',
-      it: 'Condiviso con me'
+      it: 'Condiviso con me',
       sk: 'Udostępnione dla mnie',
       }),
     },
@@ -1253,7 +1225,7 @@ const content = {
       zh: '最新优先',
       ar: 'الأحدث أولاً',
       pl: 'Najnowsze najpierw',
-      it: 'Più recenti prima'
+      it: 'Più recenti prima',
       sk: 'Najnowsze najpierw',
       }),
       oldest: t({
@@ -1269,7 +1241,7 @@ const content = {
       zh: '最旧优先',
       ar: 'الأقدم أولاً',
       pl: 'Najstarsze najpierw',
-      it: 'Più vecchi prima'
+      it: 'Più vecchi prima',
       sk: 'Najstarsze najpierw',
       }),
       nameAsc: t({ ru: 'Имя A–Z', en: 'Name A–Z', kk: 'Атауы A–Z',
@@ -1282,8 +1254,7 @@ const content = {
       zh: '名称 A–Z',
       ar: 'الاسم أ–ي',
       pl: 'Nazwa A–Z',
-      it: 'Nome A–Z' }),
-      sk: 'Nazwa A–Z',
+      it: 'Nome A–Z', sk: 'Nazwa A–Z' }),
       nameDesc: t({ ru: 'Имя Z–A', en: 'Name Z–A', kk: 'Атауы Z–A',
       de: 'Name Z–A',
       fr: 'Nom Z–A',
@@ -1294,8 +1265,7 @@ const content = {
       zh: '名称 Z–A',
       ar: 'الاسم ي–أ',
       pl: 'Nazwa Z–A',
-      it: 'Nome Z–A' }),
-      sk: 'Nazwa Z–A',
+      it: 'Nome Z–A', sk: 'Nazwa Z–A' }),
       bankAsc: t({ ru: 'Банк A–Z', en: 'Bank A–Z', kk: 'Банк A–Z',
       de: 'Bank A–Z',
       fr: 'Banque A–Z',
@@ -1306,8 +1276,7 @@ const content = {
       zh: '银行 A–Z',
       ar: 'البنك أ–ي',
       pl: 'Bank A–Z',
-      it: 'Banca A–Z' }),
-      sk: 'Bank A–Z',
+      it: 'Banca A–Z', sk: 'Bank A–Z' }),
       bankDesc: t({ ru: 'Банк Z–A', en: 'Bank Z–A', kk: 'Банк Z–A',
       de: 'Bank Z–A',
       fr: 'Banque Z–A',
@@ -1318,8 +1287,7 @@ const content = {
       zh: '银行 Z–A',
       ar: 'البنك ي–أ',
       pl: 'Bank Z–A',
-      it: 'Banca Z–A' }),
-      sk: 'Bank Z–A',
+      it: 'Banca Z–A', sk: 'Bank Z–A' }),
     },
     views: {
       title: t({
@@ -1335,7 +1303,7 @@ const content = {
       zh: '已保存的视图',
       ar: 'العروض المحفوظة',
       pl: 'Zapisane widoki',
-      it: 'Viste salvate'
+      it: 'Viste salvate',
       sk: 'Zapisane widoki',
       }),
       namePlaceholder: t({
@@ -1351,7 +1319,7 @@ const content = {
       zh: '视图名称',
       ar: 'اسم العرض',
       pl: 'Nazwa widoku',
-      it: 'Nome vista'
+      it: 'Nome vista',
       sk: 'Nazwa widoku',
       }),
       saveTooltip: t({
@@ -1367,7 +1335,7 @@ const content = {
       zh: '保存当前筛选和排序',
       ar: 'حفظ الفلاتر والترتيب الحالي',
       pl: 'Zapisz bieżące filtry i sortowanie',
-      it: 'Salva filtri e ordinamento correnti'
+      it: 'Salva filtri e ordinamento correnti',
       sk: 'Zapisz bieżące filtry i sortowanie',
       }),
       loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...',
@@ -1380,8 +1348,7 @@ const content = {
       zh: '加载中...',
       ar: 'جارٍ التحميل...',
       pl: 'Ładowanie...',
-      it: 'Caricamento...' }),
-      sk: 'Ładowanie...',
+      it: 'Caricamento...', sk: 'Ładowanie...' }),
       empty: t({
         ru: 'Нет сохранённых видов',
         en: 'No saved views',
@@ -1395,7 +1362,7 @@ const content = {
       zh: '没有保存的视图',
       ar: 'لا توجد عروض محفوظة',
       pl: 'Brak zapisanych widoków',
-      it: 'Nessuna vista salvata'
+      it: 'Nessuna vista salvata',
       sk: 'Brak zapisanych widoków',
       }),
       delete: t({
@@ -1411,7 +1378,7 @@ const content = {
       zh: '移到回收站',
       ar: 'نقل إلى المهملات',
       pl: 'Przenieś do kosza',
-      it: 'Sposta nel cestino'
+      it: 'Sposta nel cestino',
       sk: 'Przenieś do kosza',
       }),
     },
@@ -1426,8 +1393,7 @@ const content = {
       zh: '文件夹',
       ar: 'المجلدات',
       pl: 'Foldery',
-      it: 'Cartelle' }),
-      sk: 'Foldery',
+      it: 'Cartelle', sk: 'Foldery' }),
       all: t({ ru: 'Все файлы', en: 'All files', kk: 'Барлық файлдар',
       de: 'Alle Dateien',
       fr: 'Tous les fichiers',
@@ -1438,8 +1404,7 @@ const content = {
       zh: '所有文件',
       ar: 'جميع الملفات',
       pl: 'Wszystkie pliki',
-      it: 'Tutti i file' }),
-      sk: 'Wszystkie pliki',
+      it: 'Tutti i file', sk: 'Wszystkie pliki' }),
       none: t({ ru: 'Без папки', en: 'No folder', kk: 'Қапшықсыз',
       de: 'Kein Ordner',
       fr: 'Aucun dossier',
@@ -1450,8 +1415,7 @@ const content = {
       zh: '无文件夹',
       ar: 'بدون مجلد',
       pl: 'Bez folderu',
-      it: 'Nessuna cartella' }),
-      sk: 'Bez folderu',
+      it: 'Nessuna cartella', sk: 'Bez folderu' }),
       createPlaceholder: t({
         ru: 'Новая папка',
         en: 'New folder',
@@ -1465,7 +1429,7 @@ const content = {
       zh: '新文件夹',
       ar: 'مجلد جديد',
       pl: 'Nowy folder',
-      it: 'Nuova cartella'
+      it: 'Nuova cartella',
       sk: 'Nowy folder',
       }),
       createTooltip: t({
@@ -1481,7 +1445,7 @@ const content = {
       zh: '创建文件夹',
       ar: 'إنشاء مجلد',
       pl: 'Utwórz folder',
-      it: 'Crea cartella'
+      it: 'Crea cartella',
       sk: 'Utwórz folder',
       }),
       renameTooltip: t({
@@ -1497,7 +1461,7 @@ const content = {
       zh: '重命名文件夹',
       ar: 'إعادة تسمية المجلد',
       pl: 'Zmień nazwę folderu',
-      it: 'Rinomina cartella'
+      it: 'Rinomina cartella',
       sk: 'Zmień nazwę folderu',
       }),
       nameTooLong: t({
@@ -1513,7 +1477,7 @@ const content = {
       zh: '文件夹名称不能超过40个字符',
       ar: 'لا يمكن أن يتجاوز اسم المجلد 40 حرفاً',
       pl: 'Nazwa folderu nie może przekraczać 40 znaków',
-      it: 'Il nome della cartella non può superare i 40 caratteri'
+      it: 'Il nome della cartella non può superare i 40 caratteri',
       sk: 'Nazwa folderu nie może przekraczać 40 znaków',
       }),
       cancelRename: t({ ru: 'Отменить', en: 'Cancel', kk: 'Болдырмау',
@@ -1526,8 +1490,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
       deleteTooltip: t({
         ru: 'Удалить папку',
         en: 'Delete folder',
@@ -1541,7 +1504,7 @@ const content = {
       zh: '删除文件夹',
       ar: 'حذف المجلد',
       pl: 'Usuń folder',
-      it: 'Elimina cartella'
+      it: 'Elimina cartella',
       sk: 'Usuń folder',
       }),
       deleteTitle: t({
@@ -1557,7 +1520,7 @@ const content = {
       zh: '删除文件夹？',
       ar: 'هل تريد حذف المجلد؟',
       pl: 'Usunąć folder?',
-      it: 'Eliminare la cartella?'
+      it: 'Eliminare la cartella?',
       sk: 'Usunąć folder?',
       }),
       deleteMessagePrefix: t({
@@ -1573,7 +1536,7 @@ const content = {
       zh: '文件夹 ',
       ar: 'مجلد ',
       pl: 'Folder ',
-      it: 'Cartella '
+      it: 'Cartella ',
       sk: 'Folder ',
       }),
       deleteMessageSuffix: t({
@@ -1589,7 +1552,7 @@ const content = {
       zh: '将被删除。',
       ar: ' سيتم حذفها.',
       pl: ' zostanie usunięty.',
-      it: ' verrà eliminato.'
+      it: ' verrà eliminato.',
       sk: ' zostanie usunięty.',
       }),
       deleteMessageFallback: t({
@@ -1605,7 +1568,7 @@ const content = {
       zh: '文件夹将被删除。',
       ar: 'سيتم حذف المجلد.',
       pl: 'Folder zostanie usunięty.',
-      it: 'La cartella verrà eliminata.'
+      it: 'La cartella verrà eliminata.',
       sk: 'Folder zostanie usunięty.',
       }),
       deleteWithContents: t({
@@ -1621,7 +1584,7 @@ const content = {
       zh: '连同内容一起删除',
       ar: 'حذف مع المحتوى',
       pl: 'Usuń wraz z zawartością',
-      it: 'Elimina con il contenuto'
+      it: 'Elimina con il contenuto',
       sk: 'Usuń wraz z zawartością',
       }),
       deleteConfirm: t({
@@ -1637,7 +1600,7 @@ const content = {
       zh: '删除文件夹',
       ar: 'حذف المجلد',
       pl: 'Usuń folder',
-      it: 'Elimina cartella'
+      it: 'Elimina cartella',
       sk: 'Usuń folder',
       }),
       deleteCancel: t({
@@ -1653,7 +1616,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla'
+      it: 'Annulla',
       sk: 'Anuluj',
       }),
     },
@@ -1668,8 +1631,7 @@ const content = {
       zh: '标签',
       ar: 'العلامات',
       pl: 'Tagi',
-      it: 'Tag' }),
-      sk: 'Tagi',
+      it: 'Tag', sk: 'Tagi' }),
       empty: t({ ru: 'Теги не заданы', en: 'No tags yet', kk: 'Тегтер жоқ',
       de: 'Noch keine Tags',
       fr: 'Aucune étiquette',
@@ -1680,8 +1642,7 @@ const content = {
       zh: '还没有标签',
       ar: 'لا توجد علامات بعد',
       pl: 'Brak tagów',
-      it: 'Nessun tag ancora' }),
-      sk: 'Brak tagów',
+      it: 'Nessun tag ancora', sk: 'Brak tagów' }),
       clear: t({
         ru: 'Сбросить теги',
         en: 'Clear tags',
@@ -1695,7 +1656,7 @@ const content = {
       zh: '清除标签',
       ar: 'مسح العلامات',
       pl: 'Wyczyść tagi',
-      it: 'Cancella tag'
+      it: 'Cancella tag',
       sk: 'Wyczyść tagi',
       }),
       createPlaceholder: t({
@@ -1711,7 +1672,7 @@ const content = {
       zh: '新标签',
       ar: 'علامة جديدة',
       pl: 'Nowy tag',
-      it: 'Nuovo tag'
+      it: 'Nuovo tag',
       sk: 'Nowy tag',
       }),
       createTooltip: t({
@@ -1727,7 +1688,7 @@ const content = {
       zh: '创建标签',
       ar: 'إنشاء علامة',
       pl: 'Utwórz tag',
-      it: 'Crea tag'
+      it: 'Crea tag',
       sk: 'Utwórz tag',
       }),
       renameTooltip: t({
@@ -1743,7 +1704,7 @@ const content = {
       zh: '重命名标签',
       ar: 'إعادة تسمية العلامة',
       pl: 'Zmień nazwę tagu',
-      it: 'Rinomina tag'
+      it: 'Rinomina tag',
       sk: 'Zmień nazwę tagu',
       }),
       deleteTooltip: t({
@@ -1759,7 +1720,7 @@ const content = {
       zh: '删除标签',
       ar: 'حذف العلامة',
       pl: 'Usuń tag',
-      it: 'Elimina tag'
+      it: 'Elimina tag',
       sk: 'Usuń tag',
       }),
       cancelRename: t({ ru: 'Отменить', en: 'Cancel', kk: 'Болдырмау',
@@ -1772,8 +1733,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
       deleteTitle: t({
         ru: 'Удалить тег?',
         en: 'Delete tag?',
@@ -1787,7 +1747,7 @@ const content = {
       zh: '删除标签？',
       ar: 'هل تريد حذف العلامة؟',
       pl: 'Usunąć tag?',
-      it: 'Eliminare il tag?'
+      it: 'Eliminare il tag?',
       sk: 'Usunąć tag?',
       }),
       deleteMessagePrefix: t({
@@ -1803,7 +1763,7 @@ const content = {
       zh: '标签 ',
       ar: 'علامة ',
       pl: 'Tag ',
-      it: 'Tag '
+      it: 'Tag ',
       sk: 'Tag ',
       }),
       deleteMessageSuffix: t({
@@ -1819,7 +1779,7 @@ const content = {
       zh: '将被删除。',
       ar: ' سيتم حذفها.',
       pl: ' zostanie usunięty.',
-      it: ' verrà eliminato.'
+      it: ' verrà eliminato.',
       sk: ' zostanie usunięty.',
       }),
       deleteMessageFallback: t({
@@ -1835,7 +1795,7 @@ const content = {
       zh: '标签将被删除。',
       ar: 'سيتم حذف العلامة.',
       pl: 'Tag zostanie usunięty.',
-      it: 'Il tag verrà eliminato.'
+      it: 'Il tag verrà eliminato.',
       sk: 'Tag zostanie usunięty.',
       }),
       deleteConfirm: t({
@@ -1851,7 +1811,7 @@ const content = {
       zh: '删除标签',
       ar: 'حذف العلامة',
       pl: 'Usuń tag',
-      it: 'Elimina tag'
+      it: 'Elimina tag',
       sk: 'Usuń tag',
       }),
       deleteCancel: t({
@@ -1867,7 +1827,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla'
+      it: 'Annulla',
       sk: 'Anuluj',
       }),
     },
@@ -1882,8 +1842,7 @@ const content = {
       zh: '文件夹',
       ar: 'المجلدات',
       pl: 'Foldery',
-      it: 'Cartelle' }),
-      sk: 'Foldery',
+      it: 'Cartelle', sk: 'Foldery' }),
       foldersSubtitle: t({
         ru: 'Создавайте папки и раскладывайте файлы по разделам',
         en: 'Create folders and organize files',
@@ -1897,7 +1856,7 @@ const content = {
       zh: '创建文件夹并整理文件',
       ar: 'إنشاء مجلدات وتنظيم الملفات',
       pl: 'Twórz foldery i organizuj pliki',
-      it: 'Crea cartelle e organizza i file'
+      it: 'Crea cartelle e organizza i file',
       sk: 'Twórz foldery i organizuj pliki',
       }),
       folderCreateTitle: t({
@@ -1913,7 +1872,7 @@ const content = {
       zh: '创建文件夹',
       ar: 'إنشاء مجلد',
       pl: 'Utwórz folder',
-      it: 'Crea cartella'
+      it: 'Crea cartella',
       sk: 'Utwórz folder',
       }),
       folderListTitle: t({
@@ -1929,7 +1888,7 @@ const content = {
       zh: '文件夹列表',
       ar: 'قائمة المجلدات',
       pl: 'Lista folderów',
-      it: 'Elenco cartelle'
+      it: 'Elenco cartelle',
       sk: 'Lista folderów',
       }),
       folderListEmpty: t({
@@ -1945,7 +1904,7 @@ const content = {
       zh: '还没有文件夹',
       ar: 'لا توجد مجلدات بعد',
       pl: 'Brak folderów',
-      it: 'Nessuna cartella ancora'
+      it: 'Nessuna cartella ancora',
       sk: 'Brak folderów',
       }),
       folderAssignTitle: t({
@@ -1961,7 +1920,7 @@ const content = {
       zh: '将文件添加到文件夹',
       ar: 'إضافة ملفات إلى المجلد',
       pl: 'Dodaj pliki do folderu',
-      it: 'Aggiungi file alla cartella'
+      it: 'Aggiungi file alla cartella',
       sk: 'Dodaj pliki do folderu',
       }),
       folderAssignHint: t({
@@ -1977,7 +1936,7 @@ const content = {
       zh: '选择一个文件夹并选择下面的文件',
       ar: 'اختر مجلداً وحدد الملفات أدناه',
       pl: 'Wybierz folder i zaznacz pliki poniżej',
-      it: 'Seleziona una cartella e scegli i file di seguito'
+      it: 'Seleziona una cartella e scegli i file di seguito',
       sk: 'Wybierz folder i zaznacz pliki poniżej',
       }),
       folderSelectLabel: t({
@@ -1993,7 +1952,7 @@ const content = {
       zh: '文件夹',
       ar: 'مجلد',
       pl: 'Folder',
-      it: 'Cartella'
+      it: 'Cartella',
       sk: 'Folder',
       }),
       folderSelectPlaceholder: t({
@@ -2009,7 +1968,7 @@ const content = {
       zh: '选择文件夹',
       ar: 'اختر مجلداً',
       pl: 'Wybierz folder',
-      it: 'Scegli una cartella'
+      it: 'Scegli una cartella',
       sk: 'Wybierz folder',
       }),
       filesLabel: t({ ru: 'Файлы', en: 'Files', kk: 'Файлдар',
@@ -2022,8 +1981,7 @@ const content = {
       zh: '文件',
       ar: 'الملفات',
       pl: 'Pliki',
-      it: 'File' }),
-      sk: 'Pliki',
+      it: 'File', sk: 'Pliki' }),
       fileSearchPlaceholder: t({
         ru: 'Найти файл по названию, банку или тегу',
         en: 'Search by name, bank, or tag',
@@ -2037,7 +1995,7 @@ const content = {
       zh: '按名称、银行或标签搜索',
       ar: 'البحث بالاسم أو البنك أو العلامة',
       pl: 'Szukaj po nazwie, banku lub tagu',
-      it: 'Cerca per nome, banca o tag'
+      it: 'Cerca per nome, banca o tag',
       sk: 'Szukaj po nazwie, banku lub tagu',
       }),
       filesEmpty: t({
@@ -2053,7 +2011,7 @@ const content = {
       zh: '没有找到文件',
       ar: 'لم يتم العثور على ملفات',
       pl: 'Nie znaleziono plików',
-      it: 'Nessun file trovato'
+      it: 'Nessun file trovato',
       sk: 'Nie znaleziono plików',
       }),
       selectAll: t({
@@ -2069,7 +2027,7 @@ const content = {
       zh: '全选',
       ar: 'تحديد الكل',
       pl: 'Zaznacz wszystko',
-      it: 'Seleziona tutto'
+      it: 'Seleziona tutto',
       sk: 'Zaznacz wszystko',
       }),
       clearSelection: t({
@@ -2085,7 +2043,7 @@ const content = {
       zh: '取消选择',
       ar: 'إلغاء التحديد',
       pl: 'Wyczyść zaznaczenie',
-      it: 'Cancella selezione'
+      it: 'Cancella selezione',
       sk: 'Wyczyść zaznaczenie',
       }),
       assignAction: t({
@@ -2101,7 +2059,7 @@ const content = {
       zh: '添加到文件夹',
       ar: 'إضافة إلى المجلد',
       pl: 'Dodaj do folderu',
-      it: 'Aggiungi alla cartella'
+      it: 'Aggiungi alla cartella',
       sk: 'Dodaj do folderu',
       }),
       assigning: t({
@@ -2117,7 +2075,7 @@ const content = {
       zh: '添加中...',
       ar: 'جارٍ الإضافة...',
       pl: 'Dodawanie...',
-      it: 'Aggiunta in corso...'
+      it: 'Aggiunta in corso...',
       sk: 'Dodawanie...',
       }),
       selectedLabel: t({
@@ -2133,7 +2091,7 @@ const content = {
       zh: '已选：',
       ar: 'المحدد:',
       pl: 'Zaznaczono:',
-      it: 'Selezionati:'
+      it: 'Selezionati:',
       sk: 'Zaznaczono:',
       }),
       readOnlyHint: t({
@@ -2149,7 +2107,7 @@ const content = {
       zh: '没有移动权限',
       ar: 'لا يوجد إذن للنقل',
       pl: 'Brak uprawnień do przenoszenia',
-      it: 'Nessun permesso per spostare'
+      it: 'Nessun permesso per spostare',
       sk: 'Brak uprawnień do przenoszenia',
       }),
       tagsTitle: t({ ru: 'Теги', en: 'Tags', kk: 'Тегтер',
@@ -2162,8 +2120,7 @@ const content = {
       zh: '标签',
       ar: 'العلامات',
       pl: 'Tagi',
-      it: 'Tag' }),
-      sk: 'Tagi',
+      it: 'Tag', sk: 'Tagi' }),
       tagsSubtitle: t({
         ru: 'Создавайте теги и переименовывайте в списке',
         en: 'Create and rename tags here',
@@ -2177,7 +2134,7 @@ const content = {
       zh: '在此创建和重命名标签',
       ar: 'أنشئ العلامات وأعد تسميتها هنا',
       pl: 'Twórz i zmieniaj nazwy tagów tutaj',
-      it: 'Crea e rinomina i tag qui'
+      it: 'Crea e rinomina i tag qui',
       sk: 'Twórz i zmieniaj nazwy tagów tutaj',
       }),
       tagCreateTitle: t({
@@ -2193,7 +2150,7 @@ const content = {
       zh: '创建标签',
       ar: 'إنشاء علامة',
       pl: 'Utwórz tag',
-      it: 'Crea tag'
+      it: 'Crea tag',
       sk: 'Utwórz tag',
       }),
       tagListTitle: t({
@@ -2209,7 +2166,7 @@ const content = {
       zh: '标签列表',
       ar: 'قائمة العلامات',
       pl: 'Lista tagów',
-      it: 'Elenco tag'
+      it: 'Elenco tag',
       sk: 'Lista tagów',
       }),
       viewsTitle: t({
@@ -2225,7 +2182,7 @@ const content = {
       zh: '已保存的视图',
       ar: 'العروض المحفوظة',
       pl: 'Zapisane widoki',
-      it: 'Viste salvate'
+      it: 'Viste salvate',
       sk: 'Zapisane widoki',
       }),
       viewsSubtitle: t({
@@ -2241,7 +2198,7 @@ const content = {
       zh: '保存筛选并快速返回',
       ar: 'احفظ الفلاتر وعُد بسرعة',
       pl: 'Zapisz filtry i szybko wróć',
-      it: 'Salva i filtri e torna velocemente'
+      it: 'Salva i filtri e torna velocemente',
       sk: 'Zapisz filtry i szybko wróć',
       }),
       viewCreateTitle: t({
@@ -2257,7 +2214,7 @@ const content = {
       zh: '保存当前视图',
       ar: 'حفظ العرض الحالي',
       pl: 'Zapisz bieżący widok',
-      it: 'Salva vista corrente'
+      it: 'Salva vista corrente',
       sk: 'Zapisz bieżący widok',
       }),
       viewSaveAction: t({
@@ -2273,7 +2230,7 @@ const content = {
       zh: '保存',
       ar: 'حفظ',
       pl: 'Zapisz',
-      it: 'Salva'
+      it: 'Salva',
       sk: 'Zapisz',
       }),
       viewSaving: t({
@@ -2289,7 +2246,7 @@ const content = {
       zh: '保存中...',
       ar: 'جارٍ الحفظ...',
       pl: 'Zapisywanie...',
-      it: 'Salvataggio...'
+      it: 'Salvataggio...',
       sk: 'Zapisywanie...',
       }),
       viewListTitle: t({
@@ -2305,7 +2262,7 @@ const content = {
       zh: '已保存的视图',
       ar: 'العروض المحفوظة',
       pl: 'Zapisane widoki',
-      it: 'Viste salvate'
+      it: 'Viste salvate',
       sk: 'Zapisane widoki',
       }),
       viewActive: t({
@@ -2321,7 +2278,7 @@ const content = {
       zh: '活跃',
       ar: 'نشط',
       pl: 'Aktywny',
-      it: 'Attivo'
+      it: 'Attivo',
       sk: 'Aktywny',
       }),
     },
@@ -2336,8 +2293,7 @@ const content = {
       zh: '拖动',
       ar: 'اسحب',
       pl: 'Przeciągnij',
-      it: 'Trascina' }),
-      sk: 'Przeciągnij',
+      it: 'Trascina', sk: 'Przeciągnij' }),
       place: t({ ru: 'Сюда', en: 'Place', kk: 'Осында',
       de: 'Ablegen',
       fr: 'Déposer',
@@ -2348,8 +2304,7 @@ const content = {
       zh: '放置',
       ar: 'ضع',
       pl: 'Upuść',
-      it: 'Rilascia' }),
-      sk: 'Upuść',
+      it: 'Rilascia', sk: 'Upuść' }),
       cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау',
       de: 'Abbrechen',
       fr: 'Annuler',
@@ -2360,8 +2315,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
       title: t({
         ru: 'Перетащите в папку',
         en: 'Drop into folder',
@@ -2375,7 +2329,7 @@ const content = {
       zh: '拖入文件夹',
       ar: 'أسقط في المجلد',
       pl: 'Upuść do folderu',
-      it: 'Trascina nella cartella'
+      it: 'Trascina nella cartella',
       sk: 'Upuść do folderu',
       }),
       subtitle: t({
@@ -2391,7 +2345,7 @@ const content = {
       zh: '按住文件并在文件夹上方释放',
       ar: 'امسك الملف وأفلته فوق مجلد',
       pl: 'Przytrzymaj plik i upuść go nad folderem',
-      it: 'Tieni il file e rilascialo sopra una cartella'
+      it: 'Tieni il file e rilascialo sopra una cartella',
       sk: 'Przytrzymaj plik i upuść go nad folderem',
       }),
       empty: t({
@@ -2407,7 +2361,7 @@ const content = {
       zh: '创建文件夹开始整理',
       ar: 'أنشئ مجلداً لبدء التنظيم',
       pl: 'Utwórz folder, aby rozpocząć sortowanie',
-      it: 'Crea una cartella per iniziare a organizzare'
+      it: 'Crea una cartella per iniziare a organizzare',
       sk: 'Utwórz folder, aby rozpocząć sortowanie',
       }),
       rowHint: t({
@@ -2423,7 +2377,7 @@ const content = {
       zh: '拖动以移入文件夹',
       ar: 'اسحب للنقل إلى مجلد',
       pl: 'Przeciągnij, aby przenieść do folderu',
-      it: 'Trascina per spostare in una cartella'
+      it: 'Trascina per spostare in una cartella',
       sk: 'Przeciągnij, aby przenieść do folderu',
       }),
     },
@@ -2438,8 +2392,7 @@ const content = {
       zh: '文件名',
       ar: 'اسم الملف',
       pl: 'Nazwa pliku',
-      it: 'Nome file' }),
-      sk: 'Nazwa pliku',
+      it: 'Nome file', sk: 'Nazwa pliku' }),
       bank: t({ ru: 'Банк', en: 'Bank', kk: 'Банк',
       de: 'Bank',
       fr: 'Banque',
@@ -2450,8 +2403,7 @@ const content = {
       zh: '银行',
       ar: 'البنك',
       pl: 'Bank',
-      it: 'Banca' }),
-      sk: 'Bank',
+      it: 'Banca', sk: 'Bank' }),
       account: t({ ru: 'Счет', en: 'Account', kk: 'Шот',
       de: 'Konto',
       fr: 'Compte',
@@ -2462,8 +2414,7 @@ const content = {
       zh: '账户',
       ar: 'الحساب',
       pl: 'Konto',
-      it: 'Conto' }),
-      sk: 'Konto',
+      it: 'Conto', sk: 'Konto' }),
       size: t({ ru: 'Размер', en: 'Size', kk: 'Өлшемі',
       de: 'Größe',
       fr: 'Taille',
@@ -2474,8 +2425,7 @@ const content = {
       zh: '大小',
       ar: 'الحجم',
       pl: 'Rozmiar',
-      it: 'Dimensione' }),
-      sk: 'Rozmiar',
+      it: 'Dimensione', sk: 'Rozmiar' }),
       status: t({ ru: 'Статус', en: 'Status', kk: 'Күйі',
       de: 'Status',
       fr: 'Statut',
@@ -2486,8 +2436,7 @@ const content = {
       zh: '状态',
       ar: 'الحالة',
       pl: 'Status',
-      it: 'Stato' }),
-      sk: 'Status',
+      it: 'Stato', sk: 'Status' }),
       category: t({ ru: 'Категория', en: 'Category', kk: 'Санат',
       de: 'Kategorie',
       fr: 'Catégorie',
@@ -2498,8 +2447,7 @@ const content = {
       zh: '分类',
       ar: 'الفئة',
       pl: 'Kategoria',
-      it: 'Categoria' }),
-      sk: 'Kategoria',
+      it: 'Categoria', sk: 'Kategoria' }),
       access: t({ ru: 'Доступ', en: 'Access', kk: 'Қолжетімділік',
       de: 'Zugriff',
       fr: 'Accès',
@@ -2510,8 +2458,7 @@ const content = {
       zh: '访问',
       ar: 'الوصول',
       pl: 'Dostęp',
-      it: 'Accesso' }),
-      sk: 'Dostęp',
+      it: 'Accesso', sk: 'Dostęp' }),
       createdAt: t({ ru: 'Создано', en: 'Created', kk: 'Құрылған',
       de: 'Erstellt',
       fr: 'Créé',
@@ -2522,8 +2469,7 @@ const content = {
       zh: '已创建',
       ar: 'تم الإنشاء',
       pl: 'Utworzono',
-      it: 'Creato' }),
-      sk: 'Utworzono',
+      it: 'Creato', sk: 'Utworzono' }),
       deletedAt: t({ ru: 'Удалено', en: 'Deleted', kk: 'Жойылған',
       de: 'Gelöscht',
       fr: 'Supprimé',
@@ -2534,8 +2480,7 @@ const content = {
       zh: '已删除',
       ar: 'تم الحذف',
       pl: 'Usunięto',
-      it: 'Eliminato' }),
-      sk: 'Usunięto',
+      it: 'Eliminato', sk: 'Usunięto' }),
       actions: t({ ru: 'Действия', en: 'Actions', kk: 'Әрекеттер',
       de: 'Aktionen',
       fr: 'Actions',
@@ -2546,8 +2491,7 @@ const content = {
       zh: '操作',
       ar: 'الإجراءات',
       pl: 'Akcje',
-      it: 'Azioni' }),
-      sk: 'Akcje',
+      it: 'Azioni', sk: 'Akcje' }),
     },
     empty: {
       title: t({
@@ -2563,7 +2507,7 @@ const content = {
       zh: '没有找到文件',
       ar: 'لم يتم العثور على ملفات',
       pl: 'Nie znaleziono plików',
-      it: 'Nessun file trovato'
+      it: 'Nessun file trovato',
       sk: 'Nie znaleziono plików',
       }),
       subtitle: t({
@@ -2579,7 +2523,7 @@ const content = {
       zh: '尝试调整搜索或筛选条件',
       ar: 'جرّب تعديل البحث أو الفلاتر',
       pl: 'Spróbuj dostosować wyszukiwanie lub filtry',
-      it: 'Prova a modificare la ricerca o i filtri'
+      it: 'Prova a modificare la ricerca o i filtri',
       sk: 'Spróbuj dostosować wyszukiwanie lub filtry',
       }),
     },
@@ -2593,8 +2537,7 @@ const content = {
       zh: '链接',
       ar: 'روابط',
       pl: 'linki',
-      it: 'link' }),
-      sk: 'linki',
+      it: 'link', sk: 'linki' }),
     categoryCell: {
       choose: t({ ru: 'Выбрать', en: 'Choose', kk: 'Таңдау',
       de: 'Auswählen',
@@ -2606,8 +2549,7 @@ const content = {
       zh: '选择',
       ar: 'اختر',
       pl: 'Wybierz',
-      it: 'Scegli' }),
-      sk: 'Wybierz',
+      it: 'Scegli', sk: 'Wybierz' }),
       none: t({ ru: 'Без категории', en: 'No category', kk: 'Санатсыз',
       de: 'Keine Kategorie',
       fr: 'Aucune catégorie',
@@ -2618,8 +2560,7 @@ const content = {
       zh: '无分类',
       ar: 'بدون فئة',
       pl: 'Bez kategorii',
-      it: 'Nessuna categoria' }),
-      sk: 'Bez kategorii',
+      it: 'Nessuna categoria', sk: 'Bez kategorii' }),
     },
     permission: {
       owner: t({ ru: 'Владелец', en: 'Owner', kk: 'Иесі',
@@ -2632,8 +2573,7 @@ const content = {
       zh: '所有者',
       ar: 'المالك',
       pl: 'Właściciel',
-      it: 'Proprietario' }),
-      sk: 'Właściciel',
+      it: 'Proprietario', sk: 'Właściciel' }),
       editor: t({ ru: 'Редактор', en: 'Editor', kk: 'Өңдеуші',
       de: 'Bearbeiter',
       fr: 'Éditeur',
@@ -2644,8 +2584,7 @@ const content = {
       zh: '编辑者',
       ar: 'محرر',
       pl: 'Edytor',
-      it: 'Editore' }),
-      sk: 'Edytor',
+      it: 'Editore', sk: 'Edytor' }),
       viewer: t({ ru: 'Просмотр', en: 'View', kk: 'Қарау',
       de: 'Ansehen',
       fr: 'Voir',
@@ -2656,8 +2595,7 @@ const content = {
       zh: '查看',
       ar: 'عرض',
       pl: 'Wyświetl',
-      it: 'Visualizza' }),
-      sk: 'Wyświetl',
+      it: 'Visualizza', sk: 'Wyświetl' }),
       downloader: t({ ru: 'Скачивание', en: 'Download', kk: 'Жүктеу',
       de: 'Herunterladen',
       fr: 'Télécharger',
@@ -2668,8 +2606,7 @@ const content = {
       zh: '下载',
       ar: 'تنزيل',
       pl: 'Pobierz',
-      it: 'Scarica' }),
-      sk: 'Pobierz',
+      it: 'Scarica', sk: 'Pobierz' }),
       access: t({ ru: 'Доступ', en: 'Access', kk: 'Қолжетімділік',
       de: 'Zugriff',
       fr: 'Accès',
@@ -2680,8 +2617,7 @@ const content = {
       zh: '访问',
       ar: 'الوصول',
       pl: 'Dostęp',
-      it: 'Accesso' }),
-      sk: 'Dostęp',
+      it: 'Accesso', sk: 'Dostęp' }),
     },
     statusLabels: {
       completed: t({ ru: 'Завершено', en: 'Completed', kk: 'Аяқталды',
@@ -2694,8 +2630,7 @@ const content = {
       zh: '已完成',
       ar: 'مكتمل',
       pl: 'Ukończono',
-      it: 'Completato' }),
-      sk: 'Ukończono',
+      it: 'Completato', sk: 'Ukończono' }),
       processing: t({ ru: 'Обрабатывается', en: 'Processing', kk: 'Өңделуде',
       de: 'Wird verarbeitet',
       fr: 'En cours de traitement',
@@ -2706,8 +2641,7 @@ const content = {
       zh: '处理中',
       ar: 'قيد المعالجة',
       pl: 'Przetwarzanie',
-      it: 'In elaborazione' }),
-      sk: 'Przetwarzanie',
+      it: 'In elaborazione', sk: 'Przetwarzanie' }),
       error: t({ ru: 'Ошибка', en: 'Error', kk: 'Қате',
       de: 'Fehler',
       fr: 'Erreur',
@@ -2718,8 +2652,7 @@ const content = {
       zh: '错误',
       ar: 'خطأ',
       pl: 'Błąd',
-      it: 'Errore' }),
-      sk: 'Błąd',
+      it: 'Errore', sk: 'Błąd' }),
       uploaded: t({ ru: 'Загружено', en: 'Uploaded', kk: 'Жүктелді',
       de: 'Hochgeladen',
       fr: 'Téléchargé',
@@ -2730,8 +2663,7 @@ const content = {
       zh: '已上传',
       ar: 'تم الرفع',
       pl: 'Przesłano',
-      it: 'Caricato' }),
-      sk: 'Przesłano',
+      it: 'Caricato', sk: 'Przesłano' }),
       parsed: t({ ru: 'Распарсено', en: 'Parsed', kk: 'Өңделді',
       de: 'Verarbeitet',
       fr: 'Analysé',
@@ -2742,8 +2674,7 @@ const content = {
       zh: '已解析',
       ar: 'تمت المعالجة',
       pl: 'Przetworzone',
-      it: 'Analizzato' }),
-      sk: 'Przetworzone',
+      it: 'Analizzato', sk: 'Przetworzone' }),
     },
     availability: {
       labels: {
@@ -2757,8 +2688,7 @@ const content = {
       zh: 'OK',
       ar: 'OK',
       pl: 'OK',
-      it: 'OK' }),
-      sk: 'OK',
+      it: 'OK', sk: 'OK' }),
         disk: t({ ru: 'Диск', en: 'Disk', kk: 'Disk',
       de: 'Disk',
       fr: 'Disque',
@@ -2769,8 +2699,7 @@ const content = {
       zh: '磁盘',
       ar: 'القرص',
       pl: 'Dysk',
-      it: 'Disco' }),
-      sk: 'Dysk',
+      it: 'Disco', sk: 'Dysk' }),
         db: t({ ru: 'БД', en: 'DB', kk: 'DB',
       de: 'DB',
       fr: 'BD',
@@ -2781,8 +2710,7 @@ const content = {
       zh: '数据库',
       ar: 'قاعدة البيانات',
       pl: 'DB',
-      it: 'DB' }),
-      sk: 'DB',
+      it: 'DB', sk: 'DB' }),
         missing: t({ ru: 'Нет файла', en: 'Missing', kk: 'Қолжетімсіз',
       de: 'Fehlt',
       fr: 'Manquant',
@@ -2793,8 +2721,7 @@ const content = {
       zh: '缺失',
       ar: 'مفقود',
       pl: 'Brakuje',
-      it: 'Mancante' }),
-      sk: 'Brakuje',
+      it: 'Mancante', sk: 'Brakuje' }),
       },
       tooltips: {
         both: t({
@@ -2876,7 +2803,7 @@ const content = {
       zh: '预览',
       ar: 'معاينة',
       pl: 'Podgląd',
-      it: 'Anteprima'
+      it: 'Anteprima',
       sk: 'Podgląd',
     }),
     searchFiles: t({
@@ -2892,7 +2819,7 @@ const content = {
       zh: '搜索文件',
       ar: 'البحث في الملفات',
       pl: 'Szukaj plików',
-      it: 'Cerca file'
+      it: 'Cerca file',
       sk: 'Szukaj plików',
     }),
     scrollHint: t({
@@ -2908,7 +2835,7 @@ const content = {
       zh: '使用鼠标滚轮导航',
       ar: 'استخدم عجلة الماوس للتنقل',
       pl: 'Użyj kółka myszy do nawigacji',
-      it: 'Usa la rotella del mouse per navigare'
+      it: 'Usa la rotella del mouse per navigare',
       sk: 'Użyj kółka myszy do nawigacji',
     }),
     dragAndDrop: t({
@@ -2924,7 +2851,7 @@ const content = {
       zh: '拖放',
       ar: 'السحب والإفلات',
       pl: 'Przeciągnij i upuść',
-      it: 'Trascina e rilascia'
+      it: 'Trascina e rilascia',
       sk: 'Przeciągnij i upuść',
     }),
     done: t({
@@ -2940,7 +2867,7 @@ const content = {
       zh: '完成',
       ar: 'تم',
       pl: 'Gotowe',
-      it: 'Fatto'
+      it: 'Fatto',
       sk: 'Gotowe',
     }),
     tagColor: t({
@@ -2956,7 +2883,7 @@ const content = {
       zh: '标签颜色',
       ar: 'لون العلامة',
       pl: 'Kolor tagu',
-      it: 'Colore tag'
+      it: 'Colore tag',
       sk: 'Kolor tagu',
     }),
     actions: {
@@ -2970,8 +2897,7 @@ const content = {
       zh: '查看',
       ar: 'عرض',
       pl: 'Wyświetl',
-      it: 'Visualizza' }),
-      sk: 'Wyświetl',
+      it: 'Visualizza', sk: 'Wyświetl' }),
       download: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу',
       de: 'Herunterladen',
       fr: 'Télécharger',
@@ -2982,8 +2908,7 @@ const content = {
       zh: '下载',
       ar: 'تنزيل',
       pl: 'Pobierz',
-      it: 'Scarica' }),
-      sk: 'Pobierz',
+      it: 'Scarica', sk: 'Pobierz' }),
       delete: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою',
       de: 'Löschen',
       fr: 'Supprimer',
@@ -2994,8 +2919,7 @@ const content = {
       zh: '删除',
       ar: 'حذف',
       pl: 'Usuń',
-      it: 'Elimina' }),
-      sk: 'Usuń',
+      it: 'Elimina', sk: 'Usuń' }),
       share: t({ ru: 'Поделиться', en: 'Share', kk: 'Бөлісу',
       de: 'Teilen',
       fr: 'Partager',
@@ -3006,8 +2930,7 @@ const content = {
       zh: '分享',
       ar: 'مشاركة',
       pl: 'Udostępnij',
-      it: 'Condividi' }),
-      sk: 'Udostępnij',
+      it: 'Condividi', sk: 'Udostępnij' }),
       permissions: t({ ru: 'Доступ', en: 'Access', kk: 'Қолжетімділік',
       de: 'Zugriff',
       fr: 'Accès',
@@ -3018,8 +2941,7 @@ const content = {
       zh: '访问',
       ar: 'الوصول',
       pl: 'Dostęp',
-      it: 'Accesso' }),
-      sk: 'Dostęp',
+      it: 'Accesso', sk: 'Dostęp' }),
       tooltipView: t({ ru: 'Просмотр', en: 'View', kk: 'Қарау',
       de: 'Ansehen',
       fr: 'Voir',
@@ -3030,8 +2952,7 @@ const content = {
       zh: '查看',
       ar: 'عرض',
       pl: 'Wyświetl',
-      it: 'Visualizza' }),
-      sk: 'Wyświetl',
+      it: 'Visualizza', sk: 'Wyświetl' }),
       tooltipDownload: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу',
       de: 'Herunterladen',
       fr: 'Télécharger',
@@ -3042,8 +2963,7 @@ const content = {
       zh: '下载',
       ar: 'تنزيل',
       pl: 'Pobierz',
-      it: 'Scarica' }),
-      sk: 'Pobierz',
+      it: 'Scarica', sk: 'Pobierz' }),
     },
     delete: {
       title: t({
@@ -3059,7 +2979,7 @@ const content = {
       zh: '将文件移到回收站？',
       ar: 'هل تريد نقل الملف إلى المهملات؟',
       pl: 'Przenieść plik do kosza?',
-      it: 'Spostare il file nel cestino?'
+      it: 'Spostare il file nel cestino?',
       sk: 'Przenieść plik do kosza?',
       }),
       messagePrefix: t({
@@ -3075,7 +2995,7 @@ const content = {
       zh: '文件 ',
       ar: 'الملف ',
       pl: 'Plik ',
-      it: 'File '
+      it: 'File ',
       sk: 'Plik ',
       }),
       messageSuffix: t({
@@ -3091,7 +3011,7 @@ const content = {
       zh: '将被移到回收站。',
       ar: ' سيتم نقله إلى المهملات.',
       pl: ' zostanie przeniesiony do kosza.',
-      it: ' verrà spostato nel cestino.'
+      it: ' verrà spostato nel cestino.',
       sk: ' zostanie przeniesiony do kosza.',
       }),
       messageFallback: t({
@@ -3107,7 +3027,7 @@ const content = {
       zh: '文件将被移到回收站。',
       ar: 'سيتم نقل الملف إلى المهملات.',
       pl: 'Plik zostanie przeniesiony do kosza.',
-      it: 'Il file verrà spostato nel cestino.'
+      it: 'Il file verrà spostato nel cestino.',
       sk: 'Plik zostanie przeniesiony do kosza.',
       }),
       confirm: t({ ru: 'В корзину', en: 'Move', kk: 'Қоқысқа',
@@ -3120,8 +3040,7 @@ const content = {
       zh: '移动',
       ar: 'نقل',
       pl: 'Przenieś',
-      it: 'Sposta' }),
-      sk: 'Przenieś',
+      it: 'Sposta', sk: 'Przenieś' }),
       cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау',
       de: 'Abbrechen',
       fr: 'Annuler',
@@ -3132,8 +3051,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
       loading: t({
         ru: 'Перемещаем...',
         en: 'Moving...',
@@ -3147,7 +3065,7 @@ const content = {
       zh: '移动中...',
       ar: 'جارٍ النقل...',
       pl: 'Przenoszenie...',
-      it: 'Spostamento in corso...'
+      it: 'Spostamento in corso...',
       sk: 'Przenoszenie...',
       }),
       success: t({
@@ -3163,7 +3081,7 @@ const content = {
       zh: '文件已移到回收站',
       ar: 'تم نقل الملف إلى المهملات',
       pl: 'Plik przeniesiony do kosza',
-      it: 'File spostato nel cestino'
+      it: 'File spostato nel cestino',
       sk: 'Plik przeniesiony do kosza',
       }),
       error: t({
@@ -3179,7 +3097,7 @@ const content = {
       zh: '无法将文件移到回收站',
       ar: 'فشل نقل الملف إلى المهملات',
       pl: 'Nie udało się przenieść pliku do kosza',
-      it: 'Impossibile spostare il file nel cestino'
+      it: 'Impossibile spostare il file nel cestino',
       sk: 'Nie udało się przenieść pliku do kosza',
       }),
     },
@@ -3197,7 +3115,7 @@ const content = {
       zh: '永久删除文件？',
       ar: 'هل تريد حذف الملف نهائياً؟',
       pl: 'Trwale usunąć plik?',
-      it: 'Eliminare il file definitivamente?'
+      it: 'Eliminare il file definitivamente?',
       sk: 'Trwale usunąć plik?',
       }),
       messagePrefix: t({
@@ -3213,7 +3131,7 @@ const content = {
       zh: '文件 ',
       ar: 'الملف ',
       pl: 'Plik ',
-      it: 'File '
+      it: 'File ',
       sk: 'Plik ',
       }),
       messageSuffix: t({
@@ -3229,7 +3147,7 @@ const content = {
       zh: '将被永久删除。',
       ar: ' سيتم حذفه نهائياً.',
       pl: ' zostanie trwale usunięty.',
-      it: ' verrà eliminato definitivamente.'
+      it: ' verrà eliminato definitivamente.',
       sk: ' zostanie trwale usunięty.',
       }),
       messageFallback: t({
@@ -3245,7 +3163,7 @@ const content = {
       zh: '文件将被永久删除。',
       ar: 'سيتم حذف الملف نهائياً.',
       pl: 'Plik zostanie trwale usunięty.',
-      it: 'Il file verrà eliminato definitivamente.'
+      it: 'Il file verrà eliminato definitivamente.',
       sk: 'Plik zostanie trwale usunięty.',
       }),
       confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою',
@@ -3258,8 +3176,7 @@ const content = {
       zh: '删除',
       ar: 'حذف',
       pl: 'Usuń',
-      it: 'Elimina' }),
-      sk: 'Usuń',
+      it: 'Elimina', sk: 'Usuń' }),
       cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау',
       de: 'Abbrechen',
       fr: 'Annuler',
@@ -3270,8 +3187,7 @@ const content = {
       zh: '取消',
       ar: 'إلغاء',
       pl: 'Anuluj',
-      it: 'Annulla' }),
-      sk: 'Anuluj',
+      it: 'Annulla', sk: 'Anuluj' }),
     },
     toasts: {
       loadFilesFailed: t({
@@ -3287,7 +3203,7 @@ const content = {
       zh: '无法加载文件',
       ar: 'فشل تحميل الملفات',
       pl: 'Nie udało się załadować plików',
-      it: 'Impossibile caricare i file'
+      it: 'Impossibile caricare i file',
       sk: 'Nie udało się załadować plików',
       }),
       loadCategoriesFailed: t({
@@ -3303,7 +3219,7 @@ const content = {
       zh: '无法加载分类',
       ar: 'فشل تحميل الفئات',
       pl: 'Nie udało się załadować kategorii',
-      it: 'Impossibile caricare le categorie'
+      it: 'Impossibile caricare le categorie',
       sk: 'Nie udało się załadować kategorii',
       }),
       loadTagsFailed: t({
@@ -3319,7 +3235,7 @@ const content = {
       zh: '无法加载标签',
       ar: 'فشل تحميل العلامات',
       pl: 'Nie udało się załadować tagów',
-      it: 'Impossibile caricare i tag'
+      it: 'Impossibile caricare i tag',
       sk: 'Nie udało się załadować tagów',
       }),
       loadFoldersFailed: t({
@@ -3335,7 +3251,7 @@ const content = {
       zh: '无法加载文件夹',
       ar: 'فشل تحميل المجلدات',
       pl: 'Nie udało się załadować folderów',
-      it: 'Impossibile caricare le cartelle'
+      it: 'Impossibile caricare le cartelle',
       sk: 'Nie udało się załadować folderów',
       }),
       loadViewsFailed: t({
@@ -3351,7 +3267,7 @@ const content = {
       zh: '无法加载已保存的视图',
       ar: 'فشل تحميل العروض المحفوظة',
       pl: 'Nie udało się załadować zapisanych widoków',
-      it: 'Impossibile caricare le viste salvate'
+      it: 'Impossibile caricare le viste salvate',
       sk: 'Nie udało się załadować zapisanych widoków',
       }),
       downloaded: t({
@@ -3367,7 +3283,7 @@ const content = {
       zh: '文件已下载',
       ar: 'تم تنزيل الملف',
       pl: 'Plik pobrany',
-      it: 'File scaricato'
+      it: 'File scaricato',
       sk: 'Plik pobrany',
       }),
       downloadFailed: t({
@@ -3383,7 +3299,7 @@ const content = {
       zh: '无法下载文件',
       ar: 'فشل تنزيل الملف',
       pl: 'Nie udało się pobrać pliku',
-      it: 'Impossibile scaricare il file'
+      it: 'Impossibile scaricare il file',
       sk: 'Nie udało się pobrać pliku',
       }),
       shareOpened: t({
@@ -3399,7 +3315,7 @@ const content = {
       zh: '已打开共享',
       ar: 'تم فتح المشاركة',
       pl: 'Otwarto udostępnianie',
-      it: 'Condivisione aperta'
+      it: 'Condivisione aperta',
       sk: 'Otwarto udostępnianie',
       }),
       permissionsOpened: t({
@@ -3415,7 +3331,7 @@ const content = {
       zh: '已打开权限',
       ar: 'تم فتح الصلاحيات',
       pl: 'Otwarto uprawnienia',
-      it: 'Permessi aperti'
+      it: 'Permessi aperti',
       sk: 'Otwarto uprawnienia',
       }),
       categoryUpdated: t({
@@ -3431,7 +3347,7 @@ const content = {
       zh: '分类已更新',
       ar: 'تم تحديث الفئة',
       pl: 'Kategoria zaktualizowana',
-      it: 'Categoria aggiornata'
+      it: 'Categoria aggiornata',
       sk: 'Kategoria zaktualizowana',
       }),
       categoryUpdateFailed: t({
@@ -3447,7 +3363,7 @@ const content = {
       zh: '无法更新文件分类',
       ar: 'فشل تحديث فئة الملف',
       pl: 'Nie udało się zaktualizować kategorii pliku',
-      it: 'Impossibile aggiornare la categoria del file'
+      it: 'Impossibile aggiornare la categoria del file',
       sk: 'Nie udało się zaktualizować kategorii pliku',
       }),
       folderUpdated: t({
@@ -3463,7 +3379,7 @@ const content = {
       zh: '文件已成功移到文件夹',
       ar: 'تم نقل الملف بنجاح إلى المجلد',
       pl: 'Plik pomyślnie przeniesiony do folderu',
-      it: 'File spostato con successo nella cartella'
+      it: 'File spostato con successo nella cartella',
       sk: 'Plik pomyślnie przeniesiony do folderu',
       }),
       fileMovedTo: t({
@@ -3479,7 +3395,7 @@ const content = {
       zh: '文件已移到文件夹',
       ar: 'تم نقل الملف إلى المجلد',
       pl: 'Plik przeniesiony do folderu',
-      it: 'File spostato nella cartella'
+      it: 'File spostato nella cartella',
       sk: 'Plik przeniesiony do folderu',
       }),
       folderUpdateFailed: t({
@@ -3495,7 +3411,7 @@ const content = {
       zh: '无法移动文件',
       ar: 'فشل نقل الملف',
       pl: 'Nie udało się przenieść pliku',
-      it: 'Impossibile spostare il file'
+      it: 'Impossibile spostare il file',
       sk: 'Nie udało się przenieść pliku',
       }),
       folderPermissionDenied: t({
@@ -3511,7 +3427,7 @@ const content = {
       zh: '没有足够权限移动文件',
       ar: 'لا توجد أذونات كافية لنقل الملف',
       pl: 'Niewystarczające uprawnienia do przenoszenia pliku',
-      it: 'Permessi insufficienti per spostare il file'
+      it: 'Permessi insufficienti per spostare il file',
       sk: 'Niewystarczające uprawnienia do przenoszenia pliku',
       }),
       folderNameRequired: t({
@@ -3527,7 +3443,7 @@ const content = {
       zh: '输入文件夹名称',
       ar: 'أدخل اسم المجلد',
       pl: 'Wpisz nazwę folderu',
-      it: 'Inserisci il nome della cartella'
+      it: 'Inserisci il nome della cartella',
       sk: 'Wpisz nazwę folderu',
       }),
       folderCreated: t({
@@ -3543,7 +3459,7 @@ const content = {
       zh: '文件夹已创建',
       ar: 'تم إنشاء المجلد',
       pl: 'Folder utworzony',
-      it: 'Cartella creata'
+      it: 'Cartella creata',
       sk: 'Folder utworzony',
       }),
       folderCreateFailed: t({
@@ -3559,7 +3475,7 @@ const content = {
       zh: '无法创建文件夹',
       ar: 'فشل إنشاء المجلد',
       pl: 'Nie udało się utworzyć folderu',
-      it: 'Impossibile creare la cartella'
+      it: 'Impossibile creare la cartella',
       sk: 'Nie udało się utworzyć folderu',
       }),
       folderRenamed: t({
@@ -3575,7 +3491,7 @@ const content = {
       zh: '文件夹已重命名',
       ar: 'تم إعادة تسمية المجلد',
       pl: 'Folder przemianowany',
-      it: 'Cartella rinominata'
+      it: 'Cartella rinominata',
       sk: 'Folder przemianowany',
       }),
       folderRenameFailed: t({
@@ -3591,7 +3507,7 @@ const content = {
       zh: '无法重命名文件夹',
       ar: 'فشل إعادة تسمية المجلد',
       pl: 'Nie udało się zmienić nazwy folderu',
-      it: 'Impossibile rinominare la cartella'
+      it: 'Impossibile rinominare la cartella',
       sk: 'Nie udało się zmienić nazwy folderu',
       }),
       folderDeleteLoading: t({
@@ -3607,7 +3523,7 @@ const content = {
       zh: '删除文件夹中...',
       ar: 'جارٍ حذف المجلد...',
       pl: 'Usuwanie folderu...',
-      it: 'Eliminazione cartella in corso...'
+      it: 'Eliminazione cartella in corso...',
       sk: 'Usuwanie folderu...',
       }),
       folderDeleted: t({
@@ -3623,7 +3539,7 @@ const content = {
       zh: '文件夹已删除',
       ar: 'تم حذف المجلد',
       pl: 'Folder usunięty',
-      it: 'Cartella eliminata'
+      it: 'Cartella eliminata',
       sk: 'Folder usunięty',
       }),
       folderDeleteFailed: t({
@@ -3639,7 +3555,7 @@ const content = {
       zh: '无法删除文件夹',
       ar: 'فشل حذف المجلد',
       pl: 'Nie udało się usunąć folderu',
-      it: 'Impossibile eliminare la cartella'
+      it: 'Impossibile eliminare la cartella',
       sk: 'Nie udało się usunąć folderu',
       }),
       folderAssignSelectFolder: t({
@@ -3655,7 +3571,7 @@ const content = {
       zh: '选择文件夹',
       ar: 'اختر مجلداً',
       pl: 'Wybierz folder',
-      it: 'Seleziona una cartella'
+      it: 'Seleziona una cartella',
       sk: 'Wybierz folder',
       }),
       folderAssignSelectFiles: t({
@@ -3671,7 +3587,7 @@ const content = {
       zh: '选择文件',
       ar: 'تحديد الملفات',
       pl: 'Wybierz pliki',
-      it: 'Seleziona file'
+      it: 'Seleziona file',
       sk: 'Wybierz pliki',
       }),
       folderAssignSuccess: t({
@@ -3687,7 +3603,7 @@ const content = {
       zh: '文件已添加到文件夹',
       ar: 'تمت إضافة الملفات إلى المجلد',
       pl: 'Pliki dodane do folderu',
-      it: 'File aggiunti alla cartella'
+      it: 'File aggiunti alla cartella',
       sk: 'Pliki dodane do folderu',
       }),
       folderAssignFailed: t({
@@ -3703,7 +3619,7 @@ const content = {
       zh: '无法将文件添加到文件夹',
       ar: 'فشل إضافة الملفات إلى المجلد',
       pl: 'Nie udało się dodać plików do folderu',
-      it: 'Impossibile aggiungere file alla cartella'
+      it: 'Impossibile aggiungere file alla cartella',
       sk: 'Nie udało się dodać plików do folderu',
       }),
       tagNameRequired: t({
@@ -3719,7 +3635,7 @@ const content = {
       zh: '输入标签名称',
       ar: 'أدخل اسم العلامة',
       pl: 'Wpisz nazwę tagu',
-      it: 'Inserisci il nome del tag'
+      it: 'Inserisci il nome del tag',
       sk: 'Wpisz nazwę tagu',
       }),
       tagCreated: t({
@@ -3735,7 +3651,7 @@ const content = {
       zh: '标签已创建',
       ar: 'تم إنشاء العلامة',
       pl: 'Tag utworzony',
-      it: 'Tag creato'
+      it: 'Tag creato',
       sk: 'Tag utworzony',
       }),
       tagCreateFailed: t({
@@ -3751,7 +3667,7 @@ const content = {
       zh: '无法创建标签',
       ar: 'فشل إنشاء العلامة',
       pl: 'Nie udało się utworzyć tagu',
-      it: 'Impossibile creare il tag'
+      it: 'Impossibile creare il tag',
       sk: 'Nie udało się utworzyć tagu',
       }),
       tagRenamed: t({
@@ -3767,7 +3683,7 @@ const content = {
       zh: '标签已重命名',
       ar: 'تم إعادة تسمية العلامة',
       pl: 'Tag przemianowany',
-      it: 'Tag rinominato'
+      it: 'Tag rinominato',
       sk: 'Tag przemianowany',
       }),
       tagRenameFailed: t({
@@ -3783,7 +3699,7 @@ const content = {
       zh: '无法重命名标签',
       ar: 'فشل إعادة تسمية العلامة',
       pl: 'Nie udało się zmienić nazwy tagu',
-      it: 'Impossibile rinominare il tag'
+      it: 'Impossibile rinominare il tag',
       sk: 'Nie udało się zmienić nazwy tagu',
       }),
       tagDeleteLoading: t({
@@ -3799,7 +3715,7 @@ const content = {
       zh: '删除标签中...',
       ar: 'جارٍ حذف العلامة...',
       pl: 'Usuwanie tagu...',
-      it: 'Eliminazione tag in corso...'
+      it: 'Eliminazione tag in corso...',
       sk: 'Usuwanie tagu...',
       }),
       tagDeleted: t({
@@ -3815,7 +3731,7 @@ const content = {
       zh: '标签已删除',
       ar: 'تم حذف العلامة',
       pl: 'Tag usunięty',
-      it: 'Tag eliminato'
+      it: 'Tag eliminato',
       sk: 'Tag usunięty',
       }),
       tagDeleteFailed: t({
@@ -3831,7 +3747,7 @@ const content = {
       zh: '无法删除标签',
       ar: 'فشل حذف العلامة',
       pl: 'Nie udało się usunąć tagu',
-      it: 'Impossibile eliminare il tag'
+      it: 'Impossibile eliminare il tag',
       sk: 'Nie udało się usunąć tagu',
       }),
       folderTagUpdateFailed: t({
@@ -3847,7 +3763,7 @@ const content = {
       zh: '无法更新文件夹标签',
       ar: 'فشل تحديث علامة المجلد',
       pl: 'Nie udało się zaktualizować tagu folderu',
-      it: 'Impossibile aggiornare il tag della cartella'
+      it: 'Impossibile aggiornare il tag della cartella',
       sk: 'Nie udało się zaktualizować tagu folderu',
       }),
       viewNameRequired: t({
@@ -3863,7 +3779,7 @@ const content = {
       zh: '输入视图名称',
       ar: 'أدخل اسم العرض',
       pl: 'Wpisz nazwę widoku',
-      it: 'Inserisci il nome della vista'
+      it: 'Inserisci il nome della vista',
       sk: 'Wpisz nazwę widoku',
       }),
       viewSaved: t({
@@ -3879,7 +3795,7 @@ const content = {
       zh: '视图已保存',
       ar: 'تم حفظ العرض',
       pl: 'Widok zapisany',
-      it: 'Vista salvata'
+      it: 'Vista salvata',
       sk: 'Widok zapisany',
       }),
       viewSaveFailed: t({
@@ -3895,7 +3811,7 @@ const content = {
       zh: '无法保存视图',
       ar: 'فشل حفظ العرض',
       pl: 'Nie udało się zapisać widoku',
-      it: 'Impossibile salvare la vista'
+      it: 'Impossibile salvare la vista',
       sk: 'Nie udało się zapisać widoku',
       }),
       viewDeleted: t({
@@ -3911,7 +3827,7 @@ const content = {
       zh: '视图已删除',
       ar: 'تم حذف العرض',
       pl: 'Widok usunięty',
-      it: 'Vista eliminata'
+      it: 'Vista eliminata',
       sk: 'Widok usunięty',
       }),
       viewDeleteFailed: t({
@@ -3927,7 +3843,7 @@ const content = {
       zh: '无法删除视图',
       ar: 'فشل حذف العرض',
       pl: 'Nie udało się usunąć widoku',
-      it: 'Impossibile eliminare la vista'
+      it: 'Impossibile eliminare la vista',
       sk: 'Nie udało się usunąć widoku',
       }),
     },

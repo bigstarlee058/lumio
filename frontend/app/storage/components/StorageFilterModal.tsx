@@ -6,6 +6,7 @@ import { Bookmark, Save, X } from '@/app/components/icons';
 import React from 'react';
 import type { CategoryOption, FolderOption, StorageView, StorageViewPayload } from '../storageHelpers';
 import { DEFAULT_FILTERS, DEFAULT_SORT, NO_FOLDER } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 const filterSelectStyle: React.CSSProperties = {
   width: '100%', border: '1px solid #e5e7eb', background: 'rgba(249,250,251,0.5)',
@@ -75,7 +76,7 @@ export function StorageFilterModal({
         <Box sx={{ width: '100%', maxWidth: 896, bgcolor: 'background.paper', boxShadow: 24, pointerEvents: 'auto', display: 'flex', flexDirection: 'column', maxHeight: '85vh', overflow: 'hidden', border: '1px solid #f3f4f6' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: '1px solid #f3f4f6', flexShrink: 0, bgcolor: 'background.paper' }}>
             <Typography style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>{filtersTitle}</Typography>
-            <IconButton size="small" onClick={onClose} sx={{ color: '#9ca3af', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: '#f3f4f6', color: '#374151' } }}>
+            <IconButton size="small" onClick={onClose} sx={{ color: '#9ca3af', borderRadius: tokens.radius.full, '&:hover': { bgcolor: '#f3f4f6', color: '#374151' } }}>
               <X size={20} />
             </IconButton>
           </Box>
@@ -239,7 +240,7 @@ function SavedViewsPanel({
         </Box>
         <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
           <TextField size="small" value={viewName} onChange={(e) => onSetViewName(e.target.value)} placeholder={viewNamePlaceholder} sx={{ flex: 1 }} />
-          <IconButton size="small" onClick={() => onSaveView(viewPayload)} disabled={viewSaving || !viewName.trim()} title={viewSaveTooltip} sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-sm)', color: 'primary.main', bgcolor: 'background.paper', '&:hover': { bgcolor: 'primary.main', color: '#fff' }, '&:disabled': { opacity: 0.5 } }}>
+          <IconButton size="small" onClick={() => onSaveView(viewPayload)} disabled={viewSaving || !viewName.trim()} title={viewSaveTooltip} sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.sm, color: 'primary.main', bgcolor: 'background.paper', '&:hover': { bgcolor: 'primary.main', color: '#fff' }, '&:disabled': { opacity: 0.5 } }}>
             <Save size={18} />
           </IconButton>
         </Box>
@@ -292,10 +293,10 @@ function ViewItem({ view, activeViewId, viewDeleteLabel, onDeleteView, onApplyVi
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, border: '1px solid', borderColor: isActive ? 'rgba(22,129,24,0.3)' : '#e5e7eb', bgcolor: isActive ? 'rgba(22,129,24,0.05)' : '#fff', px: 1.5, py: 1.25, '&:hover .view-delete-btn': { opacity: 1 } }}>
       <Box component="button" type="button" onClick={() => onApplyView(view)} sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flex: 1, fontSize: 14, fontWeight: 500, color: '#374151', bgcolor: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-        {isActive && <Box sx={{ width: 6, height: 6, borderRadius: 'var(--lumio-radius-full)', bgcolor: 'primary.main', flexShrink: 0 }} />}
+        {isActive && <Box sx={{ width: 6, height: 6, borderRadius: tokens.radius.full, bgcolor: 'primary.main', flexShrink: 0 }} />}
         <Typography style={{ fontSize: 14, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{view.name}</Typography>
       </Box>
-      <IconButton size="small" className="view-delete-btn" onClick={() => onDeleteView(view.id)} title={viewDeleteLabel} sx={{ color: '#d1d5db', opacity: 0, borderRadius: 'var(--lumio-radius-sm)', '&:hover': { color: '#ef4444', bgcolor: 'transparent' } }}>
+      <IconButton size="small" className="view-delete-btn" onClick={() => onDeleteView(view.id)} title={viewDeleteLabel} sx={{ color: '#d1d5db', opacity: 0, borderRadius: tokens.radius.sm, '&:hover': { color: '#ef4444', bgcolor: 'transparent' } }}>
         <X size={14} />
       </IconButton>
     </Box>

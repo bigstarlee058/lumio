@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Button, Divider, Stack, Typography } from '@mui/material';
+import { tokens } from '@/lib/theme-tokens';
 
 interface OnboardingNavigationProps {
   currentStep: number;
@@ -46,7 +47,7 @@ export function OnboardingNavigation({
           onClick={onBack}
           disabled={disableBack}
           sx={{
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             borderColor: 'divider',
             bgcolor: 'background.paper',
             color: 'text.primary',
@@ -69,7 +70,7 @@ export function OnboardingNavigation({
               onClick={onSkip}
               disabled={isSubmitting}
               sx={{
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 color: 'text.secondary',
                 fontWeight: 600,
                 fontSize: 14,
@@ -89,7 +90,7 @@ export function OnboardingNavigation({
             onClick={onNext}
             disabled={isSubmitting}
             sx={{
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               fontWeight: 600,
               fontSize: 14,
               textTransform: 'none',

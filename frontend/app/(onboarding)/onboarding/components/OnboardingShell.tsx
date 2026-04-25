@@ -6,6 +6,7 @@ import { OnboardingNavigation } from './OnboardingNavigation';
 import { OnboardingProgress } from './OnboardingProgress';
 import { OnboardingStepContent } from './OnboardingStepContent';
 import type { OnboardingData } from '../useOnboardingWizard';
+import { tokens } from '@/lib/theme-tokens';
 
 type IntegrationCard = {
   key: string;
@@ -101,7 +102,7 @@ export function OnboardingShell({
       >
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-xl)',
+            borderRadius: tokens.radius.xl,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

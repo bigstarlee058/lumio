@@ -4,6 +4,7 @@ import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
 import { Box, IconButton, Typography } from '@mui/material';
 import { Check, ChevronLeft, Search } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 interface CurrencyDrawerProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ export function CurrencyDrawer({
             size="small"
             onClick={onClose}
             aria-label="Close currency drawer"
-            sx={{ borderRadius: 'var(--lumio-radius-md)' }}
+            sx={{ borderRadius: tokens.radius.md }}
           >
             <ChevronLeft style={{ width: 20, height: 20 }} />
           </IconButton>

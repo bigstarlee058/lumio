@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useTheme } from 'next-themes';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+import { tokens } from '@/lib/theme-tokens';
   type AvailableTable,
   DEFAULT_TABLES_REPORTS_FILTERS,
   type TablesReportDrillDownResponse,
@@ -237,8 +238,8 @@ export default function TablesReportsView() {
 
   const selectedTablesCount = selectedTableIds.length;
   const chartTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
-  const panelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 16, borderRadius: 'var(--lumio-radius-lg)' };
-  const subtlePanelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#334155', borderRadius: 'var(--lumio-radius-md)', cursor: 'pointer' };
+  const panelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 16, borderRadius: tokens.radius.lg };
+  const subtlePanelStyle: React.CSSProperties = { border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#334155', borderRadius: tokens.radius.md, cursor: 'pointer' };
 
   return (
     <div
@@ -253,12 +254,12 @@ export default function TablesReportsView() {
               Aggregated insights from your custom tables
             </p>
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #e2e8f0', background: '#f1f5f9', padding: 4, borderRadius: 'var(--lumio-radius-md)' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, border: '1px solid #e2e8f0', background: '#f1f5f9', padding: 4, borderRadius: tokens.radius.md }}>
             <button
               type="button"
               onClick={() => setActiveFlowType('all')}
               style={{
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 background: activeFlowType === 'all' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
@@ -275,7 +276,7 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('expense')}
               style={{
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 background: activeFlowType === 'expense' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
@@ -292,7 +293,7 @@ export default function TablesReportsView() {
               type="button"
               onClick={() => setActiveFlowType('income')}
               style={{
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 background: activeFlowType === 'income' ? 'var(--card-bg)' : 'transparent',
                 padding: '6px 12px',
                 fontSize: 14,
@@ -314,7 +315,7 @@ export default function TablesReportsView() {
             value={searchInput}
             onChange={event => setSearchInput(event.target.value)}
             placeholder="Search counterparties, categories, tables..."
-            style={{ width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#0f172a', outline: 'none', borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, color: '#0f172a', outline: 'none', borderRadius: tokens.radius.md }}
           />
           <div style={{ position: 'relative' }} ref={tableDropdownRef}>
             <button
@@ -327,11 +328,11 @@ export default function TablesReportsView() {
             </button>
 
             {tableDropdownOpen ? (
-              <div style={{ position: 'absolute', right: 0, zIndex: 20, marginTop: 8, width: 288, border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: 'var(--lumio-radius-lg)' }}>
+              <div style={{ position: 'absolute', right: 0, zIndex: 20, marginTop: 8, width: 288, border: '1px solid #e2e8f0', background: 'var(--card-bg)', padding: 8, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', borderRadius: tokens.radius.lg }}>
                 <button
                   type="button"
                   onClick={() => setSelectedTableIds([])}
-                  style={{ marginBottom: 4, width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: '#0369a1', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 'var(--lumio-radius-sm)' }}
+                  style={{ marginBottom: 4, width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: '#0369a1', background: 'none', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.sm }}
                 >
                   All tables
                 </button>
@@ -340,7 +341,7 @@ export default function TablesReportsView() {
                   return (
                     <label
                       key={table.id}
-                      style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 8, padding: '8px 12px', fontSize: 14, color: '#334155', borderRadius: 'var(--lumio-radius-sm)' }}
+                      style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 8, padding: '8px 12px', fontSize: 14, color: '#334155', borderRadius: tokens.radius.sm }}
                     >
                       <input
                         type="checkbox"
@@ -390,7 +391,7 @@ export default function TablesReportsView() {
                 )
               }
               style={{
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 background: selectedTableIds.includes(table.id) ? '#e0f2fe' : '#f1f5f9',
                 padding: '4px 12px',
                 color: selectedTableIds.includes(table.id) ? '#0369a1' : '#64748b',
@@ -477,7 +478,7 @@ export default function TablesReportsView() {
                   type="button"
                   onClick={() => setSortKey(key)}
                   style={{
-                    borderRadius: 'var(--lumio-radius-full)',
+                    borderRadius: tokens.radius.full,
                     background: sortKey === key ? '#e0f2fe' : '#f1f5f9',
                     padding: '4px 12px',
                     fontSize: 12,
@@ -492,7 +493,7 @@ export default function TablesReportsView() {
               ))}
             </div>
 
-            <div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #e2e8f0', background: 'var(--card-bg)', borderRadius: 'var(--lumio-radius-lg)' }}>
+            <div style={{ marginTop: 16, overflow: 'hidden', border: '1px solid #e2e8f0', background: 'var(--card-bg)', borderRadius: tokens.radius.lg }}>
               <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid #e2e8f0', textAlign: 'left', fontSize: 12, color: '#64748b' }}>
@@ -526,7 +527,7 @@ export default function TablesReportsView() {
                         <span
                           style={{
                             display: 'inline-flex',
-                            borderRadius: 'var(--lumio-radius-sm)',
+                            borderRadius: tokens.radius.sm,
                             background: row.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
                             padding: '2px 8px',
                             fontSize: 12,
@@ -558,7 +559,7 @@ export default function TablesReportsView() {
                 aria-hidden="true"
               >
                 <div
-                  style={{ maxHeight: '80vh', width: '100%', maxWidth: 768, overflow: 'hidden', background: 'var(--card-bg)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', borderRadius: 'var(--lumio-radius-xl)' }}
+                  style={{ maxHeight: '80vh', width: '100%', maxWidth: 768, overflow: 'hidden', background: 'var(--card-bg)', boxShadow: '0 25px 50px rgba(0,0,0,0.25)', borderRadius: tokens.radius.xl }}
                   aria-modal="true"
                   onClick={event => event.stopPropagation()}
                   onKeyDown={event => event.stopPropagation()}
@@ -602,7 +603,7 @@ export default function TablesReportsView() {
                                 <span
                                   style={{
                                     display: 'inline-flex',
-                                    borderRadius: 'var(--lumio-radius-sm)',
+                                    borderRadius: tokens.radius.sm,
                                     background: item.source === 'google_sheets_import' ? '#ecfdf5' : '#f1f5f9',
                                     padding: '2px 8px',
                                     fontSize: 12,

@@ -7,9 +7,10 @@ import type { JSX } from 'react';
 import { SectionRenderer } from './sections';
 import { RenderIcon } from './sections/components/RenderIcon';
 import type { ActionItem, SidePanelProps, SidePanelSection } from './types';
+import { tokens } from '@/lib/theme-tokens';
 
-export const BTN_BASE: React.CSSProperties = { padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: 'var(--lumio-radius-md)' };
-const BTN_FOOTER: React.CSSProperties = { flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '8px 12px', fontSize: 14, fontWeight: 500, border: 'none', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' };
+export const BTN_BASE: React.CSSProperties = { padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md };
+const BTN_FOOTER: React.CSSProperties = { flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '8px 12px', fontSize: 14, fontWeight: 500, border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md };
 const STYLE_PRIMARY = { backgroundColor: 'var(--primary)', color: 'white' };
 const STYLE_SECONDARY = { backgroundColor: '#f3f4f6', color: '#374151' };
 
@@ -29,7 +30,7 @@ export function PanelContent({ loading, error, onRetry, sections }: ContentProps
       <AlertCircle size={40} style={{ color: '#ef4444', marginBottom: 12 }} />
       <p style={{ fontSize: 14, fontWeight: 500, color: '#111827', textAlign: 'center', margin: '0 0 4px' }}>Error loading content</p>
       <p style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
-      {onRetry && <button type="button" onClick={onRetry} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}><RefreshCw size={14} />Retry</button>}
+      {onRetry && <button type="button" onClick={onRetry} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}><RefreshCw size={14} />Retry</button>}
     </div>
   );
   if (sections.length === 0) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}><p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', margin: 0 }}>No content available</p></div>;

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { Download, X } from '@/app/components/icons';
 import { useState } from 'react';
 import type { ReportTemplate } from './ReportTemplateCard';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface ReportGenerateParams {
   templateId: string;
@@ -65,7 +66,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
       data-tour-id="reports-generator"
       sx={{
         mt: 3,
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid var(--border)',
         bgcolor: 'var(--card)',
         p: 3,
@@ -173,7 +174,7 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
                   fontSize: 11,
                   fontWeight: 600,
                   cursor: 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   textTransform: 'uppercase',
                 }}
               >

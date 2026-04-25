@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { Download, FileText } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface ReportHistoryItem {
   id: string;
@@ -160,7 +161,7 @@ export function ReportHistory(): React.JSX.Element {
                   <Chip
                     label={item.format.toUpperCase()}
                     size="small"
-                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || '#f1f5f9', color: chipColors?.color || '#475569', height: 20, borderRadius: 'var(--lumio-radius-full)' }}
+                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || '#f1f5f9', color: chipColors?.color || '#475569', height: 20, borderRadius: tokens.radius.full }}
                   />
                 </TableCell>
                 <TableCell>

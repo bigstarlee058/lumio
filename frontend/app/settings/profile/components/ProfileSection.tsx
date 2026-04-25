@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   t: {
@@ -96,7 +97,7 @@ export function ProfileSection({
             width: '100%',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderRadius: 'var(--lumio-radius-md)',
+            borderRadius: tokens.radius.md,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

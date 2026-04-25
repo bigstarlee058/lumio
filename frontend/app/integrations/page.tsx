@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function IntegrationsPage(): React.JSX.Element {
@@ -34,7 +35,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             alt="Dropbox"
             width={32}
             height={32}
-            style={{ borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ borderRadius: tokens.radius.md }}
           />
         ),
         actions: [
@@ -63,7 +64,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             alt="Google Drive"
             width={32}
             height={32}
-            style={{ borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ borderRadius: tokens.radius.md }}
           />
         ),
         actions: [
@@ -92,7 +93,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             alt="Gmail"
             width={32}
             height={32}
-            style={{ borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ borderRadius: tokens.radius.md }}
           />
         ),
         actions: [
@@ -121,7 +122,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             alt="Google Sheets"
             width={32}
             height={32}
-            style={{ borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ borderRadius: tokens.radius.md }}
           />
         ),
         actions: [
@@ -150,7 +151,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             alt="Telegram"
             width={32}
             height={32}
-            style={{ borderRadius: 'var(--lumio-radius-md)' }}
+            style={{ borderRadius: tokens.radius.md }}
           />
         ),
         actions: [
@@ -277,7 +278,7 @@ export default function IntegrationsPage(): React.JSX.Element {
       tabIndex={item.primaryAction?.href && !item.primaryAction.external ? 0 : undefined}
       sx={{
         border: '1px solid #e5e7eb',
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         p: 2,
         bgcolor: 'background.paper',
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -302,7 +303,7 @@ export default function IntegrationsPage(): React.JSX.Element {
         <Box
           sx={{
             p: 1,
-            borderRadius: 'var(--lumio-radius-sm)',
+            borderRadius: tokens.radius.sm,
             bgcolor: '#f9fafb',
             border: '1px solid #f3f4f6',
             display: 'flex',
@@ -328,7 +329,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                   bgcolor: '#fef3c7',
                   color: '#92400e',
                   border: '1px solid #fde68a',
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                 }}
               >
                 <Star style={{ height: 12, width: 12, marginRight: 4 }} />
@@ -348,7 +349,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                   bgcolor: '#ecfdf5',
                   color: '#065f46',
                   border: '1px solid #a7f3d0',
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                 }}
               >
                 <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {item.badge}
@@ -375,7 +376,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     color: '#374151',
                     textDecoration: 'none',
                   }}
@@ -395,7 +396,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     color: '#9ca3af',
                     cursor: 'not-allowed',
                     background: 'transparent',
@@ -415,7 +416,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                     padding: '6px 16px',
                     fontSize: 12,
                     fontWeight: 500,
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     background: 'var(--color-primary)',
                     color: '#fff',
                     textDecoration: 'none',
@@ -435,7 +436,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                     fontSize: 12,
                     fontWeight: 500,
                     border: '1px solid #e5e7eb',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     color: '#374151',
                     textDecoration: 'none',
                   }}
@@ -464,7 +465,7 @@ export default function IntegrationsPage(): React.JSX.Element {
           px: 1.5,
           py: 0.5,
           border: '1px solid #e5e7eb',
-          borderRadius: 'var(--lumio-radius-sm)',
+          borderRadius: tokens.radius.sm,
           bgcolor: 'background.paper',
         }}
       >
@@ -490,7 +491,7 @@ export default function IntegrationsPage(): React.JSX.Element {
           <Box
             sx={{
               p: 1,
-              borderRadius: 'var(--lumio-radius-full)',
+              borderRadius: tokens.radius.full,
               bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
               color: 'primary.main',
               display: 'flex',
@@ -527,7 +528,7 @@ export default function IntegrationsPage(): React.JSX.Element {
               display: 'block',
               width: '100%',
               border: '1px solid #e5e7eb',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               background: 'var(--card-bg)',
               padding: '8px 16px 8px 40px',
               fontSize: 14,
@@ -544,7 +545,7 @@ export default function IntegrationsPage(): React.JSX.Element {
         <Box
           sx={{
             mb: 4,
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             bgcolor: 'rgba(var(--color-primary-rgb), 0.05)',
             border: '1px solid rgba(var(--color-primary-rgb), 0.2)',
             p: 2,
@@ -573,7 +574,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             {active.length === 0 && !searchQuery ? (
               <Box
                 sx={{
-                  borderRadius: 'var(--lumio-radius-lg)',
+                  borderRadius: tokens.radius.lg,
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -619,7 +620,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             {available.length === 0 && !searchQuery ? (
               <Box
                 sx={{
-                  borderRadius: 'var(--lumio-radius-lg)',
+                  borderRadius: tokens.radius.lg,
                   border: '1px dashed #e5e7eb',
                   bgcolor: '#f9fafb',
                   p: 2,
@@ -683,7 +684,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             <Box
               sx={{
                 mb: 2,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 bgcolor: '#f3f4f6',
                 p: 2,
                 display: 'flex',

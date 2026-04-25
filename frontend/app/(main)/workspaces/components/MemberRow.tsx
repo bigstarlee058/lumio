@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { ChevronDown, MoreHorizontal } from '@/app/components/icons';
 import { useState } from 'react';
 import type { WorkspaceMember, WorkspaceRole } from './hooks/useMemberManagement';
+import { tokens } from '@/lib/theme-tokens';
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
@@ -49,7 +50,7 @@ type MemberAvatarProps = {
 function MemberAvatar({ avatarUrl, name, email }: MemberAvatarProps): React.ReactElement {
   const label = name || email || 'Member avatar';
   return (
-    <Box sx={{ width: 36, height: 36, flexShrink: 0, overflow: 'hidden', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>
+    <Box sx={{ width: 36, height: 36, flexShrink: 0, overflow: 'hidden', borderRadius: tokens.radius.full, bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600 }}>
       {avatarUrl ? (
         <img src={avatarUrl} alt={label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
@@ -70,7 +71,7 @@ function RoleBadge({ member, roleTargets, roleUpdating, onChangeMemberRole }: Ro
   const [roleMenuAnchor, setRoleMenuAnchor] = useState<HTMLElement | null>(null);
   const canManageRole = roleTargets.length > 0;
   const roleStyle = ROLE_COLORS[member.role] || ROLE_COLORS.member;
-  const badgeStyle = { borderRadius: 'var(--lumio-radius-sm)', border: `1px solid ${roleStyle.border}`, background: roleStyle.bg, color: roleStyle.color, padding: '2px 10px', fontSize: 12, fontWeight: 500 };
+  const badgeStyle = { borderRadius: tokens.radius.sm, border: `1px solid ${roleStyle.border}`, background: roleStyle.bg, color: roleStyle.color, padding: '2px 10px', fontSize: 12, fontWeight: 500 };
   return (
     <Tooltip title={ROLE_TOOLTIPS[member.role] || 'Workspace role'} placement="top">
       <span>
