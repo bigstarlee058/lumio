@@ -5,6 +5,8 @@ import { useIntlayer } from '@/app/i18n';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { useMemo } from 'react';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 import { SUPPORTED_LOCALES } from '@/app/lib/locale';
@@ -89,21 +91,24 @@ function useLanguageStepData(props: LanguageStepProps): LanguageStepData {
   return { text, timezoneSelectOptions, selectedTimeZoneOption, languageOptions };
 }
 
-const labelStyle = {
+const makeLabelStyle = (color: string) => ({
   fontSize: 12,
   fontWeight: 600,
   textTransform: 'uppercase' as const,
   letterSpacing: '0.14em',
-  color: 'var(--lumio-text-secondary)',
-};
+  color,
+});
 
 function LanguageHeader({ text }: { text: TextFn }): React.ReactElement {
+  const { resolvedTheme } = useTheme();
+  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
+
   return (
     <div>
       <h2 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
         {text(['language', 'title'], 'Language and timezone')}
       </h2>
-      <p style={{ marginTop: 8, fontSize: 14, color: 'var(--lumio-text-secondary)' }}>
+      <p style={{ marginTop: 8, fontSize: 14, color: textSecondary }}>
         {text(
           ['language', 'subtitle'],
           'Choose your preferred interface language and timezone for accurate report timestamps.',
@@ -122,6 +127,8 @@ interface LocaleSelectorProps {
 
 function LocaleSelector(props: LocaleSelectorProps): React.ReactElement {
   const { locale, onLocaleChange, languageOptions, label } = props;
+  const { resolvedTheme } = useTheme();
+  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
     onLocaleChange(event.target.value as SupportedLocale);
@@ -129,7 +136,7 @@ function LocaleSelector(props: LocaleSelectorProps): React.ReactElement {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <label style={labelStyle} htmlFor="onboarding-locale">{label}</label>
+      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-locale">{label}</label>
       <Select id="onboarding-locale" value={locale} onChange={handleChange}>
         {languageOptions.map(option => (
           <option key={option.value} value={option.value}>
@@ -167,6 +174,8 @@ function buildRenderInput(placeholder: string): (params: object) => React.ReactE
 
 function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
   const { selectedTimeZoneOption, timezoneSelectOptions, onTimeZoneChange, label, noOptionsText, placeholder, hint } = props;
+  const { resolvedTheme } = useTheme();
+  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
 
   // eslint-disable-next-line max-params
   const handleChange = (_event: React.SyntheticEvent, option: TimeZoneOption | null): void => {
@@ -179,7 +188,7 @@ function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <label style={labelStyle} htmlFor="onboarding-timezone-select">{label}</label>
+      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-timezone-select">{label}</label>
       <Autocomplete<TimeZoneOption, false>
         options={timezoneSelectOptions}
         value={selectedTimeZoneOption}
@@ -189,7 +198,7 @@ function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
         noOptionsText={noOptionsText}
         renderInput={buildRenderInput(placeholder)}
       />
-      <p style={{ fontSize: 14, color: 'var(--lumio-text-secondary)', margin: 0 }}>{hint}</p>
+      <p style={{ fontSize: 14, color: textSecondary, margin: 0 }}>{hint}</p>
     </div>
   );
 }

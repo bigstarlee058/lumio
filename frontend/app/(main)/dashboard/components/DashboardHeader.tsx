@@ -3,6 +3,7 @@
 import { ExportDropdown } from '@/app/components/dashboard/ExportDropdown';
 import Link from 'next/link';
 import type React from 'react';
+import { useTheme } from 'next-themes';
 import type { DashboardTabId } from '../hooks/useDashboardPage';
 import { DashboardTabs } from './DashboardTabs';
 import { tokens } from '@/lib/theme-tokens';
@@ -16,6 +17,9 @@ type DashboardHeaderProps = {
 };
 
 export function DashboardHeader({ statusHeading, greetingSubtitle, activeTab, onTabChange, exportMenu }: DashboardHeaderProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+
   return (
     <div className="lumio-dashboard-header">
       <div className="lumio-dashboard-header__row">
@@ -33,7 +37,7 @@ export function DashboardHeader({ statusHeading, greetingSubtitle, activeTab, on
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              backgroundColor: 'var(--lumio-color-primary)',
+              backgroundColor: c.primary,
               color: '#fff',
               padding: '10px 20px',
               fontSize: 14,
@@ -52,7 +56,7 @@ export function DashboardHeader({ statusHeading, greetingSubtitle, activeTab, on
           </Link>
         </div>
       </div>
-      <div style={{ marginTop: 24, borderBottom: '1px solid var(--lumio-color-border)' }}>
+      <div style={{ marginTop: 24, borderBottom: `1px solid ${c.border}` }}>
         <DashboardTabs activeTab={activeTab} onTabChange={onTabChange} />
       </div>
     </div>

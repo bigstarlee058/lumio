@@ -14,6 +14,8 @@ import {
 } from '@/app/components/icons';
 import Link from 'next/link';
 import type React from 'react';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 import { Spinner } from '../ui/spinner';
 import { CashFlowMini } from './CashFlowMini';
 import { RecentActivity } from './RecentActivity';
@@ -37,7 +39,7 @@ interface SparkProps {
   w?: number;
 }
 
-function Spark({ points, color = 'var(--lumio-color-primary)', fill = true, h = 38, w = 120 }: SparkProps) {
+function Spark({ points, color = tokens.color.primary, fill = true, h = 38, w = 120 }: SparkProps) {
   if (points.length < 2) return null;
   const max = Math.max(...points);
   const min = Math.min(...points);
@@ -114,6 +116,9 @@ function actionIcoClass(priority: string): string {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function OverviewTab({ data, formatAmount, range, isLoading, effectivePeriod }: OverviewTabProps) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+
   const mappedActions = (data.actions || []).map(a => {
     let priority: 'critical' | 'warning' | 'info' | 'success' = 'info';
     if (a.type === 'payments_overdue') priority = 'critical';
@@ -155,7 +160,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
     return (
       <div className="lumio-dashboard__empty">
         <div className="lumio-dashboard__empty-icon">
-          <FileUp size={40} color="var(--lumio-color-ink-400)" />
+          <FileUp size={40} color={c.ink400} />
         </div>
         <h2 className="lumio-dashboard__empty-title">Upload your first statement</h2>
         <p className="lumio-dashboard__empty-desc">
@@ -189,28 +194,28 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
           deltaDir={data.snapshot.totalBalance < 0 ? 'down' : undefined}
           sub={data.snapshot.currency}
           sparkPoints={netPoints.length >= 2 ? netPoints : undefined}
-          sparkColor="var(--lumio-color-success)"
+          sparkColor={c.success}
         />
         <StatCard
           label="Income"
           value={isLoading ? <Spinner size={12} /> : formatAmount(data.snapshot.income30d)}
           sub={rangeLabel}
           sparkPoints={incomePoints.length >= 2 ? incomePoints : undefined}
-          sparkColor="var(--lumio-color-primary)"
+          sparkColor={c.primary}
         />
         <StatCard
           label="Expenses"
           value={isLoading ? <Spinner size={12} /> : formatAmount(data.snapshot.expense30d)}
           sub={rangeLabel}
           sparkPoints={expensePoints.length >= 2 ? expensePoints : undefined}
-          sparkColor="var(--lumio-color-warning)"
+          sparkColor={c.warning}
         />
         <StatCard
           label="Uncategorized"
           value={isLoading ? <Spinner size={12} /> : String(uncatCount)}
           delta={uncatCount > 0 ? 'Needs review' : 'All clear'}
           deltaDir={uncatCount > 0 ? 'flat' : 'up'}
-          sparkColor="var(--lumio-color-danger)"
+          sparkColor={c.danger}
         />
       </div>
 
@@ -226,11 +231,11 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
             </div>
             <div className="lumio-dashboard__card-head-actions">
               <span className="lumio-dashboard__legend">
-                <span className="lumio-dashboard__legend-dot" style={{ background: 'var(--lumio-color-primary)' }} />
+                <span className="lumio-dashboard__legend-dot" style={{ background: c.primary }} />
                 Income
               </span>
               <span className="lumio-dashboard__legend">
-                <span className="lumio-dashboard__legend-dot" style={{ background: 'var(--lumio-color-ink-300)' }} />
+                <span className="lumio-dashboard__legend-dot" style={{ background: c.ink300 }} />
                 Expense
               </span>
             </div>
@@ -281,7 +286,7 @@ export function OverviewTab({ data, formatAmount, range, isLoading, effectivePer
         <div className="lumio-dashboard__card lumio-dashboard__actions">
           <div className="lumio-dashboard__card-title" style={{ marginBottom: 16 }}>Quick actions</div>
           {mappedActions.length === 0 ? (
-            <div style={{ fontSize: 13, color: 'var(--lumio-color-ink-400)', textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ fontSize: 13, color: c.ink400, textAlign: 'center', padding: '24px 0' }}>
               No actions needed
             </div>
           ) : (
