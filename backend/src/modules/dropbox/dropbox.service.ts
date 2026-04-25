@@ -3,7 +3,6 @@ import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Dropbox } from 'dropbox';
-import * as fetch from 'isomorphic-fetch';
 import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
@@ -184,7 +183,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
       clientId,
       clientSecret,
       accessToken,
-      fetch,
+      fetch: globalThis.fetch,
     });
   }
 
