@@ -7,7 +7,7 @@ import { Check, ChevronLeft, Globe, Search } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
-import { type AppLocale as AppLanguage } from '@/app/lib/locale';
+import { type AppLocale as AppLanguage, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
@@ -20,15 +20,13 @@ export function AuthLanguageSwitcher() {
 
   const languages = useMemo(
     () =>
-      [
-        {
-          code: 'ru' as const,
-          label: languageNames.ru.value,
-          note: languageModal.defaultLanguageNote.value,
-        },
-        { code: 'en' as const, label: languageNames.en.value },
-        { code: 'kk' as const, label: languageNames.kk.value },
-      ].filter(l => availableLocales.map(String).includes(l.code)),
+      SUPPORTED_LOCALES
+        .filter(code => availableLocales.map(String).includes(code))
+        .map(code => ({
+          code,
+          label: (languageNames as Record<string, { value: string }>)[code]?.value ?? code,
+          ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
+        })),
     [availableLocales, languageModal.defaultLanguageNote, languageNames],
   );
 

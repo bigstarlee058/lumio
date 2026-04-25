@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import { useMemo } from 'react';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
+import { SUPPORTED_LOCALES } from '@/app/lib/locale';
 
 const COMMON_TIMEZONES = [
   'UTC',
@@ -80,11 +81,10 @@ function useLanguageStepData(props: LanguageStepProps): LanguageStepData {
     return match ?? { value: timeZone, label: timeZone };
   }, [timeZone, timezoneSelectOptions]);
 
-  const languageOptions: Array<{ value: SupportedLocale; label: string }> = [
-    { value: 'ru', label: text(['language', 'localeOptions', 'ru'], 'Russian') },
-    { value: 'en', label: text(['language', 'localeOptions', 'en'], 'English') },
-    { value: 'kk', label: text(['language', 'localeOptions', 'kk'], 'Kazakh') },
-  ];
+  const languageOptions: Array<{ value: SupportedLocale; label: string }> = SUPPORTED_LOCALES.map(code => ({
+    value: code,
+    label: text(['language', 'localeOptions', code], code),
+  }));
 
   return { text, timezoneSelectOptions, selectedTimeZoneOption, languageOptions };
 }
