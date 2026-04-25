@@ -17,6 +17,7 @@ const content = {
       ar: 'إنشاء حساب',
       pl: 'Utwórz konto',
       it: 'Crea un account',
+      sk: 'Utwórz konto',
     }),
     subtitle: t({
       ru: 'Присоединяйтесь к Lumio',
@@ -32,6 +33,7 @@ const content = {
       ar: 'انضم إلى Lumio',
       pl: 'Dołącz do Lumio',
       it: 'Unisciti a Lumio',
+      sk: 'Dołącz do Lumio',
     }),
     fullNameLabel: t({
       ru: 'Полное имя',
@@ -47,6 +49,7 @@ const content = {
       ar: 'الاسم الكامل',
       pl: 'Pełne imię i nazwisko',
       it: 'Nome completo',
+      sk: 'Pełne imię i nazwisko',
     }),
     passwordLabel: t({
       ru: 'Пароль',
@@ -62,6 +65,7 @@ const content = {
       ar: 'كلمة المرور',
       pl: 'Hasło',
       it: 'Password',
+      sk: 'Hasło',
     }),
     passwordHelper: t({
       ru: 'Минимум 8 символов',
@@ -77,6 +81,7 @@ const content = {
       ar: '8 أحرف على الأقل',
       pl: 'Co najmniej 8 znaków',
       it: 'Almeno 8 caratteri',
+      sk: 'Co najmniej 8 znaków',
     }),
     companyLabel: t({
       ru: 'Компания (опционально)',
@@ -92,6 +97,7 @@ const content = {
       ar: 'الشركة (اختياري)',
       pl: 'Firma (opcjonalnie)',
       it: 'Azienda (facoltativo)',
+      sk: 'Firma (opcjonalnie)',
     }),
     submit: t({
       ru: 'Зарегистрироваться',
@@ -107,6 +113,7 @@ const content = {
       ar: 'إنشاء حساب',
       pl: 'Zarejestruj się',
       it: 'Registrati',
+      sk: 'Zarejestruj się',
     }),
     haveAccount: t({
       ru: 'Уже есть аккаунт? Войти',
@@ -122,6 +129,7 @@ const content = {
       ar: 'لديك حساب بالفعل؟ تسجيل الدخول',
       pl: 'Masz już konto? Zaloguj się',
       it: 'Hai già un account? Accedi',
+      sk: 'Masz już konto? Zaloguj się',
     }),
     rightTitle: t({
       ru: 'Присоединяйтесь к Lumio',
@@ -137,6 +145,7 @@ const content = {
       ar: 'انضم إلى Lumio',
       pl: 'Dołącz do Lumio',
       it: 'Unisciti a Lumio',
+      sk: 'Dołącz do Lumio',
     }),
     rightTagline: t({
       ru: 'Автоматизируйте финансы уже сегодня',
@@ -152,6 +161,7 @@ const content = {
       ar: 'أتمتة أموالك اليوم',
       pl: 'Zautomatyzuj swoje finanse już dziś',
       it: 'Automatizza le tue finanze oggi',
+      sk: 'Zautomatyzuj swoje finanse już dziś',
     }),
     registerFailed: t({
       ru: 'Не удалось зарегистрироваться. Попробуйте ещё раз.',
@@ -167,6 +177,7 @@ const content = {
       ar: 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.',
       pl: 'Rejestracja nie powiodła się. Spróbuj ponownie.',
       it: 'Registrazione non riuscita. Per favore riprova.',
+      sk: 'Rejestracja nie powiodła się. Spróbuj ponownie.',
     }),
     googleRegisterFailed: t({
       ru: 'Не удалось зарегистрироваться через Google. Попробуйте ещё раз.',
@@ -182,6 +193,7 @@ const content = {
       ar: 'فشل إنشاء الحساب عبر Google. يرجى المحاولة مرة أخرى.',
       pl: 'Rejestracja przez Google nie powiodła się. Spróbuj ponownie.',
       it: 'Registrazione con Google non riuscita. Per favore riprova.',
+      sk: 'Rejestracja przez Google nie powiodła się. Spróbuj ponownie.',
     }),
     orLabel: t({
       ru: 'или',
@@ -197,6 +209,7 @@ const content = {
       ar: 'أو',
       pl: 'lub',
       it: 'o',
+      sk: 'lub',
     }),
     inviteLoadFailed: t({
       ru: 'Не удалось загрузить данные приглашения. Попробуйте ещё раз.',
@@ -212,6 +225,7 @@ const content = {
       ar: 'فشل تحميل تفاصيل الدعوة. يرجى المحاولة مرة أخرى.',
       pl: 'Nie udało się załadować szczegółów zaproszenia. Spróbuj ponownie.',
       it: 'Impossibile caricare i dettagli dell\'invito. Per favore riprova.',
+      sk: 'Nie udało się załadować szczegółów zaproszenia. Spróbuj ponownie.',
     }),
   },
 } satisfies Dictionary;

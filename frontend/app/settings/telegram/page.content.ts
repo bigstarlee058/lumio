@@ -17,6 +17,7 @@ const content = {
       ar: 'سجّل الدخول لتكوين Telegram.',
       pl: 'Zaloguj się, aby skonfigurować Telegram.',
       it: 'Accedi per configurare Telegram.',
+      sk: 'Zaloguj się, aby skonfigurować Telegram.',
     }),
     permissionRequired: t({
       ru: 'У вас нет прав для просмотра Telegram настроек.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'ليس لديك إذن لعرض إعدادات Telegram.',
       pl: 'Nie masz uprawnień do wyświetlania ustawień Telegram.',
       it: 'Non hai il permesso di visualizzare le impostazioni Telegram.',
+      sk: 'Nie masz uprawnień do wyświetlania ustawień Telegram.',
     }),
     title: t({
       ru: 'Telegram настройки',
@@ -47,6 +49,7 @@ const content = {
       ar: 'إعدادات Telegram',
       pl: 'Ustawienia Telegram',
       it: 'Impostazioni Telegram',
+      sk: 'Ustawienia Telegram',
     }),
     subtitle: t({
       ru: 'Подключите чат к боту, отправляйте отчёты и просматривайте историю отправок.',
@@ -62,6 +65,7 @@ const content = {
       ar: 'قم بتوصيل دردشة بالروبوت وإرسال التقارير وعرض سجل الإرسال.',
       pl: 'Połącz czat z botem, wysyłaj raporty i przeglądaj historię wysyłek.',
       it: 'Connetti una chat al bot, invia report e visualizza la cronologia degli invii.',
+      sk: 'Połącz czat z botem, wysyłaj raporty i przeglądaj historię wysyłek.',
     }),
     errors: {
       chatIdRequired: t({
@@ -78,6 +82,7 @@ const content = {
         ar: 'أدخل chatId المستلم من الروبوت',
         pl: 'Podaj chatId otrzymany od bota',
         it: 'Fornisci il chatId ricevuto dal bot',
+        sk: 'Podaj chatId otrzymany od bota',
       }),
       connectFailed: t({
         ru: 'Не удалось подключить Telegram',
@@ -93,6 +98,7 @@ const content = {
         ar: 'فشل الاتصال بـ Telegram',
         pl: 'Nie udało się połączyć Telegram',
         it: 'Impossibile connettere Telegram',
+        sk: 'Nie udało się połączyć Telegram',
       }),
       sendFailed: t({
         ru: 'Не удалось отправить отчёт',
@@ -108,6 +114,7 @@ const content = {
         ar: 'فشل إرسال التقرير',
         pl: 'Nie udało się wysłać raportu',
         it: 'Impossibile inviare il report',
+        sk: 'Nie udało się wysłać raportu',
       }),
     },
     messages: {
@@ -125,6 +132,7 @@ const content = {
         ar: 'تم توصيل Telegram بنجاح. تحقق من الروبوت وأمر /report.',
         pl: 'Telegram połączony pomyślnie. Sprawdź bota i komendę /report.',
         it: 'Telegram connesso con successo. Controlla il bot e il comando /report.',
+        sk: 'Telegram połączony pomyślnie. Sprawdź bota i komendę /report.',
       }),
       sent: t({
         ru: 'Отчёт отправлен в Telegram. Проверьте чат.',
@@ -140,6 +148,7 @@ const content = {
         ar: 'تم إرسال التقرير إلى Telegram. تحقق من الدردشة.',
         pl: 'Raport wysłany do Telegram. Sprawdź czat.',
         it: 'Report inviato a Telegram. Controlla la chat.',
+        sk: 'Raport wysłany do Telegram. Sprawdź czat.',
       }),
     },
     connect: {
@@ -157,6 +166,7 @@ const content = {
         ar: 'الاتصال',
         pl: 'Połączenie',
         it: 'Connessione',
+        sk: 'Połączenie',
       }),
       steps: t({
         ru: '1) В Telegram откройте бота и отправьте команду /start, чтобы увидеть свой Telegram ID.\n2) Введите ниже chatId из Telegram (ID чата, обычно совпадает с вашим user ID для личных чатов).\n3) Нажмите «Сохранить», затем выполните /report в боте.',
@@ -172,8 +182,9 @@ const content = {
         ar: '1) في Telegram، افتح الروبوت وأرسل /start لرؤية معرّف Telegram الخاص بك.\n2) أدخل chatId من Telegram أدناه (يتطابق معرّف الدردشة عادةً مع معرّف المستخدم في الدردشات الخاصة).\n3) انقر على «حفظ»، ثم نفّذ /report في الروبوت.',
         pl: '1) W Telegram otwórz bota i wyślij /start, aby zobaczyć swój Telegram ID.\n2) Wpisz poniżej chatId z Telegram (ID czatu zwykle pokrywa się z Twoim ID użytkownika w prywatnych czatach).\n3) Kliknij «Zapisz», a następnie uruchom /report w bocie.',
         it: '1) In Telegram, apri il bot e invia /start per vedere il tuo ID Telegram.\n2) Inserisci qui sotto il chatId da Telegram (l\'ID chat di solito corrisponde al tuo ID utente per le chat private).\n3) Clicca su «Salva», poi esegui /report nel bot.',
+        sk: '1) W Telegram otwórz bota i wyślij /start, aby zobaczyć swój Telegram ID.\n2) Wpisz poniżej chatId z Telegram (ID czatu zwykle pokrywa się z Twoim ID użytkownika w prywatnych czatach).\n3) Kliknij «Zapisz», a następnie uruchom /report w bocie.',
       }),
-      chatIdLabel: t({ ru: 'Telegram chatId', en: 'Telegram chatId', kk: 'Telegram chatId', de: 'Telegram chatId', fr: 'Telegram chatId', es: 'Telegram chatId', pt: 'Telegram chatId', tr: 'Telegram chatId', uk: 'Telegram chatId', zh: 'Telegram chatId', ar: 'Telegram chatId', pl: 'Telegram chatId', it: 'Telegram chatId' }),
+      chatIdLabel: t({ ru: 'Telegram chatId', en: 'Telegram chatId', kk: 'Telegram chatId', de: 'Telegram chatId', fr: 'Telegram chatId', es: 'Telegram chatId', pt: 'Telegram chatId', tr: 'Telegram chatId', uk: 'Telegram chatId', zh: 'Telegram chatId', ar: 'Telegram chatId', pl: 'Telegram chatId', it: 'Telegram chatId', sk: 'Telegram chatId'}),
       chatIdPlaceholder: t({
         ru: 'Например, 123456789',
         en: 'For example, 123456789',
@@ -188,6 +199,7 @@ const content = {
         ar: 'على سبيل المثال، 123456789',
         pl: 'Na przykład 123456789',
         it: 'Ad esempio, 123456789',
+        sk: 'Na przykład 123456789',
       }),
       chatIdHelp: t({
         ru: 'Введите chatId, который показывает бот',
@@ -203,8 +215,9 @@ const content = {
         ar: 'أدخل chatId الذي يعرضه الروبوت',
         pl: 'Podaj chatId wyświetlany przez bota',
         it: 'Inserisci il chatId mostrato dal bot',
+        sk: 'Podaj chatId wyświetlany przez bota',
       }),
-      telegramIdLabel: t({ ru: 'Telegram ID', en: 'Telegram ID', kk: 'Telegram ID', de: 'Telegram ID', fr: 'Telegram ID', es: 'Telegram ID', pt: 'Telegram ID', tr: 'Telegram ID', uk: 'Telegram ID', zh: 'Telegram ID', ar: 'Telegram ID', pl: 'Telegram ID', it: 'Telegram ID' }),
+      telegramIdLabel: t({ ru: 'Telegram ID', en: 'Telegram ID', kk: 'Telegram ID', de: 'Telegram ID', fr: 'Telegram ID', es: 'Telegram ID', pt: 'Telegram ID', tr: 'Telegram ID', uk: 'Telegram ID', zh: 'Telegram ID', ar: 'Telegram ID', pl: 'Telegram ID', it: 'Telegram ID', sk: 'Telegram ID'}),
       telegramIdPlaceholder: t({
         ru: 'ID из команды /start',
         en: 'ID from the /start command',
@@ -219,6 +232,7 @@ const content = {
         ar: 'المعرّف من أمر /start',
         pl: 'ID z komendy /start',
         it: 'ID dal comando /start',
+        sk: 'ID z komendy /start',
       }),
       telegramIdHelp: t({
         ru: 'Необязательно, но ускоряет привязку',
@@ -234,6 +248,7 @@ const content = {
         ar: 'اختياري، لكنه يسرّع الربط',
         pl: 'Opcjonalnie, ale przyspiesza łączenie',
         it: 'Facoltativo, ma accelera il collegamento',
+        sk: 'Opcjonalnie, ale przyspiesza łączenie',
       }),
       save: t({
         ru: 'Сохранить подключение',
@@ -249,6 +264,7 @@ const content = {
         ar: 'حفظ الاتصال',
         pl: 'Zapisz połączenie',
         it: 'Salva connessione',
+        sk: 'Zapisz połączenie',
       }),
       linkedIdPrefix: t({
         ru: 'Связан ID',
@@ -264,6 +280,7 @@ const content = {
         ar: 'المعرّف المرتبط',
         pl: 'Powiązany ID',
         it: 'ID collegato',
+        sk: 'Powiązany ID',
       }),
     },
     quickSend: {
@@ -281,6 +298,7 @@ const content = {
         ar: 'إرسال سريع للتقرير',
         pl: 'Szybkie wysyłanie raportu',
         it: 'Invio rapido report',
+        sk: 'Szybkie wysyłanie raportu',
       }),
       subtitle: t({
         ru: 'Ежедневные отчёты отправляются автоматически в 08:00 UTC, месячные — 1 числа в 09:00 UTC.',
@@ -296,6 +314,7 @@ const content = {
         ar: 'تُرسَل التقارير اليومية تلقائيًا في 08:00 UTC؛ والتقارير الشهرية في اليوم الأول عند 09:00 UTC.',
         pl: 'Raporty dzienne są wysyłane automatycznie o 08:00 UTC; miesięczne 1. dnia o 09:00 UTC.',
         it: 'I report giornalieri vengono inviati automaticamente alle 08:00 UTC; quelli mensili il 1° alle 09:00 UTC.',
+        sk: 'Raporty dzienne są wysyłane automatycznie o 08:00 UTC; miesięczne 1. dnia o 09:00 UTC.',
       }),
       sendToday: t({
         ru: 'Отправить за сегодня',
@@ -311,6 +330,7 @@ const content = {
         ar: 'إرسال تقرير اليوم',
         pl: 'Wyślij za dziś',
         it: 'Invia per oggi',
+        sk: 'Wyślij za dziś',
       }),
       sendMonth: t({
         ru: 'Отправить за месяц',
@@ -326,6 +346,7 @@ const content = {
         ar: 'إرسال تقرير الشهر',
         pl: 'Wyślij za miesiąc',
         it: 'Invia per il mese',
+        sk: 'Wyślij za miesiąc',
       }),
     },
     history: {
@@ -343,6 +364,7 @@ const content = {
         ar: 'سجل الإرسال',
         pl: 'Historia wysyłek',
         it: 'Cronologia invii',
+        sk: 'Historia wysyłek',
       }),
       subtitle: t({
         ru: 'Последние попытки отправки отчётов через Telegram бот.',
@@ -358,6 +380,7 @@ const content = {
         ar: 'أحدث محاولات إرسال التقارير عبر روبوت Telegram.',
         pl: 'Ostatnie próby wysyłania raportów przez bota Telegram.',
         it: 'Ultimi tentativi di invio report tramite il bot Telegram.',
+        sk: 'Ostatnie próby wysyłania raportów przez bota Telegram.',
       }),
       table: {
         type: t({
@@ -374,6 +397,7 @@ const content = {
           ar: 'النوع',
           pl: 'Typ',
           it: 'Tipo',
+          sk: 'Typ',
         }),
         reportDate: t({
           ru: 'Дата отчёта',
@@ -389,6 +413,7 @@ const content = {
           ar: 'تاريخ التقرير',
           pl: 'Data raportu',
           it: 'Data report',
+          sk: 'Data raportu',
         }),
         chat: t({
           ru: 'Чат',
@@ -404,6 +429,7 @@ const content = {
           ar: 'الدردشة',
           pl: 'Czat',
           it: 'Chat',
+          sk: 'Czat',
         }),
         status: t({
           ru: 'Статус',
@@ -419,6 +445,7 @@ const content = {
           ar: 'الحالة',
           pl: 'Status',
           it: 'Stato',
+          sk: 'Status',
         }),
         sentAt: t({
           ru: 'Отправлено',
@@ -434,6 +461,7 @@ const content = {
           ar: 'تم الإرسال',
           pl: 'Wysłano',
           it: 'Inviato',
+          sk: 'Wysłano',
         }),
       },
       empty: t({
@@ -450,8 +478,9 @@ const content = {
         ar: 'السجل فارغ الآن.',
         pl: 'Historia jest na razie pusta.',
         it: 'La cronologia è vuota per ora.',
+        sk: 'Historia jest na razie pusta.',
       }),
-      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—' }),
+      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—', sk: '—'}),
     },
     reportType: {
       daily: t({
@@ -468,6 +497,7 @@ const content = {
         ar: 'يومي',
         pl: 'Dzienny',
         it: 'Giornaliero',
+        sk: 'Dzienny',
       }),
       monthly: t({
         ru: 'Месячный',
@@ -483,6 +513,7 @@ const content = {
         ar: 'شهري',
         pl: 'Miesięczny',
         it: 'Mensile',
+        sk: 'Miesięczny',
       }),
       custom: t({
         ru: 'Пользовательский',
@@ -498,6 +529,7 @@ const content = {
         ar: 'مخصص',
         pl: 'Niestandardowy',
         it: 'Personalizzato',
+        sk: 'Niestandardowy',
       }),
     },
     reportStatus: {
@@ -515,6 +547,7 @@ const content = {
         ar: 'تم الإرسال',
         pl: 'Wysłano',
         it: 'Inviato',
+        sk: 'Wysłano',
       }),
       failed: t({
         ru: 'Ошибка',
@@ -530,6 +563,7 @@ const content = {
         ar: 'فشل',
         pl: 'Błąd',
         it: 'Fallito',
+        sk: 'Błąd',
       }),
       pending: t({
         ru: 'В очереди',
@@ -545,6 +579,7 @@ const content = {
         ar: 'قيد الانتظار',
         pl: 'Oczekujące',
         it: 'In attesa',
+        sk: 'Oczekujące',
       }),
     },
     howTo: {
@@ -562,6 +597,7 @@ const content = {
         ar: 'كيف تجد chatId؟',
         pl: 'Jak znaleźć chatId?',
         it: 'Come trovare il chatId?',
+        sk: 'Jak znaleźć chatId?',
       }),
       text: t({
         ru: 'Откройте бота в Telegram, отправьте /start и скопируйте ID из ответа. Для личных чатов chatId совпадает с этим ID. Для групповых чатов понадобится chatId группы (отправьте сообщение и запросите через @userinfobot).',
@@ -577,6 +613,7 @@ const content = {
         ar: 'افتح الروبوت في Telegram وأرسل /start وانسخ المعرّف من الرد. في الدردشات الخاصة يتطابق chatId مع هذا المعرّف. في الدردشات الجماعية تحتاج إلى chatId المجموعة (أرسل رسالة واستفسر عبر @userinfobot).',
         pl: 'Otwórz bota w Telegram, wyślij /start i skopiuj ID z odpowiedzi. W prywatnych czatach chatId odpowiada temu ID. W grupach potrzebujesz chatId grupy (wyślij wiadomość i zapytaj przez @userinfobot).',
         it: 'Apri il bot in Telegram, invia /start e copia l\'ID dalla risposta. Per le chat private, il chatId corrisponde a questo ID. Per le chat di gruppo, hai bisogno del chatId del gruppo (invia un messaggio e richiedilo tramite @userinfobot).',
+        sk: 'Otwórz bota w Telegram, wyślij /start i skopiuj ID z odpowiedzi. W prywatnych czatach chatId odpowiada temu ID. W grupach potrzebujesz chatId grupy (wyślij wiadomość i zapytaj przez @userinfobot).',
       }),
     },
   },

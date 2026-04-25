@@ -17,6 +17,7 @@ const content = {
       ar: 'البحث بالطرف المقابل أو الغرض أو BIN أو رقم الوثيقة...',
       pl: 'Szukaj po kontrahencie, celu, BIN lub numerze dokumentu...',
       it: 'Cerca per controparte, scopo, BIN o numero documento...',
+      sk: 'Szukaj po kontrahencie, celu, BIN lub numerze dokumentu...',
     }),
     filters: t({
       ru: 'Фильтры',
@@ -32,6 +33,7 @@ const content = {
       ar: 'المرشحات',
       pl: 'Filtry',
       it: 'Filtri',
+      sk: 'Filtry',
     }),
     statusFilter: t({
       ru: 'Статус',
@@ -47,6 +49,7 @@ const content = {
       ar: 'الحالة',
       pl: 'Status',
       it: 'Stato',
+      sk: 'Status',
     }),
     statusAll: t({
       ru: 'Все',
@@ -62,6 +65,7 @@ const content = {
       ar: 'الكل',
       pl: 'Wszystkie',
       it: 'Tutti',
+      sk: 'Wszystkie',
     }),
     statusWarnings: t({
       ru: 'С предупреждениями',
@@ -77,6 +81,7 @@ const content = {
       ar: 'بتحذيرات',
       pl: 'Z ostrzeżeniami',
       it: 'Con avvisi',
+      sk: 'Z ostrzeżeniami',
     }),
     statusErrors: t({
       ru: 'С ошибками',
@@ -92,6 +97,7 @@ const content = {
       ar: 'بأخطاء',
       pl: 'Z błędami',
       it: 'Con errori',
+      sk: 'Z błędami',
     }),
     statusUncategorized: t({
       ru: 'Без категории',
@@ -107,6 +113,7 @@ const content = {
       ar: 'غير مصنف',
       pl: 'Bez kategorii',
       it: 'Non categorizzato',
+      sk: 'Bez kategorii',
     }),
     categoryFilter: t({
       ru: 'Категория',
@@ -122,6 +129,7 @@ const content = {
       ar: 'الفئة',
       pl: 'Kategoria',
       it: 'Categoria',
+      sk: 'Kategoria',
     }),
     categoryAll: t({
       ru: 'Все категории',
@@ -137,6 +145,7 @@ const content = {
       ar: 'جميع الفئات',
       pl: 'Wszystkie kategorie',
       it: 'Tutte le categorie',
+      sk: 'Wszystkie kategorie',
     }),
     clearFilters: t({
       ru: 'Очистить',
@@ -152,6 +161,7 @@ const content = {
       ar: 'مسح',
       pl: 'Wyczyść',
       it: 'Cancella',
+      sk: 'Wyczyść',
     }),
     columnDate: t({
       ru: 'Дата',
@@ -167,6 +177,7 @@ const content = {
       ar: 'التاريخ',
       pl: 'Data',
       it: 'Data',
+      sk: 'Data',
     }),
     columnCounterparty: t({
       ru: 'Контрагент',
@@ -182,6 +193,7 @@ const content = {
       ar: 'الطرف المقابل',
       pl: 'Kontrahent',
       it: 'Controparte',
+      sk: 'Kontrahent',
     }),
     columnBin: t({
       ru: 'БИН',
@@ -197,6 +209,7 @@ const content = {
       ar: 'رقم BIN',
       pl: 'BIN',
       it: 'BIN',
+      sk: 'BIN',
     }),
     columnPurpose: t({
       ru: 'Назначение',
@@ -212,6 +225,7 @@ const content = {
       ar: 'الغرض',
       pl: 'Cel',
       it: 'Scopo',
+      sk: 'Cel',
     }),
     columnDebit: t({
       ru: 'Дебет',
@@ -227,6 +241,7 @@ const content = {
       ar: 'مدين',
       pl: 'Debet',
       it: 'Addebito',
+      sk: 'Debet',
     }),
     columnCredit: t({
       ru: 'Кредит',
@@ -242,6 +257,7 @@ const content = {
       ar: 'دائن',
       pl: 'Kredyt',
       it: 'Credito',
+      sk: 'Kredyt',
     }),
     columnCategory: t({
       ru: 'Категория',
@@ -257,6 +273,7 @@ const content = {
       ar: 'الفئة',
       pl: 'Kategoria',
       it: 'Categoria',
+      sk: 'Kategoria',
     }),
     noResults: t({
       ru: 'Транзакции не найдены',
@@ -272,6 +289,7 @@ const content = {
       ar: 'لم يتم العثور على معاملات',
       pl: 'Nie znaleziono transakcji',
       it: 'Nessuna transazione trovata',
+      sk: 'Nie znaleziono transakcji',
     }),
     rowsPerPage: t({
       ru: 'Строк на странице:',
@@ -287,6 +305,7 @@ const content = {
       ar: 'صفوف في الصفحة:',
       pl: 'Wierszy na stronę:',
       it: 'Righe per pagina:',
+      sk: 'Wierszy na stronę:',
     }),
     of: t({
       ru: 'из',
@@ -302,6 +321,7 @@ const content = {
       ar: 'من',
       pl: 'z',
       it: 'di',
+      sk: 'z',
     }),
     previous: t({
       ru: 'Назад',
@@ -317,6 +337,7 @@ const content = {
       ar: 'السابق',
       pl: 'Poprzednia',
       it: 'Precedente',
+      sk: 'Poprzednia',
     }),
     next: t({
       ru: 'Вперед',
@@ -332,6 +353,7 @@ const content = {
       ar: 'التالي',
       pl: 'Następna',
       it: 'Successivo',
+      sk: 'Następna',
     }),
   },
 } satisfies Dictionary;

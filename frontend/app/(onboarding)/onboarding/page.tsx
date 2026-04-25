@@ -22,6 +22,7 @@ import { LanguageStep } from './steps/LanguageStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { WorkspaceStep } from './steps/WorkspaceStep';
 import {
+import { tokens } from '@/lib/theme-tokens';
   type OnboardingData,
   type SupportedLocale,
   useOnboardingWizard,
@@ -661,7 +662,7 @@ export default function OnboardingPage() {
 
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-xl)',
+            borderRadius: tokens.radius.xl,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

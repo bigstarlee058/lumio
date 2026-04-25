@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import React, { memo } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function
 const Coin = ({
@@ -86,7 +87,7 @@ const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; ro
         height: '100%',
         background: '#85bb65',
         border: '2px solid #5a8c43',
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

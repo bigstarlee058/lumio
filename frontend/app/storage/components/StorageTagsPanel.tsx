@@ -6,6 +6,7 @@ import React from 'react';
 import { HexColorPicker } from 'react-colorful';
 import type { TagOption } from '../storageHelpers';
 import { colorPickerPopoverSlotProps } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface StorageTagsPanelProps {
   tags: TagOption[];
@@ -98,9 +99,9 @@ export function StorageTagsPanel({
               onSetNewTagPickerOpen((prev) => !prev);
             }}
             aria-label={tagColorLabel}
-            sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', p: 0.5 }}
+            sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, p: 0.5 }}
           >
-            <Box sx={{ width: 24, height: 24, borderRadius: 'var(--lumio-radius-full)', bgcolor: newTagColor }} />
+            <Box sx={{ width: 24, height: 24, borderRadius: tokens.radius.full, bgcolor: newTagColor }} />
           </IconButton>
           <Popover
             open={newTagPickerOpen}
@@ -116,7 +117,7 @@ export function StorageTagsPanel({
         <IconButton
           onClick={onCreateTag}
           title={tagsCreateTooltip}
-          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: 'primary.dark' } }}
+          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' } }}
         >
           <Plus size={18} />
         </IconButton>
@@ -278,9 +279,9 @@ function TagEditRow({
               onSetEditingTagPickerId((prev) => (prev === tag.id ? null : tag.id));
             }}
             aria-label={tagColorLabel}
-            sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', p: 0.5 }}
+            sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, p: 0.5 }}
           >
-            <Box sx={{ width: 16, height: 16, borderRadius: 'var(--lumio-radius-full)', bgcolor: editingTagColor ?? '#168118' }} />
+            <Box sx={{ width: 16, height: 16, borderRadius: tokens.radius.full, bgcolor: editingTagColor ?? '#168118' }} />
           </IconButton>
           <Popover
             open={editingTagPickerId === tag.id}
@@ -296,14 +297,14 @@ function TagEditRow({
         <IconButton
           size="small"
           onClick={() => onRenameTag(tag.id)}
-          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: 'primary.dark' } }}
+          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' } }}
         >
           <Check size={16} />
         </IconButton>
         <IconButton
           size="small"
           onClick={onCancelEditTag}
-          sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
+          sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
         >
           <X size={16} />
         </IconButton>
@@ -334,7 +335,7 @@ function TagViewRow({
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-        <Box sx={{ width: 10, height: 10, borderRadius: 'var(--lumio-radius-full)', bgcolor: tag.color ?? '#cbd5f5', flexShrink: 0 }} />
+        <Box sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, bgcolor: tag.color ?? '#cbd5f5', flexShrink: 0 }} />
         <Typography style={{ fontSize: 14, fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {tag.name}
         </Typography>
@@ -347,7 +348,7 @@ function TagViewRow({
               size="small"
               onClick={() => onStartEditTag(tag)}
               title={tagsRenameTooltip}
-              sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
+              sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' } }}
             >
               <PencilLine size={16} />
             </IconButton>
@@ -355,7 +356,7 @@ function TagViewRow({
               size="small"
               onClick={() => onConfirmDeleteTag(tag)}
               title={tagsDeleteTooltip}
-              sx={{ border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', color: '#6b7280', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+              sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, color: '#6b7280', '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
             >
               <Trash2 size={16} />
             </IconButton>

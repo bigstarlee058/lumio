@@ -17,6 +17,7 @@ const content = {
       ar: 'مطلوب تصحيح قبل الإرسال',
       pl: 'Wymagana korekta przed przesłaniem',
       it: 'Correzione richiesta prima dell\'invio',
+      sk: 'Wymagana korekta przed przesłaniem',
     }),
     alertReviewTitle: t({
       ru: 'Проверьте выписку перед отправкой',
@@ -32,6 +33,7 @@ const content = {
       ar: 'راجع الكشف قبل الإرسال',
       pl: 'Przejrzyj wyciąg przed przesłaniem',
       it: 'Rivedi l\'estratto conto prima dell\'invio',
+      sk: 'Przejrzyj wyciąg przed przesłaniem',
     }),
     alertReadyTitle: t({
       ru: 'Выписка готова к отправке',
@@ -47,6 +49,7 @@ const content = {
       ar: 'الكشف جاهز للإرسال',
       pl: 'Wyciąg jest gotowy do przesłania',
       it: 'L\'estratto conto è pronto per l\'invio',
+      sk: 'Wyciąg jest gotowy do przesłania',
     }),
     alertReadyBody: t({
       ru: 'Все обязательные категории назначены. Данные выглядят корректно, можно отправлять.',
@@ -62,6 +65,7 @@ const content = {
       ar: 'تم تعيين جميع الفئات المطلوبة. تبدو البيانات جيدة وجاهزة للإرسال.',
       pl: 'Wszystkie wymagane kategorie zostały przypisane. Dane wyglądają dobrze i są gotowe do przesłania.',
       it: 'Tutte le categorie obbligatorie sono assegnate. I dati sembrano corretti e sono pronti per l\'invio.',
+      sk: 'Wszystkie wymagane kategorie zostały przypisane. Dane wyglądają dobrze i są gotowe do przesłania.',
     }),
     alertStatementCategoryMissing: t({
       ru: 'Не выбрана категория выписки.',
@@ -77,6 +81,7 @@ const content = {
       ar: 'لم يتم تحديد فئة الكشف.',
       pl: 'Kategoria wyciągu nie jest wybrana.',
       it: 'La categoria dell\'estratto conto non è selezionata.',
+      sk: 'Kategoria wyciągu nie jest wybrana.',
     }),
     alertStatementCategoryDisabled: t({
       ru: 'Выбранная категория выписки отключена. Выберите активную.',
@@ -92,6 +97,7 @@ const content = {
       ar: 'فئة الكشف المحددة معطلة. اختر فئة نشطة.',
       pl: 'Wybrana kategoria wyciągu jest wyłączona. Wybierz aktywną kategorię.',
       it: 'La categoria dell\'estratto conto selezionata è disabilitata. Scegli una categoria attiva.',
+      sk: 'Wybrana kategoria wyciągu jest wyłączona. Wybierz aktywną kategorię.',
     }),
     alertTransactionsCategoryMissing: t({
       ru: '{count} транзакций требуют категорию. Назначьте категории для всех строк.',
@@ -107,6 +113,7 @@ const content = {
       ar: '{count} معاملة تتطلب فئة. قم بتعيين الفئات لجميع الصفوف.',
       pl: '{count} transakcji wymaga kategorii. Przypisz kategorie do wszystkich wierszy.',
       it: '{count} transazioni richiedono una categoria. Assegna categorie a tutte le righe.',
+      sk: '{count} transakcji wymaga kategorii. Przypisz kategorie do wszystkich wierszy.',
     }),
     alertParsingErrors: t({
       ru: 'Обнаружено {count} ошибок парсинга. Проверьте детали и данные выписки.',
@@ -122,6 +129,7 @@ const content = {
       ar: 'تم العثور على {count} أخطاء تحليل. راجع تفاصيل التحليل وبيانات الكشف.',
       pl: 'Znaleziono {count} błędów parsowania. Przejrzyj szczegóły parsowania i dane wyciągu.',
       it: 'Trovati {count} errori di analisi. Rivedi i dettagli di analisi e i dati dell\'estratto conto.',
+      sk: 'Znaleziono {count} błędów parsowania. Przejrzyj szczegóły parsowania i dane wyciągu.',
     }),
     alertParsingWarnings: t({
       ru: 'Есть {count} предупреждений парсинга. Рекомендуется проверить спорные строки.',
@@ -137,6 +145,7 @@ const content = {
       ar: 'تم العثور على {count} تحذيرات تحليل. يُنصح بمراجعة الصفوف المُعلَّمة.',
       pl: 'Znaleziono {count} ostrzeżeń parsowania. Zaleca się przegląd oznaczonych wierszy.',
       it: 'Trovati {count} avvisi di analisi. Si consiglia di rivedere le righe contrassegnate.',
+      sk: 'Znaleziono {count} ostrzeżeń parsowania. Zaleca się przegląd oznaczonych wierszy.',
     }),
     alertNoTransactions: t({
       ru: 'В выписке нет транзакций. Проверьте файл или параметры импорта.',
@@ -152,6 +161,7 @@ const content = {
       ar: 'لم يتم العثور على معاملات في هذا الكشف. تحقق من الملف أو إعدادات الاستيراد.',
       pl: 'Nie znaleziono transakcji w tym wyciągu. Sprawdź plik lub ustawienia importu.',
       it: 'Nessuna transazione trovata in questo estratto conto. Controlla il file o le impostazioni di importazione.',
+      sk: 'Nie znaleziono transakcji w tym wyciągu. Sprawdź plik lub ustawienia importu.',
     }),
   },
 } satisfies Dictionary;

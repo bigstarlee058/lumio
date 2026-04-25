@@ -18,6 +18,7 @@ const content = {
         ar: 'لوحة التحكم',
         pl: 'Panel',
         it: 'Dashboard',
+        sk: 'Panel',
       }),
       statements: t({
         ru: 'Выписки',
@@ -33,6 +34,7 @@ const content = {
         ar: 'كشوف الحساب',
         pl: 'Wyciągi',
         it: 'Estratti conto',
+        sk: 'Wyciągi',
       }),
       receipts: t({
         ru: 'Чеки',
@@ -48,6 +50,7 @@ const content = {
         ar: 'الإيصالات',
         pl: 'Paragony',
         it: 'Ricevute',
+        sk: 'Paragony',
       }),
       workspaces: t({
         ru: 'Рабочие пространства',
@@ -63,6 +66,7 @@ const content = {
         ar: 'مساحات العمل',
         pl: 'Przestrzenie robocze',
         it: 'Aree di lavoro',
+        sk: 'Przestrzenie robocze',
       }),
       storage: t({
         ru: 'Хранилище',
@@ -78,6 +82,7 @@ const content = {
         ar: 'التخزين',
         pl: 'Magazyn',
         it: 'Archiviazione',
+        sk: 'Magazyn',
       }),
       dataEntry: t({
         ru: 'Ввод данных',
@@ -93,6 +98,7 @@ const content = {
         ar: 'إدخال البيانات',
         pl: 'Wprowadzanie danych',
         it: 'Inserimento dati',
+        sk: 'Wprowadzanie danych',
       }),
       tables: t({
         ru: 'Таблицы',
@@ -108,6 +114,7 @@ const content = {
         ar: 'الجداول',
         pl: 'Tabele',
         it: 'Tabelle',
+        sk: 'Tabele',
       }),
       reports: t({
         ru: 'Отчёты',
@@ -123,6 +130,7 @@ const content = {
         ar: 'التقارير',
         pl: 'Raporty',
         it: 'Report',
+        sk: 'Raporty',
       }),
       activityLog: t({
         ru: 'Журнал активности',
@@ -138,6 +146,7 @@ const content = {
         ar: 'سجل النشاط',
         pl: 'Dziennik aktywności',
         it: 'Registro attività',
+        sk: 'Dziennik aktywności',
       }),
       categories: t({
         ru: 'Категории',
@@ -153,6 +162,7 @@ const content = {
         ar: 'الفئات',
         pl: 'Kategorie',
         it: 'Categorie',
+        sk: 'Kategorie',
       }),
       integrations: t({
         ru: 'Интеграции',
@@ -168,6 +178,7 @@ const content = {
         ar: 'التكاملات',
         pl: 'Integracje',
         it: 'Integrazioni',
+        sk: 'Integracje',
       }),
       plugins: t({
         ru: 'Плагины',
@@ -183,6 +194,7 @@ const content = {
         ar: 'الإضافات',
         pl: 'Wtyczki',
         it: 'Plugin',
+        sk: 'Wtyczki',
       }),
     },
     userMenu: {
@@ -200,6 +212,7 @@ const content = {
         ar: 'الملف الشخصي',
         pl: 'Profil',
         it: 'Profilo',
+        sk: 'Profil',
       }),
       settings: t({
         ru: 'Настройки',
@@ -215,6 +228,7 @@ const content = {
         ar: 'الإعدادات',
         pl: 'Ustawienia',
         it: 'Impostazioni',
+        sk: 'Ustawienia',
       }),
       workspace: t({
         ru: 'Рабочее пространство',
@@ -230,6 +244,7 @@ const content = {
         ar: 'مساحة العمل',
         pl: 'Przestrzeń robocza',
         it: 'Area di lavoro',
+        sk: 'Przestrzeń robocza',
       }),
       integrations: t({
         ru: 'Интеграции',
@@ -245,6 +260,7 @@ const content = {
         ar: 'التكاملات',
         pl: 'Integracje',
         it: 'Integrazioni',
+        sk: 'Integracje',
       }),
       supportedBanks: t({
         ru: 'Поддерживаемые банки',
@@ -260,6 +276,7 @@ const content = {
         ar: 'البنوك المدعومة',
         pl: 'Obsługiwane banki',
         it: 'Banche supportate',
+        sk: 'Obsługiwane banki',
       }),
       trash: t({
         ru: 'Корзина',
@@ -275,6 +292,7 @@ const content = {
         ar: 'سلة المحذوفات',
         pl: 'Kosz',
         it: 'Cestino',
+        sk: 'Kosz',
       }),
       categories: t({
         ru: 'Категории',
@@ -290,6 +308,7 @@ const content = {
         ar: 'الفئات',
         pl: 'Kategorie',
         it: 'Categorie',
+        sk: 'Kategorie',
       }),
       admin: t({
         ru: 'Админка',
@@ -305,6 +324,7 @@ const content = {
         ar: 'الإدارة',
         pl: 'Administracja',
         it: 'Amministrazione',
+        sk: 'Administracja',
       }),
       knowledgeBase: t({
         ru: 'База знаний',
@@ -320,6 +340,7 @@ const content = {
         ar: 'قاعدة المعرفة',
         pl: 'Baza wiedzy',
         it: 'Base di conoscenza',
+        sk: 'Baza wiedzy',
       }),
       logout: t({
         ru: 'Выйти',
@@ -335,6 +356,7 @@ const content = {
         ar: 'تسجيل الخروج',
         pl: 'Wyloguj się',
         it: 'Esci',
+        sk: 'Wyloguj się',
       }),
       logoutSuccess: t({
         ru: 'Вы успешно вышли из системы',
@@ -350,6 +372,7 @@ const content = {
         ar: 'لقد سجّلت الخروج بنجاح',
         pl: 'Pomyślnie wylogowano',
         it: 'Hai effettuato il logout con successo',
+        sk: 'Pomyślnie wylogowano',
       }),
       language: t({
         ru: 'Язык',
@@ -365,6 +388,7 @@ const content = {
         ar: 'اللغة',
         pl: 'Język',
         it: 'Lingua',
+        sk: 'Język',
       }),
       moreActions: t({
         ru: 'Меню',
@@ -380,6 +404,7 @@ const content = {
         ar: 'القائمة',
         pl: 'Menu',
         it: 'Menu',
+        sk: 'Menu',
       }),
     },
     languageModal: {
@@ -397,6 +422,7 @@ const content = {
         ar: 'الواجهة',
         pl: 'Interfejs',
         it: 'Interfaccia',
+        sk: 'Interfejs',
       }),
       title: t({
         ru: 'Выбор языка',
@@ -412,6 +438,7 @@ const content = {
         ar: 'اختر اللغة',
         pl: 'Wybierz język',
         it: 'Scegli lingua',
+        sk: 'Wybierz język',
       }),
       back: t({
         ru: 'Назад',
@@ -427,6 +454,7 @@ const content = {
         ar: 'رجوع',
         pl: 'Wstecz',
         it: 'Indietro',
+        sk: 'Wstecz',
       }),
       currentLanguageLabel: t({
         ru: 'Текущий язык',
@@ -442,6 +470,7 @@ const content = {
         ar: 'اللغة الحالية',
         pl: 'Bieżący język',
         it: 'Lingua corrente',
+        sk: 'Bieżący język',
       }),
       defaultLanguageNote: t({
         ru: 'По умолчанию',
@@ -457,6 +486,7 @@ const content = {
         ar: 'الافتراضي',
         pl: 'Domyślny',
         it: 'Predefinito',
+        sk: 'Domyślny',
       }),
       changeLanguage: t({
         ru: 'Сменить язык',
@@ -472,6 +502,7 @@ const content = {
         ar: 'تغيير اللغة',
         pl: 'Zmień język',
         it: 'Cambia lingua',
+        sk: 'Zmień język',
       }),
       availableLanguagesLabel: t({
         ru: 'Доступные языки',
@@ -487,6 +518,7 @@ const content = {
         ar: 'اللغات المتاحة',
         pl: 'Dostępne języki',
         it: 'Lingue disponibili',
+        sk: 'Dostępne języki',
       }),
       chooseAction: t({
         ru: 'Выбрать',
@@ -502,6 +534,7 @@ const content = {
         ar: 'اختر',
         pl: 'Wybierz',
         it: 'Seleziona',
+        sk: 'Wybierz',
       }),
       scrollHint: t({
         ru: 'Прокрутите список и выберите язык.',
@@ -517,6 +550,7 @@ const content = {
         ar: 'قم بالتمرير في القائمة واختر لغة.',
         pl: 'Przewiń listę i wybierz język.',
         it: 'Scorri l\'elenco e scegli una lingua.',
+        sk: 'Przewiń listę i wybierz język.',
       }),
       footerHint: t({
         ru: 'Переводы будут добавлены на следующем этапе.',
@@ -532,6 +566,7 @@ const content = {
         ar: 'ستُضاف الترجمات في الخطوة التالية.',
         pl: 'Tłumaczenia zostaną dodane w następnym kroku.',
         it: 'Le traduzioni verranno aggiunte nel passaggio successivo.',
+        sk: 'Tłumaczenia zostaną dodane w następnym kroku.',
       }),
       cancel: t({
         ru: 'Отмена',
@@ -547,6 +582,7 @@ const content = {
         ar: 'إلغاء',
         pl: 'Anuluj',
         it: 'Annulla',
+        sk: 'Anuluj',
       }),
       save: t({
         ru: 'Сохранить',
@@ -562,6 +598,7 @@ const content = {
         ar: 'حفظ',
         pl: 'Zapisz',
         it: 'Salva',
+        sk: 'Zapisz',
       }),
       savedToastPrefix: t({
         ru: 'Язык выбран',
@@ -577,6 +614,7 @@ const content = {
         ar: 'تم اختيار اللغة',
         pl: 'Język wybrany',
         it: 'Lingua selezionata',
+        sk: 'Język wybrany',
       }),
     },
     tour: {
@@ -594,6 +632,7 @@ const content = {
         ar: 'بدء الجولة',
         pl: 'Rozpocznij tour',
         it: 'Avvia tour',
+        sk: 'Rozpocznij tour',
       }),
       menuLabel: t({
         ru: 'Туры',
@@ -609,6 +648,7 @@ const content = {
         ar: 'الجولات',
         pl: 'Toury',
         it: 'Tour',
+        sk: 'Toury',
       }),
       progressText: t({
         ru: '{{current}} из {{total}}',
@@ -624,12 +664,13 @@ const content = {
         ar: '{{current}} من {{total}}',
         pl: '{{current}} z {{total}}',
         it: '{{current}} di {{total}}',
+        sk: '{{current}} z {{total}}',
       }),
       buttons: {
-        next: t({ ru: 'Далее', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próximo', tr: 'İleri', uk: 'Далі', zh: '下一步', ar: 'التالي', pl: 'Dalej', it: 'Avanti' }),
-        prev: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '上一步', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro' }),
-        done: t({ ru: 'Готово', en: 'Done', kk: 'Дайын', de: 'Fertig', fr: 'Terminé', es: 'Listo', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Готово', zh: '完成', ar: 'تم', pl: 'Gotowe', it: 'Fatto' }),
-        close: t({ ru: 'Закрыть', en: 'Close', kk: 'Жабу', de: 'Schließen', fr: 'Fermer', es: 'Cerrar', pt: 'Fechar', tr: 'Kapat', uk: 'Закрити', zh: '关闭', ar: 'إغلاق', pl: 'Zamknij', it: 'Chiudi' }),
+        next: t({ ru: 'Далее', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próximo', tr: 'İleri', uk: 'Далі', zh: '下一步', ar: 'التالي', pl: 'Dalej', it: 'Avanti', sk: 'Dalej'}),
+        prev: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '上一步', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro', sk: 'Wstecz'}),
+        done: t({ ru: 'Готово', en: 'Done', kk: 'Дайын', de: 'Fertig', fr: 'Terminé', es: 'Listo', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Готово', zh: '完成', ar: 'تم', pl: 'Gotowe', it: 'Fatto', sk: 'Gotowe'}),
+        close: t({ ru: 'Закрыть', en: 'Close', kk: 'Жабу', de: 'Schließen', fr: 'Fermer', es: 'Cerrar', pt: 'Fechar', tr: 'Kapat', uk: 'Закрити', zh: '关闭', ar: 'إغلاق', pl: 'Zamknij', it: 'Chiudi', sk: 'Zamknij'}),
       },
       fallback: {
         noTargets: t({
@@ -646,6 +687,7 @@ const content = {
           ar: 'تعذر بدء الجولة: العناصر المستهدفة غير متاحة في هذه الصفحة.',
           pl: 'Nie można uruchomić touru: elementy docelowe nie są dostępne na tej stronie.',
           it: 'Impossibile avviare il tour: i target non sono disponibili in questa pagina.',
+          sk: 'Nie można uruchomić touru: elementy docelowe nie są dostępne na tej stronie.',
         }),
       },
       steps: {
@@ -664,6 +706,7 @@ const content = {
             ar: 'مساحة عملك',
             pl: 'Twoja przestrzeń robocza',
             it: 'La tua area di lavoro',
+            sk: 'Twoja przestrzeń robocza',
           }),
           description: t({
             ru: 'Логотип Lumio ведет на главную страницу.',
@@ -679,6 +722,7 @@ const content = {
             ar: 'شعار Lumio يعيدك إلى لوحة التحكم الرئيسية.',
             pl: 'Logo Lumio prowadzi do strony głównej.',
             it: 'Il logo Lumio ti riporta alla dashboard principale.',
+            sk: 'Logo Lumio prowadzi do strony głównej.',
           }),
         },
         navigation: {
@@ -696,6 +740,7 @@ const content = {
             ar: 'الأقسام الرئيسية',
             pl: 'Główne sekcje',
             it: 'Sezioni principali',
+            sk: 'Główne sekcje',
           }),
           description: t({
             ru: 'Здесь доступ к выпискам, хранилищу, вводу данных, таблицам и отчетам.',
@@ -711,6 +756,7 @@ const content = {
             ar: 'يمكنك الوصول هنا إلى كشوف الحساب والتخزين وإدخال البيانات والجداول والتقارير.',
             pl: 'Tutaj dostęp do wyciągów, magazynu, wprowadzania danych, tabel i raportów.',
             it: 'Accedi qui a estratti conto, archiviazione, inserimento dati, tabelle e report.',
+            sk: 'Tutaj dostęp do wyciągów, magazynu, wprowadzania danych, tabel i raportów.',
           }),
         },
         theme: {
@@ -728,6 +774,7 @@ const content = {
             ar: 'السمات الفاتحة والداكنة والتلقائية',
             pl: 'Jasny, ciemny i automatyczny motyw',
             it: 'Temi chiaro, scuro e automatico',
+            sk: 'Jasny, ciemny i automatyczny motyw',
           }),
           description: t({
             ru: 'Переключайте тему интерфейса вручную или по расписанию 07:00/19:00.',
@@ -743,6 +790,7 @@ const content = {
             ar: 'قم بتبديل سمة الواجهة يدويًا أو وفق جدول 07:00/19:00.',
             pl: 'Przełączaj motyw interfejsu ręcznie lub według harmonogramu 07:00/19:00.',
             it: 'Cambia il tema dell\'interfaccia manualmente o secondo il programma 07:00/19:00.',
+            sk: 'Przełączaj motyw interfejsu ręcznie lub według harmonogramu 07:00/19:00.',
           }),
         },
         userMenu: {
@@ -760,6 +808,7 @@ const content = {
             ar: 'الملف الشخصي والإعدادات',
             pl: 'Profil i ustawienia',
             it: 'Profilo e impostazioni',
+            sk: 'Profil i ustawienia',
           }),
           description: t({
             ru: 'Откройте меню, чтобы перейти в настройки, управление рабочим пространством, интеграции или выйти.',
@@ -775,6 +824,7 @@ const content = {
             ar: 'افتح القائمة لإدارة الإعدادات ومساحة العمل والتكاملات أو تسجيل الخروج.',
             pl: 'Otwórz menu, aby zarządzać ustawieniami, przestrzenią roboczą, integracjami lub wylogować się.',
             it: 'Apri il menu per gestire impostazioni, area di lavoro, integrazioni o effettuare il logout.',
+            sk: 'Otwórz menu, aby zarządzać ustawieniami, przestrzenią roboczą, integracjami lub wylogować się.',
           }),
         },
         mobileMenu: {
@@ -792,6 +842,7 @@ const content = {
             ar: 'قائمة الجوال',
             pl: 'Menu mobilne',
             it: 'Menu mobile',
+            sk: 'Menu mobilne',
           }),
           description: t({
             ru: 'Используйте бургер, чтобы открыть навигацию на небольших экранах.',
@@ -807,6 +858,7 @@ const content = {
             ar: 'استخدم أيقونة القائمة لفتح التنقل على الشاشات الصغيرة.',
             pl: 'Użyj przycisku hamburger, aby otworzyć nawigację na małych ekranach.',
             it: 'Usa il menu hamburger per aprire la navigazione su schermi piccoli.',
+            sk: 'Użyj przycisku hamburger, aby otworzyć nawigację na małych ekranach.',
           }),
         },
       },
@@ -825,21 +877,23 @@ const content = {
       ar: 'دعم المشروع',
       pl: 'Wspomóż projekt',
       it: 'Supporta il progetto',
+      sk: 'Wspomóż projekt',
     }),
     languages: {
-      ru: t({ ru: 'Русский', en: 'Русский', kk: 'Русский', de: 'Русский', fr: 'Русский', es: 'Русский', pt: 'Русский', tr: 'Русский', uk: 'Русский', zh: 'Русский', ar: 'Русский', pl: 'Русский', it: 'Русский' }),
-      en: t({ ru: 'English', en: 'English', kk: 'English', de: 'English', fr: 'English', es: 'English', pt: 'English', tr: 'English', uk: 'English', zh: 'English', ar: 'English', pl: 'English', it: 'English' }),
-      kk: t({ ru: 'Қазақша', en: 'Қазақша', kk: 'Қазақша', de: 'Қазақша', fr: 'Қазақша', es: 'Қазақша', pt: 'Қазақша', tr: 'Қазақша', uk: 'Қазақша', zh: 'Қазақша', ar: 'Қазақша', pl: 'Қазақша', it: 'Қазақша' }),
-      de: t({ ru: 'Deutsch', en: 'Deutsch', kk: 'Deutsch', de: 'Deutsch', fr: 'Deutsch', es: 'Deutsch', pt: 'Deutsch', tr: 'Deutsch', uk: 'Deutsch', zh: 'Deutsch', ar: 'Deutsch', pl: 'Deutsch', it: 'Deutsch' }),
-      fr: t({ ru: 'Français', en: 'Français', kk: 'Français', de: 'Français', fr: 'Français', es: 'Français', pt: 'Français', tr: 'Français', uk: 'Français', zh: 'Français', ar: 'Français', pl: 'Français', it: 'Français' }),
-      es: t({ ru: 'Español', en: 'Español', kk: 'Español', de: 'Español', fr: 'Español', es: 'Español', pt: 'Español', tr: 'Español', uk: 'Español', zh: 'Español', ar: 'Español', pl: 'Español', it: 'Español' }),
-      pt: t({ ru: 'Português', en: 'Português', kk: 'Português', de: 'Português', fr: 'Português', es: 'Português', pt: 'Português', tr: 'Português', uk: 'Português', zh: 'Português', ar: 'Português', pl: 'Português', it: 'Português' }),
-      tr: t({ ru: 'Türkçe', en: 'Türkçe', kk: 'Türkçe', de: 'Türkçe', fr: 'Türkçe', es: 'Türkçe', pt: 'Türkçe', tr: 'Türkçe', uk: 'Türkçe', zh: 'Türkçe', ar: 'Türkçe', pl: 'Türkçe', it: 'Türkçe' }),
-      uk: t({ ru: 'Українська', en: 'Українська', kk: 'Українська', de: 'Українська', fr: 'Українська', es: 'Українська', pt: 'Українська', tr: 'Українська', uk: 'Українська', zh: 'Українська', ar: 'Українська', pl: 'Українська', it: 'Українська' }),
-      zh: t({ ru: '中文', en: '中文', kk: '中文', de: '中文', fr: '中文', es: '中文', pt: '中文', tr: '中文', uk: '中文', zh: '中文', ar: '中文', pl: '中文', it: '中文' }),
-      ar: t({ ru: 'العربية', en: 'العربية', kk: 'العربية', de: 'العربية', fr: 'العربية', es: 'العربية', pt: 'العربية', tr: 'العربية', uk: 'العربية', zh: 'العربية', ar: 'العربية', pl: 'العربية', it: 'العربية' }),
-      pl: t({ ru: 'Polski', en: 'Polski', kk: 'Polski', de: 'Polski', fr: 'Polski', es: 'Polski', pt: 'Polski', tr: 'Polski', uk: 'Polski', zh: 'Polski', ar: 'Polski', pl: 'Polski', it: 'Polski' }),
-      it: t({ ru: 'Italiano', en: 'Italiano', kk: 'Italiano', de: 'Italiano', fr: 'Italiano', es: 'Italiano', pt: 'Italiano', tr: 'Italiano', uk: 'Italiano', zh: 'Italiano', ar: 'Italiano', pl: 'Italiano', it: 'Italiano' }),
+      ru: t({ ru: 'Русский', en: 'Русский', kk: 'Русский', de: 'Русский', fr: 'Русский', es: 'Русский', pt: 'Русский', tr: 'Русский', uk: 'Русский', zh: 'Русский', ar: 'Русский', pl: 'Русский', it: 'Русский', sk: 'Русский' }),
+      en: t({ ru: 'English', en: 'English', kk: 'English', de: 'English', fr: 'English', es: 'English', pt: 'English', tr: 'English', uk: 'English', zh: 'English', ar: 'English', pl: 'English', it: 'English', sk: 'English' }),
+      kk: t({ ru: 'Қазақша', en: 'Қазақша', kk: 'Қазақша', de: 'Қазақша', fr: 'Қазақша', es: 'Қазақша', pt: 'Қазақша', tr: 'Қазақша', uk: 'Қазақша', zh: 'Қазақша', ar: 'Қазақша', pl: 'Қазақша', it: 'Қазақша', sk: 'Қазақша' }),
+      de: t({ ru: 'Deutsch', en: 'Deutsch', kk: 'Deutsch', de: 'Deutsch', fr: 'Deutsch', es: 'Deutsch', pt: 'Deutsch', tr: 'Deutsch', uk: 'Deutsch', zh: 'Deutsch', ar: 'Deutsch', pl: 'Deutsch', it: 'Deutsch', sk: 'Deutsch' }),
+      fr: t({ ru: 'Français', en: 'Français', kk: 'Français', de: 'Français', fr: 'Français', es: 'Français', pt: 'Français', tr: 'Français', uk: 'Français', zh: 'Français', ar: 'Français', pl: 'Français', it: 'Français', sk: 'Français' }),
+      es: t({ ru: 'Español', en: 'Español', kk: 'Español', de: 'Español', fr: 'Español', es: 'Español', pt: 'Español', tr: 'Español', uk: 'Español', zh: 'Español', ar: 'Español', pl: 'Español', it: 'Español', sk: 'Español' }),
+      pt: t({ ru: 'Português', en: 'Português', kk: 'Português', de: 'Português', fr: 'Português', es: 'Português', pt: 'Português', tr: 'Português', uk: 'Português', zh: 'Português', ar: 'Português', pl: 'Português', it: 'Português', sk: 'Português' }),
+      tr: t({ ru: 'Türkçe', en: 'Türkçe', kk: 'Türkçe', de: 'Türkçe', fr: 'Türkçe', es: 'Türkçe', pt: 'Türkçe', tr: 'Türkçe', uk: 'Türkçe', zh: 'Türkçe', ar: 'Türkçe', pl: 'Türkçe', it: 'Türkçe', sk: 'Türkçe' }),
+      uk: t({ ru: 'Українська', en: 'Українська', kk: 'Українська', de: 'Українська', fr: 'Українська', es: 'Українська', pt: 'Українська', tr: 'Українська', uk: 'Українська', zh: 'Українська', ar: 'Українська', pl: 'Українська', it: 'Українська', sk: 'Українська' }),
+      zh: t({ ru: '中文', en: '中文', kk: '中文', de: '中文', fr: '中文', es: '中文', pt: '中文', tr: '中文', uk: '中文', zh: '中文', ar: '中文', pl: '中文', it: '中文', sk: '中文' }),
+      ar: t({ ru: 'العربية', en: 'العربية', kk: 'العربية', de: 'العربية', fr: 'العربية', es: 'العربية', pt: 'العربية', tr: 'العربية', uk: 'العربية', zh: 'العربية', ar: 'العربية', pl: 'العربية', it: 'العربية', sk: 'العربية' }),
+      pl: t({ ru: 'Polski', en: 'Polski', kk: 'Polski', de: 'Polski', fr: 'Polski', es: 'Polski', pt: 'Polski', tr: 'Polski', uk: 'Polski', zh: 'Polski', ar: 'Polski', pl: 'Polski', it: 'Polski', sk: 'Polski' }),
+      it: t({ ru: 'Italiano', en: 'Italiano', kk: 'Italiano', de: 'Italiano', fr: 'Italiano', es: 'Italiano', pt: 'Italiano', tr: 'Italiano', uk: 'Italiano', zh: 'Italiano', ar: 'Italiano', pl: 'Italiano', it: 'Italiano', sk: 'Italiano' }),
+      sk: t({ ru: 'Slovenčina', en: 'Slovenčina', kk: 'Slovenčina', de: 'Slovenčina', fr: 'Slovenčina', es: 'Slovenčina', pt: 'Slovenčina', tr: 'Slovenčina', uk: 'Slovenčina', zh: 'Slovenčina', ar: 'Slovenčina', pl: 'Slovenčina', it: 'Slovenčina', sk: 'Slovenčina' }),
     },
   },
 } satisfies Dictionary;

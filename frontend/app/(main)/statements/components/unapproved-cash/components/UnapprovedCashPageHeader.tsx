@@ -1,6 +1,7 @@
 import React from 'react';
 import { Spinner } from '@/app/components/ui/spinner';
 import { RefreshCcw } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 interface UnapprovedCashPageHeaderProps {
   title: string;
@@ -47,7 +48,7 @@ export function UnapprovedCashPageHeader({
           fontWeight: 500,
           color: '#374151',
           cursor: 'pointer',
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           transition: 'background 0.15s',
         }}
         disabled={refreshing || loading}

@@ -1,0 +1,5 @@
+// app/styles/abstracts/_index.scss
+// Forward all abstracts so consumers can do: @use '../abstracts' as *;
+@forward 'variables';
+@forward 'variables-dark';
+@forward 'mixins';

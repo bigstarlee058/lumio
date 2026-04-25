@@ -18,6 +18,7 @@ const content = {
       ar: 'لوحة التحكم',
       pl: 'Pulpit',
       it: 'Dashboard',
+      sk: 'Pulpit',
     }),
     subtitle: t({
       ru: 'Последние 30 дней',
@@ -33,6 +34,7 @@ const content = {
       ar: 'آخر 30 يومًا',
       pl: 'Ostatnie 30 dni',
       it: 'Ultimi 30 giorni',
+      sk: 'Ostatnie 30 dni',
     }),
     workspaceFallback: t({
       ru: 'Рабочее пространство',
@@ -48,17 +50,18 @@ const content = {
       ar: 'مساحة العمل',
       pl: 'Obszar roboczy',
       it: 'Area di lavoro',
+      sk: 'Obszar roboczy',
     }),
     snapshot: {
-      totalBalance: t({ ru: 'Баланс', en: 'Total balance', kk: 'Баланс', de: 'Gesamtguthaben', fr: 'Solde total', es: 'Balance total', pt: 'Saldo total', tr: 'Toplam bakiye', uk: 'Баланс', zh: '总余额', ar: 'الرصيد الإجمالي', pl: 'Łączne saldo', it: 'Saldo totale' }),
-      income: t({ ru: 'Доход (30д)', en: 'Income (30d)', kk: 'Түсім (30к)', de: 'Einnahmen (30T)', fr: 'Revenus (30j)', es: 'Ingresos (30d)', pt: 'Receitas (30d)', tr: 'Gelir (30g)', uk: 'Дохід (30д)', zh: '收入 (30天)', ar: 'الدخل (30 يومًا)', pl: 'Przychód (30d)', it: 'Entrate (30g)' }),
-      expense: t({ ru: 'Расход (30д)', en: 'Expense (30d)', kk: 'Шығыс (30к)', de: 'Ausgaben (30T)', fr: 'Dépenses (30j)', es: 'Gastos (30d)', pt: 'Despesas (30d)', tr: 'Gider (30g)', uk: 'Витрати (30д)', zh: '支出 (30天)', ar: 'المصروفات (30 يومًا)', pl: 'Wydatki (30d)', it: 'Spese (30g)' }),
-      netFlow: t({ ru: 'Net flow', en: 'Net flow', kk: 'Net flow', de: 'Netto-Cashflow', fr: 'Flux net', es: 'Flujo neto', pt: 'Fluxo líquido', tr: 'Net akış', uk: 'Чистий потік', zh: '净现金流', ar: 'صافي التدفق', pl: 'Przepływ netto', it: 'Flusso netto' }),
-      toPay: t({ ru: 'К оплате', en: 'To pay', kk: 'Төлеу керек', de: 'Zu zahlen', fr: 'À payer', es: 'Por pagar', pt: 'A pagar', tr: 'Ödenecek', uk: 'До оплати', zh: '待付款', ar: 'للدفع', pl: 'Do zapłaty', it: 'Da pagare' }),
-      overdue: t({ ru: 'Просрочено', en: 'Overdue', kk: 'Мерзімі өтті', de: 'Überfällig', fr: 'En retard', es: 'Vencido', pt: 'Vencido', tr: 'Vadesi geçmiş', uk: 'Прострочено', zh: '已逾期', ar: 'متأخر', pl: 'Zaległe', it: 'Scaduto' }),
+      totalBalance: t({ ru: 'Баланс', en: 'Total balance', kk: 'Баланс', de: 'Gesamtguthaben', fr: 'Solde total', es: 'Balance total', pt: 'Saldo total', tr: 'Toplam bakiye', uk: 'Баланс', zh: '总余额', ar: 'الرصيد الإجمالي', pl: 'Łączne saldo', it: 'Saldo totale', sk: 'Łączne saldo'}),
+      income: t({ ru: 'Доход (30д)', en: 'Income (30d)', kk: 'Түсім (30к)', de: 'Einnahmen (30T)', fr: 'Revenus (30j)', es: 'Ingresos (30d)', pt: 'Receitas (30d)', tr: 'Gelir (30g)', uk: 'Дохід (30д)', zh: '收入 (30天)', ar: 'الدخل (30 يومًا)', pl: 'Przychód (30d)', it: 'Entrate (30g)', sk: 'Przychód (30d)'}),
+      expense: t({ ru: 'Расход (30д)', en: 'Expense (30d)', kk: 'Шығыс (30к)', de: 'Ausgaben (30T)', fr: 'Dépenses (30j)', es: 'Gastos (30d)', pt: 'Despesas (30d)', tr: 'Gider (30g)', uk: 'Витрати (30д)', zh: '支出 (30天)', ar: 'المصروفات (30 يومًا)', pl: 'Wydatki (30d)', it: 'Spese (30g)', sk: 'Wydatki (30d)'}),
+      netFlow: t({ ru: 'Net flow', en: 'Net flow', kk: 'Net flow', de: 'Netto-Cashflow', fr: 'Flux net', es: 'Flujo neto', pt: 'Fluxo líquido', tr: 'Net akış', uk: 'Чистий потік', zh: '净现金流', ar: 'صافي التدفق', pl: 'Przepływ netto', it: 'Flusso netto', sk: 'Przepływ netto'}),
+      toPay: t({ ru: 'К оплате', en: 'To pay', kk: 'Төлеу керек', de: 'Zu zahlen', fr: 'À payer', es: 'Por pagar', pt: 'A pagar', tr: 'Ödenecek', uk: 'До оплати', zh: '待付款', ar: 'للدفع', pl: 'Do zapłaty', it: 'Da pagare', sk: 'Do zapłaty'}),
+      overdue: t({ ru: 'Просрочено', en: 'Overdue', kk: 'Мерзімі өтті', de: 'Überfällig', fr: 'En retard', es: 'Vencido', pt: 'Vencido', tr: 'Vadesi geçmiş', uk: 'Прострочено', zh: '已逾期', ar: 'متأخر', pl: 'Zaległe', it: 'Scaduto', sk: 'Zaległe'}),
     },
     actions: {
-      title: t({ ru: 'Требуют действия', en: 'Action required', kk: 'Әрекет қажет', de: 'Aktion erforderlich', fr: 'Action requise', es: 'Acción requerida', pt: 'Ação necessária', tr: 'İşlem gerekiyor', uk: 'Потрібна дія', zh: '需要操作', ar: 'يلزم اتخاذ إجراء', pl: 'Wymagane działanie', it: 'Azione richiesta' }),
+      title: t({ ru: 'Требуют действия', en: 'Action required', kk: 'Әрекет қажет', de: 'Aktion erforderlich', fr: 'Action requise', es: 'Acción requerida', pt: 'Ação necessária', tr: 'İşlem gerekiyor', uk: 'Потрібна дія', zh: '需要操作', ar: 'يلزم اتخاذ إجراء', pl: 'Wymagane działanie', it: 'Azione richiesta', sk: 'Wymagane działanie'}),
       empty: t({
         ru: 'Нет срочных действий',
         en: 'All clear — no actions required',
@@ -73,10 +76,11 @@ const content = {
         ar: 'كل شيء على ما يرام — لا إجراءات مطلوبة',
         pl: 'Wszystko w porządku — brak wymaganych działań',
         it: 'Tutto a posto — nessuna azione richiesta',
+        sk: 'Wszystko w porządku — brak wymaganych działań',
       }),
     },
     cashFlow: {
-      title: t({ ru: 'Cash flow', en: 'Cash flow', kk: 'Cash flow', de: 'Cashflow', fr: 'Flux de trésorerie', es: 'Flujo de caja', pt: 'Fluxo de caixa', tr: 'Nakit akışı', uk: 'Грошовий потік', zh: '现金流', ar: 'التدفق النقدي', pl: 'Przepływy pieniężne', it: 'Flusso di cassa' }),
+      title: t({ ru: 'Cash flow', en: 'Cash flow', kk: 'Cash flow', de: 'Cashflow', fr: 'Flux de trésorerie', es: 'Flujo de caja', pt: 'Fluxo de caixa', tr: 'Nakit akışı', uk: 'Грошовий потік', zh: '现金流', ar: 'التدفق النقدي', pl: 'Przepływy pieniężne', it: 'Flusso di cassa', sk: 'Przepływy pieniężne'}),
       empty: t({
         ru: 'Нет данных по cash flow за 30 дней',
         en: 'No cash flow data for the last 30 days',
@@ -91,6 +95,7 @@ const content = {
         ar: 'لا توجد بيانات تدفق نقدي للـ 30 يومًا الماضية',
         pl: 'Brak danych przepływów pieniężnych za ostatnie 30 dni',
         it: 'Nessun dato di flusso di cassa per gli ultimi 30 giorni',
+        sk: 'Brak danych przepływów pieniężnych za ostatnie 30 dni',
       }),
     },
     categories: {
@@ -108,6 +113,7 @@ const content = {
         ar: 'فئات المصروفات',
         pl: 'Kategorie wydatków',
         it: 'Categorie di spesa',
+        sk: 'Kategorie wydatków',
       }),
       empty: t({
         ru: 'Нет данных по категориям расходов',
@@ -123,11 +129,12 @@ const content = {
         ar: 'لا توجد بيانات لفئات المصروفات',
         pl: 'Brak danych kategorii wydatków',
         it: 'Nessun dato sulle categorie di spesa',
+        sk: 'Brak danych kategorii wydatków',
       }),
     },
     activity: {
-      title: t({ ru: 'Последние действия', en: 'Recent activity', kk: 'Соңғы әрекеттер', de: 'Letzte Aktivitäten', fr: 'Activité récente', es: 'Actividad reciente', pt: 'Atividade recente', tr: 'Son etkinlik', uk: 'Остання активність', zh: '最近活动', ar: 'النشاط الأخير', pl: 'Ostatnia aktywność', it: 'Attività recente' }),
-      empty: t({ ru: 'Нет активности', en: 'No recent activity', kk: 'Белсенділік жоқ', de: 'Keine Aktivitäten', fr: 'Aucune activité récente', es: 'Sin actividad reciente', pt: 'Sem atividade recente', tr: 'Son etkinlik yok', uk: 'Немає активності', zh: '没有最近活动', ar: 'لا يوجد نشاط حديث', pl: 'Brak ostatniej aktywności', it: 'Nessuna attività recente' }),
+      title: t({ ru: 'Последние действия', en: 'Recent activity', kk: 'Соңғы әрекеттер', de: 'Letzte Aktivitäten', fr: 'Activité récente', es: 'Actividad reciente', pt: 'Atividade recente', tr: 'Son etkinlik', uk: 'Остання активність', zh: '最近活动', ar: 'النشاط الأخير', pl: 'Ostatnia aktywność', it: 'Attività recente', sk: 'Ostatnia aktywność'}),
+      empty: t({ ru: 'Нет активности', en: 'No recent activity', kk: 'Белсенділік жоқ', de: 'Keine Aktivitäten', fr: 'Aucune activité récente', es: 'Sin actividad reciente', pt: 'Sem atividade recente', tr: 'Son etkinlik yok', uk: 'Немає активності', zh: '没有最近活动', ar: 'لا يوجد نشاط حديث', pl: 'Brak ostatniej aktywności', it: 'Nessuna attività recente', sk: 'Brak ostatniej aktywności'}),
     },
     notifications: {
       title: t({
@@ -144,6 +151,7 @@ const content = {
         ar: 'إشعارات مهمة',
         pl: 'Ważne powiadomienia',
         it: 'Notifiche importanti',
+        sk: 'Ważne powiadomienia',
       }),
       empty: t({
         ru: 'Нет новых уведомлений',
@@ -159,6 +167,7 @@ const content = {
         ar: 'لا توجد إشعارات جديدة',
         pl: 'Brak nowych powiadomień',
         it: 'Nessuna nuova notifica',
+        sk: 'Brak nowych powiadomień',
       }),
       settings: t({
         ru: 'Настройки уведомлений',
@@ -174,6 +183,7 @@ const content = {
         ar: 'إعدادات الإشعارات',
         pl: 'Ustawienia powiadomień',
         it: 'Impostazioni notifiche',
+        sk: 'Ustawienia powiadomień',
       }),
     },
     latestStatements: {
@@ -191,6 +201,7 @@ const content = {
         ar: 'أحدث الكشوف',
         pl: 'Najnowsze wyciągi',
         it: 'Ultimi estratti conto',
+        sk: 'Najnowsze wyciągi',
       }),
       empty: t({
         ru: 'Выписок пока нет',
@@ -206,6 +217,7 @@ const content = {
         ar: 'لا توجد كشوف بعد',
         pl: 'Brak wyciągów',
         it: 'Nessun estratto conto ancora',
+        sk: 'Brak wyciągów',
       }),
     },
     latestReceipts: {
@@ -223,6 +235,7 @@ const content = {
         ar: 'أحدث الإيصالات',
         pl: 'Najnowsze paragony',
         it: 'Ultimi ricevuti',
+        sk: 'Najnowsze paragony',
       }),
       empty: t({
         ru: 'Чеков пока нет',
@@ -238,6 +251,7 @@ const content = {
         ar: 'لا توجد إيصالات بعد',
         pl: 'Brak paragonów',
         it: 'Nessun ricevuto ancora',
+        sk: 'Brak paragonów',
       }),
     },
     refresh: {
@@ -255,6 +269,7 @@ const content = {
         ar: 'اسحب للتحديث',
         pl: 'Pociągnij, aby odświeżyć',
         it: 'Trascina per aggiornare',
+        sk: 'Pociągnij, aby odświeżyć',
       }),
       ready: t({
         ru: 'Отпустите для обновления',
@@ -270,8 +285,9 @@ const content = {
         ar: 'أفلت للتحديث',
         pl: 'Puść, aby odświeżyć',
         it: 'Rilascia per aggiornare',
+        sk: 'Puść, aby odświeżyć',
       }),
-      loading: t({ ru: 'Обновляем...', en: 'Refreshing...', kk: 'Жаңартылуда...', de: 'Wird aktualisiert...', fr: 'Actualisation...', es: 'Actualizando...', pt: 'Atualizando...', tr: 'Yenileniyor...', uk: 'Оновлення...', zh: '刷新中...', ar: 'جارٍ التحديث...', pl: 'Odświeżanie...', it: 'Aggiornamento...' }),
+      loading: t({ ru: 'Обновляем...', en: 'Refreshing...', kk: 'Жаңартылуда...', de: 'Wird aktualisiert...', fr: 'Actualisation...', es: 'Actualizando...', pt: 'Atualizando...', tr: 'Yenileniyor...', uk: 'Оновлення...', zh: '刷新中...', ar: 'جارٍ التحديث...', pl: 'Odświeżanie...', it: 'Aggiornamento...', sk: 'Odświeżanie...'}),
     },
     error: {
       load: t({
@@ -288,36 +304,37 @@ const content = {
         ar: 'فشل تحميل لوحة التحكم',
         pl: 'Nie udało się załadować pulpitu',
         it: 'Impossibile caricare la dashboard',
+        sk: 'Nie udało się załadować pulpitu',
       }),
     },
     range: {
-      '7d': t({ ru: '7 дней', en: '7d', kk: '7 күн', de: '7T', fr: '7j', es: '7d', pt: '7d', tr: '7g', uk: '7 днів', zh: '7天', ar: '7 أيام', pl: '7d', it: '7g' }),
-      '30d': t({ ru: '30 дней', en: '30d', kk: '30 күн', de: '30T', fr: '30j', es: '30d', pt: '30d', tr: '30g', uk: '30 днів', zh: '30天', ar: '30 يومًا', pl: '30d', it: '30g' }),
-      '90d': t({ ru: '90 дней', en: '90d', kk: '90 күн', de: '90T', fr: '90j', es: '90d', pt: '90d', tr: '90g', uk: '90 днів', zh: '90天', ar: '90 يومًا', pl: '90d', it: '90g' }),
+      '7d': t({ ru: '7 дней', en: '7d', kk: '7 күн', de: '7T', fr: '7j', es: '7d', pt: '7d', tr: '7g', uk: '7 днів', zh: '7天', ar: '7 أيام', pl: '7d', it: '7g', sk: '7d'}),
+      '30d': t({ ru: '30 дней', en: '30d', kk: '30 күн', de: '30T', fr: '30j', es: '30d', pt: '30d', tr: '30g', uk: '30 днів', zh: '30天', ar: '30 يومًا', pl: '30d', it: '30g', sk: '30d'}),
+      '90d': t({ ru: '90 дней', en: '90d', kk: '90 күн', de: '90T', fr: '90j', es: '90d', pt: '90d', tr: '90g', uk: '90 днів', zh: '90天', ar: '90 يومًا', pl: '90d', it: '90g', sk: '90d'}),
     },
     tabs: {
-      overview: t({ ru: 'Обзор', en: 'Overview', kk: 'Шолу', de: 'Übersicht', fr: 'Aperçu', es: 'Resumen', pt: 'Visão geral', tr: 'Genel bakış', uk: 'Огляд', zh: '概览', ar: 'نظرة عامة', pl: 'Przegląd', it: 'Panoramica' }),
-      trends: t({ ru: 'Тренды', en: 'Trends', kk: 'Трендтер', de: 'Trends', fr: 'Tendances', es: 'Tendencias', pt: 'Tendências', tr: 'Eğilimler', uk: 'Тренди', zh: '趋势', ar: 'الاتجاهات', pl: 'Trendy', it: 'Tendenze' }),
-      dataHealth: t({ ru: 'Качество данных', en: 'Data Health', kk: 'Деректер сапасы', de: 'Datenqualität', fr: 'Qualité des données', es: 'Calidad de datos', pt: 'Saúde dos dados', tr: 'Veri sağlığı', uk: 'Якість даних', zh: '数据健康', ar: 'جودة البيانات', pl: 'Jakość danych', it: 'Salute dei dati' }),
+      overview: t({ ru: 'Обзор', en: 'Overview', kk: 'Шолу', de: 'Übersicht', fr: 'Aperçu', es: 'Resumen', pt: 'Visão geral', tr: 'Genel bakış', uk: 'Огляд', zh: '概览', ar: 'نظرة عامة', pl: 'Przegląd', it: 'Panoramica', sk: 'Przegląd'}),
+      trends: t({ ru: 'Тренды', en: 'Trends', kk: 'Трендтер', de: 'Trends', fr: 'Tendances', es: 'Tendencias', pt: 'Tendências', tr: 'Eğilimler', uk: 'Тренди', zh: '趋势', ar: 'الاتجاهات', pl: 'Trendy', it: 'Tendenze', sk: 'Trendy'}),
+      dataHealth: t({ ru: 'Качество данных', en: 'Data Health', kk: 'Деректер сапасы', de: 'Datenqualität', fr: 'Qualité des données', es: 'Calidad de datos', pt: 'Saúde dos dados', tr: 'Veri sağlığı', uk: 'Якість даних', zh: '数据健康', ar: 'جودة البيانات', pl: 'Jakość danych', it: 'Salute dei dati', sk: 'Jakość danych'}),
     },
     quickActions: {
-      upload: t({ ru: 'Загрузить / Распарсить', en: 'Upload / Parse', kk: 'Жүктеу / Талдау', de: 'Hochladen / Verarbeiten', fr: 'Télécharger / Analyser', es: 'Subir / Analizar', pt: 'Carregar / Analisar', tr: 'Yükle / Ayrıştır', uk: 'Завантажити / Розібрати', zh: '上传 / 解析', ar: 'رفع / تحليل', pl: 'Prześlij / Parsuj', it: 'Carica / Analizza' }),
-      review: t({ ru: 'Очередь на проверку', en: 'Review queue', kk: 'Тексеру кезегі', de: 'Prüfwarteschlange', fr: 'File de révision', es: 'Cola de revisión', pt: 'Fila de revisão', tr: 'İnceleme kuyruğu', uk: 'Черга на перевірку', zh: '审核队列', ar: 'طابور المراجعة', pl: 'Kolejka do przeglądu', it: 'Coda di revisione' }),
-      export: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksportuj', it: 'Esporta' }),
+      upload: t({ ru: 'Загрузить / Распарсить', en: 'Upload / Parse', kk: 'Жүктеу / Талдау', de: 'Hochladen / Verarbeiten', fr: 'Télécharger / Analyser', es: 'Subir / Analizar', pt: 'Carregar / Analisar', tr: 'Yükle / Ayrıştır', uk: 'Завантажити / Розібрати', zh: '上传 / 解析', ar: 'رفع / تحليل', pl: 'Prześlij / Parsuj', it: 'Carica / Analizza', sk: 'Prześlij / Parsuj'}),
+      review: t({ ru: 'Очередь на проверку', en: 'Review queue', kk: 'Тексеру кезегі', de: 'Prüfwarteschlange', fr: 'File de révision', es: 'Cola de revisión', pt: 'Fila de revisão', tr: 'İnceleme kuyruğu', uk: 'Черга на перевірку', zh: '审核队列', ar: 'طابور المراجعة', pl: 'Kolejka do przeglądu', it: 'Coda di revisione', sk: 'Kolejka do przeglądu'}),
+      export: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksportuj', it: 'Esporta', sk: 'Eksportuj'}),
     },
     exportMenu: {
-      button: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksportuj', it: 'Esporta' }),
-      title: t({ ru: 'Экспорт данных', en: 'Export data', kk: 'Деректерді экспорттау', de: 'Daten exportieren', fr: 'Exporter les données', es: 'Exportar datos', pt: 'Exportar dados', tr: 'Verileri dışa aktar', uk: 'Експорт даних', zh: '导出数据', ar: 'تصدير البيانات', pl: 'Eksportuj dane', it: 'Esporta dati' }),
-      excel: t({ ru: 'Excel (.xlsx)', en: 'Excel (.xlsx)', kk: 'Excel (.xlsx)', de: 'Excel (.xlsx)', fr: 'Excel (.xlsx)', es: 'Excel (.xlsx)', pt: 'Excel (.xlsx)', tr: 'Excel (.xlsx)', uk: 'Excel (.xlsx)', zh: 'Excel (.xlsx)', ar: 'Excel (.xlsx)', pl: 'Excel (.xlsx)', it: 'Excel (.xlsx)' }),
-      pdf: t({ ru: 'PDF', en: 'PDF', kk: 'PDF', de: 'PDF', fr: 'PDF', es: 'PDF', pt: 'PDF', tr: 'PDF', uk: 'PDF', zh: 'PDF', ar: 'PDF', pl: 'PDF', it: 'PDF' }),
-      csv: t({ ru: 'CSV', en: 'CSV', kk: 'CSV', de: 'CSV', fr: 'CSV', es: 'CSV', pt: 'CSV', tr: 'CSV', uk: 'CSV', zh: 'CSV', ar: 'CSV', pl: 'CSV', it: 'CSV' }),
-      docx: t({ ru: 'Word (.docx)', en: 'Word (.docx)', kk: 'Word (.docx)', de: 'Word (.docx)', fr: 'Word (.docx)', es: 'Word (.docx)', pt: 'Word (.docx)', tr: 'Word (.docx)', uk: 'Word (.docx)', zh: 'Word (.docx)', ar: 'Word (.docx)', pl: 'Word (.docx)', it: 'Word (.docx)' }),
-      downloading: t({ ru: 'Скачивание...', en: 'Downloading...', kk: 'Жүктелуде...', de: 'Herunterladen...', fr: 'Téléchargement...', es: 'Descargando...', pt: 'Baixando...', tr: 'İndiriliyor...', uk: 'Завантаження...', zh: '下载中...', ar: 'جارٍ التنزيل...', pl: 'Pobieranie...', it: 'Download in corso...' }),
-      success: t({ ru: 'Файл успешно скачан', en: 'File downloaded successfully', kk: 'Файл сәтті жүктелді', de: 'Datei erfolgreich heruntergeladen', fr: 'Fichier téléchargé avec succès', es: 'Archivo descargado correctamente', pt: 'Arquivo baixado com sucesso', tr: 'Dosya başarıyla indirildi', uk: 'Файл успішно завантажено', zh: '文件下载成功', ar: 'تم تنزيل الملف بنجاح', pl: 'Plik pobrany pomyślnie', it: 'File scaricato con successo' }),
-      error: t({ ru: 'Ошибка при скачивании', en: 'Download failed', kk: 'Жүктеу қатесі', de: 'Download fehlgeschlagen', fr: 'Échec du téléchargement', es: 'Error al descargar', pt: 'Falha no download', tr: 'İndirme başarısız', uk: 'Помилка при завантаженні', zh: '下载失败', ar: 'فشل التنزيل', pl: 'Pobieranie nie powiodło się', it: 'Download non riuscito' }),
+      button: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksportuj', it: 'Esporta', sk: 'Eksportuj'}),
+      title: t({ ru: 'Экспорт данных', en: 'Export data', kk: 'Деректерді экспорттау', de: 'Daten exportieren', fr: 'Exporter les données', es: 'Exportar datos', pt: 'Exportar dados', tr: 'Verileri dışa aktar', uk: 'Експорт даних', zh: '导出数据', ar: 'تصدير البيانات', pl: 'Eksportuj dane', it: 'Esporta dati', sk: 'Eksportuj dane'}),
+      excel: t({ ru: 'Excel (.xlsx)', en: 'Excel (.xlsx)', kk: 'Excel (.xlsx)', de: 'Excel (.xlsx)', fr: 'Excel (.xlsx)', es: 'Excel (.xlsx)', pt: 'Excel (.xlsx)', tr: 'Excel (.xlsx)', uk: 'Excel (.xlsx)', zh: 'Excel (.xlsx)', ar: 'Excel (.xlsx)', pl: 'Excel (.xlsx)', it: 'Excel (.xlsx)', sk: 'Excel (.xlsx)'}),
+      pdf: t({ ru: 'PDF', en: 'PDF', kk: 'PDF', de: 'PDF', fr: 'PDF', es: 'PDF', pt: 'PDF', tr: 'PDF', uk: 'PDF', zh: 'PDF', ar: 'PDF', pl: 'PDF', it: 'PDF', sk: 'PDF'}),
+      csv: t({ ru: 'CSV', en: 'CSV', kk: 'CSV', de: 'CSV', fr: 'CSV', es: 'CSV', pt: 'CSV', tr: 'CSV', uk: 'CSV', zh: 'CSV', ar: 'CSV', pl: 'CSV', it: 'CSV', sk: 'CSV'}),
+      docx: t({ ru: 'Word (.docx)', en: 'Word (.docx)', kk: 'Word (.docx)', de: 'Word (.docx)', fr: 'Word (.docx)', es: 'Word (.docx)', pt: 'Word (.docx)', tr: 'Word (.docx)', uk: 'Word (.docx)', zh: 'Word (.docx)', ar: 'Word (.docx)', pl: 'Word (.docx)', it: 'Word (.docx)', sk: 'Word (.docx)'}),
+      downloading: t({ ru: 'Скачивание...', en: 'Downloading...', kk: 'Жүктелуде...', de: 'Herunterladen...', fr: 'Téléchargement...', es: 'Descargando...', pt: 'Baixando...', tr: 'İndiriliyor...', uk: 'Завантаження...', zh: '下载中...', ar: 'جارٍ التنزيل...', pl: 'Pobieranie...', it: 'Download in corso...', sk: 'Pobieranie...'}),
+      success: t({ ru: 'Файл успешно скачан', en: 'File downloaded successfully', kk: 'Файл сәтті жүктелді', de: 'Datei erfolgreich heruntergeladen', fr: 'Fichier téléchargé avec succès', es: 'Archivo descargado correctamente', pt: 'Arquivo baixado com sucesso', tr: 'Dosya başarıyla indirildi', uk: 'Файл успішно завантажено', zh: '文件下载成功', ar: 'تم تنزيل الملف بنجاح', pl: 'Plik pobrany pomyślnie', it: 'File scaricato con successo', sk: 'Plik pobrany pomyślnie'}),
+      error: t({ ru: 'Ошибка при скачивании', en: 'Download failed', kk: 'Жүктеу қатесі', de: 'Download fehlgeschlagen', fr: 'Échec du téléchargement', es: 'Error al descargar', pt: 'Falha no download', tr: 'İndirme başarısız', uk: 'Помилка при завантаженні', zh: '下载失败', ar: 'فشل التنزيل', pl: 'Pobieranie nie powiodło się', it: 'Download non riuscito', sk: 'Pobieranie nie powiodło się'}),
     },
     greeting: {
-      fallbackName: t({ ru: 'Пользователь', en: 'User', kk: 'Қолданушы', de: 'Benutzer', fr: 'Utilisateur', es: 'Usuario', pt: 'Usuário', tr: 'Kullanıcı', uk: 'Користувач', zh: '用户', ar: 'المستخدم', pl: 'Użytkownik', it: 'Utente' }),
+      fallbackName: t({ ru: 'Пользователь', en: 'User', kk: 'Қолданушы', de: 'Benutzer', fr: 'Utilisateur', es: 'Usuario', pt: 'Usuário', tr: 'Kullanıcı', uk: 'Користувач', zh: '用户', ar: 'المستخدم', pl: 'Użytkownik', it: 'Utente', sk: 'Użytkownik'}),
       empty: {
         title: t({
           ru: 'Добро пожаловать, {name}',
@@ -333,6 +350,7 @@ const content = {
           ar: 'مرحباً، {name}',
           pl: 'Witaj, {name}',
           it: 'Benvenuto, {name}',
+          sk: 'Witaj, {name}',
         }),
         subtitle: t({
           ru: 'Загрузите первую выписку, чтобы начать финансовый обзор',
@@ -348,6 +366,7 @@ const content = {
           ar: 'ارفع أول كشف حساب لك لبدء بناء نظرتك المالية',
           pl: 'Prześlij pierwszy wyciąg, aby rozpocząć budowanie przeglądu finansowego',
           it: 'Carica il tuo primo estratto conto per iniziare a costruire la tua panoramica finanziaria',
+          sk: 'Prześlij pierwszy wyciąg, aby rozpocząć budowanie przeglądu finansowego',
         }),
       },
       pendingReview: {
@@ -365,6 +384,7 @@ const content = {
           ar: 'مرحباً بعودتك، {name}',
           pl: 'Witaj ponownie, {name}',
           it: 'Bentornato, {name}',
+          sk: 'Witaj ponownie, {name}',
         }),
         subtitle: t({
           ru: 'У вас {count} транзакций ждут проверки',
@@ -380,6 +400,7 @@ const content = {
           ar: 'لديك {count} معاملة في انتظار المراجعة',
           pl: 'Masz {count} transakcji oczekujących na przegląd',
           it: 'Hai {count} transazioni in attesa di revisione',
+          sk: 'Masz {count} transakcji oczekujących na przegląd',
         }),
       },
       stale: {
@@ -397,6 +418,7 @@ const content = {
           ar: 'مساء الخير، {name}',
           pl: 'Dobry wieczór, {name}',
           it: 'Buona sera, {name}',
+          sk: 'Dobry wieczór, {name}',
         }),
         subtitle: t({
           ru: 'За последние {days} дней не было новых импортов',
@@ -412,6 +434,7 @@ const content = {
           ar: 'لم يتم استيراد أي كشوف جديدة خلال الـ {days} يومًا الماضية',
           pl: 'W ciągu ostatnich {days} dni nie zaimportowano nowych wyciągów',
           it: 'Nessun nuovo estratto conto è stato importato negli ultimi {days} giorni',
+          sk: 'W ciągu ostatnich {days} dni nie zaimportowano nowych wyciągów',
         }),
       },
       upToDate: {
@@ -429,6 +452,7 @@ const content = {
           ar: 'مرحباً بعودتك، {name}',
           pl: 'Witaj ponownie, {name}',
           it: 'Bentornato, {name}',
+          sk: 'Witaj ponownie, {name}',
         }),
         subtitle: t({
           ru: 'Последние импорты обработаны и актуальны',
@@ -444,15 +468,16 @@ const content = {
           ar: 'عمليات الاستيراد الأخيرة تمت معالجتها وهي محدّثة',
           pl: 'Twoje ostatnie importy są przetworzone i aktualne',
           it: 'Le tue ultime importazioni sono elaborate e aggiornate',
+          sk: 'Twoje ostatnie importy są przetworzone i aktualne',
         }),
       },
     },
     statusHeading: {
-      error: t({ ru: 'Данные недоступны', en: 'Data unavailable', kk: 'Деректер қолжетімсіз', de: 'Daten nicht verfügbar', fr: 'Données indisponibles', es: 'Datos no disponibles', pt: 'Dados indisponíveis', tr: 'Veriler mevcut değil', uk: 'Дані недоступні', zh: '数据不可用', ar: 'البيانات غير متاحة', pl: 'Dane niedostępne', it: 'Dati non disponibili' }),
-      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Wird geladen...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
-      empty: t({ ru: 'Данных пока нет', en: 'No data yet', kk: 'Деректер әлі жоқ', de: 'Noch keine Daten', fr: 'Pas encore de données', es: 'Sin datos aún', pt: 'Ainda sem dados', tr: 'Henüz veri yok', uk: 'Даних поки немає', zh: '暂无数据', ar: 'لا توجد بيانات بعد', pl: 'Brak danych', it: 'Nessun dato ancora' }),
-      overdue: t({ ru: 'Просрочки', en: 'Overdue payments', kk: 'Мерзімі өткен', de: 'Überfällige Zahlungen', fr: 'Paiements en retard', es: 'Pagos vencidos', pt: 'Pagamentos vencidos', tr: 'Vadesi geçmiş ödemeler', uk: 'Прострочені платежі', zh: '逾期付款', ar: 'مدفوعات متأخرة', pl: 'Zaległe płatności', it: 'Pagamenti scaduti' }),
-      needsReview: t({ ru: 'Ждёт проверки', en: 'Needs review', kk: 'Тексеру керек', de: 'Prüfung erforderlich', fr: 'Révision nécessaire', es: 'Necesita revisión', pt: 'Precisa de revisão', tr: 'İnceleme gerekiyor', uk: 'Потребує перевірки', zh: '需要审核', ar: 'يحتاج مراجعة', pl: 'Wymaga przeglądu', it: 'Necessita revisione' }),
+      error: t({ ru: 'Данные недоступны', en: 'Data unavailable', kk: 'Деректер қолжетімсіз', de: 'Daten nicht verfügbar', fr: 'Données indisponibles', es: 'Datos no disponibles', pt: 'Dados indisponíveis', tr: 'Veriler mevcut değil', uk: 'Дані недоступні', zh: '数据不可用', ar: 'البيانات غير متاحة', pl: 'Dane niedostępne', it: 'Dati non disponibili', sk: 'Dane niedostępne'}),
+      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Wird geladen...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
+      empty: t({ ru: 'Данных пока нет', en: 'No data yet', kk: 'Деректер әлі жоқ', de: 'Noch keine Daten', fr: 'Pas encore de données', es: 'Sin datos aún', pt: 'Ainda sem dados', tr: 'Henüz veri yok', uk: 'Даних поки немає', zh: '暂无数据', ar: 'لا توجد بيانات بعد', pl: 'Brak danych', it: 'Nessun dato ancora', sk: 'Brak danych'}),
+      overdue: t({ ru: 'Просрочки', en: 'Overdue payments', kk: 'Мерзімі өткен', de: 'Überfällige Zahlungen', fr: 'Paiements en retard', es: 'Pagos vencidos', pt: 'Pagamentos vencidos', tr: 'Vadesi geçmiş ödemeler', uk: 'Прострочені платежі', zh: '逾期付款', ar: 'مدفوعات متأخرة', pl: 'Zaległe płatności', it: 'Pagamenti scaduti', sk: 'Zaległe płatności'}),
+      needsReview: t({ ru: 'Ждёт проверки', en: 'Needs review', kk: 'Тексеру керек', de: 'Prüfung erforderlich', fr: 'Révision nécessaire', es: 'Necesita revisión', pt: 'Precisa de revisão', tr: 'İnceleme gerekiyor', uk: 'Потребує перевірки', zh: '需要审核', ar: 'يحتاج مراجعة', pl: 'Wymaga przeglądu', it: 'Necessita revisione', sk: 'Wymaga przeglądu'}),
       pendingSubmit: t({
         ru: 'Ожидает отправки',
         en: 'Pending submit',
@@ -467,6 +492,7 @@ const content = {
         ar: 'في انتظار الإرسال',
         pl: 'Oczekuje na wysłanie',
         it: 'In attesa di invio',
+        sk: 'Oczekuje na wysłanie',
       }),
       receiptsNeedReview: t({
         ru: 'Чеки на проверке',
@@ -482,6 +508,7 @@ const content = {
         ar: 'الإيصالات تحتاج مراجعة',
         pl: 'Paragony wymagają przeglądu',
         it: 'I ricevuti necessitano revisione',
+        sk: 'Paragony wymagają przeglądu',
       }),
       parsingIssues: t({
         ru: 'Ошибки парсинга',
@@ -497,6 +524,7 @@ const content = {
         ar: 'مشاكل التحليل',
         pl: 'Błędy parsowania',
         it: 'Problemi di analisi',
+        sk: 'Błędy parsowania',
       }),
       uncategorized: t({
         ru: 'Без категорий',
@@ -512,8 +540,9 @@ const content = {
         ar: 'عناصر غير مصنّفة',
         pl: 'Elementy bez kategorii',
         it: 'Elementi non categorizzati',
+        sk: 'Elementy bez kategorii',
       }),
-      stale: t({ ru: 'Данные устарели', en: 'Data is stale', kk: 'Деректер ескірді', de: 'Daten sind veraltet', fr: 'Données obsolètes', es: 'Datos desactualizados', pt: 'Dados desatualizados', tr: 'Veriler güncel değil', uk: 'Дані застаріли', zh: '数据已过期', ar: 'البيانات قديمة', pl: 'Dane są przestarzałe', it: 'I dati non sono aggiornati' }),
+      stale: t({ ru: 'Данные устарели', en: 'Data is stale', kk: 'Деректер ескірді', de: 'Daten sind veraltet', fr: 'Données obsolètes', es: 'Datos desactualizados', pt: 'Dados desatualizados', tr: 'Veriler güncel değil', uk: 'Дані застаріли', zh: '数据已过期', ar: 'البيانات قديمة', pl: 'Dane są przestarzałe', it: 'I dati non sono aggiornati', sk: 'Dane są przestarzałe'}),
       negativeFlow: t({
         ru: 'Отрицательный поток',
         en: 'Negative cash flow',
@@ -528,6 +557,7 @@ const content = {
         ar: 'تدفق نقدي سالب',
         pl: 'Ujemny przepływ pieniężny',
         it: 'Flusso di cassa negativo',
+        sk: 'Ujemny przepływ pieniężny',
       }),
       positiveFlow: t({
         ru: 'Положительный поток',
@@ -543,6 +573,7 @@ const content = {
         ar: 'تدفق نقدي إيجابي',
         pl: 'Dodatni przepływ pieniężny',
         it: 'Flusso di cassa positivo',
+        sk: 'Dodatni przepływ pieniężny',
       }),
       breakEven: t({
         ru: 'Период баланса',
@@ -558,15 +589,16 @@ const content = {
         ar: 'فترة التعادل',
         pl: 'Okres progu rentowności',
         it: 'Periodo di pareggio',
+        sk: 'Okres progu rentowności',
       }),
-      allClear: t({ ru: 'Всё хорошо', en: 'All good', kk: 'Бәрі жақсы', de: 'Alles in Ordnung', fr: 'Tout va bien', es: 'Todo bien', pt: 'Tudo bem', tr: 'Her şey yolunda', uk: 'Все добре', zh: '一切正常', ar: 'كل شيء على ما يرام', pl: 'Wszystko w porządku', it: 'Tutto bene' }),
+      allClear: t({ ru: 'Всё хорошо', en: 'All good', kk: 'Бәрі жақсы', de: 'Alles in Ordnung', fr: 'Tout va bien', es: 'Todo bien', pt: 'Tudo bem', tr: 'Her şey yolunda', uk: 'Все добре', zh: '一切正常', ar: 'كل شيء على ما يرام', pl: 'Wszystko w porządku', it: 'Tutto bene', sk: 'Wszystko w porządku'}),
     },
     dataHealth: {
-      uncategorized: t({ ru: 'Без категории', en: 'Uncategorized', kk: 'Санатсыз', de: 'Unkategorisiert', fr: 'Non catégorisé', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategorisiz', uk: 'Без категорії', zh: '未分类', ar: 'غير مصنّف', pl: 'Bez kategorii', it: 'Non categorizzato' }),
-      errors: t({ ru: 'Ошибки', en: 'Errors', kk: 'Қателер', de: 'Fehler', fr: 'Erreurs', es: 'Errores', pt: 'Erros', tr: 'Hatalar', uk: 'Помилки', zh: '错误', ar: 'أخطاء', pl: 'Błędy', it: 'Errori' }),
-      pendingReview: t({ ru: 'На проверке', en: 'Pending review', kk: 'Тексеруде', de: 'Prüfung ausstehend', fr: 'En attente de révision', es: 'Revisión pendiente', pt: 'Revisão pendente', tr: 'İnceleme bekliyor', uk: 'На перевірці', zh: '待审核', ar: 'في انتظار المراجعة', pl: 'Oczekuje na przegląd', it: 'In attesa di revisione' }),
-      parsingWarnings: t({ ru: 'Предупреждения', en: 'Parsing warnings', kk: 'Ескертулер', de: 'Analysewarnungen', fr: 'Avertissements d\'analyse', es: 'Advertencias de análisis', pt: 'Avisos de análise', tr: 'Ayrıştırma uyarıları', uk: 'Попередження', zh: '解析警告', ar: 'تحذيرات التحليل', pl: 'Ostrzeżenia parsowania', it: 'Avvisi di analisi' }),
-      balanceOk: t({ ru: 'Баланс сведён', en: 'Balance is balanced', kk: 'Баланс теңестірілген', de: 'Bilanz ausgeglichen', fr: 'Solde équilibré', es: 'Saldo equilibrado', pt: 'Saldo equilibrado', tr: 'Bakiye dengeli', uk: 'Баланс зведено', zh: '余额平衡', ar: 'الرصيد متوازن', pl: 'Saldo zbilansowane', it: 'Saldo bilanciato' }),
+      uncategorized: t({ ru: 'Без категории', en: 'Uncategorized', kk: 'Санатсыз', de: 'Unkategorisiert', fr: 'Non catégorisé', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategorisiz', uk: 'Без категорії', zh: '未分类', ar: 'غير مصنّف', pl: 'Bez kategorii', it: 'Non categorizzato', sk: 'Bez kategorii'}),
+      errors: t({ ru: 'Ошибки', en: 'Errors', kk: 'Қателер', de: 'Fehler', fr: 'Erreurs', es: 'Errores', pt: 'Erros', tr: 'Hatalar', uk: 'Помилки', zh: '错误', ar: 'أخطاء', pl: 'Błędy', it: 'Errori', sk: 'Błędy'}),
+      pendingReview: t({ ru: 'На проверке', en: 'Pending review', kk: 'Тексеруде', de: 'Prüfung ausstehend', fr: 'En attente de révision', es: 'Revisión pendiente', pt: 'Revisão pendente', tr: 'İnceleme bekliyor', uk: 'На перевірці', zh: '待审核', ar: 'في انتظار المراجعة', pl: 'Oczekuje na przegląd', it: 'In attesa di revisione', sk: 'Oczekuje na przegląd'}),
+      parsingWarnings: t({ ru: 'Предупреждения', en: 'Parsing warnings', kk: 'Ескертулер', de: 'Analysewarnungen', fr: 'Avertissements d\'analyse', es: 'Advertencias de análisis', pt: 'Avisos de análise', tr: 'Ayrıştırma uyarıları', uk: 'Попередження', zh: '解析警告', ar: 'تحذيرات التحليل', pl: 'Ostrzeżenia parsowania', it: 'Avvisi di analisi', sk: 'Ostrzeżenia parsowania'}),
+      balanceOk: t({ ru: 'Баланс сведён', en: 'Balance is balanced', kk: 'Баланс теңестірілген', de: 'Bilanz ausgeglichen', fr: 'Solde équilibré', es: 'Saldo equilibrado', pt: 'Saldo equilibrado', tr: 'Bakiye dengeli', uk: 'Баланс зведено', zh: '余额平衡', ar: 'الرصيد متوازن', pl: 'Saldo zbilansowane', it: 'Saldo bilanciato', sk: 'Saldo zbilansowane'}),
       balanceWarning: t({
         ru: 'Баланс не сведён',
         en: 'Balance mismatch',
@@ -581,14 +613,15 @@ const content = {
         ar: 'عدم تطابق الرصيد',
         pl: 'Niezgodność salda',
         it: 'Discrepanza saldo',
+        sk: 'Niezgodność salda',
       }),
-      noBalance: t({ ru: 'Баланс не настроен', en: 'No balance sheet', kk: 'Баланс жоқ', de: 'Keine Bilanz', fr: 'Pas de bilan', es: 'Sin balance', pt: 'Sem balanço', tr: 'Bilanço yok', uk: 'Баланс не налаштовано', zh: '无资产负债表', ar: 'لا يوجد ميزانية', pl: 'Brak bilansu', it: 'Nessun bilancio' }),
-      lastUpload: t({ ru: 'Последняя загрузка', en: 'Last upload', kk: 'Соңғы жүктеу', de: 'Letzter Upload', fr: 'Dernier téléchargement', es: 'Última subida', pt: 'Último upload', tr: 'Son yükleme', uk: 'Останнє завантаження', zh: '最后上传', ar: 'آخر رفع', pl: 'Ostatnie przesłanie', it: 'Ultimo caricamento' }),
-      unapprovedCash: t({ ru: 'Неподтверждённые', en: 'Unapproved cash', kk: 'Расталмаған', de: 'Nicht genehmigte Einträge', fr: 'Espèces non approuvées', es: 'Efectivo no aprobado', pt: 'Dinheiro não aprovado', tr: 'Onaylanmamış nakit', uk: 'Непідтверджені', zh: '未审批现金', ar: 'نقد غير معتمد', pl: 'Niezatwierdzone', it: 'Contanti non approvati' }),
+      noBalance: t({ ru: 'Баланс не настроен', en: 'No balance sheet', kk: 'Баланс жоқ', de: 'Keine Bilanz', fr: 'Pas de bilan', es: 'Sin balance', pt: 'Sem balanço', tr: 'Bilanço yok', uk: 'Баланс не налаштовано', zh: '无资产负债表', ar: 'لا يوجد ميزانية', pl: 'Brak bilansu', it: 'Nessun bilancio', sk: 'Brak bilansu'}),
+      lastUpload: t({ ru: 'Последняя загрузка', en: 'Last upload', kk: 'Соңғы жүктеу', de: 'Letzter Upload', fr: 'Dernier téléchargement', es: 'Última subida', pt: 'Último upload', tr: 'Son yükleme', uk: 'Останнє завантаження', zh: '最后上传', ar: 'آخر رفع', pl: 'Ostatnie przesłanie', it: 'Ultimo caricamento', sk: 'Ostatnie przesłanie'}),
+      unapprovedCash: t({ ru: 'Неподтверждённые', en: 'Unapproved cash', kk: 'Расталмаған', de: 'Nicht genehmigte Einträge', fr: 'Espèces non approuvées', es: 'Efectivo no aprobado', pt: 'Dinheiro não aprovado', tr: 'Onaylanmamış nakit', uk: 'Непідтверджені', zh: '未审批现金', ar: 'نقد غير معتمد', pl: 'Niezatwierdzone', it: 'Contanti non approvati', sk: 'Niezatwierdzone'}),
     },
     trends: {
-      dailyTrend: t({ ru: 'Ежедневный тренд', en: 'Daily trend', kk: 'Күнделікті тренд', de: 'Täglicher Trend', fr: 'Tendance quotidienne', es: 'Tendencia diaria', pt: 'Tendência diária', tr: 'Günlük eğilim', uk: 'Щоденний тренд', zh: '每日趋势', ar: 'الاتجاه اليومي', pl: 'Dzienny trend', it: 'Tendenza giornaliera' }),
-      categories: t({ ru: 'Категории расходов', en: 'Expense categories', kk: 'Шығыс санаттары', de: 'Ausgabenkategorien', fr: 'Catégories de dépenses', es: 'Categorías de gastos', pt: 'Categorias de despesas', tr: 'Harcama kategorileri', uk: 'Категорії витрат', zh: '支出类别', ar: 'فئات المصروفات', pl: 'Kategorie wydatków', it: 'Categorie di spesa' }),
+      dailyTrend: t({ ru: 'Ежедневный тренд', en: 'Daily trend', kk: 'Күнделікті тренд', de: 'Täglicher Trend', fr: 'Tendance quotidienne', es: 'Tendencia diaria', pt: 'Tendência diária', tr: 'Günlük eğilim', uk: 'Щоденний тренд', zh: '每日趋势', ar: 'الاتجاه اليومي', pl: 'Dzienny trend', it: 'Tendenza giornaliera', sk: 'Dzienny trend'}),
+      categories: t({ ru: 'Категории расходов', en: 'Expense categories', kk: 'Шығыс санаттары', de: 'Ausgabenkategorien', fr: 'Catégories de dépenses', es: 'Categorías de gastos', pt: 'Categorias de despesas', tr: 'Harcama kategorileri', uk: 'Категорії витрат', zh: '支出类别', ar: 'فئات المصروفات', pl: 'Kategorie wydatków', it: 'Categorie di spesa', sk: 'Kategorie wydatków'}),
       counterparties: t({
         ru: 'Доход по контрагентам',
         en: 'Income by counterparty',
@@ -603,11 +636,12 @@ const content = {
         ar: 'الدخل حسب الطرف المقابل',
         pl: 'Przychód według kontrahentów',
         it: 'Entrate per controparte',
+        sk: 'Przychód według kontrahentów',
       }),
-      sources: t({ ru: 'Источники данных', en: 'Data sources', kk: 'Деректер көздері', de: 'Datenquellen', fr: 'Sources de données', es: 'Fuentes de datos', pt: 'Fontes de dados', tr: 'Veri kaynakları', uk: 'Джерела даних', zh: '数据来源', ar: 'مصادر البيانات', pl: 'Źródła danych', it: 'Fonti dei dati' }),
+      sources: t({ ru: 'Источники данных', en: 'Data sources', kk: 'Деректер көздері', de: 'Datenquellen', fr: 'Sources de données', es: 'Fuentes de datos', pt: 'Fontes de dados', tr: 'Veri kaynakları', uk: 'Джерела даних', zh: '数据来源', ar: 'مصادر البيانات', pl: 'Źródła danych', it: 'Fonti dei dati', sk: 'Źródła danych'}),
     },
     topMerchants: {
-      title: t({ ru: 'Топ поставщиков', en: 'Top merchants', kk: 'Топ жеткізушілер', de: 'Top-Händler', fr: 'Principaux marchands', es: 'Principales comerciantes', pt: 'Principais fornecedores', tr: 'En iyi satıcılar', uk: 'Топ постачальників', zh: '顶级商户', ar: 'أبرز التجار', pl: 'Najlepsi dostawcy', it: 'Principali fornitori' }),
+      title: t({ ru: 'Топ поставщиков', en: 'Top merchants', kk: 'Топ жеткізушілер', de: 'Top-Händler', fr: 'Principaux marchands', es: 'Principales comerciantes', pt: 'Principais fornecedores', tr: 'En iyi satıcılar', uk: 'Топ постачальників', zh: '顶级商户', ar: 'أبرز التجار', pl: 'Najlepsi dostawcy', it: 'Principali fornitori', sk: 'Najlepsi dostawcy'}),
       empty: t({
         ru: 'Нет данных по поставщикам',
         en: 'No merchant data',
@@ -622,10 +656,11 @@ const content = {
         ar: 'لا توجد بيانات تجار',
         pl: 'Brak danych dostawców',
         it: 'Nessun dato sui fornitori',
+        sk: 'Brak danych dostawców',
       }),
     },
     topCategories: {
-      title: t({ ru: 'Топ категорий', en: 'Top categories', kk: 'Топ санаттар', de: 'Top-Kategorien', fr: 'Principales catégories', es: 'Principales categorías', pt: 'Principais categorias', tr: 'En iyi kategoriler', uk: 'Топ категорій', zh: '顶级类别', ar: 'أبرز الفئات', pl: 'Najlepsze kategorie', it: 'Categorie principali' }),
+      title: t({ ru: 'Топ категорий', en: 'Top categories', kk: 'Топ санаттар', de: 'Top-Kategorien', fr: 'Principales catégories', es: 'Principales categorías', pt: 'Principais categorias', tr: 'En iyi kategoriler', uk: 'Топ категорій', zh: '顶级类别', ar: 'أبرز الفئات', pl: 'Najlepsze kategorie', it: 'Categorie principali', sk: 'Najlepsze kategorie'}),
       empty: t({
         ru: 'Нет данных по категориям',
         en: 'No category data',
@@ -640,6 +675,7 @@ const content = {
         ar: 'لا توجد بيانات فئات',
         pl: 'Brak danych kategorii',
         it: 'Nessun dato sulle categorie',
+        sk: 'Brak danych kategorii',
       }),
     },
     emptyState: {
@@ -657,6 +693,7 @@ const content = {
         ar: 'مرحباً بك في لوحة التحكم الخاصة بك',
         pl: 'Witaj na swoim pulpicie',
         it: 'Benvenuto nella tua dashboard',
+        sk: 'Witaj na swoim pulpicie',
       }),
       description: t({
         ru: 'Начните с первых документов или расходов, чтобы увидеть живую картину финансов.',
@@ -672,6 +709,7 @@ const content = {
         ar: 'أضف أول مستنداتك أو مصروفاتك لرؤية النشاط المالي الفعلي هنا.',
         pl: 'Dodaj pierwsze dokumenty lub wydatki, aby zobaczyć tu rzeczywistą aktywność finansową.',
         it: 'Aggiungi i tuoi primi documenti o spese per vedere l\'attività finanziaria reale qui.',
+        sk: 'Dodaj pierwsze dokumenty lub wydatki, aby zobaczyć tu rzeczywistą aktywność finansową.',
       }),
       upload: t({
         ru: 'Загрузить первую выписку',
@@ -687,6 +725,7 @@ const content = {
         ar: 'رفع أول كشف حساب',
         pl: 'Prześlij pierwszy wyciąg',
         it: 'Carica il tuo primo estratto conto',
+        sk: 'Prześlij pierwszy wyciąg',
       }),
       gmail: t({
         ru: 'Подключить Gmail',
@@ -702,6 +741,7 @@ const content = {
         ar: 'ربط Gmail',
         pl: 'Połącz Gmail',
         it: 'Collega Gmail',
+        sk: 'Połącz Gmail',
       }),
       manual: t({
         ru: 'Добавить расход вручную',
@@ -717,6 +757,7 @@ const content = {
         ar: 'إضافة مصروف يدوياً',
         pl: 'Dodaj wydatek ręcznie',
         it: 'Aggiungi spesa manuale',
+        sk: 'Dodaj wydatek ręcznie',
       }),
       step1Label: t({
         ru: 'Загрузите выписку или добавьте расход',
@@ -732,6 +773,7 @@ const content = {
         ar: 'ارفع كشف حساب أو أضف مصروفاً',
         pl: 'Prześlij wyciąg lub dodaj wydatek',
         it: 'Carica un estratto conto o aggiungi una spesa',
+        sk: 'Prześlij wyciąg lub dodaj wydatek',
       }),
       step2Label: t({
         ru: 'Мы автоматически распарсим и категоризируем',
@@ -747,6 +789,7 @@ const content = {
         ar: 'نقوم تلقائياً بتحليل بياناتك وتصنيفها',
         pl: 'Automatycznie parsujemy i kategoryzujemy Twoje dane',
         it: 'Analizziamo e categorizziamo automaticamente i tuoi dati',
+        sk: 'Automatycznie parsujemy i kategoryzujemy Twoje dane',
       }),
       step3Label: t({
         ru: 'Анализируйте финансы в реальном времени',
@@ -762,6 +805,7 @@ const content = {
         ar: 'حلّل أموالك في الوقت الفعلي',
         pl: 'Analizuj swoje finanse w czasie rzeczywistym',
         it: 'Analizza le tue finanze in tempo reale',
+        sk: 'Analizuj swoje finanse w czasie rzeczywistym',
       }),
     },
   },

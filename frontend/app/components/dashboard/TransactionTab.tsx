@@ -15,6 +15,7 @@ import { CurrencyFilterDropdown } from '@/app/components/ui/CurrencyFilterDropdo
 import { Spinner } from '@/app/components/ui/spinner';
 import { useCurrencyDisplay } from '@/app/contexts/CurrencyDisplayContext';
 import api from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function TransactionTab() {
@@ -145,7 +146,7 @@ export function TransactionTab() {
                 width: 24,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 bgcolor: 'var(--primary)',
                 fontSize: 12,
                 fontWeight: 700,

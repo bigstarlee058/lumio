@@ -14,17 +14,13 @@ import {
   Res,
   UploadedFile,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { IdempotencyService } from '../../common/services/idempotency.service';
 import { validateFile } from '../../common/utils/file-validator.util';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
@@ -59,7 +55,6 @@ interface ThumbnailErrorLike {
 }
 
 @Controller('statements')
-@UseGuards(JwtAuthGuard)
 export class StatementsController {
   constructor(
     private readonly statementsService: StatementsService,
@@ -88,8 +83,7 @@ export class StatementsController {
   // Legacy POST /statements endpoint (backward compatibility for single 'file' field)
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   @UseInterceptors(FilesInterceptor('file', 1, multerConfig))
   async uploadLegacy(
@@ -104,8 +98,7 @@ export class StatementsController {
 
   @Post('upload')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   @UseInterceptors(FilesInterceptor('files', 2, multerConfig))
   async upload(
@@ -120,8 +113,7 @@ export class StatementsController {
 
   @Post('manual-expense')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
   async createManualExpense(
@@ -140,8 +132,7 @@ export class StatementsController {
 
   @Post('upload-receipt')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
   async uploadReceipt(
@@ -171,8 +162,7 @@ export class StatementsController {
 
   @Post(':id/attach-file')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   @UseInterceptors(FileInterceptor('file', multerConfig))
   async attachFile(
@@ -268,8 +258,7 @@ export class StatementsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findAll(
     @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
@@ -286,8 +275,7 @@ export class StatementsController {
 
   // File routes must be defined before :id route to avoid conflicts
   @Get(':id/file')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getFile(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -314,8 +302,7 @@ export class StatementsController {
   }
 
   @Get(':id/view')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async viewFile(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -336,8 +323,7 @@ export class StatementsController {
   }
 
   @Get(':id/thumbnail')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getThumbnail(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -407,8 +393,7 @@ export class StatementsController {
 
   @Post(':id/trash')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_DELETE)
+  @WorkspaceAuth(Permission.STATEMENT_DELETE)
   async moveToTrash(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -418,8 +403,7 @@ export class StatementsController {
   }
 
   @Post(':id/restore')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async restoreFile(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -429,8 +413,7 @@ export class StatementsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -440,8 +423,7 @@ export class StatementsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   async update(
     @Param('id') id: string,
@@ -453,8 +435,7 @@ export class StatementsController {
   }
 
   @Post(':id/convert-dropped-sample')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async convertDroppedSample(
     @Param('id') id: string,
     @Body() payload: ConvertDroppedSampleDto,
@@ -471,8 +452,7 @@ export class StatementsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_DELETE)
+  @WorkspaceAuth(Permission.STATEMENT_DELETE)
   @Audit({ entityType: EntityType.STATEMENT, includeDiff: true, isUndoable: true })
   async remove(
     @Param('id') id: string,
@@ -489,8 +469,7 @@ export class StatementsController {
   }
 
   @Post(':id/reprocess')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async reprocess(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -503,8 +482,7 @@ export class StatementsController {
   }
 
   @Post(':id/commit-import')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async commitImport(
     @Param('id') id: string,
     @CurrentUser() user: User,

@@ -10,6 +10,7 @@ import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
 import { FilterSection } from './FilterSection';
 import type {
+import { tokens } from '@/lib/theme-tokens';
   StatementFilterDateMode,
   StatementFilterDatePreset,
   StatementFilters,
@@ -151,7 +152,7 @@ export function FiltersDrawer({
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    borderRadius: 'var(--lumio-radius-md)',
+    borderRadius: tokens.radius.md,
     border: '1px solid #e5e7eb',
     background: 'var(--card-bg)',
     padding: '8px 12px',
@@ -545,7 +546,7 @@ export function FiltersDrawer({
             justifyContent: 'center',
             width: 24,
             height: 24,
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             bgcolor: 'rgba(255,255,255,0.2)',
             fontSize: 12,
             fontWeight: 600,

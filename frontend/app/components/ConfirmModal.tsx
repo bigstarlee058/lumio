@@ -4,6 +4,7 @@ import { useIntlayer } from '@/app/i18n';
 import { AlertTriangle } from '@/app/components/icons';
 import React from 'react';
 import { ModalFooter, ModalShell } from './ui/modal-shell';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -58,7 +59,7 @@ export default function ConfirmModal({
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
-            style={{ padding: 8, borderRadius: 'var(--lumio-radius-full)', background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
+            style={{ padding: 8, borderRadius: tokens.radius.full, background: isDestructive ? '#fef2f2' : '#eff6ff', color: isDestructive ? '#dc2626' : '#2563eb' }}
           >
             {icon ?? <AlertTriangle size={20} />}
           </div>

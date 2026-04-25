@@ -2,10 +2,11 @@
 
 import Box from '@mui/material/Box';
 import { RefreshCcw } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 type DashboardErrorBannerProps = { error: string; onRefresh: () => void };
 
-const REFRESH_BTN_STYLE: React.CSSProperties = { marginLeft: 'auto', padding: 4, borderRadius: 'var(--lumio-radius-full)', color: '#be123c', background: 'none', border: 'none', cursor: 'pointer' };
+const REFRESH_BTN_STYLE: React.CSSProperties = { marginLeft: 'auto', padding: 4, borderRadius: tokens.radius.full, color: '#be123c', background: 'none', border: 'none', cursor: 'pointer' };
 
 export function DashboardErrorBanner({ error, onRefresh }: DashboardErrorBannerProps): React.JSX.Element {
   return (

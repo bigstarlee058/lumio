@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'googleDriveIntegrationPage',
-  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive' },
+  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive', sk: 'Google Drive' },
   folderLabel: {
     ru: 'Папка в Drive',
     en: 'Drive folder',
@@ -17,6 +17,7 @@ const content = makeCloudStorageContent({
     ar: 'مجلد Drive',
     pl: 'Folder Drive',
     it: 'Cartella Drive',
+    sk: 'Folder Drive',
   },
   connectingLabel: {
     ru: 'Открываем авторизацию Google…',
@@ -32,6 +33,7 @@ const content = makeCloudStorageContent({
     ar: 'جارٍ فتح تفويض Google…',
     pl: 'Otwieranie autoryzacji Google…',
     it: 'Apertura autorizzazione Google…',
+    sk: 'Otwieranie autoryzacji Google…',
   },
   connectedLabel: {
     ru: 'Google Drive подключен',
@@ -47,6 +49,7 @@ const content = makeCloudStorageContent({
     ar: 'تم توصيل Google Drive',
     pl: 'Google Drive połączony',
     it: 'Google Drive connesso',
+    sk: 'Google Drive połączony',
   },
   pickerUnavailableLabel: {
     ru: 'Google Picker недоступен',
@@ -62,6 +65,7 @@ const content = makeCloudStorageContent({
     ar: 'Google Picker غير متاح',
     pl: 'Google Picker jest niedostępny',
     it: 'Google Picker non disponibile',
+    sk: 'Google Drive',
   },
 });
 

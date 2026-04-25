@@ -16,6 +16,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { Check, Tag } from '@/app/components/icons';
 import React, { useRef } from 'react';
 import type { Category, CategoryFormData } from './hooks/useCategoryManagement';
+import { tokens } from '@/lib/theme-tokens';
 
 export const PREDEFINED_ICONS = [
   'mdi:home', 'mdi:food', 'mdi:car', 'mdi:shopping', 'mdi:cart',
@@ -65,10 +66,10 @@ type IconGridProps = { formData: CategoryFormData; onFormDataChange: (data: Cate
 function IconGrid({ formData, onFormDataChange }: IconGridProps): React.JSX.Element {
   const theme = useTheme();
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))', gap: 1, maxHeight: 200, overflowY: 'auto', p: 1, border: '1px solid', borderColor: 'divider', borderRadius: 'var(--lumio-radius-lg)' }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))', gap: 1, maxHeight: 200, overflowY: 'auto', p: 1, border: '1px solid', borderColor: 'divider', borderRadius: tokens.radius.lg }}>
       {PREDEFINED_ICONS.map(iconName => (
         <Box key={iconName} onClick={() => onFormDataChange({ ...formData, icon: iconName, withoutIcon: false })}
-          sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-sm)', cursor: 'pointer', bgcolor: formData.icon === iconName ? alpha(formData.color, 0.2) : 'transparent', color: formData.icon === iconName ? formData.color : 'text.secondary', border: formData.icon === iconName ? `2px solid ${formData.color}` : '1px solid transparent', '&:hover': { bgcolor: alpha(formData.color || theme.palette.primary.main, 0.1), color: formData.color || theme.palette.primary.main } }}>
+          sx={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.sm, cursor: 'pointer', bgcolor: formData.icon === iconName ? alpha(formData.color, 0.2) : 'transparent', color: formData.icon === iconName ? formData.color : 'text.secondary', border: formData.icon === iconName ? `2px solid ${formData.color}` : '1px solid transparent', '&:hover': { bgcolor: alpha(formData.color || theme.palette.primary.main, 0.1), color: formData.color || theme.palette.primary.main } }}>
           <Tag size={24} />
         </Box>
       ))}
@@ -84,7 +85,7 @@ function IconUploadRow({ formData, uploadingIcon, uploadLabel, uploadingLabel, u
       {!formData.withoutIcon && previewIconUrl && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography variant="body2" color="text.secondary">{uploadedIconLabel}</Typography>
-          <Box component="img" src={previewIconUrl} alt="" sx={{ width: 32, height: 32, borderRadius: 'var(--lumio-radius-sm)', objectFit: 'contain', border: '1px solid', borderColor: 'divider' }} />
+          <Box component="img" src={previewIconUrl} alt="" sx={{ width: 32, height: 32, borderRadius: tokens.radius.sm, objectFit: 'contain', border: '1px solid', borderColor: 'divider' }} />
         </Box>
       )}
       <Button variant="outlined" size="small" onClick={onUploadClick} disabled={uploadingIcon} sx={{ ml: 'auto' }}>{uploadingIcon ? uploadingLabel : uploadLabel}</Button>
@@ -125,7 +126,7 @@ function ColorPicker({ formData, label, onFormDataChange }: ColorPickerProps): R
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         {PREDEFINED_COLORS.map(color => (
           <Box key={color} onClick={() => onFormDataChange({ ...formData, color })}
-            sx={{ width: 32, height: 32, borderRadius: 'var(--lumio-radius-full)', bgcolor: color, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: formData.color === color ? 3 : 0, transform: formData.color === color ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.2s', border: formData.color === color ? '2px solid white' : 'none', outline: formData.color === color ? `2px solid ${color}` : 'none' }}>
+            sx={{ width: 32, height: 32, borderRadius: tokens.radius.full, bgcolor: color, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: formData.color === color ? 3 : 0, transform: formData.color === color ? 'scale(1.1)' : 'scale(1)', transition: 'transform 0.2s', border: formData.color === color ? '2px solid white' : 'none', outline: formData.color === color ? `2px solid ${color}` : 'none' }}>
             {formData.color === color && <Check size={20} style={{ color: 'white' }} />}
           </Box>
         ))}
@@ -145,9 +146,9 @@ type PreviewProps = { formData: CategoryFormData; label: string; placeholder: st
 function CategoryPreview({ formData, label, placeholder }: PreviewProps): React.JSX.Element {
   const color = formData.color || '#2196F3';
   return (
-    <Box sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: 'var(--lumio-radius-lg)', display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Box sx={{ mt: 2, p: 2, bgcolor: 'background.default', borderRadius: tokens.radius.lg, display: 'flex', alignItems: 'center', gap: 2 }}>
       <Typography variant="body2" color="text.secondary">{label}</Typography>
-      <Box sx={{ width: 48, height: 48, borderRadius: 'var(--lumio-radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: alpha(color, 0.1), color }}>
+      <Box sx={{ width: 48, height: 48, borderRadius: tokens.radius.sm, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: alpha(color, 0.1), color }}>
         <PreviewIcon formData={formData} />
       </Box>
       <Typography variant="subtitle1" fontWeight="bold">{formData.name || placeholder}</Typography>

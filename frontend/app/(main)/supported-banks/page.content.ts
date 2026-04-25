@@ -17,6 +17,7 @@ const content = {
       ar: 'البنوك المدعومة',
       pl: 'Obsługiwane banki',
       it: 'Banche supportate',
+      sk: 'Obsługiwane banki',
     }),
     subtitle: t({
       ru: 'Список банков, для которых доступен автоматический парсинг выписок.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'قائمة البنوك المتاحة لتحليل كشوف الحساب تلقائيًا.',
       pl: 'Lista banków dostępnych do automatycznego przetwarzania wyciągów.',
       it: 'Elenco delle banche disponibili per l\'analisi automatica degli estratti conto.',
+      sk: 'Lista banków dostępnych do automatycznego przetwarzania wyciągów.',
     }),
     parserStatus: t({
       ru: 'Парсер активен',
@@ -47,6 +49,7 @@ const content = {
       ar: 'المحلل نشط',
       pl: 'Parser jest aktywny',
       it: 'Il parser è attivo',
+      sk: 'Parser jest aktywny',
     }),
     comingSoon: t({
       ru: 'Скоро добавим новые банки',
@@ -62,6 +65,7 @@ const content = {
       ar: 'المزيد من البنوك قريبًا',
       pl: 'Więcej banków wkrótce',
       it: 'Altre banche in arrivo',
+      sk: 'Więcej banków wkrótce',
     }),
     statusLabel: t({
       ru: 'Статус',
@@ -77,6 +81,7 @@ const content = {
       ar: 'الحالة',
       pl: 'Status',
       it: 'Stato',
+      sk: 'Status',
     }),
     formatsLabel: t({
       ru: 'Поддерживаемый формат',
@@ -92,6 +97,7 @@ const content = {
       ar: 'الصيغة المدعومة',
       pl: 'Obsługiwany format',
       it: 'Formato supportato',
+      sk: 'Obsługiwany format',
     }),
     supported: t({
       ru: 'Поддерживается',
@@ -107,6 +113,7 @@ const content = {
       ar: 'مدعوم',
       pl: 'Obsługiwany',
       it: 'Supportato',
+      sk: 'Obsługiwany',
     }),
     pdfStatements: t({
       ru: 'PDF-выписки',
@@ -122,10 +129,11 @@ const content = {
       ar: 'كشوف الحساب PDF',
       pl: 'Wyciągi PDF',
       it: 'Estratti conto PDF',
+      sk: 'Wyciągi PDF',
     }),
     banks: {
       kaspi: {
-        name: t({ ru: 'Kaspi', en: 'Kaspi', kk: 'Kaspi', de: 'Kaspi', fr: 'Kaspi', es: 'Kaspi', pt: 'Kaspi', tr: 'Kaspi', uk: 'Kaspi', zh: 'Kaspi', ar: 'Kaspi', pl: 'Kaspi', it: 'Kaspi' }),
+        name: t({ ru: 'Kaspi', en: 'Kaspi', kk: 'Kaspi', de: 'Kaspi', fr: 'Kaspi', es: 'Kaspi', pt: 'Kaspi', tr: 'Kaspi', uk: 'Kaspi', zh: 'Kaspi', ar: 'Kaspi', pl: 'Kaspi', it: 'Kaspi', sk: 'Kaspi'}),
         notes: t({
           ru: 'Загружайте выписки Kaspi в PDF для автоматического распознавания операций.',
           en: 'Upload Kaspi PDF statements for automatic transaction extraction.',
@@ -140,10 +148,11 @@ const content = {
           ar: 'ارفع كشوف حساب Kaspi بتنسيق PDF للاستخراج التلقائي للمعاملات.',
           pl: 'Prześlij wyciągi PDF Kaspi do automatycznego wyodrębniania transakcji.',
           it: 'Carica estratti conto PDF di Kaspi per l\'estrazione automatica delle transazioni.',
+          sk: 'Prześlij wyciągi PDF Kaspi do automatycznego wyodrębniania transakcji.',
         }),
       },
       bereke: {
-        name: t({ ru: 'Bereke', en: 'Bereke', kk: 'Bereke', de: 'Bereke', fr: 'Bereke', es: 'Bereke', pt: 'Bereke', tr: 'Bereke', uk: 'Bereke', zh: 'Bereke', ar: 'Bereke', pl: 'Bereke', it: 'Bereke' }),
+        name: t({ ru: 'Bereke', en: 'Bereke', kk: 'Bereke', de: 'Bereke', fr: 'Bereke', es: 'Bereke', pt: 'Bereke', tr: 'Bereke', uk: 'Bereke', zh: 'Bereke', ar: 'Bereke', pl: 'Bereke', it: 'Bereke', sk: 'Bereke'}),
         notes: t({
           ru: 'Загружайте выписки Bereke в PDF для автоматического распознавания операций.',
           en: 'Upload Bereke PDF statements for automatic transaction extraction.',
@@ -158,6 +167,7 @@ const content = {
           ar: 'ارفع كشوف حساب Bereke بتنسيق PDF للاستخراج التلقائي للمعاملات.',
           pl: 'Prześlij wyciągi PDF Bereke do automatycznego wyodrębniania transakcji.',
           it: 'Carica estratti conto PDF di Bereke per l\'estrazione automatica delle transazioni.',
+          sk: 'Prześlij wyciągi PDF Bereke do automatycznego wyodrębniania transakcji.',
         }),
       },
     },

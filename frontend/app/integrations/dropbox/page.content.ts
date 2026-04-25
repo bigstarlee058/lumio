@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'dropboxIntegrationPage',
-  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox' },
+  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox', sk: 'Dropbox' },
   folderLabel: {
     ru: 'Папка в Dropbox',
     en: 'Dropbox folder',
@@ -17,6 +17,7 @@ const content = makeCloudStorageContent({
     ar: 'مجلد Dropbox',
     pl: 'Folder Dropbox',
     it: 'Cartella Dropbox',
+    sk: 'Folder Dropbox',
   },
   connectingLabel: {
     ru: 'Открываем авторизацию Dropbox…',
@@ -32,6 +33,7 @@ const content = makeCloudStorageContent({
     ar: 'جارٍ فتح تفويض Dropbox…',
     pl: 'Otwieranie autoryzacji Dropbox…',
     it: 'Apertura autorizzazione Dropbox…',
+    sk: 'Otwieranie autoryzacji Dropbox…',
   },
   connectedLabel: {
     ru: 'Dropbox подключен',
@@ -47,6 +49,7 @@ const content = makeCloudStorageContent({
     ar: 'تم توصيل Dropbox',
     pl: 'Dropbox połączony',
     it: 'Dropbox connesso',
+    sk: 'Dropbox połączony',
   },
   pickerUnavailableLabel: {
     ru: 'Dropbox Chooser недоступен',
@@ -62,6 +65,7 @@ const content = makeCloudStorageContent({
     ar: 'Dropbox Chooser غير متاح',
     pl: 'Dropbox Chooser jest niedostępny',
     it: 'Dropbox Chooser non disponibile',
+    sk: 'Dropbox',
   },
 });
 

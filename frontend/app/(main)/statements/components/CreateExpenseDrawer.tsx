@@ -14,6 +14,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
 import {
+import { tokens } from '@/lib/theme-tokens';
   Check,
   ChevronDown,
   ChevronLeft,
@@ -244,13 +245,13 @@ export default function CreateExpenseDrawer({
               </>
             ) : mode === 'scan' ? (
               <>
-                <label style={{ display: 'flex', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-lg)', border: '2px dashed', borderColor: 'color-mix(in srgb, var(--primary) 40%, transparent)', background: 'rgba(0,0,0,0.04)', padding: '48px 24px', textAlign: 'center' }}>
+                <label style={{ display: 'flex', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '2px dashed', borderColor: 'color-mix(in srgb, var(--primary) 40%, transparent)', background: 'rgba(0,0,0,0.04)', padding: '48px 24px', textAlign: 'center' }}>
                   <Receipt size={56} style={{ color: 'var(--muted-foreground)' }} />
                   <p style={{ marginTop: 24, fontSize: 30, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
                     Upload receipts
                   </p>
                   <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>or drag and drop them here</p>
-                  <span style={{ marginTop: 24, display: 'inline-flex', borderRadius: 'var(--lumio-radius-md)', background: 'var(--primary)', padding: '10px 28px', fontSize: 14, fontWeight: 600, color: '#fff' }}>
+                  <span style={{ marginTop: 24, display: 'inline-flex', borderRadius: tokens.radius.md, background: 'var(--primary)', padding: '10px 28px', fontSize: 14, fontWeight: 600, color: '#fff' }}>
                     Choose files
                   </span>
                   <input
@@ -296,7 +297,7 @@ export default function CreateExpenseDrawer({
                     <button
                       type="button"
                       onClick={() => setCurrencyPickerOpen(true)}
-                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--lumio-radius-md)', border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
+                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
                     >
                       {manualDraft.currency}
                       <ChevronDown size={20} style={{ color: 'var(--muted-foreground)' }} />
@@ -306,9 +307,9 @@ export default function CreateExpenseDrawer({
               </div>
             ) : (
               <>
-                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-lg)', border: '1px solid var(--border-color, #d7e2ef)', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
+                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
                   <FileText size={56} style={{ color: 'color-mix(in srgb, var(--muted-foreground) 60%, transparent)' }} />
-                  <span style={{ position: 'absolute', left: '50%', top: '50%', display: 'flex', height: 40, width: 40, transform: 'translate(8px, 4px)', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-full)', background: 'var(--primary)', color: '#fff' }}>
+                  <span style={{ position: 'absolute', left: '50%', top: '50%', display: 'flex', height: 40, width: 40, transform: 'translate(8px, 4px)', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, background: 'var(--primary)', color: '#fff' }}>
                     <Plus size={20} />
                   </span>
                   <input
@@ -321,7 +322,7 @@ export default function CreateExpenseDrawer({
                   />
                 </label>
 
-                <div style={{ overflow: 'hidden', borderRadius: 'var(--lumio-radius-lg)', border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)' }}>
+                <div style={{ overflow: 'hidden', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)' }}>
                   <button
                     type="button"
                     onClick={() => setManualStep('amount')}
@@ -450,7 +451,7 @@ export default function CreateExpenseDrawer({
             )}
 
             {files.length > 0 && !currencyPickerOpen ? (
-              <div style={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)', padding: '12px' }}>
+              <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, #d7e2ef)', background: 'var(--card-bg, #fff)', padding: '12px' }}>
                 <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
                   Selected files
                 </p>
@@ -458,7 +459,7 @@ export default function CreateExpenseDrawer({
                   {files.map(file => (
                     <div
                       key={`${file.name}-${file.size}`}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 'var(--lumio-radius-sm)', border: '1px solid var(--border-color, #d7e2ef)', padding: '8px 12px', fontSize: 14 }}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.sm, border: '1px solid var(--border-color, #d7e2ef)', padding: '8px 12px', fontSize: 14 }}
                     >
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--foreground)' }}>{file.name}</span>
                       <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
@@ -471,7 +472,7 @@ export default function CreateExpenseDrawer({
             ) : null}
 
             {error ? (
-              <div style={{ borderRadius: 'var(--lumio-radius-sm)', border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: '#b91c1c' }}>
+              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: '#b91c1c' }}>
                 {error}
               </div>
             ) : null}
@@ -481,7 +482,7 @@ export default function CreateExpenseDrawer({
             <Button
               type="button"
               size="lg"
-              style={{ width: '100%', borderRadius: 'var(--lumio-radius-md)' }}
+              style={{ width: '100%', borderRadius: tokens.radius.md }}
               disabled={
                 submitting ||
                 currencyPickerOpen ||

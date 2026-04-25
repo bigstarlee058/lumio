@@ -4,6 +4,7 @@ import { useIntlayer } from '@/app/i18n';
 import { Box, Stack, Typography } from '@mui/material';
 import { CheckCircle2, ShieldCheck, Sparkles, Workflow } from '@/app/components/icons';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
+import { tokens } from '@/lib/theme-tokens';
 
 export function WelcomeStep() {
   const t = useIntlayer('onboardingPage');
@@ -41,7 +42,7 @@ export function WelcomeStep() {
         >
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -55,7 +56,7 @@ export function WelcomeStep() {
           </Box>
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -69,7 +70,7 @@ export function WelcomeStep() {
           </Box>
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -85,7 +86,7 @@ export function WelcomeStep() {
 
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

@@ -17,6 +17,7 @@ const content = {
       ar: 'الإضافات',
       pl: 'Wtyczki',
       it: 'Plugin',
+      sk: 'Wtyczki',
     }),
     subtitle: t({
       ru: 'Расширяйте возможности Lumio с помощью плагинов.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'وسّع Lumio بإضافات قوية.',
       pl: 'Rozszerzaj Lumio za pomocą wtyczek.',
       it: 'Estendi Lumio con potenti plugin.',
+      sk: 'Rozszerzaj Lumio za pomocą wtyczek.',
     }),
     sections: {
       enabled: t({
@@ -48,6 +50,7 @@ const content = {
         ar: 'مفعّل',
         pl: 'Włączone',
         it: 'Attivato',
+        sk: 'Włączone',
       }),
       available: t({
         ru: 'Доступно',
@@ -63,6 +66,7 @@ const content = {
         ar: 'متاح',
         pl: 'Dostępne',
         it: 'Disponibile',
+        sk: 'Dostępne',
       }),
     },
     enable: t({
@@ -79,6 +83,7 @@ const content = {
       ar: 'تفعيل',
       pl: 'Włącz',
       it: 'Attiva',
+      sk: 'Włącz',
     }),
     disable: t({
       ru: 'Отключить',
@@ -94,6 +99,7 @@ const content = {
       ar: 'تعطيل',
       pl: 'Wyłącz',
       it: 'Disattiva',
+      sk: 'Wyłącz',
     }),
     cards: {
       aiAssistant: {
@@ -111,6 +117,7 @@ const content = {
           ar: 'مساعد الذكاء الاصطناعي',
           pl: 'Asystent AI',
           it: 'Assistente IA',
+          sk: 'Asystent AI',
         }),
         description: t({
           ru: 'Анализируйте финансовые данные с помощью ИИ. Подготавливает промпты с вашими данными и передаёт их в ChatGPT.',
@@ -126,6 +133,7 @@ const content = {
           ar: 'حلّل البيانات المالية بالذكاء الاصطناعي. يُعدّ المطالبات ببياناتك ويرسلها إلى ChatGPT.',
           pl: 'Analizuj dane finansowe z pomocą AI. Przygotowuje prompty z Twoimi danymi i przekazuje do ChatGPT.',
           it: 'Analizza i dati finanziari con l\'IA. Prepara prompt con i tuoi dati e li invia a ChatGPT.',
+          sk: 'Analizuj dane finansowe z pomocą AI. Przygotowuje prompty z Twoimi danymi i przekazuje do ChatGPT.',
         }),
       },
     },

@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Stack, Typography } from '@mui/material';
+import { tokens } from '@/lib/theme-tokens';
 
 interface OnboardingProgressProps {
   currentStep: number;
@@ -18,14 +19,14 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
           height: 8,
           width: '100%',
           overflow: 'hidden',
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           bgcolor: 'action.hover',
         }}
       >
         <Box
           sx={{
             height: '100%',
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             bgcolor: 'primary.main',
             transition: 'width 300ms ease',
             width: `${progress}%`,
@@ -47,7 +48,7 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
             <Box
               key={label}
               sx={{
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 border: '1px solid',
                 px: 1.5,
                 py: 1,

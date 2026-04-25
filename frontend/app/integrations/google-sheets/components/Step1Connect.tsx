@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import type { SpreadsheetSelection, WorksheetOption } from '@/app/lib/googleSheetsSelection';
 import type { AuthStatus } from '../useGoogleSheetsPage';
 import type { ReturnType as PickerStateType } from '../useGoogleSheetsPage';
+import { tokens } from '@/lib/theme-tokens';
 
 interface Step1Texts {
   step1: {
@@ -77,25 +78,25 @@ export function Step1Connect({ authStatus, pickerAccessToken, pickerApiKey, pick
   const cannotConnect = submitting || !selectedSpreadsheet;
 
   return (
-    <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-step1">
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-step1">
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', border: '1px solid rgba(var(--color-primary-rgb), 0.2)', display: 'flex' }}><FileSpreadsheet style={{ height: 20, width: 20, color: 'var(--color-primary)' }} /></Box>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.sm, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', border: '1px solid rgba(var(--color-primary-rgb), 0.2)', display: 'flex' }}><FileSpreadsheet style={{ height: 20, width: 20, color: 'var(--color-primary)' }} /></Box>
         <Box><Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.step1.label}</Typography><Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{t.step1.title}</Typography></Box>
       </Box>
       <Stack spacing={2}>
-        <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5 }} data-tour-id="gs-integration-account">
+        <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5 }} data-tour-id="gs-integration-account">
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Typography style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{copy.step1.accountLabel}</Typography>
               <Typography style={{ fontSize: 14, color: '#6b7280' }}>{authStatus.connected ? copy.step1.connectedAs.replace('{email}', authStatus.email || 'Google') : copy.step1.accountHelp}</Typography>
             </Box>
-            <button type="button" onClick={onStartOauth} disabled={connectingAccount} data-tour-id="gs-integration-connect-account" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--lumio-radius-md)', background: 'var(--color-primary)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#fff', border: 'none', cursor: connectingAccount ? 'not-allowed' : 'pointer', opacity: connectingAccount ? 0.7 : 1 }}>
+            <button type="button" onClick={onStartOauth} disabled={connectingAccount} data-tour-id="gs-integration-connect-account" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, background: 'var(--color-primary)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#fff', border: 'none', cursor: connectingAccount ? 'not-allowed' : 'pointer', opacity: connectingAccount ? 0.7 : 1 }}>
               {connectingAccount ? <Spinner size={16} /> : null}
               {authStatus.connected ? copy.step1.reconnectButton : copy.step1.connectAccountButton}
             </button>
           </Box>
         </Box>
-        <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', p: 1.5 }} data-tour-id="gs-integration-picker">
+        <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', p: 1.5 }} data-tour-id="gs-integration-picker">
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Typography style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{copy.step1.spreadsheetLabel}</Typography>
@@ -108,20 +109,20 @@ export function Step1Connect({ authStatus, pickerAccessToken, pickerApiKey, pick
         </Box>
         <label style={{ display: 'block' }}>
           <Typography style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.step1.worksheetLabel}</Typography>
-          <select value={worksheetName} onChange={(e): void => setWorksheetName(e.target.value)} data-tour-id="gs-integration-worksheet" disabled={!selectedSpreadsheet || loadingWorksheets} style={{ marginTop: 4, width: '100%', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, opacity: !selectedSpreadsheet || loadingWorksheets ? 0.6 : 1 }}>
+          <select value={worksheetName} onChange={(e): void => setWorksheetName(e.target.value)} data-tour-id="gs-integration-worksheet" disabled={!selectedSpreadsheet || loadingWorksheets} style={{ marginTop: 4, width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, opacity: !selectedSpreadsheet || loadingWorksheets ? 0.6 : 1 }}>
             <option value="">{loadingWorksheets ? copy.step1.loadingWorksheets : copy.step1.selectWorksheet}</option>
             {worksheets.map(item => <option key={item.title} value={item.title}>{item.title}</option>)}
           </select>
         </label>
         <label style={{ display: 'block' }}>
           <Typography style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.step1.nameLabel}</Typography>
-          <input type="text" style={{ marginTop: 4, width: '100%', border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14 }} placeholder={t.step1.namePlaceholder.value} value={sheetName} onChange={(e): void => setSheetName(e.target.value)} data-tour-id="gs-integration-sheet-name" />
+          <input type="text" style={{ marginTop: 4, width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14 }} placeholder={t.step1.namePlaceholder.value} value={sheetName} onChange={(e): void => setSheetName(e.target.value)} data-tour-id="gs-integration-sheet-name" />
           <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>{t.step1.nameHelp}</Typography>
         </label>
-        <button type="button" onClick={onConnect} disabled={cannotConnect} data-tour-id="gs-integration-connect" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--lumio-radius-md)', background: 'var(--color-primary)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#fff', border: 'none', cursor: cannotConnect ? 'not-allowed' : 'pointer', opacity: cannotConnect ? 0.7 : 1, width: 'fit-content' }}>
+        <button type="button" onClick={onConnect} disabled={cannotConnect} data-tour-id="gs-integration-connect" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, background: 'var(--color-primary)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#fff', border: 'none', cursor: cannotConnect ? 'not-allowed' : 'pointer', opacity: cannotConnect ? 0.7 : 1, width: 'fit-content' }}>
           {submitting ? <Spinner size={16} /> : null}{t.step1.connectButton}
         </button>
-        <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', bgcolor: 'rgba(var(--color-primary-rgb), 0.05)', p: 1.5, mt: 1 }}><Typography style={{ fontSize: 14, color: 'var(--color-primary)' }}>{t.step1.successText}</Typography></Box>
+        <Box sx={{ borderRadius: tokens.radius.lg, bgcolor: 'rgba(var(--color-primary-rgb), 0.05)', p: 1.5, mt: 1 }}><Typography style={{ fontSize: 14, color: 'var(--color-primary)' }}>{t.step1.successText}</Typography></Box>
       </Stack>
     </Box>
   );

@@ -17,6 +17,7 @@ const customTablesTourContent = {
       ar: 'جولة الجداول المخصصة',
       pl: 'Tour niestandardowych tabel',
       it: 'Tour delle tabelle personalizzate',
+      sk: 'Tour niestandardowych tabel',
     }),
     description: t({
       ru: 'Создание и управление таблицами для экспорта',
@@ -32,6 +33,7 @@ const customTablesTourContent = {
       ar: 'إنشاء وإدارة الجداول الجاهزة للتصدير',
       pl: 'Twórz tabele gotowe do eksportu i zarządzaj nimi',
       it: 'Crea e gestisci tabelle pronte per l\'esportazione',
+      sk: 'Twórz tabele gotowe do eksportu i zarządzaj nimi',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const customTablesTourContent = {
           ar: 'مرحباً بك في الجداول المخصصة',
           pl: 'Witaj w niestandardowych tabelach',
           it: 'Benvenuto nelle Tabelle personalizzate',
+          sk: 'Witaj w niestandardowych tabelach',
         }),
         description: t({
           ru: 'Здесь вы собираете таблицы для экспорта и отчетности: из выписок, вручную или через Google Sheets. Тур покажет основные элементы текущей страницы.',
@@ -64,6 +67,7 @@ const customTablesTourContent = {
           ar: 'تتيح لك هذه الصفحة إنشاء جداول للتصدير والتقارير من كشوف الحسابات يدوياً أو عبر Google Sheets. تعرض هذه الجولة الأجزاء الرئيسية من سير العمل الحالي.',
           pl: 'Ta strona pozwala tworzyć tabele do eksportu i raportowania z wyciągów, ręcznie lub przez Google Sheets. Ten przewodnik pokazuje kluczowe elementy bieżącego przepływu pracy.',
           it: 'Questa pagina ti permette di costruire tabelle per esportazioni e reportistica da estratti conto, manualmente o tramite Google Sheets. Questo tour mostra le parti chiave del flusso di lavoro attuale.',
+          sk: 'Ta strona pozwala tworzyć tabele do eksportu i raportowania z wyciągów, ręcznie lub przez Google Sheets. Ten przewodnik pokazuje kluczowe elementy bieżącego przepływu pracy.',
         }),
       },
       createExport: {
@@ -81,6 +85,7 @@ const customTablesTourContent = {
           ar: 'إنشاء جدول التصدير',
           pl: 'Utwórz tabelę eksportu',
           it: 'Crea tabella di esportazione',
+          sk: 'Utwórz tabelę eksportu',
         }),
         description: t({
           ru: 'Основная кнопка сразу открывает сценарий создания таблицы из выписок. Это быстрый путь, если вам нужна таблица для выгрузки или дальнейшей обработки.',
@@ -96,6 +101,7 @@ const customTablesTourContent = {
           ar: 'يفتح الإجراء الرئيسي تدفق إنشاء جدول من كشوف الحسابات. استخدمه عندما تحتاج إلى جدول جاهز للتصدير بسرعة لمزيد من العمل.',
           pl: 'Główna akcja otwiera przepływ tworzenia tabeli z wyciągów. Użyj jej, gdy potrzebujesz szybkiej tabeli gotowej do eksportu do dalszej pracy.',
           it: 'L\'azione principale apre il flusso per costruire una tabella dagli estratti conto. Usala quando hai bisogno di una tabella pronta per l\'esportazione rapidamente per lavori successivi.',
+          sk: 'Główna akcja otwiera przepływ tworzenia tabeli z wyciągów. Użyj jej, gdy potrzebujesz szybkiej tabeli gotowej do eksportu do dalszej pracy.',
         }),
       },
       createDropdown: {
@@ -113,6 +119,7 @@ const customTablesTourContent = {
           ar: 'خيارات إنشاء أخرى',
           pl: 'Inne opcje tworzenia',
           it: 'Altre opzioni di creazione',
+          sk: 'Inne opcje tworzenia',
         }),
         description: t({
           ru: 'Через это меню можно создать пустую таблицу с нуля или перейти к импорту из Google Sheets, если данные уже подготовлены в другом источнике.',
@@ -128,6 +135,7 @@ const customTablesTourContent = {
           ar: 'يمنحك هذا القائمة مسارات الإنشاء البديلة: ابدأ بجدول فارغ أو استورد من Google Sheets عندما تكون بيانات المصدر موجودة بالفعل في مكان آخر.',
           pl: 'To menu oferuje alternatywne ścieżki tworzenia: zacznij od pustej tabeli lub zaimportuj z Google Sheets, gdy dane źródłowe już istnieją gdzie indziej.',
           it: 'Questo menu offre i percorsi di creazione alternativi: inizia con una tabella vuota o importa da Google Sheets quando i dati sorgente esistono già altrove.',
+          sk: 'To menu oferuje alternatywne ścieżki tworzenia: zacznij od pustej tabeli lub zaimportuj z Google Sheets, gdy dane źródłowe już istnieją gdzie indziej.',
         }),
       },
       search: {
@@ -145,6 +153,7 @@ const customTablesTourContent = {
           ar: 'البحث في الجداول',
           pl: 'Szukaj tabel',
           it: 'Cerca tabelle',
+          sk: 'Szukaj tabel',
         }),
         description: t({
           ru: 'Поиск помогает быстро находить нужные таблицы по названию, особенно когда у вас уже несколько экспортов под разные задачи и периоды.',
@@ -160,6 +169,7 @@ const customTablesTourContent = {
           ar: 'يساعدك البحث على العثور بسرعة على جدول حسب الاسم، خاصة عندما يكون لديك عدة تصديرات لسير عمل وفترات مختلفة.',
           pl: 'Wyszukiwanie pomaga szybko znaleźć tabelę według nazwy, zwłaszcza gdy masz wiele eksportów dla różnych przepływów pracy i okresów.',
           it: 'La ricerca ti aiuta a trovare rapidamente una tabella per nome, specialmente quando hai più esportazioni per diversi flussi di lavoro e periodi.',
+          sk: 'Wyszukiwanie pomaga szybko znaleźć tabelę według nazwy, zwłaszcza gdy masz wiele eksportów dla różnych przepływów pracy i okresów.',
         }),
       },
       sourceFilter: {
@@ -177,6 +187,7 @@ const customTablesTourContent = {
           ar: 'فلتر المصدر',
           pl: 'Filtr źródła',
           it: 'Filtro per sorgente',
+          sk: 'Filtr źródła',
         }),
         description: t({
           ru: 'Фильтруйте таблицы по происхождению: ручные, из Google Sheets или созданные из выписок. Это упрощает навигацию по рабочим наборам данных.',
@@ -192,6 +203,7 @@ const customTablesTourContent = {
           ar: 'فلتر الجداول حسب مصدرها: يدوي أو Google Sheets أو مستند إلى كشوف الحسابات. إنها أسرع طريقة لتضييق القائمة إلى سير عمل واحد.',
           pl: 'Filtruj tabele według ich pochodzenia: ręcznie, Google Sheets lub na podstawie wyciągów. To najszybszy sposób zawężenia listy do jednego przepływu pracy.',
           it: 'Filtra le tabelle in base alla loro provenienza: manuale, Google Sheets o basata su estratti conto. È il modo più rapido per restringere la lista a un flusso di lavoro.',
+          sk: 'Filtruj tabele według ich pochodzenia: ręcznie, Google Sheets lub na podstawie wyciągów. To najszybszy sposób zawężenia listy do jednego przepływu pracy.',
         }),
       },
       tablesList: {
@@ -209,6 +221,7 @@ const customTablesTourContent = {
           ar: 'قائمة الجداول',
           pl: 'Lista tabel',
           it: 'Elenco tabelle',
+          sk: 'Lista tabel',
         }),
         description: t({
           ru: 'Здесь собраны все созданные таблицы. В каждой строке видны назначение, источник, количество строк, дата обновления и быстрые действия.',
@@ -224,6 +237,7 @@ const customTablesTourContent = {
           ar: 'تعرض هذه المنطقة كل جدول أنشأته. يعرض كل صف الغرض والمصدر وعدد الصفوف وآخر تحديث والإجراءات السريعة.',
           pl: 'Ten obszar pokazuje każdą utworzoną przez ciebie tabelę. Każdy wiersz pokazuje cel, źródło, liczbę wierszy, ostatnią aktualizację i szybkie akcje.',
           it: 'Quest\'area mostra ogni tabella che hai creato. Ogni riga mostra lo scopo, la sorgente, il conteggio righe, l\'ultimo aggiornamento e le azioni rapide.',
+          sk: 'Ten obszar pokazuje każdą utworzoną przez ciebie tabelę. Każdy wiersz pokazuje cel, źródło, liczbę wierszy, ostatnią aktualizację i szybkie akcje.',
         }),
       },
       pagination: {
@@ -241,6 +255,7 @@ const customTablesTourContent = {
           ar: 'التنقل في القائمة',
           pl: 'Nawigacja po liście',
           it: 'Navigazione lista',
+          sk: 'Nawigacja po liście',
         }),
         description: t({
           ru: 'Если таблиц много, используйте пагинацию, чтобы переходить между страницами результатов и контролировать текущий диапазон отображения.',
@@ -256,6 +271,7 @@ const customTablesTourContent = {
           ar: 'عندما تنمو القائمة استخدم التصفح لتتنقل بين صفحات النتائج وتتابع النطاق المرئي.',
           pl: 'Gdy lista rośnie, użyj paginacji, aby poruszać się po stronach wyników i śledzić widoczny zakres.',
           it: 'Quando la lista cresce, usa la paginazione per spostarti tra le pagine dei risultati e tenere traccia dell\'intervallo visibile.',
+          sk: 'Gdy lista rośnie, użyj paginacji, aby poruszać się po stronach wyników i śledzić widoczny zakres.',
         }),
       },
       completed: {
@@ -273,6 +289,7 @@ const customTablesTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете, где создавать, искать и фильтровать кастомные таблицы. Дальше можно открыть нужную таблицу и работать уже с ее структурой и данными.',
@@ -288,6 +305,7 @@ const customTablesTourContent = {
           ar: 'أنت تعرف الآن أين تنشئ وتجد وتفلتر الجداول المخصصة. من هنا يمكنك فتح الجدول الصحيح والعمل على بنيته وبياناته.',
           pl: 'Teraz wiesz, gdzie tworzyć, znajdować i filtrować niestandardowe tabele. Stąd możesz otworzyć właściwą tabelę i pracować z jej strukturą i danymi.',
           it: 'Ora sai dove creare, trovare e filtrare le tabelle personalizzate. Da qui puoi aprire la tabella giusta e lavorare con la sua struttura e i suoi dati.',
+          sk: 'Teraz wiesz, gdzie tworzyć, znajdować i filtrować niestandardowe tabele. Stąd możesz otworzyć właściwą tabelę i pracować z jej strukturą i danymi.',
         }),
       },
     },

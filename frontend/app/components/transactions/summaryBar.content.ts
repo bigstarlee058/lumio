@@ -17,6 +17,7 @@ const content = {
       ar: 'تم الرفع',
       pl: 'Przesłano',
       it: 'Caricato',
+      sk: 'Przesłano',
     }),
     parsed: t({
       ru: 'Распознано',
@@ -32,6 +33,7 @@ const content = {
       ar: 'تم التحليل',
       pl: 'Przetworzone',
       it: 'Analizzato',
+      sk: 'Przetworzone',
     }),
     warnings: t({
       ru: 'Предупреждения',
@@ -47,6 +49,7 @@ const content = {
       ar: 'تحذيرات',
       pl: 'Ostrzeżenia',
       it: 'Avvisi',
+      sk: 'Ostrzeżenia',
     }),
     errors: t({
       ru: 'Ошибки',
@@ -62,6 +65,7 @@ const content = {
       ar: 'أخطاء',
       pl: 'Błędy',
       it: 'Errori',
+      sk: 'Błędy',
     }),
     uncategorized: t({
       ru: 'Без категории',
@@ -77,6 +81,7 @@ const content = {
       ar: 'غير مصنف',
       pl: 'Bez kategorii',
       it: 'Non categorizzato',
+      sk: 'Bez kategorii',
     }),
     debitTotal: t({
       ru: 'Дебет',
@@ -92,6 +97,7 @@ const content = {
       ar: 'مدين',
       pl: 'Debet',
       it: 'Addebito',
+      sk: 'Debet',
     }),
     creditTotal: t({
       ru: 'Кредит',
@@ -107,6 +113,7 @@ const content = {
       ar: 'دائن',
       pl: 'Kredyt',
       it: 'Credito',
+      sk: 'Kredyt',
     }),
     fixIssues: t({
       ru: 'Исправить проблемы',
@@ -122,6 +129,7 @@ const content = {
       ar: 'إصلاح المشكلات',
       pl: 'Napraw problemy',
       it: 'Risolvi i problemi',
+      sk: 'Napraw problemy',
     }),
     showErrors: t({
       ru: 'Показать ошибки',
@@ -137,6 +145,7 @@ const content = {
       ar: 'عرض الأخطاء',
       pl: 'Pokaż błędy',
       it: 'Mostra errori',
+      sk: 'Pokaż błędy',
     }),
     export: t({
       ru: 'Экспорт',
@@ -152,6 +161,7 @@ const content = {
       ar: 'تصدير',
       pl: 'Eksportuj',
       it: 'Esporta',
+      sk: 'Eksportuj',
     }),
     download: t({
       ru: 'Скачать',
@@ -167,6 +177,7 @@ const content = {
       ar: 'تنزيل',
       pl: 'Pobierz',
       it: 'Scarica',
+      sk: 'Pobierz',
     }),
     share: t({
       ru: 'Поделиться',
@@ -182,6 +193,7 @@ const content = {
       ar: 'مشاركة',
       pl: 'Udostępnij',
       it: 'Condividi',
+      sk: 'Udostępnij',
     }),
   },
 } satisfies Dictionary;

@@ -4,6 +4,7 @@ import { Box, IconButton, TextField } from '@mui/material';
 import { Check, X } from '@/app/components/icons';
 import React from 'react';
 import type { FolderOption } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface FolderEditRowProps {
   folder: FolderOption;
@@ -15,10 +16,10 @@ export interface FolderEditRowProps {
 }
 
 const confirmBtnSx = {
-  bgcolor: 'primary.main', color: '#fff', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: 'primary.dark' },
+  bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' },
 };
 const cancelBtnSx = {
-  border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-full)', color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' },
+  border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' },
 };
 const textFieldSx = { flex: 1 };
 

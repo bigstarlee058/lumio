@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { Check } from '@/app/components/icons';
 import Image from 'next/image';
 import React, { memo } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface BackgroundSelectorProps {
   selectedBackground: string | null;
@@ -33,7 +34,7 @@ const BackgroundCard = memo(function BackgroundCard({
         position: 'relative',
         overflow: 'hidden',
         border: selected ? '2px solid var(--primary)' : '2px solid #d1d5db',
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         aspectRatio: compact ? '2.35/1' : '16/9',
         cursor: 'pointer',
         padding: 0,
@@ -66,7 +67,7 @@ const BackgroundCard = memo(function BackgroundCard({
         >
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-full)',
+              borderRadius: tokens.radius.full,
               bgcolor: 'background.paper',
               p: 0.5,
               display: 'flex',

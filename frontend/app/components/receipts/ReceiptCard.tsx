@@ -3,6 +3,7 @@
 import type { ReceiptRecord } from '@/app/lib/api';
 import { Box, Chip, Paper, Typography } from '@mui/material';
 import { Camera, FileImage, FileText, Mail, UploadCloud } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 const statusColorMap: Record<string, { bgcolor: string; color: string }> = {
   approved: { bgcolor: '#dcfce7', color: '#166534' },
@@ -73,7 +74,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
         sx={{
           height: '100%',
           border: '1px solid #e2e8f0',
-          borderRadius: 'var(--lumio-radius-lg)',
+          borderRadius: tokens.radius.lg,
           '&:hover': { borderColor: '#cbd5e1' },
           transition: 'border-color 0.15s',
         }}
@@ -114,7 +115,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
               label={receipt.status}
               size="small"
               sx={{
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 fontSize: 12,
                 bgcolor: statusColors.bgcolor,
                 color: statusColors.color,

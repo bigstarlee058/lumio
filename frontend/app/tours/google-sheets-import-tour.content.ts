@@ -17,6 +17,7 @@ const content = {
       ar: 'جولة استيراد Google Sheets',
       pl: 'Tour importu Google Sheets',
       it: 'Tour importazione Google Sheets',
+      sk: 'Tour importu Google Sheets',
     }),
     description: t({
       ru: 'Пошаговый обзор настроек импорта и создания таблицы.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'نظرة عامة خطوة بخطوة على إعدادات الاستيراد وإنشاء الجدول.',
       pl: 'Przegląd krok po kroku ustawień importu i tworzenia tabeli.',
       it: 'Una panoramica passo dopo passo delle impostazioni di importazione e della creazione di tabelle.',
+      sk: 'Przegląd krok po kroku ustawień importu i tworzenia tabeli.',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const content = {
           ar: 'الاستيراد من Google Sheets',
           pl: 'Importuj z Google Sheets',
           it: 'Importa da Google Sheets',
+          sk: 'Importuj z Google Sheets',
         }),
         description: t({
           ru: 'Этот тур объяснит все шаги: подключение, превью, выбор колонок и импорт.',
@@ -64,6 +67,7 @@ const content = {
           ar: 'تشرح هذه الجولة جميع الخطوات: الاتصال والمعاينة وإعداد الأعمدة والاستيراد.',
           pl: 'Ten przewodnik wyjaśnia wszystkie kroki: połączenie, podgląd, konfigurację kolumn i import.',
           it: 'Questo tour spiega tutti i passaggi: connessione, anteprima, configurazione colonne e importazione.',
+          sk: 'Ten przewodnik wyjaśnia wszystkie kroki: połączenie, podgląd, konfigurację kolumn i import.',
         }),
       },
       backLink: {
@@ -81,6 +85,7 @@ const content = {
           ar: 'العودة إلى الجداول',
           pl: 'Powrót do tabel',
           it: 'Torna alle tabelle',
+          sk: 'Powrót do tabel',
         }),
         description: t({
           ru: 'Ссылка возвращает в список пользовательских таблиц.',
@@ -96,6 +101,7 @@ const content = {
           ar: 'يعود هذا الرابط إلى قائمة الجداول المخصصة.',
           pl: 'Ten link wraca do listy niestandardowych tabel.',
           it: 'Questo link torna all\'elenco delle tabelle personalizzate.',
+          sk: 'Ten link wraca do listy niestandardowych tabel.',
         }),
       },
       sourceCard: {
@@ -113,6 +119,7 @@ const content = {
           ar: 'مصدر البيانات',
           pl: 'Źródło danych',
           it: 'Sorgente dati',
+          sk: 'Źródło danych',
         }),
         description: t({
           ru: 'Здесь выбирается подключение и параметры чтения листа.',
@@ -128,6 +135,7 @@ const content = {
           ar: 'حدد هنا اتصالاً ومعلمات قراءة الورقة.',
           pl: 'Tutaj wybierz połączenie i parametry odczytu arkusza.',
           it: 'Seleziona qui una connessione e i parametri di lettura del foglio.',
+          sk: 'Tutaj wybierz połączenie i parametry odczytu arkusza.',
         }),
       },
       connection: {
@@ -145,6 +153,7 @@ const content = {
           ar: 'الاتصال',
           pl: 'Połączenie',
           it: 'Connessione',
+          sk: 'Połączenie',
         }),
         description: t({
           ru: 'Выберите Google Sheets подключение, которое хотите импортировать.',
@@ -160,6 +169,7 @@ const content = {
           ar: 'اختر اتصال Google Sheets الذي تريد استيراده.',
           pl: 'Wybierz połączenie Google Sheets, które chcesz zaimportować.',
           it: 'Scegli la connessione Google Sheets che vuoi importare.',
+          sk: 'Wybierz połączenie Google Sheets, które chcesz zaimportować.',
         }),
       },
       worksheet: {
@@ -177,6 +187,7 @@ const content = {
           ar: 'ورقة العمل',
           pl: 'Arkusz',
           it: 'Foglio di lavoro',
+          sk: 'Arkusz',
         }),
         description: t({
           ru: 'Укажите имя листа (worksheet). Если оставить пустым, будет выбран лист по умолчанию.',
@@ -192,6 +203,7 @@ const content = {
           ar: 'أدخل اسم ورقة العمل. اتركه فارغاً لاستخدام الورقة الافتراضية.',
           pl: 'Podaj nazwę arkusza. Zostaw puste, aby użyć domyślnego arkusza.',
           it: 'Inserisci un nome foglio di lavoro. Lascia vuoto per usare il foglio predefinito.',
+          sk: 'Podaj nazwę arkusza. Zostaw puste, aby użyć domyślnego arkusza.',
         }),
       },
       range: {
@@ -209,6 +221,7 @@ const content = {
           ar: 'النطاق',
           pl: 'Zakres',
           it: 'Intervallo',
+          sk: 'Zakres',
         }),
         description: t({
           ru: 'Определите диапазон данных (например A1:Z200), чтобы ограничить импорт.',
@@ -224,6 +237,7 @@ const content = {
           ar: 'حدد نطاق البيانات (مثلاً A1:Z200) لتقييد الاستيراد.',
           pl: 'Zdefiniuj zakres danych (np. A1:Z200), aby ograniczyć import.',
           it: 'Definisci un intervallo di dati (es. A1:Z200) per limitare l\'importazione.',
+          sk: 'Zdefiniuj zakres danych (np. A1:Z200), aby ograniczyć import.',
         }),
       },
       headerOffset: {
@@ -241,6 +255,7 @@ const content = {
           ar: 'إزاحة الرأس',
           pl: 'Przesunięcie nagłówka',
           it: 'Offset intestazione',
+          sk: 'Przesunięcie nagłówka',
         }),
         description: t({
           ru: 'Укажите номер строки заголовка, чтобы корректно определить названия колонок.',
@@ -256,6 +271,7 @@ const content = {
           ar: 'حدد فهرس صف الرأس للكشف عن أسماء الأعمدة بشكل صحيح.',
           pl: 'Ustaw indeks wiersza nagłówka, aby poprawnie wykryć nazwy kolumn.',
           it: 'Imposta l\'indice della riga di intestazione per rilevare correttamente i nomi delle colonne.',
+          sk: 'Ustaw indeks wiersza nagłówka, aby poprawnie wykryć nazwy kolumn.',
         }),
       },
       layout: {
@@ -273,6 +289,7 @@ const content = {
           ar: 'نوع التخطيط',
           pl: 'Typ układu',
           it: 'Tipo di layout',
+          sk: 'Typ układu',
         }),
         description: t({
           ru: 'Выберите раскладку данных для корректной интерпретации таблицы.',
@@ -288,6 +305,7 @@ const content = {
           ar: 'اختر تخطيطاً حتى يتم تفسير البيانات بشكل صحيح.',
           pl: 'Wybierz układ, aby dane były poprawnie interpretowane.',
           it: 'Scegli un layout affinché i dati vengano interpretati correttamente.',
+          sk: 'Wybierz układ, aby dane były poprawnie interpretowane.',
         }),
       },
       previewButton: {
@@ -305,6 +323,7 @@ const content = {
           ar: 'إنشاء معاينة',
           pl: 'Generuj podgląd',
           it: 'Genera anteprima',
+          sk: 'Generuj podgląd',
         }),
         description: t({
           ru: 'Нажмите, чтобы загрузить превью данных и подготовить настройки импорта.',
@@ -320,6 +339,7 @@ const content = {
           ar: 'انقر لتحميل معاينة البيانات وإعداد إعدادات الاستيراد.',
           pl: 'Kliknij, aby załadować podgląd danych i przygotować ustawienia importu.',
           it: 'Clicca per caricare un\'anteprima dei dati e preparare le impostazioni di importazione.',
+          sk: 'Kliknij, aby załadować podgląd danych i przygotować ustawienia importu.',
         }),
       },
       previewPanel: {
@@ -337,6 +357,7 @@ const content = {
           ar: 'معاينة البيانات',
           pl: 'Podgląd danych',
           it: 'Anteprima dati',
+          sk: 'Podgląd danych',
         }),
         description: t({
           ru: 'Здесь отображается превью диапазона и параметры, определенные автоматически.',
@@ -352,6 +373,7 @@ const content = {
           ar: 'تعرض هذه اللوحة نطاق المعاينة والمعلمات المكتشفة تلقائياً.',
           pl: 'Ten panel pokazuje zakres podglądu i automatycznie wykryte parametry.',
           it: 'Questo pannello mostra l\'intervallo di anteprima e i parametri rilevati automaticamente.',
+          sk: 'Ten panel pokazuje zakres podglądu i automatycznie wykryte parametry.',
         }),
       },
       columnsPanel: {
@@ -369,6 +391,7 @@ const content = {
           ar: 'الأعمدة',
           pl: 'Kolumny',
           it: 'Colonne',
+          sk: 'Kolumny',
         }),
         description: t({
           ru: 'Настройте какие колонки импортировать и их типы.',
@@ -384,6 +407,7 @@ const content = {
           ar: 'اختر الأعمدة التي تريد استيرادها وأنواعها.',
           pl: 'Wybierz kolumny do zaimportowania i ich typy.',
           it: 'Scegli quali colonne importare e i loro tipi.',
+          sk: 'Wybierz kolumny do zaimportowania i ich typy.',
         }),
       },
       enableAll: {
@@ -401,6 +425,7 @@ const content = {
           ar: 'تفعيل الكل',
           pl: 'Włącz wszystkie',
           it: 'Abilita tutto',
+          sk: 'Włącz wszystkie',
         }),
         description: t({
           ru: 'Быстро включить все колонки для импорта.',
@@ -416,6 +441,7 @@ const content = {
           ar: 'تفعيل جميع الأعمدة للاستيراد بسرعة.',
           pl: 'Szybko włącz wszystkie kolumny do importu.',
           it: 'Abilita rapidamente tutte le colonne per l\'importazione.',
+          sk: 'Szybko włącz wszystkie kolumny do importu.',
         }),
       },
       resultCard: {
@@ -433,6 +459,7 @@ const content = {
           ar: 'النتيجة',
           pl: 'Wynik',
           it: 'Risultato',
+          sk: 'Wynik',
         }),
         description: t({
           ru: 'Укажите параметры создаваемой таблицы и запускайте импорт.',
@@ -448,6 +475,7 @@ const content = {
           ar: 'حدد معلمات الجدول وابدأ الاستيراد.',
           pl: 'Ustaw parametry tabeli i rozpocznij import.',
           it: 'Imposta i parametri della tabella e avvia l\'importazione.',
+          sk: 'Ustaw parametry tabeli i rozpocznij import.',
         }),
       },
       tableName: {
@@ -465,6 +493,7 @@ const content = {
           ar: 'اسم الجدول',
           pl: 'Nazwa tabeli',
           it: 'Nome tabella',
+          sk: 'Nazwa tabeli',
         }),
         description: t({
           ru: 'Введите название будущей таблицы.',
@@ -480,6 +509,7 @@ const content = {
           ar: 'أدخل اسم الجدول الجديد.',
           pl: 'Podaj nazwę nowej tabeli.',
           it: 'Inserisci il nome per la nuova tabella.',
+          sk: 'Podaj nazwę nowej tabeli.',
         }),
       },
       category: {
@@ -497,6 +527,7 @@ const content = {
           ar: 'الفئة',
           pl: 'Kategoria',
           it: 'Categoria',
+          sk: 'Kategoria',
         }),
         description: t({
           ru: 'Можно привязать таблицу к категории для удобной навигации.',
@@ -512,6 +543,7 @@ const content = {
           ar: 'يمكنك اختياريًا ربط الجدول بفئة لتسهيل التنقل.',
           pl: 'Opcjonalnie powiąż tabelę z kategorią, aby ułatwić nawigację.',
           it: 'Facoltativamente collega la tabella a una categoria per facilitare la navigazione.',
+          sk: 'Opcjonalnie powiąż tabelę z kategorią, aby ułatwić nawigację.',
         }),
       },
       importData: {
@@ -529,6 +561,7 @@ const content = {
           ar: 'استيراد البيانات',
           pl: 'Importuj dane',
           it: 'Importa dati',
+          sk: 'Importuj dane',
         }),
         description: t({
           ru: 'Определяет, импортировать ли строки (кроме заголовков).',
@@ -544,6 +577,7 @@ const content = {
           ar: 'يحدد ما إذا كان سيتم استيراد الصفوف (باستثناء الرؤوس).',
           pl: 'Określa, czy importować wiersze (z wyłączeniem nagłówków).',
           it: 'Decide se importare le righe (escluse le intestazioni).',
+          sk: 'Określa, czy importować wiersze (z wyłączeniem nagłówków).',
         }),
       },
       importButton: {
@@ -561,6 +595,7 @@ const content = {
           ar: 'بدء الاستيراد',
           pl: 'Rozpocznij import',
           it: 'Avvia importazione',
+          sk: 'Rozpocznij import',
         }),
         description: t({
           ru: 'Запускает импорт и создание таблицы Lumio.',
@@ -576,6 +611,7 @@ const content = {
           ar: 'يبدأ الاستيراد وينشئ جدول Lumio.',
           pl: 'Uruchamia import i tworzy tabelę Lumio.',
           it: 'Avvia l\'importazione e crea una tabella Lumio.',
+          sk: 'Uruchamia import i tworzy tabelę Lumio.',
         }),
       },
       completed: {
@@ -593,6 +629,7 @@ const content = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'После завершения вы перейдете в созданную таблицу.',
@@ -608,6 +645,7 @@ const content = {
           ar: 'بعد الاكتمال ستنتقل إلى الجدول المنشأ.',
           pl: 'Po zakończeniu zostaniesz przeniesiony do utworzonej tabeli.',
           it: 'Al completamento sarai portato alla tabella creata.',
+          sk: 'Po zakończeniu zostaniesz przeniesiony do utworzonej tabeli.',
         }),
       },
     },

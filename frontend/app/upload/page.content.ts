@@ -17,6 +17,7 @@ const content = {
       ar: 'رفع كشوف الحساب البنكية',
       pl: 'Prześlij wyciągi bankowe',
       it: 'Carica estratti conto bancari',
+      sk: 'Prześlij wyciągi bankowe',
     }),
     description: t({
       ru: 'После загрузки файлы будут автоматически обработаны: извлечены транзакции, классифицированы и синхронизированы с Google Sheets (если подключен). Результаты обработки можно посмотреть на странице Выписки.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'بعد الرفع، ستتم معالجة الملفات تلقائيًا: استخراج المعاملات وتصنيفها ومزامنتها مع Google Sheets (إذا كان متصلاً). يمكنك عرض النتائج في صفحة كشوف الحساب.',
       pl: 'Po przesłaniu pliki zostaną automatycznie przetworzone: transakcje zostaną wyodrębnione, skategoryzowane i zsynchronizowane z Google Sheets (jeśli jest połączony). Wyniki można zobaczyć na stronie Wyciągi.',
       it: 'Dopo il caricamento, i file verranno elaborati automaticamente: le transazioni verranno estratte, categorizzate e sincronizzate con Google Sheets (se connesso). Puoi visualizzare i risultati nella pagina Estratti conto.',
+      sk: 'Po przesłaniu pliki zostaną automatycznie przetworzone: transakcje zostaną wyodrębnione, skategoryzowane i zsynchronizowane z Google Sheets (jeśli jest połączony). Wyniki można zobaczyć na stronie Wyciągi.',
     }),
     success: t({
       ru: 'Файлы успешно загружены! Идёт обработка... Вы будете перенаправлены на страницу выписок.',
@@ -47,6 +49,7 @@ const content = {
       ar: 'تم رفع الملفات بنجاح! جارٍ المعالجة... سيتم توجيهك إلى صفحة كشوف الحساب.',
       pl: 'Pliki przesłane pomyślnie! Trwa przetwarzanie... Zostaniesz przekierowany na stronę wyciągów.',
       it: 'File caricati con successo! L\'elaborazione è in corso... Sarai reindirizzato alla pagina degli estratti conto.',
+      sk: 'Pliki przesłane pomyślnie! Trwa przetwarzanie... Zostaniesz przekierowany na stronę wyciągów.',
     }),
     oauthLinkMissing: t({
       ru: 'Не удалось получить ссылку для авторизации Google',
@@ -62,6 +65,7 @@ const content = {
       ar: 'فشل الحصول على رابط تفويض Google',
       pl: 'Nie udało się uzyskać linku autoryzacji Google',
       it: 'Impossibile ottenere il link di autorizzazione Google',
+      sk: 'Nie udało się uzyskać linku autoryzacji Google',
     }),
     oauthStartFailed: t({
       ru: 'Не удалось начать авторизацию Google',
@@ -77,6 +81,7 @@ const content = {
       ar: 'فشل بدء تفويض Google',
       pl: 'Nie udało się uruchomić autoryzacji Google',
       it: 'Impossibile avviare l\'autorizzazione Google',
+      sk: 'Nie udało się uruchomić autoryzacji Google',
     }),
     maxTwoFiles: t({
       ru: 'Максимум 2 файла можно загрузить за раз',
@@ -92,6 +97,7 @@ const content = {
       ar: 'يمكنك رفع ما يصل إلى ملفين في المرة الواحدة',
       pl: 'Możesz przesłać maksymalnie 2 pliki na raz',
       it: 'Puoi caricare fino a 2 file alla volta',
+      sk: 'Możesz przesłać maksymalnie 2 pliki na raz',
     }),
     allowDuplicates: t({
       ru: 'Разрешить загрузку дубликатов',
@@ -107,6 +113,7 @@ const content = {
       ar: 'السماح برفع الملفات المكررة',
       pl: 'Zezwól na przesyłanie duplikatów',
       it: 'Consenti caricamento di duplicati',
+      sk: 'Zezwól na przesyłanie duplikatów',
     }),
     uploadFailed: t({
       ru: 'Не удалось загрузить файлы. Попробуйте снова.',
@@ -122,6 +129,7 @@ const content = {
       ar: 'فشل رفع الملفات. يرجى المحاولة مرة أخرى.',
       pl: 'Nie udało się przesłać plików. Spróbuj ponownie.',
       it: 'Impossibile caricare i file. Riprova.',
+      sk: 'Nie udało się przesłać plików. Spróbuj ponownie.',
     }),
     pickAtLeastOne: t({
       ru: 'Пожалуйста, выберите хотя бы один файл',
@@ -137,6 +145,7 @@ const content = {
       ar: 'يرجى تحديد ملف واحد على الأقل',
       pl: 'Proszę wybrać co najmniej jeden plik',
       it: 'Seleziona almeno un file',
+      sk: 'Proszę wybrać co najmniej jeden plik',
     }),
     googleSheetOptional: t({
       ru: 'Google Таблица (опционально)',
@@ -152,6 +161,7 @@ const content = {
       ar: 'Google Sheet (اختياري)',
       pl: 'Google Sheet (opcjonalnie)',
       it: 'Google Sheet (opzionale)',
+      sk: 'Google Sheet (opcjonalnie)',
     }),
     noSync: t({
       ru: 'Без синхронизации с Google Таблицами',
@@ -167,6 +177,7 @@ const content = {
       ar: 'بدون مزامنة Google Sheets',
       pl: 'Bez synchronizacji z Google Sheets',
       it: 'Nessuna sincronizzazione con Google Sheets',
+      sk: 'Bez synchronizacji z Google Sheets',
     }),
     googleSheetHelp: t({
       ru: 'Выберите Google Таблицу для автоматической синхронизации транзакций. Если не выбрана, данные будут сохранены только в системе.',
@@ -182,6 +193,7 @@ const content = {
       ar: 'اختر Google Sheet للمزامنة التلقائية للمعاملات. إذا لم يتم اختياره، ستُحفظ البيانات فقط في النظام.',
       pl: 'Wybierz Google Sheet do automatycznej synchronizacji transakcji. Jeśli nie zostanie wybrany, dane będą zapisywane tylko w systemie.',
       it: 'Seleziona un Google Sheet per la sincronizzazione automatica delle transazioni. Se non selezionato, i dati verranno salvati solo nel sistema.',
+      sk: 'Wybierz Google Sheet do automatycznej synchronizacji transakcji. Jeśli nie zostanie wybrany, dane będą zapisywane tylko w systemie.',
     }),
     noConnectedSheets: t({
       ru: 'Нет подключенных таблиц.',
@@ -197,6 +209,7 @@ const content = {
       ar: 'لا توجد جداول متصلة.',
       pl: 'Brak połączonych arkuszy.',
       it: 'Nessun foglio connesso.',
+      sk: 'Brak połączonych arkuszy.',
     }),
     oauthOpening: t({
       ru: 'Открытие...',
@@ -212,6 +225,7 @@ const content = {
       ar: 'جارٍ الفتح...',
       pl: 'Otwieranie...',
       it: 'Apertura...',
+      sk: 'Otwieranie...',
     }),
     connectGoogleSheets: t({
       ru: 'Подключить Google Таблицы',
@@ -227,6 +241,7 @@ const content = {
       ar: 'ربط Google Sheets',
       pl: 'Połącz Google Sheets',
       it: 'Connetti Google Sheets',
+      sk: 'Połącz Google Sheets',
     }),
     dropTitle: t({
       ru: 'Перетащите файлы сюда или нажмите, чтобы выбрать',
@@ -242,6 +257,7 @@ const content = {
       ar: 'اسحب الملفات هنا أو انقر للاختيار',
       pl: 'Przeciągnij pliki tutaj lub kliknij, aby wybrać',
       it: 'Trascina i file qui o clicca per selezionare',
+      sk: 'Przeciągnij pliki tutaj lub kliknij, aby wybrać',
     }),
     dropSubtitle: t({
       ru: 'Поддерживаемые форматы: PDF, XLSX, XLS, CSV, JPG, PNG (до 2 файлов, каждый до 10 МБ)',
@@ -257,6 +273,7 @@ const content = {
       ar: 'الصيغ المدعومة: PDF, XLSX, XLS, CSV, JPG, PNG (حتى ملفين، حتى 10 ميغابايت لكل منهما)',
       pl: 'Obsługiwane formaty: PDF, XLSX, XLS, CSV, JPG, PNG (do 2 plików, każdy do 10 MB)',
       it: 'Formati supportati: PDF, XLSX, XLS, CSV, JPG, PNG (fino a 2 file, fino a 10 MB ciascuno)',
+      sk: 'Obsługiwane formaty: PDF, XLSX, XLS, CSV, JPG, PNG (do 2 plików, każdy do 10 MB)',
     }),
     selectedFiles: t({
       ru: 'Выбранные файлы',
@@ -272,6 +289,7 @@ const content = {
       ar: 'الملفات المحددة',
       pl: 'Wybrane pliki',
       it: 'File selezionati',
+      sk: 'Wybrane pliki',
     }),
     megabytesShort: t({
       ru: 'МБ',
@@ -287,6 +305,7 @@ const content = {
       ar: 'ميغابايت',
       pl: 'MB',
       it: 'MB',
+      sk: 'MB',
     }),
     uploadButtonIdle: t({
       ru: 'Загрузить файлы',
@@ -302,6 +321,7 @@ const content = {
       ar: 'رفع الملفات',
       pl: 'Prześlij pliki',
       it: 'Carica file',
+      sk: 'Prześlij pliki',
     }),
     uploadButtonLoading: t({
       ru: 'Загрузка...',
@@ -317,6 +337,7 @@ const content = {
       ar: 'جارٍ الرفع...',
       pl: 'Przesyłanie...',
       it: 'Caricamento...',
+      sk: 'Przesyłanie...',
     }),
     afterUploadTitle: t({
       ru: 'Что происходит после загрузки?',
@@ -332,6 +353,7 @@ const content = {
       ar: 'ماذا يحدث بعد الرفع؟',
       pl: 'Co się dzieje po przesłaniu?',
       it: 'Cosa succede dopo il caricamento?',
+      sk: 'Co się dzieje po przesłaniu?',
     }),
     afterUploadSteps: {
       step1: t({
@@ -348,6 +370,7 @@ const content = {
         ar: 'يتم حفظ الملف في النظام',
         pl: 'Plik jest zapisywany w systemie',
         it: 'Il file viene salvato nel sistema',
+        sk: 'Plik jest zapisywany w systemie',
       }),
       step2: t({
         ru: 'Автоматически определяется банк и формат выписки',
@@ -363,6 +386,7 @@ const content = {
         ar: 'يتم اكتشاف البنك وتنسيق كشف الحساب تلقائيًا',
         pl: 'Bank i format wyciągu są wykrywane automatycznie',
         it: 'La banca e il formato dell\'estratto conto vengono rilevati automaticamente',
+        sk: 'Bank i format wyciągu są wykrywane automatycznie',
       }),
       step3: t({
         ru: 'Извлекаются все транзакции',
@@ -378,6 +402,7 @@ const content = {
         ar: 'يتم استخراج جميع المعاملات',
         pl: 'Wszystkie transakcje są wyodrębniane',
         it: 'Tutte le transazioni vengono estratte',
+        sk: 'Wszystkie transakcje są wyodrębniane',
       }),
       step4: t({
         ru: 'Транзакции автоматически классифицируются по категориям',
@@ -393,6 +418,7 @@ const content = {
         ar: 'يتم تصنيف المعاملات تلقائيًا',
         pl: 'Transakcje są automatycznie kategoryzowane',
         it: 'Le transazioni vengono categorizzate automaticamente',
+        sk: 'Transakcje są automatycznie kategoryzowane',
       }),
       step5: t({
         ru: 'Если выбран Google Sheet, данные синхронизируются',
@@ -408,6 +434,7 @@ const content = {
         ar: 'إذا تم اختيار Google Sheet، يتم مزامنة البيانات',
         pl: 'Jeśli wybrano Google Sheet, dane są synchronizowane',
         it: 'Se è selezionato un Google Sheet, i dati vengono sincronizzati',
+        sk: 'Jeśli wybrano Google Sheet, dane są synchronizowane',
       }),
       step6: t({
         ru: 'Результаты можно посмотреть на странице Выписки',
@@ -423,6 +450,7 @@ const content = {
         ar: 'النتائج متاحة في صفحة كشوف الحساب',
         pl: 'Wyniki są dostępne na stronie Wyciągi',
         it: 'I risultati sono disponibili nella pagina Estratti conto',
+        sk: 'Wyniki są dostępne na stronie Wyciągi',
       }),
     },
   },

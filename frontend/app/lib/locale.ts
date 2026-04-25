@@ -1,15 +1,17 @@
 'use client';
 
-export type AppLocale = 'en' | 'ru' | 'kk';
+export type AppLocale = 'en' | 'ru' | 'kk' | 'zh' | 'de' | 'fr' | 'es' | 'uk' | 'pl' | 'sk';
 
 export const DEFAULT_LOCALE: AppLocale = 'ru';
 export const LOCALE_COOKIE_NAME = 'INTLAYER_LOCALE';
+export const SUPPORTED_LOCALES = ['ru', 'en', 'kk', 'zh', 'de', 'fr', 'es', 'uk', 'pl', 'sk'] as const satisfies readonly AppLocale[];
 const LEGACY_LOCALE_COOKIE_NAME = 'intlayer-locale';
 const LOCALE_COOKIE_ATTRIBUTES = 'path=/; max-age=31536000; samesite=lax';
 const EXPIRED_COOKIE_ATTRIBUTES = 'path=/; max-age=0; samesite=lax';
 
 export function isSupportedLocale(value: string | null | undefined): value is AppLocale {
-  return value === 'en' || value === 'ru' || value === 'kk';
+  if (value == null) return false;
+  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
 function readCookie(name: string): string | null {

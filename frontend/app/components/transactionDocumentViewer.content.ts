@@ -17,6 +17,7 @@ const content = {
       ar: 'لم يتم اكتشاف البنك',
       pl: 'Nie wykryto banku',
       it: 'Banca non rilevata',
+      sk: 'Nie wykryto banku',
     }),
     bankStatement: t({
       ru: 'Банковская выписка',
@@ -32,6 +33,7 @@ const content = {
       ar: 'كشف الحساب البنكي',
       pl: 'Wyciąg bankowy',
       it: 'Estratto conto bancario',
+      sk: 'Wyciąg bankowy',
     }),
     accountNumber: t({
       ru: 'Номер счета',
@@ -47,6 +49,7 @@ const content = {
       ar: 'رقم الحساب',
       pl: 'Numer konta',
       it: 'Numero di conto',
+      sk: 'Numer konta',
     }),
     statementPeriod: t({
       ru: 'Период выписки',
@@ -62,6 +65,7 @@ const content = {
       ar: 'فترة الكشف',
       pl: 'Okres wyciągu',
       it: 'Periodo del estratto',
+      sk: 'Okres wyciągu',
     }),
     statementFile: t({
       ru: 'Файл выписки',
@@ -77,6 +81,7 @@ const content = {
       ar: 'ملف الكشف',
       pl: 'Plik wyciągu',
       it: 'File estratto',
+      sk: 'Plik wyciągu',
     }),
     openingBalance: t({
       ru: 'Начальный баланс',
@@ -92,6 +97,7 @@ const content = {
       ar: 'الرصيد الافتتاحي',
       pl: 'Saldo otwarcia',
       it: 'Saldo iniziale',
+      sk: 'Saldo otwarcia',
     }),
     income: t({
       ru: 'Поступления',
@@ -107,6 +113,7 @@ const content = {
       ar: 'الدخل',
       pl: 'Przychody',
       it: 'Entrate',
+      sk: 'Przychody',
     }),
     expenses: t({
       ru: 'Списания',
@@ -122,6 +129,7 @@ const content = {
       ar: 'المصروفات',
       pl: 'Wydatki',
       it: 'Spese',
+      sk: 'Wydatki',
     }),
     closingBalance: t({
       ru: 'Конечный баланс',
@@ -137,6 +145,7 @@ const content = {
       ar: 'الرصيد الختامي',
       pl: 'Saldo zamknięcia',
       it: 'Saldo finale',
+      sk: 'Saldo zamknięcia',
     }),
     balanceChange: t({
       ru: 'Изменение баланса за период',
@@ -152,6 +161,7 @@ const content = {
       ar: 'تغيير الرصيد للفترة',
       pl: 'Zmiana salda za okres',
       it: 'Variazione del saldo nel periodo',
+      sk: 'Zmiana salda za okres',
     }),
     totalTransactions: t({
       ru: 'Всего транзакций',
@@ -167,6 +177,7 @@ const content = {
       ar: 'إجمالي المعاملات',
       pl: 'Łączna liczba transakcji',
       it: 'Transazioni totali',
+      sk: 'Łączna liczba transakcji',
     }),
     transactionList: t({
       ru: 'Список транзакций',
@@ -182,6 +193,7 @@ const content = {
       ar: 'قائمة المعاملات',
       pl: 'Lista transakcji',
       it: 'Elenco transazioni',
+      sk: 'Lista transakcji',
     }),
     transactionListDescription: t({
       ru: 'Детальная информация по всем операциям',
@@ -197,6 +209,7 @@ const content = {
       ar: 'معلومات تفصيلية حول جميع المعاملات',
       pl: 'Szczegółowe informacje o wszystkich operacjach',
       it: 'Informazioni dettagliate su tutte le transazioni',
+      sk: 'Szczegółowe informacje o wszystkich operacjach',
     }),
     columns: {
       date: t({
@@ -213,6 +226,7 @@ const content = {
         ar: 'التاريخ',
         pl: 'Data',
         it: 'Data',
+        sk: 'Data',
       }),
       documentNumber: t({
         ru: 'Номер документа',
@@ -228,6 +242,7 @@ const content = {
         ar: 'رقم المستند',
         pl: 'Numer dokumentu',
         it: 'Numero documento',
+        sk: 'Numer dokumentu',
       }),
       counterparty: t({
         ru: 'Контрагент',
@@ -243,6 +258,7 @@ const content = {
         ar: 'الطرف المقابل',
         pl: 'Kontrahent',
         it: 'Controparte',
+        sk: 'Kontrahent',
       }),
       bin: t({
         ru: 'БИН',
@@ -258,6 +274,7 @@ const content = {
         ar: 'BIN',
         pl: 'BIN',
         it: 'BIN',
+        sk: 'BIN',
       }),
       paymentPurpose: t({
         ru: 'Назначение платежа',
@@ -273,6 +290,7 @@ const content = {
         ar: 'غرض الدفع',
         pl: 'Tytuł płatności',
         it: 'Causale del pagamento',
+        sk: 'Tytuł płatności',
       }),
       debit: t({
         ru: 'Дебет',
@@ -288,6 +306,7 @@ const content = {
         ar: 'المدين',
         pl: 'Debet',
         it: 'Debito',
+        sk: 'Debet',
       }),
       credit: t({
         ru: 'Кредит',
@@ -303,6 +322,7 @@ const content = {
         ar: 'الدائن',
         pl: 'Kredyt',
         it: 'Credito',
+        sk: 'Kredyt',
       }),
       currency: t({
         ru: 'Валюта',
@@ -318,6 +338,7 @@ const content = {
         ar: 'العملة',
         pl: 'Waluta',
         it: 'Valuta',
+        sk: 'Waluta',
       }),
     },
     total: t({
@@ -334,6 +355,7 @@ const content = {
       ar: 'الإجمالي:',
       pl: 'ŁĄCZNIE:',
       it: 'TOTALE:',
+      sk: 'ŁĄCZNIE:',
     }),
     totalExpenses: t({
       ru: 'Всего списаний',
@@ -349,6 +371,7 @@ const content = {
       ar: 'إجمالي المصروفات',
       pl: 'Łączne wydatki',
       it: 'Totale spese',
+      sk: 'Łączne wydatki',
     }),
     totalIncome: t({
       ru: 'Всего поступлений',
@@ -364,6 +387,7 @@ const content = {
       ar: 'إجمالي الدخل',
       pl: 'Łączne przychody',
       it: 'Totale entrate',
+      sk: 'Łączne przychody',
     }),
     footer: t({
       ru: 'Документ сформирован автоматически • Lumio Parse Ledger',
@@ -379,6 +403,7 @@ const content = {
       ar: 'تم إنشاء المستند تلقائيًا • Lumio Parse Ledger',
       pl: 'Dokument wygenerowany automatycznie • Lumio Parse Ledger',
       it: 'Documento generato automaticamente • Lumio Parse Ledger',
+      sk: 'Dokument wygenerowany automatycznie • Lumio Parse Ledger',
     }),
   },
 } satisfies Dictionary;

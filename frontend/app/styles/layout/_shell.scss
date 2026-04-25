@@ -1,0 +1,494 @@
+// _shell.scss — BEM block for the vertical sidebar shell
+@use '../abstracts' as *;
+
+// ── Layout shell ──
+.lumio-shell {
+  display: flex;
+  min-height: 100vh;
+
+  &__sidebar {
+    width: 248px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    background: $lumio-color-surface;
+    border-right: 1px solid $lumio-color-border;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 40;
+
+    &--mobile {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: $lumio-shadow-lg;
+    }
+
+    &--mobile-visible {
+      transform: translateX(0);
+    }
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: $lumio-color-bg;
+  }
+}
+
+// ── Brand ──
+.lumio-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 12px;
+  flex-shrink: 0;
+
+  &-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: $lumio-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  &-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $lumio-color-text-primary;
+    letter-spacing: -0.02em;
+  }
+
+  &-meta {
+    font-size: 10px;
+    font-weight: 600;
+    color: $lumio-color-ink-400;
+    background: $lumio-color-ink-100;
+    border-radius: $lumio-radius-xs;
+    padding: 1px 5px;
+    letter-spacing: 0.02em;
+  }
+}
+
+// ── Workspace switcher ──
+.lumio-sidebar__ws-switcher {
+  margin: 0 10px 8px;
+  padding: 8px;
+  border-radius: $lumio-radius-md;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  border: 1px solid transparent;
+  transition: background 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $lumio-color-ink-50;
+    border-color: $lumio-color-border;
+
+    @include dark {
+      background: $lumio-color-ink-100-dk;
+    }
+  }
+}
+
+.lumio-sidebar__ws-chip {
+  width: 28px;
+  height: 28px;
+  border-radius: $lumio-radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.lumio-sidebar__ws-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lumio-sidebar__ws-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: $lumio-color-text-primary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lumio-sidebar__ws-role {
+  font-size: 11px;
+  color: $lumio-color-text-secondary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lumio-sidebar__ws-chevron {
+  color: $lumio-color-ink-400;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+// Workspace dropdown
+.lumio-sidebar__ws-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: $lumio-color-surface;
+  border: 1px solid $lumio-color-border;
+  border-radius: $lumio-radius-md;
+  box-shadow: $lumio-shadow-md;
+  padding: 4px;
+  z-index: 50;
+
+  &-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $lumio-color-ink-400;
+    padding: 4px 8px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.lumio-sidebar__ws-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: $lumio-radius-sm;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: $lumio-color-text-primary;
+  text-align: left;
+  transition: background 0.1s;
+
+  &:hover {
+    background: $lumio-color-ink-50;
+
+    @include dark {
+      background: $lumio-color-ink-100-dk;
+    }
+  }
+
+  &--active {
+    font-weight: 600;
+  }
+
+  &-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ── CTA button ──
+.lumio-sidebar__cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 10px 12px;
+  padding: 7px 10px;
+  border-radius: $lumio-radius-md;
+  background: $lumio-color-ink-900;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: background 0.12s, transform 0.06s;
+  box-shadow: $lumio-shadow-xs;
+
+  &:hover {
+    background: $lumio-color-ink-800;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  @include dark {
+    background: $lumio-color-primary-dk;
+
+    &:hover {
+      background: $lumio-color-primary-hover-dk;
+    }
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: $lumio-radius-xs;
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.lumio-sidebar__kbd {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $lumio-radius-xs;
+  padding: 1px 5px;
+  letter-spacing: 0.01em;
+}
+
+// ── Navigation ──
+.lumio-sidebar__nav {
+  flex: 1;
+  padding: 0 10px;
+  overflow-y: auto;
+}
+
+.lumio-sidebar__section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: $lumio-color-ink-400;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 8px 4px;
+}
+
+.lumio-sidebar__nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: $lumio-radius-sm;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: $lumio-color-text-secondary;
+  text-align: left;
+  text-decoration: none;
+  transition: background 0.1s, color 0.1s;
+  font-family: inherit;
+
+  &:hover {
+    background: $lumio-color-ink-50;
+    color: $lumio-color-text-primary;
+
+    @include dark {
+      background: $lumio-color-ink-100-dk;
+    }
+  }
+
+  &--active {
+    background: $lumio-color-primary-50;
+    color: $lumio-color-primary;
+    font-weight: 600;
+
+    @include dark {
+      background: $lumio-color-primary-100-dk;
+      color: $lumio-color-primary-dk;
+    }
+
+    &:hover {
+      background: $lumio-color-primary-100;
+
+      @include dark {
+        background: $lumio-color-primary-200-dk;
+      }
+    }
+
+    .lumio-sidebar__nav-icon {
+      opacity: 1;
+    }
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  &-label {
+    flex: 1;
+  }
+}
+
+// ── Footer / Storage widget ──
+.lumio-sidebar__footer {
+  flex-shrink: 0;
+  padding: 10px;
+  border-top: 1px solid $lumio-color-border;
+}
+
+.lumio-sidebar__storage {
+  padding: 10px;
+  border-radius: $lumio-radius-md;
+  background: $lumio-color-ink-50;
+
+  @include dark {
+    background: $lumio-color-ink-100-dk;
+  }
+
+  &-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: $lumio-color-text-secondary;
+    margin-bottom: 6px;
+  }
+
+  &-label {
+    font-weight: 500;
+  }
+
+  &-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-bar {
+    height: 4px;
+    border-radius: $lumio-radius-full;
+    background: $lumio-color-border;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  &-fill {
+    height: 100%;
+    border-radius: $lumio-radius-full;
+    background: $lumio-color-primary;
+    transition: width 0.3s;
+  }
+}
+
+// ── TopBar ──
+.lumio-topbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  background: $lumio-color-surface;
+  border-bottom: 1px solid $lumio-color-border;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  flex-shrink: 0;
+
+  &__breadcrumbs {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__icon-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $lumio-radius-sm;
+    border: none;
+    background: transparent;
+    color: $lumio-color-ink-500;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    font-family: inherit;
+
+    &:hover {
+      background: $lumio-color-ink-100;
+      color: $lumio-color-text-primary;
+    }
+  }
+
+  &__hamburger {
+    display: none;
+  }
+}
+
+// ── Mobile sidebar overlay ──
+.lumio-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 45;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  &--visible {
+    opacity: 1;
+  }
+}
+
+// ── Responsive ──
+@media (max-width: 1023px) {
+  .lumio-shell__sidebar {
+    display: none;
+
+    &--mobile {
+      display: flex;
+    }
+  }
+
+  .lumio-sidebar-overlay {
+    display: block;
+  }
+
+  .lumio-topbar__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: $lumio-radius-sm;
+    border: none;
+    background: transparent;
+    color: $lumio-color-ink-500;
+    cursor: pointer;
+    transition: background 0.1s;
+    margin-right: 4px;
+    flex-shrink: 0;
+
+    &:hover {
+      background: $lumio-color-ink-100;
+    }
+  }
+}

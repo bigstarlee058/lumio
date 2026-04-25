@@ -9,6 +9,7 @@ import { TopSpendersPageHeader } from '@/app/(main)/statements/components/top-sp
 import { useTopSpendersViewModel } from '@/app/(main)/statements/components/top-spenders/hooks/useTopSpendersViewModel';
 import type { TopSpendersViewModelReturn } from '@/app/(main)/statements/components/top-spenders/hooks/useTopSpendersViewModel';
 import { Spinner } from '@/app/components/ui/spinner';
+import { tokens } from '@/lib/theme-tokens';
 
 type VmProps = { vm: TopSpendersViewModelReturn };
 
@@ -22,7 +23,7 @@ function TopSpendersBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: 'var(--lumio-radius-lg)' }}>
+      <div style={{ border: '1px dashed #d1d5db', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: tokens.radius.lg }}>
         {vm.labels.noData}
       </div>
     );

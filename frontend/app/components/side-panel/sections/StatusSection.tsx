@@ -5,6 +5,7 @@ import type { StatusItem, StatusSection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
 import { STATUS_COLOR_MAP } from './helpers/section-constants';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function
 function StatusItemComponent({ item }: { item: StatusItem }) {
@@ -20,7 +21,7 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
         style={{
           width: 8,
           height: 8,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           flexShrink: 0,
           backgroundColor: STATUS_COLOR_MAP[item.status] ?? '#9ca3af',
         }}

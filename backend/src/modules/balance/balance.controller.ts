@@ -1,11 +1,8 @@
-import { Body, Controller, Get, Put, Query, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -15,12 +12,11 @@ import { ExportBalanceDto } from './dto/export-balance.dto';
 import { UpdateBalanceSnapshotDto } from './dto/update-balance-snapshot.dto';
 
 @Controller('reports/balance')
-@UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
 export class BalanceController {
   constructor(private readonly balanceService: BalanceService) {}
 
   @Get('sheet')
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getSheet(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -34,7 +30,7 @@ export class BalanceController {
   }
 
   @Get('accounts')
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getAccounts(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -48,7 +44,7 @@ export class BalanceController {
   }
 
   @Put('snapshot')
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async updateSnapshot(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -58,7 +54,7 @@ export class BalanceController {
   }
 
   @Get('export')
-  @RequirePermission(Permission.REPORT_EXPORT)
+  @WorkspaceAuth(Permission.REPORT_EXPORT)
   async exportBalance(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,

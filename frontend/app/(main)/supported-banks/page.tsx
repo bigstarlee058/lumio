@@ -7,6 +7,7 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { Building2, CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
+import { tokens } from '@/lib/theme-tokens';
 
 type SupportedBankCard = {
   id: string;
@@ -65,7 +66,7 @@ export default function SupportedBanksPage(): React.JSX.Element {
             icon={<CheckCircle2 size={14} />}
             label={resolveLabel(getNestedValue(t, ['parserStatus']), 'Parser is active')}
             size="small"
-            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: 'var(--lumio-radius-full)' }}
+            sx={{ bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', fontWeight: 600, borderRadius: tokens.radius.full }}
           />
         </Box>
       </Box>

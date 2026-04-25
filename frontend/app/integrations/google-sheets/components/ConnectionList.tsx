@@ -4,6 +4,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import type React from 'react';
 import type { GoogleSheetConnection } from '../useGoogleSheetsPage';
 import { ConnectionCard } from './ConnectionCard';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ConnectionListTexts {
   list: {
@@ -34,7 +35,7 @@ function LoadingSkeleton(): React.JSX.Element {
   return (
     <Stack spacing={1}>
       {[1, 2].map(key => (
-        <Box key={key} sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #f3f4f6', bgcolor: '#f9fafb', p: 1.5, height: 80, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+        <Box key={key} sx={{ borderRadius: tokens.radius.lg, border: '1px solid #f3f4f6', bgcolor: '#f9fafb', p: 1.5, height: 80, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
       ))}
     </Stack>
   );
@@ -43,13 +44,13 @@ function LoadingSkeleton(): React.JSX.Element {
 // eslint-disable-next-line max-lines-per-function
 export function ConnectionList({ connections, loadingList, emptyState, syncingId, removingId, locale, t, onAuthorize, onSync, onRemove }: ConnectionListProps): React.JSX.Element {
   return (
-    <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-list">
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id="gs-integration-list">
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
         <Typography style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>{t.list.title}</Typography>
         <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.list.subtitle}</Typography>
       </Box>
       {loadingList ? <LoadingSkeleton /> : emptyState ? (
-        <Box sx={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 2 }}>
+        <Box sx={{ borderRadius: tokens.radius.lg, border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 2 }}>
           <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.list.empty}</Typography>
         </Box>
       ) : (

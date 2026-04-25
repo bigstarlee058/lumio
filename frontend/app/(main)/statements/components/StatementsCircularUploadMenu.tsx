@@ -9,6 +9,7 @@ import { Cloud, Plus, Receipt, ScanLine, Scan } from '@/app/components/icons';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   providers: ConnectedCloudProviders;
@@ -254,7 +255,7 @@ export default function StatementsCircularUploadMenu({
                 width: 44,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 border: '1px solid var(--border-color, #e5e7eb)',
                 background: 'var(--card-bg, #fff)',
                 color: 'var(--foreground)',
@@ -275,7 +276,7 @@ export default function StatementsCircularUploadMenu({
                 zIndex: 50,
                 transform: 'translateY(-50%)',
                 whiteSpace: 'nowrap',
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 border: '1px solid var(--border-color, #e5e7eb)',
                 background: 'var(--card-bg, #fff)',
                 padding: '4px 10px',
@@ -305,7 +306,7 @@ export default function StatementsCircularUploadMenu({
           width: 56,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           background: 'var(--primary)',
           color: '#fff',
           transition: 'all 0.2s',
@@ -336,7 +337,7 @@ export default function StatementsCircularUploadMenu({
           width: 56,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           border: '1px solid var(--border-color, #e5e7eb)',
           background: 'var(--card-bg, #fff)',
           color: 'var(--muted-foreground)',

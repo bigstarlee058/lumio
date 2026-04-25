@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-export type SupportedLocale = 'ru' | 'en' | 'kk';
+export type { AppLocale as SupportedLocale } from '@/app/lib/locale';
 
 export interface OnboardingData {
   locale: SupportedLocale;

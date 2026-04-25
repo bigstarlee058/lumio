@@ -17,6 +17,7 @@ const content = {
       ar: 'البحث بالطرف المقابل أو الغرض أو الفئة...',
       pl: 'Szukaj po kontrahencie, tytule lub kategorii...',
       it: 'Cerca per controparte, scopo o categoria...',
+      sk: 'Szukaj po kontrahencie, tytule lub kategorii...',
     }),
     empty: t({
       ru: 'Транзакции не найдены',
@@ -32,6 +33,7 @@ const content = {
       ar: 'لم يتم العثور على معاملات',
       pl: 'Nie znaleziono transakcji',
       it: 'Nessuna transazione trovata',
+      sk: 'Nie znaleziono transakcji',
     }),
     pagination: {
       rowsPerPage: t({
@@ -48,6 +50,7 @@ const content = {
         ar: 'صفوف في الصفحة:',
         pl: 'Wierszy na stronę:',
         it: 'Righe per pagina:',
+        sk: 'Wierszy na stronę:',
       }),
       of: t({
         ru: 'из',
@@ -63,6 +66,7 @@ const content = {
         ar: 'من',
         pl: 'z',
         it: 'di',
+        sk: 'z',
       }),
     },
     dash: t({
@@ -79,6 +83,7 @@ const content = {
       ar: '—',
       pl: '—',
       it: '—',
+      sk: '—',
     }),
     type: {
       income: t({
@@ -95,6 +100,7 @@ const content = {
         ar: 'دخل',
         pl: 'Przychód',
         it: 'Entrata',
+        sk: 'Przychód',
       }),
       expense: t({
         ru: 'Расход',
@@ -110,6 +116,7 @@ const content = {
         ar: 'مصروف',
         pl: 'Wydatek',
         it: 'Spesa',
+        sk: 'Wydatek',
       }),
       transfer: t({
         ru: 'Перевод',
@@ -125,6 +132,7 @@ const content = {
         ar: 'تحويل',
         pl: 'Przelew',
         it: 'Trasferimento',
+        sk: 'Przelew',
       }),
     },
     columns: {
@@ -142,6 +150,7 @@ const content = {
         ar: 'التاريخ',
         pl: 'Data',
         it: 'Data',
+        sk: 'Data',
       }),
       documentNumber: t({
         ru: 'Номер документа',
@@ -157,6 +166,7 @@ const content = {
         ar: 'رقم المستند',
         pl: 'Numer dokumentu',
         it: 'Numero documento',
+        sk: 'Numer dokumentu',
       }),
       counterpartyName: t({
         ru: 'Контрагент',
@@ -172,6 +182,7 @@ const content = {
         ar: 'الطرف المقابل',
         pl: 'Kontrahent',
         it: 'Controparte',
+        sk: 'Kontrahent',
       }),
       counterpartyBin: t({
         ru: 'БИН',
@@ -187,6 +198,7 @@ const content = {
         ar: 'BIN',
         pl: 'BIN',
         it: 'BIN',
+        sk: 'BIN',
       }),
       paymentPurpose: t({
         ru: 'Назначение платежа',
@@ -202,6 +214,7 @@ const content = {
         ar: 'غرض الدفع',
         pl: 'Tytuł płatności',
         it: 'Causale del pagamento',
+        sk: 'Tytuł płatności',
       }),
       debit: t({
         ru: 'Дебет',
@@ -217,6 +230,7 @@ const content = {
         ar: 'المدين',
         pl: 'Debet',
         it: 'Debito',
+        sk: 'Debet',
       }),
       credit: t({
         ru: 'Кредит',
@@ -232,6 +246,7 @@ const content = {
         ar: 'الدائن',
         pl: 'Kredyt',
         it: 'Credito',
+        sk: 'Kredyt',
       }),
       currency: t({
         ru: 'Валюта',
@@ -247,6 +262,7 @@ const content = {
         ar: 'العملة',
         pl: 'Waluta',
         it: 'Valuta',
+        sk: 'Waluta',
       }),
       exchangeRate: t({
         ru: 'Курс',
@@ -262,6 +278,7 @@ const content = {
         ar: 'سعر الصرف',
         pl: 'Kurs',
         it: 'Tasso',
+        sk: 'Kurs',
       }),
       transactionType: t({
         ru: 'Тип',
@@ -277,6 +294,7 @@ const content = {
         ar: 'النوع',
         pl: 'Typ',
         it: 'Tipo',
+        sk: 'Typ',
       }),
       category: t({
         ru: 'Категория',
@@ -292,6 +310,7 @@ const content = {
         ar: 'الفئة',
         pl: 'Kategoria',
         it: 'Categoria',
+        sk: 'Kategoria',
       }),
       article: t({
         ru: 'Статья',
@@ -307,6 +326,7 @@ const content = {
         ar: 'المادة',
         pl: 'Pozycja',
         it: 'Articolo',
+        sk: 'Pozycja',
       }),
       amountForeign: t({
         ru: 'Сумма в валюте',
@@ -322,6 +342,7 @@ const content = {
         ar: 'المبلغ بالعملة',
         pl: 'Kwota w walucie',
         it: 'Importo in valuta',
+        sk: 'Kwota w walucie',
       }),
       branch: t({
         ru: 'Филиал',
@@ -337,6 +358,7 @@ const content = {
         ar: 'الفرع',
         pl: 'Oddział',
         it: 'Filiale',
+        sk: 'Oddział',
       }),
       wallet: t({
         ru: 'Кошелёк',
@@ -352,6 +374,7 @@ const content = {
         ar: 'المحفظة',
         pl: 'Portfel',
         it: 'Portafoglio',
+        sk: 'Portfel',
       }),
     },
   },

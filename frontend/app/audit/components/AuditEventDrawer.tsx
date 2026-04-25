@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import React from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { DiffViewer } from './DiffViewer';
+import { tokens } from '@/lib/theme-tokens';
 
 interface AuditEventDrawerProps {
   event: AuditEvent | null;
@@ -86,7 +87,7 @@ function EventDrawerBody({ event, onRollback }: { event: AuditEvent; onRollback?
         <button
           type="button"
           onClick={() => onRollback?.(event)}
-          style={{ width: '100%', border: '1px solid #fecaca', background: '#fef2f2', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#b91c1c', cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' }}
+          style={{ width: '100%', border: '1px solid #fecaca', background: '#fef2f2', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#b91c1c', cursor: 'pointer', borderRadius: tokens.radius.md }}
         >
           Откатить изменение
         </button>

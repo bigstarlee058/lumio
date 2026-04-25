@@ -4,6 +4,7 @@ import type { JSX } from 'react';
 import { AnalyticsSourceBadge } from '@/app/(main)/statements/components/analytics/AnalyticsSourceBadge';
 import type { AggregateSortKey, TopMerchantAggregateRow, TopMerchantSourceChannel } from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
 import { formatMoney } from '@/app/lib/analytics-common';
+import { tokens } from '@/lib/theme-tokens';
 
 type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
 type SortLabels = { sortByAmount: string; sortByAverage: string; sortByOperations: string };
@@ -27,7 +28,7 @@ type SortBtnProps = { label: string; active: boolean; onClick: () => void };
 
 function SortBtn({ label, active, onClick }: SortBtnProps): React.JSX.Element {
   return (
-    <button type="button" style={{ borderRadius: 'var(--lumio-radius-sm)', padding: '4px 10px', fontSize: 12, fontWeight: 500, background: active ? '#fff' : 'transparent', color: active ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: active ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }} onClick={onClick}>
+    <button type="button" style={{ borderRadius: tokens.radius.sm, padding: '4px 10px', fontSize: 12, fontWeight: 500, background: active ? '#fff' : 'transparent', color: active ? '#111827' : '#4b5563', border: 'none', cursor: 'pointer', boxShadow: active ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }} onClick={onClick}>
       {label}
     </button>
   );
@@ -54,13 +55,13 @@ function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): 
 export function TopMerchantsLeaderboard({ rows, sortKey, onSortChange, onRowClick, title, currency, sourceLabels, sortLabels, columnLabels }: Props): React.JSX.Element {
   const sortKeyLabels: Record<AggregateSortKey, string> = { amount: sortLabels.sortByAmount, average: sortLabels.sortByAverage, operations: sortLabels.sortByOperations };
   return (
-    <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: 'var(--lumio-radius-lg)' }}>
+    <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 20, borderRadius: tokens.radius.lg }}>
       <div style={{ marginBottom: 8, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{title}</h3>
           <span style={{ fontSize: 12, color: '#6b7280' }}>{rows.length}</span>
         </div>
-        <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: '#f9fafb', padding: 4, borderRadius: 'var(--lumio-radius-md)' }}>
+        <div style={{ display: 'inline-flex', border: '1px solid #e5e7eb', background: '#f9fafb', padding: 4, borderRadius: tokens.radius.md }}>
           {SORT_KEYS.map(k => <SortBtn key={k} label={sortKeyLabels[k]} active={sortKey === k} onClick={() => onSortChange(k)} />)}
         </div>
       </div>

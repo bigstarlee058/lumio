@@ -7,6 +7,7 @@ import type { CSSProperties } from 'react';
 import type { CustomTableColumn, CustomTableGridRow } from '../utils/stylingUtils';
 import { getRowStyle } from '../utils/stylingUtils';
 import type { FormatMobileCellFn, SelectRowFn } from './MobileTableView.types';
+import { tokens } from '@/lib/theme-tokens';
 
 interface MobileTableViewProps {
   isDark: boolean;
@@ -35,8 +36,8 @@ interface MobileTableViewProps {
 
 type P = MobileTableViewProps;
 
-const BTN_BASE: CSSProperties = { borderRadius: 'var(--lumio-radius-md)', border: '1px solid #e5e7eb', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#374151', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
-const DELETE_BTN: CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, borderRadius: 'var(--lumio-radius-md)', border: '1px solid #fecaca', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#dc2626', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
+const BTN_BASE: CSSProperties = { borderRadius: tokens.radius.md, border: '1px solid #e5e7eb', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#374151', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
+const DELETE_BTN: CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, borderRadius: tokens.radius.md, border: '1px solid #fecaca', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#dc2626', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
 
 interface MobileRowActionsProps {
   row: CustomTableGridRow;
@@ -143,7 +144,7 @@ function MobileScrollHeader({ isDark, rows, selectedRowIds, allRowsSelectedMobil
         <Checkbox checked={allRowsSelectedMobile} indeterminate={someRowsSelectedMobile && !allRowsSelectedMobile} onCheckedChange={onSelectAll} aria-label="Select all rows" />
         <span>{selectedRowIds.length}/{rows.length}</span>
       </div>
-      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 'var(--lumio-radius-md)', border: '1px dashed #d1d5db', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: '#4b5563', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
+      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: '#4b5563', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
     </div>
   );
 }

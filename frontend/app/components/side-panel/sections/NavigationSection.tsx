@@ -7,6 +7,7 @@ import type { NavigationItem, NavigationSection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
 import Link from 'next/link';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function, complexity
 function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; depth?: number }) {
@@ -51,7 +52,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
               padding: '0 6px',
               fontSize: 10,
               fontWeight: 600,
-              borderRadius: 'var(--lumio-radius-full)',
+              borderRadius: tokens.radius.full,
               backgroundColor: 'var(--primary)',
               color: 'white',
             }}
@@ -88,7 +89,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
     border: 'none',
     cursor: item.disabled ? 'not-allowed' : 'pointer',
     opacity: item.disabled ? 0.5 : 1,
-    borderRadius: 'var(--lumio-radius-md)',
+    borderRadius: tokens.radius.md,
     backgroundColor: item.active
       ? isHighEmphasis
         ? 'rgba(var(--primary-rgb),0.1)'

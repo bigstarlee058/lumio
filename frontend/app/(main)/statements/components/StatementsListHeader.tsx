@@ -13,6 +13,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal } from '@/app/components/icons';
 import type { ComponentPropsWithoutRef, JSX } from 'react';
 import { StatementsBulkActions } from './StatementsBulkActions';
+import { tokens } from '@/lib/theme-tokens';
 
 interface FilterOption {
   value: string;
@@ -415,7 +416,7 @@ export function StatementsListHeader({
               alignItems: 'center',
               gap: 6,
               whiteSpace: 'nowrap',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               padding: '6px 8px',
               fontSize: 13,
               fontWeight: 500,
@@ -437,7 +438,7 @@ export function StatementsListHeader({
                   width: 20,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius: 'var(--lumio-radius-full)',
+                  borderRadius: tokens.radius.full,
                   background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
                   fontSize: 12,
                   fontWeight: 600,
@@ -456,7 +457,7 @@ export function StatementsListHeader({
               alignItems: 'center',
               gap: 6,
               whiteSpace: 'nowrap',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
               padding: '6px 8px',
               fontSize: 13,
               fontWeight: 500,

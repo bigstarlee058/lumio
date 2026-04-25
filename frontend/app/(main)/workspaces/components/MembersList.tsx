@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { ChevronDown, MoreHorizontal } from '@/app/components/icons';
 import { useState } from 'react';
 import type { WorkspaceMember, WorkspaceRole } from './hooks/useMemberManagement';
+import { tokens } from '@/lib/theme-tokens';
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: {
@@ -125,7 +126,7 @@ export function MembersList({
                   height: 36,
                   flexShrink: 0,
                   overflow: 'hidden',
-                  borderRadius: 'var(--lumio-radius-full)',
+                  borderRadius: tokens.radius.full,
                   bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                   color: 'var(--primary)',
                   display: 'flex',
@@ -200,7 +201,7 @@ export function MembersList({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: 4,
-                          borderRadius: 'var(--lumio-radius-sm)',
+                          borderRadius: tokens.radius.sm,
                           border: `1px solid ${roleStyle.border}`,
                           background: roleStyle.bg,
                           color: roleStyle.color,
@@ -239,7 +240,7 @@ export function MembersList({
                   ) : (
                     <span
                       style={{
-                        borderRadius: 'var(--lumio-radius-sm)',
+                        borderRadius: tokens.radius.sm,
                         border: `1px solid ${roleStyle.border}`,
                         background: roleStyle.bg,
                         color: roleStyle.color,

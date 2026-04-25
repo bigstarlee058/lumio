@@ -5,6 +5,7 @@ import { CheckCircle2, ExternalLink, Star } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface IntegrationAction {
   label: React.ReactNode;
@@ -26,7 +27,7 @@ export interface IntegrationItem {
   actions: IntegrationAction[];
 }
 
-const externalLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#374151', textDecoration: 'none' };
+const externalLinkStyle: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, color: '#374151', textDecoration: 'none' };
 
 function ExternalActionLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
@@ -39,7 +40,7 @@ function ExternalActionLink({ action }: { action: IntegrationAction }): React.JS
 
 function DisabledPrimaryButton({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
-    <button type="button" disabled style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#9ca3af', cursor: 'not-allowed', background: 'transparent' }} onClick={(e): void => e.stopPropagation()}>
+    <button type="button" disabled style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, color: '#9ca3af', cursor: 'not-allowed', background: 'transparent' }} onClick={(e): void => e.stopPropagation()}>
       {action.label}
     </button>
   );
@@ -47,7 +48,7 @@ function DisabledPrimaryButton({ action }: { action: IntegrationAction }): React
 
 function PrimaryLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
-    <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 16px', fontSize: 12, fontWeight: 500, borderRadius: 'var(--lumio-radius-md)', background: 'var(--color-primary)', color: '#fff', textDecoration: 'none' }}>
+    <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 16px', fontSize: 12, fontWeight: 500, borderRadius: tokens.radius.md, background: 'var(--color-primary)', color: '#fff', textDecoration: 'none' }}>
       {action.label}
     </Link>
   );
@@ -55,7 +56,7 @@ function PrimaryLink({ action }: { action: IntegrationAction }): React.JSX.Eleme
 
 function SecondaryLink({ action }: { action: IntegrationAction }): React.JSX.Element {
   return (
-    <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', color: '#374151', textDecoration: 'none' }}>
+    <Link href={action.href} onClick={(e): void => e.stopPropagation()} style={{ display: 'inline-flex', alignItems: 'center', padding: '6px 12px', fontSize: 12, fontWeight: 500, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, color: '#374151', textDecoration: 'none' }}>
       {action.label}
     </Link>
   );
@@ -71,13 +72,13 @@ function ActionButton({ action, active }: { action: IntegrationAction; active: b
 function IntegrationBadge({ recommended, badge }: { recommended: boolean; badge: React.ReactNode }): React.JSX.Element {
   if (recommended) {
     return (
-      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 'var(--lumio-radius-sm)' }}>
+      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: tokens.radius.sm }}>
         <Star style={{ height: 12, width: 12, marginRight: 4 }} />{badge}
       </Box>
     );
   }
   return (
-    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', borderRadius: 'var(--lumio-radius-sm)' }}>
+    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', fontSize: 12, fontWeight: 600, px: 1, py: 0.25, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', borderRadius: tokens.radius.sm }}>
       <CheckCircle2 style={{ height: 12, width: 12, marginRight: 4 }} /> {badge}
     </Box>
   );
@@ -108,7 +109,7 @@ function isItemClickable(item: IntegrationItem): boolean {
 }
 
 function makeCardSx(clickable: boolean): object {
-  return { border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-lg)', p: 2, bgcolor: 'background.paper', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', cursor: clickable ? 'pointer' : 'default', '&:hover': { boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }, '&:focus-visible': { outline: '2px solid var(--color-primary)', outlineOffset: 2 } };
+  return { border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, p: 2, bgcolor: 'background.paper', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', cursor: clickable ? 'pointer' : 'default', '&:hover': { boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }, '&:focus-visible': { outline: '2px solid var(--color-primary)', outlineOffset: 2 } };
 }
 
 export function IntegrationCard({ item, onCardClick }: IntegrationCardProps): React.JSX.Element {
@@ -128,7 +129,7 @@ export function IntegrationCard({ item, onCardClick }: IntegrationCardProps): Re
       onKeyDown={handleKeyDown}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-        <Box sx={{ p: 1, borderRadius: 'var(--lumio-radius-sm)', bgcolor: '#f9fafb', border: '1px solid #f3f4f6', display: 'flex' }}>{item.icon}</Box>
+        <Box sx={{ p: 1, borderRadius: tokens.radius.sm, bgcolor: '#f9fafb', border: '1px solid #f3f4f6', display: 'flex' }}>{item.icon}</Box>
         <IntegrationCardBody item={item} />
       </Box>
     </Box>
@@ -139,12 +140,12 @@ export function CategoryDivider({ label }: { label: React.ReactNode }): React.JS
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
       <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
-      <Box component="span" sx={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b7280', px: 1.5, py: 0.5, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-sm)', bgcolor: 'background.paper' }}>{label}</Box>
+      <Box component="span" sx={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b7280', px: 1.5, py: 0.5, border: '1px solid #e5e7eb', borderRadius: tokens.radius.sm, bgcolor: 'background.paper' }}>{label}</Box>
       <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
     </Box>
   );
 }
 
 export function IntegrationIcon({ src, alt }: { src: string; alt: string }): React.JSX.Element {
-  return <Image src={src} alt={alt} width={32} height={32} style={{ borderRadius: 'var(--lumio-radius-md)' }} />;
+  return <Image src={src} alt={alt} width={32} height={32} style={{ borderRadius: tokens.radius.md }} />;
 }

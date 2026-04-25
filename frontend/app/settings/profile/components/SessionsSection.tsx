@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   t: {
@@ -53,7 +54,7 @@ export function SessionsSection({
 
       <Box
         sx={{
-          borderRadius: 'var(--lumio-radius-lg)',
+          borderRadius: tokens.radius.lg,
           border: '1px solid',
           borderColor: 'divider',
           bgcolor: 'action.hover',
@@ -80,7 +81,7 @@ export function SessionsSection({
               display: 'flex',
               alignItems: 'center',
               gap: 1,
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px solid',
               borderColor: 'divider',
               px: 2,
@@ -105,7 +106,7 @@ export function SessionsSection({
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
                     gap: 2,
-                    borderRadius: 'var(--lumio-radius-lg)',
+                    borderRadius: tokens.radius.lg,
                     border: '1px solid',
                     borderColor: 'divider',
                     bgcolor: 'background.paper',
@@ -124,7 +125,7 @@ export function SessionsSection({
                         width: 40,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: 'var(--lumio-radius-sm)',
+                        borderRadius: tokens.radius.sm,
                         bgcolor: 'primary.light',
                         color: 'primary.main',
                         flexShrink: 0,
@@ -178,7 +179,7 @@ export function SessionsSection({
         ) : (
           <Box
             sx={{
-              borderRadius: 'var(--lumio-radius-lg)',
+              borderRadius: tokens.radius.lg,
               border: '1px dashed',
               borderColor: 'divider',
               bgcolor: 'action.hover',

@@ -2,6 +2,7 @@
 
 import { RefreshCcw } from '@/app/components/icons';
 import { text } from '../helpers/dashboard-helpers';
+import { tokens } from '@/lib/theme-tokens';
 
 type PullIndicatorProps = {
   isMobile: boolean;
@@ -20,7 +21,7 @@ export function DashboardPullIndicator({ isMobile, pullDistance, pullRefreshing,
   const label = pullRefreshing ? text(t?.loading) : isReadyToRefresh ? text(t?.ready) : text(t?.idle);
   return (
     <div style={CONTAINER_STYLE}>
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: 'var(--lumio-radius-full)', border: '1px solid', borderColor: isActive ? 'rgba(var(--primary-rgb),0.4)' : '#e5e7eb', padding: '6px 12px', fontSize: 12, fontWeight: 500, boxShadow: '0 1px 2px rgba(0,0,0,0.05)', backgroundColor: 'var(--card-bg)', color: isActive ? 'var(--primary)' : '#6b7280' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.full, border: '1px solid', borderColor: isActive ? 'rgba(var(--primary-rgb),0.4)' : '#e5e7eb', padding: '6px 12px', fontSize: 12, fontWeight: 500, boxShadow: '0 1px 2px rgba(0,0,0,0.05)', backgroundColor: 'var(--card-bg)', color: isActive ? 'var(--primary)' : '#6b7280' }}>
         <RefreshCcw style={{ width: 14, height: 14 }} className={pullRefreshing ? 'animate-spin' : undefined} />
         <span>{label}</span>
       </div>

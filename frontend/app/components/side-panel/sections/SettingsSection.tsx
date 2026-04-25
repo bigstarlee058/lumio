@@ -3,6 +3,7 @@
 import type { SettingsSection, SettingsSelectItem, SettingsToggleItem } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
+import { tokens } from '@/lib/theme-tokens';
 
 function isToggleItem(item: SettingsToggleItem | SettingsSelectItem): item is SettingsToggleItem {
   return 'checked' in item;
@@ -55,7 +56,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
           display: 'inline-flex',
           width: 36,
           height: 20,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           flexShrink: 0,
           cursor: item.disabled ? 'not-allowed' : 'pointer',
           transition: 'background-color 200ms',
@@ -70,7 +71,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
             display: 'inline-block',
             width: 16,
             height: 16,
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             backgroundColor: 'var(--card-bg)',
             boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
             transition: 'transform 200ms',

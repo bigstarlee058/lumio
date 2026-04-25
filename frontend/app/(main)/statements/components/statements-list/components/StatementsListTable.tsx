@@ -22,6 +22,7 @@ import {
 } from '@/app/lib/statement-status';
 import { ArrowDown, File } from '@/app/components/icons';
 import { StatementsGmailSync } from './StatementsGmailSync';
+import { tokens } from '@/lib/theme-tokens';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -158,7 +159,7 @@ function EmptyState({
           width: 64,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           background: '#f9fafb',
           color: '#d1d5db',
         }}

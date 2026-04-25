@@ -12,6 +12,7 @@ import CardContent from '@mui/material/CardContent';
 import Checkbox from '@mui/material/Checkbox';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { tokens } from '@/lib/theme-tokens';
 
 type NotificationKey = keyof NotificationPreferences;
 type NotificationItem = { label: string; description: string };
@@ -48,7 +49,7 @@ function NotificationSettingRow({
         alignItems: 'flex-start',
         justifyContent: 'space-between',
         gap: 2,
-        borderRadius: 'var(--lumio-radius-lg)',
+        borderRadius: tokens.radius.lg,
         border: '1px solid',
         borderColor: 'divider',
         p: 1.5,
@@ -127,7 +128,7 @@ export function NotificationsSection({
       {notificationsLoading ? (
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',

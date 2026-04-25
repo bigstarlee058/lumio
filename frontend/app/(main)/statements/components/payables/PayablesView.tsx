@@ -25,6 +25,7 @@ import PayableFiltersBar from './PayableFiltersBar';
 import PayableSummaryCards from './PayableSummaryCards';
 import PayablesList from './PayablesList';
 import {
+import { tokens } from '@/lib/theme-tokens';
   DEFAULT_PAYABLES_FILTERS,
   type PayablesFiltersState,
   buildPayablesListParams,
@@ -464,7 +465,7 @@ export function PayablesView(): React.JSX.Element {
   if (!user) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.loginRequired}
         </div>
       </div>
@@ -474,7 +475,7 @@ export function PayablesView(): React.JSX.Element {
   if (!currentWorkspace) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: 'var(--lumio-radius-lg)', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
           {labels.noWorkspace}
         </div>
       </div>

@@ -9,6 +9,7 @@ import { UnapprovedCashFilterBar } from '@/app/(main)/statements/components/unap
 import { UnapprovedCashPageHeader } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashPageHeader';
 import { UnapprovedCashStatCards } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashStatCards';
 import {
+import { tokens } from '@/lib/theme-tokens';
   useUnapprovedCashViewModel,
   type UnapprovedCashViewModel,
 } from '@/app/(main)/statements/components/unapproved-cash/hooks/useUnapprovedCashViewModel';
@@ -41,7 +42,7 @@ export default function UnapprovedCashView(): React.JSX.Element {
   return (
     <div className="container-shared" style={CONTAINER_STYLE}>
       <UnapprovedCashControls vm={vm} />
-      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: 'var(--lumio-radius-lg)' }}>
+      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: tokens.radius.lg }}>
         <UnapprovedCashContent
           loading={vm.loading}
           filteredQueue={vm.filteredQueue}

@@ -10,6 +10,7 @@ import { FileImage, FileText, UploadCloud, X } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useReceiptUpload } from './hooks/useReceiptUpload';
+import { tokens } from '@/lib/theme-tokens';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ACCEPTED_TYPES = new Set([
@@ -147,7 +148,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
           >
             <Box
               sx={{
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 bgcolor: 'background.paper',
                 p: 2,
                 color: 'primary.main',
@@ -235,7 +236,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                   }}
                 >
                   <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ borderRadius: 'var(--lumio-radius-full)', bgcolor: '#f1f5f9', p: 1, color: '#475569' }}>
+                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: '#f1f5f9', p: 1, color: '#475569' }}>
                       {isPdf ? (
                         <FileText style={{ width: 16, height: 16 }} />
                       ) : (
@@ -271,7 +272,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                     sx={{
                       color: '#94a3b8',
                       '&:hover': { bgcolor: '#f1f5f9', color: '#334155' },
-                      borderRadius: 'var(--lumio-radius-md)',
+                      borderRadius: tokens.radius.md,
                     }}
                   >
                     <X style={{ width: 16, height: 16 }} />

@@ -17,6 +17,7 @@ import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { pipeFileStreamResponse } from '../../common/utils/stream-response.util';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -210,7 +211,7 @@ export class StorageController {
     @WorkspaceId() workspaceId: string,
   ) {
     await this.storageService.deleteTag(tagId, workspaceId);
-    return { message: 'Tag deleted successfully' };
+    return deletedResponse('Tag');
   }
 
   /**
@@ -411,7 +412,7 @@ export class StorageController {
   @Delete('shares/:id')
   async deleteSharedLink(@Param('id') linkId: string, @CurrentUser() user: User) {
     await this.storageService.deleteSharedLink(linkId, user.id);
-    return { message: 'Shared link deleted successfully' };
+    return deletedResponse('Shared link');
   }
 
   /**

@@ -18,6 +18,7 @@ const content = {
         ar: 'فشل تحميل بيانات الكشف',
         pl: 'Nie udało się załadować danych wyciągu',
         it: 'Impossibile caricare i dati dell\'estratto conto',
+        sk: 'Nie udało się załadować danych wyciągu',
       }),
     },
     loading: t({
@@ -34,6 +35,7 @@ const content = {
       ar: 'جارٍ تحميل الملف...',
       pl: 'Ładowanie pliku...',
       it: 'Caricamento file...',
+      sk: 'Ładowanie pliku...',
     }),
     fileLoaded: t({
       ru: 'Файл загружен',
@@ -49,6 +51,7 @@ const content = {
       ar: 'تم تحميل الملف',
       pl: 'Plik załadowany',
       it: 'File caricato',
+      sk: 'Plik załadowany',
     }),
     fileLoadFailed: t({
       ru: 'Не удалось загрузить файл',
@@ -64,6 +67,7 @@ const content = {
       ar: 'فشل تحميل الملف',
       pl: 'Nie udało się załadować pliku',
       it: 'Impossibile caricare il file',
+      sk: 'Nie udało się załadować pliku',
     }),
     statementNotFound: t({
       ru: 'Выписка не найдена',
@@ -79,6 +83,7 @@ const content = {
       ar: 'الكشف غير موجود',
       pl: 'Wyciąg nie znaleziony',
       it: 'Estratto conto non trovato',
+      sk: 'Wyciąg nie znaleziony',
     }),
     back: t({
       ru: 'Назад',
@@ -94,6 +99,7 @@ const content = {
       ar: 'رجوع',
       pl: 'Wstecz',
       it: 'Indietro',
+      sk: 'Wstecz',
     }),
     backToStatements: t({
       ru: 'Назад к списку выписок',
@@ -109,6 +115,7 @@ const content = {
       ar: 'العودة إلى الكشوفات',
       pl: 'Wróć do wyciągów',
       it: 'Torna agli estratti conto',
+      sk: 'Wróć do wyciągów',
     }),
   },
 } satisfies Dictionary;

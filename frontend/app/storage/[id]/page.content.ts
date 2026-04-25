@@ -3,7 +3,7 @@ import { type Dictionary, t } from 'intlayer';
 const content = {
   key: 'storageDetailsPage',
   content: {
-    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
+    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
     notFound: t({
       ru: 'Файл не найден',
       en: 'File not found',
@@ -18,6 +18,7 @@ const content = {
       ar: 'الملف غير موجود',
       pl: 'Plik nie znaleziony',
       it: 'File non trovato',
+      sk: 'Plik nie znaleziony',
     }),
     toasts: {
       previewFailed: t({
@@ -34,6 +35,7 @@ const content = {
         ar: 'فشل تحميل معاينة الملف',
         pl: 'Nie udało się załadować podglądu pliku',
         it: 'Impossibile caricare l\'anteprima del file',
+        sk: 'Nie udało się załadować podglądu pliku',
       }),
       restoreSuccess: t({
         ru: 'Файл восстановлен',
@@ -49,6 +51,7 @@ const content = {
         ar: 'تم استعادة الملف',
         pl: 'Plik przywrócony',
         it: 'File ripristinato',
+        sk: 'Plik przywrócony',
       }),
       restoreFailed: t({
         ru: 'Не удалось восстановить файл',
@@ -64,6 +67,7 @@ const content = {
         ar: 'فشل استعادة الملف',
         pl: 'Nie udało się przywrócić pliku',
         it: 'Impossibile ripristinare il file',
+        sk: 'Nie udało się przywrócić pliku',
       }),
       loadCategoriesFailed: t({
         ru: 'Не удалось загрузить категории',
@@ -79,14 +83,15 @@ const content = {
         ar: 'فشل تحميل الفئات',
         pl: 'Nie udało się załadować kategorii',
         it: 'Impossibile caricare le categorie',
+        sk: 'Nie udało się załadować kategorii',
       }),
     },
     availability: {
       labels: {
-        both: t({ ru: 'OK', en: 'OK', kk: 'OK', de: 'OK', fr: 'OK', es: 'OK', pt: 'OK', tr: 'OK', uk: 'OK', zh: 'OK', ar: 'OK', pl: 'OK', it: 'OK' }),
+        both: t({ ru: 'OK', en: 'OK', kk: 'OK', de: 'OK', fr: 'OK', es: 'OK', pt: 'OK', tr: 'OK', uk: 'OK', zh: 'OK', ar: 'OK', pl: 'OK', it: 'OK', sk: 'OK'}),
         disk: t({ ru: 'Диск', en: 'Disk', kk: 'Disk', de: 'Disk', fr: 'Disque', es: 'Disco', pt: 'Disco', tr: 'Disk', uk: 'Диск', zh: '磁盘', ar: 'القرص', pl: 'Dysk', it: 'Disco' }),
-        db: t({ ru: 'БД', en: 'DB', kk: 'DB', de: 'DB', fr: 'BD', es: 'BD', pt: 'BD', tr: 'DB', uk: 'БД', zh: '数据库', ar: 'قاعدة البيانات', pl: 'DB', it: 'DB' }),
-        missing: t({ ru: 'Нет файла', en: 'Missing', kk: 'Қолжетімсіз', de: 'Fehlt', fr: 'Manquant', es: 'Faltante', pt: 'Ausente', tr: 'Eksik', uk: 'Відсутній', zh: '缺失', ar: 'مفقود', pl: 'Brakuje', it: 'Mancante' }),
+        db: t({ ru: 'БД', en: 'DB', kk: 'DB', de: 'DB', fr: 'BD', es: 'BD', pt: 'BD', tr: 'DB', uk: 'БД', zh: '数据库', ar: 'قاعدة البيانات', pl: 'DB', it: 'DB', sk: 'DB'}),
+        missing: t({ ru: 'Нет файла', en: 'Missing', kk: 'Қолжетімсіз', de: 'Fehlt', fr: 'Manquant', es: 'Faltante', pt: 'Ausente', tr: 'Eksik', uk: 'Відсутній', zh: '缺失', ar: 'مفقود', pl: 'Brakuje', it: 'Mancante', sk: 'Brakuje'}),
       },
       tooltips: {
         both: t({
@@ -103,6 +108,7 @@ const content = {
           ar: 'الملف متاح على القرص وفي قاعدة البيانات',
           pl: 'Plik jest dostępny na dysku i w bazie danych',
           it: 'Il file è disponibile su disco e nel DB',
+          sk: 'Plik jest dostępny na dysku i w bazie danych',
         }),
         disk: t({
           ru: 'Файл доступен на диске',
@@ -118,6 +124,7 @@ const content = {
           ar: 'الملف متاح على القرص',
           pl: 'Plik jest dostępny na dysku',
           it: 'Il file è disponibile su disco',
+          sk: 'Plik jest dostępny na dysku',
         }),
         db: t({
           ru: 'Файл доступен в базе данных',
@@ -133,6 +140,7 @@ const content = {
           ar: 'الملف متاح في قاعدة البيانات',
           pl: 'Plik jest dostępny w bazie danych',
           it: 'Il file è disponibile nel DB',
+          sk: 'Plik jest dostępny w bazie danych',
         }),
         missing: t({
           ru: 'Файл недоступен (нет на диске и в базе данных)',
@@ -148,21 +156,22 @@ const content = {
           ar: 'الملف غير متاح (مفقود من القرص وقاعدة البيانات)',
           pl: 'Plik niedostępny (brak na dysku i w bazie danych)',
           it: 'File non disponibile (mancante su disco e nel DB)',
+          sk: 'Plik niedostępny (brak na dysku i w bazie danych)',
         }),
       },
     },
     permission: {
-      owner: t({ ru: 'Владелец', en: 'Owner', kk: 'Иесі', de: 'Eigentümer', fr: 'Propriétaire', es: 'Propietario', pt: 'Proprietário', tr: 'Sahip', uk: 'Власник', zh: '所有者', ar: 'المالك', pl: 'Właściciel', it: 'Proprietario' }),
-      editor: t({ ru: 'Редактор', en: 'Editor', kk: 'Өңдеуші', de: 'Bearbeiter', fr: 'Éditeur', es: 'Editor', pt: 'Editor', tr: 'Düzenleyici', uk: 'Редактор', zh: '编辑者', ar: 'محرر', pl: 'Edytor', it: 'Editore' }),
-      viewer: t({ ru: 'Просмотр', en: 'Viewer', kk: 'Қарау', de: 'Betrachter', fr: 'Lecteur', es: 'Lector', pt: 'Visualizador', tr: 'Görüntüleyici', uk: 'Переглядач', zh: '查看者', ar: 'مشاهد', pl: 'Przeglądający', it: 'Visualizzatore' }),
-      downloader: t({ ru: 'Скачивание', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Téléchargement', es: 'Descarga', pt: 'Download', tr: 'İndirme', uk: 'Завантаження', zh: '下载', ar: 'تنزيل', pl: 'Pobieranie', it: 'Download' }),
-      access: t({ ru: 'Доступ', en: 'Access', kk: 'Қолжетімділік', de: 'Zugriff', fr: 'Accès', es: 'Acceso', pt: 'Acesso', tr: 'Erişim', uk: 'Доступ', zh: '访问', ar: 'الوصول', pl: 'Dostęp', it: 'Accesso' }),
+      owner: t({ ru: 'Владелец', en: 'Owner', kk: 'Иесі', de: 'Eigentümer', fr: 'Propriétaire', es: 'Propietario', pt: 'Proprietário', tr: 'Sahip', uk: 'Власник', zh: '所有者', ar: 'المالك', pl: 'Właściciel', it: 'Proprietario', sk: 'Właściciel'}),
+      editor: t({ ru: 'Редактор', en: 'Editor', kk: 'Өңдеуші', de: 'Bearbeiter', fr: 'Éditeur', es: 'Editor', pt: 'Editor', tr: 'Düzenleyici', uk: 'Редактор', zh: '编辑者', ar: 'محرر', pl: 'Edytor', it: 'Editore', sk: 'Edytor'}),
+      viewer: t({ ru: 'Просмотр', en: 'Viewer', kk: 'Қарау', de: 'Betrachter', fr: 'Lecteur', es: 'Lector', pt: 'Visualizador', tr: 'Görüntüleyici', uk: 'Переглядач', zh: '查看者', ar: 'مشاهد', pl: 'Przeglądający', it: 'Visualizzatore', sk: 'Przeglądający'}),
+      downloader: t({ ru: 'Скачивание', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Téléchargement', es: 'Descarga', pt: 'Download', tr: 'İndirme', uk: 'Завантаження', zh: '下载', ar: 'تنزيل', pl: 'Pobieranie', it: 'Download', sk: 'Pobieranie'}),
+      access: t({ ru: 'Доступ', en: 'Access', kk: 'Қолжетімділік', de: 'Zugriff', fr: 'Accès', es: 'Acceso', pt: 'Acesso', tr: 'Erişim', uk: 'Доступ', zh: '访问', ar: 'الوصول', pl: 'Dostęp', it: 'Accesso', sk: 'Dostęp'}),
     },
     status: {
-      completed: t({ ru: 'Завершено', en: 'Completed', kk: 'Аяқталды', de: 'Abgeschlossen', fr: 'Terminé', es: 'Completado', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Завершено', zh: '已完成', ar: 'مكتمل', pl: 'Ukończono', it: 'Completato' }),
-      processing: t({ ru: 'Обрабатывается', en: 'Processing', kk: 'Өңделуде', de: 'Wird verarbeitet', fr: 'En cours de traitement', es: 'Procesando', pt: 'Processando', tr: 'İşleniyor', uk: 'Обробляється', zh: '处理中', ar: 'قيد المعالجة', pl: 'Przetwarzanie', it: 'In elaborazione' }),
-      error: t({ ru: 'Ошибка', en: 'Error', kk: 'Қате', de: 'Fehler', fr: 'Erreur', es: 'Error', pt: 'Erro', tr: 'Hata', uk: 'Помилка', zh: '错误', ar: 'خطأ', pl: 'Błąd', it: 'Errore' }),
-      uploaded: t({ ru: 'Загружено', en: 'Uploaded', kk: 'Жүктелді', de: 'Hochgeladen', fr: 'Téléchargé', es: 'Subido', pt: 'Enviado', tr: 'Yüklendi', uk: 'Завантажено', zh: '已上传', ar: 'تم الرفع', pl: 'Przesłano', it: 'Caricato' }),
+      completed: t({ ru: 'Завершено', en: 'Completed', kk: 'Аяқталды', de: 'Abgeschlossen', fr: 'Terminé', es: 'Completado', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Завершено', zh: '已完成', ar: 'مكتمل', pl: 'Ukończono', it: 'Completato', sk: 'Ukończono'}),
+      processing: t({ ru: 'Обрабатывается', en: 'Processing', kk: 'Өңделуде', de: 'Wird verarbeitet', fr: 'En cours de traitement', es: 'Procesando', pt: 'Processando', tr: 'İşleniyor', uk: 'Обробляється', zh: '处理中', ar: 'قيد المعالجة', pl: 'Przetwarzanie', it: 'In elaborazione', sk: 'Przetwarzanie'}),
+      error: t({ ru: 'Ошибка', en: 'Error', kk: 'Қате', de: 'Fehler', fr: 'Erreur', es: 'Error', pt: 'Erro', tr: 'Hata', uk: 'Помилка', zh: '错误', ar: 'خطأ', pl: 'Błąd', it: 'Errore', sk: 'Błąd'}),
+      uploaded: t({ ru: 'Загружено', en: 'Uploaded', kk: 'Жүктелді', de: 'Hochgeladen', fr: 'Téléchargé', es: 'Subido', pt: 'Enviado', tr: 'Yüklendi', uk: 'Завантажено', zh: '已上传', ar: 'تم الرفع', pl: 'Przesłano', it: 'Caricato', sk: 'Przesłano'}),
     },
     actions: {
       downloadTooltip: t({
@@ -179,8 +188,9 @@ const content = {
         ar: 'تنزيل الملف',
         pl: 'Pobierz plik',
         it: 'Scarica file',
+        sk: 'Pobierz plik',
       }),
-      download: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Télécharger', es: 'Descargar', pt: 'Baixar', tr: 'İndir', uk: 'Завантажити', zh: '下载', ar: 'تنزيل', pl: 'Pobierz', it: 'Scarica' }),
+      download: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Télécharger', es: 'Descargar', pt: 'Baixar', tr: 'İndir', uk: 'Завантажити', zh: '下载', ar: 'تنزيل', pl: 'Pobierz', it: 'Scarica', sk: 'Pobierz'}),
       restoreTooltip: t({
         ru: 'Восстановить файл на диск из базы данных',
         en: 'Restore file to disk from DB',
@@ -195,8 +205,9 @@ const content = {
         ar: 'استعادة الملف إلى القرص من قاعدة البيانات',
         pl: 'Przywróć plik na dysk z bazy danych',
         it: 'Ripristina file su disco dal DB',
+        sk: 'Przywróć plik na dysk z bazy danych',
       }),
-      restore: t({ ru: 'Восстановить', en: 'Restore', kk: 'Қалпына келтіру', de: 'Wiederherstellen', fr: 'Restaurer', es: 'Restaurar', pt: 'Restaurar', tr: 'Geri yükle', uk: 'Відновити', zh: '恢复', ar: 'استعادة', pl: 'Przywróć', it: 'Ripristina' }),
+      restore: t({ ru: 'Восстановить', en: 'Restore', kk: 'Қалпына келтіру', de: 'Wiederherstellen', fr: 'Restaurer', es: 'Restaurar', pt: 'Restaurar', tr: 'Geri yükle', uk: 'Відновити', zh: '恢复', ar: 'استعادة', pl: 'Przywróć', it: 'Ripristina', sk: 'Przywróć'}),
       shareTooltip: t({
         ru: 'Поделиться файлом',
         en: 'Share file',
@@ -211,12 +222,13 @@ const content = {
         ar: 'مشاركة الملف',
         pl: 'Udostępnij plik',
         it: 'Condividi file',
+        sk: 'Udostępnij plik',
       }),
-      share: t({ ru: 'Поделиться', en: 'Share', kk: 'Бөлісу', de: 'Teilen', fr: 'Partager', es: 'Compartir', pt: 'Compartilhar', tr: 'Paylaş', uk: 'Поділитися', zh: '分享', ar: 'مشاركة', pl: 'Udostępnij', it: 'Condividi' }),
-      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Volver', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro' }),
+      share: t({ ru: 'Поделиться', en: 'Share', kk: 'Бөлісу', de: 'Teilen', fr: 'Partager', es: 'Compartir', pt: 'Compartilhar', tr: 'Paylaş', uk: 'Поділитися', zh: '分享', ar: 'مشاركة', pl: 'Udostępnij', it: 'Condividi', sk: 'Udostępnij'}),
+      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Volver', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro', sk: 'Wstecz'}),
     },
     cards: {
-      size: t({ ru: 'Размер файла', en: 'File size', kk: 'Файл өлшемі', de: 'Dateigröße', fr: 'Taille du fichier', es: 'Tamaño del archivo', pt: 'Tamanho do arquivo', tr: 'Dosya boyutu', uk: 'Розмір файлу', zh: '文件大小', ar: 'حجم الملف', pl: 'Rozmiar pliku', it: 'Dimensione file' }),
+      size: t({ ru: 'Размер файла', en: 'File size', kk: 'Файл өлшемі', de: 'Dateigröße', fr: 'Taille du fichier', es: 'Tamaño del archivo', pt: 'Tamanho do arquivo', tr: 'Dosya boyutu', uk: 'Розмір файлу', zh: '文件大小', ar: 'حجم الملف', pl: 'Rozmiar pliku', it: 'Dimensione file', sk: 'Rozmiar pliku'}),
       transactions: t({
         ru: 'Транзакций',
         en: 'Transactions',
@@ -231,10 +243,11 @@ const content = {
         ar: 'المعاملات',
         pl: 'Transakcje',
         it: 'Transazioni',
+        sk: 'Transakcje',
       }),
-      uploadedAt: t({ ru: 'Загружено', en: 'Uploaded', kk: 'Жүктелді', de: 'Hochgeladen', fr: 'Téléchargé', es: 'Subido', pt: 'Enviado', tr: 'Yüklendi', uk: 'Завантажено', zh: '已上传', ar: 'تم الرفع', pl: 'Przesłano', it: 'Caricato' }),
-      account: t({ ru: 'Счет', en: 'Account', kk: 'Шот', de: 'Konto', fr: 'Compte', es: 'Cuenta', pt: 'Conta', tr: 'Hesap', uk: 'Рахунок', zh: '账户', ar: 'الحساب', pl: 'Konto', it: 'Conto' }),
-      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—' }),
+      uploadedAt: t({ ru: 'Загружено', en: 'Uploaded', kk: 'Жүктелді', de: 'Hochgeladen', fr: 'Téléchargé', es: 'Subido', pt: 'Enviado', tr: 'Yüklendi', uk: 'Завантажено', zh: '已上传', ar: 'تم الرفع', pl: 'Przesłano', it: 'Caricato', sk: 'Przesłano'}),
+      account: t({ ru: 'Счет', en: 'Account', kk: 'Шот', de: 'Konto', fr: 'Compte', es: 'Cuenta', pt: 'Conta', tr: 'Hesap', uk: 'Рахунок', zh: '账户', ar: 'الحساب', pl: 'Konto', it: 'Conto', sk: 'Konto'}),
+      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—', sk: '—'}),
     },
     preview: {
       title: t({
@@ -251,8 +264,9 @@ const content = {
         ar: 'معاينة الملف',
         pl: 'Podgląd pliku',
         it: 'Anteprima file',
+        sk: 'Podgląd pliku',
       }),
-      refresh: t({ ru: 'Обновить', en: 'Refresh', kk: 'Жаңарту', de: 'Aktualisieren', fr: 'Actualiser', es: 'Actualizar', pt: 'Atualizar', tr: 'Yenile', uk: 'Оновити', zh: '刷新', ar: 'تحديث', pl: 'Odśwież', it: 'Aggiorna' }),
+      refresh: t({ ru: 'Обновить', en: 'Refresh', kk: 'Жаңарту', de: 'Aktualisieren', fr: 'Actualiser', es: 'Actualizar', pt: 'Atualizar', tr: 'Yenile', uk: 'Оновити', zh: '刷新', ar: 'تحديث', pl: 'Odśwież', it: 'Aggiorna', sk: 'Odśwież'}),
       openNewTab: t({
         ru: 'Открыть в новой вкладке',
         en: 'Open in new tab',
@@ -267,6 +281,7 @@ const content = {
         ar: 'فتح في علامة تبويب جديدة',
         pl: 'Otwórz w nowej karcie',
         it: 'Apri in una nuova scheda',
+        sk: 'Otwórz w nowej karcie',
       }),
       iframeTitle: t({
         ru: 'Предпросмотр файла',
@@ -282,6 +297,7 @@ const content = {
         ar: 'معاينة الملف',
         pl: 'Podgląd pliku',
         it: 'Anteprima file',
+        sk: 'Podgląd pliku',
       }),
       retry: t({
         ru: 'Попробовать снова',
@@ -297,6 +313,7 @@ const content = {
         ar: 'حاول مجدداً',
         pl: 'Spróbuj ponownie',
         it: 'Riprova',
+        sk: 'Spróbuj ponownie',
       }),
       unavailable: t({
         ru: 'Файл недоступен. Похоже, он был удалён с сервера. Попросите владельца загрузить файл заново.',
@@ -312,6 +329,7 @@ const content = {
         ar: 'الملف غير متاح. ربما تم حذفه من الخادم. اطلب من المالك رفعه مرة أخرى.',
         pl: 'Plik niedostępny. Mógł zostać usunięty z serwera. Poproś właściciela o ponowne przesłanie pliku.',
         it: 'File non disponibile. Potrebbe essere stato rimosso dal server. Chiedi al proprietario di caricarlo di nuovo.',
+        sk: 'Plik niedostępny. Mógł zostać usunięty z serwera. Poproś właściciela o ponowne przesłanie pliku.',
       }),
       empty: t({
         ru: 'Превью появится после загрузки файла. Если формат не поддерживает онлайн-просмотр, скачайте файл.',
@@ -327,6 +345,7 @@ const content = {
         ar: 'ستظهر المعاينة بعد رفع الملف. إذا كان التنسيق لا يدعم العرض عبر الإنترنت، قم بتنزيل الملف.',
         pl: 'Podgląd pojawi się po przesłaniu pliku. Jeśli format nie obsługuje przeglądania online, pobierz plik.',
         it: 'L\'anteprima apparirà dopo il caricamento del file. Se il formato non supporta la visualizzazione online, scarica il file.',
+        sk: 'Podgląd pojawi się po przesłaniu pliku. Jeśli format nie obsługuje przeglądania online, pobierz plik.',
       }),
     },
     tabs: {
@@ -344,8 +363,9 @@ const content = {
         ar: 'المعاملات',
         pl: 'Transakcje',
         it: 'Transazioni',
+        sk: 'Transakcje',
       }),
-      links: t({ ru: 'Ссылки', en: 'Links', kk: 'Сілтемелер', de: 'Links', fr: 'Liens', es: 'Enlaces', pt: 'Links', tr: 'Bağlantılar', uk: 'Посилання', zh: '链接', ar: 'الروابط', pl: 'Linki', it: 'Link' }),
+      links: t({ ru: 'Ссылки', en: 'Links', kk: 'Сілтемелер', de: 'Links', fr: 'Liens', es: 'Enlaces', pt: 'Links', tr: 'Bağlantılar', uk: 'Посилання', zh: '链接', ar: 'الروابط', pl: 'Linki', it: 'Link', sk: 'Linki'}),
       permissions: t({
         ru: 'Права доступа',
         en: 'Permissions',
@@ -360,6 +380,7 @@ const content = {
         ar: 'الصلاحيات',
         pl: 'Uprawnienia',
         it: 'Permessi',
+        sk: 'Uprawnienia',
       }),
     },
   },

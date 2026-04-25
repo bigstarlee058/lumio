@@ -4,7 +4,7 @@ const content = {
   key: 'gmailIntegrationPage',
   content: {
     header: {
-      title: t({ ru: 'Gmail', en: 'Gmail', kk: 'Gmail', de: 'Gmail', fr: 'Gmail', es: 'Gmail', pt: 'Gmail', tr: 'Gmail', uk: 'Gmail', zh: 'Gmail', ar: 'Gmail', pl: 'Gmail', it: 'Gmail' }),
+      title: t({ ru: 'Gmail', en: 'Gmail', kk: 'Gmail', de: 'Gmail', fr: 'Gmail', es: 'Gmail', pt: 'Gmail', tr: 'Gmail', uk: 'Gmail', zh: 'Gmail', ar: 'Gmail', pl: 'Gmail', it: 'Gmail', sk: 'Gmail'}),
       subtitle: t({
         ru: 'Подключите Gmail, чтобы автоматически импортировать чеки и счета',
         en: 'Connect Gmail to automatically import receipts and invoices',
@@ -19,6 +19,7 @@ const content = {
         ar: 'قم بتوصيل Gmail لاستيراد الإيصالات والفواتير تلقائيًا',
         pl: 'Połącz Gmail, aby automatycznie importować paragony i faktury',
         it: 'Collega Gmail per importare automaticamente ricevute e fatture',
+        sk: 'Połącz Gmail, aby automatycznie importować paragony i faktury',
       }),
     },
     status: {
@@ -36,6 +37,7 @@ const content = {
         ar: 'متصل',
         pl: 'Połączone',
         it: 'Connesso',
+        sk: 'Połączone',
       }),
       disconnected: t({
         ru: 'Не подключено',
@@ -51,6 +53,7 @@ const content = {
         ar: 'غير متصل',
         pl: 'Rozłączone',
         it: 'Disconnesso',
+        sk: 'Rozłączone',
       }),
       needsReauth: t({
         ru: 'Требуется повторная авторизация',
@@ -66,6 +69,7 @@ const content = {
         ar: 'يتطلب إعادة المصادقة',
         pl: 'Wymagane ponowne uwierzytelnienie',
         it: 'Richiesta nuova autenticazione',
+        sk: 'Wymagane ponowne uwierzytelnienie',
       }),
       active: t({
         ru: 'Активно',
@@ -81,6 +85,7 @@ const content = {
         ar: 'نشط',
         pl: 'Aktywne',
         it: 'Attivo',
+        sk: 'Aktywne',
       }),
       inactive: t({
         ru: 'Неактивно',
@@ -96,6 +101,7 @@ const content = {
         ar: 'غير نشط',
         pl: 'Nieaktywne',
         it: 'Inattivo',
+        sk: 'Nieaktywne',
       }),
       enabled: t({
         ru: 'Включено',
@@ -111,6 +117,7 @@ const content = {
         ar: 'مفعّل',
         pl: 'Włączone',
         it: 'Abilitato',
+        sk: 'Włączone',
       }),
       disabled: t({
         ru: 'Выключено',
@@ -126,6 +133,7 @@ const content = {
         ar: 'معطّل',
         pl: 'Wyłączone',
         it: 'Disabilitato',
+        sk: 'Wyłączone',
       }),
     },
     actions: {
@@ -143,6 +151,7 @@ const content = {
         ar: 'توصيل Gmail',
         pl: 'Połącz Gmail',
         it: 'Connetti Gmail',
+        sk: 'Połącz Gmail',
       }),
       reconnect: t({
         ru: 'Переподключить',
@@ -158,6 +167,7 @@ const content = {
         ar: 'إعادة الاتصال',
         pl: 'Połącz ponownie',
         it: 'Riconnetti',
+        sk: 'Połącz ponownie',
       }),
       disconnect: t({
         ru: 'Отключить',
@@ -173,6 +183,7 @@ const content = {
         ar: 'قطع الاتصال',
         pl: 'Rozłącz',
         it: 'Disconnetti',
+        sk: 'Rozłącz',
       }),
       sync: t({
         ru: 'Синхронизировать Gmail',
@@ -188,6 +199,7 @@ const content = {
         ar: 'مزامنة Gmail',
         pl: 'Synchronizuj Gmail',
         it: 'Sincronizza Gmail',
+        sk: 'Synchronizuj Gmail',
       }),
     },
     settings: {
@@ -205,6 +217,7 @@ const content = {
         ar: 'الإعدادات',
         pl: 'Ustawienia',
         it: 'Impostazioni',
+        sk: 'Ustawienia',
       }),
       labelName: t({
         ru: 'Название ярлыка',
@@ -220,6 +233,7 @@ const content = {
         ar: 'اسم التسمية',
         pl: 'Nazwa etykiety',
         it: 'Nome etichetta',
+        sk: 'Nazwa etykiety',
       }),
       lastSync: t({
         ru: 'Последняя синхронизация',
@@ -235,6 +249,7 @@ const content = {
         ar: 'آخر مزامنة',
         pl: 'Ostatnia synchronizacja',
         it: 'Ultima sincronizzazione',
+        sk: 'Ostatnia synchronizacja',
       }),
       filterEnabled: t({
         ru: 'Включить автоматическую фильтрацию',
@@ -250,6 +265,7 @@ const content = {
         ar: 'تفعيل التصفية التلقائية',
         pl: 'Włącz automatyczne filtrowanie',
         it: 'Abilita filtro automatico',
+        sk: 'Włącz automatyczne filtrowanie',
       }),
       watchStatus: t({
         ru: 'Статус отслеживания',
@@ -265,6 +281,7 @@ const content = {
         ar: 'حالة المراقبة',
         pl: 'Status śledzenia',
         it: 'Stato monitoraggio',
+        sk: 'Status śledzenia',
       }),
       expires: t({
         ru: 'Истекает',
@@ -280,6 +297,7 @@ const content = {
         ar: 'تنتهي صلاحيته',
         pl: 'Wygasa',
         it: 'Scade',
+        sk: 'Wygasa',
       }),
       keywords: t({
         ru: 'Ключевые слова',
@@ -295,6 +313,7 @@ const content = {
         ar: 'كلمات مفتاح التصفية',
         pl: 'Słowa kluczowe filtra',
         it: 'Parole chiave filtro',
+        sk: 'Słowa kluczowe filtra',
       }),
       keywordsPlaceholder: t({
         ru: 'чек, счет, подтверждение заказа',
@@ -310,6 +329,7 @@ const content = {
         ar: 'إيصال، فاتورة، تأكيد الطلب',
         pl: 'paragon, faktura, potwierdzenie zamówienia',
         it: 'ricevuta, fattura, conferma ordine',
+        sk: 'paragon, faktura, potwierdzenie zamówienia',
       }),
       keywordsHelp: t({
         ru: 'Ключевые слова через запятую для фильтрации писем',
@@ -325,6 +345,7 @@ const content = {
         ar: 'كلمات مفتاحية مفصولة بفواصل لتصفية الرسائل',
         pl: 'Słowa kluczowe oddzielone przecinkami do filtrowania e-maili',
         it: 'Parole chiave separate da virgola per filtrare le email',
+        sk: 'Słowa kluczowe oddzielone przecinkami do filtrowania e-maili',
       }),
       hasAttachment: t({
         ru: 'Только письма с вложениями',
@@ -340,6 +361,7 @@ const content = {
         ar: 'رسائل البريد التي تحتوي على مرفقات فقط',
         pl: 'Tylko e-maile z załącznikami',
         it: 'Solo email con allegati',
+        sk: 'Tylko e-maile z załącznikami',
       }),
     },
     toasts: {
@@ -357,6 +379,7 @@ const content = {
         ar: 'جارٍ الاتصال بـ Gmail...',
         pl: 'Łączenie z Gmail...',
         it: 'Connessione a Gmail in corso...',
+        sk: 'Łączenie z Gmail...',
       }),
       connected: t({
         ru: 'Gmail подключен',
@@ -372,6 +395,7 @@ const content = {
         ar: 'تم توصيل Gmail بنجاح!',
         pl: 'Gmail połączony pomyślnie!',
         it: 'Gmail connesso con successo!',
+        sk: 'Gmail połączony pomyślnie!',
       }),
       disconnected: t({
         ru: 'Gmail отключен',
@@ -387,6 +411,7 @@ const content = {
         ar: 'تم قطع اتصال Gmail',
         pl: 'Gmail rozłączony',
         it: 'Gmail disconnesso',
+        sk: 'Gmail rozłączony',
       }),
       settingsSaved: t({
         ru: 'Настройки сохранены',
@@ -402,6 +427,7 @@ const content = {
         ar: 'تم حفظ الإعدادات',
         pl: 'Ustawienia zapisane',
         it: 'Impostazioni salvate',
+        sk: 'Ustawienia zapisane',
       }),
       syncStarted: t({
         ru: 'Синхронизация запущена',
@@ -417,6 +443,7 @@ const content = {
         ar: 'بدأت مزامنة Gmail',
         pl: 'Synchronizacja Gmail rozpoczęta',
         it: 'Sincronizzazione Gmail avviata',
+        sk: 'Synchronizacja Gmail rozpoczęta',
       }),
     },
     errors: {
@@ -434,6 +461,7 @@ const content = {
         ar: 'فشل تحميل حالة تكامل Gmail',
         pl: 'Nie udało się załadować statusu integracji Gmail',
         it: 'Impossibile caricare lo stato di integrazione Gmail',
+        sk: 'Nie udało się załadować statusu integracji Gmail',
       }),
       connectFailed: t({
         ru: 'Не удалось подключить Gmail',
@@ -449,6 +477,7 @@ const content = {
         ar: 'فشل الاتصال بـ Gmail',
         pl: 'Nie udało się połączyć Gmail',
         it: 'Impossibile connettere Gmail',
+        sk: 'Nie udało się połączyć Gmail',
       }),
       missingOauthUrl: t({
         ru: 'Не удалось получить OAuth ссылку Gmail',
@@ -464,6 +493,7 @@ const content = {
         ar: 'فشل الحصول على رابط OAuth الخاص بـ Gmail',
         pl: 'Nie udało się uzyskać adresu OAuth Gmail',
         it: 'Impossibile ottenere l\'URL OAuth di Gmail',
+        sk: 'Nie udało się uzyskać adresu OAuth Gmail',
       }),
       disconnectFailed: t({
         ru: 'Не удалось отключить Gmail',
@@ -479,6 +509,7 @@ const content = {
         ar: 'فشل قطع اتصال Gmail',
         pl: 'Nie udało się rozłączyć Gmail',
         it: 'Impossibile disconnettere Gmail',
+        sk: 'Nie udało się rozłączyć Gmail',
       }),
       saveFailed: t({
         ru: 'Не удалось сохранить настройки',
@@ -494,6 +525,7 @@ const content = {
         ar: 'فشل حفظ الإعدادات',
         pl: 'Nie udało się zapisać ustawień',
         it: 'Impossibile salvare le impostazioni',
+        sk: 'Nie udało się zapisać ustawień',
       }),
       syncFailed: t({
         ru: 'Не удалось синхронизировать Gmail',
@@ -509,6 +541,7 @@ const content = {
         ar: 'فشلت مزامنة Gmail',
         pl: 'Nie udało się zsynchronizować Gmail',
         it: 'Impossibile sincronizzare Gmail',
+        sk: 'Nie udało się zsynchronizować Gmail',
       }),
       noMatches: t({
         ru: 'Подходящие письма не найдены',
@@ -524,6 +557,7 @@ const content = {
         ar: 'لم يتم العثور على رسائل بريد مطابقة في Gmail',
         pl: 'Nie znaleziono pasujących wiadomości w Gmail',
         it: 'Nessuna email corrispondente trovata in Gmail',
+        sk: 'Nie znaleziono pasujących wiadomości w Gmail',
       }),
       allSynced: t({
         ru: 'Все доступные чеки уже синхронизированы',
@@ -539,6 +573,7 @@ const content = {
         ar: 'جميع الإيصالات المتاحة في Gmail متزامنة بالفعل',
         pl: 'Wszystkie paragony dostępne w Gmail są już zsynchronizowane',
         it: 'Tutte le ricevute disponibili in Gmail sono già sincronizzate',
+        sk: 'Wszystkie paragony dostępne w Gmail są już zsynchronizowane',
       }),
       syncNoNew: t({
         ru: 'Синхронизация завершена без новых чеков',
@@ -554,6 +589,7 @@ const content = {
         ar: 'اكتملت مزامنة Gmail دون إيصالات جديدة',
         pl: 'Synchronizacja Gmail zakończona bez nowych paragonów',
         it: 'Sincronizzazione Gmail completata senza nuove ricevute',
+        sk: 'Synchronizacja Gmail zakończona bez nowych paragonów',
       }),
       loginRequired: t({
         ru: 'Войдите, чтобы подключить Gmail',
@@ -569,6 +605,7 @@ const content = {
         ar: 'يرجى تسجيل الدخول لتوصيل Gmail',
         pl: 'Zaloguj się, aby połączyć Gmail',
         it: 'Accedi per connettere Gmail',
+        sk: 'Zaloguj się, aby połączyć Gmail',
       }),
       authFailed: t({
         ru: 'Не удалось подключить Gmail',
@@ -584,6 +621,7 @@ const content = {
         ar: 'فشل الاتصال بـ Gmail',
         pl: 'Nie udało się połączyć Gmail',
         it: 'Impossibile connettere Gmail',
+        sk: 'Nie udało się połączyć Gmail',
       }),
     },
     info: {
@@ -601,6 +639,7 @@ const content = {
         ar: 'كيف يعمل',
         pl: 'Jak to działa',
         it: 'Come funziona',
+        sk: 'Jak to działa',
       }),
       step1: t({
         ru: '1. Подключите Gmail с доступом только на чтение',
@@ -616,6 +655,7 @@ const content = {
         ar: '1. قم بتوصيل حساب Gmail بصلاحية القراءة فقط',
         pl: '1. Połącz konto Gmail z dostępem tylko do odczytu',
         it: '1. Connetti il tuo account Gmail con accesso in sola lettura',
+        sk: '1. Połącz konto Gmail z dostępem tylko do odczytu',
       }),
       step2: t({
         ru: '2. Мы автоматически создадим ярлык "Lumio/Receipts"',
@@ -631,6 +671,7 @@ const content = {
         ar: '2. نقوم تلقائيًا بإنشاء تسمية "Lumio/Receipts"',
         pl: '2. Automatycznie tworzymy etykietę "Lumio/Receipts"',
         it: '2. Creiamo automaticamente un\'etichetta "Lumio/Receipts"',
+        sk: '2. Automatycznie tworzymy etykietę "Lumio/Receipts"',
       }),
       step3: t({
         ru: '3. Письма по фильтрам будут импортироваться автоматически',
@@ -646,6 +687,7 @@ const content = {
         ar: '3. يتم استيراد رسائل البريد المطابقة لمرشحاتك تلقائيًا',
         pl: '3. E-maile pasujące do filtrów są automatycznie importowane',
         it: '3. Le email corrispondenti ai tuoi filtri vengono importate automaticamente',
+        sk: '3. E-maile pasujące do filtrów są automatycznie importowane',
       }),
       step4: t({
         ru: '4. Проверяйте и подтверждайте чеки на странице Receipts',
@@ -661,6 +703,7 @@ const content = {
         ar: '4. راجع الإيصالات وافتح صفحة Receipts للموافقة عليها',
         pl: '4. Przeglądaj i zatwierdzaj paragony na stronie Receipts',
         it: '4. Revisiona e approva le ricevute nella pagina Receipts',
+        sk: '4. Przeglądaj i zatwierdzaj paragony na stronie Receipts',
       }),
     },
     common: {
@@ -678,6 +721,7 @@ const content = {
         ar: 'جارٍ التحميل...',
         pl: 'Ładowanie...',
         it: 'Caricamento...',
+        sk: 'Ładowanie...',
       }),
       notConnected: t({
         ru: 'Не подключено',
@@ -693,8 +737,9 @@ const content = {
         ar: 'غير متصل',
         pl: 'Niepołączone',
         it: 'Non connesso',
+        sk: 'Niepołączone',
       }),
-      unknownDate: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—' }),
+      unknownDate: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—', sk: '—'}),
     },
   },
 } satisfies Dictionary;

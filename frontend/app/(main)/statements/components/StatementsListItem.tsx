@@ -10,6 +10,7 @@ import { CreditCard, Receipt } from '@/app/components/icons';
 import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from '@/app/components/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { tokens } from '@/lib/theme-tokens';
 
 export type StatementListItem = {
   id: string;
@@ -376,7 +377,7 @@ export function StatementsListItem({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 4,
-                            borderRadius: 'var(--lumio-radius-xs)',
+                            borderRadius: tokens.radius.xs,
                             padding: '2px 6px',
                             fontSize: 10,
                             letterSpacing: '0.05em',
@@ -489,7 +490,7 @@ export function StatementsListItem({
                         pointerEvents: 'none',
                         position: 'fixed',
                         zIndex: 140,
-                        borderRadius: 'var(--lumio-radius-lg)',
+                        borderRadius: tokens.radius.lg,
                         border: '1px solid #e5e7eb',
                         background: 'var(--card-bg)',
                         padding: 8,
@@ -527,7 +528,7 @@ export function StatementsListItem({
                     alt="Gmail"
                     width={16}
                     height={16}
-                    style={{ borderRadius: 'var(--lumio-radius-full)', objectFit: 'contain' }}
+                    style={{ borderRadius: tokens.radius.full, objectFit: 'contain' }}
                   />
                 ) : isLocalReceipt ? (
                   <Receipt
@@ -556,7 +557,7 @@ export function StatementsListItem({
                       alignItems: 'center',
                       gap: 4,
                       padding: '2px 6px',
-                      borderRadius: 'var(--lumio-radius-xs)',
+                      borderRadius: tokens.radius.xs,
                       fontSize: 10,
                       letterSpacing: '0.05em',
                       marginLeft: 4,
@@ -580,7 +581,7 @@ export function StatementsListItem({
                   style={{ color: '#6b7280', opacity: 0.5, marginLeft: 4 }}
                 />
               ) : (
-                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: 'var(--lumio-radius-xs)', padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: tokens.radius.xs, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
                   {resolvedTypeLabel === 'PDF' ? 'PDF' : resolvedTypeLabel}
                 </span>
               )}

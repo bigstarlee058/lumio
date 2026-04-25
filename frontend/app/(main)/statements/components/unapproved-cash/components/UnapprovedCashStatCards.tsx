@@ -1,4 +1,5 @@
 import type { UnapprovedReasonId } from '../../unapproved-cash-utils';
+import { tokens } from '@/lib/theme-tokens';
 
 interface UnapprovedCashStatCardsProps {
   totalCount: number;
@@ -15,7 +16,7 @@ const CARD_STYLE: React.CSSProperties = {
   border: '1px solid #e5e7eb',
   background: 'var(--card-bg)',
   padding: 12,
-  borderRadius: 'var(--lumio-radius-lg)',
+  borderRadius: tokens.radius.lg,
 };
 
 const LABEL_STYLE: React.CSSProperties = {

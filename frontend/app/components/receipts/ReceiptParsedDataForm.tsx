@@ -14,6 +14,7 @@ import { Box, IconButton, Typography } from '@mui/material';
 import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import type { EditableReceiptParsedData, ReceiptCategoryOption } from './receipt-types';
+import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
@@ -333,7 +334,7 @@ export function ReceiptParsedDataForm({
                 setCurrencySearch('');
               }}
               aria-label="Close currency drawer"
-              sx={{ borderRadius: 'var(--lumio-radius-md)' }}
+              sx={{ borderRadius: tokens.radius.md }}
             >
               <ChevronLeft style={{ width: 20, height: 20 }} />
             </IconButton>

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   tx: (path: string[], fallback: string) => string;
@@ -48,7 +49,7 @@ export function ChangelogSection({
       {changelogLoading ? (
         <Box
           sx={{
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -67,7 +68,7 @@ export function ChangelogSection({
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px dashed',
             borderColor: 'divider',
             bgcolor: 'background.paper',
@@ -91,7 +92,7 @@ export function ChangelogSection({
               onClick={() => setChangelogSelectedEntry(entry)}
               sx={{
                 width: '100%',
-                borderRadius: 'var(--lumio-radius-lg)',
+                borderRadius: tokens.radius.lg,
                 border: '1px solid',
                 borderColor: 'divider',
                 bgcolor: 'background.paper',

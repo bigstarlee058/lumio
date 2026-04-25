@@ -1,10 +1,9 @@
 import { BarChart2, Building2, FileText, LayoutDashboard, Plug, Puzzle, ScrollText, Table } from '@/app/components/icons';
 import React, { type ReactNode } from 'react';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
-
 export const MOBILE_MENU_VISIBILITY_EVENT = 'lumio-mobile-menu-visibility';
 
-export type AppLanguage = 'ru' | 'en' | 'kk';
+export type { AppLocale as AppLanguage } from '@/app/lib/locale';
 
 export interface NavItem {
   label: ReactNode;

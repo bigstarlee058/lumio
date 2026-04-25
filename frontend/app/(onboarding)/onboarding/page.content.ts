@@ -17,16 +17,17 @@ const content = {
       ar: 'الخطوة {current} من {total}',
       pl: 'Krok {current} z {total}',
       it: 'Passo {current} di {total}',
+      sk: 'Krok {current} z {total}',
     }),
     steps: {
-      welcome: t({ ru: 'Старт', en: 'Start', kk: 'Бастау', de: 'Start', fr: 'Démarrer', es: 'Inicio', pt: 'Início', tr: 'Başlangıç', uk: 'Старт', zh: '开始', ar: 'البداية', pl: 'Start', it: 'Inizio' }),
-      language: t({ ru: 'Язык', en: 'Language', kk: 'Тіл', de: 'Sprache', fr: 'Langue', es: 'Idioma', pt: 'Idioma', tr: 'Dil', uk: 'Мова', zh: '语言', ar: 'اللغة', pl: 'Język', it: 'Lingua' }),
-      workspace: t({ ru: 'Воркспейс', en: 'Workspace', kk: 'Жұмыс кеңістігі', de: 'Arbeitsbereich', fr: 'Espace de travail', es: 'Espacio de trabajo', pt: 'Workspace', tr: 'Çalışma alanı', uk: 'Воркспейс', zh: '工作区', ar: 'مساحة العمل', pl: 'Przestrzeń robocza', it: 'Area di lavoro' }),
-      integrations: t({ ru: 'Интеграции', en: 'Integrations', kk: 'Интеграциялар', de: 'Integrationen', fr: 'Intégrations', es: 'Integraciones', pt: 'Integrações', tr: 'Entegrasyonlar', uk: 'Інтеграції', zh: '集成', ar: 'التكاملات', pl: 'Integracje', it: 'Integrazioni' }),
-      completion: t({ ru: 'Готово', en: 'Done', kk: 'Дайын', de: 'Fertig', fr: 'Terminé', es: 'Listo', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Готово', zh: '完成', ar: 'تم', pl: 'Gotowe', it: 'Completato' }),
+      welcome: t({ ru: 'Старт', en: 'Start', kk: 'Бастау', de: 'Start', fr: 'Démarrer', es: 'Inicio', pt: 'Início', tr: 'Başlangıç', uk: 'Старт', zh: '开始', ar: 'البداية', pl: 'Start', it: 'Inizio', sk: 'Start'}),
+      language: t({ ru: 'Язык', en: 'Language', kk: 'Тіл', de: 'Sprache', fr: 'Langue', es: 'Idioma', pt: 'Idioma', tr: 'Dil', uk: 'Мова', zh: '语言', ar: 'اللغة', pl: 'Język', it: 'Lingua', sk: 'Język'}),
+      workspace: t({ ru: 'Воркспейс', en: 'Workspace', kk: 'Жұмыс кеңістігі', de: 'Arbeitsbereich', fr: 'Espace de travail', es: 'Espacio de trabajo', pt: 'Workspace', tr: 'Çalışma alanı', uk: 'Воркспейс', zh: '工作区', ar: 'مساحة العمل', pl: 'Przestrzeń robocza', it: 'Area di lavoro', sk: 'Przestrzeń robocza'}),
+      integrations: t({ ru: 'Интеграции', en: 'Integrations', kk: 'Интеграциялар', de: 'Integrationen', fr: 'Intégrations', es: 'Integraciones', pt: 'Integrações', tr: 'Entegrasyonlar', uk: 'Інтеграції', zh: '集成', ar: 'التكاملات', pl: 'Integracje', it: 'Integrazioni', sk: 'Integracje'}),
+      completion: t({ ru: 'Готово', en: 'Done', kk: 'Дайын', de: 'Fertig', fr: 'Terminé', es: 'Listo', pt: 'Concluído', tr: 'Tamamlandı', uk: 'Готово', zh: '完成', ar: 'تم', pl: 'Gotowe', it: 'Completato', sk: 'Gotowe'}),
     },
     welcome: {
-      badge: t({ ru: 'Добро пожаловать', en: 'Welcome', kk: 'Қош келдіңіз', de: 'Willkommen', fr: 'Bienvenue', es: 'Bienvenido', pt: 'Bem-vindo', tr: 'Hoş geldiniz', uk: 'Ласкаво просимо', zh: '欢迎', ar: 'مرحبًا', pl: 'Witamy', it: 'Benvenuto' }),
+      badge: t({ ru: 'Добро пожаловать', en: 'Welcome', kk: 'Қош келдіңіз', de: 'Willkommen', fr: 'Bienvenue', es: 'Bienvenido', pt: 'Bem-vindo', tr: 'Hoş geldiniz', uk: 'Ласкаво просимо', zh: '欢迎', ar: 'مرحبًا', pl: 'Witamy', it: 'Benvenuto', sk: 'Witamy'}),
       title: t({
         ru: 'Настроим Lumio под вас',
         en: "Let's tailor Lumio for you",
@@ -41,6 +42,7 @@ const content = {
         ar: 'لنخصص Lumio لك',
         pl: 'Dostosujmy Lumio dla Ciebie',
         it: 'Personalizziamo Lumio per te',
+        sk: 'Dostosujmy Lumio dla Ciebie',
       }),
       subtitle: t({
         ru: 'Это займет пару минут: выберем язык, базовую валюту и подключим нужные интеграции.',
@@ -56,6 +58,7 @@ const content = {
         ar: 'يستغرق ذلك بضع دقائق: اختر اللغة والعملة الافتراضية والتكاملات.',
         pl: 'To zajmuje kilka minut: wybierz język, domyślną walutę i integracje.',
         it: 'Ci vogliono un paio di minuti: scegli lingua, valuta predefinita e integrazioni.',
+        sk: 'To zajmuje kilka minut: wybierz język, domyślną walutę i integracje.',
       }),
       nextTitle: t({
         ru: 'Что будет дальше',
@@ -71,6 +74,7 @@ const content = {
         ar: 'ماذا سيحدث بعد ذلك',
         pl: 'Co się dzieje dalej',
         it: 'Cosa succede dopo',
+        sk: 'Co się dzieje dalej',
       }),
       nextSteps: {
         language: t({
@@ -87,6 +91,7 @@ const content = {
           ar: 'اختر لغة الواجهة والمنطقة الزمنية',
           pl: 'Wybierz język interfejsu i strefę czasową',
           it: 'Scegli la lingua dell\'interfaccia e il fuso orario',
+          sk: 'Wybierz język interfejsu i strefę czasową',
         }),
         workspace: t({
           ru: 'Настройте название, валюту и фон воркспейса',
@@ -102,6 +107,7 @@ const content = {
           ar: 'حدد اسم مساحة العمل والعملة والخلفية',
           pl: 'Ustaw nazwę, walutę i tło przestrzeni roboczej',
           it: 'Imposta nome, valuta e sfondo dell\'area di lavoro',
+          sk: 'Ustaw nazwę, walutę i tło przestrzeni roboczej',
         }),
         integrations: t({
           ru: 'Подключите интеграции, которые нужны сейчас',
@@ -117,6 +123,7 @@ const content = {
           ar: 'اربط التكاملات التي تحتاجها الآن',
           pl: 'Połącz integracje, których potrzebujesz teraz',
           it: 'Collega le integrazioni di cui hai bisogno ora',
+          sk: 'Połącz integracje, których potrzebujesz teraz',
         }),
       },
       points: {
@@ -134,6 +141,7 @@ const content = {
           ar: 'إعداد أولي سريع',
           pl: 'Szybka konfiguracja początkowa',
           it: 'Configurazione iniziale rapida',
+          sk: 'Szybka konfiguracja początkowa',
         }),
         integrations: t({
           ru: 'Подключение сервисов в один клик',
@@ -149,6 +157,7 @@ const content = {
           ar: 'ربط الخدمات بنقرة واحدة',
           pl: 'Połącz usługi jednym kliknięciem',
           it: 'Connetti servizi in un clic',
+          sk: 'Połącz usługi jednym kliknięciem',
         }),
         control: t({
           ru: 'Понятный старт и полный контроль',
@@ -164,6 +173,7 @@ const content = {
           ar: 'بداية واضحة وتحكم كامل',
           pl: 'Jasny start i pełna kontrola',
           it: 'Inizio chiaro e pieno controllo',
+          sk: 'Jasny start i pełna kontrola',
         }),
       },
     },
@@ -182,6 +192,7 @@ const content = {
         ar: 'اللغة والمنطقة الزمنية',
         pl: 'Język i strefa czasowa',
         it: 'Lingua e fuso orario',
+        sk: 'Język i strefa czasowa',
       }),
       subtitle: t({
         ru: 'Выберите удобный язык интерфейса и ваш часовой пояс для корректного времени в отчетах.',
@@ -197,14 +208,22 @@ const content = {
         ar: 'اختر لغة الواجهة المفضلة والمنطقة الزمنية لطوابع زمنية دقيقة في التقارير.',
         pl: 'Wybierz preferowany język interfejsu i strefę czasową dla dokładnych znaczników czasu w raportach.',
         it: 'Scegli la tua lingua dell\'interfaccia preferita e il fuso orario per timestamp accurati nei report.',
+        sk: 'Wybierz preferowany język interfejsu i strefę czasową dla dokładnych znaczników czasu w raportach.',
       }),
-      localeLabel: t({ ru: 'Язык', en: 'Language', kk: 'Тіл', de: 'Sprache', fr: 'Langue', es: 'Idioma', pt: 'Idioma', tr: 'Dil', uk: 'Мова', zh: '语言', ar: 'اللغة', pl: 'Język', it: 'Lingua' }),
+      localeLabel: t({ ru: 'Язык', en: 'Language', kk: 'Тіл', de: 'Sprache', fr: 'Langue', es: 'Idioma', pt: 'Idioma', tr: 'Dil', uk: 'Мова', zh: '语言', ar: 'اللغة', pl: 'Język', it: 'Lingua', sk: 'Język'}),
       localeOptions: {
-        ru: t({ ru: 'Русский', en: 'Russian', kk: 'Орыс тілі', de: 'Russisch', fr: 'Russe', es: 'Ruso', pt: 'Russo', tr: 'Rusça', uk: 'Російська', zh: '俄语', ar: 'الروسية', pl: 'Rosyjski', it: 'Russo' }),
-        en: t({ ru: 'English', en: 'English', kk: 'English', de: 'Englisch', fr: 'Anglais', es: 'Inglés', pt: 'Inglês', tr: 'İngilizce', uk: 'Англійська', zh: '英语', ar: 'الإنجليزية', pl: 'Angielski', it: 'Inglese' }),
-        kk: t({ ru: 'Қазақша', en: 'Kazakh', kk: 'Қазақша', de: 'Kasachisch', fr: 'Kazakh', es: 'Kazajo', pt: 'Cazaque', tr: 'Kazakça', uk: 'Казахська', zh: '哈萨克语', ar: 'الكازاخية', pl: 'Kazachski', it: 'Kazaco' }),
+        ru: t({ ru: 'Русский', en: 'Russian', kk: 'Орыс тілі', de: 'Russisch', fr: 'Russe', es: 'Ruso', pt: 'Russo', tr: 'Rusça', uk: 'Російська', zh: '俄语', ar: 'الروسية', pl: 'Rosyjski', it: 'Russo', sk: 'Rosyjski'}),
+        en: t({ ru: 'English', en: 'English', kk: 'English', de: 'Englisch', fr: 'Anglais', es: 'Inglés', pt: 'Inglês', tr: 'İngilizce', uk: 'Англійська', zh: '英语', ar: 'الإنجليزية', pl: 'Angielski', it: 'Inglese', sk: 'Angielski'}),
+        kk: t({ ru: 'Қазақша', en: 'Kazakh', kk: 'Қазақша', de: 'Kasachisch', fr: 'Kazakh', es: 'Kazajo', pt: 'Cazaque', tr: 'Kazakça', uk: 'Казахська', zh: '哈萨克语', ar: 'الكازاخية', pl: 'Kazachski', it: 'Kazaco', sk: 'Kazachski'}),
+        zh: t({ ru: 'Китайский', en: 'Chinese', kk: 'Қытай тілі', de: 'Chinesisch', fr: 'Chinois', es: 'Chino', pt: 'Chinês', tr: 'Çince', uk: 'Китайська', zh: '中文', ar: 'الصينية', pl: 'Chiński', it: 'Cinese', sk: 'Chiński'}),
+        de: t({ ru: 'Немецкий', en: 'German', kk: 'Неміс тілі', de: 'Deutsch', fr: 'Allemand', es: 'Alemán', pt: 'Alemão', tr: 'Almanca', uk: 'Німецька', zh: '德语', ar: 'الألمانية', pl: 'Niemiecki', it: 'Tedesco', sk: 'Niemiecki'}),
+        fr: t({ ru: 'Французский', en: 'French', kk: 'Француз тілі', de: 'Französisch', fr: 'Français', es: 'Francés', pt: 'Francês', tr: 'Fransızca', uk: 'Французька', zh: '法语', ar: 'الفرنسية', pl: 'Francuski', it: 'Francese', sk: 'Francuski'}),
+        es: t({ ru: 'Испанский', en: 'Spanish', kk: 'Испан тілі', de: 'Spanisch', fr: 'Espagnol', es: 'Español', pt: 'Espanhol', tr: 'İspanyolca', uk: 'Іспанська', zh: '西班牙语', ar: 'الإسبانية', pl: 'Hiszpański', it: 'Spagnolo', sk: 'Hiszpański'}),
+        uk: t({ ru: 'Украинский', en: 'Ukrainian', kk: 'Украин тілі', de: 'Ukrainisch', fr: 'Ukrainien', es: 'Ucraniano', pt: 'Ucraniano', tr: 'Ukraynaca', uk: 'Українська', zh: '乌克兰语', ar: 'الأوكرانية', pl: 'Ukraiński', it: 'Ucraino', sk: 'Ukraiński'}),
+        pl: t({ ru: 'Польский', en: 'Polish', kk: 'Поляк тілі', de: 'Polnisch', fr: 'Polonais', es: 'Polaco', pt: 'Polonês', tr: 'Lehçe', uk: 'Польська', zh: '波兰语', ar: 'البولندية', pl: 'Polski', it: 'Polacco', sk: 'Polski'}),
+        sk: t({ ru: 'Словацкий', en: 'Slovak', kk: 'Словак тілі', de: 'Slowakisch', fr: 'Slovaque', es: 'Eslovaco', pt: 'Eslovaco', tr: 'Slovakça', uk: 'Словацька', zh: '斯洛伐克语', ar: 'السلوفاكية', pl: 'Słowacki', it: 'Slovacco' }),
       },
-      timeZoneLabel: t({ ru: 'Часовой пояс', en: 'Timezone', kk: 'Уақыт белдеуі', de: 'Zeitzone', fr: 'Fuseau horaire', es: 'Zona horaria', pt: 'Fuso horário', tr: 'Saat dilimi', uk: 'Часовий пояс', zh: '时区', ar: 'المنطقة الزمنية', pl: 'Strefa czasowa', it: 'Fuso orario' }),
+      timeZoneLabel: t({ ru: 'Часовой пояс', en: 'Timezone', kk: 'Уақыт белдеуі', de: 'Zeitzone', fr: 'Fuseau horaire', es: 'Zona horaria', pt: 'Fuso horário', tr: 'Saat dilimi', uk: 'Часовий пояс', zh: '时区', ar: 'المنطقة الزمنية', pl: 'Strefa czasowa', it: 'Fuso orario', sk: 'Strefa czasowa'}),
       timeZonePlaceholder: t({
         ru: 'Выберите часовой пояс',
         en: 'Select timezone',
@@ -219,6 +238,7 @@ const content = {
         ar: 'اختر المنطقة الزمنية',
         pl: 'Wybierz strefę czasową',
         it: 'Seleziona fuso orario',
+        sk: 'Wybierz strefę czasową',
       }),
       timeZoneHint: t({
         ru: 'Вы всегда сможете изменить это позже в настройках профиля.',
@@ -234,6 +254,7 @@ const content = {
         ar: 'يمكنك دائمًا تغيير هذا لاحقًا في إعدادات الملف الشخصي.',
         pl: 'Zawsze możesz to zmienić później w ustawieniach profilu.',
         it: 'Puoi sempre cambiarlo in seguito nelle impostazioni del profilo.',
+        sk: 'Zawsze możesz to zmienić później w ustawieniach profilu.',
       }),
       timeZoneNoOptions: t({
         ru: 'Часовые пояса не найдены',
@@ -249,6 +270,7 @@ const content = {
         ar: 'لم يتم العثور على مناطق زمنية مطابقة',
         pl: 'Nie znaleziono pasujących stref czasowych',
         it: 'Nessun fuso orario corrispondente trovato',
+        sk: 'Nie znaleziono pasujących stref czasowych',
       }),
     },
     workspace: {
@@ -266,6 +288,7 @@ const content = {
         ar: 'إعداد مساحة العمل الأولى',
         pl: 'Skonfiguruj pierwszą przestrzeń roboczą',
         it: 'Configura la tua prima area di lavoro',
+        sk: 'Skonfiguruj pierwszą przestrzeń roboczą',
       }),
       subtitle: t({
         ru: 'Задайте название и валюту по умолчанию для корректного учета данных.',
@@ -281,6 +304,7 @@ const content = {
         ar: 'حدد اسم مساحة العمل والعملة الافتراضية لتتبع البيانات بدقة.',
         pl: 'Ustaw nazwę przestrzeni roboczej i domyślną walutę dla dokładnego śledzenia danych.',
         it: 'Imposta il nome dell\'area di lavoro e la valuta predefinita per un monitoraggio preciso dei dati.',
+        sk: 'Ustaw nazwę przestrzeni roboczej i domyślną walutę dla dokładnego śledzenia danych.',
       }),
       nameLabel: t({
         ru: 'Название воркспейса',
@@ -296,6 +320,7 @@ const content = {
         ar: 'اسم مساحة العمل',
         pl: 'Nazwa przestrzeni roboczej',
         it: 'Nome dell\'area di lavoro',
+        sk: 'Nazwa przestrzeni roboczej',
       }),
       namePlaceholder: t({
         ru: 'Например: My Company workspace',
@@ -311,6 +336,7 @@ const content = {
         ar: 'مثال: My Company workspace',
         pl: 'Na przykład: My Company workspace',
         it: 'Ad esempio: My Company workspace',
+        sk: 'Na przykład: My Company workspace',
       }),
       currencyHint: t({
         ru: 'Эта валюта будет использоваться по умолчанию при создании новых записей.',
@@ -326,6 +352,7 @@ const content = {
         ar: 'ستُستخدم هذه العملة افتراضيًا للسجلات الجديدة.',
         pl: 'Ta waluta będzie używana domyślnie dla nowych rekordów.',
         it: 'Questa valuta verrà utilizzata per impostazione predefinita per i nuovi record.',
+        sk: 'Ta waluta będzie używana domyślnie dla nowych rekordów.',
       }),
       currencyPickerTitle: t({
         ru: 'Выберите валюту',
@@ -341,6 +368,7 @@ const content = {
         ar: 'اختر العملة',
         pl: 'Wybierz walutę',
         it: 'Seleziona una valuta',
+        sk: 'Wybierz walutę',
       }),
       currencyPickerSubtitle: t({
         ru: 'Найдите и выберите валюту, которая будет использоваться по умолчанию.',
@@ -356,6 +384,7 @@ const content = {
         ar: 'ابحث عن العملة التي ستُستخدم افتراضيًا وحددها.',
         pl: 'Znajdź i wybierz walutę, która będzie używana domyślnie.',
         it: 'Trova e seleziona la valuta che verrà utilizzata per impostazione predefinita.',
+        sk: 'Znajdź i wybierz walutę, która będzie używana domyślnie.',
       }),
       backgroundLabel: t({
         ru: 'Фон воркспейса',
@@ -371,6 +400,7 @@ const content = {
         ar: 'خلفية مساحة العمل',
         pl: 'Tło przestrzeni roboczej',
         it: 'Sfondo dell\'area di lavoro',
+        sk: 'Tło przestrzeni roboczej',
       }),
       customBackgroundLabel: t({
         ru: 'Своя картинка (URL)',
@@ -386,6 +416,7 @@ const content = {
         ar: 'صورة مخصصة (URL)',
         pl: 'Własny obraz (URL)',
         it: 'Immagine personalizzata (URL)',
+        sk: 'Własny obraz (URL)',
       }),
       customBackgroundPlaceholder: t({
         ru: 'https://example.com/my-image.jpg',
@@ -401,6 +432,7 @@ const content = {
         ar: 'https://example.com/my-image.jpg',
         pl: 'https://example.com/my-image.jpg',
         it: 'https://example.com/my-image.jpg',
+        sk: 'https://example.com/my-image.jpg',
       }),
       customBackgroundHint: t({
         ru: 'Можно вставить ссылку на свою картинку или выбрать одну из готовых ниже.',
@@ -416,6 +448,7 @@ const content = {
         ar: 'الصق رابط صورتك الخاصة أو اختر أحد الإعدادات المسبقة أدناه.',
         pl: 'Wklej URL własnego obrazu lub wybierz jeden z gotowych poniżej.',
         it: 'Incolla l\'URL della tua immagine o scegli uno dei preset qui sotto.',
+        sk: 'Wklej URL własnego obrazu lub wybierz jeden z gotowych poniżej.',
       }),
     },
     integrations: {
@@ -433,6 +466,7 @@ const content = {
         ar: 'اربط تكاملاتك',
         pl: 'Połącz swoje integracje',
         it: 'Collega le tue integrazioni',
+        sk: 'Połącz swoje integracje',
       }),
       subtitle: t({
         ru: 'Выберите сервисы, которые хотите настроить сейчас. Можно подключить и позже.',
@@ -448,6 +482,7 @@ const content = {
         ar: 'اختر الخدمات التي تريد إعدادها الآن. يمكنك ربطها لاحقًا أيضًا.',
         pl: 'Wybierz usługi, które chcesz skonfigurować teraz. Możesz je połączyć później.',
         it: 'Scegli i servizi che vuoi configurare ora. Puoi connetterli anche in seguito.',
+        sk: 'Wybierz usługi, które chcesz skonfigurować teraz. Możesz je połączyć później.',
       }),
       helper: t({
         ru: 'Если пропустить шаг, интеграции можно подключить в разделе Настройки -> Интеграции.',
@@ -463,6 +498,7 @@ const content = {
         ar: 'إذا تخطيت هذه الخطوة، يمكنك ربط التكاملات لاحقًا في الإعدادات -> التكاملات.',
         pl: 'Jeśli pominiesz ten krok, możesz połączyć integracje później w Ustawieniach -> Integracje.',
         it: 'Se salti questo passaggio, puoi connettere le integrazioni in seguito in Impostazioni -> Integrazioni.',
+        sk: 'Jeśli pominiesz ten krok, możesz połączyć integracje później w Ustawieniach -> Integracje.',
       }),
       connectFailed: t({
         ru: 'Не удалось подключить интеграцию. Попробуйте еще раз.',
@@ -478,10 +514,11 @@ const content = {
         ar: 'فشل ربط التكامل. يرجى المحاولة مرة أخرى.',
         pl: 'Nie udało się połączyć integracji. Spróbuj ponownie.',
         it: 'Impossibile connettere l\'integrazione. Riprova.',
+        sk: 'Nie udało się połączyć integracji. Spróbuj ponownie.',
       }),
       cards: {
         gmail: {
-          title: t({ ru: 'Gmail', en: 'Gmail', kk: 'Gmail', de: 'Gmail', fr: 'Gmail', es: 'Gmail', pt: 'Gmail', tr: 'Gmail', uk: 'Gmail', zh: 'Gmail', ar: 'Gmail', pl: 'Gmail', it: 'Gmail' }),
+          title: t({ ru: 'Gmail', en: 'Gmail', kk: 'Gmail', de: 'Gmail', fr: 'Gmail', es: 'Gmail', pt: 'Gmail', tr: 'Gmail', uk: 'Gmail', zh: 'Gmail', ar: 'Gmail', pl: 'Gmail', it: 'Gmail', sk: 'Gmail'}),
           description: t({
             ru: 'Автоматически импортируйте чеки и инвойсы из Gmail.',
             en: 'Automatically import receipts and invoices from Gmail.',
@@ -496,11 +533,12 @@ const content = {
             ar: 'استيراد الإيصالات والفواتير من Gmail تلقائيًا.',
             pl: 'Automatycznie importuj paragony i faktury z Gmaila.',
             it: 'Importa automaticamente ricevute e fatture da Gmail.',
+            sk: 'Automatycznie importuj paragony i faktury z Gmaila.',
           }),
-          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti' }),
+          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti', sk: 'Połącz'}),
         },
         googleDrive: {
-          title: t({ ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive' }),
+          title: t({ ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive', sk: 'Google Drive'}),
           description: t({
             ru: 'Синхронизируйте выписки с Google Drive и импортируйте файлы.',
             en: 'Sync statements with Google Drive and import files.',
@@ -515,11 +553,12 @@ const content = {
             ar: 'زامن كشوف الحساب مع Google Drive واستورد الملفات.',
             pl: 'Synchronizuj wyciągi z Google Drive i importuj pliki.',
             it: 'Sincronizza gli estratti conto con Google Drive e importa file.',
+            sk: 'Synchronizuj wyciągi z Google Drive i importuj pliki.',
           }),
-          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti' }),
+          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti', sk: 'Połącz'}),
         },
         dropbox: {
-          title: t({ ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox' }),
+          title: t({ ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox', sk: 'Dropbox'}),
           description: t({
             ru: 'Синхронизируйте выписки с Dropbox и импортируйте файлы.',
             en: 'Sync statements with Dropbox and import files.',
@@ -534,11 +573,12 @@ const content = {
             ar: 'زامن كشوف الحساب مع Dropbox واستورد الملفات.',
             pl: 'Synchronizuj wyciągi z Dropbox i importuj pliki.',
             it: 'Sincronizza gli estratti conto con Dropbox e importa file.',
+            sk: 'Synchronizuj wyciągi z Dropbox i importuj pliki.',
           }),
-          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti' }),
+          action: t({ ru: 'Подключить', en: 'Connect', kk: 'Қосу', de: 'Verbinden', fr: 'Connecter', es: 'Conectar', pt: 'Conectar', tr: 'Bağla', uk: 'Підключити', zh: '连接', ar: 'ربط', pl: 'Połącz', it: 'Connetti', sk: 'Połącz'}),
         },
         googleSheets: {
-          title: t({ ru: 'Google Sheets', en: 'Google Sheets', kk: 'Google Sheets', de: 'Google Sheets', fr: 'Google Sheets', es: 'Google Sheets', pt: 'Google Sheets', tr: 'Google Sheets', uk: 'Google Sheets', zh: 'Google Sheets', ar: 'Google Sheets', pl: 'Google Sheets', it: 'Google Sheets' }),
+          title: t({ ru: 'Google Sheets', en: 'Google Sheets', kk: 'Google Sheets', de: 'Google Sheets', fr: 'Google Sheets', es: 'Google Sheets', pt: 'Google Sheets', tr: 'Google Sheets', uk: 'Google Sheets', zh: 'Google Sheets', ar: 'Google Sheets', pl: 'Google Sheets', it: 'Google Sheets', sk: 'Google Sheets'}),
           description: t({
             ru: 'Отправляйте распарсенные транзакции в выбранную таблицу.',
             en: 'Send parsed transactions to a selected spreadsheet.',
@@ -553,11 +593,12 @@ const content = {
             ar: 'أرسل المعاملات المحللة إلى جدول بيانات محدد.',
             pl: 'Wysyłaj przetworzone transakcje do wybranego arkusza.',
             it: 'Invia le transazioni elaborate a un foglio di calcolo selezionato.',
+            sk: 'Wysyłaj przetworzone transakcje do wybranego arkusza.',
           }),
-          action: t({ ru: 'Открыть настройку', en: 'Open setup', kk: 'Баптауды ашу', de: 'Einrichtung öffnen', fr: 'Ouvrir la configuration', es: 'Abrir configuración', pt: 'Abrir configuração', tr: 'Kurulumu aç', uk: 'Відкрити налаштування', zh: '打开设置', ar: 'فتح الإعداد', pl: 'Otwórz konfigurację', it: 'Apri configurazione' }),
+          action: t({ ru: 'Открыть настройку', en: 'Open setup', kk: 'Баптауды ашу', de: 'Einrichtung öffnen', fr: 'Ouvrir la configuration', es: 'Abrir configuración', pt: 'Abrir configuração', tr: 'Kurulumu aç', uk: 'Відкрити налаштування', zh: '打开设置', ar: 'فتح الإعداد', pl: 'Otwórz konfigurację', it: 'Apri configurazione', sk: 'Otwórz konfigurację'}),
         },
         telegram: {
-          title: t({ ru: 'Telegram', en: 'Telegram', kk: 'Telegram', de: 'Telegram', fr: 'Telegram', es: 'Telegram', pt: 'Telegram', tr: 'Telegram', uk: 'Telegram', zh: 'Telegram', ar: 'Telegram', pl: 'Telegram', it: 'Telegram' }),
+          title: t({ ru: 'Telegram', en: 'Telegram', kk: 'Telegram', de: 'Telegram', fr: 'Telegram', es: 'Telegram', pt: 'Telegram', tr: 'Telegram', uk: 'Telegram', zh: 'Telegram', ar: 'Telegram', pl: 'Telegram', it: 'Telegram', sk: 'Telegram'}),
           description: t({
             ru: 'Получайте уведомления и отправляйте выписки через бота.',
             en: 'Receive notifications and send statements via bot.',
@@ -572,12 +613,13 @@ const content = {
             ar: 'استقبل الإشعارات وأرسل كشوف الحساب عبر البوت.',
             pl: 'Otrzymuj powiadomienia i wysyłaj wyciągi przez bota.',
             it: 'Ricevi notifiche e invia estratti conto tramite bot.',
+            sk: 'Otrzymuj powiadomienia i wysyłaj wyciągi przez bota.',
           }),
-          action: t({ ru: 'Настроить', en: 'Set up', kk: 'Баптау', de: 'Einrichten', fr: 'Configurer', es: 'Configurar', pt: 'Configurar', tr: 'Ayarla', uk: 'Налаштувати', zh: '设置', ar: 'إعداد', pl: 'Skonfiguruj', it: 'Configura' }),
+          action: t({ ru: 'Настроить', en: 'Set up', kk: 'Баптау', de: 'Einrichten', fr: 'Configurer', es: 'Configurar', pt: 'Configurar', tr: 'Ayarla', uk: 'Налаштувати', zh: '设置', ar: 'إعداد', pl: 'Skonfiguruj', it: 'Configura', sk: 'Skonfiguruj'}),
         },
       },
-      connectedBadge: t({ ru: 'Подключено', en: 'Connected', kk: 'Қосылған', de: 'Verbunden', fr: 'Connecté', es: 'Conectado', pt: 'Conectado', tr: 'Bağlandı', uk: 'Підключено', zh: '已连接', ar: 'متصل', pl: 'Połączono', it: 'Connesso' }),
-      availableBadge: t({ ru: 'Доступно', en: 'Available', kk: 'Қолжетімді', de: 'Verfügbar', fr: 'Disponible', es: 'Disponible', pt: 'Disponível', tr: 'Mevcut', uk: 'Доступно', zh: '可用', ar: 'متاح', pl: 'Dostępne', it: 'Disponibile' }),
+      connectedBadge: t({ ru: 'Подключено', en: 'Connected', kk: 'Қосылған', de: 'Verbunden', fr: 'Connecté', es: 'Conectado', pt: 'Conectado', tr: 'Bağlandı', uk: 'Підключено', zh: '已连接', ar: 'متصل', pl: 'Połączono', it: 'Connesso', sk: 'Połączono'}),
+      availableBadge: t({ ru: 'Доступно', en: 'Available', kk: 'Қолжетімді', de: 'Verfügbar', fr: 'Disponible', es: 'Disponible', pt: 'Disponível', tr: 'Mevcut', uk: 'Доступно', zh: '可用', ar: 'متاح', pl: 'Dostępne', it: 'Disponibile', sk: 'Dostępne'}),
     },
     completion: {
       title: t({
@@ -594,6 +636,7 @@ const content = {
         ar: 'تم! اكتمل الإعداد',
         pl: 'Gotowe! Konfiguracja zakończona',
         it: 'Fatto! Configurazione completata',
+        sk: 'Gotowe! Konfiguracja zakończona',
       }),
       subtitle: t({
         ru: 'Нажмите кнопку ниже, и перейдете в рабочее пространство.',
@@ -609,11 +652,12 @@ const content = {
         ar: 'اضغط على الزر أدناه للانتقال إلى مساحة العمل.',
         pl: 'Naciśnij przycisk poniżej, aby przejść do przestrzeni roboczej.',
         it: 'Premi il pulsante qui sotto per continuare verso la tua area di lavoro.',
+        sk: 'Naciśnij przycisk poniżej, aby przejść do przestrzeni roboczej.',
       }),
-      summaryTitle: t({ ru: 'Ваши настройки', en: 'Your setup', kk: 'Сіздің баптауларыңыз', de: 'Ihre Einstellungen', fr: 'Votre configuration', es: 'Tu configuración', pt: 'Sua configuração', tr: 'Kurulumunuz', uk: 'Ваші налаштування', zh: '您的设置', ar: 'إعداداتك', pl: 'Twoje ustawienia', it: 'La tua configurazione' }),
-      notSet: t({ ru: 'не задано', en: 'not set', kk: 'орнатылмаған', de: 'nicht festgelegt', fr: 'non défini', es: 'no definido', pt: 'não definido', tr: 'ayarlanmadı', uk: 'не задано', zh: '未设置', ar: 'غير محدد', pl: 'nie ustawiono', it: 'non impostato' }),
+      summaryTitle: t({ ru: 'Ваши настройки', en: 'Your setup', kk: 'Сіздің баптауларыңыз', de: 'Ihre Einstellungen', fr: 'Votre configuration', es: 'Tu configuración', pt: 'Sua configuração', tr: 'Kurulumunuz', uk: 'Ваші налаштування', zh: '您的设置', ar: 'إعداداتك', pl: 'Twoje ustawienia', it: 'La tua configurazione', sk: 'Twoje ustawienia'}),
+      notSet: t({ ru: 'не задано', en: 'not set', kk: 'орнатылмаған', de: 'nicht festgelegt', fr: 'non défini', es: 'no definido', pt: 'não definido', tr: 'ayarlanmadı', uk: 'не задано', zh: '未设置', ar: 'غير محدد', pl: 'nie ustawiono', it: 'non impostato', sk: 'nie ustawiono'}),
       summary: {
-        language: t({ ru: 'Язык: {value}', en: 'Language: {value}', kk: 'Тіл: {value}', de: 'Sprache: {value}', fr: 'Langue : {value}', es: 'Idioma: {value}', pt: 'Idioma: {value}', tr: 'Dil: {value}', uk: 'Мова: {value}', zh: '语言：{value}', ar: 'اللغة: {value}', pl: 'Język: {value}', it: 'Lingua: {value}' }),
+        language: t({ ru: 'Язык: {value}', en: 'Language: {value}', kk: 'Тіл: {value}', de: 'Sprache: {value}', fr: 'Langue : {value}', es: 'Idioma: {value}', pt: 'Idioma: {value}', tr: 'Dil: {value}', uk: 'Мова: {value}', zh: '语言：{value}', ar: 'اللغة: {value}', pl: 'Język: {value}', it: 'Lingua: {value}', sk: 'Język: {value}'}),
         timeZone: t({
           ru: 'Часовой пояс: {value}',
           en: 'Timezone: {value}',
@@ -628,6 +672,7 @@ const content = {
           ar: 'المنطقة الزمنية: {value}',
           pl: 'Strefa czasowa: {value}',
           it: 'Fuso orario: {value}',
+          sk: 'Strefa czasowa: {value}',
         }),
         workspace: t({
           ru: 'Воркспейс: {value}',
@@ -643,8 +688,9 @@ const content = {
           ar: 'مساحة العمل: {value}',
           pl: 'Przestrzeń robocza: {value}',
           it: 'Area di lavoro: {value}',
+          sk: 'Przestrzeń robocza: {value}',
         }),
-        currency: t({ ru: 'Валюта: {value}', en: 'Currency: {value}', kk: 'Валюта: {value}', de: 'Währung: {value}', fr: 'Devise : {value}', es: 'Moneda: {value}', pt: 'Moeda: {value}', tr: 'Para birimi: {value}', uk: 'Валюта: {value}', zh: '货币：{value}', ar: 'العملة: {value}', pl: 'Waluta: {value}', it: 'Valuta: {value}' }),
+        currency: t({ ru: 'Валюта: {value}', en: 'Currency: {value}', kk: 'Валюта: {value}', de: 'Währung: {value}', fr: 'Devise : {value}', es: 'Moneda: {value}', pt: 'Moeda: {value}', tr: 'Para birimi: {value}', uk: 'Валюта: {value}', zh: '货币：{value}', ar: 'العملة: {value}', pl: 'Waluta: {value}', it: 'Valuta: {value}', sk: 'Waluta: {value}'}),
         integrations: t({
           ru: 'Подключенные интеграции:',
           en: 'Connected integrations:',
@@ -659,6 +705,7 @@ const content = {
           ar: 'التكاملات المتصلة:',
           pl: 'Połączone integracje:',
           it: 'Integrazioni connesse:',
+          sk: 'Połączone integracje:',
         }),
         background: t({
           ru: 'Фон воркспейса: {value}',
@@ -674,9 +721,10 @@ const content = {
           ar: 'خلفية مساحة العمل: {value}',
           pl: 'Tło przestrzeni roboczej: {value}',
           it: 'Sfondo area di lavoro: {value}',
+          sk: 'Tło przestrzeni roboczej: {value}',
         }),
       },
-      backgroundSet: t({ ru: 'установлен', en: 'set', kk: 'орнатылған', de: 'festgelegt', fr: 'défini', es: 'definido', pt: 'definido', tr: 'ayarlandı', uk: 'встановлено', zh: '已设置', ar: 'محدد', pl: 'ustawiono', it: 'impostato' }),
+      backgroundSet: t({ ru: 'установлен', en: 'set', kk: 'орнатылған', de: 'festgelegt', fr: 'défini', es: 'definido', pt: 'definido', tr: 'ayarlandı', uk: 'встановлено', zh: '已设置', ar: 'محدد', pl: 'ustawiono', it: 'impostato', sk: 'ustawiono'}),
       noIntegrations: t({
         ru: 'Интеграции не подключены',
         en: 'No integrations connected',
@@ -691,15 +739,16 @@ const content = {
         ar: 'لا توجد تكاملات متصلة',
         pl: 'Brak połączonych integracji',
         it: 'Nessuna integrazione connessa',
+        sk: 'Brak połączonych integracji',
       }),
     },
     navigation: {
-      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro' }),
-      next: t({ ru: 'Далее', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próximo', tr: 'İleri', uk: 'Далі', zh: '下一步', ar: 'التالي', pl: 'Dalej', it: 'Avanti' }),
-      finish: t({ ru: 'Начать работу', en: 'Start using app', kk: 'Жұмысты бастау', de: 'App starten', fr: 'Commencer à utiliser l\'application', es: 'Empezar a usar la app', pt: 'Começar a usar o app', tr: 'Uygulamayı kullanmaya başla', uk: 'Почати роботу', zh: '开始使用应用', ar: 'ابدأ استخدام التطبيق', pl: 'Zacznij korzystać z aplikacji', it: 'Inizia a usare l\'app' }),
-      skip: t({ ru: 'Пропустить', en: 'Skip', kk: 'Өткізу', de: 'Überspringen', fr: 'Passer', es: 'Omitir', pt: 'Pular', tr: 'Atla', uk: 'Пропустити', zh: '跳过', ar: 'تخطي', pl: 'Pomiń', it: 'Salta' }),
-      skipAll: t({ ru: 'Пропустить все', en: 'Skip all', kk: 'Барлығын өткізу', de: 'Alle überspringen', fr: 'Tout passer', es: 'Omitir todo', pt: 'Pular tudo', tr: 'Tümünü atla', uk: 'Пропустити все', zh: '全部跳过', ar: 'تخطي الكل', pl: 'Pomiń wszystko', it: 'Salta tutto' }),
-      saving: t({ ru: 'Сохраняем...', en: 'Saving...', kk: 'Сақталуда...', de: 'Speichern...', fr: 'Enregistrement...', es: 'Guardando...', pt: 'Salvando...', tr: 'Kaydediliyor...', uk: 'Зберігаємо...', zh: '保存中...', ar: 'جارٍ الحفظ...', pl: 'Zapisywanie...', it: 'Salvataggio...' }),
+      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro', sk: 'Wstecz'}),
+      next: t({ ru: 'Далее', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próximo', tr: 'İleri', uk: 'Далі', zh: '下一步', ar: 'التالي', pl: 'Dalej', it: 'Avanti', sk: 'Dalej'}),
+      finish: t({ ru: 'Начать работу', en: 'Start using app', kk: 'Жұмысты бастау', de: 'App starten', fr: 'Commencer à utiliser l\'application', es: 'Empezar a usar la app', pt: 'Começar a usar o app', tr: 'Uygulamayı kullanmaya başla', uk: 'Почати роботу', zh: '开始使用应用', ar: 'ابدأ استخدام التطبيق', pl: 'Zacznij korzystać z aplikacji', it: 'Inizia a usare l\'app', sk: 'Zacznij korzystać z aplikacji'}),
+      skip: t({ ru: 'Пропустить', en: 'Skip', kk: 'Өткізу', de: 'Überspringen', fr: 'Passer', es: 'Omitir', pt: 'Pular', tr: 'Atla', uk: 'Пропустити', zh: '跳过', ar: 'تخطي', pl: 'Pomiń', it: 'Salta', sk: 'Pomiń'}),
+      skipAll: t({ ru: 'Пропустить все', en: 'Skip all', kk: 'Барлығын өткізу', de: 'Alle überspringen', fr: 'Tout passer', es: 'Omitir todo', pt: 'Pular tudo', tr: 'Tümünü atla', uk: 'Пропустити все', zh: '全部跳过', ar: 'تخطي الكل', pl: 'Pomiń wszystko', it: 'Salta tutto', sk: 'Pomiń wszystko'}),
+      saving: t({ ru: 'Сохраняем...', en: 'Saving...', kk: 'Сақталуда...', de: 'Speichern...', fr: 'Enregistrement...', es: 'Guardando...', pt: 'Salvando...', tr: 'Kaydediliyor...', uk: 'Зберігаємо...', zh: '保存中...', ar: 'جارٍ الحفظ...', pl: 'Zapisywanie...', it: 'Salvataggio...', sk: 'Zapisywanie...'}),
     },
     errors: {
       workspaceLoadFailed: t({
@@ -716,6 +765,7 @@ const content = {
         ar: 'فشل تحميل بيانات مساحة العمل. يمكنك المتابعة بالإعدادات الافتراضية.',
         pl: 'Nie udało się załadować danych przestrzeni roboczej. Możesz kontynuować z ustawieniami domyślnymi.',
         it: 'Impossibile caricare i dati dell\'area di lavoro. Puoi continuare con le impostazioni predefinite.',
+        sk: 'Nie udało się załadować danych przestrzeni roboczej. Możesz kontynuować z ustawieniami domyślnymi.',
       }),
       completeFailed: t({
         ru: 'Не удалось завершить онбординг. Попробуйте еще раз.',
@@ -731,6 +781,7 @@ const content = {
         ar: 'فشل إكمال عملية التهيئة. يرجى المحاولة مرة أخرى.',
         pl: 'Nie udało się ukończyć procesu wdrożenia. Spróbuj ponownie.',
         it: 'Impossibile completare l\'onboarding. Riprova.',
+        sk: 'Nie udało się ukończyć procesu wdrożenia. Spróbuj ponownie.',
       }),
     },
   },

@@ -17,6 +17,7 @@ const content = {
       ar: 'Lumio — معالجة كشوف الحسابات البنكية',
       pl: 'Lumio — Przetwarzanie wyciągów bankowych',
       it: 'Lumio — Elaborazione degli estratti conto bancari',
+      sk: 'Lumio — Przetwarzanie wyciągów bankowych',
     }),
     description: t({
       ru: 'Система автоматической обработки банковских выписок',
@@ -32,6 +33,7 @@ const content = {
       ar: 'نظام معالجة كشوف الحسابات البنكية تلقائياً',
       pl: 'System automatycznego przetwarzania wyciągów bankowych',
       it: 'Sistema di elaborazione automatica degli estratti conto bancari',
+      sk: 'System automatycznego przetwarzania wyciągów bankowych',
     }),
   },
 } satisfies Dictionary;

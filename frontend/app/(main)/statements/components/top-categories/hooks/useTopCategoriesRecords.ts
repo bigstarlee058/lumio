@@ -21,7 +21,7 @@ type Params = {
   activeFlowType: TopCategoryFlowType;
 };
 
-export type CategoryFromOption = { id: string; label: string; description?: string | null; bankName?: string | null };
+export type { AnalyticsFromOption as CategoryFromOption } from '@/app/(main)/statements/components/shared-analytics.utils';
 
 export type CategoryRecordsReturn = {
   allRecords: TopCategoryRecord[];

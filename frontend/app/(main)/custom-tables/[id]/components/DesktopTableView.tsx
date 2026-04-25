@@ -11,6 +11,7 @@ import { solidifyBackground } from '../utils/colorUtils';
 import type { CustomTableGridRow } from '../utils/stylingUtils';
 import { getRowStyle } from '../utils/stylingUtils';
 import type { ResizeMouseDownFn } from './DesktopTableView.types';
+import { tokens } from '@/lib/theme-tokens';
 
 interface StickyOffsets { left: Record<string, number>; right: Record<string, number>; }
 
@@ -163,7 +164,7 @@ function DesktopAddRowFooter({ footerRef, isDark, onCreateRow, label }: DesktopA
   const bg = isDark ? '#1f2937' : '#f9fafb';
   return (<div ref={footerRef} data-testid="custom-table-add-row" style={{ position: 'sticky', left: 0, zIndex: 10, width: '100%', borderTop: '1px solid #e5e7eb', backgroundColor: bg, padding: '12px 0' }}>
     <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: 'var(--lumio-radius-md)', border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: '#4b5563', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', transition: 'border-color 0.2s, color 0.2s' }}>
+      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: '#4b5563', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', transition: 'border-color 0.2s, color 0.2s' }}>
         <Plus size={16} />{label}
       </button>
     </div>

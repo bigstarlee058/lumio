@@ -7,8 +7,8 @@ import { Check, ChevronLeft, Globe, Search } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
-
-type AppLanguage = 'ru' | 'en' | 'kk';
+import { type AppLocale as AppLanguage, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
@@ -20,23 +20,23 @@ export function AuthLanguageSwitcher() {
   useLockBodyScroll(languageModalOpen);
 
   const languages = useMemo(
-    () =>
-      [
-        {
-          code: 'ru' as const,
-          label: languageNames.ru.value,
-          note: languageModal.defaultLanguageNote.value,
-        },
-        { code: 'en' as const, label: languageNames.en.value },
-        { code: 'kk' as const, label: languageNames.kk.value },
-      ].filter(l => availableLocales.map(String).includes(l.code)),
+    () => {
+      const available = availableLocales.map(String);
+      return SUPPORTED_LOCALES
+        .filter(code => available.includes(code))
+        .map(code => ({
+          code,
+          label: (languageNames as Record<string, { value: string }>)[code]?.value ?? code,
+          ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
+        }));
+    },
     [availableLocales, languageModal.defaultLanguageNote, languageNames],
   );
 
   const currentLanguageLabel = useMemo(() => {
-    const currentCode = (locale || 'ru') as AppLanguage;
-    return languages.find(l => l.code === currentCode)?.label ?? languageNames.ru.value;
-  }, [locale, languages, languageNames.ru.value]);
+    const currentCode = (locale || DEFAULT_LOCALE) as AppLanguage;
+    return languages.find(l => l.code === currentCode)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+  }, [locale, languages, languageNames]);
 
   const filteredLanguages = useMemo(() => {
     const query = languageSearch.trim().toLowerCase();
@@ -52,7 +52,7 @@ export function AuthLanguageSwitcher() {
     setLocale(code);
     setLanguageModalOpen(false);
     setLanguageSearch('');
-    const selectedLabel = languages.find(l => l.code === code)?.label ?? languageNames.ru.value;
+    const selectedLabel = languages.find(l => l.code === code)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
     toast.success(`${languageModal.savedToastPrefix.value}: ${selectedLabel}`);
     setTimeout(() => {
       window.location.reload();
@@ -67,7 +67,7 @@ export function AuthLanguageSwitcher() {
           setLanguageSearch('');
           setLanguageModalOpen(true);
         }}
-        sx={{ borderRadius: 'var(--lumio-radius-full)', color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+        sx={{ borderRadius: tokens.radius.full, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
       >
         <Globe size={20} suppressHydrationWarning />
       </IconButton>

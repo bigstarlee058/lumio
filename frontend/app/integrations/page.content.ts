@@ -17,6 +17,7 @@ const content = {
       ar: 'التكاملات',
       pl: 'Integracje',
       it: 'Integrazioni',
+      sk: 'Integracje',
     }),
     subtitle: t({
       ru: 'Подключайте внешние сервисы и автоматизируйте обмен данными.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'قم بتوصيل الخدمات الخارجية وأتمتة تبادل البيانات.',
       pl: 'Połącz zewnętrzne usługi i zautomatyzuj wymianę danych.',
       it: 'Connetti servizi esterni e automatizza lo scambio di dati.',
+      sk: 'Połącz zewnętrzne usługi i zautomatyzuj wymianę danych.',
     }),
     sections: {
       connected: t({
@@ -48,6 +50,7 @@ const content = {
         ar: 'متصل',
         pl: 'Połączone',
         it: 'Connesso',
+        sk: 'Połączone',
       }),
       available: t({
         ru: 'Доступно к подключению',
@@ -63,6 +66,7 @@ const content = {
         ar: 'متاح',
         pl: 'Dostępne',
         it: 'Disponibile',
+        sk: 'Dostępne',
       }),
     },
     banner: t({
@@ -79,6 +83,7 @@ const content = {
       ar: 'ابدأ من هنا: قم بتوصيل Gmail أو Google Drive لاستيراد الإيصالات والكشوفات تلقائيًا.',
       pl: 'Zacznij tutaj: połącz Gmail lub Google Drive, aby automatycznie importować paragony i wyciągi.',
       it: 'Inizia qui: collega Gmail o Google Drive per importare automaticamente ricevute ed estratti conto.',
+      sk: 'Zacznij tutaj: połącz Gmail lub Google Drive, aby automatycznie importować paragony i wyciągi.',
     }),
     recommendedBadge: t({
       ru: 'Рекомендуется',
@@ -94,6 +99,7 @@ const content = {
       ar: 'موصى به',
       pl: 'Polecane',
       it: 'Consigliato',
+      sk: 'Polecane',
     }),
     empty: {
       connected: t({
@@ -110,6 +116,7 @@ const content = {
         ar: 'لا توجد تكاملات نشطة حتى الآن.',
         pl: 'Brak aktywnych integracji.',
         it: 'Nessuna integrazione attiva ancora.',
+        sk: 'Brak aktywnych integracji.',
       }),
       available: t({
         ru: 'Нет доступных интеграций.',
@@ -125,6 +132,7 @@ const content = {
         ar: 'لا تتوفر تكاملات.',
         pl: 'Brak dostępnych integracji.',
         it: 'Nessuna integrazione disponibile.',
+        sk: 'Brak dostępnych integracji.',
       }),
     },
     categories: {
@@ -142,6 +150,7 @@ const content = {
         ar: 'التخزين',
         pl: 'Przechowywanie',
         it: 'Archiviazione',
+        sk: 'Przechowywanie',
       }),
       email: t({
         ru: 'Почта',
@@ -157,6 +166,7 @@ const content = {
         ar: 'البريد الإلكتروني',
         pl: 'Poczta',
         it: 'Email',
+        sk: 'Poczta',
       }),
       spreadsheets: t({
         ru: 'Таблицы',
@@ -172,6 +182,7 @@ const content = {
         ar: 'جداول البيانات',
         pl: 'Arkusze',
         it: 'Fogli di calcolo',
+        sk: 'Arkusze',
       }),
       messaging: t({
         ru: 'Мессенджеры',
@@ -187,6 +198,7 @@ const content = {
         ar: 'المراسلة',
         pl: 'Komunikatory',
         it: 'Messaggistica',
+        sk: 'Komunikatory',
       }),
     },
     searchPlaceholder: t({
@@ -203,6 +215,7 @@ const content = {
       ar: 'البحث عن التكاملات...',
       pl: 'Szukaj integracji...',
       it: 'Cerca integrazioni...',
+      sk: 'Szukaj integracji...',
     }),
     noResults: t({
       ru: 'Ничего не найдено',
@@ -218,6 +231,7 @@ const content = {
       ar: 'لم يتم العثور على شيء',
       pl: 'Nic nie znaleziono',
       it: 'Nessun risultato',
+      sk: 'Nic nie znaleziono',
     }),
     noResultsDescription: t({
       ru: 'По запросу «{{query}}» нет подходящих интеграций.',
@@ -233,6 +247,7 @@ const content = {
       ar: 'لم يتم العثور على تكاملات مطابقة لـ "{{query}}".',
       pl: 'Nie znaleziono integracji pasujących do „{{query}}".',
       it: 'Nessuna integrazione trovata per "{{query}}".',
+      sk: 'Nie znaleziono integracji pasujących do „{{query}}".',
     }),
     resetSearch: t({
       ru: 'Сбросить поиск',
@@ -248,6 +263,7 @@ const content = {
       ar: 'إعادة تعيين البحث',
       pl: 'Resetuj wyszukiwanie',
       it: 'Reimposta ricerca',
+      sk: 'Resetuj wyszukiwanie',
     }),
     cards: {
       dropbox: {
@@ -265,6 +281,7 @@ const content = {
           ar: 'زامن الكشوفات مع Dropbox واستورد الملفات بنقرات قليلة.',
           pl: 'Synchronizuj wyciągi z Dropbox i importuj pliki za pomocą kilku kliknięć.',
           it: 'Sincronizza gli estratti con Dropbox e importa file in pochi clic.',
+          sk: 'Synchronizuj wyciągi z Dropbox i importuj pliki za pomocą kilku kliknięć.',
         }),
         badge: t({
           ru: 'Доступно',
@@ -280,6 +297,7 @@ const content = {
           ar: 'متاح',
           pl: 'Dostępne',
           it: 'Disponibile',
+          sk: 'Dostępne',
         }),
         actions: {
           connect: t({
@@ -296,6 +314,7 @@ const content = {
             ar: 'اتصال',
             pl: 'Połącz',
             it: 'Connetti',
+            sk: 'Połącz',
           }),
           docs: t({
             ru: 'Документация',
@@ -311,6 +330,7 @@ const content = {
             ar: 'التوثيق',
             pl: 'Dokumentacja',
             it: 'Documentazione',
+            sk: 'Dokumentacja',
           }),
         },
       },
@@ -329,6 +349,7 @@ const content = {
           ar: 'زامن الكشوفات مع Google Drive واستورد الملفات بنقرات قليلة.',
           pl: 'Synchronizuj wyciągi z Google Drive i importuj pliki za pomocą kilku kliknięć.',
           it: 'Sincronizza gli estratti con Google Drive e importa file in pochi clic.',
+          sk: 'Synchronizuj wyciągi z Google Drive i importuj pliki za pomocą kilku kliknięć.',
         }),
         badge: t({
           ru: 'Доступно',
@@ -344,6 +365,7 @@ const content = {
           ar: 'متاح',
           pl: 'Dostępne',
           it: 'Disponibile',
+          sk: 'Dostępne',
         }),
         actions: {
           connect: t({
@@ -360,6 +382,7 @@ const content = {
             ar: 'اتصال',
             pl: 'Połącz',
             it: 'Connetti',
+            sk: 'Połącz',
           }),
           docs: t({
             ru: 'Документация',
@@ -375,6 +398,7 @@ const content = {
             ar: 'التوثيق',
             pl: 'Dokumentacja',
             it: 'Documentazione',
+            sk: 'Dokumentacja',
           }),
         },
       },
@@ -393,6 +417,7 @@ const content = {
           ar: 'أرسل المعاملات المعالجة إلى جدول البيانات المحدد.',
           pl: 'Wysyłaj przetworzone transakcje do wybranego arkusza.',
           it: 'Invia le transazioni elaborate al foglio di calcolo selezionato.',
+          sk: 'Wysyłaj przetworzone transakcje do wybranego arkusza.',
         }),
         badge: t({
           ru: 'Доступно',
@@ -408,6 +433,7 @@ const content = {
           ar: 'متاح',
           pl: 'Dostępne',
           it: 'Disponibile',
+          sk: 'Dostępne',
         }),
         actions: {
           connect: t({
@@ -424,6 +450,7 @@ const content = {
             ar: 'اتصال',
             pl: 'Połącz',
             it: 'Connetti',
+            sk: 'Połącz',
           }),
           docs: t({
             ru: 'Документация',
@@ -439,6 +466,7 @@ const content = {
             ar: 'التوثيق',
             pl: 'Dokumentacja',
             it: 'Documentazione',
+            sk: 'Dokumentacja',
           }),
         },
       },
@@ -457,6 +485,7 @@ const content = {
           ar: 'تلقَّ الإشعارات وأرسل الكشوفات عبر روبوت.',
           pl: 'Otrzymuj powiadomienia i wysyłaj wyciągi przez bota.',
           it: 'Ricevi notifiche e invia estratti tramite un bot.',
+          sk: 'Otrzymuj powiadomienia i wysyłaj wyciągi przez bota.',
         }),
         badge: t({
           ru: 'Скоро',
@@ -472,6 +501,7 @@ const content = {
           ar: 'قريبًا',
           pl: 'Wkrótce',
           it: 'Prossimamente',
+          sk: 'Wkrótce',
         }),
         actions: {
           setup: t({
@@ -488,6 +518,7 @@ const content = {
             ar: 'إعداد الروبوت',
             pl: 'Skonfiguruj bota',
             it: 'Configura bot',
+            sk: 'Skonfiguruj bota',
           }),
           guide: t({
             ru: 'Руководство',
@@ -503,6 +534,7 @@ const content = {
             ar: 'دليل',
             pl: 'Przewodnik',
             it: 'Guida',
+            sk: 'Przewodnik',
           }),
         },
       },

@@ -17,6 +17,7 @@ const categoriesTourContent = {
       ar: 'جولة الفئات',
       pl: 'Tour kategorii',
       it: 'Tour delle categorie',
+      sk: 'Tour kategorii',
     }),
     description: t({
       ru: 'Управление рабочими категориями',
@@ -32,6 +33,7 @@ const categoriesTourContent = {
       ar: 'إدارة فئات مساحة العمل',
       pl: 'Zarządzaj kategoriami obszaru roboczego',
       it: 'Gestisci le categorie dell\'area di lavoro',
+      sk: 'Zarządzaj kategoriami obszaru roboczego',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const categoriesTourContent = {
           ar: 'مرحباً بك في الفئات',
           pl: 'Witaj w Kategoriach',
           it: 'Benvenuto nelle Categorie',
+          sk: 'Witaj w Kategoriach',
         }),
         description: t({
           ru: 'На этой странице вы управляете категориями рабочего пространства: создаете новые, ищете существующие и включаете или отключаете их для использования в системе.',
@@ -64,6 +67,7 @@ const categoriesTourContent = {
           ar: 'في هذه الصفحة تدير فئات مساحة العمل: إنشاء فئات جديدة والبحث في الموجودة وتفعيلها أو تعطيلها للاستخدام في المنتج.',
           pl: 'Na tej stronie zarządzasz kategoriami obszaru roboczego: tworzysz nowe, szukasz istniejących i włączasz lub wyłączasz je do użytku w produkcie.',
           it: 'In questa pagina gestisci le categorie dell\'area di lavoro: crea nuove, cerca quelle esistenti e abilitale o disabilitale per l\'uso nel prodotto.',
+          sk: 'Na tej stronie zarządzasz kategoriami obszaru roboczego: tworzysz nowe, szukasz istniejących i włączasz lub wyłączasz je do użytku w produkcie.',
         }),
       },
       addButton: {
@@ -81,6 +85,7 @@ const categoriesTourContent = {
           ar: 'إضافة فئة',
           pl: 'Dodaj kategorię',
           it: 'Aggiungi categoria',
+          sk: 'Dodaj kategorię',
         }),
         description: t({
           ru: 'Эта кнопка открывает форму создания категории. Используйте ее, когда нужно добавить новый способ группировки транзакций, файлов или данных.',
@@ -96,6 +101,7 @@ const categoriesTourContent = {
           ar: 'يفتح هذا الزر نموذج إنشاء الفئة. استخدمه عندما تحتاج إلى طريقة جديدة لتجميع المعاملات أو الملفات أو البيانات ذات الصلة.',
           pl: 'Ten przycisk otwiera formularz tworzenia kategorii. Użyj go, gdy potrzebujesz nowego sposobu grupowania transakcji, plików lub powiązanych danych.',
           it: 'Questo pulsante apre il modulo di creazione della categoria. Usalo quando hai bisogno di un nuovo modo per raggruppare transazioni, file o dati correlati.',
+          sk: 'Ten przycisk otwiera formularz tworzenia kategorii. Użyj go, gdy potrzebujesz nowego sposobu grupowania transakcji, plików lub powiązanych danych.',
         }),
       },
       search: {
@@ -113,6 +119,7 @@ const categoriesTourContent = {
           ar: 'البحث في الفئات',
           pl: 'Szukaj kategorii',
           it: 'Cerca categorie',
+          sk: 'Szukaj kategorii',
         }),
         description: t({
           ru: 'Поиск помогает быстро находить нужные категории по названию, особенно если список уже большой и включает системные и пользовательские элементы.',
@@ -128,6 +135,7 @@ const categoriesTourContent = {
           ar: 'يساعدك البحث على تحديد موقع فئة بسرعة حسب الاسم، خاصة عندما تنمو القائمة لتشمل إدخالات النظام والمخصصة.',
           pl: 'Wyszukiwanie pomaga szybko znaleźć kategorię według nazwy, zwłaszcza gdy lista rośnie i obejmuje zarówno wpisy systemowe, jak i niestandardowe.',
           it: 'La ricerca ti aiuta a trovare rapidamente una categoria per nome, specialmente quando la lista cresce per includere sia voci di sistema che personalizzate.',
+          sk: 'Wyszukiwanie pomaga szybko znaleźć kategorię według nazwy, zwłaszcza gdy lista rośnie i obejmuje zarówno wpisy systemowe, jak i niestandardowe.',
         }),
       },
       categoriesList: {
@@ -145,6 +153,7 @@ const categoriesTourContent = {
           ar: 'قائمة الفئات',
           pl: 'Lista kategorii',
           it: 'Elenco categorie',
+          sk: 'Lista kategorii',
         }),
         description: t({
           ru: 'Здесь показаны все категории с их названием, статусом использования и служебными метками. Это основная область для обзора и управления списком.',
@@ -160,6 +169,7 @@ const categoriesTourContent = {
           ar: 'تعرض هذه القائمة كل فئة باسمها وحالة الاستخدام وشارات النظام. إنها المنطقة الرئيسية لمراجعة المجموعة الكاملة وإدارتها.',
           pl: 'Ta lista pokazuje każdą kategorię z jej nazwą, stanem użycia i odznaczeniami systemowymi. Jest to główny obszar do przeglądania i zarządzania pełnym zestawem.',
           it: 'Questo elenco mostra ogni categoria con il suo nome, stato di utilizzo e badge di sistema. È l\'area principale per esaminare e gestire l\'intero insieme.',
+          sk: 'Ta lista pokazuje każdą kategorię z jej nazwą, stanem użycia i odznaczeniami systemowymi. Jest to główny obszar do przeglądania i zarządzania pełnym zestawem.',
         }),
       },
       categoryToggle: {
@@ -177,6 +187,7 @@ const categoriesTourContent = {
           ar: 'تفعيل أو تعطيل',
           pl: 'Włącz lub wyłącz',
           it: 'Abilita o disabilita',
+          sk: 'Włącz lub wyłącz',
         }),
         description: t({
           ru: 'Переключатель управляет доступностью категории в интерфейсах выписок и отчетов. Если конкретной строки нет, тур пропустит этот шаг без ошибки.',
@@ -192,6 +203,7 @@ const categoriesTourContent = {
           ar: 'يتحكم هذا المفتاح في ما إذا كانت الفئة تبقى متاحة في سير عمل كشوف الحسابات والتقارير. إذا لم يكن صف الفئة مرئياً حالياً، تتخطى الجولة هذه الخطوة بأمان.',
           pl: 'Ten przełącznik kontroluje, czy kategoria pozostaje dostępna w przepływach wyciągów i raportów. Jeśli żaden wiersz kategorii nie jest widoczny, przewodnik bezpiecznie pomija ten krok.',
           it: 'Questo toggle controlla se una categoria rimane disponibile nei flussi di estratti conto e reportistica. Se non è visibile nessuna riga di categoria, il tour salta questo passaggio in modo sicuro.',
+          sk: 'Ten przełącznik kontroluje, czy kategoria pozostaje dostępna w przepływach wyciągów i raportów. Jeśli żaden wiersz kategorii nie jest widoczny, przewodnik bezpiecznie pomija ten krok.',
         }),
       },
       completed: {
@@ -209,6 +221,7 @@ const categoriesTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете, где создавать, искать и переключать категории рабочего пространства. Дальше можно открыть нужную категорию и настроить ее подробнее.',
@@ -224,6 +237,7 @@ const categoriesTourContent = {
           ar: 'أنت تعرف الآن أين تنشئ وتجد وتبدّل فئات مساحة العمل. من هنا يمكنك فتح الفئة الصحيحة وتحسينها أكثر.',
           pl: 'Teraz wiesz, gdzie tworzyć, znajdować i przełączać kategorie obszaru roboczego. Stąd możesz otworzyć właściwą kategorię i dopracować ją dalej.',
           it: 'Ora sai dove creare, trovare e attivare/disattivare le categorie dell\'area di lavoro. Da qui puoi aprire la categoria giusta e perfezionarla ulteriormente.',
+          sk: 'Teraz wiesz, gdzie tworzyć, znajdować i przełączać kategorie obszaru roboczego. Stąd możesz otworzyć właściwą kategorię i dopracować ją dalej.',
         }),
       },
     },

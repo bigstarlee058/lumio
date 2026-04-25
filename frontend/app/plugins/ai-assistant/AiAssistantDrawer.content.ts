@@ -17,6 +17,7 @@ const content = {
       ar: 'مساعد الذكاء الاصطناعي',
       pl: 'Asystent AI',
       it: 'Assistente IA',
+      sk: 'Asystent AI',
     }),
     subtitle: t({
       ru: 'Выберите анализ — данные будут переданы в ChatGPT',
@@ -32,6 +33,7 @@ const content = {
       ar: 'اختر تحليلًا — سيتم إرسال بياناتك إلى ChatGPT',
       pl: 'Wybierz analizę — dane zostaną wysłane do ChatGPT',
       it: 'Scegli un\'analisi — i tuoi dati verranno inviati a ChatGPT',
+      sk: 'Wybierz analizę — dane zostaną wysłane do ChatGPT',
     }),
     run: t({
       ru: 'Открыть в ChatGPT',
@@ -47,6 +49,7 @@ const content = {
       ar: 'فتح في ChatGPT',
       pl: 'Otwórz w ChatGPT',
       it: 'Apri in ChatGPT',
+      sk: 'Otwórz w ChatGPT',
     }),
     loading: t({
       ru: 'Загрузка данных...',
@@ -62,6 +65,7 @@ const content = {
       ar: 'جارٍ تحميل البيانات...',
       pl: 'Ładowanie danych...',
       it: 'Caricamento dati...',
+      sk: 'Ładowanie danych...',
     }),
     copied: t({
       ru: 'Промпт скопирован — вставьте в ChatGPT',
@@ -77,6 +81,7 @@ const content = {
       ar: 'تم نسخ المطالبة — الصقها في ChatGPT',
       pl: 'Prompt skopiowany — wklej go do ChatGPT',
       it: 'Prompt copiato — incollalo in ChatGPT',
+      sk: 'Prompt skopiowany — wklej go do ChatGPT',
     }),
     cards: {
       expenseSummary: {
@@ -94,6 +99,7 @@ const content = {
           ar: 'ملخص المصروفات',
           pl: 'Podsumowanie wydatków',
           it: 'Riepilogo spese',
+          sk: 'Podsumowanie wydatków',
         }),
         description: t({
           ru: 'Разбивка расходов по категориям за 30 дней с рекомендациями',
@@ -109,6 +115,7 @@ const content = {
           ar: 'تفصيل المصروفات حسب الفئة لمدة 30 يومًا مع التوصيات',
           pl: 'Zestawienie wydatków wg kategorii za 30 dni z rekomendacjami',
           it: 'Ripartizione spese per categoria di 30 giorni con raccomandazioni',
+          sk: 'Zestawienie wydatków wg kategorii za 30 dni z rekomendacjami',
         }),
       },
       cashFlow: {
@@ -126,6 +133,7 @@ const content = {
           ar: 'تحليل التدفق النقدي',
           pl: 'Analiza przepływów pieniężnych',
           it: 'Analisi flusso di cassa',
+          sk: 'Analiza przepływów pieniężnych',
         }),
         description: t({
           ru: 'Тренды доходов и расходов с прогнозом',
@@ -141,6 +149,7 @@ const content = {
           ar: 'اتجاهات الدخل والمصروفات مع التوقعات',
           pl: 'Trendy przychodów i wydatków z prognozą',
           it: 'Tendenze entrate e uscite con previsione',
+          sk: 'Trendy przychodów i wydatków z prognozą',
         }),
       },
       topCounterparties: {
@@ -158,6 +167,7 @@ const content = {
           ar: 'أبرز الأطراف المقابلة',
           pl: 'Najważniejsi kontrahenci',
           it: 'Principali controparti',
+          sk: 'Najważniejsi kontrahenci',
         }),
         description: t({
           ru: 'Анализ ваших основных финансовых партнёров',
@@ -173,6 +183,7 @@ const content = {
           ar: 'تحليل علاقاتك المالية الرئيسية',
           pl: 'Analiza kluczowych relacji finansowych',
           it: 'Analisi delle principali relazioni finanziarie',
+          sk: 'Analiza kluczowych relacji finansowych',
         }),
       },
       taxPreparation: {
@@ -190,6 +201,7 @@ const content = {
           ar: 'إعداد الضرائب',
           pl: 'Przygotowanie podatkowe',
           it: 'Preparazione fiscale',
+          sk: 'Przygotowanie podatkowe',
         }),
         description: t({
           ru: 'Сводка транзакций для налоговой отчётности за 90 дней',
@@ -205,6 +217,7 @@ const content = {
           ar: 'ملخص المعاملات للإقرار الضريبي لمدة 90 يومًا',
           pl: 'Podsumowanie transakcji do rozliczenia podatkowego za 90 dni',
           it: 'Riepilogo transazioni per la dichiarazione fiscale di 90 giorni',
+          sk: 'Podsumowanie transakcji do rozliczenia podatkowego za 90 dni',
         }),
       },
       anomalyDetection: {
@@ -222,6 +235,7 @@ const content = {
           ar: 'كشف الشذوذ',
           pl: 'Wykrywanie anomalii',
           it: 'Rilevamento anomalie',
+          sk: 'Wykrywanie anomalii',
         }),
         description: t({
           ru: 'Поиск необычных транзакций и подозрительных паттернов',
@@ -237,6 +251,7 @@ const content = {
           ar: 'البحث عن معاملات غير عادية وأنماط مشبوهة',
           pl: 'Znajdź nietypowe transakcje i podejrzane wzorce',
           it: 'Trova transazioni insolite e modelli sospetti',
+          sk: 'Znajdź nietypowe transakcje i podejrzane wzorce',
         }),
       },
       budgetRecommendations: {
@@ -254,6 +269,7 @@ const content = {
           ar: 'توصيات الميزانية',
           pl: 'Rekomendacje budżetowe',
           it: 'Raccomandazioni di budget',
+          sk: 'Rekomendacje budżetowe',
         }),
         description: t({
           ru: 'Персональный бюджетный план на основе ваших расходов',
@@ -269,6 +285,7 @@ const content = {
           ar: 'خطة ميزانية مخصصة بناءً على إنفاقك',
           pl: 'Spersonalizowany plan budżetowy na podstawie Twoich wydatków',
           it: 'Piano di budget personalizzato basato sulle tue spese',
+          sk: 'Spersonalizowany plan budżetowy na podstawie Twoich wydatków',
         }),
       },
     },

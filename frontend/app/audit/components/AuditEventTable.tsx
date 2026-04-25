@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import { ChevronDown, ChevronRight, Cpu, Plug, User } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
+import { tokens } from '@/lib/theme-tokens';
 
 interface AuditEventTableProps {
   events: AuditEvent[];
@@ -157,7 +158,7 @@ export function AuditEventTable({
                 fontWeight: 600,
                 bgcolor: colors.bg,
                 color: colors.color,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 height: 24,
               }}
             />
@@ -234,7 +235,7 @@ export function AuditEventTable({
                 fontWeight: 600,
                 bgcolor: colors.bg,
                 color: colors.color,
-                borderRadius: 'var(--lumio-radius-full)',
+                borderRadius: tokens.radius.full,
                 height: 24,
               }}
             />

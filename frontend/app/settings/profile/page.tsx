@@ -39,6 +39,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function ProfileSettingsPage() {
@@ -398,7 +399,7 @@ export default function ProfileSettingsPage() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         overflow: 'hidden',
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         bgcolor: 'primary.light',
                         color: 'primary.main',
                         fontSize: 16,
@@ -429,7 +430,7 @@ export default function ProfileSettingsPage() {
                         width: 28,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         border: '1px solid',
                         borderColor: 'divider',
                         bgcolor: 'background.paper',
@@ -466,7 +467,7 @@ export default function ProfileSettingsPage() {
                         width: '100%',
                         alignItems: 'center',
                         gap: 1.5,
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                         px: 1.5,
                         py: 1.25,
                         textAlign: 'left',
@@ -487,7 +488,7 @@ export default function ProfileSettingsPage() {
                           width: 32,
                           alignItems: 'center',
                           justifyContent: 'center',
-                          borderRadius: 'var(--lumio-radius-sm)',
+                          borderRadius: tokens.radius.sm,
                           color: isActive ? 'primary.main' : 'text.secondary',
                         }}
                       >
@@ -522,7 +523,7 @@ export default function ProfileSettingsPage() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         overflow: 'hidden',
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         bgcolor: 'primary.light',
                         color: 'primary.main',
                         fontSize: 16,
@@ -553,7 +554,7 @@ export default function ProfileSettingsPage() {
                         width: 24,
                         alignItems: 'center',
                         justifyContent: 'center',
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         border: '1px solid',
                         borderColor: 'divider',
                         bgcolor: 'background.paper',
@@ -603,7 +604,7 @@ export default function ProfileSettingsPage() {
                   width: 44,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius: 'var(--lumio-radius-sm)',
+                  borderRadius: tokens.radius.sm,
                   bgcolor: 'primary.light',
                   color: 'primary.main',
                   flexShrink: 0,
@@ -662,7 +663,7 @@ export default function ProfileSettingsPage() {
                 placeholder={t.profileCard.timeZones.auto.value}
                 sx={{
                   width: '100%',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   border: '1px solid',
                   borderColor: 'divider',
                   bgcolor: 'background.paper',
@@ -694,7 +695,7 @@ export default function ProfileSettingsPage() {
                         width: '100%',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                         px: 1.5,
                         py: 1.5,
                         textAlign: 'left',
@@ -717,7 +718,7 @@ export default function ProfileSettingsPage() {
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  sx={{ borderRadius: 'var(--lumio-radius-md)', bgcolor: 'background.paper', px: 1.5, py: 1.5 }}
+                  sx={{ borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 1.5, py: 1.5 }}
                 >
                   No time zones found
                 </Typography>

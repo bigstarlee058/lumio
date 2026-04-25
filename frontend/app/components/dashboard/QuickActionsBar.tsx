@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
 import { FileUp, ListChecks } from '@/app/components/icons';
 import Link from 'next/link';
+import { tokens } from '@/lib/theme-tokens';
 
 const staticActions = [
   { key: 'upload' as const, label: 'Upload / Parse', href: '/statements/submit', icon: FileUp },
@@ -35,7 +36,7 @@ export function QuickActionsBar({ reviewCount }: QuickActionsBarProps) {
             <Button
               variant="ghost"
               size="sm"
-              style={{ gap: 6, borderRadius: 'var(--lumio-radius-md)', color: '#64748b', fontSize: 12, height: 28, padding: '0 12px', fontWeight: 400 }}
+              style={{ gap: 6, borderRadius: tokens.radius.md, color: '#64748b', fontSize: 12, height: 28, padding: '0 12px', fontWeight: 400 }}
             >
               <action.icon size={14} />
               {label}

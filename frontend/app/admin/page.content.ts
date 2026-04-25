@@ -17,6 +17,7 @@ const content = {
       ar: 'لوحة الإدارة',
       pl: 'Panel administracyjny',
       it: 'Pannello di amministrazione',
+      sk: 'Panel administracyjny',
     }),
     tabs: {
       statementsLog: t({
@@ -33,6 +34,7 @@ const content = {
         ar: 'سجل الكشوفات',
         pl: 'Dziennik wyciągów',
         it: 'Log estratti',
+        sk: 'Dziennik wyciągów',
       }),
       users: t({
         ru: 'Управление пользователями',
@@ -48,6 +50,7 @@ const content = {
         ar: 'إدارة المستخدمين',
         pl: 'Zarządzanie użytkownikami',
         it: 'Gestione utenti',
+        sk: 'Zarządzanie użytkownikami',
       }),
       audit: t({
         ru: 'Аудит-лог',
@@ -63,6 +66,7 @@ const content = {
         ar: 'سجل التدقيق',
         pl: 'Dziennik audytu',
         it: 'Log di audit',
+        sk: 'Dziennik audytu',
       }),
     },
     errors: {
@@ -80,6 +84,7 @@ const content = {
         ar: 'فشل تحميل الكشوفات',
         pl: 'Błąd ładowania wyciągów',
         it: 'Errore nel caricamento degli estratti',
+        sk: 'Błąd ładowania wyciągów',
       }),
       loadAudit: t({
         ru: 'Ошибка загрузки аудит-лога',
@@ -95,6 +100,7 @@ const content = {
         ar: 'فشل تحميل سجل التدقيق',
         pl: 'Błąd ładowania dziennika audytu',
         it: 'Errore nel caricamento del log di audit',
+        sk: 'Błąd ładowania dziennika audytu',
       }),
       reprocess: t({
         ru: 'Ошибка повторной обработки',
@@ -110,6 +116,7 @@ const content = {
         ar: 'فشل إعادة المعالجة',
         pl: 'Błąd ponownego przetwarzania',
         it: 'Errore nel rielaborazione',
+        sk: 'Błąd ponownego przetwarzania',
       }),
       delete: t({
         ru: 'Ошибка удаления выписки',
@@ -125,6 +132,7 @@ const content = {
         ar: 'فشل حذف الكشف',
         pl: 'Błąd usuwania wyciągu',
         it: 'Errore nell\'eliminazione dell\'estratto',
+        sk: 'Błąd usuwania wyciągu',
       }),
     },
     confirmDelete: t({
@@ -141,6 +149,7 @@ const content = {
       ar: 'هل أنت متأكد أنك تريد حذف هذا الكشف؟',
       pl: 'Czy na pewno chcesz usunąć ten wyciąg?',
       it: 'Sei sicuro di voler eliminare questo estratto?',
+      sk: 'Czy na pewno chcesz usunąć ten wyciąg?',
     }),
     status: {
       completed: t({
@@ -157,6 +166,7 @@ const content = {
         ar: 'مكتمل',
         pl: 'Ukończone',
         it: 'Completato',
+        sk: 'Ukończone',
       }),
       processing: t({
         ru: 'Обрабатывается',
@@ -172,6 +182,7 @@ const content = {
         ar: 'قيد المعالجة',
         pl: 'Przetwarzanie',
         it: 'In elaborazione',
+        sk: 'Przetwarzanie',
       }),
       error: t({
         ru: 'Ошибка',
@@ -187,6 +198,7 @@ const content = {
         ar: 'خطأ',
         pl: 'Błąd',
         it: 'Errore',
+        sk: 'Błąd',
       }),
     },
     search: t({
@@ -203,6 +215,7 @@ const content = {
       ar: 'بحث',
       pl: 'Szukaj',
       it: 'Cerca',
+      sk: 'Szukaj',
     }),
     refresh: t({
       ru: 'Обновить',
@@ -218,6 +231,7 @@ const content = {
       ar: 'تحديث',
       pl: 'Odśwież',
       it: 'Aggiorna',
+      sk: 'Odśwież',
     }),
     table: {
       file: t({
@@ -234,6 +248,7 @@ const content = {
         ar: 'الملف',
         pl: 'Plik',
         it: 'File',
+        sk: 'Plik',
       }),
       type: t({
         ru: 'Тип',
@@ -249,6 +264,7 @@ const content = {
         ar: 'النوع',
         pl: 'Typ',
         it: 'Tipo',
+        sk: 'Typ',
       }),
       bank: t({
         ru: 'Банк',
@@ -264,6 +280,7 @@ const content = {
         ar: 'البنك',
         pl: 'Bank',
         it: 'Banca',
+        sk: 'Bank',
       }),
       status: t({
         ru: 'Статус',
@@ -279,6 +296,7 @@ const content = {
         ar: 'الحالة',
         pl: 'Status',
         it: 'Stato',
+        sk: 'Status',
       }),
       transactions: t({
         ru: 'Операций',
@@ -294,6 +312,7 @@ const content = {
         ar: 'المعاملات',
         pl: 'Transakcje',
         it: 'Transazioni',
+        sk: 'Transakcje',
       }),
       uploadedAt: t({
         ru: 'Дата загрузки',
@@ -309,6 +328,7 @@ const content = {
         ar: 'تاريخ الرفع',
         pl: 'Data przesłania',
         it: 'Data caricamento',
+        sk: 'Data przesłania',
       }),
       processedAt: t({
         ru: 'Дата обработки',
@@ -324,6 +344,7 @@ const content = {
         ar: 'تاريخ المعالجة',
         pl: 'Data przetworzenia',
         it: 'Data elaborazione',
+        sk: 'Data przetworzenia',
       }),
       actions: t({
         ru: 'Действия',
@@ -339,6 +360,7 @@ const content = {
         ar: 'الإجراءات',
         pl: 'Akcje',
         it: 'Azioni',
+        sk: 'Akcje',
       }),
     },
     usersTab: {
@@ -356,6 +378,7 @@ const content = {
         ar: 'انتقل إلى صفحة إدارة المستخدمين لتكوين أذونات الوصول.',
         pl: 'Przejdź do strony zarządzania użytkownikami, aby skonfigurować uprawnienia dostępu.',
         it: 'Vai alla pagina di gestione utenti per configurare le autorizzazioni di accesso.',
+        sk: 'Przejdź do strony zarządzania użytkownikami, aby skonfigurować uprawnienia dostępu.',
       }),
       button: t({
         ru: 'Управление пользователями',
@@ -371,6 +394,7 @@ const content = {
         ar: 'إدارة المستخدمين',
         pl: 'Zarządzaj użytkownikami',
         it: 'Gestisci utenti',
+        sk: 'Zarządzaj użytkownikami',
       }),
     },
     auditTab: {
@@ -388,6 +412,7 @@ const content = {
         ar: 'لا توجد إدخالات بعد',
         pl: 'Brak wpisów',
         it: 'Nessuna voce ancora',
+        sk: 'Brak wpisów',
       }),
       title: t({
         ru: 'Аудит-лог',
@@ -403,6 +428,7 @@ const content = {
         ar: 'سجل التدقيق',
         pl: 'Dziennik audytu',
         it: 'Log di audit',
+        sk: 'Dziennik audytu',
       }),
       helper: t({
         ru: 'Отслеживайте действия в рабочем пространстве и откаты.',
@@ -418,6 +444,7 @@ const content = {
         ar: 'تتبع نشاط مساحة العمل وعمليات التراجع.',
         pl: 'Śledź aktywność obszaru roboczego i wycofania.',
         it: 'Monitora l\'attività del workspace e i rollback.',
+        sk: 'Śledź aktywność obszaru roboczego i wycofania.',
       }),
       action: t({
         ru: 'Действие',
@@ -433,6 +460,7 @@ const content = {
         ar: 'الإجراء',
         pl: 'Akcja',
         it: 'Azione',
+        sk: 'Akcja',
       }),
       description: t({
         ru: 'Описание',
@@ -448,6 +476,7 @@ const content = {
         ar: 'الوصف',
         pl: 'Opis',
         it: 'Descrizione',
+        sk: 'Opis',
       }),
       user: t({
         ru: 'Пользователь',
@@ -463,6 +492,7 @@ const content = {
         ar: 'المستخدم',
         pl: 'Użytkownik',
         it: 'Utente',
+        sk: 'Użytkownik',
       }),
       date: t({
         ru: 'Дата',
@@ -478,6 +508,7 @@ const content = {
         ar: 'التاريخ',
         pl: 'Data',
         it: 'Data',
+        sk: 'Data',
       }),
       loading: t({
         ru: 'Загрузка событий аудита...',
@@ -493,6 +524,7 @@ const content = {
         ar: 'جارٍ تحميل أحداث التدقيق...',
         pl: 'Ładowanie zdarzeń audytu...',
         it: 'Caricamento eventi di audit...',
+        sk: 'Ładowanie zdarzeń audytu...',
       }),
       filters: {
         title: t({
@@ -509,6 +541,7 @@ const content = {
           ar: 'الفلاتر',
           pl: 'Filtry',
           it: 'Filtri',
+          sk: 'Filtry',
         }),
         all: t({
           ru: 'Все',
@@ -524,6 +557,7 @@ const content = {
           ar: 'الكل',
           pl: 'Wszystkie',
           it: 'Tutti',
+          sk: 'Wszystkie',
         }),
         entityType: t({
           ru: 'Тип сущности',
@@ -539,6 +573,7 @@ const content = {
           ar: 'نوع الكيان',
           pl: 'Typ encji',
           it: 'Tipo entità',
+          sk: 'Typ encji',
         }),
         user: t({
           ru: 'Пользователь',
@@ -554,6 +589,7 @@ const content = {
           ar: 'المستخدم',
           pl: 'Użytkownik',
           it: 'Utente',
+          sk: 'Użytkownik',
         }),
         action: t({
           ru: 'Действие',
@@ -569,6 +605,7 @@ const content = {
           ar: 'الإجراء',
           pl: 'Akcja',
           it: 'Azione',
+          sk: 'Akcja',
         }),
         entityId: t({
           ru: 'ID сущности',
@@ -584,6 +621,7 @@ const content = {
           ar: 'معرّف الكيان',
           pl: 'ID encji',
           it: 'ID entità',
+          sk: 'ID encji',
         }),
         severity: t({
           ru: 'Серьезность',
@@ -599,6 +637,7 @@ const content = {
           ar: 'الخطورة',
           pl: 'Powaga',
           it: 'Gravità',
+          sk: 'Powaga',
         }),
         dateFrom: t({
           ru: 'Дата от',
@@ -614,6 +653,7 @@ const content = {
           ar: 'التاريخ من',
           pl: 'Data od',
           it: 'Data da',
+          sk: 'Data od',
         }),
         dateTo: t({
           ru: 'Дата до',
@@ -629,6 +669,7 @@ const content = {
           ar: 'التاريخ إلى',
           pl: 'Data do',
           it: 'Data a',
+          sk: 'Data do',
         }),
       },
     },
@@ -647,6 +688,7 @@ const content = {
         ar: 'تفاصيل الخطأ',
         pl: 'Szczegóły błędu',
         it: 'Dettagli errore',
+        sk: 'Szczegóły błędu',
       }),
       close: t({
         ru: 'Закрыть',
@@ -662,6 +704,7 @@ const content = {
         ar: 'إغلاق',
         pl: 'Zamknij',
         it: 'Chiudi',
+        sk: 'Zamknij',
       }),
     },
   },

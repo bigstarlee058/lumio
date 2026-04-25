@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import { Button } from '@/app/components/ui/button';
 import { FileUp, Plus } from '@/app/components/icons';
 import Link from 'next/link';
+import { tokens } from '@/lib/theme-tokens';
 
 const actions = [
   {
@@ -36,7 +37,7 @@ export function QuickActions({ allowed, labels }: QuickActionsProps) {
         <Link key={action.href} href={action.href}>
           <Button
             variant="outline"
-            style={{ gap: 8, borderRadius: 'var(--lumio-radius-md)', borderColor: 'rgba(var(--primary-rgb),0.3)', color: 'var(--primary)' }}
+            style={{ gap: 8, borderRadius: tokens.radius.md, borderColor: 'rgba(var(--primary-rgb),0.3)', color: 'var(--primary)' }}
           >
             <action.icon size={16} />
             {labels[action.key]}

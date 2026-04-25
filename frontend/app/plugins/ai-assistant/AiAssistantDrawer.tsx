@@ -16,6 +16,7 @@ import {
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { promptTemplates } from './prompt-templates';
+import { tokens } from '@/lib/theme-tokens';
 
 const CHATGPT_URL = 'https://chatgpt.com/';
 const MAX_URL_LENGTH = 6000;
@@ -97,7 +98,7 @@ export function AiAssistantDrawer({ isOpen, onClose }: AiAssistantDrawerProps) {
                 onClick={() => { if (!isLoading) void handleCardClick(card.key); }}
                 sx={{
                   border: '1px solid var(--border-color, #e5e7eb)',
-                  borderRadius: 'var(--lumio-radius-lg, 12px)',
+                  borderRadius: tokens.radius.lg,
                   p: 2,
                   cursor: isLoading ? 'wait' : 'pointer',
                   opacity: isLoading ? 0.6 : 1,
@@ -117,7 +118,7 @@ export function AiAssistantDrawer({ isOpen, onClose }: AiAssistantDrawerProps) {
                   sx={{
                     width: 36,
                     height: 36,
-                    borderRadius: 'var(--lumio-radius-md, 8px)',
+                    borderRadius: tokens.radius.md,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

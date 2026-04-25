@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 import { ChevronRight, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
 import type { Category, CategoryUsageCount } from './hooks/useCategoryManagement';
+import { tokens } from '@/lib/theme-tokens';
 
 const SOURCE_BADGE_COLORS: Record<
   NonNullable<Category['source']>,
@@ -125,7 +126,7 @@ export function CategoryTree({
               justifyContent: 'center',
               width: 64,
               height: 64,
-              borderRadius: 'var(--lumio-radius-full)',
+              borderRadius: tokens.radius.full,
               bgcolor: 'var(--muted)',
               color: 'var(--muted-foreground)',
             }}
@@ -153,7 +154,7 @@ export function CategoryTree({
               fontWeight: 500,
               color: 'var(--foreground)',
               cursor: 'pointer',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
             }}
           >
             <Plus size={16} />
@@ -204,7 +205,7 @@ export function CategoryTree({
                         justifyContent: 'center',
                         width: 32,
                         height: 32,
-                        borderRadius: 'var(--lumio-radius-sm)',
+                        borderRadius: tokens.radius.sm,
                         bgcolor: iconTint,
                         color: categoryColor,
                       }}
@@ -243,7 +244,7 @@ export function CategoryTree({
                             bgcolor: badgeColors.bg,
                             color: badgeColors.color,
                             border: `1px solid ${badgeColors.border}`,
-                            borderRadius: 'var(--lumio-radius-sm)',
+                            borderRadius: tokens.radius.sm,
                           }}
                         >
                           {badgeLabel}
@@ -277,7 +278,7 @@ export function CategoryTree({
                       alignItems: 'center',
                       width: 54,
                       height: 32,
-                      borderRadius: 'var(--lumio-radius-full)',
+                      borderRadius: tokens.radius.full,
                       border: 'none',
                       background: isEnabled ? 'var(--primary)' : 'rgba(107,114,128,0.4)',
                       cursor: isToggling ? 'default' : 'pointer',
@@ -292,7 +293,7 @@ export function CategoryTree({
                         display: 'inline-block',
                         width: 24,
                         height: 24,
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         background: 'var(--card)',
                         boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                         transition: 'transform 0.2s',
@@ -309,7 +310,7 @@ export function CategoryTree({
                         justifyContent: 'center',
                         width: 32,
                         height: 32,
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         color: 'rgba(107,114,128,0.6)',
                       }}
                     >
@@ -325,7 +326,7 @@ export function CategoryTree({
                         justifyContent: 'center',
                         width: 32,
                         height: 32,
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         color: 'var(--muted-foreground)',
                         background: 'none',
                         border: 'none',

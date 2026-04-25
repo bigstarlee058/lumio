@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Block, BuildingProps, WindowGrid, motion, stableWindowNoise } from './shared';
+import { tokens } from '@/lib/theme-tokens';
 
 function GothicSpire(): React.JSX.Element {
   const NEEDLE_STYLE: React.CSSProperties = { width: 2, height: 30, background: 'rgba(255,255,255,0.4)' };
@@ -25,7 +26,7 @@ function GothicRoseWindow(): React.JSX.Element {
     borderRight: '30px solid transparent', borderBottom: '40px solid rgba(255,255,255,0.15)', marginBottom: '-1px',
   };
   const WINDOW_STYLE: React.CSSProperties = {
-    width: 30, height: 30, borderRadius: 'var(--lumio-radius-full)', background: 'rgba(255,255,255,0.2)',
+    width: 30, height: 30, borderRadius: tokens.radius.full, background: 'rgba(255,255,255,0.2)',
     border: '2px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center',
   };
   return (
@@ -33,7 +34,7 @@ function GothicRoseWindow(): React.JSX.Element {
       <div style={PEDIMENT} />
       <Block w={60} h={80} style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
         <div style={WINDOW_STYLE}>
-          <div style={{ width: 14, height: 14, borderRadius: 'var(--lumio-radius-full)', border: '1px solid rgba(255,255,255,0.4)' }} />
+          <div style={{ width: 14, height: 14, borderRadius: tokens.radius.full, border: '1px solid rgba(255,255,255,0.4)' }} />
         </div>
       </Block>
     </div>

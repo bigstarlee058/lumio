@@ -6,12 +6,16 @@ import { fetchAuditEvents, rollbackEvent } from '@/lib/api/audit';
 import { Container, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
 import { AuditEventModal } from '../audit/components/AuditEventModal';
 import { AuditFilterBar } from '../audit/components/AuditFilterBar';
 import { AuditTimeline } from '../audit/components/AuditTimeline';
 import { assertRollbackSucceeded } from '../audit/utils/rollback-result';
+import { tokens } from '@/lib/theme-tokens';
 
 export default function AdminPage() {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const t = useIntlayer('adminPage');
 
   const [auditLogs, setAuditLogs] = useState<AuditEvent[]>([]);
@@ -86,7 +90,7 @@ export default function AdminPage() {
         <AuditFilterBar filters={auditFilters} onFiltersChange={handleFiltersChange} />
 
         {auditError && (
-          <div style={{ padding: '10px 14px', marginBottom: 16, fontSize: 13, color: 'var(--lumio-color-danger)', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: 'var(--lumio-radius-md)' }}>
+          <div style={{ padding: '10px 14px', marginBottom: 16, fontSize: 13, color: c.danger, background: c.dangerSoft, border: `1px solid ${c.danger}`, borderRadius: tokens.radius.md }}>
             {auditError}
           </div>
         )}

@@ -17,6 +17,7 @@ const content = {
       ar: 'سجّل الدخول لإدارة مساحة عملك.',
       pl: 'Zaloguj się, aby zarządzać obszarem roboczym.',
       it: 'Accedi per gestire il tuo workspace.',
+      sk: 'Zaloguj się, aby zarządzać obszarem roboczym.',
     }),
     title: t({
       ru: 'Рабочее пространство',
@@ -32,6 +33,7 @@ const content = {
       ar: 'مساحة العمل',
       pl: 'Obszar roboczy',
       it: 'Workspace',
+      sk: 'Obszar roboczy',
     }),
     subtitle: t({
       ru: 'Приглашайте коллег по email и управляйте доступом.',
@@ -47,6 +49,7 @@ const content = {
       ar: 'ادعُ الزملاء بالبريد الإلكتروني وأدر الوصول.',
       pl: 'Zapraszaj współpracowników e-mailem i zarządzaj dostępem.',
       it: 'Invita i colleghi via email e gestisci l\'accesso.',
+      sk: 'Zapraszaj współpracowników e-mailem i zarządzaj dostępem.',
     }),
     errors: {
       loadOverview: t({
@@ -63,6 +66,7 @@ const content = {
         ar: 'فشل تحميل مساحة العمل',
         pl: 'Nie udało się załadować obszaru roboczego',
         it: 'Impossibile caricare il workspace',
+        sk: 'Nie udało się załadować obszaru roboczego',
       }),
       inviteFailed: t({
         ru: 'Не удалось отправить приглашение',
@@ -78,6 +82,7 @@ const content = {
         ar: 'فشل إرسال الدعوة',
         pl: 'Nie udało się wysłać zaproszenia',
         it: 'Impossibile inviare l\'invito',
+        sk: 'Nie udało się wysłać zaproszenia',
       }),
       copyFailed: t({
         ru: 'Не удалось скопировать ссылку',
@@ -93,6 +98,7 @@ const content = {
         ar: 'فشل نسخ الرابط',
         pl: 'Nie udało się skopiować linku',
         it: 'Impossibile copiare il link',
+        sk: 'Nie udało się skopiować linku',
       }),
     },
     toasts: {
@@ -110,6 +116,7 @@ const content = {
         ar: 'تم إرسال الدعوة',
         pl: 'Zaproszenie wysłane',
         it: 'Invito inviato',
+        sk: 'Zaproszenie wysłane',
       }),
       linkCopied: t({
         ru: 'Ссылка скопирована',
@@ -125,6 +132,7 @@ const content = {
         ar: 'تم نسخ الرابط',
         pl: 'Link skopiowany',
         it: 'Link copiato',
+        sk: 'Link skopiowany',
       }),
     },
     roles: {
@@ -142,6 +150,7 @@ const content = {
         ar: 'المالك',
         pl: 'Właściciel',
         it: 'Proprietario',
+        sk: 'Właściciel',
       }),
       admin: t({
         ru: 'Администратор',
@@ -157,6 +166,7 @@ const content = {
         ar: 'المشرف',
         pl: 'Administrator',
         it: 'Amministratore',
+        sk: 'Administrator',
       }),
       member: t({
         ru: 'Участник',
@@ -172,6 +182,7 @@ const content = {
         ar: 'عضو',
         pl: 'Członek',
         it: 'Membro',
+        sk: 'Członek',
       }),
       roleLabel: t({
         ru: 'Роль',
@@ -187,6 +198,7 @@ const content = {
         ar: 'الدور',
         pl: 'Rola',
         it: 'Ruolo',
+        sk: 'Rola',
       }),
       memberDescription: t({
         ru: 'Может работать с данными, но не управляет участниками и доступом.',
@@ -202,6 +214,7 @@ const content = {
         ar: 'يمكنه العمل مع البيانات لكن لا يمكنه إدارة الأعضاء أو الوصول.',
         pl: 'Może pracować z danymi, ale nie zarządza członkami ani dostępem.',
         it: 'Può lavorare con i dati, ma non gestisce i membri o l\'accesso.',
+        sk: 'Może pracować z danymi, ale nie zarządza członkami ani dostępem.',
       }),
       adminDescription: t({
         ru: 'Может управлять участниками и доступом, отправлять приглашения.',
@@ -217,6 +230,7 @@ const content = {
         ar: 'يمكنه إدارة الأعضاء والوصول وإرسال الدعوات.',
         pl: 'Może zarządzać członkami i dostępem oraz wysyłać zaproszenia.',
         it: 'Può gestire i membri e l\'accesso, e inviare inviti.',
+        sk: 'Może zarządzać członkami i dostępem oraz wysyłać zaproszenia.',
       }),
     },
     members: {
@@ -234,6 +248,7 @@ const content = {
         ar: 'الأعضاء',
         pl: 'Członkowie',
         it: 'Membri',
+        sk: 'Członkowie',
       }),
     },
     invite: {
@@ -251,6 +266,7 @@ const content = {
         ar: 'دعوة عبر البريد الإلكتروني',
         pl: 'Zaproś przez e-mail',
         it: 'Invita via email',
+        sk: 'Zaproś przez e-mail',
       }),
       onlyAdminHint: t({
         ru: 'Только владелец или администратор может отправлять приглашения.',
@@ -266,6 +282,7 @@ const content = {
         ar: 'يمكن للمالك أو المشرف فقط إرسال الدعوات.',
         pl: 'Tylko właściciel lub administrator może wysyłać zaproszenia.',
         it: 'Solo il proprietario o un amministratore può inviare inviti.',
+        sk: 'Tylko właściciel lub administrator może wysyłać zaproszenia.',
       }),
       permissionsTitle: t({
         ru: 'Права доступа',
@@ -281,6 +298,7 @@ const content = {
         ar: 'أذونات الوصول',
         pl: 'Uprawnienia dostępu',
         it: 'Autorizzazioni di accesso',
+        sk: 'Uprawnienia dostępu',
       }),
       permissionsHint: t({
         ru: 'Отметьте, что может редактировать участник. Если не отмечено — только просмотр.',
@@ -296,6 +314,7 @@ const content = {
         ar: 'حدد ما يمكن للعضو تعديله. إذا لم يُحدَّد، فهو للعرض فقط.',
         pl: 'Zaznacz, co może edytować członek. Jeśli niezaznaczone — tylko podgląd.',
         it: 'Seleziona cosa può modificare il membro. Se non selezionato, solo visualizzazione.',
+        sk: 'Zaznacz, co może edytować członek. Jeśli niezaznaczone — tylko podgląd.',
       }),
       permissions: {
         canEditStatements: t({
@@ -312,6 +331,7 @@ const content = {
           ar: 'الكشوفات',
           pl: 'Wyciągi',
           it: 'Estratti',
+          sk: 'Wyciągi',
         }),
         canEditCustomTables: t({
           ru: 'Таблицы',
@@ -327,6 +347,7 @@ const content = {
           ar: 'الجداول',
           pl: 'Tabele',
           it: 'Tabelle',
+          sk: 'Tabele',
         }),
         canEditCategories: t({
           ru: 'Категории',
@@ -342,6 +363,7 @@ const content = {
           ar: 'الفئات',
           pl: 'Kategorie',
           it: 'Categorie',
+          sk: 'Kategorie',
         }),
         canEditDataEntry: t({
           ru: 'Ввод данных',
@@ -357,6 +379,7 @@ const content = {
           ar: 'إدخال البيانات',
           pl: 'Wprowadzanie danych',
           it: 'Inserimento dati',
+          sk: 'Wprowadzanie danych',
         }),
         canShareFiles: t({
           ru: 'Ссылки и доступ к файлам',
@@ -372,6 +395,7 @@ const content = {
           ar: 'مشاركة الملفات والوصول',
           pl: 'Udostępnianie plików i dostęp',
           it: 'Condivisione file e accesso',
+          sk: 'Udostępnianie plików i dostęp',
         }),
       },
       send: t({
@@ -388,6 +412,7 @@ const content = {
         ar: 'إرسال الدعوة',
         pl: 'Wyślij zaproszenie',
         it: 'Invia invito',
+        sk: 'Wyślij zaproszenie',
       }),
       inviteLinkLabel: t({
         ru: 'Ссылка на приглашение',
@@ -403,6 +428,7 @@ const content = {
         ar: 'رابط الدعوة',
         pl: 'Link zaproszenia',
         it: 'Link di invito',
+        sk: 'Link zaproszenia',
       }),
     },
     pending: {
@@ -420,6 +446,7 @@ const content = {
         ar: 'الدعوات المعلقة',
         pl: 'Oczekujące zaproszenia',
         it: 'Inviti in attesa',
+        sk: 'Oczekujące zaproszenia',
       }),
       empty: t({
         ru: 'Пока нет активных приглашений.',
@@ -435,6 +462,7 @@ const content = {
         ar: 'لا توجد دعوات نشطة حتى الآن.',
         pl: 'Brak aktywnych zaproszeń.',
         it: 'Nessun invito attivo ancora.',
+        sk: 'Brak aktywnych zaproszeń.',
       }),
       validUntil: t({
         ru: 'Действительно до',
@@ -450,6 +478,7 @@ const content = {
         ar: 'صالح حتى',
         pl: 'Ważny do',
         it: 'Valido fino al',
+        sk: 'Ważny do',
       }),
       copyLink: t({
         ru: 'Копировать ссылку',
@@ -465,6 +494,7 @@ const content = {
         ar: 'نسخ الرابط',
         pl: 'Kopiuj link',
         it: 'Copia link',
+        sk: 'Kopiuj link',
       }),
     },
     backgrounds: {
@@ -482,6 +512,7 @@ const content = {
         ar: 'عرض المزيد',
         pl: 'Pokaż więcej',
         it: 'Mostra di più',
+        sk: 'Pokaż więcej',
       }),
       showLess: t({
         ru: 'Скрыть',
@@ -497,6 +528,7 @@ const content = {
         ar: 'عرض أقل',
         pl: 'Pokaż mniej',
         it: 'Mostra meno',
+        sk: 'Pokaż mniej',
       }),
     },
   },

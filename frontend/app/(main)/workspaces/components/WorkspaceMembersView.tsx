@@ -18,6 +18,7 @@ import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from '@/app/comp
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
+import { tokens } from '@/lib/theme-tokens';
   type MemberRoleFilter,
   type MemberSortBy,
   filterAndSortMembers,
@@ -453,7 +454,7 @@ export default function WorkspaceMembersView() {
                     fontSize: 14,
                     color: 'var(--foreground)',
                     outline: 'none',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     boxSizing: 'border-box',
                     opacity: !isOwnerOrAdmin ? 0.6 : 1,
                     cursor: !isOwnerOrAdmin ? 'not-allowed' : 'auto',
@@ -482,7 +483,7 @@ export default function WorkspaceMembersView() {
                     fontSize: 14,
                     color: 'var(--foreground)',
                     outline: 'none',
-                    borderRadius: 'var(--lumio-radius-md)',
+                    borderRadius: tokens.radius.md,
                     opacity: !isOwnerOrAdmin ? 0.6 : 1,
                     cursor: !isOwnerOrAdmin ? 'not-allowed' : 'auto',
                   }}
@@ -521,7 +522,7 @@ export default function WorkspaceMembersView() {
             )}
 
             {!isOwnerOrAdmin && (
-              <Box sx={{ border: '1px solid #fbbf24', bgcolor: '#fffbeb', p: 1.5, fontSize: 14, color: '#92400e', borderRadius: 'var(--lumio-radius-md)' }}>
+              <Box sx={{ border: '1px solid #fbbf24', bgcolor: '#fffbeb', p: 1.5, fontSize: 14, color: '#92400e', borderRadius: tokens.radius.md }}>
                 Only owner or admin can invite new members.
               </Box>
             )}
@@ -656,7 +657,7 @@ export default function WorkspaceMembersView() {
                         height: 36,
                         flexShrink: 0,
                         overflow: 'hidden',
-                        borderRadius: 'var(--lumio-radius-full)',
+                        borderRadius: tokens.radius.full,
                         bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                         color: 'var(--primary)',
                         display: 'flex',
@@ -703,7 +704,7 @@ export default function WorkspaceMembersView() {
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: 4,
-                                borderRadius: 'var(--lumio-radius-sm)',
+                                borderRadius: tokens.radius.sm,
                                 border: `1px solid ${roleStyle.border}`,
                                 background: roleStyle.bg,
                                 color: roleStyle.color,
@@ -740,7 +741,7 @@ export default function WorkspaceMembersView() {
                         ) : (
                           <span
                             style={{
-                              borderRadius: 'var(--lumio-radius-sm)',
+                              borderRadius: tokens.radius.sm,
                               border: `1px solid ${roleStyle.border}`,
                               background: roleStyle.bg,
                               color: roleStyle.color,

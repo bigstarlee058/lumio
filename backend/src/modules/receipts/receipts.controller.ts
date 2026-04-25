@@ -13,17 +13,13 @@ import {
   Res,
   UploadedFile,
   UploadedFiles,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { validateFile } from '../../common/utils/file-validator.util';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
 import { multerConfig } from '../../config/multer.config';
@@ -47,14 +43,12 @@ const SUPPORTED_RECEIPT_MIME_TYPES = new Set([
 ]);
 
 @Controller('receipts')
-@UseGuards(JwtAuthGuard)
 export class ReceiptsController {
   constructor(private readonly receiptsService: ReceiptsService) {}
 
   @Post('upload')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @UseInterceptors(FilesInterceptor('files', 5, multerConfig))
   async upload(
     @UploadedFiles() files: MulterFile[],
@@ -87,8 +81,7 @@ export class ReceiptsController {
 
   @Post('scan')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_UPLOAD)
+  @WorkspaceAuth(Permission.STATEMENT_UPLOAD)
   @UseInterceptors(FileInterceptor('file', multerConfig))
   async scan(
     @UploadedFile() file: MulterFile,
@@ -112,15 +105,13 @@ export class ReceiptsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findAll(@WorkspaceId() workspaceId: string, @Query() query: ReceiptQueryDto) {
     return this.receiptsService.findAll(workspaceId, query);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findOne(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     const receipt = await this.receiptsService.findOne(id, workspaceId);
     if (!receipt) {
@@ -130,8 +121,7 @@ export class ReceiptsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async update(
     @Param('id') id: string,
     @WorkspaceId() workspaceId: string,
@@ -145,8 +135,7 @@ export class ReceiptsController {
   }
 
   @Post(':id/approve')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async approve(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     const result = await this.receiptsService.approve(id, workspaceId);
     if (!result) {
@@ -156,23 +145,20 @@ export class ReceiptsController {
   }
 
   @Post('bulk-approve')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async bulkApprove(@Body() dto: BulkApproveDto, @WorkspaceId() workspaceId: string) {
     return this.receiptsService.bulkApprove(dto.receiptIds, workspaceId, dto.categoryId);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async delete(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     await this.receiptsService.delete(id, workspaceId);
   }
 
   @Get(':id/file')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getFile(
     @Param('id') id: string,
     @WorkspaceId() workspaceId: string,

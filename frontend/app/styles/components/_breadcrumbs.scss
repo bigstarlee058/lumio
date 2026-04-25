@@ -1,0 +1,104 @@
+@use '../abstracts' as *;
+
+.lumio-breadcrumbs {
+  width: 100%;
+  overflow-x: auto;
+
+  &__list {
+    margin: 0;
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    display: inline-flex;
+    min-width: max-content;
+    list-style: none;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: rgba($color-muted, 0.7);
+    font-size: 0.875rem;
+    border-radius: $lumio-radius-sm;
+
+    @include dark {
+      background-color: rgba($color-muted-dk, 0.7);
+    }
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    /* First item uses smaller left padding */
+    &:first-child {
+      .lumio-breadcrumbs__link,
+      .lumio-breadcrumbs__button,
+      .lumio-breadcrumbs__current,
+      .lumio-breadcrumbs__plain {
+        padding: 0.125rem 0.375rem 0.125rem 0;
+      }
+    }
+  }
+
+  &__link,
+  &__button,
+  &__current,
+  &__plain {
+    padding: 0.125rem 0.375rem;
+    border-radius: $lumio-radius-xs;
+  }
+
+  &__link,
+  &__button {
+    color: $color-muted-foreground;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    transition: color 0.15s;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
+    &:hover {
+      color: $color-foreground;
+
+      @include dark {
+        color: $color-foreground-dk;
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($color-ring, 0.5);
+
+      @include dark {
+        box-shadow: 0 0 0 2px rgba($color-ring-dk, 0.5);
+      }
+    }
+  }
+
+  &__current {
+    font-weight: 500;
+    color: $color-foreground;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+  }
+
+  &__plain {
+    color: $color-muted-foreground;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+  }
+
+  &__separator {
+    color: rgba($color-muted-foreground, 0.8);
+
+    @include dark {
+      color: rgba($color-muted-foreground-dk, 0.8);
+    }
+  }
+}

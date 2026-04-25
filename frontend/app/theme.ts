@@ -1,4 +1,5 @@
 import { type ThemeOptions, alpha, createTheme } from '@mui/material/styles';
+import { tokens } from '@/lib/theme-tokens';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -11,7 +12,9 @@ const SURFACE_TOKENS: Record<ThemeMode, AppSurfaceTokens> = {
   dark: { primary: '#5cc462' },
 };
 
-const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> = {
+const getSharedOptions = (mode: ThemeMode): Pick<ThemeOptions, 'shape' | 'typography' | 'components'> => {
+  const c = mode === 'dark' ? tokens.dark.color : tokens.color;
+  return {
   shape: { borderRadius: 10 },
   typography: {
     fontFamily:
@@ -28,7 +31,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           padding: '6px 14px',
           height: 36,
           fontSize: '13px',
@@ -57,25 +60,25 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiIconButton: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-sm)',
-          '&:hover': { backgroundColor: 'var(--lumio-color-ink-100)' },
+          borderRadius: tokens.radius.sm,
+          '&:hover': { backgroundColor: c.ink100 },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-lg)',
+          borderRadius: tokens.radius.lg,
           boxShadow: '0 1px 0 0 rgba(12, 12, 20, 0.04)',
           backgroundImage: 'none',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: { backgroundImage: 'none' },
-        rounded: { borderRadius: 'var(--lumio-radius-lg)' },
+        rounded: { borderRadius: tokens.radius.lg },
         elevation1: { boxShadow: '0 1px 2px 0 rgba(12, 12, 20, 0.05)' },
         elevation2: { boxShadow: '0 4px 16px -4px rgba(12, 12, 20, 0.08)' },
         elevation3: { boxShadow: '0 20px 40px -12px rgba(12, 12, 20, 0.12)' },
@@ -84,7 +87,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiDialog: {
       styleOverrides: {
         paper: {
-          borderRadius: 'var(--lumio-radius-xl)',
+          borderRadius: tokens.radius.xl,
           boxShadow: '0 30px 80px -20px rgba(15, 23, 42, 0.35), 0 8px 16px -4px rgba(15, 23, 42, 0.1)',
         },
       },
@@ -92,17 +95,17 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           height: 36,
           fontSize: '13px',
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            boxShadow: '0 0 0 3px var(--lumio-color-primary-50)',
+            boxShadow: `0 0 0 3px ${c.primary50}`,
           },
         },
       },
     },
     MuiFilledInput: {
-      styleOverrides: { root: { borderRadius: 'var(--lumio-radius-md)' } },
+      styleOverrides: { root: { borderRadius: tokens.radius.md } },
     },
     MuiTextField: {
       defaultProps: { variant: 'outlined' },
@@ -110,7 +113,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           height: 22,
           fontSize: '11.5px',
           fontWeight: 500,
@@ -120,7 +123,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiAlert: {
       styleOverrides: {
         root: {
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           fontSize: '13px',
         },
       },
@@ -128,25 +131,25 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     MuiMenu: {
       styleOverrides: {
         paper: {
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           boxShadow: '0 4px 16px -4px rgba(12, 12, 20, 0.08), 0 1px 2px rgba(12, 12, 20, 0.04)',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
     MuiPopover: {
       styleOverrides: {
         paper: {
-          borderRadius: 'var(--lumio-radius-md)',
+          borderRadius: tokens.radius.md,
           boxShadow: '0 4px 16px -4px rgba(12, 12, 20, 0.08)',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
     MuiTooltip: {
       styleOverrides: {
         tooltip: {
-          borderRadius: 'var(--lumio-radius-sm)',
+          borderRadius: tokens.radius.sm,
           fontSize: '12px',
           fontWeight: 500,
           padding: '5px 10px',
@@ -154,7 +157,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
       },
     },
     MuiTableContainer: {
-      styleOverrides: { root: { borderRadius: 'var(--lumio-radius-lg)' } },
+      styleOverrides: { root: { borderRadius: tokens.radius.lg } },
     },
     MuiTab: {
       styleOverrides: {
@@ -168,6 +171,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     },
     // Avatar, Switch, CircularProgress intentionally NOT overridden (stay round)
   },
+  };
 };
 
 const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
@@ -273,7 +277,7 @@ export const createAppTheme = (mode: ThemeMode) => {
   const surfaces = SURFACE_TOKENS[mode];
 
   return createTheme({
-    ...sharedOptions,
+    ...getSharedOptions(mode),
     palette: {
       ...paletteByMode[mode],
       action: {

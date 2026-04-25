@@ -1,0 +1,116 @@
+// app/styles/themes/_globals.scss
+// Global theme-level styles: body, focus, MUI/Tailwind overrides, body utility classes.
+@use '../abstracts' as *;
+
+body {
+  background-color: $color-background;
+  color: $color-foreground;
+  font-family: $lumio-font-family;
+  font-feature-settings: "ss01", "cv11";
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: background-color 220ms ease, color 220ms ease;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  @include dark {
+    background-color: $color-background-dk;
+    color: $color-foreground-dk;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+  border-radius: $lumio-radius-xs;
+
+  @include dark { outline-color: $color-primary-dk; }
+}
+
+// ── Font helper classes ───────────────────────────────────────
+.ff-dashboard-sans { font-family: $lumio-font-family; }
+.ff-dashboard-mono { font-family: $lumio-font-family-mono; }
+
+.ff-logo {
+  font-family: var(--font-nunito), "Nunito", sans-serif;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: 3.5px !important;
+  line-height: 50px !important;
+  text-transform: uppercase !important;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+// ── Layout utility classes ────────────────────────────────────
+.container-shared { width: 100%; }
+.bg-white { background-color: $color-card-bg !important; }
+
+// ── Body state classes ────────────────────────────────────────
+body.body-scroll-locked {
+  overflow: hidden;
+  padding-right: var(--scroll-lock-scrollbar-width, 0px);
+}
+
+body.ff-table-fullscreen {
+  overflow: hidden;
+
+  .lumio-topbar { display: none; }
+
+  .lumio-shell__sidebar { display: none; }
+
+  .lumio-shell__content > main {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  &.ff-table-columns-scroll {
+    overflow: auto;
+
+    .lumio-shell__content > main {
+      height: auto;
+      overflow: visible;
+    }
+  }
+}
+
+body.ff-col-resizing { user-select: none; }
+
+// ── Side panel + breadcrumbs ──────────────────────────────────
+@media (min-width: 1024px) {
+  body[data-side-panel-active="true"] [data-global-breadcrumbs] {
+    display: none;
+  }
+}
+
+// ── Custom table row fill ─────────────────────────────────────
+.custom-table-container tr.row-fill td {
+  background-color: inherit;
+
+  input,
+  select,
+  textarea { background-color: transparent; }
+}
+
+// ── MUI hover in light mode ───────────────────────────────────
+:not(.dark) .hover\:bg-gray-50:hover,
+:not(.dark) .hover\:bg-gray-100:hover,
+:not(.dark) .hover\:bg-gray-200:hover,
+:not(.dark) .hover\:bg-white:hover,
+:not(.dark) .hover\:bg-muted:hover,
+:not(.dark) .hover\:bg-card:hover {
+  background-color: $color-muted !important;
+}
+
+:not(.dark) .MuiButtonBase-root:not(.MuiButton-contained):hover,
+:not(.dark) .MuiButton-root:not(.MuiButton-contained):hover,
+:not(.dark) .MuiIconButton-root:hover,
+:not(.dark) .MuiMenuItem-root:hover,
+:not(.dark) .MuiListItem-root:hover,
+:not(.dark) .MuiTableRow-root:hover {
+  background-color: $color-muted !important;
+}

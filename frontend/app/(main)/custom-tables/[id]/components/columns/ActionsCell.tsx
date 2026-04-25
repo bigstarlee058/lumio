@@ -2,10 +2,11 @@
 
 import { Pencil, Trash2 } from '@/app/components/icons';
 import type { DeleteRowFn, OpenColorPickerFn } from '../../utils/columnDefinitions.types';
+import { tokens } from '@/lib/theme-tokens';
 
 const BTN_STYLE: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  borderRadius: 'var(--lumio-radius-sm)', padding: 4, color: '#9ca3af',
+  borderRadius: tokens.radius.sm, padding: 4, color: '#9ca3af',
   background: 'none', border: 'none', cursor: 'pointer',
   transition: 'background-color 0.2s, color 0.2s',
 };

@@ -1,0 +1,641 @@
+@use '../abstracts' as *;
+
+/* BEM block: lumio-navigation */
+
+.lumio-navigation {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #1a2130;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 300ms;
+
+  &__inner {
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    @media (min-width: 640px) {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  &__bar {
+    display: flex;
+    justify-content: space-between;
+    height: 3.5rem;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+  }
+
+  &__logo-link {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  &__logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: $lumio-radius-sm;
+  }
+
+  &__logo-text {
+    color: white;
+    font-size: 19px;
+    letter-spacing: 0.2em;
+    font-weight: 800;
+  }
+
+  &__primary-nav {
+    display: none;
+    margin-left: 1.5rem;
+    align-items: center;
+    gap: 0.25rem;
+
+    @media (min-width: 768px) {
+      display: flex;
+    }
+  }
+
+  &__nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: $lumio-radius-sm;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 200ms, background-color 200ms;
+    color: #94a3b8;
+
+    &:hover {
+      color: white;
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
+    }
+
+    &--active {
+      background-color: rgba($color-primary, 0.15);
+      color: white;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.15);
+      }
+    }
+  }
+
+  &__nav-icon {
+    opacity: 0.7;
+    transition: opacity 200ms;
+
+    .lumio-navigation__nav-item:hover &,
+    .lumio-navigation__nav-item--active & {
+      opacity: 1;
+    }
+  }
+
+  &__nav-label {
+    display: none;
+
+    @media (min-width: 1024px) {
+      display: block;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__desktop-actions {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+      display: flex;
+    }
+  }
+
+  &__icon-btn {
+    height: 2rem;
+    width: 2rem;
+    border-radius: $lumio-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms;
+
+    &:hover {
+      color: white;
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
+    }
+  }
+
+  &__user-menu-area {
+    position: relative;
+    margin-left: 0.75rem;
+  }
+
+  &__user-menu-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 100px;
+    height: 40px;
+    padding: 0 1.25rem;
+    background-color: $color-card-bg;
+    color: $color-primary;
+    border: 1px solid $color-border;
+    border-radius: $lumio-radius-sm;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform 150ms;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-primary-dk;
+      border-color: $color-border-dk;
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__mobile-toggle {
+    display: flex;
+    align-items: center;
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  &__mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: $lumio-radius-sm;
+    color: #94a3b8;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms;
+
+    &:hover {
+      color: white;
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
+    }
+  }
+
+  /* Mobile menu overlay and drawer */
+  &__mobile-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: opacity 200ms;
+
+    &--visible {
+      opacity: 1;
+    }
+
+    &--hidden {
+      opacity: 0;
+    }
+  }
+
+  &__mobile-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    width: 88vw;
+    max-width: 384px;
+    border-left: 1px solid $color-border;
+    background-color: $color-card-bg;
+    color: $color-card-foreground;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateX(0);
+    will-change: transform;
+    transition: transform 300ms ease-out;
+    padding: 0;
+    margin: 0;
+
+    @include dark {
+      border-left-color: $color-border-dk;
+      background-color: $color-card-bg-dk;
+      color: $color-card-foreground-dk;
+    }
+
+    &--closed {
+      transform: translateX(100%);
+    }
+  }
+
+  &__mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid $color-border;
+    background-color: $color-card-bg;
+    padding: 16px;
+
+    @include dark {
+      border-bottom-color: $color-border-dk;
+      background-color: $color-card-bg-dk;
+    }
+  }
+
+  &__mobile-drawer-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $lumio-radius-sm;
+    padding: 8px;
+    color: $color-muted-foreground;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
+    &:hover {
+      background-color: $color-muted;
+      color: $color-foreground;
+
+      @include dark {
+        background-color: $color-muted-dk;
+        color: $color-foreground-dk;
+      }
+    }
+  }
+
+  &__mobile-drawer-body {
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    background-color: $color-card-bg;
+    padding: 8px;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+    }
+  }
+
+  &__mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: $lumio-radius-sm;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 200ms, background-color 200ms;
+    color: $color-foreground;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+
+    &:hover {
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
+    }
+
+    &--active {
+      background-color: rgba($color-primary, 0.1);
+      color: $color-primary;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+        color: $color-primary-dk;
+      }
+    }
+  }
+
+  &__mobile-nav-icon {
+    color: $color-muted-foreground;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
+    &--active {
+      color: $color-primary;
+
+      @include dark {
+        color: $color-primary-dk;
+      }
+    }
+  }
+
+  &__mobile-divider {
+    margin: 8px 0;
+    height: 1px;
+    background-color: $color-border;
+
+    @include dark {
+      background-color: $color-border-dk;
+    }
+  }
+
+  &__mobile-section-label {
+    background-color: $color-card-bg;
+    padding: 8px 12px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $color-muted-foreground;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-muted-foreground-dk;
+    }
+  }
+
+  &__mobile-menu-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: $lumio-radius-sm;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    color: $color-foreground;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 200ms;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+
+    &:hover {
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
+    }
+
+    &--active {
+      background-color: rgba($color-primary, 0.1);
+      color: $color-primary;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+        color: $color-primary-dk;
+      }
+    }
+  }
+
+  /* Language modal */
+  &__lang-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__lang-back-btn {
+    border-radius: $lumio-radius-sm;
+    padding: 8px;
+    color: $color-muted-foreground;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 200ms, background-color 200ms;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
+    &:hover {
+      background-color: $color-muted;
+      color: $color-foreground;
+
+      @include dark {
+        background-color: $color-muted-dk;
+        color: $color-foreground-dk;
+      }
+    }
+  }
+
+  &__lang-body {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  &__lang-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__lang-search-wrapper {
+    position: relative;
+  }
+
+  &__lang-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: $color-muted-foreground;
+    pointer-events: none;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+  }
+
+  &__lang-search-input {
+    width: 100%;
+    border-radius: $lumio-radius-sm;
+    border: 1px solid $color-primary;
+    background-color: $color-card-bg;
+    padding: 12px 16px 12px 44px;
+    font-size: 16px;
+    color: $color-foreground;
+    outline: none;
+    box-sizing: border-box;
+
+    @include dark {
+      border-color: $color-primary-dk;
+      background-color: $color-card-bg-dk;
+      color: $color-foreground-dk;
+    }
+  }
+
+  &__lang-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__lang-option {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: $lumio-radius-sm;
+    padding: 12px 16px;
+    text-align: left;
+    color: $color-foreground;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 200ms;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+
+    &:hover {
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
+    }
+
+    &--selected {
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
+    }
+  }
+
+  &__lang-option-label {
+    font-weight: 500;
+  }
+
+  &__lang-empty {
+    border-radius: $lumio-radius-sm;
+    background-color: $color-card-bg;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: $color-muted-foreground;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-muted-foreground-dk;
+    }
+  }
+
+  /* User menu profile item */
+  &__profile-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.75rem;
+    cursor: default;
+  }
+
+  &__avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: $lumio-radius-sm;
+    background-color: $color-muted;
+    color: $color-muted-foreground;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include dark {
+      background-color: $color-muted-dk;
+      color: $color-muted-foreground-dk;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__profile-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $color-foreground;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
+  }
+
+  &__profile-email {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: $color-muted-foreground;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+  }
+}

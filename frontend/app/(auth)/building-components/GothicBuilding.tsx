@@ -5,6 +5,7 @@ import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import { stableWindowNoise } from './shared';
 import type { BuildingProps } from './shared';
+import { tokens } from '@/lib/theme-tokens';
 
 const WINDOW_COUNT = 6;
 const WINDOW_NOISE_OFFSET = 1000;
@@ -44,7 +45,7 @@ const GothicRoseWindow = (): React.JSX.Element => (
         style={{
           width: 30,
           height: 30,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           background: 'rgba(255,255,255,0.2)',
           border: '2px solid rgba(255,255,255,0.3)',
           display: 'flex',
@@ -52,7 +53,7 @@ const GothicRoseWindow = (): React.JSX.Element => (
           justifyContent: 'center',
         }}
       >
-        <div style={{ width: 14, height: 14, borderRadius: 'var(--lumio-radius-full)', border: '1px solid rgba(255,255,255,0.4)' }} />
+        <div style={{ width: 14, height: 14, borderRadius: tokens.radius.full, border: '1px solid rgba(255,255,255,0.4)' }} />
       </div>
     </Block>
   </div>

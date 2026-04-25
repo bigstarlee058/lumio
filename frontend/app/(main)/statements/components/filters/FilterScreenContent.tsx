@@ -14,6 +14,7 @@ import type {
   FiltersDrawerLabels,
 } from './FiltersDrawer';
 import type { StatementFilters } from './statement-filters';
+import { tokens } from '@/lib/theme-tokens';
 
 export type FilterScreenContentProps = {
   screen: string;
@@ -33,7 +34,7 @@ export type FilterScreenContentProps = {
 
 const INPUT_STYLE: React.CSSProperties = {
   width: '100%',
-  borderRadius: 'var(--lumio-radius-md)',
+  borderRadius: tokens.radius.md,
   border: '1px solid #e5e7eb',
   background: 'var(--card-bg)',
   padding: '8px 12px',

@@ -1,0 +1,304 @@
+@use '../abstracts' as *;
+
+/* ── Legacy classes used by AdminAuditTab ─────────────────────── */
+.lumio-audit-panel {
+  min-height: 0;
+
+  &__header {
+    margin-bottom: 24px;
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+
+    @media (min-width: 1024px) {
+      grid-template-columns: 280px 1fr;
+    }
+  }
+
+  &__filters {
+    align-self: start;
+    padding: 16px;
+  }
+
+  &__results {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* ── Activity log page layout ─────────────────────────────────── */
+.audit-page {
+  max-width: 900px;
+  padding: 32px 24px;
+}
+
+.audit-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.audit-page__title {
+  font-size: 22px;
+  font-weight: 700;
+  color: $lumio-color-ink-900;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.audit-page__subtitle {
+  font-size: 13px;
+  color: $lumio-color-ink-500;
+  margin: 4px 0 0;
+}
+
+/* ── Filter bar ───────────────────────────────────────────────── */
+.audit-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.audit-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 260px;
+
+  svg {
+    position: absolute;
+    left: 10px;
+    color: $lumio-color-ink-400;
+    pointer-events: none;
+  }
+}
+
+.audit-search {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px 0 32px;
+  font-size: 13px;
+  color: $lumio-color-ink-900;
+  background: $color-card-bg;
+  border: 1px solid $lumio-color-ink-150;
+  border-radius: $lumio-radius-md;
+  outline: none;
+  transition: border-color 0.12s;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
+
+  &::placeholder {
+    color: $lumio-color-ink-400;
+  }
+
+  &:focus {
+    border-color: $lumio-color-primary;
+  }
+}
+
+/* ── Timeline card ────────────────────────────────────────────── */
+.audit-timeline-card {
+  background: $color-card-bg;
+  border: 1px solid $lumio-color-ink-150;
+  border-radius: $lumio-radius-lg;
+  padding: 20px 24px;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
+}
+
+/* ── Timeline list ────────────────────────────────────────────── */
+.audit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 15px;
+    width: 1px;
+    background: $lumio-color-ink-150;
+  }
+}
+
+/* ── Timeline item ────────────────────────────────────────────── */
+.audit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  position: relative;
+
+  & + & {
+    border-top: 1px solid $lumio-color-ink-100;
+  }
+}
+
+/* ── Timeline dot (icon circle) ───────────────────────────────── */
+.audit-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: $color-card-bg;
+  border: 1px solid $lumio-color-ink-150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $lumio-color-ink-500;
+  position: relative;
+  z-index: 1;
+  flex: none;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
+}
+
+/* ── Timeline body ────────────────────────────────────────────── */
+.audit-body {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+
+  &:hover .audit-line {
+    color: $lumio-color-ink-900;
+  }
+}
+
+/* ── Timeline content line ────────────────────────────────────── */
+.audit-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  flex-wrap: wrap;
+  color: $lumio-color-ink-700;
+}
+
+.audit-actor {
+  font-weight: 600;
+  color: $lumio-color-ink-900;
+}
+
+.audit-verb {
+  color: $lumio-color-ink-500;
+}
+
+.audit-what {
+  color: $lumio-color-ink-800;
+  font-weight: 500;
+}
+
+.audit-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: $lumio-color-ink-100;
+  color: $lumio-color-ink-600;
+  margin-left: 2px;
+}
+
+/* ── Timestamp ────────────────────────────────────────────────── */
+.audit-when {
+  font-size: 11.5px;
+  color: $lumio-color-ink-400;
+  margin-top: 3px;
+}
+
+/* ── Avatar ───────────────────────────────────────────────────── */
+.audit-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex: none;
+  letter-spacing: 0.02em;
+}
+
+/* ── Batch group ──────────────────────────────────────────────── */
+.audit-batch-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: $lumio-color-ink-700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    color: $lumio-color-ink-900;
+  }
+}
+
+/* ── Rollback button ──────────────────────────────────────────── */
+.audit-rollback-btn {
+  flex: none;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: $lumio-color-ink-600;
+  background: $color-card-bg;
+  border: 1px solid $lumio-color-ink-200;
+  border-radius: $lumio-radius-md;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  white-space: nowrap;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
+
+  &:hover {
+    border-color: $lumio-color-danger;
+    color: $lumio-color-danger;
+    background: #fff1f2;
+  }
+}
+
+/* ── Empty state ──────────────────────────────────────────────── */
+.audit-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: $lumio-color-ink-400;
+  font-size: 13.5px;
+}
+
+/* ── Pagination row ───────────────────────────────────────────── */
+.audit-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $lumio-color-ink-150;
+  font-size: 13px;
+  color: $lumio-color-ink-500;
+}

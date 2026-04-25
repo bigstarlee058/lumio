@@ -23,6 +23,7 @@ import TransactionsView, {
 } from '../../components/TransactionsView';
 import api from '../../lib/api';
 import { Box, Chip, Typography } from '@mui/material';
+import { tokens } from '@/lib/theme-tokens';
 
 type FileAvailabilityStatus = 'both' | 'disk' | 'db' | 'missing';
 
@@ -330,7 +331,7 @@ export default function FileDetailsPage() {
         label={getAvailabilityLabel(status)}
         size="small"
         title={getAvailabilityTooltip(status)}
-        sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, ...chipSx }}
+        sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...chipSx }}
       />
     );
   };
@@ -424,7 +425,7 @@ export default function FileDetailsPage() {
             onClick={() => router.push('/statements')}
             aria-label="Back to storage"
             sx={{
-              borderRadius: 'var(--lumio-radius-full)',
+              borderRadius: tokens.radius.full,
               border: '1px solid #e5e7eb',
               bgcolor: 'background.paper',
               p: 1,
@@ -448,19 +449,19 @@ export default function FileDetailsPage() {
               <Chip
                 label={getBankDisplayName(statement.bankName)}
                 size="small"
-                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main', border: '1px solid rgba(22,129,24,0.2)' }}
+                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main', border: '1px solid rgba(22,129,24,0.2)' }}
               />
               <Chip
                 label={getStatusLabel(statement.status)}
                 size="small"
-                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
+                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }}
               />
               {renderAvailabilityBadge(fileAvailability)}
               <Chip
                 icon={isOwner ? <ShieldCheck style={{ width: 16, height: 16 }} /> : <Shield style={{ width: 16, height: 16 }} />}
                 label={isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
                 size="small"
-                sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
+                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
               />
             </Box>
           </Box>
@@ -733,14 +734,14 @@ export default function FileDetailsPage() {
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: '#111827' }}>
-                            <Chip label={link.permission} size="small" sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
+                            <Chip label={link.permission} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
                             <Chip
                               label={link.status}
                               size="small"
-                              sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
+                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
                             />
                             {link.expiresAt && (
-                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: 'var(--lumio-radius-sm)', fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
+                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
                             )}
                           </Box>
                           {link.description && (

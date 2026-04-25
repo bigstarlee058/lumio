@@ -19,6 +19,7 @@ const content = {
         ar: 'فشل تحميل الجداول المتصلة',
         pl: 'Nie udało się załadować połączonych arkuszy',
         it: 'Impossibile caricare i fogli connessi',
+        sk: 'Nie udało się załadować połączonych arkuszy',
       }),
       missingAuthUrl: t({
         ru: 'Не удалось получить ссылку для авторизации Google',
@@ -34,6 +35,7 @@ const content = {
         ar: 'فشل الحصول على رابط تفويض Google',
         pl: 'Nie udało się uzyskać URL autoryzacji Google',
         it: 'Impossibile ottenere l\'URL di autorizzazione Google',
+        sk: 'Nie udało się uzyskać URL autoryzacji Google',
       }),
       sheetIdMissing: t({
         ru: 'Укажите ID или ссылку на таблицу',
@@ -49,6 +51,7 @@ const content = {
         ar: 'أدخل معرّف جدول البيانات أو عنوان URL',
         pl: 'Podaj ID lub URL arkusza',
         it: 'Fornisci un ID o URL del foglio di calcolo',
+        sk: 'Podaj ID lub URL arkusza',
       }),
       connectFailed: t({
         ru: 'Не удалось подключить таблицу',
@@ -64,6 +67,7 @@ const content = {
         ar: 'فشل توصيل جدول البيانات',
         pl: 'Nie udało się połączyć arkusza',
         it: 'Impossibile connettere il foglio di calcolo',
+        sk: 'Nie udało się połączyć arkusza',
       }),
       loadWorksheets: t({
         ru: 'Не удалось загрузить листы таблицы',
@@ -79,6 +83,7 @@ const content = {
         ar: 'فشل تحميل أوراق جدول البيانات',
         pl: 'Nie udało się załadować arkuszy tabeli',
         it: 'Impossibile caricare i fogli di lavoro',
+        sk: 'Nie udało się załadować arkuszy tabeli',
       }),
       spreadsheetRequired: t({
         ru: 'Сначала выберите таблицу в Google Picker',
@@ -94,6 +99,7 @@ const content = {
         ar: 'اختر جدول بيانات في Google Picker أولاً',
         pl: 'Najpierw wybierz arkusz w Google Picker',
         it: 'Scegli prima un foglio di calcolo in Google Picker',
+        sk: 'Najpierw wybierz arkusz w Google Picker',
       }),
       syncFailed: t({
         ru: 'Не удалось синхронизировать',
@@ -109,6 +115,7 @@ const content = {
         ar: 'فشلت المزامنة',
         pl: 'Nie udało się zsynchronizować',
         it: 'Sincronizzazione fallita',
+        sk: 'Nie udało się zsynchronizować',
       }),
       removeFailed: t({
         ru: 'Не удалось отключить таблицу',
@@ -124,6 +131,7 @@ const content = {
         ar: 'فشل قطع اتصال الجدول',
         pl: 'Nie udało się rozłączyć arkusza',
         it: 'Impossibile disconnettere il foglio',
+        sk: 'Nie udało się rozłączyć arkusza',
       }),
     },
     toasts: {
@@ -141,6 +149,7 @@ const content = {
         ar: 'جارٍ فتح تفويض Google…',
         pl: 'Otwieranie autoryzacji Google…',
         it: 'Apertura autorizzazione Google…',
+        sk: 'Otwieranie autoryzacji Google…',
       }),
       connected: t({
         ru: 'Google Sheets подключен',
@@ -156,6 +165,7 @@ const content = {
         ar: 'تم توصيل Google Sheets',
         pl: 'Google Sheets połączony',
         it: 'Google Sheets connesso',
+        sk: 'Google Sheets połączony',
       }),
       syncStarted: t({
         ru: 'Синхронизация запущена',
@@ -171,6 +181,7 @@ const content = {
         ar: 'بدأت المزامنة',
         pl: 'Synchronizacja rozpoczęta',
         it: 'Sincronizzazione avviata',
+        sk: 'Synchronizacja rozpoczęta',
       }),
       removed: t({
         ru: 'Подключение отключено',
@@ -186,6 +197,7 @@ const content = {
         ar: 'تمت إزالة الاتصال',
         pl: 'Połączenie usunięte',
         it: 'Connessione rimossa',
+        sk: 'Połączenie usunięte',
       }),
     },
     loginRequired: {
@@ -203,6 +215,7 @@ const content = {
         ar: 'سجّل الدخول لتوصيل Google Sheets',
         pl: 'Zaloguj się, aby połączyć Google Sheets',
         it: 'Accedi per connettere Google Sheets',
+        sk: 'Zaloguj się, aby połączyć Google Sheets',
       }),
       subtitle: t({
         ru: 'Авторизация нужна для создания привязки таблицы к вашему аккаунту.',
@@ -218,6 +231,7 @@ const content = {
         ar: 'التفويض مطلوب لربط جدول بيانات بحسابك.',
         pl: 'Autoryzacja jest wymagana do powiązania arkusza z kontem.',
         it: 'L\'autorizzazione è necessaria per collegare un foglio al tuo account.',
+        sk: 'Autoryzacja jest wymagana do powiązania arkusza z kontem.',
       }),
     },
     header: {
@@ -235,6 +249,7 @@ const content = {
         ar: 'اتصال Google Sheets',
         pl: 'Połączenie Google Sheets',
         it: 'Connessione Google Sheets',
+        sk: 'Połączenie Google Sheets',
       }),
       subtitle: t({
         ru: 'Укажите таблицу и лист, куда будут отправляться данные. После подключения вставьте Apps Script из документации для отправки вебхуков.',
@@ -250,6 +265,7 @@ const content = {
         ar: 'حدد جدول البيانات وعلامة تبويب الورقة لإرسال البيانات. بعد الاتصال، الصق Apps Script من المستندات لإرسال webhooks.',
         pl: 'Określ arkusz kalkulacyjny i kartę arkusza do wysyłania danych. Po połączeniu wklej Apps Script z dokumentacji, aby wysyłać webhooki.',
         it: 'Specifica il foglio di calcolo e la scheda per l\'invio dei dati. Dopo la connessione, incolla Apps Script dalla documentazione per inviare webhook.',
+        sk: 'Określ arkusz kalkulacyjny i kartę arkusza do wysyłania danych. Po połączeniu wklej Apps Script z dokumentacji, aby wysyłać webhooki.',
       }),
     },
     step1: {
@@ -267,6 +283,7 @@ const content = {
         ar: 'الخطوة 1',
         pl: 'Krok 1',
         it: 'Passaggio 1',
+        sk: 'Krok 1',
       }),
       title: t({
         ru: 'Подключить Google Sheets',
@@ -282,6 +299,7 @@ const content = {
         ar: 'توصيل Google Sheets',
         pl: 'Połącz Google Sheets',
         it: 'Connetti Google Sheets',
+        sk: 'Połącz Google Sheets',
       }),
       accountLabel: t({
         ru: 'Google аккаунт',
@@ -297,6 +315,7 @@ const content = {
         ar: 'حساب Google',
         pl: 'Konto Google',
         it: 'Account Google',
+        sk: 'Konto Google',
       }),
       accountHelp: t({
         ru: 'Подключите Google аккаунт, чтобы открыть список ваших таблиц.',
@@ -312,6 +331,7 @@ const content = {
         ar: 'قم بتوصيل حساب Google للتصفح بين جداول البيانات.',
         pl: 'Połącz konto Google, aby przeglądać swoje arkusze.',
         it: 'Connetti il tuo account Google per sfogliare i tuoi fogli di calcolo.',
+        sk: 'Połącz konto Google, aby przeglądać swoje arkusze.',
       }),
       connectedAs: t({
         ru: 'Подключено как {email}',
@@ -327,6 +347,7 @@ const content = {
         ar: 'متصل بوصفك {email}',
         pl: 'Połączono jako {email}',
         it: 'Connesso come {email}',
+        sk: 'Połączono jako {email}',
       }),
       connectAccountButton: t({
         ru: 'Войти в Google',
@@ -342,6 +363,7 @@ const content = {
         ar: 'تسجيل الدخول بواسطة Google',
         pl: 'Zaloguj się przez Google',
         it: 'Accedi con Google',
+        sk: 'Zaloguj się przez Google',
       }),
       reconnectButton: t({
         ru: 'Сменить Google аккаунт',
@@ -357,6 +379,7 @@ const content = {
         ar: 'تبديل حساب Google',
         pl: 'Zmień konto Google',
         it: 'Cambia account Google',
+        sk: 'Zmień konto Google',
       }),
       spreadsheetLabel: t({
         ru: 'Таблица для импорта',
@@ -372,6 +395,7 @@ const content = {
         ar: 'جدول البيانات المراد استيراده',
         pl: 'Arkusz do importu',
         it: 'Foglio di calcolo da importare',
+        sk: 'Arkusz do importu',
       }),
       spreadsheetHelp: t({
         ru: 'Откройте Google Picker и выберите нужную таблицу.',
@@ -387,6 +411,7 @@ const content = {
         ar: 'افتح Google Picker واختر جدول البيانات الذي تحتاجه.',
         pl: 'Otwórz Google Picker i wybierz potrzebny arkusz.',
         it: 'Apri Google Picker e scegli il foglio di calcolo di cui hai bisogno.',
+        sk: 'Otwórz Google Picker i wybierz potrzebny arkusz.',
       }),
       chooseSpreadsheetButton: t({
         ru: 'Выбрать таблицу',
@@ -402,6 +427,7 @@ const content = {
         ar: 'اختر جدول البيانات',
         pl: 'Wybierz arkusz',
         it: 'Scegli foglio di calcolo',
+        sk: 'Wybierz arkusz',
       }),
       chooseSpreadsheetLoading: t({
         ru: 'Открываем Picker…',
@@ -417,6 +443,7 @@ const content = {
         ar: 'جارٍ فتح Picker…',
         pl: 'Otwieranie Picker…',
         it: 'Apertura Picker…',
+        sk: 'Otwieranie Picker…',
       }),
       openSpreadsheet: t({
         ru: 'Открыть таблицу',
@@ -432,6 +459,7 @@ const content = {
         ar: 'افتح جدول البيانات',
         pl: 'Otwórz arkusz',
         it: 'Apri foglio di calcolo',
+        sk: 'Otwórz arkusz',
       }),
       nameLabel: t({
         ru: 'Название в системе',
@@ -447,6 +475,7 @@ const content = {
         ar: 'الاسم في النظام',
         pl: 'Nazwa w systemie',
         it: 'Nome nel sistema',
+        sk: 'Nazwa w systemie',
       }),
       namePlaceholder: t({
         ru: 'Например: Выписки Казахстан',
@@ -462,6 +491,7 @@ const content = {
         ar: 'مثال: كشوفات KZ',
         pl: 'np. wyciągi KZ',
         it: 'es. estratti KZ',
+        sk: 'np. wyciągi KZ',
       }),
       nameHelp: t({
         ru: 'Если оставить пустым — используем название из Google Sheets.',
@@ -477,6 +507,7 @@ const content = {
         ar: 'إذا تُرك فارغًا، سنستخدم الاسم من Google Sheets.',
         pl: 'Jeśli puste, użyjemy nazwy z Google Sheets.',
         it: 'Se vuoto, useremo il nome da Google Sheets.',
+        sk: 'Jeśli puste, użyjemy nazwy z Google Sheets.',
       }),
       worksheetLabel: t({
         ru: 'Лист',
@@ -492,6 +523,7 @@ const content = {
         ar: 'ورقة العمل',
         pl: 'Arkusz',
         it: 'Foglio',
+        sk: 'Arkusz',
       }),
       selectWorksheet: t({
         ru: 'Выберите лист',
@@ -507,6 +539,7 @@ const content = {
         ar: 'اختر ورقة العمل',
         pl: 'Wybierz arkusz',
         it: 'Scegli foglio',
+        sk: 'Wybierz arkusz',
       }),
       loadingWorksheets: t({
         ru: 'Загружаем листы…',
@@ -522,6 +555,7 @@ const content = {
         ar: 'جارٍ تحميل الأوراق…',
         pl: 'Ładowanie arkuszy…',
         it: 'Caricamento fogli…',
+        sk: 'Ładowanie arkuszy…',
       }),
       connectButton: t({
         ru: 'Импортировать из таблицы',
@@ -537,6 +571,7 @@ const content = {
         ar: 'استيراد من جدول البيانات',
         pl: 'Importuj z arkusza',
         it: 'Importa dal foglio di calcolo',
+        sk: 'Importuj z arkusza',
       }),
       successText: t({
         ru: 'После выбора таблицы Lumio сохранит подключение и сможет использовать лист для импорта и дальнейшей синхронизации.',
@@ -552,6 +587,7 @@ const content = {
         ar: 'بعد الاختيار، يحفظ Lumio الاتصال ويمكنه استخدام ورقة العمل للاستيراد والمزامنة المستقبلية.',
         pl: 'Po wyborze Lumio zapisuje połączenie i może używać arkusza do importu i przyszłej synchronizacji.',
         it: 'Dopo la selezione, Lumio salva la connessione e può usare il foglio per l\'importazione e la sincronizzazione futura.',
+        sk: 'Po wyborze Lumio zapisuje połączenie i może używać arkusza do importu i przyszłej synchronizacji.',
       }),
     },
     step2: {
@@ -569,6 +605,7 @@ const content = {
         ar: 'الخطوة 2 (الإعداد المتقدم)',
         pl: 'Krok 2 (Zaawansowana konfiguracja)',
         it: 'Passaggio 2 (Configurazione avanzata)',
+        sk: 'Krok 2 (Zaawansowana konfiguracja)',
       }),
       title: t({
         ru: 'Автообновление из Google Sheets (опционально)',
@@ -584,6 +621,7 @@ const content = {
         ar: 'تفعيل التحديثات التلقائية من Google Sheets (اختياري)',
         pl: 'Włącz automatyczne aktualizacje z Google Sheets (opcjonalnie)',
         it: 'Abilita aggiornamenti automatici da Google Sheets (opzionale)',
+        sk: 'Włącz automatyczne aktualizacje z Google Sheets (opcjonalnie)',
       }),
       description: t({
         ru: 'Скопируйте скрипт из нашей инструкции и поставьте триггер onEdit, чтобы отправлять изменения по вебхуку.',
@@ -599,6 +637,7 @@ const content = {
         ar: 'انسخ النص البرمجي من دليلنا واضبط مشغّل onEdit لإرسال التغييرات عبر webhook.',
         pl: 'Skopiuj skrypt z naszego przewodnika i ustaw wyzwalacz onEdit, aby wysyłać zmiany przez webhook.',
         it: 'Copia lo script dalla nostra guida e imposta un trigger onEdit per inviare le modifiche tramite webhook.',
+        sk: 'Skopiuj skrypt z naszego przewodnika i ustaw wyzwalacz onEdit, aby wysyłać zmiany przez webhook.',
       }),
       appsScriptDoc: t({
         ru: 'Инструкция по Apps Script',
@@ -614,6 +653,7 @@ const content = {
         ar: 'دليل Apps Script',
         pl: 'Przewodnik Apps Script',
         it: 'Guida Apps Script',
+        sk: 'Przewodnik Apps Script',
       }),
       openSheets: t({
         ru: 'Открыть Google Sheets',
@@ -629,6 +669,7 @@ const content = {
         ar: 'فتح Google Sheets',
         pl: 'Otwórz Google Sheets',
         it: 'Apri Google Sheets',
+        sk: 'Otwórz Google Sheets',
       }),
       webhookEndpointLabel: t({
         ru: 'Эндпоинт вебхука',
@@ -644,6 +685,7 @@ const content = {
         ar: 'نقطة نهاية webhook',
         pl: 'Punkt końcowy webhook',
         it: 'Endpoint webhook',
+        sk: 'Punkt końcowy webhook',
       }),
       webhookHeaderLabel: t({
         ru: 'Заголовок',
@@ -659,6 +701,7 @@ const content = {
         ar: 'الترويسة',
         pl: 'Nagłówek',
         it: 'Intestazione',
+        sk: 'Nagłówek',
       }),
       webhookTokenHint: t({
         ru: 'ваш токен',
@@ -674,6 +717,7 @@ const content = {
         ar: 'رمزك المميز',
         pl: 'twój token',
         it: 'il tuo token',
+        sk: 'twój token',
       }),
       showTechnicalDetails: t({
         ru: 'Показать технические детали',
@@ -689,6 +733,7 @@ const content = {
         ar: 'عرض التفاصيل التقنية',
         pl: 'Pokaż szczegóły techniczne',
         it: 'Mostra dettagli tecnici',
+        sk: 'Pokaż szczegóły techniczne',
       }),
     },
     list: {
@@ -706,6 +751,7 @@ const content = {
         ar: 'الجداول المتصلة',
         pl: 'Połączone arkusze',
         it: 'Fogli connessi',
+        sk: 'Połączone arkusze',
       }),
       subtitle: t({
         ru: 'Автообновление по вебхуку',
@@ -721,6 +767,7 @@ const content = {
         ar: 'تحديثات تلقائية عبر webhook',
         pl: 'Automatyczne aktualizacje przez webhook',
         it: 'Aggiornamenti automatici tramite webhook',
+        sk: 'Automatyczne aktualizacje przez webhook',
       }),
       empty: t({
         ru: 'Пока нет подключений. Добавьте первую таблицу через форму слева.',
@@ -736,6 +783,7 @@ const content = {
         ar: 'لا توجد اتصالات حتى الآن. أضف أول جدول باستخدام النموذج على اليسار.',
         pl: 'Brak połączeń. Dodaj pierwszy arkusz używając formularza po lewej.',
         it: 'Nessuna connessione ancora. Aggiungi il tuo primo foglio usando il modulo a sinistra.',
+        sk: 'Brak połączeń. Dodaj pierwszy arkusz używając formularza po lewej.',
       }),
       badges: {
         oauthNeeded: t({
@@ -752,6 +800,7 @@ const content = {
           ar: 'OAuth مطلوب',
           pl: 'Wymagany OAuth',
           it: 'OAuth richiesto',
+          sk: 'Wymagany OAuth',
         }),
         active: t({
           ru: 'Активно',
@@ -767,10 +816,11 @@ const content = {
           ar: 'نشط',
           pl: 'Aktywne',
           it: 'Attivo',
+          sk: 'Aktywne',
         }),
       },
       fields: {
-        idPrefix: t({ ru: 'ID', en: 'ID', kk: 'ID', de: 'ID', fr: 'ID', es: 'ID', pt: 'ID', tr: 'ID', uk: 'ID', zh: 'ID', ar: 'المعرّف', pl: 'ID', it: 'ID' }),
+        idPrefix: t({ ru: 'ID', en: 'ID', kk: 'ID', de: 'ID', fr: 'ID', es: 'ID', pt: 'ID', tr: 'ID', uk: 'ID', zh: 'ID', ar: 'المعرّف', pl: 'ID', it: 'ID', sk: 'ID'}),
         worksheetPrefix: t({
           ru: 'Лист',
           en: 'Sheet',
@@ -785,6 +835,7 @@ const content = {
           ar: 'الورقة',
           pl: 'Arkusz',
           it: 'Foglio',
+          sk: 'Arkusz',
         }),
         lastSyncPrefix: t({
           ru: 'Последняя синхронизация',
@@ -800,6 +851,7 @@ const content = {
           ar: 'آخر مزامنة',
           pl: 'Ostatnia synchronizacja',
           it: 'Ultima sincronizzazione',
+          sk: 'Ostatnia synchronizacja',
         }),
       },
       actions: {
@@ -817,6 +869,7 @@ const content = {
           ar: 'تفويض',
           pl: 'Autoryzuj',
           it: 'Autorizza',
+          sk: 'Autoryzuj',
         }),
         sync: t({
           ru: 'Синхронизировать',
@@ -832,6 +885,7 @@ const content = {
           ar: 'مزامنة',
           pl: 'Synchronizuj',
           it: 'Sincronizza',
+          sk: 'Synchronizuj',
         }),
         disconnect: t({
           ru: 'Отключить',
@@ -847,9 +901,10 @@ const content = {
           ar: 'قطع الاتصال',
           pl: 'Rozłącz',
           it: 'Disconnetti',
+          sk: 'Rozłącz',
         }),
       },
-      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—' }),
+      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—', sk: '—'}),
     },
   },
 } satisfies Dictionary;

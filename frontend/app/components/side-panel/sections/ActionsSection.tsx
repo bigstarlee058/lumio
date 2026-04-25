@@ -6,6 +6,7 @@ import type { ActionItem, ActionsSection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
 import { ACTION_SIZE_STYLES, ACTION_VARIANT_STYLES } from './helpers/section-constants';
+import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function, complexity
 function ActionItemComponent({ item }: { item: ActionItem }) {
@@ -23,7 +24,7 @@ function ActionItemComponent({ item }: { item: ActionItem }) {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         fontWeight: 500,
         cursor: item.disabled || item.loading ? 'not-allowed' : 'pointer',
         opacity: item.disabled || item.loading ? 0.5 : 1,

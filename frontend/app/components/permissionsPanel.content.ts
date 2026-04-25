@@ -17,6 +17,7 @@ const content = {
       ar: 'الأذونات',
       pl: 'Uprawnienia',
       it: 'Autorizzazioni',
+      sk: 'Uprawnienia',
     }),
     grantAccess: t({
       ru: 'Предоставить доступ',
@@ -32,6 +33,7 @@ const content = {
       ar: 'منح الوصول',
       pl: 'Przyznaj dostęp',
       it: 'Concedi accesso',
+      sk: 'Przyznaj dostęp',
     }),
     empty: t({
       ru: 'Пока никому не предоставлен доступ к этому файлу',
@@ -47,6 +49,7 @@ const content = {
       ar: 'لم يتم منح أي شخص حق الوصول إلى هذا الملف بعد',
       pl: 'Nikt nie otrzymał jeszcze dostępu do tego pliku',
       it: 'Nessuno ha ancora ricevuto accesso a questo file',
+      sk: 'Nikt nie otrzymał jeszcze dostępu do tego pliku',
     }),
     confirmRevoke: t({
       ru: 'Вы уверены, что хотите отозвать права доступа?',
@@ -62,6 +65,7 @@ const content = {
       ar: 'هل أنت متأكد أنك تريد إلغاء الوصول؟',
       pl: 'Czy na pewno chcesz odwołać dostęp?',
       it: 'Sei sicuro di voler revocare l\'accesso?',
+      sk: 'Czy na pewno chcesz odwołać dostęp?',
     }),
     errors: {
       grantFailed: t({
@@ -78,6 +82,7 @@ const content = {
         ar: 'فشل منح الوصول',
         pl: 'Nie udało się przyznać dostępu',
         it: 'Impossibile concedere l\'accesso',
+        sk: 'Nie udało się przyznać dostępu',
       }),
       updateFailed: t({
         ru: 'Не удалось обновить права',
@@ -93,6 +98,7 @@ const content = {
         ar: 'فشل تحديث الأذونات',
         pl: 'Nie udało się zaktualizować uprawnień',
         it: 'Impossibile aggiornare le autorizzazioni',
+        sk: 'Nie udało się zaktualizować uprawnień',
       }),
     },
     table: {
@@ -110,6 +116,7 @@ const content = {
         ar: 'المستخدم',
         pl: 'Użytkownik',
         it: 'Utente',
+        sk: 'Użytkownik',
       }),
       rights: t({
         ru: 'Права',
@@ -125,6 +132,7 @@ const content = {
         ar: 'الحقوق',
         pl: 'Prawa',
         it: 'Diritti',
+        sk: 'Prawa',
       }),
       canReshare: t({
         ru: 'Может поделиться',
@@ -140,6 +148,7 @@ const content = {
         ar: 'يمكنه إعادة المشاركة',
         pl: 'Może udostępnić',
         it: 'Può ricondividere',
+        sk: 'Może udostępnić',
       }),
       expires: t({
         ru: 'Срок действия',
@@ -155,6 +164,7 @@ const content = {
         ar: 'ينتهي',
         pl: 'Wygasa',
         it: 'Scade',
+        sk: 'Wygasa',
       }),
       grantedBy: t({
         ru: 'Предоставил',
@@ -170,6 +180,7 @@ const content = {
         ar: 'منح بواسطة',
         pl: 'Przyznane przez',
         it: 'Concesso da',
+        sk: 'Przyznane przez',
       }),
       createdAt: t({
         ru: 'Создано',
@@ -185,6 +196,7 @@ const content = {
         ar: 'تاريخ الإنشاء',
         pl: 'Utworzono',
         it: 'Creato',
+        sk: 'Utworzono',
       }),
       actions: t({
         ru: 'Действия',
@@ -200,6 +212,7 @@ const content = {
         ar: 'الإجراءات',
         pl: 'Akcje',
         it: 'Azioni',
+        sk: 'Akcje',
       }),
     },
     values: {
@@ -217,6 +230,7 @@ const content = {
         ar: 'نعم',
         pl: 'Tak',
         it: 'Sì',
+        sk: 'Tak',
       }),
       no: t({
         ru: 'Нет',
@@ -232,6 +246,7 @@ const content = {
         ar: 'لا',
         pl: 'Nie',
         it: 'No',
+        sk: 'Nie',
       }),
       forever: t({
         ru: 'Бессрочно',
@@ -247,6 +262,7 @@ const content = {
         ar: 'للأبد',
         pl: 'Na zawsze',
         it: 'Per sempre',
+        sk: 'Na zawsze',
       }),
     },
     tooltips: {
@@ -264,6 +280,7 @@ const content = {
         ar: 'تعديل',
         pl: 'Edytuj',
         it: 'Modifica',
+        sk: 'Edytuj',
       }),
       revoke: t({
         ru: 'Отозвать',
@@ -279,6 +296,7 @@ const content = {
         ar: 'إلغاء',
         pl: 'Odwołaj',
         it: 'Revoca',
+        sk: 'Odwołaj',
       }),
     },
     permission: {
@@ -296,6 +314,7 @@ const content = {
         ar: 'المالك',
         pl: 'Właściciel',
         it: 'Proprietario',
+        sk: 'Właściciel',
       }),
       editor: t({
         ru: 'Редактор',
@@ -311,6 +330,7 @@ const content = {
         ar: 'المحرر',
         pl: 'Edytor',
         it: 'Editor',
+        sk: 'Edytor',
       }),
       viewer: t({
         ru: 'Просмотр',
@@ -326,6 +346,7 @@ const content = {
         ar: 'عارض',
         pl: 'Przeglądający',
         it: 'Visualizzatore',
+        sk: 'Przeglądający',
       }),
       downloader: t({
         ru: 'Скачивание',
@@ -341,6 +362,7 @@ const content = {
         ar: 'تنزيل',
         pl: 'Pobieranie',
         it: 'Download',
+        sk: 'Pobieranie',
       }),
       editorLong: t({
         ru: 'Редактирование',
@@ -356,6 +378,7 @@ const content = {
         ar: 'التحرير',
         pl: 'Edycja',
         it: 'Modifica',
+        sk: 'Edycja',
       }),
       viewDownloadLong: t({
         ru: 'Просмотр и скачивание',
@@ -371,6 +394,7 @@ const content = {
         ar: 'عرض وتنزيل',
         pl: 'Przeglądaj i pobieraj',
         it: 'Visualizza e scarica',
+        sk: 'Przeglądaj i pobieraj',
       }),
       default: t({
         ru: 'Права',
@@ -386,6 +410,7 @@ const content = {
         ar: 'الأذونات',
         pl: 'Uprawnienia',
         it: 'Autorizzazioni',
+        sk: 'Uprawnienia',
       }),
     },
     dialogs: {
@@ -403,6 +428,7 @@ const content = {
         ar: 'منح الوصول',
         pl: 'Przyznaj dostęp',
         it: 'Concedi accesso',
+        sk: 'Przyznaj dostęp',
       }),
       editTitle: t({
         ru: 'Редактировать права доступа',
@@ -418,6 +444,7 @@ const content = {
         ar: 'تعديل الأذونات',
         pl: 'Edytuj uprawnienia',
         it: 'Modifica autorizzazioni',
+        sk: 'Edytuj uprawnienia',
       }),
       userIdOrEmail: t({
         ru: 'Email или ID пользователя',
@@ -433,6 +460,7 @@ const content = {
         ar: 'البريد الإلكتروني أو معرف المستخدم',
         pl: 'E-mail lub ID użytkownika',
         it: 'Email o ID utente',
+        sk: 'E-mail lub ID użytkownika',
       }),
       userIdOrEmailHelp: t({
         ru: 'Введите email пользователя, которому хотите предоставить доступ',
@@ -448,6 +476,7 @@ const content = {
         ar: 'أدخل البريد الإلكتروني للمستخدم الذي تريد منحه الوصول',
         pl: 'Wprowadź e-mail użytkownika, któremu chcesz przyznać dostęp',
         it: "Inserisci l'email dell'utente a cui vuoi concedere l'accesso",
+        sk: 'Wprowadź e-mail użytkownika, któremu chcesz przyznać dostęp',
       }),
       accessLevel: t({
         ru: 'Уровень доступа',
@@ -463,6 +492,7 @@ const content = {
         ar: 'مستوى الوصول',
         pl: 'Poziom dostępu',
         it: 'Livello di accesso',
+        sk: 'Poziom dostępu',
       }),
       expiresAt: t({
         ru: 'Срок действия (опционально)',
@@ -478,6 +508,7 @@ const content = {
         ar: 'تاريخ الانتهاء (اختياري)',
         pl: 'Data wygaśnięcia (opcjonalnie)',
         it: 'Scadenza (opzionale)',
+        sk: 'Data wygaśnięcia (opcjonalnie)',
       }),
       expiresAtHelp: t({
         ru: 'Оставьте пустым для бессрочного доступа',
@@ -493,6 +524,7 @@ const content = {
         ar: 'اتركه فارغاً للوصول غير المحدود',
         pl: 'Pozostaw puste dla nieograniczonego dostępu',
         it: 'Lascia vuoto per accesso senza scadenza',
+        sk: 'Pozostaw puste dla nieograniczonego dostępu',
       }),
       reshare: t({
         ru: 'Разрешить делиться с другими',
@@ -508,6 +540,7 @@ const content = {
         ar: 'السماح بالمشاركة مع الآخرين',
         pl: 'Zezwól na udostępnianie innym',
         it: 'Consenti la condivisione con altri',
+        sk: 'Zezwól na udostępnianie innym',
       }),
       cancel: t({
         ru: 'Отмена',
@@ -523,6 +556,7 @@ const content = {
         ar: 'إلغاء',
         pl: 'Anuluj',
         it: 'Annulla',
+        sk: 'Anuluj',
       }),
       save: t({
         ru: 'Сохранить',
@@ -538,6 +572,7 @@ const content = {
         ar: 'حفظ',
         pl: 'Zapisz',
         it: 'Salva',
+        sk: 'Zapisz',
       }),
       grant: t({
         ru: 'Предоставить доступ',
@@ -553,6 +588,7 @@ const content = {
         ar: 'منح الوصول',
         pl: 'Przyznaj dostęp',
         it: 'Concedi accesso',
+        sk: 'Przyznaj dostęp',
       }),
     },
   },

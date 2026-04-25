@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import { Star } from '@/app/components/icons';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { tokens } from '@/lib/theme-tokens';
 
 const getApiMessage = (error: unknown, fallback: string) => {
   if (!error || typeof error !== 'object') return fallback;
@@ -160,7 +161,7 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
           top: 12,
           right: 12,
           padding: 8,
-          borderRadius: 'var(--lumio-radius-full)',
+          borderRadius: tokens.radius.full,
           border: 'none',
           cursor: 'pointer',
           transition: 'opacity 0.2s',

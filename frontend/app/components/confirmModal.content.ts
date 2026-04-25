@@ -18,6 +18,7 @@ const content = {
         ar: 'تأكيد',
         pl: 'Potwierdź',
         it: 'Conferma',
+        sk: 'Potwierdź',
       }),
       cancel: t({
         ru: 'Отмена',
@@ -33,6 +34,7 @@ const content = {
         ar: 'إلغاء',
         pl: 'Anuluj',
         it: 'Annulla',
+        sk: 'Anuluj',
       }),
     },
     sr: {
@@ -50,6 +52,7 @@ const content = {
         ar: 'إغلاق',
         pl: 'Zamknij',
         it: 'Chiudi',
+        sk: 'Zamknij',
       }),
     },
   },

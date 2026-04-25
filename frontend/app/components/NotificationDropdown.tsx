@@ -8,7 +8,7 @@ import { AlertTriangle, Bell, CircleAlert, Info } from '@/app/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import '@/app/styles/blocks/lumio-notification-dropdown.css';
+import { tokens } from '@/lib/theme-tokens';
 
 type NotificationDropdownProps = {
   triggerClassName?: string;
@@ -157,7 +157,7 @@ export function NotificationDropdown({
             mt: 1,
             p: 0,
             overflow: 'hidden',
-            borderRadius: 'var(--lumio-radius-lg)',
+            borderRadius: tokens.radius.lg,
             border: '1px solid var(--border-color)',
             backgroundColor: 'var(--card-bg)',
             color: 'var(--card-foreground)',

@@ -5,6 +5,7 @@ import { Folder, MoreVertical } from '@/app/components/icons';
 import React from 'react';
 import toast from 'react-hot-toast';
 import type { FolderOption } from '../storageHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface FolderViewRowProps {
   folder: FolderOption;
@@ -31,7 +32,7 @@ const dragBtnSx = {
   '.group:hover &': { opacity: 1 },
   '&:hover': { color: 'primary.main', bgcolor: 'rgba(22,129,24,0.05)' },
 };
-const menuBtnSx = { color: '#9ca3af', borderRadius: 'var(--lumio-radius-full)', '&:hover': { bgcolor: '#f3f4f6' } };
+const menuBtnSx = { color: '#9ca3af', borderRadius: tokens.radius.full, '&:hover': { bgcolor: '#f3f4f6' } };
 const nameSx: React.CSSProperties = {
   fontSize: 14, fontWeight: 500, color: '#111827',
   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',

@@ -5,6 +5,7 @@ import React from 'react';
 import { DEFAULT_TRASH_TTL_DAYS, MS_PER_DAY, NO_FOLDER, type FileAvailability, type StorageFile } from '../storageHelpers';
 import { getAvailabilityChipStyle, getStatusChipStyle } from './storageStyling';
 import { getAvailabilityLabel, getAvailabilityTooltip } from './storageFormatters';
+import { tokens } from '@/lib/theme-tokens';
 
 // ─── Folder / Tag counts ──────────────────────────────────────────────────────
 
@@ -190,7 +191,7 @@ function buildRenderTrashExpiryBadge({ locale, trashTtlDays, t }: Pick<RenderFun
       label,
       size: 'small',
       title: expiresAt.toLocaleDateString(resolveLocale(locale)),
-      sx: { borderRadius: 'var(--lumio-radius-full)', fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
+      sx: { borderRadius: tokens.radius.full, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
     });
   };
 }
@@ -204,12 +205,12 @@ function buildRenderAvailabilityChip({ t }: Pick<RenderFunctionParams, 't'>): (a
     const { dotColor, chipSx } = getAvailabilityChipStyle(status);
     return React.createElement(Chip, {
       label: React.createElement(Box, { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
-        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: 'var(--lumio-radius-full)', bgcolor: dotColor, flexShrink: 0 } }),
+        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: tokens.radius.full, bgcolor: dotColor, flexShrink: 0 } }),
         getAvailabilityLabel(status, labels),
       ),
       size: 'small',
       title: getAvailabilityTooltip(status, tooltips),
-      sx: { borderRadius: 'var(--lumio-radius-full)', fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
+      sx: { borderRadius: tokens.radius.full, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
     });
   };
 }
@@ -220,11 +221,11 @@ function buildRenderStatusBadge({ boundGetStatusLabel, getStatusTone }: Pick<Ren
     const { dotColor, chipSx } = getStatusChipStyle(tone);
     return React.createElement(Chip, {
       label: React.createElement(Box, { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
-        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: 'var(--lumio-radius-full)', bgcolor: dotColor, flexShrink: 0 } }),
+        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: tokens.radius.full, bgcolor: dotColor, flexShrink: 0 } }),
         boundGetStatusLabel(status),
       ),
       size: 'small',
-      sx: { borderRadius: 'var(--lumio-radius-full)', fontSize: 12, fontWeight: 500, height: 'auto', py: 0.5, ...chipSx },
+      sx: { borderRadius: tokens.radius.full, fontSize: 12, fontWeight: 500, height: 'auto', py: 0.5, ...chipSx },
     });
   };
 }

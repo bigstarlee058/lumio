@@ -18,6 +18,7 @@ const content = {
         ar: 'الرئيسية',
         pl: 'Strona główna',
         it: 'Home',
+        sk: 'Strona główna',
       }),
       statements: t({
         ru: 'Выписки',
@@ -33,6 +34,7 @@ const content = {
         ar: 'كشوف الحساب',
         pl: 'Wyciągi',
         it: 'Estratti conto',
+        sk: 'Wyciągi',
       }),
       'statements/top-spenders': t({
         ru: 'Главные расходы',
@@ -48,6 +50,7 @@ const content = {
         ar: 'أكبر المنفقين',
         pl: 'Największe wydatki',
         it: 'Principali spese',
+        sk: 'Największe wydatki',
       }),
       receipts: t({
         ru: 'Чеки',
@@ -63,6 +66,7 @@ const content = {
         ar: 'الإيصالات',
         pl: 'Paragony',
         it: 'Ricevute',
+        sk: 'Paragony',
       }),
       upload: t({
         ru: 'Загрузка',
@@ -78,6 +82,7 @@ const content = {
         ar: 'رفع',
         pl: 'Prześlij',
         it: 'Carica',
+        sk: 'Prześlij',
       }),
       'data-entry': t({
         ru: 'Ввод данных',
@@ -93,6 +98,7 @@ const content = {
         ar: 'إدخال البيانات',
         pl: 'Wprowadzanie danych',
         it: 'Inserimento dati',
+        sk: 'Wprowadzanie danych',
       }),
       storage: t({
         ru: 'Хранилище',
@@ -108,6 +114,7 @@ const content = {
         ar: 'التخزين',
         pl: 'Magazyn',
         it: 'Archivio',
+        sk: 'Magazyn',
       }),
       reports: t({
         ru: 'Отчёты',
@@ -123,6 +130,7 @@ const content = {
         ar: 'التقارير',
         pl: 'Raporty',
         it: 'Rapporti',
+        sk: 'Raporty',
       }),
       categories: t({
         ru: 'Категории',
@@ -138,6 +146,7 @@ const content = {
         ar: 'الفئات',
         pl: 'Kategorie',
         it: 'Categorie',
+        sk: 'Kategorie',
       }),
       integrations: t({
         ru: 'Интеграции',
@@ -153,6 +162,7 @@ const content = {
         ar: 'التكاملات',
         pl: 'Integracje',
         it: 'Integrazioni',
+        sk: 'Integracje',
       }),
       'supported-banks': t({
         ru: 'Поддерживаемые банки',
@@ -168,6 +178,7 @@ const content = {
         ar: 'البنوك المدعومة',
         pl: 'Obsługiwane banki',
         it: 'Banche supportate',
+        sk: 'Obsługiwane banki',
       }),
       'integrations/google-sheets': t({
         ru: 'Google Sheets',
@@ -183,6 +194,7 @@ const content = {
         ar: 'Google Sheets',
         pl: 'Google Sheets',
         it: 'Google Sheets',
+        sk: 'Google Sheets',
       }),
       'custom-tables': t({
         ru: 'Таблицы',
@@ -198,6 +210,7 @@ const content = {
         ar: 'الجداول',
         pl: 'Tabele',
         it: 'Tabelle',
+        sk: 'Tabele',
       }),
       'custom-tables/import': t({
         ru: 'Импорт',
@@ -213,6 +226,7 @@ const content = {
         ar: 'استيراد',
         pl: 'Import',
         it: 'Importa',
+        sk: 'Import',
       }),
       'custom-tables/import/google-sheets': t({
         ru: 'Google Sheets',
@@ -228,6 +242,7 @@ const content = {
         ar: 'Google Sheets',
         pl: 'Google Sheets',
         it: 'Google Sheets',
+        sk: 'Google Sheets',
       }),
       settings: t({
         ru: 'Настройки',
@@ -243,6 +258,7 @@ const content = {
         ar: 'الإعدادات',
         pl: 'Ustawienia',
         it: 'Impostazioni',
+        sk: 'Ustawienia',
       }),
       'settings/profile': t({
         ru: 'Профиль',
@@ -258,6 +274,7 @@ const content = {
         ar: 'الملف الشخصي',
         pl: 'Profil',
         it: 'Profilo',
+        sk: 'Profil',
       }),
       'settings/workspace': t({
         ru: 'Рабочее пространство',
@@ -273,6 +290,7 @@ const content = {
         ar: 'مساحة العمل',
         pl: 'Przestrzeń robocza',
         it: 'Area di lavoro',
+        sk: 'Przestrzeń robocza',
       }),
       'settings/telegram': t({
         ru: 'Telegram',
@@ -288,6 +306,7 @@ const content = {
         ar: 'Telegram',
         pl: 'Telegram',
         it: 'Telegram',
+        sk: 'Telegram',
       }),
       'google-sheets': t({
         ru: 'Google Sheets',
@@ -303,6 +322,7 @@ const content = {
         ar: 'Google Sheets',
         pl: 'Google Sheets',
         it: 'Google Sheets',
+        sk: 'Google Sheets',
       }),
       'google-sheets/callback': t({
         ru: 'Callback',
@@ -318,6 +338,7 @@ const content = {
         ar: 'Callback',
         pl: 'Callback',
         it: 'Callback',
+        sk: 'Callback',
       }),
       admin: t({
         ru: 'Админка',
@@ -333,6 +354,7 @@ const content = {
         ar: 'المشرف',
         pl: 'Admin',
         it: 'Admin',
+        sk: 'Admin',
       }),
     },
   },

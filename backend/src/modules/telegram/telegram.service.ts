@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 import { TimeoutError, retry } from '../../common/utils/async.util';
+import { formatMoney } from '../../common/utils/format-money.util';
 import { ReportStatus, ReportType, TelegramReport } from '../../entities/telegram-report.entity';
 import { User } from '../../entities/user.entity';
 import type { DailyReport } from '../reports/interfaces/daily-report.interface';
@@ -636,11 +637,7 @@ export class TelegramService {
   }
 
   private formatAmount(value: number | null | undefined): string {
-    const amount = value || 0;
-    return new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    return formatMoney(value || 0);
   }
 
   private toDateOnly(dateLike: string | Date): Date {

@@ -4,7 +4,7 @@ const content = {
   key: 'customTableDetailPage',
   content: {
     auth: {
-      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
+      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
       loginRequired: t({
         ru: 'Войдите в систему, чтобы просматривать таблицу.',
         en: 'Log in to view the table.',
@@ -19,6 +19,7 @@ const content = {
         ar: 'قم بتسجيل الدخول لعرض الجدول.',
         pl: 'Zaloguj się, aby przeglądać tabelę.',
         it: 'Accedi per visualizzare la tabella.',
+        sk: 'Zaloguj się, aby przeglądać tabelę.',
       }),
     },
     errors: {
@@ -36,12 +37,13 @@ const content = {
         ar: 'الجدول غير موجود.',
         pl: 'Tabela nie znaleziona.',
         it: 'Tabella non trovata.',
+        sk: 'Tabela nie znaleziona.',
       }),
     },
     tabs: {
-      all: t({ ru: 'Все', en: 'All', kk: 'Барлығы', de: 'Alle', fr: 'Tous', es: 'Todos', pt: 'Todos', tr: 'Tümü', uk: 'Всі', zh: '全部', ar: 'الكل', pl: 'Wszystkie', it: 'Tutti' }),
-      paid: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato' }),
-      unpaid: t({ ru: 'Не оплачено', en: 'Unpaid', kk: 'Төленбеді', de: 'Nicht bezahlt', fr: 'Non payé', es: 'No pagado', pt: 'Não pago', tr: 'Ödenmedi', uk: 'Не оплачено', zh: '未付款', ar: 'غير مدفوع', pl: 'Niezapłacono', it: 'Non pagato' }),
+      all: t({ ru: 'Все', en: 'All', kk: 'Барлығы', de: 'Alle', fr: 'Tous', es: 'Todos', pt: 'Todos', tr: 'Tümü', uk: 'Всі', zh: '全部', ar: 'الكل', pl: 'Wszystkie', it: 'Tutti', sk: 'Wszystkie'}),
+      paid: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato', sk: 'Zapłacono'}),
+      unpaid: t({ ru: 'Не оплачено', en: 'Unpaid', kk: 'Төленбеді', de: 'Nicht bezahlt', fr: 'Non payé', es: 'No pagado', pt: 'Não pago', tr: 'Ödenmedi', uk: 'Не оплачено', zh: '未付款', ar: 'غير مدفوع', pl: 'Niezapłacono', it: 'Non pagato', sk: 'Niezapłacono'}),
     },
     actions: {
       markPaid: t({
@@ -58,6 +60,7 @@ const content = {
         ar: 'وضع علامة مدفوع',
         pl: 'Oznacz jako zapłacone',
         it: 'Segna come pagato',
+        sk: 'Oznacz jako zapłacone',
       }),
       markUnpaid: t({
         ru: 'Отметить как не оплачено',
@@ -73,9 +76,10 @@ const content = {
         ar: 'وضع علامة غير مدفوع',
         pl: 'Oznacz jako niezapłacone',
         it: 'Segna come non pagato',
+        sk: 'Oznacz jako niezapłacone',
       }),
-      print: t({ ru: 'Печать', en: 'Print', kk: 'Басып шығару', de: 'Drucken', fr: 'Imprimer', es: 'Imprimir', pt: 'Imprimir', tr: 'Yazdır', uk: 'Друк', zh: '打印', ar: 'طباعة', pl: 'Drukuj', it: 'Stampa' }),
-      delete: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
+      print: t({ ru: 'Печать', en: 'Print', kk: 'Басып шығару', de: 'Drucken', fr: 'Imprimer', es: 'Imprimir', pt: 'Imprimir', tr: 'Yazdır', uk: 'Друк', zh: '打印', ar: 'طباعة', pl: 'Drukuj', it: 'Stampa', sk: 'Drukuj'}),
+      delete: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
       markingPaid: t({
         ru: 'Отмечаем...',
         en: 'Marking...',
@@ -90,6 +94,7 @@ const content = {
         ar: 'جارٍ الوضع...',
         pl: 'Oznaczanie...',
         it: 'Contrassegno...',
+        sk: 'Oznaczanie...',
       }),
       markingUnpaid: t({
         ru: 'Отмечаем...',
@@ -105,6 +110,7 @@ const content = {
         ar: 'جارٍ الوضع...',
         pl: 'Oznaczanie...',
         it: 'Contrassegno...',
+        sk: 'Oznaczanie...',
       }),
       searchPlaceholder: t({
         ru: 'Поиск по счету',
@@ -120,9 +126,10 @@ const content = {
         ar: 'البحث في الفاتورة',
         pl: 'Szukaj faktury',
         it: 'Cerca fattura',
+        sk: 'Szukaj faktury',
       }),
-      columns: t({ ru: 'Колонки', en: 'Columns', kk: 'Бағандар', de: 'Spalten', fr: 'Colonnes', es: 'Columnas', pt: 'Colunas', tr: 'Sütunlar', uk: 'Стовпці', zh: '列', ar: 'الأعمدة', pl: 'Kolumny', it: 'Colonne' }),
-      columnsReset: t({ ru: 'Сбросить', en: 'Reset', kk: 'Қалпына келтіру', de: 'Zurücksetzen', fr: 'Réinitialiser', es: 'Restablecer', pt: 'Redefinir', tr: 'Sıfırla', uk: 'Скинути', zh: '重置', ar: 'إعادة تعيين', pl: 'Resetuj', it: 'Reimposta' }),
+      columns: t({ ru: 'Колонки', en: 'Columns', kk: 'Бағандар', de: 'Spalten', fr: 'Colonnes', es: 'Columnas', pt: 'Colunas', tr: 'Sütunlar', uk: 'Стовпці', zh: '列', ar: 'الأعمدة', pl: 'Kolumny', it: 'Colonne', sk: 'Kolumny'}),
+      columnsReset: t({ ru: 'Сбросить', en: 'Reset', kk: 'Қалпына келтіру', de: 'Zurücksetzen', fr: 'Réinitialiser', es: 'Restablecer', pt: 'Redefinir', tr: 'Sıfırla', uk: 'Скинути', zh: '重置', ar: 'إعادة تعيين', pl: 'Resetuj', it: 'Reimposta', sk: 'Resetuj'}),
       columnsHint: t({
         ru: 'Скрыть / порядок',
         en: 'Hide / order',
@@ -137,14 +144,15 @@ const content = {
         ar: 'إخفاء / ترتيب',
         pl: 'Ukryj / kolejność',
         it: 'Nascondi / ordine',
+        sk: 'Ukryj / kolejność',
       }),
-      actionsHeader: t({ ru: 'Действия', en: 'Actions', kk: 'Әрекеттер', de: 'Aktionen', fr: 'Actions', es: 'Acciones', pt: 'Ações', tr: 'Eylemler', uk: 'Дії', zh: '操作', ar: 'الإجراءات', pl: 'Akcje', it: 'Azioni' }),
+      actionsHeader: t({ ru: 'Действия', en: 'Actions', kk: 'Әрекеттер', de: 'Aktionen', fr: 'Actions', es: 'Acciones', pt: 'Ações', tr: 'Eylemler', uk: 'Дії', zh: '操作', ar: 'الإجراءات', pl: 'Akcje', it: 'Azioni', sk: 'Akcje'}),
     },
     nav: {
-      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro' }),
-      tables: t({ ru: 'Таблицы', en: 'Tables', kk: 'Кестелер', de: 'Tabellen', fr: 'Tableaux', es: 'Tablas', pt: 'Tabelas', tr: 'Tablolar', uk: 'Таблиці', zh: '表格', ar: 'الجداول', pl: 'Tabele', it: 'Tabelle' }),
+      back: t({ ru: 'Назад', en: 'Back', kk: 'Артқа', de: 'Zurück', fr: 'Retour', es: 'Atrás', pt: 'Voltar', tr: 'Geri', uk: 'Назад', zh: '返回', ar: 'رجوع', pl: 'Wstecz', it: 'Indietro', sk: 'Wstecz'}),
+      tables: t({ ru: 'Таблицы', en: 'Tables', kk: 'Кестелер', de: 'Tabellen', fr: 'Tableaux', es: 'Tablas', pt: 'Tabelas', tr: 'Tablolar', uk: 'Таблиці', zh: '表格', ar: 'الجداول', pl: 'Tabele', it: 'Tabelle', sk: 'Tabele'}),
     },
-    paidColumn: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленген', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato' }),
+    paidColumn: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленген', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato', sk: 'Zapłacono'}),
     meta: {
       namePlaceholder: t({
         ru: 'Название таблицы',
@@ -160,6 +168,7 @@ const content = {
         ar: 'اسم الجدول',
         pl: 'Nazwa tabeli',
         it: 'Nome della tabella',
+        sk: 'Nazwa tabeli',
       }),
       descriptionPlaceholder: t({
         ru: 'Описание таблицы',
@@ -175,9 +184,10 @@ const content = {
         ar: 'وصف الجدول',
         pl: 'Opis tabeli',
         it: 'Descrizione della tabella',
+        sk: 'Opis tabeli',
       }),
-      save: t({ ru: 'Сохранить', en: 'Save', kk: 'Сақтау', de: 'Speichern', fr: 'Enregistrer', es: 'Guardar', pt: 'Salvar', tr: 'Kaydet', uk: 'Зберегти', zh: '保存', ar: 'حفظ', pl: 'Zapisz', it: 'Salva' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      save: t({ ru: 'Сохранить', en: 'Save', kk: 'Сақтау', de: 'Speichern', fr: 'Enregistrer', es: 'Guardar', pt: 'Salvar', tr: 'Kaydet', uk: 'Зберегти', zh: '保存', ar: 'حفظ', pl: 'Zapisz', it: 'Salva', sk: 'Zapisz'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
       editTooltip: t({
         ru: 'Редактировать название и описание',
         en: 'Edit name and description',
@@ -192,6 +202,7 @@ const content = {
         ar: 'تعديل الاسم والوصف',
         pl: 'Edytuj nazwę i opis',
         it: 'Modifica nome e descrizione',
+        sk: 'Edytuj nazwę i opis',
       }),
       editMenu: {
         name: t({
@@ -208,6 +219,7 @@ const content = {
           ar: 'تعديل الاسم',
           pl: 'Edytuj nazwę',
           it: 'Modifica nome',
+          sk: 'Edytuj nazwę',
         }),
         description: t({
           ru: 'Изменить описание',
@@ -223,6 +235,7 @@ const content = {
           ar: 'تعديل الوصف',
           pl: 'Edytuj opis',
           it: 'Modifica descrizione',
+          sk: 'Edytuj opis',
         }),
         both: t({
           ru: 'Название и описание',
@@ -238,6 +251,7 @@ const content = {
           ar: 'الاسم والوصف',
           pl: 'Nazwa i opis',
           it: 'Nome e descrizione',
+          sk: 'Nazwa i opis',
         }),
       },
       nameRequired: t({
@@ -254,8 +268,9 @@ const content = {
         ar: 'أدخل اسم الجدول',
         pl: 'Wprowadź nazwę tabeli',
         it: 'Inserisci il nome della tabella',
+        sk: 'Wprowadź nazwę tabeli',
       }),
-      saved: t({ ru: 'Сохранено', en: 'Saved', kk: 'Сақталды', de: 'Gespeichert', fr: 'Enregistré', es: 'Guardado', pt: 'Salvo', tr: 'Kaydedildi', uk: 'Збережено', zh: '已保存', ar: 'تم الحفظ', pl: 'Zapisano', it: 'Salvato' }),
+      saved: t({ ru: 'Сохранено', en: 'Saved', kk: 'Сақталды', de: 'Gespeichert', fr: 'Enregistré', es: 'Guardado', pt: 'Salvo', tr: 'Kaydedildi', uk: 'Збережено', zh: '已保存', ar: 'تم الحفظ', pl: 'Zapisano', it: 'Salvato', sk: 'Zapisano'}),
       saveFailed: t({
         ru: 'Не удалось сохранить изменения',
         en: 'Failed to save changes',
@@ -270,10 +285,11 @@ const content = {
         ar: 'فشل حفظ التغييرات',
         pl: 'Nie udało się zapisać zmian',
         it: 'Impossibile salvare le modifiche',
+        sk: 'Nie udało się zapisać zmian',
       }),
     },
     category: {
-      none: t({ ru: 'Без категории', en: 'No category', kk: 'Санатсыз', de: 'Keine Kategorie', fr: 'Sans catégorie', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategori yok', uk: 'Без категорії', zh: '无类别', ar: 'بدون فئة', pl: 'Bez kategorii', it: 'Nessuna categoria' }),
+      none: t({ ru: 'Без категории', en: 'No category', kk: 'Санатсыз', de: 'Keine Kategorie', fr: 'Sans catégorie', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategori yok', uk: 'Без категорії', zh: '无类别', ar: 'بدون فئة', pl: 'Bez kategorii', it: 'Nessuna categoria', sk: 'Bez kategorii'}),
       updated: t({
         ru: 'Категория обновлена',
         en: 'Category updated',
@@ -288,6 +304,7 @@ const content = {
         ar: 'تم تحديث الفئة',
         pl: 'Kategoria zaktualizowana',
         it: 'Categoria aggiornata',
+        sk: 'Kategoria zaktualizowana',
       }),
       updateFailed: t({
         ru: 'Не удалось обновить категорию',
@@ -303,14 +320,15 @@ const content = {
         ar: 'فشل تحديث الفئة',
         pl: 'Nie udało się zaktualizować kategorii',
         it: 'Impossibile aggiornare la categoria',
+        sk: 'Nie udało się zaktualizować kategorii',
       }),
     },
     columnTypes: {
-      text: t({ ru: 'Текст', en: 'Text', kk: 'Мәтін', de: 'Text', fr: 'Texte', es: 'Texto', pt: 'Texto', tr: 'Metin', uk: 'Текст', zh: '文本', ar: 'نص', pl: 'Tekst', it: 'Testo' }),
-      number: t({ ru: 'Число', en: 'Number', kk: 'Сан', de: 'Zahl', fr: 'Nombre', es: 'Número', pt: 'Número', tr: 'Sayı', uk: 'Число', zh: '数字', ar: 'رقم', pl: 'Liczba', it: 'Numero' }),
-      date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data' }),
-      boolean: t({ ru: 'Да/Нет', en: 'Yes/No', kk: 'Иә/Жоқ', de: 'Ja/Nein', fr: 'Oui/Non', es: 'Sí/No', pt: 'Sim/Não', tr: 'Evet/Hayır', uk: 'Так/Ні', zh: '是/否', ar: 'نعم/لا', pl: 'Tak/Nie', it: 'Sì/No' }),
-      select: t({ ru: 'Выбор', en: 'Select', kk: 'Таңдау', de: 'Auswahl', fr: 'Sélection', es: 'Selección', pt: 'Seleção', tr: 'Seçim', uk: 'Вибір', zh: '选择', ar: 'اختيار', pl: 'Wybór', it: 'Selezione' }),
+      text: t({ ru: 'Текст', en: 'Text', kk: 'Мәтін', de: 'Text', fr: 'Texte', es: 'Texto', pt: 'Texto', tr: 'Metin', uk: 'Текст', zh: '文本', ar: 'نص', pl: 'Tekst', it: 'Testo', sk: 'Tekst'}),
+      number: t({ ru: 'Число', en: 'Number', kk: 'Сан', de: 'Zahl', fr: 'Nombre', es: 'Número', pt: 'Número', tr: 'Sayı', uk: 'Число', zh: '数字', ar: 'رقم', pl: 'Liczba', it: 'Numero', sk: 'Liczba'}),
+      date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data', sk: 'Data'}),
+      boolean: t({ ru: 'Да/Нет', en: 'Yes/No', kk: 'Иә/Жоқ', de: 'Ja/Nein', fr: 'Oui/Non', es: 'Sí/No', pt: 'Sim/Não', tr: 'Evet/Hayır', uk: 'Так/Ні', zh: '是/否', ar: 'نعم/لا', pl: 'Tak/Nie', it: 'Sì/No', sk: 'Tak/Nie'}),
+      select: t({ ru: 'Выбор', en: 'Select', kk: 'Таңдау', de: 'Auswahl', fr: 'Sélection', es: 'Selección', pt: 'Seleção', tr: 'Seçim', uk: 'Вибір', zh: '选择', ar: 'اختيار', pl: 'Wybór', it: 'Selezione', sk: 'Wybór'}),
       multiSelect: t({
         ru: 'Мультивыбор',
         en: 'Multi-select',
@@ -325,6 +343,7 @@ const content = {
         ar: 'اختيار متعدد',
         pl: 'Wielokrotny wybór',
         it: 'Selezione multipla',
+        sk: 'Wielokrotny wybór',
       }),
     },
     grid: {
@@ -342,6 +361,7 @@ const content = {
         ar: 'فشل حفظ عرض العمود',
         pl: 'Nie udało się zapisać szerokości kolumny',
         it: 'Impossibile salvare la larghezza della colonna',
+        sk: 'Nie udało się zapisać szerokości kolumny',
       }),
       emptyTitle: t({
         ru: 'Пока нет данных',
@@ -357,6 +377,7 @@ const content = {
         ar: 'لا توجد بيانات بعد',
         pl: 'Brak danych',
         it: 'Nessun dato ancora',
+        sk: 'Brak danych',
       }),
       emptySubtitle: t({
         ru: 'Начните с добавления строк в таблицу',
@@ -372,6 +393,7 @@ const content = {
         ar: 'ابدأ بإضافة صفوف إلى جدولك',
         pl: 'Zacznij od dodania wierszy do tabeli',
         it: 'Inizia aggiungendo righe alla tua tabella',
+        sk: 'Zacznij od dodania wierszy do tabeli',
       }),
       addRowLabel: t({
         ru: 'Добавить строку',
@@ -387,6 +409,7 @@ const content = {
         ar: 'إضافة صف',
         pl: 'Dodaj wiersz',
         it: 'Aggiungi riga',
+        sk: 'Dodaj wiersz',
       }),
       loadTableFailed: t({
         ru: 'Не удалось загрузить таблицу',
@@ -402,6 +425,7 @@ const content = {
         ar: 'فشل تحميل الجدول',
         pl: 'Nie udało się załadować tabeli',
         it: 'Impossibile caricare la tabella',
+        sk: 'Nie udało się załadować tabeli',
       }),
       loadRowsFailed: t({
         ru: 'Не удалось загрузить строки',
@@ -417,6 +441,7 @@ const content = {
         ar: 'فشل تحميل الصفوف',
         pl: 'Nie udało się załadować wierszy',
         it: 'Impossibile caricare le righe',
+        sk: 'Nie udało się załadować wierszy',
       }),
       saveValueFailed: t({
         ru: 'Не удалось сохранить значение',
@@ -432,8 +457,9 @@ const content = {
         ar: 'فشل حفظ القيمة',
         pl: 'Nie udało się zapisać wartości',
         it: 'Impossibile salvare il valore',
+        sk: 'Nie udało się zapisać wartości',
       }),
-      loadMore: t({ ru: 'Загрузить ещё', en: 'Load more', kk: 'Тағы жүктеу', de: 'Mehr laden', fr: 'Charger plus', es: 'Cargar más', pt: 'Carregar mais', tr: 'Daha fazla yükle', uk: 'Завантажити ще', zh: '加载更多', ar: 'تحميل المزيد', pl: 'Załaduj więcej', it: 'Carica altro' }),
+      loadMore: t({ ru: 'Загрузить ещё', en: 'Load more', kk: 'Тағы жүктеу', de: 'Mehr laden', fr: 'Charger plus', es: 'Cargar más', pt: 'Carregar mais', tr: 'Daha fazla yükle', uk: 'Завантажити ще', zh: '加载更多', ar: 'تحميل المزيد', pl: 'Załaduj więcej', it: 'Carica altro', sk: 'Załaduj więcej'}),
       noMore: t({
         ru: 'Больше нет строк',
         en: 'No more rows',
@@ -448,6 +474,7 @@ const content = {
         ar: 'لا مزيد من الصفوف',
         pl: 'Brak kolejnych wierszy',
         it: 'Non ci sono altre righe',
+        sk: 'Brak kolejnych wierszy',
       }),
       loadingMore: t({
         ru: 'Загрузка...',
@@ -463,11 +490,12 @@ const content = {
         ar: 'جارٍ التحميل...',
         pl: 'Ładowanie...',
         it: 'Caricamento...',
+        sk: 'Ładowanie...',
       }),
     },
     paste: {
-      titlePrefix: t({ ru: 'Вставка ', en: 'Paste ', kk: 'Қою ', de: 'Einfügen ', fr: 'Coller ', es: 'Pegar ', pt: 'Colar ', tr: 'Yapıştır ', uk: 'Вставка ', zh: '粘贴 ', ar: 'لصق ', pl: 'Wklej ', it: 'Incolla ' }),
-      titleSuffix: t({ ru: ' строк', en: ' rows', kk: ' жол', de: ' Zeilen', fr: ' lignes', es: ' filas', pt: ' linhas', tr: ' satır', uk: ' рядків', zh: ' 行', ar: ' صفوف', pl: ' wierszy', it: ' righe' }),
+      titlePrefix: t({ ru: 'Вставка ', en: 'Paste ', kk: 'Қою ', de: 'Einfügen ', fr: 'Coller ', es: 'Pegar ', pt: 'Colar ', tr: 'Yapıştır ', uk: 'Вставка ', zh: '粘贴 ', ar: 'لصق ', pl: 'Wklej ', it: 'Incolla ', sk: 'Wklej '}),
+      titleSuffix: t({ ru: ' строк', en: ' rows', kk: ' жол', de: ' Zeilen', fr: ' lignes', es: ' filas', pt: ' linhas', tr: ' satır', uk: ' рядків', zh: ' 行', ar: ' صفوف', pl: ' wierszy', it: ' righe', sk: ' wierszy'}),
       titleFallback: t({
         ru: 'Вставка строк',
         en: 'Paste rows',
@@ -482,6 +510,7 @@ const content = {
         ar: 'لصق الصفوف',
         pl: 'Wklej wiersze',
         it: 'Incolla righe',
+        sk: 'Wklej wiersze',
       }),
       headersToggle: t({
         ru: 'Первая строка — заголовки',
@@ -497,6 +526,7 @@ const content = {
         ar: 'الصف الأول هو الرؤوس',
         pl: 'Pierwszy wiersz to nagłówki',
         it: 'La prima riga sono le intestazioni',
+        sk: 'Pierwszy wiersz to nagłówki',
       }),
       parsing: t({
         ru: 'Подготовка превью...',
@@ -512,9 +542,10 @@ const content = {
         ar: 'جارٍ تحضير المعاينة...',
         pl: 'Przygotowywanie podglądu...',
         it: 'Preparazione anteprima...',
+        sk: 'Przygotowywanie podglądu...',
       }),
-      add: t({ ru: 'Добавить', en: 'Add', kk: 'Қосу', de: 'Hinzufügen', fr: 'Ajouter', es: 'Agregar', pt: 'Adicionar', tr: 'Ekle', uk: 'Додати', zh: '添加', ar: 'إضافة', pl: 'Dodaj', it: 'Aggiungi' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      add: t({ ru: 'Добавить', en: 'Add', kk: 'Қосу', de: 'Hinzufügen', fr: 'Ajouter', es: 'Agregar', pt: 'Adicionar', tr: 'Ekle', uk: 'Додати', zh: '添加', ar: 'إضافة', pl: 'Dodaj', it: 'Aggiungi', sk: 'Dodaj'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
       noRows: t({
         ru: 'Нет строк для вставки',
         en: 'No rows to insert',
@@ -529,6 +560,7 @@ const content = {
         ar: 'لا توجد صفوف للإدراج',
         pl: 'Brak wierszy do wstawienia',
         it: 'Nessuna riga da inserire',
+        sk: 'Brak wierszy do wstawienia',
       }),
       errorsTitle: t({
         ru: 'Есть ошибки',
@@ -544,16 +576,17 @@ const content = {
         ar: 'توجد أخطاء',
         pl: 'Znaleziono błędy',
         it: 'Errori trovati',
+        sk: 'Znaleziono błędy',
       }),
       errors: {
-        date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data' }),
-        amount: t({ ru: 'Сумма', en: 'Amount', kk: 'Сома', de: 'Betrag', fr: 'Montant', es: 'Importe', pt: 'Valor', tr: 'Tutar', uk: 'Сума', zh: '金额', ar: 'المبلغ', pl: 'Kwota', it: 'Importo' }),
-        currency: t({ ru: 'Валюта', en: 'Currency', kk: 'Валюта', de: 'Währung', fr: 'Devise', es: 'Moneda', pt: 'Moeda', tr: 'Para birimi', uk: 'Валюта', zh: '货币', ar: 'العملة', pl: 'Waluta', it: 'Valuta' }),
-        paid: t({ ru: 'Paid', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato' }),
+        date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data', sk: 'Data'}),
+        amount: t({ ru: 'Сумма', en: 'Amount', kk: 'Сома', de: 'Betrag', fr: 'Montant', es: 'Importe', pt: 'Valor', tr: 'Tutar', uk: 'Сума', zh: '金额', ar: 'المبلغ', pl: 'Kwota', it: 'Importo', sk: 'Kwota'}),
+        currency: t({ ru: 'Валюта', en: 'Currency', kk: 'Валюта', de: 'Währung', fr: 'Devise', es: 'Moneda', pt: 'Moeda', tr: 'Para birimi', uk: 'Валюта', zh: '货币', ar: 'العملة', pl: 'Waluta', it: 'Valuta', sk: 'Waluta'}),
+        paid: t({ ru: 'Paid', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato', sk: 'Zapłacono'}),
       },
-      addedPrefix: t({ ru: 'Добавлено ', en: 'Added ', kk: 'Қосылды ', de: 'Hinzugefügt ', fr: 'Ajouté ', es: 'Agregado ', pt: 'Adicionado ', tr: 'Eklendi ', uk: 'Додано ', zh: '已添加 ', ar: 'تمت الإضافة ', pl: 'Dodano ', it: 'Aggiunto ' }),
-      addedSuffix: t({ ru: ' строк', en: ' rows', kk: ' жол', de: ' Zeilen', fr: ' lignes', es: ' filas', pt: ' linhas', tr: ' satır', uk: ' рядків', zh: ' 行', ar: ' صفوف', pl: ' wierszy', it: ' righe' }),
-      undo: t({ ru: 'Отменить', en: 'Undo', kk: 'Болдырмау', de: 'Rückgängig', fr: 'Annuler', es: 'Deshacer', pt: 'Desfazer', tr: 'Geri al', uk: 'Скасувати', zh: '撤销', ar: 'تراجع', pl: 'Cofnij', it: 'Annulla' }),
+      addedPrefix: t({ ru: 'Добавлено ', en: 'Added ', kk: 'Қосылды ', de: 'Hinzugefügt ', fr: 'Ajouté ', es: 'Agregado ', pt: 'Adicionado ', tr: 'Eklendi ', uk: 'Додано ', zh: '已添加 ', ar: 'تمت الإضافة ', pl: 'Dodano ', it: 'Aggiunto ', sk: 'Dodano '}),
+      addedSuffix: t({ ru: ' строк', en: ' rows', kk: ' жол', de: ' Zeilen', fr: ' lignes', es: ' filas', pt: ' linhas', tr: ' satır', uk: ' рядків', zh: ' 行', ar: ' صفوف', pl: ' wierszy', it: ' righe', sk: ' wierszy'}),
+      undo: t({ ru: 'Отменить', en: 'Undo', kk: 'Болдырмау', de: 'Rückgängig', fr: 'Annuler', es: 'Deshacer', pt: 'Desfazer', tr: 'Geri al', uk: 'Скасувати', zh: '撤销', ar: 'تراجع', pl: 'Cofnij', it: 'Annulla', sk: 'Cofnij'}),
       insertFailed: t({
         ru: 'Не удалось добавить строки',
         en: 'Failed to add rows',
@@ -568,6 +601,7 @@ const content = {
         ar: 'فشل إضافة الصفوف',
         pl: 'Nie udało się dodać wierszy',
         it: 'Impossibile aggiungere righe',
+        sk: 'Nie udało się dodać wierszy',
       }),
       undoFailed: t({
         ru: 'Не удалось отменить вставку',
@@ -583,8 +617,9 @@ const content = {
         ar: 'فشل التراجع عن الإدراج',
         pl: 'Nie udało się cofnąć wstawiania',
         it: 'Impossibile annullare l\'inserimento',
+        sk: 'Nie udało się cofnąć wstawiania',
       }),
-      moreRowsPrefix: t({ ru: 'И ещё ', en: 'And ', kk: 'Тағы ', de: 'Und ', fr: 'Et ', es: 'Y ', pt: 'E ', tr: 'Ve ', uk: 'І ще ', zh: '还有 ', ar: 'و ', pl: 'I jeszcze ', it: 'E altri ' }),
+      moreRowsPrefix: t({ ru: 'И ещё ', en: 'And ', kk: 'Тағы ', de: 'Und ', fr: 'Et ', es: 'Y ', pt: 'E ', tr: 'Ve ', uk: 'І ще ', zh: '还有 ', ar: 'و ', pl: 'I jeszcze ', it: 'E altri ', sk: 'I jeszcze '}),
       moreRowsSuffix: t({
         ru: ' строк',
         en: ' more rows',
@@ -599,6 +634,7 @@ const content = {
         ar: ' صفوف إضافية',
         pl: ' wierszy',
         it: ' righe in più',
+        sk: ' wierszy',
       }),
       mappingTitle: t({
         ru: 'Сопоставление колонок',
@@ -614,6 +650,7 @@ const content = {
         ar: 'تعيين الأعمدة',
         pl: 'Mapowanie kolumn',
         it: 'Mappatura colonne',
+        sk: 'Mapowanie kolumn',
       }),
       mappingIgnore: t({
         ru: 'Не импортировать',
@@ -629,6 +666,7 @@ const content = {
         ar: 'تجاهل',
         pl: 'Ignoruj',
         it: 'Ignora',
+        sk: 'Ignoruj',
       }),
       mappingNew: t({
         ru: 'Новая колонка',
@@ -644,6 +682,7 @@ const content = {
         ar: 'عمود جديد',
         pl: 'Nowa kolumna',
         it: 'Nuova colonna',
+        sk: 'Nowa kolumna',
       }),
       mappingNewPlaceholder: t({
         ru: 'Название колонки',
@@ -659,6 +698,7 @@ const content = {
         ar: 'اسم العمود',
         pl: 'Nazwa kolumny',
         it: 'Nome colonna',
+        sk: 'Nazwa kolumny',
       }),
       missingColumnTitle: t({
         ru: 'Укажите название новой колонки',
@@ -674,6 +714,7 @@ const content = {
         ar: 'أدخل اسماً للعمود الجديد',
         pl: 'Podaj nazwę dla nowej kolumny',
         it: 'Fornisci un nome per la nuova colonna',
+        sk: 'Podaj nazwę dla nowej kolumny',
       }),
       mappingTypeLabel: t({
         ru: 'Тип',
@@ -689,12 +730,13 @@ const content = {
         ar: 'النوع',
         pl: 'Typ',
         it: 'Tipo',
+        sk: 'Typ',
       }),
       defaults: {
-        date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data' }),
-        type: t({ ru: 'Тип', en: 'Type', kk: 'Түрі', de: 'Typ', fr: 'Type', es: 'Tipo', pt: 'Tipo', tr: 'Tür', uk: 'Тип', zh: '类型', ar: 'النوع', pl: 'Typ', it: 'Tipo' }),
-        amount: t({ ru: 'Сумма', en: 'Amount', kk: 'Сома', de: 'Betrag', fr: 'Montant', es: 'Importe', pt: 'Valor', tr: 'Tutar', uk: 'Сума', zh: '金额', ar: 'المبلغ', pl: 'Kwota', it: 'Importo' }),
-        currency: t({ ru: 'Валюта', en: 'Currency', kk: 'Валюта', de: 'Währung', fr: 'Devise', es: 'Moneda', pt: 'Moeda', tr: 'Para birimi', uk: 'Валюта', zh: '货币', ar: 'العملة', pl: 'Waluta', it: 'Valuta' }),
+        date: t({ ru: 'Дата', en: 'Date', kk: 'Күні', de: 'Datum', fr: 'Date', es: 'Fecha', pt: 'Data', tr: 'Tarih', uk: 'Дата', zh: '日期', ar: 'تاريخ', pl: 'Data', it: 'Data', sk: 'Data'}),
+        type: t({ ru: 'Тип', en: 'Type', kk: 'Түрі', de: 'Typ', fr: 'Type', es: 'Tipo', pt: 'Tipo', tr: 'Tür', uk: 'Тип', zh: '类型', ar: 'النوع', pl: 'Typ', it: 'Tipo', sk: 'Typ'}),
+        amount: t({ ru: 'Сумма', en: 'Amount', kk: 'Сома', de: 'Betrag', fr: 'Montant', es: 'Importe', pt: 'Valor', tr: 'Tutar', uk: 'Сума', zh: '金额', ar: 'المبلغ', pl: 'Kwota', it: 'Importo', sk: 'Kwota'}),
+        currency: t({ ru: 'Валюта', en: 'Currency', kk: 'Валюта', de: 'Währung', fr: 'Devise', es: 'Moneda', pt: 'Moeda', tr: 'Para birimi', uk: 'Валюта', zh: '货币', ar: 'العملة', pl: 'Waluta', it: 'Valuta', sk: 'Waluta'}),
         comment: t({
           ru: 'Комментарий',
           en: 'Comment',
@@ -709,8 +751,9 @@ const content = {
           ar: 'تعليق',
           pl: 'Komentarz',
           it: 'Commento',
+          sk: 'Komentarz',
         }),
-        paid: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato' }),
+        paid: t({ ru: 'Оплачено', en: 'Paid', kk: 'Төленді', de: 'Bezahlt', fr: 'Payé', es: 'Pagado', pt: 'Pago', tr: 'Ödendi', uk: 'Оплачено', zh: '已付款', ar: 'مدفوع', pl: 'Zapłacono', it: 'Pagato', sk: 'Zapłacono'}),
         columnPrefix: t({
           ru: 'Колонка',
           en: 'Column',
@@ -725,6 +768,7 @@ const content = {
           ar: 'عمود',
           pl: 'Kolumna',
           it: 'Colonna',
+          sk: 'Kolumna',
         }),
       },
     },
@@ -743,6 +787,7 @@ const content = {
         ar: 'لا مزيد من الصفوف',
         pl: 'Brak kolejnych wierszy',
         it: 'Non ci sono altre righe',
+        sk: 'Brak kolejnych wierszy',
       }),
       creatingPaidColumn: t({
         ru: 'Создание колонки оплаты...',
@@ -758,6 +803,7 @@ const content = {
         ar: 'جارٍ إنشاء عمود الدفع...',
         pl: 'Tworzenie kolumny płatności...',
         it: 'Creazione colonna pagamento...',
+        sk: 'Tworzenie kolumny płatności...',
       }),
       paidColumnCreated: t({
         ru: 'Колонка оплаты создана',
@@ -773,6 +819,7 @@ const content = {
         ar: 'تم إنشاء عمود الدفع',
         pl: 'Kolumna płatności utworzona',
         it: 'Colonna pagamento creata',
+        sk: 'Kolumna płatności utworzona',
       }),
       paidColumnCreateFailed: t({
         ru: 'Не удалось создать колонку оплаты',
@@ -788,6 +835,7 @@ const content = {
         ar: 'فشل إنشاء عمود الدفع',
         pl: 'Nie udało się utworzyć kolumny płatności',
         it: 'Impossibile creare la colonna pagamento',
+        sk: 'Nie udało się utworzyć kolumny płatności',
       }),
       updateSomeRowsFailed: t({
         ru: 'Не удалось обновить некоторые строки',
@@ -803,6 +851,7 @@ const content = {
         ar: 'فشل تحديث بعض الصفوف',
         pl: 'Nie udało się zaktualizować niektórych wierszy',
         it: 'Impossibile aggiornare alcune righe',
+        sk: 'Nie udało się zaktualizować niektórych wierszy',
       }),
       markedPaid: t({
         ru: 'Отмечено как оплачено',
@@ -818,6 +867,7 @@ const content = {
         ar: 'تم وضع علامة مدفوع',
         pl: 'Oznaczono jako zapłacone',
         it: 'Contrassegnato come pagato',
+        sk: 'Oznaczono jako zapłacone',
       }),
       markedUnpaid: t({
         ru: 'Отмечено как не оплачено',
@@ -833,6 +883,7 @@ const content = {
         ar: 'تم وضع علامة غير مدفوع',
         pl: 'Oznaczono jako niezapłacone',
         it: 'Contrassegnato come non pagato',
+        sk: 'Oznaczono jako niezapłacone',
       }),
       updateRowsFailed: t({
         ru: 'Не удалось обновить строки',
@@ -848,15 +899,16 @@ const content = {
         ar: 'فشل تحديث الصفوف',
         pl: 'Nie udało się zaktualizować wierszy',
         it: 'Impossibile aggiornare le righe',
+        sk: 'Nie udało się zaktualizować wierszy',
       }),
     },
     zoom: {
-      out: t({ ru: 'Уменьшить масштаб', en: 'Zoom out', kk: 'Кішірейту', de: 'Verkleinern', fr: 'Dézoomer', es: 'Alejar', pt: 'Diminuir zoom', tr: 'Uzaklaştır', uk: 'Зменшити масштаб', zh: '缩小', ar: 'تصغير', pl: 'Oddalenie', it: 'Riduci zoom' }),
-      in: t({ ru: 'Увеличить масштаб', en: 'Zoom in', kk: 'Үлкейту', de: 'Vergrößern', fr: 'Zoomer', es: 'Acercar', pt: 'Aumentar zoom', tr: 'Yaklaştır', uk: 'Збільшити масштаб', zh: '放大', ar: 'تكبير', pl: 'Przybliżenie', it: 'Aumenta zoom' }),
+      out: t({ ru: 'Уменьшить масштаб', en: 'Zoom out', kk: 'Кішірейту', de: 'Verkleinern', fr: 'Dézoomer', es: 'Alejar', pt: 'Diminuir zoom', tr: 'Uzaklaştır', uk: 'Зменшити масштаб', zh: '缩小', ar: 'تصغير', pl: 'Oddalenie', it: 'Riduci zoom', sk: 'Oddalenie'}),
+      in: t({ ru: 'Увеличить масштаб', en: 'Zoom in', kk: 'Үлкейту', de: 'Vergrößern', fr: 'Zoomer', es: 'Acercar', pt: 'Aumentar zoom', tr: 'Yaklaştır', uk: 'Збільшити масштаб', zh: '放大', ar: 'تكبير', pl: 'Przybliżenie', it: 'Aumenta zoom', sk: 'Przybliżenie'}),
     },
     fill: {
-      column: t({ ru: 'Колонка', en: 'Column', kk: 'Баған', de: 'Spalte', fr: 'Colonne', es: 'Columna', pt: 'Coluna', tr: 'Sütun', uk: 'Стовпець', zh: '列', ar: 'عمود', pl: 'Kolumna', it: 'Colonna' }),
-      row: t({ ru: 'Строка', en: 'Row', kk: 'Жол', de: 'Zeile', fr: 'Ligne', es: 'Fila', pt: 'Linha', tr: 'Satır', uk: 'Рядок', zh: '行', ar: 'صف', pl: 'Wiersz', it: 'Riga' }),
+      column: t({ ru: 'Колонка', en: 'Column', kk: 'Баған', de: 'Spalte', fr: 'Colonne', es: 'Columna', pt: 'Coluna', tr: 'Sütun', uk: 'Стовпець', zh: '列', ar: 'عمود', pl: 'Kolumna', it: 'Colonna', sk: 'Kolumna'}),
+      row: t({ ru: 'Строка', en: 'Row', kk: 'Жол', de: 'Zeile', fr: 'Ligne', es: 'Fila', pt: 'Linha', tr: 'Satır', uk: 'Рядок', zh: '行', ar: 'صف', pl: 'Wiersz', it: 'Riga', sk: 'Wiersz'}),
       selectedRowsPrefix: t({
         ru: 'Выбрано строк',
         en: 'Selected rows',
@@ -871,6 +923,7 @@ const content = {
         ar: 'الصفوف المحددة',
         pl: 'Wybrane wiersze',
         it: 'Righe selezionate',
+        sk: 'Wybrane wiersze',
       }),
       rowsFillTitle: t({
         ru: 'Заливка строк',
@@ -886,6 +939,7 @@ const content = {
         ar: 'تعبئة الصفوف',
         pl: 'Wypełnienie wierszy',
         it: 'Riempimento righe',
+        sk: 'Wypełnienie wierszy',
       }),
       colorTooltip: t({
         ru: 'Цвет заливки',
@@ -901,9 +955,10 @@ const content = {
         ar: 'لون التعبئة',
         pl: 'Kolor wypełnienia',
         it: 'Colore di riempimento',
+        sk: 'Kolor wypełnienia',
       }),
-      fillButton: t({ ru: 'Заливка', en: 'Fill', kk: 'Бояу', de: 'Füllen', fr: 'Remplir', es: 'Rellenar', pt: 'Preencher', tr: 'Doldur', uk: 'Заливка', zh: '填充', ar: 'تعبئة', pl: 'Wypełnij', it: 'Riempi' }),
-      clear: t({ ru: 'Очистить', en: 'Clear', kk: 'Тазалау', de: 'Löschen', fr: 'Effacer', es: 'Limpiar', pt: 'Limpar', tr: 'Temizle', uk: 'Очистити', zh: '清除', ar: 'مسح', pl: 'Wyczyść', it: 'Cancella' }),
+      fillButton: t({ ru: 'Заливка', en: 'Fill', kk: 'Бояу', de: 'Füllen', fr: 'Remplir', es: 'Rellenar', pt: 'Preencher', tr: 'Doldur', uk: 'Заливка', zh: '填充', ar: 'تعبئة', pl: 'Wypełnij', it: 'Riempi', sk: 'Wypełnij'}),
+      clear: t({ ru: 'Очистить', en: 'Clear', kk: 'Тазалау', de: 'Löschen', fr: 'Effacer', es: 'Limpiar', pt: 'Limpar', tr: 'Temizle', uk: 'Очистити', zh: '清除', ar: 'مسح', pl: 'Wyczyść', it: 'Cancella', sk: 'Wyczyść'}),
       chooseRowsError: t({
         ru: 'Выберите строки, к которым нужно применить заливку',
         en: 'Select rows to apply fill',
@@ -918,6 +973,7 @@ const content = {
         ar: 'حدد الصفوف لتطبيق التعبئة',
         pl: 'Wybierz wiersze, do których chcesz zastosować wypełnienie',
         it: 'Seleziona le righe a cui applicare il riempimento',
+        sk: 'Wybierz wiersze, do których chcesz zastosować wypełnienie',
       }),
       applied: t({
         ru: 'Заливка применена',
@@ -933,6 +989,7 @@ const content = {
         ar: 'تم تطبيق التعبئة',
         pl: 'Wypełnienie zastosowane',
         it: 'Riempimento applicato',
+        sk: 'Wypełnienie zastosowane',
       }),
       clearedToast: t({
         ru: 'Заливка сброшена',
@@ -948,6 +1005,7 @@ const content = {
         ar: 'تم مسح التعبئة',
         pl: 'Wypełnienie wyczyszczone',
         it: 'Riempimento rimosso',
+        sk: 'Wypełnienie wyczyszczone',
       }),
       applyFailed: t({
         ru: 'Не удалось применить заливку',
@@ -963,6 +1021,7 @@ const content = {
         ar: 'فشل تطبيق التعبئة',
         pl: 'Nie udało się zastosować wypełnienia',
         it: 'Impossibile applicare il riempimento',
+        sk: 'Nie udało się zastosować wypełnienia',
       }),
     },
     addRow: {
@@ -980,6 +1039,7 @@ const content = {
         ar: 'جارٍ إضافة صف...',
         pl: 'Dodawanie wiersza...',
         it: 'Aggiunta riga...',
+        sk: 'Dodawanie wiersza...',
       }),
       success: t({
         ru: 'Строка добавлена',
@@ -995,6 +1055,7 @@ const content = {
         ar: 'تمت إضافة الصف',
         pl: 'Wiersz dodany',
         it: 'Riga aggiunta',
+        sk: 'Wiersz dodany',
       }),
       failed: t({
         ru: 'Не удалось добавить строку',
@@ -1010,6 +1071,7 @@ const content = {
         ar: 'فشل إضافة الصف',
         pl: 'Nie udało się dodać wiersza',
         it: 'Impossibile aggiungere la riga',
+        sk: 'Nie udało się dodać wiersza',
       }),
     },
     renameColumn: {
@@ -1027,6 +1089,7 @@ const content = {
         ar: 'تمت إعادة تسمية العمود',
         pl: 'Kolumna przemianowana',
         it: 'Colonna rinominata',
+        sk: 'Kolumna przemianowana',
       }),
       failed: t({
         ru: 'Не удалось переименовать колонку',
@@ -1042,6 +1105,7 @@ const content = {
         ar: 'فشل إعادة تسمية العمود',
         pl: 'Nie udało się przemianować kolumny',
         it: 'Impossibile rinominare la colonna',
+        sk: 'Nie udało się przemianować kolumny',
       }),
     },
     deleteColumn: {
@@ -1059,6 +1123,7 @@ const content = {
         ar: 'جارٍ حذف العمود...',
         pl: 'Usuwanie kolumny...',
         it: 'Eliminazione colonna...',
+        sk: 'Usuwanie kolumny...',
       }),
       success: t({
         ru: 'Колонка удалена',
@@ -1074,6 +1139,7 @@ const content = {
         ar: 'تم حذف العمود',
         pl: 'Kolumna usunięta',
         it: 'Colonna eliminata',
+        sk: 'Kolumna usunięta',
       }),
       failed: t({
         ru: 'Не удалось удалить колонку',
@@ -1089,6 +1155,7 @@ const content = {
         ar: 'فشل حذف العمود',
         pl: 'Nie udało się usunąć kolumny',
         it: 'Impossibile eliminare la colonna',
+        sk: 'Nie udało się usunąć kolumny',
       }),
       confirmTitle: t({
         ru: 'Удалить колонку?',
@@ -1104,6 +1171,7 @@ const content = {
         ar: 'حذف العمود؟',
         pl: 'Usunąć kolumnę?',
         it: 'Eliminare la colonna?',
+        sk: 'Usunąć kolumnę?',
       }),
       confirmWithNamePrefix: t({
         ru: 'Колонка "',
@@ -1119,6 +1187,7 @@ const content = {
         ar: 'العمود "',
         pl: 'Kolumna "',
         it: 'La colonna "',
+        sk: 'Kolumna "',
       }),
       confirmWithNameSuffix: t({
         ru: '" будет удалена. Значения в строках останутся в данных, но не будут отображаться (пока не добавите колонку снова).',
@@ -1134,6 +1203,7 @@ const content = {
         ar: '" سيُحذف. ستبقى القيم في البيانات لكن لن تُعرض (حتى تضيف العمود مرة أخرى).',
         pl: '" zostanie usunięta. Wartości pozostaną w danych, ale nie będą wyświetlane (dopóki nie dodasz kolumny ponownie).',
         it: '" verrà eliminata. I valori rimarranno nei dati ma non verranno mostrati (finché non aggiungi di nuovo la colonna).',
+        sk: '" zostanie usunięta. Wartości pozostaną w danych, ale nie będą wyświetlane (dopóki nie dodasz kolumny ponownie).',
       }),
       confirmNoName: t({
         ru: 'Колонка будет удалена.',
@@ -1149,9 +1219,10 @@ const content = {
         ar: 'سيُحذف العمود.',
         pl: 'Kolumna zostanie usunięta.',
         it: 'La colonna verrà eliminata.',
+        sk: 'Kolumna zostanie usunięta.',
       }),
-      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
     },
     deleteRow: {
       loading: t({
@@ -1168,6 +1239,7 @@ const content = {
         ar: 'جارٍ حذف الصف...',
         pl: 'Usuwanie wiersza...',
         it: 'Eliminazione riga...',
+        sk: 'Usuwanie wiersza...',
       }),
       success: t({
         ru: 'Строка удалена',
@@ -1183,6 +1255,7 @@ const content = {
         ar: 'تم حذف الصف',
         pl: 'Wiersz usunięty',
         it: 'Riga eliminata',
+        sk: 'Wiersz usunięty',
       }),
       failed: t({
         ru: 'Не удалось удалить строку',
@@ -1198,6 +1271,7 @@ const content = {
         ar: 'فشل حذف الصف',
         pl: 'Nie udało się usunąć wiersza',
         it: 'Impossibile eliminare la riga',
+        sk: 'Nie udało się usunąć wiersza',
       }),
       confirmTitle: t({
         ru: 'Удалить строку?',
@@ -1213,8 +1287,9 @@ const content = {
         ar: 'حذف الصف؟',
         pl: 'Usunąć wiersz?',
         it: 'Eliminare la riga?',
+        sk: 'Usunąć wiersz?',
       }),
-      confirmWithNumberPrefix: t({ ru: 'Строка #', en: 'Row #', kk: 'Жол #', de: 'Zeile #', fr: 'Ligne n°', es: 'Fila #', pt: 'Linha #', tr: 'Satır #', uk: 'Рядок #', zh: '行 #', ar: 'الصف #', pl: 'Wiersz #', it: 'Riga #' }),
+      confirmWithNumberPrefix: t({ ru: 'Строка #', en: 'Row #', kk: 'Жол #', de: 'Zeile #', fr: 'Ligne n°', es: 'Fila #', pt: 'Linha #', tr: 'Satır #', uk: 'Рядок #', zh: '行 #', ar: 'الصف #', pl: 'Wiersz #', it: 'Riga #', sk: 'Wiersz #'}),
       confirmWithNumberSuffix: t({
         ru: ' будет удалена.',
         en: ' will be deleted.',
@@ -1229,6 +1304,7 @@ const content = {
         ar: ' سيُحذف.',
         pl: ' zostanie usunięty.',
         it: ' verrà eliminata.',
+        sk: ' zostanie usunięty.',
       }),
       confirmNoNumber: t({
         ru: 'Строка будет удалена.',
@@ -1244,9 +1320,10 @@ const content = {
         ar: 'سيُحذف الصف.',
         pl: 'Wiersz zostanie usunięty.',
         it: 'La riga verrà eliminata.',
+        sk: 'Wiersz zostanie usunięty.',
       }),
-      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
     },
     bulkDeleteRows: {
       loading: t({
@@ -1263,6 +1340,7 @@ const content = {
         ar: 'جارٍ حذف الصفوف...',
         pl: 'Usuwanie wierszy...',
         it: 'Eliminazione righe...',
+        sk: 'Usuwanie wierszy...',
       }),
       success: t({
         ru: 'Строки удалены',
@@ -1278,6 +1356,7 @@ const content = {
         ar: 'تم حذف الصفوف',
         pl: 'Wiersze usunięte',
         it: 'Righe eliminate',
+        sk: 'Wiersze usunięte',
       }),
       failed: t({
         ru: 'Не удалось удалить некоторые строки',
@@ -1293,6 +1372,7 @@ const content = {
         ar: 'فشل حذف بعض الصفوف',
         pl: 'Nie udało się usunąć niektórych wierszy',
         it: 'Impossibile eliminare alcune righe',
+        sk: 'Nie udało się usunąć niektórych wierszy',
       }),
       confirmTitle: t({
         ru: 'Удалить строки?',
@@ -1308,6 +1388,7 @@ const content = {
         ar: 'حذف الصفوف؟',
         pl: 'Usunąć wiersze?',
         it: 'Eliminare le righe?',
+        sk: 'Usunąć wiersze?',
       }),
       confirmMessagePrefix: t({
         ru: 'Будут удалены ',
@@ -1323,6 +1404,7 @@ const content = {
         ar: 'حذف ',
         pl: 'Usuń ',
         it: 'Elimina ',
+        sk: 'Usuń ',
       }),
       confirmMessageSuffix: t({
         ru: ' выбранных строк.',
@@ -1338,9 +1420,10 @@ const content = {
         ar: ' الصفوف المحددة؟',
         pl: ' zaznaczonych wierszy?',
         it: ' righe selezionate?',
+        sk: ' zaznaczonych wierszy?',
       }),
-      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
     },
     columnIcon: {
       uploaded: t({
@@ -1357,6 +1440,7 @@ const content = {
         ar: 'تم رفع الأيقونة',
         pl: 'Ikona przesłana',
         it: 'Icona caricata',
+        sk: 'Ikona przesłana',
       }),
       uploadFailed: t({
         ru: 'Не удалось загрузить иконку',
@@ -1372,6 +1456,7 @@ const content = {
         ar: 'فشل رفع الأيقونة',
         pl: 'Nie udało się przesłać ikony',
         it: 'Impossibile caricare l\'icona',
+        sk: 'Nie udało się przesłać ikony',
       }),
     },
     addColumn: {
@@ -1389,6 +1474,7 @@ const content = {
         ar: 'عمود جديد',
         pl: 'Nowa kolumna',
         it: 'Nuova colonna',
+        sk: 'Nowa kolumna',
       }),
       loading: t({
         ru: 'Добавление колонки...',
@@ -1404,6 +1490,7 @@ const content = {
         ar: 'جارٍ إضافة عمود...',
         pl: 'Dodawanie kolumny...',
         it: 'Aggiunta colonna...',
+        sk: 'Dodawanie kolumny...',
       }),
       success: t({
         ru: 'Колонка добавлена',
@@ -1419,6 +1506,7 @@ const content = {
         ar: 'تمت إضافة العمود',
         pl: 'Kolumna dodana',
         it: 'Colonna aggiunta',
+        sk: 'Kolumna dodana',
       }),
       failed: t({
         ru: 'Не удалось добавить колонку',
@@ -1434,6 +1522,7 @@ const content = {
         ar: 'فشل إضافة العمود',
         pl: 'Nie udało się dodać kolumny',
         it: 'Impossibile aggiungere la colonna',
+        sk: 'Nie udało się dodać kolumny',
       }),
       titleLabel: t({
         ru: 'Название колонки',
@@ -1449,6 +1538,7 @@ const content = {
         ar: 'اسم العمود',
         pl: 'Nazwa kolumny',
         it: 'Nome colonna',
+        sk: 'Nazwa kolumny',
       }),
       titlePlaceholder: t({
         ru: 'Например: Сумма, Дата, Контрагент',
@@ -1464,10 +1554,11 @@ const content = {
         ar: 'مثال: المبلغ، التاريخ، الطرف المقابل',
         pl: 'np. Kwota, Data, Kontrahent',
         it: 'es. Importo, Data, Controparte',
+        sk: 'np. Kwota, Data, Kontrahent',
       }),
-      typeLabel: t({ ru: 'Тип', en: 'Type', kk: 'Түрі', de: 'Typ', fr: 'Type', es: 'Tipo', pt: 'Tipo', tr: 'Tür', uk: 'Тип', zh: '类型', ar: 'النوع', pl: 'Typ', it: 'Tipo' }),
-      iconLabel: t({ ru: 'Иконка', en: 'Icon', kk: 'Иконка', de: 'Symbol', fr: 'Icône', es: 'Icono', pt: 'Ícone', tr: 'Simge', uk: 'Іконка', zh: '图标', ar: 'أيقونة', pl: 'Ikona', it: 'Icona' }),
-      choose: t({ ru: 'Выбрать', en: 'Choose', kk: 'Таңдау', de: 'Auswählen', fr: 'Choisir', es: 'Elegir', pt: 'Escolher', tr: 'Seç', uk: 'Вибрати', zh: '选择', ar: 'اختيار', pl: 'Wybierz', it: 'Scegli' }),
+      typeLabel: t({ ru: 'Тип', en: 'Type', kk: 'Түрі', de: 'Typ', fr: 'Type', es: 'Tipo', pt: 'Tipo', tr: 'Tür', uk: 'Тип', zh: '类型', ar: 'النوع', pl: 'Typ', it: 'Tipo', sk: 'Typ'}),
+      iconLabel: t({ ru: 'Иконка', en: 'Icon', kk: 'Иконка', de: 'Symbol', fr: 'Icône', es: 'Icono', pt: 'Ícone', tr: 'Simge', uk: 'Іконка', zh: '图标', ar: 'أيقونة', pl: 'Ikona', it: 'Icona', sk: 'Ikona'}),
+      choose: t({ ru: 'Выбрать', en: 'Choose', kk: 'Таңдау', de: 'Auswählen', fr: 'Choisir', es: 'Elegir', pt: 'Escolher', tr: 'Seç', uk: 'Вибрати', zh: '选择', ar: 'اختيار', pl: 'Wybierz', it: 'Scegli', sk: 'Wybierz'}),
       uploadIcon: t({
         ru: 'Загрузить иконку',
         en: 'Upload icon',
@@ -1482,6 +1573,7 @@ const content = {
         ar: 'رفع أيقونة',
         pl: 'Prześlij ikonę',
         it: 'Carica icona',
+        sk: 'Prześlij ikonę',
       }),
       uploading: t({
         ru: 'Загрузка...',
@@ -1497,13 +1589,14 @@ const content = {
         ar: 'جارٍ الرفع...',
         pl: 'Przesyłanie...',
         it: 'Caricamento...',
+        sk: 'Przesyłanie...',
       }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
-      save: t({ ru: 'Сохранить', en: 'Save', kk: 'Сақтау', de: 'Speichern', fr: 'Enregistrer', es: 'Guardar', pt: 'Salvar', tr: 'Kaydet', uk: 'Зберегти', zh: '保存', ar: 'حفظ', pl: 'Zapisz', it: 'Salva' }),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
+      save: t({ ru: 'Сохранить', en: 'Save', kk: 'Сақтау', de: 'Speichern', fr: 'Enregistrer', es: 'Guardar', pt: 'Salvar', tr: 'Kaydet', uk: 'Зберегти', zh: '保存', ar: 'حفظ', pl: 'Zapisz', it: 'Salva', sk: 'Zapisz'}),
     },
     dateFilters: {
-      from: t({ ru: 'Дата от', en: 'Date from', kk: 'Күні бастап', de: 'Datum von', fr: 'Date de', es: 'Fecha desde', pt: 'Data de', tr: 'Tarihten', uk: 'Дата від', zh: '起始日期', ar: 'من التاريخ', pl: 'Data od', it: 'Data da' }),
-      to: t({ ru: 'Дата до', en: 'Date to', kk: 'Күні дейін', de: 'Datum bis', fr: 'Date jusqu\'à', es: 'Fecha hasta', pt: 'Data até', tr: 'Tarihe kadar', uk: 'Дата до', zh: '截止日期', ar: 'إلى التاريخ', pl: 'Data do', it: 'Data a' }),
+      from: t({ ru: 'Дата от', en: 'Date from', kk: 'Күні бастап', de: 'Datum von', fr: 'Date de', es: 'Fecha desde', pt: 'Data de', tr: 'Tarihten', uk: 'Дата від', zh: '起始日期', ar: 'من التاريخ', pl: 'Data od', it: 'Data da', sk: 'Data od'}),
+      to: t({ ru: 'Дата до', en: 'Date to', kk: 'Күні дейін', de: 'Datum bis', fr: 'Date jusqu\'à', es: 'Fecha hasta', pt: 'Data até', tr: 'Tarihe kadar', uk: 'Дата до', zh: '截止日期', ar: 'إلى التاريخ', pl: 'Data do', it: 'Data a', sk: 'Data do'}),
     },
   },
 } satisfies Dictionary;

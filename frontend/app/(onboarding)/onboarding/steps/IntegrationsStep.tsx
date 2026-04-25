@@ -5,6 +5,7 @@ import { useIntlayer } from '@/app/i18n';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
+import { tokens } from '@/lib/theme-tokens';
 
 export interface OnboardingIntegrationCard {
   key: string;
@@ -60,7 +61,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
               key={card.key}
               component="article"
               sx={{
-                borderRadius: 'var(--lumio-radius-lg)',
+                borderRadius: tokens.radius.lg,
                 border: '1px solid',
                 borderColor: 'divider',
                 bgcolor: 'background.paper',
@@ -74,7 +75,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                     sx={{
                       mb: 1.5,
                       display: 'inline-flex',
-                      borderRadius: 'var(--lumio-radius-sm)',
+                      borderRadius: tokens.radius.sm,
                       border: '1px solid',
                       borderColor: 'primary.light',
                       bgcolor: 'primary.50',
@@ -86,7 +87,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                       alt={card.title}
                       width={24}
                       height={24}
-                      style={{ borderRadius: 'var(--lumio-radius-md)' }}
+                      style={{ borderRadius: tokens.radius.md }}
                     />
                   </Box>
                   <Typography style={{ fontSize: 14, fontWeight: 600 }} sx={{ color: 'text.primary' }}>
@@ -102,7 +103,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                   sx={{
                     display: 'inline-flex',
                     flexShrink: 0,
-                    borderRadius: 'var(--lumio-radius-sm)',
+                    borderRadius: tokens.radius.sm,
                     px: 1,
                     py: 0.5,
                     fontSize: 12,
@@ -127,7 +128,7 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                 startIcon={card.loading ? <Spinner size={14} /> : undefined}
                 sx={{
                   mt: 2,
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   fontWeight: 600,
                   fontSize: 12,
                   textTransform: 'none',

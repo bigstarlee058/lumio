@@ -4,7 +4,7 @@ const content = {
   key: 'customTablesPage',
   content: {
     header: {
-      title: t({ ru: 'Таблицы', en: 'Tables', kk: 'Кестелер', de: 'Tabellen', fr: 'Tableaux', es: 'Tablas', pt: 'Tabelas', tr: 'Tablolar', uk: 'Таблиці', zh: '表格', ar: 'الجداول', pl: 'Tabele', it: 'Tabelle' }),
+      title: t({ ru: 'Таблицы', en: 'Tables', kk: 'Кестелер', de: 'Tabellen', fr: 'Tableaux', es: 'Tablas', pt: 'Tabelas', tr: 'Tablolar', uk: 'Таблиці', zh: '表格', ar: 'الجداول', pl: 'Tabele', it: 'Tabelle', sk: 'Tabele'}),
       subtitle: t({
         ru: 'Создавайте и управляйте структурированными таблицами из выписок и чеков для бухгалтерии и отчетности.',
         en: 'Export and manage structured tables created from statements and receipts for accounting and reporting.',
@@ -19,6 +19,7 @@ const content = {
         ar: 'قم بتصدير وإدارة الجداول المنظمة المنشأة من كشوف الحسابات والإيصالات للمحاسبة وإعداد التقارير.',
         pl: 'Eksportuj i zarządzaj ustrukturyzowanymi tabelami tworzonymi z wyciągów i paragonów na potrzeby księgowości i raportowania.',
         it: 'Esporta e gestisci tabelle strutturate create da estratti conto e ricevute per la contabilità e la reportistica.',
+        sk: 'Eksportuj i zarządzaj ustrukturyzowanymi tabelami tworzonymi z wyciągów i paragonów na potrzeby księgowości i raportowania.',
       }),
     },
     searchPlaceholder: t({
@@ -35,9 +36,10 @@ const content = {
       ar: 'البحث في الجداول...',
       pl: 'Szukaj tabel...',
       it: 'Cerca tabelle...',
+      sk: 'Szukaj tabel...',
     }),
     auth: {
-      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
+      loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
       loginRequired: t({
         ru: 'Войдите в систему, чтобы просматривать таблицы.',
         en: 'Log in to view tables.',
@@ -52,10 +54,11 @@ const content = {
         ar: 'قم بتسجيل الدخول لعرض الجداول.',
         pl: 'Zaloguj się, aby przeglądać tabele.',
         it: 'Accedi per visualizzare le tabelle.',
+        sk: 'Zaloguj się, aby przeglądać tabele.',
       }),
     },
     actions: {
-      create: t({ ru: 'Создать', en: 'Create', kk: 'Құру', de: 'Erstellen', fr: 'Créer', es: 'Crear', pt: 'Criar', tr: 'Oluştur', uk: 'Створити', zh: '创建', ar: 'إنشاء', pl: 'Utwórz', it: 'Crea' }),
+      create: t({ ru: 'Создать', en: 'Create', kk: 'Құру', de: 'Erstellen', fr: 'Créer', es: 'Crear', pt: 'Criar', tr: 'Oluştur', uk: 'Створити', zh: '创建', ar: 'إنشاء', pl: 'Utwórz', it: 'Crea', sk: 'Utwórz'}),
       createExportTable: t({
         ru: 'Создать экспортную таблицу',
         en: 'Create export table',
@@ -70,6 +73,7 @@ const content = {
         ar: 'إنشاء جدول تصدير',
         pl: 'Utwórz tabelę eksportu',
         it: 'Crea tabella di esportazione',
+        sk: 'Utwórz tabelę eksportu',
       }),
       createFirstExportTable: t({
         ru: 'Создать первую экспортную таблицу',
@@ -85,12 +89,13 @@ const content = {
         ar: 'أنشئ أول جدول تصدير لك',
         pl: 'Utwórz swoją pierwszą tabelę eksportu',
         it: 'Crea la tua prima tabella di esportazione',
+        sk: 'Utwórz swoją pierwszą tabelę eksportu',
       }),
-      open: t({ ru: 'Открыть', en: 'Open', kk: 'Ашу', de: 'Öffnen', fr: 'Ouvrir', es: 'Abrir', pt: 'Abrir', tr: 'Aç', uk: 'Відкрити', zh: '打开', ar: 'فتح', pl: 'Otwórz', it: 'Apri' }),
-      export: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksport', it: 'Esporta' }),
-      exportCsv: t({ ru: 'CSV', en: 'CSV', kk: 'CSV', de: 'CSV', fr: 'CSV', es: 'CSV', pt: 'CSV', tr: 'CSV', uk: 'CSV', zh: 'CSV', ar: 'CSV', pl: 'CSV', it: 'CSV' }),
-      exportXlsx: t({ ru: 'XLSX', en: 'XLSX', kk: 'XLSX', de: 'XLSX', fr: 'XLSX', es: 'XLSX', pt: 'XLSX', tr: 'XLSX', uk: 'XLSX', zh: 'XLSX', ar: 'XLSX', pl: 'XLSX', it: 'XLSX' }),
-      updateData: t({ ru: 'Обновить данные', en: 'Update data', kk: 'Деректерді жаңарту', de: 'Daten aktualisieren', fr: 'Mettre à jour les données', es: 'Actualizar datos', pt: 'Atualizar dados', tr: 'Verileri güncelle', uk: 'Оновити дані', zh: '更新数据', ar: 'تحديث البيانات', pl: 'Aktualizuj dane', it: 'Aggiorna dati' }),
+      open: t({ ru: 'Открыть', en: 'Open', kk: 'Ашу', de: 'Öffnen', fr: 'Ouvrir', es: 'Abrir', pt: 'Abrir', tr: 'Aç', uk: 'Відкрити', zh: '打开', ar: 'فتح', pl: 'Otwórz', it: 'Apri', sk: 'Otwórz'}),
+      export: t({ ru: 'Экспорт', en: 'Export', kk: 'Экспорт', de: 'Exportieren', fr: 'Exporter', es: 'Exportar', pt: 'Exportar', tr: 'Dışa aktar', uk: 'Експорт', zh: '导出', ar: 'تصدير', pl: 'Eksport', it: 'Esporta', sk: 'Eksport'}),
+      exportCsv: t({ ru: 'CSV', en: 'CSV', kk: 'CSV', de: 'CSV', fr: 'CSV', es: 'CSV', pt: 'CSV', tr: 'CSV', uk: 'CSV', zh: 'CSV', ar: 'CSV', pl: 'CSV', it: 'CSV', sk: 'CSV'}),
+      exportXlsx: t({ ru: 'XLSX', en: 'XLSX', kk: 'XLSX', de: 'XLSX', fr: 'XLSX', es: 'XLSX', pt: 'XLSX', tr: 'XLSX', uk: 'XLSX', zh: 'XLSX', ar: 'XLSX', pl: 'XLSX', it: 'XLSX', sk: 'XLSX'}),
+      updateData: t({ ru: 'Обновить данные', en: 'Update data', kk: 'Деректерді жаңарту', de: 'Daten aktualisieren', fr: 'Mettre à jour les données', es: 'Actualizar datos', pt: 'Atualizar dados', tr: 'Verileri güncelle', uk: 'Оновити дані', zh: '更新数据', ar: 'تحديث البيانات', pl: 'Aktualizuj dane', it: 'Aggiorna dati', sk: 'Aktualizuj dane'}),
       importTable: t({
         ru: 'Импорт таблицы',
         en: 'Import table',
@@ -105,6 +110,7 @@ const content = {
         ar: 'استيراد الجدول',
         pl: 'Importuj tabelę',
         it: 'Importa tabella',
+        sk: 'Importuj tabelę',
       }),
       fromStatement: t({
         ru: 'Из выписки',
@@ -120,6 +126,7 @@ const content = {
         ar: 'من كشف الحساب',
         pl: 'Z wyciągu',
         it: 'Da estratto conto',
+        sk: 'Z wyciągu',
       }),
       importGoogleSheets: t({
         ru: 'Импорт из Google Sheets',
@@ -135,6 +142,7 @@ const content = {
         ar: 'استيراد من Google Sheets',
         pl: 'Importuj z Google Sheets',
         it: 'Importa da Google Sheets',
+        sk: 'Importuj z Google Sheets',
       }),
       createBlankTable: t({
         ru: 'Создать пустую таблицу',
@@ -150,15 +158,16 @@ const content = {
         ar: 'إنشاء جدول فارغ',
         pl: 'Utwórz pustą tabelę',
         it: 'Crea tabella vuota',
+        sk: 'Utwórz pustą tabelę',
       }),
-      close: t({ ru: 'Закрыть', en: 'Close', kk: 'Жабу', de: 'Schließen', fr: 'Fermer', es: 'Cerrar', pt: 'Fechar', tr: 'Kapat', uk: 'Закрити', zh: '关闭', ar: 'إغلاق', pl: 'Zamknij', it: 'Chiudi' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
-      delete: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
-      previous: t({ ru: 'Предыдущая', en: 'Previous', kk: 'Алдыңғы', de: 'Zurück', fr: 'Précédent', es: 'Anterior', pt: 'Anterior', tr: 'Önceki', uk: 'Попередня', zh: '上一页', ar: 'السابق', pl: 'Poprzednia', it: 'Precedente' }),
-      next: t({ ru: 'Следующая', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próxima', tr: 'Sonraki', uk: 'Наступна', zh: '下一页', ar: 'التالي', pl: 'Następna', it: 'Successivo' }),
+      close: t({ ru: 'Закрыть', en: 'Close', kk: 'Жабу', de: 'Schließen', fr: 'Fermer', es: 'Cerrar', pt: 'Fechar', tr: 'Kapat', uk: 'Закрити', zh: '关闭', ar: 'إغلاق', pl: 'Zamknij', it: 'Chiudi', sk: 'Zamknij'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
+      delete: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
+      previous: t({ ru: 'Предыдущая', en: 'Previous', kk: 'Алдыңғы', de: 'Zurück', fr: 'Précédent', es: 'Anterior', pt: 'Anterior', tr: 'Önceki', uk: 'Попередня', zh: '上一页', ar: 'السابق', pl: 'Poprzednia', it: 'Precedente', sk: 'Poprzednia'}),
+      next: t({ ru: 'Следующая', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próxima', tr: 'Sonraki', uk: 'Наступна', zh: '下一页', ar: 'التالي', pl: 'Następna', it: 'Successivo', sk: 'Następna'}),
     },
     sources: {
-      label: t({ ru: 'Источник', en: 'Source', kk: 'Дереккөз', de: 'Quelle', fr: 'Source', es: 'Fuente', pt: 'Fonte', tr: 'Kaynak', uk: 'Джерело', zh: '来源', ar: 'المصدر', pl: 'Źródło', it: 'Fonte' }),
+      label: t({ ru: 'Источник', en: 'Source', kk: 'Дереккөз', de: 'Quelle', fr: 'Source', es: 'Fuente', pt: 'Fonte', tr: 'Kaynak', uk: 'Джерело', zh: '来源', ar: 'المصدر', pl: 'Źródło', it: 'Fonte', sk: 'Źródło'}),
       googleSheets: t({
         ru: 'Google Sheets',
         en: 'Google Sheets',
@@ -173,18 +182,19 @@ const content = {
         ar: 'Google Sheets',
         pl: 'Google Sheets',
         it: 'Google Sheets',
+        sk: 'Google Sheets',
       }),
-      manual: t({ ru: 'Вручную', en: 'Manual', kk: 'Қолмен', de: 'Manuell', fr: 'Manuel', es: 'Manual', pt: 'Manual', tr: 'Manuel', uk: 'Вручну', zh: '手动', ar: 'يدوي', pl: 'Ręcznie', it: 'Manuale' }),
+      manual: t({ ru: 'Вручную', en: 'Manual', kk: 'Қолмен', de: 'Manuell', fr: 'Manuel', es: 'Manual', pt: 'Manual', tr: 'Manuel', uk: 'Вручну', zh: '手动', ar: 'يدوي', pl: 'Ręcznie', it: 'Manuale', sk: 'Ręcznie'}),
     },
     filters: {
-      all: t({ ru: 'Все', en: 'All', kk: 'Барлығы', de: 'Alle', fr: 'Tous', es: 'Todos', pt: 'Todos', tr: 'Tümü', uk: 'Всі', zh: '全部', ar: 'الكل', pl: 'Wszystkie', it: 'Tutti' }),
-      fromStatement: t({ ru: 'Из выписки', en: 'From statement', kk: 'Үзіндіден', de: 'Aus Kontoauszug', fr: 'Depuis un relevé', es: 'Desde estado de cuenta', pt: 'Do extrato', tr: 'Özetten', uk: 'З виписки', zh: '从对账单', ar: 'من كشف الحساب', pl: 'Z wyciągu', it: 'Da estratto conto' }),
-      sortUpdated: t({ ru: 'Последние изменения', en: 'Recent updates', kk: 'Соңғы өзгерістер', de: 'Zuletzt geändert', fr: 'Mises à jour récentes', es: 'Actualizaciones recientes', pt: 'Atualizações recentes', tr: 'Son güncellemeler', uk: 'Останні зміни', zh: '最近更新', ar: 'التحديثات الأخيرة', pl: 'Ostatnie zmiany', it: 'Aggiornamenti recenti' }),
-      sortName: t({ ru: 'По названию', en: 'By name', kk: 'Атауы бойынша', de: 'Nach Name', fr: 'Par nom', es: 'Por nombre', pt: 'Por nome', tr: 'İsme göre', uk: 'За назвою', zh: '按名称', ar: 'حسب الاسم', pl: 'Według nazwy', it: 'Per nome' }),
-      sort: t({ ru: 'Сортировка', en: 'Sort', kk: 'Сұрыптау', de: 'Sortieren', fr: 'Trier', es: 'Ordenar', pt: 'Ordenar', tr: 'Sırala', uk: 'Сортування', zh: '排序', ar: 'ترتيب', pl: 'Sortuj', it: 'Ordina' }),
-      filters: t({ ru: 'Фильтры', en: 'Filters', kk: 'Сүзгілер', de: 'Filter', fr: 'Filtres', es: 'Filtros', pt: 'Filtros', tr: 'Filtreler', uk: 'Фільтри', zh: '筛选', ar: 'الفلاتر', pl: 'Filtry', it: 'Filtri' }),
-      apply: t({ ru: 'Применить', en: 'Apply', kk: 'Қолдану', de: 'Anwenden', fr: 'Appliquer', es: 'Aplicar', pt: 'Aplicar', tr: 'Uygula', uk: 'Застосувати', zh: '应用', ar: 'تطبيق', pl: 'Zastosuj', it: 'Applica' }),
-      reset: t({ ru: 'Сбросить', en: 'Reset', kk: 'Қалпына келтіру', de: 'Zurücksetzen', fr: 'Réinitialiser', es: 'Restablecer', pt: 'Redefinir', tr: 'Sıfırla', uk: 'Скинути', zh: '重置', ar: 'إعادة تعيين', pl: 'Resetuj', it: 'Reimposta' }),
+      all: t({ ru: 'Все', en: 'All', kk: 'Барлығы', de: 'Alle', fr: 'Tous', es: 'Todos', pt: 'Todos', tr: 'Tümü', uk: 'Всі', zh: '全部', ar: 'الكل', pl: 'Wszystkie', it: 'Tutti', sk: 'Wszystkie'}),
+      fromStatement: t({ ru: 'Из выписки', en: 'From statement', kk: 'Үзіндіден', de: 'Aus Kontoauszug', fr: 'Depuis un relevé', es: 'Desde estado de cuenta', pt: 'Do extrato', tr: 'Özetten', uk: 'З виписки', zh: '从对账单', ar: 'من كشف الحساب', pl: 'Z wyciągu', it: 'Da estratto conto', sk: 'Z wyciągu'}),
+      sortUpdated: t({ ru: 'Последние изменения', en: 'Recent updates', kk: 'Соңғы өзгерістер', de: 'Zuletzt geändert', fr: 'Mises à jour récentes', es: 'Actualizaciones recientes', pt: 'Atualizações recentes', tr: 'Son güncellemeler', uk: 'Останні зміни', zh: '最近更新', ar: 'التحديثات الأخيرة', pl: 'Ostatnie zmiany', it: 'Aggiornamenti recenti', sk: 'Ostatnie zmiany'}),
+      sortName: t({ ru: 'По названию', en: 'By name', kk: 'Атауы бойынша', de: 'Nach Name', fr: 'Par nom', es: 'Por nombre', pt: 'Por nome', tr: 'İsme göre', uk: 'За назвою', zh: '按名称', ar: 'حسب الاسم', pl: 'Według nazwy', it: 'Per nome', sk: 'Według nazwy'}),
+      sort: t({ ru: 'Сортировка', en: 'Sort', kk: 'Сұрыптау', de: 'Sortieren', fr: 'Trier', es: 'Ordenar', pt: 'Ordenar', tr: 'Sırala', uk: 'Сортування', zh: '排序', ar: 'ترتيب', pl: 'Sortuj', it: 'Ordina', sk: 'Sortuj'}),
+      filters: t({ ru: 'Фильтры', en: 'Filters', kk: 'Сүзгілер', de: 'Filter', fr: 'Filtres', es: 'Filtros', pt: 'Filtros', tr: 'Filtreler', uk: 'Фільтри', zh: '筛选', ar: 'الفلاتر', pl: 'Filtry', it: 'Filtri', sk: 'Filtry'}),
+      apply: t({ ru: 'Применить', en: 'Apply', kk: 'Қолдану', de: 'Anwenden', fr: 'Appliquer', es: 'Aplicar', pt: 'Aplicar', tr: 'Uygula', uk: 'Застосувати', zh: '应用', ar: 'تطبيق', pl: 'Zastosuj', it: 'Applica', sk: 'Zastosuj'}),
+      reset: t({ ru: 'Сбросить', en: 'Reset', kk: 'Қалпына келтіру', de: 'Zurücksetzen', fr: 'Réinitialiser', es: 'Restablecer', pt: 'Redefinir', tr: 'Sıfırla', uk: 'Скинути', zh: '重置', ar: 'إعادة تعيين', pl: 'Resetuj', it: 'Reimposta', sk: 'Resetuj'}),
       resetFilters: t({
         ru: 'Сбросить фильтры',
         en: 'Reset filters',
@@ -199,19 +209,20 @@ const content = {
         ar: 'إعادة تعيين الفلاتر',
         pl: 'Resetuj filtry',
         it: 'Reimposta filtri',
+        sk: 'Resetuj filtry',
       }),
-      viewResults: t({ ru: 'Показать', en: 'View results', kk: 'Нәтижені көру', de: 'Ergebnisse anzeigen', fr: 'Voir les résultats', es: 'Ver resultados', pt: 'Ver resultados', tr: 'Sonuçları gör', uk: 'Показати результати', zh: '查看结果', ar: 'عرض النتائج', pl: 'Pokaż wyniki', it: 'Visualizza risultati' }),
-      saveSearch: t({ ru: 'Сохранить поиск', en: 'Save search', kk: 'Іздеуді сақтау', de: 'Suche speichern', fr: 'Enregistrer la recherche', es: 'Guardar búsqueda', pt: 'Salvar pesquisa', tr: 'Aramayı kaydet', uk: 'Зберегти пошук', zh: '保存搜索', ar: 'حفظ البحث', pl: 'Zapisz wyszukiwanie', it: 'Salva ricerca' }),
-      any: t({ ru: 'Любой', en: 'Any', kk: 'Кез келген', de: 'Beliebig', fr: 'N\'importe lequel', es: 'Cualquiera', pt: 'Qualquer', tr: 'Herhangi biri', uk: 'Будь-який', zh: '任意', ar: 'أي', pl: 'Dowolny', it: 'Qualsiasi' }),
-      drawerTitle: t({ ru: 'Фильтры', en: 'Filters', kk: 'Сүзгілер', de: 'Filter', fr: 'Filtres', es: 'Filtros', pt: 'Filtros', tr: 'Filtreler', uk: 'Фільтри', zh: '筛选', ar: 'الفلاتر', pl: 'Filtry', it: 'Filtri' }),
-      drawerGeneral: t({ ru: 'Основное', en: 'General', kk: 'Негізгі', de: 'Allgemein', fr: 'Général', es: 'General', pt: 'Geral', tr: 'Genel', uk: 'Загальне', zh: '常规', ar: 'عام', pl: 'Ogólne', it: 'Generale' }),
+      viewResults: t({ ru: 'Показать', en: 'View results', kk: 'Нәтижені көру', de: 'Ergebnisse anzeigen', fr: 'Voir les résultats', es: 'Ver resultados', pt: 'Ver resultados', tr: 'Sonuçları gör', uk: 'Показати результати', zh: '查看结果', ar: 'عرض النتائج', pl: 'Pokaż wyniki', it: 'Visualizza risultati', sk: 'Pokaż wyniki'}),
+      saveSearch: t({ ru: 'Сохранить поиск', en: 'Save search', kk: 'Іздеуді сақтау', de: 'Suche speichern', fr: 'Enregistrer la recherche', es: 'Guardar búsqueda', pt: 'Salvar pesquisa', tr: 'Aramayı kaydet', uk: 'Зберегти пошук', zh: '保存搜索', ar: 'حفظ البحث', pl: 'Zapisz wyszukiwanie', it: 'Salva ricerca', sk: 'Zapisz wyszukiwanie'}),
+      any: t({ ru: 'Любой', en: 'Any', kk: 'Кез келген', de: 'Beliebig', fr: 'N\'importe lequel', es: 'Cualquiera', pt: 'Qualquer', tr: 'Herhangi biri', uk: 'Будь-який', zh: '任意', ar: 'أي', pl: 'Dowolny', it: 'Qualsiasi', sk: 'Dowolny'}),
+      drawerTitle: t({ ru: 'Фильтры', en: 'Filters', kk: 'Сүзгілер', de: 'Filter', fr: 'Filtres', es: 'Filtros', pt: 'Filtros', tr: 'Filtreler', uk: 'Фільтри', zh: '筛选', ar: 'الفلاتر', pl: 'Filtry', it: 'Filtri', sk: 'Filtry'}),
+      drawerGeneral: t({ ru: 'Основное', en: 'General', kk: 'Негізгі', de: 'Allgemein', fr: 'Général', es: 'General', pt: 'Geral', tr: 'Genel', uk: 'Загальне', zh: '常规', ar: 'عام', pl: 'Ogólne', it: 'Generale', sk: 'Ogólne'}),
     },
     sidePanel: {
-      subtitle: t({ ru: 'Обзор', en: 'Overview', kk: 'Шолу', de: 'Übersicht', fr: 'Aperçu', es: 'Resumen', pt: 'Visão geral', tr: 'Genel bakış', uk: 'Огляд', zh: '概览', ar: 'نظرة عامة', pl: 'Przegląd', it: 'Panoramica' }),
-      todoTitle: t({ ru: 'К выполнению', en: 'To-do', kk: 'Аяқтау керек', de: 'Aufgaben', fr: 'À faire', es: 'Por hacer', pt: 'A fazer', tr: 'Yapılacaklar', uk: 'До виконання', zh: '待办事项', ar: 'المهام', pl: 'Do zrobienia', it: 'Da fare' }),
-      accountingTitle: t({ ru: 'Бухгалтерия', en: 'Accounting', kk: 'Бухгалтерия', de: 'Buchhaltung', fr: 'Comptabilité', es: 'Contabilidad', pt: 'Contabilidade', tr: 'Muhasebe', uk: 'Бухгалтерія', zh: '会计', ar: 'المحاسبة', pl: 'Księgowość', it: 'Contabilità' }),
-      insightsTitle: t({ ru: 'Инсайты', en: 'Insights', kk: 'Инсайттар', de: 'Einblicke', fr: 'Insights', es: 'Perspectivas', pt: 'Insights', tr: 'Öngörüler', uk: 'Інсайти', zh: '洞察', ar: 'الرؤى', pl: 'Spostrzeżenia', it: 'Approfondimenti' }),
-      allTables: t({ ru: 'Все таблицы', en: 'All tables', kk: 'Барлық кестелер', de: 'Alle Tabellen', fr: 'Tous les tableaux', es: 'Todas las tablas', pt: 'Todas as tabelas', tr: 'Tüm tablolar', uk: 'Всі таблиці', zh: '所有表格', ar: 'كل الجداول', pl: 'Wszystkie tabele', it: 'Tutte le tabelle' }),
+      subtitle: t({ ru: 'Обзор', en: 'Overview', kk: 'Шолу', de: 'Übersicht', fr: 'Aperçu', es: 'Resumen', pt: 'Visão geral', tr: 'Genel bakış', uk: 'Огляд', zh: '概览', ar: 'نظرة عامة', pl: 'Przegląd', it: 'Panoramica', sk: 'Przegląd'}),
+      todoTitle: t({ ru: 'К выполнению', en: 'To-do', kk: 'Аяқтау керек', de: 'Aufgaben', fr: 'À faire', es: 'Por hacer', pt: 'A fazer', tr: 'Yapılacaklar', uk: 'До виконання', zh: '待办事项', ar: 'المهام', pl: 'Do zrobienia', it: 'Da fare', sk: 'Do zrobienia'}),
+      accountingTitle: t({ ru: 'Бухгалтерия', en: 'Accounting', kk: 'Бухгалтерия', de: 'Buchhaltung', fr: 'Comptabilité', es: 'Contabilidad', pt: 'Contabilidade', tr: 'Muhasebe', uk: 'Бухгалтерія', zh: '会计', ar: 'المحاسبة', pl: 'Księgowość', it: 'Contabilità', sk: 'Księgowość'}),
+      insightsTitle: t({ ru: 'Инсайты', en: 'Insights', kk: 'Инсайттар', de: 'Einblicke', fr: 'Insights', es: 'Perspectivas', pt: 'Insights', tr: 'Öngörüler', uk: 'Інсайти', zh: '洞察', ar: 'الرؤى', pl: 'Spostrzeżenia', it: 'Approfondimenti', sk: 'Spostrzeżenia'}),
+      allTables: t({ ru: 'Все таблицы', en: 'All tables', kk: 'Барлық кестелер', de: 'Alle Tabellen', fr: 'Tous les tableaux', es: 'Todas las tablas', pt: 'Todas as tabelas', tr: 'Tüm tablolar', uk: 'Всі таблиці', zh: '所有表格', ar: 'كل الجداول', pl: 'Wszystkie tabele', it: 'Tutte le tabelle', sk: 'Wszystkie tabele'}),
       sourceOverview: t({
         ru: 'Обзор источников',
         en: 'Sources overview',
@@ -226,9 +237,10 @@ const content = {
         ar: 'نظرة عامة على المصادر',
         pl: 'Przegląd źródeł',
         it: 'Panoramica delle fonti',
+        sk: 'Przegląd źródeł',
       }),
-      noData: t({ ru: 'Нет данных', en: 'No data', kk: 'Дерек жоқ', de: 'Keine Daten', fr: 'Aucune donnée', es: 'Sin datos', pt: 'Sem dados', tr: 'Veri yok', uk: 'Немає даних', zh: '暂无数据', ar: 'لا توجد بيانات', pl: 'Brak danych', it: 'Nessun dato' }),
-      createTable: t({ ru: 'Создать таблицу', en: 'Create table', kk: 'Кесте құру', de: 'Tabelle erstellen', fr: 'Créer un tableau', es: 'Crear tabla', pt: 'Criar tabela', tr: 'Tablo oluştur', uk: 'Створити таблицю', zh: '创建表格', ar: 'إنشاء جدول', pl: 'Utwórz tabelę', it: 'Crea tabella' }),
+      noData: t({ ru: 'Нет данных', en: 'No data', kk: 'Дерек жоқ', de: 'Keine Daten', fr: 'Aucune donnée', es: 'Sin datos', pt: 'Sem dados', tr: 'Veri yok', uk: 'Немає даних', zh: '暂无数据', ar: 'لا توجد بيانات', pl: 'Brak danych', it: 'Nessun dato', sk: 'Brak danych'}),
+      createTable: t({ ru: 'Создать таблицу', en: 'Create table', kk: 'Кесте құру', de: 'Tabelle erstellen', fr: 'Créer un tableau', es: 'Crear tabla', pt: 'Criar tabela', tr: 'Tablo oluştur', uk: 'Створити таблицю', zh: '创建表格', ar: 'إنشاء جدول', pl: 'Utwórz tabelę', it: 'Crea tabella', sk: 'Utwórz tabelę'}),
       openMenu: t({
         ru: 'Открыть действия таблиц',
         en: 'Open table actions',
@@ -243,9 +255,10 @@ const content = {
         ar: 'فتح إجراءات الجدول',
         pl: 'Otwórz akcje tabeli',
         it: 'Apri azioni tabella',
+        sk: 'Otwórz akcje tabeli',
       }),
     },
-    fromLabel: t({ ru: 'Источник', en: 'From', kk: 'Көзі', de: 'Von', fr: 'De', es: 'De', pt: 'De', tr: 'Kaynak', uk: 'Джерело', zh: '来自', ar: 'من', pl: 'Od', it: 'Da' }),
+    fromLabel: t({ ru: 'Источник', en: 'From', kk: 'Көзі', de: 'Von', fr: 'De', es: 'De', pt: 'De', tr: 'Kaynak', uk: 'Джерело', zh: '来自', ar: 'من', pl: 'Od', it: 'Da', sk: 'Od'}),
     growthHint: t({
       ru: 'Вы можете создать несколько экспортных таблиц для разных отчетов или периодов.',
       en: 'You can create multiple export tables for different reports or periods.',
@@ -260,6 +273,7 @@ const content = {
       ar: 'يمكنك إنشاء جداول تصدير متعددة لتقارير أو فترات مختلفة.',
       pl: 'Możesz tworzyć wiele tabel eksportu dla różnych raportów lub okresów.',
       it: 'Puoi creare più tabelle di esportazione per diversi report o periodi.',
+      sk: 'Możesz tworzyć wiele tabel eksportu dla różnych raportów lub okresów.',
     }),
     namingHint: t({
       ru: 'Используйте понятные имена: Расходы экспорт - Feb 2026, VAT reconciliation - Q1, Bank statements export.',
@@ -275,14 +289,15 @@ const content = {
       ar: 'استخدم أسماء واضحة: تصدير المصروفات - فبراير 2026، تسوية ضريبة القيمة المضافة - Q1، تصدير كشوف البنك.',
       pl: 'Używaj jasnych nazw: Eksport wydatków - Luty 2026, Uzgodnienie VAT - Q1, Eksport wyciągów bankowych.',
       it: 'Usa nomi chiari: Esportazione spese - Feb 2026, Riconciliazione IVA - Q1, Esportazione estratti conto.',
+      sk: 'Używaj jasnych nazw: Eksport wydatków - Luty 2026, Uzgodnienie VAT - Q1, Eksport wyciągów bankowych.',
     }),
     columns: {
-      name: t({ ru: 'Название', en: 'Name', kk: 'Атауы', de: 'Name', fr: 'Nom', es: 'Nombre', pt: 'Nome', tr: 'Ad', uk: 'Назва', zh: '名称', ar: 'الاسم', pl: 'Nazwa', it: 'Nome' }),
-      purpose: t({ ru: 'Назначение / тип', en: 'Purpose / Type', kk: 'Мақсаты / түрі', de: 'Zweck / Typ', fr: 'Objectif / Type', es: 'Propósito / Tipo', pt: 'Finalidade / Tipo', tr: 'Amaç / Tür', uk: 'Призначення / тип', zh: '用途 / 类型', ar: 'الغرض / النوع', pl: 'Przeznaczenie / Typ', it: 'Scopo / Tipo' }),
-      source: t({ ru: 'Источник', en: 'Source', kk: 'Дереккөз', de: 'Quelle', fr: 'Source', es: 'Fuente', pt: 'Fonte', tr: 'Kaynak', uk: 'Джерело', zh: '来源', ar: 'المصدر', pl: 'Źródło', it: 'Fonte' }),
-      rows: t({ ru: 'Строки', en: 'Rows', kk: 'Жолдар', de: 'Zeilen', fr: 'Lignes', es: 'Filas', pt: 'Linhas', tr: 'Satırlar', uk: 'Рядки', zh: '行', ar: 'الصفوف', pl: 'Wiersze', it: 'Righe' }),
-      updatedAt: t({ ru: 'Обновлено', en: 'Last updated', kk: 'Соңғы жаңарту', de: 'Zuletzt aktualisiert', fr: 'Dernière mise à jour', es: 'Última actualización', pt: 'Última atualização', tr: 'Son güncelleme', uk: 'Останнє оновлення', zh: '最后更新', ar: 'آخر تحديث', pl: 'Ostatnia aktualizacja', it: 'Ultimo aggiornamento' }),
-      actions: t({ ru: 'Действия', en: 'Actions', kk: 'Әрекеттер', de: 'Aktionen', fr: 'Actions', es: 'Acciones', pt: 'Ações', tr: 'Eylemler', uk: 'Дії', zh: '操作', ar: 'الإجراءات', pl: 'Akcje', it: 'Azioni' }),
+      name: t({ ru: 'Название', en: 'Name', kk: 'Атауы', de: 'Name', fr: 'Nom', es: 'Nombre', pt: 'Nome', tr: 'Ad', uk: 'Назва', zh: '名称', ar: 'الاسم', pl: 'Nazwa', it: 'Nome', sk: 'Nazwa'}),
+      purpose: t({ ru: 'Назначение / тип', en: 'Purpose / Type', kk: 'Мақсаты / түрі', de: 'Zweck / Typ', fr: 'Objectif / Type', es: 'Propósito / Tipo', pt: 'Finalidade / Tipo', tr: 'Amaç / Tür', uk: 'Призначення / тип', zh: '用途 / 类型', ar: 'الغرض / النوع', pl: 'Przeznaczenie / Typ', it: 'Scopo / Tipo', sk: 'Przeznaczenie / Typ'}),
+      source: t({ ru: 'Источник', en: 'Source', kk: 'Дереккөз', de: 'Quelle', fr: 'Source', es: 'Fuente', pt: 'Fonte', tr: 'Kaynak', uk: 'Джерело', zh: '来源', ar: 'المصدر', pl: 'Źródło', it: 'Fonte', sk: 'Źródło'}),
+      rows: t({ ru: 'Строки', en: 'Rows', kk: 'Жолдар', de: 'Zeilen', fr: 'Lignes', es: 'Filas', pt: 'Linhas', tr: 'Satırlar', uk: 'Рядки', zh: '行', ar: 'الصفوف', pl: 'Wiersze', it: 'Righe', sk: 'Wiersze'}),
+      updatedAt: t({ ru: 'Обновлено', en: 'Last updated', kk: 'Соңғы жаңарту', de: 'Zuletzt aktualisiert', fr: 'Dernière mise à jour', es: 'Última actualización', pt: 'Última atualização', tr: 'Son güncelleme', uk: 'Останнє оновлення', zh: '最后更新', ar: 'آخر تحديث', pl: 'Ostatnia aktualizacja', it: 'Ultimo aggiornamento', sk: 'Ostatnia aktualizacja'}),
+      actions: t({ ru: 'Действия', en: 'Actions', kk: 'Әрекеттер', de: 'Aktionen', fr: 'Actions', es: 'Acciones', pt: 'Ações', tr: 'Eylemler', uk: 'Дії', zh: '操作', ar: 'الإجراءات', pl: 'Akcje', it: 'Azioni', sk: 'Akcje'}),
     },
     ctaDescription: t({
       ru: 'Создайте таблицу, сопоставив поля из выписок или чеков для экспорта в Excel или бухгалтерские системы.',
@@ -298,6 +313,7 @@ const content = {
       ar: 'أنشئ جدولاً عن طريق ربط حقول من كشوف الحسابات أو الإيصالات للتصدير إلى Excel أو أنظمة المحاسبة.',
       pl: 'Utwórz tabelę mapując pola z wyciągów lub paragonów do eksportu do Excela lub systemów księgowych.',
       it: 'Crea una tabella mappando i campi da estratti conto o ricevute per l\'esportazione in Excel o sistemi contabili.',
+      sk: 'Utwórz tabelę mapując pola z wyciągów lub paragonów do eksportu do Excela lub systemów księgowych.',
     }),
     pagination: {
       shown: t({
@@ -314,9 +330,10 @@ const content = {
         ar: 'عرض {from}–{to} من {count}',
         pl: 'Wyświetlanie {from}–{to} z {count}',
         it: 'Visualizzazione {from}–{to} di {count}',
+        sk: 'Wyświetlanie {from}–{to} z {count}',
       }),
-      previous: t({ ru: 'Предыдущая', en: 'Previous', kk: 'Алдыңғы', de: 'Zurück', fr: 'Précédent', es: 'Anterior', pt: 'Anterior', tr: 'Önceki', uk: 'Попередня', zh: '上一页', ar: 'السابق', pl: 'Poprzednia', it: 'Precedente' }),
-      next: t({ ru: 'Следующая', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próxima', tr: 'Sonraki', uk: 'Наступна', zh: '下一页', ar: 'التالي', pl: 'Następna', it: 'Successivo' }),
+      previous: t({ ru: 'Предыдущая', en: 'Previous', kk: 'Алдыңғы', de: 'Zurück', fr: 'Précédent', es: 'Anterior', pt: 'Anterior', tr: 'Önceki', uk: 'Попередня', zh: '上一页', ar: 'السابق', pl: 'Poprzednia', it: 'Precedente', sk: 'Poprzednia'}),
+      next: t({ ru: 'Следующая', en: 'Next', kk: 'Келесі', de: 'Weiter', fr: 'Suivant', es: 'Siguiente', pt: 'Próxima', tr: 'Sonraki', uk: 'Наступна', zh: '下一页', ar: 'التالي', pl: 'Następna', it: 'Successivo', sk: 'Następna'}),
       pageOf: t({
         ru: 'Страница {page} из {count}',
         en: 'Page {page} of {count}',
@@ -331,6 +348,7 @@ const content = {
         ar: 'الصفحة {page} من {count}',
         pl: 'Strona {page} z {count}',
         it: 'Pagina {page} di {count}',
+        sk: 'Strona {page} z {count}',
       }),
     },
     empty: {
@@ -348,6 +366,7 @@ const content = {
         ar: 'لا توجد جداول تصدير بعد',
         pl: 'Brak tabel eksportu',
         it: 'Nessuna tabella di esportazione ancora',
+        sk: 'Brak tabel eksportu',
       }),
       description: t({
         ru: 'Создайте таблицу для бухгалтерского экспорта из выписок и чеков.',
@@ -363,6 +382,7 @@ const content = {
         ar: 'أنشئ جدولاً لتصدير المحاسبة من كشوف الحسابات والإيصالات.',
         pl: 'Utwórz tabelę do eksportów księgowych z wyciągów i paragonów.',
         it: 'Crea una tabella per le esportazioni contabili da estratti conto e ricevute.',
+        sk: 'Utwórz tabelę do eksportów księgowych z wyciągów i paragonów.',
       }),
       step1: t({
         ru: '1. Выберите выписки или чеки для включения',
@@ -378,6 +398,7 @@ const content = {
         ar: '1. حدد كشوف الحسابات أو الإيصالات للتضمين',
         pl: '1. Wybierz wyciągi lub paragony do uwzględnienia',
         it: '1. Seleziona estratti conto o ricevute da includere',
+        sk: '1. Wybierz wyciągi lub paragony do uwzględnienia',
       }),
       step2: t({
         ru: '2. Выберите поля: дата, сумма, контрагент, категория, НДС',
@@ -393,6 +414,7 @@ const content = {
         ar: '2. اختر الحقول: التاريخ، المبلغ، التاجر، الفئة، ضريبة القيمة المضافة',
         pl: '2. Wybierz pola: data, kwota, sprzedawca, kategoria, VAT',
         it: '2. Scegli i campi: data, importo, commerciante, categoria, IVA',
+        sk: '2. Wybierz pola: data, kwota, sprzedawca, kategoria, VAT',
       }),
       step3: t({
         ru: '3. Сформируйте структуру таблицы',
@@ -408,6 +430,7 @@ const content = {
         ar: '3. أنشئ هيكل الجدول',
         pl: '3. Utwórz strukturę tabeli',
         it: '3. Crea la struttura della tabella',
+        sk: '3. Utwórz strukturę tabeli',
       }),
       step4: t({
         ru: '4. Экспортируйте в Excel и обновляйте данные в любой момент',
@@ -423,9 +446,10 @@ const content = {
         ar: '4. قم بالتصدير إلى Excel أو تحديث البيانات في أي وقت',
         pl: '4. Eksportuj do Excela lub odświeżaj dane w dowolnym momencie',
         it: '4. Esporta in Excel o aggiorna i dati in qualsiasi momento',
+        sk: '4. Eksportuj do Excela lub odświeżaj dane w dowolnym momencie',
       }),
     },
-    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
+    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
     toasts: {
       loadTablesFailed: t({
         ru: 'Не удалось загрузить таблицы',
@@ -441,6 +465,7 @@ const content = {
         ar: 'فشل تحميل الجداول',
         pl: 'Nie udało się załadować tabel',
         it: 'Impossibile caricare le tabelle',
+        sk: 'Nie udało się załadować tabel',
       }),
       loadStatementsFailed: t({
         ru: 'Не удалось загрузить выписки',
@@ -456,6 +481,7 @@ const content = {
         ar: 'فشل تحميل كشوف الحسابات',
         pl: 'Nie udało się załadować wyciągów',
         it: 'Impossibile caricare gli estratti conto',
+        sk: 'Nie udało się załadować wyciągów',
       }),
       created: t({
         ru: 'Таблица создана',
@@ -471,6 +497,7 @@ const content = {
         ar: 'تم إنشاء الجدول',
         pl: 'Tabela została utworzona',
         it: 'Tabella creata',
+        sk: 'Tabela została utworzona',
       }),
       createFailed: t({
         ru: 'Не удалось создать таблицу',
@@ -486,6 +513,7 @@ const content = {
         ar: 'فشل إنشاء الجدول',
         pl: 'Nie udało się utworzyć tabeli',
         it: 'Impossibile creare la tabella',
+        sk: 'Nie udało się utworzyć tabeli',
       }),
       selectAtLeastOneStatement: t({
         ru: 'Выберите хотя бы одну выписку',
@@ -501,6 +529,7 @@ const content = {
         ar: 'حدد كشف حساب واحداً على الأقل',
         pl: 'Wybierz co najmniej jeden wyciąg',
         it: 'Seleziona almeno un estratto conto',
+        sk: 'Wybierz co najmniej jeden wyciąg',
       }),
       createdFromStatement: t({
         ru: 'Таблица создана из выписки',
@@ -516,6 +545,7 @@ const content = {
         ar: 'تم إنشاء الجدول من كشوف الحسابات',
         pl: 'Tabela utworzona z wyciągów',
         it: 'Tabella creata dagli estratti conto',
+        sk: 'Tabela utworzona z wyciągów',
       }),
       createFromStatementFailed: t({
         ru: 'Не удалось создать таблицу из выписки',
@@ -531,8 +561,9 @@ const content = {
         ar: 'فشل إنشاء الجدول من كشوف الحسابات',
         pl: 'Nie udało się utworzyć tabeli z wyciągów',
         it: 'Impossibile creare la tabella dagli estratti conto',
+        sk: 'Nie udało się utworzyć tabeli z wyciągów',
       }),
-      deleting: t({ ru: 'Удаление...', en: 'Deleting...', kk: 'Жойылуда...', de: 'Löschen...', fr: 'Suppression...', es: 'Eliminando...', pt: 'Excluindo...', tr: 'Siliniyor...', uk: 'Видалення...', zh: '删除中...', ar: 'جارٍ الحذف...', pl: 'Usuwanie...', it: 'Eliminazione...' }),
+      deleting: t({ ru: 'Удаление...', en: 'Deleting...', kk: 'Жойылуда...', de: 'Löschen...', fr: 'Suppression...', es: 'Eliminando...', pt: 'Excluindo...', tr: 'Siliniyor...', uk: 'Видалення...', zh: '删除中...', ar: 'جارٍ الحذف...', pl: 'Usuwanie...', it: 'Eliminazione...', sk: 'Usuwanie...'}),
       deleted: t({
         ru: 'Таблица удалена',
         en: 'Table deleted',
@@ -547,6 +578,7 @@ const content = {
         ar: 'تم حذف الجدول',
         pl: 'Tabela została usunięta',
         it: 'Tabella eliminata',
+        sk: 'Tabela została usunięta',
       }),
       deleteFailed: t({
         ru: 'Не удалось удалить таблицу',
@@ -562,11 +594,12 @@ const content = {
         ar: 'فشل حذف الجدول',
         pl: 'Nie udało się usunąć tabeli',
         it: 'Impossibile eliminare la tabella',
+        sk: 'Nie udało się usunąć tabeli',
       }),
     },
     create: {
-      title: t({ ru: 'Новая таблица', en: 'New table', kk: 'Жаңа кесте', de: 'Neue Tabelle', fr: 'Nouveau tableau', es: 'Nueva tabla', pt: 'Nova tabela', tr: 'Yeni tablo', uk: 'Нова таблиця', zh: '新建表格', ar: 'جدول جديد', pl: 'Nowa tabela', it: 'Nuova tabella' }),
-      name: t({ ru: 'Название', en: 'Name', kk: 'Атауы', de: 'Name', fr: 'Nom', es: 'Nombre', pt: 'Nome', tr: 'Ad', uk: 'Назва', zh: '名称', ar: 'الاسم', pl: 'Nazwa', it: 'Nome' }),
+      title: t({ ru: 'Новая таблица', en: 'New table', kk: 'Жаңа кесте', de: 'Neue Tabelle', fr: 'Nouveau tableau', es: 'Nueva tabla', pt: 'Nova tabela', tr: 'Yeni tablo', uk: 'Нова таблиця', zh: '新建表格', ar: 'جدول جديد', pl: 'Nowa tabela', it: 'Nuova tabella', sk: 'Nowa tabela'}),
+      name: t({ ru: 'Название', en: 'Name', kk: 'Атауы', de: 'Name', fr: 'Nom', es: 'Nombre', pt: 'Nome', tr: 'Ad', uk: 'Назва', zh: '名称', ar: 'الاسم', pl: 'Nazwa', it: 'Nome', sk: 'Nazwa'}),
       namePlaceholder: t({
         ru: 'Например: Реестр платежей',
         en: 'e.g. Payments registry',
@@ -581,8 +614,9 @@ const content = {
         ar: 'مثال: سجل المدفوعات',
         pl: 'np. Rejestr płatności',
         it: 'es. Registro dei pagamenti',
+        sk: 'np. Rejestr płatności',
       }),
-      description: t({ ru: 'Описание', en: 'Description', kk: 'Сипаттама', de: 'Beschreibung', fr: 'Description', es: 'Descripción', pt: 'Descrição', tr: 'Açıklama', uk: 'Опис', zh: '描述', ar: 'الوصف', pl: 'Opis', it: 'Descrizione' }),
+      description: t({ ru: 'Описание', en: 'Description', kk: 'Сипаттама', de: 'Beschreibung', fr: 'Description', es: 'Descripción', pt: 'Descrição', tr: 'Açıklama', uk: 'Опис', zh: '描述', ar: 'الوصف', pl: 'Opis', it: 'Descrizione', sk: 'Opis'}),
       descriptionPlaceholder: t({
         ru: 'Опционально',
         en: 'Optional',
@@ -597,6 +631,7 @@ const content = {
         ar: 'اختياري',
         pl: 'Opcjonalnie',
         it: 'Facoltativo',
+        sk: 'Opcjonalnie',
       }),
       category: t({
         ru: 'Категория (иконка/цвет)',
@@ -612,8 +647,9 @@ const content = {
         ar: 'الفئة (أيقونة/لون)',
         pl: 'Kategoria (ikona/kolor)',
         it: 'Categoria (icona/colore)',
+        sk: 'Kategoria (ikona/kolor)',
       }),
-      noCategory: t({ ru: 'Без категории', en: 'No category', kk: 'Санатсыз', de: 'Keine Kategorie', fr: 'Sans catégorie', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategori yok', uk: 'Без категорії', zh: '无类别', ar: 'بدون فئة', pl: 'Bez kategorii', it: 'Nessuna categoria' }),
+      noCategory: t({ ru: 'Без категории', en: 'No category', kk: 'Санатсыз', de: 'Keine Kategorie', fr: 'Sans catégorie', es: 'Sin categoría', pt: 'Sem categoria', tr: 'Kategori yok', uk: 'Без категорії', zh: '无类别', ar: 'بدون فئة', pl: 'Bez kategorii', it: 'Nessuna categoria', sk: 'Bez kategorii'}),
       categoryHint: t({
         ru: 'Иконка/цвет будут взяты из категории',
         en: 'Icon/color will be taken from category',
@@ -628,8 +664,9 @@ const content = {
         ar: 'سيتم أخذ الأيقونة/اللون من الفئة',
         pl: 'Ikona/kolor zostanie pobrana z kategorii',
         it: 'L\'icona/colore verrà presa dalla categoria',
+        sk: 'Ikona/kolor zostanie pobrana z kategorii',
       }),
-      creating: t({ ru: 'Создание...', en: 'Creating...', kk: 'Құрылуда...', de: 'Erstellen...', fr: 'Création...', es: 'Creando...', pt: 'Criando...', tr: 'Oluşturuluyor...', uk: 'Створення...', zh: '创建中...', ar: 'جارٍ الإنشاء...', pl: 'Tworzenie...', it: 'Creazione...' }),
+      creating: t({ ru: 'Создание...', en: 'Creating...', kk: 'Құрылуда...', de: 'Erstellen...', fr: 'Création...', es: 'Creando...', pt: 'Criando...', tr: 'Oluşturuluyor...', uk: 'Створення...', zh: '创建中...', ar: 'جارٍ الإنشاء...', pl: 'Tworzenie...', it: 'Creazione...', sk: 'Tworzenie...'}),
     },
     createFromStatements: {
       title: t({
@@ -646,6 +683,7 @@ const content = {
         ar: 'إنشاء جدول من كشوف الحسابات',
         pl: 'Utwórz tabelę z wyciągów',
         it: 'Crea tabella dagli estratti conto',
+        sk: 'Utwórz tabelę z wyciągów',
       }),
       step1: t({
         ru: 'Шаг 1 - Выбор выписок',
@@ -661,6 +699,7 @@ const content = {
         ar: 'الخطوة 1 - اختيار كشوف الحسابات',
         pl: 'Krok 1 - Wybierz wyciągi',
         it: 'Passo 1 - Seleziona estratti conto',
+        sk: 'Krok 1 - Wybierz wyciągi',
       }),
       step2: t({
         ru: 'Шаг 2 - Параметры таблицы',
@@ -676,6 +715,7 @@ const content = {
         ar: 'الخطوة 2 - تفاصيل الجدول',
         pl: 'Krok 2 - Szczegóły tabeli',
         it: 'Passo 2 - Dettagli tabella',
+        sk: 'Krok 2 - Szczegóły tabeli',
       }),
       stepCounter: t({
         ru: 'Шаг {current} из {total}',
@@ -691,6 +731,7 @@ const content = {
         ar: 'الخطوة {current} من {total}',
         pl: 'Krok {current} z {total}',
         it: 'Passo {current} di {total}',
+        sk: 'Krok {current} z {total}',
       }),
       step1Description: t({
         ru: 'Выберите выписки для таблицы: используйте поиск, фильтр и группировку.',
@@ -706,6 +747,7 @@ const content = {
         ar: 'اختر كشوف الحسابات للجدول باستخدام البحث والفلاتر والتجميع.',
         pl: 'Wybierz wyciągi do tabeli korzystając z wyszukiwania, filtrów i grupowania.',
         it: 'Scegli gli estratti conto per la tabella usando ricerca, filtri e raggruppamento.',
+        sk: 'Wybierz wyciągi do tabeli korzystając z wyszukiwania, filtrów i grupowania.',
       }),
       step2Description: t({
         ru: 'Укажите детали таблицы и проверьте предварительный результат перед созданием.',
@@ -721,6 +763,7 @@ const content = {
         ar: 'حدد تفاصيل الجدول وراجع النتيجة قبل الإنشاء.',
         pl: 'Ustaw szczegóły tabeli i sprawdź wynik przed jej utworzeniem.',
         it: 'Imposta i dettagli della tabella e rivedi il risultato prima di creare la tabella.',
+        sk: 'Ustaw szczegóły tabeli i sprawdź wynik przed jej utworzeniem.',
       }),
       nameOptional: t({
         ru: 'Название (опционально)',
@@ -736,6 +779,7 @@ const content = {
         ar: 'الاسم (اختياري)',
         pl: 'Nazwa (opcjonalnie)',
         it: 'Nome (facoltativo)',
+        sk: 'Nazwa (opcjonalnie)',
       }),
       namePlaceholder: t({
         ru: 'Например: Платежи из выписки',
@@ -751,6 +795,7 @@ const content = {
         ar: 'مثال: مدفوعات من كشف الحساب',
         pl: 'np. Płatności z wyciągu',
         it: 'es. Pagamenti dall\'estratto conto',
+        sk: 'np. Płatności z wyciągu',
       }),
       descriptionOptional: t({
         ru: 'Описание (опционально)',
@@ -766,6 +811,7 @@ const content = {
         ar: 'الوصف (اختياري)',
         pl: 'Opis (opcjonalnie)',
         it: 'Descrizione (facoltativo)',
+        sk: 'Opis (opcjonalnie)',
       }),
       descriptionPlaceholder: t({
         ru: 'Опционально',
@@ -781,8 +827,9 @@ const content = {
         ar: 'اختياري',
         pl: 'Opcjonalnie',
         it: 'Facoltativo',
+        sk: 'Opcjonalnie',
       }),
-      statements: t({ ru: 'Выписки', en: 'Statements', kk: 'Үзінділер', de: 'Kontoauszüge', fr: 'Relevés', es: 'Estados de cuenta', pt: 'Extratos', tr: 'Ekstreler', uk: 'Виписки', zh: '对账单', ar: 'كشوف الحسابات', pl: 'Wyciągi', it: 'Estratti conto' }),
+      statements: t({ ru: 'Выписки', en: 'Statements', kk: 'Үзінділер', de: 'Kontoauszüge', fr: 'Relevés', es: 'Estados de cuenta', pt: 'Extratos', tr: 'Ekstreler', uk: 'Виписки', zh: '对账单', ar: 'كشوف الحسابات', pl: 'Wyciągi', it: 'Estratti conto', sk: 'Wyciągi'}),
       statementsLoading: t({
         ru: 'Загрузка...',
         en: 'Loading...',
@@ -797,6 +844,7 @@ const content = {
         ar: 'جارٍ التحميل...',
         pl: 'Ładowanie...',
         it: 'Caricamento...',
+        sk: 'Ładowanie...',
       }),
       statementsEmpty: t({
         ru: 'Нет выписок',
@@ -812,6 +860,7 @@ const content = {
         ar: 'لا توجد كشوف حسابات',
         pl: 'Brak wyciągów',
         it: 'Nessun estratto conto',
+        sk: 'Brak wyciągów',
       }),
       hint: t({
         ru: 'Доступны только обработанные выписки с транзакциями',
@@ -827,6 +876,7 @@ const content = {
         ar: 'تتوفر فقط كشوف الحسابات المعالجة التي تحتوي على معاملات',
         pl: 'Dostępne są tylko przetworzone wyciągi z transakcjami',
         it: 'Sono disponibili solo gli estratti conto elaborati con transazioni',
+        sk: 'Dostępne są tylko przetworzone wyciągi z transakcjami',
       }),
       searchPlaceholder: t({
         ru: 'Поиск по файлу, источнику или периоду',
@@ -842,6 +892,7 @@ const content = {
         ar: 'البحث بالملف أو المصدر أو الفترة',
         pl: 'Szukaj po pliku, źródle lub okresie',
         it: 'Cerca per file, fonte o periodo',
+        sk: 'Szukaj po pliku, źródle lub okresie',
       }),
       sourceFilter: t({
         ru: 'Источник',
@@ -857,6 +908,7 @@ const content = {
         ar: 'المصدر',
         pl: 'Źródło',
         it: 'Fonte',
+        sk: 'Źródło',
       }),
       sourceAll: t({
         ru: 'Все источники',
@@ -872,6 +924,7 @@ const content = {
         ar: 'كل المصادر',
         pl: 'Wszystkie źródła',
         it: 'Tutte le fonti',
+        sk: 'Wszystkie źródła',
       }),
       groupBy: t({
         ru: 'Группировать по',
@@ -887,6 +940,7 @@ const content = {
         ar: 'تجميع حسب',
         pl: 'Grupuj według',
         it: 'Raggruppa per',
+        sk: 'Grupuj według',
       }),
       groupBySource: t({
         ru: 'Источнику',
@@ -902,6 +956,7 @@ const content = {
         ar: 'المصدر',
         pl: 'Źródło',
         it: 'Fonte',
+        sk: 'Źródło',
       }),
       groupByPeriod: t({
         ru: 'Периоду',
@@ -917,6 +972,7 @@ const content = {
         ar: 'الفترة',
         pl: 'Okres',
         it: 'Periodo',
+        sk: 'Okres',
       }),
       sourceLabel: t({
         ru: 'Источник',
@@ -932,6 +988,7 @@ const content = {
         ar: 'المصدر',
         pl: 'Źródło',
         it: 'Fonte',
+        sk: 'Źródło',
       }),
       periodLabel: t({
         ru: 'Период',
@@ -947,6 +1004,7 @@ const content = {
         ar: 'الفترة',
         pl: 'Okres',
         it: 'Periodo',
+        sk: 'Okres',
       }),
       fileLabel: t({
         ru: 'Файл',
@@ -962,6 +1020,7 @@ const content = {
         ar: 'ملف',
         pl: 'Plik',
         it: 'File',
+        sk: 'Plik',
       }),
       rowsLabel: t({
         ru: 'Строки',
@@ -977,6 +1036,7 @@ const content = {
         ar: 'الصفوف',
         pl: 'Wiersze',
         it: 'Righe',
+        sk: 'Wiersze',
       }),
       selectedLabel: t({
         ru: 'Выбрано: {count}',
@@ -992,6 +1052,7 @@ const content = {
         ar: 'المحدد: {count}',
         pl: 'Wybrano: {count}',
         it: 'Selezionato: {count}',
+        sk: 'Wybrano: {count}',
       }),
       duplicateUploads: t({
         ru: 'Дубли загрузок: {count} (используется последняя)',
@@ -1007,6 +1068,7 @@ const content = {
         ar: 'الرفعات المكررة: {count} (يُستخدم الأحدث)',
         pl: 'Zduplikowane przesyłki: {count} (używana jest ostatnia)',
         it: 'Upload duplicati: {count} (viene usato il più recente)',
+        sk: 'Zduplikowane przesyłki: {count} (używana jest ostatnia)',
       }),
       noSearchResults: t({
         ru: 'По текущему фильтру выписки не найдены',
@@ -1022,6 +1084,7 @@ const content = {
         ar: 'لا توجد كشوف حسابات تطابق الفلاتر الحالية',
         pl: 'Brak wyciągów pasujących do bieżących filtrów',
         it: 'Nessun estratto conto corrisponde ai filtri attuali',
+        sk: 'Brak wyciągów pasujących do bieżących filtrów',
       }),
       previewTitle: t({
         ru: 'Предпросмотр',
@@ -1037,6 +1100,7 @@ const content = {
         ar: 'معاينة',
         pl: 'Podgląd',
         it: 'Anteprima',
+        sk: 'Podgląd',
       }),
       previewSummary: t({
         ru: 'Вы создаете таблицу из {statements} выписок',
@@ -1052,6 +1116,7 @@ const content = {
         ar: 'أنت تنشئ جدولاً من {statements} كشف حساب',
         pl: 'Tworzysz tabelę z {statements} wyciągów',
         it: 'Stai creando una tabella da {statements} estratti conto',
+        sk: 'Tworzysz tabelę z {statements} wyciągów',
       }),
       previewRows: t({
         ru: 'Итого строк: {rows}',
@@ -1067,6 +1132,7 @@ const content = {
         ar: 'إجمالي الصفوف: {rows}',
         pl: 'Łącznie wierszy: {rows}',
         it: 'Totale righe: {rows}',
+        sk: 'Łącznie wierszy: {rows}',
       }),
       previewEditable: t({
         ru: 'Вы можете изменить выбор выписок на шаге 1.',
@@ -1082,6 +1148,7 @@ const content = {
         ar: 'لا يزال بإمكانك تغيير اختيار كشوف الحسابات في الخطوة 1.',
         pl: 'Nadal możesz zmienić wybór wyciągów w kroku 1.',
         it: 'Puoi ancora modificare la selezione degli estratti conto al Passo 1.',
+        sk: 'Nadal możesz zmienić wybór wyciągów w kroku 1.',
       }),
       next: t({
         ru: 'Далее',
@@ -1097,6 +1164,7 @@ const content = {
         ar: 'التالي',
         pl: 'Dalej',
         it: 'Avanti',
+        sk: 'Dalej',
       }),
       back: t({
         ru: 'Назад',
@@ -1112,6 +1180,7 @@ const content = {
         ar: 'رجوع',
         pl: 'Wstecz',
         it: 'Indietro',
+        sk: 'Wstecz',
       }),
       createWithRows: t({
         ru: 'Создать ({rows} строк)',
@@ -1127,8 +1196,9 @@ const content = {
         ar: 'إنشاء ({rows} صف)',
         pl: 'Utwórz ({rows} wierszy)',
         it: 'Crea ({rows} righe)',
+        sk: 'Utwórz ({rows} wierszy)',
       }),
-      creating: t({ ru: 'Создание...', en: 'Creating...', kk: 'Құрылуда...', de: 'Erstellen...', fr: 'Création...', es: 'Creando...', pt: 'Criando...', tr: 'Oluşturuluyor...', uk: 'Створення...', zh: '创建中...', ar: 'جارٍ الإنشاء...', pl: 'Tworzenie...', it: 'Creazione...' }),
+      creating: t({ ru: 'Создание...', en: 'Creating...', kk: 'Құрылуда...', de: 'Erstellen...', fr: 'Création...', es: 'Creando...', pt: 'Criando...', tr: 'Oluşturuluyor...', uk: 'Створення...', zh: '创建中...', ar: 'جارٍ الإنشاء...', pl: 'Tworzenie...', it: 'Creazione...', sk: 'Tworzenie...'}),
     },
     confirmDelete: {
       title: t({
@@ -1145,6 +1215,7 @@ const content = {
         ar: 'حذف الجدول؟',
         pl: 'Usunąć tabelę?',
         it: 'Eliminare la tabella?',
+        sk: 'Usunąć tabelę?',
       }),
       messageWithNamePrefix: t({
         ru: 'Таблица "',
@@ -1160,6 +1231,7 @@ const content = {
         ar: 'الجدول "',
         pl: 'Tabela "',
         it: 'La tabella "',
+        sk: 'Tabela "',
       }),
       messageWithNameSuffix: t({
         ru: '" будет удалена вместе со всеми строками и колонками.',
@@ -1175,6 +1247,7 @@ const content = {
         ar: '" سيُحذف مع كل الصفوف والأعمدة.',
         pl: '" zostanie usunięta wraz ze wszystkimi wierszami i kolumnami.',
         it: '" verrà eliminata insieme a tutte le righe e colonne.',
+        sk: '" zostanie usunięta wraz ze wszystkimi wierszami i kolumnami.',
       }),
       messageNoName: t({
         ru: 'Таблица будет удалена вместе со всеми строками и колонками.',
@@ -1190,9 +1263,10 @@ const content = {
         ar: 'سيُحذف الجدول مع كل الصفوف والأعمدة.',
         pl: 'Tabela zostanie usunięta wraz ze wszystkimi wierszami i kolumnami.',
         it: 'La tabella verrà eliminata insieme a tutte le righe e colonne.',
+        sk: 'Tabela zostanie usunięta wraz ze wszystkimi wierszami i kolumnami.',
       }),
-      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina' }),
-      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla' }),
+      confirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою', de: 'Löschen', fr: 'Supprimer', es: 'Eliminar', pt: 'Excluir', tr: 'Sil', uk: 'Видалити', zh: '删除', ar: 'حذف', pl: 'Usuń', it: 'Elimina', sk: 'Usuń'}),
+      cancel: t({ ru: 'Отмена', en: 'Cancel', kk: 'Болдырмау', de: 'Abbrechen', fr: 'Annuler', es: 'Cancelar', pt: 'Cancelar', tr: 'İptal', uk: 'Скасувати', zh: '取消', ar: 'إلغاء', pl: 'Anuluj', it: 'Annulla', sk: 'Anuluj'}),
     },
   },
 } satisfies Dictionary;

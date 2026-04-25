@@ -4,6 +4,7 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { AlertCircle, FileText } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 interface PDFThumbnailProps {
   fileId: string;
@@ -147,7 +148,7 @@ function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
 
   if (errorMessage) {
     return (
-      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid #e5e7eb', borderRadius: 'var(--lumio-radius-md)', backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
+      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
         <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: '#9ca3af' }} />
         <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{errorMessage}</p>
       </div>
@@ -191,7 +192,7 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
   }
 
   return (
-    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: 'var(--lumio-radius-md)', overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
+    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: tokens.radius.md, overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
       {loading && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Spinner size={16} sx={{ color: '#4b5563' }} />

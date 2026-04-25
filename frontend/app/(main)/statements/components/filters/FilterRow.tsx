@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronRight } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 type FilterRowProps = {
   label: string;
@@ -20,7 +21,7 @@ export function FilterRow({ label, value, onClick, style }: FilterRowProps) {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 16,
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         padding: '16px',
         textAlign: 'left',
         transition: 'background-color 0.15s',

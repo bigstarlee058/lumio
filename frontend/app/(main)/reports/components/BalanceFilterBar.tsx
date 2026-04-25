@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { CalendarDays, Download, RefreshCcw } from '@/app/components/icons';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
+import { tokens } from '@/lib/theme-tokens';
 
 type BalanceExportFormat = 'excel' | 'pdf';
 
@@ -33,7 +34,7 @@ type BalanceFilterBarProps = {
 };
 
 const filterSelectStyle = { border: 'none', background: 'transparent', fontSize: 14, color: 'var(--foreground)', outline: 'none' };
-const buttonBase = { display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 12px', fontSize: 14, cursor: 'pointer', borderRadius: 'var(--lumio-radius-md)' };
+const buttonBase = { display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 12px', fontSize: 14, cursor: 'pointer', borderRadius: tokens.radius.md };
 const menuBtnStyle = { display: 'block', width: '100%', padding: '8px 12px', textAlign: 'left' as const, fontSize: 14, color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer' };
 const dateInputStyle = { border: '1px solid var(--border)', padding: '8px 12px', fontSize: 14, color: 'var(--foreground)', outline: 'none', background: 'var(--card)' };
 

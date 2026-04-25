@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import type { AppLanguage } from '../helpers/navigation-config';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
 
 interface Language {
   code: AppLanguage;
@@ -14,7 +15,7 @@ interface UseLanguageSelectionParams {
   locale: string;
   availableLocales: unknown[];
   setLocale: (code: AppLanguage) => void;
-  languageNames: { ru: { value: string }; en: { value: string }; kk: { value: string } };
+  languageNames: Record<string, { value: string }>;
   languageModal: { defaultLanguageNote: { value: string }; savedToastPrefix: { value: string } };
   setMobileMenuOpen: (open: boolean) => void;
 }
@@ -32,24 +33,24 @@ export function useLanguageSelection({
   const [languageSearch, setLanguageSearch] = useState('');
 
   const languages = useMemo(
-    (): Language[] =>
-      [
-        {
-          code: 'ru' as const,
-          label: languageNames.ru.value,
-          note: languageModal.defaultLanguageNote.value,
-        },
-        { code: 'en' as const, label: languageNames.en.value },
-        { code: 'kk' as const, label: languageNames.kk.value },
-      ].filter(l => availableLocales.map(String).includes(l.code)),
+    (): Language[] => {
+      const available = availableLocales.map(String);
+      return SUPPORTED_LOCALES
+        .filter(code => available.includes(code))
+        .map(code => ({
+          code,
+          label: languageNames[code]?.value ?? code,
+          ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
+        }));
+    },
     [availableLocales, languageModal.defaultLanguageNote, languageNames],
   );
 
   const normalizedLocale = (locale as AppLanguage) || 'ru';
 
   const languageLabel = useMemo(() => {
-    return languages.find(l => l.code === normalizedLocale)?.label ?? languageNames.ru.value;
-  }, [languages, languageNames.ru.value, normalizedLocale]);
+    return languages.find(l => l.code === normalizedLocale)?.label ?? (languageNames[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+  }, [languages, languageNames, normalizedLocale]);
 
   const filteredLanguages = useMemo(() => {
     const query = languageSearch.trim().toLowerCase();
@@ -62,13 +63,13 @@ export function useLanguageSelection({
       setLocale(code);
       setLanguageModalOpen(false);
       setLanguageSearch('');
-      const selectedLabel = languages.find(l => l.code === code)?.label ?? languageNames.ru.value;
+      const selectedLabel = languages.find(l => l.code === code)?.label ?? (languageNames[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
       toast.success(`${languageModal.savedToastPrefix.value}: ${selectedLabel}`);
       setTimeout(() => {
         window.location.reload();
       }, 50);
     },
-    [languageModal.savedToastPrefix.value, languageNames.ru.value, languages, setLocale],
+    [languageModal.savedToastPrefix.value, languageNames, languages, setLocale],
   );
 
   const openLanguageMenu = useCallback(() => {

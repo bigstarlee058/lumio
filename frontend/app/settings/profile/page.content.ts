@@ -17,6 +17,7 @@ const content = {
       ar: 'سجّل الدخول لإدارة ملفك الشخصي.',
       pl: 'Zaloguj się, aby zarządzać profilem.',
       it: 'Accedi per gestire il tuo profilo.',
+      sk: 'Zaloguj się, aby zarządzać profilem.',
     }),
     title: t({
       ru: 'Настройки профиля',
@@ -32,6 +33,7 @@ const content = {
       ar: 'إعدادات الملف الشخصي',
       pl: 'Ustawienia profilu',
       it: 'Impostazioni profilo',
+      sk: 'Ustawienia profilu',
     }),
     subtitle: t({
       ru: 'Обновите контактный email и пароль. Изменения вступают в силу сразу после сохранения.',
@@ -47,6 +49,7 @@ const content = {
       ar: 'حدّث بريدك الإلكتروني للتواصل وكلمة المرور. تسري التغييرات فور الحفظ.',
       pl: 'Zaktualizuj kontaktowy e-mail i hasło. Zmiany wchodzą w życie natychmiast po zapisaniu.',
       it: 'Aggiorna la tua email di contatto e la password. Le modifiche hanno effetto immediatamente dopo il salvataggio.',
+      sk: 'Zaktualizuj kontaktowy e-mail i hasło. Zmiany wchodzą w życie natychmiast po zapisaniu.',
     }),
     navigation: {
       title: t({
@@ -63,6 +66,7 @@ const content = {
         ar: 'الأقسام',
         pl: 'Sekcje',
         it: 'Sezioni',
+        sk: 'Sekcje',
       }),
       sectionLabel: t({
         ru: 'Раздел',
@@ -78,10 +82,11 @@ const content = {
         ar: 'قسم',
         pl: 'Sekcja',
         it: 'Sezione',
+        sk: 'Sekcja',
       }),
     },
     changelogCard: {
-      title: t({ ru: 'Changelog', en: 'Changelog', kk: 'Changelog', de: 'Changelog', fr: 'Changelog', es: 'Changelog', pt: 'Changelog', tr: 'Changelog', uk: 'Changelog', zh: 'Changelog', ar: 'Changelog', pl: 'Changelog', it: 'Changelog' }),
+      title: t({ ru: 'Changelog', en: 'Changelog', kk: 'Changelog', de: 'Changelog', fr: 'Changelog', es: 'Changelog', pt: 'Changelog', tr: 'Changelog', uk: 'Changelog', zh: 'Changelog', ar: 'Changelog', pl: 'Changelog', it: 'Changelog', sk: 'Changelog'}),
       description: t({
         ru: 'Краткая лента обновлений продукта.',
         en: 'A compact stream of product updates.',
@@ -96,6 +101,7 @@ const content = {
         ar: 'تدفق مدمج لتحديثات المنتج.',
         pl: 'Zwarty strumień aktualizacji produktu.',
         it: 'Un flusso compatto di aggiornamenti del prodotto.',
+        sk: 'Zwarty strumień aktualizacji produktu.',
       }),
       loading: t({
         ru: 'Загружаем changelog...',
@@ -111,6 +117,7 @@ const content = {
         ar: 'جارٍ تحميل changelog...',
         pl: 'Ładowanie changelog...',
         it: 'Caricamento changelog...',
+        sk: 'Ładowanie changelog...',
       }),
       empty: t({
         ru: 'Пока нет опубликованных обновлений.',
@@ -126,6 +133,7 @@ const content = {
         ar: 'لا توجد تحديثات منشورة حتى الآن.',
         pl: 'Brak opublikowanych aktualizacji.',
         it: 'Nessun aggiornamento pubblicato ancora.',
+        sk: 'Brak opublikowanych aktualizacji.',
       }),
       openDetails: t({
         ru: 'Открыть детали',
@@ -141,6 +149,7 @@ const content = {
         ar: 'فتح التفاصيل',
         pl: 'Otwórz szczegóły',
         it: 'Apri dettagli',
+        sk: 'Otwórz szczegóły',
       }),
       releaseLabel: t({
         ru: 'Релиз',
@@ -156,6 +165,7 @@ const content = {
         ar: 'الإصدار',
         pl: 'Wydanie',
         it: 'Release',
+        sk: 'Wydanie',
       }),
       closeLabel: t({
         ru: 'Закрыть changelog',
@@ -171,6 +181,7 @@ const content = {
         ar: 'إغلاق changelog',
         pl: 'Zamknij changelog',
         it: 'Chiudi changelog',
+        sk: 'Zamknij changelog',
       }),
     },
     validation: {
@@ -188,6 +199,7 @@ const content = {
         ar: 'أدخل كلمة مرورك الحالية للتأكيد.',
         pl: 'Podaj aktualne hasło, aby potwierdzić.',
         it: 'Inserisci la tua password attuale per confermare.',
+        sk: 'Podaj aktualne hasło, aby potwierdzić.',
       }),
       passwordMismatch: t({
         ru: 'Новый пароль и подтверждение не совпадают.',
@@ -203,10 +215,11 @@ const content = {
         ar: 'كلمة المرور الجديدة والتأكيد غير متطابقين.',
         pl: 'Nowe hasło i potwierdzenie nie są zgodne.',
         it: 'La nuova password e la conferma non coincidono.',
+        sk: 'Nowe hasło i potwierdzenie nie są zgodne.',
       }),
     },
     emailCard: {
-      title: t({ ru: 'Email', en: 'Email', kk: 'Email', de: 'E-Mail', fr: 'E-mail', es: 'Correo electrónico', pt: 'E-mail', tr: 'E-posta', uk: 'Email', zh: '邮箱', ar: 'البريد الإلكتروني', pl: 'E-mail', it: 'Email' }),
+      title: t({ ru: 'Email', en: 'Email', kk: 'Email', de: 'E-Mail', fr: 'E-mail', es: 'Correo electrónico', pt: 'E-mail', tr: 'E-posta', uk: 'Email', zh: '邮箱', ar: 'البريد الإلكتروني', pl: 'E-mail', it: 'Email', sk: 'E-mail'}),
       newEmailLabel: t({
         ru: 'Новый email',
         en: 'New email',
@@ -221,6 +234,7 @@ const content = {
         ar: 'البريد الإلكتروني الجديد',
         pl: 'Nowy e-mail',
         it: 'Nuova email',
+        sk: 'Nowy e-mail',
       }),
       currentPasswordLabel: t({
         ru: 'Текущий пароль',
@@ -236,6 +250,7 @@ const content = {
         ar: 'كلمة المرور الحالية',
         pl: 'Aktualne hasło',
         it: 'Password attuale',
+        sk: 'Aktualne hasło',
       }),
       currentPasswordHelp: t({
         ru: 'Мы запрашиваем пароль, чтобы подтвердить смену email.',
@@ -251,6 +266,7 @@ const content = {
         ar: 'نطلب كلمة مرورك لتأكيد تغيير البريد الإلكتروني.',
         pl: 'Prosimy o hasło, aby potwierdzić zmianę e-maila.',
         it: 'Chiediamo la tua password per confermare la modifica dell\'email.',
+        sk: 'Prosimy o hasło, aby potwierdzić zmianę e-maila.',
       }),
       submit: t({
         ru: 'Обновить email',
@@ -266,6 +282,7 @@ const content = {
         ar: 'تحديث البريد الإلكتروني',
         pl: 'Zaktualizuj e-mail',
         it: 'Aggiorna email',
+        sk: 'Zaktualizuj e-mail',
       }),
       successFallback: t({
         ru: 'Email успешно обновлён.',
@@ -281,6 +298,7 @@ const content = {
         ar: 'تم تحديث البريد الإلكتروني بنجاح.',
         pl: 'E-mail zaktualizowany pomyślnie.',
         it: 'Email aggiornata con successo.',
+        sk: 'E-mail zaktualizowany pomyślnie.',
       }),
       errorFallback: t({
         ru: 'Не удалось обновить email.',
@@ -296,6 +314,7 @@ const content = {
         ar: 'فشل تحديث البريد الإلكتروني.',
         pl: 'Nie udało się zaktualizować e-maila.',
         it: 'Impossibile aggiornare l\'email.',
+        sk: 'Nie udało się zaktualizować e-maila.',
       }),
     },
     profileCard: {
@@ -313,6 +332,7 @@ const content = {
         ar: 'الملف الشخصي',
         pl: 'Profil',
         it: 'Profilo',
+        sk: 'Profil',
       }),
       nameLabel: t({
         ru: 'Имя',
@@ -328,6 +348,7 @@ const content = {
         ar: 'الاسم',
         pl: 'Imię',
         it: 'Nome',
+        sk: 'Imię',
       }),
       languageLabel: t({
         ru: 'Язык интерфейса',
@@ -343,6 +364,7 @@ const content = {
         ar: 'لغة الواجهة',
         pl: 'Język',
         it: 'Lingua',
+        sk: 'Język',
       }),
       timeZoneLabel: t({
         ru: 'Часовой пояс',
@@ -358,6 +380,7 @@ const content = {
         ar: 'المنطقة الزمنية',
         pl: 'Strefa czasowa',
         it: 'Fuso orario',
+        sk: 'Strefa czasowa',
       }),
       timeZoneHelp: t({
         ru: 'Оставьте «Авто», чтобы использовать часовой пояс устройства.',
@@ -373,6 +396,7 @@ const content = {
         ar: 'احتفظ بـ «تلقائي» لاستخدام المنطقة الزمنية للجهاز.',
         pl: 'Zostaw «Auto», aby używać strefy czasowej urządzenia.',
         it: 'Mantieni "Auto" per usare il fuso orario del dispositivo.',
+        sk: 'Zostaw «Auto», aby używać strefy czasowej urządzenia.',
       }),
       submit: t({
         ru: 'Сохранить',
@@ -388,6 +412,7 @@ const content = {
         ar: 'حفظ',
         pl: 'Zapisz',
         it: 'Salva',
+        sk: 'Zapisz',
       }),
       unsavedChanges: t({
         ru: 'Есть несохранённые изменения.',
@@ -403,6 +428,7 @@ const content = {
         ar: 'توجد تغييرات غير محفوظة.',
         pl: 'Niezapisane zmiany.',
         it: 'Modifiche non salvate.',
+        sk: 'Niezapisane zmiany.',
       }),
       successFallback: t({
         ru: 'Профиль обновлён.',
@@ -418,6 +444,7 @@ const content = {
         ar: 'تم تحديث الملف الشخصي.',
         pl: 'Profil zaktualizowany.',
         it: 'Profilo aggiornato.',
+        sk: 'Profil zaktualizowany.',
       }),
       errorFallback: t({
         ru: 'Не удалось обновить профиль.',
@@ -433,16 +460,17 @@ const content = {
         ar: 'فشل تحديث الملف الشخصي.',
         pl: 'Nie udało się zaktualizować profilu.',
         it: 'Impossibile aggiornare il profilo.',
+        sk: 'Nie udało się zaktualizować profilu.',
       }),
       languages: {
-        ru: t({ ru: 'Русский', en: 'Русский', kk: 'Русский', de: 'Русский', fr: 'Русский', es: 'Русский', pt: 'Русский', tr: 'Русский', uk: 'Русский', zh: 'Русский', ar: 'Русский', pl: 'Русский', it: 'Русский' }),
-        en: t({ ru: 'English', en: 'English', kk: 'English', de: 'English', fr: 'English', es: 'English', pt: 'English', tr: 'English', uk: 'English', zh: 'English', ar: 'English', pl: 'English', it: 'English' }),
-        kk: t({ ru: 'Қазақша', en: 'Қазақша', kk: 'Қазақша', de: 'Қазақша', fr: 'Қазақша', es: 'Қазақша', pt: 'Қазақша', tr: 'Қазақша', uk: 'Қазақша', zh: 'Қазақша', ar: 'Қазақша', pl: 'Қазақша', it: 'Қазақша' }),
-        auto: t({ ru: 'Авто', en: 'Auto', kk: 'Авто', de: 'Auto', fr: 'Auto', es: 'Auto', pt: 'Auto', tr: 'Otomatik', uk: 'Авто', zh: '自动', ar: 'تلقائي', pl: 'Auto', it: 'Auto' }),
+        ru: t({ ru: 'Русский', en: 'Русский', kk: 'Русский', de: 'Русский', fr: 'Русский', es: 'Русский', pt: 'Русский', tr: 'Русский', uk: 'Русский', zh: 'Русский', ar: 'Русский', pl: 'Русский', it: 'Русский', sk: 'Русский'}),
+        en: t({ ru: 'English', en: 'English', kk: 'English', de: 'English', fr: 'English', es: 'English', pt: 'English', tr: 'English', uk: 'English', zh: 'English', ar: 'English', pl: 'English', it: 'English', sk: 'English'}),
+        kk: t({ ru: 'Қазақша', en: 'Қазақша', kk: 'Қазақша', de: 'Қазақша', fr: 'Қазақша', es: 'Қазақша', pt: 'Қазақша', tr: 'Қазақша', uk: 'Қазақша', zh: 'Қазақша', ar: 'Қазақша', pl: 'Қазақша', it: 'Қазақша', sk: 'Қазақша'}),
+        auto: t({ ru: 'Авто', en: 'Auto', kk: 'Авто', de: 'Auto', fr: 'Auto', es: 'Auto', pt: 'Auto', tr: 'Otomatik', uk: 'Авто', zh: '自动', ar: 'تلقائي', pl: 'Auto', it: 'Auto', sk: 'Auto'}),
       },
       timeZones: {
-        auto: t({ ru: 'Авто', en: 'Auto', kk: 'Авто', de: 'Auto', fr: 'Auto', es: 'Auto', pt: 'Auto', tr: 'Otomatik', uk: 'Авто', zh: '自动', ar: 'تلقائي', pl: 'Auto', it: 'Auto' }),
-        utc: t({ ru: 'UTC', en: 'UTC', kk: 'UTC', de: 'UTC', fr: 'UTC', es: 'UTC', pt: 'UTC', tr: 'UTC', uk: 'UTC', zh: 'UTC', ar: 'UTC', pl: 'UTC', it: 'UTC' }),
+        auto: t({ ru: 'Авто', en: 'Auto', kk: 'Авто', de: 'Auto', fr: 'Auto', es: 'Auto', pt: 'Auto', tr: 'Otomatik', uk: 'Авто', zh: '自动', ar: 'تلقائي', pl: 'Auto', it: 'Auto', sk: 'Auto'}),
+        utc: t({ ru: 'UTC', en: 'UTC', kk: 'UTC', de: 'UTC', fr: 'UTC', es: 'UTC', pt: 'UTC', tr: 'UTC', uk: 'UTC', zh: 'UTC', ar: 'UTC', pl: 'UTC', it: 'UTC', sk: 'UTC'}),
         europeMoscow: t({
           ru: 'Europe/Moscow',
           en: 'Europe/Moscow',
@@ -457,6 +485,7 @@ const content = {
           ar: 'Europe/Moscow',
           pl: 'Europe/Moscow',
           it: 'Europe/Moscow',
+          sk: 'Europe/Moscow',
         }),
         asiaAlmaty: t({
           ru: 'Asia/Almaty',
@@ -472,6 +501,7 @@ const content = {
           ar: 'Asia/Almaty',
           pl: 'Asia/Almaty',
           it: 'Asia/Almaty',
+          sk: 'Asia/Almaty',
         }),
       },
       editPhotoLabel: t({
@@ -488,6 +518,7 @@ const content = {
         ar: 'تعديل الصورة',
         pl: 'Edytuj zdjęcie',
         it: 'Modifica foto',
+        sk: 'Edytuj zdjęcie',
       }),
       avatarUpdated: t({
         ru: 'Аватар обновлен.',
@@ -503,6 +534,7 @@ const content = {
         ar: 'تم تحديث الصورة الرمزية.',
         pl: 'Awatar zaktualizowany.',
         it: 'Avatar aggiornato.',
+        sk: 'Awatar zaktualizowany.',
       }),
       avatarError: t({
         ru: 'Не удалось обновить аватар.',
@@ -518,6 +550,7 @@ const content = {
         ar: 'فشل تحديث الصورة الرمزية.',
         pl: 'Nie udało się zaktualizować awatara.',
         it: 'Impossibile aggiornare l\'avatar.',
+        sk: 'Nie udało się zaktualizować awatara.',
       }),
       avatarSizeError: t({
         ru: 'Слишком большой файл. Максимум 2 МБ.',
@@ -533,6 +566,7 @@ const content = {
         ar: 'الملف كبير جدًا. الحد الأقصى 2 ميغابايت.',
         pl: 'Plik jest za duży. Maks. 2 MB.',
         it: 'File troppo grande. Massimo 2 MB.',
+        sk: 'Plik jest za duży. Maks. 2 MB.',
       }),
     },
     sessionsCard: {
@@ -550,6 +584,7 @@ const content = {
         ar: 'الجلسات',
         pl: 'Sesje',
         it: 'Sessioni',
+        sk: 'Sesje',
       }),
       lastLoginLabel: t({
         ru: 'Последний вход',
@@ -565,6 +600,7 @@ const content = {
         ar: 'آخر تسجيل دخول',
         pl: 'Ostatnie logowanie',
         it: 'Ultimo accesso',
+        sk: 'Ostatnie logowanie',
       }),
       activeSessionsLabel: t({
         ru: 'Активные устройства',
@@ -580,6 +616,7 @@ const content = {
         ar: 'الأجهزة النشطة',
         pl: 'Aktywne urządzenia',
         it: 'Dispositivi attivi',
+        sk: 'Aktywne urządzenia',
       }),
       currentSessionBadge: t({
         ru: 'Это устройство',
@@ -595,6 +632,7 @@ const content = {
         ar: 'هذا الجهاز',
         pl: 'To urządzenie',
         it: 'Questo dispositivo',
+        sk: 'To urządzenie',
       }),
       loadingLabel: t({
         ru: 'Загрузка сеансов...',
@@ -610,6 +648,7 @@ const content = {
         ar: 'جارٍ تحميل الجلسات...',
         pl: 'Ładowanie sesji...',
         it: 'Caricamento sessioni...',
+        sk: 'Ładowanie sesji...',
       }),
       emptySessionsLabel: t({
         ru: 'Активные сеансы не найдены.',
@@ -625,8 +664,9 @@ const content = {
         ar: 'لم يتم العثور على جلسات نشطة.',
         pl: 'Nie znaleziono aktywnych sesji.',
         it: 'Nessuna sessione attiva trovata.',
+        sk: 'Nie znaleziono aktywnych sesji.',
       }),
-      ipLabel: t({ ru: 'IP', en: 'IP', kk: 'IP', de: 'IP', fr: 'IP', es: 'IP', pt: 'IP', tr: 'IP', uk: 'IP', zh: 'IP', ar: 'IP', pl: 'IP', it: 'IP' }),
+      ipLabel: t({ ru: 'IP', en: 'IP', kk: 'IP', de: 'IP', fr: 'IP', es: 'IP', pt: 'IP', tr: 'IP', uk: 'IP', zh: 'IP', ar: 'IP', pl: 'IP', it: 'IP', sk: 'IP'}),
       lastActiveLabel: t({
         ru: 'Последняя активность',
         en: 'Last active',
@@ -641,6 +681,7 @@ const content = {
         ar: 'آخر نشاط',
         pl: 'Ostatnia aktywność',
         it: 'Ultima attività',
+        sk: 'Ostatnia aktywność',
       }),
       logoutSessionButton: t({
         ru: 'Выйти',
@@ -656,6 +697,7 @@ const content = {
         ar: 'تسجيل الخروج',
         pl: 'Wyloguj',
         it: 'Esci',
+        sk: 'Wyloguj',
       }),
       sessionLogoutSuccess: t({
         ru: 'Сеанс завершен.',
@@ -671,6 +713,7 @@ const content = {
         ar: 'تم إنهاء الجلسة.',
         pl: 'Sesja wylogowana.',
         it: 'Sessione disconnessa.',
+        sk: 'Sesja wylogowana.',
       }),
       sessionLogoutError: t({
         ru: 'Не удалось завершить сеанс.',
@@ -686,6 +729,7 @@ const content = {
         ar: 'فشل إنهاء الجلسة.',
         pl: 'Nie udało się wylogować sesji.',
         it: 'Impossibile disconnettere la sessione.',
+        sk: 'Nie udało się wylogować sesji.',
       }),
       sessionsLoadError: t({
         ru: 'Не удалось загрузить список сеансов.',
@@ -701,6 +745,7 @@ const content = {
         ar: 'فشل تحميل قائمة الجلسات.',
         pl: 'Nie udało się załadować listy sesji.',
         it: 'Impossibile caricare l\'elenco delle sessioni.',
+        sk: 'Nie udało się załadować listy sesji.',
       }),
       logoutAllHelp: t({
         ru: 'Завершает все активные сессии на других устройствах и в других браузерах.',
@@ -716,6 +761,7 @@ const content = {
         ar: 'ينهي جميع الجلسات النشطة على الأجهزة والمتصفحات الأخرى.',
         pl: 'Kończy wszystkie aktywne sesje na innych urządzeniach i przeglądarkach.',
         it: 'Termina tutte le sessioni attive su altri dispositivi e browser.',
+        sk: 'Kończy wszystkie aktywne sesje na innych urządzeniach i przeglądarkach.',
       }),
       securityHint: t({
         ru: 'Завершайте только знакомые сеансы. Выход с текущего устройства завершит текущую авторизацию.',
@@ -731,6 +777,7 @@ const content = {
         ar: 'أنهِ فقط الجلسات التي تعرفها. تسجيل الخروج من هذا الجهاز ينهي تسجيل دخولك الحالي.',
         pl: 'Kończ tylko znane sesje. Wylogowanie na tym urządzeniu kończy bieżące logowanie.',
         it: 'Disconnettiti solo dalle sessioni che riconosci. Il logout su questo dispositivo termina il tuo accesso corrente.',
+        sk: 'Kończ tylko znane sesje. Wylogowanie na tym urządzeniu kończy bieżące logowanie.',
       }),
       logoutSessionConfirm: t({
         ru: 'Завершить этот сеанс?',
@@ -746,6 +793,7 @@ const content = {
         ar: 'هل تريد إنهاء هذه الجلسة؟',
         pl: 'Zakończyć tę sesję?',
         it: 'Disconnettere questa sessione?',
+        sk: 'Zakończyć tę sesję?',
       }),
       logoutCurrentConfirm: t({
         ru: 'Выйти на этом устройстве? Потребуется повторный вход.',
@@ -761,6 +809,7 @@ const content = {
         ar: 'تسجيل الخروج من هذا الجهاز؟ ستحتاج إلى تسجيل الدخول مجددًا.',
         pl: 'Wylogować się na tym urządzeniu? Będziesz musiał zalogować się ponownie.',
         it: 'Disconnettersi su questo dispositivo? Dovrai accedere di nuovo.',
+        sk: 'Wylogować się na tym urządzeniu? Będziesz musiał zalogować się ponownie.',
       }),
       logoutAllConfirm: t({
         ru: 'Выйти со всех устройств? На каждом устройстве потребуется вход заново.',
@@ -776,6 +825,7 @@ const content = {
         ar: 'تسجيل الخروج من جميع الأجهزة؟ ستحتاج إلى تسجيل الدخول مجددًا على كل جهاز.',
         pl: 'Wylogować się ze wszystkich urządzeń? Na każdym urządzeniu będzie wymagane ponowne logowanie.',
         it: 'Disconnettersi da tutti i dispositivi? Dovrai accedere di nuovo su ogni dispositivo.',
+        sk: 'Wylogować się ze wszystkich urządzeń? Na każdym urządzeniu będzie wymagane ponowne logowanie.',
       }),
       logoutAllButton: t({
         ru: 'Выйти со всех устройств',
@@ -791,6 +841,7 @@ const content = {
         ar: 'تسجيل الخروج من جميع الأجهزة',
         pl: 'Wyloguj ze wszystkich urządzeń',
         it: 'Disconnetti da tutti i dispositivi',
+        sk: 'Wyloguj ze wszystkich urządzeń',
       }),
     },
     passwordCard: {
@@ -808,6 +859,7 @@ const content = {
         ar: 'كلمة المرور',
         pl: 'Hasło',
         it: 'Password',
+        sk: 'Hasło',
       }),
       currentPasswordLabel: t({
         ru: 'Текущий пароль',
@@ -823,6 +875,7 @@ const content = {
         ar: 'كلمة المرور الحالية',
         pl: 'Aktualne hasło',
         it: 'Password attuale',
+        sk: 'Aktualne hasło',
       }),
       newPasswordLabel: t({
         ru: 'Новый пароль',
@@ -838,6 +891,7 @@ const content = {
         ar: 'كلمة المرور الجديدة',
         pl: 'Nowe hasło',
         it: 'Nuova password',
+        sk: 'Nowe hasło',
       }),
       newPasswordHelp: t({
         ru: 'Минимум 8 символов.',
@@ -853,6 +907,7 @@ const content = {
         ar: '8 أحرف على الأقل.',
         pl: 'Co najmniej 8 znaków.',
         it: 'Almeno 8 caratteri.',
+        sk: 'Co najmniej 8 znaków.',
       }),
       confirmPasswordLabel: t({
         ru: 'Подтвердите новый пароль',
@@ -868,6 +923,7 @@ const content = {
         ar: 'تأكيد كلمة المرور الجديدة',
         pl: 'Potwierdź nowe hasło',
         it: 'Conferma nuova password',
+        sk: 'Potwierdź nowe hasło',
       }),
       submit: t({
         ru: 'Обновить пароль',
@@ -883,6 +939,7 @@ const content = {
         ar: 'تحديث كلمة المرور',
         pl: 'Zaktualizuj hasło',
         it: 'Aggiorna password',
+        sk: 'Zaktualizuj hasło',
       }),
       securityHint: t({
         ru: 'Используйте уникальный пароль и подтверждайте действие перед сохранением.',
@@ -898,6 +955,7 @@ const content = {
         ar: 'استخدم كلمة مرور فريدة وأكّد الإجراء قبل الحفظ.',
         pl: 'Używaj unikalnego hasła i potwierdź działanie przed zapisaniem.',
         it: 'Usa una password univoca e conferma l\'azione prima di salvare.',
+        sk: 'Używaj unikalnego hasła i potwierdź działanie przed zapisaniem.',
       }),
       confirmSubmit: t({
         ru: 'Обновить пароль сейчас? Возможно, потребуется заново войти на других устройствах.',
@@ -913,6 +971,7 @@ const content = {
         ar: 'تحديث كلمة المرور الآن؟ قد تحتاج إلى تسجيل الدخول مجددًا على الأجهزة الأخرى.',
         pl: 'Zaktualizować hasło teraz? Może być konieczne ponowne logowanie na innych urządzeniach.',
         it: 'Aggiornare la password ora? Potrebbe essere necessario accedere di nuovo su altri dispositivi.',
+        sk: 'Zaktualizować hasło teraz? Może być konieczne ponowne logowanie na innych urządzeniach.',
       }),
       successFallback: t({
         ru: 'Пароль успешно обновлён.',
@@ -928,6 +987,7 @@ const content = {
         ar: 'تم تحديث كلمة المرور بنجاح.',
         pl: 'Hasło zaktualizowane pomyślnie.',
         it: 'Password aggiornata con successo.',
+        sk: 'Hasło zaktualizowane pomyślnie.',
       }),
       errorFallback: t({
         ru: 'Не удалось обновить пароль.',
@@ -943,6 +1003,7 @@ const content = {
         ar: 'فشل تحديث كلمة المرور.',
         pl: 'Nie udało się zaktualizować hasła.',
         it: 'Impossibile aggiornare la password.',
+        sk: 'Nie udało się zaktualizować hasła.',
       }),
     },
     notificationsCard: {
@@ -960,6 +1021,7 @@ const content = {
         ar: 'الإشعارات',
         pl: 'Powiadomienia',
         it: 'Notifiche',
+        sk: 'Powiadomienia',
       }),
       description: t({
         ru: 'Выберите, какие уведомления хотите получать в колокольчике.',
@@ -975,6 +1037,7 @@ const content = {
         ar: 'اختر الإشعارات التي تريد تلقيها في الجرس.',
         pl: 'Wybierz, jakie powiadomienia chcesz otrzymywać w dzwonku.',
         it: 'Scegli quali notifiche vuoi ricevere nella campanella.',
+        sk: 'Wybierz, jakie powiadomienia chcesz otrzymywać w dzwonku.',
       }),
       loading: t({
         ru: 'Загрузка...',
@@ -990,6 +1053,7 @@ const content = {
         ar: 'جارٍ التحميل...',
         pl: 'Ładowanie...',
         it: 'Caricamento...',
+        sk: 'Ładowanie...',
       }),
       workspace: {
         title: t({
@@ -1006,6 +1070,7 @@ const content = {
           ar: 'نشاط مساحة العمل',
           pl: 'Aktywność workspace',
           it: 'Attività workspace',
+          sk: 'Aktywność workspace',
         }),
         description: t({
           ru: 'Уведомления о действиях других участников',
@@ -1021,6 +1086,7 @@ const content = {
           ar: 'إشعارات بشأن إجراءات الأعضاء الآخرين',
           pl: 'Powiadomienia o działaniach innych członków',
           it: 'Notifiche sulle azioni degli altri membri',
+          sk: 'Powiadomienia o działaniach innych członków',
         }),
       },
       system: {
@@ -1038,6 +1104,7 @@ const content = {
           ar: 'إشعارات النظام',
           pl: 'Powiadomienia systemowe',
           it: 'Notifiche di sistema',
+          sk: 'Powiadomienia systemowe',
         }),
         description: t({
           ru: 'Критичные события и ошибки обработки данных',
@@ -1053,6 +1120,7 @@ const content = {
           ar: 'الأحداث الحرجة وأخطاء معالجة البيانات',
           pl: 'Krytyczne zdarzenia i błędy przetwarzania danych',
           it: 'Eventi critici ed errori di elaborazione dati',
+          sk: 'Krytyczne zdarzenia i błędy przetwarzania danych',
         }),
       },
       items: {
@@ -1071,6 +1139,7 @@ const content = {
             ar: 'تحميل الكشوفات',
             pl: 'Przesyłanie wyciągów',
             it: 'Caricamento estratti',
+            sk: 'Przesyłanie wyciągów',
           }),
           description: t({
             ru: 'Когда участники загружают новые выписки',
@@ -1086,6 +1155,7 @@ const content = {
             ar: 'عندما يرفع الأعضاء كشوفات جديدة',
             pl: 'Gdy członkowie przesyłają nowe wyciągi',
             it: 'Quando i membri caricano nuovi estratti',
+            sk: 'Gdy członkowie przesyłają nowe wyciągi',
           }),
         },
         importCommitted: {
@@ -1103,6 +1173,7 @@ const content = {
             ar: 'استيراد المعاملات',
             pl: 'Import transakcji',
             it: 'Importazione transazioni',
+            sk: 'Import transakcji',
           }),
           description: t({
             ru: 'Когда участники подтверждают импорт транзакций',
@@ -1118,6 +1189,7 @@ const content = {
             ar: 'عندما يؤكد الأعضاء استيراد المعاملات',
             pl: 'Gdy członkowie potwierdzają import transakcji',
             it: 'Quando i membri confermano l\'importazione delle transazioni',
+            sk: 'Gdy członkowie potwierdzają import transakcji',
           }),
         },
         categoryChanges: {
@@ -1135,6 +1207,7 @@ const content = {
             ar: 'تغييرات الفئات',
             pl: 'Zmiany kategorii',
             it: 'Modifiche categorie',
+            sk: 'Zmiany kategorii',
           }),
           description: t({
             ru: 'Создание, изменение и удаление категорий',
@@ -1150,6 +1223,7 @@ const content = {
             ar: 'إنشاء الفئات وتحديثها وحذفها',
             pl: 'Tworzenie, aktualizacja i usuwanie kategorii',
             it: 'Creazione, aggiornamento ed eliminazione di categorie',
+            sk: 'Tworzenie, aktualizacja i usuwanie kategorii',
           }),
         },
         memberActivity: {
@@ -1167,6 +1241,7 @@ const content = {
             ar: 'نشاط الأعضاء',
             pl: 'Aktywność członków',
             it: 'Attività dei membri',
+            sk: 'Aktywność członków',
           }),
           description: t({
             ru: 'Приглашения и вступление новых участников',
@@ -1182,6 +1257,7 @@ const content = {
             ar: 'الدعوات وانضمام أعضاء جدد',
             pl: 'Zaproszenia i dołączanie nowych członków',
             it: 'Inviti e nuovi membri',
+            sk: 'Zaproszenia i dołączanie nowych członków',
           }),
         },
         dataDeleted: {
@@ -1199,6 +1275,7 @@ const content = {
             ar: 'حذف البيانات',
             pl: 'Usuwanie danych',
             it: 'Eliminazione dati',
+            sk: 'Usuwanie danych',
           }),
           description: t({
             ru: 'Удаление транзакций, выписок и других данных',
@@ -1214,6 +1291,7 @@ const content = {
             ar: 'حذف المعاملات والكشوفات والبيانات الأخرى',
             pl: 'Usuwanie transakcji, wyciągów i innych danych',
             it: 'Eliminazione di transazioni, estratti e altri dati',
+            sk: 'Usuwanie transakcji, wyciągów i innych danych',
           }),
         },
         workspaceUpdated: {
@@ -1231,6 +1309,7 @@ const content = {
             ar: 'إعدادات مساحة العمل',
             pl: 'Ustawienia workspace',
             it: 'Impostazioni workspace',
+            sk: 'Ustawienia workspace',
           }),
           description: t({
             ru: 'Изменение названия, валюты и других параметров',
@@ -1246,6 +1325,7 @@ const content = {
             ar: 'التغييرات في الاسم والعملة والإعدادات الأخرى',
             pl: 'Zmiany nazwy, waluty i innych parametrów',
             it: 'Modifiche a nome, valuta e altre impostazioni',
+            sk: 'Zmiany nazwy, waluty i innych parametrów',
           }),
         },
         parsingErrors: {
@@ -1263,6 +1343,7 @@ const content = {
             ar: 'أخطاء التحليل',
             pl: 'Błędy parsowania',
             it: 'Errori di parsing',
+            sk: 'Błędy parsowania',
           }),
           description: t({
             ru: 'Проблемы при обработке выписок',
@@ -1278,6 +1359,7 @@ const content = {
             ar: 'مشكلات أثناء معالجة الكشوفات',
             pl: 'Problemy podczas przetwarzania wyciągów',
             it: 'Problemi durante l\'elaborazione degli estratti',
+            sk: 'Problemy podczas przetwarzania wyciągów',
           }),
         },
         importFailures: {
@@ -1295,6 +1377,7 @@ const content = {
             ar: 'فشل الاستيراد',
             pl: 'Błędy importu',
             it: 'Errori di importazione',
+            sk: 'Błędy importu',
           }),
           description: t({
             ru: 'Импорт завершился с ошибкой',
@@ -1310,6 +1393,7 @@ const content = {
             ar: 'اكتمل الاستيراد بخطأ',
             pl: 'Import zakończony błędem',
             it: 'Importazione terminata con un errore',
+            sk: 'Import zakończony błędem',
           }),
         },
         uncategorizedItems: {
@@ -1327,6 +1411,7 @@ const content = {
             ar: 'العناصر غير المصنّفة',
             pl: 'Elementy bez kategorii',
             it: 'Elementi senza categoria',
+            sk: 'Elementy bez kategorii',
           }),
           description: t({
             ru: 'Транзакции и чеки, требующие категоризации',
@@ -1342,6 +1427,7 @@ const content = {
             ar: 'المعاملات والإيصالات التي تحتاج إلى تصنيف',
             pl: 'Transakcje i paragony wymagające kategoryzacji',
             it: 'Transazioni e ricevute che richiedono categorizzazione',
+            sk: 'Transakcje i paragony wymagające kategoryzacji',
           }),
         },
       },
@@ -1360,6 +1446,7 @@ const content = {
           ar: 'تم حفظ الإعدادات',
           pl: 'Ustawienia zapisane',
           it: 'Impostazioni salvate',
+          sk: 'Ustawienia zapisane',
         }),
       },
       errors: {
@@ -1377,6 +1464,7 @@ const content = {
           ar: 'فشل تحميل إعدادات الإشعارات',
           pl: 'Nie udało się załadować ustawień powiadomień',
           it: 'Impossibile caricare le impostazioni delle notifiche',
+          sk: 'Nie udało się załadować ustawień powiadomień',
         }),
         save: t({
           ru: 'Не удалось сохранить настройки уведомлений',
@@ -1392,6 +1480,7 @@ const content = {
           ar: 'فشل حفظ إعدادات الإشعارات',
           pl: 'Nie udało się zapisać ustawień powiadomień',
           it: 'Impossibile salvare le impostazioni delle notifiche',
+          sk: 'Nie udało się zapisać ustawień powiadomień',
         }),
       },
     },
@@ -1410,6 +1499,7 @@ const content = {
         ar: 'المظهر',
         pl: 'Wygląd',
         it: 'Aspetto',
+        sk: 'Wygląd',
       }),
       description: t({
         ru: 'Настройте тему приложения',
@@ -1425,6 +1515,7 @@ const content = {
         ar: 'تكوين مظهر التطبيق',
         pl: 'Skonfiguruj motyw aplikacji',
         it: 'Configura il tema dell\'applicazione',
+        sk: 'Skonfiguruj motyw aplikacji',
       }),
       themeLabel: t({
         ru: 'Тема',
@@ -1440,6 +1531,7 @@ const content = {
         ar: 'السمة',
         pl: 'Motyw',
         it: 'Tema',
+        sk: 'Motyw',
       }),
       themeHelp: t({
         ru: 'Выберите светлую, тёмную или автоматическую тему по расписанию.',
@@ -1455,6 +1547,7 @@ const content = {
         ar: 'اختر سمة فاتحة أو داكنة أو تلقائية مجدولة.',
         pl: 'Wybierz jasny, ciemny lub automatyczny motyw według harmonogramu.',
         it: 'Scegli un tema chiaro, scuro o automatico programmato.',
+        sk: 'Wybierz jasny, ciemny lub automatyczny motyw według harmonogramu.',
       }),
       light: t({
         ru: 'Светлая',
@@ -1470,6 +1563,7 @@ const content = {
         ar: 'فاتح',
         pl: 'Jasny',
         it: 'Chiaro',
+        sk: 'Jasny',
       }),
       dark: t({
         ru: 'Тёмная',
@@ -1485,6 +1579,7 @@ const content = {
         ar: 'داكن',
         pl: 'Ciemny',
         it: 'Scuro',
+        sk: 'Ciemny',
       }),
       auto: t({
         ru: 'Авто',
@@ -1500,6 +1595,7 @@ const content = {
         ar: 'تلقائي',
         pl: 'Auto',
         it: 'Auto',
+        sk: 'Auto',
       }),
       active: t({
         ru: 'Активная тема',
@@ -1515,6 +1611,7 @@ const content = {
         ar: 'السمة النشطة',
         pl: 'Aktywny motyw',
         it: 'Tema attivo',
+        sk: 'Aktywny motyw',
       }),
       followsSystem: t({
         ru: 'Светлая тема включается в 07:00, тёмная — в 19:00.',
@@ -1530,6 +1627,7 @@ const content = {
         ar: 'تُفعَّل السمة الفاتحة في 07:00 والداكنة في 19:00.',
         pl: 'Jasny motyw włącza się o 07:00, ciemny o 19:00.',
         it: 'Il tema chiaro si attiva alle 07:00, quello scuro alle 19:00.',
+        sk: 'Jasny motyw włącza się o 07:00, ciemny o 19:00.',
       }),
     },
   },

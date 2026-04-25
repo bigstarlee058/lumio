@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from '@/app/components/icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
+import { tokens } from '@/lib/theme-tokens';
 
 type BalanceExportFormat = 'excel' | 'pdf';
 
@@ -442,7 +443,7 @@ function BalanceSheet(): React.JSX.Element {
                 fontSize: 14,
                 color: 'var(--muted-foreground)',
                 cursor: 'pointer',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
               }}
             >
               <RefreshCcw size={16} />
@@ -465,7 +466,7 @@ function BalanceSheet(): React.JSX.Element {
                 fontSize: 14,
                 color: 'var(--foreground)',
                 cursor: 'pointer',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
               }}
             >
               {exportingFormat ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : <Download size={16} />}

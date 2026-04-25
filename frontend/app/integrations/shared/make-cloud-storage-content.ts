@@ -14,6 +14,7 @@ type LocalizedLabel = {
   ar: string;
   pl: string;
   it: string;
+  sk: string;
 };
 
 type CloudStorageProvider = {
@@ -44,6 +45,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
         ar: 'جارٍ التحميل...',
         pl: 'Ładowanie...',
         it: 'Caricamento...',
+        sk: 'Ładowanie...',
       }),
       header: {
         title: t(provider.name),
@@ -61,6 +63,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: `قم بتوصيل ${provider.name.ar} لمزامنة الكشوفات واستيراد الملفات.`,
           pl: `Połącz ${provider.name.pl}, aby synchronizować wyciągi i importować pliki.`,
           it: `Connetti ${provider.name.it} per sincronizzare gli estratti e importare file.`,
+          sk: `Połącz ${provider.name.pl}, aby synchronizować wyciągi i importować pliki.`,
         }),
       },
       status: {
@@ -78,6 +81,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'متصل',
           pl: 'Połączone',
           it: 'Connesso',
+          sk: 'Połączone',
         }),
         disconnected: t({
           ru: 'Не подключено',
@@ -93,6 +97,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'غير متصل',
           pl: 'Niepołączone',
           it: 'Non connesso',
+          sk: 'Niepołączone',
         }),
         needsReauth: t({
           ru: 'Требуется повторная авторизация',
@@ -108,6 +113,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'يتطلب إعادة التفويض',
           pl: 'Wymagana ponowna autoryzacja',
           it: 'Riautorizzazione richiesta',
+          sk: 'Wymagana ponowna autoryzacja',
         }),
       },
       actions: {
@@ -125,6 +131,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'اتصال',
           pl: 'Połącz',
           it: 'Connetti',
+          sk: 'Połącz',
         }),
         reconnect: t({
           ru: 'Переподключить',
@@ -140,6 +147,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'إعادة الاتصال',
           pl: 'Połącz ponownie',
           it: 'Riconnetti',
+          sk: 'Połącz ponownie',
         }),
         disconnect: t({
           ru: 'Отключить',
@@ -155,6 +163,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'قطع الاتصال',
           pl: 'Rozłącz',
           it: 'Disconnetti',
+          sk: 'Rozłącz',
         }),
         syncNow: t({
           ru: 'Синхронизировать сейчас',
@@ -170,6 +179,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'مزامنة الآن',
           pl: 'Synchronizuj teraz',
           it: 'Sincronizza ora',
+          sk: 'Synchronizuj teraz',
         }),
         pickFolder: t({
           ru: 'Выбрать папку',
@@ -185,6 +195,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'اختر مجلدًا',
           pl: 'Wybierz folder',
           it: 'Scegli cartella',
+          sk: 'Wybierz folder',
         }),
       },
       settings: {
@@ -202,6 +213,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'إعدادات المزامنة',
           pl: 'Ustawienia synchronizacji',
           it: 'Impostazioni sincronizzazione',
+          sk: 'Ustawienia synchronizacji',
         }),
         syncEnabled: t({
           ru: 'Ежедневная синхронизация',
@@ -217,6 +229,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'مزامنة يومية',
           pl: 'Codzienna synchronizacja',
           it: 'Sincronizzazione giornaliera',
+          sk: 'Codzienna synchronizacja',
         }),
         syncTime: t({
           ru: 'Время синхронизации',
@@ -232,6 +245,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'وقت المزامنة',
           pl: 'Czas synchronizacji',
           it: 'Orario sincronizzazione',
+          sk: 'Czas synchronizacji',
         }),
         timeZone: t({
           ru: 'Часовой пояс',
@@ -247,6 +261,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'المنطقة الزمنية',
           pl: 'Strefa czasowa',
           it: 'Fuso orario',
+          sk: 'Strefa czasowa',
         }),
         folder: t(provider.folderLabel),
         folderPlaceholder: t({
@@ -263,6 +278,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'غير محدد (سيقوم Lumio بإنشائه)',
           pl: 'Nie wybrano (Lumio utworzy)',
           it: 'Non selezionata (Lumio ne creerà una)',
+          sk: 'Nie wybrano (Lumio utworzy)',
         }),
         lastSync: t({
           ru: 'Последняя синхронизация',
@@ -278,6 +294,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'آخر مزامنة',
           pl: 'Ostatnia synchronizacja',
           it: 'Ultima sincronizzazione',
+          sk: 'Ostatnia synchronizacja',
         }),
       },
       toasts: {
@@ -297,6 +314,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'تم قطع اتصال التكامل',
           pl: 'Integracja rozłączona',
           it: 'Integrazione disconnessa',
+          sk: 'Integracja rozłączona',
         }),
         syncStarted: t({
           ru: 'Синхронизация запущена',
@@ -312,6 +330,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'بدأت المزامنة',
           pl: 'Synchronizacja rozpoczęta',
           it: 'Sincronizzazione avviata',
+          sk: 'Synchronizacja rozpoczęta',
         }),
         settingsSaved: t({
           ru: 'Настройки сохранены',
@@ -327,6 +346,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'تم حفظ الإعدادات',
           pl: 'Ustawienia zapisane',
           it: 'Impostazioni salvate',
+          sk: 'Ustawienia zapisane',
         }),
       },
       errors: {
@@ -344,6 +364,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'فشل تحميل حالة التكامل',
           pl: 'Nie udało się załadować statusu integracji',
           it: 'Impossibile caricare lo stato di integrazione',
+          sk: 'Nie udało się załadować statusu integracji',
         }),
         connectFailed: t({
           ru: 'Не удалось начать подключение',
@@ -359,6 +380,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'فشل بدء الاتصال',
           pl: 'Nie udało się rozpocząć połączenia',
           it: 'Impossibile avviare la connessione',
+          sk: 'Nie udało się rozpocząć połączenia',
         }),
         disconnectFailed: t({
           ru: 'Не удалось отключить интеграцию',
@@ -374,6 +396,7 @@ export const makeCloudStorageContent = (provider: CloudStorageProvider) => {
           ar: 'فشل قطع اتصال التكامل',
           pl: 'Nie udało się rozłączyć integracji',
           it: 'Impossibile disconnettere l\'integrazione',
+          sk: 'Nie udało się rozłączyć integracji',
         }),
         pickerUnavailable: t(provider.pickerUnavailableLabel),
       },

@@ -9,14 +9,10 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
 import { Audit } from '../audit/decorators/audit.decorator';
@@ -33,7 +29,6 @@ interface LegacyBulkUpdateTransactionDto {
 }
 
 @Controller('transactions')
-@UseGuards(JwtAuthGuard)
 export class TransactionsController {
   constructor(
     private readonly transactionsService: TransactionsService,
@@ -41,8 +36,7 @@ export class TransactionsController {
   ) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_VIEW)
+  @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async findAll(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -87,8 +81,7 @@ export class TransactionsController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_VIEW)
+  @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -98,8 +91,7 @@ export class TransactionsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_EDIT)
+  @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   @Audit({ entityType: EntityType.TRANSACTION, includeDiff: true, isUndoable: true })
   async update(
     @Param('id') id: string,
@@ -112,8 +104,7 @@ export class TransactionsController {
 
   @Post('bulk-update')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_BULK_UPDATE)
+  @WorkspaceAuth(Permission.TRANSACTION_BULK_UPDATE)
   async bulkUpdate(
     @Body() body: BulkUpdateTransactionDto | LegacyBulkUpdateTransactionDto,
     @CurrentUser() user: User,
@@ -136,8 +127,7 @@ export class TransactionsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_DELETE)
+  @WorkspaceAuth(Permission.TRANSACTION_DELETE)
   @Audit({ entityType: EntityType.TRANSACTION, includeDiff: true, isUndoable: true })
   async remove(
     @Param('id') id: string,
@@ -148,8 +138,7 @@ export class TransactionsController {
   }
 
   @Get('duplicates/detect')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_VIEW)
+  @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async detectDuplicates(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -191,8 +180,7 @@ export class TransactionsController {
 
   @Post('duplicates/mark')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_EDIT)
+  @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async markDuplicates(
     @Body() body: { groups: Array<{ masterId: string; duplicateIds: string[] }> },
     @CurrentUser() user: User,
@@ -215,8 +203,7 @@ export class TransactionsController {
 
   @Post('duplicates/merge')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_EDIT)
+  @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async mergeDuplicates(
     @Body() body: { transactionIds: string[] },
     @CurrentUser() user: User,
@@ -237,8 +224,7 @@ export class TransactionsController {
 
   @Post(':id/unmark-duplicate')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.TRANSACTION_EDIT)
+  @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async unmarkDuplicate(
     @Param('id') id: string,
     @CurrentUser() user: User,

@@ -19,6 +19,7 @@ import { AVAILABLE_BACKGROUNDS } from '../constants';
 import { BackgroundSelector } from './BackgroundSelector';
 import { CurrencySelector } from './CurrencySelector';
 import { ServiceIntegrationSuggestions } from './ServiceIntegrationSuggestions';
+import { tokens } from '@/lib/theme-tokens';
 
 type WorkspaceCreatePayload = { name: string; description?: string; backgroundImage: string | null; currency: string | null };
 type ApiErrorLike = { response?: { data?: { message?: string } } };
@@ -131,7 +132,7 @@ type CurrencyDrawerProps = { isOpen: boolean; selectedCurrency: string | null; o
 function CurrencyDrawerTitle({ onClose }: { onClose: () => void }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-      <button type="button" onClick={onClose} style={{ borderRadius: 'var(--lumio-radius-full)', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }} aria-label="Close currency drawer"><ChevronLeft size={20} /></button>
+      <button type="button" onClick={onClose} style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }} aria-label="Close currency drawer"><ChevronLeft size={20} /></button>
       <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>Select a currency</Typography>
     </Box>
   );

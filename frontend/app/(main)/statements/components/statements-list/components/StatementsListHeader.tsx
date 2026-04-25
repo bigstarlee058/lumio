@@ -9,6 +9,7 @@ import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { ChevronDown, Columns2, Search, SlidersHorizontal } from '@/app/components/icons';
 import { BulkActionsBar } from './BulkActionsBar';
 import { StatementsDuplicateGroup } from './StatementsDuplicateGroup';
+import { tokens } from '@/lib/theme-tokens';
 
 // ---------------------------------------------------------------------------
 // Shared option types
@@ -152,7 +153,7 @@ function FiltersButton({
         alignItems: 'center',
         gap: 6,
         whiteSpace: 'nowrap',
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         padding: '6px 8px',
         fontSize: 13,
         fontWeight: 500,
@@ -174,7 +175,7 @@ function FiltersButton({
             width: 20,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: 'var(--lumio-radius-full)',
+            borderRadius: tokens.radius.full,
             background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
             fontSize: 12,
             fontWeight: 600,
@@ -203,7 +204,7 @@ function ColumnsButton({
         alignItems: 'center',
         gap: 6,
         whiteSpace: 'nowrap',
-        borderRadius: 'var(--lumio-radius-md)',
+        borderRadius: tokens.radius.md,
         padding: '6px 8px',
         fontSize: 13,
         fontWeight: 500,

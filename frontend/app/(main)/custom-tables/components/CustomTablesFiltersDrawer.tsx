@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
 import { ChevronLeft } from '@/app/components/icons';
 import React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 
 type FilterOption<T extends string> = { value: T; label: string };
 type FiltersLabels = { title: string; resetFilters: string; viewResults: string; saveSearch: string; general: string; source: string; sort: string; any: string };
@@ -27,7 +28,7 @@ type CustomTablesFiltersDrawerProps = {
 type ActiveCountBadgeProps = { count: number };
 function ActiveCountBadge({ count }: ActiveCountBadgeProps): React.JSX.Element | null {
   if (count === 0) return null;
-  return <Box component="span" sx={{ ml: 1, display: 'inline-flex', height: 24, width: 24, alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-full)', bgcolor: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', fontWeight: 600 }}>{count}</Box>;
+  return <Box component="span" sx={{ ml: 1, display: 'inline-flex', height: 24, width: 24, alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, bgcolor: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', fontWeight: 600 }}>{count}</Box>;
 }
 
 type ViewResultsBtnProps = { label: string; activeCount: number; onClick: () => void };
@@ -82,7 +83,7 @@ function DrawerTitle({ screenTitle, isRoot, resetLabel, onBack, onClose, onReset
   return (
     <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <button type="button" onClick={isRoot ? onClose : onBack} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--lumio-radius-full)', padding: 8, color: '#6b7280', border: 'none', backgroundColor: 'transparent', cursor: 'pointer' }} aria-label={screenTitle}>
+        <button type="button" onClick={isRoot ? onClose : onBack} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, padding: 8, color: '#6b7280', border: 'none', backgroundColor: 'transparent', cursor: 'pointer' }} aria-label={screenTitle}>
           <ChevronLeft size={20} />
         </button>
         <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827' }}>{screenTitle}</span>

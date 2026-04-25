@@ -17,6 +17,7 @@ const integrationsTourContent = {
       ar: 'جولة التكاملات',
       pl: 'Tour integracji',
       it: 'Tour delle integrazioni',
+      sk: 'Tour integracji',
     }),
     description: t({
       ru: 'Подключение внешних сервисов к Lumio',
@@ -32,6 +33,7 @@ const integrationsTourContent = {
       ar: 'توصيل الخدمات الخارجية بـ Lumio',
       pl: 'Połącz zewnętrzne usługi z Lumio',
       it: 'Connetti servizi esterni a Lumio',
+      sk: 'Połącz zewnętrzne usługi z Lumio',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const integrationsTourContent = {
           ar: 'مرحباً بك في التكاملات',
           pl: 'Witaj w Integracjach',
           it: 'Benvenuto nelle Integrazioni',
+          sk: 'Witaj w Integracjach',
         }),
         description: t({
           ru: 'На этой странице собраны доступные подключения к внешним сервисам. Здесь вы выбираете нужный инструмент и переходите к его настройке.',
@@ -64,6 +67,7 @@ const integrationsTourContent = {
           ar: 'تعرض هذه الصفحة الخدمات الخارجية التي يمكن توصيلها بـ Lumio. إنها نقطة البداية لاختيار أداة وفتح سير إعدادها.',
           pl: 'Ta strona wyświetla zewnętrzne usługi, które mogą łączyć się z Lumio. Jest to punkt startowy do wyboru narzędzia i otwarcia jego przepływu konfiguracji.',
           it: 'Questa pagina elenca i servizi esterni che possono connettersi a Lumio. È il punto di partenza per scegliere uno strumento e aprire il suo flusso di configurazione.',
+          sk: 'Ta strona wyświetla zewnętrzne usługi, które mogą łączyć się z Lumio. Jest to punkt startowy do wyboru narzędzia i otwarcia jego przepływu konfiguracji.',
         }),
       },
       search: {
@@ -81,6 +85,7 @@ const integrationsTourContent = {
           ar: 'البحث في التكاملات',
           pl: 'Szukaj integracji',
           it: 'Cerca integrazioni',
+          sk: 'Szukaj integracji',
         }),
         description: t({
           ru: 'Поиск помогает быстро найти нужную интеграцию по названию или описанию, особенно когда список подключений становится длиннее.',
@@ -96,6 +101,7 @@ const integrationsTourContent = {
           ar: 'يساعدك البحث على العثور بسرعة على تكامل حسب الاسم أو الوصف، خاصة مع نمو الكتالوج.',
           pl: 'Wyszukiwanie pomaga szybko znaleźć integrację według nazwy lub opisu, zwłaszcza gdy katalog rośnie.',
           it: 'La ricerca ti aiuta a trovare rapidamente un\'integrazione per nome o descrizione, soprattutto man mano che il catalogo cresce.',
+          sk: 'Wyszukiwanie pomaga szybko znaleźć integrację według nazwy lub opisu, zwłaszcza gdy katalog rośnie.',
         }),
       },
       available: {
@@ -113,6 +119,7 @@ const integrationsTourContent = {
           ar: 'التكاملات المتاحة',
           pl: 'Dostępne integracje',
           it: 'Integrazioni disponibili',
+          sk: 'Dostępne integracje',
         }),
         description: t({
           ru: 'В этом разделе показаны сервисы, которые можно подключить. Карточки сгруппированы по типу, чтобы проще ориентироваться среди хранилищ, почты, таблиц и мессенджеров.',
@@ -128,6 +135,7 @@ const integrationsTourContent = {
           ar: 'تعرض هذه القسم الخدمات الجاهزة للتوصيل. تجمع البطاقات حسب الفئة لتسهيل التصفح بين أدوات التخزين والبريد الإلكتروني وجداول البيانات والمراسلة.',
           pl: 'Ta sekcja wyświetla usługi gotowe do połączenia. Karty są pogrupowane według kategorii, aby łatwiej przeglądać magazyny, e-mail, arkusze i narzędzia do wiadomości.',
           it: 'Questa sezione elenca i servizi pronti per essere connessi. Le schede sono raggruppate per categoria per facilitare la navigazione tra strumenti di storage, email, fogli di calcolo e messaggistica.',
+          sk: 'Ta sekcja wyświetla usługi gotowe do połączenia. Karty są pogrupowane według kategorii, aby łatwiej przeglądać magazyny, e-mail, arkusze i narzędzia do wiadomości.',
         }),
       },
       googleSheets: {
@@ -145,6 +153,7 @@ const integrationsTourContent = {
           ar: 'Google Sheets',
           pl: 'Google Sheets',
           it: 'Google Sheets',
+          sk: 'Google Sheets',
         }),
         description: t({
           ru: 'Карточка Google Sheets ведет в отдельный сценарий настройки интеграции. Отсюда начинается подключение таблиц для импорта, экспорта и синхронизации данных.',
@@ -160,6 +169,7 @@ const integrationsTourContent = {
           ar: 'تفتح بطاقة Google Sheets سير الإعداد المخصص. استخدمها لبدء توصيل جداول البيانات للاستيراد والتصدير ومزامنة البيانات.',
           pl: 'Karta Google Sheets otwiera dedykowany przepływ konfiguracji. Użyj jej, aby zacząć łączyć arkusze kalkulacyjne do importu, eksportu i synchronizacji danych.',
           it: 'La scheda Google Sheets apre il flusso di configurazione dedicato. Usala per iniziare a connettere fogli di calcolo per importazione, esportazione e sincronizzazione dati.',
+          sk: 'Karta Google Sheets otwiera dedykowany przepływ konfiguracji. Użyj jej, aby zacząć łączyć arkusze kalkulacyjne do importu, eksportu i synchronizacji danych.',
         }),
       },
       completed: {
@@ -177,6 +187,7 @@ const integrationsTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете, где искать и открывать интеграции. Следующий шаг - перейти в нужную карточку и закончить настройку конкретного сервиса.',
@@ -192,6 +203,7 @@ const integrationsTourContent = {
           ar: 'أنت تعرف الآن أين تبحث عن التكاملات وكيف تفتحها. الخطوة التالية هي الدخول إلى البطاقة الصحيحة وإتمام إعداد الخدمة المحددة.',
           pl: 'Teraz wiesz, gdzie szukać i otwierać integracje. Następny krok to wejście do właściwej karty i ukończenie konfiguracji konkretnej usługi.',
           it: 'Ora sai dove cercare e aprire le integrazioni. Il passo successivo è entrare nella scheda giusta e completare la configurazione del servizio specifico.',
+          sk: 'Teraz wiesz, gdzie szukać i otwierać integracje. Następny krok to wejście do właściwej karty i ukończenie konfiguracji konkretnej usługi.',
         }),
       },
     },

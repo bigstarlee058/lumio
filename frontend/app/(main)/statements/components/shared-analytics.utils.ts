@@ -2,6 +2,7 @@ export type ComparisonTrend = 'up' | 'down' | 'flat';
 export type SourceType = 'statement' | 'gmail';
 export type SourceChannel = 'bank' | 'receipt' | 'gmail';
 export type AggregateSortKey = 'amount' | 'average' | 'operations';
+export type AnalyticsFromOption = { id: string; label: string; description?: string | null; bankName?: string | null };
 
 type AggregateRow = {
   count: number;

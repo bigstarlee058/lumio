@@ -3,14 +3,18 @@
 import { Download } from '@/app/components/icons';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
 import { AuditEventDrawer } from './components/AuditEventDrawer';
 import { AuditFilterBar } from './components/AuditFilterBar';
 import { AuditRollbackModal } from './components/AuditRollbackModal';
 import { AuditTimeline } from './components/AuditTimeline';
 import { useAuditLoader } from './hooks/useAuditLoader';
 import { useAuditRollback } from './hooks/useAuditRollback';
+import { tokens } from '@/lib/theme-tokens';
 
 export default function AuditPage() {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const loader = useAuditLoader();
   const [selectedEvent, setSelectedEvent] = useState<import('@/lib/api/audit').AuditEvent | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -51,10 +55,10 @@ export default function AuditPage() {
             padding: '0 14px',
             fontSize: 13,
             fontWeight: 500,
-            color: 'var(--lumio-color-ink-700)',
-            background: 'var(--card-bg)',
-            border: '1px solid var(--lumio-color-ink-200)',
-            borderRadius: 'var(--lumio-radius-md)',
+            color: c.ink700,
+            background: c.surface,
+            border: `1px solid ${c.ink200}`,
+            borderRadius: tokens.radius.md,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             flexShrink: 0,
@@ -75,10 +79,10 @@ export default function AuditPage() {
             padding: '10px 14px',
             marginBottom: 16,
             fontSize: 13,
-            color: 'var(--lumio-color-danger)',
-            background: '#fff1f2',
-            border: '1px solid #fecdd3',
-            borderRadius: 'var(--lumio-radius-md)',
+            color: c.danger,
+            background: c.dangerSoft,
+            border: `1px solid ${c.danger}`,
+            borderRadius: tokens.radius.md,
           }}
         >
           {loader.error}

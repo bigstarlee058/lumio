@@ -1,0 +1,308 @@
+// app/styles/vendors/_tour-theme.scss
+// Driver.js tour styles — integrated with Lumio design system.
+@use '../abstracts' as *;
+
+/* Base popover container */
+.driver-popover {
+  background-color: $color-card-bg;
+  color: $color-foreground;
+  border-radius: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px
+    color-mix(in srgb, $color-border 60%, transparent);
+  max-width: 400px;
+  padding: 24px;
+  border: 1px solid $color-border;
+  z-index: 10001;
+  animation: driver-fade-in 0.2s ease-out;
+
+  @include dark {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Centered popovers (welcome/completion steps with no target element) */
+  &.tour-popover--centered {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translate(-50%, -50%) !important;
+    max-width: 500px;
+    text-align: center;
+
+    .driver-popover-title {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .driver-popover-description {
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .driver-popover-arrow {
+      display: none;
+    }
+  }
+}
+
+/* Title */
+.driver-popover-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: $color-primary;
+  line-height: 1.4;
+}
+
+/* Description */
+.driver-popover-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: $color-muted-foreground;
+  margin-bottom: 16px;
+
+  p {
+    margin: 0;
+  }
+
+  strong {
+    color: $color-foreground;
+    font-weight: 600;
+  }
+}
+
+/* Footer with buttons and progress */
+.driver-popover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+
+  &.driver-popover-footer-no-btns {
+    display: none;
+  }
+}
+
+/* Progress text */
+.driver-popover-progress-text {
+  font-size: 12px;
+  color: $color-muted-foreground;
+  font-weight: 500;
+}
+
+/* Buttons container */
+.driver-popover-navigation-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons */
+.driver-popover-next-btn,
+.driver-popover-prev-btn,
+.driver-popover-close-btn {
+  border-radius: 0;
+  padding: 8px 16px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* "Next" button */
+.driver-popover-next-btn {
+  background-color: $color-primary;
+  color: $color-primary-foreground;
+
+  &:hover {
+    background-color: $color-primary-hover;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px color-mix(in srgb, $color-primary 40%, transparent);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+
+    &:hover {
+      background-color: initial;
+      box-shadow: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-ring;
+    outline-offset: 2px;
+  }
+}
+
+/* "Back" button */
+.driver-popover-prev-btn {
+  background-color: transparent;
+  color: $color-muted-foreground;
+  border: 1px solid $color-border;
+
+  &:hover {
+    background-color: $color-muted;
+    color: $color-foreground;
+    border-color: color-mix(in srgb, $color-border 60%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+
+    &:hover {
+      background-color: initial;
+      box-shadow: none;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-ring;
+    outline-offset: 2px;
+  }
+}
+
+/* Close button */
+.driver-popover-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: transparent;
+  color: $color-muted-foreground;
+  padding: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $color-muted;
+    color: $color-foreground;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-ring;
+    outline-offset: 2px;
+  }
+}
+
+/* Popover arrow */
+.driver-popover-arrow {
+  border-color: $color-card-bg;
+}
+
+.driver-popover-arrow-side-top {
+  border-top-color: $color-card-bg;
+}
+
+.driver-popover-arrow-side-bottom {
+  border-bottom-color: $color-card-bg;
+}
+
+.driver-popover-arrow-side-left {
+  border-left-color: $color-card-bg;
+}
+
+.driver-popover-arrow-side-right {
+  border-right-color: $color-card-bg;
+}
+
+/* Highlighted element */
+.driver-active-element {
+  position: relative;
+  z-index: 10000 !important;
+  box-shadow: 0 0 0 3px #3b82f6, 0 0 0 7px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.5) !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Overlay */
+.driver-overlay {
+  background-color: transparent !important;
+  backdrop-filter: none;
+
+  @include dark {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Active zone (where highlighted element is located) */
+.driver-no-interaction {
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes driver-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Progress indicator */
+.driver-popover-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: $color-muted;
+  border-radius: 0;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    display: block;
+    height: 100%;
+    background-color: $color-primary;
+    transition: width 0.3s ease;
+  }
+}
+
+/* Adaptive for mobile */
+@media (max-width: 640px) {
+  .driver-popover {
+    max-width: calc(100vw - 32px);
+    padding: 20px;
+  }
+
+  .driver-popover-title {
+    font-size: 16px;
+  }
+
+  .driver-popover-description {
+    font-size: 13px;
+  }
+
+  .driver-popover-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .driver-popover-navigation-btns {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn {
+    flex: 1;
+  }
+}

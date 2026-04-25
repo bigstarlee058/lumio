@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import { CheckCircle2, Layers, Save, Trash2 } from '@/app/components/icons';
 import type { CategoryOption } from '../editHelpers';
 import { formatLabel, labelValue } from '../editHelpers';
+import { tokens } from '@/lib/theme-tokens';
 
 type EditCategoryMapperProps = {
   open: boolean;
@@ -72,7 +73,7 @@ type ExportConfirmDialogProps = {
   onConfirm: () => void;
 };
 
-const BTN_BASE = { borderRadius: 'var(--lumio-radius-md)', padding: '10px 24px', fontSize: 16, fontWeight: 500, cursor: 'pointer' } as const;
+const BTN_BASE = { borderRadius: tokens.radius.md, padding: '10px 24px', fontSize: 16, fontWeight: 500, cursor: 'pointer' } as const;
 const CANCEL_STYLE = { ...BTN_BASE, border: '1px solid #e5e7eb', background: 'var(--card-bg)', color: '#4b5563' } as const;
 const CONFIRM_STYLE = { ...BTN_BASE, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--primary)', color: '#fff', border: 'none' } as const;
 

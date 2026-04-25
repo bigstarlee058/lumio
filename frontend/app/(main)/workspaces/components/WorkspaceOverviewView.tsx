@@ -25,6 +25,7 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AVAILABLE_BACKGROUNDS } from '../constants';
 import { BackgroundSelector } from './BackgroundSelector';
+import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
@@ -229,7 +230,7 @@ export default function WorkspaceOverviewView() {
                 justifyContent: 'center',
                 width: 44,
                 height: 44,
-                borderRadius: 'var(--lumio-radius-sm)',
+                borderRadius: tokens.radius.sm,
                 bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
                 color: 'var(--primary)',
                 fontSize: 18,
@@ -294,7 +295,7 @@ export default function WorkspaceOverviewView() {
                 fontWeight: 500,
                 color: 'var(--foreground)',
                 cursor: 'pointer',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 opacity: savingBackground ? 0.6 : 1,
               }}
             >
@@ -311,7 +312,7 @@ export default function WorkspaceOverviewView() {
               maxWidth: 320,
               overflow: 'hidden',
               border: '1px solid var(--border)',
-              borderRadius: 'var(--lumio-radius-md)',
+              borderRadius: tokens.radius.md,
             }}
           >
             {resolveBackgroundSrc(currentWorkspace.backgroundImage) ? (
@@ -365,7 +366,7 @@ export default function WorkspaceOverviewView() {
                   fontSize: 14,
                   color: 'var(--foreground)',
                   outline: 'none',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   boxSizing: 'border-box',
                 }}
               />
@@ -393,7 +394,7 @@ export default function WorkspaceOverviewView() {
                   fontSize: 14,
                   color: 'var(--foreground)',
                   outline: 'none',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   boxSizing: 'border-box',
                   resize: 'vertical',
                 }}
@@ -425,7 +426,7 @@ export default function WorkspaceOverviewView() {
                   fontSize: 14,
                   color: 'var(--foreground)',
                   cursor: 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   boxSizing: 'border-box',
                 }}
               >
@@ -453,7 +454,7 @@ export default function WorkspaceOverviewView() {
                   fontWeight: 500,
                   color: '#fff',
                   cursor: !isDirty || saving ? 'not-allowed' : 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   opacity: !isDirty || saving ? 0.6 : 1,
                 }}
               >
@@ -500,7 +501,7 @@ export default function WorkspaceOverviewView() {
                   fontWeight: 500,
                   color: '#b91c1c',
                   cursor: deleting ? 'not-allowed' : 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   opacity: deleting ? 0.6 : 1,
                 }}
               >
@@ -524,7 +525,7 @@ export default function WorkspaceOverviewView() {
             <button
               type="button"
               onClick={() => setShowBackgroundPicker(false)}
-              style={{ borderRadius: 'var(--lumio-radius-full)', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
               aria-label="Close background drawer"
             >
               <ChevronLeft size={20} />
@@ -572,7 +573,7 @@ export default function WorkspaceOverviewView() {
                 setCurrencyDrawerOpen(false);
                 setCurrencySearch('');
               }}
-              style={{ borderRadius: 'var(--lumio-radius-full)', padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
               aria-label="Close currency drawer"
             >
               <ChevronLeft size={20} />
@@ -611,7 +612,7 @@ export default function WorkspaceOverviewView() {
                   fontSize: 14,
                   color: 'var(--foreground)',
                   outline: 'none',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   boxSizing: 'border-box',
                 }}
               />
@@ -631,7 +632,7 @@ export default function WorkspaceOverviewView() {
                   border: 'none',
                   padding: '16px',
                   cursor: 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   marginBottom: 8,
                 }}
               >
@@ -656,7 +657,7 @@ export default function WorkspaceOverviewView() {
                   border: 'none',
                   padding: '16px',
                   cursor: 'pointer',
-                  borderRadius: 'var(--lumio-radius-md)',
+                  borderRadius: tokens.radius.md,
                   marginBottom: 8,
                 }}
               >
@@ -688,7 +689,7 @@ export default function WorkspaceOverviewView() {
                         border: 'none',
                         padding: '12px',
                         cursor: 'pointer',
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                         textAlign: 'left',
                       }}
                     >
@@ -720,7 +721,7 @@ export default function WorkspaceOverviewView() {
                       border: 'none',
                       padding: '12px',
                       cursor: 'pointer',
-                      borderRadius: 'var(--lumio-radius-md)',
+                      borderRadius: tokens.radius.md,
                       textAlign: 'left',
                     }}
                   >
@@ -745,7 +746,7 @@ export default function WorkspaceOverviewView() {
                         border: 'none',
                         padding: '12px',
                         cursor: 'pointer',
-                        borderRadius: 'var(--lumio-radius-md)',
+                        borderRadius: tokens.radius.md,
                         textAlign: 'left',
                       }}
                     >
@@ -775,7 +776,7 @@ export default function WorkspaceOverviewView() {
         closeOnBackdropClick={!deleting}
         closeOnEscape={!deleting}
         title="Delete workspace?"
-        paperSx={{ borderRadius: 'var(--lumio-radius-xl)', border: '1px solid var(--border)', bgcolor: 'var(--card)', boxShadow: 24 }}
+        paperSx={{ borderRadius: tokens.radius.xl, border: '1px solid var(--border)', bgcolor: 'var(--card)', boxShadow: 24 }}
         footer={
           <ModalFooter
             onCancel={closeDeleteModal}
@@ -815,7 +816,7 @@ export default function WorkspaceOverviewView() {
                 fontSize: 14,
                 color: 'var(--foreground)',
                 outline: 'none',
-                borderRadius: 'var(--lumio-radius-md)',
+                borderRadius: tokens.radius.md,
                 boxSizing: 'border-box',
               }}
             />

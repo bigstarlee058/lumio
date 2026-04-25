@@ -17,6 +17,7 @@ const content = {
       ar: 'إنشاء رابط جديد',
       pl: 'Utwórz nowy link',
       it: 'Crea un nuovo link',
+      sk: 'Utwórz nowy link',
     }),
     accessLevel: {
       label: t({
@@ -33,6 +34,7 @@ const content = {
         ar: 'مستوى الوصول',
         pl: 'Poziom dostępu',
         it: 'Livello di accesso',
+        sk: 'Poziom dostępu',
       }),
       view: t({
         ru: 'Только просмотр',
@@ -48,6 +50,7 @@ const content = {
         ar: 'عرض فقط',
         pl: 'Tylko podgląd',
         it: 'Solo visualizzazione',
+        sk: 'Tylko podgląd',
       }),
       download: t({
         ru: 'Просмотр и скачивание',
@@ -63,6 +66,7 @@ const content = {
         ar: 'عرض وتنزيل',
         pl: 'Przeglądaj i pobieraj',
         it: 'Visualizza e scarica',
+        sk: 'Przeglądaj i pobieraj',
       }),
       edit: t({
         ru: 'Полный доступ',
@@ -78,6 +82,7 @@ const content = {
         ar: 'وصول كامل',
         pl: 'Pełny dostęp',
         it: 'Accesso completo',
+        sk: 'Pełny dostęp',
       }),
     },
     expiresAt: t({
@@ -94,6 +99,7 @@ const content = {
       ar: 'تاريخ الانتهاء (اختياري)',
       pl: 'Data wygaśnięcia (opcjonalnie)',
       it: 'Scadenza (opzionale)',
+      sk: 'Data wygaśnięcia (opcjonalnie)',
     }),
     password: {
       label: t({
@@ -110,6 +116,7 @@ const content = {
         ar: 'كلمة المرور (اختياري)',
         pl: 'Hasło (opcjonalnie)',
         it: 'Password (opzionale)',
+        sk: 'Hasło (opcjonalnie)',
       }),
       help: t({
         ru: 'Добавьте пароль для дополнительной защиты',
@@ -125,6 +132,7 @@ const content = {
         ar: 'أضف كلمة مرور لحماية إضافية',
         pl: 'Dodaj hasło dla dodatkowej ochrony',
         it: 'Aggiungi una password per una protezione extra',
+        sk: 'Dodaj hasło dla dodatkowej ochrony',
       }),
     },
     description: {
@@ -142,6 +150,7 @@ const content = {
         ar: 'الوصف (اختياري)',
         pl: 'Opis (opcjonalnie)',
         it: 'Descrizione (opzionale)',
+        sk: 'Opis (opcjonalnie)',
       }),
       help: t({
         ru: 'Добавьте заметку о том, для кого эта ссылка',
@@ -157,6 +166,7 @@ const content = {
         ar: 'أضف ملاحظة حول من هذا الرابط له',
         pl: 'Dodaj notatkę o tym, dla kogo jest ten link',
         it: 'Aggiungi una nota su chi è destinato questo link',
+        sk: 'Dodaj notatkę o tym, dla kogo jest ten link',
       }),
     },
     allowAnonymous: t({
@@ -173,6 +183,7 @@ const content = {
       ar: 'السماح بالوصول عبر الرابط بدون تسجيل دخول',
       pl: 'Zezwól na dostęp przez link bez logowania',
       it: 'Consenti accesso tramite link senza login',
+      sk: 'Zezwól na dostęp przez link bez logowania',
     }),
     createButton: t({
       ru: 'Создать ссылку',
@@ -188,6 +199,7 @@ const content = {
       ar: 'إنشاء رابط',
       pl: 'Utwórz link',
       it: 'Crea link',
+      sk: 'Utwórz link',
     }),
     createdCopied: t({
       ru: 'Ссылка создана и скопирована в буфер обмена!',
@@ -203,6 +215,7 @@ const content = {
       ar: 'تم إنشاء الرابط ونسخه إلى الحافظة!',
       pl: 'Link utworzony i skopiowany do schowka!',
       it: 'Link creato e copiato negli appunti!',
+      sk: 'Link utworzony i skopiowany do schowka!',
     }),
     activeLinks: t({
       ru: 'Активные ссылки',
@@ -218,6 +231,7 @@ const content = {
       ar: 'الروابط النشطة',
       pl: 'Aktywne linki',
       it: 'Link attivi',
+      sk: 'Aktywne linki',
     }),
     noLinks: t({
       ru: 'Пока нет активных ссылок для этого файла',
@@ -233,6 +247,7 @@ const content = {
       ar: 'لا توجد روابط نشطة لهذا الملف بعد',
       pl: 'Nie ma jeszcze aktywnych linków do tego pliku',
       it: 'Non ci sono ancora link attivi per questo file',
+      sk: 'Nie ma jeszcze aktywnych linków do tego pliku',
     }),
     untilPrefix: t({
       ru: 'До',
@@ -248,6 +263,7 @@ const content = {
       ar: 'حتى',
       pl: 'Do',
       it: 'Fino al',
+      sk: 'Do',
     }),
     createdPrefix: t({
       ru: 'Создана',
@@ -263,6 +279,7 @@ const content = {
       ar: 'تم الإنشاء',
       pl: 'Utworzono',
       it: 'Creato',
+      sk: 'Utworzono',
     }),
     visitsPrefix: t({
       ru: 'Переходов',
@@ -278,6 +295,7 @@ const content = {
       ar: 'الزيارات',
       pl: 'Odwiedziny',
       it: 'Visite',
+      sk: 'Odwiedziny',
     }),
     tooltips: {
       copy: t({
@@ -294,6 +312,7 @@ const content = {
         ar: 'نسخ الرابط',
         pl: 'Kopiuj link',
         it: 'Copia link',
+        sk: 'Kopiuj link',
       }),
       delete: t({
         ru: 'Удалить',
@@ -309,6 +328,7 @@ const content = {
         ar: 'حذف',
         pl: 'Usuń',
         it: 'Elimina',
+        sk: 'Usuń',
       }),
     },
     permissionLabel: {
@@ -326,6 +346,7 @@ const content = {
         ar: 'عرض',
         pl: 'Podgląd',
         it: 'Visualizza',
+        sk: 'Podgląd',
       }),
       download: t({
         ru: 'Просмотр и скачивание',
@@ -341,6 +362,7 @@ const content = {
         ar: 'عرض وتنزيل',
         pl: 'Przeglądaj i pobieraj',
         it: 'Visualizza e scarica',
+        sk: 'Przeglądaj i pobieraj',
       }),
       edit: t({
         ru: 'Полный доступ',
@@ -356,6 +378,7 @@ const content = {
         ar: 'وصول كامل',
         pl: 'Pełny dostęp',
         it: 'Accesso completo',
+        sk: 'Pełny dostęp',
       }),
     },
     statusLabel: {
@@ -373,6 +396,7 @@ const content = {
         ar: 'نشط',
         pl: 'Aktywny',
         it: 'Attivo',
+        sk: 'Aktywny',
       }),
       expired: t({
         ru: 'Истекла',
@@ -388,6 +412,7 @@ const content = {
         ar: 'منتهي الصلاحية',
         pl: 'Wygasły',
         it: 'Scaduto',
+        sk: 'Wygasły',
       }),
     },
   },
