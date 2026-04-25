@@ -12,7 +12,9 @@ const SURFACE_TOKENS: Record<ThemeMode, AppSurfaceTokens> = {
   dark: { primary: '#5cc462' },
 };
 
-const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> = {
+const getSharedOptions = (mode: ThemeMode): Pick<ThemeOptions, 'shape' | 'typography' | 'components'> => {
+  const c = mode === 'dark' ? tokens.dark.color : tokens.color;
+  return {
   shape: { borderRadius: 10 },
   typography: {
     fontFamily:
@@ -59,7 +61,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
       styleOverrides: {
         root: {
           borderRadius: tokens.radius.sm,
-          '&:hover': { backgroundColor: 'var(--lumio-color-ink-100)' },
+          '&:hover': { backgroundColor: c.ink100 },
         },
       },
     },
@@ -69,7 +71,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
           borderRadius: tokens.radius.lg,
           boxShadow: '0 1px 0 0 rgba(12, 12, 20, 0.04)',
           backgroundImage: 'none',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
@@ -97,7 +99,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
           height: 36,
           fontSize: '13px',
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            boxShadow: '0 0 0 3px var(--lumio-color-primary-50)',
+            boxShadow: `0 0 0 3px ${c.primary50}`,
           },
         },
       },
@@ -131,7 +133,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
         paper: {
           borderRadius: tokens.radius.md,
           boxShadow: '0 4px 16px -4px rgba(12, 12, 20, 0.08), 0 1px 2px rgba(12, 12, 20, 0.04)',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
@@ -140,7 +142,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
         paper: {
           borderRadius: tokens.radius.md,
           boxShadow: '0 4px 16px -4px rgba(12, 12, 20, 0.08)',
-          border: '1px solid var(--lumio-color-ink-150)',
+          border: `1px solid ${c.ink150}`,
         },
       },
     },
@@ -169,6 +171,7 @@ const sharedOptions: Pick<ThemeOptions, 'shape' | 'typography' | 'components'> =
     },
     // Avatar, Switch, CircularProgress intentionally NOT overridden (stay round)
   },
+  };
 };
 
 const paletteByMode: Record<ThemeMode, ThemeOptions['palette']> = {
@@ -274,7 +277,7 @@ export const createAppTheme = (mode: ThemeMode) => {
   const surfaces = SURFACE_TOKENS[mode];
 
   return createTheme({
-    ...sharedOptions,
+    ...getSharedOptions(mode),
     palette: {
       ...paletteByMode[mode],
       action: {

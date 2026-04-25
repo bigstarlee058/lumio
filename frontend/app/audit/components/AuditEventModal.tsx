@@ -3,6 +3,7 @@
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import type { AuditEvent } from '@/lib/api/audit';
 import React from 'react';
+import { useTheme } from 'next-themes';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { relativeTime } from '../utils/relativeTime';
 import { tokens } from '@/lib/theme-tokens';
@@ -15,31 +16,34 @@ interface AuditEventModalProps {
   rollbackLoading?: boolean;
 }
 
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '8px 0',
-  borderBottom: '1px solid var(--lumio-color-ink-100)',
-  fontSize: 13,
-};
-
-const labelStyle: React.CSSProperties = {
-  color: 'var(--lumio-color-ink-500)',
-  fontWeight: 500,
-};
-
-const valueStyle: React.CSSProperties = {
-  color: 'var(--lumio-color-ink-900)',
-  fontWeight: 500,
-  textAlign: 'right',
-  maxWidth: '60%',
-  wordBreak: 'break-all',
-};
-
 export function AuditEventModal({ event, isOpen, onClose, onRollback, rollbackLoading }: AuditEventModalProps) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+
   if (!event) return null;
   const formatted = formatAuditEvent(event);
+
+  const rowStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '8px 0',
+    borderBottom: `1px solid ${c.ink100}`,
+    fontSize: 13,
+  };
+
+  const labelStyle: React.CSSProperties = {
+    color: c.ink500,
+    fontWeight: 500,
+  };
+
+  const valueStyle: React.CSSProperties = {
+    color: c.ink900,
+    fontWeight: 500,
+    textAlign: 'right',
+    maxWidth: '60%',
+    wordBreak: 'break-all',
+  };
 
   return (
     <ModalShell
@@ -68,11 +72,11 @@ export function AuditEventModal({ event, isOpen, onClose, onRollback, rollbackLo
           style={{
             padding: '10px 14px',
             marginBottom: 12,
-            background: 'var(--lumio-color-ink-50, #f8f8f9)',
-            border: '1px solid var(--lumio-color-ink-150)',
+            background: c.ink50,
+            border: `1px solid ${c.ink150}`,
             borderRadius: tokens.radius.md,
             fontSize: 13,
-            color: 'var(--lumio-color-ink-700)',
+            color: c.ink700,
             lineHeight: 1.5,
           }}
         >
@@ -105,7 +109,7 @@ export function AuditEventModal({ event, isOpen, onClose, onRollback, rollbackLo
             style={{
               marginTop: 8,
               fontSize: 12,
-              color: 'var(--lumio-color-ink-400)',
+              color: c.ink400,
               lineHeight: 1.5,
             }}
           >

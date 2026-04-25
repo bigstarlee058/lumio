@@ -22,7 +22,7 @@ type Params = {
   activeFlowType: TopSpenderFlowType;
 };
 
-export type FromOption = { id: string; label: string; description?: string | null; bankName?: string | null };
+export type { AnalyticsFromOption as FromOption } from '@/app/(main)/statements/components/shared-analytics.utils';
 
 export type RecordsReturn = {
   allRecords: TopSpenderRecord[];

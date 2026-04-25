@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
 import { tokens } from '@/lib/theme-tokens';
 
 const MIME_TYPES = [
@@ -27,6 +28,8 @@ type ImportResult = { status?: 'ok' | 'error'; fileId?: string };
 
 export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) {
   const t = useIntlayer('storagePage');
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const pt = provider.getTranslations(t);
   const [status, setStatus] = useState<StorageStatus | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,14 +97,14 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
   })();
 
   const btnBase = { display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', fontSize: 14, fontWeight: 600, cursor: working ? 'not-allowed' : 'pointer', opacity: working ? 0.7 : 1 } as const;
-  const primaryBtn = { ...btnBase, background: 'var(--lumio-primary,#3e9c35)', color: '#fff', border: 'none' };
-  const outlineBtn = { ...btnBase, background: 'transparent', color: 'var(--lumio-primary,#3e9c35)', border: '1px solid var(--lumio-primary,#3e9c35)' };
+  const primaryBtn = { ...btnBase, background: c.primary, color: '#fff', border: 'none' };
+  const outlineBtn = { ...btnBase, background: 'transparent', color: c.primary, border: `1px solid ${c.primary}` };
 
   return (
     <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ padding: 8, borderRadius: tokens.radius.full, background: 'rgba(var(--lumio-primary-rgb,22,129,24),0.1)', color: 'var(--lumio-primary,#3e9c35)' }}>
+          <div style={{ padding: 8, borderRadius: tokens.radius.full, background: c.primary50, color: c.primary }}>
             <Image src={provider.logoSrc} alt={provider.logoAlt} width={20} height={20} />
           </div>
           <div>
