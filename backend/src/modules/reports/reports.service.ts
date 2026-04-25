@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Between, In, LessThanOrEqual, MoreThanOrEqual, type Repository } from 'typeorm';
 import * as XLSX from 'xlsx';
+import { formatMoney } from '../../common/utils/format-money.util';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { Branch } from '../../entities/branch.entity';
 import { Category } from '../../entities/category.entity';
@@ -1692,14 +1693,7 @@ export class ReportsService {
   }
 
   private formatWorkspaceAmount(value: number | null): string {
-    if (value == null) {
-      return '';
-    }
-
-    return new Intl.NumberFormat('ru-RU', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
+    return formatMoney(value);
   }
 
   private escapeCsvValue(value: string): string {
