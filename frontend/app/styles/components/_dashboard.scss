@@ -1,0 +1,672 @@
+@use '../abstracts' as *;
+
+/* BEM block: lumio-dashboard */
+
+/* ── Stat grid ── */
+.lumio-dashboard {
+  &__stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+
+    @media (max-width: 1280px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__stat {
+    position: relative;
+    padding: 18px 20px 16px;
+    background: $lumio-color-surface;
+    border: 1px solid $lumio-color-ink-150;
+    border-radius: $lumio-radius-lg;
+    overflow: hidden;
+    box-shadow: $lumio-shadow-sm;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-ink-150-dk;
+      box-shadow: $lumio-shadow-sm-dk;
+    }
+  }
+
+  &__stat-label {
+    font-size: 11.5px;
+    color: $lumio-color-ink-500;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__stat-value {
+    font-size: 26px;
+    font-weight: 600;
+    color: $lumio-color-ink-900;
+    letter-spacing: -0.015em;
+    margin-top: 6px;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  &__stat-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    border-radius: $lumio-radius-xs;
+    font-weight: 500;
+
+    &--up {
+      background: $lumio-color-success-soft;
+      color: #047857;
+
+      @include dark {
+        background: $lumio-color-success-soft-dk;
+      }
+    }
+
+    &--down {
+      background: $lumio-color-danger-soft;
+      color: #be123c;
+
+      @include dark {
+        background: $lumio-color-danger-soft-dk;
+      }
+    }
+
+    &--flat {
+      background: $lumio-color-ink-100;
+      color: $lumio-color-ink-600;
+
+      @include dark {
+        background: $lumio-color-ink-100-dk;
+        color: $lumio-color-ink-600-dk;
+      }
+    }
+  }
+
+  &__stat-sub {
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__stat-spark {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 42px;
+    pointer-events: none;
+    opacity: 0.9;
+  }
+
+  /* ── Main 2fr/1fr grid ── */
+  &__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__cashflow  { grid-column: 1; grid-row: 1; }
+  &__categories { grid-column: 2; grid-row: 1; }
+  &__activity  { grid-column: 1; grid-row: 2 / span 2; }
+  &__actions   { grid-column: 2; grid-row: 2; }
+  &__upload    { grid-column: 2; grid-row: 3; }
+
+  @media (max-width: 1024px) {
+    &__cashflow,
+    &__categories,
+    &__activity,
+    &__actions,
+    &__upload {
+      grid-column: 1 !important;
+      grid-row: auto !important;
+    }
+  }
+
+  /* ── Card (padded) ── */
+  &__card {
+    background: $lumio-color-surface;
+    border: 1px solid $lumio-color-ink-150;
+    border-radius: $lumio-radius-lg;
+    padding: 20px;
+    box-shadow: $lumio-shadow-sm;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-ink-150-dk;
+      box-shadow: $lumio-shadow-sm-dk;
+    }
+  }
+
+  /* Card shell — provides border/radius/shadow but no padding (used for components with self-managed padding) */
+  &__card-shell {
+    background: $lumio-color-surface;
+    border: 1px solid $lumio-color-ink-150;
+    border-radius: $lumio-radius-lg;
+    box-shadow: $lumio-shadow-sm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-ink-150-dk;
+      box-shadow: $lumio-shadow-sm-dk;
+    }
+  }
+
+  &__card-shell-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 20px 0;
+    flex-shrink: 0;
+  }
+
+  &__card-shell-body {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ── Card header (for padded cards) ── */
+  &__card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  &__card-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  &__card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: $lumio-color-ink-900;
+    letter-spacing: -0.01em;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__card-sub {
+    font-size: 12.5px;
+    color: $lumio-color-ink-500;
+    margin-top: 4px;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: $lumio-radius-xs;
+    flex-shrink: 0;
+  }
+
+  &__card-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $lumio-color-primary;
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: $lumio-radius-xs;
+    transition: background-color 150ms;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    @include dark {
+      color: $lumio-color-primary-dk;
+    }
+
+    &:hover {
+      background-color: $lumio-color-primary-50;
+
+      @include dark {
+        background-color: $lumio-color-primary-50-dk;
+      }
+    }
+  }
+
+  /* ── Cash flow chart area ── */
+  &__cf-chart {
+    height: 260px;
+    position: relative;
+  }
+
+  /* ── Top categories area ── */
+  &__cat-chart {
+    height: 260px;
+    position: relative;
+  }
+
+  /* ── Quick actions ── */
+  &__action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__action-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border-radius: $lumio-radius-sm;
+    cursor: pointer;
+    transition: background-color 120ms;
+    text-align: left;
+    background: none;
+    border: none;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover {
+      background: $lumio-color-ink-50;
+
+      @include dark {
+        background: $lumio-color-ink-50-dk;
+      }
+    }
+  }
+
+  &__action-ico {
+    width: 32px;
+    height: 32px;
+    border-radius: $lumio-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &--warning {
+      background: $lumio-color-warning-soft;
+      color: $lumio-color-warning;
+
+      @include dark {
+        background: $lumio-color-warning-soft-dk;
+        color: $lumio-color-warning-dk;
+      }
+    }
+
+    &--info {
+      background: $lumio-color-info-soft;
+      color: $lumio-color-info;
+
+      @include dark {
+        background: $lumio-color-info-soft-dk;
+        color: $lumio-color-info-dk;
+      }
+    }
+
+    &--success {
+      background: $lumio-color-success-soft;
+      color: $lumio-color-success;
+
+      @include dark {
+        background: $lumio-color-success-soft-dk;
+        color: $lumio-color-success-dk;
+      }
+    }
+
+    &--neutral {
+      background: $lumio-color-ink-100;
+      color: $lumio-color-ink-600;
+
+      @include dark {
+        background: $lumio-color-ink-100-dk;
+        color: $lumio-color-ink-600-dk;
+      }
+    }
+
+    &--critical {
+      background: $lumio-color-danger-soft;
+      color: $lumio-color-danger;
+
+      @include dark {
+        background: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+      }
+    }
+  }
+
+  &__action-body {
+    min-width: 0;
+  }
+
+  &__action-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: $lumio-color-ink-900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__action-sub {
+    font-size: 11.5px;
+    color: $lumio-color-ink-500;
+    margin-top: 2px;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__action-chevron {
+    color: $lumio-color-ink-300;
+    flex-shrink: 0;
+
+    @include dark {
+      color: $lumio-color-ink-300-dk;
+    }
+  }
+
+  /* ── Upload zone ── */
+  &__upload-zone {
+    border: 1.5px dashed $lumio-color-ink-200;
+    border-radius: $lumio-radius-md;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 120ms, background-color 120ms;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+
+    @include dark {
+      border-color: $lumio-color-ink-200-dk;
+    }
+
+    &:hover {
+      border-color: $lumio-color-primary;
+      background: $lumio-color-primary-50;
+
+      @include dark {
+        border-color: $lumio-color-primary-dk;
+        background: $lumio-color-primary-50-dk;
+      }
+    }
+  }
+
+  &__upload-ico {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $lumio-radius-md;
+    background: $lumio-color-primary-50;
+    color: $lumio-color-primary;
+
+    @include dark {
+      background: $lumio-color-primary-50-dk;
+      color: $lumio-color-primary-dk;
+    }
+  }
+
+  &__upload-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__upload-sub {
+    font-size: 12px;
+    color: $lumio-color-ink-500;
+    margin-top: 4px;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__upload-formats {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  &__format-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: $lumio-radius-xs;
+    font-size: 11px;
+    font-weight: 500;
+    background: $lumio-color-ink-100;
+    color: $lumio-color-ink-600;
+
+    @include dark {
+      background: $lumio-color-ink-100-dk;
+      color: $lumio-color-ink-600-dk;
+    }
+  }
+
+  /* ── Empty state ── */
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 16px;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    margin-bottom: 24px;
+    display: flex;
+    width: 80px;
+    height: 80px;
+    align-items: center;
+    justify-content: center;
+    border-radius: $lumio-radius-lg;
+    border: 1px solid $lumio-color-border;
+    background: $lumio-color-surface;
+    box-shadow: $lumio-shadow-md;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      box-shadow: $lumio-shadow-md-dk;
+    }
+  }
+
+  &__empty-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 700;
+    color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__empty-desc {
+    margin: 0 0 32px;
+    max-width: 448px;
+    font-size: 14px;
+    color: $lumio-color-ink-500;
+    line-height: 1.6;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: $lumio-color-primary;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: $lumio-radius-md;
+    text-decoration: none;
+    transition: background-color 150ms;
+
+    @include dark {
+      background-color: $lumio-color-primary-dk;
+    }
+
+    &:hover {
+      background-color: $lumio-color-primary-hover;
+
+      @include dark {
+        background-color: $lumio-color-primary-hover-dk;
+      }
+    }
+  }
+
+  /* ── Period banner ── */
+  &__period-banner {
+    border: 1px solid $lumio-color-border;
+    background: $lumio-color-surface-muted;
+    padding: 10px 16px;
+    border-radius: $lumio-radius-sm;
+    font-size: 12px;
+    color: $lumio-color-ink-500;
+    margin-bottom: 16px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+}
+
+/* ── Page header ── */
+.lumio-dashboard-header {
+  padding: 32px 32px 0; /* matches DashboardTabContent px:4 = 32px */
+
+  @media (max-width: 640px) {
+    padding: 24px 16px 0;
+  }
+
+  &__greet {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: $lumio-color-ink-500;
+    margin-bottom: 8px;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: $lumio-color-ink-900;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+  }
+
+  &__subtitle {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    @media (max-width: 640px) {
+      flex-wrap: wrap;
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+}
