@@ -17,6 +17,7 @@ const content = {
       ar: 'مرحباً بعودتك',
       pl: 'Witaj ponownie',
       it: 'Bentornato',
+      sk: 'Witaj ponownie',
     }),
     subtitle: t({
       ru: 'Войдите, чтобы продолжить работу в Lumio',
@@ -32,6 +33,7 @@ const content = {
       ar: 'سجّل دخولك لمواصلة استخدام Lumio',
       pl: 'Zaloguj się, aby kontynuować korzystanie z Lumio',
       it: 'Accedi per continuare a usare Lumio',
+      sk: 'Zaloguj się, aby kontynuować korzystanie z Lumio',
     }),
     passwordLabel: t({
       ru: 'Пароль',
@@ -47,6 +49,7 @@ const content = {
       ar: 'كلمة المرور',
       pl: 'Hasło',
       it: 'Password',
+      sk: 'Hasło',
     }),
     submit: t({
       ru: 'Войти',
@@ -62,6 +65,7 @@ const content = {
       ar: 'تسجيل الدخول',
       pl: 'Zaloguj się',
       it: 'Accedi',
+      sk: 'Zaloguj się',
     }),
     noAccount: t({
       ru: 'Нет аккаунта? Зарегистрируйтесь',
@@ -77,6 +81,7 @@ const content = {
       ar: 'ليس لديك حساب؟ سجّل الآن',
       pl: 'Nie masz konta? Zarejestruj się',
       it: 'Non hai un account? Registrati',
+      sk: 'Nie masz konta? Zarejestruj się',
     }),
     rightTagline: t({
       ru: 'Платформа для обработки банковских выписок',
@@ -92,6 +97,7 @@ const content = {
       ar: 'منصة لمعالجة كشوف الحسابات البنكية',
       pl: 'Platforma do przetwarzania wyciągów bankowych',
       it: 'Una piattaforma per l\'elaborazione degli estratti conto bancari',
+      sk: 'Platforma do przetwarzania wyciągów bankowych',
     }),
     loginFailed: t({
       ru: 'Не удалось выполнить вход. Попробуйте ещё раз.',
@@ -107,6 +113,7 @@ const content = {
       ar: 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.',
       pl: 'Logowanie nie powiodło się. Spróbuj ponownie.',
       it: 'Accesso non riuscito. Per favore riprova.',
+      sk: 'Logowanie nie powiodło się. Spróbuj ponownie.',
     }),
     googleLoginFailed: t({
       ru: 'Не удалось войти через Google. Попробуйте ещё раз.',
@@ -122,6 +129,7 @@ const content = {
       ar: 'فشل تسجيل الدخول عبر Google. يرجى المحاولة مرة أخرى.',
       pl: 'Logowanie przez Google nie powiodło się. Spróbuj ponownie.',
       it: 'Accesso con Google non riuscito. Per favore riprova.',
+      sk: 'Logowanie przez Google nie powiodło się. Spróbuj ponownie.',
     }),
     orLabel: t({
       ru: 'или',
@@ -137,6 +145,7 @@ const content = {
       ar: 'أو',
       pl: 'lub',
       it: 'o',
+      sk: 'lub',
     }),
   },
 } satisfies Dictionary;

@@ -17,6 +17,7 @@ const adminTourContent = {
       ar: 'جولة لوحة الإدارة',
       pl: 'Tour panelu administracyjnego',
       it: 'Tour del pannello di amministrazione',
+      sk: 'Tour panelu administracyjnego',
     }),
     description: t({
       ru: 'Обзор административных инструментов',
@@ -32,6 +33,7 @@ const adminTourContent = {
       ar: 'نظرة عامة على أدوات الإدارة',
       pl: 'Przegląd narzędzi administracyjnych',
       it: 'Panoramica degli strumenti di amministrazione',
+      sk: 'Przegląd narzędzi administracyjnych',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const adminTourContent = {
           ar: 'مرحباً بك في لوحة الإدارة',
           pl: 'Witaj w panelu administracyjnym',
           it: 'Benvenuto nel pannello di amministrazione',
+          sk: 'Witaj w panelu administracyjnym',
         }),
         description: t({
           ru: 'Админ-панель помогает просматривать системные данные, переходить к управлению пользователями и анализировать аудит действий.',
@@ -64,6 +67,7 @@ const adminTourContent = {
           ar: 'يمنحك لوحة الإدارة الوصول إلى البيانات على مستوى النظام ونقاط دخول إدارة المستخدمين وأدوات مراجعة التدقيق.',
           pl: 'Panel administracyjny daje dostęp do danych systemowych, punktów wejścia zarządzania użytkownikami i narzędzi przeglądu audytu.',
           it: 'Il pannello di amministrazione ti dà accesso ai dati di sistema, ai punti di accesso per la gestione degli utenti e agli strumenti di revisione audit.',
+          sk: 'Panel administracyjny daje dostęp do danych systemowych, punktów wejścia zarządzania użytkownikami i narzędzi przeglądu audytu.',
         }),
       },
       tabs: {
@@ -81,6 +85,7 @@ const adminTourContent = {
           ar: 'علامات التبويب الرئيسية',
           pl: 'Główne zakładki',
           it: 'Schede principali',
+          sk: 'Główne zakładki',
         }),
         description: t({
           ru: 'Верхние вкладки переключают между журналом выписок, разделом пользователей и аудитом. Это основная навигация внутри админки.',
@@ -96,6 +101,7 @@ const adminTourContent = {
           ar: 'تتبدل علامات التبويب العلوية هذه بين سجل كشوف الحسابات والمستخدمين والتدقيق. وهي نقاط التنقل الرئيسية داخل منطقة الإدارة.',
           pl: 'Te górne zakładki przełączają między dziennikiem wyciągów, użytkownikami i audytem. Są to główne punkty nawigacji w obszarze administracyjnym.',
           it: 'Queste schede superiori passano tra il registro degli estratti conto, gli utenti e l\'audit. Sono i principali punti di navigazione nell\'area admin.',
+          sk: 'Te górne zakładki przełączają między dziennikiem wyciągów, użytkownikami i audytem. Są to główne punkty nawigacji w obszarze administracyjnym.',
         }),
       },
       statementsLog: {
@@ -113,6 +119,7 @@ const adminTourContent = {
           ar: 'البحث في سجل كشوف الحسابات',
           pl: 'Wyszukiwanie w dzienniku wyciągów',
           it: 'Ricerca nel registro degli estratti conto',
+          sk: 'Wyszukiwanie w dzienniku wyciągów',
         }),
         description: t({
           ru: 'Через поиск можно быстро находить загруженные выписки по названию файла или банку и затем разбирать ошибки, повторную обработку или удаление.',
@@ -128,6 +135,7 @@ const adminTourContent = {
           ar: 'استخدم هذا البحث للعثور بسرعة على الكشوفات المرفوعة حسب اسم الملف أو البنك قبل مراجعة الأخطاء أو إعادة المعالجة أو الحذف.',
           pl: 'Użyj tego wyszukiwania, aby szybko znaleźć przesłane wyciągi według nazwy pliku lub banku przed przeglądaniem błędów, ponownym przetwarzaniem lub usuwaniem.',
           it: 'Usa questa ricerca per trovare rapidamente gli estratti conto caricati per nome file o banca prima di esaminare errori, rielaborare o eliminare.',
+          sk: 'Użyj tego wyszukiwania, aby szybko znaleźć przesłane wyciągi według nazwy pliku lub banku przed przeglądaniem błędów, ponownym przetwarzaniem lub usuwaniem.',
         }),
       },
       usersLink: {
@@ -145,6 +153,7 @@ const adminTourContent = {
           ar: 'فتح إدارة المستخدمين',
           pl: 'Otwórz zarządzanie użytkownikami',
           it: 'Apri gestione utenti',
+          sk: 'Otwórz zarządzanie użytkownikami',
         }),
         description: t({
           ru: 'Кнопка открывает отдельный административный экран управления пользователями, где доступны роли, статусы и права.',
@@ -160,6 +169,7 @@ const adminTourContent = {
           ar: 'يفتح هذا الزر شاشة إدارة المستخدمين المخصصة حيث تُدار الأدوار والحالات والصلاحيات.',
           pl: 'Ten przycisk otwiera dedykowany ekran zarządzania użytkownikami admina, gdzie zarządzane są role, statusy i uprawnienia.',
           it: 'Questo pulsante apre la schermata dedicata agli utenti admin dove vengono gestiti ruoli, stati e permessi.',
+          sk: 'Ten przycisk otwiera dedykowany ekran zarządzania użytkownikami admina, gdzie zarządzane są role, statusy i uprawnienia.',
         }),
       },
       auditFilters: {
@@ -177,6 +187,7 @@ const adminTourContent = {
           ar: 'فلاتر التدقيق',
           pl: 'Filtry audytu',
           it: 'Filtri di audit',
+          sk: 'Filtry audytu',
         }),
         description: t({
           ru: 'В аудит-разделе фильтры помогают сузить список событий по сущности, пользователю, действию, severity и периоду времени.',
@@ -192,6 +203,7 @@ const adminTourContent = {
           ar: 'في قسم التدقيق تساعد هذه الفلاتر على تضييق الأحداث حسب الكيان والمستخدم والإجراء والخطورة والنطاق الزمني.',
           pl: 'W sekcji audytu filtry te zawężają zdarzenia według encji, użytkownika, akcji, ważności i zakresu czasu.',
           it: 'Nella sezione audit, questi filtri restringono gli eventi per entità, utente, azione, gravità e intervallo di tempo.',
+          sk: 'W sekcji audytu filtry te zawężają zdarzenia według encji, użytkownika, akcji, ważności i zakresu czasu.',
         }),
       },
       completed: {
@@ -209,6 +221,7 @@ const adminTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете базовую структуру админ-панели. Дальше можно перейти в нужную вкладку и работать уже с конкретными административными задачами.',
@@ -224,6 +237,7 @@ const adminTourContent = {
           ar: 'أنت تعرف الآن الهيكل الأساسي للوحة الإدارة. من هنا يمكنك الانتقال إلى علامة التبويب الصحيحة والعمل على المهمة الإدارية المحددة التي تحتاجها.',
           pl: 'Znasz teraz podstawową strukturę panelu administracyjnego. Stąd możesz przejść do właściwej zakładki i pracować nad konkretnym zadaniem administracyjnym.',
           it: 'Ora conosci la struttura di base del pannello di amministrazione. Da qui puoi spostarti nella scheda giusta e lavorare sull\'attività amministrativa specifica di cui hai bisogno.',
+          sk: 'Znasz teraz podstawową strukturę panelu administracyjnego. Stąd możesz przejść do właściwej zakładki i pracować nad konkretnym zadaniem administracyjnym.',
         }),
       },
     },

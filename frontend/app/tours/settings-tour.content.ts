@@ -17,6 +17,7 @@ const settingsTourContent = {
       ar: 'جولة مساحة العمل',
       pl: 'Tour obszaru roboczego',
       it: 'Tour dell\'area di lavoro',
+      sk: 'Tour obszaru roboczego',
     }),
     description: t({
       ru: 'Обзор профиля и настроек рабочего пространства',
@@ -32,6 +33,7 @@ const settingsTourContent = {
       ar: 'نظرة عامة على ملف مساحة العمل والإعدادات الافتراضية',
       pl: 'Przegląd profilu obszaru roboczego i ustawień domyślnych',
       it: 'Panoramica del profilo dell\'area di lavoro e delle impostazioni predefinite',
+      sk: 'Przegląd profilu obszaru roboczego i ustawień domyślnych',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const settingsTourContent = {
           ar: 'مرحباً بك في مساحة العمل',
           pl: 'Witaj w Obszarze roboczym',
           it: 'Benvenuto nell\'Area di lavoro',
+          sk: 'Witaj w Obszarze roboczym',
         }),
         description: t({
           ru: 'Эта страница помогает управлять основными настройками рабочего пространства: названием, валютой по умолчанию и визуальным оформлением.',
@@ -64,6 +67,7 @@ const settingsTourContent = {
           ar: 'هذه الصفحة لإدارة إعدادات مساحة العمل الأساسية: الاسم والعملة الافتراضية والمظهر المرئي.',
           pl: 'Ta strona służy do zarządzania podstawowymi ustawieniami obszaru roboczego: nazwą, domyślną walutą i wyglądem.',
           it: 'Questa pagina serve a gestire le impostazioni principali dell\'area di lavoro: nome, valuta predefinita e aspetto visivo.',
+          sk: 'Ta strona służy do zarządzania podstawowymi ustawieniami obszaru roboczego: nazwą, domyślną walutą i wyglądem.',
         }),
       },
       sidePanel: {
@@ -81,6 +85,7 @@ const settingsTourContent = {
           ar: 'قسم النظرة العامة',
           pl: 'Sekcja przeglądu',
           it: 'Sezione panoramica',
+          sk: 'Sekcja przeglądu',
         }),
         description: t({
           ru: 'Здесь собраны основные настройки текущего рабочего пространства. Это отправная точка для изменения профиля и базовых параметров.',
@@ -96,6 +101,7 @@ const settingsTourContent = {
           ar: 'تحتوي هذه المنطقة على الإعدادات الرئيسية لمساحة العمل الحالية. إنها نقطة البداية لتعديل تفاصيل الملف الشخصي والإعدادات الافتراضية.',
           pl: 'Ten obszar zawiera główne ustawienia bieżącego obszaru roboczego. Jest to punkt startowy do edytowania szczegółów profilu i ustawień domyślnych.',
           it: 'Quest\'area contiene le impostazioni principali per l\'area di lavoro corrente. È il punto di partenza per modificare i dettagli del profilo e le impostazioni predefinite.',
+          sk: 'Ten obszar zawiera główne ustawienia bieżącego obszaru roboczego. Jest to punkt startowy do edytowania szczegółów profilu i ustawień domyślnych.',
         }),
       },
       workspaceName: {
@@ -113,6 +119,7 @@ const settingsTourContent = {
           ar: 'اسم مساحة العمل',
           pl: 'Nazwa obszaru roboczego',
           it: 'Nome dell\'area di lavoro',
+          sk: 'Nazwa obszaru roboczego',
         }),
         description: t({
           ru: 'Измените название, если рабочее пространство нужно переименовать для команды, клиента или нового сценария использования.',
@@ -128,6 +135,7 @@ const settingsTourContent = {
           ar: 'حدّث هذا الحقل عندما تحتاج مساحة العمل إلى اسم أوضح لفريقك أو عميلك أو حالة الاستخدام الحالية.',
           pl: 'Zaktualizuj to pole, gdy obszar roboczy potrzebuje wyraźniejszej nazwy dla twojego zespołu, klienta lub bieżącego przypadku użycia.',
           it: 'Aggiorna questo campo quando l\'area di lavoro ha bisogno di un nome più chiaro per il tuo team, cliente o caso d\'uso attuale.',
+          sk: 'Zaktualizuj to pole, gdy obszar roboczy potrzebuje wyraźniejszej nazwy dla twojego zespołu, klienta lub bieżącego przypadku użycia.',
         }),
       },
       workspaceCurrency: {
@@ -145,6 +153,7 @@ const settingsTourContent = {
           ar: 'العملة الافتراضية',
           pl: 'Domyślna waluta',
           it: 'Valuta predefinita',
+          sk: 'Domyślna waluta',
         }),
         description: t({
           ru: 'Через это поле выбирается валюта по умолчанию для нового ввода и связанных финансовых сценариев внутри рабочего пространства.',
@@ -160,6 +169,7 @@ const settingsTourContent = {
           ar: 'يحدد هذا الضبط العملة الافتراضية المستخدمة للإدخالات الجديدة والتدفقات المالية الأخرى داخل مساحة العمل.',
           pl: 'Ten element kontrolny ustawia domyślną walutę używaną dla nowych wpisów i innych przepływów finansowych w obszarze roboczym.',
           it: 'Questo controllo imposta la valuta predefinita utilizzata per le nuove voci e altri flussi finanziari all\'interno dell\'area di lavoro.',
+          sk: 'Ten element kontrolny ustawia domyślną walutę używaną dla nowych wpisów i innych przepływów finansowych w obszarze roboczym.',
         }),
       },
       workspaceBackground: {
@@ -177,6 +187,7 @@ const settingsTourContent = {
           ar: 'خلفية مساحة العمل',
           pl: 'Tło obszaru roboczego',
           it: 'Sfondo dell\'area di lavoro',
+          sk: 'Tło obszaru roboczego',
         }),
         description: t({
           ru: 'Здесь можно выбрать изображение для карточки рабочего пространства и обновить его визуальное оформление без изменения остальных настроек.',
@@ -192,6 +203,7 @@ const settingsTourContent = {
           ar: 'استخدم هذا القسم لاختيار الصورة المعروضة على بطاقة مساحة العمل وتحديث هويتها المرئية دون تغيير الإعدادات الأخرى.',
           pl: 'Użyj tej sekcji, aby wybrać obraz wyświetlany na karcie obszaru roboczego i odświeżyć jego tożsamość wizualną bez zmiany innych ustawień.',
           it: 'Usa questa sezione per scegliere l\'immagine mostrata sulla scheda dell\'area di lavoro e aggiornarne l\'identità visiva senza modificare altre impostazioni.',
+          sk: 'Użyj tej sekcji, aby wybrać obraz wyświetlany na karcie obszaru roboczego i odświeżyć jego tożsamość wizualną bez zmiany innych ustawień.',
         }),
       },
       completed: {
@@ -209,6 +221,7 @@ const settingsTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете, где настраиваются базовые параметры рабочего пространства. Следующий шаг - сохранить изменения или перейти в другие разделы workspace.',
@@ -224,6 +237,7 @@ const settingsTourContent = {
           ar: 'أنت تعرف الآن أين توجد إعدادات مساحة العمل الأساسية. بعد ذلك يمكنك حفظ التغييرات أو الانتقال إلى أقسام مساحة العمل الأخرى.',
           pl: 'Teraz wiesz, gdzie znajdują się podstawowe ustawienia obszaru roboczego. Następnie możesz zapisać zmiany lub przejść do innych sekcji obszaru roboczego.',
           it: 'Ora sai dove si trovano le impostazioni principali dell\'area di lavoro. Successivamente puoi salvare le modifiche o spostarti in altre sezioni dell\'area di lavoro.',
+          sk: 'Teraz wiesz, gdzie znajdują się podstawowe ustawienia obszaru roboczego. Następnie możesz zapisać zmiany lub przejść do innych sekcji obszaru roboczego.',
         }),
       },
     },

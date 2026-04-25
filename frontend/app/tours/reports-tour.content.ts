@@ -17,6 +17,7 @@ const reportsTourContent = {
       ar: 'جولة التقارير',
       pl: 'Tour raportów',
       it: 'Tour dei report',
+      sk: 'Tour raportów',
     }),
     description: t({
       ru: 'Создание финансовых отчетов из готовых шаблонов',
@@ -32,6 +33,7 @@ const reportsTourContent = {
       ar: 'إنشاء تقارير مالية من قوالب جاهزة',
       pl: 'Twórz raporty finansowe z gotowych szablonów',
       it: 'Crea report finanziari da modelli predefiniti',
+      sk: 'Twórz raporty finansowe z gotowych szablonów',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const reportsTourContent = {
           ar: 'مرحباً بك في التقارير',
           pl: 'Witaj w Raportach',
           it: 'Benvenuto nei Report',
+          sk: 'Witaj w Raportach',
         }),
         description: t({
           ru: 'На этой странице вы выбираете шаблон отчета, задаете период и выгружаете результат в нужном формате. Тур покажет текущий рабочий сценарий.',
@@ -64,6 +67,7 @@ const reportsTourContent = {
           ar: 'تتيح لك هذه الصفحة اختيار قالب تقرير وتحديد الفترة وتصدير النتيجة بالتنسيق الذي تحتاجه. تستعرض هذه الجولة سير العمل الحالي.',
           pl: 'Ta strona pozwala wybrać szablon raportu, ustawić okres i wyeksportować wynik w potrzebnym formacie. Ten przewodnik przeprowadza przez bieżący przepływ pracy.',
           it: 'Questa pagina ti permette di scegliere un modello di report, impostare il periodo ed esportare il risultato nel formato necessario. Questo tour percorre il flusso di lavoro attuale.',
+          sk: 'Ta strona pozwala wybrać szablon raportu, ustawić okres i wyeksportować wynik w potrzebnym formacie. Ten przewodnik przeprowadza przez bieżący przepływ pracy.',
         }),
       },
       tabs: {
@@ -81,6 +85,7 @@ const reportsTourContent = {
           ar: 'أقسام الصفحة',
           pl: 'Sekcje strony',
           it: 'Sezioni della pagina',
+          sk: 'Sekcje strony',
         }),
         description: t({
           ru: 'Верхние вкладки переключают между шаблонами и историей уже созданных отчетов. Это основная навигация внутри страницы.',
@@ -96,6 +101,7 @@ const reportsTourContent = {
           ar: 'تتبدل هذه علامات التبويب بين القوالب المتاحة وتاريخ التقارير المنشأة. وهي التنقل الرئيسي داخل هذه الصفحة.',
           pl: 'Te zakładki przełączają między dostępnymi szablonami a historią wygenerowanych raportów. Są to główne punkty nawigacji na tej stronie.',
           it: 'Queste schede passano tra i modelli disponibili e la cronologia dei report generati. Sono la navigazione principale all\'interno di questa pagina.',
+          sk: 'Te zakładki przełączają między dostępnymi szablonami a historią wygenerowanych raportów. Są to główne punkty nawigacji na tej stronie.',
         }),
       },
       templates: {
@@ -113,6 +119,7 @@ const reportsTourContent = {
           ar: 'قوالب التقارير',
           pl: 'Szablony raportów',
           it: 'Modelli di report',
+          sk: 'Szablony raportów',
         }),
         description: t({
           ru: 'Здесь собраны доступные типы отчетов. Выбирайте шаблон в зависимости от того, хотите ли вы посмотреть прибыль и убытки, баланс, движение денег или расходы по категориям.',
@@ -128,6 +135,7 @@ const reportsTourContent = {
           ar: 'تحتوي هذه الشبكة على أنواع التقارير المتاحة. اختر قالباً بناءً على ما إذا كنت تريد الأرباح والخسائر أو الميزانية العمومية أو التدفق النقدي أو الإنفاق حسب الفئة.',
           pl: 'Ta siatka zawiera dostępne typy raportów. Wybierz szablon w zależności od tego, czy chcesz zyski i straty, bilans, przepływ gotówki czy wydatki według kategorii.',
           it: 'Questa griglia contiene i tipi di report disponibili. Scegli un modello in base al tipo di report che vuoi: profitti e perdite, bilancio, flusso di cassa o spese per categoria.',
+          sk: 'Ta siatka zawiera dostępne typy raportów. Wybierz szablon w zależności od tego, czy chcesz zyski i straty, bilans, przepływ gotówki czy wydatki według kategorii.',
         }),
       },
       selectTemplate: {
@@ -145,6 +153,7 @@ const reportsTourContent = {
           ar: 'اختر قالباً',
           pl: 'Wybierz szablon',
           it: 'Seleziona un modello',
+          sk: 'Wybierz szablon',
         }),
         description: t({
           ru: 'Карточка P&L открывает панель настройки отчета. После выбора можно задать период и формат перед генерацией файла.',
@@ -160,6 +169,7 @@ const reportsTourContent = {
           ar: 'تفتح بطاقة P&L لوحة إعداد التقرير. بعد اختيارها يمكنك ضبط الفترة وتنسيق التصدير قبل إنشاء الملف.',
           pl: 'Karta P&L otwiera panel konfiguracji raportu. Po jej wybraniu możesz skonfigurować okres i format eksportu przed wygenerowaniem pliku.',
           it: 'La scheda P&L apre il pannello di configurazione del report. Dopo averla selezionata, puoi configurare il periodo e il formato di esportazione prima di generare il file.',
+          sk: 'Karta P&L otwiera panel konfiguracji raportu. Po jej wybraniu możesz skonfigurować okres i format eksportu przed wygenerowaniem pliku.',
         }),
       },
       generator: {
@@ -177,6 +187,7 @@ const reportsTourContent = {
           ar: 'لوحة الإنشاء',
           pl: 'Panel generowania',
           it: 'Pannello di generazione',
+          sk: 'Panel generowania',
         }),
         description: t({
           ru: 'В этой панели вы задаете период отчета и проверяете, какой шаблон сейчас активен. Это центральная точка перед выгрузкой документа.',
@@ -192,6 +203,7 @@ const reportsTourContent = {
           ar: 'هذه اللوحة هي المكان الذي تحدد فيه فترة التقرير وتؤكد أي قالب نشط. إنها منطقة التحكم الرئيسية قبل التصدير.',
           pl: 'W tym panelu ustawiasz okres raportowania i potwierdzasz, który szablon jest aktywny. Jest to główny obszar kontrolny przed eksportem.',
           it: 'Questo pannello è dove imposti il periodo di reportistica e confermi quale modello è attivo. È l\'area di controllo principale prima dell\'esportazione.',
+          sk: 'W tym panelu ustawiasz okres raportowania i potwierdzasz, który szablon jest aktywny. Jest to główny obszar kontrolny przed eksportem.',
         }),
       },
       format: {
@@ -209,6 +221,7 @@ const reportsTourContent = {
           ar: 'تنسيق التصدير',
           pl: 'Format eksportu',
           it: 'Formato di esportazione',
+          sk: 'Format eksportu',
         }),
         description: t({
           ru: 'Выберите формат под задачу: Excel для дальнейшей работы, PDF для отправки или CSV для обработки данных в других системах.',
@@ -224,6 +237,7 @@ const reportsTourContent = {
           ar: 'اختر تنسيق الإخراج المناسب للمهمة: Excel لمزيد من التحرير أو PDF للمشاركة أو CSV للمعالجة اللاحقة.',
           pl: 'Wybierz format wyjściowy odpowiedni do zadania: Excel do dalszej edycji, PDF do udostępniania lub CSV do dalszego przetwarzania.',
           it: 'Scegli il formato di output adatto al lavoro: Excel per ulteriori modifiche, PDF per la condivisione o CSV per l\'elaborazione successiva.',
+          sk: 'Wybierz format wyjściowy odpowiedni do zadania: Excel do dalszej edycji, PDF do udostępniania lub CSV do dalszego przetwarzania.',
         }),
       },
       completed: {
@@ -241,6 +255,7 @@ const reportsTourContent = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы знаете, где выбрать шаблон и как подготовить отчет к выгрузке. Следующий шаг - сгенерировать нужный документ и скачать его.',
@@ -256,6 +271,7 @@ const reportsTourContent = {
           ar: 'أنت تعرف الآن أين تختار قالباً وكيف تعد تقريراً للتصدير. الخطوة التالية هي إنشاء المستند الذي تحتاجه وتنزيله.',
           pl: 'Teraz wiesz, gdzie wybrać szablon i jak przygotować raport do eksportu. Następny krok to wygenerowanie potrzebnego dokumentu i pobranie go.',
           it: 'Ora sai dove scegliere un modello e come preparare un report per l\'esportazione. Il passo successivo è generare il documento di cui hai bisogno e scaricarlo.',
+          sk: 'Teraz wiesz, gdzie wybrać szablon i jak przygotować raport do eksportu. Następny krok to wygenerowanie potrzebnego dokumentu i pobranie go.',
         }),
       },
     },

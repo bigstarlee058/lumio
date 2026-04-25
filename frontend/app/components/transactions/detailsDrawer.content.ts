@@ -17,6 +17,7 @@ const content = {
       ar: 'تفاصيل المعاملة',
       pl: 'Szczegóły transakcji',
       it: 'Dettagli della transazione',
+      sk: 'Szczegóły transakcji',
     }),
     date: t({
       ru: 'Дата',
@@ -32,6 +33,7 @@ const content = {
       ar: 'التاريخ',
       pl: 'Data',
       it: 'Data',
+      sk: 'Data',
     }),
     documentNumber: t({
       ru: 'Номер документа',
@@ -47,6 +49,7 @@ const content = {
       ar: 'رقم الوثيقة',
       pl: 'Numer dokumentu',
       it: 'Numero documento',
+      sk: 'Numer dokumentu',
     }),
     counterparty: t({
       ru: 'Контрагент',
@@ -62,6 +65,7 @@ const content = {
       ar: 'الطرف المقابل',
       pl: 'Kontrahent',
       it: 'Controparte',
+      sk: 'Kontrahent',
     }),
     bin: t({
       ru: 'БИН',
@@ -77,6 +81,7 @@ const content = {
       ar: 'رقم BIN',
       pl: 'BIN',
       it: 'BIN',
+      sk: 'BIN',
     }),
     purpose: t({
       ru: 'Назначение платежа',
@@ -92,6 +97,7 @@ const content = {
       ar: 'غرض الدفع',
       pl: 'Cel płatności',
       it: 'Scopo del pagamento',
+      sk: 'Cel płatności',
     }),
     debit: t({
       ru: 'Дебет',
@@ -107,6 +113,7 @@ const content = {
       ar: 'مدين',
       pl: 'Debet',
       it: 'Addebito',
+      sk: 'Debet',
     }),
     credit: t({
       ru: 'Кредит',
@@ -122,6 +129,7 @@ const content = {
       ar: 'دائن',
       pl: 'Kredyt',
       it: 'Credito',
+      sk: 'Kredyt',
     }),
     additionalDetails: t({
       ru: 'Дополнительные данные',
@@ -137,6 +145,7 @@ const content = {
       ar: 'تفاصيل إضافية',
       pl: 'Dodatkowe szczegóły',
       it: 'Dettagli aggiuntivi',
+      sk: 'Dodatkowe szczegóły',
     }),
     currency: t({
       ru: 'Валюта',
@@ -152,6 +161,7 @@ const content = {
       ar: 'العملة',
       pl: 'Waluta',
       it: 'Valuta',
+      sk: 'Waluta',
     }),
     exchangeRate: t({
       ru: 'Курс обмена',
@@ -167,6 +177,7 @@ const content = {
       ar: 'سعر الصرف',
       pl: 'Kurs wymiany',
       it: 'Tasso di cambio',
+      sk: 'Kurs wymiany',
     }),
     article: t({
       ru: 'Статья',
@@ -182,6 +193,7 @@ const content = {
       ar: 'بند',
       pl: 'Artykuł',
       it: 'Articolo',
+      sk: 'Artykuł',
     }),
     branch: t({
       ru: 'Филиал',
@@ -197,6 +209,7 @@ const content = {
       ar: 'الفرع',
       pl: 'Oddział',
       it: 'Filiale',
+      sk: 'Oddział',
     }),
     wallet: t({
       ru: 'Кошелёк',
@@ -212,6 +225,7 @@ const content = {
       ar: 'المحفظة',
       pl: 'Portfel',
       it: 'Portafoglio',
+      sk: 'Portfel',
     }),
     parsingMetadata: t({
       ru: 'Метаданные распознавания',
@@ -227,6 +241,7 @@ const content = {
       ar: 'بيانات التحليل الوصفية',
       pl: 'Metadane parsowania',
       it: 'Metadati di analisi',
+      sk: 'Metadane parsowania',
     }),
     confidence: t({
       ru: 'Уверенность',
@@ -242,6 +257,7 @@ const content = {
       ar: 'الثقة',
       pl: 'Pewność',
       it: 'Affidabilità',
+      sk: 'Pewność',
     }),
     rawExtract: t({
       ru: 'Исходные данные',
@@ -257,6 +273,7 @@ const content = {
       ar: 'البيانات الخام',
       pl: 'Surowe dane',
       it: 'Dati grezzi',
+      sk: 'Surowe dane',
     }),
     currentCategory: t({
       ru: 'Текущая категория',
@@ -272,6 +289,7 @@ const content = {
       ar: 'الفئة الحالية',
       pl: 'Bieżąca kategoria',
       it: 'Categoria attuale',
+      sk: 'Bieżąca kategoria',
     }),
     noCategory: t({
       ru: 'Категория не назначена',
@@ -287,6 +305,7 @@ const content = {
       ar: 'لم يتم تعيين فئة',
       pl: 'Brak przypisanej kategorii',
       it: 'Nessuna categoria assegnata',
+      sk: 'Brak przypisanej kategorii',
     }),
     actions: t({
       ru: 'Действия',
@@ -302,6 +321,7 @@ const content = {
       ar: 'الإجراءات',
       pl: 'Akcje',
       it: 'Azioni',
+      sk: 'Akcje',
     }),
     setCategory: t({
       ru: 'Установить категорию',
@@ -317,6 +337,7 @@ const content = {
       ar: 'تعيين الفئة',
       pl: 'Ustaw kategorię',
       it: 'Imposta categoria',
+      sk: 'Ustaw kategorię',
     }),
     selectCategory: t({
       ru: 'Выберите категорию...',
@@ -332,6 +353,7 @@ const content = {
       ar: 'اختر الفئة...',
       pl: 'Wybierz kategorię...',
       it: 'Seleziona categoria...',
+      sk: 'Wybierz kategorię...',
     }),
     updating: t({
       ru: 'Обновление...',
@@ -347,6 +369,7 @@ const content = {
       ar: 'جارٍ التحديث...',
       pl: 'Aktualizowanie...',
       it: 'Aggiornamento...',
+      sk: 'Aktualizowanie...',
     }),
     apply: t({
       ru: 'Применить',
@@ -362,6 +385,7 @@ const content = {
       ar: 'تطبيق',
       pl: 'Zastosuj',
       it: 'Applica',
+      sk: 'Zastosuj',
     }),
     markIgnored: t({
       ru: 'Отметить как игнорируемое',
@@ -377,6 +401,7 @@ const content = {
       ar: 'وضع علامة متجاهَل',
       pl: 'Oznacz jako zignorowane',
       it: 'Segna come ignorato',
+      sk: 'Oznacz jako zignorowane',
     }),
   },
 } satisfies Dictionary;

@@ -18,6 +18,7 @@ const content = {
         ar: 'فشل الحصول على رمز تفويض Google.',
         pl: 'Nie udało się uzyskać kodu autoryzacji Google.',
         it: 'Impossibile ottenere il codice di autorizzazione Google.',
+        sk: 'Nie udało się uzyskać kodu autoryzacji Google.',
       }),
       oauthErrorPrefix: t({
         ru: 'Google OAuth ошибка',
@@ -33,6 +34,7 @@ const content = {
         ar: 'خطأ Google OAuth',
         pl: 'Błąd Google OAuth',
         it: 'Errore Google OAuth',
+        sk: 'Błąd Google OAuth',
       }),
       connectFailed: t({
         ru: 'Не удалось подключить Google Sheet',
@@ -48,6 +50,7 @@ const content = {
         ar: 'فشل ربط Google Sheet',
         pl: 'Nie udało się połączyć Google Sheet',
         it: 'Impossibile connettere Google Sheet',
+        sk: 'Nie udało się połączyć Google Sheet',
       }),
     },
     title: t({
@@ -64,6 +67,7 @@ const content = {
       ar: 'اتصال Google Sheets',
       pl: 'Połączenie z Google Sheets',
       it: 'Connessione a Google Sheets',
+      sk: 'Połączenie z Google Sheets',
     }),
     subtitle: t({
       ru: 'Завершаем подключение Google аккаунта и возвращаем вас к выбору таблицы.',
@@ -79,6 +83,7 @@ const content = {
       ar: 'جارٍ إنهاء ربط حساب Google والعودة إلى تحديد جدول البيانات.',
       pl: 'Kończenie połączenia z kontem Google i powrót do wyboru arkusza.',
       it: 'Completamento della connessione dell\'account Google e ritorno alla selezione del foglio di calcolo.',
+      sk: 'Kończenie połączenia z kontem Google i powrót do wyboru arkusza.',
     }),
     success: t({
       ru: 'Google аккаунт подключен. Перенаправляем…',
@@ -94,6 +99,7 @@ const content = {
       ar: 'تم ربط حساب Google. جارٍ التوجيه…',
       pl: 'Konto Google połączone. Przekierowywanie…',
       it: 'Account Google connesso. Reindirizzamento…',
+      sk: 'Konto Google połączone. Przekierowywanie…',
     }),
   },
 } satisfies Dictionary;

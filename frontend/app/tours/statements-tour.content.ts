@@ -21,6 +21,7 @@ const content = {
       ar: 'جولة كشوف الحسابات',
       pl: 'Wyciągi — przewodnik',
       it: 'Tour degli estratti conto',
+      sk: 'Wyciągi — przewodnik',
     }),
     description: t({
       ru: 'Узнайте как загружать и управлять банковскими выписками',
@@ -36,6 +37,7 @@ const content = {
       ar: 'تعرف على كيفية رفع كشوف الحسابات البنكية وإدارتها',
       pl: 'Dowiedz się, jak przesyłać wyciągi bankowe i nimi zarządzać',
       it: 'Scopri come caricare e gestire gli estratti conto bancari',
+      sk: 'Dowiedz się, jak przesyłać wyciągi bankowe i nimi zarządzać',
     }),
     steps: {
       welcome: {
@@ -53,6 +55,7 @@ const content = {
           ar: 'مرحباً بك في كشوف الحسابات',
           pl: 'Witaj w Wyciągach',
           it: 'Benvenuto negli Estratti conto',
+          sk: 'Witaj w Wyciągach',
         }),
         description: t({
           ru: 'На этой странице вы загружаете документы, находите нужные выписки и переходите к их разбору. Коротко пройдемся по текущему интерфейсу.',
@@ -68,6 +71,7 @@ const content = {
           ar: 'في هذه الصفحة تقوم برفع المستندات والعثور على الكشوفات المناسبة والبدء في مراجعتها. لنستعرض سير العمل الحالي.',
           pl: 'Na tej stronie przesyłasz dokumenty, znajdujesz odpowiednie wyciągi i przechodzisz do ich przeglądu. Przejdźmy razem przez bieżący przepływ pracy.',
           it: 'In questa pagina carichi documenti, trovi gli estratti giusti e inizi la revisione. Facciamo una breve panoramica del flusso di lavoro attuale.',
+          sk: 'Na tej stronie przesyłasz dokumenty, znajdujesz odpowiednie wyciągi i przechodzisz do ich przeglądu. Przejdźmy razem przez bieżący przepływ pracy.',
         }),
       },
       uploadTrigger: {
@@ -85,6 +89,7 @@ const content = {
           ar: 'رفع ومسح',
           pl: 'Prześlij i skanuj',
           it: 'Carica e scansiona',
+          sk: 'Prześlij i skanuj',
         }),
         description: t({
           ru: 'Эта кнопка запускает самый быстрый путь добавления новых документов: скан, локальная загрузка, Gmail и облачные источники.',
@@ -100,6 +105,7 @@ const content = {
           ar: 'يفتح هذا الزر أسرع طريقة لإضافة مستندات جديدة: المسح الضوئي، الرفع المحلي، Gmail والمصادر السحابية المتصلة.',
           pl: 'Ten przycisk otwiera najszybszą ścieżkę dodawania nowych dokumentów: skanowanie, lokalny upload, Gmail i połączone źródła w chmurze.',
           it: 'Questo pulsante apre il percorso più rapido per aggiungere nuovi documenti: scansione, caricamento locale, Gmail e fonti cloud collegate.',
+          sk: 'Ten przycisk otwiera najszybszą ścieżkę dodawania nowych dokumentów: skanowanie, lokalny upload, Gmail i połączone źródła w chmurze.',
         }),
       },
       searchBar: {
@@ -117,6 +123,7 @@ const content = {
           ar: 'البحث في القائمة',
           pl: 'Szukaj na liście',
           it: 'Cerca nella lista',
+          sk: 'Szukaj na liście',
         }),
         description: t({
           ru: 'Поиск помогает быстро сузить список по названию файла, теме письма, отправителю или продавцу.',
@@ -132,6 +139,7 @@ const content = {
           ar: 'يضيّق البحث القائمة بسرعة حسب اسم الملف أو موضوع البريد الإلكتروني أو المرسل أو التاجر.',
           pl: 'Wyszukiwanie szybko zawęża listę według nazwy pliku, tematu wiadomości, nadawcy lub sprzedawcy.',
           it: 'La ricerca restringe rapidamente la lista per nome file, oggetto email, mittente o commerciante.',
+          sk: 'Wyszukiwanie szybko zawęża listę według nazwy pliku, tematu wiadomości, nadawcy lub sprzedawcy.',
         }),
       },
       filters: {
@@ -149,6 +157,7 @@ const content = {
           ar: 'الفلاتر',
           pl: 'Filtry',
           it: 'Filtri',
+          sk: 'Filtry',
         }),
         description: t({
           ru: 'Здесь собраны быстрые фильтры и доступ к расширенной панели, чтобы оставить в списке только нужные документы.',
@@ -164,6 +173,7 @@ const content = {
           ar: 'تجمع هذه المنطقة الفلاتر السريعة واللوحة المتقدمة حتى تتمكن من إبقاء المستندات التي تحتاجها فقط في العرض.',
           pl: 'Ten obszar grupuje szybkie filtry i panel zaawansowany, dzięki czemu możesz wyświetlać tylko potrzebne dokumenty.',
           it: 'Quest\'area raggruppa i filtri rapidi e il pannello avanzato per visualizzare solo i documenti necessari.',
+          sk: 'Ten obszar grupuje szybkie filtry i panel zaawansowany, dzięki czemu możesz wyświetlać tylko potrzebne dokumenty.',
         }),
       },
       statementsList: {
@@ -181,6 +191,7 @@ const content = {
           ar: 'قائمة كشوف الحسابات',
           pl: 'Lista wyciągów',
           it: 'Elenco estratti conto',
+          sk: 'Lista wyciągów',
         }),
         description: t({
           ru: 'Основная область показывает найденные документы, их даты, суммы и доступные действия без перехода в другие разделы.',
@@ -196,6 +207,7 @@ const content = {
           ar: 'تعرض القائمة الرئيسية المستندات المطابقة وتواريخها ومبالغها والإجراءات المتاحة دون مغادرة الصفحة.',
           pl: 'Główna lista pokazuje dopasowane dokumenty, ich daty, kwoty i dostępne akcje bez opuszczania strony.',
           it: 'L\'elenco principale mostra i documenti trovati, le loro date, gli importi e le azioni disponibili senza lasciare la pagina.',
+          sk: 'Główna lista pokazuje dopasowane dokumenty, ich daty, kwoty i dostępne akcje bez opuszczania strony.',
         }),
       },
       statementRow: {
@@ -213,6 +225,7 @@ const content = {
           ar: 'صف كشف الحساب',
           pl: 'Wiersz wyciągu',
           it: 'Riga estratto conto',
+          sk: 'Wiersz wyciągu',
         }),
         description: t({
           ru: 'Каждая строка показывает ключевые данные по документу: источник, дату, сумму и текущее состояние обработки. Это хороший ориентир для проверки списка перед следующими действиями.',
@@ -228,6 +241,7 @@ const content = {
           ar: 'يعرض كل صف التفاصيل الرئيسية للمستند: المصدر والتاريخ والمبلغ وحالة المعالجة الحالية. إنه أفضل مكان للتحقق السريع من القائمة قبل المتابعة.',
           pl: 'Każdy wiersz pokazuje kluczowe szczegóły dokumentu: źródło, datę, kwotę i bieżący stan przetwarzania. To najlepsze miejsce do szybkiej weryfikacji listy przed dalszymi działaniami.',
           it: 'Ogni riga mostra i dettagli chiave del documento: fonte, data, importo e stato di elaborazione corrente. È il posto migliore per verificare rapidamente la lista prima di procedere.',
+          sk: 'Każdy wiersz pokazuje kluczowe szczegóły dokumentu: źródło, datę, kwotę i bieżący stan przetwarzania. To najlepsze miejsce do szybkiej weryfikacji listy przed dalszymi działaniami.',
         }),
       },
       completed: {
@@ -245,6 +259,7 @@ const content = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь тур отражает текущую страницу выписок. Можно загрузить новый документ или открыть любую строку для продолжения.',
@@ -260,6 +275,7 @@ const content = {
           ar: 'تتطابق الجولة الآن مع صفحة كشوف الحسابات الحالية. يمكنك رفع مستند جديد أو فتح أي صف للمتابعة.',
           pl: 'Przewodnik odpowiada teraz bieżącej stronie wyciągów. Możesz przesłać nowy dokument lub otworzyć dowolny wiersz, aby kontynuować.',
           it: 'Il tour corrisponde ora alla pagina degli estratti conto attuale. Puoi caricare un nuovo documento o aprire qualsiasi riga per continuare.',
+          sk: 'Przewodnik odpowiada teraz bieżącej stronie wyciągów. Możesz przesłać nowy dokument lub otworzyć dowolny wiersz, aby kontynuować.',
         }),
       },
     },

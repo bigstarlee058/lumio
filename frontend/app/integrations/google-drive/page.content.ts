@@ -62,6 +62,7 @@ const content = makeCloudStorageContent({
     ar: 'Google Picker غير متاح',
     pl: 'Google Picker jest niedostępny',
     it: 'Google Picker non disponibile',
+    sk: 'Google Drive',
   },
 });
 

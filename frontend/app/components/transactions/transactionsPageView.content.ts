@@ -17,6 +17,7 @@ const content = {
       ar: 'لم يتم التنفيذ بعد',
       pl: 'Jeszcze nie zaimplementowano',
       it: 'Non ancora implementato',
+      sk: 'Jeszcze nie zaimplementowano',
     }),
     categoryUpdated: t({
       ru: 'Категория обновлена успешно',
@@ -32,6 +33,7 @@ const content = {
       ar: 'تم تحديث الفئة بنجاح',
       pl: 'Kategoria zaktualizowana pomyślnie',
       it: 'Categoria aggiornata con successo',
+      sk: 'Kategoria zaktualizowana pomyślnie',
     }),
     categoryUpdateFailed: t({
       ru: 'Не удалось обновить категорию',
@@ -47,6 +49,7 @@ const content = {
       ar: 'فشل تحديث الفئة',
       pl: 'Nie udało się zaktualizować kategorii',
       it: 'Impossibile aggiornare la categoria',
+      sk: 'Nie udało się zaktualizować kategorii',
     }),
     categoriesUpdated: t({
       ru: 'Категория назначена транзакциям',
@@ -62,6 +65,7 @@ const content = {
       ar: 'تم تعيين الفئة للمعاملات',
       pl: 'Kategoria przypisana do transakcji',
       it: 'Categoria assegnata alle transazioni',
+      sk: 'Kategoria przypisana do transakcji',
     }),
     bulkUpdateFailed: t({
       ru: 'Не удалось обновить категории',
@@ -77,6 +81,7 @@ const content = {
       ar: 'فشل تحديث الفئات',
       pl: 'Nie udało się zaktualizować kategorii',
       it: 'Impossibile aggiornare le categorie',
+      sk: 'Nie udało się zaktualizować kategorii',
     }),
     exportComingSoon: t({
       ru: 'Экспорт скоро будет доступен',
@@ -92,6 +97,7 @@ const content = {
       ar: 'ميزة التصدير قادمة قريباً',
       pl: 'Funkcja eksportu wkrótce',
       it: 'Funzione di esportazione in arrivo',
+      sk: 'Funkcja eksportu wkrótce',
     }),
     shareComingSoon: t({
       ru: 'Функция поделиться скоро будет доступна',
@@ -107,6 +113,7 @@ const content = {
       ar: 'ميزة المشاركة قادمة قريباً',
       pl: 'Funkcja udostępniania wkrótce',
       it: 'Funzione di condivisione in arrivo',
+      sk: 'Funkcja udostępniania wkrótce',
     }),
     fixIssuesHint: t({
       ru: 'Используйте фильтры для поиска и исправления проблем',
@@ -122,6 +129,7 @@ const content = {
       ar: 'استخدم المرشحات للعثور على المشكلات وإصلاحها',
       pl: 'Użyj filtrów, aby znaleźć i naprawić problemy',
       it: 'Usa i filtri per trovare e risolvere i problemi',
+      sk: 'Użyj filtrów, aby znaleźć i naprawić problemy',
     }),
     selected: t({
       ru: 'выбрано',
@@ -137,6 +145,7 @@ const content = {
       ar: 'محدد',
       pl: 'zaznaczono',
       it: 'selezionato',
+      sk: 'zaznaczono',
     }),
     selectCategory: t({
       ru: 'Выберите категорию...',
@@ -152,6 +161,7 @@ const content = {
       ar: 'اختر الفئة...',
       pl: 'Wybierz kategorię...',
       it: 'Seleziona categoria...',
+      sk: 'Wybierz kategorię...',
     }),
     apply: t({
       ru: 'Применить',
@@ -167,6 +177,7 @@ const content = {
       ar: 'تطبيق',
       pl: 'Zastosuj',
       it: 'Applica',
+      sk: 'Zastosuj',
     }),
     clearSelection: t({
       ru: 'Очистить',
@@ -182,6 +193,7 @@ const content = {
       ar: 'مسح',
       pl: 'Wyczyść',
       it: 'Cancella',
+      sk: 'Wyczyść',
     }),
     allCategorized: t({
       ru: 'Все транзакции уже категоризированы',
@@ -197,6 +209,7 @@ const content = {
       ar: 'جميع المعاملات مصنفة بالفعل',
       pl: 'Wszystkie transakcje są już skategoryzowane',
       it: 'Tutte le transazioni sono già categorizzate',
+      sk: 'Wszystkie transakcje są już skategoryzowane',
     }),
     categorizingProgress: t({
       ru: 'Категоризация {{count}} транзакций...',
@@ -212,6 +225,7 @@ const content = {
       ar: 'جارٍ تصنيف {{count}} معاملة...',
       pl: 'Kategoryzowanie {{count}} transakcji...',
       it: 'Categorizzazione di {{count}} transazioni...',
+      sk: 'Kategoryzowanie {{count}} transakcji...',
     }),
     categorizeSuccess: t({
       ru: 'Успешно категоризировано {{count}} транзакций',
@@ -227,6 +241,7 @@ const content = {
       ar: 'تم تصنيف {{count}} معاملة بنجاح',
       pl: 'Pomyślnie skategoryzowano {{count}} transakcji',
       it: '{{count}} transazioni categorizzate con successo',
+      sk: 'Pomyślnie skategoryzowano {{count}} transakcji',
     }),
     categorizePartial: t({
       ru: 'Категоризировано {{successful}} из {{total}}. Ошибок: {{failed}}',
@@ -242,6 +257,7 @@ const content = {
       ar: 'تم تصنيف {{successful}} من {{total}}. أخطاء: {{failed}}',
       pl: 'Skategoryzowano {{successful}} z {{total}}. Błędy: {{failed}}',
       it: '{{successful}} di {{total}} categorizzati. Errori: {{failed}}',
+      sk: 'Skategoryzowano {{successful}} z {{total}}. Błędy: {{failed}}',
     }),
     categorizeFailed: t({
       ru: 'Не удалось категоризировать (ошибок: {{count}})',
@@ -257,6 +273,7 @@ const content = {
       ar: 'فشل التصنيف (أخطاء: {{count}})',
       pl: 'Nie udało się skategoryzować (błędy: {{count}})',
       it: 'Impossibile categorizzare (errori: {{count}})',
+      sk: 'Nie udało się skategoryzować (błędy: {{count}})',
     }),
     autoFixFailed: t({
       ru: 'Не удалось автоматически исправить проблемы',
@@ -272,6 +289,7 @@ const content = {
       ar: 'فشل إصلاح المشكلات تلقائياً',
       pl: 'Nie udało się automatycznie naprawić problemów',
       it: 'Impossibile correggere automaticamente i problemi',
+      sk: 'Nie udało się automatycznie naprawić problemów',
     }),
     exportToTable: t({
       ru: 'Экспорт в таблицу: функционал в разработке',
@@ -287,6 +305,7 @@ const content = {
       ar: 'التصدير إلى جدول: الميزة قيد التطوير',
       pl: 'Eksport do tabeli: funkcja w trakcie tworzenia',
       it: 'Esporta in tabella: funzionalità in sviluppo',
+      sk: 'Eksport do tabeli: funkcja w trakcie tworzenia',
     }),
     exportFormat: t({
       ru: 'Экспорт в {{type}}: функционал в разработке',
@@ -302,6 +321,7 @@ const content = {
       ar: 'التصدير إلى {{type}}: الميزة قيد التطوير',
       pl: 'Eksport do {{type}}: funkcja w trakcie tworzenia',
       it: 'Esporta in {{type}}: funzionalità in sviluppo',
+      sk: 'Eksport do {{type}}: funkcja w trakcie tworzenia',
     }),
   },
 } satisfies Dictionary;

@@ -62,6 +62,7 @@ const content = makeCloudStorageContent({
     ar: 'Dropbox Chooser غير متاح',
     pl: 'Dropbox Chooser jest niedostępny',
     it: 'Dropbox Chooser non disponibile',
+    sk: 'Dropbox',
   },
 });
 

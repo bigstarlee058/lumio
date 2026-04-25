@@ -17,6 +17,7 @@ const content = {
       ar: 'رابط الدعوة غير صالح',
       pl: 'Nieprawidłowy link zaproszenia',
       it: 'Link di invito non valido',
+      sk: 'Nieprawidłowy link zaproszenia',
     }),
     title: t({
       ru: 'Приглашение в рабочее пространство',
@@ -32,6 +33,7 @@ const content = {
       ar: 'دعوة مساحة العمل',
       pl: 'Zaproszenie do przestrzeni roboczej',
       it: 'Invito all\'area di lavoro',
+      sk: 'Zaproszenie do przestrzeni roboczej',
     }),
     subtitle: t({
       ru: 'Чтобы принять приглашение, войдите или зарегистрируйтесь под указанным email.',
@@ -47,12 +49,13 @@ const content = {
       ar: 'لقبول الدعوة، سجّل الدخول أو أنشئ حسابًا بالبريد الإلكتروني المدعو.',
       pl: 'Aby zaakceptować zaproszenie, zaloguj się lub zarejestruj się podanym adresem e-mail.',
       it: 'Per accettare l\'invito, accedi o registrati con l\'e-mail invitata.',
+      sk: 'Aby zaakceptować zaproszenie, zaloguj się lub zarejestruj się podanym adresem e-mail.',
     }),
     details: {
-      workspace: t({ ru: 'Рабочее пространство', en: 'Workspace', kk: 'Workspace', de: 'Arbeitsbereich', fr: 'Espace de travail', es: 'Espacio de trabajo', pt: 'Workspace', tr: 'Çalışma alanı', uk: 'Робочий простір', zh: '工作区', ar: 'مساحة العمل', pl: 'Przestrzeń robocza', it: 'Area di lavoro' }),
-      role: t({ ru: 'Роль', en: 'Role', kk: 'Рөл', de: 'Rolle', fr: 'Rôle', es: 'Rol', pt: 'Função', tr: 'Rol', uk: 'Роль', zh: '角色', ar: 'الدور', pl: 'Rola', it: 'Ruolo' }),
-      expiresAt: t({ ru: 'Действует до', en: 'Expires at', kk: 'Дейін жарамды', de: 'Läuft ab am', fr: 'Expire le', es: 'Expira el', pt: 'Expira em', tr: 'Sona erme tarihi', uk: 'Діє до', zh: '到期时间', ar: 'ينتهي في', pl: 'Wygasa dnia', it: 'Scade il' }),
-      email: t({ ru: 'Кому отправлено', en: 'Sent to', kk: 'Кімге жіберілді', de: 'Gesendet an', fr: 'Envoyé à', es: 'Enviado a', pt: 'Enviado para', tr: 'Gönderildi', uk: 'Кому надіслано', zh: '发送至', ar: 'أُرسل إلى', pl: 'Wysłano do', it: 'Inviato a' }),
+      workspace: t({ ru: 'Рабочее пространство', en: 'Workspace', kk: 'Workspace', de: 'Arbeitsbereich', fr: 'Espace de travail', es: 'Espacio de trabajo', pt: 'Workspace', tr: 'Çalışma alanı', uk: 'Робочий простір', zh: '工作区', ar: 'مساحة العمل', pl: 'Przestrzeń robocza', it: 'Area di lavoro', sk: 'Przestrzeń robocza'}),
+      role: t({ ru: 'Роль', en: 'Role', kk: 'Рөл', de: 'Rolle', fr: 'Rôle', es: 'Rol', pt: 'Função', tr: 'Rol', uk: 'Роль', zh: '角色', ar: 'الدور', pl: 'Rola', it: 'Ruolo', sk: 'Rola'}),
+      expiresAt: t({ ru: 'Действует до', en: 'Expires at', kk: 'Дейін жарамды', de: 'Läuft ab am', fr: 'Expire le', es: 'Expira el', pt: 'Expira em', tr: 'Sona erme tarihi', uk: 'Діє до', zh: '到期时间', ar: 'ينتهي في', pl: 'Wygasa dnia', it: 'Scade il', sk: 'Wygasa dnia'}),
+      email: t({ ru: 'Кому отправлено', en: 'Sent to', kk: 'Кімге жіберілді', de: 'Gesendet an', fr: 'Envoyé à', es: 'Enviado a', pt: 'Enviado para', tr: 'Gönderildi', uk: 'Кому надіслано', zh: '发送至', ar: 'أُرسل إلى', pl: 'Wysłano do', it: 'Inviato a', sk: 'Wysłano do'}),
     },
     statusMessages: {
       accepted: t({
@@ -69,6 +72,7 @@ const content = {
         ar: 'تم قبول هذه الدعوة بالفعل.',
         pl: 'To zaproszenie zostało już zaakceptowane.',
         it: 'Questo invito è già stato accettato.',
+        sk: 'To zaproszenie zostało już zaakceptowane.',
       }),
       expired: t({
         ru: 'Срок действия приглашения истёк.',
@@ -84,6 +88,7 @@ const content = {
         ar: 'انتهت صلاحية هذه الدعوة.',
         pl: 'To zaproszenie wygasło.',
         it: 'Questo invito è scaduto.',
+        sk: 'To zaproszenie wygasło.',
       }),
       cancelled: t({
         ru: 'Это приглашение было отозвано.',
@@ -99,6 +104,7 @@ const content = {
         ar: 'تم إلغاء هذه الدعوة.',
         pl: 'To zaproszenie zostało odwołane.',
         it: 'Questo invito è stato revocato.',
+        sk: 'To zaproszenie zostało odwołane.',
       }),
       pending: t({
         ru: 'Приглашение активно.',
@@ -114,12 +120,13 @@ const content = {
         ar: 'الدعوة نشطة.',
         pl: 'Zaproszenie jest aktywne.',
         it: 'L\'invito è attivo.',
+        sk: 'Zaproszenie jest aktywne.',
       }),
     },
     actions: {
-      login: t({ ru: 'Войти', en: 'Log in', kk: 'Кіру', de: 'Anmelden', fr: 'Se connecter', es: 'Iniciar sesión', pt: 'Entrar', tr: 'Giriş yap', uk: 'Увійти', zh: '登录', ar: 'تسجيل الدخول', pl: 'Zaloguj się', it: 'Accedi' }),
-      register: t({ ru: 'Зарегистрироваться', en: 'Sign up', kk: 'Тіркелу', de: 'Registrieren', fr: 'S\'inscrire', es: 'Registrarse', pt: 'Cadastrar-se', tr: 'Kaydol', uk: 'Зареєструватися', zh: '注册', ar: 'إنشاء حساب', pl: 'Zarejestruj się', it: 'Registrati' }),
-      accept: t({ ru: 'Принять приглашение', en: 'Accept invitation', kk: 'Шақыруды қабылдау', de: 'Einladung annehmen', fr: 'Accepter l\'invitation', es: 'Aceptar invitación', pt: 'Aceitar convite', tr: 'Daveti kabul et', uk: 'Прийняти запрошення', zh: '接受邀请', ar: 'قبول الدعوة', pl: 'Przyjmij zaproszenie', it: 'Accetta invito' }),
+      login: t({ ru: 'Войти', en: 'Log in', kk: 'Кіру', de: 'Anmelden', fr: 'Se connecter', es: 'Iniciar sesión', pt: 'Entrar', tr: 'Giriş yap', uk: 'Увійти', zh: '登录', ar: 'تسجيل الدخول', pl: 'Zaloguj się', it: 'Accedi', sk: 'Zaloguj się'}),
+      register: t({ ru: 'Зарегистрироваться', en: 'Sign up', kk: 'Тіркелу', de: 'Registrieren', fr: 'S\'inscrire', es: 'Registrarse', pt: 'Cadastrar-se', tr: 'Kaydol', uk: 'Зареєструватися', zh: '注册', ar: 'إنشاء حساب', pl: 'Zarejestruj się', it: 'Registrati', sk: 'Zarejestruj się'}),
+      accept: t({ ru: 'Принять приглашение', en: 'Accept invitation', kk: 'Шақыруды қабылдау', de: 'Einladung annehmen', fr: 'Accepter l\'invitation', es: 'Aceptar invitación', pt: 'Aceitar convite', tr: 'Daveti kabul et', uk: 'Прийняти запрошення', zh: '接受邀请', ar: 'قبول الدعوة', pl: 'Przyjmij zaproszenie', it: 'Accetta invito', sk: 'Przyjmij zaproszenie'}),
       loginAnother: t({
         ru: 'Войти другим аккаунтом',
         en: 'Log in with another account',
@@ -134,8 +141,9 @@ const content = {
         ar: 'تسجيل الدخول بحساب آخر',
         pl: 'Zaloguj się innym kontem',
         it: 'Accedi con un altro account',
+        sk: 'Zaloguj się innym kontem',
       }),
-      goToApp: t({ ru: 'Перейти в приложение', en: 'Go to app', kk: 'Қосымшаға өту', de: 'Zur App gehen', fr: 'Aller à l\'application', es: 'Ir a la aplicación', pt: 'Ir para o app', tr: 'Uygulamaya git', uk: 'Перейти до додатку', zh: '前往应用', ar: 'الذهاب إلى التطبيق', pl: 'Przejdź do aplikacji', it: 'Vai all\'app' }),
+      goToApp: t({ ru: 'Перейти в приложение', en: 'Go to app', kk: 'Қосымшаға өту', de: 'Zur App gehen', fr: 'Aller à l\'application', es: 'Ir a la aplicación', pt: 'Ir para o app', tr: 'Uygulamaya git', uk: 'Перейти до додатку', zh: '前往应用', ar: 'الذهاب إلى التطبيق', pl: 'Przejdź do aplikacji', it: 'Vai all\'app', sk: 'Przejdź do aplikacji'}),
     },
     messages: {
       acceptedFallback: t({
@@ -152,6 +160,7 @@ const content = {
         ar: 'تم قبول الدعوة. مرحبًا!',
         pl: 'Zaproszenie zaakceptowane. Witamy!',
         it: 'Invito accettato. Benvenuto!',
+        sk: 'Zaproszenie zaakceptowane. Witamy!',
       }),
       wrongAccount: t({
         ru: 'Вам нужно войти как',
@@ -167,6 +176,7 @@ const content = {
         ar: 'تحتاج إلى تسجيل الدخول بوصفك',
         pl: 'Musisz zalogować się jako',
         it: 'Devi accedere come',
+        sk: 'Musisz zalogować się jako',
       }),
     },
     errors: {
@@ -184,6 +194,7 @@ const content = {
         ar: 'فشل تحميل الدعوة',
         pl: 'Nie udało się załadować zaproszenia',
         it: 'Impossibile caricare l\'invito',
+        sk: 'Nie udało się załadować zaproszenia',
       }),
       acceptFailed: t({
         ru: 'Не удалось принять приглашение',
@@ -199,6 +210,7 @@ const content = {
         ar: 'فشل قبول الدعوة',
         pl: 'Nie udało się zaakceptować zaproszenia',
         it: 'Impossibile accettare l\'invito',
+        sk: 'Nie udało się zaakceptować zaproszenia',
       }),
     },
   },

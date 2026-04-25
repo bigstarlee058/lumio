@@ -3,7 +3,7 @@ import { type Dictionary, t } from 'intlayer';
 const content = {
   key: 'sharedFilePage',
   content: {
-    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...' }),
+    loading: t({ ru: 'Загрузка...', en: 'Loading...', kk: 'Жүктелуде...', de: 'Laden...', fr: 'Chargement...', es: 'Cargando...', pt: 'Carregando...', tr: 'Yükleniyor...', uk: 'Завантаження...', zh: '加载中...', ar: 'جارٍ التحميل...', pl: 'Ładowanie...', it: 'Caricamento...', sk: 'Ładowanie...'}),
     errors: {
       passwordRequired: t({
         ru: 'Требуется пароль для доступа к файлу',
@@ -19,6 +19,7 @@ const content = {
         ar: 'كلمة المرور مطلوبة للوصول إلى هذا الملف',
         pl: 'Hasło jest wymagane, aby uzyskać dostęp do tego pliku',
         it: 'È richiesta una password per accedere a questo file',
+        sk: 'Hasło jest wymagane, aby uzyskać dostęp do tego pliku',
       }),
       loadFailed: t({
         ru: 'Не удалось загрузить файл',
@@ -34,8 +35,9 @@ const content = {
         ar: 'فشل تحميل الملف',
         pl: 'Nie udało się załadować pliku',
         it: 'Impossibile caricare il file',
+        sk: 'Nie udało się załadować pliku',
       }),
-      notFound: t({ ru: 'Файл не найден', en: 'File not found', kk: 'Файл табылмады', de: 'Datei nicht gefunden', fr: 'Fichier introuvable', es: 'Archivo no encontrado', pt: 'Arquivo não encontrado', tr: 'Dosya bulunamadı', uk: 'Файл не знайдено', zh: '文件未找到', ar: 'الملف غير موجود', pl: 'Plik nie znaleziony', it: 'File non trovato' }),
+      notFound: t({ ru: 'Файл не найден', en: 'File not found', kk: 'Файл табылмады', de: 'Datei nicht gefunden', fr: 'Fichier introuvable', es: 'Archivo no encontrado', pt: 'Arquivo não encontrado', tr: 'Dosya bulunamadı', uk: 'Файл не знайдено', zh: '文件未找到', ar: 'الملف غير موجود', pl: 'Plik nie znaleziony', it: 'File non trovato', sk: 'Plik nie znaleziony'}),
       noTransactionsAccess: t({
         ru: 'У вас нет прав на просмотр транзакций. Обратитесь к владельцу файла для получения доступа.',
         en: 'You do not have permission to view transactions. Contact the file owner to get access.',
@@ -50,10 +52,11 @@ const content = {
         ar: 'ليس لديك إذن لعرض المعاملات. تواصل مع مالك الملف للحصول على الوصول.',
         pl: 'Nie masz uprawnień do przeglądania transakcji. Skontaktuj się z właścicielem pliku, aby uzyskać dostęp.',
         it: 'Non hai il permesso di visualizzare le transazioni. Contatta il proprietario del file per ottenere l\'accesso.',
+        sk: 'Nie masz uprawnień do przeglądania transakcji. Skontaktuj się z właścicielem pliku, aby uzyskać dostęp.',
       }),
     },
     permission: {
-      view: t({ ru: 'Просмотр', en: 'View', kk: 'Қарау', de: 'Anzeigen', fr: 'Voir', es: 'Ver', pt: 'Visualizar', tr: 'Görüntüle', uk: 'Перегляд', zh: '查看', ar: 'عرض', pl: 'Podgląd', it: 'Visualizza' }),
+      view: t({ ru: 'Просмотр', en: 'View', kk: 'Қарау', de: 'Anzeigen', fr: 'Voir', es: 'Ver', pt: 'Visualizar', tr: 'Görüntüle', uk: 'Перегляд', zh: '查看', ar: 'عرض', pl: 'Podgląd', it: 'Visualizza', sk: 'Podgląd'}),
       download: t({
         ru: 'Просмотр и скачивание',
         en: 'View and download',
@@ -68,12 +71,13 @@ const content = {
         ar: 'عرض وتنزيل',
         pl: 'Podgląd i pobieranie',
         it: 'Visualizza e scarica',
+        sk: 'Podgląd i pobieranie',
       }),
-      edit: t({ ru: 'Редактирование', en: 'Edit', kk: 'Өңдеу', de: 'Bearbeiten', fr: 'Modifier', es: 'Editar', pt: 'Editar', tr: 'Düzenle', uk: 'Редагування', zh: '编辑', ar: 'تعديل', pl: 'Edytuj', it: 'Modifica' }),
-      prefix: t({ ru: 'Права', en: 'Permission', kk: 'Құқық', de: 'Berechtigung', fr: 'Permission', es: 'Permiso', pt: 'Permissão', tr: 'İzin', uk: 'Права', zh: '权限', ar: 'الصلاحية', pl: 'Uprawnienie', it: 'Permesso' }),
+      edit: t({ ru: 'Редактирование', en: 'Edit', kk: 'Өңдеу', de: 'Bearbeiten', fr: 'Modifier', es: 'Editar', pt: 'Editar', tr: 'Düzenle', uk: 'Редагування', zh: '编辑', ar: 'تعديل', pl: 'Edytuj', it: 'Modifica', sk: 'Edytuj'}),
+      prefix: t({ ru: 'Права', en: 'Permission', kk: 'Құқық', de: 'Berechtigung', fr: 'Permission', es: 'Permiso', pt: 'Permissão', tr: 'İzin', uk: 'Права', zh: '权限', ar: 'الصلاحية', pl: 'Uprawnienie', it: 'Permesso', sk: 'Uprawnienie'}),
     },
     protected: {
-      title: t({ ru: 'Защищенный файл', en: 'Protected file', kk: 'Қорғалған файл', de: 'Geschützte Datei', fr: 'Fichier protégé', es: 'Archivo protegido', pt: 'Arquivo protegido', tr: 'Korumalı dosya', uk: 'Захищений файл', zh: '受保护的文件', ar: 'ملف محمي', pl: 'Chroniony plik', it: 'File protetto' }),
+      title: t({ ru: 'Защищенный файл', en: 'Protected file', kk: 'Қорғалған файл', de: 'Geschützte Datei', fr: 'Fichier protégé', es: 'Archivo protegido', pt: 'Arquivo protegido', tr: 'Korumalı dosya', uk: 'Захищений файл', zh: '受保护的文件', ar: 'ملف محمي', pl: 'Chroniony plik', it: 'File protetto', sk: 'Chroniony plik'}),
       subtitle: t({
         ru: 'Для доступа к этому файлу требуется пароль',
         en: 'Password is required to access this file',
@@ -88,22 +92,23 @@ const content = {
         ar: 'كلمة المرور مطلوبة للوصول إلى هذا الملف',
         pl: 'Hasło jest wymagane, aby uzyskać dostęp do tego pliku',
         it: 'È richiesta una password per accedere a questo file',
+        sk: 'Hasło jest wymagane, aby uzyskać dostęp do tego pliku',
       }),
-      passwordLabel: t({ ru: 'Пароль', en: 'Password', kk: 'Құпиясөз', de: 'Passwort', fr: 'Mot de passe', es: 'Contraseña', pt: 'Senha', tr: 'Şifre', uk: 'Пароль', zh: '密码', ar: 'كلمة المرور', pl: 'Hasło', it: 'Password' }),
-      open: t({ ru: 'Открыть файл', en: 'Open file', kk: 'Файлды ашу', de: 'Datei öffnen', fr: 'Ouvrir le fichier', es: 'Abrir archivo', pt: 'Abrir arquivo', tr: 'Dosyayı aç', uk: 'Відкрити файл', zh: '打开文件', ar: 'فتح الملف', pl: 'Otwórz plik', it: 'Apri file' }),
+      passwordLabel: t({ ru: 'Пароль', en: 'Password', kk: 'Құпиясөз', de: 'Passwort', fr: 'Mot de passe', es: 'Contraseña', pt: 'Senha', tr: 'Şifre', uk: 'Пароль', zh: '密码', ar: 'كلمة المرور', pl: 'Hasło', it: 'Password', sk: 'Hasło'}),
+      open: t({ ru: 'Открыть файл', en: 'Open file', kk: 'Файлды ашу', de: 'Datei öffnen', fr: 'Ouvrir le fichier', es: 'Abrir archivo', pt: 'Abrir arquivo', tr: 'Dosyayı aç', uk: 'Відкрити файл', zh: '打开文件', ar: 'فتح الملف', pl: 'Otwórz plik', it: 'Apri file', sk: 'Otwórz plik'}),
     },
     header: {
-      badge: t({ ru: 'Общий доступ', en: 'Shared', kk: 'Ортақ қолжетімділік', de: 'Geteilt', fr: 'Partagé', es: 'Compartido', pt: 'Compartilhado', tr: 'Paylaşıldı', uk: 'Спільний доступ', zh: '共享', ar: 'مشترك', pl: 'Udostępniony', it: 'Condiviso' }),
-      download: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Télécharger', es: 'Descargar', pt: 'Baixar', tr: 'İndir', uk: 'Завантажити', zh: '下载', ar: 'تنزيل', pl: 'Pobierz', it: 'Scarica' }),
+      badge: t({ ru: 'Общий доступ', en: 'Shared', kk: 'Ортақ қолжетімділік', de: 'Geteilt', fr: 'Partagé', es: 'Compartido', pt: 'Compartilhado', tr: 'Paylaşıldı', uk: 'Спільний доступ', zh: '共享', ar: 'مشترك', pl: 'Udostępniony', it: 'Condiviso', sk: 'Udostępniony'}),
+      download: t({ ru: 'Скачать', en: 'Download', kk: 'Жүктеу', de: 'Herunterladen', fr: 'Télécharger', es: 'Descargar', pt: 'Baixar', tr: 'İndir', uk: 'Завантажити', zh: '下载', ar: 'تنزيل', pl: 'Pobierz', it: 'Scarica', sk: 'Pobierz'}),
     },
     cards: {
-      bank: t({ ru: 'Банк', en: 'Bank', kk: 'Банк', de: 'Bank', fr: 'Banque', es: 'Banco', pt: 'Banco', tr: 'Banka', uk: 'Банк', zh: '银行', ar: 'البنك', pl: 'Bank', it: 'Banca' }),
-      fileSize: t({ ru: 'Размер файла', en: 'File size', kk: 'Файл өлшемі', de: 'Dateigröße', fr: 'Taille du fichier', es: 'Tamaño del archivo', pt: 'Tamanho do arquivo', tr: 'Dosya boyutu', uk: 'Розмір файлу', zh: '文件大小', ar: 'حجم الملف', pl: 'Rozmiar pliku', it: 'Dimensione file' }),
-      transactions: t({ ru: 'Транзакций', en: 'Transactions', kk: 'Транзакциялар', de: 'Transaktionen', fr: 'Transactions', es: 'Transacciones', pt: 'Transações', tr: 'İşlemler', uk: 'Транзакції', zh: '交易', ar: 'المعاملات', pl: 'Transakcje', it: 'Transazioni' }),
-      account: t({ ru: 'Счет', en: 'Account', kk: 'Шот', de: 'Konto', fr: 'Compte', es: 'Cuenta', pt: 'Conta', tr: 'Hesap', uk: 'Рахунок', zh: '账户', ar: 'الحساب', pl: 'Konto', it: 'Conto' }),
-      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—' }),
+      bank: t({ ru: 'Банк', en: 'Bank', kk: 'Банк', de: 'Bank', fr: 'Banque', es: 'Banco', pt: 'Banco', tr: 'Banka', uk: 'Банк', zh: '银行', ar: 'البنك', pl: 'Bank', it: 'Banca', sk: 'Bank'}),
+      fileSize: t({ ru: 'Размер файла', en: 'File size', kk: 'Файл өлшемі', de: 'Dateigröße', fr: 'Taille du fichier', es: 'Tamaño del archivo', pt: 'Tamanho do arquivo', tr: 'Dosya boyutu', uk: 'Розмір файлу', zh: '文件大小', ar: 'حجم الملف', pl: 'Rozmiar pliku', it: 'Dimensione file', sk: 'Rozmiar pliku'}),
+      transactions: t({ ru: 'Транзакций', en: 'Transactions', kk: 'Транзакциялар', de: 'Transaktionen', fr: 'Transactions', es: 'Transacciones', pt: 'Transações', tr: 'İşlemler', uk: 'Транзакції', zh: '交易', ar: 'المعاملات', pl: 'Transakcje', it: 'Transazioni', sk: 'Transakcje'}),
+      account: t({ ru: 'Счет', en: 'Account', kk: 'Шот', de: 'Konto', fr: 'Compte', es: 'Cuenta', pt: 'Conta', tr: 'Hesap', uk: 'Рахунок', zh: '账户', ar: 'الحساب', pl: 'Konto', it: 'Conto', sk: 'Konto'}),
+      dash: t({ ru: '—', en: '—', kk: '—', de: '—', fr: '—', es: '—', pt: '—', tr: '—', uk: '—', zh: '—', ar: '—', pl: '—', it: '—', sk: '—'}),
     },
-    transactionsTitle: t({ ru: 'Транзакции', en: 'Transactions', kk: 'Транзакциялар', de: 'Transaktionen', fr: 'Transactions', es: 'Transacciones', pt: 'Transações', tr: 'İşlemler', uk: 'Транзакції', zh: '交易', ar: 'المعاملات', pl: 'Transakcje', it: 'Transazioni' }),
+    transactionsTitle: t({ ru: 'Транзакции', en: 'Transactions', kk: 'Транзакциялар', de: 'Transaktionen', fr: 'Transactions', es: 'Transacciones', pt: 'Transações', tr: 'İşlemler', uk: 'Транзакції', zh: '交易', ar: 'المعاملات', pl: 'Transakcje', it: 'Transazioni', sk: 'Transakcje'}),
   },
 } satisfies Dictionary;
 

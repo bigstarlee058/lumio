@@ -17,6 +17,7 @@ const content = {
       ar: 'تصدير المعاملات',
       pl: 'Eksportuj transakcje',
       it: 'Esporta transazioni',
+      sk: 'Eksportuj transakcje',
     }),
     exportButton: t({
       ru: 'Экспортировать',
@@ -32,6 +33,7 @@ const content = {
       ar: 'تصدير',
       pl: 'Eksportuj',
       it: 'Esporta',
+      sk: 'Eksportuj',
     }),
     cancel: t({
       ru: 'Отмена',
@@ -47,6 +49,7 @@ const content = {
       ar: 'إلغاء',
       pl: 'Anuluj',
       it: 'Annulla',
+      sk: 'Anuluj',
     }),
     description: t({
       ru: 'Выберите формат экспорта для текущей выборки транзакций:',
@@ -62,6 +65,7 @@ const content = {
       ar: 'اختر تنسيق التصدير لتحديد المعاملات الحالي:',
       pl: 'Wybierz format eksportu dla bieżącego wyboru transakcji:',
       it: 'Scegli un formato di esportazione per la selezione di transazioni corrente:',
+      sk: 'Wybierz format eksportu dla bieżącego wyboru transakcji:',
     }),
     exportToTable: t({
       ru: 'Экспорт в таблицу',
@@ -77,6 +81,7 @@ const content = {
       ar: 'التصدير إلى جدول',
       pl: 'Eksportuj do tabeli',
       it: 'Esporta in tabella',
+      sk: 'Eksportuj do tabeli',
     }),
     exportToTableDescription: t({
       ru: 'Создать новую таблицу или добавить в существующую',
@@ -92,6 +97,7 @@ const content = {
       ar: 'إنشاء جدول جديد أو إضافة إلى جدول موجود',
       pl: 'Utwórz nową tabelę lub dodaj do istniejącej',
       it: 'Crea una nuova tabella o aggiungila a una esistente',
+      sk: 'Utwórz nową tabelę lub dodaj do istniejącej',
     }),
     downloadFile: t({
       ru: 'Скачать файл в формате .xlsx или .csv',
@@ -107,6 +113,7 @@ const content = {
       ar: 'تنزيل الملف بتنسيق .xlsx أو .csv',
       pl: 'Pobierz plik w formacie .xlsx lub .csv',
       it: 'Scarica il file in formato .xlsx o .csv',
+      sk: 'Pobierz plik w formacie .xlsx lub .csv',
     }),
   },
 } satisfies Dictionary;

@@ -17,6 +17,7 @@ const content = {
       ar: 'إدارة المستخدمين',
       pl: 'Zarządzanie użytkownikami',
       it: 'Gestione utenti',
+      sk: 'Zarządzanie użytkownikami',
     }),
     search: t({
       ru: 'Поиск',
@@ -32,6 +33,7 @@ const content = {
       ar: 'بحث',
       pl: 'Szukaj',
       it: 'Cerca',
+      sk: 'Szukaj',
     }),
     refresh: t({
       ru: 'Обновить',
@@ -47,9 +49,10 @@ const content = {
       ar: 'تحديث',
       pl: 'Odśwież',
       it: 'Aggiorna',
+      sk: 'Odśwież',
     }),
     table: {
-      email: t({ ru: 'Email', en: 'Email', kk: 'Email', de: 'E-Mail', fr: 'E-mail', es: 'Correo electrónico', pt: 'E-mail', tr: 'E-posta', uk: 'Email', zh: '邮箱', ar: 'البريد الإلكتروني', pl: 'E-mail', it: 'Email' }),
+      email: t({ ru: 'Email', en: 'Email', kk: 'Email', de: 'E-Mail', fr: 'E-mail', es: 'Correo electrónico', pt: 'E-mail', tr: 'E-posta', uk: 'Email', zh: '邮箱', ar: 'البريد الإلكتروني', pl: 'E-mail', it: 'Email', sk: 'E-mail'}),
       name: t({
         ru: 'Имя',
         en: 'Name',
@@ -64,6 +67,7 @@ const content = {
         ar: 'الاسم',
         pl: 'Imię',
         it: 'Nome',
+        sk: 'Imię',
       }),
       role: t({
         ru: 'Роль',
@@ -79,6 +83,7 @@ const content = {
         ar: 'الدور',
         pl: 'Rola',
         it: 'Ruolo',
+        sk: 'Rola',
       }),
       status: t({
         ru: 'Статус',
@@ -94,6 +99,7 @@ const content = {
         ar: 'الحالة',
         pl: 'Status',
         it: 'Stato',
+        sk: 'Status',
       }),
       permissions: t({
         ru: 'Права',
@@ -109,6 +115,7 @@ const content = {
         ar: 'الأذونات',
         pl: 'Uprawnienia',
         it: 'Autorizzazioni',
+        sk: 'Uprawnienia',
       }),
       createdAt: t({
         ru: 'Дата регистрации',
@@ -124,6 +131,7 @@ const content = {
         ar: 'تاريخ التسجيل',
         pl: 'Data rejestracji',
         it: 'Data di registrazione',
+        sk: 'Data rejestracji',
       }),
       actions: t({
         ru: 'Действия',
@@ -139,6 +147,7 @@ const content = {
         ar: 'الإجراءات',
         pl: 'Akcje',
         it: 'Azioni',
+        sk: 'Akcje',
       }),
     },
     roles: {
@@ -156,6 +165,7 @@ const content = {
         ar: 'المشرف',
         pl: 'Administrator',
         it: 'Amministratore',
+        sk: 'Administrator',
       }),
       user: t({
         ru: 'Пользователь',
@@ -171,6 +181,7 @@ const content = {
         ar: 'مستخدم',
         pl: 'Użytkownik',
         it: 'Utente',
+        sk: 'Użytkownik',
       }),
       viewer: t({
         ru: 'Наблюдатель',
@@ -186,6 +197,7 @@ const content = {
         ar: 'مشاهد',
         pl: 'Obserwator',
         it: 'Visualizzatore',
+        sk: 'Obserwator',
       }),
     },
     status: {
@@ -203,6 +215,7 @@ const content = {
         ar: 'نشط',
         pl: 'Aktywny',
         it: 'Attivo',
+        sk: 'Aktywny',
       }),
       inactive: t({
         ru: 'Неактивен',
@@ -218,6 +231,7 @@ const content = {
         ar: 'غير نشط',
         pl: 'Nieaktywny',
         it: 'Inattivo',
+        sk: 'Nieaktywny',
       }),
     },
     permissionsChip: {
@@ -235,6 +249,7 @@ const content = {
         ar: 'افتراضي',
         pl: 'Domyślne',
         it: 'Predefinito',
+        sk: 'Domyślne',
       }),
     },
     tooltips: {
@@ -252,6 +267,7 @@ const content = {
         ar: 'إدارة الأذونات',
         pl: 'Zarządzaj uprawnieniami',
         it: 'Gestisci autorizzazioni',
+        sk: 'Zarządzaj uprawnieniami',
       }),
     },
     dialog: {
@@ -269,6 +285,7 @@ const content = {
         ar: 'إدارة الأذونات',
         pl: 'Zarządzaj uprawnieniami',
         it: 'Gestisci autorizzazioni',
+        sk: 'Zarządzaj uprawnieniami',
       }),
       rolePrefix: t({
         ru: 'Роль',
@@ -284,6 +301,7 @@ const content = {
         ar: 'الدور',
         pl: 'Rola',
         it: 'Ruolo',
+        sk: 'Rola',
       }),
       subtitleSuffix: t({
         ru: 'Выберите дополнительные права доступа:',
@@ -299,6 +317,7 @@ const content = {
         ar: 'اختر أذونات إضافية:',
         pl: 'Wybierz dodatkowe uprawnienia:',
         it: 'Seleziona autorizzazioni aggiuntive:',
+        sk: 'Wybierz dodatkowe uprawnienia:',
       }),
       resetDefaults: t({
         ru: 'Сбросить к умолчаниям',
@@ -314,6 +333,7 @@ const content = {
         ar: 'إعادة الضبط إلى الافتراضي',
         pl: 'Zresetuj do domyślnych',
         it: 'Ripristina predefiniti',
+        sk: 'Zresetuj do domyślnych',
       }),
       cancel: t({
         ru: 'Отмена',
@@ -329,6 +349,7 @@ const content = {
         ar: 'إلغاء',
         pl: 'Anuluj',
         it: 'Annulla',
+        sk: 'Anuluj',
       }),
       save: t({
         ru: 'Сохранить',
@@ -344,6 +365,7 @@ const content = {
         ar: 'حفظ',
         pl: 'Zapisz',
         it: 'Salva',
+        sk: 'Zapisz',
       }),
     },
     errors: {
@@ -361,6 +383,7 @@ const content = {
         ar: 'فشل تحميل المستخدمين',
         pl: 'Błąd ładowania użytkowników',
         it: 'Errore nel caricamento degli utenti',
+        sk: 'Błąd ładowania użytkowników',
       }),
       loadPermissions: t({
         ru: 'Ошибка загрузки прав',
@@ -376,6 +399,7 @@ const content = {
         ar: 'فشل تحميل الأذونات',
         pl: 'Błąd ładowania uprawnień',
         it: 'Errore nel caricamento delle autorizzazioni',
+        sk: 'Błąd ładowania uprawnień',
       }),
       savePermissions: t({
         ru: 'Ошибка сохранения прав',
@@ -391,6 +415,7 @@ const content = {
         ar: 'فشل حفظ الأذونات',
         pl: 'Błąd zapisywania uprawnień',
         it: 'Errore nel salvataggio delle autorizzazioni',
+        sk: 'Błąd zapisywania uprawnień',
       }),
       resetPermissions: t({
         ru: 'Ошибка сброса прав',
@@ -406,6 +431,7 @@ const content = {
         ar: 'فشل إعادة تعيين الأذونات',
         pl: 'Błąd resetowania uprawnień',
         it: 'Errore nel ripristino delle autorizzazioni',
+        sk: 'Błąd resetowania uprawnień',
       }),
       updateRole: t({
         ru: 'Ошибка обновления роли',
@@ -421,6 +447,7 @@ const content = {
         ar: 'فشل تحديث الدور',
         pl: 'Błąd aktualizacji roli',
         it: 'Errore nell\'aggiornamento del ruolo',
+        sk: 'Błąd aktualizacji roli',
       }),
       updateStatus: t({
         ru: 'Ошибка обновления статуса',
@@ -436,6 +463,7 @@ const content = {
         ar: 'فشل تحديث الحالة',
         pl: 'Błąd aktualizacji statusu',
         it: 'Errore nell\'aggiornamento dello stato',
+        sk: 'Błąd aktualizacji statusu',
       }),
     },
     permissions: {
@@ -453,6 +481,7 @@ const content = {
         ar: 'عرض الكشوفات',
         pl: 'Przeglądaj wyciągi',
         it: 'Visualizza estratti',
+        sk: 'Przeglądaj wyciągi',
       }),
       statementUpload: t({
         ru: 'Загрузка выписок',
@@ -468,6 +497,7 @@ const content = {
         ar: 'رفع الكشوفات',
         pl: 'Przesyłaj wyciągi',
         it: 'Carica estratti',
+        sk: 'Przesyłaj wyciągi',
       }),
       statementDelete: t({
         ru: 'Удаление выписок',
@@ -483,6 +513,7 @@ const content = {
         ar: 'حذف الكشوفات',
         pl: 'Usuń wyciągi',
         it: 'Elimina estratti',
+        sk: 'Usuń wyciągi',
       }),
       statementEdit: t({
         ru: 'Редактирование выписок',
@@ -498,6 +529,7 @@ const content = {
         ar: 'تعديل الكشوفات',
         pl: 'Edytuj wyciągi',
         it: 'Modifica estratti',
+        sk: 'Edytuj wyciągi',
       }),
       transactionView: t({
         ru: 'Просмотр транзакций',
@@ -513,6 +545,7 @@ const content = {
         ar: 'عرض المعاملات',
         pl: 'Przeglądaj transakcje',
         it: 'Visualizza transazioni',
+        sk: 'Przeglądaj transakcje',
       }),
       transactionEdit: t({
         ru: 'Редактирование транзакций',
@@ -528,6 +561,7 @@ const content = {
         ar: 'تعديل المعاملات',
         pl: 'Edytuj transakcje',
         it: 'Modifica transazioni',
+        sk: 'Edytuj transakcje',
       }),
       transactionDelete: t({
         ru: 'Удаление транзакций',
@@ -543,6 +577,7 @@ const content = {
         ar: 'حذف المعاملات',
         pl: 'Usuń transakcje',
         it: 'Elimina transazioni',
+        sk: 'Usuń transakcje',
       }),
       transactionBulkUpdate: t({
         ru: 'Массовое обновление транзакций',
@@ -558,6 +593,7 @@ const content = {
         ar: 'تحديث جماعي للمعاملات',
         pl: 'Zbiorcza aktualizacja transakcji',
         it: 'Aggiornamento in blocco transazioni',
+        sk: 'Zbiorcza aktualizacja transakcji',
       }),
       categoryView: t({
         ru: 'Просмотр категорий',
@@ -573,6 +609,7 @@ const content = {
         ar: 'عرض الفئات',
         pl: 'Przeglądaj kategorie',
         it: 'Visualizza categorie',
+        sk: 'Przeglądaj kategorie',
       }),
       categoryCreate: t({
         ru: 'Создание категорий',
@@ -588,6 +625,7 @@ const content = {
         ar: 'إنشاء الفئات',
         pl: 'Twórz kategorie',
         it: 'Crea categorie',
+        sk: 'Twórz kategorie',
       }),
       categoryEdit: t({
         ru: 'Редактирование категорий',
@@ -603,6 +641,7 @@ const content = {
         ar: 'تعديل الفئات',
         pl: 'Edytuj kategorie',
         it: 'Modifica categorie',
+        sk: 'Edytuj kategorie',
       }),
       categoryDelete: t({
         ru: 'Удаление категорий',
@@ -618,6 +657,7 @@ const content = {
         ar: 'حذف الفئات',
         pl: 'Usuń kategorie',
         it: 'Elimina categorie',
+        sk: 'Usuń kategorie',
       }),
       branchView: t({
         ru: 'Просмотр филиалов',
@@ -633,6 +673,7 @@ const content = {
         ar: 'عرض الفروع',
         pl: 'Przeglądaj oddziały',
         it: 'Visualizza filiali',
+        sk: 'Przeglądaj oddziały',
       }),
       branchCreate: t({
         ru: 'Создание филиалов',
@@ -648,6 +689,7 @@ const content = {
         ar: 'إنشاء الفروع',
         pl: 'Twórz oddziały',
         it: 'Crea filiali',
+        sk: 'Twórz oddziały',
       }),
       branchEdit: t({
         ru: 'Редактирование филиалов',
@@ -663,6 +705,7 @@ const content = {
         ar: 'تعديل الفروع',
         pl: 'Edytuj oddziały',
         it: 'Modifica filiali',
+        sk: 'Edytuj oddziały',
       }),
       branchDelete: t({
         ru: 'Удаление филиалов',
@@ -678,6 +721,7 @@ const content = {
         ar: 'حذف الفروع',
         pl: 'Usuń oddziały',
         it: 'Elimina filiali',
+        sk: 'Usuń oddziały',
       }),
       walletView: t({
         ru: 'Просмотр кошельков',
@@ -693,6 +737,7 @@ const content = {
         ar: 'عرض المحافظ',
         pl: 'Przeglądaj portfele',
         it: 'Visualizza portafogli',
+        sk: 'Przeglądaj portfele',
       }),
       walletCreate: t({
         ru: 'Создание кошельков',
@@ -708,6 +753,7 @@ const content = {
         ar: 'إنشاء المحافظ',
         pl: 'Twórz portfele',
         it: 'Crea portafogli',
+        sk: 'Twórz portfele',
       }),
       walletEdit: t({
         ru: 'Редактирование кошельков',
@@ -723,6 +769,7 @@ const content = {
         ar: 'تعديل المحافظ',
         pl: 'Edytuj portfele',
         it: 'Modifica portafogli',
+        sk: 'Edytuj portfele',
       }),
       walletDelete: t({
         ru: 'Удаление кошельков',
@@ -738,6 +785,7 @@ const content = {
         ar: 'حذف المحافظ',
         pl: 'Usuń portfele',
         it: 'Elimina portafogli',
+        sk: 'Usuń portfele',
       }),
       reportView: t({
         ru: 'Просмотр отчётов',
@@ -753,6 +801,7 @@ const content = {
         ar: 'عرض التقارير',
         pl: 'Przeglądaj raporty',
         it: 'Visualizza report',
+        sk: 'Przeglądaj raporty',
       }),
       reportExport: t({
         ru: 'Экспорт отчётов',
@@ -768,6 +817,7 @@ const content = {
         ar: 'تصدير التقارير',
         pl: 'Eksportuj raporty',
         it: 'Esporta report',
+        sk: 'Eksportuj raporty',
       }),
       googleSheetView: t({
         ru: 'Просмотр Google Sheets',
@@ -783,6 +833,7 @@ const content = {
         ar: 'عرض Google Sheets',
         pl: 'Przeglądaj Google Sheets',
         it: 'Visualizza Google Sheets',
+        sk: 'Przeglądaj Google Sheets',
       }),
       googleSheetConnect: t({
         ru: 'Подключение Google Sheets',
@@ -798,6 +849,7 @@ const content = {
         ar: 'توصيل Google Sheets',
         pl: 'Połącz Google Sheets',
         it: 'Connetti Google Sheets',
+        sk: 'Połącz Google Sheets',
       }),
       googleSheetSync: t({
         ru: 'Синхронизация Google Sheets',
@@ -813,6 +865,7 @@ const content = {
         ar: 'مزامنة Google Sheets',
         pl: 'Synchronizuj Google Sheets',
         it: 'Sincronizza Google Sheets',
+        sk: 'Synchronizuj Google Sheets',
       }),
     },
   },

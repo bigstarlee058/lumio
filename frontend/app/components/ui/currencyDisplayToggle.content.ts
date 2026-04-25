@@ -17,6 +17,7 @@ const content = {
       ar: 'عرض بـ',
       pl: 'Pokaż w',
       it: 'Mostra in',
+      sk: 'Pokaż w',
     }),
     showOriginal: t({
       ru: 'Оригинальные валюты',
@@ -32,6 +33,7 @@ const content = {
       ar: 'العملات الأصلية',
       pl: 'Oryginalne waluty',
       it: 'Valute originali',
+      sk: 'Oryginalne waluty',
     }),
     currency: t({
       ru: 'Валюта',
@@ -47,6 +49,7 @@ const content = {
       ar: 'العملة',
       pl: 'Waluta',
       it: 'Valuta',
+      sk: 'Waluta',
     }),
   },
 } satisfies Dictionary;

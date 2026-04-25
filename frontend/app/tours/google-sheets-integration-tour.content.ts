@@ -17,6 +17,7 @@ const content = {
       ar: 'جولة اتصال Google Sheets',
       pl: 'Tour połączenia Google Sheets',
       it: 'Tour connessione Google Sheets',
+      sk: 'Tour połączenia Google Sheets',
     }),
     description: t({
       ru: 'Пошаговый гайд по подключению таблицы и настройке синхронизации.',
@@ -32,6 +33,7 @@ const content = {
       ar: 'دليل خطوة بخطوة لتوصيل جدول بيانات وضبط المزامنة.',
       pl: 'Przewodnik krok po kroku do połączenia arkusza i konfiguracji synchronizacji.',
       it: 'Guida passo dopo passo per connettere un foglio e configurare la sincronizzazione.',
+      sk: 'Przewodnik krok po kroku do połączenia arkusza i konfiguracji synchronizacji.',
     }),
     steps: {
       welcome: {
@@ -49,6 +51,7 @@ const content = {
           ar: 'اتصال Google Sheets',
           pl: 'Połączenie Google Sheets',
           it: 'Connessione Google Sheets',
+          sk: 'Połączenie Google Sheets',
         }),
         description: t({
           ru: 'Этот тур объяснит, как подключить таблицу, настроить Apps Script и управлять синхронизацией.',
@@ -64,6 +67,7 @@ const content = {
           ar: 'تشرح هذه الجولة كيفية توصيل جدول بيانات وإعداد Apps Script وإدارة المزامنة.',
           pl: 'Ten przewodnik wyjaśnia, jak połączyć arkusz, skonfigurować Apps Script i zarządzać synchronizacją.',
           it: 'Questo tour spiega come connettere un foglio, configurare Apps Script e gestire la sincronizzazione.',
+          sk: 'Ten przewodnik wyjaśnia, jak połączyć arkusz, skonfigurować Apps Script i zarządzać synchronizacją.',
         }),
       },
       step1Card: {
@@ -81,6 +85,7 @@ const content = {
           ar: 'الخطوة 1: إضافة جدول بيانات',
           pl: 'Krok 1: Dodaj arkusz',
           it: 'Passo 1: Aggiungi un foglio',
+          sk: 'Krok 1: Dodaj arkusz',
         }),
         description: t({
           ru: 'Выберите таблицу через Google picker, затем при необходимости задайте имя подключения и конкретный лист.',
@@ -96,6 +101,7 @@ const content = {
           ar: 'اختر جدول بيانات عبر منتقي Google، ثم حدد اسم الاتصال وورقة العمل إذا لزم الأمر.',
           pl: 'Wybierz arkusz kalkulacyjny przez selektor Google, a następnie ustaw nazwę połączenia i arkusz roboczy w razie potrzeby.',
           it: 'Scegli un foglio di calcolo tramite il selettore Google, poi imposta un nome di connessione e foglio di lavoro se necessario.',
+          sk: 'Wybierz arkusz kalkulacyjny przez selektor Google, a następnie ustaw nazwę połączenia i arkusz roboczy w razie potrzeby.',
         }),
       },
       sheetUrl: {
@@ -113,6 +119,7 @@ const content = {
           ar: 'منتقي جدول البيانات',
           pl: 'Selektor arkusza kalkulacyjnego',
           it: 'Selettore foglio di calcolo',
+          sk: 'Selektor arkusza kalkulacyjnego',
         }),
         description: t({
           ru: 'Здесь открывается Google picker для выбора нужной таблицы из вашего аккаунта и перехода к следующему шагу подключения.',
@@ -128,6 +135,7 @@ const content = {
           ar: 'يفتح هذا الضبط منتقي Google حتى تتمكن من اختيار جدول البيانات المناسب من حسابك ومتابعة الإعداد.',
           pl: 'Ten element otwiera selektor Google, aby wybrać właściwy arkusz kalkulacyjny z konta i kontynuować konfigurację.',
           it: 'Questo controllo apre il selettore Google per scegliere il foglio di calcolo corretto dal tuo account e continuare la configurazione.',
+          sk: 'Ten element otwiera selektor Google, aby wybrać właściwy arkusz kalkulacyjny z konta i kontynuować konfigurację.',
         }),
       },
       sheetName: {
@@ -145,6 +153,7 @@ const content = {
           ar: 'الاسم في Lumio',
           pl: 'Nazwa w Lumio',
           it: 'Nome in Lumio',
+          sk: 'Nazwa w Lumio',
         }),
         description: t({
           ru: 'Это имя будет отображаться в списке подключений.',
@@ -160,6 +169,7 @@ const content = {
           ar: 'سيظهر هذا الاسم في قائمة الاتصالات.',
           pl: 'Ta nazwa będzie widoczna na liście połączeń.',
           it: 'Questo nome apparirà nell\'elenco delle connessioni.',
+          sk: 'Ta nazwa będzie widoczna na liście połączeń.',
         }),
       },
       worksheet: {
@@ -177,6 +187,7 @@ const content = {
           ar: 'اسم ورقة العمل',
           pl: 'Nazwa arkusza',
           it: 'Nome foglio di lavoro',
+          sk: 'Nazwa arkusza',
         }),
         description: t({
           ru: 'Укажите конкретный лист, если данных несколько.',
@@ -192,6 +203,7 @@ const content = {
           ar: 'حدد ورقة عمل إذا كان جدول البيانات يحتوي على علامات تبويب متعددة.',
           pl: 'Podaj arkusz roboczy, jeśli arkusz kalkulacyjny ma wiele kart.',
           it: 'Specifica un foglio di lavoro se il foglio di calcolo ha più schede.',
+          sk: 'Podaj arkusz roboczy, jeśli arkusz kalkulacyjny ma wiele kart.',
         }),
       },
       connectButton: {
@@ -209,6 +221,7 @@ const content = {
           ar: 'التفويض والاتصال',
           pl: 'Autoryzuj i połącz',
           it: 'Autorizza e connetti',
+          sk: 'Autoryzuj i połącz',
         }),
         description: t({
           ru: 'Запускает OAuth для доступа к Google Sheets.',
@@ -224,6 +237,7 @@ const content = {
           ar: 'يبدأ OAuth لمنح الوصول إلى Google Sheets.',
           pl: 'Uruchamia OAuth, aby udzielić dostępu do Google Sheets.',
           it: 'Avvia OAuth per concedere l\'accesso a Google Sheets.',
+          sk: 'Uruchamia OAuth, aby udzielić dostępu do Google Sheets.',
         }),
       },
       step2Card: {
@@ -241,6 +255,7 @@ const content = {
           ar: 'الخطوة 2: Apps Script',
           pl: 'Krok 2: Apps Script',
           it: 'Passo 2: Apps Script',
+          sk: 'Krok 2: Apps Script',
         }),
         description: t({
           ru: 'Добавьте Apps Script, чтобы отправлять вебхуки при изменениях.',
@@ -256,6 +271,7 @@ const content = {
           ar: 'أضف Apps Script لإرسال webhooks عند التغييرات.',
           pl: 'Dodaj Apps Script, aby wysyłać webhooki przy zmianach.',
           it: 'Aggiungi Apps Script per inviare webhook in caso di modifiche.',
+          sk: 'Dodaj Apps Script, aby wysyłać webhooki przy zmianach.',
         }),
       },
       appsScript: {
@@ -273,6 +289,7 @@ const content = {
           ar: 'دليل Apps Script',
           pl: 'Przewodnik Apps Script',
           it: 'Guida Apps Script',
+          sk: 'Przewodnik Apps Script',
         }),
         description: t({
           ru: 'Откройте документацию и следуйте шагам настройки.',
@@ -288,6 +305,7 @@ const content = {
           ar: 'افتح الوثائق واتبع خطوات الإعداد.',
           pl: 'Otwórz dokumentację i postępuj zgodnie z krokami konfiguracji.',
           it: 'Apri la documentazione e segui i passaggi di configurazione.',
+          sk: 'Otwórz dokumentację i postępuj zgodnie z krokami konfiguracji.',
         }),
       },
       listCard: {
@@ -305,6 +323,7 @@ const content = {
           ar: 'جداول البيانات المتصلة',
           pl: 'Połączone arkusze',
           it: 'Fogli connessi',
+          sk: 'Połączone arkusze',
         }),
         description: t({
           ru: 'Здесь отображаются все активные подключения.',
@@ -320,6 +339,7 @@ const content = {
           ar: 'جميع الاتصالات النشطة مدرجة هنا.',
           pl: 'Wszystkie aktywne połączenia są tutaj wymienione.',
           it: 'Tutte le connessioni attive sono elencate qui.',
+          sk: 'Wszystkie aktywne połączenia są tutaj wymienione.',
         }),
       },
       connectionCard: {
@@ -337,6 +357,7 @@ const content = {
           ar: 'بطاقة الاتصال',
           pl: 'Karta połączenia',
           it: 'Scheda connessione',
+          sk: 'Karta połączenia',
         }),
         description: t({
           ru: 'Показывает статус OAuth, ID таблицы и дату синхронизации.',
@@ -352,6 +373,7 @@ const content = {
           ar: 'يعرض حالة OAuth ومعرف جدول البيانات وآخر مزامنة.',
           pl: 'Pokazuje status OAuth, ID arkusza i ostatnią synchronizację.',
           it: 'Mostra lo stato OAuth, l\'ID del foglio e l\'ultima sincronizzazione.',
+          sk: 'Pokazuje status OAuth, ID arkusza i ostatnią synchronizację.',
         }),
       },
       authorize: {
@@ -369,6 +391,7 @@ const content = {
           ar: 'إعادة التفويض',
           pl: 'Ponowna autoryzacja',
           it: 'Ri-autorizza',
+          sk: 'Ponowna autoryzacja',
         }),
         description: t({
           ru: 'Появляется, если OAuth требуется повторно.',
@@ -384,6 +407,7 @@ const content = {
           ar: 'يظهر عند الحاجة إلى تحديث OAuth.',
           pl: 'Pojawia się gdy OAuth wymaga odświeżenia.',
           it: 'Appare quando OAuth deve essere aggiornato.',
+          sk: 'Pojawia się gdy OAuth wymaga odświeżenia.',
         }),
       },
       sync: {
@@ -401,6 +425,7 @@ const content = {
           ar: 'المزامنة',
           pl: 'Synchronizacja',
           it: 'Sincronizzazione',
+          sk: 'Synchronizacja',
         }),
         description: t({
           ru: 'Запускает принудительную синхронизацию данных.',
@@ -416,6 +441,7 @@ const content = {
           ar: 'يُشغّل مزامنة يدوية للبيانات.',
           pl: 'Uruchamia ręczną synchronizację danych.',
           it: 'Attiva una sincronizzazione manuale dei dati.',
+          sk: 'Uruchamia ręczną synchronizację danych.',
         }),
       },
       disconnect: {
@@ -433,6 +459,7 @@ const content = {
           ar: 'قطع الاتصال',
           pl: 'Rozłącz',
           it: 'Disconnetti',
+          sk: 'Rozłącz',
         }),
         description: t({
           ru: 'Удаляет подключение и останавливает синхронизацию.',
@@ -448,6 +475,7 @@ const content = {
           ar: 'يزيل الاتصال ويوقف المزامنة.',
           pl: 'Usuwa połączenie i zatrzymuje synchronizację.',
           it: 'Rimuove la connessione e interrompe la sincronizzazione.',
+          sk: 'Usuwa połączenie i zatrzymuje synchronizację.',
         }),
       },
       completed: {
@@ -465,6 +493,7 @@ const content = {
           ar: 'تم',
           pl: 'Gotowe',
           it: 'Fatto',
+          sk: 'Gotowe',
         }),
         description: t({
           ru: 'Теперь вы можете подключать и управлять Google Sheets.',
@@ -480,6 +509,7 @@ const content = {
           ar: 'يمكنك الآن توصيل Google Sheets وإدارتها.',
           pl: 'Możesz teraz łączyć i zarządzać Google Sheets.',
           it: 'Ora puoi connettere e gestire Google Sheets.',
+          sk: 'Możesz teraz łączyć i zarządzać Google Sheets.',
         }),
       },
     },

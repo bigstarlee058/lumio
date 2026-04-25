@@ -18,6 +18,7 @@ const content = {
         ar: 'التفويض مطلوب',
         pl: 'Wymagana autoryzacja',
         it: 'Autorizzazione richiesta',
+        sk: 'Wymagana autoryzacja',
       }),
       fileLoadFailed: t({
         ru: 'Не удалось загрузить файл',
@@ -33,6 +34,7 @@ const content = {
         ar: 'فشل تحميل الملف',
         pl: 'Nie udało się załadować pliku',
         it: 'Impossibile caricare il file',
+        sk: 'Nie udało się załadować pliku',
       }),
       fileLoadError: t({
         ru: 'Ошибка загрузки файла',
@@ -48,6 +50,7 @@ const content = {
         ar: 'خطأ في تحميل الملف',
         pl: 'Błąd ładowania pliku',
         it: 'Errore nel caricamento del file',
+        sk: 'Błąd ładowania pliku',
       }),
       pdfRendererFailed: t({
         ru: 'Не удалось загрузить просмотрщик PDF',
@@ -63,6 +66,7 @@ const content = {
         ar: 'فشل تحميل عارض PDF',
         pl: 'Nie udało się załadować przeglądarki PDF',
         it: 'Impossibile caricare il visualizzatore PDF',
+        sk: 'Nie udało się załadować przeglądarki PDF',
       }),
       downloadFailed: t({
         ru: 'Ошибка скачивания файла',
@@ -78,6 +82,7 @@ const content = {
         ar: 'خطأ في تنزيل الملف',
         pl: 'Błąd pobierania pliku',
         it: 'Errore nel download del file',
+        sk: 'Błąd pobierania pliku',
       }),
       downloadAlertFailed: t({
         ru: 'Не удалось скачать файл',
@@ -93,6 +98,7 @@ const content = {
         ar: 'فشل تنزيل الملف',
         pl: 'Nie udało się pobrać pliku',
         it: 'Impossibile scaricare il file',
+        sk: 'Nie udało się pobrać pliku',
       }),
       uploadFailed: t({
         ru: 'Не удалось загрузить файл',
@@ -108,6 +114,7 @@ const content = {
         ar: 'فشل رفع الملف',
         pl: 'Nie udało się przesłać pliku',
         it: 'Impossibile caricare il file',
+        sk: 'Nie udało się przesłać pliku',
       }),
       parsingFailed: t({
         ru: 'Не удалось запустить парсинг',
@@ -123,6 +130,7 @@ const content = {
         ar: 'فشل بدء التحليل',
         pl: 'Nie udało się uruchomić parsowania',
         it: 'Impossibile avviare il parsing',
+        sk: 'Nie udało się uruchomić parsowania',
       }),
       displayFailed: t({
         ru: 'Не удалось отобразить документ',
@@ -138,6 +146,7 @@ const content = {
         ar: 'فشل عرض المستند',
         pl: 'Nie udało się wyświetlić dokumentu',
         it: 'Impossibile visualizzare il documento',
+        sk: 'Nie udało się wyświetlić dokumentu',
       }),
     },
     loading: t({
@@ -154,6 +163,7 @@ const content = {
       ar: 'جارٍ تحميل المستند...',
       pl: 'Ładowanie dokumentu...',
       it: 'Caricamento documento...',
+      sk: 'Ładowanie dokumentu...',
     }),
     fileNotAttached: t({
       ru: 'Файл не прикреплен',
@@ -169,6 +179,7 @@ const content = {
       ar: 'الملف غير مرفق',
       pl: 'Plik nie jest dołączony',
       it: 'File non allegato',
+      sk: 'Plik nie jest dołączony',
     }),
     loadError: t({
       ru: 'Ошибка загрузки',
@@ -184,6 +195,7 @@ const content = {
       ar: 'خطأ في التحميل',
       pl: 'Błąd ładowania',
       it: 'Errore di caricamento',
+      sk: 'Błąd ładowania',
     }),
     uploadFileHint: t({
       ru: 'Загрузите файл, чтобы открыть превью документа',
@@ -199,6 +211,7 @@ const content = {
       ar: 'قم برفع ملف لفتح معاينة المستند',
       pl: 'Prześlij plik, aby otworzyć podgląd dokumentu',
       it: 'Carica un file per aprire la anteprima del documento',
+      sk: 'Prześlij plik, aby otworzyć podgląd dokumentu',
     }),
     uploading: t({
       ru: 'Загрузка...',
@@ -214,6 +227,7 @@ const content = {
       ar: 'جارٍ الرفع...',
       pl: 'Przesyłanie...',
       it: 'Caricamento...',
+      sk: 'Przesyłanie...',
     }),
     uploadFile: t({
       ru: 'Загрузить файл',
@@ -229,6 +243,7 @@ const content = {
       ar: 'رفع ملف',
       pl: 'Prześlij plik',
       it: 'Carica file',
+      sk: 'Prześlij plik',
     }),
     close: t({
       ru: 'Закрыть',
@@ -244,6 +259,7 @@ const content = {
       ar: 'إغلاق',
       pl: 'Zamknij',
       it: 'Chiudi',
+      sk: 'Zamknij',
     }),
     startParsing: t({
       ru: 'Запустить парсинг?',
@@ -259,6 +275,7 @@ const content = {
       ar: 'هل تريد بدء التحليل؟',
       pl: 'Uruchomić parsowanie?',
       it: 'Avviare il parsing?',
+      sk: 'Uruchomić parsowanie?',
     }),
     startParsingDescription: t({
       ru: 'Хотите извлечь данные из загруженной выписки и заменить текущие ручные значения?',
@@ -274,6 +291,7 @@ const content = {
       ar: 'هل تريد استخراج البيانات من الكشف المرفوع واستبدال القيم اليدوية الحالية؟',
       pl: 'Czy chcesz wyodrębnić dane z przesłanego wyciągu i zastąpić bieżące wartości ręczne?',
       it: 'Vuoi estrarre i dati dall\'estratto caricato e sostituire i valori manuali attuali?',
+      sk: 'Czy chcesz wyodrębnić dane z przesłanego wyciągu i zastąpić bieżące wartości ręczne?',
     }),
     decline: t({
       ru: 'Отказаться',
@@ -289,6 +307,7 @@ const content = {
       ar: 'رفض',
       pl: 'Odrzuć',
       it: 'Rifiuta',
+      sk: 'Odrzuć',
     }),
     startingParsing: t({
       ru: 'Запуск...',
@@ -304,6 +323,7 @@ const content = {
       ar: 'جارٍ البدء...',
       pl: 'Uruchamianie...',
       it: 'Avvio...',
+      sk: 'Uruchamianie...',
     }),
     startParsingButton: t({
       ru: 'Запустить парсинг',
@@ -319,6 +339,7 @@ const content = {
       ar: 'بدء التحليل',
       pl: 'Uruchom parsowanie',
       it: 'Avvia parsing',
+      sk: 'Uruchom parsowanie',
     }),
   },
 } satisfies Dictionary;

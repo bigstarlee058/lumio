@@ -17,6 +17,7 @@ const content = {
       ar: 'الإشعارات',
       pl: 'Powiadomienia',
       it: 'Notifiche',
+      sk: 'Powiadomienia',
     }),
     markAllRead: t({
       ru: 'Прочитать все',
@@ -32,6 +33,7 @@ const content = {
       ar: 'تحديد الكل كمقروء',
       pl: 'Oznacz wszystkie jako przeczytane',
       it: 'Segna tutto come letto',
+      sk: 'Oznacz wszystkie jako przeczytane',
     }),
     loading: t({
       ru: 'Загрузка...',
@@ -47,6 +49,7 @@ const content = {
       ar: 'جارٍ التحميل...',
       pl: 'Ładowanie...',
       it: 'Caricamento...',
+      sk: 'Ładowanie...',
     }),
     empty: t({
       ru: 'Нет новых уведомлений',
@@ -62,6 +65,7 @@ const content = {
       ar: 'لا توجد إشعارات جديدة',
       pl: 'Brak nowych powiadomień',
       it: 'Nessuna nuova notifica',
+      sk: 'Brak nowych powiadomień',
     }),
     settingsLink: t({
       ru: 'Настройки уведомлений',
@@ -77,6 +81,7 @@ const content = {
       ar: 'إعدادات الإشعارات',
       pl: 'Ustawienia powiadomień',
       it: 'Impostazioni notifiche',
+      sk: 'Ustawienia powiadomień',
     }),
     justNow: t({
       ru: 'только что',
@@ -92,6 +97,7 @@ const content = {
       ar: 'الآن',
       pl: 'przed chwilą',
       it: 'proprio ora',
+      sk: 'przed chwilą',
     }),
     aria: {
       notifications: t({
@@ -108,6 +114,7 @@ const content = {
         ar: 'الإشعارات',
         pl: 'Powiadomienia',
         it: 'Notifiche',
+        sk: 'Powiadomienia',
       }),
     },
   },

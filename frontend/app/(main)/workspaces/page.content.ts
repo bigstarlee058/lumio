@@ -17,6 +17,7 @@ export default {
       ar: 'اختر مساحة العمل',
       pl: 'Wybierz obszar roboczy',
       it: 'Seleziona area di lavoro',
+      sk: 'Wybierz obszar roboczy',
     }),
     subtitle: t({
       en: 'Choose a workspace to continue',
@@ -32,6 +33,7 @@ export default {
       ar: 'اختر مساحة عمل للمتابعة',
       pl: 'Wybierz obszar roboczy, aby kontynuować',
       it: 'Scegli un\'area di lavoro per continuare',
+      sk: 'Wybierz obszar roboczy, aby kontynuować',
     }),
     createWorkspace: t({
       en: 'Create New Workspace',
@@ -47,6 +49,7 @@ export default {
       ar: 'إنشاء مساحة عمل جديدة',
       pl: 'Utwórz nowy obszar roboczy',
       it: 'Crea nuova area di lavoro',
+      sk: 'Utwórz nowy obszar roboczy',
     }),
     noWorkspaces: t({
       en: 'You have no workspaces yet',
@@ -62,6 +65,7 @@ export default {
       ar: 'ليس لديك مساحات عمل بعد',
       pl: 'Nie masz jeszcze obszarów roboczych',
       it: 'Non hai ancora aree di lavoro',
+      sk: 'Nie masz jeszcze obszarów roboczych',
     }),
     loading: t({
       en: 'Loading workspaces...',
@@ -77,6 +81,7 @@ export default {
       ar: 'جارٍ تحميل مساحات العمل...',
       pl: 'Ładowanie obszarów roboczych...',
       it: 'Caricamento aree di lavoro...',
+      sk: 'Ładowanie obszarów roboczych...',
     }),
     searchPlaceholder: t({
       en: 'Search workspaces...',
@@ -92,6 +97,7 @@ export default {
       ar: 'البحث في مساحات العمل...',
       pl: 'Szukaj obszarów roboczych...',
       it: 'Cerca aree di lavoro...',
+      sk: 'Szukaj obszarów roboczych...',
     }),
     members: t({
       en: 'members',
@@ -107,6 +113,7 @@ export default {
       ar: 'أعضاء',
       pl: 'członków',
       it: 'membri',
+      sk: 'członków',
     }),
     integrations: t({
       en: 'integrations',
@@ -122,6 +129,7 @@ export default {
       ar: 'تكاملات',
       pl: 'integracji',
       it: 'integrazioni',
+      sk: 'integracji',
     }),
     activeRecently: t({
       en: 'Active recently',
@@ -137,6 +145,7 @@ export default {
       ar: 'نشط مؤخراً',
       pl: 'Niedawno aktywny',
       it: 'Attivo di recente',
+      sk: 'Niedawno aktywny',
     }),
     roles: {
       owner: t({
@@ -153,6 +162,7 @@ export default {
         ar: 'المالك',
         pl: 'Właściciel',
         it: 'Proprietario',
+        sk: 'Właściciel',
       }),
       admin: t({
         en: 'Admin',
@@ -168,6 +178,7 @@ export default {
         ar: 'مسؤول',
         pl: 'Administrator',
         it: 'Amministratore',
+        sk: 'Administrator',
       }),
       member: t({
         en: 'Member',
@@ -183,6 +194,7 @@ export default {
         ar: 'عضو',
         pl: 'Członek',
         it: 'Membro',
+        sk: 'Członek',
       }),
       viewer: t({
         en: 'Viewer',
@@ -198,6 +210,7 @@ export default {
         ar: 'مشاهد',
         pl: 'Obserwator',
         it: 'Visualizzatore',
+        sk: 'Obserwator',
       }),
     },
   },
