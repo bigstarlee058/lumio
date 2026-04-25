@@ -13,7 +13,7 @@ interface UnapprovedCashStatCardsProps {
 }
 
 const CARD_STYLE: React.CSSProperties = {
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   background: 'var(--card-bg)',
   padding: 12,
   borderRadius: tokens.radius.lg,
@@ -23,14 +23,14 @@ const LABEL_STYLE: React.CSSProperties = {
   fontSize: 12,
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
-  color: '#6b7280',
+  color: 'var(--muted-foreground)',
 };
 
 const VALUE_STYLE: React.CSSProperties = {
   marginTop: 4,
   fontSize: 20,
   fontWeight: 600,
-  color: '#111827',
+  color: 'var(--foreground)',
 };
 
 export function UnapprovedCashStatCards({

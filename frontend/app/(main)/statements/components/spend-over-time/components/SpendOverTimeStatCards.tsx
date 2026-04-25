@@ -52,8 +52,8 @@ export function SpendOverTimeStatCards({ totals, comparison, isIncomeView, prima
       <StatCard label={primaryMetricLabel} value={primaryValue} icon={primaryIcon} comparisonItem={getCmp({ c: comparison, key: 'total' })} {...cp} />
       <StatCard label={statementsLabel} value={formatMoney(totals.statementAmount, currency)} icon={<ChartPie size={16} color="var(--primary)" />} comparisonItem={getCmp({ c: comparison, key: 'statementsAmount' })} {...cp} />
       <StatCard label={receiptsLabel} value={formatMoney(totals.gmailAmount, currency)} icon={<Mail size={16} color="#10b981" />} comparisonItem={getCmp({ c: comparison, key: 'receiptsAmount' })} {...cp} />
-      <StatCard label={operationsLabel} value={String(totals.count)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>#</span>} comparisonItem={getCmp({ c: comparison, key: 'operations' })} isMoney={false} {...cp} />
-      <StatCard label={avgPerPeriodLabel} value={formatMoney(totals.avgPerPeriod, currency)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>AVG</span>} comparisonItem={getCmp({ c: comparison, key: 'avgPerPeriod' })} {...cp} />
+      <StatCard label={operationsLabel} value={String(totals.count)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)' }}>#</span>} comparisonItem={getCmp({ c: comparison, key: 'operations' })} isMoney={false} {...cp} />
+      <StatCard label={avgPerPeriodLabel} value={formatMoney(totals.avgPerPeriod, currency)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)' }}>AVG</span>} comparisonItem={getCmp({ c: comparison, key: 'avgPerPeriod' })} {...cp} />
     </div>
   );
 }

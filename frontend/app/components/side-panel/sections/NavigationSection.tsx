@@ -39,7 +39,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
         {item.badgeLoading && (
-          <Spinner size={14} style={{ color: '#9ca3af' }} />
+          <Spinner size={14} style={{ color: 'var(--muted-foreground)' }} />
         )}
         {!item.badgeLoading && item.badge !== undefined && Number(item.badge) > 0 && (
           <span
@@ -64,7 +64,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
           <ChevronRight
             size={14}
             style={{
-              color: '#9ca3af',
+              color: 'var(--muted-foreground)',
               transition: 'transform 200ms',
               transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
             }}

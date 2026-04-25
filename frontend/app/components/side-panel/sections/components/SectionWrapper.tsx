@@ -39,7 +39,7 @@ export function SectionWrapper({
             marginTop: section.collapsible ? 12 : 4,
             fontSize: 14,
             fontWeight: 400,
-            color: '#9ca3af',
+            color: 'var(--muted-foreground)',
             background: 'none',
             border: 'none',
             cursor: section.collapsible ? 'pointer' : 'default',

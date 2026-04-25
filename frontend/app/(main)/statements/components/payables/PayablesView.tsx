@@ -25,11 +25,11 @@ import PayableFiltersBar from './PayableFiltersBar';
 import PayableSummaryCards from './PayableSummaryCards';
 import PayablesList from './PayablesList';
 import {
-import { tokens } from '@/lib/theme-tokens';
   DEFAULT_PAYABLES_FILTERS,
   type PayablesFiltersState,
   buildPayablesListParams,
 } from './payables-utils';
+import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_SUMMARY: PayablesSummary = {
   toPay: 0,
@@ -465,7 +465,7 @@ export function PayablesView(): React.JSX.Element {
   if (!user) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: 'var(--text-secondary)' }}>
           {labels.loginRequired}
         </div>
       </div>
@@ -475,7 +475,7 @@ export function PayablesView(): React.JSX.Element {
   if (!currentWorkspace) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: '#4b5563' }}>
+        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: 'var(--text-secondary)' }}>
           {labels.noWorkspace}
         </div>
       </div>
@@ -488,8 +488,8 @@ export function PayablesView(): React.JSX.Element {
         <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <h1 style={{ fontSize: 24, fontWeight: 600, color: '#0f172a' }}>{labels.title}</h1>
-              <p style={{ marginTop: 8, maxWidth: 768, fontSize: 14, color: '#475569' }}>{labels.subtitle}</p>
+              <h1 style={{ fontSize: 24, fontWeight: 600, color: 'var(--foreground)' }}>{labels.title}</h1>
+              <p style={{ marginTop: 8, maxWidth: 768, fontSize: 14, color: 'var(--text-secondary)' }}>{labels.subtitle}</p>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
               <Button

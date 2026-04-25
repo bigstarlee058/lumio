@@ -10,10 +10,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function IntegrationsPage(): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const t = useIntlayer('integrationsPage');
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
@@ -277,7 +280,7 @@ export default function IntegrationsPage(): React.JSX.Element {
       role={item.primaryAction?.href && !item.primaryAction.external ? 'button' : undefined}
       tabIndex={item.primaryAction?.href && !item.primaryAction.external ? 0 : undefined}
       sx={{
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         borderRadius: tokens.radius.lg,
         p: 2,
         bgcolor: 'background.paper',
@@ -304,8 +307,8 @@ export default function IntegrationsPage(): React.JSX.Element {
           sx={{
             p: 1,
             borderRadius: tokens.radius.sm,
-            bgcolor: '#f9fafb',
-            border: '1px solid #f3f4f6',
+            bgcolor: c.ink50,
+            border: `1px solid ${c.ink100}`,
             display: 'flex',
           }}
         >
@@ -313,7 +316,7 @@ export default function IntegrationsPage(): React.JSX.Element {
         </Box>
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+            <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
               {item.name}
             </Typography>
             {item.recommended && (
@@ -356,7 +359,7 @@ export default function IntegrationsPage(): React.JSX.Element {
               </Box>
             )}
           </Box>
-          <Typography style={{ fontSize: 14, color: '#4b5563', marginTop: 4 }}>
+          <Typography style={{ fontSize: 14, color: c.ink700, marginTop: 4 }}>
             {item.description}
           </Typography>
           <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -375,14 +378,14 @@ export default function IntegrationsPage(): React.JSX.Element {
                     padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 500,
-                    border: '1px solid #e5e7eb',
+                    border: `1px solid ${c.ink150}`,
                     borderRadius: tokens.radius.md,
-                    color: '#374151',
+                    color: c.ink800,
                     textDecoration: 'none',
                   }}
                 >
                   {action.label}
-                  <ExternalLink style={{ height: 12, width: 12, marginLeft: 4, color: '#9ca3af' }} />
+                  <ExternalLink style={{ height: 12, width: 12, marginLeft: 4, color: c.ink400 }} />
                 </a>
               ) : action.primary && item.active ? (
                 <button
@@ -395,9 +398,9 @@ export default function IntegrationsPage(): React.JSX.Element {
                     padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 500,
-                    border: '1px solid #e5e7eb',
+                    border: `1px solid ${c.ink150}`,
                     borderRadius: tokens.radius.md,
-                    color: '#9ca3af',
+                    color: c.ink400,
                     cursor: 'not-allowed',
                     background: 'transparent',
                   }}
@@ -418,7 +421,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                     fontWeight: 500,
                     borderRadius: tokens.radius.md,
                     background: 'var(--color-primary)',
-                    color: '#fff',
+                    color: c.surface,
                     textDecoration: 'none',
                   }}
                 >
@@ -435,9 +438,9 @@ export default function IntegrationsPage(): React.JSX.Element {
                     padding: '6px 12px',
                     fontSize: 12,
                     fontWeight: 500,
-                    border: '1px solid #e5e7eb',
+                    border: `1px solid ${c.ink150}`,
                     borderRadius: tokens.radius.md,
-                    color: '#374151',
+                    color: c.ink800,
                     textDecoration: 'none',
                   }}
                 >
@@ -453,7 +456,7 @@ export default function IntegrationsPage(): React.JSX.Element {
 
   const renderCategoryDivider = (label: React.ReactNode): React.JSX.Element => (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-      <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
+      <Box sx={{ height: '1px', flex: 1, bgcolor: c.ink150 }} />
       <Box
         component="span"
         sx={{
@@ -461,17 +464,17 @@ export default function IntegrationsPage(): React.JSX.Element {
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
-          color: '#6b7280',
+          color: c.ink500,
           px: 1.5,
           py: 0.5,
-          border: '1px solid #e5e7eb',
+          border: `1px solid ${c.ink150}`,
           borderRadius: tokens.radius.sm,
           bgcolor: 'background.paper',
         }}
       >
         {label}
       </Box>
-      <Box sx={{ height: '1px', flex: 1, bgcolor: '#e5e7eb' }} />
+      <Box sx={{ height: '1px', flex: 1, bgcolor: c.ink150 }} />
     </Box>
   );
 
@@ -500,10 +503,10 @@ export default function IntegrationsPage(): React.JSX.Element {
             <Plug style={{ height: 24, width: 24 }} />
           </Box>
           <Box>
-            <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
+            <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>
               {t.title}
             </Typography>
-            <Typography style={{ marginTop: 4, color: '#6b7280' }}>{t.subtitle}</Typography>
+            <Typography style={{ marginTop: 4, color: c.ink500 }}>{t.subtitle}</Typography>
           </Box>
         </Box>
 
@@ -519,7 +522,7 @@ export default function IntegrationsPage(): React.JSX.Element {
               pointerEvents: 'none',
             }}
           >
-            <Search style={{ height: 16, width: 16, color: '#9ca3af' }} />
+            <Search style={{ height: 16, width: 16, color: c.ink400 }} />
           </Box>
           <input
             type="text"
@@ -527,12 +530,12 @@ export default function IntegrationsPage(): React.JSX.Element {
             style={{
               display: 'block',
               width: '100%',
-              border: '1px solid #e5e7eb',
+              border: `1px solid ${c.ink150}`,
               borderRadius: tokens.radius.md,
               background: 'var(--card-bg)',
               padding: '8px 16px 8px 40px',
               fontSize: 14,
-              color: '#111827',
+              color: c.ink900,
             }}
             placeholder={t.searchPlaceholder.value}
             value={searchQuery}
@@ -558,7 +561,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 2, flexShrink: 0 }}
           />
           <Box>
-            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: c.ink900 }}>
               {t.banner}
             </Typography>
           </Box>
@@ -568,19 +571,19 @@ export default function IntegrationsPage(): React.JSX.Element {
       <Stack spacing={4}>
         {active.length > 0 || !searchQuery ? (
           <Box data-tour-id="integrations-connected">
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}>
               {t.sections.connected}
             </Typography>
             {active.length === 0 && !searchQuery ? (
               <Box
                 sx={{
                   borderRadius: tokens.radius.lg,
-                  border: '1px dashed #e5e7eb',
-                  bgcolor: '#f9fafb',
+                  border: `1px dashed ${c.ink150}`,
+                  bgcolor: c.ink50,
                   p: 2,
                 }}
               >
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.empty.connected}</Typography>
+                <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.empty.connected}</Typography>
               </Box>
             ) : (
               <Stack spacing={3}>
@@ -614,19 +617,19 @@ export default function IntegrationsPage(): React.JSX.Element {
 
         {available.length > 0 || !searchQuery ? (
           <Box data-tour-id="integrations-available">
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12 }}>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}>
               {t.sections.available}
             </Typography>
             {available.length === 0 && !searchQuery ? (
               <Box
                 sx={{
                   borderRadius: tokens.radius.lg,
-                  border: '1px dashed #e5e7eb',
-                  bgcolor: '#f9fafb',
+                  border: `1px dashed ${c.ink150}`,
+                  bgcolor: c.ink50,
                   p: 2,
                 }}
               >
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.empty.available}</Typography>
+                <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.empty.available}</Typography>
               </Box>
             ) : (
               <Stack spacing={3}>
@@ -685,17 +688,17 @@ export default function IntegrationsPage(): React.JSX.Element {
               sx={{
                 mb: 2,
                 borderRadius: tokens.radius.full,
-                bgcolor: '#f3f4f6',
+                bgcolor: c.ink100,
                 p: 2,
                 display: 'flex',
               }}
             >
-              <Search style={{ height: 32, width: 32, color: '#9ca3af' }} />
+              <Search style={{ height: 32, width: 32, color: c.ink400 }} />
             </Box>
-            <Typography style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>
+            <Typography style={{ fontSize: 18, fontWeight: 500, color: c.ink900 }}>
               {t.noResults.value}
             </Typography>
-            <Typography style={{ color: '#6b7280', marginTop: 4 }}>
+            <Typography style={{ color: c.ink500, marginTop: 4 }}>
               {t.noResultsDescription.value.replace('{{query}}', searchQuery)}
             </Typography>
             <button

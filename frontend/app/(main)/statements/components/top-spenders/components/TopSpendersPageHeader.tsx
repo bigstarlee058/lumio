@@ -15,8 +15,8 @@ export function TopSpendersPageHeader({ vm }: Props): React.JSX.Element {
     <div style={{ marginBottom: 20, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
-          <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.subtitle}</p>
+          <h1 style={{ fontSize: 20, fontWeight: 600, color: 'var(--foreground)' }}>{labels.title}</h1>
+          <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{labels.subtitle}</p>
         </div>
         <AnalyticsFlowToggle
           activeFlow={vm.activeFlowType}

@@ -22,8 +22,8 @@ function EmptyWorkspacesState({ createLabel, noWorkspacesLabel, onCreateClick }:
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
       <Box sx={{ fontSize: 48, mb: 2 }}><Building2 size={48} /></Box>
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: '#111827' }}>{noWorkspacesLabel}</Typography>
-      <Typography variant="body2" sx={{ mb: 3, color: '#4b5563' }}>Create your first workspace to get started</Typography>
+      <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'var(--foreground)' }}>{noWorkspacesLabel}</Typography>
+      <Typography variant="body2" sx={{ mb: 3, color: 'var(--text-secondary)' }}>Create your first workspace to get started</Typography>
       <button type="button" onClick={onCreateClick} style={{ padding: '12px 24px', background: 'var(--primary)', color: '#fff', fontWeight: 500, fontSize: 14, border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}>{createLabel}</button>
     </Box>
   );
@@ -33,8 +33,8 @@ function NoResultsState(): React.JSX.Element {
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
       <Box sx={{ mb: 2 }}><Search size={48} /></Box>
-      <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: '#111827' }}>No workspaces found</Typography>
-      <Typography variant="body2" sx={{ mb: 3, color: '#4b5563' }}>Try adjusting your search query</Typography>
+      <Typography variant="h6" fontWeight={600} sx={{ mb: 1, color: 'var(--foreground)' }}>No workspaces found</Typography>
+      <Typography variant="body2" sx={{ mb: 3, color: 'var(--text-secondary)' }}>Try adjusting your search query</Typography>
     </Box>
   );
 }
@@ -58,9 +58,9 @@ export function WorkspaceGridView({ workspaces, allWorkspacesEmpty, filteredEmpt
       {workspaces.map(workspace => (
         <WorkspaceCard key={workspace.id} workspace={workspace} onClick={() => onWorkspaceClick(workspace.id)} onFavoriteToggle={onFavoriteToggle} />
       ))}
-      <button type="button" onClick={onCreateClick} style={{ display: 'flex', height: '100%', width: '100%', aspectRatio: '16/9', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 24, borderRadius: tokens.radius.lg, transition: 'border-color 0.2s' }}>
+      <button type="button" onClick={onCreateClick} style={{ display: 'flex', height: '100%', width: '100%', aspectRatio: '16/9', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 24, borderRadius: tokens.radius.lg, transition: 'border-color 0.2s' }}>
         <Plus size={30} strokeWidth={2.25} style={{ marginBottom: 12, color: 'var(--primary)' }} />
-        <Typography variant="h6" fontWeight={600} style={{ textAlign: 'center', color: '#111827' }}>{createLabel}</Typography>
+        <Typography variant="h6" fontWeight={600} style={{ textAlign: 'center', color: 'var(--foreground)' }}>{createLabel}</Typography>
       </button>
     </Box>
   );

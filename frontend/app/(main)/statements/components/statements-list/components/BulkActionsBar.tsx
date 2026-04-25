@@ -20,7 +20,7 @@ function MergeButton({ label, onClick }: { label: string; onClick: () => void })
           {label}
         </span>
       </span>
-      <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+      <ChevronRight size={16} style={{ color: 'var(--muted-foreground)' }} />
     </button>
   );
 }
@@ -29,12 +29,12 @@ function DismissButton({ label, onClick }: { label: string; onClick: () => void 
   return (
     <button type="button" onClick={onClick} className="lumio-stmt-list-view__bulk-menu-btn">
       <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <X size={16} style={{ color: '#99a39d' }} />
-        <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#0f3428' }}>
+        <X size={16} style={{ color: 'var(--muted-foreground)' }} />
+        <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
           {label}
         </span>
       </span>
-      <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+      <ChevronRight size={16} style={{ color: 'var(--muted-foreground)' }} />
     </button>
   );
 }
@@ -83,7 +83,7 @@ function StandardActions({
             {markDuplicateLabel}
           </span>
         </span>
-        <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+        <ChevronRight size={16} style={{ color: 'var(--muted-foreground)' }} />
       </button>
       <button
         type="button"
@@ -91,12 +91,12 @@ function StandardActions({
         className="lumio-stmt-list-view__bulk-menu-btn"
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Download size={16} style={{ color: '#99a39d' }} />
-          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#0f3428' }}>
+          <Download size={16} style={{ color: 'var(--muted-foreground)' }} />
+          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
             Export
           </span>
         </span>
-        <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+        <ChevronRight size={16} style={{ color: 'var(--muted-foreground)' }} />
       </button>
       <button
         type="button"
@@ -104,12 +104,12 @@ function StandardActions({
         className="lumio-stmt-list-view__bulk-menu-btn lumio-stmt-list-view__bulk-menu-btn--danger"
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Trash2 size={16} style={{ color: '#dc2626' }} />
-          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#991b1b' }}>
+          <Trash2 size={16} style={{ color: 'var(--destructive)' }} />
+          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--destructive)' }}>
             Delete
           </span>
         </span>
-        <ChevronRight size={16} style={{ color: '#f0b5b5' }} />
+        <ChevronRight size={16} style={{ color: 'var(--destructive)' }} />
       </button>
     </>
   );
@@ -156,7 +156,7 @@ function MobileBulkActions({
 }: MobileBulkProps): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__mobile-bulk">
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
         {selectedCount} selected
       </span>
       <div className="lumio-stmt-list-view__mobile-bulk-actions">

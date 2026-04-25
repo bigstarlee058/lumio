@@ -84,9 +84,9 @@ export function TrashListItem({
         <div className="lumio-trash-item__file-col">
           <BankLogoAvatar bankName={item.bankName} size={20} />
           <div style={{ minWidth: 0 }}>
-            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: '#111827' }}>{item.fileName}</p>
+            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: 'var(--foreground)' }}>{item.fileName}</p>
             {bankDisplayName ? (
-              <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>{bankDisplayName}</p>
+              <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>{bankDisplayName}</p>
             ) : null}
           </div>
         </div>

@@ -14,7 +14,6 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
 import {
-import { tokens } from '@/lib/theme-tokens';
   Check,
   ChevronDown,
   ChevronLeft,
@@ -27,6 +26,7 @@ import { tokens } from '@/lib/theme-tokens';
   Search,
   UploadCloud,
 } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   open: boolean;
@@ -391,7 +391,7 @@ export default function CreateExpenseDrawer({
                       style={{ marginTop: 6, width: '100%', border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
                     />
                     {!manualValidation.merchant ? (
-                      <p style={{ marginTop: 4, fontSize: 12, color: '#ef4444' }}>This field is required</p>
+                      <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>This field is required</p>
                     ) : null}
                   </div>
 
@@ -410,7 +410,7 @@ export default function CreateExpenseDrawer({
                         {selectedCategoryName || 'Required'}
                       </p>
                       {!manualValidation.category ? (
-                        <p style={{ marginTop: 4, fontSize: 12, color: '#ef4444' }}>This field is required</p>
+                        <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>This field is required</p>
                       ) : null}
                     </div>
                     <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
@@ -472,7 +472,7 @@ export default function CreateExpenseDrawer({
             ) : null}
 
             {error ? (
-              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: '#b91c1c' }}>
+              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: '#fff1f2', padding: '8px 12px', fontSize: 14, color: 'var(--destructive)' }}>
                 {error}
               </div>
             ) : null}

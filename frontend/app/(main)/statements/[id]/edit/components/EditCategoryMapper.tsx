@@ -74,7 +74,7 @@ type ExportConfirmDialogProps = {
 };
 
 const BTN_BASE = { borderRadius: tokens.radius.md, padding: '10px 24px', fontSize: 16, fontWeight: 500, cursor: 'pointer' } as const;
-const CANCEL_STYLE = { ...BTN_BASE, border: '1px solid #e5e7eb', background: 'var(--card-bg)', color: '#4b5563' } as const;
+const CANCEL_STYLE = { ...BTN_BASE, border: '1px solid var(--border-color)', background: 'var(--card-bg)', color: 'var(--text-secondary)' } as const;
 const CONFIRM_STYLE = { ...BTN_BASE, display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--primary)', color: '#fff', border: 'none' } as const;
 
 export function ExportConfirmDialog({ open, exportingToTable, hasTransactions, labels, onClose, onConfirm }: ExportConfirmDialogProps): React.ReactElement {
@@ -83,7 +83,7 @@ export function ExportConfirmDialog({ open, exportingToTable, hasTransactions, l
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>{labels.exportConfirmTitle.value}</DialogTitle>
       <DialogContent dividers>
-        <p style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>{labels.exportConfirmBody.value}</p>
+        <p style={{ fontSize: 16, lineHeight: 2, color: 'var(--foreground)' }}>{labels.exportConfirmBody.value}</p>
       </DialogContent>
       <DialogActions sx={{ px: 4, py: 3, gap: 1.5, justifyContent: 'flex-end' }}>
         <button type="button" onClick={onClose} style={CANCEL_STYLE}>{labels.cancel.value}</button>

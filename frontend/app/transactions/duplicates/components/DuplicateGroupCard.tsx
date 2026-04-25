@@ -73,7 +73,7 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
   };
 
   return (
-    <Box sx={{ border: selected ? '2px solid var(--primary)' : '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, transition: 'border-color 200ms' }}>
+    <Box sx={{ border: selected ? '2px solid var(--primary)' : '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3, transition: 'border-color 200ms' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
         <Checkbox checked={selected} onChange={onToggle} sx={{ mt: 0.5, p: 0 }} />
 
@@ -104,15 +104,15 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
             </Box>
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Calendar size={16} style={{ color: '#6b7280' }} />
+                <Calendar size={16} style={{ color: 'var(--muted-foreground)' }} />
                 <Typography variant="body2">{formatDate(group.master.date)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <DollarSign size={16} style={{ color: '#6b7280' }} />
+                <DollarSign size={16} style={{ color: 'var(--muted-foreground)' }} />
                 <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatAmount(group.master.amount)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <User size={16} style={{ color: '#6b7280' }} />
+                <User size={16} style={{ color: 'var(--muted-foreground)' }} />
                 <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.master.counterparty}</Typography>
               </Box>
               <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.master.purpose}</Typography>
@@ -124,10 +124,10 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
             {group.duplicates.slice(0, expanded ? undefined : 2).map((duplicate, index) => (
               <Box
                 key={duplicate.id}
-                sx={{ bgcolor: '#f9fafb', p: 2, border: '1px solid #e5e7eb' }}
+                sx={{ bgcolor: 'var(--muted)', p: 2, border: '1px solid var(--border-color)' }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: '#dc2626', textTransform: 'uppercase' }}>
+                  <Typography sx={{ fontSize: 10, letterSpacing: '0.1em', fontWeight: 700, color: 'var(--destructive)', textTransform: 'uppercase' }}>
                     DUPLICATE {index + 1}
                   </Typography>
                   {duplicate.matchType && (
@@ -146,15 +146,15 @@ export default function DuplicateGroupCard({ group, selected, onToggle }: Duplic
                 </Box>
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Calendar size={16} style={{ color: '#6b7280' }} />
+                    <Calendar size={16} style={{ color: 'var(--muted-foreground)' }} />
                     <Typography variant="body2">{formatDate(duplicate.date)}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <DollarSign size={16} style={{ color: '#6b7280' }} />
+                    <DollarSign size={16} style={{ color: 'var(--muted-foreground)' }} />
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatAmount(duplicate.amount)}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <User size={16} style={{ color: '#6b7280' }} />
+                    <User size={16} style={{ color: 'var(--muted-foreground)' }} />
                     <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{duplicate.counterparty}</Typography>
                   </Box>
                   <Typography variant="body2" sx={{ color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{duplicate.purpose}</Typography>

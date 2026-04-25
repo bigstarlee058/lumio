@@ -84,7 +84,7 @@ function buildRowNumberColumn(): ColumnDef<CustomTableGridRow> {
     header: '#',
     size: 80, minSize: 60, maxSize: 120, enableResizing: false, enableSorting: false,
     cell: ({ row }) => (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', color: '#6b7280' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>
         {row.original.rowNumber}
       </div>
     ),
@@ -114,7 +114,7 @@ interface ActionsColumnParams {
 function buildActionsColumn({ actionsHeaderLabel, colorTooltipLabel, deleteLabel, onOpenColorPicker, onDeleteRow }: ActionsColumnParams): ColumnDef<CustomTableGridRow> {
   return {
     id: '__actions',
-    header: () => <div style={{ textAlign: 'center', fontWeight: 600, color: '#4b5563' }}>{actionsHeaderLabel}</div>,
+    header: () => <div style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-secondary)' }}>{actionsHeaderLabel}</div>,
     size: 120, minSize: 100, maxSize: 150, enableResizing: false,
     cell: ({ row }) => <ActionsCell rowId={row.original.id} colorTooltipLabel={colorTooltipLabel} deleteLabel={deleteLabel} onOpenColorPicker={onOpenColorPicker} onDeleteRow={onDeleteRow} />,
   };
@@ -124,7 +124,7 @@ function buildAddColumnButton(onAddColumnClick?: () => void): ColumnDef<CustomTa
   return {
     id: '__add_column',
     header: () => (
-      <button onClick={onAddColumnClick} style={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', background: 'none', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s, color 0.2s' }} title="Add Column">
+      <button onClick={onAddColumnClick} style={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s, color 0.2s' }} title="Add Column">
         <Plus size={16} />
       </button>
     ),

@@ -11,7 +11,7 @@ type MsgProps = { rollbackTarget: NonNullable<RollbackState['rollbackTarget']>; 
 function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): React.JSX.Element {
   return (
     <Stack spacing={1.5}>
-      <Typography variant="body2" style={{ color: '#4b5563' }}>
+      <Typography variant="body2" style={{ color: 'var(--text-secondary)' }}>
         This will attempt to rollback:{' '}
         {rollbackTarget.description || `${rollbackTarget.entityType} ${rollbackTarget.entityId}`}.
       </Typography>
@@ -21,7 +21,7 @@ function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): React.JSX
         </Alert>
       )}
       {rollbackError && (
-        <Typography variant="body2" style={{ color: '#dc2626' }}>{rollbackError}</Typography>
+        <Typography variant="body2" style={{ color: 'var(--destructive)' }}>{rollbackError}</Typography>
       )}
     </Stack>
   );

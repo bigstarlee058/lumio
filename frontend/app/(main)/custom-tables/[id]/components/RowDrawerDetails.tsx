@@ -26,11 +26,11 @@ interface RowDrawerDetailsProps {
 }
 
 const TOGGLE_SX = {
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   bgcolor: 'background.paper',
   px: 1.5, py: 0.75,
   fontSize: 12, fontWeight: 600,
-  color: '#374151', cursor: 'pointer',
+  color: 'var(--foreground)', cursor: 'pointer',
   '&:hover': { bgcolor: 'action.hover' },
 };
 
@@ -86,7 +86,7 @@ export function RowDrawerDetails({
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <RowDrawerMetaBox row={row} />
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
-        <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+        <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
           {mode === 'edit' ? 'Edit fields' : 'Fields'}
         </Typography>
         <ModeToggleButton mode={mode} onModeChange={onModeChange} onCancelEdit={onCancelEdit} />

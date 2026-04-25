@@ -63,7 +63,7 @@ export function FinlabTransactionCard({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        border: '1px solid #E8E8E8',
+        border: '1px solid var(--border-color)',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -76,11 +76,11 @@ export function FinlabTransactionCard({
 
       {isLoading ? (
         <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>Loading...</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading...</Typography>
         </Box>
       ) : receipts.length === 0 ? (
         <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No receipts found</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No receipts found</Typography>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -105,7 +105,7 @@ export function FinlabTransactionCard({
                     <Typography sx={{ fontSize: 15, fontWeight: 700, color: '#1e293b', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
                       {vendorLabel}
                     </Typography>
-                    <Typography sx={{ fontSize: 13, color: '#94a3b8', fontWeight: 500, mt: 0.5 }}>
+                    <Typography sx={{ fontSize: 13, color: 'var(--muted-foreground)', fontWeight: 500, mt: 0.5 }}>
                       Gmail receipt
                     </Typography>
                   </div>
@@ -122,7 +122,7 @@ export function FinlabTransactionCard({
                           })
                         : '—'}
                     </Typography>
-                    <Typography sx={{ fontSize: 13, color: '#94a3b8', fontWeight: 500, mt: 0.5 }}>
+                    <Typography sx={{ fontSize: 13, color: 'var(--muted-foreground)', fontWeight: 500, mt: 0.5 }}>
                       {hasValidReceivedAt
                         ? receivedAt?.toLocaleTimeString('en-US', {
                             hour: '2-digit',

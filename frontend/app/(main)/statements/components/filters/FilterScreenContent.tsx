@@ -35,11 +35,11 @@ export type FilterScreenContentProps = {
 const INPUT_STYLE: React.CSSProperties = {
   width: '100%',
   borderRadius: tokens.radius.md,
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   background: 'var(--card-bg)',
   padding: '8px 12px',
   fontSize: 14,
-  color: '#111827',
+  color: 'var(--foreground)',
   outline: 'none',
   boxSizing: 'border-box',
 };

@@ -43,7 +43,7 @@ interface Category {
 const SOURCE_BADGE_COLORS: Record<NonNullable<Category['source']>, { bg: string; color: string; border: string }> = {
   system: { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
   parsing: { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-  user: { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' },
+  user: { bg: '#f8fafc', color: 'var(--text-secondary)', border: 'var(--border-color)' },
 };
 
 interface CategoryUsageCount {
@@ -488,7 +488,7 @@ export default function WorkspaceCategoriesView() {
               <button
                 type="button"
                 onClick={handleBulkDelete}
-                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: '#b91c1c', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{ border: '1px solid rgba(239,68,68,0.3)', background: '#fef2f2', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--destructive)', cursor: 'pointer', borderRadius: tokens.radius.md }}
               >
                 Delete Custom
               </button>

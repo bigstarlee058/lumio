@@ -7,6 +7,7 @@ import { DroppableHeaderTrigger } from './DroppableHeaderTrigger';
 import { listToggleSx } from '../helpers/storageStyling';
 import type { StorageFile } from '../storageHelpers';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 type SortKey = string;
 
@@ -70,11 +71,13 @@ export function StorageHeader({
   onOpenFolderModal,
   onFolderDragOver,
 }: StorageHeaderProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
         bgcolor: 'background.paper',
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         p: 3,
         mb: 3,
         display: 'flex',
@@ -89,11 +92,11 @@ export function StorageHeader({
           <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main' }}>
             <Folder style={{ width: 24, height: 24 }} />
           </Box>
-          <Typography component="h1" style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>
+          <Typography component="h1" style={{ fontSize: 22, fontWeight: 700, color: c.ink900 }}>
             {titleLabel}
           </Typography>
         </Box>
-        <Typography style={{ fontSize: 14, color: '#6b7280' }}>{subtitleLabel}</Typography>
+        <Typography style={{ fontSize: 14, color: c.ink500 }}>{subtitleLabel}</Typography>
       </Box>
       <Box sx={{ display: 'flex', width: { xs: '100%', md: 'auto' }, flexDirection: 'column', gap: 1.5 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, gap: 1.5, position: 'relative' }}>
@@ -161,9 +164,11 @@ function StorageTabButtons({
   onOpenFolderModal,
   onFolderDragOver,
 }: StorageTabButtonsProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 0.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, border: `1px solid ${c.ink150}`, bgcolor: c.ink50, p: 0.5 }}>
         <Box sx={{ position: 'relative' }}>
           <DroppableHeaderTrigger onDragOver={onFolderDragOver}>
             <Box
@@ -208,9 +213,11 @@ function StorageSearchInput({
   searchFilesLabel,
   onSearchChange,
 }: StorageSearchInputProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ position: 'relative', width: { xs: '100%', md: 320 } }} data-tour-id="file-search">
-      <Search style={{ width: 16, height: 16, color: '#9ca3af', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+      <Search style={{ width: 16, height: 16, color: c.ink400, position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
       <TextField
         size="small"
         value={searchQuery}
@@ -244,12 +251,14 @@ function StorageSortSelect({
   sortBankDesc,
   onSortChange,
 }: StorageSortSelectProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ position: 'relative', width: { xs: '100%', md: 224 } }}>
       <select
         value={sortKey}
         onChange={(e) => onSortChange(e.target.value)}
-        style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 40px 8px 12px', fontSize: 14, color: '#111827', outline: 'none', appearance: 'auto' }}
+        style={{ width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', padding: '8px 40px 8px 12px', fontSize: 14, color: c.ink900, outline: 'none', appearance: 'auto' }}
       >
         <option value="createdAt:desc">{sortNewest}</option>
         <option value="createdAt:asc">{sortOldest}</option>

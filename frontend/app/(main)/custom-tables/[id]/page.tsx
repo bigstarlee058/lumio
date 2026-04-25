@@ -284,9 +284,9 @@ export default function CustomTableDetailPage() {
       const toastId = toast.custom(
         toastProps => (
           <Box
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5, boxShadow: 3, opacity: toastProps.visible ? 1 : 0 }}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1.5, boxShadow: 3, opacity: toastProps.visible ? 1 : 0 }}
           >
-            <Typography style={{ fontSize: 14, color: '#1f2937' }}>
+            <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>
               {tx(t, ['paste', 'addedPrefix'], 'Added ')}
               {createdCount}
               {tx(t, ['paste', 'addedSuffix'], ' rows')}
@@ -497,7 +497,7 @@ export default function CustomTableDetailPage() {
 
   if (authLoading || loading) {
     return (
-      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
         {t.auth.loading}
       </Box>
     );
@@ -505,7 +505,7 @@ export default function CustomTableDetailPage() {
   if (!user || !table) {
     return (
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, fontSize: 14, color: '#4b5563' }}>
+        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3, fontSize: 14, color: 'var(--text-secondary)' }}>
           {!user ? t.auth.loginRequired : t.errors.notFound}
         </Box>
       </Box>
@@ -513,7 +513,7 @@ export default function CustomTableDetailPage() {
   }
   if (!mounted)
     return (
-      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
         {t.auth.loading}
       </Box>
     );
@@ -537,21 +537,21 @@ export default function CustomTableDetailPage() {
               bgcolor: 'background.paper',
               px: { xs: 2, sm: 3 },
               pt: 2.5,
-              borderLeft: '1px solid #e5e7eb',
-              borderRight: '1px solid #e5e7eb',
-              borderTop: '1px solid #e5e7eb',
+              borderLeft: '1px solid var(--border-color)',
+              borderRight: '1px solid var(--border-color)',
+              borderTop: '1px solid var(--border-color)',
               ...(normalizedActiveTabId === columnsTabId ? { bottom: 0, overflowY: 'auto', pb: 3 } : { pb: 0 }),
             }
           : { mb: 0, display: 'flex', flexDirection: 'column', gap: 0 }}
         className={isPrintMode ? 'custom-table-print-controls' : undefined}
       >
         {/* Row 1: Tabs */}
-        <Box sx={{ display: 'flex', width: '100%', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5, borderBottom: '1px solid #f3f4f6', px: 1 }}>
+        <Box sx={{ display: 'flex', width: '100%', alignItems: 'flex-end', justifyContent: 'space-between', gap: 1.5, borderBottom: '1px solid var(--muted)', px: 1 }}>
           <Box
             component="button"
             type="button"
             onClick={handleBackNavigation}
-            sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: 0.75, pb: 1.5, fontSize: 14, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: '#111827' } }}
+            sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: 0.75, pb: 1.5, fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: 'var(--foreground)' } }}
           >
             <ArrowBackIcon size={16} />
             <span>{t.nav.back.value}</span>
@@ -568,13 +568,13 @@ export default function CustomTableDetailPage() {
                     if (normalizedActiveTabId === tab.id) return;
                     setActiveTabId(tab.id);
                   }}
-                  sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isActive ? 'primary.main' : '#6b7280', '&:hover': { color: isActive ? 'primary.main' : '#111827' } }}
+                  sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isActive ? 'primary.main' : '#6b7280', '&:hover': { color: isActive ? 'primary.main' : 'var(--foreground)' } }}
                 >
                   {tab.label}
                   {typeof tab.count === 'number' && (
                     <Box
                       component="span"
-                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(22,129,24,0.1)' : '#f3f4f6', color: isActive ? 'primary.main' : '#6b7280' }}
+                      sx={{ ml: 0.75, fontSize: 12, py: 0.25, px: 1, bgcolor: isActive ? 'rgba(22,129,24,0.1)' : 'var(--muted)', color: isActive ? 'primary.main' : '#6b7280' }}
                     >
                       {tab.count}
                     </Box>
@@ -592,7 +592,7 @@ export default function CustomTableDetailPage() {
                 if (normalizedActiveTabId === columnsTabId) return;
                 setActiveTabId(columnsTabId);
               }}
-              sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#6b7280', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#111827' } }}
+              sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : '#6b7280', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--foreground)' } }}
             >
               {tx(t, ['actions', 'columns'], 'Columns')}
               {normalizedActiveTabId === columnsTabId && (
@@ -611,7 +611,7 @@ export default function CustomTableDetailPage() {
                   type="button"
                   onClick={() => markSelectedRowsPaid(true)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : '#9ca3af', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <CheckCircle
                     style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#22c55e' : 'rgba(34,197,94,0.5)' }}
@@ -627,7 +627,7 @@ export default function CustomTableDetailPage() {
                   type="button"
                   onClick={() => markSelectedRowsPaid(false)}
                   disabled={selectedRowIds.length === 0 || bulkMarking !== null}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : '#9ca3af', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#4b5563' : 'var(--muted-foreground)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <XCircle
                     style={{ width: 14, height: 14, color: (selectedRowIds.length > 0 && bulkMarking === null) ? '#ef4444' : 'rgba(239,68,68,0.5)' }}
@@ -641,7 +641,7 @@ export default function CustomTableDetailPage() {
                 <Box
                   component="button"
                   onClick={handlePrintTable}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: '#f9fafb', color: '#111827' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: 'var(--text-secondary)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { bgcolor: 'var(--muted)', color: 'var(--foreground)' } }}
                 >
                   <Printer className="h-3.5 w-3.5" />
                   <span>{tx(t, ['actions', 'print'], 'Print')}</span>
@@ -650,7 +650,7 @@ export default function CustomTableDetailPage() {
                   component="button"
                   onClick={() => openBulkDeleteModal(selectedRowIds)}
                   disabled={selectedRowIds.length === 0}
-                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid #e5e7eb', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#fecaca', bgcolor: '#fef2f2', color: '#dc2626' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                  sx={{ display: 'inline-flex', flexShrink: 0, alignItems: 'center', gap: { xs: 0.75, sm: 1 }, whiteSpace: 'nowrap', border: '1px solid var(--border-color)', px: { xs: 1.25, sm: 2 }, py: { xs: 0.5, sm: 0.75 }, fontSize: { xs: 11, sm: 12 }, fontWeight: 500, color: 'var(--text-secondary)', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#fecaca', bgcolor: '#fef2f2', color: 'var(--destructive)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   <span>{tx(t, ['actions', 'delete'], 'Delete')}</span>
@@ -658,12 +658,12 @@ export default function CustomTableDetailPage() {
               </Box>
               <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
                 <Box sx={{ position: 'relative' }}>
-                  <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
+                  <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--muted-foreground)' }} />
                   <input
                     placeholder={tx(t, ['actions', 'searchPlaceholder'], 'Search')}
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    style={{ paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8, fontSize: 14, width: 192, border: '1px solid #e5e7eb', background: 'var(--card-bg)', outline: 'none' }}
+                    style={{ paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8, fontSize: 14, width: 192, border: '1px solid var(--border-color)', background: 'var(--card-bg)', outline: 'none' }}
                   />
                 </Box>
               </Box>
@@ -701,7 +701,7 @@ export default function CustomTableDetailPage() {
         <Box
           sx={isFullscreen
             ? { height: '100%', width: '100%', bgcolor: 'background.paper', maxWidth: 1920, mx: 'auto' }
-            : { border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}
+            : { border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}
         >
           {normalizedActiveTabId !== columnsTabId && (
             <CustomTableTanStack
@@ -749,7 +749,7 @@ export default function CustomTableDetailPage() {
             component="button"
             onClick={() => loadRows({ filtersParam: combinedFiltersParam })}
             disabled={!hasMore || loadingRows}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+            sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
           >
             {loadingRows ? t.grid.loadingMore : hasMore ? t.grid.loadMore : t.grid.noMore}
           </Box>

@@ -163,16 +163,16 @@ function TableDesktopHeader({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#9ca3af',
+              color: 'var(--muted-foreground)',
             }}
           >
             <span className="sr-only">{labels.receipt}</span>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted-foreground)' }}>
             {labels.merchant}
-            <span style={{ padding: '0 4px', color: '#d1d5db' }}>•</span>
+            <span style={{ padding: '0 4px', color: 'var(--border-color)' }}>•</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <button
                 type="button"
@@ -215,10 +215,10 @@ function TableDesktopHeader({
           paddingLeft: 16,
         }}
       >
-        <div style={{ width: 128, textAlign: 'right', color: '#9ca3af', paddingRight: 4 }}>
+        <div style={{ width: 128, textAlign: 'right', color: 'var(--muted-foreground)', paddingRight: 4 }}>
           {labels.amount}
         </div>
-        <div style={{ width: 144, textAlign: 'right', color: '#9ca3af' }}>{labels.action}</div>
+        <div style={{ width: 144, textAlign: 'right', color: 'var(--muted-foreground)' }}>{labels.action}</div>
       </div>
     </div>
   );
@@ -269,14 +269,14 @@ export function StatementsListTable({
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: tokens.radius.full,
-            background: '#f9fafb',
-            color: '#d1d5db',
+            background: 'var(--muted)',
+            color: 'var(--border-color)',
           }}
         >
           <File size={32} />
         </div>
-        <h3 style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{labels.emptyTitle}</h3>
-        <p style={{ marginTop: 4, color: '#6b7280' }}>{labels.emptyDescription}</p>
+        <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{labels.emptyTitle}</h3>
+        <p style={{ marginTop: 4, color: 'var(--muted-foreground)' }}>{labels.emptyDescription}</p>
       </div>
     );
   }
@@ -291,7 +291,7 @@ export function StatementsListTable({
             onCheckedChange={onToggleSelectAll}
             aria-label="Select all statements"
           />
-          <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>Select all</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
         </div>
         <TableDesktopHeader
           allVisibleSelected={allVisibleSelected}
@@ -336,11 +336,11 @@ export function StatementsListTable({
         })}
       </div>
       <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
-        <div style={{ fontSize: 14, color: '#6b7280' }}>
+        <div style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
           {formatPaginationLabel(labels.paginationShown, { from: rangeStart, to: rangeEnd, count: total })}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
+          <span style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
             {formatPaginationLabel(labels.paginationPageOf, { page, count: totalPagesCount })}
           </span>
           <AppPagination page={page} total={totalPagesCount} onChange={onPageChange} />

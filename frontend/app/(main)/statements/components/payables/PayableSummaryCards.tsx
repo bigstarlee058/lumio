@@ -46,7 +46,7 @@ function PayableSummaryCards({
         const count = 'count' in item ? item.count : undefined;
 
         return (
-          <Card key={item.key} style={{ border: '1px solid #E8E8E8', boxShadow: 'none' }}>
+          <Card key={item.key} style={{ border: '1px solid var(--border-color)', boxShadow: 'none' }}>
             <div className="lumio-payable-summary__card-content">
               <div className="lumio-payable-summary__card-header">
                 <span>{item.label}</span>
@@ -55,11 +55,11 @@ function PayableSummaryCards({
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.025em', color: '#0f172a' }}>
+                <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--foreground)' }}>
                   {formatMoney(item.value, currency, locale)}
                 </div>
                 {typeof count === 'number' ? (
-                  <div style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
+                  <div style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>
                     {count} {labels.itemsSuffix}
                   </div>
                 ) : null}

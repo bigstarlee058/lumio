@@ -35,11 +35,11 @@ function MetadataFields({ form, hints, labels, balanceStartInputRef, balanceEndI
       <CustomDatePicker containerTestId="statement-metadata-field-start-date" label={labelValue(labels.startDate, 'Start date')} value={form.statementDateFrom} onChange={value => onChange({ field: 'statementDateFrom', value })} helperText={hints.startDate} />
       <CustomDatePicker containerTestId="statement-metadata-field-end-date" label={labelValue(labels.endDate, 'End date')} value={form.statementDateTo} onChange={value => onChange({ field: 'statementDateTo', value })} helperText={hints.endDate} />
       <div data-testid="statement-metadata-field-opening-balance">
-        <span style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>{labelValue(labels.openingBalance, 'Opening balance')}</span>
+        <span style={{ fontSize: 12, color: 'var(--muted-foreground)', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>{labelValue(labels.openingBalance, 'Opening balance')}</span>
         <TextField type="number" fullWidth size="small" inputRef={balanceStartInputRef} value={form.balanceStart} onChange={e => onChange({ field: 'balanceStart', value: e.target.value })} placeholder="0.00" helperText={hints.openingBalance} sx={{ '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: 'primary.main' } } }} />
       </div>
       <div data-testid="statement-metadata-field-closing-balance">
-        <span style={{ fontSize: 12, color: '#6b7280', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>{labelValue(labels.balanceEnd, 'Closing balance')}</span>
+        <span style={{ fontSize: 12, color: 'var(--muted-foreground)', display: 'block', marginBottom: 4, fontWeight: 500, marginLeft: 4 }}>{labelValue(labels.balanceEnd, 'Closing balance')}</span>
         <TextField type="number" fullWidth size="small" inputRef={balanceEndInputRef} value={form.balanceEnd} onChange={e => onChange({ field: 'balanceEnd', value: e.target.value })} placeholder="0.00" helperText={hints.closingBalance} sx={{ '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: 'primary.main' } } }} />
       </div>
     </Box>

@@ -15,6 +15,7 @@ import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from '@/app/com
 import { useMemo, useState } from 'react';
 import type { EditableReceiptParsedData, ReceiptCategoryOption } from './receipt-types';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
@@ -32,6 +33,8 @@ export function ReceiptParsedDataForm({
   onChange,
   onCurrencyChange,
 }: ReceiptParsedDataFormProps) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const enabledCategories = categories.filter(category => category.isEnabled !== false);
   const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState(false);
   const [currencySearch, setCurrencySearch] = useState('');
@@ -92,7 +95,7 @@ export function ReceiptParsedDataForm({
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
           <Box>
-            <label htmlFor="receipt-vendor" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-vendor" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Vendor
             </label>
             <Input
@@ -113,7 +116,7 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-amount" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-amount" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Amount
             </label>
             <Input
@@ -131,7 +134,7 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-currency-trigger" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-currency-trigger" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Currency
             </label>
             <Box
@@ -146,7 +149,7 @@ export function ReceiptParsedDataForm({
                 width: '100%',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                border: '1px solid #e2e8f0',
+                border: `1px solid ${c.ink150}`,
                 bgcolor: 'background.paper',
                 px: 1.5,
                 py: 1,
@@ -158,12 +161,12 @@ export function ReceiptParsedDataForm({
               <Box component="span" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {selectedCurrencyItem?.code || value.currency || 'Select a currency'}
               </Box>
-              <ChevronDown style={{ width: 16, height: 16, color: '#94a3b8' }} />
+              <ChevronDown style={{ width: 16, height: 16, color: c.ink400 }} />
             </Box>
           </Box>
 
           <Box>
-            <label htmlFor="receipt-tax" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-tax" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Tax
             </label>
             <Input
@@ -181,7 +184,7 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-payment-method" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-payment-method" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Payment method
             </label>
             <Select
@@ -199,7 +202,7 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-transaction-type" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-transaction-type" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Transaction type
             </label>
             <Select
@@ -221,7 +224,7 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-category" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+            <label htmlFor="receipt-category" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
               Category
             </label>
             <Select
@@ -242,7 +245,7 @@ export function ReceiptParsedDataForm({
 
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Line items</Typography>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>Line items</Typography>
             <MuiButton
               variant="text"
               size="small"
@@ -265,7 +268,7 @@ export function ReceiptParsedDataForm({
             </MuiButton>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: '1px solid #e2e8f0', bgcolor: 'var(--muted)', p: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: `1px solid ${c.ink150}`, bgcolor: 'var(--muted)', p: 2 }}>
             {/* eslint-disable-next-line max-lines-per-function, max-params */}
             {value.lineItems.map((lineItem, index) => (
               <Box key={lineItem.id} sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', md: 'minmax(0,1fr) 120px 44px' } }}>
@@ -345,7 +348,7 @@ export function ReceiptParsedDataForm({
         <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', pb: 2 }}>
             <Box sx={{ position: 'relative' }}>
-              <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#94a3b8', pointerEvents: 'none' }} />
+              <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: c.ink400, pointerEvents: 'none' }} />
               <input
                 type="text"
                 value={currencySearch}
@@ -353,7 +356,7 @@ export function ReceiptParsedDataForm({
                 placeholder="Search"
                 style={{
                   width: '100%',
-                  border: '1px solid #e2e8f0',
+                  border: `1px solid ${c.ink150}`,
                   background: 'var(--card-bg)',
                   padding: '12px 16px 12px 40px',
                   fontSize: 14,
@@ -389,7 +392,7 @@ export function ReceiptParsedDataForm({
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
               <Box>
-                <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>Recents</Typography>
+                <Typography style={{ paddingLeft: 4, fontSize: 14, color: c.ink400 }}>Recents</Typography>
                 <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {recentCurrencyItems.map(item => (
                     <Box
@@ -419,7 +422,7 @@ export function ReceiptParsedDataForm({
             ) : null}
 
             <Box>
-              <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>All</Typography>
+              <Typography style={{ paddingLeft: 4, fontSize: 14, color: c.ink400 }}>All</Typography>
               <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {allCurrencyItems.length > 0 ? (
                   allCurrencyItems.map(item => (
@@ -446,7 +449,7 @@ export function ReceiptParsedDataForm({
                     </Box>
                   ))
                 ) : (
-                  <Typography sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: '#94a3b8' }}>
+                  <Typography sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: c.ink400 }}>
                     No currencies found
                   </Typography>
                 )}

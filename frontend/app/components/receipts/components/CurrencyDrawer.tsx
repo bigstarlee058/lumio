@@ -55,7 +55,7 @@ export function CurrencyDrawer({
       <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', pb: 2 }}>
           <Box sx={{ position: 'relative' }}>
-            <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#94a3b8', pointerEvents: 'none' }} />
+            <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--muted-foreground)', pointerEvents: 'none' }} />
             <input
               type="text"
               value={currencySearch}
@@ -99,7 +99,7 @@ export function CurrencyDrawer({
 
           {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
             <Box>
-              <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>Recents</Typography>
+              <Typography style={{ paddingLeft: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>Recents</Typography>
               <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {recentCurrencyItems.map(item => (
                   <Box
@@ -129,7 +129,7 @@ export function CurrencyDrawer({
           ) : null}
 
           <Box>
-            <Typography style={{ paddingLeft: 4, fontSize: 14, color: '#94a3b8' }}>All</Typography>
+            <Typography style={{ paddingLeft: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>All</Typography>
             <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {allCurrencyItems.length > 0 ? (
                 allCurrencyItems.map(item => (
@@ -156,7 +156,7 @@ export function CurrencyDrawer({
                   </Box>
                 ))
               ) : (
-                <Typography sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: '#94a3b8' }}>
+                <Typography sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: 'var(--muted-foreground)' }}>
                   No currencies found
                 </Typography>
               )}

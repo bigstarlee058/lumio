@@ -31,8 +31,8 @@ export function UnapprovedCashPageHeader({
       }}
     >
       <div>
-        <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{title}</h1>
-        <p style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>{subtitle}</p>
+        <h1 style={{ fontSize: 20, fontWeight: 600, color: 'var(--foreground)' }}>{title}</h1>
+        <p style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>{subtitle}</p>
       </div>
       <button
         type="button"
@@ -41,12 +41,12 @@ export function UnapprovedCashPageHeader({
           display: 'inline-flex',
           alignItems: 'center',
           gap: 8,
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--border-color)',
           background: 'var(--card-bg)',
           padding: '8px 12px',
           fontSize: 14,
           fontWeight: 500,
-          color: '#374151',
+          color: 'var(--foreground)',
           cursor: 'pointer',
           borderRadius: tokens.radius.md,
           transition: 'background 0.15s',

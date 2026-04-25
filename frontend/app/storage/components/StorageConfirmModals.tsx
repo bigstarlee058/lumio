@@ -86,14 +86,14 @@ function DeleteFolderMessage({
   onSetDeleteFolderWithContents: (v: boolean) => void;
 }): React.JSX.Element {
   if (!folderToDelete) {
-    return <Typography style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.6 }}>{messageFallback}</Typography>;
+    return <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{messageFallback}</Typography>;
   }
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-      <Typography style={{ fontSize: 14, color: '#4b5563', lineHeight: 1.6 }}>
+      <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
         {messagePrefix}{folderToDelete.name}{messageSuffix}
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: '#4b5563' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'var(--text-secondary)' }}>
         <Checkbox checked={deleteFolderWithContents} onCheckedChange={onSetDeleteFolderWithContents} className="h-4 w-4" />
         {withContentsLabel}
       </Box>

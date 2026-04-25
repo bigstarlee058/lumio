@@ -37,12 +37,12 @@ function DiffPatchView({ diff }: { diff: Extract<AuditEventDiff, unknown[]> }): 
       {diff.map((op, idx) => {
         const key = `${op.op}-${op.path}-${idx}`;
         return (
-          <Box key={key} sx={{ border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5, fontSize: 14 }}>
-            <Typography variant="body2" fontWeight={600} style={{ color: '#1f2937' }}>
+          <Box key={key} sx={{ border: '1px solid var(--border-color)', bgcolor: 'var(--muted)', p: 1.5, fontSize: 14 }}>
+            <Typography variant="body2" fontWeight={600} style={{ color: 'var(--foreground)' }}>
               {op.op.toUpperCase()} {op.path}
             </Typography>
             {op.value !== undefined && (
-              <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap', fontSize: 12, color: '#4b5563', margin: '8px 0 0' }}>
+              <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap', fontSize: 12, color: 'var(--text-secondary)', margin: '8px 0 0' }}>
                 {formatValue(op.value)}
               </pre>
             )}
@@ -62,8 +62,8 @@ function getRowBackground(hadBefore: boolean, hadAfter: boolean, changed: boolea
 
 function DiffObjectView({ before, after, keys }: { before: Record<string, unknown>; after: Record<string, unknown>; keys: string[] }): React.JSX.Element {
   return (
-    <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb' }}>
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', bgcolor: '#f9fafb', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', color: '#6b7280' }}>
+    <Box sx={{ overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', bgcolor: 'var(--muted)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', color: 'var(--muted-foreground)' }}>
         <Box sx={{ px: 1.5, py: 1 }}>Field</Box>
         <Box sx={{ px: 1.5, py: 1 }}>Before</Box>
         <Box sx={{ px: 1.5, py: 1 }}>After</Box>
@@ -77,12 +77,12 @@ function DiffObjectView({ before, after, keys }: { before: Record<string, unknow
           const changed = JSON.stringify(beforeValue) !== JSON.stringify(afterValue);
           const rowBg = getRowBackground(hadBefore, hadAfter, changed);
           return (
-            <Box key={key} sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', fontSize: 14, bgcolor: rowBg, borderTop: '1px solid #e5e7eb' }}>
-              <Box sx={{ px: 1.5, py: 1, fontWeight: 500, color: '#374151' }}>{FIELD_LABELS[key] ?? key}</Box>
-              <Box sx={{ px: 1.5, py: 1, color: '#4b5563' }}>
+            <Box key={key} sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', fontSize: 14, bgcolor: rowBg, borderTop: '1px solid var(--border-color)' }}>
+              <Box sx={{ px: 1.5, py: 1, fontWeight: 500, color: 'var(--foreground)' }}>{FIELD_LABELS[key] ?? key}</Box>
+              <Box sx={{ px: 1.5, py: 1, color: 'var(--text-secondary)' }}>
                 <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, margin: 0 }}>{formatValue(beforeValue)}</pre>
               </Box>
-              <Box sx={{ px: 1.5, py: 1, color: '#4b5563' }}>
+              <Box sx={{ px: 1.5, py: 1, color: 'var(--text-secondary)' }}>
                 <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12, margin: 0 }}>{formatValue(afterValue)}</pre>
               </Box>
             </Box>
@@ -95,7 +95,7 @@ function DiffObjectView({ before, after, keys }: { before: Record<string, unknow
 
 export function DiffViewer({ diff }: { diff: AuditEventDiff | null }): React.JSX.Element {
   if (!diff) {
-    return <Typography variant="body2" style={{ color: '#6b7280' }}>No diff available.</Typography>;
+    return <Typography variant="body2" style={{ color: 'var(--muted-foreground)' }}>No diff available.</Typography>;
   }
 
   if (Array.isArray(diff)) {
@@ -109,7 +109,7 @@ export function DiffViewer({ diff }: { diff: AuditEventDiff | null }): React.JSX
   ).filter(key => !TECHNICAL_FIELDS.has(key));
 
   if (keys.length === 0) {
-    return <Typography variant="body2" style={{ color: '#6b7280' }}>No user-facing changes available.</Typography>;
+    return <Typography variant="body2" style={{ color: 'var(--muted-foreground)' }}>No user-facing changes available.</Typography>;
   }
 
   return <DiffObjectView before={before} after={after} keys={keys} />;

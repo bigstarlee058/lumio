@@ -19,7 +19,7 @@ const confirmBtnSx = {
   bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' },
 };
 const cancelBtnSx = {
-  border: '1px solid #e5e7eb', borderRadius: tokens.radius.full, color: '#6b7280', '&:hover': { bgcolor: '#f9fafb' },
+  border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { bgcolor: 'var(--muted)' },
 };
 const textFieldSx = { flex: 1 };
 

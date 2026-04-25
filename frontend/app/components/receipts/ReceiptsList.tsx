@@ -47,14 +47,14 @@ export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: Rec
       <Box
         sx={{
           border: '2px dashed #cbd5e1',
-          bgcolor: '#f8fafc',
+          bgcolor: 'var(--muted)',
           px: 3,
           py: 8,
           textAlign: 'center',
         }}
       >
-        <Typography style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>No receipts yet</Typography>
-        <Typography style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>No receipts yet</Typography>
+        <Typography style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
           Upload a receipt or scan one with your camera to start reviewing extracted data.
         </Typography>
       </Box>

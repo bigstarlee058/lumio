@@ -2,6 +2,8 @@
 
 import { ChevronDown, ChevronRight, Copy, Download, GitMerge, Trash2, X } from '@/app/components/icons';
 import type { JSX } from 'react';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 interface Props {
   selectedCount: number;
@@ -29,6 +31,8 @@ function DesktopDuplicateActions({
   onMerge: () => void;
   onDismiss: () => void;
 }): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <>
       <button type="button" onClick={onMerge} className="lumio-stmt-list-view__bulk-menu-btn">
@@ -40,16 +44,16 @@ function DesktopDuplicateActions({
             {mergeDuplicatesLabel}
           </span>
         </span>
-        <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+        <ChevronRight size={16} style={{ color: c.ink300 }} />
       </button>
       <button type="button" onClick={onDismiss} className="lumio-stmt-list-view__bulk-menu-btn">
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <X size={16} style={{ color: '#99a39d' }} />
-          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#0f3428' }}>
+          <X size={16} style={{ color: c.ink400 }} />
+          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: c.ink900 }}>
             {dismissDuplicateLabel}
           </span>
         </span>
-        <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+        <ChevronRight size={16} style={{ color: c.ink300 }} />
       </button>
       <div className="lumio-stmt-list-view__bulk-menu-divider" />
     </>
@@ -103,6 +107,8 @@ export function StatementsBulkActions({
   onExport,
   onDelete,
 }: Props): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <>
       <div className="lumio-stmt-list-view__bulk-desktop">
@@ -139,7 +145,7 @@ export function StatementsBulkActions({
                   {markDuplicateLabel}
                 </span>
               </span>
-              <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+              <ChevronRight size={16} style={{ color: c.ink300 }} />
             </button>
 
             <button
@@ -148,12 +154,12 @@ export function StatementsBulkActions({
               className="lumio-stmt-list-view__bulk-menu-btn"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Download size={16} style={{ color: '#99a39d' }} />
-                <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#0f3428' }}>
+                <Download size={16} style={{ color: c.ink400 }} />
+                <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: c.ink900 }}>
                   Export
                 </span>
               </span>
-              <ChevronRight size={16} style={{ color: '#c4cac4' }} />
+              <ChevronRight size={16} style={{ color: c.ink300 }} />
             </button>
 
             <button
@@ -162,19 +168,19 @@ export function StatementsBulkActions({
               className="lumio-stmt-list-view__bulk-menu-btn lumio-stmt-list-view__bulk-menu-btn--danger"
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <Trash2 size={16} style={{ color: '#dc2626' }} />
-                <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: '#991b1b' }}>
+                <Trash2 size={16} style={{ color: c.danger }} />
+                <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: c.danger }}>
                   Delete
                 </span>
               </span>
-              <ChevronRight size={16} style={{ color: '#f0b5b5' }} />
+              <ChevronRight size={16} style={{ color: c.danger }} />
             </button>
           </div>
         )}
       </div>
 
       <div className="lumio-stmt-list-view__mobile-bulk">
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>
+        <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
           {selectedCount} selected
         </span>
         <div className="lumio-stmt-list-view__mobile-bulk-actions">

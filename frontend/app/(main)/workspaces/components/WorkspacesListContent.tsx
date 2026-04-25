@@ -46,7 +46,7 @@ function LoadingView({ loadingLabel }: { loadingLabel: string }): React.JSX.Elem
     <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Box sx={{ textAlign: 'center' }}>
         <CircularProgress size={100} />
-        <Typography variant="body2" sx={{ mt: 2, color: '#4b5563' }}>{loadingLabel}</Typography>
+        <Typography variant="body2" sx={{ mt: 2, color: 'var(--text-secondary)' }}>{loadingLabel}</Typography>
       </Box>
     </Box>
   );

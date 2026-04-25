@@ -36,8 +36,8 @@ interface MobileTableViewProps {
 
 type P = MobileTableViewProps;
 
-const BTN_BASE: CSSProperties = { borderRadius: tokens.radius.md, border: '1px solid #e5e7eb', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#374151', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
-const DELETE_BTN: CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, borderRadius: tokens.radius.md, border: '1px solid #fecaca', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: '#dc2626', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
+const BTN_BASE: CSSProperties = { borderRadius: tokens.radius.md, border: '1px solid var(--border-color)', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: 'var(--foreground)', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
+const DELETE_BTN: CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, borderRadius: tokens.radius.md, border: '1px solid #fecaca', padding: '4px 8px', fontSize: '0.75rem', fontWeight: 500, color: 'var(--destructive)', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' };
 
 interface MobileRowActionsProps {
   row: CustomTableGridRow;
@@ -62,7 +62,7 @@ interface MobileRowFieldsProps {
 }
 function MobileRowFields({ row, orderedColumns, isDark, formatMobileCellValue }: MobileRowFieldsProps): React.JSX.Element {
   const dtColor = isDark ? '#9ca3af' : '#6b7280';
-  const ddColor = isDark ? '#f3f4f6' : '#111827';
+  const ddColor = isDark ? '#f3f4f6' : 'var(--foreground)';
   return (
     <dl style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
       {orderedColumns.map(column => (
@@ -82,8 +82,8 @@ interface MobileRowCardProps extends MobileRowActionsProps {
 }
 function MobileRowCard({ row, orderedColumns, isDark, selectedRowsSet, onSelectRow, onViewRow, onEditRow, onDeleteRow, formatMobileCellValue, labels }: MobileRowCardProps): React.JSX.Element {
   const rowStyle = getRowStyle(row);
-  const border = isDark ? '1px solid #374151' : '1px solid #e5e7eb';
-  const headerColor = isDark ? '#e5e7eb' : '#374151';
+  const border = isDark ? '1px solid #374151' : '1px solid var(--border-color)';
+  const headerColor = isDark ? '#e5e7eb' : 'var(--foreground)';
   return (
     <article data-testid={`custom-table-mobile-card-${row.id}`} style={{ border, backgroundColor: 'var(--card-bg)', padding: 12, ...rowStyle }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
@@ -100,7 +100,7 @@ function MobileRowCard({ row, orderedColumns, isDark, selectedRowsSet, onSelectR
 
 function MobileEmptyState({ labels }: { labels: { emptyTitle: string; emptySubtitle: string } }): React.JSX.Element {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: '#6b7280' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--muted-foreground)' }}>
       <GripVertical size={48} style={{ marginBottom: 16, opacity: 0.2 }} />
       <p style={{ fontSize: '1.125rem', fontWeight: 500 }}>{labels.emptyTitle}</p>
       <p style={{ fontSize: '0.875rem' }}>{labels.emptySubtitle}</p>
@@ -110,7 +110,7 @@ function MobileEmptyState({ labels }: { labels: { emptyTitle: string; emptySubti
 
 function MobileLoadingRow({ label }: { label: string }): React.JSX.Element {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: '#6b7280' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--muted-foreground)' }}>
       <Spinner size={20} style={{ marginRight: 8 }} /><span>{label}</span>
     </div>
   );
@@ -118,11 +118,11 @@ function MobileLoadingRow({ label }: { label: string }): React.JSX.Element {
 
 interface MobileBottomAddRowProps { isDark: boolean; onCreateRow?: () => Promise<CustomTableGridRow | null>; label: string; }
 function MobileBottomAddRow({ isDark, onCreateRow, label }: MobileBottomAddRowProps): React.JSX.Element {
-  const borderTop = isDark ? '1px solid #374151' : '1px solid #e5e7eb';
-  const bg = isDark ? '#1f2937' : '#f9fafb';
+  const borderTop = isDark ? '1px solid #374151' : '1px solid var(--border-color)';
+  const bg = isDark ? '#1f2937' : 'var(--muted)';
   return (
     <div style={{ borderTop, backgroundColor: bg, padding: 12 }}>
-      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: '#4b5563', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}>
+      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}>
         <Plus size={16} />{label}
       </button>
     </div>
@@ -136,15 +136,15 @@ interface MobileScrollHeaderProps {
   onCreateRow?: () => Promise<CustomTableGridRow | null>; label: string;
 }
 function MobileScrollHeader({ isDark, rows, selectedRowIds, allRowsSelectedMobile, someRowsSelectedMobile, onSelectAll, onCreateRow, label }: MobileScrollHeaderProps): React.JSX.Element {
-  const border = isDark ? '1px solid #374151' : '1px solid #e5e7eb';
-  const color = isDark ? '#e5e7eb' : '#374151';
+  const border = isDark ? '1px solid #374151' : '1px solid var(--border-color)';
+  const color = isDark ? '#e5e7eb' : 'var(--foreground)';
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: border, backgroundColor: 'var(--card-bg)', padding: '8px 12px' }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: '0.875rem', fontWeight: 500, color }}>
         <Checkbox checked={allRowsSelectedMobile} indeterminate={someRowsSelectedMobile && !allRowsSelectedMobile} onCheckedChange={onSelectAll} aria-label="Select all rows" />
         <span>{selectedRowIds.length}/{rows.length}</span>
       </div>
-      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: '#4b5563', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
+      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
     </div>
   );
 }
@@ -167,7 +167,7 @@ function MobileRowsContent(p: P): React.JSX.Element {
 }
 
 function MobileScrollBody(p: P): React.JSX.Element {
-  const border = p.isDark ? '1px solid #374151' : '1px solid #e5e7eb';
+  const border = p.isDark ? '1px solid #374151' : '1px solid var(--border-color)';
   const height = p.isFullscreen ? 'calc(100vh - 150px)' : '600px';
   return (
     <div ref={p.tableContainerRef} onScroll={p.onScroll} style={{ position: 'relative', overflowY: 'auto', border, backgroundColor: 'var(--card-bg)', height }}>

@@ -18,13 +18,13 @@ interface StatementOptionTextProps {
 function StatementOptionText({ option, labels, formatLabel }: StatementOptionTextProps): React.JSX.Element {
   return (
     <Box sx={{ minWidth: 0, flex: 1 }}>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#111827' }}>
+      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
         {option.title}
       </Box>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
+      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>
         {labels.sourceLabel}: {option.sourceLabel} - {labels.periodLabel}: {option.periodLabel}
       </Box>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
+      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>
         {labels.fileLabel}: {option.fileLabel}
       </Box>
       {option.duplicateCount > 1 ? (
@@ -72,12 +72,12 @@ function StatementGroupItem({
         bgcolor: 'transparent',
         cursor: option.disabled ? 'not-allowed' : 'pointer',
         opacity: option.disabled ? 0.5 : 1,
-        '&:hover': { bgcolor: option.disabled ? 'transparent' : '#f9fafb' },
+        '&:hover': { bgcolor: option.disabled ? 'transparent' : 'var(--muted)' },
       }}
     >
       <Checkbox checked={checked} className="h-4 w-4" style={{ marginTop: 2, flexShrink: 0 }} />
       <StatementOptionText option={option} labels={labels} formatLabel={formatLabel} />
-      <Box style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, color: '#374151' }}>
+      <Box style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, color: 'var(--foreground)' }}>
         {option.rowsLabel}
       </Box>
     </Box>
@@ -100,16 +100,16 @@ export function StatementGroup({
   onToggleStatement,
 }: StatementGroupProps): React.JSX.Element {
   return (
-    <Box sx={{ border: '1px solid #e5e7eb' }}>
+    <Box sx={{ border: '1px solid var(--border-color)' }}>
       <Box
         sx={{
-          borderBottom: '1px solid #e5e7eb',
-          bgcolor: '#f9fafb',
+          borderBottom: '1px solid var(--border-color)',
+          bgcolor: 'var(--muted)',
           px: 1.5,
           py: 0.75,
           fontSize: 12,
           fontWeight: 600,
-          color: '#4b5563',
+          color: 'var(--text-secondary)',
         }}
       >
         {group.label} ({group.options.length})

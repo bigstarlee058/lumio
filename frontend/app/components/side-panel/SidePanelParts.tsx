@@ -9,10 +9,10 @@ import { RenderIcon } from './sections/components/RenderIcon';
 import type { ActionItem, SidePanelProps, SidePanelSection } from './types';
 import { tokens } from '@/lib/theme-tokens';
 
-export const BTN_BASE: React.CSSProperties = { padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md };
+export const BTN_BASE: React.CSSProperties = { padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md };
 const BTN_FOOTER: React.CSSProperties = { flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '8px 12px', fontSize: 14, fontWeight: 500, border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md };
 const STYLE_PRIMARY = { backgroundColor: 'var(--primary)', color: 'white' };
-const STYLE_SECONDARY = { backgroundColor: '#f3f4f6', color: '#374151' };
+const STYLE_SECONDARY = { backgroundColor: 'var(--muted)', color: 'var(--foreground)' };
 
 type ToggleProps = { position: string; onToggle: () => void; label: string; size?: number };
 export function CollapseBtn({ position, onToggle, label, size = 16 }: ToggleProps): React.JSX.Element {
@@ -24,16 +24,16 @@ export function CollapseBtn({ position, onToggle, label, size = 16 }: ToggleProp
 
 type ContentProps = { loading: boolean; error: string | null; onRetry?: () => void; sections: SidePanelSection[] };
 export function PanelContent({ loading, error, onRetry, sections }: ContentProps): React.JSX.Element {
-  if (loading) return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}><Spinner size={32} /><p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Loading...</p></div>;
+  if (loading) return <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}><Spinner size={32} /><p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>Loading...</p></div>;
   if (error) return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
-      <AlertCircle size={40} style={{ color: '#ef4444', marginBottom: 12 }} />
-      <p style={{ fontSize: 14, fontWeight: 500, color: '#111827', textAlign: 'center', margin: '0 0 4px' }}>Error loading content</p>
-      <p style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
+      <AlertCircle size={40} style={{ color: 'var(--destructive)', marginBottom: 12 }} />
+      <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', textAlign: 'center', margin: '0 0 4px' }}>Error loading content</p>
+      <p style={{ fontSize: 12, color: 'var(--muted-foreground)', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
       {onRetry && <button type="button" onClick={onRetry} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}><RefreshCw size={14} />Retry</button>}
     </div>
   );
-  if (sections.length === 0) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}><p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', margin: 0 }}>No content available</p></div>;
+  if (sections.length === 0) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}><p style={{ fontSize: 14, color: 'var(--muted-foreground)', textAlign: 'center', margin: 0 }}>No content available</p></div>;
   return <>{sections.map(s => <SectionRenderer key={s.id} section={s} />)}</>;
 }
 
@@ -64,7 +64,7 @@ function HeaderInfo({ header }: HeaderInfoProps): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
       {header.icon && <div style={{ padding: 8, backgroundColor: 'rgba(var(--primary-rgb),0.1)', flexShrink: 0 }}><RenderIcon icon={header.icon} size={18} /></div>}
-      <div style={{ minWidth: 0 }}>{header.title && <h2 style={{ fontSize: 18, fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{header.title}</h2>}</div>
+      <div style={{ minWidth: 0 }}>{header.title && <h2 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{header.title}</h2>}</div>
     </div>
   );
 }

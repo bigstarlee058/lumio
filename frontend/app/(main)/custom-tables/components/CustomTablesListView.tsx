@@ -180,7 +180,7 @@ export function CustomTablesListView({
         }}
         data-tour-id="pagination"
       >
-        <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+        <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
           {filteredCount === 0
             ? labels.emptyLabels.title
             : formatPaginationLabel(labels.paginationLabels.shown, {
@@ -191,7 +191,7 @@ export function CustomTablesListView({
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
-            style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}
+            style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}
           >
             {formatPaginationLabel(labels.paginationLabels.pageOf, {
               page,
@@ -217,7 +217,7 @@ function EmptyState({
   return (
     <Box
       sx={{
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--border-color)',
         bgcolor: 'background.paper',
         px: { xs: 3, sm: 5 },
         py: { xs: 5, sm: 6 },
@@ -233,15 +233,15 @@ function EmptyState({
           alignItems: 'center',
           justifyContent: 'center',
           bgcolor: 'action.hover',
-          color: '#9ca3af',
+          color: 'var(--muted-foreground)',
         }}
       >
         <TableIcon className="h-8 w-8" />
       </Box>
-      <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: '#111827' }}>
+      <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
         {labels.title}
       </Typography>
-      <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
+      <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)' }}>
         {labels.description}
       </Typography>
       <Box
@@ -249,8 +249,8 @@ function EmptyState({
           mt: 2.5,
           mx: 'auto',
           maxWidth: 672,
-          border: '1px solid #e5e7eb',
-          bgcolor: '#f9fafb',
+          border: '1px solid var(--border-color)',
+          bgcolor: 'var(--muted)',
           p: 2,
         }}
       >
@@ -263,7 +263,7 @@ function EmptyState({
             flexDirection: 'column',
             gap: 1,
             fontSize: 14,
-            color: '#111827',
+            color: 'var(--foreground)',
           }}
         >
           <li>{labels.step1}</li>
@@ -316,7 +316,7 @@ function TableListHeader({
         fontWeight: 500,
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        color: '#6b7280',
+        color: 'var(--muted-foreground)',
       }}
     >
       <Box sx={{ width: 16 }} />
@@ -358,7 +358,7 @@ function TableListRow({
         cursor: 'pointer',
         alignItems: 'center',
         gap: 1.5,
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--border-color)',
         bgcolor: 'background.paper',
         px: 2,
         py: 1.5,
@@ -400,9 +400,9 @@ function TableListRow({
         title={labels.openLabel}
       >
         {table.category?.icon ? (
-          <CategoryIcon size={20} style={{ color: '#374151' }} />
+          <CategoryIcon size={20} style={{ color: 'var(--foreground)' }} />
         ) : (
-          <TableIcon className="h-5 w-5" style={{ color: '#4b5563' }} />
+          <TableIcon className="h-5 w-5" style={{ color: 'var(--text-secondary)' }} />
         )}
       </Box>
       <Box sx={{ width: 12, flexShrink: 0 }} />
@@ -411,7 +411,7 @@ function TableListRow({
           style={{
             fontSize: 14,
             fontWeight: 600,
-            color: '#111827',
+            color: 'var(--foreground)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -423,7 +423,7 @@ function TableListRow({
           style={{
             marginTop: 4,
             fontSize: 12,
-            color: '#6b7280',
+            color: 'var(--muted-foreground)',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -454,7 +454,7 @@ function TableListRow({
           <Typography
             style={{
               fontSize: 12,
-              color: '#6b7280',
+              color: 'var(--muted-foreground)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -471,7 +471,7 @@ function TableListRow({
           flexShrink: 0,
           fontSize: 12,
           fontWeight: 600,
-          color: '#374151',
+          color: 'var(--foreground)',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
@@ -488,7 +488,7 @@ function TableListRow({
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
-          color: '#6b7280',
+          color: 'var(--muted-foreground)',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
@@ -504,7 +504,7 @@ function TableListRow({
           textAlign: 'right',
           fontSize: 14,
           fontWeight: 600,
-          color: '#111827',
+          color: 'var(--foreground)',
         }}
       >
         {table.rowsCountLabel}
@@ -517,7 +517,7 @@ function TableListRow({
           textAlign: 'right',
           fontSize: 14,
           fontWeight: 600,
-          color: '#111827',
+          color: 'var(--foreground)',
         }}
       >
         {table.updatedLabel}
@@ -583,12 +583,12 @@ function TableListRow({
           sx={{
             display: 'inline-flex',
             alignItems: 'center',
-            border: '1px solid #e5e7eb',
+            border: '1px solid var(--border-color)',
             px: 1.5,
             py: 0.75,
             fontSize: 14,
             fontWeight: 500,
-            color: '#374151',
+            color: 'var(--foreground)',
             bgcolor: 'transparent',
             cursor: 'pointer',
             '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
@@ -612,11 +612,11 @@ function TableListRow({
             py: 0.75,
             fontSize: 14,
             fontWeight: 500,
-            color: '#6b7280',
+            color: 'var(--muted-foreground)',
             bgcolor: 'transparent',
             border: 'none',
             cursor: 'pointer',
-            '&:hover': { color: '#111827' },
+            '&:hover': { color: 'var(--foreground)' },
             '&:disabled': { opacity: 0.5 },
           }}
           disabled={updatingTableId === table.id}
@@ -638,12 +638,12 @@ function TableListRow({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--border-color)',
                 p: 0.75,
-                color: '#4b5563',
+                color: 'var(--text-secondary)',
                 bgcolor: 'transparent',
                 cursor: 'pointer',
-                '&:hover': { borderColor: '#d1d5db', color: '#111827' },
+                '&:hover': { borderColor: 'var(--border-color)', color: 'var(--foreground)' },
               }}
               onClick={event => event.stopPropagation()}
               aria-label="More actions"
@@ -657,7 +657,7 @@ function TableListRow({
                 event.stopPropagation();
                 onConfirmDelete(table);
               }}
-              style={{ color: '#dc2626' }}
+              style={{ color: 'var(--destructive)' }}
             >
               <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                 <Trash2 className="h-4 w-4" />
@@ -668,7 +668,7 @@ function TableListRow({
         </DropdownMenu>
 
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-          <ChevronRight className="h-5 w-5" style={{ color: '#9ca3af' }} />
+          <ChevronRight className="h-5 w-5" style={{ color: 'var(--muted-foreground)' }} />
         </Box>
       </Box>
     </Box>

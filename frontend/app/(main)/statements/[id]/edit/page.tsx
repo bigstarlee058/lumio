@@ -452,7 +452,7 @@ export default function EditStatementPage(): React.JSX.Element {
                 label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`}
                 size="small"
                 data-testid="statement-transactions-chip"
-                style={{ border: '1px solid #e5e7eb', backgroundColor: '#f9fafb', color: '#6b7280' }}
+                style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}
                 sx={{
                   fontWeight: 500,
                   '& .MuiChip-icon': { color: 'text.secondary' },
@@ -500,16 +500,16 @@ export default function EditStatementPage(): React.JSX.Element {
                   minWidth: 0,
                   maxWidth: { xs: '100%', md: 280 },
                   overflow: 'hidden',
-                  borderColor: '#ef4444 !important',
-                  color: '#b91c1c !important',
+                  borderColor: 'var(--destructive) !important',
+                  color: 'var(--destructive) !important',
                   bgcolor: '#fef2f2 !important',
                   borderWidth: '2px !important',
                   '& .MuiButton-startIcon': {
-                    color: '#dc2626 !important',
+                    color: 'var(--destructive) !important',
                   },
                   '&:hover': {
                     bgcolor: '#fee2e2 !important',
-                    borderColor: '#dc2626 !important',
+                    borderColor: 'var(--destructive) !important',
                   },
                 }}
               >
@@ -962,7 +962,7 @@ export default function EditStatementPage(): React.JSX.Element {
           {t.labels.exportConfirmTitle.value}
         </DialogTitle>
         <DialogContent dividers>
-          <p style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>
+          <p style={{ fontSize: 16, lineHeight: 2, color: 'var(--foreground)' }}>
             {t.labels.exportConfirmBody.value}
           </p>
         </DialogContent>
@@ -970,7 +970,7 @@ export default function EditStatementPage(): React.JSX.Element {
           <button
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            style={{ borderRadius: tokens.radius.md, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer' }}
+            style={{ borderRadius: tokens.radius.md, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer' }}
           >
             {t.labels.cancel.value}
           </button>

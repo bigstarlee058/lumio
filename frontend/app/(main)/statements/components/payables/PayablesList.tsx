@@ -19,6 +19,8 @@ import {
   getPayableStatusVariant,
   isPayableOverdue,
 } from './payables-utils';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 interface PayablesListProps {
   items: Payable[];
@@ -80,12 +82,14 @@ function PayablesList({
   onDelete,
 }: PayablesListProps): React.JSX.Element {
   const isMobile = useIsMobile();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
 
   if (items.length === 0) {
     return (
       <div className="lumio-payable-list__empty">
-        <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0f172a' }}>{emptyTitle}</h3>
-        <p style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>{emptyDescription}</p>
+        <h3 style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>{emptyTitle}</h3>
+        <p style={{ marginTop: 8, fontSize: 14, color: c.ink500 }}>{emptyDescription}</p>
       </div>
     );
   }
@@ -140,8 +144,8 @@ function PayablesList({
               <div key={payable.id} className="lumio-payable-list__mobile-row">
                 <div className="lumio-payable-list__mobile-row-top">
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>{payable.vendor}</div>
-                    <div style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: c.ink900 }}>{payable.vendor}</div>
+                    <div style={{ marginTop: 4, fontSize: 14, color: c.ink500 }}>
                       {labels.dueDate}: {formatPayableDate(payable.dueDate, locale)}
                     </div>
                   </div>
@@ -150,14 +154,14 @@ function PayablesList({
                   </Badge>
                 </div>
                 <div className="lumio-payable-list__mobile-row-data">
-                  <span style={{ color: '#64748b' }}>{labels.amount}</span>
-                  <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                  <span style={{ color: c.ink500 }}>{labels.amount}</span>
+                  <span style={{ fontWeight: 600, color: c.ink900 }}>
                     {formatMoney(payable.amount, payable.currency, locale)}
                   </span>
                 </div>
                 <div className="lumio-payable-list__mobile-row-data">
-                  <span style={{ color: '#64748b' }}>{labels.source}</span>
-                  <span style={{ fontWeight: 500, color: '#334155' }}>
+                  <span style={{ color: c.ink500 }}>{labels.source}</span>
+                  <span style={{ fontWeight: 500, color: c.ink800 }}>
                     {labels.sourceLabels[payable.source] || payable.source}
                   </span>
                 </div>
@@ -185,11 +189,11 @@ function PayablesList({
 
                 return (
                   <tr key={payable.id}>
-                    <td className="lumio-payable-list__td" style={{ fontWeight: 500, color: '#0f172a' }}>{payable.vendor}</td>
-                    <td className="lumio-payable-list__td" style={{ color: '#475569' }}>
+                    <td className="lumio-payable-list__td" style={{ fontWeight: 500, color: c.ink900 }}>{payable.vendor}</td>
+                    <td className="lumio-payable-list__td" style={{ color: c.ink700 }}>
                       {formatPayableDate(payable.dueDate, locale)}
                     </td>
-                    <td className="lumio-payable-list__td" style={{ color: '#475569' }}>
+                    <td className="lumio-payable-list__td" style={{ color: c.ink700 }}>
                       {labels.sourceLabels[payable.source] || payable.source}
                     </td>
                     <td className="lumio-payable-list__td">
@@ -198,7 +202,7 @@ function PayablesList({
                           payable.status}
                       </Badge>
                     </td>
-                    <td className="lumio-payable-list__td" style={{ textAlign: 'right', fontWeight: 600, color: '#0f172a' }}>
+                    <td className="lumio-payable-list__td" style={{ textAlign: 'right', fontWeight: 600, color: c.ink900 }}>
                       {formatMoney(payable.amount, payable.currency, locale)}
                     </td>
                     <td className="lumio-payable-list__td">{renderActions(payable)}</td>
@@ -211,7 +215,7 @@ function PayablesList({
       )}
 
       <div className="lumio-payable-list__pagination-row">
-        <div style={{ fontSize: 14, color: '#64748b' }}>
+        <div style={{ fontSize: 14, color: c.ink500 }}>
           {fillTemplate(labels.pageShown, {
             from: safeRangeStart,
             to: rangeEnd,

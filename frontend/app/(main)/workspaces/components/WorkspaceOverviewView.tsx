@@ -482,7 +482,7 @@ export default function WorkspaceOverviewView() {
               <Typography variant="body2" fontWeight={500} sx={{ color: '#7f1d1d', mb: 0.5 }}>
                 Danger Zone
               </Typography>
-              <Typography variant="caption" sx={{ color: '#b91c1c', display: 'block', mb: 1.5 }}>
+              <Typography variant="caption" sx={{ color: 'var(--destructive)', display: 'block', mb: 1.5 }}>
                 This will permanently delete the workspace and all related data. This action cannot
                 be undone.
               </Typography>
@@ -499,7 +499,7 @@ export default function WorkspaceOverviewView() {
                   padding: '8px 16px',
                   fontSize: 14,
                   fontWeight: 500,
-                  color: '#b91c1c',
+                  color: 'var(--destructive)',
                   cursor: deleting ? 'not-allowed' : 'pointer',
                   borderRadius: tokens.radius.md,
                   opacity: deleting ? 0.6 : 1,

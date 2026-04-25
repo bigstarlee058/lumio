@@ -13,6 +13,7 @@ import { AlertCircle } from '@/app/components/icons';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
 import { tokens } from '@/lib/theme-tokens';
@@ -35,6 +36,8 @@ type DropboxStatus = {
 type DropboxPageT = ReturnType<typeof useIntlayer<'dropboxIntegrationPage'>>;
 
 function LoadingView(): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
@@ -42,7 +45,7 @@ function LoadingView(): React.JSX.Element {
         minHeight: '60vh',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#6b7280',
+        color: c.ink500,
       }}
     >
       <Spinner size={24} />
@@ -51,22 +54,24 @@ function LoadingView(): React.JSX.Element {
 }
 
 function NotLoggedInView({ t }: { t: DropboxPageT }): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box
         sx={{
           borderRadius: tokens.radius.lg,
-          border: '1px solid #e5e7eb',
+          border: `1px solid ${c.ink150}`,
           bgcolor: 'background.paper',
           p: 3,
           boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
           textAlign: 'center',
         }}
       >
-        <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
+        <Typography style={{ color: c.ink800, fontWeight: 600, marginBottom: 8 }}>
           {t.status?.disconnected?.value || 'Disconnected'}
         </Typography>
-        <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+        <Typography style={{ fontSize: 14, color: c.ink700 }}>
           {t.header?.subtitle || 'Connect Dropbox to sync your statements'}
         </Typography>
       </Box>
@@ -92,11 +97,13 @@ function DropboxSettingsPanel({
   onPickFolder,
   onUpdateSettings,
 }: DropboxSettingsPanelProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
         borderRadius: tokens.radius.lg,
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         bgcolor: 'background.paper',
         p: 3,
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -105,7 +112,7 @@ function DropboxSettingsPanel({
       <Box
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
       >
-        <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
           {t.settings?.title || 'Settings'}
         </Typography>
         <button
@@ -134,10 +141,10 @@ function DropboxSettingsPanel({
         sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}
       >
         <Stack spacing={0.5}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.folder || 'Folder'}
           </Typography>
-          <Typography style={{ fontWeight: 500, color: '#111827' }}>
+          <Typography style={{ fontWeight: 500, color: c.ink900 }}>
             {status?.settings?.folderName ||
               status?.settings?.folderId ||
               t.settings?.folderPlaceholder ||
@@ -145,15 +152,15 @@ function DropboxSettingsPanel({
           </Typography>
         </Stack>
         <Stack spacing={0.5}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.lastSync || 'Last Sync'}
           </Typography>
-          <Typography style={{ fontWeight: 500, color: '#111827' }}>
+          <Typography style={{ fontWeight: 500, color: c.ink900 }}>
             {formatDateTime(status?.settings?.lastSyncAt, userLocale) || '—'}
           </Typography>
         </Stack>
         <Stack spacing={1}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.syncEnabled || 'Sync Enabled'}
           </Typography>
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
@@ -162,7 +169,7 @@ function DropboxSettingsPanel({
               onCheckedChange={checked => void onUpdateSettings({ syncEnabled: checked as boolean })}
               disabled={!status?.connected || saving}
             />
-            <Typography style={{ fontSize: 14, color: '#374151' }}>
+            <Typography style={{ fontSize: 14, color: c.ink800 }}>
               {status?.settings?.syncEnabled
                 ? t.status?.connected || 'Enabled'
                 : t.status?.disconnected || 'Disabled'}
@@ -170,7 +177,7 @@ function DropboxSettingsPanel({
           </Box>
         </Stack>
         <Stack spacing={1}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.syncTime || 'Sync Time'}
           </Typography>
           <input
@@ -180,19 +187,19 @@ function DropboxSettingsPanel({
             disabled={!status?.connected || saving}
             style={{
               width: '100%',
-              border: '1px solid #e5e7eb',
+              border: `1px solid ${c.ink150}`,
               borderRadius: tokens.radius.md,
               padding: '8px 12px',
               fontSize: 14,
-              color: '#111827',
+              color: c.ink900,
             }}
           />
         </Stack>
         <Stack spacing={0.5}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.timeZone || 'Time Zone'}
           </Typography>
-          <Typography style={{ fontWeight: 500, color: '#111827' }}>
+          <Typography style={{ fontWeight: 500, color: c.ink900 }}>
             {status?.settings?.timeZone || 'UTC'}
           </Typography>
         </Stack>
@@ -202,11 +209,13 @@ function DropboxSettingsPanel({
 }
 
 function DropboxInfoPanel({ t }: { t: DropboxPageT }): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
         borderRadius: tokens.radius.lg,
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         bgcolor: 'background.paper',
         p: 3,
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -216,11 +225,11 @@ function DropboxInfoPanel({ t }: { t: DropboxPageT }): React.JSX.Element {
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
         <AlertCircle style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }} />
         <Stack spacing={1}>
-          <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+          <Typography style={{ fontSize: 14, color: c.ink700 }}>
             {t.settings?.syncEnabled ||
               'Enable automatic sync to upload new statements to Dropbox'}
           </Typography>
-          <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+          <Typography style={{ fontSize: 14, color: c.ink700 }}>
             {t.settings?.folderPlaceholder || 'Pick a folder to organize your synced files'}
           </Typography>
         </Stack>
@@ -231,6 +240,8 @@ function DropboxInfoPanel({ t }: { t: DropboxPageT }): React.JSX.Element {
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function DropboxIntegrationPage(): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('dropboxIntegrationPage');
   const appKey = process.env.NEXT_PUBLIC_DROPBOX_APP_KEY || '';
@@ -314,10 +325,10 @@ export default function DropboxIntegrationPage(): React.JSX.Element {
           <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={24} height={24} />
         </Box>
         <Box>
-          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>
+          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>
             {t.header?.title || 'Dropbox Integration'}
           </Typography>
-          <Typography style={{ color: '#6b7280', marginTop: 4 }}>
+          <Typography style={{ color: c.ink500, marginTop: 4 }}>
             {t.header?.subtitle || 'Connect Dropbox to sync your statements'}
           </Typography>
         </Box>
@@ -326,7 +337,7 @@ export default function DropboxIntegrationPage(): React.JSX.Element {
       {loading && (
         <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
           <CircularProgress size={16} />
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.loading}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.loading}</Typography>
         </Box>
       )}
 

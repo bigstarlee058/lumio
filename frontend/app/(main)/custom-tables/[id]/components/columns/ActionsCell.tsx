@@ -6,7 +6,7 @@ import { tokens } from '@/lib/theme-tokens';
 
 const BTN_STYLE: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'center',
-  borderRadius: tokens.radius.sm, padding: 4, color: '#9ca3af',
+  borderRadius: tokens.radius.sm, padding: 4, color: 'var(--muted-foreground)',
   background: 'none', border: 'none', cursor: 'pointer',
   transition: 'background-color 0.2s, color 0.2s',
 };

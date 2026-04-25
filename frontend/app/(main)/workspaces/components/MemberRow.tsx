@@ -15,8 +15,8 @@ import { tokens } from '@/lib/theme-tokens';
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
   admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
-  member: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
-  viewer: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
+  member: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
+  viewer: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
 };
 const ROLE_LABELS: Record<string, string> = { owner: 'Owner', admin: 'Admin', member: 'Member', viewer: 'Viewer' };
 const ROLE_TOOLTIPS: Record<string, string> = {

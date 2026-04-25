@@ -101,16 +101,16 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
   const outlineBtn = { ...btnBase, background: 'transparent', color: c.primary, border: `1px solid ${c.primary}` };
 
   return (
-    <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+    <div style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ padding: 8, borderRadius: tokens.radius.full, background: c.primary50, color: c.primary }}>
             <Image src={provider.logoSrc} alt={provider.logoAlt} width={20} height={20} />
           </div>
           <div>
-            <p style={{ fontSize: 14, color: '#6b7280' }}>{pt?.title?.value || pt?.title || `${provider.providerName} Sync`}</p>
-            <p style={{ fontWeight: 600, color: '#111827' }}>{statusLabel}</p>
-            <p style={{ fontSize: 12, color: '#6b7280' }}>
+            <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{pt?.title?.value || pt?.title || `${provider.providerName} Sync`}</p>
+            <p style={{ fontWeight: 600, color: 'var(--foreground)' }}>{statusLabel}</p>
+            <p style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
               {loading ? (pt?.loading?.value || pt?.loading || 'Loading...') : (pt?.lastSync?.value || 'Last sync: {time}').replace('{time}', formatDateTime(status?.settings?.lastSyncAt, locale) || '—')}
             </p>
           </div>
@@ -130,7 +130,7 @@ export function BaseStorageWidget({ provider, locale }: BaseStorageWidgetProps) 
               <RefreshCcw size={16} />{pt?.actions?.connect?.value || pt?.actions?.connect || 'Connect'}
             </button>
           )}
-          <Link href={provider.settingsHref} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid #e5e7eb', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', textDecoration: 'none' }}>
+          <Link href={provider.settingsHref} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border-color)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: 'var(--foreground)', textDecoration: 'none' }}>
             <Settings size={16} />{pt?.actions?.settings?.value || pt?.actions?.settings || 'Settings'}
           </Link>
         </div>

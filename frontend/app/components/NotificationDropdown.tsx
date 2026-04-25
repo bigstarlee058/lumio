@@ -195,7 +195,7 @@ export function NotificationDropdown({
             const href = getNotificationHref(notification);
             const severityIcon =
               notification.severity === 'error' ? (
-                <CircleAlert size={14} style={{ color: '#ef4444' }} />
+                <CircleAlert size={14} style={{ color: 'var(--destructive)' }} />
               ) : notification.severity === 'warn' ? (
                 <AlertTriangle size={14} style={{ color: '#f59e0b' }} />
               ) : (

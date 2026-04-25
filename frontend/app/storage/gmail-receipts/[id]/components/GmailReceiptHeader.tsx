@@ -71,17 +71,17 @@ function CategoryButton({
       : 'Category';
 
   const issueSx = {
-    borderColor: '#ef4444 !important',
-    color: '#b91c1c !important',
+    borderColor: 'var(--destructive) !important',
+    color: 'var(--destructive) !important',
     bgcolor: '#fef2f2 !important',
     borderWidth: '2px !important',
-    '& .MuiButton-startIcon': { color: '#dc2626 !important' },
-    '&:hover': { bgcolor: '#fee2e2 !important', borderColor: '#dc2626 !important' },
+    '& .MuiButton-startIcon': { color: 'var(--destructive) !important' },
+    '&:hover': { bgcolor: '#fee2e2 !important', borderColor: 'var(--destructive) !important' },
   };
 
   const normalSx = {
-    borderColor: '#e5e7eb',
-    color: '#4b5563',
+    borderColor: 'var(--border-color)',
+    color: 'var(--text-secondary)',
     '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(25, 118, 210, 0.04)' },
   };
 

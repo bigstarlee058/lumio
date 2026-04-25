@@ -14,6 +14,8 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { buildExportData, createExportTable } from './export-helpers';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 interface ExportConfirmDialogProps {
   open: boolean;
@@ -23,16 +25,18 @@ interface ExportConfirmDialogProps {
 }
 
 function ExportConfirmDialog({ open, exportingToTable, onClose, onConfirm }: ExportConfirmDialogProps): React.ReactElement {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>Confirm export</DialogTitle>
       <DialogContent dividers>
-        <Typography style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>
+        <Typography style={{ fontSize: 16, lineHeight: 2, color: c.ink800 }}>
           Are you sure you want to export this statement to a custom table?
         </Typography>
       </DialogContent>
       <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
-        <Box component="button" type="button" onClick={onClose} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
+        <Box component="button" type="button" onClick={onClose} sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: c.ink700, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
           Cancel
         </Box>
         <Box component="button" type="button" onClick={onConfirm} disabled={exportingToTable} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { cursor: 'not-allowed', opacity: 0.5 } }}>
@@ -111,15 +115,17 @@ export function ReceiptActions({ receipt, formValue, saving, onApprove, onDownlo
 }
 
 function ReceiptHeaderTitle({ receipt }: { receipt: ReceiptRecord }): React.ReactElement {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box>
-      <Typography style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#64748b' }}>
+      <Typography style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.2em', color: c.ink500 }}>
         Receipt details
       </Typography>
-      <Typography component="h1" style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: '#020617' }}>
+      <Typography component="h1" style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: c.ink900 }}>
         {receipt.subject}
       </Typography>
-      <Typography style={{ marginTop: 8, fontSize: 14, color: '#475569' }}>
+      <Typography style={{ marginTop: 8, fontSize: 14, color: c.ink700 }}>
         {receipt.source} · {new Date(receipt.receivedAt).toLocaleDateString()}
       </Typography>
     </Box>
@@ -136,14 +142,16 @@ interface ReceiptPageHeaderProps {
 
 export function ReceiptPageHeader({ receipt, formValue, saving, onApprove, onDownload }: ReceiptPageHeaderProps): React.ReactElement {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, borderBottom: '1px solid #e2e8f0', pb: 3, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' } }}>
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, borderBottom: `1px solid ${c.ink150}`, pb: 3, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' } }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         <Box
           component="button"
           type="button"
           onClick={() => router.back()}
-          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back

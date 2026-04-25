@@ -9,7 +9,7 @@ import type { CSSProperties } from 'react';
 import type { Category, PreviewResponse } from './types';
 
 const inputStyle: CSSProperties = {
-  marginTop: 4, width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)',
+  marginTop: 4, width: '100%', border: '1px solid var(--border-color)', background: 'var(--card-bg)',
   padding: '8px 12px', fontSize: 14, outline: 'none', boxSizing: 'border-box',
 };
 
@@ -34,19 +34,19 @@ type T = {
 
 type JobProgressProps = { jobStatus: string; jobProgress: number; jobStage: string; jobError: string; t: T };
 const JobProgress = ({ jobStatus, jobProgress, jobStage, jobError, t }: JobProgressProps): React.JSX.Element => (
-  <Box sx={{ mt: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 1.5 }}>
+  <Box sx={{ mt: 1.5, border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 1.5 }}>
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.result.progressTitle}</Typography>
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>{Math.round(jobProgress)}%</Typography>
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{t.result.progressTitle}</Typography>
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{Math.round(jobProgress)}%</Typography>
     </Box>
     <Box sx={{ mt: 1, height: 8, width: '100%', bgcolor: 'action.hover', overflow: 'hidden' }}>
       <Box sx={{ height: '100%', bgcolor: 'primary.main', width: `${Math.max(0, Math.min(100, jobProgress))}%` }} />
     </Box>
-    <Typography style={{ marginTop: 8, fontSize: 12, color: '#4b5563' }}>
+    <Typography style={{ marginTop: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
       {t.result.statusLabel.value}: <span style={{ fontWeight: 500 }}>{jobStatus || t.result.dash.value}</span>{' '}
-      {jobStage ? <span style={{ color: '#6b7280' }}>({jobStage})</span> : null}
+      {jobStage ? <span style={{ color: 'var(--muted-foreground)' }}>({jobStage})</span> : null}
     </Typography>
-    {jobError ? <Typography style={{ marginTop: 8, fontSize: 12, color: '#dc2626', overflowWrap: 'break-word' }}>{jobError}</Typography> : null}
+    {jobError ? <Typography style={{ marginTop: 8, fontSize: 12, color: 'var(--destructive)', overflowWrap: 'break-word' }}>{jobError}</Typography> : null}
   </Box>
 );
 
@@ -55,8 +55,8 @@ const CategoryBadge = ({ categoryId, categories, hint }: CategoryBadgeProps): Re
   if (!categoryId) return null;
   const selected = categories.find(c => c.id === categoryId);
   return (
-    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: '#4b5563' }}>
-      <Box sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', bgcolor: selected?.color || '#f3f4f6' }}>
+    <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: 'var(--text-secondary)' }}>
+      <Box sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-color)', bgcolor: selected?.color || '#f3f4f6' }}>
         {selected?.icon ? <CategoryIconFallback size={16} /> : <Image src="/icons/icons8-google-sheets-48.png" alt="Google Sheets" width={16} height={16} className="h-4 w-4" />}
       </Box>
       <span>{hint}</span>
@@ -90,15 +90,15 @@ type TableFormProps = { tableName: string; setTableName: (v: string) => void; ta
 const TableForm = ({ tableName, setTableName, tableDescription, setTableDescription, categoryId, setCategoryId, categories, t }: TableFormProps): React.JSX.Element => (
   <>
     <label style={{ display: 'block', marginBottom: 12 }}>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.tableNameLabel}</span>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.result.tableNameLabel}</span>
       <input value={tableName} onChange={e => setTableName(e.target.value)} data-tour-id="gs-import-table-name" style={inputStyle} placeholder={t.result.tableNamePlaceholder.value} />
     </label>
     <label style={{ display: 'block', marginBottom: 12 }}>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.descriptionLabel}</span>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.result.descriptionLabel}</span>
       <input value={tableDescription} onChange={e => setTableDescription(e.target.value)} style={inputStyle} />
     </label>
     <label style={{ display: 'block', marginBottom: 12 }}>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.result.categoryLabel}</span>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.result.categoryLabel}</span>
       <select value={categoryId} onChange={e => setCategoryId(e.target.value)} data-tour-id="gs-import-category" style={inputStyle}>
         <option value="">{t.result.noCategory}</option>
         {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -126,16 +126,16 @@ export const ResultCard = ({
 }: ResultCardProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
-    <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-result-card">
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.result.title}</Typography>
+    <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-result-card">
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)', marginBottom: 12 }}>{t.result.title}</Typography>
       <TableForm tableName={tableName} setTableName={setTableName} tableDescription={tableDescription} setTableDescription={setTableDescription} categoryId={categoryId} setCategoryId={setCategoryId} categories={categories} t={t} />
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: '#374151', mb: 2 }} data-tour-id="gs-import-import-data">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'var(--foreground)', mb: 2 }} data-tour-id="gs-import-import-data">
         <Checkbox checked={importData} onCheckedChange={v => setImportData(v as boolean)} className="h-5 w-5" />
         {t.result.importDataCheckbox}
       </Box>
       <CommitButton canCommit={canCommit} committing={committing} jobId={jobId} onCommit={onCommit} t={t} />
       {jobId ? <JobProgress jobStatus={jobStatus} jobProgress={jobProgress} jobStage={jobStage} jobError={jobError} t={t} /> : null}
-      {!preview && <Typography style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>{t.result.needPreviewHint}</Typography>}
+      {!preview && <Typography style={{ marginTop: 8, fontSize: 12, color: 'var(--muted-foreground)' }}>{t.result.needPreviewHint}</Typography>}
     </Box>
   );
 };

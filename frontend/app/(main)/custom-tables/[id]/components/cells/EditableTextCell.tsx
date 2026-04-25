@@ -72,7 +72,7 @@ export function EditableTextCell({ row, column, onUpdateCell, style }: EditableT
       }}
       title="Double-click to edit"
     >
-      {inputValue || <span style={{ color: '#9ca3af' }}>—</span>}
+      {inputValue || <span style={{ color: 'var(--muted-foreground)' }}>—</span>}
     </div>
   );
 }

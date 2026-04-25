@@ -7,11 +7,11 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { parseISO, isValid, format } from 'date-fns';
 import { ChevronRight } from '@/app/components/icons';
 import type {
-import { tokens } from '@/lib/theme-tokens';
   StatementFilterDate,
   StatementFilterDateMode,
   StatementFilterDatePreset,
 } from './statement-filters';
+import { tokens } from '@/lib/theme-tokens';
 
 type DatePresetOption = {
   value: StatementFilterDatePreset;
@@ -88,7 +88,7 @@ export function DateFilterDropdown({
           ))}
         </div>
 
-        <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 8 }}>
+        <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: 8 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {modes.map(option => {
               return (
@@ -120,7 +120,7 @@ export function DateFilterDropdown({
                     textAlign: 'left',
                     fontSize: 16,
                     fontWeight: 600,
-                    color: '#111827',
+                    color: 'var(--foreground)',
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
@@ -130,7 +130,7 @@ export function DateFilterDropdown({
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
                 >
                   <span>{option.label}</span>
-                  <ChevronRight size={20} style={{ color: '#9ca3af' }} />
+                  <ChevronRight size={20} style={{ color: 'var(--muted-foreground)' }} />
                 </button>
               );
             })}
@@ -141,7 +141,7 @@ export function DateFilterDropdown({
               data-testid="date-range-picker"
               style={{
                 marginTop: 12,
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--border-color)',
                 background: 'rgba(249,250,251,0.6)',
                 padding: 12,
                 display: 'flex',

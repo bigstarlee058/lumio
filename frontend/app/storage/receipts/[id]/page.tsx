@@ -15,6 +15,8 @@ import { ArrowLeft, Download, Table } from '@/app/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 import type {
   EditableReceiptLineItem,
   EditableReceiptParsedData,
@@ -128,6 +130,8 @@ export default function ReceiptDocumentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const receiptId = params.id;
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
 
   const [receipt, setReceipt] = useState<ReceiptRecord | null>(null);
   const [categories, setCategories] = useState<ReceiptCategoryOption[]>([]);
@@ -451,14 +455,14 @@ export default function ReceiptDocumentPage() {
   if (error || !receipt) {
     return (
       <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
-        <Box sx={{ mb: 2, border: '1px solid #fecaca', bgcolor: '#fef2f2', p: 2, color: '#dc2626' }}>
+        <Box sx={{ mb: 2, border: `1px solid ${c.dangerSoft}`, bgcolor: c.dangerSoft, p: 2, color: c.danger }}>
           {error || 'Receipt not found'}
         </Box>
         <Box
           component="button"
           type="button"
           onClick={() => router.back()}
-          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back
@@ -479,7 +483,7 @@ export default function ReceiptDocumentPage() {
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             gap: 2,
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: `1px solid ${c.ink150}`,
             pb: 3,
             alignItems: { sm: 'center' },
             justifyContent: { sm: 'space-between' },
@@ -490,7 +494,7 @@ export default function ReceiptDocumentPage() {
               component="button"
               type="button"
               onClick={() => router.back()}
-              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: '#334155' } }}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Back
@@ -502,18 +506,18 @@ export default function ReceiptDocumentPage() {
                   fontWeight: 500,
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
-                  color: '#64748b',
+                  color: c.ink500,
                 }}
               >
                 Receipt details
               </Typography>
               <Typography
                 component="h1"
-                style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: '#020617' }}
+                style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: c.ink900 }}
               >
                 {receipt.subject}
               </Typography>
-              <Typography style={{ marginTop: 8, fontSize: 14, color: '#475569' }}>
+              <Typography style={{ marginTop: 8, fontSize: 14, color: c.ink700 }}>
                 {receipt.source} · {new Date(receipt.receivedAt).toLocaleDateString()}
               </Typography>
             </Box>
@@ -555,22 +559,22 @@ export default function ReceiptDocumentPage() {
                 minHeight: 420,
                 flexDirection: 'column',
                 overflow: 'hidden',
-                border: '1px solid #e2e8f0',
+                border: `1px solid ${c.ink150}`,
                 bgcolor: 'background.paper',
               }}
             >
-              <Box sx={{ borderBottom: '1px solid #e2e8f0', px: 2.5, py: 2 }}>
-                <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+              <Box sx={{ borderBottom: `1px solid ${c.ink150}`, px: 2.5, py: 2 }}>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                   Original document
                 </Typography>
               </Box>
-              <Box sx={{ flex: 1, overflow: 'auto', bgcolor: '#f8fafc', p: 2 }}>
+              <Box sx={{ flex: 1, overflow: 'auto', bgcolor: c.ink50, p: 2 }}>
                 {previewLoading ? (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
                     Preparing preview...
                   </Box>
                 ) : previewError ? (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
                     {previewError}
                   </Box>
                 ) : previewUrl ? (
@@ -578,7 +582,7 @@ export default function ReceiptDocumentPage() {
                     <iframe
                       src={previewUrl}
                       title={receipt.subject}
-                      style={{ height: '100%', minHeight: 760, width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', display: 'block' }}
+                      style={{ height: '100%', minHeight: 760, width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', display: 'block' }}
                     />
                   ) : (
                     <Box sx={{ display: 'flex', minHeight: '100%', minWidth: '100%', justifyContent: 'center' }}>
@@ -590,7 +594,7 @@ export default function ReceiptDocumentPage() {
                     </Box>
                   )
                 ) : (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#64748b' }}>
+                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
                     Preview unavailable
                   </Box>
                 )}
@@ -598,13 +602,13 @@ export default function ReceiptDocumentPage() {
             </Box>
           </Box>
 
-          <Box component="section" sx={{ height: '100%', border: '1px solid #e2e8f0', bgcolor: 'background.paper', p: 3 }}>
-            <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, borderBottom: '1px solid #e2e8f0', pb: 2 }}>
+          <Box component="section" sx={{ height: '100%', border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3 }}>
+            <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, borderBottom: `1px solid ${c.ink150}`, pb: 2 }}>
               <Box>
-                <Typography style={{ fontSize: 18, fontWeight: 600, color: '#020617' }}>
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
                   Parsed fields
                 </Typography>
-                <Typography style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
+                <Typography style={{ marginTop: 4, fontSize: 14, color: c.ink500 }}>
                   Review and correct the extracted receipt data before approval.
                 </Typography>
               </Box>
@@ -629,7 +633,7 @@ export default function ReceiptDocumentPage() {
           Confirm export
         </DialogTitle>
         <DialogContent dividers>
-          <Typography style={{ fontSize: 16, lineHeight: 2, color: '#374151' }}>
+          <Typography style={{ fontSize: 16, lineHeight: 2, color: c.ink800 }}>
             Are you sure you want to export this statement to a custom table?
           </Typography>
         </DialogContent>
@@ -639,13 +643,13 @@ export default function ReceiptDocumentPage() {
             type="button"
             onClick={() => setExportConfirmOpen(false)}
             sx={{
-              border: '1px solid #e5e7eb',
+              border: `1px solid ${c.ink150}`,
               bgcolor: 'background.paper',
               px: 3,
               py: 1.25,
               fontSize: 16,
               fontWeight: 500,
-              color: '#4b5563',
+              color: c.ink700,
               cursor: 'pointer',
               '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
             }}

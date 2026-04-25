@@ -79,7 +79,7 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
   if (isEditing) {
     return (
       <div style={{ position: 'relative', zIndex: 20, minWidth: 220, ...style }}>
-        <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+        <div style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 8, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
           <DatePicker
             value={toDate(selectedValue)}
             onChange={date => {
@@ -102,11 +102,11 @@ export function EditableDateCell({ row, column, onUpdateCell, style }: EditableD
               },
             }}
           />
-          <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid #e5e7eb', paddingTop: 8 }}>
+          <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-end', gap: 8, borderTop: '1px solid var(--border-color)', paddingTop: 8 }}>
             <button
               type="button"
               onClick={handleCancel}
-              style={{ padding: '4px 12px', fontSize: 14, color: '#374151', background: 'transparent', border: 'none', cursor: 'pointer' }}
+              style={{ padding: '4px 12px', fontSize: 14, color: 'var(--foreground)', background: 'transparent', border: 'none', cursor: 'pointer' }}
             >
               Cancel
             </button>

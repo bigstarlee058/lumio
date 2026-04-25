@@ -8,12 +8,12 @@ import { tokens } from '@/lib/theme-tokens';
 const statusColorMap: Record<string, { bgcolor: string; color: string }> = {
   approved: { bgcolor: '#dcfce7', color: '#166534' },
   needs_review: { bgcolor: '#fef9c3', color: '#854d0e' },
-  failed: { bgcolor: '#fee2e2', color: '#991b1b' },
+  failed: { bgcolor: '#fee2e2', color: 'var(--destructive)' },
   parsed: { bgcolor: '#dbeafe', color: '#1e40af' },
-  new: { bgcolor: '#f3f4f6', color: '#374151' },
-  draft: { bgcolor: '#f3f4f6', color: '#374151' },
+  new: { bgcolor: 'var(--muted)', color: 'var(--foreground)' },
+  draft: { bgcolor: 'var(--muted)', color: 'var(--foreground)' },
   reviewed: { bgcolor: '#dbeafe', color: '#1e40af' },
-  rejected: { bgcolor: '#fee2e2', color: '#991b1b' },
+  rejected: { bgcolor: '#fee2e2', color: 'var(--destructive)' },
 };
 
 type ReceiptStatusKey = keyof typeof statusColorMap;
@@ -75,14 +75,14 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
           height: '100%',
           border: '1px solid #e2e8f0',
           borderRadius: tokens.radius.lg,
-          '&:hover': { borderColor: '#cbd5e1' },
+          '&:hover': { borderColor: 'var(--border-color)' },
           transition: 'border-color 0.15s',
         }}
       >
         <Box sx={{ p: 2.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
             <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ bgcolor: '#f1f5f9', p: 1.5, color: '#475569' }}>
+              <Box sx={{ bgcolor: '#f1f5f9', p: 1.5, color: 'var(--text-secondary)' }}>
                 {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
               </Box>
               <Box sx={{ minWidth: 0 }}>
@@ -93,7 +93,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
                     whiteSpace: 'nowrap',
                     fontSize: 14,
                     fontWeight: 600,
-                    color: '#0f172a',
+                    color: 'var(--foreground)',
                   }}
                 >
                   {receipt.parsedData?.vendor || 'Unknown vendor'}
@@ -104,7 +104,7 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     fontSize: 14,
-                    color: '#64748b',
+                    color: 'var(--muted-foreground)',
                   }}
                 >
                   {receipt.subject}
@@ -123,15 +123,15 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
             />
           </Box>
 
-          <Box sx={{ mt: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: '#64748b' }}>
+          <Box sx={{ mt: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: 'var(--muted-foreground)' }}>
             <span>{new Date(receipt.receivedAt).toLocaleDateString()}</span>
-            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, bgcolor: '#f1f5f9', px: 1.25, py: 0.5, color: '#475569' }}>
+            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, bgcolor: '#f1f5f9', px: 1.25, py: 0.5, color: 'var(--text-secondary)' }}>
               {getSourceIcon(receipt.source)}
               {receipt.source}
             </Box>
           </Box>
 
-          <Typography style={{ marginTop: 16, fontSize: 18, fontWeight: 600, color: '#0f172a' }}>
+          <Typography style={{ marginTop: 16, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
             {formatAmount(receipt.parsedData?.amount, receipt.parsedData?.currency)}
           </Typography>
         </Box>

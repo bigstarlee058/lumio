@@ -31,9 +31,9 @@ function MobileAmounts({ tx, formatters }: { tx: Transaction; formatters: Transa
   const fmtAmt = (n: number): string => formatters.formatAmount(formatters.resolveDisplayAmount(tx, n), formatters.resolveDisplayCurrency(tx));
   return (
     <div className="lumio-tx-card__amounts">
-      {debit > 0 && <p style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{fmtAmt(debit)}</p>}
+      {debit > 0 && <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)' }}>{fmtAmt(debit)}</p>}
       {credit > 0 && <p style={{ fontSize: 14, fontWeight: 700, color: '#16a34a' }}>{fmtAmt(credit)}</p>}
-      {debit <= 0 && credit <= 0 && <p style={{ fontSize: 14, color: '#9ca3af' }}>—</p>}
+      {debit <= 0 && credit <= 0 && <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>—</p>}
     </div>
   );
 }
@@ -41,10 +41,10 @@ function MobileAmounts({ tx, formatters }: { tx: Transaction; formatters: Transa
 function MobileExpandedDetails({ tx, formatDate, columnBinLabel, columnDateLabel }: { tx: Transaction; formatDate: (d: string) => string; columnBinLabel: string; columnDateLabel: string }): React.ReactElement {
   return (
     <div className="lumio-tx-card__expanded">
-      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>{columnBinLabel}</span><span style={{ fontFamily: 'var(--font-mono)', color: '#111827' }}>{tx.counterpartyBin ?? '—'}</span></div>
-      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>Currency</span><span style={{ color: '#111827' }}>{tx.currency ?? '—'}</span></div>
-      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>Doc Number</span><span style={{ color: '#111827' }}>{tx.documentNumber ?? '—'}</span></div>
-      <div><span style={{ display: 'block', fontWeight: 600, color: '#6b7280', marginBottom: 4 }}>{columnDateLabel}</span><span style={{ color: '#111827' }}>{formatDate(tx.transactionDate)}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: 'var(--muted-foreground)', marginBottom: 4 }}>{columnBinLabel}</span><span style={{ fontFamily: 'var(--font-mono)', color: 'var(--foreground)' }}>{tx.counterpartyBin ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: 'var(--muted-foreground)', marginBottom: 4 }}>Currency</span><span style={{ color: 'var(--foreground)' }}>{tx.currency ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: 'var(--muted-foreground)', marginBottom: 4 }}>Doc Number</span><span style={{ color: 'var(--foreground)' }}>{tx.documentNumber ?? '—'}</span></div>
+      <div><span style={{ display: 'block', fontWeight: 600, color: 'var(--muted-foreground)', marginBottom: 4 }}>{columnDateLabel}</span><span style={{ color: 'var(--foreground)' }}>{formatDate(tx.transactionDate)}</span></div>
     </div>
   );
 }

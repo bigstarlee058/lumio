@@ -14,15 +14,15 @@ const restoreSx = {
 const deleteSx = {
   display: 'inline-flex', alignItems: 'center', gap: 0.75,
   border: '1px solid #fecaca', bgcolor: '#fef2f2', px: 1.5, py: 0.75,
-  fontSize: 12, fontWeight: 600, color: '#b91c1c', cursor: 'pointer',
+  fontSize: 12, fontWeight: 600, color: 'var(--destructive)', cursor: 'pointer',
   '&:hover': { bgcolor: '#fee2e2' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
 };
 
 const emptySx = {
   display: 'inline-flex', alignItems: 'center', gap: 0.75,
-  border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 1.5, py: 0.75,
-  fontSize: 12, fontWeight: 600, color: '#374151', cursor: 'pointer',
-  '&:hover': { bgcolor: '#f9fafb' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+  border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 1.5, py: 0.75,
+  fontSize: 12, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer',
+  '&:hover': { bgcolor: 'var(--muted)' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
 };
 
 export interface StorageBulkActionsProps {
@@ -62,7 +62,7 @@ function TrashBulkControls({
 }: TrashControlsProps): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
-      <Typography style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>{selectedLabel}</Typography>
+      <Typography style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)' }}>{selectedLabel}</Typography>
       <Box component="button" type="button" onClick={() => onBulkRestore(selectedTrashIds)} disabled={selectedTrashCount === 0} sx={restoreSx}>
         <RotateCcw size={14} />{restoreSelectedLabel}
       </Box>
@@ -98,7 +98,7 @@ export function StorageBulkActions({
         />
       )}
       {filtersApplied && (
-        <Typography style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>
+        <Typography style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)' }}>
           {filtersTitleLabel} · {filtersButtonLabel}
         </Typography>
       )}

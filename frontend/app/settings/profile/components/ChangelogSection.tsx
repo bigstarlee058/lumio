@@ -7,6 +7,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 type Props = {
   tx: (path: string[], fallback: string) => string;
@@ -25,6 +26,8 @@ export function ChangelogSection({
   changelogSelectedEntry,
   setChangelogSelectedEntry,
 }: Props) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const releaseLabelText = tx(['changelogCard', 'releaseLabel'], 'Release');
   const closeLabelText = tx(['changelogCard', 'closeLabel'], 'Close changelog');
   const emptyText = tx(['changelogCard', 'empty'], 'No published updates yet.');
@@ -77,7 +80,7 @@ export function ChangelogSection({
             textAlign: 'center',
           }}
         >
-          <FileText style={{ marginBottom: 12, width: 32, height: 32, color: '#9ca3af' }} />
+          <FileText style={{ marginBottom: 12, width: 32, height: 32, color: c.ink400 }} />
           <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
             {emptyText}
           </Typography>

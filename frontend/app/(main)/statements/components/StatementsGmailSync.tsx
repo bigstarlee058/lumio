@@ -17,8 +17,8 @@ function GmailSyncSkeletonRowMobile(): React.JSX.Element {
             height: 16,
             width: 16,
             borderRadius: tokens.radius.sm,
-            border: '1px solid #e5e7eb',
-            background: '#f3f4f6',
+            border: '1px solid var(--border-color)',
+            background: 'var(--muted)',
           }}
         />
         <div style={{ width: 40 }}>
@@ -62,8 +62,8 @@ function GmailSyncSkeletonRowDesktop(): React.JSX.Element {
                 height: 16,
                 width: 16,
                 borderRadius: tokens.radius.sm,
-                border: '1px solid #e5e7eb',
-                background: '#f3f4f6',
+                border: '1px solid var(--border-color)',
+                background: 'var(--muted)',
               }}
             />
           </div>

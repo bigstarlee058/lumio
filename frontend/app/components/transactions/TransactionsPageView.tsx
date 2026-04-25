@@ -170,7 +170,7 @@ export default function TransactionsPageView({
         <div className="lumio-tx-bulk">
           <div className="lumio-tx-bulk__count">
             <span className="lumio-tx-bulk__badge">{selectedIds.length}</span>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>{t.selected.value}</Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{t.selected.value}</Typography>
           </div>
 
           <div className="lumio-tx-bulk__controls">

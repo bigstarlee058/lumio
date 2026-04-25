@@ -49,11 +49,11 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
       <tbody>
         {records.slice(0, 120).map(record => (
           <tr key={record.id}>
-            <td style={{ color: '#4b5563' }}>{formatDateValue(record.dateValue)}</td>
+            <td style={{ color: 'var(--text-secondary)' }}>{formatDateValue(record.dateValue)}</td>
             <td><AnalyticsSourceBadge sourceChannel={record.sourceChannel as SpendOverTimeSourceChannel} labels={sourceLabels} /></td>
-            <td style={{ color: '#4b5563' }}>{record.workspaceName ?? '-'}</td>
-            <td style={{ color: '#4b5563' }}>{getRecordMerchant(record)}</td>
-            <td style={{ textAlign: 'right', fontWeight: 500, color: '#111827' }}>{formatMoney(record.amount, currency)}</td>
+            <td style={{ color: 'var(--text-secondary)' }}>{record.workspaceName ?? '-'}</td>
+            <td style={{ color: 'var(--text-secondary)' }}>{getRecordMerchant(record)}</td>
+            <td style={{ textAlign: 'right', fontWeight: 500, color: 'var(--foreground)' }}>{formatMoney(record.amount, currency)}</td>
           </tr>
         ))}
       </tbody>

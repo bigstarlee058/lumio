@@ -18,8 +18,8 @@ export interface FolderTagPickerProps {
 }
 
 const clearBtnSx = {
-  fontSize: 12, fontWeight: 500, color: '#6b7280', border: 'none',
-  bgcolor: 'transparent', cursor: 'pointer', '&:hover': { color: '#111827' },
+  fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', border: 'none',
+  bgcolor: 'transparent', cursor: 'pointer', '&:hover': { color: 'var(--foreground)' },
 };
 
 export function FolderTagPicker({
@@ -30,7 +30,7 @@ export function FolderTagPicker({
 }: FolderTagPickerProps): React.JSX.Element {
   const stopPropagation = (event: React.SyntheticEvent): void => event.stopPropagation();
   return (
-    <Box sx={{ border: '1px solid #f3f4f6', p: 1 }} onClick={stopPropagation} onKeyDown={stopPropagation}>
+    <Box sx={{ border: '1px solid var(--muted)', p: 1 }} onClick={stopPropagation} onKeyDown={stopPropagation}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         <Box component="button" type="button"
           onClick={() => onUpdateFolderTag({ folderId: folder.id, tagId: null })} sx={clearBtnSx}>

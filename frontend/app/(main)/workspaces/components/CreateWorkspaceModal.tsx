@@ -64,7 +64,7 @@ function StepBadges({ step }: { step: number }): React.JSX.Element {
   return (
     <nav aria-label="Workspace setup steps" style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
       {items.map(item => (
-        <Box key={item.id} sx={{ border: item.id === step ? '1px solid var(--primary)' : '1px solid #e5e7eb', px: 1.5, py: 0.5, fontSize: 12, fontWeight: 600, color: item.id === step ? 'var(--primary)' : '#6b7280', bgcolor: item.id === step ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'transparent' }} aria-current={item.id === step ? 'step' : undefined}>{item.label}</Box>
+        <Box key={item.id} sx={{ border: item.id === step ? '1px solid var(--primary)' : '1px solid var(--border-color)', px: 1.5, py: 0.5, fontSize: 12, fontWeight: 600, color: item.id === step ? 'var(--primary)' : '#6b7280', bgcolor: item.id === step ? 'rgba(var(--primary-rgb,22,129,24),0.1)' : 'transparent' }} aria-current={item.id === step ? 'step' : undefined}>{item.label}</Box>
       ))}
     </nav>
   );
@@ -73,7 +73,7 @@ function StepBadges({ step }: { step: number }): React.JSX.Element {
 function StepIndicator({ step }: { step: number }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
-      <Typography variant="body2" style={{ color: '#9ca3af' }}>Step {step} of 3</Typography>
+      <Typography variant="body2" style={{ color: 'var(--muted-foreground)' }}>Step {step} of 3</Typography>
       <StepBadges step={step} />
     </Box>
   );
@@ -95,7 +95,7 @@ function Step2Content({ selectedCurrency, selectedBackground, onSelectCurrency, 
     <Stack spacing={4}>
       <CurrencySelector selectedCurrency={selectedCurrency} onSelect={onSelectCurrency} mode="inline" open={false} onOpenChange={(nextOpen: boolean) => { if (nextOpen) onOpenCurrencyDrawer(); }} />
       <Box>
-        <Typography variant="body2" fontWeight={500} sx={{ mb: 1.5, color: '#374151' }}>Background Image</Typography>
+        <Typography variant="body2" fontWeight={500} sx={{ mb: 1.5, color: 'var(--foreground)' }}>Background Image</Typography>
         <BackgroundSelector selectedBackground={selectedBackground} onSelect={onSelectBackground} backgrounds={AVAILABLE_BACKGROUNDS} />
       </Box>
     </Stack>
@@ -211,8 +211,8 @@ export function CreateWorkspaceModal({ isOpen, onClose, onSuccess }: CreateWorks
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--primary)' }}>Workspace setup</Typography>
             <Box>
-              <Typography id={dialogTitleId} variant="h5" fontWeight={600} style={{ color: '#111827' }}>Create New Workspace</Typography>
-              <Typography variant="body2" style={{ color: '#6b7280' }}>Create a dedicated space for your documents, receipts, and reports.</Typography>
+              <Typography id={dialogTitleId} variant="h5" fontWeight={600} style={{ color: 'var(--foreground)' }}>Create New Workspace</Typography>
+              <Typography variant="body2" style={{ color: 'var(--muted-foreground)' }}>Create a dedicated space for your documents, receipts, and reports.</Typography>
             </Box>
             <StepIndicator step={s.step} />
           </Box>

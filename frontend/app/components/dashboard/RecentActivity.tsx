@@ -98,7 +98,7 @@ function ActivityAmount({ amount, formatAmount }: ActivityAmountProps): React.JS
   return (
     <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: 14, fontWeight: 600, flexShrink: 0, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.01em' }}>
       {isPositive ? <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} /> : <ArrowDownRight size={16} color="#94a3b8" strokeWidth={2.5} />}
-      <span style={{ color: isPositive ? '#16a34a' : '#475569' }}>{formatAmount(Math.abs(amount))}</span>
+      <span style={{ color: isPositive ? '#16a34a' : 'var(--text-secondary)' }}>{formatAmount(Math.abs(amount))}</span>
     </Box>
   );
 }
@@ -111,7 +111,7 @@ function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.
   const isStatementUpload = activity.type === 'statement_upload' && activity.entityId;
   return (
     <Link href={activity.href} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '4px 8px', transition: 'all 150ms', textDecoration: 'none', backgroundColor: 'transparent', border: '1px solid transparent' }}>
-      <Box component="span" sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: isStatementUpload ? 'transparent' : 'var(--muted)', color: '#475569', border: isStatementUpload ? 'none' : '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms', overflow: 'hidden' }}>
+      <Box component="span" sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: isStatementUpload ? 'transparent' : 'var(--muted)', color: 'var(--text-secondary)', border: isStatementUpload ? 'none' : '1px solid var(--border-color)', transition: 'background-color 150ms, color 150ms', overflow: 'hidden' }}>
         {isStatementUpload ? (
           <DocumentTypeIcon
             fileId={activity.entityId}
@@ -124,12 +124,12 @@ function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.
         )}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1, justifyContent: 'center' }}>
-        <Typography component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+        <Typography component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
           {normalizeTitle(activity)}
         </Typography>
-        <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, mt: 0.5, color: '#64748b', fontWeight: 400 }}>
+        <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, mt: 0.5, color: 'var(--muted-foreground)', fontWeight: 400 }}>
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatContext(activity)}</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, backgroundColor: 'var(--muted)', padding: '2px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#64748b' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, backgroundColor: 'var(--muted)', padding: '2px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted-foreground)' }}>
             {new Date(activity.timestamp).toLocaleDateString()}
           </span>
         </Box>
@@ -142,7 +142,7 @@ function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.
 function ActivityGroup({ group, formatAmount }: { group: { bucket: ActivityBucket; list: DashboardRecentActivity[] }; formatAmount: (value: number) => string }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#94a3b8' }}>
+      <Typography sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--muted-foreground)' }}>
         {group.bucket}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>

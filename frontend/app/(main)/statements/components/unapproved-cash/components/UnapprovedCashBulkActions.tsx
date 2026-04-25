@@ -35,10 +35,10 @@ export function UnapprovedCashBulkActions({
         <button type="button" onClick={onToggleSelectAllVisible} style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid rgba(var(--primary-rgb,0,0,0),0.3)', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--primary)', cursor: 'pointer', borderRadius: tokens.radius.md }}>
           {actions.selectAllVisible}
         </button>
-        <button type="button" onClick={onIgnoreSelected} style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: tokens.radius.md }}>
+        <button type="button" onClick={onIgnoreSelected} style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}>
           {actions.ignore}
         </button>
-        <button type="button" onClick={onClearSelection} style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 'auto', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: tokens.radius.md }}>
+        <button type="button" onClick={onClearSelection} style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 'auto', border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '4px 12px', fontSize: 12, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}>
           {actions.clearSelection}
         </button>
       </div>

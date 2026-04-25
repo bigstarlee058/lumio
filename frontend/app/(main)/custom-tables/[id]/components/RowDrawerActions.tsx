@@ -23,9 +23,9 @@ const PRIMARY_SX = {
 };
 
 const SECONDARY_SX = {
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   bgcolor: 'background.paper',
-  color: '#374151',
+  color: 'var(--foreground)',
   px: 2, py: 1,
   fontSize: 14, fontWeight: 600, cursor: 'pointer',
   '&:hover': { bgcolor: 'action.hover' },
@@ -49,7 +49,7 @@ function ActionButton({ onClick, disabled, label, primary }: ActionButtonProps):
 
 export function RowDrawerActions({ saving, isDirty, onApplySave }: RowDrawerActionsProps): React.JSX.Element {
   return (
-    <Box sx={{ position: 'sticky', bottom: 0, mx: -3, mb: -3, borderTop: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 3, py: 2 }}>
+    <Box sx={{ position: 'sticky', bottom: 0, mx: -3, mb: -3, borderTop: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 3, py: 2 }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
         <ActionButton onClick={() => onApplySave('save')} disabled={saving || !isDirty} label={saving ? 'Saving…' : 'Save'} primary />
         <ActionButton onClick={() => onApplySave('close')} disabled={saving} label="Save & close" />

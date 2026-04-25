@@ -22,14 +22,14 @@ type HeaderProps = { selectedRow: TopCategoryAggregateRow; sourceLabels: SourceL
 
 function DrillDownHeader({ selectedRow, sourceLabels, labels, onClose }: HeaderProps): React.JSX.Element {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e5e7eb', padding: '12px 20px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', padding: '12px 20px' }}>
       <div>
-        <h4 style={{ fontSize: 14, fontWeight: 600, color: selectedRow.color ?? '#111827' }}>{selectedRow.icon ? `${selectedRow.icon} ` : ''}{selectedRow.category} - {labels.drillDown}</h4>
-        <p style={{ fontSize: 12, color: '#6b7280' }}>
+        <h4 style={{ fontSize: 14, fontWeight: 600, color: selectedRow.color ?? 'var(--foreground)' }}>{selectedRow.icon ? `${selectedRow.icon} ` : ''}{selectedRow.category} - {labels.drillDown}</h4>
+        <p style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
           <AnalyticsSourceBadge sourceChannel={selectedRow.sourceChannel as TopCategorySourceChannel} labels={sourceLabels} />
         </p>
       </div>
-      <button type="button" style={{ borderRadius: tokens.radius.md, padding: 6, color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }} onClick={onClose} aria-label={labels.close}>
+      <button type="button" style={{ borderRadius: tokens.radius.md, padding: 6, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }} onClick={onClose} aria-label={labels.close}>
         <X size={16} />
       </button>
     </div>
@@ -47,15 +47,15 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
   return (
     <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
       <thead>
-        <tr style={{ textAlign: 'left', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+        <tr style={{ textAlign: 'left', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
           <th style={{ padding: '8px 16px 8px 0' }}>{labels.lastOperation}</th><th style={{ padding: '8px 16px 8px 0' }}>{labels.source}</th>
           <th style={{ padding: '8px 16px 8px 0' }}>{labels.workspace}</th><th style={{ padding: '8px 0', textAlign: 'right' }}>{labels.amount}</th>
         </tr>
       </thead>
       <tbody>
         {records.slice(0, 120).map(record => (
-          <tr key={record.id} style={{ color: '#374151', borderTop: '1px solid #f3f4f6' }}>
-            <td style={{ padding: '8px 16px 8px 0', color: '#4b5563' }}>
+          <tr key={record.id} style={{ color: 'var(--foreground)', borderTop: '1px solid var(--muted)' }}>
+            <td style={{ padding: '8px 16px 8px 0', color: 'var(--text-secondary)' }}>
               {record.dateValue && !Number.isNaN(new Date(record.dateValue).getTime())
                 ? new Date(record.dateValue).toLocaleDateString()
                 : '-'}
@@ -63,8 +63,8 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
             <td style={{ padding: '8px 16px 8px 0' }}>
               <AnalyticsSourceBadge sourceChannel={record.sourceChannel as TopCategorySourceChannel} labels={sourceLabels} />
             </td>
-            <td style={{ padding: '8px 16px 8px 0', color: '#4b5563' }}>{record.workspaceName ?? '-'}</td>
-            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500, color: '#111827' }}>{formatMoney(record.amount, currency)}</td>
+            <td style={{ padding: '8px 16px 8px 0', color: 'var(--text-secondary)' }}>{record.workspaceName ?? '-'}</td>
+            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500, color: 'var(--foreground)' }}>{formatMoney(record.amount, currency)}</td>
           </tr>
         ))}
       </tbody>
@@ -75,11 +75,11 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
 export function TopCategoriesDrillDown({ selectedRow, drillDownRecords, onClose, currency, sourceLabels, labels }: Props): React.JSX.Element {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', padding: 16 }}>
-      <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid #e5e7eb', background: 'var(--card-bg)', borderRadius: tokens.radius.xl }}>
+      <div style={{ maxHeight: '85vh', width: '100%', maxWidth: 896, overflow: 'hidden', border: '1px solid var(--border-color)', background: 'var(--card-bg)', borderRadius: tokens.radius.xl }}>
         <DrillDownHeader selectedRow={selectedRow} sourceLabels={sourceLabels} labels={labels} onClose={onClose} />
         <div style={{ maxHeight: '65vh', overflowY: 'auto', padding: '16px 20px' }}>
           {drillDownRecords.length === 0 ? (
-            <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: '#6b7280', borderRadius: tokens.radius.lg }}>
+            <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
               {labels.noOperations}
             </div>
           ) : (

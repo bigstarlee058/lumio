@@ -151,7 +151,7 @@ export function FilterOptionRow({
         textAlign: 'left',
         fontSize: 16,
         fontWeight: 600,
-        color: '#111827',
+        color: 'var(--foreground)',
         background: 'none',
         border: 'none',
         cursor: 'pointer',

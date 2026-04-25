@@ -123,15 +123,15 @@ export function SidePanel({
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: 'var(--card-bg)',
-        borderColor: '#e5e7eb',
+        borderColor: 'var(--border-color)',
         transition: 'width 300ms ease-in-out',
         boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
         overflow: 'visible',
         width: isCollapsed ? collapsedWidth : widthValue,
         minWidth: isCollapsed ? collapsedWidth : widthValue,
         ...(position === 'left'
-          ? { borderRight: '1px solid #e5e7eb' }
-          : { borderLeft: '1px solid #e5e7eb' }),
+          ? { borderRight: '1px solid var(--border-color)' }
+          : { borderLeft: '1px solid var(--border-color)' }),
         ...propStyle,
       }}
       data-side-panel
@@ -145,7 +145,7 @@ export function SidePanel({
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md }}
+              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md }}
               aria-label="Expand panel"
             >
               {position === 'left' ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -155,7 +155,7 @@ export function SidePanel({
       ) : (
         <>
           {topContent ? (
-            <div style={{ flexShrink: 0, borderBottom: '1px solid #e5e7eb', padding: '12px 16px' }}>
+            <div style={{ flexShrink: 0, borderBottom: '1px solid var(--border-color)', padding: '12px 16px' }}>
               {topContent}
             </div>
           ) : null}
@@ -172,7 +172,7 @@ export function SidePanel({
                   )}
                   <div style={{ minWidth: 0 }}>
                     {config.header.title && (
-                      <h2 style={{ fontSize: 18, fontWeight: 500, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
+                      <h2 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
                         {config.header.title}
                       </h2>
                     )}
@@ -189,7 +189,7 @@ export function SidePanel({
                     onClick={action.onClick}
                     disabled={action.disabled || action.loading}
                     title={action.tooltip || action.label}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
                   >
                     {action.loading ? (
                       <Spinner size={16} />
@@ -204,7 +204,7 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={handleToggleCollapsed}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#6b7280', borderRadius: tokens.radius.md }}
+                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md }}
                     aria-label="Collapse panel"
                   >
                     {position === 'left' ? (
@@ -223,15 +223,15 @@ export function SidePanel({
             {loading ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}>
                 <Spinner size={32} />
-                <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Loading...</p>
+                <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>Loading...</p>
               </div>
             ) : error ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
-                <AlertCircle size={40} style={{ color: '#ef4444', marginBottom: 12 }} />
-                <p style={{ fontSize: 14, fontWeight: 500, color: '#111827', textAlign: 'center', margin: '0 0 4px' }}>
+                <AlertCircle size={40} style={{ color: 'var(--destructive)', marginBottom: 12 }} />
+                <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', textAlign: 'center', margin: '0 0 4px' }}>
                   Error loading content
                 </p>
-                <p style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
+                <p style={{ fontSize: 12, color: 'var(--muted-foreground)', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
                 {onRetry && (
                   <button
                     type="button"
@@ -245,7 +245,7 @@ export function SidePanel({
               </div>
             ) : filteredSections.length === 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
-                <p style={{ fontSize: 14, color: '#6b7280', textAlign: 'center', margin: 0 }}>
+                <p style={{ fontSize: 14, color: 'var(--muted-foreground)', textAlign: 'center', margin: 0 }}>
                   No content available
                 </p>
               </div>
@@ -283,7 +283,7 @@ export function SidePanel({
                         opacity: (action.disabled || action.loading) ? 0.5 : 1,
                         ...(action.variant === 'primary'
                           ? { backgroundColor: 'var(--primary)', color: 'white' }
-                          : { backgroundColor: '#f3f4f6', color: '#374151' }),
+                          : { backgroundColor: 'var(--muted)', color: 'var(--foreground)' }),
                       }}
                     >
                       {action.loading ? (
@@ -311,8 +311,8 @@ export function SidePanel({
                 padding: 4,
                 borderRadius: tokens.radius.full,
                 backgroundColor: 'var(--card-bg)',
-                border: '1px solid #e5e7eb',
-                color: '#6b7280',
+                border: '1px solid var(--border-color)',
+                color: 'var(--muted-foreground)',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                 cursor: 'pointer',
                 ...(position === 'left' ? { right: -12 } : { left: -12 }),

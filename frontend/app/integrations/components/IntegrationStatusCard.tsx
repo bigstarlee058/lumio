@@ -47,7 +47,7 @@ export function IntegrationStatusCard({
     <Box
       sx={{
         borderRadius: tokens.radius.lg,
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--border-color)',
         bgcolor: 'background.paper',
         p: 3,
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -58,13 +58,13 @@ export function IntegrationStatusCard({
           {status?.connected ? (
             <CheckCircle2 style={{ height: 24, width: 24, color: '#10b981' }} />
           ) : (
-            <XCircle style={{ height: 24, width: 24, color: '#ef4444' }} />
+            <XCircle style={{ height: 24, width: 24, color: 'var(--destructive)' }} />
           )}
           <Box>
-            <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>
+            <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
               {title}
             </Typography>
-            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{statusLabel}</Typography>
+            <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{statusLabel}</Typography>
           </Box>
         </Box>
 
@@ -111,12 +111,12 @@ export function IntegrationStatusCard({
                   }
                   sx={{
                     borderRadius: tokens.radius.md,
-                    borderColor: '#e5e7eb',
-                    color: '#374151',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--foreground)',
                     fontWeight: 600,
                     fontSize: 14,
                     textTransform: 'none',
-                    '&:hover': { bgcolor: '#f9fafb' },
+                    '&:hover': { bgcolor: 'var(--muted)' },
                   }}
                 >
                   {disconnectLabel}
@@ -149,7 +149,7 @@ export function IntegrationStatusCard({
 
           {!status?.connected && disconnectedHint && (
             <Typography
-              style={{ fontSize: 12, color: '#6b7280', maxWidth: 280, textAlign: 'right' }}
+              style={{ fontSize: 12, color: 'var(--muted-foreground)', maxWidth: 280, textAlign: 'right' }}
             >
               {disconnectedHint}
             </Typography>

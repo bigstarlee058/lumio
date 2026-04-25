@@ -22,7 +22,7 @@ export function TransactionPagination({ page, rowsPerPage, totalPages, totalCoun
   return (
     <div className="lumio-tx-pagination">
       <div className="lumio-tx-pagination__left">
-        <span style={{ fontSize: 14, color: '#374151' }}>{rowsPerPageLabel}:</span>
+        <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{rowsPerPageLabel}:</span>
         <select
           value={rowsPerPage}
           onChange={e => { onRowsPerPageChange(Number(e.target.value)); onPageChange(0); }}
@@ -32,7 +32,7 @@ export function TransactionPagination({ page, rowsPerPage, totalPages, totalCoun
         </select>
       </div>
       <div className="lumio-tx-pagination__right">
-        <span style={{ fontSize: 14, color: '#374151' }}>{start}–{end} {ofLabel} {totalCount}</span>
+        <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{start}–{end} {ofLabel} {totalCount}</span>
         <AppPagination page={page + 1} total={totalPages} onChange={p => onPageChange(p - 1)} />
       </div>
     </div>

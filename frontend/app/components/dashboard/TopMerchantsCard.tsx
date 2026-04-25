@@ -19,11 +19,11 @@ export function TopMerchantsCard({
 }: TopMerchantsCardProps) {
   if (!merchants.length) {
     return (
-      <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'background.paper' }}>
+      <Box sx={{ height: '100%', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
         <Box
           sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}
         >
-          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>{emptyLabel}</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{emptyLabel}</Typography>
         </Box>
       </Box>
     );
@@ -32,7 +32,7 @@ export function TopMerchantsCard({
   const maxAmount = Math.max(...merchants.map(m => m.amount));
 
   return (
-    <Box sx={{ height: '100%', border: '1px solid #E8E8E8', bgcolor: 'background.paper' }}>
+    <Box sx={{ height: '100%', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
@@ -42,16 +42,16 @@ export function TopMerchantsCard({
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.18em',
-                color: '#94a3b8',
+                color: 'var(--muted-foreground)',
               }}
             >
               {title}
             </Typography>
-            <Typography sx={{ mt: 0.5, fontSize: 14, color: '#64748b' }}>
+            <Typography sx={{ mt: 0.5, fontSize: 14, color: 'var(--muted-foreground)' }}>
               Spending distribution
             </Typography>
           </div>
-          <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#64748b' }}>
+          <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'var(--muted-foreground)' }}>
             Last period
           </Typography>
         </Box>
@@ -80,8 +80,8 @@ export function TopMerchantsCard({
                         alignItems: 'center',
                         justifyContent: 'center',
                         bgcolor: 'var(--muted)',
-                        color: '#334155',
-                        border: '1px solid #E8E8E8',
+                        color: 'var(--text-secondary)',
+                        border: '1px solid var(--border-color)',
                       }}
                     >
                       {merchant.name?.[0] ?? '•'}
@@ -99,12 +99,12 @@ export function TopMerchantsCard({
                       >
                         {merchant.name}
                       </Typography>
-                      <Typography sx={{ fontSize: 12, color: '#64748b' }}>
+                      <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                         {merchant.count} payments
                       </Typography>
                     </div>
                   </Box>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+                  <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                     {formatAmount(merchant.amount)}
                   </Typography>
                 </Box>

@@ -58,7 +58,7 @@ export function FinlabExpenseCategoryCard({
         bgcolor: 'background.paper',
         p: 3,
         height: '100%',
-        border: '1px solid #E8E8E8',
+        border: '1px solid var(--border-color)',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
@@ -71,7 +71,7 @@ export function FinlabExpenseCategoryCard({
 
       {!categories.length ? (
         <Box sx={{ display: 'flex', height: 160, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No data available</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No data available</Typography>
         </Box>
       ) : (
         <Box
@@ -97,7 +97,7 @@ export function FinlabExpenseCategoryCard({
               }}
             >
               <Typography sx={{ fontSize: 18, fontWeight: 700, color: '#1e293b' }}>100%</Typography>
-              <Typography sx={{ fontSize: 10, color: '#94a3b8', fontWeight: 500 }}>Data Recorded</Typography>
+              <Typography sx={{ fontSize: 10, color: 'var(--muted-foreground)', fontWeight: 500 }}>Data Recorded</Typography>
             </Box>
           </Box>
 
@@ -115,10 +115,10 @@ export function FinlabExpenseCategoryCard({
                     />
                     <Typography
                       component="span"
-                      sx={{ fontSize: 14, color: '#475569', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      sx={{ fontSize: 14, color: 'var(--text-secondary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                     >
                       {cat.name ?? 'Other'}{' '}
-                      <span style={{ color: '#94a3b8', fontSize: 12 }}>({pct}%)</span>
+                      <span style={{ color: 'var(--muted-foreground)', fontSize: 12 }}>({pct}%)</span>
                     </Typography>
                   </Box>
                   <Typography

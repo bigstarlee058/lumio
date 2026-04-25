@@ -157,10 +157,10 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
               <UploadCloud style={{ width: 24, height: 24 }} />
             </Box>
             <Box>
-              <Typography style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>
+              <Typography style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
                 Drop receipt images or PDFs here
               </Typography>
-              <Typography style={{ marginTop: 4, fontSize: 14, color: '#64748b' }}>
+              <Typography style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>
                 Up to 5 files, 10 MB each. JPG, PNG, WEBP, BMP, TIFF, and PDF supported.
               </Typography>
             </Box>
@@ -186,7 +186,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <label htmlFor="receipt-language" style={{ fontSize: 14, fontWeight: 500, color: '#334155' }}>
+          <label htmlFor="receipt-language" style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>
             OCR language
           </label>
           <Select
@@ -205,7 +205,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
 
         {visibleError ? (
           <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fef2f2', px: 2, py: 1.5 }}>
-            <Typography style={{ fontSize: 14, color: '#b91c1c' }}>{visibleError}</Typography>
+            <Typography style={{ fontSize: 14, color: 'var(--destructive)' }}>{visibleError}</Typography>
           </Box>
         ) : null}
 
@@ -236,7 +236,7 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                   }}
                 >
                   <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: '#f1f5f9', p: 1, color: '#475569' }}>
+                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: '#f1f5f9', p: 1, color: 'var(--text-secondary)' }}>
                       {isPdf ? (
                         <FileText style={{ width: 16, height: 16 }} />
                       ) : (
@@ -251,12 +251,12 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                           whiteSpace: 'nowrap',
                           fontSize: 14,
                           fontWeight: 500,
-                          color: '#0f172a',
+                          color: 'var(--foreground)',
                         }}
                       >
                         {file.name}
                       </Typography>
-                      <Typography style={{ fontSize: 12, color: '#64748b' }}>
+                      <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </Typography>
                     </Box>
@@ -270,8 +270,8 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                       );
                     }}
                     sx={{
-                      color: '#94a3b8',
-                      '&:hover': { bgcolor: '#f1f5f9', color: '#334155' },
+                      color: 'var(--muted-foreground)',
+                      '&:hover': { bgcolor: '#f1f5f9', color: 'var(--text-secondary)' },
                       borderRadius: tokens.radius.md,
                     }}
                   >

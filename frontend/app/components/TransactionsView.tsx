@@ -318,7 +318,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span style={{ fontSize: 14, color: '#374151' }}>{t.pagination.rowsPerPage.value}:</span>
+            <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{t.pagination.rowsPerPage.value}:</span>
             <select
               value={rowsPerPage}
               onChange={e => {
@@ -327,7 +327,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
               }}
               style={{
                 borderRadius: tokens.radius.md,
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--border-color)',
                 padding: '2px 8px',
                 fontSize: 14,
                 outline: 'none',
@@ -341,7 +341,7 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <span style={{ fontSize: 14, color: '#374151' }}>
+            <span style={{ fontSize: 14, color: 'var(--foreground)' }}>
               {filteredTransactions.length === 0
                 ? `0-0 ${t.pagination.of.value} 0`
                 : `${page * rowsPerPage + 1}-${Math.min((page + 1) * rowsPerPage, filteredTransactions.length)} ${t.pagination.of.value} ${filteredTransactions.length}`}

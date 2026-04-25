@@ -27,14 +27,14 @@ const doneBtnSx = {
 };
 const dragBtnSx = {
   ml: 'auto', display: 'inline-flex', alignItems: 'center', gap: 0.5,
-  px: 1, py: 0.5, fontSize: 12, fontWeight: 500, color: '#9ca3af',
+  px: 1, py: 0.5, fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)',
   border: 'none', bgcolor: 'transparent', cursor: 'pointer', opacity: 0,
   '.group:hover &': { opacity: 1 },
   '&:hover': { color: 'primary.main', bgcolor: 'rgba(22,129,24,0.05)' },
 };
-const menuBtnSx = { color: '#9ca3af', borderRadius: tokens.radius.full, '&:hover': { bgcolor: '#f3f4f6' } };
+const menuBtnSx = { color: 'var(--muted-foreground)', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'var(--muted)' } };
 const nameSx: React.CSSProperties = {
-  fontSize: 14, fontWeight: 500, color: '#111827',
+  fontSize: 14, fontWeight: 500, color: 'var(--foreground)',
   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
 };
 
@@ -72,7 +72,7 @@ export function FolderViewRow({ folder, isPicked, pickedFolderId, dragAndDropLab
     <>
       <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', gap: 1, textAlign: 'left' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-          <Folder style={{ width: 16, height: 16, color: folder.tag?.color ?? '#9ca3af' }} />
+          <Folder style={{ width: 16, height: 16, color: folder.tag?.color ?? 'var(--muted-foreground)' }} />
           <Typography style={nameSx}>{folder.name}</Typography>
         </Box>
       </Box>

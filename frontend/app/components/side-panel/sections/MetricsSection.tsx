@@ -13,10 +13,10 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{item.title}</span>
-          <span style={{ fontSize: 14, color: '#6b7280' }}>{value}%</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
+          <span style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{value}%</span>
         </div>
-        <div style={{ height: 8, backgroundColor: '#e5e7eb', overflow: 'hidden' }}>
+        <div style={{ height: 8, backgroundColor: 'var(--border-color)', overflow: 'hidden' }}>
           <div
             style={{
               width: `${Math.min(100, Math.max(0, value))}%`,
@@ -40,7 +40,7 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{item.title}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
         <svg width="100%" height={height} aria-label={item.title} role="img">
           <polyline
             fill="none"
@@ -66,7 +66,7 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
   if (item.type === 'custom' && item.customRenderer) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{item.title}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
         {item.customRenderer(item.data)}
       </div>
     );

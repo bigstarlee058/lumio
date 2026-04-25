@@ -261,7 +261,7 @@ export function ReceiptDetailPanel({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'var(--muted)', p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: '#475569' }}>
+              <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: 'var(--text-secondary)' }}>
                 {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
               </Box>
               <Box sx={{ minWidth: 0 }}>
@@ -272,12 +272,12 @@ export function ReceiptDetailPanel({
                     whiteSpace: 'nowrap',
                     fontSize: 14,
                     fontWeight: 600,
-                    color: '#0f172a',
+                    color: 'var(--foreground)',
                   }}
                 >
                   {receipt.subject}
                 </Typography>
-                <Typography style={{ fontSize: 14, color: '#64748b' }}>{receipt.source}</Typography>
+                <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{receipt.source}</Typography>
               </Box>
             </Box>
           </Box>
@@ -307,10 +307,10 @@ export function ReceiptDetailPanel({
               />
             ) : (
               <Box>
-                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   Original document preview
                 </Typography>
-                <Typography style={{ marginTop: 8, fontSize: 14, color: '#64748b' }}>
+                <Typography style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
                   Preparing image preview...
                 </Typography>
               </Box>
@@ -318,22 +318,22 @@ export function ReceiptDetailPanel({
           </Box>
 
           <Box sx={{ border: '1px solid #e2e8f0', bgcolor: 'background.paper', p: 2.5 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: '#475569' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: 'var(--text-secondary)' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: '#475569' }}>Status</Typography>
-                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Status</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {receipt.status}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: '#475569' }}>Received</Typography>
-                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Received</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {new Date(receipt.receivedAt).toLocaleDateString()}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: '#475569' }}>Language</Typography>
-                <Typography style={{ fontSize: 14, fontWeight: 500, color: '#0f172a' }}>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Language</Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {receipt.language || 'Auto'}
                 </Typography>
               </Box>

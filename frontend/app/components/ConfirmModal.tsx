@@ -79,7 +79,7 @@ export default function ConfirmModal({
       }
     >
       {typeof message === 'string' ? (
-        <p style={{ color: '#4b5563', lineHeight: 1.625 }}>{message}</p>
+        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.625 }}>{message}</p>
       ) : (
         message
       )}

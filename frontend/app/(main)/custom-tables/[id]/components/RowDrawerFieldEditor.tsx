@@ -10,7 +10,7 @@ import { formatValue } from '../helpers/rowDrawerHelpers';
 
 const INPUT_SX: React.CSSProperties = {
   width: '100%',
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   padding: '8px 12px',
   fontSize: 14,
   outline: 'none',
@@ -36,7 +36,7 @@ function BooleanEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'op
         }
         className="h-5 w-5"
       />
-      <Typography style={{ fontSize: 14, color: '#1f2937' }}>{value ? 'Yes' : 'No'}</Typography>
+      <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{value ? 'Yes' : 'No'}</Typography>
     </Box>
   );
 }
@@ -108,7 +108,7 @@ function MultiSelectOption({ opt, value, colKey, onDraftChange }: MultiSelectOpt
         }}
         className="h-5 w-5"
       />
-      <Typography style={{ fontSize: 14, color: '#1f2937' }}>{opt}</Typography>
+      <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{opt}</Typography>
     </Box>
   );
 }
@@ -160,21 +160,21 @@ function FieldInput({ col, value, options, onDraftChange }: EditorProps): React.
 
 export function RowDrawerFieldEditor({ col, value, options, mode, onDraftChange }: FieldEditorProps): React.JSX.Element {
   return (
-    <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
+    <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
       <Typography
         style={{
           fontSize: 12,
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
-          color: '#6b7280',
+          color: 'var(--muted-foreground)',
         }}
       >
         {col.title || col.key}
       </Typography>
 
       {mode === 'view' ? (
-        <Typography style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: '#111827' }}>
+        <Typography style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
           {formatValue(col.type, value)}
         </Typography>
       ) : (

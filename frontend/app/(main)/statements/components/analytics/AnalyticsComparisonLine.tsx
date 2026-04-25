@@ -35,7 +35,7 @@ export function AnalyticsComparisonLine({
   vsPreviousPeriodLabel,
 }: Props): React.JSX.Element {
   if (!item) {
-    return <p style={{ marginTop: 4, fontSize: 12, color: '#9ca3af' }}>{noDataLabel}</p>;
+    return <p style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{noDataLabel}</p>;
   }
 
   const deltaColor = TREND_COLORS[item.trend] ?? '#6b7280';

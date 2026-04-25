@@ -10,6 +10,7 @@ import React from 'react';
 import type { CSSProperties } from 'react';
 import type { CategoryOption, FileAvailability, StorageFile, TagOption } from '../storageHelpers';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 interface DraggableFileRowProps {
   dataTourId?: string;
@@ -93,6 +94,9 @@ export const DraggableFileRow = React.memo(
     handleDownload,
     confirmDelete,
   }: DraggableFileRowProps) => {
+    const { resolvedTheme } = useTheme();
+    const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
       id: `file-${file.id}`,
       data: { file },
@@ -130,7 +134,7 @@ export const DraggableFileRow = React.memo(
             title={canEditFile(file) ? dragDropRowHintLabel : undefined}
           >
             {canEditFile(file) && (
-              <Box sx={{ p: 0.5, color: '#d1d5db', pointerEvents: 'none' }}>
+              <Box sx={{ p: 0.5, color: c.ink300, pointerEvents: 'none' }}>
                 <GripVertical size={20} />
               </Box>
             )}
@@ -166,7 +170,7 @@ export const DraggableFileRow = React.memo(
                 sx={{
                   fontSize: 16,
                   fontWeight: 600,
-                  color: '#111827',
+                  color: c.ink900,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
@@ -189,7 +193,7 @@ export const DraggableFileRow = React.memo(
               </Box>
               <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                 {file.folder?.name && (
-                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: '#6b7280' }}>
+                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: c.ink500 }}>
                     <Folder style={{ width: 14, height: 14 }} />
                     {file.folder.name}
                   </Box>
@@ -219,27 +223,27 @@ export const DraggableFileRow = React.memo(
         <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <BankLogoAvatar bankName={file.bankName} size={28} />
-            <Typography style={{ fontSize: 14, fontWeight: 500, color: '#1f2937' }}>
+            <Typography style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
               {getBankDisplayName(file.bankName)}
             </Typography>
           </Box>
         </td>
 
         <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
-          <Typography component="span" style={{ fontSize: 14, fontFamily: 'monospace', color: '#4b5563' }}>
+          <Typography component="span" style={{ fontSize: 14, fontFamily: 'monospace', color: c.ink700 }}>
             {file.metadata?.accountNumber ? `••••${file.metadata.accountNumber.slice(-4)}` : '—'}
           </Typography>
         </td>
 
-        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: c.ink800 }}>
           {formatFileSize(file.fileSize)}
         </td>
 
-        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: c.ink800 }}>
           {renderStatusBadge(file.status)}
         </td>
 
-        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: c.ink800 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <select
               value={file.categoryId || ''}
@@ -252,11 +256,11 @@ export const DraggableFileRow = React.memo(
               style={{
                 minWidth: 160,
                 borderRadius: tokens.radius.md,
-                border: '1px solid #e5e7eb',
+                border: `1px solid ${c.ink150}`,
                 background: 'var(--card-bg)',
                 padding: '8px 12px',
                 fontSize: 14,
-                color: '#111827',
+                color: c.ink900,
               }}
             >
               <option value="">{categoryNoneLabel}</option>
@@ -269,7 +273,7 @@ export const DraggableFileRow = React.memo(
                 ))}
             </select>
             {file.category?.isEnabled === false ? (
-              <Typography style={{ fontSize: 12, fontWeight: 500, color: '#dc2626' }}>
+              <Typography style={{ fontSize: 12, fontWeight: 500, color: c.danger }}>
                 {file.category.name} - choose category
               </Typography>
             ) : null}
@@ -284,14 +288,14 @@ export const DraggableFileRow = React.memo(
               borderRadius: tokens.radius.sm,
               fontSize: 12,
               fontWeight: 600,
-              bgcolor: file.isOwner ? '#f3f4f6' : '#edf7ed',
-              color: file.isOwner ? '#1f2937' : '#157811',
-              border: `1px solid ${file.isOwner ? '#e5e7eb' : '#a8d5a8'}`,
+              bgcolor: file.isOwner ? c.ink50 : c.primary50,
+              color: file.isOwner ? c.ink800 : c.primary,
+              border: `1px solid ${file.isOwner ? c.ink150 : c.primary200}`,
             }}
           />
         </td>
 
-        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: '#374151' }}>
+        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', fontSize: 14, color: c.ink800 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <span>
               {formatDate(isTrashView && file.deletedAt ? file.deletedAt : file.createdAt)}
@@ -307,7 +311,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleRestoreFromTrash(file)}
-                    sx={{ color: '#059669', bgcolor: '#ecfdf5', borderRadius: tokens.radius.sm, '&:hover': { bgcolor: '#d1fae5' } }}
+                    sx={{ color: c.success, bgcolor: c.successSoft, borderRadius: tokens.radius.sm, '&:hover': { bgcolor: c.successSoft } }}
                   >
                     <RotateCcw size={18} />
                   </IconButton>
@@ -316,7 +320,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => confirmPermanentDelete(file)}
-                    sx={{ color: '#6b7280', borderRadius: tokens.radius.sm, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                    sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.danger, bgcolor: c.dangerSoft } }}
                   >
                     <Trash2 size={18} />
                   </IconButton>
@@ -337,7 +341,7 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleDownload(file.id, file.fileName)}
-                    sx={{ color: '#6b7280', borderRadius: tokens.radius.sm, '&:hover': { color: '#374151', bgcolor: '#f3f4f6' } }}
+                    sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.ink800, bgcolor: c.ink50 } }}
                   >
                     <Download size={18} />
                   </IconButton>
@@ -347,7 +351,7 @@ export const DraggableFileRow = React.memo(
                     <IconButton
                       size="small"
                       onClick={() => confirmDelete(file)}
-                      sx={{ color: '#6b7280', borderRadius: tokens.radius.sm, '&:hover': { color: '#dc2626', bgcolor: '#fef2f2' } }}
+                      sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.danger, bgcolor: c.dangerSoft } }}
                     >
                       <Trash2 size={18} />
                     </IconButton>

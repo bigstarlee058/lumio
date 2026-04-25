@@ -140,7 +140,7 @@ export function StorageFileTable({
 }: StorageFileTableProps): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Box sx={{ bgcolor: 'background.paper', border: '1px solid #e5e7eb', overflow: 'visible' }}>
+      <Box sx={{ bgcolor: 'background.paper', border: '1px solid var(--border-color)', overflow: 'visible' }}>
         {loading ? (
           <LoadingState />
         ) : filteredFiles.length === 0 ? (
@@ -227,11 +227,11 @@ interface EmptyStateProps {
 function EmptyState({ isTrashView, title, subtitle }: EmptyStateProps): React.JSX.Element {
   return (
     <Box sx={{ textAlign: 'center', py: 8, px: 3 }}>
-      <Box sx={{ mx: 'auto', width: 64, height: 64, color: '#9ca3af', mb: 2, bgcolor: '#f3f4f6', borderRadius: tokens.radius.full, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box sx={{ mx: 'auto', width: 64, height: 64, color: 'var(--muted-foreground)', mb: 2, bgcolor: 'var(--muted)', borderRadius: tokens.radius.full, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {isTrashView ? <Trash2 style={{ width: 32, height: 32 }} /> : <Search style={{ width: 32, height: 32 }} />}
       </Box>
-      <Typography style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{title}</Typography>
-      <Typography style={{ marginTop: 4, color: '#4b5563' }}>{subtitle}</Typography>
+      <Typography style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{title}</Typography>
+      <Typography style={{ marginTop: 4, color: 'var(--text-secondary)' }}>{subtitle}</Typography>
     </Box>
   );
 }
@@ -291,7 +291,7 @@ const thStyle: React.CSSProperties = {
   textAlign: 'left',
   fontSize: 12,
   fontWeight: 600,
-  color: '#6b7280',
+  color: 'var(--muted-foreground)',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
 };
@@ -350,7 +350,7 @@ function TableBody({
   return (
     <Box sx={{ overflowX: 'auto', overflowY: 'visible' }} data-tour-id="storage-table">
       <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
-        <thead style={{ background: '#f9fafb' }}>
+        <thead style={{ background: 'var(--muted)' }}>
           <tr>
             {isTrashView && (
               <th style={{ ...thStyle, width: 48 }}>
@@ -455,12 +455,12 @@ function PaginationFooter({
 
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 1.5, px: 3, py: 2, borderTop: '1px solid #e5e7eb' }}
+      sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 1.5, px: 3, py: 2, borderTop: '1px solid var(--border-color)' }}
       data-tour-id="pagination"
     >
-      <Typography style={{ fontSize: 14, color: '#4b5563' }}>{shownLabel}</Typography>
+      <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{shownLabel}</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
+        <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
           {pageOfLabel}
         </Typography>
         <AppPagination page={currentPage} total={totalPagesCount} onChange={onPageChange} />

@@ -38,7 +38,7 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
       }
     >
       <div className="lumio-export-modal">
-        <p style={{ fontSize: 14, color: '#4b5563' }}>{t.description.value}</p>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{t.description.value}</p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Export to Table */}

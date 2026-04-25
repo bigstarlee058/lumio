@@ -18,11 +18,11 @@ import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from '@/app/comp
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
-import { tokens } from '@/lib/theme-tokens';
   type MemberRoleFilter,
   type MemberSortBy,
   filterAndSortMembers,
 } from './workspace-members.utils';
+import { tokens } from '@/lib/theme-tokens';
 
 type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
 
@@ -99,8 +99,8 @@ const PERMISSION_LABELS: Record<keyof InvitePermissions, string> = {
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
   admin: { bg: '#f0f9ff', color: '#0369a1', border: '#bae6fd' },
-  member: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
-  viewer: { bg: '#f9fafb', color: '#374151', border: '#e5e7eb' },
+  member: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
+  viewer: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -380,7 +380,7 @@ export default function WorkspaceMembersView() {
     return (
       <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: '#fef2f2', p: 3, fontSize: 14, color: '#b91c1c' }}>
+          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: '#fef2f2', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
             {fetchError || 'Failed to load workspace members'}
           </Box>
         </Box>

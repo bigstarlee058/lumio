@@ -36,7 +36,7 @@ export function TransactionMobileList({
       <div className="lumio-tx-mobile__header">
         <div className="lumio-tx-mobile__header-left">
           <Checkbox checked={allSelected} indeterminate={someSelected && !allSelected} onCheckedChange={onSelectAll} style={{ height: 20, width: 20 }} aria-label="Select all rows" />
-          <span style={{ fontSize: 14, color: '#374151' }}>{selectedIds.length}/{allTransactionsCount}</span>
+          <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{selectedIds.length}/{allTransactionsCount}</span>
         </div>
         <button type="button" onClick={() => onToggleSort('date')} className="lumio-tx-mobile__header-sort">
           {columnDateSortLabel}

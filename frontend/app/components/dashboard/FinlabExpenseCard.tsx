@@ -90,18 +90,18 @@ export function FinlabExpenseCard({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        border: '1px solid #E8E8E8',
+        border: '1px solid var(--border-color)',
       }}
     >
       <div>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: '#475569', fontWeight: 500, fontSize: 14 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--text-secondary)', fontWeight: 500, fontSize: 14 }}>
             Expense Analysis
             <Info size={14} color="#94a3b8" />
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: 32, fontWeight: 700, color: '#0f172a', letterSpacing: '-0.02em' }}>
+          <Typography sx={{ fontSize: 32, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>
             {formatAmount(totalExpense)}
           </Typography>
           <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -114,13 +114,13 @@ export function FinlabExpenseCard({
                 fontWeight: 700,
                 ...(pct <= 0
                   ? { backgroundColor: '#f0fdf4', color: '#16a34a' }
-                  : { backgroundColor: '#fff1f2', color: '#e11d48' }),
+                  : { backgroundColor: '#fff1f2', color: 'var(--destructive)' }),
               }}
             >
               ⬊ {pct > 0 ? '+' : ''}
               {pct.toFixed(1)}%
             </span>
-            <Typography sx={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>VS This Month</Typography>
+            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500 }}>VS This Month</Typography>
           </Box>
         </Box>
       </div>
@@ -135,7 +135,7 @@ export function FinlabExpenseCard({
           </Box>
         ) : (
           <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography sx={{ fontSize: 12, color: '#94a3b8' }}>No data</Typography>
+            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)' }}>No data</Typography>
           </Box>
         )}
       </Box>

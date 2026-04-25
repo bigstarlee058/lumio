@@ -303,7 +303,7 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
             <Link
               href="/statements/approve"
               className="ff-dashboard-sans"
-              style={{ color: '#888888', fontSize: 13, fontWeight: 500, marginTop: 'auto', paddingBottom: 20, transition: 'color 150ms', textDecoration: 'none' }}
+              style={{ color: 'var(--muted-foreground)', fontSize: 13, fontWeight: 500, marginTop: 'auto', paddingBottom: 20, transition: 'color 150ms', textDecoration: 'none' }}
             >
               Review &amp; approve cash →
             </Link>

@@ -34,7 +34,7 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        style={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
       >
         {LABELS[value]} <span style={{ fontSize: 10 }}>▼</span>
       </button>
@@ -45,7 +45,7 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
             right: 0,
             mt: 0.5,
             width: 140,
-            border: '1px solid #E8E8E8',
+            border: '1px solid var(--border-color)',
             bgcolor: 'background.paper',
             zIndex: 10,
           }}
@@ -67,7 +67,7 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: value === r ? '#2563eb' : '#334155',
+                color: value === r ? '#2563eb' : 'var(--text-secondary)',
                 fontWeight: value === r ? 600 : 400,
               }}
             >

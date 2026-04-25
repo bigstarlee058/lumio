@@ -44,7 +44,7 @@ function getBackgroundColor(style: CSSProperties): string | undefined {
 }
 
 function resolveStickyBg({ isHeader, isDark, bodyBackground }: { isHeader: boolean; isDark: boolean; bodyBackground?: string }): string | undefined {
-  if (isHeader) return isDark ? '#1f2937' : '#f9fafb';
+  if (isHeader) return isDark ? '#1f2937' : 'var(--muted)';
   if (bodyBackground) return solidifyBackground({ value: bodyBackground, isDark });
   return undefined;
 }
@@ -79,8 +79,8 @@ function ColumnResizer({ columnId, isResizing, isDark, onResizeMouseDown }: Colu
 
 interface DesktopHeaderCellProps { header: Header<CustomTableGridRow, unknown>; isDark: boolean; stickyOffsets: StickyOffsets; onResizeMouseDown: ResizeMouseDownFn; }
 function DesktopHeaderCell({ header, isDark, stickyOffsets, onResizeMouseDown }: DesktopHeaderCellProps): React.JSX.Element {
-  const color = isDark ? '#d1d5db' : '#374151';
-  const bg = isDark ? '#1f2937' : '#f9fafb';
+  const color = isDark ? '#d1d5db' : 'var(--foreground)';
+  const bg = isDark ? '#1f2937' : 'var(--muted)';
   return (
     <th style={{ position: 'relative', padding: '12px 16px', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color, backgroundColor: bg, width: header.getSize(), minWidth: header.column.columnDef.minSize, maxWidth: header.column.columnDef.maxSize, ...buildStickyStyle({ columnId: header.column.id, isHeader: true, stickyOffsets, isDark }) }}>
       {flexRender(header.column.columnDef.header, header.getContext())}
@@ -94,11 +94,11 @@ function DesktopTableHeader({ isDark, isPrintMode, isFullscreen, table, stickyOf
   const position = isPrintMode ? 'static' : 'sticky';
   const top = isPrintMode ? 0 : isFullscreen ? 0 : 'var(--global-nav-height, 0px)';
   const zIndex = isPrintMode ? 'auto' : 10;
-  const bg = isDark ? '#1f2937' : '#f9fafb';
+  const bg = isDark ? '#1f2937' : 'var(--muted)';
   return (
     <thead style={{ position, top, zIndex, backgroundColor: bg }}>
       {table.getHeaderGroups().map(headerGroup => (
-        <tr key={headerGroup.id} style={{ borderBottom: isDark ? '1px solid #374151' : '1px solid #e5e7eb', backgroundColor: bg }}>
+        <tr key={headerGroup.id} style={{ borderBottom: isDark ? '1px solid #374151' : '1px solid var(--border-color)', backgroundColor: bg }}>
           {headerGroup.headers.map(header => <DesktopHeaderCell key={header.id} header={header} isDark={isDark} stickyOffsets={stickyOffsets} onResizeMouseDown={onResizeMouseDown} />)}
         </tr>
       ))}
@@ -108,21 +108,21 @@ function DesktopTableHeader({ isDark, isPrintMode, isFullscreen, table, stickyOf
 
 interface DesktopTableCellProps { cell: Cell<CustomTableGridRow, unknown>; isDark: boolean; stickyOffsets: StickyOffsets; rowBackground?: string; hasRowFill: boolean; }
 function DesktopTableCell({ cell, isDark, stickyOffsets, rowBackground, hasRowFill }: DesktopTableCellProps): React.JSX.Element {
-  const color = isDark ? '#f3f4f6' : '#111827';
+  const color = isDark ? '#f3f4f6' : 'var(--foreground)';
   return (<td style={{ padding: '12px 16px', fontSize: '0.875rem', color, ...(hasRowFill ? {} : { backgroundColor: 'var(--card-bg)' }), ...(rowBackground ? { backgroundColor: rowBackground } : {}), ...buildStickyStyle({ columnId: cell.column.id, isHeader: false, bodyBackground: rowBackground, stickyOffsets, isDark }) }}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>);
 }
 
 interface DesktopPrintRowProps { row: Row<CustomTableGridRow>; rowStyle: CSSProperties; rowBackground?: string; isDark: boolean; stickyOffsets: StickyOffsets; }
 function DesktopPrintRow({ row, rowStyle, rowBackground, isDark, stickyOffsets }: DesktopPrintRowProps): React.JSX.Element {
   const hasRowFill = Boolean(rowBackground);
-  const border = isDark ? '1px solid #1f2937' : '1px solid #e5e7eb';
+  const border = isDark ? '1px solid #1f2937' : '1px solid var(--border-color)';
   return (<tr style={{ borderBottom: border, ...rowStyle }}>{row.getVisibleCells().map(cell => <DesktopTableCell key={cell.id} cell={cell} isDark={isDark} stickyOffsets={stickyOffsets} rowBackground={rowBackground} hasRowFill={hasRowFill} />)}</tr>);
 }
 
 interface DesktopVirtualRowProps { row: Row<CustomTableGridRow>; virtualRow: VirtualItem; rowStyle: CSSProperties; rowBackground?: string; isDark: boolean; stickyOffsets: StickyOffsets; }
 function DesktopVirtualRow({ row, virtualRow, rowStyle, rowBackground, isDark, stickyOffsets }: DesktopVirtualRowProps): React.JSX.Element {
   const hasRowFill = Boolean(rowBackground);
-  const border = isDark ? '1px solid #1f2937' : '1px solid #e5e7eb';
+  const border = isDark ? '1px solid #1f2937' : '1px solid var(--border-color)';
   return (<tr style={{ borderBottom: border, height: `${virtualRow.size}px`, ...rowStyle }}>{row.getVisibleCells().map(cell => <DesktopTableCell key={cell.id} cell={cell} isDark={isDark} stickyOffsets={stickyOffsets} rowBackground={rowBackground} hasRowFill={hasRowFill} />)}</tr>);
 }
 
@@ -152,19 +152,19 @@ function DesktopTableBody({ isDark, isPrintMode, table, virtualItems, rowVirtual
 }
 
 function DesktopEmptyState({ labels }: { labels: { emptyTitle: string; emptySubtitle: string } }): React.JSX.Element {
-  return (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: '#6b7280' }}><GripVertical size={48} style={{ marginBottom: 16, opacity: 0.2 }} /><p style={{ fontSize: '1.125rem', fontWeight: 500 }}>{labels.emptyTitle}</p><p style={{ fontSize: '0.875rem' }}>{labels.emptySubtitle}</p></div>);
+  return (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--muted-foreground)' }}><GripVertical size={48} style={{ marginBottom: 16, opacity: 0.2 }} /><p style={{ fontSize: '1.125rem', fontWeight: 500 }}>{labels.emptyTitle}</p><p style={{ fontSize: '0.875rem' }}>{labels.emptySubtitle}</p></div>);
 }
 
 function DesktopLoadingRow({ label }: { label: string }): React.JSX.Element {
-  return (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: '#6b7280' }}><Spinner size={20} style={{ marginRight: 8 }} /><span>{label}</span></div>);
+  return (<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--muted-foreground)' }}><Spinner size={20} style={{ marginRight: 8 }} /><span>{label}</span></div>);
 }
 
 interface DesktopAddRowFooterProps { footerRef: React.RefObject<HTMLDivElement | null>; isDark: boolean; onCreateRow?: () => Promise<CustomTableGridRow | null>; label: string; }
 function DesktopAddRowFooter({ footerRef, isDark, onCreateRow, label }: DesktopAddRowFooterProps): React.JSX.Element {
-  const bg = isDark ? '#1f2937' : '#f9fafb';
-  return (<div ref={footerRef} data-testid="custom-table-add-row" style={{ position: 'sticky', left: 0, zIndex: 10, width: '100%', borderTop: '1px solid #e5e7eb', backgroundColor: bg, padding: '12px 0' }}>
+  const bg = isDark ? '#1f2937' : 'var(--muted)';
+  return (<div ref={footerRef} data-testid="custom-table-add-row" style={{ position: 'sticky', left: 0, zIndex: 10, width: '100%', borderTop: '1px solid var(--border-color)', backgroundColor: bg, padding: '12px 0' }}>
     <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: '#4b5563', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', transition: 'border-color 0.2s, color 0.2s' }}>
+      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', transition: 'border-color 0.2s, color 0.2s' }}>
         <Plus size={16} />{label}
       </button>
     </div>
@@ -196,7 +196,7 @@ function DesktopTableContent(p: P): React.JSX.Element {
 
 function DesktopScrollBody(p: P): React.JSX.Element {
   const overflow = p.isPrintMode ? 'visible' : 'auto';
-  const border = p.isDark ? '1px solid #374151' : '1px solid #e5e7eb';
+  const border = p.isDark ? '1px solid #374151' : '1px solid var(--border-color)';
   const height = p.isPrintMode ? 'auto' : p.isFullscreen ? 'calc(100vh - 150px)' : '600px';
   return (
     <div ref={p.tableContainerRef} onScroll={p.onScroll} style={{ position: 'relative', overflowY: overflow, overflowX: overflow, border, borderTop: 'none', backgroundColor: 'var(--card-bg)', height }}>

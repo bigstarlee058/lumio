@@ -160,16 +160,16 @@ function EmptyState({
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: tokens.radius.full,
-          background: '#f9fafb',
-          color: '#d1d5db',
+          background: 'var(--muted)',
+          color: 'var(--border-color)',
         }}
       >
         <File size={32} />
       </div>
-      <h3 style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{emptyLabels.title}</h3>
-      <p style={{ marginTop: 4, color: '#6b7280' }}>{emptyLabels.description}</p>
+      <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{emptyLabels.title}</h3>
+      <p style={{ marginTop: 4, color: 'var(--muted-foreground)' }}>{emptyLabels.description}</p>
       {stage === 'submit' && hasGmailReceipts ? (
-        <p style={{ marginTop: 8, fontSize: 14, color: '#6b7280' }}>Gmail receipts are loaded</p>
+        <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>Gmail receipts are loaded</p>
       ) : null}
     </div>
   );
@@ -211,15 +211,15 @@ function TableHeader({
             />
           </div>
           <div
-            style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}
+            style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}
           >
             <span className="sr-only">{listHeaderLabels.receipt}</span>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#9ca3af' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted-foreground)' }}>
             {listHeaderLabels.merchant}
-            <span style={{ padding: '0 4px', color: '#d1d5db' }}>•</span>
+            <span style={{ padding: '0 4px', color: 'var(--border-color)' }}>•</span>
             <button
               type="button"
               data-testid="statements-date-sort"
@@ -239,10 +239,10 @@ function TableHeader({
       <div
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 24, flexShrink: 0, width: 420, paddingLeft: 16 }}
       >
-        <div style={{ width: 128, textAlign: 'right', color: '#9ca3af', paddingRight: 4 }}>
+        <div style={{ width: 128, textAlign: 'right', color: 'var(--muted-foreground)', paddingRight: 4 }}>
           {listHeaderLabels.amount}
         </div>
-        <div style={{ width: 144, textAlign: 'right', color: '#9ca3af' }}>
+        <div style={{ width: 144, textAlign: 'right', color: 'var(--muted-foreground)' }}>
           {listHeaderLabels.action}
         </div>
       </div>
@@ -269,11 +269,11 @@ function PaginationBar({
 }): React.JSX.Element {
   return (
     <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
-      <div style={{ fontSize: 14, color: '#6b7280' }}>
+      <div style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
         {formatPaginationLabel(paginationLabels.shown, { from: rangeStart, to: rangeEnd, count: total })}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
+        <span style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
           {formatPaginationLabel(paginationLabels.pageOf, { page, count: totalPagesCount })}
         </span>
         <AppPagination page={page} total={totalPagesCount} onChange={onPageChange} />
@@ -401,7 +401,7 @@ export function StatementsListTable({
             onCheckedChange={onToggleSelectAll}
             aria-label="Select all statements"
           />
-          <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>Select all</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
         </div>
         <TableHeader
           allVisibleSelected={allVisibleSelected}

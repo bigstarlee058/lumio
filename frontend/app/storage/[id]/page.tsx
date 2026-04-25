@@ -321,7 +321,7 @@ export default function FileDetailsPage() {
     const status = availability.status;
     const chipSx =
       status === 'missing'
-        ? { bgcolor: '#fef2f2', color: '#b91c1c', border: '1px solid #fecaca' }
+        ? { bgcolor: '#fef2f2', color: 'var(--destructive)', border: '1px solid #fecaca' }
         : status === 'both'
           ? { bgcolor: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0' }
           : { bgcolor: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' };
@@ -339,7 +339,7 @@ export default function FileDetailsPage() {
   if (loading) {
     return (
       <Box className="container-shared" sx={{ px: 2, py: 8 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, color: '#4b5563' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, color: 'var(--text-secondary)' }}>
           <Spinner className="h-20 w-20 text-primary" />
           <Typography style={{ fontSize: 14 }}>{t.loading}</Typography>
         </Box>
@@ -350,8 +350,8 @@ export default function FileDetailsPage() {
   if (!details) {
     return (
       <Box className="container-shared" sx={{ px: 2, py: 6 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3 }}>
-          <Typography style={{ fontSize: 16, fontWeight: 600, color: '#111827', marginBottom: 8 }}>
+        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3 }}>
+          <Typography style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}>
             {t.notFound}
           </Typography>
           <Box
@@ -362,15 +362,15 @@ export default function FileDetailsPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 1,
-              border: '1px solid #e5e7eb',
+              border: '1px solid var(--border-color)',
               px: 1.5,
               py: 1,
               fontSize: 14,
               fontWeight: 600,
-              color: '#374151',
+              color: 'var(--foreground)',
               bgcolor: 'transparent',
               cursor: 'pointer',
-              '&:hover': { bgcolor: '#f9fafb' },
+              '&:hover': { bgcolor: 'var(--muted)' },
             }}
           >
             <ArrowLeft style={{ width: 16, height: 16 }} />
@@ -426,12 +426,12 @@ export default function FileDetailsPage() {
             aria-label="Back to storage"
             sx={{
               borderRadius: tokens.radius.full,
-              border: '1px solid #e5e7eb',
+              border: '1px solid var(--border-color)',
               bgcolor: 'background.paper',
               p: 1,
-              color: '#4b5563',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
-              '&:hover': { bgcolor: '#f9fafb' },
+              '&:hover': { bgcolor: 'var(--muted)' },
             }}
           >
             <ArrowLeft style={{ width: 20, height: 20 }} />
@@ -440,7 +440,7 @@ export default function FileDetailsPage() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               <Typography
                 component="h1"
-                style={{ fontSize: 20, fontWeight: 700, color: '#111827', wordBreak: 'break-all' }}
+                style={{ fontSize: 20, fontWeight: 700, color: 'var(--foreground)', wordBreak: 'break-all' }}
               >
                 {statement.fileName}
               </Typography>
@@ -461,7 +461,7 @@ export default function FileDetailsPage() {
                 icon={isOwner ? <ShieldCheck style={{ width: 16, height: 16 }} /> : <Shield style={{ width: 16, height: 16 }} />}
                 label={isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
                 size="small"
-                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151', border: '1px solid #e5e7eb' }}
+                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--muted)', color: 'var(--foreground)', border: '1px solid var(--border-color)' }}
               />
             </Box>
           </Box>
@@ -477,15 +477,15 @@ export default function FileDetailsPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 1,
-              border: '1px solid #e5e7eb',
+              border: '1px solid var(--border-color)',
               bgcolor: 'background.paper',
               px: 1.5,
               py: 1,
               fontSize: 14,
               fontWeight: 600,
-              color: '#1f2937',
+              color: 'var(--foreground)',
               cursor: 'pointer',
-              '&:hover': { bgcolor: '#f9fafb' },
+              '&:hover': { bgcolor: 'var(--muted)' },
             }}
           >
             <Download style={{ width: 16, height: 16 }} />
@@ -531,22 +531,22 @@ export default function FileDetailsPage() {
             { label: t.cards.account, value: statement.metadata?.accountNumber || t.cards.dash.value },
             // eslint-disable-next-line max-params
           ].map((card, idx) => (
-            <Box key={idx} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
-              <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+            <Box key={idx} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
+              <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
                 {card.label}
               </Typography>
-              <Typography style={{ marginTop: 4, fontSize: 18, fontWeight: 600, color: '#111827' }}>
+              <Typography style={{ marginTop: 4, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
                 {card.value}
               </Typography>
             </Box>
           ))}
         </Box>
 
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
+        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: '#111827' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: 'var(--foreground)' }}>
               <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #168118)' }} />
-              <Typography style={{ fontWeight: 600, color: '#111827' }}>{t.preview.title}</Typography>
+              <Typography style={{ fontWeight: 600, color: 'var(--foreground)' }}>{t.preview.title}</Typography>
             </Box>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
               <Box
@@ -558,15 +558,15 @@ export default function FileDetailsPage() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 1,
-                  border: '1px solid #e5e7eb',
+                  border: '1px solid var(--border-color)',
                   bgcolor: 'background.paper',
                   px: 1.5,
                   py: 0.75,
                   fontSize: 12,
                   fontWeight: 600,
-                  color: '#374151',
+                  color: 'var(--foreground)',
                   cursor: 'pointer',
-                  '&:hover': { bgcolor: '#f9fafb' },
+                  '&:hover': { bgcolor: 'var(--muted)' },
                   '&:disabled': { opacity: 0.5 },
                 }}
               >
@@ -582,15 +582,15 @@ export default function FileDetailsPage() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 1,
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid var(--border-color)',
                     bgcolor: 'background.paper',
                     px: 1.5,
                     py: 0.75,
                     fontSize: 12,
                     fontWeight: 600,
-                    color: '#374151',
+                    color: 'var(--foreground)',
                     cursor: 'pointer',
-                    '&:hover': { bgcolor: '#f9fafb' },
+                    '&:hover': { bgcolor: 'var(--muted)' },
                   }}
                 >
                   <ExternalLink style={{ width: 16, height: 16 }} />
@@ -600,16 +600,16 @@ export default function FileDetailsPage() {
             </Box>
           </Box>
 
-          <Box sx={{ mt: 1.5, overflow: 'hidden', border: '1px dashed #e5e7eb', bgcolor: 'rgba(249,250,251,0.6)' }}>
+          <Box sx={{ mt: 1.5, overflow: 'hidden', border: '1px dashed var(--border-color)', bgcolor: 'rgba(249,250,251,0.6)' }}>
             {previewLoading && (
-              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
                 <Spinner className="h-6 w-6" />
               </Box>
             )}
 
             {!previewLoading && previewError && (
               <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: 'background.paper', px: 2, textAlign: 'center' }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#fef2f2', px: 1.5, py: 0.5, fontSize: 14, color: '#b91c1c' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#fef2f2', px: 1.5, py: 0.5, fontSize: 14, color: 'var(--destructive)' }}>
                   {previewError}
                 </Box>
                 <Box
@@ -646,7 +646,7 @@ export default function FileDetailsPage() {
             )}
 
             {!previewLoading && !previewError && !previewUrl && (
-              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.paper', px: 2, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
+              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.paper', px: 2, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
                 {t.preview.empty}
               </Box>
             )}
@@ -654,8 +654,8 @@ export default function FileDetailsPage() {
         </Box>
       </Box>
 
-      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, borderBottom: '1px solid #f3f4f6', px: 2, py: 1.5 }}>
+      <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, borderBottom: '1px solid var(--muted)', px: 2, py: 1.5 }}>
           {tabs.map(tab => {
             const isActive = tab.key === currentTab;
             return (
@@ -674,9 +674,9 @@ export default function FileDetailsPage() {
                   fontWeight: 600,
                   cursor: 'pointer',
                   border: 'none',
-                  bgcolor: isActive ? 'primary.main' : '#f9fafb',
-                  color: isActive ? '#fff' : '#374151',
-                  '&:hover': isActive ? {} : { bgcolor: '#f3f4f6' },
+                  bgcolor: isActive ? 'primary.main' : 'var(--muted)',
+                  color: isActive ? '#fff' : 'var(--foreground)',
+                  '&:hover': isActive ? {} : { bgcolor: 'var(--muted)' },
                 }}
               >
                 {tab.label}
@@ -687,7 +687,7 @@ export default function FileDetailsPage() {
 
         <Box sx={{ p: 2 }}>
           {currentTab === 'transactions' && (
-            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: 'background.paper' }}>
+            <Box sx={{ border: '1px solid var(--muted)', bgcolor: 'background.paper' }}>
               <TransactionsView transactions={transactions} />
             </Box>
           )}
@@ -695,7 +695,7 @@ export default function FileDetailsPage() {
           {currentTab === 'links' && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{t.tabs.links.value}</Typography>
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>{t.tabs.links.value}</Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Box
                     component="button"
@@ -723,31 +723,31 @@ export default function FileDetailsPage() {
               </Box>
 
               {sharedLinks.length === 0 ? (
-                <Box sx={{ border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', px: 2, py: 3, textAlign: 'center', fontSize: 14, color: '#4b5563' }}>
+                <Box sx={{ border: '1px dashed var(--border-color)', bgcolor: 'var(--muted)', px: 2, py: 3, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
                   {t.tabs.links.value} — {t.preview.empty}
                 </Box>
               ) : (
                 <Box sx={{ display: 'grid', gap: 1.5 }}>
                   {/* eslint-disable-next-line max-lines-per-function */}
                   {sharedLinks.map(link => (
-                    <Box key={link.id} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5 }}>
+                    <Box key={link.id} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1.5 }}>
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                             <Chip label={link.permission} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#eff6ff', color: '#1d4ed8' }} />
                             <Chip
                               label={link.status}
                               size="small"
-                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: '#f3f4f6', color: '#4b5563' }) }}
+                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: '#ecfdf5', color: '#065f46' } : { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' }) }}
                             />
                             {link.expiresAt && (
-                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: '#f9fafb', color: '#374151' }} />
+                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--muted)', color: 'var(--foreground)' }} />
                             )}
                           </Box>
                           {link.description && (
-                            <Typography style={{ fontSize: 14, color: '#374151' }}>{link.description}</Typography>
+                            <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{link.description}</Typography>
                           )}
-                          <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+                          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                             {t.cards.uploadedAt}: {formatDate(link.createdAt)} · {t.cards.transactions}: {link.accessCount}
                           </Typography>
                         </Box>
@@ -764,15 +764,15 @@ export default function FileDetailsPage() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 1,
-                              border: '1px solid #e5e7eb',
+                              border: '1px solid var(--border-color)',
                               bgcolor: 'background.paper',
                               px: 1.5,
                               py: 0.75,
                               fontSize: 12,
                               fontWeight: 600,
-                              color: '#374151',
+                              color: 'var(--foreground)',
                               cursor: 'pointer',
-                              '&:hover': { bgcolor: '#f9fafb' },
+                              '&:hover': { bgcolor: 'var(--muted)' },
                             }}
                           >
                             {t.actions.share}
@@ -785,15 +785,15 @@ export default function FileDetailsPage() {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 1,
-                              border: '1px solid #e5e7eb',
+                              border: '1px solid var(--border-color)',
                               bgcolor: 'background.paper',
                               px: 1.5,
                               py: 0.75,
                               fontSize: 12,
                               fontWeight: 600,
-                              color: '#374151',
+                              color: 'var(--foreground)',
                               cursor: 'pointer',
-                              '&:hover': { bgcolor: '#f9fafb' },
+                              '&:hover': { bgcolor: 'var(--muted)' },
                             }}
                           >
                             {t.preview.refresh}
@@ -808,7 +808,7 @@ export default function FileDetailsPage() {
           )}
 
           {currentTab === 'permissions' && isOwner && (
-            <Box sx={{ border: '1px solid #f3f4f6', bgcolor: 'background.paper' }}>
+            <Box sx={{ border: '1px solid var(--muted)', bgcolor: 'background.paper' }}>
               <PermissionsPanel
                 fileId={fileId}
                 permissions={permissions}

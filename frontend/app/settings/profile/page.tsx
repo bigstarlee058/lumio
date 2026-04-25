@@ -40,10 +40,13 @@ import Typography from '@mui/material/Typography';
 import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 // eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function ProfileSettingsPage() {
   const { user, loading, setUser } = useAuth();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const { locale } = useLocale();
   const { currentWorkspace, loading: workspaceLoading } = useWorkspace();
   const t = useIntlayer('settingsProfilePage');
@@ -437,7 +440,7 @@ export default function ProfileSettingsPage() {
                         boxShadow: 1,
                       }}
                     >
-                      <Pencil size={14} style={{ color: '#9ca3af' }} />
+                      <Pencil size={14} style={{ color: c.ink400 }} />
                     </Box>
                     <input
                       ref={avatarInputRef}
@@ -561,7 +564,7 @@ export default function ProfileSettingsPage() {
                         boxShadow: 1,
                       }}
                     >
-                      <Pencil size={14} style={{ color: '#9ca3af' }} />
+                      <Pencil size={14} style={{ color: c.ink400 }} />
                     </Box>
                   </Box>
                 </Box>
@@ -651,7 +654,7 @@ export default function ProfileSettingsPage() {
                   transform: 'translateY(-50%)',
                   width: 16,
                   height: 16,
-                  color: '#9ca3af',
+                  color: c.ink400,
                 }}
               />
               <Box

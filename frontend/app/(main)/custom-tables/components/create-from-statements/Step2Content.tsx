@@ -16,16 +16,16 @@ function PreviewItem({ option }: { option: StatementOption }): React.JSX.Element
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--border-color)',
         bgcolor: 'background.paper',
         px: 1,
         py: 0.5,
       }}
     >
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#374151' }}>
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--foreground)' }}>
         {option.title}
       </span>
-      <span style={{ fontSize: 12, fontWeight: 500, color: '#111827', flexShrink: 0, marginLeft: 8 }}>
+      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--foreground)', flexShrink: 0, marginLeft: 8 }}>
         {option.rowsLabel}
       </span>
     </Box>
@@ -41,16 +41,16 @@ interface PreviewStatsProps {
 function PreviewStats({ selectedStatementSummary, labels, formatLabel }: PreviewStatsProps): React.JSX.Element {
   return (
     <>
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
         {labels.previewTitle}
       </Typography>
-      <Typography style={{ marginTop: 4, fontSize: 14, color: '#374151' }}>
+      <Typography style={{ marginTop: 4, fontSize: 14, color: 'var(--foreground)' }}>
         {formatLabel({ template: labels.previewSummary, values: { statements: selectedStatementSummary.selectedCount } })}
       </Typography>
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
         {formatLabel({ template: labels.previewRows, values: { rows: selectedStatementSummary.totalRows } })}
       </Typography>
-      <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
+      <Typography style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>
         {labels.previewEditable}
       </Typography>
     </>
@@ -71,7 +71,7 @@ function SelectionPreview({
   formatLabel,
 }: SelectionPreviewProps): React.JSX.Element {
   return (
-    <Box sx={{ border: '1px solid #e5e7eb', bgcolor: '#f9fafb', p: 1.5 }}>
+    <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'var(--muted)', p: 1.5 }}>
       <PreviewStats
         selectedStatementSummary={selectedStatementSummary}
         labels={labels}

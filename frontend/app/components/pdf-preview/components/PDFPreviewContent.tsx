@@ -34,7 +34,7 @@ function PDFErrorView({ showAttachFallback, error, t, onClose, attachingFile, at
   return (
     <div className="lumio-pdf-preview-modal__error-overlay">
       <div className="lumio-pdf-preview-modal__error-body">
-        <div className="lumio-pdf-preview-modal__error-icon-wrapper"><X size={24} style={{ color: '#ef4444' }} strokeWidth={1.5} /></div>
+        <div className="lumio-pdf-preview-modal__error-icon-wrapper"><X size={24} style={{ color: 'var(--destructive)' }} strokeWidth={1.5} /></div>
         <h3 className="lumio-pdf-preview-modal__error-title">{showAttachFallback ? t.fileNotAttached.value : t.loadError.value}</h3>
         <p className="lumio-pdf-preview-modal__error-message">{showAttachFallback ? t.uploadFileHint.value : error}</p>
         {showAttachFallback

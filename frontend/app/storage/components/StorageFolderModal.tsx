@@ -36,11 +36,11 @@ export function StorageFolderModal({
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); } }}
       />
       <Box sx={{ position: 'fixed', inset: 0, zIndex: 80, display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-        <Box sx={{ display: 'flex', width: '100%', maxWidth: 1380, minHeight: '70vh', maxHeight: '90vh', flexDirection: 'column', overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
+        <Box sx={{ display: 'flex', width: '100%', maxWidth: 1380, minHeight: '70vh', maxHeight: '90vh', flexDirection: 'column', overflow: 'hidden', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
           <ModalHeader title={modalTitle} subtitle={modalSubtitle} onClose={onClose} />
           <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
             <StorageFoldersSidebar {...sidebarProps} />
-            <Box sx={{ borderLeft: '1px solid #f3f4f6', p: 2, width: 320, flexShrink: 0, overflowY: 'auto' }}>
+            <Box sx={{ borderLeft: '1px solid var(--muted)', p: 2, width: 320, flexShrink: 0, overflowY: 'auto' }}>
               <StorageTagsPanel {...tagsPanelProps} />
             </Box>
           </Box>
@@ -58,10 +58,10 @@ interface ModalHeaderProps {
 
 function ModalHeader({ title, subtitle, onClose }: ModalHeaderProps): React.JSX.Element {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f3f4f6', px: 3, py: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--muted)', px: 3, py: 2 }}>
       <Box>
-        <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{title}</Typography>
-        <Typography style={{ fontSize: 14, color: '#6b7280' }}>{subtitle}</Typography>
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>{title}</Typography>
+        <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{subtitle}</Typography>
       </Box>
       <IconButton size="small" onClick={onClose} sx={{ borderRadius: tokens.radius.sm }}><X size={18} /></IconButton>
     </Box>

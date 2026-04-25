@@ -12,6 +12,7 @@ import { CheckCircle2 } from '@/app/components/icons';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
 import { tokens } from '@/lib/theme-tokens';
@@ -42,6 +43,8 @@ type GmailStatus = {
 type GmailPageT = ReturnType<typeof useIntlayer<'gmailIntegrationPage'>>;
 
 function GmailLoadingView(): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
@@ -49,7 +52,7 @@ function GmailLoadingView(): React.JSX.Element {
         minHeight: '60vh',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#6b7280',
+        color: c.ink500,
       }}
     >
       <Spinner size={24} />
@@ -58,22 +61,24 @@ function GmailLoadingView(): React.JSX.Element {
 }
 
 function GmailNotLoggedInView({ t }: { t: GmailPageT }): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box
         sx={{
           borderRadius: tokens.radius.lg,
-          border: '1px solid #e5e7eb',
+          border: `1px solid ${c.ink150}`,
           bgcolor: 'background.paper',
           p: 3,
           boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
           textAlign: 'center',
         }}
       >
-        <Typography style={{ color: '#1f2937', fontWeight: 600, marginBottom: 8 }}>
+        <Typography style={{ color: c.ink800, fontWeight: 600, marginBottom: 8 }}>
           {t.common.notConnected.value}
         </Typography>
-        <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+        <Typography style={{ fontSize: 14, color: c.ink700 }}>
           {t.errors.loginRequired.value}
         </Typography>
       </Box>
@@ -82,11 +87,13 @@ function GmailNotLoggedInView({ t }: { t: GmailPageT }): React.JSX.Element {
 }
 
 function GmailInfoPanel({ t }: { t: GmailPageT }): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
         borderRadius: tokens.radius.lg,
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         bgcolor: 'background.paper',
         p: 2,
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
@@ -98,14 +105,14 @@ function GmailInfoPanel({ t }: { t: GmailPageT }): React.JSX.Element {
           <CheckCircle2 style={{ height: 20, width: 20 }} />
         </Box>
         <Box>
-          <Typography style={{ fontWeight: 600, color: '#111827', marginBottom: 8 }}>
+          <Typography style={{ fontWeight: 600, color: c.ink900, marginBottom: 8 }}>
             {t.info.title.value}
           </Typography>
           <Stack spacing={1}>
-            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step1.value}</Typography>
-            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step2.value}</Typography>
-            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step3.value}</Typography>
-            <Typography style={{ fontSize: 14, color: '#4b5563' }}>{t.info.step4.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.info.step1.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.info.step2.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.info.step3.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.info.step4.value}</Typography>
           </Stack>
         </Box>
       </Box>
@@ -129,31 +136,33 @@ function GmailSettingsPanel({
   userLocale,
   onUpdateSettings,
 }: GmailSettingsPanelProps): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box
       sx={{
         borderRadius: tokens.radius.lg,
-        border: '1px solid #e5e7eb',
+        border: `1px solid ${c.ink150}`,
         bgcolor: 'background.paper',
         p: 3,
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
       }}
     >
-      <Typography style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginBottom: 24 }}>
+      <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900, marginBottom: 24 }}>
         {t.settings.title.value}
       </Typography>
 
       <Stack spacing={2}>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
           <Stack spacing={0.5}>
-            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.labelName.value}</Typography>
-            <Typography style={{ fontWeight: 500, color: '#111827' }}>
+            <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.labelName.value}</Typography>
+            <Typography style={{ fontWeight: 500, color: c.ink900 }}>
               {status.settings?.labelName || 'Lumio/Receipts'}
             </Typography>
           </Stack>
           <Stack spacing={0.5}>
-            <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.lastSync.value}</Typography>
-            <Typography style={{ fontWeight: 500, color: '#111827' }}>
+            <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.lastSync.value}</Typography>
+            <Typography style={{ fontWeight: 500, color: c.ink900 }}>
               {formatDateTime(status.settings?.lastSyncAt, userLocale) || t.common.unknownDate.value}
             </Typography>
           </Stack>
@@ -166,28 +175,28 @@ function GmailSettingsPanel({
               onCheckedChange={checked => void onUpdateSettings({ filterEnabled: checked as boolean })}
               disabled={isSaving}
             />
-            <Typography style={{ fontSize: 14, color: '#374151' }}>{t.settings.filterEnabled.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink800 }}>{t.settings.filterEnabled.value}</Typography>
           </Box>
         </Stack>
 
         <Stack spacing={0.5}>
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.settings.watchStatus.value}</Typography>
-          <Typography style={{ fontWeight: 500, color: '#111827' }}>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.watchStatus.value}</Typography>
+          <Typography style={{ fontWeight: 500, color: c.ink900 }}>
             {status.settings?.watchEnabled ? (
-              <span style={{ color: '#059669' }}>{t.status.active.value}</span>
+              <span style={{ color: c.success }}>{t.status.active.value}</span>
             ) : (
-              <span style={{ color: '#9ca3af' }}>{t.status.inactive.value}</span>
+              <span style={{ color: c.ink400 }}>{t.status.inactive.value}</span>
             )}
           </Typography>
           {status.settings?.watchExpiration && (
-            <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+            <Typography style={{ fontSize: 12, color: c.ink500 }}>
               {t.settings.expires.value}: {formatDateTime(status.settings.watchExpiration, userLocale)}
             </Typography>
           )}
         </Stack>
 
         <Stack spacing={1}>
-          <label htmlFor="gmail-filter-keywords" style={{ fontSize: 14, color: '#6b7280' }}>
+          <label htmlFor="gmail-filter-keywords" style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings.keywords.value}
           </label>
           <input
@@ -204,9 +213,9 @@ function GmailSettingsPanel({
             }
             disabled={isSaving}
             placeholder={t.settings.keywordsPlaceholder.value}
-            style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: '#111827' }}
+            style={{ width: '100%', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: c.ink900 }}
           />
-          <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.settings.keywordsHelp.value}</Typography>
+          <Typography style={{ fontSize: 12, color: c.ink500 }}>{t.settings.keywordsHelp.value}</Typography>
         </Stack>
 
         <Stack spacing={1}>
@@ -220,7 +229,7 @@ function GmailSettingsPanel({
               }
               disabled={isSaving}
             />
-            <Typography style={{ fontSize: 14, color: '#374151' }}>{t.settings.hasAttachment.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink800 }}>{t.settings.hasAttachment.value}</Typography>
           </Box>
         </Stack>
       </Stack>
@@ -230,6 +239,8 @@ function GmailSettingsPanel({
 
 // eslint-disable-next-line max-lines-per-function
 export default function GmailIntegrationPage(): React.JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const { user, loading: authLoading } = useAuth();
   const t = useIntlayer('gmailIntegrationPage');
   const [gmailSyncing, setGmailSyncing] = useState(false);
@@ -323,15 +334,15 @@ export default function GmailIntegrationPage(): React.JSX.Element {
           <Image src="/icons/gmail.png" alt="Gmail" width={24} height={24} style={{ height: 24, width: 24, objectFit: 'contain' }} />
         </Box>
         <Box>
-          <Typography variant="h4" style={{ fontWeight: 700, color: '#111827' }}>{t.header.title.value}</Typography>
-          <Typography style={{ color: '#4b5563', marginTop: 4 }}>{t.header.subtitle.value}</Typography>
+          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>{t.header.title.value}</Typography>
+          <Typography style={{ color: c.ink700, marginTop: 4 }}>{t.header.subtitle.value}</Typography>
         </Box>
       </Box>
 
       {loading && (
         <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
           <CircularProgress size={16} />
-          <Typography style={{ fontSize: 14, color: '#6b7280' }}>{t.common.loading.value}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.common.loading.value}</Typography>
         </Box>
       )}
 

@@ -10,6 +10,7 @@ import { CreditCard, Receipt } from '@/app/components/icons';
 import { AlertCircle, CheckCircle2, ChevronRight, CircleHelp } from '@/app/components/icons';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useTheme } from 'next-themes';
 import { tokens } from '@/lib/theme-tokens';
 
 export type StatementListItem = {
@@ -112,13 +113,13 @@ const DUPLICATE_GROUP_STYLES: Record<DuplicateGroupTone, DuplicateGroupStyle> = 
     rowBg: 'rgba(248,250,252,0.3)',
     lineColor: 'rgba(148,163,184,0.85)',
     badgeBg: '#f1f5f9',
-    badgeColor: '#475569',
+    badgeColor: 'var(--text-secondary)',
     buttonBorder: '#e2e8f0',
     buttonBg: '#f8fafc',
-    buttonColor: '#475569',
+    buttonColor: 'var(--text-secondary)',
     buttonHoverBorder: '#cbd5e1',
     buttonHoverBg: '#f1f5f9',
-    buttonHoverColor: '#334155',
+    buttonHoverColor: 'var(--text-secondary)',
   },
   zinc: {
     rowBorderColor: '#e4e4e7',
@@ -218,6 +219,8 @@ export function StatementsListItem({
   duplicateReason,
   viewDisabled = false,
 }: Props) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const PREVIEW_WIDTH = 430;
   const PREVIEW_HEIGHT = 620;
   const thumbnailButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -356,7 +359,7 @@ export function StatementsListItem({
             aria-disabled={viewDisabled}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 40, flexShrink: 0, color: '#ef4444' }}>
+              <div style={{ width: 40, flexShrink: 0, color: c.danger }}>
                 <DocumentTypeIcon
                   fileType={isReceipt ? 'pdf' : statement.fileType}
                   fileName={statement.fileName}
@@ -368,7 +371,7 @@ export function StatementsListItem({
 
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#111827', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: c.ink900, display: 'flex', alignItems: 'center', gap: 6 }}>
                     {isProcessing ? 'Processing...' : merchantLabel}
                     {isPossibleDuplicate && (
                       <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
@@ -406,14 +409,14 @@ export function StatementsListItem({
                       fontWeight: 900,
                       letterSpacing: '-0.025em',
                       fontVariantNumeric: 'tabular-nums',
-                      color: isNegativeAmount || hasError || isMissingAmount ? '#dc2626' : '#030712',
+                      color: isNegativeAmount || hasError || isMissingAmount ? c.danger : c.ink900,
                     }}
                   >
-                    {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: '#9ca3af' }} /> : amountLabel}
+                    {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: c.ink400 }} /> : amountLabel}
                   </p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 }}>
-                  <p style={{ fontSize: 12, color: '#6b7280' }}>{dateLabel}</p>
+                  <p style={{ fontSize: 12, color: c.ink500 }}>{dateLabel}</p>
                   <StatusBadge
                     status={statement.status}
                     isProcessing={isProcessing}
@@ -471,7 +474,7 @@ export function StatementsListItem({
                 onMouseLeave={() => setPreviewVisible(false)}
                 aria-label={statement.fileName}
               >
-                <span style={{ color: '#9ca3af', opacity: 0.6, transition: 'opacity 0.15s', display: 'contents' }}>
+                <span style={{ color: c.ink400, opacity: 0.6, transition: 'opacity 0.15s', display: 'contents' }}>
                   <DocumentTypeIcon
                     fileType={isReceipt ? 'pdf' : statement.fileType}
                     fileName={statement.fileName}
@@ -491,7 +494,7 @@ export function StatementsListItem({
                         position: 'fixed',
                         zIndex: 140,
                         borderRadius: tokens.radius.lg,
-                        border: '1px solid #e5e7eb',
+                        border: `1px solid ${c.ink150}`,
                         background: 'var(--card-bg)',
                         padding: 8,
                         boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
@@ -534,7 +537,7 @@ export function StatementsListItem({
                   <Receipt
                     data-testid="receipt-statement-type-icon"
                     size={16}
-                    style={{ color: '#6b7280' }}
+                    style={{ color: c.ink500 }}
                   />
                 ) : (
                   <BankLogoAvatar bankName={statement.bankName} size={16} />
@@ -542,13 +545,13 @@ export function StatementsListItem({
               </div>
 
               {/* Main Merchant Name */}
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: '#111827', fontSize: 15 }}>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: c.ink900, fontSize: 15 }}>
                 {isProcessing ? 'Processing...' : merchantLabel}
               </span>
 
               {/* Weakened Type / Error micro-signal */}
               {hasError ? (
-                <AlertCircle size={16} style={{ color: '#ef4444', marginLeft: 4 }} />
+                <AlertCircle size={16} style={{ color: c.danger, marginLeft: 4 }} />
               ) : isPossibleDuplicate ? (
                 <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
                   <div
@@ -578,16 +581,16 @@ export function StatementsListItem({
                 <CreditCard
                   data-testid="manual-expense-type-icon"
                   size={14}
-                  style={{ color: '#6b7280', opacity: 0.5, marginLeft: 4 }}
+                  style={{ color: c.ink500, opacity: 0.5, marginLeft: 4 }}
                 />
               ) : (
-                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9ca3af', background: '#f3f4f6', borderRadius: tokens.radius.xs, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
+                <span style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: c.ink400, background: c.ink50, borderRadius: tokens.radius.xs, padding: '2px 6px', marginLeft: 4, opacity: 0.7 }}>
                   {resolvedTypeLabel === 'PDF' ? 'PDF' : resolvedTypeLabel}
                 </span>
               )}
             </div>
             {/* Weakened Date */}
-            <div style={{ fontSize: 11, fontWeight: 500, color: '#9ca3af', marginTop: 2, marginLeft: 24 }}>{dateLabel}</div>
+            <div style={{ fontSize: 11, fontWeight: 500, color: c.ink400, marginTop: 2, marginLeft: 24 }}>{dateLabel}</div>
           </div>
         </div>
 
@@ -605,10 +608,10 @@ export function StatementsListItem({
                 fontWeight: 900,
                 letterSpacing: '-0.025em',
                 fontVariantNumeric: 'tabular-nums',
-                color: isNegativeAmount || hasError || isMissingAmount ? '#dc2626' : '#030712',
+                color: isNegativeAmount || hasError || isMissingAmount ? c.danger : c.ink900,
               }}
             >
-              {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: '#9ca3af' }} /> : amountLabel}
+              {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: c.ink400 }} /> : amountLabel}
             </span>
             <div style={{ marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
               <StatusBadge

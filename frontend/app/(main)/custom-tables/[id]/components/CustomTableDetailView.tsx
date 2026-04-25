@@ -24,7 +24,7 @@ const PRINT_CSS = `
 type P = CustomTablePageState;
 
 function GridArea(p: P): React.JSX.Element {
-  const boxSx = p.isFullscreen ? { height: '100%', width: '100%', bgcolor: 'background.paper', maxWidth: 1920, mx: 'auto' } : { border: '1px solid #e5e7eb', bgcolor: 'background.paper' };
+  const boxSx = p.isFullscreen ? { height: '100%', width: '100%', bgcolor: 'background.paper', maxWidth: 1920, mx: 'auto' } : { border: '1px solid var(--border-color)', bgcolor: 'background.paper' };
   return (
     <Box sx={p.isFullscreen ? { height: '100%', width: '100%', pt: 0 } : { mt: 0 }} className={p.isFullscreen ? 'custom-table-print-target' : undefined}>
       <Box sx={boxSx}>
@@ -58,7 +58,7 @@ function LoadMoreArea(p: P): React.JSX.Element | null {
   if (p.normalizedActiveTabId === p.columnsTabId) return null;
   return (
     <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }} className={p.isPrintMode ? 'custom-table-print-controls' : undefined}>
-      <Box component="button" onClick={() => p.loadRows({ filtersParam: p.combinedFiltersParam })} disabled={!p.hasMore || p.loadingRows} sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}>
+      <Box component="button" onClick={() => p.loadRows({ filtersParam: p.combinedFiltersParam })} disabled={!p.hasMore || p.loadingRows} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}>
         {p.loadingRows ? p.t.grid.loadingMore : p.hasMore ? p.t.grid.loadMore : p.t.grid.noMore}
       </Box>
     </Box>

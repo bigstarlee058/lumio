@@ -68,7 +68,7 @@ function StageActionButton({ action, stageActionLoadingId, missingCategoryCount,
 function ErrorCategoryButton({ statementCategorySaving, optionsLoading, selectedStatementCategoryName, hasDisabledStatementCategory, disabledSuffix, onOpenCategoryDrawer }: CatBtnBase & { hasDisabledStatementCategory: boolean; disabledSuffix: string }): React.ReactElement {
   const label = hasDisabledStatementCategory ? `${selectedStatementCategoryName}${disabledSuffix}` : selectedStatementCategoryName;
   return (
-    <Button variant="outlined" startIcon={statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />} onClick={onOpenCategoryDrawer} disabled={statementCategorySaving || optionsLoading} title={selectedStatementCategoryName} sx={{ textTransform: 'none', fontWeight: 700, minWidth: 0, maxWidth: { xs: '100%', md: 280 }, overflow: 'hidden', borderColor: '#ef4444 !important', color: '#b91c1c !important', bgcolor: '#fef2f2 !important', borderWidth: '2px !important', '& .MuiButton-startIcon': { color: '#dc2626 !important' }, '&:hover': { bgcolor: '#fee2e2 !important', borderColor: '#dc2626 !important' } }}>
+    <Button variant="outlined" startIcon={statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />} onClick={onOpenCategoryDrawer} disabled={statementCategorySaving || optionsLoading} title={selectedStatementCategoryName} sx={{ textTransform: 'none', fontWeight: 700, minWidth: 0, maxWidth: { xs: '100%', md: 280 }, overflow: 'hidden', borderColor: 'var(--destructive) !important', color: 'var(--destructive) !important', bgcolor: '#fef2f2 !important', borderWidth: '2px !important', '& .MuiButton-startIcon': { color: 'var(--destructive) !important' }, '&:hover': { bgcolor: '#fee2e2 !important', borderColor: 'var(--destructive) !important' } }}>
       <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</Box>
     </Button>
   );
@@ -94,7 +94,7 @@ function StatementChips({ statement, missingCategoryCount, t }: { statement: Sta
     <Box sx={{ minWidth: 240 }}>
       <Typography variant="h4" component="h1" sx={{ fontWeight: 600, mb: 1, color: 'text.primary', letterSpacing: '-0.02em' }}>{statement?.fileName}</Typography>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-        <Chip icon={<Receipt />} label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`} size="small" data-testid="statement-transactions-chip" style={{ border: '1px solid #e5e7eb', backgroundColor: '#f9fafb', color: '#6b7280' }} sx={{ fontWeight: 500, '& .MuiChip-icon': { color: 'text.secondary' } }} />
+        <Chip icon={<Receipt />} label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`} size="small" data-testid="statement-transactions-chip" style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }} sx={{ fontWeight: 500, '& .MuiChip-icon': { color: 'text.secondary' } }} />
         {missingCategoryCount > 0 && <Chip icon={<TriangleAlert size={18} />} label={t.labels.requireCategory.value.replace('{{count}}', String(missingCategoryCount))} size="small" sx={{ bgcolor: 'error.50', color: 'error.800', border: '1px solid', borderColor: 'error.200', fontWeight: 600, '& .MuiChip-icon': { color: 'error.700' } }} />}
       </Box>
       {missingCategoryCount > 0 && <Typography sx={{ mt: 1, color: 'error.main', fontSize: '0.75rem', fontWeight: 500 }}>{t.labels.selectCategoryHint.value}</Typography>}

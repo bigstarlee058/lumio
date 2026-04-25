@@ -15,6 +15,7 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { ChevronDown, ChevronRight, Cpu, Plug, User } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { tokens } from '@/lib/theme-tokens';
 
@@ -46,13 +47,13 @@ type AuditTableRow =
 const severityColors: Record<string, { bg: string; color: string }> = {
   info: { bg: '#eff6ff', color: '#1d4ed8' },
   warn: { bg: '#fefce8', color: '#a16207' },
-  critical: { bg: '#fef2f2', color: '#b91c1c' },
+  critical: { bg: '#fef2f2', color: 'var(--destructive)' },
 };
 
 const actionToneColors: Record<string, { bg: string; color: string }> = {
   info: { bg: '#eff6ff', color: '#1d4ed8' },
   warn: { bg: '#fefce8', color: '#a16207' },
-  critical: { bg: '#fef2f2', color: '#b91c1c' },
+  critical: { bg: '#fef2f2', color: 'var(--destructive)' },
   primary: { bg: '#edf7ed', color: '#157811' },
   success: { bg: '#ecfdf5', color: '#065f46' },
 };
@@ -65,6 +66,9 @@ export function AuditEventTable({
   total,
   onPageChange,
 }: AuditEventTableProps) {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+
   const [expandedBatches, setExpandedBatches] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<SortingState>([{ id: 'date', desc: true }]);
 
@@ -136,7 +140,7 @@ export function AuditEventTable({
               <button
                 type="button"
                 onClick={() => toggleBatch(data.batchId)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: '#1f2937', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: c.ink800, background: 'none', border: 'none', cursor: 'pointer' }}
               >
                 {expandedBatches.has(data.batchId) ? (
                   <ChevronDown size={16} />
@@ -148,7 +152,7 @@ export function AuditEventTable({
             );
           }
           const formatted = formatAuditEvent(data.event);
-          const colors = actionToneColors[formatted.actionTone] || { bg: '#f3f4f6', color: '#374151' };
+          const colors = actionToneColors[formatted.actionTone] || { bg: c.ink50, color: c.ink800 };
           return (
             <Chip
               label={formatted.actionLabel}
@@ -171,10 +175,10 @@ export function AuditEventTable({
         cell: ({ row }) => {
           const data = row.original;
           if (data.type === 'group') {
-            return <Typography variant="body2" style={{ color: '#6b7280' }}>{data.count} events</Typography>;
+            return <Typography variant="body2" style={{ color: c.ink500 }}>{data.count} events</Typography>;
           }
           const formatted = formatAuditEvent(data.event);
-          return <Typography variant="body2" style={{ color: '#1f2937' }}>{formatted.objectLabel}</Typography>;
+          return <Typography variant="body2" style={{ color: c.ink800 }}>{formatted.objectLabel}</Typography>;
         },
       },
       {
@@ -182,9 +186,9 @@ export function AuditEventTable({
         header: 'Description',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
           const formatted = formatAuditEvent(data.event);
-          return <Typography variant="body2" style={{ color: '#374151' }}>{formatted.description}</Typography>;
+          return <Typography variant="body2" style={{ color: c.ink800 }}>{formatted.description}</Typography>;
         },
       },
       {
@@ -192,7 +196,7 @@ export function AuditEventTable({
         header: 'User',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
           const Icon =
             data.event.actorType === 'integration'
               ? Plug
@@ -200,8 +204,8 @@ export function AuditEventTable({
                 ? Cpu
                 : User;
           return (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, color: '#1f2937' }}>
-              <Icon size={16} style={{ color: '#6b7280' }} />
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, color: c.ink800 }}>
+              <Icon size={16} style={{ color: c.ink500 }} />
               {data.event.actorLabel}
             </span>
           );
@@ -213,7 +217,7 @@ export function AuditEventTable({
         cell: ({ row }) => {
           const data = row.original;
           return (
-            <Typography variant="body2" style={{ color: '#374151' }}>
+            <Typography variant="body2" style={{ color: c.ink800 }}>
               {new Date(data.createdAt).toLocaleString()}
             </Typography>
           );
@@ -224,8 +228,8 @@ export function AuditEventTable({
         header: 'Severity',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: '#6b7280' }}>—</Typography>;
-          const colors = severityColors[data.event.severity] || { bg: '#f3f4f6', color: '#374151' };
+          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
+          const colors = severityColors[data.event.severity] || { bg: c.ink50, color: c.ink800 };
           return (
             <Chip
               label={data.event.severity}
@@ -243,7 +247,7 @@ export function AuditEventTable({
         },
       },
     ],
-    [expandedBatches],
+    [expandedBatches, c],
   );
 
   const table = useReactTable({
@@ -259,15 +263,15 @@ export function AuditEventTable({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+      <Box sx={{ overflow: 'hidden', border: `1px solid ${c.border}` }}>
         <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{ background: '#f9fafb' }}>
+          <thead style={{ background: c.ink50 }}>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    style={{ padding: '12px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: '#6b7280', borderBottom: '1px solid #e5e7eb' }}
+                    style={{ padding: '12px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: c.ink500, borderBottom: `1px solid ${c.border}` }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -284,9 +288,9 @@ export function AuditEventTable({
                 <tr
                   key={row.id}
                   style={{
-                    background: data.type === 'event' ? '#fff' : '#f9fafb',
+                    background: data.type === 'event' ? c.surface : c.ink50,
                     cursor: data.type === 'event' ? 'pointer' : undefined,
-                    borderBottom: '1px solid #e5e7eb',
+                    borderBottom: `1px solid ${c.border}`,
                   }}
                   role={data.type === 'event' ? 'button' : undefined}
                   tabIndex={data.type === 'event' ? 0 : undefined}
@@ -313,7 +317,7 @@ export function AuditEventTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  style={{ padding: '24px 16px', textAlign: 'center', fontSize: 14, color: '#6b7280' }}
+                  style={{ padding: '24px 16px', textAlign: 'center', fontSize: 14, color: c.ink500 }}
                 >
                   No events found.
                 </td>
@@ -323,7 +327,7 @@ export function AuditEventTable({
         </table>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: '#4b5563' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: c.ink700 }}>
         <div>
           Page {page} of {totalPages}
         </div>

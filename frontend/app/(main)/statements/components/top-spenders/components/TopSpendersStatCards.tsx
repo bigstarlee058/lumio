@@ -32,7 +32,7 @@ function StatCard({ label, value, icon, comparisonItem, currency, noDataLabel, v
   return (
     <div className="lumio-view-page__stat-card">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>{label}</span>
+        <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>{label}</span>
         {icon}
       </div>
       <div style={{ marginTop: 8, fontSize: 18, fontWeight: 600 }}>{value}</div>
@@ -49,7 +49,7 @@ export function TopSpendersStatCards({ totals, comparison, isIncomeView, primary
       <StatCard label={primaryMetricLabel} value={formatMoney(totals.total, currency)} icon={icon0} comparisonItem={getCmp({ c: comparison, key: 'total' })} {...cp} />
       <StatCard label={statementsLabel} value={formatMoney(totals.statementTotal, currency)} icon={<ChartPie size={16} color="var(--primary)" />} comparisonItem={getCmp({ c: comparison, key: 'statementTotal' })} {...cp} />
       <StatCard label={receiptsLabel} value={formatMoney(totals.receiptTotal, currency)} icon={<ArrowUp size={16} color="#10b981" />} comparisonItem={getCmp({ c: comparison, key: 'receiptTotal' })} {...cp} />
-      <StatCard label={operationsLabel} value={String(totals.operations)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>#</span>} comparisonItem={getCmp({ c: comparison, key: 'operations' })} isMoney={false} {...cp} />
+      <StatCard label={operationsLabel} value={String(totals.operations)} icon={<span style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)' }}>#</span>} comparisonItem={getCmp({ c: comparison, key: 'operations' })} isMoney={false} {...cp} />
     </div>
   );
 }

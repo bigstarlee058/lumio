@@ -109,7 +109,7 @@ function StatementList({
       sx={{
         maxHeight: 360,
         overflowY: 'auto',
-        border: '1px solid #e5e7eb',
+        border: '1px solid var(--border-color)',
         display: 'flex',
         flexDirection: 'column',
         gap: 1.5,
@@ -203,7 +203,7 @@ export function Step1Content({
           alignItems: 'center',
           justifyContent: 'space-between',
           fontSize: 12,
-          color: '#6b7280',
+          color: 'var(--muted-foreground)',
         }}
       >
         <span>{labels.hint}</span>

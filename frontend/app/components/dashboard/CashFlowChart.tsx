@@ -34,7 +34,7 @@ export function CashFlowChart({ data, emptyLabel }: CashFlowChartProps) {
         type: 'category',
         data: data.map(point => point.date),
         axisLabel: { fontSize: 10, rotate: data.length > 15 ? 45 : 0 },
-        axisLine: { lineStyle: { color: '#e5e7eb' } },
+        axisLine: { lineStyle: { color: 'var(--border-color)' } },
       },
       yAxis: {
         type: 'value',
@@ -57,8 +57,8 @@ export function CashFlowChart({ data, emptyLabel }: CashFlowChartProps) {
           smooth: true,
           data: data.map(point => point.expense),
           areaStyle: { color: 'rgba(239, 68, 68, 0.1)' },
-          lineStyle: { color: '#ef4444', width: 2 },
-          itemStyle: { color: '#ef4444' },
+          lineStyle: { color: 'var(--destructive)', width: 2 },
+          itemStyle: { color: 'var(--destructive)' },
         },
       ],
     };
@@ -66,7 +66,7 @@ export function CashFlowChart({ data, emptyLabel }: CashFlowChartProps) {
 
   if (!option) {
     return (
-      <div style={{ display: 'flex', height: 256, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: '#6b7280' }}>
+      <div style={{ display: 'flex', height: 256, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'var(--muted-foreground)' }}>
         {emptyLabel}
       </div>
     );

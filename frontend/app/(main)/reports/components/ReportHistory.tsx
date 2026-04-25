@@ -39,7 +39,7 @@ function formatFileSize(bytes: number): string {
 
 const FORMAT_CHIP_COLORS: Record<string, { bg: string; color: string }> = {
   excel: { bg: '#d1fae5', color: '#065f46' },
-  pdf: { bg: '#fee2e2', color: '#991b1b' },
+  pdf: { bg: '#fee2e2', color: 'var(--destructive)' },
   csv: { bg: '#e0f2fe', color: '#0c4a6e' },
 };
 

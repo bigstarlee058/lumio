@@ -20,7 +20,7 @@ export interface NewFolderInputProps {
 const addBtnSx = {
   bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full,
   '&:hover': { bgcolor: 'primary.dark' },
-  '&:disabled': { bgcolor: '#d1d5db', cursor: 'not-allowed' },
+  '&:disabled': { bgcolor: 'var(--border-color)', cursor: 'not-allowed' },
 };
 const textFieldSx = { flex: 1 };
 

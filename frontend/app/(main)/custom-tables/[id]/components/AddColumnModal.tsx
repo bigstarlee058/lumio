@@ -47,7 +47,7 @@ export function AddColumnModal({
             component="button"
             type="button"
             onClick={handleClose}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: '#4b5563', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+            sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1, fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
           >
             {tx(t, ['addColumn', 'cancel'], 'Cancel')}
           </Box>
@@ -67,7 +67,7 @@ export function AddColumnModal({
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '4fr 2fr' }, gap: 2, alignItems: 'flex-end' }}>
         <Box>
           <label
-            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 8 }}
+            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}
             htmlFor="new-column-title"
           >
             {tx(t, ['addColumn', 'titleLabel'], 'Column title')}
@@ -83,12 +83,12 @@ export function AddColumnModal({
               }
             }}
             placeholder={tx(t, ['addColumn', 'titlePlaceholder'], '')}
-            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: 'var(--foreground)', outline: 'none', boxSizing: 'border-box' }}
           />
         </Box>
         <Box>
           <label
-            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 8 }}
+            style={{ display: 'block', fontSize: 14, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}
             htmlFor="new-column-type"
           >
             {tx(t, ['addColumn', 'typeLabel'], 'Type')}
@@ -102,7 +102,7 @@ export function AddColumnModal({
                 type: e.target.value as ColumnType,
               }))
             }
-            style={{ width: '100%', border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: '#1f2937', outline: 'none' }}
+            style={{ width: '100%', border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '12px 16px', fontSize: 14, color: 'var(--foreground)', outline: 'none' }}
           >
             {columnTypes.map(typeItem => (
               <option key={typeItem.value} value={typeItem.value}>

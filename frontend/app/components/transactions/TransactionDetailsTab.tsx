@@ -9,6 +9,7 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 
 import { formatAmount, formatDate } from './helpers/transactionFormatters';
 import type { Category, Transaction } from './types';
+import { useTheme } from 'next-themes';
 import { tokens } from '@/lib/theme-tokens';
 
 interface TransactionDetailsTabProps {
@@ -29,6 +30,8 @@ export function TransactionDetailsTab({
   const { locale } = useLocale();
   const t = useIntlayer('transactionsDrawer');
   const { showConverted } = useCurrencyDisplay();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [updating, setUpdating] = useState(false);
 
@@ -62,7 +65,7 @@ export function TransactionDetailsTab({
       <div className="lumio-tx-detail__section">
         <div className="lumio-tx-detail__icon-row">
           <div className="lumio-tx-detail__icon">
-            <Calendar size={20} color="#4b5563" />
+            <Calendar size={20} color={c.ink700} />
           </div>
           <div className="lumio-tx-detail__field">
             <div className="lumio-tx-detail__label">{t.date.value}</div>
@@ -73,7 +76,7 @@ export function TransactionDetailsTab({
         {transaction.documentNumber && (
           <div className="lumio-tx-detail__icon-row">
             <div className="lumio-tx-detail__icon">
-              <FileText size={20} color="#4b5563" />
+              <FileText size={20} color={c.ink700} />
             </div>
             <div className="lumio-tx-detail__field">
               <div className="lumio-tx-detail__label">{t.documentNumber.value}</div>
@@ -87,13 +90,13 @@ export function TransactionDetailsTab({
       <div className="lumio-tx-detail__card">
         <div className="lumio-tx-detail__icon-row">
           <div className="lumio-tx-detail__icon--white">
-            <Building2 size={20} color="#4b5563" />
+            <Building2 size={20} color={c.ink700} />
           </div>
           <div className="lumio-tx-detail__field">
             <div className="lumio-tx-detail__label">{t.counterparty.value}</div>
             <div className="lumio-tx-detail__value" style={{ fontWeight: 700 }}>{transaction.counterpartyName}</div>
             {transaction.counterpartyBin && (
-              <div style={{ marginTop: 4, fontSize: 12, color: '#4b5563' }}>
+              <div style={{ marginTop: 4, fontSize: 12, color: c.ink700 }}>
                 {t.bin.value}: {transaction.counterpartyBin}
               </div>
             )}
@@ -104,7 +107,7 @@ export function TransactionDetailsTab({
       {/* Payment Purpose */}
       <div>
         <div className="lumio-tx-detail__label">{t.purpose.value}</div>
-        <div className="lumio-tx-detail__card" style={{ marginTop: 8, fontSize: 14, color: '#111827' }}>
+        <div className="lumio-tx-detail__card" style={{ marginTop: 8, fontSize: 14, color: c.ink900 }}>
           {transaction.paymentPurpose || '—'}
         </div>
       </div>
@@ -156,40 +159,40 @@ export function TransactionDetailsTab({
 
       {/* Additional Details */}
       <div className="lumio-tx-detail__card">
-        <div className="lumio-tx-detail__label" style={{ color: '#374151', marginBottom: 8 }}>{t.additionalDetails.value}</div>
+        <div className="lumio-tx-detail__label" style={{ color: c.ink800, marginBottom: 8 }}>{t.additionalDetails.value}</div>
 
         {transaction.currency && (
           <div className="lumio-tx-detail__row">
-            <span style={{ color: '#4b5563' }}>{t.currency.value}:</span>
-            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.currency}</span>
+            <span style={{ color: c.ink700 }}>{t.currency.value}:</span>
+            <span style={{ fontWeight: 600, color: c.ink900 }}>{transaction.currency}</span>
           </div>
         )}
 
         {transaction.exchangeRate && (
           <div className="lumio-tx-detail__row">
-            <span style={{ color: '#4b5563' }}>{t.exchangeRate.value}:</span>
-            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.exchangeRate.toFixed(4)}</span>
+            <span style={{ color: c.ink700 }}>{t.exchangeRate.value}:</span>
+            <span style={{ fontWeight: 600, color: c.ink900 }}>{transaction.exchangeRate.toFixed(4)}</span>
           </div>
         )}
 
         {transaction.article && (
           <div className="lumio-tx-detail__row">
-            <span style={{ color: '#4b5563' }}>{t.article.value}:</span>
-            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.article}</span>
+            <span style={{ color: c.ink700 }}>{t.article.value}:</span>
+            <span style={{ fontWeight: 600, color: c.ink900 }}>{transaction.article}</span>
           </div>
         )}
 
         {transaction.branch?.name && (
           <div className="lumio-tx-detail__row">
-            <span style={{ color: '#4b5563' }}>{t.branch.value}:</span>
-            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.branch.name}</span>
+            <span style={{ color: c.ink700 }}>{t.branch.value}:</span>
+            <span style={{ fontWeight: 600, color: c.ink900 }}>{transaction.branch.name}</span>
           </div>
         )}
 
         {transaction.wallet?.name && (
           <div className="lumio-tx-detail__row">
-            <span style={{ color: '#4b5563' }}>{t.wallet.value}:</span>
-            <span style={{ fontWeight: 600, color: '#111827' }}>{transaction.wallet.name}</span>
+            <span style={{ color: c.ink700 }}>{t.wallet.value}:</span>
+            <span style={{ fontWeight: 600, color: c.ink900 }}>{transaction.wallet.name}</span>
           </div>
         )}
       </div>
@@ -221,7 +224,7 @@ export function TransactionDetailsTab({
 
       {/* Current Category */}
       <div className="lumio-tx-detail__card">
-        <div className="lumio-tx-detail__label" style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#374151' }}>
+        <div className="lumio-tx-detail__label" style={{ display: 'flex', alignItems: 'center', gap: 8, color: c.ink800 }}>
           <Tag size={16} />
           {t.currentCategory.value}
         </div>
@@ -230,26 +233,26 @@ export function TransactionDetailsTab({
             <span
               className="lumio-tx-detail__cat-badge"
               style={{
-                backgroundColor: transaction.category.isEnabled === false ? '#fee2e2' : transaction.category.color ? `${transaction.category.color}15` : '#e5e7eb',
-                color: transaction.category.isEnabled === false ? '#b91c1c' : transaction.category.color || '#374151',
+                backgroundColor: transaction.category.isEnabled === false ? '#fee2e2' : transaction.category.color ? `${transaction.category.color}15` : c.ink150,
+                color: transaction.category.isEnabled === false ? '#b91c1c' : transaction.category.color || c.ink800,
               }}
             >
               {transaction.category.isEnabled === false ? `${transaction.category.name} — select category` : transaction.category.name}
             </span>
           ) : (
-            <span style={{ fontSize: 14, color: '#6b7280' }}>{t.noCategory.value}</span>
+            <span style={{ fontSize: 14, color: c.ink500 }}>{t.noCategory.value}</span>
           )}
         </div>
       </div>
 
       {/* Actions */}
       <div className="lumio-tx-detail__actions">
-        <div style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{t.actions.value}</div>
+        <div style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>{t.actions.value}</div>
 
         {/* Set Category */}
         {onUpdateCategory && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <label htmlFor="category-select" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151' }}>
+            <label htmlFor="category-select" style={{ display: 'block', fontSize: 12, fontWeight: 600, color: c.ink800 }}>
               {t.setCategory.value}
             </label>
             <div className="lumio-tx-detail__set-cat">

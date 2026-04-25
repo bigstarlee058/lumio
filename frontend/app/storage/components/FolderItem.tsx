@@ -41,7 +41,7 @@ const baseButtonStyle: React.CSSProperties = {
   padding: '12px 16px', border: '1px solid',
 };
 const pickedButtonStyle: React.CSSProperties = {
-  ...baseButtonStyle, borderColor: '#168118', background: 'rgba(22,129,24,0.05)',
+  ...baseButtonStyle, borderColor: 'var(--primary)', background: 'rgba(22,129,24,0.05)',
   cursor: 'ns-resize', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 10,
 };
 const activeButtonStyle: React.CSSProperties = {
@@ -49,7 +49,7 @@ const activeButtonStyle: React.CSSProperties = {
   cursor: 'pointer', boxShadow: 'none',
 };
 const inactiveButtonStyle: React.CSSProperties = {
-  ...baseButtonStyle, borderColor: '#f3f4f6', background: 'transparent', cursor: 'pointer', boxShadow: 'none',
+  ...baseButtonStyle, borderColor: 'var(--muted)', background: 'transparent', cursor: 'pointer', boxShadow: 'none',
 };
 
 function getFolderButtonStyle({ isPicked, isActive }: { isPicked: boolean; isActive: boolean }): React.CSSProperties {

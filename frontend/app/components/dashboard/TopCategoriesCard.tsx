@@ -64,7 +64,7 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
   if (!option) {
     return (
       <Box
-        sx={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#888888', fontFamily: 'var(--font-dashboard-sans)' }}
+        sx={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
       >
         No category data
       </Box>

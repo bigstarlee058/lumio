@@ -141,7 +141,7 @@ export function CreatePayableDrawer({
           >
             <ChevronLeft size={20} />
           </button>
-          <span style={{ fontSize: 18, fontWeight: 600, color: '#0f3428' }}>
+          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
             {payable ? labels.editTitle : labels.createTitle}
           </span>
         </div>

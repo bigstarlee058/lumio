@@ -10,7 +10,7 @@ import type { GoogleSheetConnection, LayoutType } from './types';
 const inputStyle: CSSProperties = {
   marginTop: 4,
   width: '100%',
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   background: 'var(--card-bg)',
   padding: '8px 12px',
   fontSize: 14,
@@ -74,12 +74,12 @@ export const SourceCard = ({
 }: SourceCardProps): React.JSX.Element => {
   const t = tRaw as unknown as T;
   return (
-    <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-source-card">
-      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>{t.source.title}</Typography>
+    <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }} data-tour-id="gs-import-source-card">
+      <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)', marginBottom: 12 }}>{t.source.title}</Typography>
       <ConnectionSelect connections={connections} googleSheetId={googleSheetId} onConnectionChange={onConnectionChange} loadingConnections={loadingConnections} t={t} />
       <WorksheetSelect worksheetName={worksheetName} setWorksheetName={setWorksheetName} worksheetOptions={worksheetOptions} loadingWorksheets={loadingWorksheets} selectedConnection={selectedConnection} t={t} />
       <label style={{ display: 'block', marginBottom: 12 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.rangeLabel}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.source.rangeLabel}</span>
         <input value={range} onChange={e => setRange(e.target.value)} data-tour-id="gs-import-range" style={inputStyle} placeholder={t.source.rangePlaceholder.value} />
       </label>
       <LayoutOptions headerRowIndex={headerRowIndex} setHeaderRowIndex={setHeaderRowIndex} layoutType={layoutType} setLayoutType={setLayoutType} t={t} />
@@ -113,7 +113,7 @@ const PreviewButton = ({ canPreview, loadingPreview, loadingConnections, onPrevi
         {showSpinner && <Spinner className="h-4 w-4" />}
         {label}
       </Box>
-      {loadingConnections && <Typography style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>{t.source.loadingConnections}</Typography>}
+      {loadingConnections && <Typography style={{ marginTop: 8, fontSize: 12, color: 'var(--muted-foreground)' }}>{t.source.loadingConnections}</Typography>}
     </>
   );
 };
@@ -122,7 +122,7 @@ const ConnectionSelect = ({
   connections, googleSheetId, onConnectionChange, loadingConnections, t,
 }: { connections: GoogleSheetConnection[]; googleSheetId: string; onConnectionChange: (id: string) => void; loadingConnections: boolean; t: T }): React.JSX.Element => (
   <label style={{ display: 'block', marginBottom: 12 }}>
-    <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.connectionLabel}</span>
+    <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.source.connectionLabel}</span>
     <select value={googleSheetId} onChange={e => onConnectionChange(e.target.value)} data-tour-id="gs-import-connection" style={inputStyle}>
       <option value="">{t.source.selectPlaceholder}</option>
       {connections.map(c => (
@@ -132,7 +132,7 @@ const ConnectionSelect = ({
       ))}
     </select>
     {!connections.length && !loadingConnections ? (
-      <Box sx={{ mt: 1, border: '1px dashed #e5e7eb', bgcolor: '#f9fafb', p: 1.5, fontSize: 12, color: '#4b5563' }}>
+      <Box sx={{ mt: 1, border: '1px dashed var(--border-color)', bgcolor: 'var(--muted)', p: 1.5, fontSize: 12, color: 'var(--text-secondary)' }}>
         {t.source.emptyHint}{' '}
         <Link href="/integrations/google-sheets" style={{ color: 'var(--mui-palette-primary-main)', textDecoration: 'none' }}>{t.source.emptyAction}</Link>
       </Box>
@@ -144,7 +144,7 @@ const WorksheetSelect = ({
   worksheetName, setWorksheetName, worksheetOptions, loadingWorksheets, selectedConnection, t,
 }: { worksheetName: string; setWorksheetName: (v: string) => void; worksheetOptions: WorksheetOption[]; loadingWorksheets: boolean; selectedConnection: GoogleSheetConnection | null; t: T }): React.JSX.Element => (
   <label style={{ display: 'block', marginBottom: 12 }}>
-    <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.worksheetLabel}</span>
+    <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.source.worksheetLabel}</span>
     <select value={worksheetName} onChange={e => setWorksheetName(e.target.value)} data-tour-id="gs-import-worksheet"
       style={{ ...inputStyle, opacity: (!selectedConnection || loadingWorksheets) ? 0.6 : 1 }}
       disabled={!selectedConnection || loadingWorksheets}
@@ -152,7 +152,7 @@ const WorksheetSelect = ({
       <option value="">{loadingWorksheets ? t.source.worksheetLoading : t.source.worksheetPlaceholder}</option>
       {worksheetOptions.map(item => <option key={item.title} value={item.title}>{item.title}</option>)}
     </select>
-    <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b7280' }}>{t.source.worksheetHelp}</span>
+    <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{t.source.worksheetHelp}</span>
   </label>
 );
 
@@ -161,12 +161,12 @@ const LayoutOptions = ({
 }: { headerRowIndex: number; setHeaderRowIndex: (v: number) => void; layoutType: LayoutType; setLayoutType: (v: LayoutType) => void; t: T }): React.JSX.Element => (
   <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, mb: 1.5 }}>
     <label style={{ display: 'block' }}>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.headerOffsetLabel}</span>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.source.headerOffsetLabel}</span>
       <input type="number" min={0} value={headerRowIndex} onChange={e => setHeaderRowIndex(Number(e.target.value))} data-tour-id="gs-import-header-offset" style={inputStyle} />
-      <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: '#6b7280' }}>{t.source.headerOffsetHelp}</span>
+      <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{t.source.headerOffsetHelp}</span>
     </label>
     <label style={{ display: 'block' }}>
-      <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>{t.source.layoutLabel}</span>
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{t.source.layoutLabel}</span>
       <select value={layoutType} onChange={e => setLayoutType(e.target.value as LayoutType)} data-tour-id="gs-import-layout" style={inputStyle}>
         <option value="auto">{t.source.layoutAuto}</option>
         <option value="flat">{t.source.layoutFlat}</option>

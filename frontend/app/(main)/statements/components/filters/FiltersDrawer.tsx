@@ -10,11 +10,11 @@ import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
 import { FilterSection } from './FilterSection';
 import type {
-import { tokens } from '@/lib/theme-tokens';
   StatementFilterDateMode,
   StatementFilterDatePreset,
   StatementFilters,
 } from './statement-filters';
+import { tokens } from '@/lib/theme-tokens';
 
 type FiltersDrawerLabels = {
   title: string;
@@ -153,11 +153,11 @@ export function FiltersDrawer({
   const inputStyle: React.CSSProperties = {
     width: '100%',
     borderRadius: tokens.radius.md,
-    border: '1px solid #e5e7eb',
+    border: '1px solid var(--border-color)',
     background: 'var(--card-bg)',
     padding: '8px 12px',
     fontSize: 14,
-    color: '#111827',
+    color: 'var(--foreground)',
     outline: 'none',
     boxSizing: 'border-box',
   };

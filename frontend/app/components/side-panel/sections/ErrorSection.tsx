@@ -27,18 +27,18 @@ function ErrorItemComponent({ item }: { item: ErrorItem }) {
         />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-            <p style={{ fontSize: 14, fontWeight: 500, color: '#111827', margin: 0 }}>{item.title}</p>
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', margin: 0 }}>{item.title}</p>
             {item.dismissible && item.onDismiss && (
               <button
                 type="button"
                 onClick={item.onDismiss}
-                style={{ color: '#9ca3af', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                style={{ color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
               >
                 <X size={14} />
               </button>
             )}
           </div>
-          <p style={{ fontSize: 12, color: '#4b5563', marginTop: 4, marginBottom: 0 }}>{item.message}</p>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, marginBottom: 0 }}>{item.message}</p>
           {item.action && (
             <button
               type="button"
@@ -75,7 +75,7 @@ export function ErrorSectionRenderer({ section }: { section: ErrorSection }) {
           <ErrorItemComponent key={item.id} item={item} />
         ))}
         {section.maxItems && section.items.length > section.maxItems && (
-          <p style={{ fontSize: 12, color: '#6b7280', textAlign: 'center', padding: '4px 0', margin: 0 }}>
+          <p style={{ fontSize: 12, color: 'var(--muted-foreground)', textAlign: 'center', padding: '4px 0', margin: 0 }}>
             +{section.items.length - section.maxItems} more
           </p>
         )}

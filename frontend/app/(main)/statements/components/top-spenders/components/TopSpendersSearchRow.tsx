@@ -10,7 +10,7 @@ export function TopSpendersSearchRow({ vm }: Props): React.JSX.Element {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ position: 'relative', flex: 1 }}>
-        <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af', pointerEvents: 'none' }} />
+        <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--muted-foreground)', pointerEvents: 'none' }} />
         <input type="text" value={vm.searchInput} onChange={e => vm.setSearchInput(e.target.value)}
           placeholder={vm.labels.searchPlaceholder} aria-label={vm.labels.searchPlaceholder} className="lumio-view-page__search-input" />
       </div>

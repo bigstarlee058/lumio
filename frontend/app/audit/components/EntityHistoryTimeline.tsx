@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import {
-import { tokens } from '@/lib/theme-tokens';
   CheckCircle2,
   Edit3,
   FileDown,
@@ -16,6 +15,7 @@ import { tokens } from '@/lib/theme-tokens';
   Trash2,
   Unlink2,
 } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 
 interface EntityHistoryTimelineProps {
   events: AuditEvent[];
@@ -46,25 +46,25 @@ function TimelineEventItem({ event, onSelect }: { event: AuditEvent; onSelect?: 
     <button
       type="button"
       onClick={() => onSelect?.(event)}
-      style={{ display: 'flex', width: '100%', alignItems: 'flex-start', gap: 12, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, textAlign: 'left', cursor: 'pointer', borderRadius: tokens.radius.lg }}
+      style={{ display: 'flex', width: '100%', alignItems: 'flex-start', gap: 12, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 12, textAlign: 'left', cursor: 'pointer', borderRadius: tokens.radius.lg }}
     >
-      <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: tokens.radius.full, bgcolor: '#f3f4f6', color: '#4b5563', flexShrink: 0 }}>
+      <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: tokens.radius.full, bgcolor: 'var(--muted)', color: 'var(--text-secondary)', flexShrink: 0 }}>
         <Icon size={16} />
       </Box>
       <Box sx={{ flex: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-          <Typography variant="body2" fontWeight={600} style={{ color: '#111827' }}>
+          <Typography variant="body2" fontWeight={600} style={{ color: 'var(--foreground)' }}>
             {event.action.replace(/_/g, ' ')}
           </Typography>
-          <Typography variant="caption" style={{ color: '#6b7280' }}>
+          <Typography variant="caption" style={{ color: 'var(--muted-foreground)' }}>
             {new Date(event.createdAt).toLocaleString()}
           </Typography>
         </Box>
-        <Typography variant="caption" style={{ color: '#4b5563', display: 'block', marginTop: 4 }}>
+        <Typography variant="caption" style={{ color: 'var(--text-secondary)', display: 'block', marginTop: 4 }}>
           {event.actorLabel} • {event.entityType} • {event.severity}
         </Typography>
         {event.batchId && (
-          <Typography variant="caption" style={{ color: '#6b7280', display: 'block', marginTop: 4 }}>
+          <Typography variant="caption" style={{ color: 'var(--muted-foreground)', display: 'block', marginTop: 4 }}>
             Batch {event.batchId}
           </Typography>
         )}
@@ -75,7 +75,7 @@ function TimelineEventItem({ event, onSelect }: { event: AuditEvent; onSelect?: 
 
 export function EntityHistoryTimeline({ events, onSelect }: EntityHistoryTimelineProps): React.JSX.Element {
   if (!events.length) {
-    return <Typography variant="body2" style={{ color: '#6b7280' }}>No history available.</Typography>;
+    return <Typography variant="body2" style={{ color: 'var(--muted-foreground)' }}>No history available.</Typography>;
   }
 
   return (

@@ -31,7 +31,7 @@ export function RowDrawerTabBar({ activeTab, onTabChange }: RowDrawerTabBarProps
         display: 'flex',
         alignItems: 'center',
         gap: 1,
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: '1px solid var(--border-color)',
         pb: 1,
       }}
     >

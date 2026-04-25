@@ -36,7 +36,7 @@ export const DraggableModalFileItem = React.memo(
           {...(canEditFile(file) ? { ...attributes, ...listeners } : {})}
         >
           {canEditFile(file) && (
-            <Box sx={{ color: '#d1d5db', pointerEvents: 'none' }}>
+            <Box sx={{ color: 'var(--border-color)', pointerEvents: 'none' }}>
               <GripVertical size={16} />
             </Box>
           )}
@@ -77,12 +77,12 @@ export const DraggableModalFileItem = React.memo(
                   whiteSpace: 'nowrap',
                   fontSize: 14,
                   fontWeight: 500,
-                  color: '#111827',
+                  color: 'var(--foreground)',
                 }}
               >
                 {file.fileName}
               </Typography>
-              <Typography style={{ fontSize: 12, color: '#6b7280' }}>
+              <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                 {tableFromLabel} {file.bankName}
               </Typography>
             </Box>

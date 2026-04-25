@@ -15,7 +15,7 @@ export function TransactionHistoryTab({ events, loading, onSelect }: Transaction
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ border: '1px solid #e5e7eb', backgroundColor: 'var(--card-bg)', padding: 16, fontSize: 14, color: '#6b7280' }}>
+        <div style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--card-bg)', padding: 16, fontSize: 14, color: 'var(--muted-foreground)' }}>
           Loading history...
         </div>
       </div>

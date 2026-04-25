@@ -27,11 +27,11 @@ interface UnapprovedCashFilterBarProps {
 }
 
 const INPUT_STYLE: React.CSSProperties = {
-  border: '1px solid #e5e7eb',
+  border: '1px solid var(--border-color)',
   background: 'var(--card-bg)',
   padding: '8px 12px',
   fontSize: 14,
-  color: '#111827',
+  color: 'var(--foreground)',
   outline: 'none',
   borderRadius: tokens.radius.md,
 };
@@ -58,10 +58,10 @@ export function UnapprovedCashFilterBar({
   const { searchPlaceholder, filters: filterLabels } = labels;
 
   return (
-    <div style={{ border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: 12, borderRadius: tokens.radius.lg }}>
+    <div style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 12, borderRadius: tokens.radius.lg }}>
       <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(7, 1fr)' }}>
         <div style={{ position: 'relative', gridColumn: 'span 2' }}>
-          <Search style={{ pointerEvents: 'none', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
+          <Search style={{ pointerEvents: 'none', position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--muted-foreground)' }} />
           <input
             value={filters.search}
             onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
@@ -104,7 +104,7 @@ export function UnapprovedCashFilterBar({
         <button
           type="button"
           onClick={resetFilters}
-          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px solid #e5e7eb', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: '#374151', cursor: 'pointer', borderRadius: tokens.radius.md }}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}
         >
           <X style={{ width: 16, height: 16 }} />
           {filterLabels.reset}

@@ -100,7 +100,6 @@ interface StatementItem {
 
 import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
-import { tokens } from '@/lib/theme-tokens';
   type ExportColumn,
   formatUpdatedBadge,
   formatUpdatedDate,
@@ -108,6 +107,8 @@ import { tokens } from '@/lib/theme-tokens';
   sanitizeFileName,
   toCsv,
 } from './customTablesHelpers';
+import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 type TranslationValue = string | { value?: string };
 
@@ -117,6 +118,8 @@ const tx = (root: unknown, path: string[], fallback: string) =>
 export default function CustomTablesPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const t = useIntlayer('customTablesPage');
   const {
     items,
@@ -789,7 +792,7 @@ export default function CustomTablesPage() {
 
   if (authLoading) {
     return (
-      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}>
+      <Box sx={{ display: 'flex', minHeight: '50vh', alignItems: 'center', justifyContent: 'center', color: c.ink500 }}>
         {t.auth.loading}
       </Box>
     );
@@ -798,7 +801,7 @@ export default function CustomTablesPage() {
   if (!user) {
     return (
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 3, fontSize: 14, color: '#4b5563' }}>
+        <Box sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3, fontSize: 14, color: c.ink700 }}>
           {t.auth.loginRequired}
         </Box>
       </Box>
@@ -844,11 +847,11 @@ export default function CustomTablesPage() {
       />
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
         <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: { xs: 2.5, sm: 3 }, py: 2.5 }}>
+          <Box sx={{ border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: { xs: 2.5, sm: 3 }, py: 2.5 }}>
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: { md: 'center' }, justifyContent: { md: 'space-between' } }}>
               <Box sx={{ minWidth: 0 }}>
-                <Typography variant="h1" style={{ fontSize: 24, fontWeight: 600, color: '#111827' }}>{headerTitle}</Typography>
-                <Typography style={{ marginTop: 8, maxWidth: 672, fontSize: 14, color: '#6b7280' }}>{headerSubtitle}</Typography>
+                <Typography variant="h1" style={{ fontSize: 24, fontWeight: 600, color: c.ink900 }}>{headerTitle}</Typography>
+                <Typography style={{ marginTop: 8, maxWidth: 672, fontSize: 14, color: c.ink500 }}>{headerSubtitle}</Typography>
               </Box>
               <Box sx={{ display: 'flex', flexShrink: 0, flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
                 <Box
@@ -867,7 +870,7 @@ export default function CustomTablesPage() {
                       component="button"
                       type="button"
                       data-tour-id="custom-tables-create-dropdown"
-                      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 2, py: 1.25, fontSize: 14, fontWeight: 500, color: '#111827', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
+                      sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 2, py: 1.25, fontSize: 14, fontWeight: 500, color: c.ink900, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
                     >
                       <TableIcon className="h-4 w-4" />
                       {createLabel}
@@ -887,18 +890,18 @@ export default function CustomTablesPage() {
                 </DropdownMenu>
               </Box>
             </Box>
-            <Typography style={{ marginTop: 12, fontSize: 12, color: '#6b7280' }}>{ctaDescriptionLabel}</Typography>
+            <Typography style={{ marginTop: 12, fontSize: 12, color: c.ink500 }}>{ctaDescriptionLabel}</Typography>
           </Box>
 
           <Box sx={{ position: 'relative' }} data-tour-id="search-bar">
-            <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#9ca3af' }} />
+            <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: c.ink400 }} />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
-              style={{ width: '100%', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, background: 'var(--card-bg)', padding: '12px 16px 12px 44px', fontSize: 14, color: '#111827', outline: 'none', boxSizing: 'border-box' }}
+              style={{ width: '100%', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, background: 'var(--card-bg)', padding: '12px 16px 12px 44px', fontSize: 14, color: c.ink900, outline: 'none', boxSizing: 'border-box' }}
             />
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
@@ -970,7 +973,7 @@ export default function CustomTablesPage() {
               component="button"
               type="button"
               onClick={handleOpenFiltersDrawer}
-              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 13, fontWeight: 500, color: '#374151', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 13, fontWeight: 500, color: c.ink800, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" />
               {filterLabels.filters}
@@ -989,18 +992,18 @@ export default function CustomTablesPage() {
               <Spinner className="h-20 w-20 text-primary" />
             </Box>
           ) : filteredCount === 0 ? (
-            <Box sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: { xs: 3, sm: 5 }, py: { xs: 5, sm: 6 } }}>
-              <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, bgcolor: 'action.hover', color: '#9ca3af' }}>
+            <Box sx={{ border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: { xs: 3, sm: 5 }, py: { xs: 5, sm: 6 } }}>
+              <Box sx={{ mx: 'auto', mb: 2, display: 'flex', width: 64, height: 64, alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, bgcolor: 'action.hover', color: c.ink400 }}>
                 <TableIcon className="h-8 w-8" />
               </Box>
-              <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: '#111827' }}>
+              <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: c.ink900 }}>
                 {emptyLabels.title}
               </Typography>
-              <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: '#6b7280' }}>
+              <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: c.ink500 }}>
                 {emptyLabels.description}
               </Typography>
-              <Box sx={{ mt: 2.5, mx: 'auto', maxWidth: 672, border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, bgcolor: '#f9fafb', p: 2 }}>
-                <Box component="ol" sx={{ m: 0, pl: 2, display: 'flex', flexDirection: 'column', gap: 1, fontSize: 14, color: '#111827' }}>
+              <Box sx={{ mt: 2.5, mx: 'auto', maxWidth: 672, border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, bgcolor: c.ink50, p: 2 }}>
+                <Box component="ol" sx={{ m: 0, pl: 2, display: 'flex', flexDirection: 'column', gap: 1, fontSize: 14, color: c.ink900 }}>
                   <li>{emptyLabels.step1}</li>
                   <li>{emptyLabels.step2}</li>
                   <li>{emptyLabels.step3}</li>
@@ -1022,13 +1025,13 @@ export default function CustomTablesPage() {
           ) : (
             <>
               {shouldShowGrowthHint ? (
-                <Box sx={{ mb: 1.5, border: '1px solid rgba(22,129,24,0.2)', borderRadius: tokens.radius.lg, bgcolor: 'rgba(22,129,24,0.05)', px: 2, py: 1.5, fontSize: 14, color: '#157811' }}>
+                <Box sx={{ mb: 1.5, border: '1px solid rgba(22,129,24,0.2)', borderRadius: tokens.radius.lg, bgcolor: 'rgba(22,129,24,0.05)', px: 2, py: 1.5, fontSize: 14, color: c.primary }}>
                   {growthHintLabel}
                 </Box>
               ) : null}
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, overflow: 'hidden' }}>
-                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.5, px: 2, fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280' }}>
+                <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.5, px: 2, fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: c.ink500 }}>
                   <Box sx={{ width: 16 }} />
                   <Box sx={{ width: 44 }} />
                   <Box sx={{ width: 12 }} />
@@ -1042,7 +1045,7 @@ export default function CustomTablesPage() {
                 {registryItems.map(table => (
                   <Box
                     key={table.id}
-                    sx={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: 2, py: 1.5, '&:hover': { bgcolor: 'action.hover' } }}
+                    sx={{ display: 'flex', cursor: 'pointer', alignItems: 'center', gap: 1.5, border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, bgcolor: 'background.paper', px: 2, py: 1.5, '&:hover': { bgcolor: 'action.hover' } }}
                     onClick={() => router.push(`/custom-tables/${table.id}`)}
                     onKeyDown={event => {
                       if (event.target !== event.currentTarget) {
@@ -1072,17 +1075,17 @@ export default function CustomTablesPage() {
                       title={openLabel}
                     >
                       {table.category?.icon ? (
-                        <CategoryIcon size={20} style={{ color: '#374151' }} />
+                        <CategoryIcon size={20} style={{ color: c.ink800 }} />
                       ) : (
-                        <TableIcon className="h-5 w-5" style={{ color: '#4b5563' }} />
+                        <TableIcon className="h-5 w-5" style={{ color: c.ink700 }} />
                       )}
                     </Box>
                     <Box sx={{ width: 12, flexShrink: 0 }} />
                     <Box sx={{ minWidth: 0, flex: 1 }}>
-                      <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {table.displayName}
                       </Typography>
-                      <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography style={{ marginTop: 4, fontSize: 12, color: c.ink500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {fromLabel}: {table.sourceDescriptor} · {columnLabels.rows}:{' '}
                         {table.rowsCountLabel} · {columnLabels.updatedAt}:{' '}
                         {formatUpdatedDate(table.updatedAt)}
@@ -1092,19 +1095,19 @@ export default function CustomTablesPage() {
                           {table.createdFromBadge}
                         </Box>
                       ) : table.description ? (
-                        <Typography style={{ fontSize: 12, color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{table.description}</Typography>
+                        <Typography style={{ fontSize: 12, color: c.ink500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{table.description}</Typography>
                       ) : null}
                     </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 120, flexShrink: 1, minWidth: 0, fontSize: 12, fontWeight: 600, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 120, flexShrink: 1, minWidth: 0, fontSize: 12, fontWeight: 600, color: c.ink800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {table.purpose}
                     </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 120, flexShrink: 1, minWidth: 0, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 120, flexShrink: 1, minWidth: 0, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: c.ink500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {table.sourceSummary}
                     </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 72, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 72, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                       {table.rowsCountLabel}
                     </Box>
-                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 96, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                    <Box sx={{ display: { xs: 'none', md: 'inline-block' }, width: 96, flexShrink: 0, textAlign: 'right', fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                       {table.updatedLabel}
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, flexShrink: 0 }}>
@@ -1143,7 +1146,7 @@ export default function CustomTablesPage() {
                       <Box
                         component="button"
                         type="button"
-                        sx={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: '#374151', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
+                        sx={{ display: 'inline-flex', alignItems: 'center', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: c.ink800, bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}
                         onClick={event => {
                           event.stopPropagation();
                           router.push(`/custom-tables/${table.id}`);
@@ -1155,7 +1158,7 @@ export default function CustomTablesPage() {
                       <Box
                         component="button"
                         type="button"
-                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: '#6b7280', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: '#111827' }, '&:disabled': { opacity: 0.5 } }}
+                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.75, fontSize: 14, fontWeight: 500, color: c.ink500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: c.ink900 }, '&:disabled': { opacity: 0.5 } }}
                         disabled={updatingTableId === table.id}
                         onClick={event => {
                           event.stopPropagation();
@@ -1171,7 +1174,7 @@ export default function CustomTablesPage() {
                           <Box
                             component="button"
                             type="button"
-                            sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #e5e7eb', borderRadius: tokens.radius.sm, p: 0.75, color: '#4b5563', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: '#d1d5db', color: '#111827' } }}
+                            sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.sm, p: 0.75, color: c.ink700, bgcolor: 'transparent', cursor: 'pointer', '&:hover': { borderColor: c.ink300, color: c.ink900 } }}
                             onClick={event => event.stopPropagation()}
                             aria-label="More actions"
                           >
@@ -1184,7 +1187,7 @@ export default function CustomTablesPage() {
                               event.stopPropagation();
                               confirmDelete(table);
                             }}
-                            style={{ color: '#dc2626' }}
+                            style={{ color: c.danger }}
                           >
                             <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
                               <Trash2 className="h-4 w-4" />
@@ -1195,7 +1198,7 @@ export default function CustomTablesPage() {
                       </DropdownMenu>
 
                       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                        <ChevronRight className="h-5 w-5" style={{ color: '#9ca3af' }} />
+                        <ChevronRight className="h-5 w-5" style={{ color: c.ink400 }} />
                       </Box>
                     </Box>
                   </Box>
@@ -1206,7 +1209,7 @@ export default function CustomTablesPage() {
                 sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 1.5, pt: 2 }}
                 data-tour-id="pagination"
               >
-                <Typography style={{ fontSize: 14, color: '#4b5563' }}>
+                <Typography style={{ fontSize: 14, color: c.ink700 }}>
                   {filteredCount === 0
                     ? emptyLabels.title
                     : formatPaginationLabel(paginationLabels.shown, {
@@ -1216,7 +1219,7 @@ export default function CustomTablesPage() {
                       })}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
+                  <Typography style={{ fontSize: 14, color: c.ink700, minWidth: 120, textAlign: 'center' }}>
                     {formatPaginationLabel(paginationLabels.pageOf, {
                       page,
                       count: totalPages || 1,
@@ -1238,10 +1241,10 @@ export default function CustomTablesPage() {
         PaperProps={{ sx: { border: '1px solid', borderColor: 'divider' } }}
       >
         <DialogTitle sx={{ borderBottom: '1px solid', borderColor: 'divider', px: 3, py: 2.5 }}>
-          <Typography style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>
+          <Typography style={{ fontSize: 20, fontWeight: 600, color: c.ink900 }}>
             {createFromStatementsLabels.title}
           </Typography>
-          <Typography style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>
+          <Typography style={{ marginTop: 4, fontSize: 14, color: c.ink500 }}>
             {formatPaginationLabel(createFromStatementsLabels.stepCounter, {
               current: createFromStatementsStep,
               total: 2,
@@ -1254,14 +1257,14 @@ export default function CustomTablesPage() {
                 <Box
                   sx={{
                     border: '1px solid',
-                    borderColor: createFromStatementsStep === 1 ? 'primary.main' : '#e5e7eb',
+                    borderColor: createFromStatementsStep === 1 ? 'primary.main' : c.ink150,
                     borderRadius: tokens.radius.sm,
                     bgcolor: createFromStatementsStep === 1 ? 'primary.50' : 'transparent',
                     px: 1.5,
                     py: 1,
                     fontSize: 12,
                     fontWeight: 500,
-                    color: createFromStatementsStep === 1 ? 'primary.main' : '#6b7280',
+                    color: createFromStatementsStep === 1 ? 'primary.main' : c.ink500,
                   }}
                 >
                   {createFromStatementsLabels.step1}
@@ -1269,14 +1272,14 @@ export default function CustomTablesPage() {
                 <Box
                   sx={{
                     border: '1px solid',
-                    borderColor: createFromStatementsStep === 2 ? 'primary.main' : '#e5e7eb',
+                    borderColor: createFromStatementsStep === 2 ? 'primary.main' : c.ink150,
                     borderRadius: tokens.radius.sm,
                     bgcolor: createFromStatementsStep === 2 ? 'primary.50' : 'transparent',
                     px: 1.5,
                     py: 1,
                     fontSize: 12,
                     fontWeight: 500,
-                    color: createFromStatementsStep === 2 ? 'primary.main' : '#6b7280',
+                    color: createFromStatementsStep === 2 ? 'primary.main' : c.ink500,
                   }}
                 >
                   {createFromStatementsLabels.step2}
@@ -1334,7 +1337,7 @@ export default function CustomTablesPage() {
                     </Grid>
                   </Grid>
 
-                  <Box sx={{ maxHeight: 360, overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, display: 'flex', flexDirection: 'column', gap: 1.5, p: 1 }}>
+                  <Box sx={{ maxHeight: 360, overflowY: 'auto', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, display: 'flex', flexDirection: 'column', gap: 1.5, p: 1 }}>
                     {statementsLoading ? (
                       <Typography variant="caption">
                         {createFromStatementsLabels.statementsLoading}
@@ -1349,8 +1352,8 @@ export default function CustomTablesPage() {
                       </Typography>
                     ) : (
                       groupedStatementSelectionOptions.map(group => (
-                        <Box key={group.key} sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.md }}>
-                          <Box sx={{ borderBottom: '1px solid #e5e7eb', bgcolor: '#f9fafb', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: '#4b5563' }}>
+                        <Box key={group.key} sx={{ border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md }}>
+                          <Box sx={{ borderBottom: `1px solid ${c.ink150}`, bgcolor: c.ink50, px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: c.ink700 }}>
                             {group.label} ({group.options.length})
                           </Box>
                           <Box>
@@ -1381,28 +1384,28 @@ export default function CustomTablesPage() {
                                     py: 1,
                                     textAlign: 'left',
                                     border: 'none',
-                                    borderTop: idx > 0 ? '1px solid #f3f4f6' : 'none',
+                                    borderTop: idx > 0 ? `1px solid ${c.ink50}` : 'none',
                                     bgcolor: 'transparent',
                                     cursor: option.disabled ? 'not-allowed' : 'pointer',
                                     opacity: option.disabled ? 0.5 : 1,
-                                    '&:hover': { bgcolor: option.disabled ? 'transparent' : '#f9fafb' },
+                                    '&:hover': { bgcolor: option.disabled ? 'transparent' : c.ink50 },
                                   }}
                                 >
                                   <Checkbox checked={checked} className="h-4 w-4" style={{ marginTop: 2, flexShrink: 0 }} />
                                   <Box sx={{ minWidth: 0, flex: 1 }}>
-                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                                       {option.title}
                                     </Box>
-                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: c.ink500 }}>
                                       {createFromStatementsLabels.sourceLabel}: {option.sourceLabel}{' '}
                                       - {createFromStatementsLabels.periodLabel}:{' '}
                                       {option.periodLabel}
                                     </Box>
-                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#6b7280' }}>
+                                    <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: c.ink500 }}>
                                       {createFromStatementsLabels.fileLabel}: {option.fileLabel}
                                     </Box>
                                     {option.duplicateCount > 1 ? (
-                                      <Box style={{ fontSize: 12, color: '#92400e' }}>
+                                      <Box style={{ fontSize: 12, color: c.warning }}>
                                         {formatPaginationLabel(
                                           createFromStatementsLabels.duplicateUploads,
                                           {
@@ -1412,7 +1415,7 @@ export default function CustomTablesPage() {
                                       </Box>
                                     ) : null}
                                   </Box>
-                                  <Box style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, color: '#374151' }}>
+                                  <Box style={{ flexShrink: 0, fontSize: 12, fontWeight: 600, color: c.ink800 }}>
                                     {option.rowsLabel}
                                   </Box>
                                 </Box>
@@ -1424,7 +1427,7 @@ export default function CustomTablesPage() {
                     )}
                   </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: '#6b7280' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: c.ink500 }}>
                     <span>{createFromStatementsLabels.hint}</span>
                     <span>
                       {formatPaginationLabel(createFromStatementsLabels.selectedLabel, {
@@ -1473,21 +1476,21 @@ export default function CustomTablesPage() {
                     </Grid>
                   </Grid>
 
-                  <Box sx={{ border: '1px solid #e5e7eb', borderRadius: tokens.radius.lg, bgcolor: '#f9fafb', p: 1.5 }}>
-                    <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                  <Box sx={{ border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.lg, bgcolor: c.ink50, p: 1.5 }}>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                       {createFromStatementsLabels.previewTitle}
                     </Typography>
-                    <Typography style={{ marginTop: 4, fontSize: 14, color: '#374151' }}>
+                    <Typography style={{ marginTop: 4, fontSize: 14, color: c.ink800 }}>
                       {formatPaginationLabel(createFromStatementsLabels.previewSummary, {
                         statements: selectedStatementSummary.selectedCount,
                       })}
                     </Typography>
-                    <Typography style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                    <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                       {formatPaginationLabel(createFromStatementsLabels.previewRows, {
                         rows: selectedStatementSummary.totalRows,
                       })}
                     </Typography>
-                    <Typography style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
+                    <Typography style={{ marginTop: 4, fontSize: 12, color: c.ink500 }}>
                       {createFromStatementsLabels.previewEditable}
                     </Typography>
 
@@ -1495,10 +1498,10 @@ export default function CustomTablesPage() {
                       {selectedStatementPreviewItems.map(option => (
                         <Box
                           key={option.representativeId}
-                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid #e5e7eb', borderRadius: tokens.radius.sm, bgcolor: 'background.paper', px: 1, py: 0.5 }}
+                          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.sm, bgcolor: 'background.paper', px: 1, py: 0.5 }}
                         >
-                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: '#374151' }}>{option.title}</span>
-                          <span style={{ fontSize: 12, fontWeight: 500, color: '#111827', flexShrink: 0, marginLeft: 8 }}>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: c.ink800 }}>{option.title}</span>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: c.ink900, flexShrink: 0, marginLeft: 8 }}>
                             {option.rowsLabel}
                           </span>
                         </Box>

@@ -33,7 +33,7 @@ function StepIndicator({ label, active }: StepIndicatorProps): React.JSX.Element
     <Box
       sx={{
         border: '1px solid',
-        borderColor: active ? 'primary.main' : '#e5e7eb',
+        borderColor: active ? 'primary.main' : 'var(--border-color)',
         bgcolor: active ? 'primary.50' : 'transparent',
         px: 1.5,
         py: 1,

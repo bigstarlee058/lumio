@@ -25,9 +25,9 @@ export function BankLogoAvatar({ bankName, size = 32, className, rounded = true 
       alt={bankName || resolved.displayName || 'Bank'}
       size={size}
       imgClassName={className}
-      imgStyle={{ borderRadius, backgroundColor: '#f3f4f6', objectFit: 'contain' }}
+      imgStyle={{ borderRadius, backgroundColor: 'var(--muted)', objectFit: 'contain' }}
       className={className}
-      fallbackStyle={{ borderRadius, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#6b7280' }}
+      fallbackStyle={{ borderRadius, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}
       fallback={
         <Landmark
           data-testid="bank-logo-fallback-icon"

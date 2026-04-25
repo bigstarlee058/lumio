@@ -43,21 +43,21 @@ export function FinancialSnapshot({ snapshot, formatAmount, labels }: FinancialS
         return (
           <Card
             key={key}
-            style={{ border: '1px solid #E8E8E8', background: 'var(--card-bg)', boxShadow: 'none', borderRadius: tokens.radius.lg }}
+            style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', boxShadow: 'none', borderRadius: tokens.radius.lg }}
           >
             <CardContent style={{ padding: 20, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               <div>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#94a3b8' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--muted-foreground)' }}>
                   <span>{labels[labelKey]}</span>
                   <Box
                     component="span"
-                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: 'var(--muted)', color: '#64748b', border: '1px solid #E8E8E8', transition: 'background-color 150ms, color 150ms' }}
+                    sx={{ display: 'flex', height: 32, width: 32, alignItems: 'center', justifyContent: 'center', bgcolor: 'var(--muted)', color: 'var(--muted-foreground)', border: '1px solid var(--border-color)', transition: 'background-color 150ms, color 150ms' }}
                   >
                     <Icon size={16} />
                   </Box>
                 </Box>
                 <Box sx={{ mt: 2 }}>
-                  <span style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.02em', color: '#0f172a' }}>
+                  <span style={{ fontSize: 24, fontWeight: 700, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.02em', color: 'var(--foreground)' }}>
                     {formatAmount(value)}
                   </span>
                 </Box>

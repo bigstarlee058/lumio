@@ -37,15 +37,15 @@ function LeaderboardRow({ row, currency, activeFlowType, onRowClick }: RowProps)
   const average = row.count > 0 ? total / row.count : 0;
   return (
     <tr>
-      <td style={{ fontWeight: 500, color: '#111827' }}>
+      <td style={{ fontWeight: 500, color: 'var(--foreground)' }}>
         <button type="button" className="lumio-view-page__table-link" onClick={() => onRowClick(row.period)}>
           {row.label}
         </button>
       </td>
       <td style={{ textAlign: 'right' }}>{row.count}</td>
       <td style={{ textAlign: 'right' }}>{formatMoney(average, currency)}</td>
-      <td style={{ textAlign: 'right', fontWeight: 600, color: '#111827' }}>{formatMoney(total, currency)}</td>
-      <td style={{ textAlign: 'right', color: '#6b7280' }}>{row.label}</td>
+      <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--foreground)' }}>{formatMoney(total, currency)}</td>
+      <td style={{ textAlign: 'right', color: 'var(--muted-foreground)' }}>{row.label}</td>
     </tr>
   );
 }

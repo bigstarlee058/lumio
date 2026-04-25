@@ -2,27 +2,27 @@
 
 import { Box, Typography } from '@mui/material';
 import type { ReceiptRecord } from '@/app/lib/api';
-
-const centeredBoxSx = {
-  display: 'flex',
-  height: '100%',
-  minHeight: 388,
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 14,
-  color: '#64748b',
-};
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 function CenteredMessage({ children }: { children: React.ReactNode }): React.ReactElement {
-  return <Box sx={centeredBoxSx}>{children}</Box>;
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
+  return (
+    <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
+      {children}
+    </Box>
+  );
 }
 
 function PdfPreview({ url, subject }: { url: string; subject: string }): React.ReactElement {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <iframe
       src={url}
       title={subject}
-      style={{ height: '100%', minHeight: 760, width: '100%', border: '1px solid #e2e8f0', background: 'var(--card-bg)', display: 'block' }}
+      style={{ height: '100%', minHeight: 760, width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', display: 'block' }}
     />
   );
 }
@@ -63,15 +63,17 @@ interface ReceiptViewerProps {
 }
 
 export function ReceiptViewer({ receipt, previewLoading, previewUrl, previewMimeType, previewError }: ReceiptViewerProps): React.ReactElement {
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box component="section" sx={{ display: 'flex', height: '100%', minHeight: 0, flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', height: '100%', minHeight: 420, flexDirection: 'column', overflow: 'hidden', border: '1px solid #e2e8f0', bgcolor: 'background.paper' }}>
-        <Box sx={{ borderBottom: '1px solid #e2e8f0', px: 2.5, py: 2 }}>
-          <Typography style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+      <Box sx={{ display: 'flex', height: '100%', minHeight: 420, flexDirection: 'column', overflow: 'hidden', border: `1px solid ${c.ink150}`, bgcolor: 'background.paper' }}>
+        <Box sx={{ borderBottom: `1px solid ${c.ink150}`, px: 2.5, py: 2 }}>
+          <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
             Original document
           </Typography>
         </Box>
-        <Box sx={{ flex: 1, overflow: 'auto', bgcolor: '#f8fafc', p: 2 }}>
+        <Box sx={{ flex: 1, overflow: 'auto', bgcolor: c.ink50, p: 2 }}>
           <PreviewContent
             previewLoading={previewLoading}
             previewUrl={previewUrl}

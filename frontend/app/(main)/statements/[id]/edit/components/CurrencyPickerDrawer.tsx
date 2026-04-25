@@ -11,13 +11,13 @@ const CURRENCY_BTN_STYLE: React.CSSProperties = {
 type CurrencyListProps = { items: CurrencySearchItem[]; onSelect: (code: string) => void };
 function CurrencyList({ items, onSelect }: CurrencyListProps): React.ReactElement {
   if (items.length === 0) {
-    return <p style={{ borderRadius: tokens.radius.sm, background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: '#6b7280' }}>No currencies found</p>;
+    return <p style={{ borderRadius: tokens.radius.sm, background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: 'var(--muted-foreground)' }}>No currencies found</p>;
   }
   return (
     <>
       {items.map(item => (
         <button key={item.code} type="button" onClick={() => onSelect(item.code)} style={CURRENCY_BTN_STYLE}>
-          <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
+          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{item.label}</span>
         </button>
       ))}
     </>
@@ -28,7 +28,7 @@ type SelectedCurrencyButtonProps = { item: CurrencySearchItem; onSelect: (code: 
 function SelectedCurrencyButton({ item, onSelect }: SelectedCurrencyButtonProps): React.ReactElement {
   return (
     <button type="button" onClick={() => onSelect(item.code)} style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.md, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}>
-      <span style={{ fontSize: 16, fontWeight: 600, color: '#0f3428' }}>{item.label}</span>
+      <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{item.label}</span>
       <Check size={20} color="var(--primary)" />
     </button>
   );
@@ -38,7 +38,7 @@ type AllCurrencySectionProps = { items: CurrencySearchItem[]; onSelect: (code: s
 function AllCurrencySection({ items, onSelect }: AllCurrencySectionProps): React.ReactElement {
   return (
     <div style={{ marginTop: 24 }}>
-      <p style={{ padding: '0 4px', fontSize: 14, color: '#6b7280' }}>All</p>
+      <p style={{ padding: '0 4px', fontSize: 14, color: 'var(--muted-foreground)' }}>All</p>
       <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
         <CurrencyList items={items} onSelect={onSelect} />
       </div>
@@ -50,7 +50,7 @@ type RecentSectionProps = { items: CurrencySearchItem[]; onSelect: (code: string
 function RecentCurrencySection({ items, onSelect }: RecentSectionProps): React.ReactElement {
   return (
     <div style={{ marginTop: 24 }}>
-      <p style={{ padding: '0 4px', fontSize: 14, color: '#6b7280' }}>Recents</p>
+      <p style={{ padding: '0 4px', fontSize: 14, color: 'var(--muted-foreground)' }}>Recents</p>
       <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <CurrencyList items={items} onSelect={onSelect} />
       </div>
@@ -77,7 +77,7 @@ export function CurrencyPickerDrawer({ isOpen, currencySearch, selectedCurrencyI
       title={
         <div className="lumio-payable-drawer__title-wrap">
           <button type="button" onClick={onClose} className="lumio-col-drawer__back-btn" aria-label="Select a currency"><ChevronLeft size={20} /></button>
-          <span style={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>Select a currency</span>
+          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>Select a currency</span>
         </div>
       }
     >

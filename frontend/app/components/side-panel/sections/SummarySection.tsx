@@ -36,13 +36,13 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
   }, [item]);
 
   return (
-    <div style={{ padding: 12, backgroundColor: '#f9fafb', borderRadius: tokens.radius.lg }}>
+    <div style={{ padding: 12, backgroundColor: 'var(--muted)', borderRadius: tokens.radius.lg }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p
             style={{
               fontSize: 12,
-              color: '#6b7280',
+              color: 'var(--muted-foreground)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -51,14 +51,14 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
           >
             {item.label}
           </p>
-          <p style={{ fontSize: 18, fontWeight: 600, color: '#111827', marginTop: 4, marginBottom: 0 }}>
+          <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)', marginTop: 4, marginBottom: 0 }}>
             {formattedValue}
           </p>
           {item.change && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
               {item.change.type === 'increase' && <ArrowUp size={12} style={{ color: '#10b981' }} />}
-              {item.change.type === 'decrease' && <ArrowDown size={12} style={{ color: '#ef4444' }} />}
-              {item.change.type === 'neutral' && <Minus size={12} style={{ color: '#9ca3af' }} />}
+              {item.change.type === 'decrease' && <ArrowDown size={12} style={{ color: 'var(--destructive)' }} />}
+              {item.change.type === 'neutral' && <Minus size={12} style={{ color: 'var(--muted-foreground)' }} />}
               <span
                 style={{
                   fontSize: 12,
@@ -75,7 +75,7 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
                 {item.change.value}%
               </span>
               {item.change.period && (
-                <span style={{ fontSize: 12, color: '#9ca3af' }}>{item.change.period}</span>
+                <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{item.change.period}</span>
               )}
             </div>
           )}

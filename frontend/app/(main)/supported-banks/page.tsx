@@ -43,16 +43,16 @@ export default function SupportedBanksPage(): React.JSX.Element {
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
-      <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+      <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
           <Box sx={{ bgcolor: 'primary.main', p: 1.5, color: '#fff', display: 'inline-flex' }}>
             <Building2 size={24} />
           </Box>
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 600, color: '#111827' }}>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: 'var(--foreground)' }}>
               {resolveLabel(getNestedValue(t, ['title']), 'Supported banks')}
             </Typography>
-            <Typography variant="body2" sx={{ mt: 1, color: '#6b7280' }}>
+            <Typography variant="body2" sx={{ mt: 1, color: 'var(--muted-foreground)' }}>
               {resolveLabel(
                 getNestedValue(t, ['subtitle']),
                 'List of banks currently available for automatic statement parsing.',
@@ -77,34 +77,34 @@ export default function SupportedBanksPage(): React.JSX.Element {
             component="article"
             key={bank.id}
             data-supported-bank={bank.id}
-            sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+            sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: { xs: 2.5, sm: 3 }, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, bgcolor: '#f9fafb' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, bgcolor: 'var(--muted)' }}>
                 <Image src={bank.logo} alt={bank.name} width={32} height={32} style={{ objectFit: 'contain' }} />
               </Box>
               <Box>
-                <Typography sx={{ fontSize: 18, fontWeight: 600, color: '#111827' }}>{bank.name}</Typography>
-                <Typography variant="body2" sx={{ color: '#6b7280' }}>
+                <Typography sx={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>{bank.name}</Typography>
+                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
                   {resolveLabel(getNestedValue(t, ['statusLabel']), 'Status')}:{' '}
                   {resolveLabel(getNestedValue(t, ['supported']), 'Supported')}
                 </Typography>
               </Box>
             </Box>
 
-            <Box sx={{ mt: 2, border: '1px solid #f3f4f6', bgcolor: 'rgba(249,250,251,0.7)', px: 1.5, py: 1, fontSize: 14, color: '#374151' }}>
-              <Box component="span" sx={{ fontWeight: 500, color: '#1f2937', mr: 0.5 }}>
+            <Box sx={{ mt: 2, border: '1px solid var(--muted)', bgcolor: 'rgba(249,250,251,0.7)', px: 1.5, py: 1, fontSize: 14, color: 'var(--foreground)' }}>
+              <Box component="span" sx={{ fontWeight: 500, color: 'var(--foreground)', mr: 0.5 }}>
                 {resolveLabel(getNestedValue(t, ['formatsLabel']), 'Supported format')}:
               </Box>
               {resolveLabel(getNestedValue(t, ['pdfStatements']), 'PDF statements')}
             </Box>
 
-            <Typography variant="body2" sx={{ mt: 1.5, color: '#4b5563' }}>{bank.notes}</Typography>
+            <Typography variant="body2" sx={{ mt: 1.5, color: 'var(--text-secondary)' }}>{bank.notes}</Typography>
           </Box>
         ))}
       </Box>
 
-      <Typography variant="body2" sx={{ mt: 3, fontWeight: 500, color: '#6b7280' }}>
+      <Typography variant="body2" sx={{ mt: 3, fontWeight: 500, color: 'var(--muted-foreground)' }}>
         {resolveLabel(getNestedValue(t, ['comingSoon']), 'More banks are coming soon')}
       </Typography>
     </Box>

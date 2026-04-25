@@ -102,7 +102,7 @@ export function ReceiptCameraCapture({
               py: 1.5,
               fontSize: 14,
               fontWeight: 600,
-              color: '#334155',
+              color: 'var(--text-secondary)',
               '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
             }}
           >

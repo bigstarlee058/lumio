@@ -47,7 +47,7 @@ export function FinlabBalanceStatCard({
         formatter: (params: ChartTooltipParam[]) => {
           let str = `<div style="font-weight:bold;margin-bottom:4px;">Total Balance</div>`;
           params.forEach(param => {
-            str += `<div style="color:#e2e8f0">${formatAmount(param.value)}</div>`;
+            str += `<div style="color:var(--border-color)">${formatAmount(param.value)}</div>`;
           });
           return str;
         },
@@ -60,12 +60,12 @@ export function FinlabBalanceStatCard({
         }),
         axisLine: { show: true, lineStyle: { color: '#f1f5f9' } },
         axisTick: { show: false },
-        axisLabel: { color: '#94a3b8', fontSize: 11, margin: 12 },
+        axisLabel: { color: 'var(--muted-foreground)', fontSize: 11, margin: 12 },
       },
       yAxis: {
         type: 'value',
         axisLabel: {
-          color: '#cbd5e1',
+          color: 'var(--border-color)',
           fontSize: 11,
           formatter: (value: number) => {
             if (value >= 1000) return `$${(value / 1000).toFixed(0)}k`;
@@ -73,7 +73,7 @@ export function FinlabBalanceStatCard({
           },
         },
         splitLine: {
-          lineStyle: { type: 'dashed', color: '#E8E8E8' },
+          lineStyle: { type: 'dashed', color: 'var(--border-color)' },
         },
       },
       series: [
@@ -105,7 +105,7 @@ export function FinlabBalanceStatCard({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        border: '1px solid #E8E8E8',
+        border: '1px solid var(--border-color)',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
@@ -121,7 +121,7 @@ export function FinlabBalanceStatCard({
           <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
         ) : (
           <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography sx={{ fontSize: 14, color: '#94a3b8' }}>No data available</Typography>
+            <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No data available</Typography>
           </Box>
         )}
       </Box>

@@ -31,7 +31,7 @@ function FolderMoveFeedbackBanner({
   const sx =
     folderMoveFeedback.tone === 'success'
       ? { borderColor: '#a7f3d0', bgcolor: '#ecfdf5', color: '#065f46' }
-      : { borderColor: '#fecaca', bgcolor: '#fef2f2', color: '#b91c1c' };
+      : { borderColor: '#fecaca', bgcolor: '#fef2f2', color: 'var(--destructive)' };
   return (
     <Box
       role={folderMoveFeedback.tone === 'error' ? 'alert' : 'status'}

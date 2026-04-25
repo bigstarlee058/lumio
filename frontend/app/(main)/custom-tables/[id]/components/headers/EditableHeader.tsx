@@ -119,7 +119,7 @@ export function EditableHeader({
         <button
           type="button"
           onClick={handleDelete}
-          style={{ flexShrink: 0, padding: 4, border: 'none', background: 'transparent', cursor: 'pointer', color: '#9ca3af', lineHeight: 0 }}
+          style={{ flexShrink: 0, padding: 4, border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--muted-foreground)', lineHeight: 0 }}
           title="Delete column"
         >
           <X className="h-3 w-3" />

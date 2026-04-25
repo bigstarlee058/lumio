@@ -11,8 +11,8 @@ interface InsertSuccessToastContentProps {
 }
 function InsertSuccessToastContent({ visible, createdCount, tOps, onUndoClick }: InsertSuccessToastContentProps): React.JSX.Element {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid #e5e7eb', bgcolor: 'background.paper', px: 2, py: 1.5, boxShadow: 3, opacity: visible ? 1 : 0 }}>
-      <Typography style={{ fontSize: 14, color: '#1f2937' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1.5, boxShadow: 3, opacity: visible ? 1 : 0 }}>
+      <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>
         {tx(tOps, ['paste', 'addedPrefix'], 'Added ')}{createdCount}{tx(tOps, ['paste', 'addedSuffix'], ' rows')}
       </Typography>
       <Box component="button" type="button" onClick={onUndoClick} sx={{ fontSize: 14, fontWeight: 600, color: 'primary.main', bgcolor: 'transparent', border: 'none', cursor: 'pointer', '&:hover': { color: 'primary.dark' } }}>

@@ -22,11 +22,11 @@ import { LanguageStep } from './steps/LanguageStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { WorkspaceStep } from './steps/WorkspaceStep';
 import {
-import { tokens } from '@/lib/theme-tokens';
   type OnboardingData,
   type SupportedLocale,
   useOnboardingWizard,
 } from './useOnboardingWizard';
+import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_CURRENCY = 'USD';
 

@@ -27,7 +27,7 @@ export function ColumnsVisibilityPanel({
   return (
     <Box sx={{ width: '100%', px: { xs: 1, sm: 2 }, py: 2 }}>
       <Box sx={{ mx: 'auto', width: '100%', maxWidth: 768, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Box sx={{ overflow: 'hidden', border: '1px solid #e5e7eb', bgcolor: 'background.paper' }}>
+        <Box sx={{ overflow: 'hidden', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
           <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
             {(columnOrder.length ? columnOrder : orderedColumns.map(c => c.key)).map(key => {
               const col = orderedColumns.find(c => c.key === key);
@@ -37,7 +37,7 @@ export function ColumnsVisibilityPanel({
                 <Box
                   component="li"
                   key={col.key}
-                  sx={{ borderBottom: '1px solid #e5e7eb', '&:last-child': { borderBottom: 'none' } }}
+                  sx={{ borderBottom: '1px solid var(--border-color)', '&:last-child': { borderBottom: 'none' } }}
                 >
                   <Box
                     onClick={() => toggleColumnHidden(col.key)}
@@ -50,7 +50,7 @@ export function ColumnsVisibilityPanel({
                       px: { xs: 2, sm: 2.5 },
                       py: { xs: 1.5, sm: 1.75 },
                       color: isHidden ? '#9ca3af' : '#1f2937',
-                      '&:hover': { bgcolor: isHidden ? 'transparent' : '#f9fafb' },
+                      '&:hover': { bgcolor: isHidden ? 'transparent' : 'var(--muted)' },
                     }}
                   >
                     <Typography

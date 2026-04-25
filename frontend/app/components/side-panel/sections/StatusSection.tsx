@@ -33,7 +33,7 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: '#111827',
+              color: 'var(--foreground)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -46,7 +46,7 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
           <p
             style={{
               fontSize: 12,
-              color: '#6b7280',
+              color: 'var(--muted-foreground)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -59,7 +59,7 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
         )}
       </div>
       {formattedTime && (
-        <span style={{ fontSize: 12, color: '#9ca3af', flexShrink: 0 }}>{formattedTime}</span>
+        <span style={{ fontSize: 12, color: 'var(--muted-foreground)', flexShrink: 0 }}>{formattedTime}</span>
       )}
     </div>
   );

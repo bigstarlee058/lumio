@@ -10,12 +10,12 @@ type BadgeStyle = { borderColor: string; background: string; color: string };
 
 const REASON_BADGE_STYLE: Record<UnapprovedReasonId, BadgeStyle> = {
   'missing-category': { borderColor: '#fcd34d', background: '#fffbeb', color: '#b45309' },
-  'duplicate-detected': { borderColor: '#fca5a5', background: '#fff1f2', color: '#b91c1c' },
-  'unknown-merchant': { borderColor: '#e2e8f0', background: '#f1f5f9', color: '#334155' },
+  'duplicate-detected': { borderColor: '#fca5a5', background: '#fff1f2', color: 'var(--destructive)' },
+  'unknown-merchant': { borderColor: 'var(--border-color)', background: '#f1f5f9', color: 'var(--text-secondary)' },
   'missing-type': { borderColor: '#93c5fd', background: '#eff6ff', color: '#1d4ed8' },
   'missing-currency': { borderColor: '#67e8f9', background: '#ecfeff', color: '#0e7490' },
   'ocr-issues': { borderColor: '#fda4af', background: '#fff1f2', color: '#be123c' },
-  'requires-confirmation': { borderColor: '#e5e7eb', background: '#f3f4f6', color: '#374151' },
+  'requires-confirmation': { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
 };
 
 const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
@@ -23,7 +23,7 @@ const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
   pdf: { borderColor: '#7dd3fc', background: '#f0f9ff', color: '#0369a1' },
   bank: { borderColor: '#6ee7b7', background: '#ecfdf5', color: '#065f46' },
   manual: { borderColor: '#a8d5a8', background: '#edf7ed', color: '#036704' },
-  unknown: { borderColor: '#e5e7eb', background: '#f3f4f6', color: '#374151' },
+  unknown: { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
 };
 
 interface UnapprovedCashContentProps {
@@ -93,10 +93,10 @@ export function UnapprovedCashContent({
         <div style={{ borderRadius: tokens.radius.full, background: '#d1fae5', padding: 8, color: '#065f46' }}>
           <Check style={{ width: 20, height: 20 }} />
         </div>
-        <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: '#111827' }}>
+        <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
           {labels.empty.title}
         </h2>
-        <p style={{ marginTop: 4, fontSize: 14, color: '#6b7280' }}>{labels.empty.description}</p>
+        <p style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>{labels.empty.description}</p>
       </div>
     );
   }
@@ -152,7 +152,7 @@ const TH_STYLE: React.CSSProperties = {
   fontSize: 12,
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
-  color: '#6b7280',
+  color: 'var(--muted-foreground)',
   fontWeight: 600,
 };
 
@@ -183,7 +183,7 @@ function DesktopTable({
             textAlign: 'left',
           }}
         >
-          <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+          <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
             <th style={{ width: 48, padding: '12px 16px', ...TH_STYLE }}>
               <Checkbox checked={allVisibleSelected} onCheckedChange={onToggleSelectAllVisible} />
             </th>
@@ -204,23 +204,23 @@ function DesktopTable({
             const hiddenReasonCount = Math.max(0, item.reasons.length - reasonPreview.length);
 
             return (
-              <tr key={statementId} style={{ borderBottom: '1px solid #f3f4f6' }}>
+              <tr key={statementId} style={{ borderBottom: '1px solid var(--muted)' }}>
                 <td style={{ padding: '12px 16px', verticalAlign: 'top' }}>
                   <Checkbox checked={selected} onCheckedChange={() => onToggleSelect(statementId)} />
                 </td>
                 <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
-                  <p style={{ fontWeight: 500, color: '#111827' }}>
+                  <p style={{ fontWeight: 500, color: 'var(--foreground)' }}>
                     {item.statement.fileName?.trim() || item.statement.bankName?.trim() || '—'}
                   </p>
-                  <p style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
+                  <p style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>
                     {item.statement.bankName?.trim() || `#${statementId.slice(0, 8)}`}
                   </p>
                 </td>
-                <td style={{ padding: '12px 8px', verticalAlign: 'top', color: '#374151' }}>
+                <td style={{ padding: '12px 8px', verticalAlign: 'top', color: 'var(--foreground)' }}>
                   {formatDate(item)}
                 </td>
                 <td
-                  style={{ padding: '12px 8px', verticalAlign: 'top', fontWeight: 500, color: '#111827' }}
+                  style={{ padding: '12px 8px', verticalAlign: 'top', fontWeight: 500, color: 'var(--foreground)' }}
                 >
                   {formatAmount(item)}
                 </td>
@@ -234,9 +234,9 @@ function DesktopTable({
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          border: '1px solid #e5e7eb',
-                          background: '#f9fafb',
-                          color: '#4b5563',
+                          border: '1px solid var(--border-color)',
+                          background: 'var(--muted)',
+                          color: 'var(--text-secondary)',
                           padding: '2px 8px',
                           fontSize: 11,
                           fontWeight: 500,
@@ -259,12 +259,12 @@ function DesktopTable({
                       style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        border: '1px solid #e5e7eb',
+                        border: '1px solid var(--border-color)',
                         background: 'var(--card-bg)',
                         padding: '4px 10px',
                         fontSize: 12,
                         fontWeight: 500,
-                        color: '#374151',
+                        color: 'var(--foreground)',
                         cursor: 'pointer',
                         borderRadius: tokens.radius.md,
                       }}
@@ -317,7 +317,7 @@ function MobileCards({
         const selected = selectedIds.includes(statementId);
 
         return (
-          <article key={statementId} style={{ border: '1px solid #e5e7eb', padding: 12, borderRadius: tokens.radius.lg }}>
+          <article key={statementId} style={{ border: '1px solid var(--border-color)', padding: 12, borderRadius: tokens.radius.lg }}>
             <div
               style={{
                 display: 'flex',
@@ -332,15 +332,15 @@ function MobileCards({
                   onCheckedChange={() => onToggleSelect(statementId)}
                 />
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                     {item.statement.fileName?.trim() || item.statement.bankName?.trim() || '—'}
                   </p>
-                  <p style={{ fontSize: 12, color: '#6b7280' }}>
+                  <p style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                     {item.statement.bankName?.trim() || formatDate(item)}
                   </p>
                 </div>
               </div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>{formatAmount(item)}</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{formatAmount(item)}</p>
             </div>
 
             <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
@@ -363,12 +363,12 @@ function MobileCards({
                   type="button"
                   onClick={() => onReview(item)}
                   style={{
-                    border: '1px solid #e5e7eb',
+                    border: '1px solid var(--border-color)',
                     background: 'var(--card-bg)',
                     padding: '4px 10px',
                     fontSize: 12,
                     fontWeight: 500,
-                    color: '#374151',
+                    color: 'var(--foreground)',
                     cursor: 'pointer',
                     borderRadius: tokens.radius.md,
                   }}

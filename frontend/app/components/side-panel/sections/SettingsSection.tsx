@@ -20,7 +20,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
             style={{
               fontSize: 14,
               fontWeight: 500,
-              color: '#111827',
+              color: 'var(--foreground)',
               display: 'block',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -33,7 +33,7 @@ function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
             <span
               style={{
                 fontSize: 12,
-                color: '#6b7280',
+                color: 'var(--muted-foreground)',
                 display: 'block',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -89,10 +89,10 @@ function SettingsSelectComponent({ item }: { item: SettingsSelectItem }) {
     <div style={{ padding: '8px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         {item.icon && <RenderIcon icon={item.icon} size={16} />}
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{item.label}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.label}</span>
       </div>
       {item.description && (
-        <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 8, marginTop: 0 }}>
+        <p style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 8, marginTop: 0 }}>
           {item.description}
         </p>
       )}
@@ -104,9 +104,9 @@ function SettingsSelectComponent({ item }: { item: SettingsSelectItem }) {
           width: '100%',
           padding: '8px 12px',
           fontSize: 14,
-          border: '1px solid #e5e7eb',
+          border: '1px solid var(--border-color)',
           backgroundColor: 'var(--card-bg)',
-          color: '#111827',
+          color: 'var(--foreground)',
           outline: 'none',
           opacity: item.disabled ? 0.5 : 1,
         }}

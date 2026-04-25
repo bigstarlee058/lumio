@@ -148,16 +148,16 @@ function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
 
   if (errorMessage) {
     return (
-      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid #e5e7eb', borderRadius: tokens.radius.md, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
-        <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: '#9ca3af' }} />
-        <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>{errorMessage}</p>
+      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid var(--border-color)', borderRadius: tokens.radius.md, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
+        <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: 'var(--muted-foreground)' }} />
+        <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>{errorMessage}</p>
       </div>
     );
   }
 
   return (
     <div style={{ width: frameWidth, height: frameHeight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <FileText data-testid="pdf-thumbnail-fallback-icon" size={fallbackIconSize} style={{ color: '#9ca3af' }} />
+      <FileText data-testid="pdf-thumbnail-fallback-icon" size={fallbackIconSize} style={{ color: 'var(--muted-foreground)' }} />
     </div>
   );
 }
@@ -195,7 +195,7 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
     <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: tokens.radius.md, overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
       {loading && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Spinner size={16} sx={{ color: '#4b5563' }} />
+          <Spinner size={16} sx={{ color: 'var(--text-secondary)' }} />
         </div>
       )}
       {thumbnailDataUrl && (

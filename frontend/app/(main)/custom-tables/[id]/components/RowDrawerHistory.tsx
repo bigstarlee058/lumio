@@ -28,8 +28,8 @@ export function RowDrawerHistory({
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {historyLoading ? (
-          <Box sx={{ border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 2 }}>
-            <Typography style={{ fontSize: 14, color: '#6b7280' }}>Loading history...</Typography>
+          <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
+            <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading history...</Typography>
           </Box>
         ) : (
           <EntityHistoryTimeline events={historyEvents} onSelect={onSelectEvent} />

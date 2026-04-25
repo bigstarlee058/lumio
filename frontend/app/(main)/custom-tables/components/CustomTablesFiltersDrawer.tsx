@@ -83,10 +83,10 @@ function DrawerTitle({ screenTitle, isRoot, resetLabel, onBack, onClose, onReset
   return (
     <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <button type="button" onClick={isRoot ? onClose : onBack} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, padding: 8, color: '#6b7280', border: 'none', backgroundColor: 'transparent', cursor: 'pointer' }} aria-label={screenTitle}>
+        <button type="button" onClick={isRoot ? onClose : onBack} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', border: 'none', backgroundColor: 'transparent', cursor: 'pointer' }} aria-label={screenTitle}>
           <ChevronLeft size={20} />
         </button>
-        <span style={{ fontSize: '1.125rem', fontWeight: 600, color: '#111827' }}>{screenTitle}</span>
+        <span style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--foreground)' }}>{screenTitle}</span>
       </Box>
       {isRoot && <button type="button" onClick={onResetAll} style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>{resetLabel}</button>}
     </Box>

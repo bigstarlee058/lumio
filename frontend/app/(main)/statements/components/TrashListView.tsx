@@ -19,11 +19,12 @@ import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { TrashListItem, type TrashListItemModel } from './TrashListItem';
 import {
-import { tokens } from '@/lib/theme-tokens';
   type TrashEntityType,
   resolvePermanentDeletionDate,
   resolveTrashEntityType,
 } from './trash-utils';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 const PAGE_SIZE = 30;
 const DEFAULT_TRASH_TTL_DAYS = 30;
@@ -56,6 +57,8 @@ export default function TrashListView({ onCountChange }: Props) {
   const t = useIntlayer('statementsPage');
   const { locale } = useLocale();
   const { user } = useAuth();
+  const { resolvedTheme } = useTheme();
+  const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const localeCode = locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US';
   const trashTtlDays = useMemo(() => {
     const parsed = Number.parseInt(process.env.NEXT_PUBLIC_STORAGE_TRASH_TTL_DAYS || '', 10);
@@ -414,17 +417,17 @@ export default function TrashListView({ onCountChange }: Props) {
 
   const confirmDeleteMessage = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <p style={{ color: '#4b5563', lineHeight: 1.6 }}>
+      <p style={{ color: c.ink700, lineHeight: 1.6 }}>
         {labels.confirmDeleteMessage.replace('{count}', String(pendingDeleteIds.length))}
       </p>
-      <p style={{ fontSize: 14, fontWeight: 600, color: '#dc2626' }}>{labels.irreversibleWarning}</p>
+      <p style={{ fontSize: 14, fontWeight: 600, color: c.danger }}>{labels.irreversibleWarning}</p>
     </div>
   );
 
   const confirmEmptyMessage = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <p style={{ color: '#4b5563', lineHeight: 1.6 }}>{labels.confirmEmptyMessage}</p>
-      <p style={{ fontSize: 14, fontWeight: 600, color: '#dc2626' }}>{labels.irreversibleWarning}</p>
+      <p style={{ color: c.ink700, lineHeight: 1.6 }}>{labels.confirmEmptyMessage}</p>
+      <p style={{ fontSize: 14, fontWeight: 600, color: c.danger }}>{labels.irreversibleWarning}</p>
     </div>
   );
 
@@ -432,8 +435,8 @@ export default function TrashListView({ onCountChange }: Props) {
     <div className="container-shared lumio-trash-list">
       <div className="lumio-trash-list__header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <h1 style={{ fontSize: 20, fontWeight: 600, color: '#111827' }}>{labels.title}</h1>
-          <p style={{ fontSize: 14, color: '#6b7280' }}>{labels.retentionPolicy}</p>
+          <h1 style={{ fontSize: 20, fontWeight: 600, color: c.ink900 }}>{labels.title}</h1>
+          <p style={{ fontSize: 14, color: c.ink500 }}>{labels.retentionPolicy}</p>
         </div>
 
         <div className="lumio-trash-list__search-row">
@@ -451,7 +454,7 @@ export default function TrashListView({ onCountChange }: Props) {
         </div>
 
         <div className="lumio-trash-list__actions-row">
-          <span style={{ fontSize: 12, fontWeight: 500, color: '#6b7280' }}>{selectedLabel}</span>
+          <span style={{ fontSize: 12, fontWeight: 500, color: c.ink500 }}>{selectedLabel}</span>
           <button
             type="button"
             onClick={() => void handleBulkRestore()}
@@ -494,8 +497,8 @@ export default function TrashListView({ onCountChange }: Props) {
             <div className="lumio-trash-list__empty-icon">
               <Trash2 size={32} />
             </div>
-            <h3 style={{ fontSize: 18, fontWeight: 500, color: '#111827' }}>{labels.emptyTitle}</h3>
-            <p style={{ marginTop: 4, color: '#6b7280' }}>{labels.emptyDescription}</p>
+            <h3 style={{ fontSize: 18, fontWeight: 500, color: c.ink900 }}>{labels.emptyTitle}</h3>
+            <p style={{ marginTop: 4, color: c.ink500 }}>{labels.emptyDescription}</p>
           </div>
         ) : (
           <>
@@ -510,7 +513,7 @@ export default function TrashListView({ onCountChange }: Props) {
                   style={{ height: 16, width: 16, borderRadius: tokens.radius.xs }}
                   aria-label={labels.selectAll}
                 />
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#4b5563' }}>{labels.selectAll}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>{labels.selectAll}</span>
               </div>
 
               <div className="lumio-trash-list__thead">
@@ -570,9 +573,9 @@ export default function TrashListView({ onCountChange }: Props) {
             </div>
 
             <div className="lumio-trash-list__pagination">
-              <div style={{ fontSize: 14, color: '#6b7280' }}>{shownLabel}</div>
+              <div style={{ fontSize: 14, color: c.ink500 }}>{shownLabel}</div>
               <div className="lumio-trash-list__pagination-info">
-                <span style={{ fontSize: 14, color: '#4b5563', minWidth: 120, textAlign: 'center' }}>
+                <span style={{ fontSize: 14, color: c.ink700, minWidth: 120, textAlign: 'center' }}>
                   {pageOfLabel}
                 </span>
                 <AppPagination page={currentPage} total={totalPagesCount} onChange={setPage} />

@@ -58,16 +58,16 @@ export function ConnectionCard({ item, index, syncingId, removingId, locale, t, 
   const lastSyncText = item.lastSync ? formatLastSync({ lastSync: item.lastSync, locale }) : String(t.list.dash ?? '-');
 
   return (
-    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid #e5e7eb', bgcolor: 'background.paper', p: 1.5, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id={index === 0 ? 'gs-integration-connection-card' : undefined}>
+    <Box sx={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 1.5, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }} data-tour-id={index === 0 ? 'gs-integration-connection-card' : undefined}>
       <Stack spacing={1.5}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography style={{ fontWeight: 600, color: '#111827' }}>{item.sheetName}</Typography>
+            <Typography style={{ fontWeight: 600, color: 'var(--foreground)' }}>{item.sheetName}</Typography>
             <ConnectionStatus oauthConnected={item.oauthConnected} t={t} />
           </Box>
-          <Typography style={{ fontSize: 12, color: '#6b7280', marginTop: 4, wordBreak: 'break-all' }}>ID: {item.sheetId}</Typography>
-          {item.worksheetName && <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.list.fields.worksheetPrefix.value}: {item.worksheetName}</Typography>}
-          <Typography style={{ fontSize: 12, color: '#6b7280' }}>{t.list.fields.lastSyncPrefix.value}: {lastSyncText}</Typography>
+          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)', marginTop: 4, wordBreak: 'break-all' }}>ID: {item.sheetId}</Typography>
+          {item.worksheetName && <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{t.list.fields.worksheetPrefix.value}: {item.worksheetName}</Typography>}
+          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{t.list.fields.lastSyncPrefix.value}: {lastSyncText}</Typography>
         </Box>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
           {item.oauthConnected === false && (
@@ -79,7 +79,7 @@ export function ConnectionCard({ item, index, syncingId, removingId, locale, t, 
             {isSyncing ? <Spinner size={16} /> : <RefreshCcw style={{ height: 16, width: 16 }} />}
             {t.list.actions.sync}
           </button>
-          <button type="button" onClick={(): void => onRemove(item.id)} disabled={isRemoving} data-tour-id={index === 0 ? 'gs-integration-disconnect' : undefined} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid #e5e7eb', background: 'transparent', padding: '6px 12px', fontSize: 12, fontWeight: 600, color: '#374151', cursor: isRemoving ? 'not-allowed' : 'pointer', opacity: isRemoving ? 0.6 : 1 }}>
+          <button type="button" onClick={(): void => onRemove(item.id)} disabled={isRemoving} data-tour-id={index === 0 ? 'gs-integration-disconnect' : undefined} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--border-color)', background: 'transparent', padding: '6px 12px', fontSize: 12, fontWeight: 600, color: 'var(--foreground)', cursor: isRemoving ? 'not-allowed' : 'pointer', opacity: isRemoving ? 0.6 : 1 }}>
             {isRemoving ? <Spinner size={16} /> : <Trash2 style={{ height: 16, width: 16 }} />}
             {t.list.actions.disconnect}
           </button>

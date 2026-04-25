@@ -105,7 +105,7 @@ export function TransactionTab() {
 
   if (error && transactions.length === 0) {
     return (
-      <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fff1f2', p: 2, color: '#dc2626', mb: 2 }}>
+      <Box sx={{ border: '1px solid #fecaca', bgcolor: '#fff1f2', p: 2, color: 'var(--destructive)', mb: 2 }}>
         {error}
       </Box>
     );
@@ -155,7 +155,7 @@ export function TransactionTab() {
             >
               {selectedIds.length}
             </Box>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
               {t.selected?.value || 'selected'}
             </Typography>
           </Box>
@@ -164,7 +164,7 @@ export function TransactionTab() {
             <select
               value={bulkCategoryId}
               onChange={e => setBulkCategoryId(e.target.value)}
-              style={{ flex: 1, maxWidth: 320, border: '1px solid #e5e7eb', backgroundColor: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, outline: 'none' }}
+              style={{ flex: 1, maxWidth: 320, border: '1px solid var(--border-color)', backgroundColor: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, outline: 'none' }}
             >
               <option value="">{t.selectCategory?.value || 'Select category...'}</option>
               {categories
@@ -199,7 +199,7 @@ export function TransactionTab() {
           <button
             type="button"
             onClick={() => setSelectedIds([])}
-            style={{ border: '1px solid #e5e7eb', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: '#374151', cursor: 'pointer', transition: 'background-color 150ms' }}
+            style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: 14, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer', transition: 'background-color 150ms' }}
           >
             {t.clearSelection?.value || 'Clear selection'}
           </button>
