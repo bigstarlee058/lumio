@@ -110,7 +110,7 @@ export function GmailReceiptDetails({
         elevation={0}
         sx={{ mb: 4, border: '1px solid', borderColor: 'divider', '&:before': { display: 'none' }, overflow: 'hidden' }}
       >
-        <AccordionSummary expandIcon={<ChevronDown size={20} />} sx={{ bgcolor: 'grey.50' }}>
+        <AccordionSummary expandIcon={<ChevronDown size={20} />} sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50' }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.primary' }}>
             Receipt details &amp; parsing info
           </Typography>
@@ -201,7 +201,7 @@ export function GmailReceiptDetails({
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {receipt.metadata?.attachments?.map(attachment => (
-                  <Box key={`${attachment.filename}-${attachment.size}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, border: '1px solid', borderColor: 'grey.200', bgcolor: 'grey.50' }}>
+                  <Box key={`${attachment.filename}-${attachment.size}`} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, border: '1px solid', borderColor: 'divider', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50' }}>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>{attachment.filename}</Typography>
                     <Button size="small" onClick={() => setShowPreview(true)} sx={{ textTransform: 'none', fontWeight: 600, color: 'primary.main' }}>
                       Preview

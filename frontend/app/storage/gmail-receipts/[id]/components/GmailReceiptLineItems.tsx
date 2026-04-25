@@ -359,7 +359,7 @@ export function GmailReceiptLineItems({
       )}
 
       <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, borderBottom: '1px solid', borderBottomColor: 'divider', bgcolor: 'grey.50' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, borderBottom: '1px solid', borderBottomColor: 'divider', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50' }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Document lines</Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button size="small" variant="outlined" onClick={addLineItem} sx={{ textTransform: 'none', fontWeight: 600, borderColor: 'grey.300', color: 'text.secondary', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
@@ -380,7 +380,7 @@ export function GmailReceiptLineItems({
 
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: 'grey.50', borderBottom: '1px solid', borderBottomColor: 'divider' }}>
+            <TableRow sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50', borderBottom: '1px solid', borderBottomColor: 'divider' }}>
               <TableCell padding="checkbox">
                 <Checkbox
                   checked={selectedRows.size === lineItems.length && lineItems.length > 0}

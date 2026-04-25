@@ -224,20 +224,22 @@ body.ff-col-resizing { user-select: none; }
 }
 
 // ── MUI hover in light mode ───────────────────────────────────
-:not(.dark) .hover\:bg-gray-50:hover,
-:not(.dark) .hover\:bg-gray-100:hover,
-:not(.dark) .hover\:bg-gray-200:hover,
-:not(.dark) .hover\:bg-white:hover,
-:not(.dark) .hover\:bg-muted:hover,
-:not(.dark) .hover\:bg-card:hover {
+// Use html:not(.dark) so these don't bleed into MUI portals rendered on <body>
+// (which don't inherit the .dark class from <html>)
+html:not(.dark) .hover\:bg-gray-50:hover,
+html:not(.dark) .hover\:bg-gray-100:hover,
+html:not(.dark) .hover\:bg-gray-200:hover,
+html:not(.dark) .hover\:bg-white:hover,
+html:not(.dark) .hover\:bg-muted:hover,
+html:not(.dark) .hover\:bg-card:hover {
   background-color: $color-muted !important;
 }
 
-:not(.dark) .MuiButtonBase-root:not(.MuiButton-contained):hover,
-:not(.dark) .MuiButton-root:not(.MuiButton-contained):hover,
-:not(.dark) .MuiIconButton-root:hover,
-:not(.dark) .MuiMenuItem-root:hover,
-:not(.dark) .MuiListItem-root:hover,
-:not(.dark) .MuiTableRow-root:hover {
+html:not(.dark) .MuiButtonBase-root:not(.MuiButton-contained):hover,
+html:not(.dark) .MuiButton-root:not(.MuiButton-contained):hover,
+html:not(.dark) .MuiIconButton-root:hover,
+html:not(.dark) .MuiMenuItem-root:hover,
+html:not(.dark) .MuiListItem-root:hover,
+html:not(.dark) .MuiTableRow-root:hover {
   background-color: $color-muted !important;
 }

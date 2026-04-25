@@ -440,7 +440,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           title: workQueueTitle,
           titleClassName:
             'text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-gray-300',
-          className: 'rounded-2xl border border-gray-100 bg-white px-1 pt-1',
+          className: 'rounded-2xl border border-gray-100 dark:border-[var(--border)] bg-white dark:bg-[var(--card-bg)] px-1 pt-1',
           items: [
             {
               id: 'submit',
