@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
@@ -53,7 +53,7 @@ export class ClassificationController {
     @WorkspaceId() workspaceId: string,
   ) {
     const { transactionIds } = body;
-    const batchId = transactionIds.length > 1 ? uuidv4() : null;
+    const batchId = transactionIds.length > 1 ? randomUUID() : null;
     const results = {
       total: transactionIds.length,
       successful: 0,

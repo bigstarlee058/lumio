@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { resolveUploadsDir } from '../common/utils/uploads.util';
 
 // Allow overriding upload dir for production (e.g. mounted volume)
@@ -11,7 +11,7 @@ export const multerConfig = {
   storage: diskStorage({
     destination: (_req, _file, cb) => cb(null, uploadsRoot),
     filename: (_req, file, cb) => {
-      const uniqueName = `${uuidv4()}${extname(file.originalname)}`;
+      const uniqueName = `${randomUUID()}${extname(file.originalname)}`;
       cb(null, uniqueName);
     },
   }),

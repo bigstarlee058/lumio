@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, QueryFailedError, type Repository } from 'typeorm';
-import { validate as uuidValidate, v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import {
   ActorType,
   AuditAction,
@@ -246,12 +246,12 @@ export class CustomTablesService {
   }
 
   private generateColumnKey(): string {
-    const raw = uuidv4().replace(/-/g, '');
+    const raw = randomUUID().replace(/-/g, '');
     return `col_${raw.slice(0, 12)}`;
   }
 
   private isUuid(value: string): boolean {
-    return uuidValidate(value);
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
   }
 
   private sanitizeRowData(
@@ -2112,7 +2112,7 @@ export class CustomTablesService {
       this.throwHelpfulSchemaError(error);
     }
     const patchKeys = Object.keys(patch || {});
-    const batchId = patchKeys.length > 1 ? uuidv4() : null;
+    const batchId = patchKeys.length > 1 ? randomUUID() : null;
 
     for (const key of patchKeys) {
       const beforeValue = beforeData?.[key] ?? null;

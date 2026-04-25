@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import {
   CustomTableImportJob,
   CustomTableImportJobStatus,
@@ -19,7 +19,7 @@ type JobUnlockUpdate = { lockedAt: null; lockedBy: null };
 export class CustomTableImportJobsProcessor {
   private readonly logger = new Logger(CustomTableImportJobsProcessor.name);
   private readonly instanceId =
-    process.env.RAILWAY_SERVICE_INSTANCE_ID || process.env.HOSTNAME || uuidv4();
+    process.env.RAILWAY_SERVICE_INSTANCE_ID || process.env.HOSTNAME || randomUUID();
   private running = false;
   private readonly staleLockMs = Number(
     process.env.CUSTOM_TABLE_IMPORT_JOB_STALE_LOCK_MS || 10 * 60 * 1000,

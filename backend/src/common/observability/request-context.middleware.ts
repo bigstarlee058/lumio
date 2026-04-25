@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 import { RequestContext } from './request-context';
 
@@ -13,7 +13,7 @@ const extractTraceIdFromTraceParent = (traceParent: string | undefined): string 
 
 export function requestContextMiddleware(req: Request, res: Response, next: NextFunction) {
   const incomingRequestId = req.header('x-request-id') || req.header('x-correlation-id');
-  const requestId = incomingRequestId?.trim() || uuidv4();
+  const requestId = incomingRequestId?.trim() || randomUUID();
 
   const traceParent = req.header('traceparent');
   const extractedTraceId = extractTraceIdFromTraceParent(traceParent);

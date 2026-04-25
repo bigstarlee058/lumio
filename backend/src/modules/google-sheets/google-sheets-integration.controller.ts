@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Observable } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
 import { AuditService } from '../audit/audit.service';
@@ -74,7 +74,7 @@ export class GoogleSheetsIntegrationController {
   @UseGuards(GoogleSheetsWebhookGuard)
   @Post('batch')
   async receiveBatch(@Body() body: GoogleSheetsBatchUpdateDto) {
-    const batchId = body.items.length > 1 ? uuidv4() : null;
+    const batchId = body.items.length > 1 ? randomUUID() : null;
     const results = await this.updatesService.handleBatchUpdate(body, batchId);
     const processedCount = results.filter(item => item.processed).length;
 

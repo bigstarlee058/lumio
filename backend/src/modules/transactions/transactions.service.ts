@@ -4,7 +4,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import type { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
@@ -254,7 +254,7 @@ export class TransactionsService {
   ): Promise<Transaction[]> {
     await this.ensureCanEditStatements(userId);
     const updatedTransactions: Transaction[] = [];
-    const batchId = items.length > 1 ? uuidv4() : null;
+    const batchId = items.length > 1 ? randomUUID() : null;
 
     for (const item of items) {
       try {

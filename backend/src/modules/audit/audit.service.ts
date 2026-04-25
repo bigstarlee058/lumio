@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import {
   ActorType,
   AuditAction,
@@ -77,7 +77,7 @@ export class AuditService {
     events: CreateAuditEventDto[],
     batchId?: string,
   ): Promise<{ batchId: string; events: AuditEvent[] }> {
-    const resolvedBatchId = batchId || uuidv4();
+    const resolvedBatchId = batchId || randomUUID();
     const created: AuditEvent[] = [];
 
     for (const event of events) {

@@ -16,7 +16,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import type { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { calculateFileHash } from '../../common/utils/file-hash.util';
 import { getFileTypeFromMime, validateFile } from '../../common/utils/file-validator.util';
@@ -348,7 +348,7 @@ export class StatementsService {
       fileData = await fs.promises.readFile(primaryFile.path);
     } else {
       fileName = `manual-expense-${Date.now()}.csv`;
-      filePath = path.join(resolveUploadsDir(), `${uuidv4()}.csv`);
+      filePath = path.join(resolveUploadsDir(), `${randomUUID()}.csv`);
       const csv = [
         'date,merchant,description,amount,currency',
         [

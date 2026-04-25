@@ -11,7 +11,7 @@ import { render } from '@react-email/render';
 import * as React from 'react';
 import { Resend } from 'resend';
 import type { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import { TimeoutError, retry, withTimeout } from '../../common/utils/async.util';
 import {
   User,
@@ -428,7 +428,7 @@ export class WorkspacesService {
       existingInvitation.role = role;
       existingInvitation.permissions = permissions;
       existingInvitation.invitedById = currentUser.id;
-      existingInvitation.token = uuidv4();
+      existingInvitation.token = randomUUID();
       const updated = await this.invitationRepository.save(existingInvitation);
       const invitationLink = this.buildInvitationLink(updated.token, requestAppOrigin);
       await this.sendInvitationEmail({
@@ -455,7 +455,7 @@ export class WorkspacesService {
       email,
       role,
       permissions,
-      token: uuidv4(),
+      token: randomUUID(),
       status: WorkspaceInvitationStatus.PENDING,
       invitedById: currentUser.id,
       expiresAt: new Date(Date.now() + INVITATION_TTL_MS),

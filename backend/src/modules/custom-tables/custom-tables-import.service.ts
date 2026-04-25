@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, type Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'node:crypto';
 import {
   ActorType,
   AuditAction,
@@ -483,7 +483,7 @@ export class CustomTablesImportService {
   }
 
   private generateColumnKey(): string {
-    const raw = uuidv4().replace(/-/g, '');
+    const raw = randomUUID().replace(/-/g, '');
     return `col_${raw.slice(0, 12)}`;
   }
 
@@ -1213,7 +1213,7 @@ export class CustomTablesImportService {
             const patch = diffStyle(baseStyle, actualStyle);
             if (Object.keys(patch).length === 0) continue;
             cellStyleEntities.push({
-              id: uuidv4(),
+              id: randomUUID(),
               rowId,
               columnKey,
               style: patch,
