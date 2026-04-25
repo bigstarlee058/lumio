@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { google } from 'googleapis';
+import { drive } from '@googleapis/drive';
+import { OAuth2Client } from 'google-auth-library';
 import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
@@ -148,7 +149,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     if (!clientId || !clientSecret || !redirectUri) {
       throw new BadRequestException('Google Drive OAuth is not configured');
     }
-    return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+    return new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
   getAuthUrl(user: User): string {
@@ -228,7 +229,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       access_token: accessToken,
       refresh_token: refreshToken,
     });
-    return google.drive({ version: 'v3', auth: client });
+    return drive({ version: 'v3', auth: client });
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DriveSettings) {
@@ -302,7 +303,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   }
 
   private async resolveDriveFilename(
-    drive: ReturnType<typeof google.drive>,
+    driveClient: ReturnType<typeof drive>,
     folderId: string | null,
     fileName: string,
   ): Promise<string> {
@@ -311,7 +312,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     }
     const escapedName = fileName.replace(/'/g, "\\'");
     const q = `name = '${escapedName}' and '${folderId}' in parents and trashed = false`;
-    const res = await drive.files.list({
+    const res = await driveClient.files.list({
       q,
       spaces: 'drive',
       fields: 'files(id,name)',

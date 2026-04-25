@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { google } from 'googleapis';
-import type { gmail_v1 } from 'googleapis';
+import { gmail } from '@googleapis/gmail';
+import type { gmail_v1 } from '@googleapis/gmail';
 import type { Repository } from 'typeorm';
 import {
   GmailSettings,
@@ -36,10 +36,10 @@ export class GmailWatchService {
   async setupWatch(integration: Integration, userId: string): Promise<GmailWatchSubscription> {
     try {
       const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmail = google.gmail({ version: 'v1', auth: client });
+      const gmailClient = gmail({ version: 'v1', auth: client });
 
       // Get user's email address
-      const profile = await gmail.users.getProfile({ userId: 'me' });
+      const profile = await gmailClient.users.getProfile({ userId: 'me' });
       const emailAddress = profile.data.emailAddress || null;
 
       // Get label ID from settings
@@ -58,7 +58,7 @@ export class GmailWatchService {
         },
       };
 
-      const response = await gmail.users.watch(watchRequest);
+      const response = await gmailClient.users.watch(watchRequest);
 
       const expiration = new Date(Number(response.data.expiration));
       const historyId = response.data.historyId || null;
@@ -110,9 +110,9 @@ export class GmailWatchService {
   async stopWatch(integration: Integration, userId: string): Promise<void> {
     try {
       const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmail = google.gmail({ version: 'v1', auth: client });
+      const gmailClient = gmail({ version: 'v1', auth: client });
 
-      await gmail.users.stop({ userId: 'me' });
+      await gmailClient.users.stop({ userId: 'me' });
 
       // Update subscription status
       await this.watchSubscriptionRepository.update(
@@ -149,10 +149,10 @@ export class GmailWatchService {
       }
 
       const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmail = google.gmail({ version: 'v1', auth: client });
+      const gmailClient = gmail({ version: 'v1', auth: client });
 
       // Fetch history since last historyId
-      const response = await gmail.users.history.list({
+      const response = await gmailClient.users.history.list({
         userId: 'me',
         startHistoryId: settings.historyId,
         historyTypes: ['messageAdded', 'labelAdded'],

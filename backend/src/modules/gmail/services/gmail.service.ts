@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { google } from 'googleapis';
-import type { gmail_v1 } from 'googleapis';
+import { gmail } from '@googleapis/gmail';
+import type { gmail_v1 } from '@googleapis/gmail';
 import type { Repository } from 'typeorm';
 import { resolveUploadsDir } from '../../../common/utils/uploads.util';
 import { GmailSettings, Integration } from '../../../entities';
@@ -21,16 +21,16 @@ export class GmailService {
   ) {}
 
   private getGmailClient(client: Awaited<ReturnType<GmailOAuthService['getGmailClient']>>['client']) {
-    return google.gmail({ version: 'v1', auth: client });
+    return gmail({ version: 'v1', auth: client });
   }
 
   async setupGmailEnvironment(integration: Integration, userId: string): Promise<void> {
     try {
       const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmail = google.gmail({ version: 'v1', auth: client });
+      const gmailClient = gmail({ version: 'v1', auth: client });
 
       // Get or create label
-      const labelsResponse = await gmail.users.labels.list({ userId: 'me' });
+      const labelsResponse = await gmailClient.users.labels.list({ userId: 'me' });
       const existingLabel = labelsResponse.data.labels?.find(
         label => label.name === 'Lumio/Receipts',
       );
@@ -39,7 +39,7 @@ export class GmailService {
       if (existingLabel?.id) {
         labelId = existingLabel.id;
       } else {
-        const createLabelResponse = await gmail.users.labels.create({
+        const createLabelResponse = await gmailClient.users.labels.create({
           userId: 'me',
           requestBody: {
             name: 'Lumio/Receipts',
@@ -66,7 +66,7 @@ export class GmailService {
       };
 
       try {
-        await gmail.users.settings.filters.create({
+        await gmailClient.users.settings.filters.create({
           userId: 'me',
           requestBody: {
             criteria: filterCriteria,
@@ -104,7 +104,7 @@ export class GmailService {
     },
   ): Promise<gmail_v1.Schema$Message[]> {
     const { client, integration } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = this.getGmailClient(client);
+    const gmailClient = this.getGmailClient(client);
 
     const settings = await this.gmailSettingsRepository.findOne({
       where: { integrationId: integration.id },
@@ -129,7 +129,7 @@ export class GmailService {
 
     while (messages.length < maxMessages) {
       const remaining = maxMessages - messages.length;
-      const response = await gmail.users.messages.list({
+      const response = await gmailClient.users.messages.list({
         userId: 'me',
         q: searchQuery || undefined,
         maxResults: Math.min(100, remaining),
@@ -150,9 +150,9 @@ export class GmailService {
 
   async getMessage(userId: string, messageId: string): Promise<gmail_v1.Schema$Message> {
     const { client } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = this.getGmailClient(client);
+    const gmailClient = this.getGmailClient(client);
 
-    const response = await gmail.users.messages.get({
+    const response = await gmailClient.users.messages.get({
       userId: 'me',
       id: messageId,
       format: 'full',
@@ -168,9 +168,9 @@ export class GmailService {
     filename: string,
   ): Promise<string> {
     const { client } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = google.gmail({ version: 'v1', auth: client });
+    const gmailClient = gmail({ version: 'v1', auth: client });
 
-    const response = await gmail.users.messages.attachments.get({
+    const response = await gmailClient.users.messages.attachments.get({
       userId: 'me',
       messageId,
       id: attachmentId,
@@ -208,9 +208,9 @@ export class GmailService {
     removeLabelIds?: string[],
   ): Promise<void> {
     const { client } = await this.gmailOAuthService.getGmailClient(userId);
-    const gmail = google.gmail({ version: 'v1', auth: client });
+    const gmailClient = gmail({ version: 'v1', auth: client });
 
-    await gmail.users.messages.modify({
+    await gmailClient.users.messages.modify({
       userId: 'me',
       id: messageId,
       requestBody: {

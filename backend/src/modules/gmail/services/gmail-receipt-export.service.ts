@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { google } from 'googleapis';
+import { gmail } from '@googleapis/gmail';
+import { sheets } from '@googleapis/sheets';
 import { In, Repository } from 'typeorm';
 import { Category, Receipt } from '../../../entities';
 import { GmailOAuthService } from './gmail-oauth.service';
@@ -60,14 +61,14 @@ export class GmailReceiptExportService {
 
       // Get OAuth client for the user via Gmail OAuth service (includes Sheets scope)
       const { client: oauth2Client } = await this.gmailOAuthService.getGmailClient(userId);
-      const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
+      const sheetsClient = sheets({ version: 'v4', auth: oauth2Client });
 
       let finalSpreadsheetId = spreadsheetId;
       let sheetUrl = '';
 
       // Create new spreadsheet or use existing one
       if (!finalSpreadsheetId) {
-        const createResponse = await sheets.spreadsheets.create({
+        const createResponse = await sheetsClient.spreadsheets.create({
           requestBody: {
             properties: {
               title: `Lumio Receipts Export - ${new Date().toISOString().split('T')[0]}`,
@@ -113,7 +114,7 @@ export class GmailReceiptExportService {
       }
 
       // Write data to sheet
-      await sheets.spreadsheets.values.update({
+      await sheetsClient.spreadsheets.values.update({
         spreadsheetId: finalSpreadsheetId,
         range: 'Receipts!A1',
         valueInputOption: 'RAW',
@@ -123,7 +124,7 @@ export class GmailReceiptExportService {
       });
 
       // Format header row
-      await sheets.spreadsheets.batchUpdate({
+      await sheetsClient.spreadsheets.batchUpdate({
         spreadsheetId: finalSpreadsheetId,
         requestBody: {
           requests: [
@@ -211,7 +212,7 @@ export class GmailReceiptExportService {
     if (!scopes.includes('https://www.googleapis.com/auth/gmail.compose')) {
       throw new Error('Gmail integration requires re-authentication to create drafts. Please reconnect Gmail.');
     }
-    const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+    const gmailClient = gmail({ version: 'v1', auth: oauth2Client });
 
     const parsedData = this.getParsedData(receipt);
     const vendor = parsedData.vendor || receipt.sender || 'Unknown';
@@ -258,7 +259,7 @@ export class GmailReceiptExportService {
 
     const raw = this.buildMimeMessage(subject, htmlBody, attachments);
 
-    const response = await gmail.users.drafts.create({
+    const response = await gmailClient.users.drafts.create({
       userId: 'me',
       requestBody: {
         message: { raw },

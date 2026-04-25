@@ -22,8 +22,8 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
-import { google } from 'googleapis';
-import type { gmail_v1 } from 'googleapis';
+import { gmail as gmailApi } from '@googleapis/gmail';
+import type { gmail_v1 } from '@googleapis/gmail';
 import { Repository } from 'typeorm';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -855,12 +855,12 @@ export class GmailController {
         try {
           // Get attachment data from Gmail
           const { client } = await this.gmailOAuthService.getGmailClient(user.id);
-          const gmail = google.gmail({
+          const gmailClient = gmailApi({
             version: 'v1',
             auth: client,
           });
 
-          const response = await gmail.users.messages.attachments.get({
+          const response = await gmailClient.users.messages.attachments.get({
             userId: 'me',
             messageId: receipt.gmailMessageId,
             id: attachment.id,

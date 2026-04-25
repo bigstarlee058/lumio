@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 import type { Repository } from 'typeorm';
 import { decryptText, encryptText } from '../../../common/utils/encryption.util';
 import {
@@ -84,7 +84,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     if (!clientId || !clientSecret || !redirectUri) {
       throw new BadRequestException('Gmail OAuth is not configured');
     }
-    return new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+    return new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
   override async findIntegrationForUser(userId: string) {

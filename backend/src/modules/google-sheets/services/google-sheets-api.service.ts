@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
-import type { sheets_v4 } from 'googleapis';
+import { sheets } from '@googleapis/sheets';
+import { oauth2 } from '@googleapis/oauth2';
+import type { sheets_v4 } from '@googleapis/sheets';
 import type { Branch } from '../../../entities/branch.entity';
 import type { Category } from '../../../entities/category.entity';
 import type { Transaction } from '../../../entities/transaction.entity';
@@ -127,7 +128,7 @@ export class GoogleSheetsApiService {
       access_token: accessToken,
     });
 
-    return google.sheets({ version: 'v4', auth: this.oauth2Client });
+    return sheets({ version: 'v4', auth: this.oauth2Client });
   }
 
   getAuthUrl(state?: string): string {
@@ -186,8 +187,8 @@ export class GoogleSheetsApiService {
     this.oauth2Client.setCredentials({ access_token: accessToken });
 
     try {
-      const oauth2 = google.oauth2({ version: 'v2', auth: this.oauth2Client });
-      const response = await oauth2.userinfo.get();
+      const oauth2Client = oauth2({ version: 'v2', auth: this.oauth2Client });
+      const response = await oauth2Client.userinfo.get();
       return {
         email: response.data.email || null,
       };
