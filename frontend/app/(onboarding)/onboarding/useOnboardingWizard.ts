@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { type AppLocale } from '@/app/lib/locale';
 
-export type SupportedLocale = 'ru' | 'en' | 'kk';
+export type { AppLocale as SupportedLocale } from '@/app/lib/locale';
 
 export interface OnboardingData {
   locale: SupportedLocale;

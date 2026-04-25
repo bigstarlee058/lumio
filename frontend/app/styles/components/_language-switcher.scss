@@ -1,0 +1,106 @@
+@use '../abstracts' as *;
+
+.lumio-language-switcher {
+  /* Root shell (used by DrawerShell content wrapper) */
+
+  &__body {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  &__scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__search-wrapper {
+    position: relative;
+  }
+
+  &__search-icon {
+    pointer-events: none;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted-foreground);
+  }
+
+  &__search-input {
+    width: 100%;
+    border: 1px solid var(--color-primary);
+    background: var(--color-card);
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    font-size: 1rem;
+    color: var(--color-foreground);
+    outline: none;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__lang-btn {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: background-color 0.15s;
+
+    &:hover {
+      background-color: var(--color-muted);
+    }
+
+    &--selected {
+      background-color: var(--color-muted);
+    }
+  }
+
+  &__lang-label {
+    font-weight: 500;
+  }
+
+  &__empty {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--color-muted-foreground);
+    background: var(--color-card);
+  }
+
+  &__drawer-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__back-btn {
+    padding: 0.5rem;
+    border-radius: $lumio-radius-full;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-muted-foreground);
+    transition: background-color 0.15s, color 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: var(--color-muted);
+      color: var(--color-foreground);
+    }
+  }
+}

@@ -7,8 +7,7 @@ import { Check, ChevronLeft, Globe, Search } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
-
-type AppLanguage = 'ru' | 'en' | 'kk';
+import { type AppLocale as AppLanguage } from '@/app/lib/locale';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
