@@ -1,7 +1,11 @@
 <div align="center">
 <img alt="White and Blue Simple Gradient Business Profile LinkedIn Banner" src="https://github.com/user-attachments/assets/8d7eac20-fdb8-47f0-b6cc-87ee18ced773" />
 
-
+---
+  
+<p align="center">
+  :globe_with_meridians: <a href="https://lumio-app-production-627d.up.railway.app">Open Web App</a> or :computer: <a href="#quick-start">Download</a>
+</p>
 ---
 
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -10,6 +14,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
 **Open-source financial data platform for importing, processing, and analyzing bank statements**
+
 
 [Quick Start](#quick-start) • [Features](#features) • [Tech Stack](#tech-stack) • [Architecture](#architecture) • [Contributing](CONTRIBUTING.md)
 
