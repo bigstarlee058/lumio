@@ -1,0 +1,187 @@
+// app/styles/utils/_tailwind-dark.scss
+// Dark mode fallbacks for legacy Tailwind color utilities.
+@use '../abstracts' as *;
+
+.dark {
+  color-scheme: dark;
+
+  .bg-white:not([class*="dark:bg-"]) {
+    background-color: $color-card-bg-dk;
+  }
+
+  .bg-gray-50:not([class*="dark:bg-"]),
+  .bg-gray-100:not([class*="dark:bg-"]),
+  .bg-gray-200:not([class*="dark:bg-"]) {
+    background-color: $color-muted-dk;
+  }
+
+  .bg-white\/70:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-background-dk 70%, transparent);
+  }
+
+  .bg-white\/95:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-background-dk 95%, transparent);
+  }
+
+  .bg-gray-50\/20:not([class*="dark:bg-"]),
+  .bg-gray-50\/30:not([class*="dark:bg-"]),
+  .bg-gray-50\/50:not([class*="dark:bg-"]),
+  .bg-gray-50\/60:not([class*="dark:bg-"]),
+  .bg-gray-50\/80:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-muted-dk 78%, transparent);
+  }
+
+  .hover\:bg-gray-50:hover:not([class*="dark:hover:bg-"]),
+  .hover\:bg-gray-50\/80:hover:not([class*="dark:hover:bg-"]),
+  .hover\:bg-gray-100:hover:not([class*="dark:hover:bg-"]),
+  .hover\:bg-white:hover:not([class*="dark:hover:bg-"]) {
+    background-color: $color-muted-dk;
+  }
+
+  .hover\:bg-white\/80:hover:not([class*="dark:hover:bg-"]) {
+    background-color: color-mix(in srgb, $color-muted-dk 88%, transparent);
+  }
+
+  .text-gray-900:not([class*="dark:text-"]),
+  .text-gray-800:not([class*="dark:text-"]),
+  .text-gray-700:not([class*="dark:text-"]) {
+    color: $color-foreground-dk;
+  }
+
+  .text-gray-600:not([class*="dark:text-"]),
+  .text-gray-500:not([class*="dark:text-"]),
+  .text-gray-400:not([class*="dark:text-"]),
+  .text-gray-300:not([class*="dark:text-"]) {
+    color: $color-muted-foreground-dk;
+  }
+
+  .hover\:text-gray-900:hover:not([class*="dark:hover:text-"]),
+  .hover\:text-gray-800:hover:not([class*="dark:hover:text-"]),
+  .hover\:text-gray-700:hover:not([class*="dark:hover:text-"]) {
+    color: $color-foreground-dk;
+  }
+
+  .border-gray-100:not([class*="dark:border-"]),
+  .border-gray-200:not([class*="dark:border-"]),
+  .border-gray-300:not([class*="dark:border-"]) {
+    border-color: $color-border-dk;
+  }
+
+  .divide-gray-100:not([class*="dark:divide-"]) > :not([hidden]) ~ :not([hidden]),
+  .divide-gray-200:not([class*="dark:divide-"]) > :not([hidden]) ~ :not([hidden]) {
+    border-color: $color-border-dk;
+  }
+
+  .ring-gray-100:not([class*="dark:ring-"]),
+  .ring-gray-200:not([class*="dark:ring-"]) {
+    --tw-ring-color: #{$color-border-dk};
+  }
+
+  .focus\:ring-gray-200:focus:not([class*="dark:focus:ring-"]) {
+    --tw-ring-color: #{$color-border-dk};
+  }
+
+  /* Blue "info" */
+  .bg-blue-50:not([class*="dark:bg-"]),
+  .bg-blue-100:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-primary-dk 14%, transparent);
+  }
+
+  .bg-blue-50\/20:not([class*="dark:bg-"]),
+  .bg-blue-50\/30:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-primary-dk 18%, transparent);
+  }
+
+  .hover\:bg-blue-100:hover:not([class*="dark:hover:bg-"]) {
+    background-color: color-mix(in srgb, $color-primary-dk 18%, transparent);
+  }
+
+  .border-blue-200:not([class*="dark:border-"]) {
+    border-color: color-mix(in srgb, $color-primary-dk 50%, transparent);
+  }
+
+  .text-blue-600:not([class*="dark:text-"]),
+  .text-blue-700:not([class*="dark:text-"]),
+  .text-blue-800:not([class*="dark:text-"]) {
+    color: $color-primary-dk;
+  }
+
+  .hover\:bg-blue-50:hover:not([class*="dark:hover:bg-"]) {
+    background-color: color-mix(in srgb, $color-primary-dk 14%, transparent);
+  }
+
+  /* Red "danger" */
+  .bg-red-50:not([class*="dark:bg-"]),
+  .bg-red-100:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $color-destructive-dk 18%, transparent);
+  }
+
+  .hover\:bg-red-50:hover:not([class*="dark:hover:bg-"]) {
+    background-color: color-mix(in srgb, $color-destructive-dk 22%, transparent);
+  }
+
+  .border-red-200:not([class*="dark:border-"]),
+  .border-red-300:not([class*="dark:border-"]) {
+    border-color: color-mix(in srgb, $color-destructive-dk 45%, transparent);
+  }
+
+  .text-red-600:not([class*="dark:text-"]),
+  .text-red-700:not([class*="dark:text-"]),
+  .text-red-800:not([class*="dark:text-"]),
+  .text-red-900:not([class*="dark:text-"]) {
+    color: $color-destructive-dk;
+  }
+
+  /* Success / warning chips (used in older pages without `dark:` variants). */
+  .bg-green-50:not([class*="dark:bg-"]),
+  .bg-green-100:not([class*="dark:bg-"]),
+  .bg-emerald-50:not([class*="dark:bg-"]),
+  .bg-emerald-100:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $lumio-color-success-dk 14%, transparent);
+  }
+
+  .border-green-200:not([class*="dark:border-"]),
+  .border-emerald-100:not([class*="dark:border-"]),
+  .border-emerald-200:not([class*="dark:border-"]),
+  .border-emerald-300:not([class*="dark:border-"]) {
+    border-color: color-mix(in srgb, $lumio-color-success-dk 40%, transparent);
+  }
+
+  .text-green-700:not([class*="dark:text-"]),
+  .text-green-800:not([class*="dark:text-"]),
+  .text-emerald-700:not([class*="dark:text-"]),
+  .text-emerald-800:not([class*="dark:text-"]),
+  .text-emerald-950:not([class*="dark:text-"]) {
+    color: color-mix(in srgb, $lumio-color-success-dk 70%, white);
+  }
+
+  .bg-yellow-50:not([class*="dark:bg-"]),
+  .bg-yellow-100:not([class*="dark:bg-"]),
+  .bg-amber-50:not([class*="dark:bg-"]),
+  .bg-amber-100:not([class*="dark:bg-"]) {
+    background-color: color-mix(in srgb, $lumio-color-warning-dk 14%, transparent);
+  }
+
+  .hover\:bg-orange-50:hover:not([class*="dark:hover:bg-"]) {
+    background-color: color-mix(in srgb, #fb923c 14%, transparent);
+  }
+
+  .border-yellow-200:not([class*="dark:border-"]),
+  .border-amber-100:not([class*="dark:border-"]),
+  .border-amber-300:not([class*="dark:border-"]) {
+    border-color: color-mix(in srgb, $lumio-color-warning-dk 45%, transparent);
+  }
+
+  .text-yellow-700:not([class*="dark:text-"]),
+  .text-yellow-800:not([class*="dark:text-"]),
+  .text-amber-800:not([class*="dark:text-"]),
+  .text-amber-900:not([class*="dark:text-"]) {
+    color: color-mix(in srgb, $lumio-color-warning-dk 75%, white);
+  }
+
+  /* React Day Picker: align default variables with dark theme tokens. */
+  .rdp-root {
+    --rdp-accent-color: #{$color-primary-dk};
+    --rdp-accent-background-color: #{color-mix(in srgb, $color-primary-dk 18%, transparent)};
+  }
+}
