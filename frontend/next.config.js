@@ -1,4 +1,7 @@
 const path = require('path');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const normalizeTarget = url => String(url || '').replace(/\/$/, '');
 
@@ -68,4 +71,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withIntlayerSync(nextConfig);
+module.exports = withBundleAnalyzer(withIntlayerSync(nextConfig));
