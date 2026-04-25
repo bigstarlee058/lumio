@@ -10,7 +10,8 @@ const LOCALE_COOKIE_ATTRIBUTES = 'path=/; max-age=31536000; samesite=lax';
 const EXPIRED_COOKIE_ATTRIBUTES = 'path=/; max-age=0; samesite=lax';
 
 export function isSupportedLocale(value: string | null | undefined): value is AppLocale {
-  return (SUPPORTED_LOCALES as readonly string[]).includes(value ?? '');
+  if (value == null) return false;
+  return (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
 function readCookie(name: string): string | null {
