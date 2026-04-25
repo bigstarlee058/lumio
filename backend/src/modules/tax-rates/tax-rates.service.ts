@@ -1,38 +1,22 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
+import type { FindOptionsOrder, Repository } from 'typeorm';
+import { WorkspaceCrudBaseService } from '../../common/services/workspace-crud-base.service';
 import { TaxRate } from '../../entities/tax-rate.entity';
 import type { CreateTaxRateDto } from './dto/create-tax-rate.dto';
 import type { UpdateTaxRateDto } from './dto/update-tax-rate.dto';
 
 @Injectable()
-export class TaxRatesService {
+export class TaxRatesService extends WorkspaceCrudBaseService<TaxRate> {
   constructor(
     @InjectRepository(TaxRate)
-    private readonly taxRateRepository: Repository<TaxRate>,
-  ) {}
-
-  async findAll(workspaceId: string): Promise<TaxRate[]> {
-    return this.taxRateRepository.find({
-      where: { workspaceId },
-      order: {
-        isDefault: 'DESC',
-        rate: 'ASC',
-        name: 'ASC',
-      },
-    });
+    repository: Repository<TaxRate>,
+  ) {
+    super(repository, 'Tax rate');
   }
 
-  async findOne(id: string, workspaceId: string): Promise<TaxRate> {
-    const taxRate = await this.taxRateRepository.findOne({
-      where: { id, workspaceId },
-    });
-
-    if (!taxRate) {
-      throw new NotFoundException('Tax rate not found');
-    }
-
-    return taxRate;
+  protected getDefaultOrder(): FindOptionsOrder<TaxRate> {
+    return { isDefault: 'DESC', rate: 'ASC', name: 'ASC' };
   }
 
   async create(workspaceId: string, createDto: CreateTaxRateDto): Promise<TaxRate> {
@@ -41,8 +25,8 @@ export class TaxRatesService {
       throw new BadRequestException('Tax rate name is required');
     }
 
-    const duplicate = await this.taxRateRepository.findOne({
-      where: { workspaceId, name },
+    const duplicate = await this.repository.findOne({
+      where: { workspaceId, name } as any,
     });
 
     if (duplicate) {
@@ -51,10 +35,10 @@ export class TaxRatesService {
 
     const shouldBeDefault = createDto.isDefault === true;
     if (shouldBeDefault) {
-      await this.taxRateRepository.update({ workspaceId, isDefault: true }, { isDefault: false });
+      await this.repository.update({ workspaceId, isDefault: true } as any, { isDefault: false });
     }
 
-    const taxRate = this.taxRateRepository.create({
+    const taxRate = this.repository.create({
       workspaceId,
       name,
       rate: createDto.rate,
@@ -62,7 +46,7 @@ export class TaxRatesService {
       isEnabled: createDto.isEnabled ?? true,
     });
 
-    return this.taxRateRepository.save(taxRate);
+    return this.repository.save(taxRate);
   }
 
   async update(id: string, workspaceId: string, updateDto: UpdateTaxRateDto): Promise<TaxRate> {
@@ -74,8 +58,8 @@ export class TaxRatesService {
         throw new BadRequestException('Tax rate name is required');
       }
 
-      const duplicate = await this.taxRateRepository.findOne({
-        where: { workspaceId, name: normalizedName },
+      const duplicate = await this.repository.findOne({
+        where: { workspaceId, name: normalizedName } as any,
       });
 
       if (duplicate && duplicate.id !== id) {
@@ -95,26 +79,21 @@ export class TaxRatesService {
 
     if (updateDto.isDefault !== undefined) {
       if (updateDto.isDefault) {
-        await this.taxRateRepository.update({ workspaceId, isDefault: true }, { isDefault: false });
+        await this.repository.update({ workspaceId, isDefault: true } as any, { isDefault: false });
       }
       taxRate.isDefault = updateDto.isDefault;
     }
 
-    return this.taxRateRepository.save(taxRate);
-  }
-
-  async remove(id: string, workspaceId: string): Promise<void> {
-    const taxRate = await this.findOne(id, workspaceId);
-    await this.taxRateRepository.remove(taxRate);
+    return this.repository.save(taxRate);
   }
 
   async createDefaultTaxRates(workspaceId: string): Promise<void> {
-    const existingCount = await this.taxRateRepository.count({ where: { workspaceId } });
+    const existingCount = await this.repository.count({ where: { workspaceId } as any });
     if (existingCount > 0) {
       return;
     }
 
-    const defaultRate = this.taxRateRepository.create({
+    const defaultRate = this.repository.create({
       workspaceId,
       name: 'Tax exempt (0%)',
       rate: 0,
@@ -122,6 +101,6 @@ export class TaxRatesService {
       isEnabled: true,
     });
 
-    await this.taxRateRepository.save(defaultRate);
+    await this.repository.save(defaultRate);
   }
 }

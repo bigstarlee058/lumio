@@ -10,15 +10,11 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
 import { EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
@@ -31,13 +27,11 @@ import { UpdatePayableDto } from './dto/update-payable.dto';
 import { PayablesService } from './payables.service';
 
 @Controller('payables')
-@UseGuards(JwtAuthGuard)
 export class PayablesController {
   constructor(private readonly payablesService: PayablesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_CREATE)
+  @WorkspaceAuth(Permission.PAYABLE_CREATE)
   @Audit({ entityType: EntityType.PAYABLE, includeDiff: true, isUndoable: true })
   async create(
     @Body() createDto: CreatePayableDto,
@@ -48,29 +42,25 @@ export class PayablesController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_VIEW)
+  @WorkspaceAuth(Permission.PAYABLE_VIEW)
   async findAll(@WorkspaceId() workspaceId: string, @Query() query: FilterPayablesDto) {
     return this.payablesService.findAll(workspaceId, query);
   }
 
   @Get('summary')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_VIEW)
+  @WorkspaceAuth(Permission.PAYABLE_VIEW)
   async getSummary(@WorkspaceId() workspaceId: string) {
     return this.payablesService.getSummary(workspaceId);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_VIEW)
+  @WorkspaceAuth(Permission.PAYABLE_VIEW)
   async findOne(@Param('id', new ParseUUIDPipe()) id: string, @WorkspaceId() workspaceId: string) {
     return this.payablesService.findOne(id, workspaceId);
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_EDIT)
+  @WorkspaceAuth(Permission.PAYABLE_EDIT)
   @Audit({ entityType: EntityType.PAYABLE, includeDiff: true, isUndoable: true })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -82,8 +72,7 @@ export class PayablesController {
   }
 
   @Put(':id/mark-paid')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_EDIT)
+  @WorkspaceAuth(Permission.PAYABLE_EDIT)
   @Audit({ entityType: EntityType.PAYABLE, includeDiff: true, isUndoable: true })
   async markAsPaid(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -95,8 +84,7 @@ export class PayablesController {
   }
 
   @Put(':id/archive')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_EDIT)
+  @WorkspaceAuth(Permission.PAYABLE_EDIT)
   @Audit({ entityType: EntityType.PAYABLE, includeDiff: true, isUndoable: true })
   async archive(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -107,8 +95,7 @@ export class PayablesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_DELETE)
+  @WorkspaceAuth(Permission.PAYABLE_DELETE)
   @Audit({ entityType: EntityType.PAYABLE, includeDiff: true, isUndoable: true })
   async remove(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -120,8 +107,7 @@ export class PayablesController {
   }
 
   @Post('export')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.PAYABLE_VIEW)
+  @WorkspaceAuth(Permission.PAYABLE_VIEW)
   async export(
     @Body() body: FilterPayablesDto,
     @WorkspaceId() workspaceId: string,

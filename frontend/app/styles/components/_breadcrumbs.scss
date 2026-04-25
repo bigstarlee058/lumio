@@ -12,9 +12,13 @@
     list-style: none;
     align-items: center;
     gap: 0.25rem;
-    background-color: hsl(var(--muted) / 0.7);
+    background-color: rgba($color-muted, 0.7);
     font-size: 0.875rem;
     border-radius: $lumio-radius-sm;
+
+    @include dark {
+      background-color: rgba($color-muted-dk, 0.7);
+    }
   }
 
   &__item {
@@ -43,7 +47,7 @@
 
   &__link,
   &__button {
-    color: var(--color-muted-foreground);
+    color: $color-muted-foreground;
     text-decoration: none;
     background: none;
     border: none;
@@ -51,26 +55,50 @@
     font: inherit;
     transition: color 0.15s;
 
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
     &:hover {
-      color: var(--color-foreground);
+      color: $color-foreground;
+
+      @include dark {
+        color: $color-foreground-dk;
+      }
     }
 
     &:focus-visible {
       outline: none;
-      box-shadow: 0 0 0 2px hsl(var(--ring) / 0.5);
+      box-shadow: 0 0 0 2px rgba($color-ring, 0.5);
+
+      @include dark {
+        box-shadow: 0 0 0 2px rgba($color-ring-dk, 0.5);
+      }
     }
   }
 
   &__current {
     font-weight: 500;
-    color: var(--color-foreground);
+    color: $color-foreground;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
   }
 
   &__plain {
-    color: var(--color-muted-foreground);
+    color: $color-muted-foreground;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__separator {
-    color: hsl(var(--muted-foreground) / 0.8);
+    color: rgba($color-muted-foreground, 0.8);
+
+    @include dark {
+      color: rgba($color-muted-foreground-dk, 0.8);
+    }
   }
 }

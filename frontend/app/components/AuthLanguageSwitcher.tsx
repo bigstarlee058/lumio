@@ -19,21 +19,23 @@ export function AuthLanguageSwitcher() {
   useLockBodyScroll(languageModalOpen);
 
   const languages = useMemo(
-    () =>
-      SUPPORTED_LOCALES
-        .filter(code => availableLocales.map(String).includes(code))
+    () => {
+      const available = availableLocales.map(String);
+      return SUPPORTED_LOCALES
+        .filter(code => available.includes(code))
         .map(code => ({
           code,
           label: (languageNames as Record<string, { value: string }>)[code]?.value ?? code,
           ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
-        })),
+        }));
+    },
     [availableLocales, languageModal.defaultLanguageNote, languageNames],
   );
 
   const currentLanguageLabel = useMemo(() => {
-    const currentCode = (locale || 'ru') as AppLanguage;
-    return languages.find(l => l.code === currentCode)?.label ?? languageNames.ru.value;
-  }, [locale, languages, languageNames.ru.value]);
+    const currentCode = (locale || DEFAULT_LOCALE) as AppLanguage;
+    return languages.find(l => l.code === currentCode)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+  }, [locale, languages, languageNames]);
 
   const filteredLanguages = useMemo(() => {
     const query = languageSearch.trim().toLowerCase();
@@ -49,7 +51,7 @@ export function AuthLanguageSwitcher() {
     setLocale(code);
     setLanguageModalOpen(false);
     setLanguageSearch('');
-    const selectedLabel = languages.find(l => l.code === code)?.label ?? languageNames.ru.value;
+    const selectedLabel = languages.find(l => l.code === code)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
     toast.success(`${languageModal.savedToastPrefix.value}: ${selectedLabel}`);
     setTimeout(() => {
       window.location.reload();
