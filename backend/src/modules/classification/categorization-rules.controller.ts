@@ -8,16 +8,12 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { CategorizationRule } from '../../entities/categorization-rule.entity';
 import { Transaction } from '../../entities/transaction.entity';
@@ -47,7 +43,6 @@ type CategorizationRuleAuditSnapshot = {
 };
 
 @Controller('categorization-rules')
-@UseGuards(JwtAuthGuard)
 export class CategorizationRulesController {
   constructor(
     @InjectRepository(CategorizationRule)
@@ -59,8 +54,7 @@ export class CategorizationRulesController {
   ) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_VIEW)
+  @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async findAll(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
     const rules = await this.categorizationRuleRepository.find({
       where: {
@@ -80,8 +74,7 @@ export class CategorizationRulesController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_VIEW)
+  @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async findOne(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -104,8 +97,7 @@ export class CategorizationRulesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_EDIT)
+  @WorkspaceAuth(Permission.CATEGORY_EDIT)
   async create(
     @Body() dto: CreateCategorizationRuleDto,
     @CurrentUser() user: User,
@@ -142,8 +134,7 @@ export class CategorizationRulesController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_EDIT)
+  @WorkspaceAuth(Permission.CATEGORY_EDIT)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateCategorizationRuleDto,
@@ -189,8 +180,7 @@ export class CategorizationRulesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_DELETE)
+  @WorkspaceAuth(Permission.CATEGORY_DELETE)
   async remove(
     @Param('id') id: string,
     @CurrentUser() user: User,
@@ -225,8 +215,7 @@ export class CategorizationRulesController {
 
   @Post('test')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-  @RequirePermission(Permission.CATEGORY_VIEW)
+  @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async testRule(
     @Body() dto: TestCategorizationRuleDto,
     @CurrentUser() user: User,

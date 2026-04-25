@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
@@ -103,7 +104,7 @@ export class PayablesController {
     @WorkspaceId() workspaceId: string,
   ) {
     await this.payablesService.remove(id, workspaceId, user.id);
-    return { message: 'Payable deleted successfully' };
+    return deletedResponse('Payable');
   }
 
   @Post('export')

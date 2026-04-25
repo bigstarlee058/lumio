@@ -19,10 +19,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { Response } from 'express';
 import { diskStorage } from 'multer';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { Permission } from '../../common/enums/permissions.enum';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { TimezonesService } from '../../common/services/timezones.service';
 import { sanitizeAvatarFilename } from '../../common/utils/avatar-filename.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
@@ -57,8 +57,7 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_VIEW_ALL)
+  @WorkspaceAuth(Permission.USER_VIEW_ALL)
   async findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
     return this.usersService.findAll(
       page ? Number.parseInt(page) : 1,
@@ -121,19 +120,17 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async remove(
     @Param('id') id: string,
     @CurrentUser() currentUser: User,
   ): Promise<{ message: string }> {
     await this.usersService.remove(id, currentUser);
-    return { message: 'User deleted successfully' };
+    return deletedResponse('User');
   }
 
   @Get(':id/permissions')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async getUserPermissions(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
     const permissions = this.permissionsService.getUserPermissions(user);
@@ -146,8 +143,7 @@ export class UsersController {
   }
 
   @Put(':id/permissions')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async updatePermissions(@Param('id') id: string, @Body() dto: UpdatePermissionsDto) {
     const user = await this.permissionsService.updateUserPermissions(id, dto.permissions);
     return {
@@ -158,8 +154,7 @@ export class UsersController {
   }
 
   @Post(':id/permissions/add')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async addPermission(@Param('id') id: string, @Body() dto: AddPermissionDto) {
     const user = await this.permissionsService.addPermission(id, dto.permission);
     return {
@@ -170,8 +165,7 @@ export class UsersController {
   }
 
   @Post(':id/permissions/remove')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async removePermission(@Param('id') id: string, @Body() dto: RemovePermissionDto) {
     const user = await this.permissionsService.removePermission(id, dto.permission);
     return {
@@ -182,8 +176,7 @@ export class UsersController {
   }
 
   @Post(':id/permissions/reset')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.USER_MANAGE)
+  @WorkspaceAuth(Permission.USER_MANAGE)
   async resetPermissions(@Param('id') id: string) {
     const user = await this.permissionsService.resetPermissions(id);
     return {

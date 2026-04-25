@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import { CreateTaxRateDto } from './dto/create-tax-rate.dto';
@@ -42,6 +43,6 @@ export class TaxRatesController {
   @WorkspaceAuth(Permission.CATEGORY_DELETE)
   async remove(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     await this.taxRatesService.remove(id, workspaceId);
-    return { message: 'Tax rate deleted successfully' };
+    return deletedResponse('Tax rate');
   }
 }

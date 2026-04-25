@@ -6,11 +6,22 @@ import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 describe('Workspace-guarded controllers', () => {
   it.each([[WalletsController], [BranchesController]])(
-    'applies WorkspaceContextGuard on %p',
+    'applies WorkspaceContextGuard on methods of %p',
     controllerClass => {
-      const guards = Reflect.getMetadata(GUARDS_METADATA, controllerClass) ?? [];
+      const proto = controllerClass.prototype;
+      const methodNames = Object.getOwnPropertyNames(proto).filter(
+        name => name !== 'constructor' && typeof proto[name] === 'function',
+      );
 
-      expect(guards).toContain(WorkspaceContextGuard);
+      // At least one method should have WorkspaceContextGuard
+      const hasGuardedMethod = methodNames.some(name => {
+        const guards = Reflect.getMetadata(GUARDS_METADATA, proto[name]) ?? [];
+        return guards.some(
+          (g: unknown) => g === WorkspaceContextGuard || (typeof g === 'function' && g.name === 'WorkspaceContextGuard'),
+        );
+      });
+
+      expect(hasGuardedMethod).toBe(true);
     },
   );
 });

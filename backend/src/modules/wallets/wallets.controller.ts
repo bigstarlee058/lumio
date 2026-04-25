@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import type { User } from '../../entities/user.entity';
@@ -57,6 +58,6 @@ export class WalletsController {
     @WorkspaceId() workspaceId: string,
   ) {
     await this.walletsService.remove(id, workspaceId);
-    return { message: 'Wallet deleted successfully' };
+    return deletedResponse('Wallet');
   }
 }

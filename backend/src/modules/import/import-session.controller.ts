@@ -7,24 +7,19 @@ import {
   NotFoundException,
   Param,
   Post,
-  UseGuards,
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { Statement, StatementStatus } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { StatementProcessingService } from '../parsing/services/statement-processing.service';
 import { ConflictResolutionMap, ImportSessionService } from './services/import-session.service';
 
 @Controller()
-@UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
 export class ImportSessionController {
   constructor(
     private readonly importSessionService: ImportSessionService,
@@ -37,7 +32,7 @@ export class ImportSessionController {
   ) {}
 
   @Get('import-sessions/:id')
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getSessionSummary(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     const session = await this.importSessionService.getSession(id);
     if (session.workspaceId !== workspaceId) {
@@ -47,7 +42,7 @@ export class ImportSessionController {
   }
 
   @Get('statements/:id/import-preview')
-  @RequirePermission(Permission.STATEMENT_VIEW)
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getImportPreview(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     const statement = await this.statementRepository.findOne({
       where: { id, workspaceId },
@@ -94,7 +89,7 @@ export class ImportSessionController {
   }
 
   @Post('statements/:id/import-commit')
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async commitImport(
     @Param('id') id: string,
     @Body() body: { resolutions?: ConflictResolutionMap },
@@ -148,7 +143,7 @@ export class ImportSessionController {
   }
 
   @Post('import-sessions/:id/cancel')
-  @RequirePermission(Permission.STATEMENT_EDIT)
+  @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async cancelSession(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     const session = await this.importSessionService.getSession(id);
     if (session.workspaceId !== workspaceId) {

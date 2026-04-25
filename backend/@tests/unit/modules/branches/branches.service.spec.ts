@@ -1,3 +1,4 @@
+import { createRepoMock } from '../../../helpers/create-repo-mock';
 import { Branch } from '@/entities/branch.entity';
 import { BranchesService } from '@/modules/branches/branches.service';
 import { NotFoundException } from '@nestjs/common';
@@ -24,13 +25,7 @@ describe('BranchesService', () => {
         BranchesService,
         {
           provide: getRepositoryToken(Branch),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            save: jest.fn(),
-            remove: jest.fn(),
-          },
+          useValue: createRepoMock<Branch>(),
         },
       ],
     }).compile();

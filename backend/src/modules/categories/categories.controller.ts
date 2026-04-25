@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import { EntityType } from '../../entities/audit-event.entity';
@@ -79,6 +80,6 @@ export class CategoriesController {
     @WorkspaceId() workspaceId: string,
   ) {
     await this.categoriesService.remove(id, workspaceId, user.id);
-    return { message: 'Category deleted successfully' };
+    return deletedResponse('Category');
   }
 }

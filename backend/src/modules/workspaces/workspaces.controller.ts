@@ -14,6 +14,7 @@ import {
 import { Throttle } from '@nestjs/throttler';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { deletedResponse } from '../../common/utils/responses.util';
 import type { User } from '../../entities';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -107,7 +108,7 @@ export class WorkspacesController {
   @UseGuards(JwtAuthGuard)
   async deleteWorkspace(@CurrentUser() user: User, @Param('id') id: string) {
     await this.workspacesService.deleteWorkspace(id, user.id);
-    return { message: 'Workspace deleted successfully' };
+    return deletedResponse('Workspace');
   }
 
   @Patch(':id/favorite')

@@ -1,5 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
 import type { DeepPartial, FindOptionsOrder, ObjectLiteral, Repository } from 'typeorm';
+import { assertFound } from '../utils/assert-found.util';
 
 /**
  * Base service for workspace-scoped CRUD entities.
@@ -29,11 +29,7 @@ export abstract class WorkspaceCrudBaseService<T extends ObjectLiteral> {
     const entity = await this.repository.findOne({
       where: { id, workspaceId } as any,
     });
-
-    if (!entity) {
-      throw new NotFoundException(`${this.entityName} not found`);
-    }
-
+    assertFound(entity, this.entityName);
     return entity;
   }
 

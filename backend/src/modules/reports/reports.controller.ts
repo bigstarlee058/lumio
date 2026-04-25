@@ -10,15 +10,11 @@ import {
   Post,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -39,7 +35,6 @@ import type { MonthlyReport } from './interfaces/monthly-report.interface';
 import { ReportsService } from './reports.service';
 
 @Controller('reports')
-@UseGuards(JwtAuthGuard, WorkspaceContextGuard)
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
@@ -57,8 +52,7 @@ export class ReportsController {
   }
 
   @Get('statements/summary')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getStatementsSummary(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -68,8 +62,7 @@ export class ReportsController {
   }
 
   @Get('top-categories')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getTopCategories(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -79,8 +72,7 @@ export class ReportsController {
   }
 
   @Get('spend-over-time')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getSpendOverTimeReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -90,8 +82,7 @@ export class ReportsController {
   }
 
   @Post('custom-tables/summary')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesSummary(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -101,8 +92,7 @@ export class ReportsController {
   }
 
   @Post('custom-tables/report')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -112,8 +102,7 @@ export class ReportsController {
   }
 
   @Post('custom-tables/report/drill-down')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesReportDrillDown(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -123,8 +112,7 @@ export class ReportsController {
   }
 
   @Get('custom-tables/available')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getAvailableCustomTables(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -133,8 +121,7 @@ export class ReportsController {
   }
 
   @Get('daily')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getDailyReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -150,8 +137,7 @@ export class ReportsController {
   }
 
   @Get('monthly')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getMonthlyReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -168,8 +154,7 @@ export class ReportsController {
   }
 
   @Post('custom')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -179,8 +164,7 @@ export class ReportsController {
   }
 
   @Post('export')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_EXPORT)
+  @WorkspaceAuth(Permission.REPORT_EXPORT)
   async exportReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -228,8 +212,7 @@ export class ReportsController {
   }
 
   @Post('generate')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_EXPORT)
+  @WorkspaceAuth(Permission.REPORT_EXPORT)
   async generateReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -248,8 +231,7 @@ export class ReportsController {
   }
 
   @Post('workspace-export')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_EXPORT)
+  @WorkspaceAuth(Permission.REPORT_EXPORT)
   async exportWorkspaceTransactions(
     @WorkspaceId() workspaceId: string,
     @Body() dto: WorkspaceExportDto,
@@ -269,15 +251,13 @@ export class ReportsController {
   }
 
   @Get('history')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getHistory(@CurrentUser() user: User) {
     return this.reportsService.getReportHistory(user.id);
   }
 
   @Get('history/:reportId/download')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_EXPORT)
+  @WorkspaceAuth(Permission.REPORT_EXPORT)
   async downloadHistoryReport(
     @CurrentUser() user: User,
     @WorkspaceId() workspaceId: string,
@@ -295,8 +275,7 @@ export class ReportsController {
   }
 
   @Get('latest')
-  @UseGuards(PermissionsGuard)
-  @RequirePermission(Permission.REPORT_VIEW)
+  @WorkspaceAuth(Permission.REPORT_VIEW)
   async getLatestPeriod(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
     return this.reportsService.getLatestTransactionPeriod(workspaceId);
   }

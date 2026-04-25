@@ -1,17 +1,6 @@
+import { createRepoMock } from '../../../helpers/create-repo-mock';
 import { TaxRatesService } from '@/modules/tax-rates/tax-rates.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-
-function createRepoMock() {
-  return {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    count: jest.fn(),
-    create: jest.fn((input: unknown) => input),
-    save: jest.fn(async (input: unknown) => input),
-    update: jest.fn(),
-    remove: jest.fn(),
-  } as any;
-}
 
 describe('TaxRatesService', () => {
   let service: TaxRatesService;
@@ -20,6 +9,8 @@ describe('TaxRatesService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     repo = createRepoMock();
+    repo.create.mockImplementation((input: unknown) => input);
+    repo.save.mockImplementation(async (input: unknown) => input);
     service = new TaxRatesService(repo);
   });
 

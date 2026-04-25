@@ -1,3 +1,4 @@
+import { createRepoMock } from '../../../helpers/create-repo-mock';
 import { Wallet } from '@/entities/wallet.entity';
 import { WalletsService } from '@/modules/wallets/wallets.service';
 import { NotFoundException } from '@nestjs/common';
@@ -27,13 +28,7 @@ describe('WalletsService', () => {
         WalletsService,
         {
           provide: getRepositoryToken(Wallet),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            save: jest.fn(),
-            remove: jest.fn(),
-          },
+          useValue: createRepoMock<Wallet>(),
         },
       ],
     }).compile();

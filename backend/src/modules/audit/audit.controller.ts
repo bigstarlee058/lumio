@@ -1,22 +1,18 @@
-import { Controller, ForbiddenException, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { Controller, ForbiddenException, Get, Param, Post, Query } from '@nestjs/common';
+import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { PermissionsGuard } from '../../common/guards/permissions.guard';
-import { WorkspaceContextGuard } from '../../common/guards/workspace-context.guard';
 import { ActorType, AuditAction, EntityType, Severity } from '../../entities/audit-event.entity';
 import { type User, UserRole } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuditService } from './audit.service';
 
 @Controller('audit-events')
-@UseGuards(JwtAuthGuard, WorkspaceContextGuard, PermissionsGuard)
-@RequirePermission(Permission.AUDIT_VIEW)
 export class AuditController {
   constructor(private readonly auditService: AuditService) {}
 
   @Get()
+  @WorkspaceAuth(Permission.AUDIT_VIEW)
   async list(
     @WorkspaceId() workspaceIdFromContext: string,
     @Query('entityType') entityType?: EntityType,
@@ -52,6 +48,7 @@ export class AuditController {
   }
 
   @Get('entity/:entityType/:entityId')
+  @WorkspaceAuth(Permission.AUDIT_VIEW)
   async getByEntity(
     @Param('entityType') entityType: EntityType,
     @Param('entityId') entityId: string,
@@ -61,16 +58,19 @@ export class AuditController {
   }
 
   @Get('batch/:batchId')
+  @WorkspaceAuth(Permission.AUDIT_VIEW)
   async getByBatch(@Param('batchId') batchId: string, @WorkspaceId() workspaceId: string) {
     return this.auditService.findEventsByBatch(batchId, workspaceId);
   }
 
   @Get(':id')
+  @WorkspaceAuth(Permission.AUDIT_VIEW)
   async getOne(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
     return this.auditService.findEventById(id, workspaceId);
   }
 
   @Post(':id/rollback')
+  @WorkspaceAuth(Permission.AUDIT_VIEW)
   async rollback(
     @Param('id') id: string,
     @CurrentUser() user: User,
