@@ -17,6 +17,7 @@ const content = makeCloudStorageContent({
     ar: 'مجلد Drive',
     pl: 'Folder Drive',
     it: 'Cartella Drive',
+    sk: 'Folder Drive',
   },
   connectingLabel: {
     ru: 'Открываем авторизацию Google…',
@@ -32,6 +33,7 @@ const content = makeCloudStorageContent({
     ar: 'جارٍ فتح تفويض Google…',
     pl: 'Otwieranie autoryzacji Google…',
     it: 'Apertura autorizzazione Google…',
+    sk: 'Otwieranie autoryzacji Google…',
   },
   connectedLabel: {
     ru: 'Google Drive подключен',
@@ -47,6 +49,7 @@ const content = makeCloudStorageContent({
     ar: 'تم توصيل Google Drive',
     pl: 'Google Drive połączony',
     it: 'Google Drive connesso',
+    sk: 'Google Drive połączony',
   },
   pickerUnavailableLabel: {
     ru: 'Google Picker недоступен',
