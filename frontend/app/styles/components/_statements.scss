@@ -21,16 +21,29 @@
   padding: 12px;
   transition: border-color 0.15s;
 
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+  }
+
   &:hover {
     border-color: color-mix(in srgb, $color-primary 30%, transparent);
   }
 
   &--duplicate-original {
     border-left: 3px solid #f59e0b;
+
+    @include dark {
+      border-left-color: $lumio-color-warning-dk;
+    }
   }
 
   &--duplicate-secondary {
     border-left: 3px solid #d1d5db;
+
+    @include dark {
+      border-left-color: $lumio-color-ink-300-dk;
+    }
   }
 
   &__accent-line {
@@ -101,6 +114,10 @@
     font-size: 15px;
     font-weight: 700;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__date {
@@ -108,6 +125,10 @@
     font-weight: 500;
     color: #9ca3af;
     margin-top: 2px;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__amount-col {
@@ -131,8 +152,16 @@
     font-variant-numeric: tabular-nums;
     color: #030712;
 
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
+
     &--error {
       color: #dc2626;
+
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
     }
   }
 
@@ -182,18 +211,34 @@
     background-color: $lumio-color-surface-error;
     color: #b91c1c;
     box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.2) inset;
+
+    @include dark {
+      background-color: $lumio-color-danger-soft-dk;
+      color: $lumio-color-danger-dk;
+      box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.3) inset;
+    }
   }
 
   &--processing {
     background-color: $lumio-color-surface-muted;
     color: #92400e;
     box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3) inset;
+
+    @include dark {
+      background-color: $lumio-color-warning-soft-dk;
+      color: $lumio-color-warning-dk;
+      box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.4) inset;
+    }
   }
 
   &--completed {
     font-size: 11px;
     font-weight: 500;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 }
 
@@ -246,6 +291,10 @@
     transform: translateY(-50%);
     pointer-events: none;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__search-input {
@@ -258,6 +307,12 @@
     color: #111827;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
 
     &:focus {
       border-color: $color-primary;
@@ -287,6 +342,12 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-700-dk;
+    }
 
     &:hover {
       border-color: $color-primary;
@@ -329,9 +390,20 @@
     cursor: pointer;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-warning-dk;
+      background: $lumio-color-warning-soft-dk;
+      color: $lumio-color-warning-dk;
+    }
+
     &:hover {
       border-color: #f59e0b;
       background: #fef3c7;
+
+      @include dark {
+        border-color: $lumio-color-warning-dk;
+        background: $lumio-color-warning-soft-dk;
+      }
     }
   }
 
@@ -347,6 +419,11 @@
     font-size: 11px;
     font-weight: 600;
     color: #92400e;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-warning-dk;
+    }
   }
 
   &__body {
@@ -363,6 +440,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 12px 16px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__empty {
@@ -381,6 +463,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    @include dark {
+      color: $lumio-color-ink-300-dk;
+      background: $lumio-color-surface-muted-dk;
+    }
   }
 
   &__col-header {
@@ -396,6 +483,10 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: #6b7280;
+
+      @include dark {
+        color: $lumio-color-ink-500-dk;
+      }
     }
   }
 
@@ -412,6 +503,10 @@
     align-items: center;
     justify-content: center;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__col-meta {
@@ -421,6 +516,10 @@
     align-items: center;
     gap: 8px;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__col-amount {
@@ -428,12 +527,20 @@
     text-align: right;
     color: #9ca3af;
     padding-right: 4px;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__col-action {
     width: 144px;
     text-align: right;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__pagination {
@@ -453,6 +560,10 @@
   &__page-info {
     font-size: 14px;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__page-controls {
@@ -477,6 +588,12 @@
   background: $lumio-color-surface;
   padding: 8px 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
 
   @media (min-width: 768px) {
     display: none;
@@ -509,6 +626,11 @@
       border-color: #e5e7eb;
       color: #374151;
 
+      @include dark {
+        border-color: $lumio-color-border-dk;
+        color: $lumio-color-ink-700-dk;
+      }
+
       &:hover {
         border-color: $color-primary;
         color: $color-primary;
@@ -518,15 +640,30 @@
     &--download {
       border-color: #e5e7eb;
       color: #374151;
+
+      @include dark {
+        border-color: $lumio-color-border-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
 
     &--delete {
       border-color: #fecaca;
       color: #dc2626;
 
+      @include dark {
+        border-color: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+      }
+
       &:hover {
         border-color: #f87171;
         color: #b91c1c;
+
+        @include dark {
+          border-color: $lumio-color-danger-dk;
+          color: $lumio-color-danger-dk;
+        }
       }
     }
   }
@@ -572,6 +709,12 @@
     background: $lumio-color-surface;
     padding: 6px;
     box-shadow: 0 10px 20px rgba(17, 24, 39, 0.1);
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
   }
 
   &__item {
@@ -589,10 +732,18 @@
 
     &:hover {
       background: #f8fbff;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
 
     &--danger:hover {
       background: $lumio-color-surface-error;
+
+      @include dark {
+        background: $lumio-color-danger-soft-dk;
+      }
     }
   }
 
@@ -606,6 +757,10 @@
     height: 1px;
     background: #ece9e2;
     margin: 4px 0;
+
+    @include dark {
+      background: $lumio-color-border-dk;
+    }
   }
 }
 
@@ -617,6 +772,11 @@
   background: $lumio-color-surface;
   padding: 16px;
   transition: border-color 0.15s;
+
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+  }
 
   &:hover {
     border-color: color-mix(in srgb, $color-primary 30%, transparent);
@@ -654,6 +814,10 @@
     font-size: 14px;
     font-weight: 600;
     color: #374151;
+
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
   }
 
   &__dates-col {
@@ -662,6 +826,10 @@
     gap: 8px;
     font-size: 14px;
     color: #4b5563;
+
+    @include dark {
+      color: $lumio-color-ink-600-dk;
+    }
 
     @media (min-width: 640px) {
       grid-template-columns: 1fr 1fr;
@@ -679,6 +847,10 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__file-col {
@@ -689,6 +861,10 @@
     gap: 8px;
     font-size: 14px;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__actions {
@@ -717,9 +893,19 @@
     transition: all 0.15s;
     background: none;
 
+    @include dark {
+      border-color: $lumio-color-success-dk;
+      color: $lumio-color-success-dk;
+    }
+
     &:hover {
       border-color: #34d399;
       background: #ecfdf5;
+
+      @include dark {
+        border-color: $lumio-color-success-dk;
+        background: $lumio-color-success-soft-dk;
+      }
     }
   }
 
@@ -735,10 +921,21 @@
     transition: all 0.15s;
     background: none;
 
+    @include dark {
+      border-color: $lumio-color-danger-soft-dk;
+      color: $lumio-color-danger-dk;
+    }
+
     &:hover {
       border-color: #f87171;
       background: $lumio-color-surface-muted;
       color: #dc2626;
+
+      @include dark {
+        border-color: $lumio-color-danger-dk;
+        background: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+      }
     }
   }
 }
@@ -752,6 +949,10 @@
   &__search {
     border-bottom: 1px solid $color-border;
     padding-bottom: 16px;
+
+    @include dark {
+      border-bottom-color: $lumio-color-border-dk;
+    }
   }
 
   &__search-label {
@@ -766,6 +967,10 @@
     transform: translateY(-50%);
     pointer-events: none;
     color: $color-muted-foreground;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__search-input {
@@ -779,6 +984,12 @@
     color: $color-foreground;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
 
     &:focus {
       border-color: $color-primary;
@@ -807,8 +1018,16 @@
     border: none;
     color: $color-foreground;
 
+    @include dark {
+      color: $lumio-color-text-primary-dk;
+    }
+
     &:hover {
       background: $color-muted;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
 
     &--selected {
@@ -821,6 +1040,10 @@
     padding: 32px 16px;
     font-size: 16px;
     color: $color-muted-foreground;
+
+    @include dark {
+      color: $lumio-color-text-secondary-dk;
+    }
   }
 }
 
@@ -839,9 +1062,18 @@
     border: none;
     cursor: pointer;
 
+    @include dark {
+      color: $lumio-color-text-secondary-dk;
+    }
+
     &:hover {
       background: $color-muted;
       color: $color-foreground;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-text-primary-dk;
+      }
     }
   }
 
@@ -864,18 +1096,31 @@
     padding: 16px;
     transition: background-color 0.15s;
 
+    @include dark {
+      border-bottom-color: $lumio-color-border-dk;
+    }
+
     &:last-child {
       border-bottom: none;
     }
 
     &:hover {
       background: $color-muted;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
 
     &--dragging {
       z-index: 10;
       background: $color-card-bg;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      @include dark {
+        background: $lumio-color-surface-dk;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
     }
   }
 
@@ -890,8 +1135,16 @@
     background: none;
     border: none;
 
+    @include dark {
+      color: color-mix(in srgb, $lumio-color-ink-400-dk 70%, transparent);
+    }
+
     &:hover {
       color: $color-foreground;
+
+      @include dark {
+        color: $lumio-color-text-primary-dk;
+      }
     }
 
     &:active {
@@ -904,8 +1157,16 @@
     font-weight: 600;
     color: $color-foreground;
 
+    @include dark {
+      color: $lumio-color-text-primary-dk;
+    }
+
     &--hidden {
       color: $color-muted-foreground;
+
+      @include dark {
+        color: $lumio-color-text-secondary-dk;
+      }
     }
   }
 
@@ -914,6 +1175,10 @@
     bottom: 0;
     background: $color-card-bg;
     padding: 16px 0 8px;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+    }
   }
 }
 
@@ -923,6 +1188,11 @@
   border: 1px solid #e5e7eb;
   background: $lumio-color-surface;
   padding: 16px;
+
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+  }
 
   &__inner {
     display: flex;
@@ -948,6 +1218,10 @@
     transform: translateY(-50%);
     pointer-events: none;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__grid {
@@ -975,6 +1249,12 @@
     color: $color-foreground;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
+
     &:focus {
       outline: none;
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
@@ -991,6 +1271,10 @@
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: #94a3b8;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 }
 
@@ -999,12 +1283,22 @@
   border: 1px solid #e5e7eb;
   background: $lumio-color-surface;
 
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+  }
+
   &__empty {
     border-radius: $lumio-radius-lg;
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 48px 24px;
     text-align: center;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__mobile-rows {
@@ -1018,6 +1312,10 @@
     gap: 16px;
     padding: 16px;
     border-bottom: 1px solid #f3f4f6;
+
+    @include dark {
+      border-bottom-color: $lumio-color-border-dk;
+    }
 
     &:last-child {
       border-bottom: none;
@@ -1056,6 +1354,10 @@
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: #94a3b8;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__th {
@@ -1069,6 +1371,10 @@
   &__tbody tr {
     border-top: 1px solid #f3f4f6;
     vertical-align: middle;
+
+    @include dark {
+      border-top-color: $lumio-color-border-dk;
+    }
   }
 
   &__td {
@@ -1083,6 +1389,10 @@
     padding: 16px 20px;
     align-items: flex-start;
     justify-content: space-between;
+
+    @include dark {
+      border-top-color: $lumio-color-border-dk;
+    }
 
     @media (min-width: 640px) {
       flex-direction: row;
@@ -1127,6 +1437,10 @@
     text-transform: uppercase;
     letter-spacing: 0.16em;
     color: #94a3b8;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__icon {
@@ -1139,6 +1453,12 @@
     border: 1px solid #e5e7eb;
     background: #f8fafc;
     color: #475569;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+      color: $lumio-color-ink-600-dk;
+    }
   }
 }
 
@@ -1153,9 +1473,18 @@
     border: none;
     cursor: pointer;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
       background: #f3f4f6;
       color: #374151;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
   }
 
@@ -1181,6 +1510,10 @@
     font-size: 14px;
     font-weight: 500;
     color: #334155;
+
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
   }
 
   &__2col {
@@ -1203,6 +1536,12 @@
     color: $color-foreground;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
+
     &:focus {
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
     }
@@ -1219,6 +1558,12 @@
     outline: none;
     width: 100%;
     resize: vertical;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
 
     &:focus {
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
@@ -1270,11 +1615,19 @@
     font-size: 20px;
     font-weight: 600;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__subtitle {
     font-size: 14px;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__period-tabs {
@@ -1283,6 +1636,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 4px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__period-tab {
@@ -1295,6 +1653,10 @@
     background: none;
     border: none;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
 
     &--active {
       background: $color-primary;
@@ -1324,6 +1686,10 @@
     top: 50%;
     transform: translateY(-50%);
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__search-input {
@@ -1336,6 +1702,12 @@
     color: #111827;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
 
     &:focus {
       border-color: $color-primary;
@@ -1352,6 +1724,12 @@
     font-size: 14px;
     color: #374151;
     outline: none;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-700-dk;
+    }
 
     @media (min-width: 640px) {
       width: 240px;
@@ -1404,6 +1782,11 @@
     background: $lumio-color-surface;
     padding: 32px;
     text-align: center;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__empty-actions {
@@ -1437,6 +1820,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 16px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__stat-header {
@@ -1450,6 +1838,10 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__stat-value {
@@ -1482,6 +1874,10 @@
     align-items: center;
     gap: 6px;
     color: #4b5563;
+
+    @include dark {
+      color: $lumio-color-ink-600-dk;
+    }
   }
 
   &__chart-grid {
@@ -1500,11 +1896,21 @@
     background: $lumio-color-surface;
     padding: 20px;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
+
     &--wide {
       border-radius: $lumio-radius-lg;
       border: 1px solid #e5e7eb;
       background: $lumio-color-surface;
       padding: 20px;
+
+      @include dark {
+        border-color: $lumio-color-border-dk;
+        background: $lumio-color-surface-dk;
+      }
 
       @media (min-width: 1024px) {
         grid-column: span 2;
@@ -1523,6 +1929,10 @@
     font-size: 14px;
     font-weight: 600;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__leaderboard-card {
@@ -1530,6 +1940,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 20px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__leaderboard-header {
@@ -1551,11 +1966,19 @@
     font-size: 14px;
     font-weight: 600;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__leaderboard-count {
     font-size: 12px;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__sort-tabs {
@@ -1564,6 +1987,11 @@
     border: 1px solid #e5e7eb;
     background: #f9fafb;
     padding: 4px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+    }
   }
 
   &__sort-btn {
@@ -1576,10 +2004,20 @@
     border: none;
     cursor: pointer;
 
+    @include dark {
+      color: $lumio-color-ink-600-dk;
+    }
+
     &--active {
       background: $lumio-color-surface;
       color: #111827;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+      @include dark {
+        background: $lumio-color-surface-dk;
+        color: $lumio-color-ink-900-dk;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
     }
   }
 
@@ -1598,6 +2036,10 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #6b7280;
+
+      @include dark {
+        color: $lumio-color-ink-500-dk;
+      }
     }
 
     th {
@@ -1611,11 +2053,20 @@
 
     tbody {
       border-top: 1px solid #f3f4f6;
+
+      @include dark {
+        border-top-color: $lumio-color-border-dk;
+      }
     }
 
     tbody tr {
       border-bottom: 1px solid #f3f4f6;
       color: #374151;
+
+      @include dark {
+        border-bottom-color: $lumio-color-border-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
 
     td {
@@ -1646,6 +2097,10 @@
     justify-content: center;
     background: rgba(0, 0, 0, 0.3);
     padding: 16px;
+
+    @include dark {
+      background: rgba(0, 0, 0, 0.6);
+    }
   }
 
   &__drill-modal {
@@ -1656,6 +2111,11 @@
     border-radius: $lumio-radius-xl;
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__drill-header {
@@ -1664,17 +2124,29 @@
     justify-content: space-between;
     border-bottom: 1px solid #e5e7eb;
     padding: 12px 20px;
+
+    @include dark {
+      border-bottom-color: $lumio-color-border-dk;
+    }
   }
 
   &__drill-title {
     font-size: 14px;
     font-weight: 600;
     color: #111827;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__drill-subtitle {
     font-size: 12px;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__drill-close {
@@ -1685,9 +2157,18 @@
     border: none;
     cursor: pointer;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
       background: #f3f4f6;
       color: #374151;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
   }
 
@@ -1704,6 +2185,11 @@
     text-align: center;
     font-size: 14px;
     color: #6b7280;
+
+    @include dark {
+      border-color: $lumio-color-ink-300-dk;
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__empty-cta-primary {
@@ -1776,6 +2262,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     overflow: hidden;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__table {
@@ -1794,12 +2285,22 @@
     color: #6b7280;
     background: #f9fafb;
     border-bottom: 1px solid #f3f4f6;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+      background: $lumio-color-surface-muted-dk;
+      border-bottom-color: $lumio-color-border-dk;
+    }
   }
 
   &__td {
     padding: 12px 16px;
     vertical-align: top;
     border-bottom: 1px solid #f9fafb;
+
+    @include dark {
+      border-bottom-color: $lumio-color-border-dk;
+    }
   }
 
   &__badge {
@@ -1813,11 +2314,21 @@
     &--warning {
       background: $lumio-color-surface-warning;
       color: #92400e;
+
+      @include dark {
+        background: $lumio-color-warning-soft-dk;
+        color: $lumio-color-warning-dk;
+      }
     }
 
     &--error {
       background: $lumio-color-surface-error;
       color: #991b1b;
+
+      @include dark {
+        background: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+      }
     }
   }
 }
@@ -1838,8 +2349,18 @@
     cursor: pointer;
     transition: background-color 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
       background: $color-muted;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
   }
 
@@ -1850,6 +2371,12 @@
     padding: 16px;
     color: #dc2626;
     margin-bottom: 16px;
+
+    @include dark {
+      border-color: $lumio-color-danger-soft-dk;
+      background: $lumio-color-danger-soft-dk;
+      color: $lumio-color-danger-dk;
+    }
   }
 
   &__back-btn-primary {
@@ -1924,8 +2451,18 @@
     outline: none;
     transition: border-color 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &::placeholder {
       color: #9ca3af;
+
+      @include dark {
+        color: $lumio-color-ink-400-dk;
+      }
     }
 
     &:focus {
@@ -1941,6 +2478,10 @@
     transform: translateY(-50%);
     color: #9ca3af;
     pointer-events: none;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__actions-row {
@@ -1964,9 +2505,19 @@
     background: none;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-success-dk;
+      color: $lumio-color-success-dk;
+    }
+
     &:hover:not(:disabled) {
       border-color: #34d399;
       background: #ecfdf5;
+
+      @include dark {
+        border-color: $lumio-color-success-dk;
+        background: $lumio-color-success-soft-dk;
+      }
     }
 
     &:disabled {
@@ -1989,9 +2540,19 @@
     background: none;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-danger-soft-dk;
+      color: $lumio-color-danger-dk;
+    }
+
     &:hover:not(:disabled) {
       border-color: #f87171;
       background: $lumio-color-surface-muted;
+
+      @include dark {
+        border-color: $lumio-color-danger-dk;
+        background: $lumio-color-danger-soft-dk;
+      }
     }
 
     &:disabled {
@@ -2013,6 +2574,11 @@
     cursor: pointer;
     background: none;
     transition: all 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      color: $lumio-color-ink-700-dk;
+    }
 
     &:hover:not(:disabled) {
       border-color: $color-primary;
@@ -2054,6 +2620,11 @@
     border-radius: $lumio-radius-md;
     background: #f9fafb;
     color: #d1d5db;
+
+    @include dark {
+      background: $lumio-color-surface-muted-dk;
+      color: $lumio-color-ink-300-dk;
+    }
   }
 
   &__items {
@@ -2083,6 +2654,10 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #6b7280;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
 
     @media (min-width: 768px) {
       display: flex;
@@ -2123,6 +2698,12 @@
     background: $lumio-color-surface-error;
     color: #b91c1c;
     box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.2);
+
+    @include dark {
+      background: $lumio-color-danger-soft-dk;
+      color: $lumio-color-danger-dk;
+      box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.3);
+    }
   }
 
   &--pending {
@@ -2130,6 +2711,12 @@
     color: #92400e;
     box-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.3);
     animation: pulse 1.5s infinite;
+
+    @include dark {
+      background: $lumio-color-warning-soft-dk;
+      color: $lumio-color-warning-dk;
+      box-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.4);
+    }
   }
 
   &--completed {
@@ -2137,6 +2724,10 @@
     font-weight: 500;
     color: #9ca3af;
     white-space: nowrap;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 }
 
@@ -2160,6 +2751,11 @@
   padding: 12px;
   transition: border-color 0.15s;
 
+  @include dark {
+    border-color: $lumio-color-border-dk;
+    background: $lumio-color-surface-dk;
+  }
+
   &:hover {
     border-color: color-mix(in srgb, $color-primary 30%, transparent);
   }
@@ -2176,6 +2772,11 @@
   &--error {
     border-color: #fecaca;
     background: rgba(255, 241, 242, 0.4);
+
+    @include dark {
+      border-color: $lumio-color-danger-soft-dk;
+      background: rgba(220, 38, 38, 0.08);
+    }
   }
 
   &__accent {
@@ -2254,10 +2855,23 @@
     transition: all 0.15s;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-600-dk;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
     &:hover:not(:disabled) {
       border-color: #d1d5db;
       background: #f9fafb;
       color: #111827;
+
+      @include dark {
+        border-color: $lumio-color-ink-300-dk;
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-ink-900-dk;
+      }
     }
 
     &:disabled {
@@ -2314,8 +2928,18 @@
     outline: none;
     transition: border-color 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &::placeholder {
       color: #9ca3af;
+
+      @include dark {
+        color: $lumio-color-ink-400-dk;
+      }
     }
 
     &:focus {
@@ -2331,6 +2955,10 @@
     transform: translateY(-50%);
     color: #9ca3af;
     pointer-events: none;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__body {
@@ -2360,6 +2988,11 @@
     background: $lumio-color-surface;
     padding: 6px 12px;
     font-size: 14px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__bulk-action-btn {
@@ -2376,17 +3009,35 @@
     transition: all 0.15s;
     color: #374151;
 
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
       background: #f3f4f6;
       border-color: #e5e7eb;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        border-color: $lumio-color-border-dk;
+      }
     }
 
     &--danger {
       color: #dc2626;
 
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
+
       &:hover {
         background: $lumio-color-surface-error;
         border-color: #fecaca;
+
+        @include dark {
+          background: $lumio-color-danger-soft-dk;
+          border-color: $lumio-color-danger-soft-dk;
+        }
       }
     }
   }
@@ -2405,15 +3056,32 @@
     cursor: pointer;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
       background: #f9fafb;
       color: #374151;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
 
     &--active {
       background: #f0f4ff;
       color: $color-primary;
       border-color: color-mix(in srgb, $color-primary 30%, transparent);
+
+      @include dark {
+        background: color-mix(in srgb, $lumio-color-primary-dk 10%, transparent);
+        color: $lumio-color-primary-dk;
+        border-color: color-mix(in srgb, $lumio-color-primary-dk 30%, transparent);
+      }
     }
   }
 
@@ -2437,6 +3105,10 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__desktop-header {
@@ -2449,6 +3121,10 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
 
     @media (min-width: 768px) {
       display: flex;
@@ -2475,6 +3151,13 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     transition: border-color 0.15s, color 0.15s;
     color: #4b5563;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-600-dk;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
 
     &--ready {
       border-color: color-mix(in srgb, $color-primary 40%, transparent);
@@ -2523,6 +3206,12 @@
     background: $lumio-color-surface;
     padding: 6px;
     box-shadow: 0 10px 20px rgba(17, 24, 39, 0.1);
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
   }
 
   &__bulk-menu-btn {
@@ -2539,12 +3228,24 @@
     transition: background-color 0.15s;
     color: #374151;
 
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
       background: #f9fafb;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
 
     &--danger:hover {
       background: $lumio-color-surface-error;
+
+      @include dark {
+        background: $lumio-color-danger-soft-dk;
+      }
     }
   }
 
@@ -2552,6 +3253,10 @@
     height: 1px;
     margin: 4px 0;
     background: #ece9e2;
+
+    @include dark {
+      background: $lumio-color-border-dk;
+    }
   }
 
   /* Mobile bulk bar */
@@ -2570,6 +3275,12 @@
     background: $lumio-color-surface;
     padding: 8px 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
 
     @media (min-width: 768px) {
       display: none;
@@ -2597,6 +3308,11 @@
     background: none;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      color: $lumio-color-ink-700-dk;
+    }
+
     &--primary {
       border-color: color-mix(in srgb, $color-primary 20%, transparent);
       color: $color-primary;
@@ -2616,9 +3332,19 @@
       border-color: #fecaca;
       color: #dc2626;
 
+      @include dark {
+        border-color: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+      }
+
       &:hover {
         border-color: #f87171;
         color: #b91c1c;
+
+        @include dark {
+          border-color: $lumio-color-danger-dk;
+          color: $lumio-color-danger-dk;
+        }
       }
     }
   }
@@ -2638,9 +3364,20 @@
     cursor: pointer;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-warning-dk;
+      background: $lumio-color-warning-soft-dk;
+      color: $lumio-color-warning-dk;
+    }
+
     &:hover {
       border-color: #fcd34d;
       background: #fef3c7;
+
+      @include dark {
+        border-color: $lumio-color-warning-dk;
+        background: $lumio-color-warning-soft-dk;
+      }
     }
   }
 
@@ -2656,6 +3393,11 @@
     font-size: 11px;
     font-weight: 600;
     color: #92400e;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-warning-dk;
+    }
   }
 
   /* Skeleton rows */
@@ -2666,6 +3408,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 12px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
 
     @media (min-width: 768px) {
       padding: 10px 16px;
@@ -2706,6 +3453,11 @@
     border: 1px solid $color-border;
     background: rgba(0, 0, 0, 0.04);
     padding: 6px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: rgba(255, 255, 255, 0.04);
+    }
   }
 
   &__tab {
@@ -2723,15 +3475,30 @@
     border: none;
     color: $color-muted-foreground;
 
+    @include dark {
+      color: $lumio-color-text-secondary-dk;
+    }
+
     &:hover {
       background: $color-muted;
       color: $color-foreground;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+        color: $lumio-color-text-primary-dk;
+      }
     }
 
     &--active {
       background: $color-card-bg;
       color: $color-foreground;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      @include dark {
+        background: $lumio-color-surface-dk;
+        color: $lumio-color-text-primary-dk;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      }
     }
   }
 
@@ -2755,6 +3522,10 @@
     transform: translateY(-50%);
     pointer-events: none;
     color: $color-muted-foreground;
+
+    @include dark {
+      color: $lumio-color-text-secondary-dk;
+    }
   }
 
   &__search-input {
@@ -2767,6 +3538,12 @@
     color: $color-foreground;
     outline: none;
     transition: border-color 0.15s;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
 
     &:focus {
       border-color: $color-primary;
@@ -2788,8 +3565,16 @@
     border: none;
     color: $color-foreground;
 
+    @include dark {
+      color: $lumio-color-text-primary-dk;
+    }
+
     &:hover {
       background: $color-muted;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
   }
 
@@ -2804,12 +3589,21 @@
     padding: 16px;
     text-align: left;
     cursor: pointer;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+    }
   }
 
   &__label {
     padding: 0 4px;
     font-size: 14px;
     color: $color-muted-foreground;
+
+    @include dark {
+      color: $lumio-color-text-secondary-dk;
+    }
   }
 
   &__section {
@@ -2830,6 +3624,12 @@
     padding: 12px;
     font-size: 14px;
     color: $color-muted-foreground;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-secondary-dk;
+    }
   }
 }
 
@@ -2886,9 +3686,19 @@
     flex-direction: column;
     gap: 12px;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
+
     &--approved {
       border-color: #bbf7d0;
       background: #f0fdf4;
+
+      @include dark {
+        border-color: $lumio-color-success-dk;
+        background: $lumio-color-success-soft-dk;
+      }
     }
 
     &--ignored {
@@ -2947,6 +3757,12 @@
     outline: none;
     transition: border-color 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &:focus {
       border-color: $color-primary;
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 10%, transparent);
@@ -2960,6 +3776,10 @@
     transform: translateY(-50%);
     color: #9ca3af;
     pointer-events: none;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__period-tabs {
@@ -2968,6 +3788,11 @@
     border: 1px solid #e5e7eb;
     background: #f9fafb;
     padding: 4px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+    }
   }
 
   &__period-tab {
@@ -2981,10 +3806,20 @@
     border: none;
     color: #6b7280;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &--active {
       background: $lumio-color-surface;
       color: #111827;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+      @include dark {
+        background: $lumio-color-surface-dk;
+        color: $lumio-color-ink-900-dk;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
     }
   }
 
@@ -2994,6 +3829,11 @@
     border: 1px solid #e5e7eb;
     background: #f9fafb;
     padding: 4px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-muted-dk;
+    }
   }
 
   &__sort-tab {
@@ -3007,10 +3847,20 @@
     border: none;
     color: #6b7280;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &--active {
       background: $lumio-color-surface;
       color: #111827;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+      @include dark {
+        background: $lumio-color-surface-dk;
+        color: $lumio-color-ink-900-dk;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
     }
   }
 
@@ -3019,6 +3869,11 @@
     border: 1px solid #e5e7eb;
     background: $lumio-color-surface;
     padding: 20px;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+    }
   }
 
   &__table-wrap {
@@ -3040,6 +3895,10 @@
     letter-spacing: 0.05em;
     color: #6b7280;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &--right {
       text-align: right;
     }
@@ -3049,6 +3908,10 @@
     padding: 12px 16px;
     vertical-align: middle;
     border-top: 1px solid #f3f4f6;
+
+    @include dark {
+      border-top-color: $lumio-color-border-dk;
+    }
   }
 
   &__empty {
@@ -3056,6 +3919,10 @@
     text-align: center;
     font-size: 14px;
     color: #9ca3af;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &__dropdown {
@@ -3075,8 +3942,18 @@
     cursor: pointer;
     transition: all 0.15s;
 
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
       background: #f9fafb;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
   }
 
@@ -3091,6 +3968,12 @@
     background: $lumio-color-surface;
     padding: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
   }
 
   &__dropdown-item {
@@ -3108,13 +3991,26 @@
     color: #374151;
     transition: background-color 0.15s;
 
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
       background: #f9fafb;
+
+      @include dark {
+        background: $lumio-color-surface-muted-dk;
+      }
     }
 
     &--active {
       background: #f0f4ff;
       color: $color-primary;
+
+      @include dark {
+        background: color-mix(in srgb, $lumio-color-primary-dk 10%, transparent);
+        color: $lumio-color-primary-dk;
+      }
     }
   }
 }

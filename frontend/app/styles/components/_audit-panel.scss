@@ -50,12 +50,20 @@
   color: $lumio-color-ink-900;
   letter-spacing: -0.02em;
   margin: 0;
+
+  @include dark {
+    color: $lumio-color-ink-900-dk;
+  }
 }
 
 .audit-page__subtitle {
   font-size: 13px;
   color: $lumio-color-ink-500;
   margin: 4px 0 0;
+
+  @include dark {
+    color: $lumio-color-ink-500-dk;
+  }
 }
 
 /* ── Filter bar ───────────────────────────────────────────────── */
@@ -79,6 +87,10 @@
     left: 10px;
     color: $lumio-color-ink-400;
     pointer-events: none;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 }
 
@@ -96,10 +108,16 @@
 
   @include dark {
     background: $color-card-bg-dk;
+    color: $lumio-color-ink-900-dk;
+    border-color: $lumio-color-border-dk;
   }
 
   &::placeholder {
     color: $lumio-color-ink-400;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
   }
 
   &:focus {
@@ -116,6 +134,7 @@
 
   @include dark {
     background: $color-card-bg-dk;
+    border-color: $lumio-color-border-dk;
   }
 }
 
@@ -134,6 +153,10 @@
     left: 15px;
     width: 1px;
     background: $lumio-color-ink-150;
+
+    @include dark {
+      background: $lumio-color-ink-300-dk;
+    }
   }
 }
 
@@ -147,6 +170,10 @@
 
   & + & {
     border-top: 1px solid $lumio-color-ink-100;
+
+    @include dark {
+      border-top-color: $lumio-color-ink-200-dk;
+    }
   }
 }
 
@@ -167,6 +194,8 @@
 
   @include dark {
     background: $color-card-bg-dk;
+    border-color: $lumio-color-border-dk;
+    color: $lumio-color-ink-500-dk;
   }
 }
 
@@ -178,6 +207,10 @@
 
   &:hover .audit-line {
     color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 }
 
@@ -189,20 +222,36 @@
   font-size: 13px;
   flex-wrap: wrap;
   color: $lumio-color-ink-700;
+
+  @include dark {
+    color: $lumio-color-ink-700-dk;
+  }
 }
 
 .audit-actor {
   font-weight: 600;
   color: $lumio-color-ink-900;
+
+  @include dark {
+    color: $lumio-color-ink-900-dk;
+  }
 }
 
 .audit-verb {
   color: $lumio-color-ink-500;
+
+  @include dark {
+    color: $lumio-color-ink-500-dk;
+  }
 }
 
 .audit-what {
   color: $lumio-color-ink-800;
   font-weight: 500;
+
+  @include dark {
+    color: $lumio-color-ink-800-dk;
+  }
 }
 
 .audit-tag {
@@ -215,6 +264,11 @@
   background: $lumio-color-ink-100;
   color: $lumio-color-ink-600;
   margin-left: 2px;
+
+  @include dark {
+    background: $lumio-color-ink-300-dk;
+    color: $lumio-color-ink-600-dk;
+  }
 }
 
 /* ── Timestamp ────────────────────────────────────────────────── */
@@ -222,6 +276,10 @@
   font-size: 11.5px;
   color: $lumio-color-ink-400;
   margin-top: 3px;
+
+  @include dark {
+    color: $lumio-color-ink-400-dk;
+  }
 }
 
 /* ── Avatar ───────────────────────────────────────────────────── */
@@ -252,8 +310,16 @@
   cursor: pointer;
   padding: 0;
 
+  @include dark {
+    color: $lumio-color-ink-700-dk;
+  }
+
   &:hover {
     color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 }
 
@@ -274,12 +340,20 @@
 
   @include dark {
     background: $color-card-bg-dk;
+    color: $lumio-color-ink-600-dk;
+    border-color: $lumio-color-border-dk;
   }
 
   &:hover {
     border-color: $lumio-color-danger;
     color: $lumio-color-danger;
     background: #fff1f2;
+
+    @include dark {
+      border-color: $lumio-color-danger-dk;
+      color: $lumio-color-danger-dk;
+      background: rgba($lumio-color-danger-dk, 0.1);
+    }
   }
 }
 
@@ -289,6 +363,10 @@
   text-align: center;
   color: $lumio-color-ink-400;
   font-size: 13.5px;
+
+  @include dark {
+    color: $lumio-color-ink-400-dk;
+  }
 }
 
 /* ── Pagination row ───────────────────────────────────────────── */
@@ -301,4 +379,9 @@
   border-top: 1px solid $lumio-color-ink-150;
   font-size: 13px;
   color: $lumio-color-ink-500;
+
+  @include dark {
+    border-top-color: $lumio-color-border-dk;
+    color: $lumio-color-ink-500-dk;
+  }
 }

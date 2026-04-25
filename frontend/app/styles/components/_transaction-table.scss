@@ -4,8 +4,13 @@
 // Table container
 .lumio-tx-table {
   overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border: 1px solid $lumio-color-ink-150;
   background-color: $lumio-color-surface;
+
+  @include dark {
+    border-color: $lumio-color-ink-150-dk;
+    background-color: $lumio-color-surface-dk;
+  }
 
   &__scroll {
     overflow-x: auto;
@@ -19,8 +24,13 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    border-bottom: 1px solid #e5e7eb;
-    background-color: #f9fafb;
+    border-bottom: 1px solid $lumio-color-ink-150;
+    background-color: $lumio-color-ink-50;
+
+    @include dark {
+      border-bottom-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-ink-50-dk;
+    }
   }
 
   &__tbody {
@@ -28,7 +38,11 @@
   }
 
   &__tr-divider {
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid $lumio-color-ink-100;
+
+    @include dark {
+      border-top-color: $lumio-color-ink-100-dk;
+    }
   }
 
   &__th {
@@ -38,7 +52,11 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
 
     &--right {
       padding: 12px 16px;
@@ -47,7 +65,11 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #6b7280;
+      color: $lumio-color-ink-500;
+
+      @include dark {
+        color: $lumio-color-ink-500-dk;
+      }
     }
 
     &--checkbox {
@@ -70,14 +92,22 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
-      color: #374151;
+      color: $lumio-color-ink-700;
+
+      @include dark {
+        color: $lumio-color-ink-700-dk;
+      }
     }
   }
 
@@ -110,7 +140,11 @@
     padding: 12px 16px 48px;
     text-align: center;
     font-size: 14px;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__expand-btn {
@@ -118,14 +152,22 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #9ca3af;
+    color: $lumio-color-ink-300;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
 
+    @include dark {
+      color: $lumio-color-ink-300-dk;
+    }
+
     &:hover {
-      color: #4b5563;
+      color: $lumio-color-ink-600;
+
+      @include dark {
+        color: $lumio-color-ink-600-dk;
+      }
     }
   }
 
@@ -137,25 +179,46 @@
 
     &:hover {
       background-color: rgba(0, 0, 0, 0.03);
+
+      @include dark {
+        background-color: rgba(255, 255, 255, 0.04);
+      }
     }
 
     &--selected {
       background-color: rgba($color-primary, 0.05);
       border-left-color: $color-primary;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.08);
+        border-left-color: $color-primary-dk;
+      }
     }
 
     &--error {
       background-color: rgba(239, 68, 68, 0.05);
+
+      @include dark {
+        background-color: $lumio-color-surface-error-dk;
+      }
     }
 
     &--warning {
       background-color: rgba(245, 158, 11, 0.03);
+
+      @include dark {
+        background-color: $lumio-color-surface-warning-dk;
+      }
     }
   }
 
   // Expanded row
   &__expanded-row {
     background-color: rgba(249, 250, 251, 0.4);
+
+    @include dark {
+      background-color: rgba($lumio-color-ink-50-dk, 0.6);
+    }
   }
 
   &__expanded-content {
@@ -165,7 +228,12 @@
     background: $lumio-color-surface;
     padding: 16px;
     font-size: 12px;
-    border: 1px solid #f3f4f6;
+    border: 1px solid $lumio-color-ink-100;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-ink-100-dk;
+    }
 
     @media (min-width: 640px) {
       grid-template-columns: repeat(4, 1fr);
@@ -176,8 +244,12 @@
     label {
       display: block;
       font-weight: 600;
-      color: #6b7280;
+      color: $lumio-color-ink-500;
       margin-bottom: 4px;
+
+      @include dark {
+        color: $lumio-color-ink-500-dk;
+      }
     }
   }
 }
@@ -185,15 +257,24 @@
 // Mobile list
 .lumio-tx-mobile {
   overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border: 1px solid $lumio-color-ink-150;
   background-color: $lumio-color-surface;
+
+  @include dark {
+    border-color: $lumio-color-ink-150-dk;
+    background-color: $lumio-color-surface-dk;
+  }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid $lumio-color-ink-150;
     padding: 12px 16px;
+
+    @include dark {
+      border-bottom-color: $lumio-color-ink-150-dk;
+    }
   }
 
   &__header-left {
@@ -210,14 +291,22 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
-      color: #374151;
+      color: $lumio-color-ink-700;
+
+      @include dark {
+        color: $lumio-color-ink-700-dk;
+      }
     }
   }
 
@@ -229,33 +318,57 @@
   }
 
   &__empty {
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     padding: 40px 16px;
     text-align: center;
     font-size: 14px;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      color: $lumio-color-ink-500-dk;
+    }
   }
 }
 
 // Mobile card
 .lumio-tx-card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid $lumio-color-ink-150;
   padding: 12px;
   transition: border-color 150ms;
+
+  @include dark {
+    border-color: $lumio-color-ink-150-dk;
+  }
 
   &--selected {
     border-color: $color-primary;
     background-color: rgba($color-primary, 0.05);
+
+    @include dark {
+      border-color: $color-primary-dk;
+      background-color: rgba($color-primary-dk, 0.08);
+    }
   }
 
   &--error {
     border-color: #fecaca;
     background-color: rgba(239, 68, 68, 0.04);
+
+    @include dark {
+      border-color: rgba($lumio-color-danger-dk, 0.4);
+      background-color: $lumio-color-surface-error-dk;
+    }
   }
 
   &--warning {
     border-color: #fde68a;
     background-color: rgba(245, 158, 11, 0.03);
+
+    @include dark {
+      border-color: rgba($lumio-color-warning-dk, 0.4);
+      background-color: $lumio-color-surface-warning-dk;
+    }
   }
 
   &__body {
@@ -298,13 +411,21 @@
       white-space: nowrap;
       font-size: 14px;
       font-weight: 600;
-      color: #111827;
+      color: $lumio-color-ink-900;
+
+      @include dark {
+        color: $lumio-color-ink-900-dk;
+      }
     }
 
     p:last-child {
       margin-top: 2px;
       font-size: 12px;
-      color: #6b7280;
+      color: $lumio-color-ink-500;
+
+      @include dark {
+        color: $lumio-color-ink-500-dk;
+      }
     }
   }
 
@@ -319,7 +440,11 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
     font-size: 12px;
-    color: #4b5563;
+    color: $lumio-color-ink-600;
+
+    @include dark {
+      color: $lumio-color-ink-600-dk;
+    }
   }
 
   &__footer {
@@ -335,15 +460,24 @@
     align-items: center;
     justify-content: center;
     padding: 6px;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
     background: none;
     border: none;
     cursor: pointer;
     transition: background-color 150ms, color 150ms;
 
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
+
     &:hover {
-      background-color: #f3f4f6;
-      color: #374151;
+      background-color: $lumio-color-ink-100;
+      color: $lumio-color-ink-700;
+
+      @include dark {
+        background-color: $lumio-color-ink-100-dk;
+        color: $lumio-color-ink-700-dk;
+      }
     }
   }
 
@@ -352,10 +486,15 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    border: 1px solid #f3f4f6;
-    background-color: #f9fafb;
+    border: 1px solid $lumio-color-ink-100;
+    background-color: $lumio-color-ink-50;
     padding: 12px;
     font-size: 12px;
+
+    @include dark {
+      border-color: $lumio-color-ink-100-dk;
+      background-color: $lumio-color-ink-50-dk;
+    }
   }
 }
 
@@ -364,9 +503,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid $lumio-color-ink-150;
   background-color: $lumio-color-surface;
   padding: 12px 16px;
+
+  @include dark {
+    border-top-color: $lumio-color-ink-150-dk;
+    background-color: $lumio-color-surface-dk;
+  }
 
   &__left {
     display: flex;
@@ -381,13 +525,23 @@
   }
 
   &__select {
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     padding: 4px 8px;
     font-size: 14px;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &:focus {
       border-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+      }
     }
   }
 }
@@ -421,19 +575,33 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: $lumio-color-ink-300;
+
+    @include dark {
+      color: $lumio-color-ink-300-dk;
+    }
   }
 
   &__search {
     width: 100%;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 16px 8px 40px;
     font-size: 14px;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &:focus {
       border-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+      }
     }
   }
 
@@ -442,14 +610,22 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: $lumio-color-ink-300;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
 
+    @include dark {
+      color: $lumio-color-ink-300-dk;
+    }
+
     &:hover {
-      color: #4b5563;
+      color: $lumio-color-ink-600;
+
+      @include dark {
+        color: $lumio-color-ink-600-dk;
+      }
     }
   }
 
@@ -457,24 +633,41 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 600;
     transition: border-color 150ms, color 150ms;
     background: $lumio-color-surface;
-    color: #4b5563;
+    color: $lumio-color-ink-600;
     cursor: pointer;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-600-dk;
+    }
 
     &--active {
       border-color: $color-primary;
       background-color: rgba($color-primary, 0.1);
       color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+        background-color: rgba($color-primary-dk, 0.1);
+        color: $color-primary-dk;
+      }
     }
 
     &:hover {
       border-color: $color-primary;
       color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+        color: $color-primary-dk;
+      }
     }
   }
 
@@ -488,12 +681,22 @@
     background-color: $color-primary;
     font-size: 12px;
     color: white;
+
+    @include dark {
+      background-color: $color-primary-dk;
+      color: $lumio-color-ink-900;
+    }
   }
 
   &__panel {
-    border: 1px solid #e5e7eb;
-    background-color: rgba(249, 250, 251, 0.6);
+    border: 1px solid $lumio-color-ink-150;
+    background-color: rgba($lumio-color-ink-50, 0.6);
     padding: 16px;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: rgba($lumio-color-ink-50-dk, 0.8);
+    }
   }
 
   &__panel-inner {
@@ -513,45 +716,75 @@
     margin-bottom: 4px;
     font-size: 12px;
     font-weight: 600;
-    color: #374151;
+    color: $lumio-color-ink-700;
+
+    @include dark {
+      color: $lumio-color-ink-700-dk;
+    }
   }
 
   &__select {
     width: 100%;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 12px;
     font-size: 14px;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &:focus {
       border-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+      }
     }
   }
 
   &__clear-btn {
     margin-top: auto;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #4b5563;
+    color: $lumio-color-ink-600;
     cursor: pointer;
     transition: border-color 150ms, color 150ms;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-600-dk;
+    }
 
     &:hover {
       border-color: $color-primary;
       color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+        color: $color-primary-dk;
+      }
     }
   }
 }
 
 // Summary bar
 .lumio-tx-summary {
-  border: 1px solid #e5e7eb;
+  border: 1px solid $lumio-color-ink-150;
   background-color: $lumio-color-surface;
   padding: 24px;
+
+  @include dark {
+    border-color: $lumio-color-ink-150-dk;
+    background-color: $lumio-color-surface-dk;
+  }
 
   &__grid {
     display: grid;
@@ -588,12 +821,20 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
-    color: #111827;
+    color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__upload-date {
     font-size: 12px;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__badges {
@@ -626,6 +867,16 @@
       .lumio-tx-summary__badge-dot {
         background-color: #16a34a;
       }
+
+      @include dark {
+        border-color: rgba($lumio-color-success-dk, 0.4);
+        background-color: $lumio-color-success-soft-dk;
+        color: $lumio-color-success-dk;
+
+        .lumio-tx-summary__badge-dot {
+          background-color: $lumio-color-success-dk;
+        }
+      }
     }
 
     &--warnings {
@@ -635,6 +886,16 @@
 
       .lumio-tx-summary__badge-dot {
         background-color: #d97706;
+      }
+
+      @include dark {
+        border-color: rgba($lumio-color-warning-dk, 0.4);
+        background-color: $lumio-color-warning-soft-dk;
+        color: $lumio-color-warning-dk;
+
+        .lumio-tx-summary__badge-dot {
+          background-color: $lumio-color-warning-dk;
+        }
       }
     }
 
@@ -646,6 +907,16 @@
       .lumio-tx-summary__badge-dot {
         background-color: #dc2626;
       }
+
+      @include dark {
+        border-color: rgba($lumio-color-danger-dk, 0.4);
+        background-color: $lumio-color-danger-soft-dk;
+        color: $lumio-color-danger-dk;
+
+        .lumio-tx-summary__badge-dot {
+          background-color: $lumio-color-danger-dk;
+        }
+      }
     }
 
     &--uncategorized {
@@ -655,6 +926,16 @@
 
       .lumio-tx-summary__badge-dot {
         background-color: #2563eb;
+      }
+
+      @include dark {
+        border-color: rgba($lumio-color-info-dk, 0.4);
+        background-color: $lumio-color-info-soft-dk;
+        color: $lumio-color-info-dk;
+
+        .lumio-tx-summary__badge-dot {
+          background-color: $lumio-color-info-dk;
+        }
       }
     }
   }
@@ -672,11 +953,21 @@
     &--debit {
       border-color: #fecaca;
       background-color: rgba(239, 68, 68, 0.05);
+
+      @include dark {
+        border-color: rgba($lumio-color-danger-dk, 0.4);
+        background-color: $lumio-color-surface-error-dk;
+      }
     }
 
     &--credit {
       border-color: #a7f3d0;
       background-color: rgba(16, 185, 129, 0.05);
+
+      @include dark {
+        border-color: rgba($lumio-color-success-dk, 0.4);
+        background-color: $lumio-color-success-soft-dk;
+      }
     }
   }
 
@@ -689,10 +980,18 @@
 
     &--debit {
       color: #b91c1c;
+
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
     }
 
     &--credit {
       color: #15803d;
+
+      @include dark {
+        color: $lumio-color-success-dk;
+      }
     }
   }
 
@@ -703,10 +1002,18 @@
 
     &--debit {
       color: #b91c1c;
+
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
     }
 
     &--credit {
       color: #15803d;
+
+      @include dark {
+        color: $lumio-color-success-dk;
+      }
     }
   }
 
@@ -752,10 +1059,14 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid $lumio-color-ink-150;
     padding-bottom: 8px;
     font-size: 14px;
     font-weight: 600;
+
+    @include dark {
+      border-bottom-color: $lumio-color-ink-150-dk;
+    }
   }
 
   &__tab {
@@ -764,13 +1075,22 @@
     border: none;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
     font-size: 14px;
     font-weight: 600;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
 
     &--active {
       border-bottom-color: $color-primary;
       color: $color-primary;
+
+      @include dark {
+        border-bottom-color: $color-primary-dk;
+        color: $color-primary-dk;
+      }
     }
   }
 }
@@ -794,13 +1114,22 @@
   }
 
   &__icon {
-    background-color: #f3f4f6;
+    background-color: $lumio-color-ink-100;
     padding: 8px;
+
+    @include dark {
+      background-color: $lumio-color-ink-100-dk;
+    }
 
     &--white {
       background-color: $lumio-color-surface;
       padding: 8px;
-      border: 1px solid #f3f4f6;
+      border: 1px solid $lumio-color-ink-100;
+
+      @include dark {
+        background-color: $lumio-color-surface-dk;
+        border-color: $lumio-color-ink-100-dk;
+      }
     }
   }
 
@@ -813,24 +1142,42 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__value {
     margin-top: 4px;
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__card {
-    border: 1px solid #e5e7eb;
-    background-color: rgba(249, 250, 251, 0.6);
+    border: 1px solid $lumio-color-ink-150;
+    background-color: rgba($lumio-color-ink-50, 0.6);
     padding: 16px;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: rgba($lumio-color-ink-50-dk, 0.8);
+    }
 
     &--blue {
       border-color: #bfdbfe;
       background-color: rgba(59, 130, 246, 0.06);
+
+      @include dark {
+        border-color: rgba($lumio-color-info-dk, 0.4);
+        background-color: $lumio-color-info-soft-dk;
+      }
     }
   }
 
@@ -847,11 +1194,21 @@
     &--debit {
       border-color: #fecaca;
       background-color: rgba(239, 68, 68, 0.06);
+
+      @include dark {
+        border-color: rgba($lumio-color-danger-dk, 0.4);
+        background-color: $lumio-color-surface-error-dk;
+      }
     }
 
     &--credit {
       border-color: #a7f3d0;
       background-color: rgba(16, 185, 129, 0.06);
+
+      @include dark {
+        border-color: rgba($lumio-color-success-dk, 0.4);
+        background-color: $lumio-color-success-soft-dk;
+      }
     }
   }
 
@@ -864,10 +1221,18 @@
 
     &--debit {
       color: #b91c1c;
+
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
     }
 
     &--credit {
       color: #15803d;
+
+      @include dark {
+        color: $lumio-color-success-dk;
+      }
     }
   }
 
@@ -878,10 +1243,18 @@
 
     &--debit {
       color: #b91c1c;
+
+      @include dark {
+        color: $lumio-color-danger-dk;
+      }
     }
 
     &--credit {
       color: #15803d;
+
+      @include dark {
+        color: $lumio-color-success-dk;
+      }
     }
   }
 
@@ -895,8 +1268,12 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid $lumio-color-ink-150;
     padding-top: 24px;
+
+    @include dark {
+      border-top-color: $lumio-color-ink-150-dk;
+    }
   }
 
   &__set-cat {
@@ -915,18 +1292,29 @@
 
   &__ignore-btn {
     width: 100%;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #4b5563;
+    color: $lumio-color-ink-600;
     cursor: pointer;
     transition: border-color 150ms, color 150ms;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-600-dk;
+    }
 
     &:hover {
       border-color: $color-primary;
       color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+        color: $color-primary-dk;
+      }
     }
   }
 
@@ -940,6 +1328,11 @@
     cursor: pointer;
     transition: opacity 150ms;
 
+    @include dark {
+      background-color: $color-primary-dk;
+      color: $lumio-color-ink-900;
+    }
+
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
@@ -948,13 +1341,23 @@
 
   &__select {
     flex: 1;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     padding: 8px 12px;
     font-size: 14px;
     outline: none;
 
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
+
     &:focus {
       border-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+      }
     }
   }
 }
@@ -974,10 +1377,18 @@
 
     &--selected {
       border-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+      }
     }
 
     &--unselected {
-      border-color: #e5e7eb;
+      border-color: $lumio-color-ink-150;
+
+      @include dark {
+        border-color: $lumio-color-ink-150-dk;
+      }
     }
   }
 
@@ -993,7 +1404,11 @@
     gap: 8px;
     font-size: 14px;
     font-weight: 500;
-    color: #111827;
+    color: $lumio-color-ink-900;
+
+    @include dark {
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__option-desc {
@@ -1001,19 +1416,32 @@
     display: flex;
     align-items: center;
     font-size: 12px;
-    color: #6b7280;
+    color: $lumio-color-ink-500;
+
+    @include dark {
+      color: $lumio-color-ink-500-dk;
+    }
   }
 
   &__radio {
     height: 16px;
     width: 16px;
     border-radius: $lumio-radius-full;
-    border: 1px solid #d1d5db;
+    border: 1px solid $lumio-color-ink-200;
     position: relative;
+
+    @include dark {
+      border-color: $lumio-color-ink-200-dk;
+    }
 
     &--selected {
       border-color: $color-primary;
       background-color: $color-primary;
+
+      @include dark {
+        border-color: $color-primary-dk;
+        background-color: $color-primary-dk;
+      }
     }
   }
 
@@ -1030,6 +1458,10 @@
     width: 6px;
     border-radius: $lumio-radius-full;
     background-color: $lumio-color-surface;
+
+    @include dark {
+      background-color: $lumio-color-surface-dk;
+    }
   }
 }
 
@@ -1042,6 +1474,11 @@
   border: 1px solid rgba($color-primary, 0.3);
   background-color: rgba($color-primary, 0.05);
   padding: 16px;
+
+  @include dark {
+    border-color: rgba($color-primary-dk, 0.3);
+    background-color: rgba($color-primary-dk, 0.08);
+  }
 
   &__count {
     display: flex;
@@ -1060,6 +1497,11 @@
     font-size: 12px;
     font-weight: 700;
     color: white;
+
+    @include dark {
+      background-color: $color-primary-dk;
+      color: $lumio-color-ink-900;
+    }
   }
 
   &__controls {
@@ -1072,11 +1514,17 @@
   &__select {
     flex: 1;
     max-width: 320px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 12px;
     font-size: 14px;
     outline: none;
+
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-900-dk;
+    }
   }
 
   &__apply-btn {
@@ -1089,6 +1537,11 @@
     cursor: pointer;
     transition: opacity 150ms;
 
+    @include dark {
+      background-color: $color-primary-dk;
+      color: $lumio-color-ink-900;
+    }
+
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
@@ -1096,17 +1549,27 @@
   }
 
   &__clear-btn {
-    border: 1px solid #e5e7eb;
+    border: 1px solid $lumio-color-ink-150;
     background-color: $lumio-color-surface;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 600;
-    color: #374151;
+    color: $lumio-color-ink-700;
     cursor: pointer;
     transition: background-color 150ms;
 
+    @include dark {
+      border-color: $lumio-color-ink-150-dk;
+      background-color: $lumio-color-surface-dk;
+      color: $lumio-color-ink-700-dk;
+    }
+
     &:hover {
-      background-color: #f9fafb;
+      background-color: $lumio-color-ink-50;
+
+      @include dark {
+        background-color: $lumio-color-ink-50-dk;
+      }
     }
   }
 }

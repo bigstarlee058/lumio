@@ -2,6 +2,107 @@
 // Global theme-level styles: body, focus, MUI/Tailwind overrides, body utility classes.
 @use '../abstracts' as *;
 
+// ── CSS custom properties (consumed by Tailwind/generic styling layer) ────────
+// These are the non-lumio CSS vars used throughout JSX inline styles and
+// Tailwind utilities. SCSS variables are the source of truth; we emit CSS vars
+// here for runtime consumption by components that haven't been migrated to tokens.
+
+:root {
+  --background:         #{$color-background};
+  --foreground:         #{$color-foreground};
+  --primary:            #{$color-primary};
+  --primary-hover:      #{$color-primary-hover};
+  --primary-foreground: #{$lumio-color-primary-contrast};
+  --primary-light:      #{$lumio-color-primary-100};
+  --primary-rgb:        22, 129, 24;
+  --color-primary:      #{$color-primary};
+  --color-primary-rgb:  22, 129, 24;
+  --secondary:          #{$color-secondary};
+  --secondary-foreground: #{$color-secondary-foreground};
+  --muted:              #{$color-muted};
+  --muted-foreground:   #{$color-muted-foreground};
+  --muted-rgb:          242, 242, 244;
+  --card:               #{$color-card-bg};
+  --card-bg:            #{$color-card-bg};
+  --card-foreground:    #{$color-card-foreground};
+  --border:             #{$color-border};
+  --border-color:       #{$color-border};
+  --input:              #{$color-input};
+  --ring:               #{$color-ring};
+  --destructive:        #{$color-destructive};
+  --destructive-foreground: #{$color-destructive-foreground};
+  --surface-glow:         #{$color-surface-glow};
+  --surface-success-glow: #{$color-surface-success-glow};
+  --text-primary:       #{$lumio-color-text-primary};
+  --text-secondary:     #{$lumio-color-text-secondary};
+
+  /* Dashboard palette */
+  --ff-dash-primary:       #{$ff-dash-primary};
+  --ff-dash-primary-soft:  #{$ff-dash-primary-soft};
+  --ff-dash-cta:           #{$ff-dash-cta};
+  --ff-dash-surface:       #{$ff-dash-surface};
+  --ff-dash-foreground:    #{$ff-dash-foreground};
+  --ff-dash-muted:         #{$ff-dash-muted};
+  --ff-dash-border:        #{$ff-dash-border};
+  --ff-dash-critical:      #{$ff-dash-critical};
+  --ff-dash-warning:       #{$ff-dash-warning};
+  --ff-dash-info:          #{$ff-dash-info};
+  --ff-dash-success:       #{$ff-dash-success};
+  --ff-dashboard-card:            #{$ff-dash-surface};
+  --ff-dashboard-card-border:     #{$ff-dash-border};
+  --ff-dashboard-card-foreground: #{$ff-dash-foreground};
+  --font-dashboard-sans: #{$lumio-font-family};
+  --font-dashboard-mono: #{$lumio-font-family-mono};
+  --global-nav-height: #{$global-nav-height};
+}
+
+.dark {
+  color-scheme: dark;
+  --background:         #{$color-background-dk};
+  --foreground:         #{$color-foreground-dk};
+  --primary:            #{$lumio-color-primary-dk};
+  --primary-hover:      #{$lumio-color-primary-hover-dk};
+  --primary-foreground: #{$lumio-color-primary-contrast};
+  --primary-light:      #{$lumio-color-primary-100-dk};
+  --primary-rgb:        92, 196, 98;
+  --color-primary:      #{$lumio-color-primary-dk};
+  --color-primary-rgb:  92, 196, 98;
+  --secondary:          #{$lumio-color-ink-200-dk};
+  --secondary-foreground: #{$lumio-color-ink-900-dk};
+  --muted:              #{$lumio-color-ink-100-dk};
+  --muted-foreground:   #{$lumio-color-ink-500-dk};
+  --muted-rgb:          24, 28, 25;
+  --card:               #{$lumio-color-surface-dk};
+  --card-bg:            #{$lumio-color-surface-dk};
+  --card-foreground:    #{$lumio-color-ink-900-dk};
+  --border:             #{$lumio-color-border-dk};
+  --border-color:       #{$lumio-color-border-dk};
+  --input:              #{$lumio-color-border-dk};
+  --ring:               #{$lumio-color-primary-dk};
+  --destructive:        #{$lumio-color-danger-dk};
+  --destructive-foreground: #ffffff;
+  --surface-glow:         rgba(92, 196, 98, 0.24);
+  --surface-success-glow: rgba(52, 211, 153, 0.2);
+  --text-primary:       #{$lumio-color-text-primary-dk};
+  --text-secondary:     #{$lumio-color-text-secondary-dk};
+
+  /* Dashboard palette (dark) */
+  --ff-dash-primary:       #{$lumio-color-primary-dk};
+  --ff-dash-primary-soft:  #{$lumio-color-primary-dark-dk};
+  --ff-dash-cta:           #{$lumio-color-primary-hover-dk};
+  --ff-dash-surface:       #{$lumio-color-surface-dk};
+  --ff-dash-foreground:    #{$lumio-color-ink-900-dk};
+  --ff-dash-muted:         #{$lumio-color-ink-100-dk};
+  --ff-dash-border:        #{$lumio-color-border-dk};
+  --ff-dash-critical:      #{$lumio-color-danger-dk};
+  --ff-dash-warning:       #{$lumio-color-warning-dk};
+  --ff-dash-info:          #{$lumio-color-info-dk};
+  --ff-dash-success:       #{$lumio-color-success-dk};
+  --ff-dashboard-card:            #{$lumio-color-surface-dk};
+  --ff-dashboard-card-border:     #{$lumio-color-border-dk};
+  --ff-dashboard-card-foreground: #{$lumio-color-ink-900-dk};
+}
+
 body {
   background-color: $color-background;
   color: $color-foreground;
