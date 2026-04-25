@@ -840,7 +840,7 @@ const content = {
       ar: t({ ru: 'العربية', en: 'العربية', kk: 'العربية', de: 'العربية', fr: 'العربية', es: 'العربية', pt: 'العربية', tr: 'العربية', uk: 'العربية', zh: 'العربية', ar: 'العربية', pl: 'العربية', it: 'العربية', sk: 'العربية' }),
       pl: t({ ru: 'Polski', en: 'Polski', kk: 'Polski', de: 'Polski', fr: 'Polski', es: 'Polski', pt: 'Polski', tr: 'Polski', uk: 'Polski', zh: 'Polski', ar: 'Polski', pl: 'Polski', it: 'Polski', sk: 'Polski' }),
       it: t({ ru: 'Italiano', en: 'Italiano', kk: 'Italiano', de: 'Italiano', fr: 'Italiano', es: 'Italiano', pt: 'Italiano', tr: 'Italiano', uk: 'Italiano', zh: 'Italiano', ar: 'Italiano', pl: 'Italiano', it: 'Italiano', sk: 'Italiano' }),
-      sk: t({ ru: 'Slovenčina', en: 'Slovenčina', kk: 'Slovenčina', de: 'Slovenčina', fr: 'Slovenčina', es: 'Slovenčina', pt: 'Slovenčina', tr: 'Slovenčina', uk: 'Slovenčina', zh: 'Slovenčina', ar: 'Slovenčina', pl: 'Slovenčina', it: 'Slovenčina' }),
+      sk: t({ ru: 'Slovenčina', en: 'Slovenčina', kk: 'Slovenčina', de: 'Slovenčina', fr: 'Slovenčina', es: 'Slovenčina', pt: 'Slovenčina', tr: 'Slovenčina', uk: 'Slovenčina', zh: 'Slovenčina', ar: 'Slovenčina', pl: 'Slovenčina', it: 'Slovenčina', sk: 'Slovenčina' }),
     },
   },
 } satisfies Dictionary;
