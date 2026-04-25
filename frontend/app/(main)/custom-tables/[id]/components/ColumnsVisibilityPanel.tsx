@@ -49,7 +49,7 @@ export function ColumnsVisibilityPanel({
                       gap: 1.5,
                       px: { xs: 2, sm: 2.5 },
                       py: { xs: 1.5, sm: 1.75 },
-                      color: isHidden ? '#9ca3af' : '#1f2937',
+                      color: isHidden ? 'var(--muted-foreground)' : 'var(--foreground)',
                       '&:hover': { bgcolor: isHidden ? 'transparent' : 'var(--muted)' },
                     }}
                   >

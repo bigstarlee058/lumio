@@ -122,7 +122,7 @@ function MobileBottomAddRow({ isDark, onCreateRow, label }: MobileBottomAddRowPr
   const bg = isDark ? '#1f2937' : 'var(--muted)';
   return (
     <div style={{ borderTop, backgroundColor: bg, padding: 12 }}>
-      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px dashed #d1d5db', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}>
+      <button type="button" onClick={() => { void onCreateRow?.(); }} style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, border: '1px dashed var(--border-color)', backgroundColor: 'var(--card-bg)', padding: '8px 16px', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}>
         <Plus size={16} />{label}
       </button>
     </div>
@@ -144,7 +144,7 @@ function MobileScrollHeader({ isDark, rows, selectedRowIds, allRowsSelectedMobil
         <Checkbox checked={allRowsSelectedMobile} indeterminate={someRowsSelectedMobile && !allRowsSelectedMobile} onCheckedChange={onSelectAll} aria-label="Select all rows" />
         <span>{selectedRowIds.length}/{rows.length}</span>
       </div>
-      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: tokens.radius.md, border: '1px dashed #d1d5db', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
+      {onCreateRow && <button type="button" onClick={() => { void onCreateRow(); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: tokens.radius.md, border: '1px dashed var(--border-color)', padding: '6px 12px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-secondary)', background: 'none', cursor: 'pointer', transition: 'border-color 0.2s, color 0.2s' }}><Plus size={14} />{label}</button>}
     </div>
   );
 }

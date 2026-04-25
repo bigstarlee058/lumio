@@ -47,7 +47,7 @@ export function TopSpendersDrillDown({ selectedRow, drillDownRecords, onClose, c
         <DrillDownHeader selectedRow={selectedRow} sourceLabels={sourceLabels} labels={labels} onClose={onClose} />
         <div style={{ maxHeight: '65vh', overflowY: 'auto', padding: '16px 20px' }}>
           {drillDownRecords.length === 0 ? (
-            <div style={{ border: '1px dashed #d1d5db', padding: 32, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
+            <div style={{ border: '1px dashed var(--border-color)', padding: 32, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
               {labels.noOperations}
             </div>
           ) : (

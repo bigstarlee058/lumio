@@ -19,8 +19,8 @@ function tabSx(active: boolean): object {
     fontWeight: 600,
     cursor: 'pointer',
     border: 'none',
-    bgcolor: active ? '#111827' : 'transparent',
-    color: active ? '#fff' : '#4b5563',
+    bgcolor: active ? 'var(--foreground)' : 'transparent',
+    color: active ? 'var(--background)' : 'var(--text-secondary)',
   };
 }
 

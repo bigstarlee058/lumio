@@ -73,7 +73,7 @@ export function TransactionRow({ tx, isExpanded, isSelected, categories, handler
         <td className="lumio-tx-table__td--nowrap" style={{ fontSize: 14, color: 'var(--muted-foreground)', fontVariantNumeric: 'tabular-nums' }}>{formatters.formatDate(tx.transactionDate)}</td>
         <td className="lumio-tx-table__td" style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}><div style={{ maxWidth: 200 }} title={tx.counterpartyName}>{tx.counterpartyName}</div></td>
         <td className="lumio-tx-table__td" style={{ fontSize: 14, color: 'var(--muted-foreground)' }}><div style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', maxWidth: 300 }} title={tx.paymentPurpose}>{tx.paymentPurpose || '—'}</div></td>
-        <td className="lumio-tx-table__td--nowrap-right" style={{ fontSize: 14 }}><AmountCell amount={Number(tx.debit)} tx={tx} formatters={formatters} color="#111827" /></td>
+        <td className="lumio-tx-table__td--nowrap-right" style={{ fontSize: 14 }}><AmountCell amount={Number(tx.debit)} tx={tx} formatters={formatters} color="var(--foreground)" /></td>
         <td className="lumio-tx-table__td--nowrap-right" style={{ fontSize: 14 }}><AmountCell amount={Number(tx.credit)} tx={tx} formatters={formatters} color="#16a34a" /></td>
         <td className="lumio-tx-table__td" onClick={e => e.stopPropagation()}><CategoryDropdown tx={tx} categories={categories} label={categoryLabel} align="end" onUpdateCategory={handlers.onUpdateCategory} /></td>
       </tr>

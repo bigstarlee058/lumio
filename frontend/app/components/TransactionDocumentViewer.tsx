@@ -126,7 +126,7 @@ export default function TransactionDocumentViewer({
             body: {
               margin: 0,
               padding: 0,
-              backgroundColor: '#ffffff',
+              backgroundColor: 'var(--card)',
             },
             '@page': {
               size: 'A4',

@@ -677,7 +677,7 @@ export default function WorkspaceCategoriesView() {
                             width: 24,
                             height: 24,
                             borderRadius: tokens.radius.full,
-                            background: 'white',
+                            background: 'var(--card)',
                             boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
                             transition: 'transform 0.2s',
                             transform: isEnabled ? 'translateX(28px)' : 'translateX(4px)',

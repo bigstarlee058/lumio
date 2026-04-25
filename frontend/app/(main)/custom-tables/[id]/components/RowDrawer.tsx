@@ -189,7 +189,7 @@ export function RowDrawer({
             component="button"
             type="button"
             onClick={() => setActiveTab('details')}
-            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'details' ? '#111827' : 'transparent', color: activeTab === 'details' ? '#fff' : '#4b5563' }}
+            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'details' ? 'var(--foreground)' : 'transparent', color: activeTab === 'details' ? 'var(--background)' : 'var(--text-secondary)' }}
           >
             Details
           </Box>
@@ -197,7 +197,7 @@ export function RowDrawer({
             component="button"
             type="button"
             onClick={() => setActiveTab('history')}
-            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'history' ? '#111827' : 'transparent', color: activeTab === 'history' ? '#fff' : '#4b5563' }}
+            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'history' ? 'var(--foreground)' : 'transparent', color: activeTab === 'history' ? 'var(--background)' : 'var(--text-secondary)' }}
           >
             History
           </Box>
