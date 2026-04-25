@@ -1,13 +1,656 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "eede7f63ee1468097aca063840159bb881243be4"
+      "main": "4c9f0365971565eeeb07eb5b69a45ba2aa03c713"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-25T09:00:06.637Z",
+    "lastGeneratedAt": "2026-04-25T11:07:16.903Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-25-4c9f036",
+      "version": "main-4c9f036",
+      "branch": "main",
+      "date": "2026-04-25T11:07:16.903Z",
+      "title": "Release update - April 25, 2026",
+      "summary": "This release includes 18 features, 2 improvements, and 8 fixes.",
+      "markdown": "## Features\n- **scss**: Add light-mode SCSS variables\n- **scss**: Add dark-mode SCSS variables\n- **scss**: Add SCSS mixins and abstracts barrel\n- **scss**: Add JS theme tokens for inline styles migration\n- **scss**: Add base reset and scrollbar styles\n- **scss**: Add global theme styles\n- **scss**: Add Tailwind dark mode override utilities\n- **i18n**: Expand locale foundation to support 10 languages\n- **scss**: Convert tour-theme to SCSS\n- **scss**: Convert breadcrumbs, language-switcher, notification-dropdown, audit-panel to SCSS\n- **i18n**: Expand UI language selectors to use SUPPORTED_LOCALES\n- **scss**: Convert pdf-preview-modal, navigation, dashboard to SCSS\n- **scss**: Convert lumio-sidebar shell to SCSS layout\n- **scss**: Convert lumio-transaction-table to SCSS\n- Add Slovak (sk) translations to all content files\n- **scss**: Convert lumio-statements to SCSS\n- **scss**: Add barrel files, globals.scss entry point, update imports\n- **frontend**: Migrate static CSS token inline styles to JS tokens\n\n## Improvements\n- Remove duplicate locale type definitions and import from canonical source\n- **frontend**: Migrate CSS variables to JS theme tokens\n\n## Fixes\n- **frontend**: Explicit null check in isSupportedLocale guard\n- Remove unused AppLocale ghost imports from navigation-config and useOnboardingWizard\n- Use DEFAULT_LOCALE fallback and extract availableLocales mapping in language selectors\n- **scss**: Replace all remaining var(--) references with SCSS variables\n- Add sk self-reference in navigation.content.ts languages.sk entry\n- Add missing Slovak translations to content files\n- Add missing Slovak translations in dropbox, google-drive, and make-cloud-storage content files\n- Correct sk translations formatting in storage and integration content files",
+      "commits": [
+        {
+          "sha": "87096bd14e706659bf06a8c0204736ff2bf68bbc",
+          "shortSha": "87096bd",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-25T09:00:07Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "3f8944f6bf20c5ddb7be9220a1ad71007c5e6dd5",
+          "shortSha": "3f8944f",
+          "subject": "chore: add sass dependency for SCSS migration",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:29:21+03:00",
+          "files": [
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
+        },
+        {
+          "sha": "b107dd9883c747ee6861897f7d89cc04801d7045",
+          "shortSha": "b107dd9",
+          "subject": "feat(scss): add light-mode SCSS variables",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:31:19+03:00",
+          "files": [
+            "frontend/app/styles/abstracts/_variables.scss"
+          ]
+        },
+        {
+          "sha": "b6ca68b55f9a0082bfdcf013d1e38e41010d20a3",
+          "shortSha": "b6ca68b",
+          "subject": "feat(scss): add dark-mode SCSS variables",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:33:07+03:00",
+          "files": [
+            "frontend/app/styles/abstracts/_variables-dark.scss"
+          ]
+        },
+        {
+          "sha": "eee33c718e029c499f8bf55eac36d211ddc0de36",
+          "shortSha": "eee33c7",
+          "subject": "feat(scss): add SCSS mixins and abstracts barrel",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:33:47+03:00",
+          "files": [
+            "frontend/app/styles/abstracts/_index.scss",
+            "frontend/app/styles/abstracts/_mixins.scss"
+          ]
+        },
+        {
+          "sha": "cc9886411596106159ce0892731fd1e59b742d41",
+          "shortSha": "cc98864",
+          "subject": "feat(scss): add JS theme tokens for inline styles migration",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:35:36+03:00",
+          "files": [
+            "frontend/lib/theme-tokens.ts"
+          ]
+        },
+        {
+          "sha": "9da1fc429bcc9d984d8a7cc5276fbde27e2cc20e",
+          "shortSha": "9da1fc4",
+          "subject": "feat(scss): add base reset and scrollbar styles",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:36:26+03:00",
+          "files": [
+            "frontend/app/styles/base/_index.scss",
+            "frontend/app/styles/base/_reset.scss",
+            "frontend/app/styles/base/_scrollbar.scss"
+          ]
+        },
+        {
+          "sha": "781602ecd03f2ed113824dc6f3f9b10a5ea219f4",
+          "shortSha": "781602e",
+          "subject": "feat(scss): add global theme styles",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:37:31+03:00",
+          "files": [
+            "frontend/app/styles/themes/_globals.scss",
+            "frontend/app/styles/themes/_index.scss"
+          ]
+        },
+        {
+          "sha": "e954f6bd86527854943574b53322663d874621aa",
+          "shortSha": "e954f6b",
+          "subject": "feat(scss): add Tailwind dark mode override utilities",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:39:53+03:00",
+          "files": [
+            "frontend/app/styles/utils/_index.scss",
+            "frontend/app/styles/utils/_tailwind-dark.scss"
+          ]
+        },
+        {
+          "sha": "5bd27acde52a9a6597d30f2d758d7814daa1b88f",
+          "shortSha": "5bd27ac",
+          "subject": "feat(i18n): expand locale foundation to support 10 languages",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:41:18+03:00",
+          "files": [
+            "frontend/app/lib/locale.ts",
+            "frontend/intlayer.config.ts"
+          ]
+        },
+        {
+          "sha": "349f336703eeab1d203f245d6e6cb7f67c129222",
+          "shortSha": "349f336",
+          "subject": "feat(scss): convert tour-theme to SCSS",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:41:41+03:00",
+          "files": [
+            "frontend/app/styles/vendors/_index.scss",
+            "frontend/app/styles/vendors/_tour-theme.scss"
+          ]
+        },
+        {
+          "sha": "0dfd3b763fea1666fb415f7c165a0d061639e3c8",
+          "shortSha": "0dfd3b7",
+          "subject": "fix(frontend): explicit null check in isSupportedLocale guard",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:43:42+03:00",
+          "files": [
+            "frontend/app/lib/locale.ts"
+          ]
+        },
+        {
+          "sha": "aa402d6e6ed6bdf14722e6e170b89bdef52fd13d",
+          "shortSha": "aa402d6",
+          "subject": "refactor: remove duplicate locale type definitions and import from canonical source",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:44:32+03:00",
+          "files": [
+            ".railway/config.json",
+            "AGENTS.md",
+            "backend/1777027089212-0ed61ecb7f935-statement.pdf",
+            "backend/1777027135599-325e42d91dc77-statement.pdf",
+            "backend/1777069490069-a64a79ac337a-statement.pdf",
+            "backend/1777069528750-f0dfc7e81bdeb-statement.pdf",
+            "backend/1777069571835-209204c85cfb2-statement.pdf",
+            "backend/1777070027888-5fb29e4946a85-statement.pdf",
+            "backend/1777071120002-bb7bee5a9052a-statement.pdf",
+            "backend/1777071256119-9c45b745820c4-statement.pdf",
+            "backend/1777109691550-289eeb6f6b1ca-statement.pdf",
+            "backend/1777109737298-4f0b6d95ee585-statement.pdf",
+            "backend/@tests/unit/common/utils/encryption.util.spec.ts",
+            "backend/@tests/unit/common/utils/number-normalizer.util.spec.ts",
+            "backend/@tests/unit/modules/exchange-rates/exchange-rates-sync.service.spec.ts",
+            "backend/@tests/unit/modules/exchange-rates/exchange-rates.controller.spec.ts",
+            "backend/@tests/unit/modules/exchange-rates/exchange-rates.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/universal-amount-parser.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/universal-date-parser.service.spec.ts",
+            "backend/@tests/unit/modules/tax-rates/tax-rates.controller.spec.ts",
+            "backend/@tests/unit/modules/tax-rates/tax-rates.service.spec.ts",
+            "docs/plans/2026-04-18-prioritized-refactoring-execution-plan.md",
+            "docs/plans/2026-04-25-css-to-scss-migration.md",
+            "frontend/app/(onboarding)/onboarding/useOnboardingWizard.ts",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/navigation/helpers/navigation-config.ts",
+            "frontend/app/styles/components/_breadcrumbs.scss",
+            "frontend/app/styles/components/_language-switcher.scss",
+            "frontend/app/styles/components/_notification-dropdown.scss"
+          ]
+        },
+        {
+          "sha": "af01a7aeaa5c24fa1719471ad740196e6713b778",
+          "shortSha": "af01a7a",
+          "subject": "feat(scss): convert breadcrumbs, language-switcher, notification-dropdown, audit-panel to SCSS",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:44:52+03:00",
+          "files": [
+            "frontend/app/styles/components/_audit-panel.scss"
+          ]
+        },
+        {
+          "sha": "719b25c3698e6a1d230498ec4ffa27d0713b387f",
+          "shortSha": "719b25c",
+          "subject": "fix: remove unused AppLocale ghost imports from navigation-config and useOnboardingWizard",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:46:51+03:00",
+          "files": [
+            "frontend/app/(onboarding)/onboarding/useOnboardingWizard.ts",
+            "frontend/app/components/navigation/helpers/navigation-config.ts"
+          ]
+        },
+        {
+          "sha": "83a10998fb9a201415667a6ae060f72671fe0b49",
+          "shortSha": "83a1099",
+          "subject": "feat(i18n): expand UI language selectors to use SUPPORTED_LOCALES",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:48:13+03:00",
+          "files": [
+            "frontend/app/(onboarding)/onboarding/steps/LanguageStep.tsx",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/navigation/hooks/useLanguageSelection.ts"
+          ]
+        },
+        {
+          "sha": "2ddbed0b2a3c34759f77c64bd81f5e3a88ba3572",
+          "shortSha": "2ddbed0",
+          "subject": "feat(scss): convert pdf-preview-modal, navigation, dashboard to SCSS",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:48:25+03:00",
+          "files": [
+            "frontend/app/styles/components/_dashboard.scss",
+            "frontend/app/styles/components/_navigation.scss",
+            "frontend/app/styles/components/_pdf-preview-modal.scss"
+          ]
+        },
+        {
+          "sha": "3bbbfd2aecae5d1b22320508e1f3b6544431d1d4",
+          "shortSha": "3bbbfd2",
+          "subject": "fix: use DEFAULT_LOCALE fallback and extract availableLocales mapping in language selectors",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:51:53+03:00",
+          "files": [
+            "backend/src/common/decorators/workspace-auth.decorator.ts",
+            "backend/src/common/services/workspace-crud-base.service.ts",
+            "backend/src/modules/branches/branches.controller.ts",
+            "backend/src/modules/branches/branches.service.ts",
+            "backend/src/modules/categories/categories.controller.ts",
+            "backend/src/modules/payables/payables.controller.ts",
+            "backend/src/modules/tax-rates/tax-rates.controller.ts",
+            "backend/src/modules/tax-rates/tax-rates.service.ts",
+            "backend/src/modules/transactions/transactions.controller.ts",
+            "backend/src/modules/wallets/wallets.controller.ts",
+            "backend/src/modules/wallets/wallets.service.ts",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/navigation/hooks/useLanguageSelection.ts",
+            "frontend/app/styles/components/_breadcrumbs.scss",
+            "frontend/app/styles/components/_language-switcher.scss"
+          ]
+        },
+        {
+          "sha": "35fbc5a166143f95052c34c803dcc1d5ac464c54",
+          "shortSha": "35fbc5a",
+          "subject": "fix(scss): replace all remaining var(--) references with SCSS variables",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:53:39+03:00",
+          "files": [
+            "frontend/app/(onboarding)/onboarding/page.content.ts",
+            "frontend/app/components/navigation.content.ts",
+            "frontend/app/styles/components/_audit-panel.scss",
+            "frontend/app/styles/components/_navigation.scss",
+            "frontend/app/styles/components/_notification-dropdown.scss",
+            "frontend/app/styles/components/_pdf-preview-modal.scss"
+          ]
+        },
+        {
+          "sha": "71f182dd860e768da0a6ae6a66ac23464c7e6702",
+          "shortSha": "71f182d",
+          "subject": "fix: add sk self-reference in navigation.content.ts languages.sk entry",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:54:46+03:00",
+          "files": [
+            "frontend/app/components/navigation.content.ts"
+          ]
+        },
+        {
+          "sha": "710f3b5d6cc1c56460f5a252c911394addc55279",
+          "shortSha": "710f3b5",
+          "subject": "feat(scss): convert lumio-sidebar shell to SCSS layout",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:55:44+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "5285b12f7ec669bec8ece06b9668e60544873b10",
+          "shortSha": "5285b12",
+          "subject": "feat(scss): convert lumio-transaction-table to SCSS",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:58:07+03:00",
+          "files": [
+            "frontend/app/styles/components/_transaction-table.scss"
+          ]
+        },
+        {
+          "sha": "9c7ec0bea177ef260feec458b5a31e912576aef2",
+          "shortSha": "9c7ec0b",
+          "subject": "feat: add Slovak (sk) translations to all content files",
+          "author": "symonbaikov",
+          "date": "2026-04-25T12:59:12+03:00",
+          "files": [
+            "frontend/app/(auth)/login/page.content.ts",
+            "frontend/app/(auth)/register/page.content.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.content.ts",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.content.ts",
+            "frontend/app/(main)/custom-tables/page.content.ts",
+            "frontend/app/(main)/reports/page.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page-alerts.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page-columns.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page.content.ts",
+            "frontend/app/(main)/statements/[id]/view/page.content.ts",
+            "frontend/app/(main)/supported-banks/page.content.ts",
+            "frontend/app/(main)/workspaces/page.content.ts",
+            "frontend/app/(onboarding)/onboarding/page.content.ts",
+            "frontend/app/admin/page.content.ts",
+            "frontend/app/admin/users/page.content.ts",
+            "frontend/app/categories/page.content.ts",
+            "frontend/app/components/breadcrumbs.content.ts",
+            "frontend/app/components/confirmModal.content.ts",
+            "frontend/app/components/navigation.content.ts",
+            "frontend/app/components/notificationDropdown.content.ts",
+            "frontend/app/components/pdfPreviewModal.content.ts",
+            "frontend/app/components/permissionsPanel.content.ts",
+            "frontend/app/components/shareDialog.content.ts",
+            "frontend/app/components/transactionDocumentViewer.content.ts",
+            "frontend/app/components/transactions/detailsDrawer.content.ts",
+            "frontend/app/components/transactions/exportModal.content.ts",
+            "frontend/app/components/transactions/summaryBar.content.ts",
+            "frontend/app/components/transactions/transactionsPageView.content.ts",
+            "frontend/app/components/transactions/transactionsTable.content.ts",
+            "frontend/app/components/transactionsView.content.ts",
+            "frontend/app/components/ui/currencyDisplayToggle.content.ts",
+            "frontend/app/google-sheets/callback/page.content.ts",
+            "frontend/app/integrations/dropbox/page.content.ts",
+            "frontend/app/integrations/gmail/page.content.ts",
+            "frontend/app/integrations/google-drive/page.content.ts",
+            "frontend/app/integrations/google-sheets/page.content.ts",
+            "frontend/app/integrations/page.content.ts",
+            "frontend/app/invite/[token]/page.content.ts",
+            "frontend/app/layout.content.ts",
+            "frontend/app/page.content.ts",
+            "frontend/app/plugins/ai-assistant/AiAssistantDrawer.content.ts",
+            "frontend/app/plugins/page.content.ts",
+            "frontend/app/settings/profile/page.content.ts",
+            "frontend/app/settings/telegram/page.content.ts",
+            "frontend/app/settings/workspace/page.content.ts",
+            "frontend/app/shared/[token]/page.content.ts",
+            "frontend/app/storage/[id]/page.content.ts",
+            "frontend/app/storage/page.content.ts",
+            "frontend/app/tours/admin-tour.content.ts",
+            "frontend/app/tours/categories-tour.content.ts",
+            "frontend/app/tours/custom-tables-tour.content.ts",
+            "frontend/app/tours/google-sheets-import-tour.content.ts",
+            "frontend/app/tours/google-sheets-integration-tour.content.ts",
+            "frontend/app/tours/integrations-tour.content.ts",
+            "frontend/app/tours/reports-tour.content.ts",
+            "frontend/app/tours/settings-tour.content.ts",
+            "frontend/app/tours/statements-tour.content.ts",
+            "frontend/app/upload/page.content.ts"
+          ]
+        },
+        {
+          "sha": "f5b3f96b1871bad8ff92d9f39a9ffbb3d3de251b",
+          "shortSha": "f5b3f96",
+          "subject": "fix: add missing Slovak translations to content files",
+          "author": "symonbaikov",
+          "date": "2026-04-25T13:03:09+03:00",
+          "files": [
+            "frontend/app/integrations/dropbox/page.content.ts",
+            "frontend/app/integrations/google-drive/page.content.ts",
+            "frontend/app/integrations/shared/make-cloud-storage-content.ts"
+          ]
+        },
+        {
+          "sha": "6e62909ea41ecc70dd4c8ff692a3715eeb3fdc31",
+          "shortSha": "6e62909",
+          "subject": "fix: add missing Slovak translations in dropbox, google-drive, and make-cloud-storage content files",
+          "author": "symonbaikov",
+          "date": "2026-04-25T13:03:42+03:00",
+          "files": [
+            "backend/@tests/helpers/create-repo-mock.ts",
+            "backend/@tests/unit/modules/branches/branches.service.spec.ts",
+            "backend/@tests/unit/modules/tax-rates/tax-rates.service.spec.ts",
+            "backend/@tests/unit/modules/wallets/wallets.service.spec.ts",
+            "backend/@tests/unit/modules/workspace-guard/workspace-guarded-controllers.spec.ts",
+            "backend/src/common/services/workspace-crud-base.service.ts",
+            "backend/src/common/utils/assert-found.util.ts",
+            "backend/src/common/utils/responses.util.ts",
+            "backend/src/modules/audit/audit.controller.ts",
+            "backend/src/modules/balance/balance.controller.ts",
+            "backend/src/modules/branches/branches.controller.ts",
+            "backend/src/modules/categories/categories.controller.ts",
+            "backend/src/modules/classification/categorization-rules.controller.ts",
+            "backend/src/modules/import/import-session.controller.ts",
+            "backend/src/modules/payables/payables.controller.ts",
+            "backend/src/modules/receipts/receipts.controller.ts",
+            "backend/src/modules/reports/reports.controller.ts",
+            "backend/src/modules/statements/statements.controller.ts",
+            "backend/src/modules/storage/storage.controller.ts",
+            "backend/src/modules/tax-rates/tax-rates.controller.ts",
+            "backend/src/modules/telegram/telegram.controller.ts",
+            "backend/src/modules/transactions/transactions.controller.ts",
+            "backend/src/modules/users/users.controller.ts",
+            "backend/src/modules/wallets/wallets.controller.ts",
+            "backend/src/modules/workspaces/workspaces.controller.ts",
+            "frontend/app/(main)/statements/components/top-categories/hooks/useTopCategoriesState.ts",
+            "frontend/app/(main)/statements/hooks/useTopAnalyticsState.ts"
+          ]
+        },
+        {
+          "sha": "1a848f8b10093f0e55043e9854f9bdcd0cad0bae",
+          "shortSha": "1a848f8",
+          "subject": "feat(scss): convert lumio-statements to SCSS",
+          "author": "symonbaikov",
+          "date": "2026-04-25T13:04:27+03:00",
+          "files": [
+            "frontend/app/styles/components/_statements.scss"
+          ]
+        },
+        {
+          "sha": "97c937be7ded5fa03f97602bd2d255d055159796",
+          "shortSha": "97c937b",
+          "subject": "feat(scss): add barrel files, globals.scss entry point, update imports",
+          "author": "symonbaikov",
+          "date": "2026-04-25T13:06:11+03:00",
+          "files": [
+            "frontend/app/components/Navigation.tsx",
+            "frontend/app/components/NotificationDropdown.tsx",
+            "frontend/app/components/PDFPreviewModal.tsx",
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/globals.scss",
+            "frontend/app/layout.tsx",
+            "frontend/app/styles/components/_index.scss",
+            "frontend/app/styles/layout/_index.scss"
+          ]
+        },
+        {
+          "sha": "457e753080239e7ff9d1fd577e49ee33ecda263e",
+          "shortSha": "457e753",
+          "subject": "feat(frontend): migrate static CSS token inline styles to JS tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-25T14:01:49+03:00",
+          "files": [
+            "frontend/app/(auth)/MoneyAnimation.tsx",
+            "frontend/app/(auth)/building-components/ClockTower.tsx",
+            "frontend/app/(auth)/building-components/GothicBuilding.tsx",
+            "frontend/app/(auth)/buildings/ClockTower.tsx",
+            "frontend/app/(auth)/buildings/GothicBuilding.tsx",
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/DesktopTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/MobileTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/columns/ActionsCell.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesCircularMenu.tsx",
+            "frontend/app/(main)/custom-tables/components/CustomTablesFiltersDrawer.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardErrorBanner.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardHeader.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardPullIndicator.tsx",
+            "frontend/app/(main)/reports/components/BalanceFilterBar.tsx",
+            "frontend/app/(main)/reports/components/BalanceSheet.tsx",
+            "frontend/app/(main)/reports/components/ReportGenerator.tsx",
+            "frontend/app/(main)/reports/components/ReportHistory.tsx",
+            "frontend/app/(main)/reports/components/ReportTemplateCard.tsx",
+            "frontend/app/(main)/statements/[id]/edit/components/CurrencyPickerDrawer.tsx",
+            "frontend/app/(main)/statements/[id]/edit/components/EditCategoryMapper.tsx",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx",
+            "frontend/app/(main)/statements/components/StatementsGmailSync.tsx",
+            "frontend/app/(main)/statements/components/StatementsListHeader.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/StatementsListTable.tsx",
+            "frontend/app/(main)/statements/components/TablesReportsView.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/TrashListView.tsx",
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx",
+            "frontend/app/(main)/statements/components/analytics/AnalyticsChartCard.tsx",
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterActions.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterOptionRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterScreenContent.tsx",
+            "frontend/app/(main)/statements/components/filters/FiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/payables/PayablesView.tsx",
+            "frontend/app/(main)/statements/components/statements-list/components/StatementsGmailSync.tsx",
+            "frontend/app/(main)/statements/components/statements-list/components/StatementsListHeader.tsx",
+            "frontend/app/(main)/statements/components/statements-list/components/StatementsListTable.tsx",
+            "frontend/app/(main)/statements/components/top-categories/components/TopCategoriesDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-categories/components/TopCategoriesLeaderboard.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsLeaderboard.tsx",
+            "frontend/app/(main)/statements/components/top-spenders/components/TopSpendersDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-spenders/components/TopSpendersLeaderboard.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashBulkActions.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashContent.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashFilterBar.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashPageHeader.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashStatCards.tsx",
+            "frontend/app/(main)/statements/hooks/useTopAnalyticsData.ts",
+            "frontend/app/(main)/statements/hooks/useTopAnalyticsViewModel.ts",
+            "frontend/app/(main)/supported-banks/page.tsx",
+            "frontend/app/(main)/workspaces/components/BackgroundSelector.tsx",
+            "frontend/app/(main)/workspaces/components/CategoryForm.tsx",
+            "frontend/app/(main)/workspaces/components/CategoryTree.tsx",
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/CurrencySelector.tsx",
+            "frontend/app/(main)/workspaces/components/InviteForm.tsx",
+            "frontend/app/(main)/workspaces/components/MemberRow.tsx",
+            "frontend/app/(main)/workspaces/components/MembersList.tsx",
+            "frontend/app/(main)/workspaces/components/ServiceIntegrationSuggestions.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCard.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceGridView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceListFilters.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceListView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceMembersView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx",
+            "frontend/app/(onboarding)/onboarding/components/OnboardingNavigation.tsx",
+            "frontend/app/(onboarding)/onboarding/components/OnboardingProgress.tsx",
+            "frontend/app/(onboarding)/onboarding/components/OnboardingShell.tsx",
+            "frontend/app/(onboarding)/onboarding/page.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/CompletionStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/IntegrationsStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/WelcomeStep.tsx",
+            "frontend/app/(onboarding)/onboarding/steps/WorkspaceStep.tsx",
+            "frontend/app/admin/page.tsx",
+            "frontend/app/audit/components/AuditEventDrawer.tsx",
+            "frontend/app/audit/components/AuditEventModal.tsx",
+            "frontend/app/audit/components/AuditEventTable.tsx",
+            "frontend/app/audit/components/EntityHistoryTimeline.tsx",
+            "frontend/app/audit/page.tsx",
+            "frontend/app/components/AuthLanguageSwitcher.tsx",
+            "frontend/app/components/BaseStorageWidget.tsx",
+            "frontend/app/components/ChangelogModal.tsx",
+            "frontend/app/components/ConfirmModal.tsx",
+            "frontend/app/components/Navigation.tsx",
+            "frontend/app/components/NotificationDropdown.tsx",
+            "frontend/app/components/PDFThumbnail.tsx",
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/components/TransactionsView.tsx",
+            "frontend/app/components/dashboard/ActionRequired.tsx",
+            "frontend/app/components/dashboard/DataHealthTab.tsx",
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCategoryCard.tsx",
+            "frontend/app/components/dashboard/QuickActions.tsx",
+            "frontend/app/components/dashboard/QuickActionsBar.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TransactionTab.tsx",
+            "frontend/app/components/dashboard/TrendsTab.tsx",
+            "frontend/app/components/notification-dropdown-helpers.ts",
+            "frontend/app/components/receipts/ReceiptCard.tsx",
+            "frontend/app/components/receipts/ReceiptParsedDataForm.tsx",
+            "frontend/app/components/receipts/ReceiptUploadModal.tsx",
+            "frontend/app/components/receipts/components/CurrencyDrawer.tsx",
+            "frontend/app/components/side-panel/SidePanel.tsx",
+            "frontend/app/components/side-panel/SidePanelParts.tsx",
+            "frontend/app/components/side-panel/sections/ActionsSection.tsx",
+            "frontend/app/components/side-panel/sections/ErrorSection.tsx",
+            "frontend/app/components/side-panel/sections/NavigationSection.tsx",
+            "frontend/app/components/side-panel/sections/SettingsSection.tsx",
+            "frontend/app/components/side-panel/sections/StatusSection.tsx",
+            "frontend/app/components/side-panel/sections/SummarySection.tsx",
+            "frontend/app/components/transactions/CategoryDropdown.tsx",
+            "frontend/app/components/transactions/TransactionDetailsTab.tsx",
+            "frontend/app/components/ui/drawer-shell.tsx",
+            "frontend/app/global-error.tsx",
+            "frontend/app/integrations/components/IntegrationCard.tsx",
+            "frontend/app/integrations/components/IntegrationStatusCard.tsx",
+            "frontend/app/integrations/dropbox/page.content.ts",
+            "frontend/app/integrations/dropbox/page.tsx",
+            "frontend/app/integrations/gmail/page.tsx",
+            "frontend/app/integrations/google-drive/page.content.ts",
+            "frontend/app/integrations/google-drive/page.tsx",
+            "frontend/app/integrations/google-sheets/components/ConnectionCard.tsx",
+            "frontend/app/integrations/google-sheets/components/ConnectionList.tsx",
+            "frontend/app/integrations/google-sheets/components/Step1Connect.tsx",
+            "frontend/app/integrations/google-sheets/components/Step2AppScript.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/integrations/page.tsx",
+            "frontend/app/integrations/shared/make-cloud-storage-content.ts",
+            "frontend/app/plugins/ai-assistant/AiAssistantDrawer.tsx",
+            "frontend/app/plugins/components/PluginCard.tsx",
+            "frontend/app/settings/profile/components/ChangelogSection.tsx",
+            "frontend/app/settings/profile/components/NotificationsSection.tsx",
+            "frontend/app/settings/profile/components/ProfileSection.tsx",
+            "frontend/app/settings/profile/components/SessionsSection.tsx",
+            "frontend/app/settings/profile/page.tsx",
+            "frontend/app/storage/[id]/page.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/components/FolderEditRow.tsx",
+            "frontend/app/storage/components/FolderViewRow.tsx",
+            "frontend/app/storage/components/NewFolderInput.tsx",
+            "frontend/app/storage/components/StorageFileTable.tsx",
+            "frontend/app/storage/components/StorageFilterModal.tsx",
+            "frontend/app/storage/components/StorageFolderModal.tsx",
+            "frontend/app/storage/components/StorageHeader.tsx",
+            "frontend/app/storage/components/StorageTagsPanel.tsx",
+            "frontend/app/storage/gmail-receipts/components/ReceiptPreviewModal.tsx",
+            "frontend/app/storage/helpers/storageComputations.ts",
+            "frontend/app/storage/helpers/storageStyling.ts",
+            "frontend/app/storage/page.content.ts",
+            "frontend/app/theme.ts"
+          ]
+        },
+        {
+          "sha": "1ea1f8b8471cc3cc7517b05b0eb0424b434b91d4",
+          "shortSha": "1ea1f8b",
+          "subject": "fix: correct sk translations formatting in storage and integration content files",
+          "author": "symonbaikov",
+          "date": "2026-04-25T14:02:17+03:00",
+          "files": [
+            "backend/src/common/utils/format-money.util.ts",
+            "backend/src/modules/reports/reports.service.ts",
+            "backend/src/modules/telegram/telegram.service.ts",
+            "frontend/app/(main)/statements/components/shared-analytics.utils.ts",
+            "frontend/app/(main)/statements/components/top-categories/hooks/useTopCategoriesRecords.ts",
+            "frontend/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsRecords.ts"
+          ]
+        },
+        {
+          "sha": "9f689c41d08a3a6d53351078ce7430e89f36f2cb",
+          "shortSha": "9f689c4",
+          "subject": "refactor(frontend): migrate CSS variables to JS theme tokens",
+          "author": "symonbaikov",
+          "date": "2026-04-25T14:05:16+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/top-spenders/hooks/useTopSpendersRecords.ts",
+            "frontend/app/admin/page.tsx",
+            "frontend/app/audit/components/AuditEventModal.tsx",
+            "frontend/app/audit/page.tsx",
+            "frontend/app/components/BaseStorageWidget.tsx",
+            "frontend/app/lib/theme-tokens.ts",
+            "frontend/app/theme.ts"
+          ]
+        },
+        {
+          "sha": "4c9f0365971565eeeb07eb5b69a45ba2aa03c713",
+          "shortSha": "4c9f036",
+          "subject": "Merge pull request #57 from symonbaikov/feat/i18n-language-expansion",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T14:06:59+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-25-eede7f6",
       "version": "main-eede7f6",
