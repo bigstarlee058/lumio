@@ -1,13 +1,213 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "2e26dc64005c5947b5a7332ae83eb749a682c289"
+      "main": "6a9f4275c83102fcdfb08b5d25baa760b329b126"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-25T14:47:31.943Z",
+    "lastGeneratedAt": "2026-04-25T16:16:16.075Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-25-6a9f427",
+      "version": "main-6a9f427",
+      "branch": "main",
+      "date": "2026-04-25T16:16:16.075Z",
+      "title": "Release update - April 25, 2026",
+      "summary": "This release includes 3 features and 3 fixes.",
+      "markdown": "## Features\n- **scss**: Add comprehensive dark mode to shell layout\n- **frontend**: Fix remaining hardcoded colors for dark mode\n- **frontend**: Comprehensive dark mode coverage across all pages\n\n## Fixes\n- **frontend**: Fix last 8 hardcoded border colors in statements and receipts\n- **dark-mode**: Fix white backgrounds and MUI portal hover states\n- **dark-mode**: Fix remaining light backgrounds in panels, danger zone, and duplicate badges",
+      "commits": [
+        {
+          "sha": "34049af5ceb0321f62f047609f72f7c08f64ae09",
+          "shortSha": "34049af",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-25T14:47:32Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "f8c38cea9fa380ab4bdcf74d4c936cf3a01b5ec6",
+          "shortSha": "f8c38ce",
+          "subject": "feat(scss): add comprehensive dark mode to shell layout",
+          "author": "symonbaikov",
+          "date": "2026-04-25T17:55:25+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "aa54460085c0ac57c97c543dcf36dbde308d85db",
+          "shortSha": "aa54460",
+          "subject": "feat(frontend): fix remaining hardcoded colors for dark mode",
+          "author": "symonbaikov",
+          "date": "2026-04-25T18:00:03+03:00",
+          "files": [
+            "backend/1777116981849-aa87b614828a8-statement.pdf",
+            "backend/1777117022584-54081184ca923-statement.pdf",
+            "frontend/app/(main)/custom-tables/[id]/components/ColumnsVisibilityPanel.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/DesktopTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/MobileTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/RowDrawer.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/RowDrawerTabBar.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/statements/components/TopCategoriesView.tsx",
+            "frontend/app/(main)/statements/components/TopMerchantsView.tsx",
+            "frontend/app/(main)/statements/components/TopSpendersView.tsx",
+            "frontend/app/(main)/statements/components/top-categories/components/TopCategoriesDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-spenders/components/TopSpendersDrillDown.tsx",
+            "frontend/app/(main)/workspaces/components/InviteForm.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceListFilters.tsx",
+            "frontend/app/components/TransactionDocumentViewer.tsx",
+            "frontend/app/components/side-panel/sections/NavigationSection.tsx",
+            "frontend/app/components/transactions/TransactionRow.tsx"
+          ]
+        },
+        {
+          "sha": "a11b61906ea1eb2443588e0aaa9c7057d5b0ad9a",
+          "shortSha": "a11b619",
+          "subject": "feat(frontend): comprehensive dark mode coverage across all pages",
+          "author": "symonbaikov",
+          "date": "2026-04-25T18:17:39+03:00",
+          "files": [
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/DesktopTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/MobileTableView.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/PastePreviewModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/TableToolbar.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableNumberCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableSelectCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/cells/EditableTextCell.tsx",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/components/create-from-statements/ModalBody.tsx",
+            "frontend/app/(main)/custom-tables/components/create-from-statements/StatementGroup.tsx",
+            "frontend/app/(main)/custom-tables/import/google-sheets/ResultCard.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardErrorBanner.tsx",
+            "frontend/app/(main)/dashboard/components/DashboardPullIndicator.tsx",
+            "frontend/app/(main)/reports/components/ReportHistory.tsx",
+            "frontend/app/(main)/statements/[id]/edit/components/EditStatementHeader.tsx",
+            "frontend/app/(main)/statements/[id]/edit/page.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/TablesReportsView.tsx",
+            "frontend/app/(main)/statements/components/TrashListItem.tsx",
+            "frontend/app/(main)/statements/components/analytics/AnalyticsComparisonLine.tsx",
+            "frontend/app/(main)/statements/components/filters/DateFilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterOptionRow.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterRow.tsx",
+            "frontend/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashContent.tsx",
+            "frontend/app/(main)/supported-banks/page.tsx",
+            "frontend/app/(main)/workspaces/components/BackgroundSelector.tsx",
+            "frontend/app/(main)/workspaces/components/CategoryTree.tsx",
+            "frontend/app/(main)/workspaces/components/CreateWorkspaceModal.tsx",
+            "frontend/app/(main)/workspaces/components/InviteForm.tsx",
+            "frontend/app/(main)/workspaces/components/MemberRow.tsx",
+            "frontend/app/(main)/workspaces/components/MembersList.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceMembersView.tsx",
+            "frontend/app/audit/components/AuditEventDrawer.tsx",
+            "frontend/app/audit/components/AuditEventTable.tsx",
+            "frontend/app/audit/components/AuditTimeline.tsx",
+            "frontend/app/audit/components/DiffViewer.tsx",
+            "frontend/app/components/ConfirmModal.tsx",
+            "frontend/app/components/TransactionDocumentViewer.tsx",
+            "frontend/app/components/dashboard/CashFlowMini.tsx",
+            "frontend/app/components/dashboard/FinancialSnapshot.tsx",
+            "frontend/app/components/dashboard/FinlabBalanceStatCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCard.tsx",
+            "frontend/app/components/dashboard/FinlabExpenseCategoryCard.tsx",
+            "frontend/app/components/dashboard/FinlabIncomeCard.tsx",
+            "frontend/app/components/dashboard/FinlabTransactionCard.tsx",
+            "frontend/app/components/dashboard/RecentActivity.tsx",
+            "frontend/app/components/dashboard/TopCategoriesCard.tsx",
+            "frontend/app/components/dashboard/TopMerchantsCard.tsx",
+            "frontend/app/components/dashboard/TransactionTab.tsx",
+            "frontend/app/components/dashboard/TrendsTab.tsx",
+            "frontend/app/components/receipts/ReceiptCameraCapture.tsx",
+            "frontend/app/components/receipts/ReceiptCard.tsx",
+            "frontend/app/components/receipts/ReceiptDetailPanel.tsx",
+            "frontend/app/components/receipts/ReceiptUploadModal.tsx",
+            "frontend/app/components/receipts/ReceiptsList.tsx",
+            "frontend/app/components/receipts/components/CurrencyDrawer.tsx",
+            "frontend/app/components/side-panel/sections/NavigationSection.tsx",
+            "frontend/app/components/side-panel/sections/SettingsSection.tsx",
+            "frontend/app/components/side-panel/sections/StatusSection.tsx",
+            "frontend/app/components/side-panel/sections/SummarySection.tsx",
+            "frontend/app/components/transactions/TransactionDetailsTab.tsx",
+            "frontend/app/global-error.tsx",
+            "frontend/app/integrations/components/IntegrationCard.tsx",
+            "frontend/app/integrations/google-sheets/components/ConnectionCard.tsx",
+            "frontend/app/integrations/google-sheets/components/Step1Connect.tsx",
+            "frontend/app/integrations/google-sheets/page.tsx",
+            "frontend/app/integrations/page.tsx",
+            "frontend/app/storage/[id]/page.tsx",
+            "frontend/app/storage/components/DraggableFileRow.tsx",
+            "frontend/app/storage/components/StorageBulkActions.tsx",
+            "frontend/app/storage/components/StorageFilterModal.tsx",
+            "frontend/app/storage/components/StorageFoldersSidebar.tsx",
+            "frontend/app/storage/components/StoragePageHelpers.tsx",
+            "frontend/app/storage/components/StorageTagsPanel.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/components/GmailReceiptHeader.tsx",
+            "frontend/app/styles/themes/_globals.scss",
+            "frontend/app/transactions/duplicates/components/DuplicateGroupCard.tsx"
+          ]
+        },
+        {
+          "sha": "b41b567e11f884fd193bff9cd42e79b0716d61f7",
+          "shortSha": "b41b567",
+          "subject": "fix(frontend): fix last 8 hardcoded border colors in statements and receipts",
+          "author": "symonbaikov",
+          "date": "2026-04-25T18:18:08+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx"
+          ]
+        },
+        {
+          "sha": "9dfd256ca2a34a40dfaa52a4fdaac7114fd3a7a8",
+          "shortSha": "9dfd256",
+          "subject": "fix(dark-mode): fix white backgrounds and MUI portal hover states",
+          "author": "symonbaikov",
+          "date": "2026-04-25T18:55:35+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsSidePanel.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/side-panel-config.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceSidePanel.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/components/GmailReceiptDuplicates.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/components/GmailReceiptLineItems.tsx",
+            "frontend/app/styles/themes/_globals.scss"
+          ]
+        },
+        {
+          "sha": "dff541943dc8b3e92555880353d95c6870f6d275",
+          "shortSha": "dff5419",
+          "subject": "fix(dark-mode): fix remaining light backgrounds in panels, danger zone, and duplicate badges",
+          "author": "symonbaikov",
+          "date": "2026-04-25T19:13:38+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/StatementsSidePanel.tsx",
+            "frontend/app/(main)/statements/components/filters/FilterDropdown.tsx",
+            "frontend/app/(main)/statements/components/side-panel-config.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceOverviewView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceSidePanel.tsx",
+            "frontend/app/storage/gmail-receipts/[id]/components/GmailReceiptHeader.tsx"
+          ]
+        },
+        {
+          "sha": "6a9f4275c83102fcdfb08b5d25baa760b329b126",
+          "shortSha": "6a9f427",
+          "subject": "Merge pull request #58 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T19:15:59+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-25-2e26dc6",
       "version": "main-2e26dc6",
