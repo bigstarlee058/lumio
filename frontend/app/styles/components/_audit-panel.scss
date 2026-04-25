@@ -88,11 +88,15 @@
   padding: 0 10px 0 32px;
   font-size: 13px;
   color: $lumio-color-ink-900;
-  background: var(--card-bg);
+  background: $color-card-bg;
   border: 1px solid $lumio-color-ink-150;
   border-radius: $lumio-radius-md;
   outline: none;
   transition: border-color 0.12s;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
 
   &::placeholder {
     color: $lumio-color-ink-400;
@@ -105,10 +109,14 @@
 
 /* ── Timeline card ────────────────────────────────────────────── */
 .audit-timeline-card {
-  background: var(--card-bg);
+  background: $color-card-bg;
   border: 1px solid $lumio-color-ink-150;
   border-radius: $lumio-radius-lg;
   padding: 20px 24px;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
 }
 
 /* ── Timeline list ────────────────────────────────────────────── */
@@ -147,7 +155,7 @@
   width: 32px;
   height: 32px;
   border-radius: 999px;
-  background: var(--card-bg);
+  background: $color-card-bg;
   border: 1px solid $lumio-color-ink-150;
   display: flex;
   align-items: center;
@@ -156,6 +164,10 @@
   position: relative;
   z-index: 1;
   flex: none;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
 }
 
 /* ── Timeline body ────────────────────────────────────────────── */
@@ -253,12 +265,16 @@
   font-size: 12px;
   font-weight: 500;
   color: $lumio-color-ink-600;
-  background: var(--card-bg);
+  background: $color-card-bg;
   border: 1px solid $lumio-color-ink-200;
   border-radius: $lumio-radius-md;
   cursor: pointer;
   transition: border-color 0.12s, color 0.12s, background 0.12s;
   white-space: nowrap;
+
+  @include dark {
+    background: $color-card-bg-dk;
+  }
 
   &:hover {
     border-color: $lumio-color-danger;

@@ -40,54 +40,79 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--card-bg);
+    border-bottom: 1px solid $color-border;
+    background-color: $color-card-bg;
     padding: 12px 16px;
+
+    @include dark {
+      border-bottom-color: $color-border-dk;
+      background-color: $color-card-bg-dk;
+    }
   }
 
   &__title {
     font-size: 14px;
     font-weight: 600;
-    color: var(--foreground);
+    color: $color-foreground;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
   }
 
   &__mark-all {
     font-size: 12px;
-    color: var(--color-primary);
+    color: $color-primary;
     background: none;
     border: none;
     cursor: pointer;
     opacity: 1;
     transition: opacity 150ms;
 
+    @include dark {
+      color: $color-primary-dk;
+    }
+
     &:hover {
       opacity: 0.8;
     }
 
     &:disabled {
-      color: var(--muted-foreground);
+      color: $color-muted-foreground;
       cursor: default;
+
+      @include dark {
+        color: $color-muted-foreground-dk;
+      }
     }
   }
 
   &__list {
     max-height: 420px;
     overflow-y: auto;
-    background-color: var(--card-bg);
+    background-color: $color-card-bg;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+    }
   }
 
   &__empty {
     padding: 32px 16px;
     font-size: 14px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
     text-align: center;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__item {
     width: 100%;
     text-align: left;
     padding: 12px 16px;
-    border-bottom: 1px solid rgba(var(--border-color-rgb, 226 232 240) / 0.7);
+    border-bottom: 1px solid rgba($color-border, 0.7);
     background: none;
     border-left: none;
     border-right: none;
@@ -95,12 +120,24 @@
     cursor: pointer;
     transition: background-color 200ms;
 
+    @include dark {
+      border-bottom-color: rgba($color-border-dk, 0.7);
+    }
+
     &:hover {
-      background-color: rgba(var(--muted-rgb, 241 245 249) / 0.7);
+      background-color: rgba($color-muted, 0.7);
+
+      @include dark {
+        background-color: rgba($color-muted-dk, 0.7);
+      }
     }
 
     &--unread {
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.05);
+      background-color: rgba($color-primary, 0.05);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.05);
+      }
     }
   }
 
@@ -130,11 +167,15 @@
   &__item-title {
     font-size: 14px;
     font-weight: 500;
-    color: var(--foreground);
+    color: $color-foreground;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     margin: 0;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
   }
 
   &__unread-dot {
@@ -142,38 +183,58 @@
     width: 8px;
     height: 8px;
     border-radius: $lumio-radius-full;
-    background-color: var(--color-primary);
+    background-color: $color-primary;
     flex-shrink: 0;
     display: inline-block;
+
+    @include dark {
+      background-color: $color-primary-dk;
+    }
   }
 
   &__item-message {
     margin: 4px 0 0;
     font-size: 12px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__item-time {
     margin: 4px 0 0;
     font-size: 11px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__footer {
     padding: 8px 16px;
-    background-color: rgba(var(--muted-rgb, 241 245 249) / 0.3);
+    background-color: rgba($color-muted, 0.3);
+
+    @include dark {
+      background-color: rgba($color-muted-dk, 0.3);
+    }
   }
 
   &__settings-link {
     font-size: 12px;
-    color: var(--color-primary);
+    color: $color-primary;
     text-decoration: none;
     opacity: 1;
     transition: opacity 150ms;
+
+    @include dark {
+      color: $color-primary-dk;
+    }
 
     &:hover {
       opacity: 0.8;

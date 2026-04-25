@@ -203,6 +203,13 @@ const content = {
         ru: t({ ru: 'Русский', en: 'Russian', kk: 'Орыс тілі', de: 'Russisch', fr: 'Russe', es: 'Ruso', pt: 'Russo', tr: 'Rusça', uk: 'Російська', zh: '俄语', ar: 'الروسية', pl: 'Rosyjski', it: 'Russo' }),
         en: t({ ru: 'English', en: 'English', kk: 'English', de: 'Englisch', fr: 'Anglais', es: 'Inglés', pt: 'Inglês', tr: 'İngilizce', uk: 'Англійська', zh: '英语', ar: 'الإنجليزية', pl: 'Angielski', it: 'Inglese' }),
         kk: t({ ru: 'Қазақша', en: 'Kazakh', kk: 'Қазақша', de: 'Kasachisch', fr: 'Kazakh', es: 'Kazajo', pt: 'Cazaque', tr: 'Kazakça', uk: 'Казахська', zh: '哈萨克语', ar: 'الكازاخية', pl: 'Kazachski', it: 'Kazaco' }),
+        zh: t({ ru: 'Китайский', en: 'Chinese', kk: 'Қытай тілі', de: 'Chinesisch', fr: 'Chinois', es: 'Chino', pt: 'Chinês', tr: 'Çince', uk: 'Китайська', zh: '中文', ar: 'الصينية', pl: 'Chiński', it: 'Cinese' }),
+        de: t({ ru: 'Немецкий', en: 'German', kk: 'Неміс тілі', de: 'Deutsch', fr: 'Allemand', es: 'Alemán', pt: 'Alemão', tr: 'Almanca', uk: 'Німецька', zh: '德语', ar: 'الألمانية', pl: 'Niemiecki', it: 'Tedesco' }),
+        fr: t({ ru: 'Французский', en: 'French', kk: 'Француз тілі', de: 'Französisch', fr: 'Français', es: 'Francés', pt: 'Francês', tr: 'Fransızca', uk: 'Французька', zh: '法语', ar: 'الفرنسية', pl: 'Francuski', it: 'Francese' }),
+        es: t({ ru: 'Испанский', en: 'Spanish', kk: 'Испан тілі', de: 'Spanisch', fr: 'Espagnol', es: 'Español', pt: 'Espanhol', tr: 'İspanyolca', uk: 'Іспанська', zh: '西班牙语', ar: 'الإسبانية', pl: 'Hiszpański', it: 'Spagnolo' }),
+        uk: t({ ru: 'Украинский', en: 'Ukrainian', kk: 'Украин тілі', de: 'Ukrainisch', fr: 'Ukrainien', es: 'Ucraniano', pt: 'Ucraniano', tr: 'Ukraynaca', uk: 'Українська', zh: '乌克兰语', ar: 'الأوكرانية', pl: 'Ukraiński', it: 'Ucraino' }),
+        pl: t({ ru: 'Польский', en: 'Polish', kk: 'Поляк тілі', de: 'Polnisch', fr: 'Polonais', es: 'Polaco', pt: 'Polonês', tr: 'Lehçe', uk: 'Польська', zh: '波兰语', ar: 'البولندية', pl: 'Polski', it: 'Polacco' }),
+        sk: t({ ru: 'Словацкий', en: 'Slovak', kk: 'Словак тілі', de: 'Slowakisch', fr: 'Slovaque', es: 'Eslovaco', pt: 'Eslovaco', tr: 'Slovakça', uk: 'Словацька', zh: '斯洛伐克语', ar: 'السلوفاكية', pl: 'Słowacki', it: 'Slovacco' }),
       },
       timeZoneLabel: t({ ru: 'Часовой пояс', en: 'Timezone', kk: 'Уақыт белдеуі', de: 'Zeitzone', fr: 'Fuseau horaire', es: 'Zona horaria', pt: 'Fuso horário', tr: 'Saat dilimi', uk: 'Часовий пояс', zh: '时区', ar: 'المنطقة الزمنية', pl: 'Strefa czasowa', it: 'Fuso orario' }),
       timeZonePlaceholder: t({

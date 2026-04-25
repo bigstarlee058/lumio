@@ -69,7 +69,7 @@
     align-items: center;
     justify-content: center;
     border-radius: $lumio-radius-sm;
-    color: var(--color-primary);
+    color: $color-primary;
     background: none;
     border: none;
     cursor: pointer;
@@ -345,7 +345,7 @@
 
   &__btn-accent {
     border-radius: $lumio-radius-md;
-    background-color: var(--color-primary, #0a66c2);
+    background-color: $color-primary;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
@@ -354,8 +354,16 @@
     cursor: pointer;
     transition: background-color 200ms;
 
+    @include dark {
+      background-color: $color-primary-dk;
+    }
+
     &:hover {
-      background-color: var(--color-primary-hover, #095bb5);
+      background-color: $color-primary-hover;
+
+      @include dark {
+        background-color: $color-primary-hover-dk;
+      }
     }
 
     &:disabled {

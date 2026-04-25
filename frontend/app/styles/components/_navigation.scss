@@ -85,12 +85,20 @@
 
     &:hover {
       color: white;
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.1);
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
     }
 
     &--active {
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.15);
+      background-color: rgba($color-primary, 0.15);
       color: white;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.15);
+      }
     }
   }
 
@@ -143,7 +151,11 @@
 
     &:hover {
       color: white;
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.1);
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
     }
   }
 
@@ -159,15 +171,21 @@
     min-width: 100px;
     height: 40px;
     padding: 0 1.25rem;
-    background-color: var(--card-bg, white);
-    color: var(--color-primary, #0a66c2);
-    border: 1px solid var(--border-color, #e2e8f0);
+    background-color: $color-card-bg;
+    color: $color-primary;
+    border: 1px solid $color-border;
     border-radius: $lumio-radius-sm;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.05em;
     cursor: pointer;
     transition: transform 150ms;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-primary-dk;
+      border-color: $color-border-dk;
+    }
 
     &:hover {
       transform: scale(1.05);
@@ -201,7 +219,11 @@
 
     &:hover {
       color: white;
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.1);
+      background-color: rgba($color-primary, 0.1);
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+      }
     }
   }
 
@@ -229,15 +251,21 @@
     left: auto;
     width: 88vw;
     max-width: 384px;
-    border-left: 1px solid var(--border-color);
-    background-color: var(--card-bg);
-    color: var(--card-foreground);
+    border-left: 1px solid $color-border;
+    background-color: $color-card-bg;
+    color: $color-card-foreground;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     transform: translateX(0);
     will-change: transform;
     transition: transform 300ms ease-out;
     padding: 0;
     margin: 0;
+
+    @include dark {
+      border-left-color: $color-border-dk;
+      background-color: $color-card-bg-dk;
+      color: $color-card-foreground-dk;
+    }
 
     &--closed {
       transform: translateX(100%);
@@ -248,9 +276,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--card-bg);
+    border-bottom: 1px solid $color-border;
+    background-color: $color-card-bg;
     padding: 16px;
+
+    @include dark {
+      border-bottom-color: $color-border-dk;
+      background-color: $color-card-bg-dk;
+    }
   }
 
   &__mobile-drawer-close-btn {
@@ -259,23 +292,36 @@
     justify-content: center;
     border-radius: $lumio-radius-sm;
     padding: 8px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
     background: none;
     border: none;
     cursor: pointer;
     transition: color 200ms, background-color 200ms;
 
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
     &:hover {
-      background-color: var(--muted);
-      color: var(--foreground);
+      background-color: $color-muted;
+      color: $color-foreground;
+
+      @include dark {
+        background-color: $color-muted-dk;
+        color: $color-foreground-dk;
+      }
     }
   }
 
   &__mobile-drawer-body {
     height: calc(100vh - 64px);
     overflow-y: auto;
-    background-color: var(--card-bg);
+    background-color: $color-card-bg;
     padding: 8px;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+    }
   }
 
   &__mobile-nav-item {
@@ -288,40 +334,70 @@
     font-weight: 500;
     text-decoration: none;
     transition: color 200ms, background-color 200ms;
-    color: var(--foreground);
+    color: $color-foreground;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
 
     &:hover {
-      background-color: var(--muted);
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
     }
 
     &--active {
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.1);
-      color: var(--color-primary);
+      background-color: rgba($color-primary, 0.1);
+      color: $color-primary;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+        color: $color-primary-dk;
+      }
     }
   }
 
   &__mobile-nav-icon {
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
 
     &--active {
-      color: var(--color-primary);
+      color: $color-primary;
+
+      @include dark {
+        color: $color-primary-dk;
+      }
     }
   }
 
   &__mobile-divider {
     margin: 8px 0;
     height: 1px;
-    background-color: var(--border-color);
+    background-color: $color-border;
+
+    @include dark {
+      background-color: $color-border-dk;
+    }
   }
 
   &__mobile-section-label {
-    background-color: var(--card-bg);
+    background-color: $color-card-bg;
     padding: 8px 12px 4px;
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__mobile-menu-btn {
@@ -334,19 +410,32 @@
     font-size: 16px;
     font-weight: 500;
     text-align: left;
-    color: var(--foreground);
+    color: $color-foreground;
     background: none;
     border: none;
     cursor: pointer;
     transition: background-color 200ms;
 
+    @include dark {
+      color: $color-foreground-dk;
+    }
+
     &:hover {
-      background-color: var(--muted);
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
     }
 
     &--active {
-      background-color: rgba(var(--color-primary-rgb, 10 102 194) / 0.1);
-      color: var(--color-primary);
+      background-color: rgba($color-primary, 0.1);
+      color: $color-primary;
+
+      @include dark {
+        background-color: rgba($color-primary-dk, 0.1);
+        color: $color-primary-dk;
+      }
     }
   }
 
@@ -360,15 +449,24 @@
   &__lang-back-btn {
     border-radius: $lumio-radius-sm;
     padding: 8px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
     background: none;
     border: none;
     cursor: pointer;
     transition: color 200ms, background-color 200ms;
 
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
+
     &:hover {
-      background-color: var(--muted);
-      color: var(--foreground);
+      background-color: $color-muted;
+      color: $color-foreground;
+
+      @include dark {
+        background-color: $color-muted-dk;
+        color: $color-foreground-dk;
+      }
     }
   }
 
@@ -398,20 +496,30 @@
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
     pointer-events: none;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 
   &__lang-search-input {
     width: 100%;
     border-radius: $lumio-radius-sm;
-    border: 1px solid var(--color-primary);
-    background-color: var(--card-bg);
+    border: 1px solid $color-primary;
+    background-color: $color-card-bg;
     padding: 12px 16px 12px 44px;
     font-size: 16px;
-    color: var(--foreground);
+    color: $color-foreground;
     outline: none;
     box-sizing: border-box;
+
+    @include dark {
+      border-color: $color-primary-dk;
+      background-color: $color-card-bg-dk;
+      color: $color-foreground-dk;
+    }
   }
 
   &__lang-list {
@@ -428,18 +536,30 @@
     border-radius: $lumio-radius-sm;
     padding: 12px 16px;
     text-align: left;
-    color: var(--foreground);
+    color: $color-foreground;
     background: none;
     border: none;
     cursor: pointer;
     transition: background-color 200ms;
 
+    @include dark {
+      color: $color-foreground-dk;
+    }
+
     &:hover {
-      background-color: var(--muted);
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
     }
 
     &--selected {
-      background-color: var(--muted);
+      background-color: $color-muted;
+
+      @include dark {
+        background-color: $color-muted-dk;
+      }
     }
   }
 
@@ -449,10 +569,15 @@
 
   &__lang-empty {
     border-radius: $lumio-radius-sm;
-    background-color: var(--card-bg);
+    background-color: $color-card-bg;
     padding: 12px 16px;
     font-size: 14px;
-    color: var(--muted-foreground);
+    color: $color-muted-foreground;
+
+    @include dark {
+      background-color: $color-card-bg-dk;
+      color: $color-muted-foreground-dk;
+    }
   }
 
   /* User menu profile item */
@@ -470,11 +595,16 @@
     flex-shrink: 0;
     overflow: hidden;
     border-radius: $lumio-radius-sm;
-    background-color: var(--muted, #f1f5f9);
-    color: var(--muted-foreground, #64748b);
+    background-color: $color-muted;
+    color: $color-muted-foreground;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    @include dark {
+      background-color: $color-muted-dk;
+      color: $color-muted-foreground-dk;
+    }
 
     img {
       width: 100%;
@@ -486,18 +616,26 @@
   &__profile-name {
     font-size: 1rem;
     font-weight: 600;
-    color: var(--foreground, #0f172a);
+    color: $color-foreground;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @include dark {
+      color: $color-foreground-dk;
+    }
   }
 
   &__profile-email {
     font-size: 0.875rem;
     font-weight: 400;
-    color: var(--muted-foreground, #64748b);
+    color: $color-muted-foreground;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @include dark {
+      color: $color-muted-foreground-dk;
+    }
   }
 }
