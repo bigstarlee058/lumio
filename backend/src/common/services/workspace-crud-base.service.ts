@@ -15,7 +15,7 @@ export abstract class WorkspaceCrudBaseService<T extends ObjectLiteral> {
   ) {}
 
   protected getDefaultOrder(): FindOptionsOrder<T> {
-    return { name: 'ASC' } as FindOptionsOrder<T>;
+    return { name: 'ASC' } as unknown as FindOptionsOrder<T>;
   }
 
   async findAll(workspaceId: string): Promise<T[]> {
