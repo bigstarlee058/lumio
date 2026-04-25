@@ -1,13 +1,89 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "e797cd8bb08034b5e9f402e8684dcf86b27aa0c8"
+      "main": "eede7f63ee1468097aca063840159bb881243be4"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-24T21:58:21.802Z",
+    "lastGeneratedAt": "2026-04-25T09:00:06.637Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-25-eede7f6",
+      "version": "main-eede7f6",
+      "branch": "main",
+      "date": "2026-04-25T09:00:06.637Z",
+      "title": "Release update - April 25, 2026",
+      "summary": "This release includes 1 feature.",
+      "markdown": "## Features\n- **website**: Align docs site branding with main app green theme",
+      "commits": [
+        {
+          "sha": "f35aa68546abba59eb7b2965eabf4630e332cfc6",
+          "shortSha": "f35aa68",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-24T21:58:22Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "81f87c9577ce3fb3b7027f08c5d29022fa17a55b",
+          "shortSha": "81f87c9",
+          "subject": "feat(website): align docs site branding with main app green theme",
+          "author": "symonbaikov",
+          "date": "2026-04-25T01:49:04+03:00",
+          "files": [
+            "website/src/css/custom.css",
+            "website/static/img/favicon.svg",
+            "website/static/img/logo.svg"
+          ]
+        },
+        {
+          "sha": "2692b3960b15ace3fd91f1a6bd585bc9665c4d4a",
+          "shortSha": "2692b39",
+          "subject": "Merge pull request #56 from symonbaikov/feat/mui-icons-migration",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T01:49:55+03:00",
+          "files": []
+        },
+        {
+          "sha": "37041cf17dbcccbf208bd76b4de72a82e21e645a",
+          "shortSha": "37041cf",
+          "subject": "test(backend): add comprehensive unit test coverage for business logic and security",
+          "author": "symonbaikov",
+          "date": "2026-04-25T01:56:31+03:00",
+          "files": [
+            "backend/@tests/unit/common/guards/workspace-context.guard.spec.ts",
+            "backend/@tests/unit/modules/auth/dto/auth.dto.spec.ts",
+            "backend/@tests/unit/modules/gmail/guards/gmail-webhook.guard.spec.ts",
+            "backend/@tests/unit/modules/google-sheets/guards/google-sheets-webhook.guard.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/bank-profile.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/checksum-validation.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/column-validation.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/intelligent-deduplication.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/text-cleaning.service.spec.ts",
+            "backend/@tests/unit/modules/parsing/services/transaction-normalizer.service.spec.ts",
+            "backend/@tests/unit/modules/reports/reports.service.logic.spec.ts",
+            "backend/@tests/unit/modules/statements/statements.service.logic.spec.ts",
+            "backend/@tests/unit/modules/transactions/dto/update-transaction.dto.spec.ts",
+            "backend/@tests/unit/modules/users/dto/user-security.dto.spec.ts",
+            "backend/@tests/unit/modules/users/services/permissions.service.spec.ts",
+            "backend/@tests/unit/modules/workspaces/workspaces.service.members.spec.ts"
+          ]
+        },
+        {
+          "sha": "eede7f63ee1468097aca063840159bb881243be4",
+          "shortSha": "eede7f6",
+          "subject": "Update README.md",
+          "author": "Symon Baikov",
+          "date": "2026-04-25T11:59:48+03:00",
+          "files": [
+            "README.md"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-24-e797cd8",
       "version": "main-e797cd8",
