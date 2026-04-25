@@ -1,0 +1,20 @@
+// app/styles/base/_scrollbar.scss
+@use '../abstracts' as *;
+
+::-webkit-scrollbar           { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb     {
+  background: $lumio-color-ink-200;
+  border-radius: $lumio-radius-md;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+
+  @include dark { background: $lumio-color-ink-300-dk; }
+}
+::-webkit-scrollbar-thumb:hover {
+  background: $lumio-color-ink-300;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+
+  @include dark { background: $lumio-color-ink-400-dk; }
+}
+::-webkit-scrollbar-track     { background: transparent; }

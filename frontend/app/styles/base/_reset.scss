@@ -1,0 +1,49 @@
+// app/styles/base/_reset.scss
+@use '../abstracts' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $lumio-font-family;
+  font-size: $lumio-font-size-base;
+  line-height: $lumio-line-height-normal;
+  color: $lumio-color-text-primary;
+  background: $lumio-color-bg;
+  -webkit-font-smoothing: antialiased;
+
+  @include dark {
+    color: $lumio-color-text-primary-dk;
+    background: $lumio-color-bg-dk;
+  }
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+// ── Utility classes (u-* prefix) ──────────────────────────────
+.u-visually-hidden { @include visually-hidden; }
+.u-text-center  { text-align: center; }
+.u-text-right   { text-align: right; }
+.u-text-ellipsis { @include text-ellipsis; }
+.u-flex         { display: flex; }
+.u-flex-col     { display: flex; flex-direction: column; }
+.u-items-center { align-items: center; }
+.u-justify-between { justify-content: space-between; }
+.u-gap-1        { gap: $lumio-space-1; }
+.u-gap-2        { gap: $lumio-space-2; }
+.u-gap-3        { gap: $lumio-space-3; }
+.u-gap-4        { gap: $lumio-space-4; }
+.u-w-full       { width: 100%; }
+.u-h-full       { height: 100%; }
