@@ -1,0 +1,42 @@
+// app/styles/abstracts/_mixins.scss
+
+// Dark mode mixin — wraps content with .dark ancestor selector.
+// Usage: @include dark { color: $lumio-color-text-primary-dk; }
+@mixin dark {
+  .dark & {
+    @content;
+  }
+}
+
+// Responsive breakpoints
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (max-width: 640px) { @content; }
+  } @else if $breakpoint == 'md' {
+    @media (max-width: 768px) { @content; }
+  } @else if $breakpoint == 'lg' {
+    @media (max-width: 1023px) { @content; }
+  } @else if $breakpoint == 'xl' {
+    @media (max-width: 1280px) { @content; }
+  }
+}
+
+// Visually hidden (accessibility)
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Text truncation
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
