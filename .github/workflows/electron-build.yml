@@ -1,7 +1,7 @@
 name: Electron Desktop Build
 
 on:
-  # Build on every push to main/develop after CI passes
+  # Build on every push to main/develop
   push:
     branches:
       - main
@@ -19,8 +19,9 @@ permissions:
   contents: write
 
 jobs:
-  # ── Gate: wait for CI to pass on the same commit ──────────────────────
+  # ── Gate: wait for CI only on release (binaries must be trustworthy) ──
   wait-for-ci:
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Wait for CI workflow to succeed
@@ -31,9 +32,7 @@ jobs:
             const timeoutMinutes = 20;
             const pollIntervalMs = 20000;
             const deadline = Date.now() + timeoutMinutes * 60 * 1000;
-            const sha = context.eventName === 'release'
-              ? context.payload.release.target_commitish
-              : context.sha;
+            const sha = context.payload.release.target_commitish;
 
             core.info(`Waiting for CI on commit ${sha}...`);
 
@@ -69,9 +68,11 @@ jobs:
               await new Promise(r => setTimeout(r, pollIntervalMs));
             }
 
-  # ── Build matrix: macOS / Windows / Linux ───���─────────────────────────
+  # ── Build matrix: macOS / Windows / Linux ─────────────────────────────
   build:
+    # On release: wait for CI gate. On push/dispatch: build immediately.
     needs: wait-for-ci
+    if: always() && (needs.wait-for-ci.result == 'success' || needs.wait-for-ci.result == 'skipped')
     strategy:
       fail-fast: false
       matrix:
