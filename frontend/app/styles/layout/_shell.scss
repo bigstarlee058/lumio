@@ -561,8 +561,10 @@
   .lumio-navigation__user-menu-trigger {
     min-width: unset;
     padding: 0 10px;
-    gap: 0;
-    font-size: 0; // hides text, SVG uses explicit size
+  }
+
+  .lumio-navigation__user-menu-label {
+    display: none;
   }
 
   .lumio-shell__content > main {

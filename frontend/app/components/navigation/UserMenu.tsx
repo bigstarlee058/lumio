@@ -1,8 +1,8 @@
 'use client';
 
-import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
-import { Divider, ListItemIcon, ListItemText, Menu as MuiMenu, MenuItem } from '@mui/material';
 import { BookOpen, Globe, LogOut, Menu, Settings, Trash2, User } from '@/app/components/icons';
+import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import { Divider, ListItemIcon, ListItemText, MenuItem, Menu as MuiMenu } from '@mui/material';
 import React from 'react';
 
 type UserMenuProps = {
@@ -46,7 +46,9 @@ export function UserMenuTriggerAndDropdown({
         data-tour-id={mobile ? undefined : 'user-menu-trigger'}
       >
         <Menu size={18} strokeWidth={2.25} />
-        {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
+        <span className="lumio-navigation__user-menu-label">
+          {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
+        </span>
       </button>
 
       <MuiMenu
@@ -63,7 +65,9 @@ export function UserMenuTriggerAndDropdown({
               <img
                 src={normalizedAvatarUrl}
                 alt={user.name || 'User avatar'}
-                onError={() => { setAvatarError(true); }}
+                onError={() => {
+                  setAvatarError(true);
+                }}
               />
             ) : (
               <User size={20} />
@@ -77,34 +81,68 @@ export function UserMenuTriggerAndDropdown({
 
         <Divider />
 
-        <MenuItem onClick={() => { onAction('settings'); }}>
-          <ListItemIcon><Settings size={18} /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onAction('settings');
+          }}
+        >
+          <ListItemIcon>
+            <Settings size={18} />
+          </ListItemIcon>
           <ListItemText>{userMenu.settings as React.ReactNode}</ListItemText>
         </MenuItem>
-<MenuItem onClick={() => { onAction('trash'); }}>
-          <ListItemIcon><Trash2 size={18} /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onAction('trash');
+          }}
+        >
+          <ListItemIcon>
+            <Trash2 size={18} />
+          </ListItemIcon>
           <ListItemText>{trashLabel}</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => { onAction('language'); }}>
-          <ListItemIcon><Globe size={18} /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onAction('language');
+          }}
+        >
+          <ListItemIcon>
+            <Globe size={18} />
+          </ListItemIcon>
           <ListItemText>{userMenu.language as React.ReactNode}</ListItemText>
-          <span style={{ fontSize: '0.875rem', color: 'var(--muted-foreground, #64748b)', marginLeft: 8 }}>
+          <span
+            style={{
+              fontSize: '0.875rem',
+              color: 'var(--muted-foreground, #64748b)',
+              marginLeft: 8,
+            }}
+          >
             {languageLabel}
           </span>
         </MenuItem>
 
-        <MenuItem onClick={() => { onAction('knowledgeBase'); }}>
-          <ListItemIcon><BookOpen size={18} /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            onAction('knowledgeBase');
+          }}
+        >
+          <ListItemIcon>
+            <BookOpen size={18} />
+          </ListItemIcon>
           <ListItemText>{userMenu.knowledgeBase as React.ReactNode}</ListItemText>
         </MenuItem>
 
         <Divider />
 
         <MenuItem
-          onClick={() => { onAction('logout'); }}
+          onClick={() => {
+            onAction('logout');
+          }}
           sx={{ color: 'error.main', '& .MuiListItemIcon-root': { color: 'error.main' } }}
         >
-          <ListItemIcon><LogOut size={18} /></ListItemIcon>
+          <ListItemIcon>
+            <LogOut size={18} />
+          </ListItemIcon>
           <ListItemText>{userMenu.logout as React.ReactNode}</ListItemText>
         </MenuItem>
       </MuiMenu>
