@@ -1,13 +1,80 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "33b767119abff133c2a3bada32d6ee62bac86323"
+      "main": "cf2b218a3f639c666e3ce9dd39c2f1b920f2b086"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-26T21:18:37.016Z",
+    "lastGeneratedAt": "2026-04-26T22:14:21.888Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-26-cf2b218",
+      "version": "main-cf2b218",
+      "branch": "main",
+      "date": "2026-04-26T22:14:21.888Z",
+      "title": "Release update - April 26, 2026",
+      "summary": "This release includes 1 feature and 2 fixes.",
+      "markdown": "## Features\n- **topbar**: Show user name + avatar in trigger, User Actions title in dropdown\n\n## Fixes\n- **mobile**: Make TopBar logo a link to dashboard\n- **css**: Remove !important, add stylelint rule to enforce it",
+      "commits": [
+        {
+          "sha": "582e6df3b6fdcc1f9361ab7986c4c8ed1cf099d5",
+          "shortSha": "582e6df",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-26T21:18:37Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "5216aa543411c913004d8a3b6dce2139906759b5",
+          "shortSha": "5216aa5",
+          "subject": "fix(mobile): make TopBar logo a link to dashboard",
+          "author": "symonbaikov",
+          "date": "2026-04-27T00:51:06+03:00",
+          "files": [
+            "frontend/app/components/TopBar.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "1c825b95a7001bfba05d1208dbe9aa90dac40dc8",
+          "shortSha": "1c825b9",
+          "subject": "fix(css): remove !important, add stylelint rule to enforce it",
+          "author": "symonbaikov",
+          "date": "2026-04-27T01:10:15+03:00",
+          "files": [
+            "frontend/.stylelintrc.json",
+            "frontend/app/styles/components/_dashboard.scss",
+            "frontend/app/styles/components/_navigation.scss",
+            "frontend/app/styles/layout/_shell.scss",
+            "frontend/app/styles/themes/_globals.scss",
+            "frontend/app/styles/vendors/_tour-theme.scss",
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
+        },
+        {
+          "sha": "2411811cce8acfed9be7411d2e99cef81be8555f",
+          "shortSha": "2411811",
+          "subject": "feat(topbar): show user name + avatar in trigger, User Actions title in dropdown",
+          "author": "symonbaikov",
+          "date": "2026-04-27T01:12:28+03:00",
+          "files": [
+            "frontend/app/components/navigation/UserMenu.tsx"
+          ]
+        },
+        {
+          "sha": "cf2b218a3f639c666e3ce9dd39c2f1b920f2b086",
+          "shortSha": "cf2b218",
+          "subject": "Merge pull request #63 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-27T01:14:01+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-26-33b7671",
       "version": "main-33b7671",
