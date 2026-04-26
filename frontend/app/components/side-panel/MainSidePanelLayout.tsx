@@ -260,17 +260,16 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
               aria-label="Open side panel"
               sx={{
                 position: 'fixed',
-                top: 10,
+                bottom: 'calc(1rem + env(safe-area-inset-bottom))',
                 right: 16,
                 zIndex: 65,
                 fontWeight: 600,
                 display: { xs: 'inline-flex', lg: 'none' },
-                minWidth: 32,
-                width: 32,
-                height: 32,
+                minWidth: 36,
+                width: 36,
+                height: 36,
                 padding: 0,
                 borderRadius: '50%',
-                border: 'none',
                 justifyContent: 'center',
               }}
             >
