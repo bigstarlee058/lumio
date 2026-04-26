@@ -1,5 +1,6 @@
 // app/styles/themes/_globals.scss
 // Global theme-level styles: body, focus, MUI/Tailwind overrides, body utility classes.
+// stylelint-disable declaration-no-important -- MUI/utility overrides require !important to beat MUI specificity
 @use '../abstracts' as *;
 
 // ── CSS custom properties (consumed by Tailwind/generic styling layer) ────────

@@ -1,0 +1,9 @@
+{
+  "extends": ["stylelint-config-recommended-scss"],
+  "rules": {
+    "declaration-no-important": true,
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": null
+  },
+  "ignoreFiles": ["**/*.css", "**/node_modules/**"]
+}
