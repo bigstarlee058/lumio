@@ -1,13 +1,135 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "6a9f4275c83102fcdfb08b5d25baa760b329b126"
+      "main": "831e4f7b6429c26da05bf7e3f7b8feefefc15334"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-25T16:16:16.075Z",
+    "lastGeneratedAt": "2026-04-26T10:14:54.763Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-26-831e4f7",
+      "version": "main-831e4f7",
+      "branch": "main",
+      "date": "2026-04-26T10:14:54.763Z",
+      "title": "Release update - April 26, 2026",
+      "summary": "This release includes 2 features.",
+      "markdown": "## Features\n- **i18n**: Add Kazakh locale and update content translations\n- **electron**: Add desktop application with native shell",
+      "commits": [
+        {
+          "sha": "f38c56cbb43e156c6fd5938a621255f174dd35ce",
+          "shortSha": "f38c56c",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-25T16:16:16Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "1769ba8a0cfc572a482f5a054fa781afe675c520",
+          "shortSha": "1769ba8",
+          "subject": "feat(i18n): add Kazakh locale and update content translations",
+          "author": "symonbaikov",
+          "date": "2026-04-26T12:16:58+03:00",
+          "files": [
+            "frontend/app/(auth)/login/page.content.ts",
+            "frontend/app/(auth)/register/page.content.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.content.ts",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.content.ts",
+            "frontend/app/(main)/custom-tables/page.content.ts",
+            "frontend/app/(main)/reports/page.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page-alerts.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page-columns.content.ts",
+            "frontend/app/(main)/statements/[id]/edit/page.content.ts",
+            "frontend/app/(main)/statements/[id]/view/page.content.ts",
+            "frontend/app/(main)/statements/page.content.ts",
+            "frontend/app/(main)/supported-banks/page.content.ts",
+            "frontend/app/(main)/workspaces/page.content.ts",
+            "frontend/app/(onboarding)/onboarding/page.content.ts",
+            "frontend/app/admin/page.content.ts",
+            "frontend/app/admin/users/page.content.ts",
+            "frontend/app/categories/page.content.ts",
+            "frontend/app/components/breadcrumbs.content.ts",
+            "frontend/app/components/confirmModal.content.ts",
+            "frontend/app/components/navigation.content.ts",
+            "frontend/app/components/notificationDropdown.content.ts",
+            "frontend/app/components/pdfPreviewModal.content.ts",
+            "frontend/app/components/permissionsPanel.content.ts",
+            "frontend/app/components/shareDialog.content.ts",
+            "frontend/app/components/transactionDocumentViewer.content.ts",
+            "frontend/app/components/transactions/detailsDrawer.content.ts",
+            "frontend/app/components/transactions/exportModal.content.ts",
+            "frontend/app/components/transactions/summaryBar.content.ts",
+            "frontend/app/components/transactions/transactionsPageView.content.ts",
+            "frontend/app/components/transactions/transactionsTable.content.ts",
+            "frontend/app/components/transactionsView.content.ts",
+            "frontend/app/google-sheets/callback/page.content.ts",
+            "frontend/app/integrations/dropbox/page.content.ts",
+            "frontend/app/integrations/gmail/page.content.ts",
+            "frontend/app/integrations/google-drive/page.content.ts",
+            "frontend/app/integrations/google-sheets/page.content.ts",
+            "frontend/app/integrations/page.content.ts",
+            "frontend/app/layout.content.ts",
+            "frontend/app/lib/locale.ts",
+            "frontend/app/plugins/ai-assistant/AiAssistantDrawer.content.ts",
+            "frontend/app/plugins/page.content.ts",
+            "frontend/app/settings/profile/page.content.ts",
+            "frontend/app/settings/workspace/page.content.ts",
+            "frontend/app/storage/page.content.ts",
+            "frontend/intlayer.config.ts"
+          ]
+        },
+        {
+          "sha": "8d5e96e3d5398443a90181aa4d75af9460de5918",
+          "shortSha": "8d5e96e",
+          "subject": "feat(electron): add desktop application with native shell",
+          "author": "symonbaikov",
+          "date": "2026-04-26T12:17:34+03:00",
+          "files": [
+            "electron/.gitignore",
+            "electron/build/entitlements.mac.plist",
+            "electron/electron-builder.yml",
+            "electron/package-lock.json",
+            "electron/package.json",
+            "electron/resources/icon.icns",
+            "electron/resources/icon.ico",
+            "electron/resources/icon.png",
+            "electron/resources/tray-icon.png",
+            "electron/resources/tray-icon@2x.png",
+            "electron/src/config.ts",
+            "electron/src/main.ts",
+            "electron/src/offline.ts",
+            "electron/src/preload.ts",
+            "electron/src/tray.ts",
+            "electron/src/updater.ts",
+            "electron/src/window-state.ts",
+            "electron/tsconfig.json",
+            "frontend/types/lumio-desktop.d.ts",
+            "package.json"
+          ]
+        },
+        {
+          "sha": "8a79111274edfa839f526079500abea77c585bec",
+          "shortSha": "8a79111",
+          "subject": "ci(electron): add cross-platform build workflow with auto-release",
+          "author": "symonbaikov",
+          "date": "2026-04-26T12:17:48+03:00",
+          "files": [
+            ".github/workflows/electron-build.yml"
+          ]
+        },
+        {
+          "sha": "831e4f7b6429c26da05bf7e3f7b8feefefc15334",
+          "shortSha": "831e4f7",
+          "subject": "Merge pull request #60 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-26T13:14:38+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-25-6a9f427",
       "version": "main-6a9f427",
