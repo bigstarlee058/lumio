@@ -18,7 +18,12 @@
     "migration:run": "npm --prefix backend run migration:run",
     "migration:generate": "npm --prefix backend run migration:generate",
     "create-admin": "npm --prefix backend run create-admin",
-    "knip": "knip"
+    "knip": "knip",
+    "electron:dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix electron run dev\"",
+    "electron:build": "npm --prefix electron run build",
+    "electron:build:mac": "npm --prefix electron run build:mac",
+    "electron:build:win": "npm --prefix electron run build:win",
+    "electron:build:linux": "npm --prefix electron run build:linux"
   },
   "keywords": [],
   "author": "",
