@@ -1,10 +1,10 @@
 'use client';
 
-export type AppLocale = 'en' | 'ru' | 'kk' | 'zh' | 'de' | 'fr' | 'es' | 'uk' | 'pl' | 'sk';
+export type AppLocale = 'en' | 'ru' | 'kk' | 'zh' | 'de' | 'fr' | 'es' | 'uk' | 'pl' | 'sk' | 'pt' | 'tr' | 'ar' | 'it' | 'ja' | 'ko' | 'hi' | 'nl' | 'sv' | 'vi' | 'id';
 
 export const DEFAULT_LOCALE: AppLocale = 'ru';
 export const LOCALE_COOKIE_NAME = 'INTLAYER_LOCALE';
-export const SUPPORTED_LOCALES = ['ru', 'en', 'kk', 'zh', 'de', 'fr', 'es', 'uk', 'pl', 'sk'] as const satisfies readonly AppLocale[];
+export const SUPPORTED_LOCALES = ['ru', 'en', 'kk', 'zh', 'de', 'fr', 'es', 'uk', 'pl', 'sk', 'pt', 'tr', 'ar', 'it', 'ja', 'ko', 'hi', 'nl', 'sv', 'vi', 'id'] as const satisfies readonly AppLocale[];
 const LEGACY_LOCALE_COOKIE_NAME = 'intlayer-locale';
 const LOCALE_COOKIE_ATTRIBUTES = 'path=/; max-age=31536000; samesite=lax';
 const EXPIRED_COOKIE_ATTRIBUTES = 'path=/; max-age=0; samesite=lax';

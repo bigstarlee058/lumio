@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'dropboxIntegrationPage',
-  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox', sk: 'Dropbox' },
+  name: { ru: 'Dropbox', en: 'Dropbox', kk: 'Dropbox', de: 'Dropbox', fr: 'Dropbox', es: 'Dropbox', pt: 'Dropbox', tr: 'Dropbox', uk: 'Dropbox', zh: 'Dropbox', ar: 'Dropbox', pl: 'Dropbox', it: 'Dropbox', sk: 'Dropbox', ja: 'Dropbox', ko: 'Dropbox', hi: 'Dropbox', nl: 'Dropbox', sv: 'Dropbox', vi: 'Dropbox', id: 'Dropbox' },
   folderLabel: {
     ru: 'Папка в Dropbox',
     en: 'Dropbox folder',
@@ -18,6 +18,13 @@ const content = makeCloudStorageContent({
     pl: 'Folder Dropbox',
     it: 'Cartella Dropbox',
     sk: 'Folder Dropbox',
+    ja: 'Dropboxフォルダ',
+    ko: 'Dropbox 폴더',
+    hi: 'Dropbox फ़ोल्डर',
+    nl: 'Dropbox-map',
+    sv: 'Dropbox-mapp',
+    vi: 'Thư mục Dropbox',
+    id: 'Folder Dropbox',
   },
   connectingLabel: {
     ru: 'Открываем авторизацию Dropbox…',
@@ -34,6 +41,13 @@ const content = makeCloudStorageContent({
     pl: 'Otwieranie autoryzacji Dropbox…',
     it: 'Apertura autorizzazione Dropbox…',
     sk: 'Otwieranie autoryzacji Dropbox…',
+    ja: 'Dropbox認証を開いています…',
+    ko: 'Dropbox 인증을 여는 중…',
+    hi: 'Dropbox प्राधिकरण खोला जा रहा है…',
+    nl: 'Dropbox-autorisatie openen…',
+    sv: 'Öppnar Dropbox-auktorisering…',
+    vi: 'Đang mở xác thực Dropbox…',
+    id: 'Membuka otorisasi Dropbox…',
   },
   connectedLabel: {
     ru: 'Dropbox подключен',
@@ -50,6 +64,13 @@ const content = makeCloudStorageContent({
     pl: 'Dropbox połączony',
     it: 'Dropbox connesso',
     sk: 'Dropbox połączony',
+    ja: 'Dropboxが接続されました',
+    ko: 'Dropbox 연결됨',
+    hi: 'Dropbox कनेक्ट हो गया',
+    nl: 'Dropbox verbonden',
+    sv: 'Dropbox ansluten',
+    vi: 'Dropbox đã kết nối',
+    id: 'Dropbox terhubung',
   },
   pickerUnavailableLabel: {
     ru: 'Dropbox Chooser недоступен',
@@ -66,6 +87,13 @@ const content = makeCloudStorageContent({
     pl: 'Dropbox Chooser jest niedostępny',
     it: 'Dropbox Chooser non disponibile',
     sk: 'Dropbox',
+    ja: 'Dropbox Chooserは利用できません',
+    ko: 'Dropbox Chooser를 사용할 수 없습니다',
+    hi: 'Dropbox Chooser अनुपलब्ध है',
+    nl: 'Dropbox Chooser is niet beschikbaar',
+    sv: 'Dropbox Chooser är inte tillgänglig',
+    vi: 'Dropbox Chooser không khả dụng',
+    id: 'Dropbox Chooser tidak tersedia',
   },
 });
 

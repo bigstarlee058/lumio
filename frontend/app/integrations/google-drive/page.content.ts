@@ -2,7 +2,7 @@ import { makeCloudStorageContent } from '../shared/make-cloud-storage-content';
 
 const content = makeCloudStorageContent({
   key: 'googleDriveIntegrationPage',
-  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive', sk: 'Google Drive' },
+  name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive', de: 'Google Drive', fr: 'Google Drive', es: 'Google Drive', pt: 'Google Drive', tr: 'Google Drive', uk: 'Google Drive', zh: 'Google Drive', ar: 'Google Drive', pl: 'Google Drive', it: 'Google Drive', sk: 'Google Drive', ja: 'Google Drive', ko: 'Google Drive', hi: 'Google Drive', nl: 'Google Drive', sv: 'Google Drive', vi: 'Google Drive', id: 'Google Drive' },
   folderLabel: {
     ru: 'Папка в Drive',
     en: 'Drive folder',
@@ -18,6 +18,13 @@ const content = makeCloudStorageContent({
     pl: 'Folder Drive',
     it: 'Cartella Drive',
     sk: 'Folder Drive',
+    ja: 'Driveフォルダ',
+    ko: 'Drive 폴더',
+    hi: 'Drive फ़ोल्डर',
+    nl: 'Drive-map',
+    sv: 'Drive-mapp',
+    vi: 'Thư mục Drive',
+    id: 'Folder Drive',
   },
   connectingLabel: {
     ru: 'Открываем авторизацию Google…',
@@ -34,6 +41,13 @@ const content = makeCloudStorageContent({
     pl: 'Otwieranie autoryzacji Google…',
     it: 'Apertura autorizzazione Google…',
     sk: 'Otwieranie autoryzacji Google…',
+    ja: 'Google認証を開いています…',
+    ko: 'Google 인증을 여는 중…',
+    hi: 'Google प्राधिकरण खोला जा रहा है…',
+    nl: 'Google-autorisatie openen…',
+    sv: 'Öppnar Google-auktorisering…',
+    vi: 'Đang mở xác thực Google…',
+    id: 'Membuka otorisasi Google…',
   },
   connectedLabel: {
     ru: 'Google Drive подключен',
@@ -50,6 +64,13 @@ const content = makeCloudStorageContent({
     pl: 'Google Drive połączony',
     it: 'Google Drive connesso',
     sk: 'Google Drive połączony',
+    ja: 'Google Driveが接続されました',
+    ko: 'Google Drive 연결됨',
+    hi: 'Google Drive कनेक्ट हो गया',
+    nl: 'Google Drive verbonden',
+    sv: 'Google Drive ansluten',
+    vi: 'Google Drive đã kết nối',
+    id: 'Google Drive terhubung',
   },
   pickerUnavailableLabel: {
     ru: 'Google Picker недоступен',
@@ -66,6 +87,13 @@ const content = makeCloudStorageContent({
     pl: 'Google Picker jest niedostępny',
     it: 'Google Picker non disponibile',
     sk: 'Google Drive',
+    ja: 'Google Pickerは利用できません',
+    ko: 'Google Picker를 사용할 수 없습니다',
+    hi: 'Google Picker अनुपलब्ध है',
+    nl: 'Google Picker is niet beschikbaar',
+    sv: 'Google Picker är inte tillgänglig',
+    vi: 'Google Picker không khả dụng',
+    id: 'Google Picker tidak tersedia',
   },
 });
 
