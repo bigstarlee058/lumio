@@ -1,0 +1,78 @@
+@use '../abstracts' as *;
+
+// Only visible on mobile (<1024px)
+.lumio-bottom-bar {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background: $lumio-color-surface;
+    border-top: 1px solid $lumio-color-border;
+    z-index: 40;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-top-color: $lumio-color-border-dk;
+    }
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    color: $lumio-color-ink-400;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
+
+    &--active {
+      color: $lumio-color-primary;
+
+      @include dark {
+        color: $lumio-color-primary-dk;
+      }
+    }
+  }
+
+  &__fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: $lumio-color-primary;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: -12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    transition: transform 0.1s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      background: $lumio-color-primary-dk;
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+  }
+}
