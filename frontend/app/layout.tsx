@@ -6,8 +6,9 @@ import { getLocale } from 'next-intlayer/server';
 import { getIntlayer } from 'react-intlayer';
 import { IntlayerServerProvider } from 'react-intlayer/server';
 import AppChrome from './components/AppChrome';
-import TopBar from './components/TopBar';
 import DynamicPageTitle from './components/DynamicPageTitle';
+import MobileBottomBar from './components/mobile/MobileBottomBar';
+import TopBar from './components/TopBar';
 import { Providers } from './providers';
 
 const geist = Geist({
@@ -27,7 +28,12 @@ const nunito = Nunito({
 });
 
 const FONT_CLASS_NAMES = [geist.variable, geistMono.variable, nunito.variable].join(' ');
-const BODY_STYLE: React.CSSProperties = { background: 'var(--background)', color: 'var(--foreground)', WebkitFontSmoothing: 'antialiased', fontFamily: 'var(--font-geist, system-ui, sans-serif)' };
+const BODY_STYLE: React.CSSProperties = {
+  background: 'var(--background)',
+  color: 'var(--foreground)',
+  WebkitFontSmoothing: 'antialiased',
+  fontFamily: 'var(--font-geist, system-ui, sans-serif)',
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -42,7 +48,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>): Promise<React.JSX.Element> {
+export default async function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>): Promise<React.JSX.Element> {
   const locale = await getLocale();
   const resolvedLocale = typeof locale === 'string' ? locale : 'en';
   const direction = resolvedLocale.startsWith('ar') ? 'rtl' : 'ltr';
@@ -51,7 +59,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang={resolvedLocale} dir={direction} suppressHydrationWarning>
       <body className={FONT_CLASS_NAMES} style={BODY_STYLE}>
         <IntlayerServerProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <Providers initialLocale={resolvedLocale as 'en' | 'ru' | 'kk'}>
               <DynamicPageTitle />
               <div className="lumio-shell">
@@ -59,7 +72,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                 <div className="lumio-shell__content">
                   <TopBar />
                   <main>{children}</main>
-                  <div id="fab-portal" style={{ position: 'fixed', inset: 0, zIndex: 300, pointerEvents: 'none' }}>
+                  <MobileBottomBar />
+                  <div
+                    id="fab-portal"
+                    style={{ position: 'fixed', inset: 0, zIndex: 300, pointerEvents: 'none' }}
+                  >
                     <div style={{ position: 'relative', height: '100%', width: '100%' }} />
                   </div>
                 </div>

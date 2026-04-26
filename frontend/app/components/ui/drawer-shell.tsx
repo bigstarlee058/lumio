@@ -1,12 +1,12 @@
 'use client';
 
+import { X } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import type { SxProps, Theme } from '@mui/material/styles';
-import { X } from '@/app/components/icons';
 import * as React from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 export type DrawerPosition = 'left' | 'right';
 export type DrawerWidth = 'sm' | 'md' | 'lg' | 'xl';
@@ -68,14 +68,18 @@ export function DrawerShell({
   closeOnBackdropClick = true,
   closeOnEscape = true,
   className,
-  lockScroll: _lockScroll = true,
+  lockScroll: LockScroll = true,
   sx,
   zIndex,
 }: DrawerShellProps) {
   // eslint-disable-next-line max-params
   const handleClose = (_event: object, reason: 'backdropClick' | 'escapeKeyDown'): void => {
-    if (reason === 'backdropClick' && !closeOnBackdropClick) return;
-    if (reason === 'escapeKeyDown' && !closeOnEscape) return;
+    if (reason === 'backdropClick' && !closeOnBackdropClick) {
+      return;
+    }
+    if (reason === 'escapeKeyDown' && !closeOnEscape) {
+      return;
+    }
     onClose();
   };
 
@@ -92,6 +96,7 @@ export function DrawerShell({
         sx: [
           {
             width: drawerWidth,
+            maxWidth: '100%',
             borderRadius: tokens.radius.xl,
             display: 'flex',
             flexDirection: 'column',

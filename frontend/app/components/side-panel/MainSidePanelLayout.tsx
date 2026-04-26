@@ -1,12 +1,11 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { X } from '@/app/components/icons';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import Box from '@mui/material/Box';
-import MuiButton from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { PanelLeftOpen, X } from '@/app/components/icons';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { SidePanel, SidePanelProvider, useCurrentSidePanelConfig, useSidePanel } from './index';
@@ -43,7 +42,9 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   React.useEffect(() => {
-    if (!mobileSidePanelOpen) return;
+    if (!mobileSidePanelOpen) {
+      return;
+    }
 
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const onKeyDown = (event: KeyboardEvent) => {
@@ -115,7 +116,9 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   }, [globalMobileMenuOpen]);
 
   React.useLayoutEffect(() => {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {
+      return;
+    }
 
     document.body.setAttribute(SIDEPANEL_ACTIVE_BODY_ATTRIBUTE, config ? 'true' : 'false');
 
@@ -127,8 +130,12 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   const handlePanelTouchStart = React.useCallback(
     // eslint-disable-next-line complexity
     (event: React.TouchEvent<HTMLDialogElement>): void => {
-      if (!mobileSidePanelVisible) return;
-      if (event.touches.length !== 1) return;
+      if (!mobileSidePanelVisible) {
+        return;
+      }
+      if (event.touches.length !== 1) {
+        return;
+      }
       touchStartXRef.current = event.touches[0]?.clientX ?? null;
       touchStartYRef.current = event.touches[0]?.clientY ?? null;
       dragActiveRef.current = true;
@@ -137,31 +144,42 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   );
 
   // eslint-disable-next-line complexity
-  const handlePanelTouchMove = React.useCallback((event: React.TouchEvent<HTMLDialogElement>): void => {
-    if (!dragActiveRef.current) return;
-    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+  const handlePanelTouchMove = React.useCallback(
+    (event: React.TouchEvent<HTMLDialogElement>): void => {
+      if (!dragActiveRef.current) {
+        return;
+      }
+      if (touchStartXRef.current === null || touchStartYRef.current === null) {
+        return;
+      }
 
-    const touch = event.touches[0];
-    if (!touch) return;
+      const touch = event.touches[0];
+      if (!touch) {
+        return;
+      }
 
-    const deltaX = touch.clientX - touchStartXRef.current;
-    const deltaY = touch.clientY - touchStartYRef.current;
+      const deltaX = touch.clientX - touchStartXRef.current;
+      const deltaY = touch.clientY - touchStartYRef.current;
 
-    if (Math.abs(deltaX) <= Math.abs(deltaY)) {
-      return;
-    }
+      if (Math.abs(deltaX) <= Math.abs(deltaY)) {
+        return;
+      }
 
-    if (deltaX >= 0) {
-      setMobilePanelDragX(0);
-      return;
-    }
+      if (deltaX >= 0) {
+        setMobilePanelDragX(0);
+        return;
+      }
 
-    event.preventDefault();
-    setMobilePanelDragX(Math.max(-240, deltaX));
-  }, []);
+      event.preventDefault();
+      setMobilePanelDragX(Math.max(-240, deltaX));
+    },
+    [],
+  );
 
   const handlePanelTouchEnd = React.useCallback(() => {
-    if (!dragActiveRef.current) return;
+    if (!dragActiveRef.current) {
+      return;
+    }
 
     const shouldClose = mobilePanelDragX < -72;
 
@@ -231,27 +249,6 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
             />
           </Box>
 
-          {!globalMobileMenuOpen ? (
-            <MuiButton
-              type="button"
-              data-testid="mobile-side-panel-open"
-              variant="outlined"
-              size="small"
-              onClick={() => setMobileSidePanelOpen(true)}
-              aria-label="Open side panel"
-              startIcon={<PanelLeftOpen size={16} />}
-              sx={{
-                position: 'fixed',
-                bottom: 'calc(1rem + env(safe-area-inset-bottom))',
-                right: 16,
-                zIndex: 65,
-                fontWeight: 600,
-                display: { xs: 'inline-flex', lg: 'none' },
-              }}
-            >
-              Sections
-            </MuiButton>
-          ) : null}
         </>
       ) : null}
       <div style={{ flex: 1, ...(isStatementsPage ? { height: '100%', overflow: 'hidden' } : {}) }}>

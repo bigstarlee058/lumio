@@ -1,13 +1,13 @@
 'use client';
 
-import type React from 'react';
+import { BarChart3, DollarSign, PieChart, Scale } from '@/app/components/icons';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-import { BarChart3, DollarSign, PieChart, Scale } from '@/app/components/icons';
+import type React from 'react';
 import { useState } from 'react';
 import BalanceSheet from './components/BalanceSheet';
 import { type ReportGenerateParams, ReportGenerator } from './components/ReportGenerator';
@@ -91,12 +91,20 @@ export default function ReportsPage(): React.JSX.Element {
 
   if (showBalanceSheet) {
     return (
-      <Box sx={{ minHeight: '100vh' }}>
-        <Box sx={{ px: 4, pt: 4, pb: 3 }}>
+      <Box>
+        <Box sx={{ px: { xs: 2, sm: 4 }, pt: 4, pb: 3 }}>
           <button
             type="button"
             onClick={() => setShowBalanceSheet(false)}
-            style={{ marginBottom: 16, fontSize: 14, fontWeight: 500, color: 'var(--primary)', background: 'none', border: 'none', cursor: 'pointer' }}
+            style={{
+              marginBottom: 16,
+              fontSize: 14,
+              fontWeight: 500,
+              color: 'var(--primary)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+            }}
           >
             ← {text('backToTemplates', 'Back to templates')}
           </button>
@@ -104,7 +112,7 @@ export default function ReportsPage(): React.JSX.Element {
             {text('balanceSheetTitle', 'Balance Sheet')}
           </Typography>
         </Box>
-        <Box sx={{ px: 4, pb: 4 }}>
+        <Box sx={{ px: { xs: 2, sm: 4 }, pb: 4 }}>
           <BalanceSheet />
         </Box>
       </Box>
@@ -112,8 +120,8 @@ export default function ReportsPage(): React.JSX.Element {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <Box sx={{ px: 4, pt: 4, pb: 0 }}>
+    <Box>
+      <Box sx={{ px: { xs: 2, sm: 4 }, pt: 4, pb: 0 }}>
         <Typography variant="h5" fontWeight={700}>
           {text('title', 'Reports')}
         </Typography>
@@ -122,7 +130,7 @@ export default function ReportsPage(): React.JSX.Element {
         </Typography>
       </Box>
 
-      <Box sx={{ mt: 2, borderBottom: '1px solid var(--border)', px: 4 }}>
+      <Box sx={{ mt: 2, borderBottom: '1px solid var(--border)', px: { xs: 2, sm: 4 } }}>
         <Tabs
           data-tour-id="reports-tabs"
           value={tab}
@@ -152,7 +160,7 @@ export default function ReportsPage(): React.JSX.Element {
         </Tabs>
       </Box>
 
-      <Box sx={{ px: 4, py: 3 }}>
+      <Box sx={{ px: { xs: 2, sm: 4 }, py: 3 }}>
         {tab === 'templates' && (
           <>
             <Box

@@ -1,0 +1,185 @@
+@use '../abstracts' as *;
+
+// Only visible on mobile (<1024px)
+.lumio-bottom-bar {
+  display: none;
+
+  @media (max-width: 1023px) {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background: $lumio-color-surface;
+    border-top: 1px solid $lumio-color-border;
+    z-index: 40;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-top-color: $lumio-color-border-dk;
+    }
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    color: $lumio-color-ink-400;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      color: $lumio-color-ink-400-dk;
+    }
+
+    &--active {
+      color: $lumio-color-primary;
+
+      @include dark {
+        color: $lumio-color-primary-dk;
+      }
+    }
+  }
+
+  &__fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: $lumio-color-primary;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: -12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      background: $lumio-color-primary-dk;
+    }
+
+    &:active {
+      transform: scale(0.92);
+    }
+  }
+
+  // ── FAB radial menu (upward) ──
+
+  &__fab-backdrop {
+    display: none;
+
+    @media (max-width: 1023px) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 39;
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  &__fab-menu {
+    display: none;
+
+    @media (max-width: 1023px) {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+      position: fixed;
+      bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 41;
+      pointer-events: none;
+
+      .lumio-bottom-bar__fab-action {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        pointer-events: none;
+        transition:
+          opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-delay: calc(var(--fab-index, 0) * 0.04s);
+      }
+
+      &--open {
+        pointer-events: auto;
+
+        .lumio-bottom-bar__fab-action {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          pointer-events: auto;
+        }
+      }
+    }
+  }
+
+  &__fab-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 8px 10px;
+    border-radius: $lumio-radius-full;
+    border: 1px solid $lumio-color-border;
+    background: $lumio-color-surface;
+    color: $lumio-color-text-primary;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: background 0.12s;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-border-dk;
+      color: $lumio-color-text-primary-dk;
+    }
+
+    &:active {
+      background: $lumio-color-ink-50;
+
+      @include dark {
+        background: $lumio-color-ink-100-dk;
+      }
+    }
+
+    &-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba($lumio-color-primary, 0.12);
+      color: $lumio-color-primary;
+      flex-shrink: 0;
+
+      @include dark {
+        background: rgba($lumio-color-primary-dk, 0.18);
+        color: $lumio-color-primary-dk;
+      }
+    }
+
+    &-label {
+      flex: 1;
+    }
+  }
+}
