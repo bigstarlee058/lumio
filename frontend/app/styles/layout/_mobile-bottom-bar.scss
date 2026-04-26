@@ -64,6 +64,8 @@
     margin-top: -12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     text-decoration: none;
+    border: none;
+    cursor: pointer;
     transition: transform 0.1s, background 0.15s;
     -webkit-tap-highlight-color: transparent;
 
@@ -73,6 +75,111 @@
 
     &:active {
       transform: scale(0.92);
+    }
+  }
+
+  // ── FAB radial menu (upward) ──
+
+  &__fab-backdrop {
+    display: none;
+
+    @media (max-width: 1023px) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 39;
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  &__fab-menu {
+    display: none;
+
+    @media (max-width: 1023px) {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      gap: 12px;
+      position: fixed;
+      bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 41;
+      pointer-events: none;
+
+      .lumio-bottom-bar__fab-action {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        pointer-events: none;
+        transition:
+          opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-delay: calc(var(--fab-index, 0) * 0.04s);
+      }
+
+      &--open {
+        pointer-events: auto;
+
+        .lumio-bottom-bar__fab-action {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          pointer-events: auto;
+        }
+      }
+    }
+  }
+
+  &__fab-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 8px 10px;
+    border-radius: $lumio-radius-full;
+    border: 1px solid $lumio-color-border;
+    background: $lumio-color-surface;
+    color: $lumio-color-text-primary;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: background 0.12s;
+    -webkit-tap-highlight-color: transparent;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      border-color: $lumio-color-border-dk;
+      color: $lumio-color-text-primary-dk;
+    }
+
+    &:active {
+      background: $lumio-color-ink-50;
+
+      @include dark {
+        background: $lumio-color-ink-100-dk;
+      }
+    }
+
+    &-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba($lumio-color-primary, 0.12);
+      color: $lumio-color-primary;
+      flex-shrink: 0;
+
+      @include dark {
+        background: rgba($lumio-color-primary-dk, 0.18);
+        color: $lumio-color-primary-dk;
+      }
+    }
+
+    &-label {
+      flex: 1;
     }
   }
 }
