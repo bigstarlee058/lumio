@@ -1,13 +1,263 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "831e4f7b6429c26da05bf7e3f7b8feefefc15334"
+      "main": "33b767119abff133c2a3bada32d6ee62bac86323"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-26T10:14:54.763Z",
+    "lastGeneratedAt": "2026-04-26T21:18:37.016Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-26-33b7671",
+      "version": "main-33b7671",
+      "branch": "main",
+      "date": "2026-04-26T21:18:37.016Z",
+      "title": "Release update - April 26, 2026",
+      "summary": "This release includes 5 features, 14 fixes, and 1 other update.",
+      "markdown": "## Features\n- **mobile**: Add MobileBottomBar component with 5-tab navigation\n- **mobile**: Implement MobileMenuDrawer with full navigation\n- **mobile**: Integrate bottom bar, hide old sidebar/hamburger on mobile\n- **mobile**: Add upward radial menu to bottom bar FAB\n- **mobile**: Replace breadcrumbs with logo in TopBar on mobile\n\n## Fixes\n- **ci**: Make electron build independent of CI on push events\n- **mobile**: Hide bottom bar on auth/onboarding pages\n- **mobile**: Hide floating FABs on mobile, replaced by bottom bar\n- **mobile**: Hide user menu button, push icons right in TopBar\n- **mobile**: Show only hamburger icon in user menu, hide text label\n- **mobile**: Hide Menu text label, show only hamburger icon\n- **mobile**: Strip container from hamburger, plain icon button\n- **mobile**: Force override hamburger button size with !important\n- **mobile**: Convert Sections button to icon-only circle\n- **mobile**: Replace hamburger with Sections icon in TopBar\n- **mobile**: Remove floating side panel open button\n- **mobile**: Cap DrawerShell width to viewport on small screens\n- **mobile**: Responsive reports page layout and history table\n- **mobile**: Correct FAB action hrefs to open expense drawer\n\n## Other\n- Revert \"fix(mobile): replace hamburger with Sections icon in TopBar\"",
+      "commits": [
+        {
+          "sha": "17e8181439362d729c6a9e7844499870970ddfad",
+          "shortSha": "17e8181",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-26T10:14:54Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "519906781fe0c9b9c3a7c02c0a35297155c6ba38",
+          "shortSha": "5199067",
+          "subject": "fix(ci): make electron build independent of CI on push events",
+          "author": "symonbaikov",
+          "date": "2026-04-26T13:26:18+03:00",
+          "files": [
+            ".github/workflows/electron-build.yml"
+          ]
+        },
+        {
+          "sha": "bd13fa6235520d80932c93502b707e1195eda73b",
+          "shortSha": "bd13fa6",
+          "subject": "Merge pull request #61 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-26T14:21:42+03:00",
+          "files": []
+        },
+        {
+          "sha": "1260d5ebb6bca17691d3b3ec7e00dc7c9f44a630",
+          "shortSha": "1260d5e",
+          "subject": "feat(mobile): add MobileBottomBar component with 5-tab navigation",
+          "author": "symonbaikov",
+          "date": "2026-04-26T22:49:55+03:00",
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx",
+            "frontend/app/components/mobile/MobileMenuDrawer.tsx",
+            "frontend/app/styles/layout/_index.scss",
+            "frontend/app/styles/layout/_mobile-bottom-bar.scss"
+          ]
+        },
+        {
+          "sha": "60ebdde18b30d3bacab871a56ce316a608dca655",
+          "shortSha": "60ebdde",
+          "subject": "feat(mobile): implement MobileMenuDrawer with full navigation",
+          "author": "symonbaikov",
+          "date": "2026-04-26T22:52:39+03:00",
+          "files": [
+            "frontend/app/components/mobile/MobileMenuDrawer.tsx",
+            "frontend/app/styles/layout/_index.scss",
+            "frontend/app/styles/layout/_mobile-menu-drawer.scss"
+          ]
+        },
+        {
+          "sha": "513533b24fbeb3dbc22b347664432f773262b158",
+          "shortSha": "513533b",
+          "subject": "feat(mobile): integrate bottom bar, hide old sidebar/hamburger on mobile",
+          "author": "symonbaikov",
+          "date": "2026-04-26T22:54:24+03:00",
+          "files": [
+            "frontend/app/layout.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "1b2d928a31c9d9911de9d1377e6c04dbcdf8b2d7",
+          "shortSha": "1b2d928",
+          "subject": "fix(mobile): hide bottom bar on auth/onboarding pages",
+          "author": "symonbaikov",
+          "date": "2026-04-26T22:56:46+03:00",
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx"
+          ]
+        },
+        {
+          "sha": "6a9408f9a692af617476464d2b5e665a7d78720a",
+          "shortSha": "6a9408f",
+          "subject": "fix(mobile): hide floating FABs on mobile, replaced by bottom bar",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:04:25+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/components/CustomTablesCircularMenu.tsx",
+            "frontend/app/(main)/statements/components/StatementsCircularUploadMenu.tsx"
+          ]
+        },
+        {
+          "sha": "79fbbc54789a59ed8185f8ac5bf5f69cef2a8049",
+          "shortSha": "79fbbc5",
+          "subject": "feat(mobile): add upward radial menu to bottom bar FAB",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:11:29+03:00",
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx",
+            "frontend/app/styles/layout/_mobile-bottom-bar.scss"
+          ]
+        },
+        {
+          "sha": "325fb5f7865f530bc6ae48d71a8c45bbcae41360",
+          "shortSha": "325fb5f",
+          "subject": "feat(mobile): replace breadcrumbs with logo in TopBar on mobile",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:16:53+03:00",
+          "files": [
+            "frontend/app/components/TopBar.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "1c5c1fe745f302654082d4572ef032b977467b67",
+          "shortSha": "1c5c1fe",
+          "subject": "fix(mobile): hide user menu button, push icons right in TopBar",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:23:09+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "6678d3bf5cc15e9edc245541663e39429725b02f",
+          "shortSha": "6678d3b",
+          "subject": "fix(mobile): show only hamburger icon in user menu, hide text label",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:24:33+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "023133faaa6a6f595a1aaf2002e645b9523b2fb3",
+          "shortSha": "023133f",
+          "subject": "fix(mobile): hide Menu text label, show only hamburger icon",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:25:13+03:00",
+          "files": [
+            "frontend/app/components/navigation/UserMenu.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "6cc9889b91691711be39f641a60f0cfadaa37461",
+          "shortSha": "6cc9889",
+          "subject": "fix(mobile): strip container from hamburger, plain icon button",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:26:15+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "46b8d512c504e8d5e964d9bffb7d62f6635c3e3c",
+          "shortSha": "46b8d51",
+          "subject": "fix(mobile): force override hamburger button size with !important",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:27:16+03:00",
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "383d7194076ec7d7f2ef8e02b87cc7d2836b4706",
+          "shortSha": "383d719",
+          "subject": "fix(mobile): convert Sections button to icon-only circle",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:29:15+03:00",
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx"
+          ]
+        },
+        {
+          "sha": "9e3a728af4a2d9b0faf12670606461d9b8cd59c1",
+          "shortSha": "9e3a728",
+          "subject": "fix(mobile): replace hamburger with Sections icon in TopBar",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:31:17+03:00",
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "71e281a20cf20988e35b52a56cec7ef0fea46735",
+          "shortSha": "71e281a",
+          "subject": "Revert \"fix(mobile): replace hamburger with Sections icon in TopBar\"",
+          "author": "symonbaikov",
+          "date": "2026-04-26T23:32:07+03:00",
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "3c28458831785c3806a07667d11704739b122b06",
+          "shortSha": "3c28458",
+          "subject": "fix(mobile): remove floating side panel open button",
+          "author": "symonbaikov",
+          "date": "2026-04-27T00:16:56+03:00",
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx"
+          ]
+        },
+        {
+          "sha": "f3ed63260c340065e3f7e97e273c07f748d54461",
+          "shortSha": "f3ed632",
+          "subject": "fix(mobile): cap DrawerShell width to viewport on small screens",
+          "author": "symonbaikov",
+          "date": "2026-04-27T00:17:04+03:00",
+          "files": [
+            "frontend/app/components/ui/drawer-shell.tsx"
+          ]
+        },
+        {
+          "sha": "1da153d6357c4e5592444dfc7503810bd3b35699",
+          "shortSha": "1da153d",
+          "subject": "fix(mobile): responsive reports page layout and history table",
+          "author": "symonbaikov",
+          "date": "2026-04-27T00:17:10+03:00",
+          "files": [
+            "frontend/app/(main)/reports/components/ReportHistory.tsx",
+            "frontend/app/(main)/reports/page.tsx"
+          ]
+        },
+        {
+          "sha": "d34363bdb5e6ef590d5828441230db211975048c",
+          "shortSha": "d34363b",
+          "subject": "fix(mobile): correct FAB action hrefs to open expense drawer",
+          "author": "symonbaikov",
+          "date": "2026-04-27T00:17:23+03:00",
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx"
+          ]
+        },
+        {
+          "sha": "33b767119abff133c2a3bada32d6ee62bac86323",
+          "shortSha": "33b7671",
+          "subject": "Merge pull request #62 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-27T00:18:13+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-26-831e4f7",
       "version": "main-831e4f7",
