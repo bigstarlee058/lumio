@@ -167,24 +167,22 @@
   &__user-menu-trigger {
     display: inline-flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 0.5rem;
     min-width: 100px;
     height: 40px;
-    padding: 0 1.25rem;
+    padding: 0 0.875rem 0 0.5rem;
     background-color: $color-card-bg;
-    color: $color-primary;
-    border: 1px solid $color-border;
+    color: $color-foreground;
+    border: none;
     border-radius: $lumio-radius-sm;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     transition: transform 150ms;
 
     @include dark {
       background-color: $color-card-bg-dk;
-      color: $color-primary-dk;
-      border-color: $color-border-dk;
+      color: $color-foreground-dk;
     }
 
     &:hover {
@@ -193,6 +191,42 @@
 
     &:active {
       transform: scale(0.95);
+    }
+  }
+
+  &__trigger-avatar {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: $lumio-radius-sm;
+    overflow: hidden;
+    background-color: $color-muted;
+    color: $color-muted-foreground;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include dark {
+      background-color: $color-muted-dk;
+      color: $color-muted-foreground-dk;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__menu-title {
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $color-foreground;
+    text-align: center;
+
+    @include dark {
+      color: $color-foreground-dk;
     }
   }
 

@@ -19,7 +19,8 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "test": "vitest run",
-    "test:profile": "vitest run app/settings/profile/page.test.tsx"
+    "test:profile": "vitest run app/settings/profile/page.test.tsx",
+    "lint:css": "stylelint \"app/styles/**/*.scss\" \"app/components/**/*.scss\""
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -77,6 +78,9 @@
     "jsdom": "^24.0.0",
     "sass": "^1.99.0",
     "storybook": "^8.6.14",
+    "stylelint": "^16.26.1",
+    "stylelint-config-recommended-scss": "^14.1.0",
+    "stylelint-config-standard-scss": "^14.0.0",
     "ts-loader": "^9.5.4",
     "typescript": "^5",
     "typescript-eslint": "^8.58.0",
