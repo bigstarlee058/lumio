@@ -1,10 +1,9 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { PanelLeftOpen, X } from '@/app/components/icons';
+import { X } from '@/app/components/icons';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import Box from '@mui/material/Box';
-import MuiButton from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { usePathname } from 'next/navigation';
@@ -250,32 +249,6 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
             />
           </Box>
 
-          {!globalMobileMenuOpen ? (
-            <MuiButton
-              type="button"
-              data-testid="mobile-side-panel-open"
-              variant="outlined"
-              size="small"
-              onClick={() => setMobileSidePanelOpen(true)}
-              aria-label="Open side panel"
-              sx={{
-                position: 'fixed',
-                bottom: 'calc(1rem + env(safe-area-inset-bottom))',
-                right: 16,
-                zIndex: 65,
-                fontWeight: 600,
-                display: { xs: 'inline-flex', lg: 'none' },
-                minWidth: 36,
-                width: 36,
-                height: 36,
-                padding: 0,
-                borderRadius: '50%',
-                justifyContent: 'center',
-              }}
-            >
-              <PanelLeftOpen size={18} />
-            </MuiButton>
-          ) : null}
         </>
       ) : null}
       <div style={{ flex: 1, ...(isStatementsPage ? { height: '100%', overflow: 'hidden' } : {}) }}>
