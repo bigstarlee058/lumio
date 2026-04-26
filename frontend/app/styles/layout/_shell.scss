@@ -550,6 +550,16 @@
 
   .lumio-topbar__mobile-logo {
     display: flex;
+    flex: 1;
+  }
+
+  .lumio-topbar__right {
+    margin-left: auto;
+
+    // Hide user menu on mobile — replaced by bottom bar Menu drawer
+    .lumio-navigation__user-menu-trigger {
+      display: none;
+    }
   }
 
   .lumio-shell__content > main {
