@@ -1,15 +1,15 @@
 'use client';
 
+import { Cloud, Plus, Receipt, Scan, ScanLine } from '@/app/components/icons';
 import {
   type CloudImportProvider,
   type ConnectedCloudProviders,
   buildStatementUploadMenuModel,
 } from '@/app/lib/statement-upload-actions';
-import { Cloud, Plus, Receipt, ScanLine, Scan } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   providers: ConnectedCloudProviders;
@@ -35,7 +35,12 @@ const ARC_SIZES = {
     bottomPx: 20,
     scanBottomPx: 84,
     closedOffset: 'translate(16px, -6px)',
-    containerStyle: { marginLeft: -16, marginRight: -16, marginBottom: -12, height: 96 } as React.CSSProperties,
+    containerStyle: {
+      marginLeft: -16,
+      marginRight: -16,
+      marginBottom: -12,
+      height: 96,
+    } as React.CSSProperties,
   },
   floating: {
     heightPx: 240,
@@ -266,7 +271,18 @@ export default function StatementsCircularUploadMenu({
               }}
             >
               {renderActionIcon(item)}
-              <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>{item.label}</span>
+              <span
+                style={{
+                  position: 'absolute',
+                  width: 1,
+                  height: 1,
+                  overflow: 'hidden',
+                  clip: 'rect(0,0,0,0)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {item.label}
+              </span>
             </button>
             <span
               style={{
@@ -360,14 +376,22 @@ export default function StatementsCircularUploadMenu({
     </div>
   );
 
+  // On mobile, the bottom bar FAB replaces the floating menu
+  if (placement === 'floating' && !isDesktopViewport) {
+    return null;
+  }
+
   if (placement === 'floating' && portalReady) {
     const portalTarget = document.getElementById('fab-portal') ?? document.body;
     return createPortal(
       <>
         {backdrop}
-        <div style={{ position: 'fixed', bottom: 0, left: 0, zIndex: 320, pointerEvents: 'none' }}
+        <div
+          style={{ position: 'fixed', bottom: 0, left: 0, zIndex: 320, pointerEvents: 'none' }}
           data-mobile-only="true"
-        >{menu}</div>
+        >
+          {menu}
+        </div>
       </>,
       portalTarget,
     );

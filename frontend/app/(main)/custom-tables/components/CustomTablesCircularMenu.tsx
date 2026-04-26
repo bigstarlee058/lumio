@@ -1,10 +1,10 @@
 'use client';
 
 import { FileSpreadsheet, Plus, Table as TableIcon } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { tokens } from '@/lib/theme-tokens';
 
 type Props = {
   onCreateEmpty: () => void;
@@ -57,9 +57,19 @@ export default function CustomTablesCircularMenu({
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(true);
 
   useEffect(() => {
     setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia('(min-width: 1024px)');
+    setIsDesktopViewport(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktopViewport(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
 
   useEffect(() => {
@@ -190,7 +200,16 @@ export default function CustomTablesCircularMenu({
             width={18}
             height={18}
           />
-          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+          <span
+            style={{
+              position: 'absolute',
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {text.importGoogleSheets}
           </span>
         </button>
@@ -223,7 +242,16 @@ export default function CustomTablesCircularMenu({
           style={actionButtonStyle}
         >
           <FileSpreadsheet size={18} style={{ color: 'var(--color-primary)' }} />
-          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+          <span
+            style={{
+              position: 'absolute',
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {text.fromStatement}
           </span>
         </button>
@@ -256,7 +284,16 @@ export default function CustomTablesCircularMenu({
           style={actionButtonStyle}
         >
           <TableIcon size={18} style={{ color: 'var(--color-primary)' }} />
-          <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>
+          <span
+            style={{
+              position: 'absolute',
+              width: 1,
+              height: 1,
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {text.createTable}
           </span>
         </button>
@@ -297,6 +334,11 @@ export default function CustomTablesCircularMenu({
       </button>
     </div>
   );
+
+  // On mobile, the bottom bar FAB replaces the floating menu
+  if (placement === 'floating' && !isDesktopViewport) {
+    return null;
+  }
 
   if (placement === 'floating' && portalReady) {
     const portalTarget = document.getElementById('fab-portal') ?? document.body;
