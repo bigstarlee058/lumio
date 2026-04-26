@@ -19,9 +19,9 @@ import { MobileMenuDrawer } from './MobileMenuDrawer';
 const HIDDEN_PATHS = ['/onboarding', '/login', '/register', '/shared', '/invite'];
 
 const FAB_ACTIONS = [
-  { id: 'upload', label: 'Upload', icon: Upload, href: '/statements?upload=1' },
-  { id: 'scan', label: 'Scan', icon: ScanLine, href: '/statements?scan=1' },
-  { id: 'expense', label: 'Expense', icon: Receipt, href: '/statements/submit/manual' },
+  { id: 'upload', label: 'Upload', icon: Upload, href: '/statements/submit?openExpenseDrawer=scan' },
+  { id: 'scan', label: 'Scan', icon: ScanLine, href: '/statements/submit?openExpenseDrawer=scan' },
+  { id: 'expense', label: 'Expense', icon: Receipt, href: '/statements/submit?openExpenseDrawer=manual' },
 ] as const;
 
 export default function MobileBottomBar() {
