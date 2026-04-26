@@ -557,10 +557,17 @@
     margin-left: auto;
   }
 
-  // Keep hamburger icon only, hide "Menu" text label
+  // Strip container, show only hamburger icon
   .lumio-navigation__user-menu-trigger {
     min-width: unset;
-    padding: 0 10px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    gap: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    justify-content: center;
   }
 
   .lumio-navigation__user-menu-label {
