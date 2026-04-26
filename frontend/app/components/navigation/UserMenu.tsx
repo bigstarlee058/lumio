@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Globe, LogOut, Menu, Settings, Trash2, User } from '@/app/components/icons';
+import { BookOpen, Globe, LogOut, Settings, Trash2, User } from '@/app/components/icons';
 import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { Divider, ListItemIcon, ListItemText, MenuItem, Menu as MuiMenu } from '@mui/material';
 import React from 'react';
@@ -45,10 +45,18 @@ export function UserMenuTriggerAndDropdown({
         className="lumio-navigation__user-menu-trigger"
         data-tour-id={mobile ? undefined : 'user-menu-trigger'}
       >
-        <Menu size={18} strokeWidth={2.25} />
-        <span className="lumio-navigation__user-menu-label">
-          {resolveLabel(getRecord(userMenu)?.moreActions, 'Menu')}
-        </span>
+        <div className="lumio-navigation__trigger-avatar">
+          {normalizedAvatarUrl && !avatarError ? (
+            <img
+              src={normalizedAvatarUrl}
+              alt={user.name || 'User avatar'}
+              onError={() => setAvatarError(true)}
+            />
+          ) : (
+            <User size={14} />
+          )}
+        </div>
+        <span className="lumio-navigation__user-menu-label">{user.name}</span>
       </button>
 
       <MuiMenu
@@ -59,24 +67,8 @@ export function UserMenuTriggerAndDropdown({
         transformOrigin={{ vertical: 'top', horizontal: mobile ? 'left' : 'right' }}
         PaperProps={{ sx: { width: 320, mt: 0.5 } }}
       >
-        <div className="lumio-navigation__profile-item">
-          <div className="lumio-navigation__avatar">
-            {normalizedAvatarUrl && !avatarError ? (
-              <img
-                src={normalizedAvatarUrl}
-                alt={user.name || 'User avatar'}
-                onError={() => {
-                  setAvatarError(true);
-                }}
-              />
-            ) : (
-              <User size={20} />
-            )}
-          </div>
-          <div style={{ minWidth: 0 }}>
-            <div className="lumio-navigation__profile-name">{user.name}</div>
-            <div className="lumio-navigation__profile-email">{user.email}</div>
-          </div>
+        <div className="lumio-navigation__menu-title">
+          {resolveLabel(getRecord(userMenu)?.userActions, 'User Actions')}
         </div>
 
         <Divider />
