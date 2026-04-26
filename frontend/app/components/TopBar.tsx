@@ -1,25 +1,27 @@
 'use client';
 
 import { NotificationDropdown } from '@/app/components/NotificationDropdown';
+import { HelpCircle, Menu } from '@/app/components/icons';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { canAccessWorkspaceActivity } from '@/app/lib/workspace-activity-access';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
 import { getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
-import { useWorkspace } from '@/app/contexts/WorkspaceContext';
+import { canAccessWorkspaceActivity } from '@/app/lib/workspace-activity-access';
+import { AiAssistantTopBarButton } from '@/app/plugins/ai-assistant/AiAssistantTopBarButton';
 import { TourMenu } from '@/app/tours/components/TourMenu';
 import { useTheme } from 'next-themes';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { HelpCircle, Menu } from '@/app/components/icons';
 import toast from 'react-hot-toast';
-import { AiAssistantTopBarButton } from '@/app/plugins/ai-assistant/AiAssistantTopBarButton';
+import { tokens } from '@/lib/theme-tokens';
+import Image from 'next/image';
 import GlobalBreadcrumbs from './GlobalBreadcrumbs';
 import { LanguageDrawer } from './navigation/LanguageDrawer';
+import { UserMenuTriggerAndDropdown } from './navigation/UserMenu';
 import { useLanguageSelection } from './navigation/hooks/useLanguageSelection';
 import { useThemePreference } from './navigation/hooks/useThemePreference';
-import { UserMenuTriggerAndDropdown } from './navigation/UserMenu';
 
 const SIDEBAR_OPEN_EVENT = 'lumio-sidebar-open';
 const HIDDEN_PATHS = ['/onboarding', '/login', '/register', '/shared', '/invite'];
@@ -54,23 +56,44 @@ export default function TopBar() {
     setMobileMenuOpen: () => {},
   });
 
-  const navigateFromUserMenu = useCallback((path: string): void => {
-    router.push(path);
-  }, [router]);
+  const navigateFromUserMenu = useCallback(
+    (path: string): void => {
+      router.push(path);
+    },
+    [router],
+  );
 
-  const handleAction = useCallback((key: string): void => {
-    const MAP: Record<string, () => void> = {
-      settings:      () => { navigateFromUserMenu('/settings/profile'); },
-      trash:         () => { navigateFromUserMenu('/statements/trash'); },
-      language:      () => { langProps.openLanguageMenu(); },
-      admin:         () => { navigateFromUserMenu('/admin'); },
-      knowledgeBase: () => { window.open('https://symonbaikov.github.io/lumio/', '_blank', 'noopener,noreferrer'); },
-      logout:        () => { void logout(); toast.success(userMenu.logoutSuccess.value); },
-    };
-    MAP[key]?.();
-  }, [logout, navigateFromUserMenu, langProps, userMenu.logoutSuccess.value]);
+  const handleAction = useCallback(
+    (key: string): void => {
+      const MAP: Record<string, () => void> = {
+        settings: () => {
+          navigateFromUserMenu('/settings/profile');
+        },
+        trash: () => {
+          navigateFromUserMenu('/statements/trash');
+        },
+        language: () => {
+          langProps.openLanguageMenu();
+        },
+        admin: () => {
+          navigateFromUserMenu('/admin');
+        },
+        knowledgeBase: () => {
+          window.open('https://symonbaikov.github.io/lumio/', '_blank', 'noopener,noreferrer');
+        },
+        logout: () => {
+          void logout();
+          toast.success(userMenu.logoutSuccess.value);
+        },
+      };
+      MAP[key]?.();
+    },
+    [logout, navigateFromUserMenu, langProps, userMenu.logoutSuccess.value],
+  );
 
-  if (!user || HIDDEN_PATHS.some(p => pathname?.startsWith(p))) return null;
+  if (!user || HIDDEN_PATHS.some(p => pathname?.startsWith(p))) {
+    return null;
+  }
 
   const userMenuProps = {
     user,
@@ -84,9 +107,16 @@ export default function TopBar() {
     canAccessActivity: canAccessWorkspaceActivity(currentWorkspace?.memberRole),
     languageLabel: langProps.languageLabel,
     userMenu: userMenu as Record<string, unknown>,
-    onOpen: (e: React.MouseEvent<HTMLElement>): void => { setAnchorEl(e.currentTarget); },
-    onClose: (): void => { setAnchorEl(null); },
-    onAction: (key: string): void => { setAnchorEl(null); handleAction(key); },
+    onOpen: (e: React.MouseEvent<HTMLElement>): void => {
+      setAnchorEl(e.currentTarget);
+    },
+    onClose: (): void => {
+      setAnchorEl(null);
+    },
+    onAction: (key: string): void => {
+      setAnchorEl(null);
+      handleAction(key);
+    },
   };
 
   return (
@@ -100,6 +130,17 @@ export default function TopBar() {
         >
           <Menu size={20} />
         </button>
+
+        <div className="lumio-topbar__mobile-logo">
+          <Image
+            src="/images/logo.jpg"
+            alt="Lumio"
+            width={28}
+            height={28}
+            style={{ display: 'block', borderRadius: tokens.radius.sm }}
+          />
+          <span className="lumio-topbar__mobile-logo-text">Lumio</span>
+        </div>
 
         <div className="lumio-topbar__breadcrumbs">
           <GlobalBreadcrumbs variant="topbar" />

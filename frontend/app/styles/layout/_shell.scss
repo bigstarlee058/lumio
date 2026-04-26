@@ -451,6 +451,22 @@
     border-bottom-color: $lumio-color-border-dk;
   }
 
+  &__mobile-logo {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+
+    &-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: $lumio-color-text-primary;
+      letter-spacing: -0.02em;
+
+      @include dark { color: $lumio-color-text-primary-dk; }
+    }
+  }
+
   &__breadcrumbs {
     flex: 1;
     min-width: 0;
@@ -526,6 +542,14 @@
 
   .lumio-topbar__hamburger {
     display: none; // Replaced by bottom bar Menu tab
+  }
+
+  .lumio-topbar__breadcrumbs {
+    display: none;
+  }
+
+  .lumio-topbar__mobile-logo {
+    display: flex;
   }
 
   .lumio-shell__content > main {
