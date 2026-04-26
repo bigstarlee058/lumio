@@ -1,8 +1,9 @@
 'use client';
 
-import type React from 'react';
+import { Download, FileText } from '@/app/components/icons';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -13,9 +14,8 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { Download, FileText } from '@/app/components/icons';
+import type React from 'react';
 import { useEffect, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface ReportHistoryItem {
   id: string;
@@ -32,8 +32,12 @@ export interface ReportHistoryItem {
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
@@ -60,13 +64,23 @@ export function ReportHistory(): React.JSX.Element {
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 1) return text('justNow', 'Just now');
-    if (diffMins < 60) return `${diffMins}${text('minutesAgo', 'm ago')}`;
+    if (diffMins < 1) {
+      return text('justNow', 'Just now');
+    }
+    if (diffMins < 60) {
+      return `${diffMins}${text('minutesAgo', 'm ago')}`;
+    }
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}${text('hoursAgo', 'h ago')}`;
+    if (diffHours < 24) {
+      return `${diffHours}${text('hoursAgo', 'h ago')}`;
+    }
     const diffDays = Math.floor(diffHours / 24);
-    if (diffDays === 1) return text('yesterday', 'Yesterday');
-    if (diffDays < 7) return `${diffDays} ${text('daysAgo', 'days ago')}`;
+    if (diffDays === 1) {
+      return text('yesterday', 'Yesterday');
+    }
+    if (diffDays < 7) {
+      return `${diffDays} ${text('daysAgo', 'days ago')}`;
+    }
 
     const resolvedLocale = locale === 'kk' ? 'kk-KZ' : locale === 'ru' ? 'ru-RU' : 'en-US';
     return date.toLocaleDateString(resolvedLocale, { month: 'short', day: 'numeric' });
@@ -105,7 +119,16 @@ export function ReportHistory(): React.JSX.Element {
 
   if (!history.length) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8, gap: 1.5 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          py: 8,
+          gap: 1.5,
+        }}
+      >
         <FileText size={40} style={{ color: 'var(--muted-foreground)', opacity: 0.4 }} />
         <Typography variant="body2" fontWeight={600} sx={{ color: 'var(--muted-foreground)' }}>
           {text('historyEmpty', 'No reports generated yet')}
@@ -118,72 +141,174 @@ export function ReportHistory(): React.JSX.Element {
   }
 
   return (
-    <Box sx={{ overflow: 'hidden', border: '1px solid var(--border)', bgcolor: 'var(--card)' }}>
-      <Table size="small">
-        <TableHead>
-          <TableRow sx={{ bgcolor: 'var(--muted)' }}>
-            {[
-              text('historyReport', 'Report'),
-              text('historyPeriod', 'Period'),
-              text('historyFormat', 'Format'),
-              text('historyGenerated', 'Generated'),
-              text('historySize', 'Size'),
-              text('historyDownload', 'Download'),
-            // eslint-disable-next-line max-params
-            ].map((label, i) => (
-              <TableCell
-                key={label}
-                align={i === 5 ? 'right' : 'left'}
-                sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--muted-foreground)' }}
+    <>
+      {/* Mobile card list — xs only */}
+      <Box
+        sx={{
+          display: { xs: 'flex', sm: 'none' },
+          flexDirection: 'column',
+          border: '1px solid var(--border)',
+          bgcolor: 'var(--card)',
+        }}
+      >
+        {history.map((item, idx) => {
+          const chipColors = FORMAT_CHIP_COLORS[item.format];
+          return (
+            <Box
+              key={item.id}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                px: 2,
+                py: 1.5,
+                borderTop: idx > 0 ? '1px solid var(--border)' : 'none',
+              }}
+            >
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  sx={{ color: 'var(--foreground)', mb: 0.25 }}
+                >
+                  {item.templateName}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                  {item.dateFrom} – {item.dateTo}
+                </Typography>
+              </Box>
+              <Chip
+                label={item.format.toUpperCase()}
+                size="small"
+                sx={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  bgcolor: chipColors?.bg || 'var(--muted)',
+                  color: chipColors?.color || 'var(--muted-foreground)',
+                  height: 20,
+                  borderRadius: tokens.radius.full,
+                  flexShrink: 0,
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{ color: 'var(--muted-foreground)', flexShrink: 0 }}
               >
-                {label}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* eslint-disable-next-line max-lines-per-function */}
-          {history.map(item => {
-            const chipColors = FORMAT_CHIP_COLORS[item.format];
-            return (
-              <TableRow key={item.id} hover>
-                <TableCell>
-                  <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
-                    {item.templateName}
-                  </Typography>
+                {formatFileSize(item.fileSize)}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={() => void handleDownload(item)}
+                aria-label={`Re-download ${item.templateName}`}
+                sx={{ color: 'var(--primary)', flexShrink: 0 }}
+              >
+                <Download size={16} />
+              </IconButton>
+            </Box>
+          );
+        })}
+      </Box>
+
+      {/* Desktop table — sm+ */}
+      <Box
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          overflowX: 'auto',
+          border: '1px solid var(--border)',
+          bgcolor: 'var(--card)',
+        }}
+      >
+        <Table size="small" sx={{ minWidth: 480 }}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: 'var(--muted)' }}>
+              {[
+                text('historyReport', 'Report'),
+                text('historyPeriod', 'Period'),
+                text('historyFormat', 'Format'),
+                text('historyGenerated', 'Generated'),
+                text('historySize', 'Size'),
+                text('historyDownload', 'Download'),
+                // eslint-disable-next-line max-params
+              ].map((label, i) => (
+                <TableCell
+                  key={label}
+                  align={i === 5 ? 'right' : 'left'}
+                  sx={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: 'var(--muted-foreground)',
+                  }}
+                >
+                  {label}
                 </TableCell>
-                <TableCell>
-                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
-                    {item.dateFrom} – {item.dateTo}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={item.format.toUpperCase()}
-                    size="small"
-                    sx={{ fontSize: 10, fontWeight: 600, bgcolor: chipColors?.bg || 'var(--muted)', color: chipColors?.color || 'var(--muted-foreground)', height: 20, borderRadius: tokens.radius.full }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', whiteSpace: 'nowrap' }}>
-                    {getRelativeTime(item.generatedAt)}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
-                    {formatFileSize(item.fileSize)}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton size="small" onClick={() => void handleDownload(item)} aria-label={`Re-download ${item.templateName}`} title={`Re-download ${item.templateName}`} sx={{ color: 'var(--primary)' }}>
-                    <Download size={16} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </Box>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {history.map(item => {
+              const chipColors = FORMAT_CHIP_COLORS[item.format];
+              return (
+                <TableRow key={item.id} hover>
+                  <TableCell>
+                    <Typography
+                      variant="body2"
+                      fontWeight={500}
+                      sx={{ color: 'var(--foreground)' }}
+                    >
+                      {item.templateName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                      {item.dateFrom} – {item.dateTo}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={item.format.toUpperCase()}
+                      size="small"
+                      sx={{
+                        fontSize: 10,
+                        fontWeight: 600,
+                        bgcolor: chipColors?.bg || 'var(--muted)',
+                        color: chipColors?.color || 'var(--muted-foreground)',
+                        height: 20,
+                        borderRadius: tokens.radius.full,
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: 'var(--muted-foreground)', whiteSpace: 'nowrap' }}
+                    >
+                      {getRelativeTime(item.generatedAt)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)' }}>
+                      {formatFileSize(item.fileSize)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      onClick={() => void handleDownload(item)}
+                      aria-label={`Re-download ${item.templateName}`}
+                      title={`Re-download ${item.templateName}`}
+                      sx={{ color: 'var(--primary)' }}
+                    >
+                      <Download size={16} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </Box>
+    </>
   );
 }
