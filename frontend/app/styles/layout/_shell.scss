@@ -555,11 +555,14 @@
 
   .lumio-topbar__right {
     margin-left: auto;
+  }
 
-    // Hide user menu on mobile — replaced by bottom bar Menu drawer
-    .lumio-navigation__user-menu-trigger {
-      display: none;
-    }
+  // Keep hamburger icon only, hide "Menu" text label
+  .lumio-navigation__user-menu-trigger {
+    min-width: unset;
+    padding: 0 10px;
+    gap: 0;
+    font-size: 0; // hides text, SVG uses explicit size
   }
 
   .lumio-shell__content > main {
