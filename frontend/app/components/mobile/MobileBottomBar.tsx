@@ -7,9 +7,15 @@ import { useState } from 'react';
 import { isNavItemActive } from '../navigation/helpers/navigation-config';
 import { MobileMenuDrawer } from './MobileMenuDrawer';
 
+const HIDDEN_PATHS = ['/onboarding', '/login', '/register', '/shared', '/invite'];
+
 export default function MobileBottomBar() {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  if (HIDDEN_PATHS.some(p => pathname?.startsWith(p))) {
+    return null;
+  }
 
   return (
     <>
