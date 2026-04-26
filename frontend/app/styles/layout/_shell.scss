@@ -516,35 +516,19 @@
     display: none;
 
     &--mobile {
-      display: flex;
+      display: none; // Replaced by bottom bar menu drawer
     }
   }
 
   .lumio-sidebar-overlay {
-    display: block;
+    display: none; // Replaced by bottom bar menu drawer
   }
 
   .lumio-topbar__hamburger {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: $lumio-radius-sm;
-    border: none;
-    background: transparent;
-    color: $lumio-color-ink-500;
-    cursor: pointer;
-    transition: background 0.1s;
-    margin-right: 4px;
-    flex-shrink: 0;
+    display: none; // Replaced by bottom bar Menu tab
+  }
 
-    @include dark { color: $lumio-color-ink-500-dk; }
-
-    &:hover {
-      background: $lumio-color-ink-100;
-
-      @include dark { background: $lumio-color-ink-100-dk; }
-    }
+  .lumio-shell__content > main {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   }
 }
