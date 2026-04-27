@@ -196,31 +196,12 @@ export default function TransactionDuplicatesPage() {
       </Box>
 
       {/* Duplicate Groups */}
-      {loading ? (
-        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 6, textAlign: 'center' }}>
-          <Spinner size={24} />
-          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>Loading duplicates...</Typography>
-        </Box>
-      ) : duplicateGroups.length === 0 ? (
-        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 6, textAlign: 'center' }}>
-          <CheckCircle2 size={48} style={{ color: '#10b981', margin: '0 auto 16px' }} />
-          <Typography variant="h6" sx={{ mb: 1 }}>No Duplicates Found</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            All transactions appear to be unique. Click &quot;Re-detect&quot; to scan again.
-          </Typography>
-        </Box>
-      ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {duplicateGroups.map(group => (
-            <DuplicateGroupCard
-              key={group.master.id}
-              group={group}
-              selected={selectedGroups.has(group.master.id)}
-              onToggle={() => handleToggleGroup(group.master.id)}
-            />
-          ))}
-        </Box>
-      )}
+      <DuplicateGroupsContent
+        loading={loading}
+        duplicateGroups={duplicateGroups}
+        selectedGroups={selectedGroups}
+        onToggleGroup={handleToggleGroup}
+      />
     </Box>
   );
 }

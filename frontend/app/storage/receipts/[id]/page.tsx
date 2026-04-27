@@ -126,6 +126,102 @@ function buildReceiptExportData(receipt: ReceiptRecord, formValue: EditableRecei
   return { columns, rows: [baseRow] };
 }
 
+type PreviewFetchResult = {
+  url: string | null;
+  mimeType: string | null;
+  error?: string;
+};
+
+async function fetchReceiptPreview(receiptId: string): Promise<PreviewFetchResult> {
+  try {
+    const response = await fetch(`${apiBaseUrl}/receipts/${receiptId}/file`, {
+      method: 'GET',
+      headers: getWorkspaceHeaders(),
+      credentials: 'include',
+    });
+    if (!response.ok) {
+      throw new Error(`Preview request failed: ${response.status}`);
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const mimeType = response.headers.get('content-type') || blob.type || null;
+    return { url, mimeType };
+  } catch (err) {
+    console.error('Failed to load receipt preview:', err);
+    return { url: null, mimeType: null, error: 'Preview unavailable' };
+  }
+}
+
+const previewPlaceholderSx = (inkColor: string) => ({
+  display: 'flex',
+  height: '100%',
+  minHeight: 388,
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: 14,
+  color: inkColor,
+});
+
+function ReceiptPreviewContent({
+  loading,
+  error,
+  url,
+  isPdf,
+  title,
+  inkColor,
+  borderColor,
+}: {
+  loading: boolean;
+  error: string | null;
+  url: string | null;
+  isPdf: boolean;
+  title: string;
+  inkColor: string;
+  borderColor: string;
+}) {
+  if (loading) {
+    return <Box sx={previewPlaceholderSx(inkColor)}>Preparing preview...</Box>;
+  }
+  if (error) {
+    return <Box sx={previewPlaceholderSx(inkColor)}>{error}</Box>;
+  }
+  if (!url) {
+    return <Box sx={previewPlaceholderSx(inkColor)}>Preview unavailable</Box>;
+  }
+  if (isPdf) {
+    return (
+      <iframe
+        src={url}
+        title={title}
+        style={{
+          height: '100%',
+          minHeight: 760,
+          width: '100%',
+          border: `1px solid ${borderColor}`,
+          background: 'var(--card-bg)',
+          display: 'block',
+        }}
+      />
+    );
+  }
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100%', minWidth: '100%', justifyContent: 'center' }}>
+      <img
+        src={url}
+        alt={title}
+        style={{
+          height: 'auto',
+          minHeight: 0,
+          width: '180%',
+          minWidth: 720,
+          maxWidth: 'none',
+          objectFit: 'contain',
+        }}
+      />
+    </Box>
+  );
+}
+
 export default function ReceiptDocumentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -194,54 +290,32 @@ export default function ReceiptDocumentPage() {
     let active = true;
     let objectUrl: string | null = null;
 
-    const loadPreview = async () => {
-      try {
-        setPreviewLoading(true);
-        setPreviewError(null);
-
-        const response = await fetch(`${apiBaseUrl}/receipts/${receipt.id}/file`, {
-          method: 'GET',
-          headers: getWorkspaceHeaders(),
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          throw new Error(`Preview request failed: ${response.status}`);
+    const revokeAndSet = (nextUrl: string | null) => {
+      setPreviewUrl(currentUrl => {
+        if (currentUrl) {
+          URL.revokeObjectURL(currentUrl);
         }
-
-        const blob = await response.blob();
-        objectUrl = URL.createObjectURL(blob);
-        const nextMimeType = response.headers.get('content-type') || blob.type || null;
-
-        if (active) {
-          setPreviewUrl(currentUrl => {
-            if (currentUrl) {
-              URL.revokeObjectURL(currentUrl);
-            }
-            return objectUrl;
-          });
-          setPreviewMimeType(nextMimeType);
-        }
-      } catch (previewLoadError) {
-        console.error('Failed to load receipt preview:', previewLoadError);
-        if (active) {
-          setPreviewError('Preview unavailable');
-          setPreviewUrl(currentUrl => {
-            if (currentUrl) {
-              URL.revokeObjectURL(currentUrl);
-            }
-            return null;
-          });
-          setPreviewMimeType(null);
-        }
-      } finally {
-        if (active) {
-          setPreviewLoading(false);
-        }
-      }
+        return nextUrl;
+      });
     };
 
-    void loadPreview();
+    const run = async () => {
+      setPreviewLoading(true);
+      setPreviewError(null);
+      const result = await fetchReceiptPreview(receipt.id);
+      objectUrl = result.url;
+      if (!active) {
+        return;
+      }
+      if (result.error) {
+        setPreviewError(result.error);
+      }
+      revokeAndSet(result.url);
+      setPreviewMimeType(result.mimeType);
+      setPreviewLoading(false);
+    };
+
+    void run();
 
     return () => {
       active = false;
@@ -569,35 +643,15 @@ export default function ReceiptDocumentPage() {
                 </Typography>
               </Box>
               <Box sx={{ flex: 1, overflow: 'auto', bgcolor: c.ink50, p: 2 }}>
-                {previewLoading ? (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
-                    Preparing preview...
-                  </Box>
-                ) : previewError ? (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
-                    {previewError}
-                  </Box>
-                ) : previewUrl ? (
-                  isPdf ? (
-                    <iframe
-                      src={previewUrl}
-                      title={receipt.subject}
-                      style={{ height: '100%', minHeight: 760, width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', display: 'block' }}
-                    />
-                  ) : (
-                    <Box sx={{ display: 'flex', minHeight: '100%', minWidth: '100%', justifyContent: 'center' }}>
-                      <img
-                        src={previewUrl}
-                        alt={receipt.subject}
-                        style={{ height: 'auto', minHeight: 0, width: '180%', minWidth: 720, maxWidth: 'none', objectFit: 'contain' }}
-                      />
-                    </Box>
-                  )
-                ) : (
-                  <Box sx={{ display: 'flex', height: '100%', minHeight: 388, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: c.ink500 }}>
-                    Preview unavailable
-                  </Box>
-                )}
+                <ReceiptPreviewContent
+                  loading={previewLoading}
+                  error={previewError}
+                  url={previewUrl}
+                  isPdf={isPdf}
+                  title={receipt.subject}
+                  inkColor={c.ink500}
+                  borderColor={c.ink150}
+                />
               </Box>
             </Box>
           </Box>

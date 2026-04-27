@@ -14,6 +14,69 @@ type ClonableProps = Record<string, unknown>;
 const MOBILE_MENU_VISIBILITY_EVENT = 'lumio-mobile-menu-visibility';
 const SIDEPANEL_ACTIVE_BODY_ATTRIBUTE = 'data-side-panel-active';
 
+function useMountAnimation(
+  isOpen: boolean,
+  isMounted: boolean,
+  setMounted: (v: boolean) => void,
+  setVisible: (v: boolean) => void,
+): void {
+  React.useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      const frame = window.requestAnimationFrame(() => {
+        setVisible(true);
+      });
+      return () => {
+        window.cancelAnimationFrame(frame);
+      };
+    }
+
+    if (!isMounted) {
+      return;
+    }
+
+    setVisible(false);
+    const timer = window.setTimeout(() => {
+      setMounted(false);
+    }, 300);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isOpen, isMounted, setMounted, setVisible]);
+}
+
+function computeDragX(
+  event: React.TouchEvent<HTMLDialogElement>,
+  dragActiveRef: React.MutableRefObject<boolean>,
+  touchStartXRef: React.MutableRefObject<number | null>,
+  touchStartYRef: React.MutableRefObject<number | null>,
+): number | null {
+  if (!dragActiveRef.current) {
+    return null;
+  }
+  if (touchStartXRef.current === null || touchStartYRef.current === null) {
+    return null;
+  }
+
+  const touch = event.touches[0];
+  if (!touch) {
+    return null;
+  }
+
+  const deltaX = touch.clientX - touchStartXRef.current;
+  const deltaY = touch.clientY - touchStartYRef.current;
+
+  if (Math.abs(deltaX) <= Math.abs(deltaY)) {
+    return null;
+  }
+
+  if (deltaX >= 0) {
+    return 0;
+  }
+
+  return Math.max(-240, deltaX);
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function, complexity
 function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   const config = useCurrentSidePanelConfig();
@@ -69,31 +132,7 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }, [mobileSidePanelOpen]);
 
-  React.useEffect(() => {
-    if (mobileSidePanelOpen) {
-      setMobileSidePanelMounted(true);
-      const frame = window.requestAnimationFrame(() => {
-        setMobileSidePanelVisible(true);
-      });
-
-      return () => {
-        window.cancelAnimationFrame(frame);
-      };
-    }
-
-    if (!mobileSidePanelMounted) {
-      return;
-    }
-
-    setMobileSidePanelVisible(false);
-    const timer = window.setTimeout(() => {
-      setMobileSidePanelMounted(false);
-    }, 300);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [mobileSidePanelOpen, mobileSidePanelMounted]);
+  useMountAnimation(mobileSidePanelOpen, mobileSidePanelMounted, setMobileSidePanelMounted, setMobileSidePanelVisible);
 
   React.useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -128,12 +167,8 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
   }, [config]);
 
   const handlePanelTouchStart = React.useCallback(
-    // eslint-disable-next-line complexity
     (event: React.TouchEvent<HTMLDialogElement>): void => {
-      if (!mobileSidePanelVisible) {
-        return;
-      }
-      if (event.touches.length !== 1) {
+      if (!mobileSidePanelVisible || event.touches.length !== 1) {
         return;
       }
       touchStartXRef.current = event.touches[0]?.clientX ?? null;
@@ -143,35 +178,16 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
     [mobileSidePanelVisible],
   );
 
-  // eslint-disable-next-line complexity
   const handlePanelTouchMove = React.useCallback(
     (event: React.TouchEvent<HTMLDialogElement>): void => {
-      if (!dragActiveRef.current) {
+      const dragX = computeDragX(event, dragActiveRef, touchStartXRef, touchStartYRef);
+      if (dragX === null) {
         return;
       }
-      if (touchStartXRef.current === null || touchStartYRef.current === null) {
-        return;
+      if (dragX < 0) {
+        event.preventDefault();
       }
-
-      const touch = event.touches[0];
-      if (!touch) {
-        return;
-      }
-
-      const deltaX = touch.clientX - touchStartXRef.current;
-      const deltaY = touch.clientY - touchStartYRef.current;
-
-      if (Math.abs(deltaX) <= Math.abs(deltaY)) {
-        return;
-      }
-
-      if (deltaX >= 0) {
-        setMobilePanelDragX(0);
-        return;
-      }
-
-      event.preventDefault();
-      setMobilePanelDragX(Math.max(-240, deltaX));
+      setMobilePanelDragX(dragX);
     },
     [],
   );
@@ -222,6 +238,13 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
       footer: undefined,
     };
   }, [config]);
+
+  const isDragging = mobilePanelDragX !== 0;
+  const dialogTransform = isDragging
+    ? `translateX(${mobilePanelDragX}px)`
+    : mobileSidePanelVisible
+      ? 'translateX(0)'
+      : 'translateX(-100%)';
 
   return (
     <div
@@ -298,13 +321,8 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
               borderRight: '1px solid var(--border)',
               backgroundColor: 'var(--card)',
               boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
-              transform:
-                mobilePanelDragX !== 0
-                  ? `translateX(${mobilePanelDragX}px)`
-                  : mobileSidePanelVisible
-                    ? 'translateX(0)'
-                    : 'translateX(-100%)',
-              transition: mobilePanelDragX !== 0 ? 'none' : 'transform 300ms ease-out',
+              transform: dialogTransform,
+              transition: isDragging ? 'none' : 'transform 300ms ease-out',
               willChange: 'transform',
               border: 'none',
             }}
