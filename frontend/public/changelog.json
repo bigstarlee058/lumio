@@ -1,13 +1,93 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "cf2b218a3f639c666e3ce9dd39c2f1b920f2b086"
+      "main": "19c9a2be408880503266757dd786971d26d18743"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-26T22:14:21.888Z",
+    "lastGeneratedAt": "2026-04-27T22:58:35.453Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-27-19c9a2b",
+      "version": "main-19c9a2b",
+      "branch": "main",
+      "date": "2026-04-27T22:58:35.453Z",
+      "title": "Release update - April 27, 2026",
+      "summary": "This release includes 2 improvements and 1 fix.",
+      "markdown": "## Improvements\n- **custom-tables**: Reduce cognitive complexity across all hooks and pages\n- **frontend**: Reduce cognitive complexity in statements, dashboard, and shared components\n\n## Fixes\n- **lint**: Restore noExcessiveCognitiveComplexity threshold to 15",
+      "commits": [
+        {
+          "sha": "8d051f6bf581811d49ef7315e7b8afae1e838db1",
+          "shortSha": "8d051f6",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-26T22:14:22Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "aea86be171ad8539508354c4bc97d91c91a138b9",
+          "shortSha": "aea86be",
+          "subject": "fix(lint): restore noExcessiveCognitiveComplexity threshold to 15",
+          "author": "symonbaikov",
+          "date": "2026-04-28T01:53:29+03:00",
+          "files": [
+            "biome.json"
+          ]
+        },
+        {
+          "sha": "eae395d12d4c19346f56f812c7d5c50045706f4d",
+          "shortSha": "eae395d",
+          "subject": "refactor(custom-tables): reduce cognitive complexity across all hooks and pages",
+          "author": "symonbaikov",
+          "date": "2026-04-28T01:53:47+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/PastePreviewModal.tsx",
+            "frontend/app/(main)/custom-tables/[id]/components/RowDrawer.tsx",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useBulkRowActions.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useColumnConfig.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/usePasteImport.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTabStats.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableFilters.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableGrid.ts",
+            "frontend/app/(main)/custom-tables/[id]/hooks/useTableMeta.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/[id]/utils/stylingUtils.ts",
+            "frontend/app/(main)/custom-tables/components/CustomTablesCircularMenu.tsx",
+            "frontend/app/(main)/custom-tables/hooks/useCustomTablesActions.ts",
+            "frontend/app/(main)/custom-tables/import/google-sheets/page.tsx",
+            "frontend/app/(main)/custom-tables/import/google-sheets/usePageState.ts"
+          ]
+        },
+        {
+          "sha": "ab0ac6fe02a5ce03c7a2ee17a29edd33dc1e95e1",
+          "shortSha": "ab0ac6f",
+          "subject": "refactor(frontend): reduce cognitive complexity in statements, dashboard, and shared components",
+          "author": "symonbaikov",
+          "date": "2026-04-28T01:54:07+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsSidePanel.tsx",
+            "frontend/app/(main)/statements/components/filters/FiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/hooks/useStatementSelection.ts",
+            "frontend/app/components/dashboard/OverviewTab.tsx",
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx",
+            "frontend/app/storage/receipts/[id]/page.tsx",
+            "frontend/app/transactions/duplicates/page.tsx",
+            "frontend/components/mode-toggle.tsx"
+          ]
+        },
+        {
+          "sha": "19c9a2be408880503266757dd786971d26d18743",
+          "shortSha": "19c9a2b",
+          "subject": "Merge pull request #64 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-28T01:58:18+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-26-cf2b218",
       "version": "main-cf2b218",
