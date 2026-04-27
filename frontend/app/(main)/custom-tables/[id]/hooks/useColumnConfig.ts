@@ -62,6 +62,46 @@ const DEFAULT_COLUMN_WIDTH = 180;
 const MIN_COLUMN_WIDTH = 60;
 const MAX_COLUMN_WIDTH = 1200;
 
+const isFiniteNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+function loadLocalColumnWidths(tableId: string): Record<string, number> {
+  try {
+    const raw = localStorage.getItem(`custom-table:${tableId}:column-widths`);
+    if (!raw) { return {}; }
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? (parsed as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function resolveColWidth(
+  serverWidth: unknown,
+  localWidth: unknown,
+  colWidth: unknown,
+  hasServerWidths: boolean,
+): number {
+  if (hasServerWidths && isFiniteNum(serverWidth)) { return serverWidth; }
+  if (isFiniteNum(localWidth) && localWidth > 0) { return localWidth; }
+  if (!hasServerWidths && isFiniteNum(serverWidth)) { return serverWidth; }
+  if (isFiniteNum(colWidth)) { return colWidth; }
+  return DEFAULT_COLUMN_WIDTH;
+}
+
+function resolveColumnWidths(
+  columns: { key: string; width?: number }[],
+  localWidths: Record<string, number>,
+  viewCols?: Record<string, { width?: number }>,
+): Record<string, number> {
+  const cols = viewCols ?? {};
+  const hasServerWidths = Object.values(cols).some(e => isFiniteNum(e?.width));
+  const result: Record<string, number> = {};
+  for (const col of columns) {
+    result[col.key] = resolveColWidth(cols[col.key]?.width, localWidths[col.key], col.width, hasServerWidths);
+  }
+  return result;
+}
+
 export function useColumnConfig({
   tableId,
   orderedColumns,
@@ -120,48 +160,9 @@ export function useColumnConfig({
 
   // Initialize column widths from localStorage + server view settings
   useEffect(() => {
-    if (!tableId || !orderedColumns.length) return;
-    const storageKey = `custom-table:${tableId}:column-widths`;
-    let localWidths: Record<string, number> = {};
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-          localWidths = parsed as Record<string, number>;
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to load column widths from storage:', error);
-    }
-
-    const viewCols = viewSettings?.columns ?? {};
-    const hasServerWidths = Object.values(viewCols).some(
-      entry => typeof entry?.width === 'number' && Number.isFinite(entry.width),
-    );
-
-    const newWidths: Record<string, number> = {};
-    for (const col of orderedColumns) {
-      const serverWidth = viewCols?.[col.key]?.width;
-      const localWidth = localWidths[col.key];
-      let width: number | undefined;
-
-      if (hasServerWidths && typeof serverWidth === 'number' && Number.isFinite(serverWidth)) {
-        width = serverWidth;
-      } else if (typeof localWidth === 'number' && Number.isFinite(localWidth) && localWidth > 0) {
-        width = localWidth;
-      } else if (!hasServerWidths && typeof serverWidth === 'number') {
-        width = serverWidth;
-      }
-
-      if (!(typeof width === 'number' && Number.isFinite(width))) {
-        width = col.width;
-      }
-      if (!(typeof width === 'number' && Number.isFinite(width))) {
-        width = DEFAULT_COLUMN_WIDTH;
-      }
-      newWidths[col.key] = width;
-    }
+    if (!tableId || !orderedColumns.length) { return; }
+    const localWidths = loadLocalColumnWidths(tableId);
+    const newWidths = resolveColumnWidths(orderedColumns, localWidths, viewSettings?.columns);
     setColumnWidths(newWidths);
   }, [tableId, viewSettings, orderedColumns]);
 

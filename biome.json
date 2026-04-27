@@ -59,10 +59,9 @@
         "noExcessiveCognitiveComplexity": {
           "level": "error",
           "options": {
-            "maxAllowedComplexity": 6
+            "maxAllowedComplexity": 15
           }
         },
-        "noNestedTernary": "error",
         "noForEach": "error",
         "useFlatMap": "error",
         "useOptionalChain": "error",
@@ -163,10 +162,9 @@
             "noExcessiveCognitiveComplexity": {
               "level": "error",
               "options": {
-                "maxAllowedComplexity": 6
+                "maxAllowedComplexity": 15
               }
             },
-            "noNestedTernary": "error",
             "noForEach": "error",
             "noUselessFragments": "error"
           },

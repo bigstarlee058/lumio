@@ -49,6 +49,78 @@ export type DuplicateOverride = {
 };
 
 // ---------------------------------------------------------------------------
+// Merge helpers (extracted to reduce cognitive complexity)
+// ---------------------------------------------------------------------------
+
+type ClassifyResult = {
+  statementsToDelete: Set<string>;
+  gmailToMark: Map<string, string>;
+  skippedGmailCount: number;
+};
+
+function classifyDuplicatesForMerge(
+  statements: StatementLike[],
+  allStatements: StatementLike[],
+  duplicateMetaById: Map<string, DuplicateMeta>,
+): ClassifyResult {
+  const statementById = new Map(allStatements.map(s => [s.id, s]));
+  const statementsToDelete = new Set<string>();
+  const gmailToMark = new Map<string, string>();
+  let skippedGmailCount = 0;
+
+  for (const statement of statements) {
+    const meta = duplicateMetaById.get(statement.id);
+    if (!meta || statement.id === meta.primaryId) continue;
+
+    if (isGmailStatement(statement)) {
+      const primary = statementById.get(meta.primaryId);
+      if (primary && isGmailStatement(primary)) {
+        gmailToMark.set(statement.id, primary.id);
+      } else {
+        skippedGmailCount += 1;
+      }
+      continue;
+    }
+
+    statementsToDelete.add(statement.id);
+  }
+
+  return { statementsToDelete, gmailToMark, skippedGmailCount };
+}
+
+function tabulateDeleteResults(
+  results: PromiseSettledResult<unknown>[],
+  ids: string[],
+): { succeeded: string[]; failed: number } {
+  const succeeded: string[] = [];
+  let failed = 0;
+  results.forEach((result, index) => {
+    const id = ids[index];
+    if (!id) return;
+    if (result.status === 'fulfilled') { succeeded.push(id); return; }
+    const status = getApiErrorStatus(result.reason);
+    if (status === 404 || status === 410) { succeeded.push(id); return; }
+    failed += 1;
+  });
+  return { succeeded, failed };
+}
+
+function tabulateMarkResults(
+  results: PromiseSettledResult<unknown>[],
+  entries: [string, string][],
+): { succeeded: string[]; failed: number } {
+  const succeeded: string[] = [];
+  let failed = 0;
+  results.forEach((result, index) => {
+    const receiptId = entries[index]?.[0];
+    if (!receiptId) return;
+    if (result.status === 'fulfilled') { succeeded.push(receiptId); return; }
+    failed += 1;
+  });
+  return { succeeded, failed };
+}
+
+// ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
 
@@ -358,27 +430,9 @@ export function useStatementSelection({
       return;
     }
 
-    const statementById = new Map(displayStatements.map(statement => [statement.id, statement]));
-    const statementsToDelete = new Set<string>();
-    const gmailToMark = new Map<string, string>();
-    let skippedGmailCount = 0;
-
-    selectedDuplicateStatements.forEach(statement => {
-      const meta = duplicateMetaById.get(statement.id);
-      if (!meta || statement.id === meta.primaryId) return;
-
-      if (isGmailStatement(statement)) {
-        const primaryStatement = statementById.get(meta.primaryId);
-        if (primaryStatement && isGmailStatement(primaryStatement)) {
-          gmailToMark.set(statement.id, primaryStatement.id);
-        } else {
-          skippedGmailCount += 1;
-        }
-        return;
-      }
-
-      statementsToDelete.add(statement.id);
-    });
+    const { statementsToDelete, gmailToMark, skippedGmailCount } = classifyDuplicatesForMerge(
+      selectedDuplicateStatements, displayStatements, duplicateMetaById,
+    );
 
     if (statementsToDelete.size === 0 && gmailToMark.size === 0) {
       toast.error('No mergeable duplicates found in selected items');
@@ -401,35 +455,12 @@ export function useStatementSelection({
         ),
       ]);
 
-      const deletedStatementIds: string[] = [];
-      const markedGmailIds: string[] = [];
-      let failedStatements = 0;
-      let failedGmail = 0;
-
-      statementDeleteResults.forEach((result, index) => {
-        const statementId = statementIdsToDelete[index];
-        if (!statementId) return;
-        if (result.status === 'fulfilled') {
-          deletedStatementIds.push(statementId);
-          return;
-        }
-        const status = getApiErrorStatus(result.reason);
-        if (status === 404 || status === 410) {
-          deletedStatementIds.push(statementId);
-          return;
-        }
-        failedStatements += 1;
-      });
-
-      gmailMarkResults.forEach((result, index) => {
-        const receiptId = gmailEntriesToMark[index]?.[0];
-        if (!receiptId) return;
-        if (result.status === 'fulfilled') {
-          markedGmailIds.push(receiptId);
-          return;
-        }
-        failedGmail += 1;
-      });
+      const deleteOutcome = tabulateDeleteResults(statementDeleteResults, statementIdsToDelete);
+      const markOutcome = tabulateMarkResults(gmailMarkResults, gmailEntriesToMark);
+      const deletedStatementIds = deleteOutcome.succeeded;
+      const markedGmailIds = markOutcome.succeeded;
+      const failedStatements = deleteOutcome.failed;
+      const failedGmail = markOutcome.failed;
 
       if (deletedStatementIds.length === 0 && markedGmailIds.length === 0) {
         toast.error('Failed to merge selected duplicates');

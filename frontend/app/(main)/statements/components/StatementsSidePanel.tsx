@@ -80,6 +80,109 @@ type TransactionListItem = {
 };
 
 
+async function fetchAllPaginated<T>(
+  endpoint: string,
+  pageSize = 500,
+): Promise<T[]> {
+  const allItems: T[] = [];
+  let page = 1;
+  let total = Number.POSITIVE_INFINITY;
+
+  while (allItems.length < total) {
+    // eslint-disable-next-line no-await-in-loop -- sequential by design (pagination)
+    const response = await apiClient.get(endpoint, {
+      params: { page, limit: pageSize },
+    });
+    const raw = response.data?.data || response.data || [];
+    const batch: T[] = Array.isArray(raw) ? raw : [];
+    allItems.push(...batch);
+    total = Number(response.data?.total ?? allItems.length);
+    if (batch.length < pageSize) break;
+    page += 1;
+  }
+
+  return allItems;
+}
+
+function buildStatementMetaMap(allStatements: StatementListItem[]) {
+  return new Map(
+    allStatements
+      .filter(statement => Boolean(statement.id))
+      .map(statement => [
+        statement.id as string,
+        {
+          id: statement.id as string,
+          fileName: null,
+          bankName: statement.bankName ?? null,
+          status: statement.status,
+          errorMessage: statement.errorMessage,
+          fileType: statement.fileType,
+          currency: null,
+          totalDebit: statement.totalDebit ?? null,
+          totalCredit: statement.totalCredit ?? null,
+          statementDateFrom: null,
+          statementDateTo: null,
+          createdAt: null,
+          sourceHint: statement.parsingDetails?.importPreview?.source ?? null,
+        },
+      ]),
+  );
+}
+
+type SidePanelData = {
+  counts: { submit: number; approve: number; unapprovedCash: number };
+  topSenders: TopBankSender[];
+  topMerchantsCount: number;
+  topCategoriesCount: number;
+  tablesReportsCount: number;
+};
+
+async function loadSidePanelData(): Promise<SidePanelData> {
+  const allStatements = await fetchAllPaginated<StatementListItem>('/statements');
+
+  const statementIds = allStatements
+    .map(statement => statement.id)
+    .filter((id): id is string => Boolean(id));
+
+  const stageCounts = countStatementStages(statementIds, getStatementStageMap());
+  const topBankSenders = getTopBankSenders(allStatements, 5);
+
+  const topMerchantsItems = await fetchAllPaginated<TransactionListItem>('/transactions');
+
+  const uniqueMerchants = new Set(
+    topMerchantsItems
+      .map(item => (item.counterpartyName || '').trim().toLowerCase())
+      .filter(Boolean),
+  );
+
+  const statementMetaById = buildStatementMetaMap(allStatements);
+
+  const unapprovedCashCount = buildUnapprovedStatementQueue({
+    statements: Array.from(statementMetaById.values()),
+    transactions: topMerchantsItems,
+  }).length;
+
+  const [topCategoriesResponse, customTablesResponse] = await Promise.all([
+    apiClient.get('/reports/top-categories', { params: { type: 'expense', limit: 100 } }),
+    apiClient.get('/custom-tables'),
+  ]);
+
+  const topCategories = Array.isArray(topCategoriesResponse.data?.categories)
+    ? topCategoriesResponse.data.categories
+    : [];
+  const customTables = Array.isArray(customTablesResponse.data)
+    ? customTablesResponse.data
+    : [];
+
+  return {
+    counts: { ...stageCounts, unapprovedCash: unapprovedCashCount },
+    topSenders: topBankSenders,
+    topMerchantsCount: uniqueMerchants.size,
+    topCategoriesCount: topCategories.length,
+    tablesReportsCount: customTables.length,
+  };
+}
+
 export default function StatementsSidePanel({ activeItem }: Props) {
   const router = useRouter();
   const t = useIntlayer('statementsPage');
@@ -107,130 +210,24 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     gmailConnected: false,
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: deps are intentionally constrained
   useEffect(() => {
     let isMounted = true;
 
-    const loadStageCounts = async () => {
+    const loadCounts = async () => {
       if (!user) {
         setCountsLoading(false);
         return;
       }
 
       try {
-        const allStatements: StatementListItem[] = [];
-        const pageSize = 500;
-        let page = 1;
-        let total = Number.POSITIVE_INFINITY;
-
-        while (allStatements.length < total) {
-          const response = await apiClient.get('/statements', {
-            params: {
-              page,
-              limit: pageSize,
-            },
-          });
-
-          const items = response.data?.data || response.data || [];
-          const batch = Array.isArray(items) ? items : [];
-          allStatements.push(...batch);
-          total = Number(response.data?.total ?? allStatements.length);
-
-          if (batch.length < pageSize) {
-            break;
-          }
-
-          page += 1;
-        }
-
-        const statementIds = allStatements
-          .map(statement => statement.id)
-          .filter((id): id is string => Boolean(id));
-
-        const stageCounts = countStatementStages(statementIds, getStatementStageMap());
-        const topBankSenders = getTopBankSenders(allStatements, 5);
-
-        const topMerchantsItems: TransactionListItem[] = [];
-        const topMerchantsPageSize = 500;
-        let topMerchantsPage = 1;
-        let topMerchantsTotal = Number.POSITIVE_INFINITY;
-
-        while (topMerchantsItems.length < topMerchantsTotal) {
-          const topMerchantsResponse = await apiClient.get('/transactions', {
-            params: {
-              page: topMerchantsPage,
-              limit: topMerchantsPageSize,
-            },
-          });
-          const items = Array.isArray(topMerchantsResponse.data?.data)
-            ? topMerchantsResponse.data.data
-            : [];
-          topMerchantsItems.push(...items);
-          topMerchantsTotal = Number(topMerchantsResponse.data?.total ?? topMerchantsItems.length);
-
-          if (items.length < topMerchantsPageSize) {
-            break;
-          }
-
-          topMerchantsPage += 1;
-        }
-
-        const uniqueMerchants = new Set(
-          topMerchantsItems
-            .map(item => (item.counterpartyName || '').trim().toLowerCase())
-            .filter(Boolean),
-        );
-
-        const statementMetaById = new Map(
-          allStatements
-            .filter(statement => Boolean(statement.id))
-            .map(statement => [
-              statement.id as string,
-              {
-                id: statement.id as string,
-                fileName: null,
-                bankName: statement.bankName ?? null,
-                status: statement.status,
-                errorMessage: statement.errorMessage,
-                fileType: statement.fileType,
-                currency: null,
-                totalDebit: statement.totalDebit ?? null,
-                totalCredit: statement.totalCredit ?? null,
-                statementDateFrom: null,
-                statementDateTo: null,
-                createdAt: null,
-                sourceHint: statement.parsingDetails?.importPreview?.source ?? null,
-              },
-            ]),
-        );
-
-        const unapprovedCashCount = buildUnapprovedStatementQueue({
-          statements: Array.from(statementMetaById.values()),
-          transactions: topMerchantsItems,
-        }).length;
-
-        const topCategoriesResponse = await apiClient.get('/reports/top-categories', {
-          params: {
-            type: 'expense',
-            limit: 100,
-          },
-        });
-        const topCategories = Array.isArray(topCategoriesResponse.data?.categories)
-          ? topCategoriesResponse.data.categories
-          : [];
-        const customTablesResponse = await apiClient.get('/custom-tables');
-        const customTables = Array.isArray(customTablesResponse.data)
-          ? customTablesResponse.data
-          : [];
-
+        const data = await loadSidePanelData();
         if (isMounted) {
-          setCounts({
-            ...stageCounts,
-            unapprovedCash: unapprovedCashCount,
-          });
-          setTopSenders(topBankSenders);
-          setTopMerchantsCount(uniqueMerchants.size);
-          setTopCategoriesCount(topCategories.length);
-          setTablesReportsCount(customTables.length);
+          setCounts(data.counts);
+          setTopSenders(data.topSenders);
+          setTopMerchantsCount(data.topMerchantsCount);
+          setTopCategoriesCount(data.topCategoriesCount);
+          setTablesReportsCount(data.tablesReportsCount);
           setCountsLoading(false);
         }
       } catch {
@@ -246,7 +243,7 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     };
 
     setCountsLoading(true);
-    loadStageCounts();
+    void loadCounts();
 
     return () => {
       isMounted = false;

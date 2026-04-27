@@ -9,6 +9,38 @@ import toast from 'react-hot-toast';
 import type { ExportColumn } from '../customTablesHelpers';
 import { getExportColumn, sanitizeFileName, toCsv } from '../customTablesHelpers';
 
+async function fetchAllTableRows(
+  tableId: string,
+): Promise<Array<{ rowNumber?: number; data: Record<string, unknown> }>> {
+  const rows: Array<{ rowNumber?: number; data: Record<string, unknown> }> = [];
+  let cursor: number | undefined;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const response = await apiClient.get(`/custom-tables/${tableId}/rows`, {
+      params: { cursor, limit: 500 },
+    });
+    const items = response.data?.items || response.data?.data?.items || [];
+    const chunk = Array.isArray(items) ? items : [];
+    rows.push(...chunk);
+    if (chunk.length < 500) { break; }
+    const nextCursor = chunk[chunk.length - 1]?.rowNumber;
+    if (typeof nextCursor !== 'number' || Number.isNaN(nextCursor)) { break; }
+    cursor = nextCursor;
+  }
+  return rows;
+}
+
+function triggerBlobDownload(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
 interface CustomTableItem {
   id: string;
   name: string;
@@ -83,36 +115,18 @@ export function useCustomTablesActions({
       const toastId = toast.loading(`Export ${table.name}...`);
 
       try {
-        const [tableResponse] = await Promise.all([apiClient.get(`/custom-tables/${table.id}`)]);
+        const tableResponse = await apiClient.get(`/custom-tables/${table.id}`);
         const detail = tableResponse.data?.data || tableResponse.data;
         const columns = Array.isArray(detail?.columns)
           ? detail.columns
               .map((col: unknown) => getExportColumn(col))
               .filter((col: ExportColumn | null): col is ExportColumn => col !== null)
-              .sort(
-                (a: ExportColumn, b: ExportColumn) => (a.position || 0) - (b.position || 0),
-              )
+              .sort((a: ExportColumn, b: ExportColumn) => (a.position || 0) - (b.position || 0))
           : [];
 
-        if (columns.length === 0) throw new Error('No exportable columns found');
+        if (columns.length === 0) { throw new Error('No exportable columns found'); }
 
-        const rows: Array<{ rowNumber?: number; data: Record<string, unknown> }> = [];
-        let cursor: number | undefined;
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const response = await apiClient.get(`/custom-tables/${table.id}/rows`, {
-            params: { cursor, limit: 500 },
-          });
-          const items = response.data?.items || response.data?.data?.items || [];
-          const chunk = Array.isArray(items) ? items : [];
-          rows.push(...chunk);
-          if (chunk.length < 500) break;
-          const nextCursor = chunk[chunk.length - 1]?.rowNumber;
-          if (typeof nextCursor !== 'number' || Number.isNaN(nextCursor)) break;
-          cursor = nextCursor;
-        }
-
+        const rows = await fetchAllTableRows(table.id);
         const headers = columns.map((col: ExportColumn) => col.title || col.key);
         const normalizedRows = rows.map(row => {
           const mapped: Record<string, unknown> = {};
@@ -126,32 +140,17 @@ export function useCustomTablesActions({
 
         if (format === 'csv') {
           const csv = toCsv(headers, normalizedRows);
-          const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = `${fileBase}.csv`;
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-          URL.revokeObjectURL(url);
+          triggerBlobDownload(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), `${fileBase}.csv`);
         } else {
           const xlsx = await import('xlsx');
           const sheet = xlsx.utils.json_to_sheet(normalizedRows);
           const workbook = xlsx.utils.book_new();
           xlsx.utils.book_append_sheet(workbook, sheet, 'Export');
           const output = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-          const blob = new Blob([output], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          });
-          const url = URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = `${fileBase}.xlsx`;
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-          URL.revokeObjectURL(url);
+          triggerBlobDownload(
+            new Blob([output], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+            `${fileBase}.xlsx`,
+          );
         }
 
         toast.success(`Export complete: ${table.name}`, { id: toastId });

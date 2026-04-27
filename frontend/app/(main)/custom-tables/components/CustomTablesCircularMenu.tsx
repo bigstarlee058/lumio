@@ -48,6 +48,101 @@ const ARC_SIZES = {
   },
 } as const;
 
+const ACTION_BUTTON_STYLE: React.CSSProperties = {
+  display: 'flex',
+  height: 44,
+  width: 44,
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: tokens.radius.full,
+  border: '1px solid rgba(255,255,255,0.8)',
+  backgroundColor: 'var(--card-bg)',
+  cursor: 'pointer',
+  transition: 'transform 0.3s ease-out',
+};
+
+const ACTION_LABEL_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  left: 48,
+  top: '50%',
+  zIndex: 40,
+  transform: 'translateY(-50%)',
+  whiteSpace: 'nowrap',
+  borderRadius: tokens.radius.sm,
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  padding: '4px 10px',
+  fontSize: 11,
+  fontWeight: 600,
+  color: 'var(--color-primary)',
+};
+
+const SR_ONLY_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  overflow: 'hidden',
+  clip: 'rect(0,0,0,0)',
+  whiteSpace: 'nowrap',
+};
+
+function resolveLabels(labels: Props['labels']) {
+  return {
+    importGoogleSheets: labels?.importGoogleSheets ?? 'Google Sheets',
+    fromStatement: labels?.fromStatement ?? 'From statement',
+    createTable: labels?.createTable ?? 'Create table',
+    openMenu: labels?.openMenu ?? 'Open table actions',
+  };
+}
+
+function FabActionItem({
+  isOpen,
+  offset,
+  closedOffset,
+  bottom,
+  label,
+  onClick,
+  children,
+}: {
+  isOpen: boolean;
+  offset: (typeof ACTION_OFFSETS)[number];
+  closedOffset: string;
+  bottom: number;
+  label: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  const transform = isOpen
+    ? `translate(${offset.x}px, ${offset.y}px)`
+    : closedOffset;
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        bottom,
+        zIndex: 20,
+        transition: 'all 0.3s ease-out',
+        transform,
+        pointerEvents: isOpen ? 'auto' : 'none',
+        opacity: isOpen ? 1 : 0,
+      }}
+    >
+      <button
+        data-custom-tables-fab-interactive="true"
+        type="button"
+        onClick={onClick}
+        title={label}
+        style={ACTION_BUTTON_STYLE}
+      >
+        {children}
+        <span style={SR_ONLY_STYLE}>{label}</span>
+      </button>
+      <span style={ACTION_LABEL_STYLE}>{label}</span>
+    </div>
+  );
+}
+
 export default function CustomTablesCircularMenu({
   onCreateEmpty,
   onImportFromStatement,
@@ -64,7 +159,7 @@ export default function CustomTablesCircularMenu({
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') { return; }
     const mq = window.matchMedia('(min-width: 1024px)');
     setIsDesktopViewport(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsDesktopViewport(e.matches);
@@ -73,25 +168,21 @@ export default function CustomTablesCircularMenu({
   }, []);
 
   useEffect(() => {
+    if (!isOpen) { return; }
+
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Element | null;
-      if (target?.closest('[data-custom-tables-fab-interactive="true"]')) {
-        return;
-      }
-      setIsOpen(false);
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (!target?.closest('[data-custom-tables-fab-interactive="true"]')) {
         setIsOpen(false);
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('pointerdown', handlePointerDown);
-      document.addEventListener('keydown', handleEscape);
-    }
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setIsOpen(false); }
+    };
 
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleEscape);
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleEscape);
@@ -99,208 +190,54 @@ export default function CustomTablesCircularMenu({
   }, [isOpen]);
 
   const sizes = ARC_SIZES[placement];
-  const text = {
-    importGoogleSheets: labels?.importGoogleSheets ?? 'Google Sheets',
-    fromStatement: labels?.fromStatement ?? 'From statement',
-    createTable: labels?.createTable ?? 'Create table',
-    openMenu: labels?.openMenu ?? 'Open table actions',
+  const text = resolveLabels(labels);
+
+  const handleAction = (callback: () => void) => () => {
+    callback();
+    setIsOpen(false);
   };
 
-  const actionButtonStyle: React.CSSProperties = {
-    display: 'flex',
-    height: 44,
-    width: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: tokens.radius.full,
-    border: '1px solid rgba(255,255,255,0.8)',
-    backgroundColor: 'var(--card-bg)',
-    cursor: 'pointer',
-    transition: 'transform 0.3s ease-out',
+  const isPanel = placement === 'panel';
+  const containerStyle: React.CSSProperties = {
+    position: 'relative',
+    overflow: 'visible',
+    height: sizes.containerHeight,
+    width: sizes.containerWidth,
+    ...(isPanel ? { marginLeft: -16, marginRight: -16, marginBottom: -12 } : {}),
+    ...(!isPanel
+      ? { position: 'fixed', bottom: 0, left: 0, zIndex: 140, pointerEvents: 'auto' }
+      : {}),
   };
 
-  const actionLabelStyle: React.CSSProperties = {
+  const arcStyle: React.CSSProperties = {
+    pointerEvents: 'none',
     position: 'absolute',
-    left: 48,
-    top: '50%',
-    zIndex: 40,
-    transform: 'translateY(-50%)',
-    whiteSpace: 'nowrap',
-    borderRadius: tokens.radius.sm,
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    padding: '4px 10px',
-    fontSize: 11,
-    fontWeight: 600,
-    color: 'var(--color-primary)',
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'var(--color-primary)',
+    transition: 'all 0.3s ease-out',
+    height: isOpen ? sizes.height : 0,
+    width: isOpen ? sizes.width : 0,
+    borderTopRightRadius: isOpen ? sizes.radius : 0,
+    opacity: isOpen ? 1 : 0,
   };
 
   const menu = (
-    <div
-      style={{
-        position: 'relative',
-        overflow: 'visible',
-        height: sizes.containerHeight,
-        width: sizes.containerWidth,
-        ...(placement === 'panel' ? { marginLeft: -16, marginRight: -16, marginBottom: -12 } : {}),
-        ...(placement === 'floating'
-          ? {
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              zIndex: 140,
-              pointerEvents: 'auto',
-            }
-          : {}),
-      }}
-    >
-      {/* Arc background */}
-      <div
-        style={{
-          pointerEvents: 'none',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          backgroundColor: 'var(--color-primary)',
-          transition: 'all 0.3s ease-out',
-          height: isOpen ? sizes.height : 0,
-          width: isOpen ? sizes.width : 0,
-          borderTopRightRadius: isOpen ? sizes.radius : 0,
-          opacity: isOpen ? 1 : 0,
-        }}
-      />
+    <div style={containerStyle}>
+      <div style={arcStyle} />
 
-      {/* Action: Google Sheets */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          bottom: sizes.bottom,
-          zIndex: 20,
-          transition: 'all 0.3s ease-out',
-          transform: isOpen
-            ? `translate(${ACTION_OFFSETS[0].x}px, ${ACTION_OFFSETS[0].y}px)`
-            : sizes.closedOffset,
-          pointerEvents: isOpen ? 'auto' : 'none',
-          opacity: isOpen ? 1 : 0,
-        }}
-      >
-        <button
-          data-custom-tables-fab-interactive="true"
-          type="button"
-          onClick={() => {
-            onImportGoogleSheets();
-            setIsOpen(false);
-          }}
-          title={text.importGoogleSheets}
-          style={actionButtonStyle}
-        >
-          <Image
-            src="/icons/icons8-google-sheets-48.png"
-            alt="Google Sheets"
-            width={18}
-            height={18}
-          />
-          <span
-            style={{
-              position: 'absolute',
-              width: 1,
-              height: 1,
-              overflow: 'hidden',
-              clip: 'rect(0,0,0,0)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {text.importGoogleSheets}
-          </span>
-        </button>
-        <span style={actionLabelStyle}>{text.importGoogleSheets}</span>
-      </div>
+      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[0]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.importGoogleSheets} onClick={handleAction(onImportGoogleSheets)}>
+        <Image src="/icons/icons8-google-sheets-48.png" alt="Google Sheets" width={18} height={18} />
+      </FabActionItem>
 
-      {/* Action: From Statement */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          bottom: sizes.bottom,
-          zIndex: 20,
-          transition: 'all 0.3s ease-out',
-          transform: isOpen
-            ? `translate(${ACTION_OFFSETS[1].x}px, ${ACTION_OFFSETS[1].y}px)`
-            : sizes.closedOffset,
-          pointerEvents: isOpen ? 'auto' : 'none',
-          opacity: isOpen ? 1 : 0,
-        }}
-      >
-        <button
-          data-custom-tables-fab-interactive="true"
-          type="button"
-          onClick={() => {
-            onImportFromStatement();
-            setIsOpen(false);
-          }}
-          title={text.fromStatement}
-          style={actionButtonStyle}
-        >
-          <FileSpreadsheet size={18} style={{ color: 'var(--color-primary)' }} />
-          <span
-            style={{
-              position: 'absolute',
-              width: 1,
-              height: 1,
-              overflow: 'hidden',
-              clip: 'rect(0,0,0,0)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {text.fromStatement}
-          </span>
-        </button>
-        <span style={actionLabelStyle}>{text.fromStatement}</span>
-      </div>
+      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[1]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.fromStatement} onClick={handleAction(onImportFromStatement)}>
+        <FileSpreadsheet size={18} style={{ color: 'var(--color-primary)' }} />
+      </FabActionItem>
 
-      {/* Action: Create Table */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          bottom: sizes.bottom,
-          zIndex: 20,
-          transition: 'all 0.3s ease-out',
-          transform: isOpen
-            ? `translate(${ACTION_OFFSETS[2].x}px, ${ACTION_OFFSETS[2].y}px)`
-            : sizes.closedOffset,
-          pointerEvents: isOpen ? 'auto' : 'none',
-          opacity: isOpen ? 1 : 0,
-        }}
-      >
-        <button
-          data-custom-tables-fab-interactive="true"
-          type="button"
-          onClick={() => {
-            onCreateEmpty();
-            setIsOpen(false);
-          }}
-          title={text.createTable}
-          style={actionButtonStyle}
-        >
-          <TableIcon size={18} style={{ color: 'var(--color-primary)' }} />
-          <span
-            style={{
-              position: 'absolute',
-              width: 1,
-              height: 1,
-              overflow: 'hidden',
-              clip: 'rect(0,0,0,0)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {text.createTable}
-          </span>
-        </button>
-        <span style={actionLabelStyle}>{text.createTable}</span>
-      </div>
+      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[2]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.createTable} onClick={handleAction(onCreateEmpty)}>
+        <TableIcon size={18} style={{ color: 'var(--color-primary)' }} />
+      </FabActionItem>
 
-      {/* FAB toggle button */}
       <button
         data-custom-tables-fab-interactive="true"
         type="button"
@@ -335,10 +272,7 @@ export default function CustomTablesCircularMenu({
     </div>
   );
 
-  // On mobile, the bottom bar FAB replaces the floating menu
-  if (placement === 'floating' && !isDesktopViewport) {
-    return null;
-  }
+  if (placement === 'floating' && !isDesktopViewport) { return null; }
 
   if (placement === 'floating' && portalReady) {
     const portalTarget = document.getElementById('fab-portal') ?? document.body;

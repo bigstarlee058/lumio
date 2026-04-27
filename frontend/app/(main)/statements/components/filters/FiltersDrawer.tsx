@@ -91,6 +91,480 @@ type FiltersDrawerProps = {
   activeCount: number;
 };
 
+const BOOLEAN_FILTER_KEYS = ['approved', 'billable', 'exported', 'paid'] as const;
+type BooleanFilterKey = (typeof BOOLEAN_FILTER_KEYS)[number];
+
+function isBooleanFilterScreen(screen: string): screen is BooleanFilterKey {
+  return (BOOLEAN_FILTER_KEYS as readonly string[]).includes(screen);
+}
+
+function getBooleanFilterValue(
+  filters: StatementFilters,
+  screen: BooleanFilterKey,
+): boolean | null {
+  return filters[screen];
+}
+
+function BooleanFilterScreen({
+  screen,
+  filters,
+  labels,
+  onUpdateFilters,
+}: {
+  screen: BooleanFilterKey;
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+}) {
+  const currentValue = getBooleanFilterValue(filters, screen);
+  const update = (value: boolean | null) => onUpdateFilters({ [screen]: value });
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={currentValue === null} onClick={() => update(null)} variant="radio" />
+      <FilterOptionRow label={labels.yes} selected={currentValue === true} onClick={() => update(true)} variant="radio" />
+      <FilterOptionRow label={labels.no} selected={currentValue === false} onClick={() => update(false)} variant="radio" />
+    </Box>
+  );
+}
+
+function TypeFilterScreen({
+  filters,
+  labels,
+  typeOptions,
+  onUpdateFilters,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  typeOptions: FilterOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={!filters.type} onClick={() => onUpdateFilters({ type: null })} variant="radio" />
+      {typeOptions.map(option => (
+        <FilterOptionRow key={option.value} label={option.label} selected={filters.type === option.value} onClick={() => onUpdateFilters({ type: option.value })} variant="radio" />
+      ))}
+    </Box>
+  );
+}
+
+function StatusFilterScreen({
+  filters,
+  labels,
+  statusOptions,
+  onUpdateFilters,
+  toggleValue,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  statusOptions: FilterOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  toggleValue: (values: string[], value: string) => string[];
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={filters.statuses.length === 0} onClick={() => onUpdateFilters({ statuses: [] })} variant="checkbox" />
+      {statusOptions.map(option => (
+        <FilterOptionRow
+          key={option.value}
+          label={option.label}
+          selected={filters.statuses.includes(option.value)}
+          onClick={() => onUpdateFilters({ statuses: toggleValue(filters.statuses, option.value) })}
+          variant="checkbox"
+        />
+      ))}
+    </Box>
+  );
+}
+
+function DateFilterScreen({
+  filters,
+  labels,
+  datePresets,
+  dateModes,
+  onUpdateFilters,
+  inputStyle,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  datePresets: FilterDatePresetOption[];
+  dateModes: FilterDateModeOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  inputStyle: React.CSSProperties;
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        <FilterOptionRow label={labels.any} selected={!filters.date} onClick={() => onUpdateFilters({ date: null })} variant="radio" />
+        {datePresets.map(option => (
+          <FilterOptionRow
+            key={option.value}
+            label={option.label}
+            selected={filters.date?.preset === option.value}
+            onClick={() => onUpdateFilters({ date: { preset: option.value } })}
+            variant="radio"
+          />
+        ))}
+      </Box>
+      <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        {dateModes.map(option => (
+          <FilterOptionRow
+            key={option.value}
+            label={option.label}
+            selected={filters.date?.mode === option.value}
+            onClick={() =>
+              onUpdateFilters({
+                date: { mode: option.value, date: filters.date?.date || new Date().toISOString().slice(0, 10) },
+              })
+            }
+            variant="radio"
+          />
+        ))}
+        {filters.date?.mode ? (
+          <Box sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(249,250,251,0.6)', px: 1.5, py: 1.5 }}>
+            <input
+              type="date"
+              value={filters.date?.date || ''}
+              onChange={event => onUpdateFilters({ date: { mode: filters.date?.mode, date: event.target.value } })}
+              style={inputStyle}
+            />
+          </Box>
+        ) : null}
+      </Box>
+    </Box>
+  );
+}
+
+function FromToFilterScreen({
+  screen,
+  filters,
+  labels,
+  fromOptions,
+  toOptions,
+  onUpdateFilters,
+  toggleValue,
+}: {
+  screen: 'from' | 'to';
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  fromOptions: FilterAvatarOption[];
+  toOptions: FilterAvatarOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  toggleValue: (values: string[], value: string) => string[];
+}) {
+  const values = screen === 'from' ? filters.from : filters.to;
+  const options = screen === 'from' ? fromOptions : toOptions;
+  if (options.length === 0) {
+    return (
+      <Box sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', p: 2, fontSize: 14, color: 'text.secondary' }}>
+        {labels.any}
+      </Box>
+    );
+  }
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      {options.map(option => (
+        <FilterOptionRow
+          key={option.id}
+          label={option.label}
+          description={option.description}
+          avatarUrl={option.avatarUrl}
+          bankName={option.bankName}
+          selected={values.includes(option.id)}
+          onClick={() => onUpdateFilters({ [screen]: toggleValue(values, option.id) })}
+        />
+      ))}
+    </Box>
+  );
+}
+
+function GroupByFilterScreen({
+  filters,
+  labels,
+  groupByOptions,
+  onUpdateFilters,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  groupByOptions: FilterOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={!filters.groupBy} onClick={() => onUpdateFilters({ groupBy: null })} variant="radio" />
+      {groupByOptions.map(option => (
+        <FilterOptionRow key={option.value} label={option.label} selected={filters.groupBy === option.value} onClick={() => onUpdateFilters({ groupBy: option.value })} variant="radio" />
+      ))}
+    </Box>
+  );
+}
+
+function HasFilterScreen({
+  filters,
+  labels,
+  hasOptions,
+  onUpdateFilters,
+  toggleValue,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  hasOptions: FilterOption[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  toggleValue: (values: string[], value: string) => string[];
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={filters.has.length === 0} onClick={() => onUpdateFilters({ has: [] })} variant="checkbox" />
+      {hasOptions.map(option => (
+        <FilterOptionRow
+          key={option.value}
+          label={option.label}
+          selected={filters.has.includes(option.value)}
+          onClick={() => onUpdateFilters({ has: toggleValue(filters.has, option.value) })}
+          variant="checkbox"
+        />
+      ))}
+    </Box>
+  );
+}
+
+function CurrencyFilterScreen({
+  filters,
+  labels,
+  currencyOptions,
+  onUpdateFilters,
+  toggleValue,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  currencyOptions: string[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  toggleValue: (values: string[], value: string) => string[];
+}) {
+  if (currencyOptions.length === 0) {
+    return (
+      <Box sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper', p: 2, fontSize: 14, color: 'text.secondary' }}>
+        {labels.any}
+      </Box>
+    );
+  }
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <FilterOptionRow label={labels.any} selected={filters.currencies.length === 0} onClick={() => onUpdateFilters({ currencies: [] })} variant="checkbox" />
+      {currencyOptions.map(currency => (
+        <FilterOptionRow
+          key={currency}
+          label={currency}
+          selected={filters.currencies.includes(currency)}
+          onClick={() => onUpdateFilters({ currencies: toggleValue(filters.currencies, currency) })}
+          variant="checkbox"
+        />
+      ))}
+    </Box>
+  );
+}
+
+function KeywordsFilterScreen({
+  filters,
+  labels,
+  onUpdateFilters,
+  inputStyle,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  inputStyle: React.CSSProperties;
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+      <Typography variant="body2" fontWeight={500} color="text.secondary">{labels.keywords}</Typography>
+      <input value={filters.keywords} onChange={event => onUpdateFilters({ keywords: event.target.value })} placeholder={labels.keywords} style={inputStyle} />
+    </Box>
+  );
+}
+
+function parseNumberInput(value: string): number | null {
+  if (!value.trim()) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function AmountFilterScreen({
+  filters,
+  labels,
+  onUpdateFilters,
+  inputStyle,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  inputStyle: React.CSSProperties;
+}) {
+  const amountMinValue = filters.amountMin !== null ? String(filters.amountMin) : '';
+  const amountMaxValue = filters.amountMax !== null ? String(filters.amountMax) : '';
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box>
+        <Typography variant="body2" fontWeight={500} color="text.secondary">Min</Typography>
+        <input inputMode="decimal" value={amountMinValue} onChange={event => onUpdateFilters({ amountMin: parseNumberInput(event.target.value) })} placeholder="0" style={{ ...inputStyle, marginTop: 8 }} />
+      </Box>
+      <Box>
+        <Typography variant="body2" fontWeight={500} color="text.secondary">Max</Typography>
+        <input inputMode="decimal" value={amountMaxValue} onChange={event => onUpdateFilters({ amountMax: parseNumberInput(event.target.value) })} placeholder="0" style={{ ...inputStyle, marginTop: 8 }} />
+      </Box>
+    </Box>
+  );
+}
+
+function LimitFilterScreen({
+  filters,
+  labels,
+  onUpdateFilters,
+  inputStyle,
+}: {
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  inputStyle: React.CSSProperties;
+}) {
+  const limitValue = filters.limit !== null ? String(filters.limit) : '';
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+      <Typography variant="body2" fontWeight={500} color="text.secondary">{labels.limit}</Typography>
+      <input inputMode="numeric" value={limitValue} onChange={event => onUpdateFilters({ limit: parseNumberInput(event.target.value) })} placeholder="0" style={inputStyle} />
+    </Box>
+  );
+}
+
+function booleanFilterDisplayValue(
+  value: boolean | null,
+  labels: FiltersDrawerLabels,
+): string {
+  if (value === null) return labels.any;
+  return value ? labels.yes : labels.no;
+}
+
+type FilterRowConfig = {
+  screen: string;
+  label: string;
+  value: string;
+};
+
+function buildFilterRows(
+  filters: StatementFilters,
+  labels: FiltersDrawerLabels,
+): { general: FilterRowConfig[]; expenses: FilterRowConfig[]; reports: FilterRowConfig[] } {
+  const summaryValue = (value?: string | null, fallback?: string) =>
+    value && value.length > 0 ? value : fallback || labels.any;
+
+  return {
+    general: [
+      { screen: 'type', label: labels.type, value: summaryValue(filters.type) },
+      { screen: 'from', label: labels.from, value: summaryValue(filters.from.length ? `${filters.from.length}` : '') },
+      { screen: 'keywords', label: labels.keywords, value: summaryValue(filters.keywords) },
+      { screen: 'status', label: labels.status, value: summaryValue(filters.statuses.length ? `${filters.statuses.length}` : '') },
+      { screen: 'to', label: labels.to, value: summaryValue(filters.to.length ? `${filters.to.length}` : '') },
+      { screen: 'groupBy', label: labels.groupBy, value: summaryValue(filters.groupBy) },
+      { screen: 'has', label: labels.has, value: summaryValue(filters.has.length ? `${filters.has.length}` : '') },
+      { screen: 'limit', label: labels.limit, value: summaryValue(filters.limit ? `${filters.limit}` : '') },
+    ],
+    expenses: [
+      { screen: 'amount', label: labels.amount, value: summaryValue(filters.amountMin || filters.amountMax ? 'set' : '') },
+      { screen: 'billable', label: labels.billable, value: booleanFilterDisplayValue(filters.billable, labels) },
+    ],
+    reports: [
+      { screen: 'approved', label: labels.approved, value: booleanFilterDisplayValue(filters.approved, labels) },
+      { screen: 'currency', label: labels.currency, value: summaryValue(filters.currencies.length > 0 ? `${filters.currencies.length}` : '') },
+      { screen: 'date', label: labels.date, value: summaryValue(filters.date ? 'set' : '') },
+      { screen: 'exported', label: labels.exported, value: booleanFilterDisplayValue(filters.exported, labels) },
+      { screen: 'paid', label: labels.paid, value: booleanFilterDisplayValue(filters.paid, labels) },
+    ],
+  };
+}
+
+function RootFilterRows({
+  rows,
+  isScreenVisible,
+  onSelect,
+}: {
+  rows: FilterRowConfig[];
+  isScreenVisible: (screenId: string) => boolean;
+  onSelect: (field: string) => void;
+}) {
+  return (
+    <>
+      {rows.map(
+        row =>
+          isScreenVisible(row.screen) && (
+            <FilterRow
+              key={row.screen}
+              label={row.label}
+              value={row.value}
+              onClick={() => onSelect(row.screen)}
+            />
+          ),
+      )}
+    </>
+  );
+}
+
+type ScreenContentProps = {
+  screen: string;
+  filters: StatementFilters;
+  labels: FiltersDrawerLabels;
+  typeOptions: FilterOption[];
+  statusOptions: FilterOption[];
+  datePresets: FilterDatePresetOption[];
+  dateModes: FilterDateModeOption[];
+  fromOptions: FilterAvatarOption[];
+  toOptions: FilterAvatarOption[];
+  groupByOptions: FilterOption[];
+  hasOptions: FilterOption[];
+  currencyOptions: string[];
+  onUpdateFilters: (next: Partial<StatementFilters>) => void;
+  toggleValue: (values: string[], value: string) => string[];
+  inputStyle: React.CSSProperties;
+};
+
+function ScreenContent(props: ScreenContentProps) {
+  const { screen, filters, labels, onUpdateFilters, toggleValue, inputStyle } = props;
+  if (screen === 'type') return <TypeFilterScreen filters={filters} labels={labels} typeOptions={props.typeOptions} onUpdateFilters={onUpdateFilters} />;
+  if (screen === 'status') return <StatusFilterScreen filters={filters} labels={labels} statusOptions={props.statusOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
+  if (screen === 'date') return <DateFilterScreen filters={filters} labels={labels} datePresets={props.datePresets} dateModes={props.dateModes} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
+  if (screen === 'from' || screen === 'to') return <FromToFilterScreen screen={screen} filters={filters} labels={labels} fromOptions={props.fromOptions} toOptions={props.toOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
+  if (screen === 'keywords') return <KeywordsFilterScreen filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
+  if (screen === 'amount') return <AmountFilterScreen filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
+  if (isBooleanFilterScreen(screen)) return <BooleanFilterScreen screen={screen} filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} />;
+  if (screen === 'groupBy') return <GroupByFilterScreen filters={filters} labels={labels} groupByOptions={props.groupByOptions} onUpdateFilters={onUpdateFilters} />;
+  if (screen === 'has') return <HasFilterScreen filters={filters} labels={labels} hasOptions={props.hasOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
+  if (screen === 'limit') return <LimitFilterScreen filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
+  if (screen === 'currency') return <CurrencyFilterScreen filters={filters} labels={labels} currencyOptions={props.currencyOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
+  return null;
+}
+
+const SCREEN_TITLE_MAP: Record<string, keyof FiltersDrawerLabels> = {
+  type: 'type',
+  status: 'status',
+  date: 'date',
+  from: 'from',
+  to: 'to',
+  keywords: 'keywords',
+  amount: 'amount',
+  approved: 'approved',
+  billable: 'billable',
+  groupBy: 'groupBy',
+  has: 'has',
+  limit: 'limit',
+  currency: 'currency',
+  exported: 'exported',
+  paid: 'paid',
+};
+
+function getScreenTitle(screen: string, labels: FiltersDrawerLabels): string {
+  const key = SCREEN_TITLE_MAP[screen];
+  return key ? labels[key] : labels.title;
+}
+
 export function FiltersDrawer({
   open,
   onClose,
@@ -114,41 +588,14 @@ export function FiltersDrawer({
   labels,
   activeCount,
 }: FiltersDrawerProps) {
-  const summaryValue = (value?: string | null, fallback?: string) =>
-    value && value.length > 0 ? value : fallback || labels.any;
-
   const isRoot = screen === 'root';
   const allowedScreens = new Set(visibleScreens || []);
   const isScreenVisible = (screenId: string) =>
     visibleScreens === undefined || allowedScreens.has(screenId);
-  const screenTitle = isRoot
-    ? labels.title
-    : {
-        type: labels.type,
-        status: labels.status,
-        date: labels.date,
-        from: labels.from,
-        to: labels.to,
-        keywords: labels.keywords,
-        amount: labels.amount,
-        approved: labels.approved,
-        billable: labels.billable,
-        groupBy: labels.groupBy,
-        has: labels.has,
-        limit: labels.limit,
-        currency: labels.currency,
-        exported: labels.exported,
-        paid: labels.paid,
-      }[screen] || labels.title;
+  const screenTitle = isRoot ? labels.title : getScreenTitle(screen, labels);
 
   const toggleValue = (values: string[], value: string) =>
     values.includes(value) ? values.filter(item => item !== value) : [...values, value];
-
-  const parseNumberInput = (value: string) => {
-    if (!value.trim()) return null;
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  };
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -162,381 +609,12 @@ export function FiltersDrawer({
     boxSizing: 'border-box',
   };
 
-  const renderScreenContent = () => {
-    if (screen === 'type') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={!filters.type}
-            onClick={() => onUpdateFilters({ type: null })}
-            variant="radio"
-          />
-          {typeOptions.map(option => (
-            <FilterOptionRow
-              key={option.value}
-              label={option.label}
-              selected={filters.type === option.value}
-              onClick={() => onUpdateFilters({ type: option.value })}
-              variant="radio"
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    if (screen === 'status') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={filters.statuses.length === 0}
-            onClick={() => onUpdateFilters({ statuses: [] })}
-            variant="checkbox"
-          />
-          {statusOptions.map(option => (
-            <FilterOptionRow
-              key={option.value}
-              label={option.label}
-              selected={filters.statuses.includes(option.value)}
-              onClick={() =>
-                onUpdateFilters({
-                  statuses: toggleValue(filters.statuses, option.value),
-                })
-              }
-              variant="checkbox"
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    if (screen === 'date') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            <FilterOptionRow
-              label={labels.any}
-              selected={!filters.date}
-              onClick={() => onUpdateFilters({ date: null })}
-              variant="radio"
-            />
-            {datePresets.map(option => (
-              <FilterOptionRow
-                key={option.value}
-                label={option.label}
-                selected={filters.date?.preset === option.value}
-                onClick={() => onUpdateFilters({ date: { preset: option.value } })}
-                variant="radio"
-              />
-            ))}
-          </Box>
-
-          <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {dateModes.map(option => (
-              <FilterOptionRow
-                key={option.value}
-                label={option.label}
-                selected={filters.date?.mode === option.value}
-                onClick={() =>
-                  onUpdateFilters({
-                    date: {
-                      mode: option.value,
-                      date: filters.date?.date || new Date().toISOString().slice(0, 10),
-                    },
-                  })
-                }
-                variant="radio"
-              />
-            ))}
-            {filters.date?.mode ? (
-              <Box
-                sx={{
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: 'rgba(249,250,251,0.6)',
-                  px: 1.5,
-                  py: 1.5,
-                }}
-              >
-                <input
-                  type="date"
-                  value={filters.date?.date || ''}
-                  onChange={event =>
-                    onUpdateFilters({
-                      date: {
-                        mode: filters.date?.mode,
-                        date: event.target.value,
-                      },
-                    })
-                  }
-                  style={inputStyle}
-                />
-              </Box>
-            ) : null}
-          </Box>
-        </Box>
-      );
-    }
-
-    if (screen === 'from' || screen === 'to') {
-      const values = screen === 'from' ? filters.from : filters.to;
-      const options = screen === 'from' ? fromOptions : toOptions;
-      if (options.length === 0) {
-        return (
-          <Box
-            sx={{
-              border: '1px solid',
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-              p: 2,
-              fontSize: 14,
-              color: 'text.secondary',
-            }}
-          >
-            {labels.any}
-          </Box>
-        );
-      }
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          {options.map(option => (
-            <FilterOptionRow
-              key={option.id}
-              label={option.label}
-              description={option.description}
-              avatarUrl={option.avatarUrl}
-              bankName={option.bankName}
-              selected={values.includes(option.id)}
-              onClick={() =>
-                screen === 'from'
-                  ? onUpdateFilters({
-                      from: toggleValue(values, option.id),
-                    })
-                  : onUpdateFilters({
-                      to: toggleValue(values, option.id),
-                    })
-              }
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    if (screen === 'keywords') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <Typography variant="body2" fontWeight={500} color="text.secondary">
-            {labels.keywords}
-          </Typography>
-          <input
-            value={filters.keywords}
-            onChange={event => onUpdateFilters({ keywords: event.target.value })}
-            placeholder={labels.keywords}
-            style={inputStyle}
-          />
-        </Box>
-      );
-    }
-
-    if (screen === 'amount') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box>
-            <Typography variant="body2" fontWeight={500} color="text.secondary">Min</Typography>
-            <input
-              inputMode="decimal"
-              value={filters.amountMin !== null ? String(filters.amountMin) : ''}
-              onChange={event =>
-                onUpdateFilters({ amountMin: parseNumberInput(event.target.value) })
-              }
-              placeholder="0"
-              style={{ ...inputStyle, marginTop: 8 }}
-            />
-          </Box>
-          <Box>
-            <Typography variant="body2" fontWeight={500} color="text.secondary">Max</Typography>
-            <input
-              inputMode="decimal"
-              value={filters.amountMax !== null ? String(filters.amountMax) : ''}
-              onChange={event =>
-                onUpdateFilters({ amountMax: parseNumberInput(event.target.value) })
-              }
-              placeholder="0"
-              style={{ ...inputStyle, marginTop: 8 }}
-            />
-          </Box>
-        </Box>
-      );
-    }
-
-    if (
-      screen === 'approved' ||
-      screen === 'billable' ||
-      screen === 'exported' ||
-      screen === 'paid'
-    ) {
-      const currentValue =
-        screen === 'approved'
-          ? filters.approved
-          : screen === 'billable'
-            ? filters.billable
-            : screen === 'exported'
-              ? filters.exported
-              : filters.paid;
-      const updateBooleanFilter = (value: boolean | null) => {
-        if (screen === 'approved') {
-          onUpdateFilters({ approved: value });
-          return;
-        }
-        if (screen === 'billable') {
-          onUpdateFilters({ billable: value });
-          return;
-        }
-        if (screen === 'exported') {
-          onUpdateFilters({ exported: value });
-          return;
-        }
-        onUpdateFilters({ paid: value });
-      };
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={currentValue === null}
-            onClick={() => updateBooleanFilter(null)}
-            variant="radio"
-          />
-          <FilterOptionRow
-            label={labels.yes}
-            selected={currentValue === true}
-            onClick={() => updateBooleanFilter(true)}
-            variant="radio"
-          />
-          <FilterOptionRow
-            label={labels.no}
-            selected={currentValue === false}
-            onClick={() => updateBooleanFilter(false)}
-            variant="radio"
-          />
-        </Box>
-      );
-    }
-
-    if (screen === 'groupBy') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={!filters.groupBy}
-            onClick={() => onUpdateFilters({ groupBy: null })}
-            variant="radio"
-          />
-          {groupByOptions.map(option => (
-            <FilterOptionRow
-              key={option.value}
-              label={option.label}
-              selected={filters.groupBy === option.value}
-              onClick={() => onUpdateFilters({ groupBy: option.value })}
-              variant="radio"
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    if (screen === 'has') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={filters.has.length === 0}
-            onClick={() => onUpdateFilters({ has: [] })}
-            variant="checkbox"
-          />
-          {hasOptions.map(option => (
-            <FilterOptionRow
-              key={option.value}
-              label={option.label}
-              selected={filters.has.includes(option.value)}
-              onClick={() =>
-                onUpdateFilters({
-                  has: toggleValue(filters.has, option.value),
-                })
-              }
-              variant="checkbox"
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    if (screen === 'limit') {
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <Typography variant="body2" fontWeight={500} color="text.secondary">
-            {labels.limit}
-          </Typography>
-          <input
-            inputMode="numeric"
-            value={filters.limit !== null ? String(filters.limit) : ''}
-            onChange={event => onUpdateFilters({ limit: parseNumberInput(event.target.value) })}
-            placeholder="0"
-            style={inputStyle}
-          />
-        </Box>
-      );
-    }
-
-    if (screen === 'currency') {
-      if (currencyOptions.length === 0) {
-        return (
-          <Box
-            sx={{
-              border: '1px solid',
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-              p: 2,
-              fontSize: 14,
-              color: 'text.secondary',
-            }}
-          >
-            {labels.any}
-          </Box>
-        );
-      }
-      return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <FilterOptionRow
-            label={labels.any}
-            selected={filters.currencies.length === 0}
-            onClick={() => onUpdateFilters({ currencies: [] })}
-            variant="checkbox"
-          />
-          {currencyOptions.map(currency => (
-            <FilterOptionRow
-              key={currency}
-              label={currency}
-              selected={filters.currencies.includes(currency)}
-              onClick={() =>
-                onUpdateFilters({
-                  currencies: toggleValue(filters.currencies, currency),
-                })
-              }
-              variant="checkbox"
-            />
-          ))}
-        </Box>
-      );
-    }
-
-    return null;
-  };
+  const filterRows = buildFilterRows(filters, labels);
 
   const viewResultsButton = (
     <MuiButton variant="contained" sx={{ width: '100%' }} size="large" onClick={onViewResults}>
       {labels.viewResults}
-      {activeCount > 0 ? (
+      {activeCount > 0 && (
         <Box
           component="span"
           sx={{
@@ -554,7 +632,7 @@ export function FiltersDrawer({
         >
           {activeCount}
         </Box>
-      ) : null}
+      )}
     </MuiButton>
   );
 
@@ -580,7 +658,7 @@ export function FiltersDrawer({
               {screenTitle}
             </Typography>
           </Box>
-          {isRoot ? (
+          {isRoot && (
             <button
               type="button"
               onClick={onResetAll}
@@ -595,7 +673,7 @@ export function FiltersDrawer({
             >
               {labels.resetFilters}
             </button>
-          ) : null}
+          )}
         </Box>
       }
     >
@@ -603,142 +681,36 @@ export function FiltersDrawer({
         {isRoot ? (
           <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 3, pb: 14 }}>
             <FilterSection title={labels.general}>
-              {isScreenVisible('type') ? (
-                <FilterRow
-                  label={labels.type}
-                  value={summaryValue(filters.type)}
-                  onClick={() => onSelect('type')}
-                />
-              ) : null}
-              {isScreenVisible('from') ? (
-                <FilterRow
-                  label={labels.from}
-                  value={summaryValue(filters.from.length ? `${filters.from.length}` : '')}
-                  onClick={() => onSelect('from')}
-                />
-              ) : null}
-              {isScreenVisible('keywords') ? (
-                <FilterRow
-                  label={labels.keywords}
-                  value={summaryValue(filters.keywords)}
-                  onClick={() => onSelect('keywords')}
-                />
-              ) : null}
-              {isScreenVisible('status') ? (
-                <FilterRow
-                  label={labels.status}
-                  value={summaryValue(filters.statuses.length ? `${filters.statuses.length}` : '')}
-                  onClick={() => onSelect('status')}
-                />
-              ) : null}
-              {isScreenVisible('to') ? (
-                <FilterRow
-                  label={labels.to}
-                  value={summaryValue(filters.to.length ? `${filters.to.length}` : '')}
-                  onClick={() => onSelect('to')}
-                />
-              ) : null}
-              {isScreenVisible('groupBy') ? (
-                <FilterRow
-                  label={labels.groupBy}
-                  value={summaryValue(filters.groupBy)}
-                  onClick={() => onSelect('groupBy')}
-                />
-              ) : null}
-              {isScreenVisible('has') ? (
-                <FilterRow
-                  label={labels.has}
-                  value={summaryValue(filters.has.length ? `${filters.has.length}` : '')}
-                  onClick={() => onSelect('has')}
-                />
-              ) : null}
-              {isScreenVisible('limit') ? (
-                <FilterRow
-                  label={labels.limit}
-                  value={summaryValue(filters.limit ? `${filters.limit}` : '')}
-                  onClick={() => onSelect('limit')}
-                />
-              ) : null}
+              <RootFilterRows rows={filterRows.general} isScreenVisible={isScreenVisible} onSelect={onSelect} />
             </FilterSection>
-
             <FilterSection title={labels.expenses}>
-              {isScreenVisible('amount') ? (
-                <FilterRow
-                  label={labels.amount}
-                  value={summaryValue(filters.amountMin || filters.amountMax ? 'set' : '')}
-                  onClick={() => onSelect('amount')}
-                />
-              ) : null}
-              {isScreenVisible('billable') ? (
-                <FilterRow
-                  label={labels.billable}
-                  value={
-                    filters.billable === null
-                      ? labels.any
-                      : filters.billable
-                        ? labels.yes
-                        : labels.no
-                  }
-                  onClick={() => onSelect('billable')}
-                />
-              ) : null}
+              <RootFilterRows rows={filterRows.expenses} isScreenVisible={isScreenVisible} onSelect={onSelect} />
             </FilterSection>
-
             <FilterSection title={labels.reports}>
-              {isScreenVisible('approved') ? (
-                <FilterRow
-                  label={labels.approved}
-                  value={
-                    filters.approved === null
-                      ? labels.any
-                      : filters.approved
-                        ? labels.yes
-                        : labels.no
-                  }
-                  onClick={() => onSelect('approved')}
-                />
-              ) : null}
-              {isScreenVisible('currency') ? (
-                <FilterRow
-                  label={labels.currency}
-                  value={summaryValue(
-                    filters.currencies.length > 0 ? `${filters.currencies.length}` : '',
-                  )}
-                  onClick={() => onSelect('currency')}
-                />
-              ) : null}
-              {isScreenVisible('date') ? (
-                <FilterRow
-                  label={labels.date}
-                  value={summaryValue(filters.date ? 'set' : '')}
-                  onClick={() => onSelect('date')}
-                />
-              ) : null}
-              {isScreenVisible('exported') ? (
-                <FilterRow
-                  label={labels.exported}
-                  value={
-                    filters.exported === null
-                      ? labels.any
-                      : filters.exported
-                        ? labels.yes
-                        : labels.no
-                  }
-                  onClick={() => onSelect('exported')}
-                />
-              ) : null}
-              {isScreenVisible('paid') ? (
-                <FilterRow
-                  label={labels.paid}
-                  value={filters.paid === null ? labels.any : filters.paid ? labels.yes : labels.no}
-                  onClick={() => onSelect('paid')}
-                />
-              ) : null}
+              <RootFilterRows rows={filterRows.reports} isScreenVisible={isScreenVisible} onSelect={onSelect} />
             </FilterSection>
           </Box>
         ) : (
           <Box sx={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2.5, pb: 10 }}>
-            <Box sx={{ bgcolor: 'transparent', p: 0 }}>{renderScreenContent()}</Box>
+            <Box sx={{ bgcolor: 'transparent', p: 0 }}>
+              <ScreenContent
+                screen={screen}
+                filters={filters}
+                labels={labels}
+                typeOptions={typeOptions}
+                statusOptions={statusOptions}
+                datePresets={datePresets}
+                dateModes={dateModes}
+                fromOptions={fromOptions}
+                toOptions={toOptions}
+                groupByOptions={groupByOptions}
+                hasOptions={hasOptions}
+                currencyOptions={currencyOptions}
+                onUpdateFilters={onUpdateFilters}
+                toggleValue={toggleValue}
+                inputStyle={inputStyle}
+              />
+            </Box>
           </Box>
         )}
 

@@ -68,22 +68,28 @@ export function useTableMeta({
     setEditingScope(null);
   };
 
-  const saveMeta = async () => {
-    if (!tableId) return;
-    const scope: EditingScope = editingScope ?? 'both';
+  const buildMetaPayload = (scope: EditingScope): Record<string, unknown> | null => {
     const payload: Record<string, unknown> = {};
     if (scope !== 'description') {
       const name = metaDraft.name.trim();
       if (!name) {
         toast.error(messages.nameRequired);
-        return;
+        return null;
       }
       payload.name = name;
     }
     if (scope !== 'name') {
       const description = metaDraft.description.trim();
-      payload.description = description ? description : null;
+      payload.description = description || null;
     }
+    return Object.keys(payload).length ? payload : {};
+  };
+
+  const saveMeta = async () => {
+    if (!tableId) { return; }
+    const scope: EditingScope = editingScope ?? 'both';
+    const payload = buildMetaPayload(scope);
+    if (payload === null) { return; }
     if (!Object.keys(payload).length) {
       setEditingMeta(false);
       setEditingScope(null);
