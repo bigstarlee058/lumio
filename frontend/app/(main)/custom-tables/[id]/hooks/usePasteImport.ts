@@ -14,6 +14,26 @@ import type { CustomTableGridRow, CustomTableRowPatch } from '../utils/stylingUt
 import { getResponseItems } from '../utils/tableHelpers';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
 
+function extractBatchInsertResult(
+  response: { data?: Record<string, unknown> },
+  fallbackCount: number,
+): { normalizedRows: CustomTableGridRow[]; createdCount: number } {
+  const payload = (response.data || {}) as Record<string, unknown>;
+  const dataPayload = (payload.data || {}) as Record<string, unknown>;
+  const createdRows =
+    payload.rows || dataPayload.rows || payload.items || dataPayload.items || [];
+  const normalizedRows = getResponseItems(createdRows);
+  const createdCount =
+    (payload.created ?? dataPayload.created ?? normalizedRows.length ?? fallbackCount) as number;
+  return { normalizedRows, createdCount };
+}
+
+function isTabularText(text: string): boolean {
+  if (!text) { return false; }
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  return normalized.includes('\t') || normalized.split('\n').length > 1;
+}
+
 interface PasteDefaults {
   date: string;
   type: string;
@@ -229,77 +249,57 @@ export function usePasteImport({
     [tableId, refreshStats, setRows, messages.undoFailed],
   );
 
+  const createNewColumns = async (newColumns: typeof pastePreview extends null ? never : NonNullable<typeof pastePreview>['columns']): Promise<Map<string, string>> => {
+    const placeholderToKey = new Map<string, string>();
+    if (!newColumns.length) { return placeholderToKey; }
+    const created = await Promise.all(
+      newColumns.map(col =>
+        apiClient.post(`/custom-tables/${tableId}/columns`, {
+          title: col.newTitle?.trim(),
+          type: col.newType ?? 'text',
+        }),
+      ),
+    );
+    for (let i = 0; i < created.length; i++) {
+      const payload = created[i].data?.data || created[i].data;
+      const key = payload?.key;
+      const placeholderKey = newColumns[i]?.columnKey || '';
+      if (key && placeholderKey) { placeholderToKey.set(placeholderKey, key); }
+    }
+    await loadTable();
+    return placeholderToKey;
+  };
+
+  const buildPayloadRows = (dataRows: Record<string, unknown>[], keyMap: Map<string, string>): { data: CustomTableRowPatch }[] =>
+    dataRows.map(row => {
+      const data: CustomTableRowPatch = {};
+      for (const [key, value] of Object.entries(row)) {
+        data[keyMap.get(key) || key] = value;
+      }
+      return { data };
+    });
+
   const handlePasteAdd = useCallback(async () => {
-    if (!tableId || !pastePreview || pasteApplying) return;
-    if (!pastePreview.dataRows.length) {
-      toast.error(messages.noRows);
+    if (!tableId || !pastePreview || pasteApplying) { return; }
+    if (!pastePreview.dataRows.length) { toast.error(messages.noRows); return; }
+    if (pastePreview.hasErrors) { return; }
+
+    const newColumns = pastePreview.columns.filter(col => col.mode === 'new');
+    if (newColumns.some(col => !col.newTitle?.trim())) {
+      toast.error(messages.missingColumnTitle);
       return;
     }
-    if (pastePreview.hasErrors) return;
+
     setPasteApplying(true);
     try {
-      const newColumns = pastePreview.columns.filter(col => col.mode === 'new');
-      const missingTitles = newColumns.some(col => !col.newTitle || !col.newTitle.trim());
-      if (missingTitles) {
-        toast.error(messages.missingColumnTitle);
-        setPasteApplying(false);
-        return;
-      }
-      const placeholderToKey = new Map<string, string>();
-      if (newColumns.length) {
-        const created = await Promise.all(
-          newColumns.map(col =>
-            apiClient.post(`/custom-tables/${tableId}/columns`, {
-              title: col.newTitle?.trim(),
-              type: col.newType ?? 'text',
-            }),
-          ),
-        );
-        created.forEach((response, index) => {
-          const payload = response.data?.data || response.data;
-          const key = payload?.key;
-          const placeholderKey = newColumns[index]?.columnKey || '';
-          if (key && placeholderKey) {
-            placeholderToKey.set(placeholderKey, key);
-          }
-        });
-        await loadTable();
-      }
-
-      const payloadRows = pastePreview.dataRows.map(row => {
-        const data: CustomTableRowPatch = {};
-        for (const [key, value] of Object.entries(row)) {
-          const actualKey = placeholderToKey.get(key) || key;
-          data[actualKey] = value;
-        }
-        return { data };
-      });
-
-      const response = await apiClient.post(`/custom-tables/${tableId}/rows/batch`, {
-        rows: payloadRows,
-      });
-      const responsePayload = response.data || {};
-      const createdRows =
-        responsePayload.rows ||
-        responsePayload.data?.rows ||
-        responsePayload.items ||
-        responsePayload.data?.items ||
-        [];
-      const normalizedRows = getResponseItems(createdRows);
-      const createdCount =
-        responsePayload.created ??
-        responsePayload.data?.created ??
-        normalizedRows.length ??
-        pastePreview.dataRows.length;
-      if (normalizedRows.length) {
-        appendRows(normalizedRows);
-      }
+      const keyMap = await createNewColumns(newColumns);
+      const payloadRows = buildPayloadRows(pastePreview.dataRows, keyMap);
+      const response = await apiClient.post(`/custom-tables/${tableId}/rows/batch`, { rows: payloadRows });
+      const { normalizedRows, createdCount } = extractBatchInsertResult(response, pastePreview.dataRows.length);
+      if (normalizedRows.length) { appendRows(normalizedRows); }
       resetPastePreview();
       await refreshStats();
-
-      onInsertSuccess(createdCount, () =>
-        rollbackRows(normalizedRows.map(r => r.id).filter(Boolean)),
-      );
+      onInsertSuccess(createdCount, () => rollbackRows(normalizedRows.map(r => r.id).filter(Boolean)));
     } catch (error) {
       console.error('Failed to batch insert rows:', error);
       toast.error(messages.insertFailed);
@@ -324,14 +324,10 @@ export function usePasteImport({
   // Global paste event listener
   useEffect(() => {
     const onPaste = (event: ClipboardEvent) => {
-      if (pastePreviewOpen || pasteApplying) return;
-      if (!orderedColumns.length) return;
-      if (isEditableTarget(event.target)) return;
+      if (pastePreviewOpen || pasteApplying || !orderedColumns.length) { return; }
+      if (isEditableTarget(event.target)) { return; }
       const clipboardText = event.clipboardData?.getData('text/plain') || '';
-      if (!clipboardText) return;
-      const normalized = clipboardText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-      const hasMultipleLines = normalized.split('\n').length > 1;
-      if (!normalized.includes('\t') && !hasMultipleLines) return;
+      if (!isTabularText(clipboardText)) { return; }
       event.preventDefault();
       startPastePreview(clipboardText);
     };

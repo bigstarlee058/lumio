@@ -35,19 +35,30 @@ const getColumnOptions = (column: CustomTableColumn): string[] => {
     : [];
 };
 
-const normalizeValue = (type: ColumnType, value: unknown) => {
-  if (type === 'boolean') return Boolean(value);
-  if (type === 'number')
-    return value === null || value === undefined || value === '' ? null : Number(value);
-  if (type === 'multi_select') {
-    if (Array.isArray(value)) return value.map(v => String(v));
-    if (value === null || value === undefined || value === '') return [];
-    return [String(value)];
-  }
-  if (type === 'date')
-    return value === null || value === undefined || value === '' ? null : String(value);
-  if (type === 'select') return value === null || value === undefined ? '' : String(value);
-  return value === null || value === undefined ? '' : String(value);
+const isNullish = (v: unknown): v is null | undefined | '' => v === null || v === undefined || v === '';
+
+function shallowEqual(a: unknown, b: unknown): boolean {
+  if (a === b) { return true; }
+  if (!Array.isArray(a) || !Array.isArray(b)) { return false; }
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+const normalizers: Record<ColumnType, (v: unknown) => unknown> = {
+  boolean: v => Boolean(v),
+  number: v => (isNullish(v) ? null : Number(v)),
+  multi_select: v => {
+    if (Array.isArray(v)) { return v.map(item => String(item)); }
+    return isNullish(v) ? [] : [String(v)];
+  },
+  date: v => (isNullish(v) ? null : String(v)),
+  select: v => (v === null || v === undefined ? '' : String(v)),
+  text: v => (v === null || v === undefined ? '' : String(v)),
+  url: v => (v === null || v === undefined ? '' : String(v)),
+};
+
+const normalizeValue = (type: ColumnType, value: unknown): unknown => {
+  const fn = normalizers[type];
+  return fn ? fn(value) : (value === null || value === undefined ? '' : String(value));
 };
 
 const formatValue = (type: ColumnType, value: unknown) => {
@@ -64,6 +75,98 @@ const formatValue = (type: ColumnType, value: unknown) => {
   const text = String(value);
   return text.trim() ? text : '—';
 };
+
+function MultiSelectEditor({ value, options, colKey, setDraft }: {
+  value: unknown; options: string[]; colKey: string;
+  setDraft: React.Dispatch<React.SetStateAction<CustomTableRowPatch>>;
+}) {
+  return (
+    <Box sx={{ mt: 1.5, display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
+      {options.map(opt => {
+        const selected = Array.isArray(value) && value.includes(opt);
+        return (
+          <Box key={opt} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            <Checkbox
+              checked={selected}
+              onCheckedChange={checked => {
+                const next = Array.isArray(value) ? [...value] : [];
+                const updated = checked ? Array.from(new Set([...next, opt])) : next.filter(v => v !== opt);
+                setDraft(prev => ({ ...prev, [colKey]: updated }));
+              }}
+              className="h-5 w-5"
+            />
+            <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{opt}</Typography>
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
+function ColumnFieldEditor({ col, value, options, inputSx, setDraft }: {
+  col: CustomTableColumn; value: unknown; options: string[];
+  inputSx: React.CSSProperties;
+  setDraft: React.Dispatch<React.SetStateAction<CustomTableRowPatch>>;
+}) {
+  const updateField = (v: unknown) => setDraft(prev => ({ ...prev, [col.key]: v }));
+
+  if (col.type === 'boolean') {
+    return (
+      <Box sx={{ mt: 1.5, display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+        <Checkbox checked={Boolean(value)} onCheckedChange={checked => updateField(checked)} className="h-5 w-5" />
+        <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{value ? 'Yes' : 'No'}</Typography>
+      </Box>
+    );
+  }
+
+  if (col.type === 'number') {
+    return (
+      <input type="number" step="any" value={isNullish(value) ? '' : String(value)}
+        onChange={e => updateField(e.target.value.trim() === '' ? null : Number(e.target.value))} style={inputSx} />
+    );
+  }
+
+  if (col.type === 'date') {
+    return (
+      <input type="date" value={value ? String(value) : ''}
+        onChange={e => updateField(e.target.value.trim() || null)} style={inputSx} />
+    );
+  }
+
+  if (col.type === 'select' && options.length) {
+    return (
+      <select value={String(value ?? '')} onChange={e => updateField(e.target.value)} style={inputSx}>
+        <option value="">—</option>
+        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+      </select>
+    );
+  }
+
+  if (col.type === 'multi_select' && options.length) {
+    return <MultiSelectEditor value={value} options={options} colKey={col.key} setDraft={setDraft} />;
+  }
+
+  return (
+    <input type="text" value={isNullish(value) ? '' : String(value)}
+      onChange={e => updateField(e.target.value)} style={inputSx} />
+  );
+}
+
+function HistoryTab({ loading, events, onSelectEvent }: {
+  loading: boolean; events: AuditEvent[]; onSelectEvent: (e: AuditEvent) => void;
+}) {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {loading ? (
+        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
+          <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading history...</Typography>
+        </Box>
+      ) : (
+        <EntityHistoryTimeline events={events} onSelect={onSelectEvent} />
+      )}
+    </Box>
+  );
+}
 
 export function RowDrawer({
   open,
@@ -123,17 +226,12 @@ export function RowDrawer({
   const patch = useMemo(() => {
     const next: CustomTableRowPatch = {};
     for (const col of orderedColumns) {
-      const key = col.key;
-      const before = baseData?.[key];
-      const after = draft?.[key];
-      const isEqual =
-        Array.isArray(before) && Array.isArray(after)
-          ? before.length === after.length && before.every((v, idx) => v === after[idx])
-          : before === after;
-      if (!isEqual) {
-        if (col.type === 'select' && after === '') next[key] = null;
-        else next[key] = after;
+      const before = baseData?.[col.key];
+      const after = draft?.[col.key];
+      if (shallowEqual(before, after)) {
+        continue;
       }
+      next[col.key] = col.type === 'select' && after === '' ? null : after;
     }
     return next;
   }, [orderedColumns, baseData, draft]);
@@ -142,22 +240,26 @@ export function RowDrawer({
 
   const title = row ? `Row #${row.rowNumber}` : 'Row';
 
+  const handleNonDirtySave = (intent: string) => {
+    if (intent === 'close') { onClose(); }
+    if (intent === 'next') { void onSaveAndNext?.(row!.id, {}); }
+  };
+
+  const getSaveHandler = (intent: string): (() => Promise<void>) | null => {
+    if (intent === 'close' && onSaveAndClose) { return () => onSaveAndClose(row!.id, patch); }
+    if (intent === 'next' && onSaveAndNext) { return () => onSaveAndNext(row!.id, patch); }
+    return null;
+  };
+
   const applySave = async (intent: 'save' | 'close' | 'next') => {
-    if (!row) return;
-    if (!isDirty) {
-      if (intent === 'close') onClose();
-      if (intent === 'next') {
-        await onSaveAndNext?.(row.id, {});
-      }
-      return;
-    }
+    if (!row) { return; }
+    if (!isDirty) { handleNonDirtySave(intent); return; }
 
     setSaving(true);
     try {
-      if (intent === 'close' && onSaveAndClose) {
-        await onSaveAndClose(row.id, patch);
-      } else if (intent === 'next' && onSaveAndNext) {
-        await onSaveAndNext(row.id, patch);
+      const handler = getSaveHandler(intent);
+      if (handler) {
+        await handler();
       } else {
         await onSave(row.id, patch);
         setBaseData(prev => ({ ...(prev || {}), ...patch }));
@@ -262,103 +364,8 @@ export function RowDrawer({
                       <Typography style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                         {formatValue(col.type, value)}
                       </Typography>
-                    ) : col.type === 'boolean' ? (
-                      <Box sx={{ mt: 1.5, display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-                        <Checkbox
-                          checked={Boolean(value)}
-                          onCheckedChange={checked =>
-                            setDraft(prev => ({
-                              ...prev,
-                              [col.key]: checked,
-                            }))
-                          }
-                          className="h-5 w-5"
-                        />
-                        <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{value ? 'Yes' : 'No'}</Typography>
-                      </Box>
-                    ) : col.type === 'number' ? (
-                      <input
-                        type="number"
-                        step="any"
-                        value={value === null || value === undefined ? '' : String(value)}
-                        onChange={e =>
-                          setDraft(prev => ({
-                            ...prev,
-                            [col.key]: e.target.value.trim() === '' ? null : Number(e.target.value),
-                          }))
-                        }
-                        style={inputSx}
-                      />
-                    ) : col.type === 'date' ? (
-                      <input
-                        type="date"
-                        value={value ? String(value) : ''}
-                        onChange={e =>
-                          setDraft(prev => ({
-                            ...prev,
-                            [col.key]: e.target.value.trim() ? e.target.value.trim() : null,
-                          }))
-                        }
-                        style={inputSx}
-                      />
-                    ) : col.type === 'select' && options.length ? (
-                      <select
-                        value={String(value ?? '')}
-                        onChange={e =>
-                          setDraft(prev => ({
-                            ...prev,
-                            [col.key]: e.target.value,
-                          }))
-                        }
-                        style={inputSx}
-                      >
-                        <option value="">—</option>
-                        {options.map(opt => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                    ) : col.type === 'multi_select' && options.length ? (
-                      <Box sx={{ mt: 1.5, display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
-                        {options.map(opt => {
-                          const selected = Array.isArray(value) && value.includes(opt);
-                          return (
-                            <Box
-                              key={opt}
-                              sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}
-                            >
-                              <Checkbox
-                                checked={selected}
-                                onCheckedChange={checked => {
-                                  const next = Array.isArray(value) ? [...value] : [];
-                                  const updated = checked
-                                    ? Array.from(new Set([...next, opt]))
-                                    : next.filter(v => v !== opt);
-                                  setDraft(prev => ({
-                                    ...prev,
-                                    [col.key]: updated,
-                                  }));
-                                }}
-                                className="h-5 w-5"
-                              />
-                              <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{opt}</Typography>
-                            </Box>
-                          );
-                        })}
-                      </Box>
                     ) : (
-                      <input
-                        type="text"
-                        value={value === null || value === undefined ? '' : String(value)}
-                        onChange={e =>
-                          setDraft(prev => ({
-                            ...prev,
-                            [col.key]: e.target.value,
-                          }))
-                        }
-                        style={inputSx}
-                      />
+                      <ColumnFieldEditor col={col} value={value} options={options} inputSx={inputSx} setDraft={setDraft} />
                     )}
                   </Box>
                 );
@@ -402,21 +409,11 @@ export function RowDrawer({
         )}
 
         {activeTab === 'history' && (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {historyLoading ? (
-              <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
-                <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading history...</Typography>
-              </Box>
-            ) : (
-              <EntityHistoryTimeline
-                events={historyEvents}
-                onSelect={event => {
-                  setSelectedHistoryEvent(event);
-                  setHistoryDrawerOpen(true);
-                }}
-              />
-            )}
-          </Box>
+          <HistoryTab
+            loading={historyLoading}
+            events={historyEvents}
+            onSelectEvent={event => { setSelectedHistoryEvent(event); setHistoryDrawerOpen(true); }}
+          />
         )}
       </Box>
 

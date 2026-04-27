@@ -211,60 +211,54 @@ export function useBulkRowActions({
     [tableId],
   );
 
+  const applyPaidUpdates = (succeededMap: Map<string, boolean>, colKey: string): void => {
+    if (!succeededMap.size) { return; }
+    setRows(prev =>
+      prev.map(row =>
+        succeededMap.has(row.id)
+          ? { ...row, data: { ...(row.data || {}), [colKey]: succeededMap.get(row.id) } }
+          : row,
+      ),
+    );
+  };
+
+  const executeBulkPaid = async (paid: boolean, ids: string[]): Promise<string[]> => {
+    const resolvedPaidColKey = await ensurePaidStatusColumnKey();
+    const predictions = await classifyPaidStatuses(ids);
+    const updates = ids.map(rowId => ({
+      rowId,
+      value: predictions.get(rowId) ?? paid,
+    }));
+    const results = await Promise.allSettled(
+      updates.map(u =>
+        apiClient.patch(`/custom-tables/${tableId}/rows/${u.rowId}`, {
+          data: { [resolvedPaidColKey]: u.value },
+        }),
+      ),
+    );
+    const { succeededMap, failedIds } = partitionResults(results, updates);
+    applyPaidUpdates(succeededMap, resolvedPaidColKey);
+    setSelectedRowIds(failedIds);
+    return failedIds;
+  };
+
   const markSelectedRowsPaid = useCallback(
     async (paid: boolean) => {
-      if (!tableId) return;
+      if (!tableId || !selectedRowIds.length || bulkMarking) { return; }
       const ids = [...selectedRowIds];
-      if (!ids.length) return;
-      if (bulkMarking) return;
-      setBulkMarking(paid ? 'paid' : 'unpaid');
-      const toastId = toast.loading(paid ? messages.markingPaid : messages.markingUnpaid);
+      const markingLabel = paid ? 'paid' as const : 'unpaid' as const;
+      const loadingMessage = paid ? messages.markingPaid : messages.markingUnpaid;
+      const successMessage = paid ? messages.markedPaid : messages.markedUnpaid;
+      setBulkMarking(markingLabel);
+      const toastId = toast.loading(loadingMessage);
       try {
-        const resolvedPaidColKey = await ensurePaidStatusColumnKey();
-        const predictions = await classifyPaidStatuses(ids);
-        const updates = ids.map(rowId => {
-          const predicted = predictions.get(rowId);
-          const value = predicted === null || predicted === undefined ? paid : predicted;
-          return { rowId, value };
-        });
-        const results = await Promise.allSettled(
-          updates.map(update =>
-            apiClient.patch(`/custom-tables/${tableId}/rows/${update.rowId}`, {
-              data: { [resolvedPaidColKey]: update.value },
-            }),
-          ),
-        );
-        const failedIds: string[] = [];
-        const succeededMap = new Map<string, boolean>();
-        results.forEach((result, index) => {
-          const update = updates[index];
-          if (result.status === 'fulfilled') {
-            succeededMap.set(update.rowId, update.value);
-          } else {
-            failedIds.push(update.rowId);
-          }
-        });
-        if (succeededMap.size) {
-          setRows(prev =>
-            prev.map(row => {
-              if (!succeededMap.has(row.id)) return row;
-              return {
-                ...row,
-                data: {
-                  ...(row.data || {}),
-                  [resolvedPaidColKey]: succeededMap.get(row.id) as boolean,
-                },
-              };
-            }),
-          );
-        }
-        setSelectedRowIds(failedIds);
+        const failedIds = await executeBulkPaid(paid, ids);
         if (failedIds.length) {
           toast.error(messages.updateSomeRowsFailed, { id: toastId });
         } else {
-          toast.success(paid ? messages.markedPaid : messages.markedUnpaid, { id: toastId });
+          toast.success(successMessage, { id: toastId });
         }
-        refreshStats();
+        void refreshStats();
       } catch (error) {
         console.error('Failed to mark rows:', error);
         toast.error(messages.updateRowsFailed, { id: toastId });

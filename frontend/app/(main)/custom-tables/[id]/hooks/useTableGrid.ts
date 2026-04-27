@@ -55,67 +55,89 @@ export function useTableGrid({
     combinedFiltersRef.current = combinedFiltersParam;
   }, [combinedFiltersParam]);
 
+  const isStaleRequest = (controller: AbortController, requestId: number): boolean =>
+    controller.signal.aborted || requestId !== rowsRequestSeqRef.current;
+
+  const cleanupLoadState = (controller: AbortController, requestId: number): void => {
+    if (requestId === rowsRequestSeqRef.current) {
+      loadingRowsRef.current = false;
+      setLoadingRows(false);
+    }
+    if (rowsAbortControllerRef.current === controller) {
+      rowsAbortControllerRef.current = null;
+    }
+  };
+
+  const extractRows = (response: { data?: { items?: unknown[]; data?: { items?: unknown[] } } }): unknown[] => {
+    const items = response.data?.items || response.data?.data?.items || [];
+    return Array.isArray(items) ? items : [];
+  };
+
+  const dedupeRows = <T,>(merged: T[]): T[] => {
+    const seen = new Set<string>();
+    const result: T[] = [];
+    for (const row of merged) {
+      const id = getRowIdentity(row);
+      if (!id || seen.has(id)) { continue; }
+      seen.add(id);
+      result.push(row);
+    }
+    return result;
+  };
+
+  const applyFetchedRows = (fetched: unknown[], reset: boolean): void => {
+    if (reset) {
+      setRows(() => dedupeRows(fetched as CustomTableGridRow[]));
+    } else {
+      setRows(prev => dedupeRows([...prev, ...(fetched as CustomTableGridRow[])]));
+    }
+  };
+
+  const handleLoadError = (error: unknown): void => {
+    if (!isAbortError(error)) {
+      console.error('Failed to load rows:', error);
+      toast.error(loadRowsFailedMessage);
+    }
+  };
+
+  const canStartLoad = (shouldReset: boolean): boolean => {
+    if (!tableId) { return false; }
+    return shouldReset || !loadingRowsRef.current;
+  };
+
   const loadRows = useCallback(
     async (opts?: { reset?: boolean; filtersParam?: string }) => {
-      if (!tableId) return;
       const shouldReset = Boolean(opts?.reset);
-      if (!shouldReset && loadingRowsRef.current) return;
+      if (!canStartLoad(shouldReset)) { return; }
 
       rowsRequestSeqRef.current += 1;
       const requestId = rowsRequestSeqRef.current;
-
-      if (shouldReset) {
-        rowsAbortControllerRef.current?.abort();
-      }
+      if (shouldReset) { rowsAbortControllerRef.current?.abort(); }
 
       const controller = new AbortController();
       rowsAbortControllerRef.current = controller;
       loadingRowsRef.current = true;
       setLoadingRows(true);
 
-      try {
-        const cursor = shouldReset
-          ? undefined
-          : rowsRef.current[rowsRef.current.length - 1]?.rowNumber;
-        const filters = opts?.filtersParam ?? combinedFiltersRef.current;
+      const cursor = shouldReset ? undefined : rowsRef.current.at(-1)?.rowNumber;
+      const filters = opts?.filtersParam ?? combinedFiltersRef.current;
 
+      try {
         const response = await apiClient.get(`/custom-tables/${tableId}/rows`, {
           signal: controller.signal,
           params: { cursor, limit: 50, filters },
         });
-
-        if (controller.signal.aborted || requestId !== rowsRequestSeqRef.current) return;
-
-        const items = response.data?.items || response.data?.data?.items || [];
-        const next = Array.isArray(items) ? items : [];
-        setRows(prev => {
-          const merged = shouldReset ? next : [...prev, ...next];
-          const seen = new Set<string>();
-          const deduped: typeof merged = [];
-          for (const row of merged) {
-            const id = getRowIdentity(row);
-            if (!id || seen.has(id)) continue;
-            seen.add(id);
-            deduped.push(row);
-          }
-          return deduped;
-        });
+        if (isStaleRequest(controller, requestId)) { return; }
+        const next = extractRows(response);
+        applyFetchedRows(next, shouldReset);
         setHasMore(next.length >= 50);
       } catch (error) {
-        if (isAbortError(error)) return;
-        console.error('Failed to load rows:', error);
-        toast.error(loadRowsFailedMessage);
+        handleLoadError(error);
       } finally {
-        if (requestId === rowsRequestSeqRef.current) {
-          loadingRowsRef.current = false;
-          setLoadingRows(false);
-        }
-        if (rowsAbortControllerRef.current === controller) {
-          rowsAbortControllerRef.current = null;
-        }
+        cleanupLoadState(controller, requestId);
       }
     },
-    [tableId, loadRowsFailedMessage],
+    [tableId, loadRowsFailedMessage], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   // Reset and reload when filters or tableId changes

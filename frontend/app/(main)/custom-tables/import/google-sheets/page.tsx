@@ -73,6 +73,31 @@ type SheetCellStyle = {
   textFormat?: SheetTextFormat;
 };
 
+type JobPollResult = {
+  status: string;
+  progress: number;
+  stage: string;
+  error: string;
+  tableId?: string;
+};
+
+async function fetchJobStatus(jobId: string): Promise<JobPollResult | null> {
+  try {
+    const response = await apiClient.get(`/custom-tables/import/jobs/${jobId}`);
+    const payload = response.data?.data || response.data;
+    return {
+      status: String(payload?.status || ''),
+      progress: typeof payload?.progress === 'number' ? payload.progress : 0,
+      stage: String(payload?.stage || ''),
+      error: String(payload?.error || ''),
+      tableId: payload?.result?.tableId,
+    };
+  } catch (error) {
+    console.error('Job poll failed:', error);
+    return null;
+  }
+}
+
 export default function GoogleSheetsImportPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -155,23 +180,21 @@ export default function GoogleSheetsImportPage() {
   }, [selectedConnection]);
 
   useEffect(() => {
-    const loadWorksheets = async () => {
-      if (!selectedConnection?.sheetId || selectedConnection.oauthConnected === false) {
-        setWorksheetOptions([]);
-        return;
-      }
+    if (!selectedConnection?.sheetId || selectedConnection.oauthConnected === false) {
+      setWorksheetOptions([]);
+      return;
+    }
+    const sheetId = selectedConnection.sheetId;
+    const fallbackName = selectedConnection.worksheetName || '';
 
+    const loadWorksheets = async () => {
       try {
         setLoadingWorksheets(true);
-        const response = await apiClient.get(
-          `/google-sheets/spreadsheets/${selectedConnection.sheetId}/worksheets`,
-        );
+        const response = await apiClient.get(`/google-sheets/spreadsheets/${sheetId}/worksheets`);
         const items: WorksheetOption[] = response.data?.data || response.data || [];
         setWorksheetOptions(items);
-        setWorksheetName(current =>
-          getDefaultWorksheetName(current || selectedConnection.worksheetName || '', items),
-        );
-      } catch (error) {
+        setWorksheetName(current => getDefaultWorksheetName(current || fallbackName, items));
+      } catch {
         setWorksheetOptions([]);
       } finally {
         setLoadingWorksheets(false);
@@ -182,9 +205,10 @@ export default function GoogleSheetsImportPage() {
   }, [selectedConnection]);
 
   const handlePreview = async () => {
-    if (!googleSheetId) return;
-    if (selectedConnection?.oauthConnected === false) {
-      toast.error(t.toasts.oauthRequired.value);
+    if (!googleSheetId || selectedConnection?.oauthConnected === false) {
+      if (selectedConnection?.oauthConnected === false) {
+        toast.error(t.toasts.oauthRequired.value);
+      }
       return;
     }
     setLoadingPreview(true);
@@ -196,14 +220,12 @@ export default function GoogleSheetsImportPage() {
         headerRowIndex,
         layoutType,
       });
-
       const data: PreviewResponse = response.data?.data || response.data;
       setPreview(data);
       setColumns(data.columns || []);
       setHeaderRowIndex(data.headerRowIndex ?? headerRowIndex);
-      if (!tableName.trim()) {
-        setTableName(selectedConnection?.sheetName || t.defaults.tableName.value);
-      }
+      const fallbackName = selectedConnection?.sheetName || t.defaults.tableName.value;
+      setTableName(prev => prev.trim() ? prev : fallbackName);
       toast.success(t.toasts.previewReady.value);
     } catch (error: unknown) {
       console.error('Preview failed:', error);
@@ -261,37 +283,29 @@ export default function GoogleSheetsImportPage() {
     let timer: number | null = null;
 
     const poll = async () => {
-      try {
-        const response = await apiClient.get(`/custom-tables/import/jobs/${jobId}`);
-        const payload = response.data?.data || response.data;
-        if (cancelled) return;
-
-        const status = String(payload?.status || '');
-        setJobStatus(status);
-        setJobProgress(typeof payload?.progress === 'number' ? payload.progress : 0);
-        setJobStage(String(payload?.stage || ''));
-        setJobError(String(payload?.error || ''));
-
-        if (status === 'done') {
-          const tableId = payload?.result?.tableId;
-          toast.success(t.toasts.importDone.value);
-          if (tableId) {
-            router.push(`/custom-tables/${tableId}`);
-          } else {
-            router.push('/custom-tables');
-          }
-          return;
-        }
-
-        if (status === 'failed') {
-          toast.error(payload?.error || t.toasts.importError.value);
-          return;
-        }
-      } catch (error) {
-        if (cancelled) return;
-        console.error('Job poll failed:', error);
+      const result = await fetchJobStatus(jobId);
+      if (cancelled) {
+        return;
       }
+      if (!result) {
+        timer = window.setTimeout(poll, 1500);
+        return;
+      }
+      setJobStatus(result.status);
+      setJobProgress(result.progress);
+      setJobStage(result.stage);
+      setJobError(result.error);
 
+      if (result.status === 'done') {
+        toast.success(t.toasts.importDone.value);
+        const dest = result.tableId ? `/custom-tables/${result.tableId}` : '/custom-tables';
+        router.push(dest);
+        return;
+      }
+      if (result.status === 'failed') {
+        toast.error(result.error || t.toasts.importError.value);
+        return;
+      }
       timer = window.setTimeout(poll, 1500);
     };
 
@@ -814,43 +828,50 @@ const mapHorizontalAlignment = (value: unknown): CSSProperties['textAlign'] | un
   return undefined;
 };
 
+const getTextFormatCss = (tf: SheetTextFormat | null) => {
+  if (!tf) {
+    return {};
+  }
+  const color = typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined;
+  const fontWeight = typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined;
+  const fontStyle = typeof tf.italic === 'boolean' ? (tf.italic ? 'italic' : 'normal') : undefined;
+  const fontSize =
+    typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
+      ? tf.fontSize
+      : undefined;
+  const fontFamily = typeof tf.fontFamily === 'string' && tf.fontFamily.trim() ? tf.fontFamily : undefined;
+  return { color, fontWeight, fontStyle, fontSize, fontFamily };
+};
+
+const getTextDecorationLine = (tf: SheetTextFormat | null): CSSProperties['textDecorationLine'] | undefined => {
+  if (!tf) {
+    return undefined;
+  }
+  const underline = typeof tf.underline === 'boolean' ? tf.underline : undefined;
+  const strikethrough = typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
+  if (underline === true || strikethrough === true) {
+    const parts: string[] = [];
+    if (underline === true) parts.push('underline');
+    if (strikethrough === true) parts.push('line-through');
+    return parts.join(' ') as CSSProperties['textDecorationLine'];
+  }
+  if (underline === false || strikethrough === false) {
+    return 'none';
+  }
+  return undefined;
+};
+
 const sheetStyleToCss = (style: SheetCellStyle) => {
   const backgroundColor =
     typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined;
   const textAlign = mapHorizontalAlignment(style.horizontalAlignment);
   const tf = style.textFormat ?? null;
-  const color = tf && typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined;
-  const fontWeight = tf && typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined;
-  const fontStyle =
-    tf && typeof tf.italic === 'boolean' ? (tf.italic ? 'italic' : 'normal') : undefined;
-
-  const underline = tf && typeof tf.underline === 'boolean' ? tf.underline : undefined;
-  const strikethrough = tf && typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
-  let textDecorationLine: CSSProperties['textDecorationLine'] | undefined;
-  if (underline === true || strikethrough === true) {
-    const parts: string[] = [];
-    if (underline === true) parts.push('underline');
-    if (strikethrough === true) parts.push('line-through');
-    textDecorationLine = parts.join(' ') as CSSProperties['textDecorationLine'];
-  } else if (underline === false || strikethrough === false) {
-    textDecorationLine = 'none';
-  }
-
-  const fontSize =
-    tf && typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
-      ? tf.fontSize
-      : undefined;
-  const fontFamily =
-    tf && typeof tf.fontFamily === 'string' && tf.fontFamily.trim() ? tf.fontFamily : undefined;
+  const textDecorationLine = getTextDecorationLine(tf);
 
   return {
     backgroundColor,
     textAlign,
-    color,
-    fontWeight,
-    fontStyle,
+    ...getTextFormatCss(tf),
     textDecorationLine,
-    fontSize,
-    fontFamily,
   };
 };

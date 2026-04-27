@@ -4,8 +4,39 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import { Spinner } from '@/app/components/ui/spinner';
 import { Box, Typography } from '@mui/material';
-import type { PasteErrorKey, PastePreviewData } from '../utils/pasteUtils';
+import type { PasteErrorKey, PastePreviewData, PastePreviewRow } from '../utils/pasteUtils';
 import { tx } from '../utils/tableHelpers';
+
+// ---------------------------------------------------------------------------
+// Sub-components extracted to reduce cognitive complexity
+// ---------------------------------------------------------------------------
+
+function PasteTableCell({
+  cell,
+  rowIndex,
+  onCellChange,
+}: {
+  cell: PastePreviewRow['cells'][number];
+  rowIndex: number;
+  onCellChange: (rowIndex: number, sourceIndex: number, value: string) => void;
+}) {
+  const bgColor = cell.error ? 'var(--color-error-soft-bg)' : 'transparent';
+  const textColor = cell.error ? '#b91c1c' : 'var(--foreground)';
+
+  return (
+    <td style={{ padding: '8px 12px', borderRight: '1px solid var(--muted)', background: bgColor, color: textColor }}>
+      {cell.sourceIndex !== null ? (
+        <input
+          value={cell.value}
+          onChange={event => onCellChange(rowIndex, cell.sourceIndex as number, event.target.value)}
+          style={{ width: '100%', background: 'transparent', border: 'none', padding: 0, outline: 'none', fontSize: 14, color: textColor }}
+        />
+      ) : (
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cell.value || '\u2014'}</div>
+      )}
+    </td>
+  );
+}
 
 interface PastePreviewModalProps {
   t: unknown;
@@ -135,26 +166,12 @@ export function PastePreviewModal({
                     {pastePreview.previewRows.map(row => (
                       <tr key={row.id} style={{ borderBottom: '1px solid var(--muted)' }}>
                         {row.cells.map((cell, index) => (
-                          <td
+                          <PasteTableCell
                             key={`${row.id}-${index}`}
-                            style={{ padding: '8px 12px', borderRight: '1px solid var(--muted)', background: cell.error ? 'var(--color-error-soft-bg)' : 'transparent', color: cell.error ? '#b91c1c' : 'var(--foreground)' }}
-                          >
-                            {cell.sourceIndex !== null ? (
-                              <input
-                                value={cell.value}
-                                onChange={event =>
-                                  onCellChange(
-                                    row.rowIndex,
-                                    cell.sourceIndex as number,
-                                    event.target.value,
-                                  )
-                                }
-                                style={{ width: '100%', background: 'transparent', border: 'none', padding: 0, outline: 'none', fontSize: 14, color: cell.error ? '#b91c1c' : 'var(--foreground)' }}
-                              />
-                            ) : (
-                              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cell.value || '—'}</div>
-                            )}
-                          </td>
+                            cell={cell}
+                            rowIndex={row.rowIndex}
+                            onCellChange={onCellChange}
+                          />
                         ))}
                       </tr>
                     ))}

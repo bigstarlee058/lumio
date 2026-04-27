@@ -216,15 +216,20 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
     if (!jobId) return;
     let cancelled = false;
     let timer: number | null = null;
+    const handlePollResult = (result: PollResult): void => {
+      if (result.status === 'done') {
+        toast.success(msgs.importDone);
+        router.push(result.tableId ? `/custom-tables/${result.tableId}` : '/custom-tables');
+      }
+      if (result.status === 'failed') {
+        toast.error(result.errorMsg || msgs.importError);
+      }
+    };
     const poll = (): void => {
       void apiClient.get(`/custom-tables/import/jobs/${jobId}`).then(res => {
         const payload = res.data?.data || res.data;
         const result = extractPollResult({ payload, cancelled, setJobStatus, setJobProgress, setJobStage, setJobError });
-        if (!result.shouldContinue) {
-          if (result.status === 'done') { toast.success(msgs.importDone); router.push(result.tableId ? `/custom-tables/${result.tableId}` : '/custom-tables'); }
-          if (result.status === 'failed') { toast.error(result.errorMsg || msgs.importError); }
-          return;
-        }
+        if (!result.shouldContinue) { handlePollResult(result); return; }
         timer = window.setTimeout(poll, 1500);
       }).catch(() => { if (!cancelled) timer = window.setTimeout(poll, 1500); });
     };

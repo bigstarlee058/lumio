@@ -58,63 +58,46 @@ export function useTabStats({
   const statsRequestSeqRef = useRef(0);
   const statsAbortControllerRef = useRef<AbortController | null>(null);
 
+  const fetchTotalOnly = async (signal: AbortSignal): Promise<TabCounts> => {
+    const response = await apiClient.get(`/custom-tables/${tableId}/rows`, {
+      signal, params: { limit: 1 },
+    });
+    return { total: readRowsTotal(response), paid: null, unpaid: null };
+  };
+
+  const fetchAllStats = async (signal: AbortSignal, colKey: string): Promise<TabCounts> => {
+    const [totalRes, paidRes, unpaidRes] = await Promise.all([
+      apiClient.get(`/custom-tables/${tableId}/rows`, { signal, params: { limit: 1 } }),
+      apiClient.get(`/custom-tables/${tableId}/rows`, {
+        signal, params: { limit: 1, filters: JSON.stringify([{ col: colKey, op: 'eq', value: true }]) },
+      }),
+      apiClient.get(`/custom-tables/${tableId}/rows`, {
+        signal, params: { limit: 1, filters: JSON.stringify([{ col: colKey, op: 'eq', value: false }]) },
+      }),
+    ]);
+    return { total: readRowsTotal(totalRes), paid: readRowsTotal(paidRes), unpaid: readRowsTotal(unpaidRes) };
+  };
+
   const refreshStats = useCallback(async () => {
-    if (!tableId || !isAuthenticated) return;
+    if (!tableId || !isAuthenticated) { return; }
     statsRequestSeqRef.current += 1;
     const requestId = statsRequestSeqRef.current;
     statsAbortControllerRef.current?.abort();
     const controller = new AbortController();
     statsAbortControllerRef.current = controller;
+    const fetchCounts = paidColKey
+      ? () => fetchAllStats(controller.signal, paidColKey)
+      : () => fetchTotalOnly(controller.signal);
 
     try {
-      const totalRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: { limit: 1 },
-      });
-
-      if (!paidColKey) {
-        const totalResponse = await totalRequest;
-        if (controller.signal.aborted || requestId !== statsRequestSeqRef.current) return;
-        setTabCounts({ total: readRowsTotal(totalResponse), paid: null, unpaid: null });
-        return;
-      }
-
-      const paidRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: {
-          limit: 1,
-          filters: JSON.stringify([{ col: paidColKey, op: 'eq', value: true }]),
-        },
-      });
-      const unpaidRequest = apiClient.get(`/custom-tables/${tableId}/rows`, {
-        signal: controller.signal,
-        params: {
-          limit: 1,
-          filters: JSON.stringify([{ col: paidColKey, op: 'eq', value: false }]),
-        },
-      });
-
-      const [totalResponse, paidResponse, unpaidResponse] = await Promise.all([
-        totalRequest,
-        paidRequest,
-        unpaidRequest,
-      ]);
-      if (controller.signal.aborted || requestId !== statsRequestSeqRef.current) return;
-
-      setTabCounts({
-        total: readRowsTotal(totalResponse),
-        paid: readRowsTotal(paidResponse),
-        unpaid: readRowsTotal(unpaidResponse),
-      });
+      const counts = await fetchCounts();
+      if (requestId === statsRequestSeqRef.current) { setTabCounts(counts); }
     } catch (error) {
-      if (isAbortError(error)) return;
-      console.error('Failed to fetch table stats:', error);
+      if (!isAbortError(error)) { console.error('Failed to fetch table stats:', error); }
     } finally {
-      if (statsAbortControllerRef.current === controller) {
-        statsAbortControllerRef.current = null;
-      }
+      if (statsAbortControllerRef.current === controller) { statsAbortControllerRef.current = null; }
     }
-  }, [paidColKey, tableId, isAuthenticated]);
+  }, [paidColKey, tableId, isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-refresh when params change
   useEffect(() => {

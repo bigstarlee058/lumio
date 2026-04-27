@@ -130,47 +130,43 @@ export const mapFontFamily = (value: string): string | undefined => {
   return `${quoted}, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
 };
 
-export const sheetStyleToCss = (style: SheetStyle) => {
-  const backgroundColor =
-    typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined;
-  const textAlign = mapHorizontalAlignment(style.horizontalAlignment);
-  const verticalAlign = mapVerticalAlignment(style.verticalAlignment);
-
-  const tf = style.textFormat && typeof style.textFormat === 'object' ? style.textFormat : null;
-  const color = tf && typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined;
-  const fontWeight = tf && typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined;
-  const fontStyle =
-    tf && typeof tf.italic === 'boolean' ? (tf.italic ? 'italic' : 'normal') : undefined;
-
-  const underline = tf && typeof tf.underline === 'boolean' ? tf.underline : undefined;
-  const strikethrough = tf && typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
-  let textDecorationLine: CSSProperties['textDecorationLine'] | undefined;
+const extractTextDecoration = (
+  tf: SheetTextFormat,
+): CSSProperties['textDecorationLine'] | undefined => {
+  const underline = typeof tf.underline === 'boolean' ? tf.underline : undefined;
+  const strikethrough = typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
   if (underline === true || strikethrough === true) {
     const parts: string[] = [];
-    if (underline === true) parts.push('underline');
-    if (strikethrough === true) parts.push('line-through');
-    textDecorationLine = parts.join(' ') as CSSProperties['textDecorationLine'];
-  } else if (underline === false || strikethrough === false) {
-    textDecorationLine = 'none';
+    if (underline === true) { parts.push('underline'); }
+    if (strikethrough === true) { parts.push('line-through'); }
+    return parts.join(' ') as CSSProperties['textDecorationLine'];
   }
+  if (underline === false || strikethrough === false) { return 'none'; }
+  return undefined;
+};
 
-  const fontSize =
-    tf && typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
+const extractTextFormatCss = (tf: SheetTextFormat) => ({
+  color: typeof tf.foregroundColor === 'string' ? tf.foregroundColor : undefined,
+  fontWeight: typeof tf.bold === 'boolean' ? (tf.bold ? 700 : 400) : undefined,
+  fontStyle: typeof tf.italic === 'boolean' ? (tf.italic ? 'italic' : 'normal') : undefined,
+  textDecorationLine: extractTextDecoration(tf),
+  fontSize:
+    typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
       ? tf.fontSize
-      : undefined;
-  const fontFamily =
-    tf && typeof tf.fontFamily === 'string' ? mapFontFamily(tf.fontFamily) : undefined;
+      : undefined,
+  fontFamily: typeof tf.fontFamily === 'string' ? mapFontFamily(tf.fontFamily) : undefined,
+});
+
+export const sheetStyleToCss = (style: SheetStyle) => {
+  const tf = style.textFormat && typeof style.textFormat === 'object' ? style.textFormat : null;
+  const textProps = tf ? extractTextFormatCss(tf) : {};
 
   return {
-    backgroundColor,
-    textAlign,
-    verticalAlign,
-    color,
-    fontWeight,
-    fontStyle,
-    textDecorationLine,
-    fontSize,
-    fontFamily,
+    backgroundColor:
+      typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined,
+    textAlign: mapHorizontalAlignment(style.horizontalAlignment),
+    verticalAlign: mapVerticalAlignment(style.verticalAlignment),
+    ...textProps,
   };
 };
 
