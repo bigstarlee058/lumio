@@ -25,7 +25,7 @@ type WorkspaceLike = { id: string; name?: string | null };
 type SortKey = 'amount' | 'average' | 'operations';
 type SourceLabels = { sourceBank: string; sourceReceipt: string; sourceGmailInbox: string };
 
-const STORAGE_KEY = 'lumio-spend-over-time-filters-v2';
+const STORAGE_KEY = 'lumio-spend-over-time-filters-v3';
 
 export type SpendOverTimeViewModelReturn = UseSpendOverTimeStateReturn & SpendOverTimeDataReturn & {
   labels: Record<string, string>;
@@ -71,6 +71,7 @@ export const useSpendOverTimeViewModel = (): SpendOverTimeViewModelReturn => {
     { value: 'year', label: 'Year' },
   ], []);
   const viewOptions = useMemo(() => [
+    { value: 'calendar', label: 'Calendar' },
     { value: 'line', label: 'Line' },
     { value: 'bar', label: 'Bar' },
     { value: 'stacked', label: 'Stacked' },

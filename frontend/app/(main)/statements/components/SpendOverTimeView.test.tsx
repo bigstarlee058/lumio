@@ -326,9 +326,11 @@ describe('SpendOverTimeView', () => {
 
     expect(container.textContent).toContain('Spend over time');
     expect(container.textContent).toContain('Current workspace');
-    expect(container.textContent).toContain('View: Line');
-    expect(container.textContent).toContain('Group by: Month');
-    expect(container.textContent).toContain('Jan 2026');
+    expect(container.textContent).toContain('View: Calendar');
+    expect(container.textContent).toContain('Calendar view');
+    expect(container.textContent).toContain('January 2026');
+    expect(container.textContent).toContain('Anthropic');
+    expect(container.textContent).toContain('Uber');
     expect(container.textContent).not.toContain('Feb 2026');
     expect(container.textContent).not.toContain('Duplicate Anthropic receipt');
   });
@@ -344,7 +346,7 @@ describe('SpendOverTimeView', () => {
     });
 
     const rowButton = Array.from(container.querySelectorAll('button')).find(button =>
-      button.textContent?.includes('Jan 2026'),
+      button.textContent?.includes('Anthropic'),
     );
 
     expect(rowButton).toBeTruthy();
@@ -353,9 +355,8 @@ describe('SpendOverTimeView', () => {
       rowButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    expect(document.body.textContent).toContain('Jan 2026 - Drill-down');
+    expect(document.body.textContent).toContain('2026-01-10 - Drill-down');
     expect(document.body.textContent).toContain('Anthropic');
-    expect(document.body.textContent).toContain('Uber');
   });
 
   it('shows empty state actions when no operations match filters', async () => {
