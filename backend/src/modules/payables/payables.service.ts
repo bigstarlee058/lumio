@@ -11,6 +11,7 @@ import { Payable, PayableSource, PayableStatus } from '../../entities/payable.en
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { NotificationsService } from '../notifications/notifications.service';
+import { normalizePagination } from '../../common/utils/pagination.util';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { ExportFormat, FilterPayablesDto, PayablesSortOption } from './dto/filter-payables.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
@@ -59,10 +60,9 @@ export class PayablesService {
   }
 
   async findAll(workspaceId: string, filters: FilterPayablesDto) {
-    const page = Math.max(filters.page || 1, 1);
-    const limit = Math.min(Math.max(filters.limit || 20, 1), 100);
+    const { page, limit, skip } = normalizePagination(filters);
     const queryBuilder = this.applySorting(this.buildFilteredQuery(workspaceId, filters), filters)
-      .skip((page - 1) * limit)
+      .skip(skip)
       .take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();

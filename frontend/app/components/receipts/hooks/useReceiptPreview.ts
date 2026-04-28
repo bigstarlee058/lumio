@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { ReceiptRecord } from '@/app/lib/api';
+import { apiBaseUrl, type ReceiptRecord } from '@/app/lib/api';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 
 interface UseReceiptPreviewParams {
@@ -21,8 +21,7 @@ const hasPreviewableAttachment = (receipt: ReceiptRecord): boolean => {
 };
 
 const fetchPreviewObjectUrl = async (receiptId: string): Promise<string | null> => {
-  const apiBase = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/$/, '');
-  const response = await fetch(`${apiBase}/receipts/${receiptId}/file`, {
+  const response = await fetch(`${apiBaseUrl}/receipts/${receiptId}/file`, {
     method: 'GET',
     headers: getWorkspaceHeaders(),
     credentials: 'include',

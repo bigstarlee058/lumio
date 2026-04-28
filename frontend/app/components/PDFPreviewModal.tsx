@@ -6,6 +6,7 @@ import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { Download, MoreVertical, X } from '@/app/components/icons';
 import { type ChangeEvent, type ComponentType, useEffect, useRef, useState } from 'react';
 import { ModalShell } from './ui/modal-shell';
+import { apiBaseUrl } from '@/app/lib/api';
 
 type ReactPdfComponentProps = Record<string, unknown>;
 
@@ -31,7 +32,6 @@ interface PDFPreviewModalProps {
   onParsingStarted?: () => void;
 }
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
 const isJsdomEnvironment = typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
 
 export function getFileEndpoint(source: 'statement' | 'gmail' | 'receipt', fileId: string): string {

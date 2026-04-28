@@ -19,6 +19,7 @@ import type {
 } from './interfaces/audit-event.interface';
 import { AuditDescriptionService } from './description/audit-description.service';
 import { RollbackService } from './rollback/rollback.service';
+import { normalizePagination } from '../../common/utils/pagination.util';
 
 @Injectable()
 export class AuditService {
@@ -98,14 +99,13 @@ export class AuditService {
     page: number;
     limit: number;
   }> {
-    const page = Math.max(Number(filter.page ?? 1), 1);
-    const limit = Math.min(Math.max(Number(filter.limit ?? 50), 1), 200);
+    const { page, limit, skip } = normalizePagination(filter, { defaultLimit: 50, maxLimit: 200 });
 
     const qb = this.auditEventRepository
       .createQueryBuilder('event')
       .leftJoinAndSelect('event.actor', 'actor')
       .orderBy('event.createdAt', 'DESC')
-      .skip((page - 1) * limit)
+      .skip(skip)
       .take(limit);
 
     if (filter.workspaceId) {

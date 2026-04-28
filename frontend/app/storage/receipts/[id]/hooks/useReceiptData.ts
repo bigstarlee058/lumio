@@ -1,6 +1,6 @@
 'use client';
 
-import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
+import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import type {
@@ -11,7 +11,6 @@ import type {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
 
 function buildLineItems(receipt: ReceiptRecord | null): EditableReceiptLineItem[] {
   return normalizeReceiptLineItems(receipt?.parsedData).map((item, index) => ({

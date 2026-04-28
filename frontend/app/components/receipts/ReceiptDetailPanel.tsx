@@ -3,7 +3,7 @@
 import { PDFPreviewModal } from '@/app/components/PDFPreviewModal';
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
+import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { Box, Divider, Typography } from '@mui/material';
@@ -107,7 +107,7 @@ export function ReceiptDetailPanel({
     const loadPreview = async () => {
       try {
         const response = await fetch(
-          `${(process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/$/, '')}/receipts/${receipt.id}/file`,
+          `${apiBaseUrl}/receipts/${receipt.id}/file`,
           {
             method: 'GET',
             headers: getWorkspaceHeaders(),

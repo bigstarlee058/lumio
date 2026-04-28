@@ -12,6 +12,7 @@ import {
   Transaction,
   TransactionType,
 } from '../../entities';
+import { normalizePagination } from '../../common/utils/pagination.util';
 import { ReceiptQueryDto } from './dto/receipt-query.dto';
 import { ReceiptProcessorService } from './services/receipt-processor.service';
 
@@ -87,8 +88,7 @@ export class ReceiptsService {
   }
 
   async findAll(workspaceId: string, query: ReceiptQueryDto) {
-    const page = Math.max(query.page ?? 1, 1);
-    const limit = Math.min(Math.max(query.limit ?? 20, 1), 100);
+    const { page, limit, skip } = normalizePagination(query);
     const where: Record<string, unknown> = { workspaceId };
 
     if (query.source) {
@@ -101,7 +101,7 @@ export class ReceiptsService {
     const [data, total] = await this.receiptRepository.findAndCount({
       where,
       order: { receivedAt: 'DESC' },
-      skip: (page - 1) * limit,
+      skip,
       take: limit,
     });
 
