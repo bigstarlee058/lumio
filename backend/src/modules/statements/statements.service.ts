@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
-import archiver from 'archiver';
+import archiver = require('archiver');
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
