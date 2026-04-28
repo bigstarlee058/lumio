@@ -75,8 +75,8 @@ describe('WorkspacesListContent', () => {
       const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
       const html = renderToStaticMarkup(<WorkspacesListContent />);
 
-      expect(html).toContain('aria-label="Loading"');
-      expect(html).toContain('role="status"');
+      expect(html).toContain('role="progressbar"');
+      expect(html).toContain('Loading...');
     } finally {
       workspaceState.loading = false;
     }
@@ -102,8 +102,8 @@ describe('WorkspacesListContent', () => {
 
     const searchInput = container.querySelector('input[aria-label="Search workspaces..."]');
     expect(searchInput).toBeTruthy();
-    expect(searchInput?.className).toContain('pl-11');
-    expect(searchInput?.className).toContain('rounded-md');
+    expect(searchInput?.getAttribute('style')).toContain('padding: 12px 16px 12px 44px');
+    expect(searchInput?.getAttribute('style')).toContain('border-radius: 10px');
   });
 
   it('switches to list format when list view button is clicked', async () => {
@@ -136,22 +136,18 @@ describe('WorkspacesListContent', () => {
     const html = renderToStaticMarkup(<WorkspacesListContent />);
 
     expect(html).toContain('Create Workspace');
-    expect(html).toContain('border-gray-200');
-    expect(html).toContain('bg-white');
-    expect(html).toContain('shadow-sm');
-    expect(html).toContain('hover:bg-gray-50');
-    expect(html).toContain('mb-3 text-primary');
-    expect(html).not.toContain('bg-gradient-to-br');
-    expect(html).not.toContain('shadow-[0_20px_45px_-28px_rgba(30,136,229,0.55)]');
-    expect(html).not.toContain('rounded-full');
+    expect(html).toContain('border:1px solid var(--border-color)');
+    expect(html).toContain('background:var(--card-bg)');
+    expect(html).toContain('border-radius:20px');
+    expect(html).toContain('color:var(--primary)');
   });
 
   it('keeps the create workspace tile at the same height as workspace cards', async () => {
     const { default: WorkspacesListContent } = await import('./WorkspacesListContent');
     const html = renderToStaticMarkup(<WorkspacesListContent />);
 
-    expect(html).toContain('h-full');
-    expect(html).toContain('w-full');
-    expect(html).toContain('aspect-video');
+    expect(html).toContain('height:100%');
+    expect(html).toContain('width:100%');
+    expect(html).toContain('aspect-ratio:16/9');
   });
 });

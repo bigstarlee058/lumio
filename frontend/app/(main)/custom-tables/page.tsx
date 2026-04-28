@@ -879,11 +879,9 @@ export default function CustomTablesPage() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleTableAction('import-google-sheets')}>
-                      <FileSpreadsheet className="h-4 w-4" />
                       {importGoogleSheetsLabel}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleTableAction('create-empty')}>
-                      <TableIcon className="h-4 w-4" />
                       {createBlankTableLabel}
                     </DropdownMenuItem>
                   </DropdownMenuContent>

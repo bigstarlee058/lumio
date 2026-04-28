@@ -31,6 +31,18 @@ vi.mock('@/app/i18n', () => ({
     empty: { value: 'Empty' },
     settingsLink: { value: 'Notification settings' },
     justNow: { value: 'just now' },
+    notificationTypes: {
+      receiptUncategorized: {
+        title: { value: 'Receipt without category' },
+        message: { value: 'Receipt "{{name}}" has no category' },
+        messageFallback: { value: 'Found a receipt without category' },
+      },
+      transactionUncategorized: {
+        title: { value: 'Transactions without category' },
+        messageSingular: { value: '{{count}} transaction needs a category' },
+        messagePlural: { value: '{{count}} transactions need a category' },
+      },
+    },
   }),
   useLocale: () => ({ locale: 'en' }),
 }));
@@ -135,7 +147,7 @@ describe('NotificationDropdown', () => {
     });
 
     const receiptNotification = Array.from(document.querySelectorAll('button')).find(button =>
-      button.textContent?.includes('Чек без категории'),
+      button.textContent?.includes('Receipt without category'),
     );
 
     expect(receiptNotification).toBeTruthy();
@@ -162,7 +174,7 @@ describe('NotificationDropdown', () => {
     });
 
     const transactionNotification = Array.from(document.querySelectorAll('button')).find(button =>
-      button.textContent?.includes('Транзакции без категории'),
+      button.textContent?.includes('Transactions without category'),
     );
 
     expect(transactionNotification).toBeTruthy();
@@ -190,6 +202,12 @@ describe('NotificationDropdown', () => {
 
     const title = document.querySelector('[data-testid="notification-menu"]')?.textContent;
     expect(title).toContain('Notifications');
+    expect(title).toContain('Receipt without category');
+    expect(title).toContain('Transactions without category');
+    expect(title).toContain('Receipt "[GitHub] Payment Receipt" has no category');
+    expect(title).toContain('1 transaction needs a category');
+    expect(title).not.toContain('Чек без категории');
+    expect(title).not.toContain('не имеет категории');
 
     const whiteSurface = Array.from(document.querySelectorAll('div')).find(node =>
       node.className.includes('bg-white'),

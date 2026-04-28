@@ -64,6 +64,7 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
         position: 'relative',
         overflow: 'hidden',
         aspectRatio: '16/9',
+        borderRadius: tokens.radius.xl,
         transition: 'box-shadow 0.3s',
         '&:hover': { boxShadow: 6 },
       }}
@@ -71,7 +72,7 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
       <button
         type="button"
         onClick={onClick}
-        style={{ position: 'relative', height: '100%', width: '100%', cursor: 'pointer', border: 'none', padding: 0, background: 'none', display: 'block' }}
+        style={{ position: 'relative', height: '100%', width: '100%', cursor: 'pointer', border: 'none', padding: 0, background: 'none', display: 'block', borderRadius: tokens.radius.xl }}
       >
         {/* Background Image */}
         <Box
@@ -160,18 +161,19 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
           position: 'absolute',
           top: 12,
           right: 12,
-          padding: 8,
-          borderRadius: tokens.radius.full,
+          padding: 4,
+          borderRadius: 0,
           border: 'none',
           cursor: 'pointer',
           transition: 'opacity 0.2s',
           opacity: isHovered || isFavorite ? 1 : 0,
-          background: isFavorite ? '#eab308' : 'rgba(255,255,255,0.2)',
-          backdropFilter: isFavorite ? undefined : 'blur(4px)',
-          color: '#fff',
+          background: 'transparent',
+          backdropFilter: undefined,
+          color: '#ffffff',
         }}
+        aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
       >
-        <Star size={18} style={{ fill: isFavorite ? 'currentColor' : 'none' }} />
+        <Star size={18} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
       </button>
     </Box>
   );

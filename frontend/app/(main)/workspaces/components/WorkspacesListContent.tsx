@@ -12,6 +12,11 @@ import { WorkspaceGridView } from './WorkspaceGridView';
 import { WorkspaceListFilters, type ViewMode } from './WorkspaceListFilters';
 import { WorkspaceListView } from './WorkspaceListView';
 
+type TranslationValue = string | { value?: string };
+
+const resolveTranslation = (value: TranslationValue | undefined, fallback: string): string =>
+  typeof value === 'string' ? value : value?.value ?? fallback;
+
 type Props = {
   embedded?: boolean;
   redirectPathOnSelect?: string | null;
@@ -99,12 +104,16 @@ export default function WorkspacesListContent({ embedded, redirectPathOnSelect =
   const ls = useWorkspaceListState({ workspaces });
   const { handleWorkspaceClick } = useWorkspaceNav({ switchWorkspace, onWorkspaceActivated, redirectPathOnSelect });
   const handleCreateWorkspace = (): void => { router.push('/onboarding?mode=create-workspace'); };
+  const loadingLabel = resolveTranslation(content.loading, 'Loading workspaces...');
+  const createLabel = resolveTranslation(content.createWorkspace, 'Create workspace');
+  const noWorkspacesLabel = resolveTranslation(content.noWorkspaces, 'You have no workspaces yet');
+  const searchPlaceholder = resolveTranslation(content.searchPlaceholder, 'Search workspaces...');
 
-  if (loading) return <LoadingView loadingLabel={String(content.loading)} />;
+  if (loading) return <LoadingView loadingLabel={loadingLabel} />;
 
   return (
     <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflow: 'hidden', pt: embedded ? 2 : 0 }}>
-      <WorkspaceListBody ls={ls} allCount={workspaces.length} currentWorkspaceId={currentWorkspace?.id} createLabel={String(content.createWorkspace)} noWorkspacesLabel={String(content.noWorkspaces)} searchPlaceholder={content.searchPlaceholder?.value || 'Search workspaces...'} embedded={Boolean(embedded)} onWorkspaceClick={handleWorkspaceClick} onCreateClick={handleCreateWorkspace} onFavoriteToggle={refreshWorkspaces} />
+      <WorkspaceListBody ls={ls} allCount={workspaces.length} currentWorkspaceId={currentWorkspace?.id} createLabel={createLabel} noWorkspacesLabel={noWorkspacesLabel} searchPlaceholder={searchPlaceholder} embedded={Boolean(embedded)} onWorkspaceClick={handleWorkspaceClick} onCreateClick={handleCreateWorkspace} onFavoriteToggle={refreshWorkspaces} />
     </Box>
   );
 }
