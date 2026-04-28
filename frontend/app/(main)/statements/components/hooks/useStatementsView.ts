@@ -6,6 +6,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
 import { useIntlayer } from '@/app/i18n';
+import { api } from '@/app/lib/api';
 import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   type OpenExpenseDrawerEventDetail,
@@ -45,7 +46,6 @@ import { useStatementsFilterState } from './useStatementsFilterState';
 import { useStatementsListData } from './useStatementsListData';
 import {
   type StatementsStatement as Statement,
-  type StatementsViewState,
   type UseStatementsViewParams,
   STATEMENTS_PAGE_SIZE as PAGE_SIZE,
 } from './statementsViewTypes';
@@ -56,6 +56,33 @@ interface StagedStatementsParams {
   search: string;
   receiptStatements: Statement[];
 }
+
+type ExchangeRateResponse = {
+  from: string;
+  to: string;
+  rate: number;
+  date: string | null;
+};
+
+const normalizeCurrencyCode = (currency: string | null | undefined): string | null => {
+  const normalized = String(currency || '').trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(normalized) ? normalized : null;
+};
+
+const resolveStatementCurrency = (statement: Statement): string | null =>
+  normalizeCurrencyCode(
+    statement.currency ||
+      statement.parsedData?.currency ||
+      statement.parsingDetails?.metadataExtracted?.currency ||
+      statement.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay,
+  );
+
+const formatCurrentExchangeRateLabel = (from: string, to: string, rate: number): string => {
+  const formattedRate = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: rate >= 10 ? 2 : 4,
+  }).format(rate);
+  return `1 ${from} = ${formattedRate} ${to}`;
+};
 
 function matchesSearch(s: Statement, q: string): boolean {
   return (
@@ -174,7 +201,9 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   visibleFilterScreens: string[];
   fromOptions: ReturnType<typeof buildFromOptions>;
   currencyOptions: string[];
+  appliedColumnsWithLabels: ReturnType<typeof useStatementsFilterState>['columns'];
   columnsWithLabels: ReturnType<typeof useStatementsFilterState>['draftColumns'];
+  currentExchangeRateLabels: Record<string, string>;
   // workspace
   currentWorkspace: ReturnType<typeof useWorkspace>['currentWorkspace'];
   isMobile: boolean;
@@ -190,6 +219,7 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   const [dateSortDirection, setDateSortDirection] = useState<'desc' | 'asc'>('desc');
   const [expenseDrawerOpen, setExpenseDrawerOpen] = useState(false);
   const [expenseDrawerMode, setExpenseDrawerMode] = useState<StatementExpenseMode>('scan');
+  const [currentExchangeRateLabels, setCurrentExchangeRateLabels] = useState<Record<string, string>>({});
   const listScrollRef = useRef<HTMLDivElement | null>(null);
 
   const tx = (path: string[], fallback: string): string =>
@@ -385,11 +415,72 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   const currencyOptions = useMemo(() => buildCurrencyOptions(stagedStatements), [stagedStatements]);
 
   const columnLabels = buildColumnLabels(filterOptionLabels);
+  const appliedColumnsWithLabels = useMemo(
+    () => filterState.columns.map(col => ({ ...col, label: columnLabels[col.id] ?? col.label })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterState.columns],
+  );
   const columnsWithLabels = useMemo(
     () => filterState.draftColumns.map(col => ({ ...col, label: columnLabels[col.id] ?? col.label })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterState.draftColumns],
   );
+  const exchangeRateColumnVisible = appliedColumnsWithLabels.some(
+    column => column.id === 'exchangeRate' && column.visible,
+  );
+  const exchangeRateTargetCurrency = normalizeCurrencyCode(currentWorkspace?.currency) ?? 'KZT';
+  const exchangeRateSourceCurrencies = useMemo(() => {
+    if (!exchangeRateColumnVisible) return [];
+    return Array.from(
+      new Set(
+        paginatedDisplayStatements
+          .map(resolveStatementCurrency)
+          .filter((currency): currency is string => Boolean(currency) && currency !== exchangeRateTargetCurrency),
+      ),
+    ).sort();
+  }, [exchangeRateColumnVisible, exchangeRateTargetCurrency, paginatedDisplayStatements]);
+
+  useEffect(() => {
+    if (!exchangeRateColumnVisible || exchangeRateSourceCurrencies.length === 0) {
+      setCurrentExchangeRateLabels({});
+      return;
+    }
+
+    let cancelled = false;
+    const target = exchangeRateTargetCurrency;
+
+    const loadCurrentRates = async (): Promise<void> => {
+      const entries = await Promise.all(
+        exchangeRateSourceCurrencies.map(async from => {
+          const key = `${from}:${target}`;
+          try {
+            const response = await api.get<ExchangeRateResponse>('/exchange-rates', {
+              params: { from, to: target },
+            });
+            const rate = Number(response.data.rate);
+            if (!Number.isFinite(rate)) return [key, null] as const;
+            return [key, formatCurrentExchangeRateLabel(from, target, rate)] as const;
+          } catch {
+            return [key, null] as const;
+          }
+        }),
+      );
+
+      if (cancelled) return;
+      setCurrentExchangeRateLabels(
+        entries.reduce<Record<string, string>>((acc, [key, label]) => {
+          if (label) acc[key] = label;
+          return acc;
+        }, {}),
+      );
+    };
+
+    void loadCurrentRates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [exchangeRateColumnVisible, exchangeRateSourceCurrencies, exchangeRateTargetCurrency]);
 
   return {
     page,
@@ -459,7 +550,9 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     visibleFilterScreens,
     fromOptions,
     currencyOptions,
+    appliedColumnsWithLabels,
     columnsWithLabels,
+    currentExchangeRateLabels,
     currentWorkspace,
     isMobile,
   };

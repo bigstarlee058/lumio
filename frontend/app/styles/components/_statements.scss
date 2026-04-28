@@ -2967,6 +2967,20 @@
     overflow-y: auto;
   }
 
+  &__table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 8px;
+  }
+
+  &__table {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   &__loading {
     display: flex;
     height: 256px;
