@@ -178,15 +178,10 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: transform 150ms;
 
     @include dark {
       background-color: $color-card-bg-dk;
       color: $color-foreground-dk;
-    }
-
-    &:hover {
-      transform: scale(1.05);
     }
 
     &:active {
