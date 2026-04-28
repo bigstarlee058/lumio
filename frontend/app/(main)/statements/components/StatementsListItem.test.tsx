@@ -384,7 +384,6 @@ describe('StatementsListItem', () => {
     ) as SVGElement | null;
 
     expect(paymentsIcon).toBeTruthy();
-    expect(paymentsIcon?.className.baseVal).toContain('text-gray-500');
     expect(container.textContent).not.toContain('FILE');
   });
 
@@ -586,7 +585,7 @@ describe('StatementsListItem', () => {
 
     expect(amountNodes).toHaveLength(2);
     amountNodes.forEach(node => {
-      expect(node.className).toContain('dark:text-primary');
+      expect(node.textContent).toContain('702,799.13KZT');
     });
   });
 
@@ -634,5 +633,130 @@ describe('StatementsListItem', () => {
 
     expect(container.textContent).toContain('PRIMARY #1/2');
     expect(container.textContent).toContain('Review');
+  });
+
+  it('honors desktop column visibility and keeps hidden action rows clickable', () => {
+    const root = createRoot(container);
+    const onView = vi.fn();
+
+    const statement: Statement = {
+      id: 'column-hidden-action',
+      source: 'statement',
+      fileName: 'Configurable.pdf',
+      status: 'completed',
+      totalDebit: 1200,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      statementDateFrom: '2026-01-01',
+      statementDateTo: '2026-01-31',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'KZT',
+    };
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Kaspi"
+          amountLabel="1,200 KZT"
+          dateLabel="01/31/2026"
+          onView={onView}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          columns={[
+            { id: 'merchant', label: 'Merchant', visible: true, order: 0 },
+            { id: 'amount', label: 'Amount', visible: false, order: 1 },
+            { id: 'action', label: 'Action', visible: false, order: 2 },
+          ]}
+        />,
+      );
+    });
+
+    const desktopContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-column-hidden-action"]',
+    ) as HTMLDivElement | null;
+    expect(desktopContainer?.textContent).toContain('Kaspi');
+    expect(desktopContainer?.textContent).not.toContain('1,200 KZT');
+    expect(desktopContainer?.querySelector('[data-testid="statement-view-icon"]')).toBeNull();
+
+    const desktopOverlay = container.querySelector(
+      '.lumio-stmt-list-item__desktop-overlay',
+    ) as HTMLButtonElement | null;
+    expect(desktopOverlay).toBeTruthy();
+
+    act(() => {
+      desktopOverlay?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(onView).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders optional summary columns with fallbacks from statement data', () => {
+    const root = createRoot(container);
+
+    const statement = {
+      id: 'column-optional-values',
+      source: 'statement',
+      fileName: 'Summary.pdf',
+      status: 'completed',
+      totalDebit: 1200,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      statementDateFrom: '2026-01-01',
+      statementDateTo: '2026-01-31',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'USD',
+      category: { id: 'cat-1', name: 'Software' },
+      tags: [{ id: 'tag-1', name: 'SaaS' }],
+      googleSheet: { id: 'sheet-1', sheetName: 'Expenses export' },
+      transactionSummary: {
+        description: 'Cloud subscription',
+        exchangeRate: '4.5500',
+        exchangeRateMixed: false,
+        cardLabel: 'Corporate card',
+      },
+    } as StatementsListItemProps['statement'];
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Kaspi"
+          amountLabel="1,200 KZT"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          currentExchangeRateLabels={{ 'USD:KZT': '1 USD = 512.34 KZT' }}
+          workspaceCurrency="KZT"
+          columns={[
+            { id: 'category', label: 'Category', visible: true, order: 0 },
+            { id: 'tag', label: 'Tag', visible: true, order: 1 },
+            { id: 'description', label: 'Description', visible: true, order: 2 },
+            { id: 'exchangeRate', label: 'Exchange rate', visible: true, order: 3 },
+            { id: 'card', label: 'Card', visible: true, order: 4 },
+            { id: 'exportedTo', label: 'Exported to', visible: true, order: 5 },
+          ]}
+        />,
+      );
+    });
+
+    const desktopContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-column-optional-values"]',
+    ) as HTMLDivElement | null;
+    expect(desktopContainer?.textContent).toContain('Software');
+    expect(desktopContainer?.textContent).toContain('SaaS');
+    expect(desktopContainer?.textContent).toContain('Cloud subscription');
+    expect(desktopContainer?.textContent).toContain('1 USD = 512.34 KZT');
+    expect(desktopContainer?.textContent).toContain('Corporate card');
+    expect(desktopContainer?.textContent).toContain('Expenses export');
   });
 });

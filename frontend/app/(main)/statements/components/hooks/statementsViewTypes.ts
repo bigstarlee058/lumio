@@ -1,7 +1,6 @@
 import type { StatementExpenseMode } from '@/app/lib/statement-expense-drawer';
 import type { StatementStage } from '@/app/lib/statement-workflow';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
-import { useIsMobile } from '@/app/hooks/useIsMobile';
 import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { ReadonlyURLSearchParams } from 'next/navigation';
@@ -32,18 +31,35 @@ export interface StatementsStatement {
   bankName: string;
   fileType: string;
   currency?: string | null;
+  category?: { id?: string | null; name?: string | null; color?: string | null; icon?: string | null } | null;
+  tags?: Array<{ id?: string; name?: string; color?: string | null }>;
+  googleSheet?: { id?: string; sheetName?: string | null; worksheetName?: string | null } | null;
+  transactionSummary?: {
+    description?: string | null;
+    exchangeRate?: string | number | null;
+    exchangeRateMixed?: boolean;
+    cardLabel?: string | null;
+  } | null;
   user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
   errorMessage?: string | null;
   parsingDetails?: {
     logEntries?: Array<{ timestamp: string; level: string; message: string }>;
     detectedBy?: string;
     parserUsed?: string;
-    importPreview?: { source?: string; merchant?: string; attachments?: number };
+    importPreview?: { source?: string; merchant?: string; attachments?: number; description?: string; categoryId?: string };
     metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } };
   };
   gmailMessageId?: string;
   receivedAt?: string;
-  parsedData?: { amount?: number; currency?: string; vendor?: string; date?: string };
+  parsedData?: {
+    amount?: number;
+    currency?: string;
+    vendor?: string;
+    date?: string;
+    category?: string;
+    categoryId?: string;
+    lineItems?: Array<{ description: string; amount?: number }>;
+  };
 }
 
 export interface UseStatementsViewParams {
@@ -123,7 +139,9 @@ export interface StatementsViewState {
   visibleFilterScreens: string[];
   fromOptions: ReturnType<typeof useStatementsFilterState>['draftColumns'];
   currencyOptions: string[];
+  appliedColumnsWithLabels: ReturnType<typeof useStatementsFilterState>['columns'];
   columnsWithLabels: ReturnType<typeof useStatementsFilterState>['draftColumns'];
+  currentExchangeRateLabels: Record<string, string>;
   currentWorkspace: ReturnType<typeof useWorkspace>['currentWorkspace'];
   isMobile: boolean;
 }

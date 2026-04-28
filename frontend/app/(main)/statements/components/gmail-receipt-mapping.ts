@@ -13,6 +13,9 @@ export interface GmailReceipt {
     currency?: string;
     vendor?: string;
     date?: string;
+    category?: string;
+    categoryId?: string;
+    lineItems?: Array<{ description: string; amount?: number }>;
   };
   gmailMessageId?: string;
 }
@@ -22,6 +25,9 @@ interface GmailMappedParsedData {
   currency?: string;
   vendor?: string;
   date?: string;
+  category?: string;
+  categoryId?: string;
+  lineItems?: Array<{ description: string; amount?: number }>;
 }
 
 export interface GmailMappedStatement {
@@ -109,6 +115,9 @@ export const mapGmailReceiptToStatement = (receipt: GmailReceipt): GmailMappedSt
       currency: receipt.parsedData?.currency,
       vendor: receipt.parsedData?.vendor,
       date: receipt.parsedData?.date,
+      category: receipt.parsedData?.category,
+      categoryId: receipt.parsedData?.categoryId,
+      lineItems: receipt.parsedData?.lineItems,
     },
   };
 };

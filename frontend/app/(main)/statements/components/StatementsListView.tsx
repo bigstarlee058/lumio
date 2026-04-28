@@ -296,6 +296,9 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
           rangeEnd={v.rangeEnd}
           total={v.total}
           duplicateMetaById={v.duplicateMetaById}
+          columns={v.appliedColumnsWithLabels}
+          currentExchangeRateLabels={v.currentExchangeRateLabels}
+          workspaceCurrency={v.currentWorkspace?.currency}
           viewLabel={viewLabel}
           reviewDuplicateLabel={reviewDuplicateLabel}
           labels={{

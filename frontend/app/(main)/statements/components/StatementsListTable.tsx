@@ -10,7 +10,6 @@ import {
   isManualExpenseStatement,
 } from '@/app/lib/statement-status';
 import { ArrowDown, File } from '@/app/components/icons';
-import type { JSX } from 'react';
 import {
   formatPaginationLabel,
   formatStatementAmount,
@@ -22,6 +21,11 @@ import {
 } from './StatementsListView.utils';
 import { StatementsGmailSync } from './StatementsGmailSync';
 import { StatementsListItem } from './StatementsListItem';
+import {
+  DEFAULT_STATEMENT_COLUMNS,
+  type StatementColumn,
+  type StatementColumnId,
+} from './columns/statement-columns';
 import type { DuplicateMeta } from './hooks/useStatementSelection';
 import { tokens } from '@/lib/theme-tokens';
 
@@ -34,8 +38,30 @@ interface StatementForTable {
   fileType: string;
   subject?: string;
   sender?: string;
-  parsedData?: { vendor?: string; amount?: number; currency?: string; date?: string };
-  parsingDetails?: { importPreview?: { attachments?: number } };
+  exported?: boolean | null;
+  paid?: boolean | null;
+  processedAt?: string;
+  receivedAt?: string;
+  parsedData?: {
+    vendor?: string;
+    amount?: number;
+    currency?: string;
+    date?: string;
+    category?: string;
+    categoryId?: string;
+    lineItems?: Array<{ description: string; amount?: number }>;
+  };
+  category?: { id?: string | null; name?: string | null; color?: string | null; icon?: string | null } | null;
+  tags?: Array<{ id?: string; name?: string; color?: string | null }>;
+  googleSheet?: { id?: string; sheetName?: string | null; worksheetName?: string | null } | null;
+  transactionSummary?: {
+    description?: string | null;
+    exchangeRate?: string | number | null;
+    exchangeRateMixed?: boolean;
+    cardLabel?: string | null;
+  } | null;
+  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
+  parsingDetails?: { importPreview?: { attachments?: number; description?: string; merchant?: string; categoryId?: string } };
 }
 
 interface TableLabels {
@@ -66,6 +92,9 @@ interface Props {
   rangeEnd: number;
   total: number;
   duplicateMetaById: Map<string, DuplicateMeta>;
+  columns?: StatementColumn[];
+  currentExchangeRateLabels?: Record<string, string>;
+  workspaceCurrency?: string | null;
   viewLabel: string;
   reviewDuplicateLabel: string;
   labels: TableLabels;
@@ -76,6 +105,61 @@ interface Props {
   onIconClick: (statement: StatementForTable) => void;
   onPageChange: (page: number) => void;
 }
+
+const NUMERIC_COLUMN_IDS = new Set<StatementColumnId>(['amount', 'exchangeRate']);
+const BOOLEAN_COLUMN_IDS = new Set<StatementColumnId>(['approved', 'billable', 'exported']);
+const COLUMN_MIN_WIDTHS: Record<StatementColumnId, number> = {
+  receipt: 48,
+  date: 124,
+  merchant: 260,
+  from: 136,
+  to: 136,
+  category: 136,
+  tag: 136,
+  amount: 148,
+  action: 128,
+  approved: 96,
+  billable: 96,
+  card: 136,
+  description: 220,
+  exchangeRate: 156,
+  exported: 96,
+  exportedTo: 136,
+};
+
+const columnHeaderStyle = (columnId: StatementColumnId): React.CSSProperties => {
+  const common: React.CSSProperties = {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    color: 'var(--muted-foreground)',
+    textAlign: NUMERIC_COLUMN_IDS.has(columnId) ? 'right' : 'left',
+  };
+
+  if (columnId === 'receipt') return { ...common, width: 48, flex: '0 0 48px', textAlign: 'center' };
+  if (columnId === 'merchant') return { ...common, minWidth: 220, flex: '1 1 260px' };
+  if (columnId === 'description') return { ...common, minWidth: 180, flex: '1 1 220px' };
+  if (columnId === 'action') return { ...common, width: 128, flex: '0 0 128px', textAlign: 'right' };
+  if (columnId === 'amount') return { ...common, width: 148, flex: '0 0 148px', textAlign: 'right' };
+  if (columnId === 'date') return { ...common, width: 124, flex: '0 0 124px' };
+  if (columnId === 'exchangeRate') return { ...common, width: 156, flex: '0 0 156px', textAlign: 'right' };
+  if (NUMERIC_COLUMN_IDS.has(columnId)) return { ...common, width: 116, flex: '0 0 116px', textAlign: 'right' };
+  if (BOOLEAN_COLUMN_IDS.has(columnId)) return { ...common, width: 96, flex: '0 0 96px' };
+  return { ...common, width: 136, flex: '0 0 136px' };
+};
+
+const getRenderedColumns = (columns: StatementColumn[] = DEFAULT_STATEMENT_COLUMNS): StatementColumn[] => {
+  const visibleColumns = columns.filter(column => column.visible);
+  return visibleColumns.length > 0 ? visibleColumns : columns.slice(0, 1);
+};
+
+const calculateTableMinWidth = (columns: StatementColumn[] = DEFAULT_STATEMENT_COLUMNS): number => {
+  const renderedColumns = getRenderedColumns(columns);
+  const columnsWidth = renderedColumns.reduce((sum, column) => sum + COLUMN_MIN_WIDTHS[column.id], 0);
+  const gapWidth = Math.max(0, renderedColumns.length - 1) * 24;
+  return 32 + columnsWidth + gapWidth + 64;
+};
 
 interface StatementRowData {
   isReceipt: boolean;
@@ -126,6 +210,7 @@ function TableDesktopHeader({
   allVisibleSelected,
   selectedCount,
   dateSortDirection,
+  columns = DEFAULT_STATEMENT_COLUMNS,
   labels,
   onToggleSelectAll,
   onToggleSortDirection,
@@ -133,47 +218,27 @@ function TableDesktopHeader({
   allVisibleSelected: boolean;
   selectedCount: number;
   dateSortDirection: 'asc' | 'desc';
+  columns: StatementColumn[];
   labels: TableLabels;
   onToggleSelectAll: () => void;
   onToggleSortDirection: () => void;
 }): React.JSX.Element {
+  const renderedColumns = getRenderedColumns(columns);
+
   return (
     <div className="lumio-stmt-list-view__desktop-header">
-      <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            flexShrink: 0,
-            marginRight: 16,
-          }}
-        >
-          <div style={{ width: 16, display: 'flex', justifyContent: 'center', opacity: 0.7 }}>
-            <Checkbox
-              checked={allVisibleSelected}
-              indeterminate={selectedCount > 0 && !allVisibleSelected}
-              onCheckedChange={onToggleSelectAll}
-              aria-label="Select all statements"
-            />
-          </div>
-          <div
-            style={{
-              width: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--muted-foreground)',
-            }}
-          >
-            <span className="sr-only">{labels.receipt}</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted-foreground)' }}>
-            {labels.merchant}
-            <span style={{ padding: '0 4px', color: 'var(--border-color)' }}>•</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+      <div style={{ width: 16, display: 'flex', justifyContent: 'center', opacity: 0.7, flexShrink: 0, marginRight: 16 }}>
+        <Checkbox
+          checked={allVisibleSelected}
+          indeterminate={selectedCount > 0 && !allVisibleSelected}
+          onCheckedChange={onToggleSelectAll}
+          aria-label="Select all statements"
+        />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24, flex: 1, minWidth: 0 }}>
+        {renderedColumns.map(column => (
+          <div key={column.id} style={columnHeaderStyle(column.id)}>
+            {column.id === 'date' ? (
               <button
                 type="button"
                 data-testid="statements-date-sort"
@@ -190,7 +255,7 @@ function TableDesktopHeader({
                 onClick={onToggleSortDirection}
                 aria-label={`Sort by date ${dateSortDirection === 'desc' ? 'ascending' : 'descending'}`}
               >
-                {labels.date}
+                {column.label || labels.date}
                 <ArrowDown
                   size={12}
                   style={{
@@ -199,26 +264,13 @@ function TableDesktopHeader({
                   }}
                 />
               </button>
-            </div>
+            ) : column.id === 'receipt' ? (
+              <span className="sr-only">{column.label || labels.receipt}</span>
+            ) : (
+              column.label
+            )}
           </div>
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          gap: 24,
-          flexShrink: 0,
-          width: 420,
-          paddingLeft: 16,
-        }}
-      >
-        <div style={{ width: 128, textAlign: 'right', color: 'var(--muted-foreground)', paddingRight: 4 }}>
-          {labels.amount}
-        </div>
-        <div style={{ width: 144, textAlign: 'right', color: 'var(--muted-foreground)' }}>{labels.action}</div>
+        ))}
       </div>
     </div>
   );
@@ -239,6 +291,9 @@ export function StatementsListTable({
   rangeEnd,
   total,
   duplicateMetaById,
+  columns,
+  currentExchangeRateLabels,
+  workspaceCurrency,
   viewLabel,
   reviewDuplicateLabel,
   labels,
@@ -281,59 +336,67 @@ export function StatementsListTable({
     );
   }
 
+  const tableMinWidth = calculateTableMinWidth(columns);
+
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 16px' }}>
-          <Checkbox
-            checked={allVisibleSelected}
-            indeterminate={selectedCount > 0 && !allVisibleSelected}
-            onCheckedChange={onToggleSelectAll}
-            aria-label="Select all statements"
-          />
-          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
-        </div>
-        <TableDesktopHeader
-          allVisibleSelected={allVisibleSelected}
-          selectedCount={selectedCount}
-          dateSortDirection={dateSortDirection}
-          labels={labels}
-          onToggleSelectAll={onToggleSelectAll}
-          onToggleSortDirection={onToggleSortDirection}
-        />
-        <StatementsGmailSync skeletonKeys={gmailSyncSkeletonKeys} />
-        {paginatedStatements.map((statement, index) => {
-          const rowData = resolveStatementRowData(statement, labels.scanning);
-          const duplicateMeta = duplicateMetaById.get(statement.id);
-          return (
-            <StatementsListItem
-              key={statement.id}
-              dataTourId={index === 0 ? 'statement-row-primary' : undefined}
-              statement={statement}
-              viewLabel={viewLabel}
-              isReceipt={rowData.isReceipt}
-              isProcessing={rowData.isProcessingReceipt}
-              merchantLabel={rowData.merchantLabel}
-              amountLabel={rowData.amountLabel}
-              dateLabel={rowData.dateLabel}
-              isPossibleDuplicate={Boolean(duplicateMeta)}
-              duplicatePosition={duplicateMeta?.position}
-              duplicateGroupSize={duplicateMeta?.total}
-              duplicateRole={duplicateMeta?.role}
-              duplicateGroupLabel={duplicateMeta?.groupLabel}
-              duplicateGroupTone={duplicateMeta?.groupTone}
-              duplicateReason={duplicateMeta?.reason}
-              duplicateActionLabel={reviewDuplicateLabel}
-              typeLabel={rowData.isReceipt ? 'Receipt' : statement.fileType}
-              isManualExpense={rowData.isManualExpense}
-              viewDisabled={rowData.isProcessingStatement}
-              onView={() => onView(statement)}
-              onIconClick={() => onIconClick(statement)}
-              onToggleSelect={() => onToggleStatement(statement.id)}
-              selected={selectedStatementIds.includes(statement.id)}
+      <div className="lumio-stmt-list-view__table-scroll">
+        <div className="lumio-stmt-list-view__table" style={{ minWidth: tableMinWidth }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 16px' }}>
+            <Checkbox
+              checked={allVisibleSelected}
+              indeterminate={selectedCount > 0 && !allVisibleSelected}
+              onCheckedChange={onToggleSelectAll}
+              aria-label="Select all statements"
             />
-          );
-        })}
+            <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
+          </div>
+          <TableDesktopHeader
+            allVisibleSelected={allVisibleSelected}
+            selectedCount={selectedCount}
+            dateSortDirection={dateSortDirection}
+            columns={columns}
+            labels={labels}
+            onToggleSelectAll={onToggleSelectAll}
+            onToggleSortDirection={onToggleSortDirection}
+          />
+          <StatementsGmailSync skeletonKeys={gmailSyncSkeletonKeys} />
+          {paginatedStatements.map((statement, index) => {
+            const rowData = resolveStatementRowData(statement, labels.scanning);
+            const duplicateMeta = duplicateMetaById.get(statement.id);
+            return (
+              <StatementsListItem
+                key={statement.id}
+                dataTourId={index === 0 ? 'statement-row-primary' : undefined}
+                statement={statement}
+                viewLabel={viewLabel}
+                isReceipt={rowData.isReceipt}
+                isProcessing={rowData.isProcessingReceipt}
+                merchantLabel={rowData.merchantLabel}
+                amountLabel={rowData.amountLabel}
+                dateLabel={rowData.dateLabel}
+                isPossibleDuplicate={Boolean(duplicateMeta)}
+                duplicatePosition={duplicateMeta?.position}
+                duplicateGroupSize={duplicateMeta?.total}
+                duplicateRole={duplicateMeta?.role}
+                duplicateGroupLabel={duplicateMeta?.groupLabel}
+                duplicateGroupTone={duplicateMeta?.groupTone}
+                duplicateReason={duplicateMeta?.reason}
+                duplicateActionLabel={reviewDuplicateLabel}
+                typeLabel={rowData.isReceipt ? 'Receipt' : statement.fileType}
+                isManualExpense={rowData.isManualExpense}
+                viewDisabled={rowData.isProcessingStatement}
+                onView={() => onView(statement)}
+                onIconClick={() => onIconClick(statement)}
+                onToggleSelect={() => onToggleStatement(statement.id)}
+                selected={selectedStatementIds.includes(statement.id)}
+                columns={columns}
+                currentExchangeRateLabels={currentExchangeRateLabels}
+                workspaceCurrency={workspaceCurrency}
+              />
+            );
+          })}
+        </div>
       </div>
       <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
         <div style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
