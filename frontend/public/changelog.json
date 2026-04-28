@@ -1,13 +1,82 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "4661ce97c8a3d91a5fcf7b11ef929a34da33cfbf"
+      "main": "5c8da78988dbf76b526dd6c4525b8008e4bbf9d3"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-28T17:03:50.462Z",
+    "lastGeneratedAt": "2026-04-28T17:33:39.973Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-28-5c8da78",
+      "version": "main-5c8da78",
+      "branch": "main",
+      "date": "2026-04-28T17:33:39.973Z",
+      "title": "Release update - April 28, 2026",
+      "summary": "This release includes 3 features.",
+      "markdown": "## Features\n- **statements-ui**: Add configurable columns and table overflow\n- **exchange-rates**: Add public API fallback\n- **statements**: Add summary metadata for configurable columns",
+      "commits": [
+        {
+          "sha": "9b44afe68aaf9e464d1f3991524232e86f6cd626",
+          "shortSha": "9b44afe",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-28T17:03:51Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "eaae0255cedb242b08cfd04d8eed537062431fcc",
+          "shortSha": "eaae025",
+          "subject": "feat(statements-ui): add configurable columns and table overflow",
+          "author": "symonbaikov",
+          "date": "2026-04-28T20:32:16+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.test.tsx",
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx",
+            "frontend/app/(main)/statements/components/StatementsListTable.test.tsx",
+            "frontend/app/(main)/statements/components/StatementsListTable.tsx",
+            "frontend/app/(main)/statements/components/StatementsListView.tsx",
+            "frontend/app/(main)/statements/components/gmail-receipt-mapping.ts",
+            "frontend/app/(main)/statements/components/hooks/statementsViewTypes.ts",
+            "frontend/app/(main)/statements/components/hooks/useStatementsView.ts",
+            "frontend/app/styles/components/_statements.scss"
+          ]
+        },
+        {
+          "sha": "837aece74ccc67d66ef6a8ad817f818cf1120f72",
+          "shortSha": "837aece",
+          "subject": "feat(exchange-rates): add public API fallback",
+          "author": "symonbaikov",
+          "date": "2026-04-28T20:32:18+03:00",
+          "files": [
+            "backend/@tests/unit/modules/exchange-rates/exchange-rates.service.spec.ts",
+            "backend/src/modules/exchange-rates/exchange-rates.service.ts"
+          ]
+        },
+        {
+          "sha": "6247cbab77d169076def31d3a476023ace2c65a7",
+          "shortSha": "6247cba",
+          "subject": "feat(statements): add summary metadata for configurable columns",
+          "author": "symonbaikov",
+          "date": "2026-04-28T20:32:19+03:00",
+          "files": [
+            "backend/@tests/unit/statements.service.spec.ts",
+            "backend/src/modules/statements/statements.service.ts"
+          ]
+        },
+        {
+          "sha": "5c8da78988dbf76b526dd6c4525b8008e4bbf9d3",
+          "shortSha": "5c8da78",
+          "subject": "Merge pull request #67 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-28T20:33:17+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-28-4661ce9",
       "version": "main-4661ce9",
