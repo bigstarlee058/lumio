@@ -17,6 +17,7 @@ export class ExchangeRatesService {
   private readonly logger = new Logger(ExchangeRatesService.name);
   private readonly apiKey: string | undefined;
   private readonly apiBaseUrl = 'https://v6.exchangerate-api.com/v6';
+  private readonly publicApiBaseUrl = 'https://api.frankfurter.dev/v2/rate';
 
   constructor(
     @InjectRepository(ExchangeRate)
@@ -73,6 +74,13 @@ export class ExchangeRatesService {
       await this.saveRate(normalizedFrom, normalizedTo, apiRate, rateDate, 'exchangerate-api');
       await this.cacheManager.set(cacheKey, apiRate, this.isToday(rateDate) ? 4 * 3600 : 0);
       return apiRate;
+    }
+
+    const publicApiRate = await this.getRateFromPublicApi(normalizedFrom, normalizedTo, rateDate);
+    if (publicApiRate) {
+      await this.saveRate(normalizedFrom, normalizedTo, publicApiRate, rateDate, 'frankfurter');
+      await this.cacheManager.set(cacheKey, publicApiRate, this.isToday(rateDate) ? 4 * 3600 : 0);
+      return publicApiRate;
     }
 
     // 5. Fallback: most recent rate from DB
@@ -176,6 +184,29 @@ export class ExchangeRatesService {
       }
 
       return rate;
+    } catch {
+      return null;
+    }
+  }
+
+  private async getRateFromPublicApi(
+    from: string,
+    to: string,
+    rateDate: string,
+  ): Promise<number | null> {
+    try {
+      const url = new URL(`${this.publicApiBaseUrl}/${from}/${to}`);
+      if (!this.isToday(rateDate)) {
+        url.searchParams.set('date', rateDate);
+      }
+
+      const response = await fetch(url.toString());
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = (await response.json()) as { rate?: number };
+      return typeof data.rate === 'number' && Number.isFinite(data.rate) ? data.rate : null;
     } catch {
       return null;
     }

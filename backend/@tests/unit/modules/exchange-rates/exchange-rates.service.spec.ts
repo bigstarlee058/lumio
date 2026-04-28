@@ -33,6 +33,7 @@ describe('ExchangeRatesService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 }) as any;
     repo = createRepoMock();
     cache = createCacheMock();
     service = new ExchangeRatesService(repo, cache, createConfigMock());
@@ -90,6 +91,25 @@ describe('ExchangeRatesService', () => {
       repo.findOne.mockResolvedValue(null);
       const rate = await service.getRate('USD', 'KZT');
       expect(rate).toBe(1);
+    });
+
+    it('fetches the current rate from the public API when no API key is configured', async () => {
+      repo.findOne.mockResolvedValue(null);
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ rate: 512.34 }),
+      }) as any;
+
+      const rate = await service.getRate('USD', 'KZT');
+
+      expect(rate).toBe(512.34);
+      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('api.frankfurter.dev'));
+      expect(repo.createQueryBuilder).toHaveBeenCalled();
+      expect(cache.set).toHaveBeenCalledWith(
+        expect.stringContaining('exchange_rate:USD:KZT'),
+        512.34,
+        expect.any(Number),
+      );
     });
 
     it('uses specific date when provided', async () => {
