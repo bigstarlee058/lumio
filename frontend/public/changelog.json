@@ -1,13 +1,193 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "19c9a2be408880503266757dd786971d26d18743"
+      "main": "4661ce97c8a3d91a5fcf7b11ef929a34da33cfbf"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-27T22:58:35.453Z",
+    "lastGeneratedAt": "2026-04-28T17:03:50.462Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-28-4661ce9",
+      "version": "main-4661ce9",
+      "branch": "main",
+      "date": "2026-04-28T17:03:50.462Z",
+      "title": "Release update - April 28, 2026",
+      "summary": "This release includes 4 features and 1 improvement.",
+      "markdown": "## Features\n- **frontend**: Polish custom tables, workspaces, and notifications\n- **statements**: Simplify analytics views and upload flows\n- **sync**: Add workspace file export from profile\n- **statements**: Add edit review helper components\n\n## Improvements\n- **app**: Centralize preview endpoints and access helpers",
+      "commits": [
+        {
+          "sha": "7962e7d9c65516ce5a40b448cc01af39f01e7829",
+          "shortSha": "7962e7d",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-27T22:58:36Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "cdf2f561c7ede553bc56105f8a0a8c8d5608e38b",
+          "shortSha": "cdf2f56",
+          "subject": "feat(frontend): polish custom tables, workspaces, and notifications",
+          "author": "symonbaikov",
+          "date": "2026-04-28T19:55:46+03:00",
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page-modals.content.ts",
+            "frontend/app/(main)/custom-tables/[id]/page-operations.content.ts",
+            "frontend/app/(main)/custom-tables/[id]/page.tsx",
+            "frontend/app/(main)/custom-tables/page.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceCard.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspaceGridView.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspacesListContent.test.tsx",
+            "frontend/app/(main)/workspaces/components/WorkspacesListContent.tsx",
+            "frontend/app/components/NotificationDropdown.test.tsx",
+            "frontend/app/components/NotificationDropdown.tsx",
+            "frontend/app/components/notificationDropdown.content.ts"
+          ]
+        },
+        {
+          "sha": "ba99ecc31745ee8f299ecfcb06c0c4a448868314",
+          "shortSha": "ba99ecc",
+          "subject": "feat(statements): simplify analytics views and upload flows",
+          "author": "symonbaikov",
+          "date": "2026-04-28T19:56:50+03:00",
+          "files": [
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.test.tsx",
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx",
+            "frontend/app/(main)/statements/components/SpendOverTimeView.test.tsx",
+            "frontend/app/(main)/statements/components/shared/TopAnalyticsFiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time/components/SpendOverTimeCalendar.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time/components/SpendOverTimeContent.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time/components/SpendOverTimeFilterChipsRow.tsx",
+            "frontend/app/(main)/statements/components/spend-over-time/helpers/buildSpendOverTimeLabels.ts",
+            "frontend/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeAggregation.ts",
+            "frontend/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeViewModel.ts",
+            "frontend/app/(main)/statements/components/top-categories/components/TopCategoriesContent.tsx",
+            "frontend/app/(main)/statements/components/top-categories/components/TopCategoriesFiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel.ts",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsContent.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsDrillDown.test.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsDrillDown.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/components/TopMerchantsFiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsState.ts",
+            "frontend/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsViewModel.ts",
+            "frontend/app/(main)/statements/components/top-spenders/components/TopSpendersContent.tsx",
+            "frontend/app/(main)/statements/components/top-spenders/components/TopSpendersFiltersDrawer.tsx",
+            "frontend/app/(main)/statements/components/top-spenders/hooks/useTopSpendersState.ts",
+            "frontend/app/(main)/statements/components/top-spenders/hooks/useTopSpendersViewModel.ts",
+            "frontend/app/(main)/statements/hooks/useSpendOverTimeState.ts"
+          ]
+        },
+        {
+          "sha": "428849e1809ec6498d007893d40febcec3bf75cf",
+          "shortSha": "428849e",
+          "subject": "feat(sync): add workspace file export from profile",
+          "author": "symonbaikov",
+          "date": "2026-04-28T19:57:46+03:00",
+          "files": [
+            "backend/src/modules/statements/statements.controller.ts",
+            "backend/src/modules/statements/statements.service.ts",
+            "frontend/app/lib/api.ts",
+            "frontend/app/settings/profile/components/SyncSection.tsx",
+            "frontend/app/settings/profile/hooks/useSync.ts",
+            "frontend/app/settings/profile/page.tsx",
+            "frontend/app/settings/profile/profileHelpers.ts"
+          ]
+        },
+        {
+          "sha": "cd719f6b0ad2c5019d9eb006ed18cba13554e846",
+          "shortSha": "cd719f6",
+          "subject": "feat(statements): add edit review helper components",
+          "author": "symonbaikov",
+          "date": "2026-04-28T19:58:48+03:00",
+          "files": [
+            "frontend/app/(main)/statements/[id]/edit/TransactionTableRow.tsx",
+            "frontend/app/(main)/statements/[id]/edit/readinessHelpers.ts"
+          ]
+        },
+        {
+          "sha": "3acab280e6a0465946426014afa41018927d2d65",
+          "shortSha": "3acab28",
+          "subject": "refactor(app): centralize preview endpoints and access helpers",
+          "author": "symonbaikov",
+          "date": "2026-04-28T20:00:02+03:00",
+          "files": [
+            "backend/src/common/utils/ensure-can-edit.util.ts",
+            "backend/src/common/utils/pagination.util.ts",
+            "backend/src/modules/audit/audit.service.ts",
+            "backend/src/modules/categories/categories.service.ts",
+            "backend/src/modules/custom-tables/custom-tables.service.ts",
+            "backend/src/modules/data-entry/data-entry.service.ts",
+            "backend/src/modules/payables/payables.service.ts",
+            "backend/src/modules/receipts/receipts.service.ts",
+            "frontend/app/(main)/statements/[id]/view/page.tsx",
+            "frontend/app/components/PDFPreviewModal.tsx",
+            "frontend/app/components/PDFThumbnail.tsx",
+            "frontend/app/components/pdf-preview/helpers/pdf-endpoints.ts",
+            "frontend/app/components/receipts/ReceiptDetailPanel.tsx",
+            "frontend/app/components/receipts/hooks/useReceiptPreview.ts",
+            "frontend/app/storage/receipts/[id]/hooks/useReceiptData.ts",
+            "frontend/app/storage/receipts/[id]/page.tsx"
+          ]
+        },
+        {
+          "sha": "e27a4d82941ab3d9477bb75d9c3350c3dcf484ff",
+          "shortSha": "e27a4d8",
+          "subject": "chore(repo): add tooling, assets, and workflow updates",
+          "author": "symonbaikov",
+          "date": "2026-04-28T20:01:15+03:00",
+          "files": [
+            ".github/workflows/ci.yml",
+            ".playwright-mcp/page-2026-04-26T19-55-28-098Z.yml",
+            ".playwright-mcp/page-2026-04-26T19-55-51-016Z.yml",
+            ".playwright-mcp/page-2026-04-26T19-56-14-017Z.yml",
+            ".playwright-mcp/page-2026-04-26T19-56-24-147Z.yml",
+            ".playwright-mcp/page-2026-04-26T20-11-50-073Z.yml",
+            "backend/1777371916055-b6d43ccff0658-statement.pdf",
+            "backend/1777371977573-dad0838b7e775-statement.pdf",
+            "backend/1777372042520-b5e49a34e297b-statement.pdf",
+            "backend/1777372174709-44ea5e4940f44-statement.pdf",
+            "backend/1777372346546-adf7897d1c9ea-statement.pdf",
+            "desktop-login.png",
+            "docs/plans/2026-04-26-mobile-bottom-tab-bar.md",
+            "docs/statements-examples/Kaspi-2.pdf",
+            "docs/statements-examples/bereke-2.pdf",
+            "docs/statements-examples/bereke-bank.pdf",
+            "docs/statements-examples/kaspi-bank.pdf",
+            "frontend/app/globals.css",
+            "frontend/app/hero.ts",
+            "frontend/app/mantine-theme.ts",
+            "frontend/app/styles/components/_navigation.scss",
+            "frontend/app/tours/tour-theme.css",
+            "frontend/public/images/logo.svg",
+            "frontend/types/driver-js.d.ts",
+            "frontend/types/globals-scss.d.ts",
+            "mobile-after-login.png",
+            "mobile-final-login.png",
+            "mobile-login-fixed.png",
+            "mobile-login.png",
+            "scripts/biome-fix-per-file.sh",
+            "scripts/fix-block-statements.mjs",
+            "scripts/fix-intlayer-locales.mjs",
+            "scripts/fix-jsx-biome-comments.py",
+            "scripts/fix-unused-vars.py",
+            "scripts/suppress-biome-rule.py",
+            "scripts/suppress-exhaustive-deps.mjs",
+            "sonar-project.properties"
+          ]
+        },
+        {
+          "sha": "4661ce97c8a3d91a5fcf7b11ef929a34da33cfbf",
+          "shortSha": "4661ce9",
+          "subject": "Merge pull request #66 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-28T20:03:27+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-27-19c9a2b",
       "version": "main-19c9a2b",
