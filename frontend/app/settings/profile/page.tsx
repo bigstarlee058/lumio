@@ -17,6 +17,7 @@ import { NotificationsSection } from '@/app/settings/profile/components/Notifica
 import { PasswordSection } from '@/app/settings/profile/components/PasswordSection';
 import { ProfileSection } from '@/app/settings/profile/components/ProfileSection';
 import { SessionsSection } from '@/app/settings/profile/components/SessionsSection';
+import { SyncSection } from '@/app/settings/profile/components/SyncSection';
 import { useAppearance } from '@/app/settings/profile/hooks/useAppearance';
 import { useAvatarUpload } from '@/app/settings/profile/hooks/useAvatarUpload';
 import { useChangelog } from '@/app/settings/profile/hooks/useChangelog';
@@ -25,6 +26,7 @@ import { useNotifications } from '@/app/settings/profile/hooks/useNotifications'
 import { usePasswordForm } from '@/app/settings/profile/hooks/usePasswordForm';
 import { useProfileForm } from '@/app/settings/profile/hooks/useProfileForm';
 import { useSessions } from '@/app/settings/profile/hooks/useSessions';
+import { useSync } from '@/app/settings/profile/hooks/useSync';
 import {
   type SectionId,
   type TimeZoneOption,
@@ -37,7 +39,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Bell, Check, Clock, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
+import { Bell, Check, Clock, Cloud, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
 import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
@@ -222,6 +224,9 @@ export default function ProfileSettingsPage() {
   const { changelogEntries, changelogLoading, changelogSelectedEntry, setChangelogSelectedEntry } =
     useChangelog(isAuthenticated, activeSection, workspaceReady);
 
+  const { bankStats, totalCount, statsLoading, downloading, errorMessage: syncError, handleExportZip } =
+    useSync();
+
   useEffect(() => {
     setActiveSection(normalizeSection(window.location.hash?.replace('#', '')));
   }, []);
@@ -278,6 +283,11 @@ export default function ProfileSettingsPage() {
       title: tx(['changelogCard', 'title'], 'Changelog'),
       description: tx(['changelogCard', 'description'], ''),
       icon: Clock,
+    },
+    sync: {
+      title: tx(['syncCard', 'title'], 'Sync'),
+      description: tx(['syncCard', 'description'], 'Export and sync files to your filesystem'),
+      icon: Cloud,
     },
   };
 
@@ -370,6 +380,16 @@ export default function ProfileSettingsPage() {
         changelogLoading={changelogLoading}
         changelogSelectedEntry={changelogSelectedEntry}
         setChangelogSelectedEntry={setChangelogSelectedEntry}
+      />
+    ),
+    sync: (
+      <SyncSection
+        bankStats={bankStats}
+        totalCount={totalCount}
+        statsLoading={statsLoading}
+        downloading={downloading}
+        errorMessage={syncError}
+        handleExportZip={handleExportZip}
       />
     ),
   };

@@ -73,6 +73,7 @@ export const sections = [
   'password',
   'notifications',
   'changelog',
+  'sync',
 ] as const;
 export type SectionId = (typeof sections)[number];
 
