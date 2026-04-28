@@ -1,29 +1,11 @@
 'use client';
 import type { JSX } from 'react';
 
-import { TopSpendersCharts } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersCharts';
 import { TopSpendersLeaderboard } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersLeaderboard';
 import { TopSpendersStatCards } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersStatCards';
 import type { useTopSpendersViewModel } from '@/app/(main)/statements/components/top-spenders/hooks/useTopSpendersViewModel';
 
 type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
-
-function TopSpendersChartsSection({ vm }: Props): React.JSX.Element {
-  const isIncomeView = vm.activeFlowType === 'income';
-  const chartTheme = vm.resolvedTheme === 'dark' ? 'dark' : 'light';
-  const { labels } = vm;
-  return (
-    <TopSpendersCharts
-      trendChart={vm.trendChart as object}
-      sourceChart={vm.sourceChart as object}
-      topCompaniesChart={vm.topCompaniesChart as object}
-      chartTheme={chartTheme}
-      trendTitle={isIncomeView ? labels.incomeTrend : labels.spendTrend}
-      sourceSplitTitle={labels.sourceSplit}
-      companiesTitle={isIncomeView ? labels.topIncomeSenders : labels.topCompanies}
-    />
-  );
-}
 
 function TopSpendersLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
@@ -63,7 +45,6 @@ export function TopSpendersContent({ vm }: Props): React.JSX.Element {
         noDataLabel={labels.comparisonNoData}
         vsPreviousPeriodLabel={labels.vsPreviousPeriod}
       />
-      <TopSpendersChartsSection vm={vm} />
       <TopSpendersLeaderboardSection vm={vm} />
     </div>
   );

@@ -4,13 +4,12 @@ import TransactionsPageView from '@/app/components/transactions/TransactionsPage
 import type { Category, StatementDetails, Transaction } from '@/app/components/transactions/types';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
-import api from '@/app/lib/api';
+import api, { apiBaseUrl } from '@/app/lib/api';
 import { ArrowLeft } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
 
 interface RawStatement {
   id: string;

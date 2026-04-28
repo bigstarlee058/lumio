@@ -16,6 +16,7 @@ import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.e
 import { Category, CategorySource, CategoryType } from '../../entities/category.entity';
 import { AuditService } from '../audit/audit.service';
 import type { CategoryChangedEvent } from '../notifications/events/notification-events';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { CreateCategoryDto } from './dto/create-category.dto';
 import type { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -95,18 +96,7 @@ export class CategoriesService {
   }
 
   private async ensureCanEditCategories(workspaceId: string, userId: string): Promise<void> {
-    if (!workspaceId) return;
-
-    const membership = await this.workspaceMemberRepository.findOne({
-      where: { workspaceId, userId },
-      select: ['role', 'permissions'],
-    });
-
-    if (!membership) return;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
-    if (membership.permissions?.canEditCategories === false) {
-      throw new ForbiddenException('Недостаточно прав для редактирования категорий');
-    }
+    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditCategories', 'Недостаточно прав для редактирования категорий');
   }
 
   async create(

@@ -1,15 +1,15 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, QueryFailedError, type Repository } from 'typeorm';
-import { User, WorkspaceMember, WorkspaceRole } from '../../entities';
+import { User, WorkspaceMember } from '../../entities';
 import { DataEntryCustomField } from '../../entities/data-entry-custom-field.entity';
 import { DataEntry, type DataEntryType } from '../../entities/data-entry.entity';
 import type { CreateDataEntryCustomFieldDto } from './dto/create-data-entry-custom-field.dto';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { CreateDataEntryDto } from './dto/create-data-entry.dto';
 import type { UpdateDataEntryCustomFieldDto } from './dto/update-data-entry-custom-field.dto';
 
@@ -52,16 +52,7 @@ export class DataEntryService {
   ) {}
 
   private async ensureCanEditDataEntry(workspaceId: string, userId: string): Promise<void> {
-    const membership = await this.workspaceMemberRepository.findOne({
-      where: { workspaceId, userId },
-      select: ['role', 'permissions'],
-    });
-
-    if (!membership) return;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
-    if (membership.permissions?.canEditDataEntry === false) {
-      throw new ForbiddenException('Недостаточно прав для редактирования ввода данных');
-    }
+    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditDataEntry', 'Недостаточно прав для редактирования ввода данных');
   }
 
   async create(workspaceId: string, userId: string, dto: CreateDataEntryDto): Promise<DataEntry> {

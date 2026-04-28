@@ -257,6 +257,17 @@ export class StatementsController {
     return response;
   }
 
+  @Get('export-zip')
+  @WorkspaceAuth(Permission.STATEMENT_VIEW)
+  async exportZip(
+    @WorkspaceId() workspaceId: string,
+    @Res() res: Response,
+  ) {
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="lumio-export.zip"');
+    await this.statementsService.exportZip(workspaceId, res);
+  }
+
   @Get()
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findAll(

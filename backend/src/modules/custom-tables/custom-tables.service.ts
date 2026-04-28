@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -29,8 +28,9 @@ import { DataEntry, DataEntryType } from '../../entities/data-entry.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction, TransactionType } from '../../entities/transaction.entity';
 import { User } from '../../entities/user.entity';
-import { WorkspaceMember, WorkspaceRole } from '../../entities/workspace-member.entity';
+import { WorkspaceMember } from '../../entities/workspace-member.entity';
 import { AuditService } from '../audit/audit.service';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { BatchCreateCustomTableRowsDto } from './dto/batch-create-custom-table-rows.dto';
 import type { ClassifyPaidStatusDto } from './dto/classify-paid-status.dto';
 import type { CreateCustomTableColumnDto } from './dto/create-custom-table-column.dto';
@@ -192,16 +192,7 @@ export class CustomTablesService {
   }
 
   private async ensureCanEditCustomTables(userId: string, workspaceId: string): Promise<void> {
-    const membership = await this.workspaceMemberRepository.findOne({
-      where: { workspaceId, userId },
-      select: ['role', 'permissions'],
-    });
-
-    if (!membership) return;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
-    if (membership.permissions?.canEditCustomTables === false) {
-      throw new ForbiddenException('Недостаточно прав для редактирования таблиц');
-    }
+    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditCustomTables', 'Недостаточно прав для редактирования таблиц');
   }
 
   private async resolveCategoryId(workspaceId: string, categoryId: string): Promise<string> {

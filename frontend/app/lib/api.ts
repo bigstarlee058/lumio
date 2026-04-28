@@ -30,7 +30,7 @@ type ApproveReceiptPayload = {
 
 type UpdateReceiptPayload = Partial<ReceiptRecord>;
 
-const apiBaseUrl =
+export const apiBaseUrl =
   process.env.NEXT_PUBLIC_API_URL ||
   (process.env.NODE_ENV === 'development' ? 'http://localhost:3001/api/v1' : '/api/v1');
 
@@ -264,6 +264,10 @@ export const receiptsApi = {
     });
     return response.data as ReceiptRecord;
   },
+};
+
+export const statementsApi = {
+  exportZip: () => apiClient.get('/statements/export-zip', { responseType: 'blob' }),
 };
 
 export const api = apiClient;

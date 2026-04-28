@@ -27,7 +27,7 @@ type Params = {
   flowRecordsWithoutDateFilter: SpendOverTimeRecord[];
   activeFlowType: SpendOverTimeFlowType;
   groupBy: SpendOverTimeGroupBy;
-  viewType: 'line' | 'bar' | 'stacked';
+  viewType: 'calendar' | 'line' | 'bar' | 'stacked';
   sortKey: SortKey;
   workspaceCurrency: string;
   resolvedTheme: string | undefined;
@@ -110,7 +110,8 @@ export const useSpendOverTimeAggregation = ({
   const currentPeriodRange = useMemo(() => computePeriodRange(flowFilteredRecords), [flowFilteredRecords]);
   const previousPeriodTotals = useMemo(() => computePreviousTotals(currentPeriodRange, flowRecordsWithoutDateFilter, groupBy), [currentPeriodRange, flowRecordsWithoutDateFilter, groupBy]);
   const comparison = useMemo(() => previousPeriodTotals ? buildComparison(report.totals, previousPeriodTotals, activeFlowType) : null, [report.totals, previousPeriodTotals, activeFlowType]);
-  const trendChart = useMemo(() => buildSpendOverTimeTrendChart(report.points, viewType, activeFlowType, { totalIncome: totalIncomeLabel, totalSpend: totalSpendLabel }, resolvedTheme), [report.points, viewType, activeFlowType, totalIncomeLabel, totalSpendLabel, resolvedTheme]);
+  const trendChartView = viewType === 'calendar' ? 'line' : viewType;
+  const trendChart = useMemo(() => buildSpendOverTimeTrendChart(report.points, trendChartView, activeFlowType, { totalIncome: totalIncomeLabel, totalSpend: totalSpendLabel }, resolvedTheme), [report.points, trendChartView, activeFlowType, totalIncomeLabel, totalSpendLabel, resolvedTheme]);
   const sourceChart = useMemo(() => buildSpendOverTimeSourceChart(report.totals, { statementsAmount: statementsAmountLabel, receiptsAmount: receiptsAmountLabel }), [report.totals, statementsAmountLabel, receiptsAmountLabel]);
   const periodsChart = useMemo(() => buildSpendOverTimePeriodsChart(rows, activeFlowType, resolvedTheme), [rows, activeFlowType, resolvedTheme]);
   return { report, rows, comparison, trendChart, sourceChart, periodsChart };

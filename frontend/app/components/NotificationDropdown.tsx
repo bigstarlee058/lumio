@@ -41,6 +41,32 @@ function formatRelativeTime(value: string, locale: string, justNowLabel: string)
   return date.toLocaleDateString(locale === 'kk' ? 'kk-KZ' : locale);
 }
 
+function replaceTemplate(template: string, values: Record<string, string | number>): string {
+  return Object.entries(values).reduce(
+    (result, [key, value]) => result.replaceAll(`{{${key}}}`, String(value)),
+    template,
+  );
+}
+
+function extractReceiptName(message: string): string | null {
+  const quoted = message.match(/"([^"]+)"/);
+  return quoted?.[1] ?? null;
+}
+
+function extractCount(message: string): number | null {
+  const match = message.match(/\d+/);
+  if (!match) return null;
+  const value = Number(match[0]);
+  return Number.isFinite(value) ? value : null;
+}
+
+function resolveTranslationValue(
+  value: string | { value?: string } | undefined,
+  fallback: string,
+): string {
+  return typeof value === 'string' ? value : value?.value ?? fallback;
+}
+
 export function NotificationDropdown({
   triggerClassName,
   iconSize = 20,
@@ -124,6 +150,71 @@ export function NotificationDropdown({
     return String(unreadCount);
   }, [unreadCount]);
 
+  const receiptUncategorizedTitle = resolveTranslationValue(
+    t.notificationTypes?.receiptUncategorized?.title,
+    'Receipt without category',
+  );
+  const receiptUncategorizedMessage = resolveTranslationValue(
+    t.notificationTypes?.receiptUncategorized?.message,
+    'Receipt "{{name}}" has no category',
+  );
+  const receiptUncategorizedFallback = resolveTranslationValue(
+    t.notificationTypes?.receiptUncategorized?.messageFallback,
+    'Found a receipt without category',
+  );
+  const transactionUncategorizedTitle = resolveTranslationValue(
+    t.notificationTypes?.transactionUncategorized?.title,
+    'Transactions without category',
+  );
+  const transactionUncategorizedMessageSingular = resolveTranslationValue(
+    t.notificationTypes?.transactionUncategorized?.messageSingular,
+    '{{count}} transaction needs a category',
+  );
+  const transactionUncategorizedMessagePlural = resolveTranslationValue(
+    t.notificationTypes?.transactionUncategorized?.messagePlural,
+    '{{count}} transactions need a category',
+  );
+
+  const getLocalizedNotificationCopy = (notification: {
+    type: string;
+    title: string;
+    message: string;
+    meta: Record<string, unknown> | null;
+  }) => {
+    if (notification.type === 'receipt.uncategorized') {
+      const receiptName = extractReceiptName(notification.message);
+      return {
+        title: receiptUncategorizedTitle,
+        message: receiptName
+          ? replaceTemplate(receiptUncategorizedMessage, {
+              name: receiptName,
+            })
+          : receiptUncategorizedFallback,
+      };
+    }
+
+    if (notification.type === 'transaction.uncategorized') {
+      const metaCount =
+        typeof notification.meta?.count === 'number' ? notification.meta.count : null;
+      const count = metaCount ?? extractCount(notification.message) ?? 0;
+
+      return {
+        title: transactionUncategorizedTitle,
+        message: replaceTemplate(
+          count === 1
+            ? transactionUncategorizedMessageSingular
+            : transactionUncategorizedMessagePlural,
+          { count },
+        ),
+      };
+    }
+
+    return {
+      title: notification.title,
+      message: notification.message,
+    };
+  };
+
   return (
     <>
       <button
@@ -193,6 +284,7 @@ export function NotificationDropdown({
 
           {notifications.map(notification => {
             const href = getNotificationHref(notification);
+            const localizedCopy = getLocalizedNotificationCopy(notification);
             const severityIcon =
               notification.severity === 'error' ? (
                 <CircleAlert size={14} style={{ color: 'var(--destructive)' }} />
@@ -223,14 +315,14 @@ export function NotificationDropdown({
                   <div className="lumio-notification-dropdown__item-content">
                     <div className="lumio-notification-dropdown__item-header-row">
                       <p className="lumio-notification-dropdown__item-title">
-                        {notification.title}
+                        {localizedCopy.title}
                       </p>
                       {!notification.isRead ? (
                         <span className="lumio-notification-dropdown__unread-dot" />
                       ) : null}
                     </div>
                     <p className="lumio-notification-dropdown__item-message">
-                      {notification.message}
+                      {localizedCopy.message}
                     </p>
                     <p className="lumio-notification-dropdown__item-time">
                       {formatRelativeTime(notification.createdAt, locale, t.justNow.value)}

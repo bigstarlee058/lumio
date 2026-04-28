@@ -6,9 +6,16 @@ import { createRoot } from 'react-dom/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CreateExpenseDrawer from './CreateExpenseDrawer';
 
+const isMobileMock = vi.hoisted(() => vi.fn(() => false));
+
+vi.mock('@/app/hooks/useIsMobile', () => ({
+  useIsMobile: () => isMobileMock(),
+}));
+
 describe('CreateExpenseDrawer mobile uploads', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    isMobileMock.mockReturnValue(false);
   });
 
   it('uses camera-friendly file input in scan mode', async () => {
@@ -120,6 +127,44 @@ describe('CreateExpenseDrawer mobile uploads', () => {
 
     expect(drawerSurface).toBeTruthy();
     expect(lightSurface).toBeUndefined();
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it('shows separate camera and gallery actions on mobile in scan mode', async () => {
+    isMobileMock.mockReturnValue(true);
+
+    const container = document.createElement('div');
+    document.body.innerHTML = '';
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <CreateExpenseDrawer
+          open
+          initialMode="scan"
+          categories={[]}
+          taxRates={[]}
+          onClose={() => undefined}
+          onSubmitScan={async () => undefined}
+          onSubmitManual={async () => undefined}
+        />,
+      );
+    });
+
+    expect(screen.getByRole('button', { name: /take photo/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /choose from gallery/i })).toBeInTheDocument();
+    expect(screen.queryByText('Upload receipts')).not.toBeInTheDocument();
+    expect(screen.queryByText('Choose files')).not.toBeInTheDocument();
+
+    const fileInputs = Array.from(document.querySelectorAll('input[type="file"]')) as HTMLInputElement[];
+    expect(fileInputs).toHaveLength(2);
+    expect(fileInputs[0]?.getAttribute('capture')).toBe('environment');
+    expect(fileInputs[0]?.getAttribute('accept')).toBe('image/*');
+    expect(fileInputs[1]?.getAttribute('accept')).toContain('image/*');
 
     await act(async () => {
       root.unmount();

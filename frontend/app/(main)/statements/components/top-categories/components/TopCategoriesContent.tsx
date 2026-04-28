@@ -1,30 +1,12 @@
 'use client';
 import type { JSX } from 'react';
 
-import { TopCategoriesCharts } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesCharts';
 import { TopCategoriesLeaderboard } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesLeaderboard';
 import { TopCategoriesStatCards } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesStatCards';
 import type { CategorySortKey } from '@/app/(main)/statements/components/top-categories.utils';
 import type { useTopCategoriesViewModel } from '@/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel';
 
 type Props = { vm: ReturnType<typeof useTopCategoriesViewModel> };
-
-function TopCategoriesChartsSection({ vm }: Props): React.JSX.Element {
-  const isIncomeView = vm.activeFlowType === 'income';
-  const chartTheme = vm.resolvedTheme === 'dark' ? 'dark' : 'light';
-  const { labels } = vm;
-  return (
-    <TopCategoriesCharts
-      trendChart={vm.trendChart as object}
-      sourceChart={vm.sourceChart as object}
-      topCategoriesChart={vm.topCategoriesChart as object}
-      chartTheme={chartTheme}
-      trendTitle={isIncomeView ? labels.incomeTrend : labels.spendTrend}
-      sourceSplitTitle={labels.sourceSplit}
-      categoriesTitle={isIncomeView ? labels.topIncomeCategories : labels.topCategories}
-    />
-  );
-}
 
 function TopCategoriesLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
@@ -64,7 +46,6 @@ export function TopCategoriesContent({ vm }: Props): React.JSX.Element {
         noDataLabel={labels.comparisonNoData}
         vsPreviousPeriodLabel={labels.vsPreviousPeriod}
       />
-      <TopCategoriesChartsSection vm={vm} />
       <TopCategoriesLeaderboardSection vm={vm} />
     </div>
   );

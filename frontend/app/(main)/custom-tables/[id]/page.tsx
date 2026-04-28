@@ -194,6 +194,8 @@ function TableQuickTabs({
   onTabChange: (id: string) => void;
   columnsLabel: string;
 }) {
+  const isColumnsTabActive = normalizedActiveTabId === columnsTabId;
+
   return (
     <Box sx={{ display: 'flex', minWidth: 0, flex: 1, alignItems: 'center', justifyContent: 'flex-end', gap: 2.5, overflowX: 'auto' }}>
       {quickTabs.map(tab => {
@@ -224,10 +226,10 @@ function TableQuickTabs({
         component="button"
         type="button"
         onClick={() => { if (normalizedActiveTabId !== columnsTabId) { onTabChange(columnsTabId); } }}
-        sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--muted-foreground)', '&:hover': { color: normalizedActiveTabId === columnsTabId ? 'primary.main' : 'var(--foreground)' } }}
+        sx={{ position: 'relative', flexShrink: 0, whiteSpace: 'nowrap', pb: 1.5, fontSize: 14, fontWeight: 500, bgcolor: 'transparent', border: 'none', cursor: 'pointer', color: isColumnsTabActive ? 'primary.main' : 'var(--muted-foreground)', '&:hover': { color: isColumnsTabActive ? 'primary.main' : 'var(--foreground)' } }}
       >
         {columnsLabel}
-        {showColumnsTab && (
+        {isColumnsTabActive && (
           <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, bgcolor: 'primary.main' }} />
         )}
       </Box>

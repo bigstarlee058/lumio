@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
+import archiver from 'archiver';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
@@ -37,6 +38,7 @@ import type {
 import { StatementProcessingService } from '../parsing/services/statement-processing.service';
 import type { ConvertDroppedSampleDto } from './dto/convert-dropped-sample.dto';
 import type { CreateManualExpenseDto } from './dto/create-manual-expense.dto';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { FilterStatementsDto } from './dto/filter-statements.dto';
 import type { UpdateStatementDto } from './dto/update-statement.dto';
 import { ReceiptStatementService } from './services/receipt-statement.service';
@@ -154,19 +156,7 @@ export class StatementsService {
   }
 
   private async ensureCanEditStatements(userId: string, workspaceId: string): Promise<void> {
-    if (!workspaceId) return;
-
-    const membership = await this.workspaceMemberRepository.findOne({
-      where: { workspaceId, userId },
-      select: ['role', 'permissions'],
-    });
-
-    if (!membership) return;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
-
-    if (membership.permissions?.canEditStatements === false) {
-      throw new ForbiddenException('Недостаточно прав для редактирования выписок');
-    }
+    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditStatements', 'Недостаточно прав для редактирования выписок');
   }
 
   private async ensureCanModify(
@@ -1462,5 +1452,26 @@ export class StatementsService {
       console.error('Error generating thumbnail:', error);
       throw new BadRequestException('Failed to generate thumbnail');
     }
+  }
+
+  async exportZip(workspaceId: string, outputStream: NodeJS.WritableStream): Promise<void> {
+    const { data: statements } = await this.findAll(workspaceId, {});
+
+    const archive = archiver('zip', { zlib: { level: 5 } });
+    archive.pipe(outputStream);
+
+    for (const statement of statements) {
+      try {
+        const { stream, fileName } = await this.fileStorageService.getStatementFileStream(statement);
+        const isReceipt = statement.fileType === FileType.IMAGE || !statement.bankName;
+        const folder = isReceipt ? 'receipts' : (statement.bankName ?? 'other');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        archive.append(stream as any, { name: `${folder}/${fileName}` });
+      } catch {
+        // Skip files that cannot be retrieved
+      }
+    }
+
+    await archive.finalize();
   }
 }

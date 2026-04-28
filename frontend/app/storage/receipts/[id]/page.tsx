@@ -3,7 +3,7 @@
 import { Spinner } from '@/app/components/ui/spinner';
 import { DetailActionButton } from '@/app/components/ui/detail-action-button';
 import { ReceiptParsedDataForm } from '@/app/components/receipts/ReceiptParsedDataForm';
-import apiClient, { receiptsApi, type ReceiptRecord } from '@/app/lib/api';
+import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import Dialog from '@mui/material/Dialog';
@@ -30,7 +30,6 @@ type ReceiptExportColumn = {
 
 type ReceiptExportRow = Record<string, string | number>;
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? '/api/v1').replace(/\/$/, '');
 
 function buildLineItems(receipt: ReceiptRecord | null): EditableReceiptLineItem[] {
   return normalizeReceiptLineItems(receipt?.parsedData).map((item, index) => ({

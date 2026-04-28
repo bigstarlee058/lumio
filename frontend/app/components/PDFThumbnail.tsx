@@ -5,6 +5,7 @@ import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { AlertCircle, FileText } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 import { tokens } from '@/lib/theme-tokens';
+import { apiBaseUrl } from '@/app/lib/api';
 
 interface PDFThumbnailProps {
   fileId: string;
@@ -18,7 +19,6 @@ interface PDFThumbnailProps {
   preservePageAspect?: boolean;
 }
 
-const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/$/, '');
 const DEFAULT_THUMBNAIL_WIDTH = 200;
 const MIN_THUMBNAIL_WIDTH = 80;
 const MAX_THUMBNAIL_WIDTH = 1600;

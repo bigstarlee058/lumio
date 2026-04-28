@@ -166,6 +166,36 @@ const content = {
         id: 'Notifikasi',
       }),
     },
+    notificationTypes: {
+      receiptUncategorized: {
+        title: t({
+          ru: 'Чек без категории',
+          en: 'Receipt without category',
+        }),
+        message: t({
+          ru: 'Чек "{{name}}" не имеет категории',
+          en: 'Receipt "{{name}}" has no category',
+        }),
+        messageFallback: t({
+          ru: 'Найден чек без категории',
+          en: 'Found a receipt without category',
+        }),
+      },
+      transactionUncategorized: {
+        title: t({
+          ru: 'Транзакции без категории',
+          en: 'Transactions without category',
+        }),
+        messageSingular: t({
+          ru: '{{count}} транзакция требует выбора категории',
+          en: '{{count}} transaction needs a category',
+        }),
+        messagePlural: t({
+          ru: '{{count}} транзакции требуют выбора категории',
+          en: '{{count}} transactions need a category',
+        }),
+      },
+    },
   },
 } satisfies Dictionary;
 

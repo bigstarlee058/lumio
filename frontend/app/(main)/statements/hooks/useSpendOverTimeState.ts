@@ -15,7 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 // Types
 // ---------------------------------------------------------------------------
 
-type ViewTypeValue = 'line' | 'bar' | 'stacked';
+type ViewTypeValue = 'calendar' | 'line' | 'bar' | 'stacked';
 type WorkspaceFilterValue = 'current' | 'all' | string;
 
 type StoredState = {
@@ -72,8 +72,8 @@ export interface UseSpendOverTimeStateReturn {
 // Constants
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_SPEND_OVER_TIME_GROUP_BY: SpendOverTimeGroupBy = 'month';
-export const DEFAULT_SPEND_OVER_TIME_VIEW: ViewTypeValue = 'line';
+export const DEFAULT_SPEND_OVER_TIME_GROUP_BY: SpendOverTimeGroupBy = 'day';
+export const DEFAULT_SPEND_OVER_TIME_VIEW: ViewTypeValue = 'calendar';
 const DEFAULT_FLOW: SpendOverTimeFlowType = 'expense';
 
 // ---------------------------------------------------------------------------
@@ -194,7 +194,7 @@ export function useSpendOverTimeState(storageKey: string): UseSpendOverTimeState
 
   const applyFilterChanges = (): void => {
     setAppliedFilters(draftFilters);
-    setGroupBy(draftGroupBy);
+    setGroupBy(draftViewType === 'calendar' ? 'day' : draftGroupBy);
     setViewType(draftViewType);
   };
 
