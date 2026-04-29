@@ -16,14 +16,15 @@ npm install
 cp .env.example .env
 ```
 
-Для отправки email-приглашений в рабочие пространства добавьте:
+Пользовательские интеграции настраиваются через UI на уровне workspace:
 
-- `APP_URL` — базовый URL фронтенда (используется в ссылках приглашений)
-- `RESEND_API_KEY` — API ключ Resend
-- `RESEND_FROM` — From адрес, например `"Lumio <noreply@your-domain.com>"`
-- `RESEND_REPLY_TO` — опционально, Reply-To адрес
+- **Integrations → AI-compatible endpoint** для Ollama/LocalAI/vLLM.
+- **Integrations → SMTP email** для email-приглашений.
+- **Settings → Telegram** для bot token.
+- **Integrations → S3-compatible/WebDAV/IMAP** для storage и receipt import.
+- **Integrations → Application URL** для публичного URL ссылок.
 
-Если `RESEND_API_KEY` или `RESEND_FROM` не заданы, ссылка всё равно вернётся в ответе API, но письмо отправлено не будет.
+Env оставлен для инфраструктуры и bootstrap/fallback: `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `INTEGRATIONS_ENCRYPTION_KEY`, `FRONTEND_URL`/`APP_URL`. Если SMTP не задан ни в UI, ни через fallback env, ссылка приглашения всё равно вернётся в ответе API, но письмо отправлено не будет.
 
 ## Запуск базы данных
 
@@ -80,6 +81,4 @@ src/
 API доступно по адресу: `http://localhost:3001/api/v1`
 
 Health check: `GET /api/v1/health`
-
-
 

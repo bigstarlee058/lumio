@@ -74,7 +74,7 @@ Lumio is a full-stack financial operations platform built for teams that need to
 - **OCR for Image Statements** — Tesseract.js text extraction from scanned documents and photos.
 - **Idempotent Uploads** — SHA-256 file hashing prevents duplicate imports.
 - **Transaction Deduplication** — Fingerprint-based duplicate detection with confidence scoring, merge, and mark-as-duplicate workflows.
-- **AI Auto-Categorization** — Gemini / OpenRouter-backed categorization with per-workspace learning rules.
+- **AI Auto-Categorization** — OpenAI-compatible local/provider endpoint with per-workspace learning rules.
 - **Multi-Tenant Workspaces** — Unlimited workspaces with invitation flows and per-workspace data isolation.
 - **Granular RBAC** — Roles: owner, admin, member, viewer. Per-user permission overrides.
 - **Dashboard & Reports** — Cash flow, top categories, trends, custom report builder with CSV/XLSX export.
@@ -88,14 +88,14 @@ Lumio is a full-stack financial operations platform built for teams that need to
 
 - **ML Categorization Rules** — `CategoryLearning` remembers per-workspace merchant→category patterns and applies them automatically on future imports.
 - **AI Financial Insights** — Automatically generated insights surfaced on the dashboard; dismissible per-user.
-- **Generic AI PDF Parser** — Gemini / OpenRouter extracts structured transaction data from any PDF when no native parser matches.
+- **Generic AI PDF Parser** — an OpenAI-compatible endpoint extracts structured transaction data from any PDF when no native parser matches.
 
 ### Integrations
 
-- **Gmail Receipts** — OAuth Gmail sync: pulls email receipts, parses merchant/amount/tax/line-item data, links receipts to transactions.
-- **Google Drive** — OAuth integration for importing statement files from Drive folders.
-- **Dropbox** — OAuth integration for importing statement files from Dropbox.
-- **Google Sheets** — Two-way sync: export transactions to Sheets; import Sheets data into custom tables.
+- **IMAP Receipts** — mailbox polling pulls email receipts, parses merchant/amount/tax/line-item data, links receipts to transactions.
+- **S3-compatible Storage** — import and sync statement files with MinIO or another S3-compatible bucket.
+- **WebDAV Storage** — import and sync statement files with Nextcloud or another WebDAV-compatible server.
+- **Workbook Import** — export and import custom table data via XLSX, CSV, and ODS files.
 - **Telegram Bot** — Scheduled financial reports delivered to a Telegram chat or channel.
 
 ### Collaboration & Access Control
@@ -147,7 +147,7 @@ Setting expectations upfront:
 | Bereke Bank (legacy format) | PDF | `BerekeOldParser` — native |
 | Any bank | CSV | `CsvParser` — generic delimiter detection |
 | Any bank | XLSX / XLS | `ExcelParser` — generic |
-| Any bank | PDF | `GenericPdfParser` — AI-assisted via Gemini / OpenRouter |
+| Any bank | PDF | `GenericPdfParser` — AI-assisted via OpenAI-compatible endpoint |
 | Any bank | Image (PNG / JPG) | OCR pipeline via Tesseract.js |
 
 ---
@@ -164,8 +164,8 @@ Setting expectations upfront:
 | Cache | [Redis 7](https://redis.io/) via `cache-manager` |
 | Auth | JWT (access 1 h / refresh 30 d), Passport.js, bcrypt |
 | File Processing | pdf-parse, pdf-lib, tesseract.js v5, sharp, xlsx |
-| AI / LLM | @google/generative-ai (Gemini), @openrouter/sdk |
-| Email | [Resend v6](https://resend.com/) + React Email templates |
+| AI / LLM | OpenAI-compatible HTTP endpoint (Ollama, LocalAI, vLLM) |
+| Email | SMTP via nodemailer + React Email templates |
 | Real-time | Socket.IO 4 + @nestjs/websockets |
 | Scheduling | @nestjs/schedule (cron jobs for Telegram reports, Gmail sync) |
 | Metrics | prom-client (Prometheus) |
@@ -211,7 +211,7 @@ lumio/
 ├── backend/                         # NestJS API server
 │   ├── src/
 │   │   ├── modules/                 # 30 feature modules
-│   │   │   ├── auth/                # JWT auth, refresh tokens, Google OAuth, session management
+│   │   │   ├── auth/                # JWT auth, refresh tokens, session management
 │   │   │   ├── users/               # User CRUD, avatars, permission overrides
 │   │   │   ├── workspaces/          # Multi-tenant workspaces, RBAC, invitations
 │   │   │   ├── statements/          # Bank statement upload & lifecycle management
@@ -223,10 +223,10 @@ lumio/
 │   │   │   ├── reports/             # Financial reports, export (CSV/XLSX)
 │   │   │   ├── balance/             # Balance sheet accounts & snapshots
 │   │   │   ├── storage/             # File storage, versioning, shared links
-│   │   │   ├── gmail/               # Gmail OAuth, receipt sync & parsing
-│   │   │   ├── google-drive/        # Google Drive OAuth & file import
-│   │   │   ├── google-sheets/       # Google Sheets two-way sync
-│   │   │   ├── dropbox/             # Dropbox OAuth & file import
+│   │   │   ├── gmail/               # Legacy receipt sync & parsing
+│   │   │   ├── google-drive/        # Legacy Drive migration compatibility
+│   │   │   ├── google-sheets/       # Legacy Sheets migration compatibility
+│   │   │   ├── dropbox/             # Legacy Dropbox migration compatibility
 │   │   │   ├── exchange-rates/      # Currency exchange rate management
 │   │   │   ├── telegram/            # Telegram bot, scheduled reports
 │   │   │   ├── custom-tables/       # User-defined data structures
@@ -260,7 +260,7 @@ lumio/
 │   │   │   └── supported-banks/     # Supported banks reference page
 │   │   ├── categories/              # Category management
 │   │   ├── data-entry/              # Manual data entry UI
-│   │   ├── integrations/            # Integration hub (Gmail, Drive, Dropbox, Sheets)
+│   │   ├── integrations/            # Integration hub (S3, WebDAV, IMAP, workbook import)
 │   │   ├── storage/                 # File storage browser
 │   │   ├── settings/                # Profile, notifications, workspace, Telegram
 │   │   ├── audit/                   # Audit log viewer
@@ -368,7 +368,7 @@ No environment variables are required in development mode. The backend uses sens
 | `PORT` | `3001` |
 | `JWT_SECRET` | Built-in dev default (disabled in production) |
 | `JWT_REFRESH_SECRET` | Built-in dev default (disabled in production) |
-| `JWT_EXPIRES_IN` | `1h` |
+| `JWT_EXPIRES_IN` | `30d` |
 | `JWT_REFRESH_EXPIRES_IN` | `30d` |
 
 To override any value, create `backend/.env`. A minimal template is available in `backend/.env.example`.
@@ -394,74 +394,35 @@ bash scripts/generate-env.sh
 ### Optional Integrations
 
 <details>
-<summary><b>Google OAuth, Drive & Sheets</b></summary>
+<summary><b>Open Protocol Storage & Mail</b></summary>
 
-Required for Google login, Gmail receipt sync, Drive import, and Sheets sync.
+Use open protocols and self-hostable services for file sync and receipt import.
 
-```bash
-# backend/.env
-GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your-client-secret
-GOOGLE_REDIRECT_URI=http://localhost:3001/api/v1/auth/google/callback
-
-# frontend/.env.local
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-```
-
-Create OAuth credentials in [Google Cloud Console](https://console.cloud.google.com/). Enable Gmail API, Drive API, and Sheets API in your project.
+Configure S3-compatible storage, WebDAV storage, and IMAP inboxes from **Integrations**. Server env variables are only a temporary fallback for bootstrap or migration.
 </details>
 
 <details>
 <summary><b>AI Auto-Categorization & Generic PDF Parsing</b></summary>
 
-Provide at least one key. The system will fall back to the next available provider if one fails.
-
-```bash
-# backend/.env
-GEMINI_API_KEY=your-gemini-api-key
-OPENROUTER_API_KEY=your-openrouter-key
-```
+Point Lumio at an OpenAI-compatible endpoint from **Integrations → AI-compatible endpoint**. `AI_API_KEY` may be omitted for local endpoints that do not require authentication. Env values remain supported only as server defaults.
 </details>
 
 <details>
-<summary><b>Dropbox</b></summary>
+<summary><b>Dependency Policy</b></summary>
 
-```bash
-# backend/.env
-DROPBOX_CLIENT_ID=your-app-key
-DROPBOX_CLIENT_SECRET=your-app-secret
-DROPBOX_REDIRECT_URI=http://localhost:3001/api/v1/integrations/dropbox/callback
-
-# frontend/.env.local
-NEXT_PUBLIC_DROPBOX_APP_KEY=your-app-key
-```
-
-Create an app in [Dropbox App Console](https://www.dropbox.com/developers/apps).
+Do not add closed SaaS SDKs for new integration work. Prefer OSS libraries that implement open protocols such as SMTP, IMAP, WebDAV, S3-compatible object storage, and OpenAI-compatible local inference.
 </details>
 
 <details>
 <summary><b>Telegram Bot</b></summary>
 
-```bash
-# backend/.env
-TELEGRAM_BOT_TOKEN=your-token-from-botfather
-```
-
-Get a token from [@BotFather](https://t.me/botfather), then connect in **Settings → Telegram**.
+Get a token from [@BotFather](https://t.me/botfather), then save the bot token in **Settings → Telegram**. The token is stored encrypted; `TELEGRAM_BOT_TOKEN` is only a fallback server default.
 </details>
 
 <details>
-<summary><b>Email (Resend)</b></summary>
+<summary><b>Email (SMTP)</b></summary>
 
-Used for workspace invitation emails. If not configured, invitation links are returned in the API response but no email is sent.
-
-```bash
-# backend/.env
-RESEND_API_KEY=re_your-api-key
-RESEND_FROM="Lumio <noreply@your-domain.com>"
-```
-
-Get an API key at [resend.com](https://resend.com).
+Used for workspace invitation emails. Configure SMTP from **Integrations → SMTP email**. If neither UI settings nor env fallback are configured, invitation links are returned in the API response but no email is sent.
 </details>
 
 ---
@@ -706,12 +667,12 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
              │                                    │
 ┌────────────▼────────────┐         ┌────────────▼───────────────┐
 │   Next.js Frontend      │         │   External Integrations     │
-│   (Port 3000)           │         │  - Google OAuth             │
-│                         │         │  - Gmail API                │
-│  - App Router           │         │  - Google Drive             │
-│  - React 19             │         │  - Dropbox                  │
+│   (Port 3000)           │         │  - SMTP / IMAP              │
+│                         │         │  - S3-compatible storage    │
+│  - App Router           │         │  - WebDAV storage           │
+│  - React 19             │         │  - Workbook files           │
 │  - MUI + Emotion        │         │  - Telegram Bot             │
-│  - Real-time updates    │         │  - Gemini / OpenRouter      │
+│  - Real-time updates    │         │  - OpenAI-compatible AI     │
 └────────────┬────────────┘         └─────────────────────────────┘
              │
              │ REST API (/api/v1)
@@ -793,7 +754,7 @@ Upload request
       ├── BerekeOldParser    (Bereke Bank legacy PDF)
       ├── ExcelParser        (XLSX / XLS)
       ├── CsvParser          (CSV)
-      ├── GenericPdfParser   (AI-assisted: Gemini / OpenRouter)
+      ├── GenericPdfParser   (AI-assisted: OpenAI-compatible endpoint)
       └── OCR Pipeline       (Tesseract.js for images)
   → ImportSession created (status: processing)
   → Transactions persisted
@@ -967,7 +928,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 Built on great open-source foundations:
 
-[NestJS](https://nestjs.com/) · [Next.js](https://nextjs.org/) · [PostgreSQL](https://www.postgresql.org/) · [TypeORM](https://typeorm.io/) · [Redis](https://redis.io/) · [MUI](https://mui.com/) · [Emotion](https://emotion.sh/) · [TanStack Table](https://tanstack.com/table) · [ECharts](https://echarts.apache.org/) · [Tesseract.js](https://tesseract.projectnaptha.com/) · [Socket.IO](https://socket.io/) · [Intlayer](https://intlayer.org/) · [driver.js](https://driverjs.com/) · [Biome](https://biomejs.dev/) · [Storybook](https://storybook.js.org/) · [Resend](https://resend.com/) · and many more.
+[NestJS](https://nestjs.com/) · [Next.js](https://nextjs.org/) · [PostgreSQL](https://www.postgresql.org/) · [TypeORM](https://typeorm.io/) · [Redis](https://redis.io/) · [MUI](https://mui.com/) · [Emotion](https://emotion.sh/) · [TanStack Table](https://tanstack.com/table) · [ECharts](https://echarts.apache.org/) · [Tesseract.js](https://tesseract.projectnaptha.com/) · [Socket.IO](https://socket.io/) · [Intlayer](https://intlayer.org/) · [driver.js](https://driverjs.com/) · [Biome](https://biomejs.dev/) · [Storybook](https://storybook.js.org/) · and many more.
 
 ---
 
