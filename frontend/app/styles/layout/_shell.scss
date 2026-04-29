@@ -58,14 +58,16 @@
 .lumio-sidebar__brand {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 16px 12px;
+  gap: 12px;
+  padding: 18px 16px 14px;
   flex-shrink: 0;
+  width: 100%;
+  text-decoration: none;
 
   &-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: $lumio-radius-sm;
+    width: 36px;
+    height: 36px;
+    border-radius: $lumio-radius-md;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,10 +76,16 @@
   }
 
   &-name {
-    font-size: 15px;
-    font-weight: 700;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-manrope), 'Manrope', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
     color: $lumio-color-text-primary;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
 
     @include dark { color: $lumio-color-text-primary-dk; }
   }

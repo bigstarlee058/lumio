@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Nunito } from 'next/font/google';
+import { Geist, Geist_Mono, Manrope, Nunito } from 'next/font/google';
 import './globals.scss';
 import { ThemeProvider } from '@/components/theme-provider';
 import { getLocale } from 'next-intlayer/server';
@@ -21,13 +21,23 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
 });
 
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-manrope',
+});
+
 // Keep Nunito for branding elements
 const nunito = Nunito({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-nunito',
 });
 
-const FONT_CLASS_NAMES = [geist.variable, geistMono.variable, nunito.variable].join(' ');
+const FONT_CLASS_NAMES = [
+  geist.variable,
+  geistMono.variable,
+  manrope.variable,
+  nunito.variable,
+].join(' ');
 const BODY_STYLE: React.CSSProperties = {
   background: 'var(--background)',
   color: 'var(--foreground)',

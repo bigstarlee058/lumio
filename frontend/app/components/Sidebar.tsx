@@ -88,13 +88,18 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
   return (
     <>
       {/* Brand */}
-      <div className="lumio-sidebar__brand">
+      <Link href="/" className="lumio-sidebar__brand" onClick={onNavClick} aria-label="Lumio home">
         <div className="lumio-sidebar__brand-mark">
-          <Image src="/images/logo.jpg" alt="Lumio" width={28} height={28} style={{ display: 'block', borderRadius: tokens.radius.sm }} />
+          <Image
+            src="/images/logo.jpg"
+            alt="Lumio"
+            width={36}
+            height={36}
+            style={{ display: 'block', borderRadius: tokens.radius.md }}
+          />
         </div>
-        <div className="lumio-sidebar__brand-name">Lumio</div>
-        <span className="lumio-sidebar__brand-meta">v2</span>
-      </div>
+        <div className="lumio-sidebar__brand-name">LUMIO</div>
+      </Link>
 
       {/* Workspace switcher */}
       <WorkspaceSwitcher />
