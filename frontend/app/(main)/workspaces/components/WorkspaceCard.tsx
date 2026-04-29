@@ -1,9 +1,10 @@
 'use client';
 
-import { api } from '@/app/lib/api';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
 import Box from '@mui/material/Box';
-import { Star } from '@/app/components/icons';
-import React, { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { tokens } from '@/lib/theme-tokens';
 
@@ -23,22 +24,25 @@ interface WorkspaceCardProps {
     isFavorite?: boolean;
   };
   onClick: () => void;
-  onFavoriteToggle?: () => void;
+  onFavoriteToggle?: (workspaceId: string) => Promise<void>;
 }
 
 export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: WorkspaceCardProps) {
   const [isFavorite, setIsFavorite] = useState(workspace.isFavorite || false);
   const [isHovered, setIsHovered] = useState(false);
 
+  useEffect(() => {
+    setIsFavorite(workspace.isFavorite || false);
+  }, [workspace.isFavorite]);
+
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    const nextFavorite = !isFavorite;
+    setIsFavorite(nextFavorite);
     try {
-      const response = await api.patch(`/workspaces/${workspace.id}/favorite`);
-      setIsFavorite(response.data.isFavorite);
-      if (onFavoriteToggle) {
-        onFavoriteToggle();
-      }
+      await onFavoriteToggle?.(workspace.id);
     } catch (error: unknown) {
+      setIsFavorite(!nextFavorite);
       toast.error(getApiMessage(error, 'Failed to update favorite status'));
     }
   };
@@ -154,27 +158,31 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
       </button>
 
       {/* Star Button (Top Right) */}
-      <button
-        type="button"
+      <IconButton
         onClick={handleFavoriteClick}
-        style={{
+        sx={{
           position: 'absolute',
           top: 12,
           right: 12,
-          padding: 4,
-          borderRadius: 0,
-          border: 'none',
-          cursor: 'pointer',
+          p: 0.5,
+          borderRadius: tokens.radius.full,
           transition: 'opacity 0.2s',
           opacity: isHovered || isFavorite ? 1 : 0,
-          background: 'transparent',
+          bgcolor: 'transparent',
           backdropFilter: undefined,
           color: '#ffffff',
+          '&:hover': {
+            bgcolor: 'transparent',
+          },
         }}
         aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
       >
-        <Star size={18} style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
-      </button>
+        {isFavorite ? (
+          <StarIcon sx={{ fontSize: 18, filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
+        ) : (
+          <StarBorderIcon sx={{ fontSize: 18, filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
+        )}
+      </IconButton>
     </Box>
   );
 }

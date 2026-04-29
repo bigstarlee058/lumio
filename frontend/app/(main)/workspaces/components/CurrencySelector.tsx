@@ -94,7 +94,7 @@ function AllCurrenciesList({ items, minimal, onSelect }: AllCurrenciesListProps)
       {!minimal && <Typography variant="caption" sx={{ px: 0.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted-foreground)' }}>All</Typography>}
       <Box sx={{ mt: minimal ? 0.75 : 1, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
         {items.length > 0 ? items.map(item => <CurrencyItemButton key={item.code} item={item} minimal={minimal} onSelect={onSelect} />) : (
-          <Box sx={{ bgcolor: 'var(--muted)', px: 1.5, py: 1.25 }}>
+          <Box sx={{ bgcolor: 'var(--muted)', borderRadius: tokens.radius.md, px: 1.5, py: 1.25 }}>
             <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>No currencies found</Typography>
           </Box>
         )}
@@ -108,7 +108,7 @@ type PanelProps = { minimal: boolean; showPanelHeader: boolean; title: string; s
 // eslint-disable-next-line max-lines-per-function, complexity
 function CurrencyPanel({ minimal, showPanelHeader, title, search, selectedCurrencyItem, selectedMatchesSearch, currencyQuery, recentCurrencyItems, allCurrencyItems, onSearchChange, onClose, onSelect }: PanelProps): React.JSX.Element {
   return (
-    <Box sx={minimal ? { width: '100%' } : { width: '100%', border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2.5 }}>
+    <Box sx={minimal ? { width: '100%' } : { width: '100%', border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2.5 }}>
       {!minimal && showPanelHeader && (
         <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
           <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>{title}</Typography>

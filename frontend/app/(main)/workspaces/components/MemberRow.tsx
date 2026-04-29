@@ -117,7 +117,7 @@ export function MemberRow({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, border: '1px solid var(--border)', bgcolor: 'var(--background)', px: 2, py: 1.5 }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, border: '1px solid var(--border)', borderRadius: tokens.radius.md, bgcolor: 'var(--background)', px: 2, py: 1.5 }}>
       <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
         <MemberAvatar avatarUrl={avatarUrl} name={member.name} email={member.email} />
         <Box sx={{ minWidth: 0 }}>

@@ -27,7 +27,7 @@ function SortMenu({ sortOption, showSortMenu, onToggle, onSelect }: SortMenuProp
         <SortAsc size={20} />
       </button>
       {showSortMenu && (
-        <Box sx={{ position: 'absolute', right: 0, mt: 0.5, width: 192, bgcolor: 'background.paper', border: '1px solid var(--border-color)', boxShadow: 3, zIndex: 10 }}>
+        <Box sx={{ position: 'absolute', right: 0, mt: 0.5, width: 192, bgcolor: 'background.paper', border: '1px solid var(--border-color)', borderRadius: tokens.radius.md, boxShadow: 3, zIndex: 10, overflow: 'hidden' }}>
           {SORT_OPTIONS.map(opt => (
             <button key={opt.key} type="button" onClick={() => onSelect(opt.key)}
               style={{ display: 'block', width: '100%', padding: '8px 16px', textAlign: 'left', fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', fontWeight: sortOption === opt.key ? 600 : 400, color: sortOption === opt.key ? 'var(--primary)' : 'var(--foreground)' }}>

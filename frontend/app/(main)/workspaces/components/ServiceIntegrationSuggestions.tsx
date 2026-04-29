@@ -65,6 +65,7 @@ export function ServiceIntegrationSuggestions({
             key={integration.id}
             sx={{
               border: '1px solid var(--border)',
+              borderRadius: tokens.radius.lg,
               p: 2,
               transition: 'box-shadow 0.2s',
               '&:hover': { boxShadow: 2 },

@@ -221,7 +221,7 @@ export default function WorkspaceOverviewView() {
         data-tour-id="workspace-side-panel"
       >
         {/* Header card */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2, mb: 1.5 }}>
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2, mb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
             <Box
               sx={{
@@ -253,7 +253,7 @@ export default function WorkspaceOverviewView() {
 
         {/* Background section */}
         <Box
-          sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2, mb: 1.5 }}
+          sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2, mb: 1.5 }}
           data-tour-id="workspace-background"
         >
           <Box
@@ -343,7 +343,7 @@ export default function WorkspaceOverviewView() {
 
         {/* Settings section */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
+          <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2 }}>
             {/* Workspace name */}
             <Box sx={{ mb: 1.5 }}>
               <label
@@ -476,6 +476,7 @@ export default function WorkspaceOverviewView() {
               sx={{
                 border: '1px solid',
                 borderColor: 'var(--color-error-soft-border)',
+                borderRadius: tokens.radius.lg,
                 bgcolor: 'var(--color-error-soft-bg)',
                 p: 2,
               }}
@@ -757,7 +758,7 @@ export default function WorkspaceOverviewView() {
                     </button>
                   ))
                 ) : (
-                  <Box sx={{ bgcolor: 'var(--muted)', p: 1.5 }}>
+                  <Box sx={{ bgcolor: 'var(--muted)', borderRadius: tokens.radius.md, p: 1.5 }}>
                     <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
                       No currencies found
                     </Typography>

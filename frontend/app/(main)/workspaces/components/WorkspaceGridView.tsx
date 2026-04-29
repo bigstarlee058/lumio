@@ -47,7 +47,7 @@ type WorkspaceGridViewProps = {
   noWorkspacesLabel: string;
   onWorkspaceClick: (id: string) => void;
   onCreateClick: () => void;
-  onFavoriteToggle: () => void;
+  onFavoriteToggle: (id: string) => Promise<void>;
 };
 
 export function WorkspaceGridView({ workspaces, allWorkspacesEmpty, filteredEmpty, createLabel, noWorkspacesLabel, onWorkspaceClick, onCreateClick, onFavoriteToggle }: WorkspaceGridViewProps): React.JSX.Element {

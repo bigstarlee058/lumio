@@ -67,7 +67,7 @@ type BodyProps = {
   embedded: boolean;
   onWorkspaceClick: (id: string) => void;
   onCreateClick: () => void;
-  onFavoriteToggle: () => void;
+  onFavoriteToggle: (id: string) => Promise<void>;
 };
 
 function WorkspaceListBody({ ls, allCount, currentWorkspaceId, createLabel, noWorkspacesLabel, searchPlaceholder, embedded, onWorkspaceClick, onCreateClick, onFavoriteToggle }: BodyProps): React.JSX.Element {
@@ -99,7 +99,7 @@ function useWorkspaceNav({ switchWorkspace, onWorkspaceActivated, redirectPathOn
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function WorkspacesListContent({ embedded, redirectPathOnSelect = '/workspaces/overview', onWorkspaceActivated }: Props): React.JSX.Element {
   const content = useIntlayer('workspaces-selector');
-  const { currentWorkspace, workspaces, loading, switchWorkspace, refreshWorkspaces } = useWorkspace();
+  const { currentWorkspace, workspaces, loading, switchWorkspace, toggleFavorite } = useWorkspace();
   const router = useRouter();
   const ls = useWorkspaceListState({ workspaces });
   const { handleWorkspaceClick } = useWorkspaceNav({ switchWorkspace, onWorkspaceActivated, redirectPathOnSelect });
@@ -113,7 +113,7 @@ export default function WorkspacesListContent({ embedded, redirectPathOnSelect =
 
   return (
     <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflow: 'hidden', pt: embedded ? 2 : 0 }}>
-      <WorkspaceListBody ls={ls} allCount={workspaces.length} currentWorkspaceId={currentWorkspace?.id} createLabel={createLabel} noWorkspacesLabel={noWorkspacesLabel} searchPlaceholder={searchPlaceholder} embedded={Boolean(embedded)} onWorkspaceClick={handleWorkspaceClick} onCreateClick={handleCreateWorkspace} onFavoriteToggle={refreshWorkspaces} />
+      <WorkspaceListBody ls={ls} allCount={workspaces.length} currentWorkspaceId={currentWorkspace?.id} createLabel={createLabel} noWorkspacesLabel={noWorkspacesLabel} searchPlaceholder={searchPlaceholder} embedded={Boolean(embedded)} onWorkspaceClick={handleWorkspaceClick} onCreateClick={handleCreateWorkspace} onFavoriteToggle={toggleFavorite} />
     </Box>
   );
 }

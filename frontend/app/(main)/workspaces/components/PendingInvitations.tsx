@@ -3,6 +3,7 @@
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { tokens } from '@/lib/theme-tokens';
 import type { WorkspaceInvitation } from './hooks/useMemberManagement';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -55,7 +56,7 @@ function InviteRow({
 }: InviteRowProps): React.ReactElement {
   const isActionBusy = isResending || isRevoking;
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, border: '1px dashed var(--border)', px: 2, py: 1.5 }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, border: '1px dashed var(--border)', borderRadius: tokens.radius.md, px: 2, py: 1.5 }}>
       <Box>
         <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>{invite.email}</Typography>
         <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block' }}>Role: {getRoleLabel(invite.role)}</Typography>
@@ -89,7 +90,7 @@ export function PendingInvitations({
   onCopyLink,
 }: PendingInvitationsProps): React.ReactElement {
   return (
-    <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
       <Typography variant="caption" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}>
         Pending invitations
       </Typography>

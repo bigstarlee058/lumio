@@ -497,12 +497,12 @@ export default function WorkspaceCategoriesView() {
         </Box>
 
         {/* Info banner */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', borderRadius: tokens.radius.md, px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
           Disabling a category will hide it from statements and reports.
         </Box>
 
         {/* Category list */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 1 }} data-tour-id="categories-list">
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 1 }} data-tour-id="categories-list">
           {/* Table header */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--muted-foreground)' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -574,6 +574,7 @@ export default function WorkspaceCategoriesView() {
                       justifyContent: 'space-between',
                       border: '1px solid var(--border)',
                       borderLeft: `3px solid ${categoryColor}`,
+                      borderRadius: tokens.radius.md,
                       px: 2,
                       py: 2,
                       bgcolor: index % 2 === 0 ? 'var(--card)' : 'rgba(var(--muted-rgb,243,244,246),0.4)',
