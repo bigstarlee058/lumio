@@ -12,9 +12,8 @@ Configured in `backend/audit-ci.json` and used by `dependency-scan` job:
 
 ## License exceptions
 
-`dependency-scan` runs license checks with a permissive allowlist that currently permits LGPL artifacts required by the build:
+`dependency-scan` runs license checks for dependencies in all npm package roots, including dev dependencies. The allowlist only permits open-source licenses and intentionally excludes `UNLICENSED` dependency packages.
 
-- `pdf2json` (LGPL) transitively pulled by `pdf2table` in the backend.
-- `@img/sharp-libvips-*` (LGPL) required by Next.js image pipeline.
+- `@img/sharp-libvips-*` (LGPL) required by `sharp`/Next.js image processing.
 
-If licensing requirements change, adjust the `ALLOWED_LICENSES` string in `.github/workflows/ci.yml` and tighten/removing these exceptions.
+If licensing requirements change, adjust the `ALLOWED_LICENSES` string in `.github/workflows/ci.yml` and tighten/remove these exceptions.
