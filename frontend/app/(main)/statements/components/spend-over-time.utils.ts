@@ -69,6 +69,8 @@ const getWeekStart = (date: Date): Date => {
   return new Date(result.getFullYear(), result.getMonth(), result.getDate());
 };
 
+const DAY_PERIOD_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 const monthFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   year: 'numeric',
@@ -104,6 +106,56 @@ const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy): { period: s
 
   const period = `${date.getFullYear()}`;
   return { period, label: period };
+};
+
+export const isSpendOverTimeDayPeriod = (period: string | null | undefined): boolean =>
+  Boolean(period && DAY_PERIOD_REGEX.test(period));
+
+const spendOverTimePeriodBuilders: Record<SpendOverTimeGroupBy, (date: Date) => string> = {
+  day: formatDateISO,
+  week: date => formatDateISO(getWeekStart(date)),
+  month: date => `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, '0')}`,
+  quarter: date => `${date.getFullYear()}-Q${Math.floor(date.getMonth() / 3) + 1}`,
+  year: date => `${date.getFullYear()}`,
+};
+
+export const matchesSpendOverTimePeriod = (date: Date, period: string, groupBy: SpendOverTimeGroupBy): boolean => {
+  return spendOverTimePeriodBuilders[groupBy](date) === period;
+};
+
+const getSpendOverTimeRecordDate = (record: SpendOverTimeRecord): Date | null =>
+  toDateOnly(record.dateValue || record.createdAt || null);
+
+const getSpendOverTimeRecordTime = (record: SpendOverTimeRecord): number =>
+  getSpendOverTimeRecordDate(record)?.getTime() ?? 0;
+
+export const filterSpendOverTimeDrillDownRecords = (period: string, groupBy: SpendOverTimeGroupBy, records: SpendOverTimeRecord[]): SpendOverTimeRecord[] =>
+  records
+    .filter(record => {
+      const date = getSpendOverTimeRecordDate(record);
+      return date ? matchesSpendOverTimePeriod(date, period, groupBy) : false;
+    })
+    .sort((a, b) => getSpendOverTimeRecordTime(b) - getSpendOverTimeRecordTime(a));
+
+export const buildSpendOverTimeSelectedPoint = (period: string | null, records: SpendOverTimeRecord[]): SpendOverTimePoint | null => {
+  if (!period || records.length === 0) return null;
+  const point = records.reduce<SpendOverTimePoint>((result, record) => {
+    if (record.flowType === 'income') result.income += record.amount;
+    else result.expense += record.amount;
+    if (record.sourceType === 'gmail') result.gmailAmount += record.amount;
+    else result.statementAmount += record.amount;
+    result.count += 1;
+    result.net = result.income - result.expense;
+    return result;
+  }, { period, label: period, income: 0, expense: 0, net: 0, count: 0, statementAmount: 0, gmailAmount: 0 });
+  return {
+    ...point,
+    income: Number(point.income.toFixed(2)),
+    expense: Number(point.expense.toFixed(2)),
+    net: Number(point.net.toFixed(2)),
+    statementAmount: Number(point.statementAmount.toFixed(2)),
+    gmailAmount: Number(point.gmailAmount.toFixed(2)),
+  };
 };
 
 export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput): { flowType: 'income' | 'expense'; amount: number } => {

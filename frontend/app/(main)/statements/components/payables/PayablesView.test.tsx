@@ -150,6 +150,14 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => navigationState.searchParams,
 }));
 
+vi.mock('@mui/x-date-pickers/DatePicker', async () => {
+  const ReactModule = await import('react');
+  return {
+    DatePicker: ({ label }: { label: string }) =>
+      ReactModule.createElement('input', { 'aria-label': label, readOnly: true }),
+  };
+});
+
 vi.mock('@/app/lib/payables-api', () => ({
   __esModule: true,
   default: apiMocks,
@@ -282,6 +290,7 @@ describe('PayablesView', () => {
 
     expect(await screen.findByText('Payables')).toBeInTheDocument();
     expect(await screen.findByText('ACME LLC')).toBeInTheDocument();
+    expect(screen.queryByText('Sort')).not.toBeInTheDocument();
     expect(apiMocks.getSummary).toHaveBeenCalledTimes(1);
     expect(apiMocks.list).toHaveBeenCalledTimes(1);
   });
@@ -299,7 +308,7 @@ describe('PayablesView', () => {
     expect(toastMock.success).toHaveBeenCalledWith('Marked as paid');
   });
 
-  it('exports all filtered rows without page params and includes sort', async () => {
+  it('exports all filtered rows without page params and keeps the default sort', async () => {
     const createObjectURL = vi.fn(() => 'blob:payables');
     const revokeObjectURL = vi.fn();
     Object.defineProperty(window.URL, 'createObjectURL', {
@@ -319,12 +328,11 @@ describe('PayablesView', () => {
 
     await act(async () => {
       fireEvent.change(selects[0] as HTMLSelectElement, { target: { value: 'paid' } });
-      fireEvent.change(selects[2] as HTMLSelectElement, { target: { value: 'amountDesc' } });
     });
 
     await waitFor(() => {
       expect(apiMocks.list).toHaveBeenLastCalledWith(
-        expect.objectContaining({ status: 'paid', sort: 'amountDesc' }),
+        expect.objectContaining({ status: 'paid', sort: 'dueDateAsc' }),
       );
     });
 
@@ -337,7 +345,7 @@ describe('PayablesView', () => {
         source: undefined,
         dueDateFrom: undefined,
         dueDateTo: undefined,
-        sort: 'amountDesc',
+        sort: 'dueDateAsc',
         format: 'csv',
       });
     });
@@ -461,7 +469,7 @@ describe('PayablesView', () => {
     await screen.findByText('Page Two Vendor');
 
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'pagination item 2' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
     });
 
     await screen.findByText('Page One Vendor');

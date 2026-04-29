@@ -57,6 +57,10 @@ export default function TelegramSettingsPage() {
   const [loadingReports, setLoadingReports] = useState(false);
   const [sendingDaily, setSendingDaily] = useState(false);
   const [sendingMonthly, setSendingMonthly] = useState(false);
+  const [botToken, setBotToken] = useState('');
+  const [botTimeoutMs, setBotTimeoutMs] = useState('10000');
+  const [botConfigured, setBotConfigured] = useState(false);
+  const [savingBot, setSavingBot] = useState(false);
 
   const formatTelegramDate = (dateString: string | null | undefined): string => {
     if (!dateString) return t.history.dash.value;
@@ -95,6 +99,7 @@ export default function TelegramSettingsPage() {
 
   useEffect(() => {
     void loadReports();
+    void loadBotSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -107,6 +112,37 @@ export default function TelegramSettingsPage() {
       console.error('Failed to load telegram reports', err);
     } finally {
       setLoadingReports(false);
+    }
+  };
+
+  const loadBotSettings = async (): Promise<void> => {
+    try {
+      const response = await apiClient.get('/settings/notifications/telegram');
+      const settings = response.data?.settings || {};
+      setBotConfigured(Boolean(settings.botTokenConfigured || response.data?.connected));
+      setBotTimeoutMs(String(settings.timeoutMs || 10000));
+    } catch (err) {
+      console.error('Failed to load telegram bot settings', err);
+    }
+  };
+
+  const saveBotSettings = async (): Promise<void> => {
+    try {
+      setSavingBot(true);
+      setStatusMessage(null);
+      setError(null);
+      await apiClient.put('/settings/notifications/telegram', {
+        botToken,
+        timeoutMs: Number(botTimeoutMs) || 10000,
+      });
+      setBotToken('');
+      setBotConfigured(true);
+      setStatusMessage('Telegram bot settings saved.');
+    } catch (err) {
+      const message = getApiErrorMessage(err, 'Failed to save Telegram bot settings');
+      setError(message);
+    } finally {
+      setSavingBot(false);
     }
   };
 
@@ -203,6 +239,56 @@ export default function TelegramSettingsPage() {
             {error && <Alert severity="error">{error}</Alert>}
           </Box>
         )}
+
+        <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
+          <Stack spacing={3}>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                Bot token
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Configure the workspace Telegram bot token in the UI. The token is encrypted and is
+                not returned after saving.
+              </Typography>
+            </Box>
+
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <TextField
+                fullWidth
+                type="password"
+                label="Bot token"
+                placeholder={botConfigured ? 'Configured, leave blank to keep current token' : '123456:ABC'}
+                value={botToken}
+                onChange={e => setBotToken(e.target.value)}
+              />
+              <TextField
+                fullWidth
+                label="Timeout, ms"
+                value={botTimeoutMs}
+                onChange={e => setBotTimeoutMs(e.target.value)}
+              />
+            </Stack>
+
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <Button
+                variant="contained"
+                startIcon={<CheckCircle size={18} />}
+                onClick={saveBotSettings}
+                disabled={savingBot || (!botConfigured && !botToken)}
+              >
+                {savingBot ? 'Checking...' : botConfigured ? 'Update bot' : 'Save bot'}
+              </Button>
+              {botConfigured && (
+                <Chip
+                  icon={<TelegramIcon size={16} />}
+                  color="success"
+                  label="Bot configured"
+                  variant="outlined"
+                />
+              )}
+            </Stack>
+          </Stack>
+        </Paper>
 
         <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider' }}>
           <Stack spacing={3}>

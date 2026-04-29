@@ -34,9 +34,9 @@ function SortBtn({ label, active, onClick }: SortBtnProps): React.JSX.Element {
   );
 }
 
-type RowProps = { row: TopSpenderAggregateRow; currency: string; sourceLabels: SourceLabels; onRowClick: (id: string) => void };
+type RowProps = { row: TopSpenderAggregateRow; sourceLabels: SourceLabels; onRowClick: (id: string) => void };
 
-function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): React.JSX.Element {
+function LeaderboardRow({ row, sourceLabels, onRowClick }: RowProps): React.JSX.Element {
   const lastDate = row.lastDate && !Number.isNaN(new Date(row.lastDate).getTime()) ? new Date(row.lastDate).toLocaleDateString() : '-';
   return (
     <tr style={{ color: 'var(--foreground)', borderTop: '1px solid var(--muted)' }}>
@@ -45,14 +45,14 @@ function LeaderboardRow({ row, currency, sourceLabels, onRowClick }: RowProps): 
       </td>
       <td style={{ padding: '8px 16px 8px 0' }}><AnalyticsSourceBadge sourceChannel={row.sourceChannel as TopSpenderSourceChannel} labels={sourceLabels} /></td>
       <td style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{row.count}</td>
-      <td style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{formatMoney(row.average, currency)}</td>
-      <td style={{ padding: '8px 16px 8px 0', textAlign: 'right', fontWeight: 600, color: 'var(--foreground)' }}>{formatMoney(row.total, currency)}</td>
+      <td style={{ padding: '8px 16px 8px 0', textAlign: 'right' }}>{formatMoney(row.average, row.currency)}</td>
+      <td style={{ padding: '8px 16px 8px 0', textAlign: 'right', fontWeight: 600, color: 'var(--foreground)' }}>{formatMoney(row.total, row.currency)}</td>
       <td style={{ padding: '8px 0', textAlign: 'right', color: 'var(--muted-foreground)' }}>{lastDate}</td>
     </tr>
   );
 }
 
-export function TopSpendersLeaderboard({ rows, sortKey, onSortChange, onRowClick, title, currency, sourceLabels, sortLabels, columnLabels }: Props): React.JSX.Element {
+export function TopSpendersLeaderboard({ rows, sortKey, onSortChange, onRowClick, title, sourceLabels, sortLabels, columnLabels }: Props): React.JSX.Element {
   const sortKeyLabels: Record<AggregateSortKey, string> = { amount: sortLabels.sortByAmount, average: sortLabels.sortByAverage, operations: sortLabels.sortByOperations };
   return (
     <div style={{ border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 20, borderRadius: tokens.radius.lg }}>
@@ -75,7 +75,7 @@ export function TopSpendersLeaderboard({ rows, sortKey, onSortChange, onRowClick
             </tr>
           </thead>
           <tbody>
-            {rows.slice(0, 60).map(row => <LeaderboardRow key={row.id} row={row} currency={currency} sourceLabels={sourceLabels} onRowClick={onRowClick} />)}
+            {rows.slice(0, 60).map(row => <LeaderboardRow key={row.id} row={row} sourceLabels={sourceLabels} onRowClick={onRowClick} />)}
           </tbody>
         </table>
       </div>

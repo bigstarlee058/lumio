@@ -2,11 +2,12 @@
 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
+import type React from 'react';
 
 interface CustomDatePickerProps {
   value?: string | null;
   onChange: (date: string) => void;
-  label?: string;
+  label?: React.ReactNode;
   placeholder?: string;
   helperText?: string;
   containerTestId?: string;

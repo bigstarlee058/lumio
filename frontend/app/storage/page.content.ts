@@ -1409,7 +1409,6 @@ const content = {
       sv: 'Valda filer ({count}) kommer att raderas permanent.',
       vi: 'Các tệp đã chọn ({count}) sẽ bị xóa vĩnh viễn.',
       id: 'File yang dipilih ({count}) akan dihapus secara permanen.',
-,
       }),
       bulkDeleteConfirm: t({ ru: 'Удалить', en: 'Delete', kk: 'Жою',
       de: 'Löschen',

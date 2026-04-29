@@ -121,7 +121,7 @@ describe('StatementsListItem', () => {
     expect(container.querySelector('img[alt="Gmail"]')).not.toBeNull();
   });
 
-  it('renders dedicated mobile and desktop layout containers', () => {
+  it('renders a single column layout container', () => {
     const root = createRoot(container);
 
     const statement: Statement = {
@@ -159,7 +159,7 @@ describe('StatementsListItem', () => {
 
     expect(
       container.querySelector('[data-testid="statement-item-mobile-statement-1"]'),
-    ).toBeTruthy();
+    ).toBeNull();
     expect(
       container.querySelector('[data-testid="statement-item-desktop-statement-1"]'),
     ).toBeTruthy();
@@ -283,7 +283,7 @@ describe('StatementsListItem', () => {
     expect(document.body.querySelector('[data-testid="statement-hover-preview"]')).toBeTruthy();
   });
 
-  it('renders compact mobile card without type label and view button', () => {
+  it('opens from the unified column row overlay', () => {
     const root = createRoot(container);
     const onView = vi.fn();
 
@@ -320,26 +320,30 @@ describe('StatementsListItem', () => {
       );
     });
 
-    const mobileContainer = container.querySelector(
-      '[data-testid="statement-item-mobile-statement-compact"]',
+    const rowContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-statement-compact"]',
     ) as HTMLDivElement | null;
-    expect(mobileContainer).toBeTruthy();
-    expect(mobileContainer?.textContent).toContain('Kaspi');
-    expect(mobileContainer?.textContent).toContain('1,200 KZT');
-    expect(mobileContainer?.textContent).toContain('01/31/2026');
-    expect(mobileContainer?.textContent).not.toContain('View');
-    expect(mobileContainer?.textContent).not.toContain('PDF');
-
-    const mobileCardButton = container.querySelector(
-      '[data-testid="statement-item-mobile-card-statement-compact"]',
-    ) as HTMLButtonElement | null;
-    expect(mobileCardButton).toBeTruthy();
+    expect(rowContainer).toBeTruthy();
+    expect(rowContainer?.textContent).toContain('Kaspi');
+    expect(rowContainer?.textContent).toContain('1,200 KZT');
+    expect(rowContainer?.textContent).toContain('01/31/2026');
 
     act(() => {
-      mobileCardButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      rowContainer?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
     expect(onView).toHaveBeenCalledTimes(1);
+
+    const overlayButton = container.querySelector(
+      '.lumio-stmt-list-item__desktop-overlay',
+    ) as HTMLButtonElement | null;
+    expect(overlayButton).toBeTruthy();
+
+    act(() => {
+      overlayButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(onView).toHaveBeenCalledTimes(2);
   });
 
   it('renders payments icon for manual expense type', () => {
@@ -481,13 +485,13 @@ describe('StatementsListItem', () => {
       );
     });
 
-    const mobileCardButton = container.querySelector(
-      '[data-testid="statement-item-mobile-card-statement-disabled-view"]',
+    const overlayButton = container.querySelector(
+      '.lumio-stmt-list-item__desktop-overlay',
     ) as HTMLButtonElement | null;
-    expect(mobileCardButton).toBeTruthy();
+    expect(overlayButton).toBeTruthy();
 
     act(() => {
-      mobileCardButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      overlayButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
     const desktopViewButton = container.querySelector(
@@ -540,7 +544,7 @@ describe('StatementsListItem', () => {
     });
 
     expect(container.textContent).not.toContain('0 KZT');
-    expect(container.querySelectorAll('[aria-label="Loading"]')).toHaveLength(2);
+    expect(container.querySelectorAll('[aria-label="Loading"]')).toHaveLength(1);
   });
 
   it('uses the primary color for amounts in dark mode', () => {
@@ -583,7 +587,7 @@ describe('StatementsListItem', () => {
       node.textContent?.includes('702,799.13KZT'),
     );
 
-    expect(amountNodes).toHaveLength(2);
+    expect(amountNodes).toHaveLength(1);
     amountNodes.forEach(node => {
       expect(node.textContent).toContain('702,799.13KZT');
     });
@@ -758,5 +762,139 @@ describe('StatementsListItem', () => {
     expect(desktopContainer?.textContent).toContain('1 USD = 512.34 KZT');
     expect(desktopContainer?.textContent).toContain('Corporate card');
     expect(desktopContainer?.textContent).toContain('Expenses export');
+  });
+
+  it('uses the current USD exchange rate for non-USD statement rows', () => {
+    const root = createRoot(container);
+
+    const statement = {
+      id: 'column-usd-rate',
+      source: 'statement',
+      fileName: 'Summary.pdf',
+      status: 'completed',
+      totalDebit: 1200,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      statementDateFrom: '2026-01-01',
+      statementDateTo: '2026-01-31',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'KZT',
+    } as StatementsListItemProps['statement'];
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Kaspi"
+          amountLabel="1,200 KZT"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          currentExchangeRateLabels={{ 'USD:KZT': '1 USD = 512.34 KZT' }}
+          workspaceCurrency="KZT"
+          columns={[
+            { id: 'exchangeRate', label: 'Exchange rate', visible: true, order: 0 },
+          ]}
+        />,
+      );
+    });
+
+    const desktopContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-column-usd-rate"]',
+    ) as HTMLDivElement | null;
+    expect(desktopContainer?.textContent).toContain('1 USD = 512.34 KZT');
+  });
+
+  it('uses the current USD exchange rate when workspace currency is missing', () => {
+    const root = createRoot(container);
+
+    const statement = {
+      id: 'column-usd-rate-default-currency',
+      source: 'statement',
+      fileName: 'Summary.pdf',
+      status: 'completed',
+      totalDebit: 1200,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      bankName: 'kaspi',
+      fileType: 'pdf',
+      currency: 'KZT',
+    } as StatementsListItemProps['statement'];
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Kaspi"
+          amountLabel="1,200 KZT"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          currentExchangeRateLabels={{ 'USD:KZT': '1 USD = 512.34 KZT' }}
+          workspaceCurrency={null}
+          columns={[
+            { id: 'exchangeRate', label: 'Exchange rate', visible: true, order: 0 },
+          ]}
+        />,
+      );
+    });
+
+    const desktopContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-column-usd-rate-default-currency"]',
+    ) as HTMLDivElement | null;
+    expect(desktopContainer?.textContent).toContain('1 USD = 512.34 KZT');
+  });
+
+  it('normalizes NIS workspace currency to ILS for current exchange rates', () => {
+    const root = createRoot(container);
+
+    const statement = {
+      id: 'column-usd-rate-nis-currency',
+      source: 'statement',
+      fileName: 'Summary.pdf',
+      status: 'completed',
+      totalDebit: 1200,
+      totalCredit: 0,
+      createdAt: '2026-02-01T00:00:00Z',
+      bankName: 'hapoalim',
+      fileType: 'pdf',
+      currency: 'ILS',
+    } as StatementsListItemProps['statement'];
+
+    act(() => {
+      root.render(
+        <StatementsListItem
+          statement={statement}
+          viewLabel="View"
+          isReceipt={false}
+          isProcessing={false}
+          merchantLabel="Hapoalim"
+          amountLabel="1,200 ILS"
+          dateLabel="01/31/2026"
+          onView={() => undefined}
+          onIconClick={() => undefined}
+          onToggleSelect={() => undefined}
+          currentExchangeRateLabels={{ 'USD:ILS': '1 USD = 3.72 ILS' }}
+          workspaceCurrency="NIS"
+          columns={[
+            { id: 'exchangeRate', label: 'Exchange rate', visible: true, order: 0 },
+          ]}
+        />,
+      );
+    });
+
+    const desktopContainer = container.querySelector(
+      '[data-testid="statement-item-desktop-column-usd-rate-nis-currency"]',
+    ) as HTMLDivElement | null;
+    expect(desktopContainer?.textContent).toContain('1 USD = 3.72 ILS');
   });
 });

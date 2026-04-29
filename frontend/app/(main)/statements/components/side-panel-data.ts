@@ -117,18 +117,12 @@ type StageCountsResult = {
   topBankSenders: ReturnType<typeof getTopBankSenders>;
   uniqueMerchantsCount: number;
   topCategoriesCount: number;
-  customTablesCount: number;
   unapprovedCashCount: number;
 };
 
 const loadTopCategoriesCount = async (): Promise<number> => {
   const res = await apiClient.get('/reports/top-categories', { params: { type: 'expense', limit: 100 } });
   return Array.isArray(res.data?.categories) ? res.data.categories.length : 0;
-};
-
-const loadCustomTablesCount = async (): Promise<number> => {
-  const res = await apiClient.get('/custom-tables');
-  return Array.isArray(res.data) ? res.data.length : 0;
 };
 
 const loadMerchantsAndUnapproved = async (allStatements: StatementListItem[]): Promise<{ uniqueMerchantsCount: number; unapprovedCashCount: number }> => {
@@ -145,10 +139,9 @@ export const loadStageCounts = async (): Promise<StageCountsResult> => {
   const statementIds = allStatements.map(s => s.id).filter((id): id is string => Boolean(id));
   const counts = countStatementStages(statementIds, getStatementStageMap()) as StageCounts;
   const topBankSenders = getTopBankSenders(allStatements, 5);
-  const [{ uniqueMerchantsCount, unapprovedCashCount }, topCategoriesCount, customTablesCount] = await Promise.all([
+  const [{ uniqueMerchantsCount, unapprovedCashCount }, topCategoriesCount] = await Promise.all([
     loadMerchantsAndUnapproved(allStatements),
     loadTopCategoriesCount(),
-    loadCustomTablesCount(),
   ]);
-  return { counts, topBankSenders, uniqueMerchantsCount, topCategoriesCount, customTablesCount, unapprovedCashCount };
+  return { counts, topBankSenders, uniqueMerchantsCount, topCategoriesCount, unapprovedCashCount };
 };

@@ -23,6 +23,7 @@ const capturedConfigRef = vi.hoisted(() => ({
     footer?: {
       content?: React.ReactElement<{
         onScan: () => void;
+        onGmail: () => void;
         onLocalUpload: () => void;
       }>;
     };
@@ -53,6 +54,7 @@ vi.mock('@/app/components/side-panel', () => ({
       footer?: {
         content?: React.ReactElement<{
           onScan: () => void;
+          onGmail: () => void;
           onLocalUpload: () => void;
         }>;
       };
@@ -76,6 +78,7 @@ vi.mock('@/app/lib/payables-api', () => ({
 describe('StatementsSidePanel FAB navigation', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    vi.clearAllMocks();
     pushMock.mockReset();
     capturedConfigRef.current = null;
     authState.user = null;
@@ -99,6 +102,44 @@ describe('StatementsSidePanel FAB navigation', () => {
     });
 
     expect(pushMock).toHaveBeenCalledWith('/statements/submit?openExpenseDrawer=scan');
+
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
+  it('routes inbox sync to IMAP setup when mailbox is not connected', async () => {
+    const { default: apiClient } = await import('@/app/lib/api');
+    const { payablesApi } = await import('@/app/lib/payables-api');
+    const { default: StatementsSidePanel } = await import('./StatementsSidePanel');
+    authState.user = { id: 'user-1' };
+
+    vi.mocked(apiClient.get).mockResolvedValue({ data: { connected: false } });
+    vi.mocked(payablesApi.getSummary).mockResolvedValue({
+      toPay: 0,
+      overdue: 0,
+      dueThisWeek: 0,
+      paidThisMonth: 0,
+      toPayCount: 0,
+      overdueCount: 0,
+    });
+
+    const container = document.createElement('div');
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<StatementsSidePanel activeItem="submit" />);
+    });
+
+    const onGmail = capturedConfigRef.current?.footer?.content?.props.onGmail;
+    expect(onGmail).toBeTypeOf('function');
+
+    await act(async () => {
+      onGmail?.();
+    });
+
+    expect(pushMock).toHaveBeenCalledWith('/integrations/imap');
+    expect(vi.mocked(apiClient.post)).not.toHaveBeenCalledWith('/integrations/gmail/sync');
 
     await act(async () => {
       root.unmount();
@@ -160,7 +201,7 @@ describe('StatementsSidePanel FAB navigation', () => {
       if (
         url === '/integrations/dropbox/status' ||
         url === '/integrations/google-drive/status' ||
-        url === '/integrations/gmail/status'
+        url === '/integrations/imap/status'
       ) {
         return Promise.resolve({ data: { connected: false } });
       }
@@ -214,7 +255,7 @@ describe('StatementsSidePanel FAB navigation', () => {
       if (
         url === '/integrations/dropbox/status' ||
         url === '/integrations/google-drive/status' ||
-        url === '/integrations/gmail/status'
+        url === '/integrations/imap/status'
       ) {
         return Promise.resolve({ data: { connected: false } });
       }
@@ -249,7 +290,7 @@ describe('StatementsSidePanel FAB navigation', () => {
     });
   });
 
-  it('shows tables reports navigation item with custom tables count', async () => {
+  it('does not show tables reports navigation item', async () => {
     const { default: apiClient } = await import('@/app/lib/api');
     const { payablesApi } = await import('@/app/lib/payables-api');
     const { default: StatementsSidePanel } = await import('./StatementsSidePanel');
@@ -277,19 +318,10 @@ describe('StatementsSidePanel FAB navigation', () => {
         return Promise.resolve({ data: { categories: [] } });
       }
 
-      if (url === '/custom-tables') {
-        return Promise.resolve({
-          data: [
-            { id: 'table-1', name: 'Ops', source: 'manual' },
-            { id: 'table-2', name: 'GS', source: 'google_sheets_import' },
-          ],
-        });
-      }
-
       if (
         url === '/integrations/dropbox/status' ||
         url === '/integrations/google-drive/status' ||
-        url === '/integrations/gmail/status'
+        url === '/integrations/imap/status'
       ) {
         return Promise.resolve({ data: { connected: false } });
       }
@@ -313,8 +345,8 @@ describe('StatementsSidePanel FAB navigation', () => {
       ?.flatMap(section => section.items ?? [])
       .find(item => item.id === 'tables-reports');
 
-    expect(tablesReportsItem).toBeDefined();
-    expect(tablesReportsItem?.badge).toBe(2);
+    expect(tablesReportsItem).toBeUndefined();
+    expect(apiClient.get).not.toHaveBeenCalledWith('/custom-tables');
 
     await act(async () => {
       root.unmount();

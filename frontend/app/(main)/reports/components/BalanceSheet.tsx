@@ -2,6 +2,7 @@
 'use client';
 
 import type React from 'react';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import Alert from '@mui/material/Alert';
@@ -415,19 +416,13 @@ function BalanceSheet(): React.JSX.Element {
             </Box>
 
             {filterMode === 'date' && (
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={event => setSelectedDate(event.target.value)}
-                style={{
-                  border: '1px solid var(--border)',
-                  padding: '8px 12px',
-                  fontSize: 14,
-                  color: 'var(--foreground)',
-                  outline: 'none',
-                  background: 'var(--card)',
-                }}
-              />
+              <Box sx={{ minWidth: 180 }}>
+                <CustomDatePicker
+                  label={text('asOfDate', 'As of date')}
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                />
+              </Box>
             )}
 
             <button

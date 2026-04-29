@@ -74,7 +74,7 @@ async function refreshAccessToken(originalRequest: Record<string, unknown>): Pro
   if (!refreshToken) return Promise.reject(new Error('No refresh token'));
 
   const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+    `${apiBaseUrl}/auth/refresh`,
     {},
     { headers: { Authorization: `Bearer ${refreshToken}` } },
   );

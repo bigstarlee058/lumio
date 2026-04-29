@@ -1,13 +1,12 @@
 'use client';
 
-import { Cloud, Plus, Receipt, Scan, ScanLine } from '@/app/components/icons';
+import { Cloud, Inbox, Plus, Receipt, Scan, ScanLine } from '@/app/components/icons';
 import {
   type CloudImportProvider,
   type ConnectedCloudProviders,
   buildStatementUploadMenuModel,
 } from '@/app/lib/statement-upload-actions';
 import { tokens } from '@/lib/theme-tokens';
-import Image from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -158,20 +157,18 @@ export default function StatementsCircularUploadMenu({
 
     if (item.id === 'cloud-import') {
       if (item.provider === 'dropbox') {
-        return <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={18} height={18} />;
+        return <Cloud size={18} color="var(--primary)" />;
       }
 
       if (item.provider === 'google-drive') {
-        return (
-          <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={18} height={18} />
-        );
+        return <Cloud size={18} color="var(--primary)" />;
       }
 
       return <Cloud size={18} color="var(--primary)" />;
     }
 
     if (item.id === 'gmail') {
-      return <Image src="/icons/gmail.png" alt="Gmail" width={18} height={18} />;
+      return <Inbox size={18} color="var(--primary)" />;
     }
 
     return <Receipt size={18} color="var(--muted-foreground)" />;

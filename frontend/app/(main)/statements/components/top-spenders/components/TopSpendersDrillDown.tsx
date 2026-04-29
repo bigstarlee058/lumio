@@ -87,7 +87,7 @@ function DrillDownTable({ records, currency, sourceLabels, labels }: TableProps)
               <AnalyticsSourceBadge sourceChannel={record.sourceChannel as TopSpenderSourceChannel} labels={sourceLabels} />
             </td>
             <td style={{ padding: '8px 16px 8px 0', color: 'var(--text-secondary)' }}>{record.workspaceName || '-'}</td>
-            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500, color: 'var(--foreground)' }}>{formatMoney(record.amount, currency)}</td>
+            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500, color: 'var(--foreground)' }}>{formatMoney(record.amount, record.currencyValue || currency)}</td>
           </tr>
         ))}
       </tbody>

@@ -1,5 +1,6 @@
 'use client';
 
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import {
@@ -108,12 +109,9 @@ function LineItemRow({
 
       <TableCell sx={{ minWidth: 100 }}>
         {isEditing ? (
-          <TextField
-            size="small"
-            type="date"
+          <CustomDatePicker
             value={editedData.date?.split('T')[0] || ''}
-            onChange={e => setEditedData(prev => ({ ...prev, date: e.target.value }))}
-            InputLabelProps={{ shrink: true }}
+            onChange={value => setEditedData(prev => ({ ...prev, date: value }))}
           />
         ) : editedData.date ? (
           new Date(editedData.date).toLocaleDateString()

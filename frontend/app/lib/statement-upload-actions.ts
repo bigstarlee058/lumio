@@ -53,7 +53,7 @@ export function buildStatementUploadMenuModel(
     },
     {
       id: 'gmail',
-      label: providers.gmailConnected ? 'Sync' : 'Gmail',
+      label: providers.gmailConnected ? 'Sync inbox' : 'Mailbox',
       disabled: false,
     },
     {

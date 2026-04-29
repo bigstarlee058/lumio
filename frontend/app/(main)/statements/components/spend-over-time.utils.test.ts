@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  buildSpendOverTimeSelectedPoint,
   type SpendOverTimeRecord,
   buildSpendOverTimeReport,
   dedupeSpendOverTimeReceiptRecords,
+  filterSpendOverTimeDrillDownRecords,
   resolveSpendOverTimeFlow,
 } from './spend-over-time.utils';
 
@@ -201,5 +203,25 @@ describe('spend over time helpers', () => {
       '2026',
       '2027',
     ]);
+  });
+
+  it('returns all drill-down operations for a clicked calendar day', () => {
+    const records = [
+      createRecord({ id: 'tx-1', merchant: 'Peakford Ltd', dateValue: '2026-04-09', amount: 15 }),
+      createRecord({ id: 'tx-2', merchant: 'Kaspi', dateValue: '2026-04-09T18:30:00.000Z', amount: 42 }),
+      createRecord({ id: 'tx-3', merchant: 'Other day', dateValue: '2026-04-10', amount: 9 }),
+    ];
+
+    const drillDownRecords = filterSpendOverTimeDrillDownRecords('2026-04-09', 'day', records);
+    const selectedPoint = buildSpendOverTimeSelectedPoint('2026-04-09', drillDownRecords);
+
+    expect(drillDownRecords.map(record => record.merchant)).toEqual(['Peakford Ltd', 'Kaspi']);
+    expect(selectedPoint).toMatchObject({
+      period: '2026-04-09',
+      label: '2026-04-09',
+      expense: 57,
+      count: 2,
+      statementAmount: 57,
+    });
   });
 });

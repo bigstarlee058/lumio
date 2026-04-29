@@ -17,12 +17,9 @@ import { type TopBankSender, getTopBankSenders } from '@/app/lib/statement-insig
 import {
   type CloudImportProvider,
   type ConnectedCloudProviders,
-  type GmailSyncSkeletonMeta,
-  STATEMENTS_GMAIL_SYNC_EVENT,
-  STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
 } from '@/app/lib/statement-upload-actions';
 import { countStatementStages, getStatementStageMap } from '@/app/lib/statement-workflow';
-import { Ban, Banknote, CalendarRange, Folder, Pencil, Send, ShoppingCart, Table2, ThumbsUp, User } from '@/app/components/icons';
+import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, ThumbsUp, User } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -38,7 +35,6 @@ type ActiveItem =
   | 'top-spenders'
   | 'top-merchants'
   | 'top-categories'
-  | 'tables-reports'
   | 'transactions';
 
 type Props = {
@@ -134,7 +130,6 @@ type SidePanelData = {
   topSenders: TopBankSender[];
   topMerchantsCount: number;
   topCategoriesCount: number;
-  tablesReportsCount: number;
 };
 
 async function loadSidePanelData(): Promise<SidePanelData> {
@@ -162,16 +157,12 @@ async function loadSidePanelData(): Promise<SidePanelData> {
     transactions: topMerchantsItems,
   }).length;
 
-  const [topCategoriesResponse, customTablesResponse] = await Promise.all([
-    apiClient.get('/reports/top-categories', { params: { type: 'expense', limit: 100 } }),
-    apiClient.get('/custom-tables'),
-  ]);
+  const topCategoriesResponse = await apiClient.get('/reports/top-categories', {
+    params: { type: 'expense', limit: 100 },
+  });
 
   const topCategories = Array.isArray(topCategoriesResponse.data?.categories)
     ? topCategoriesResponse.data.categories
-    : [];
-  const customTables = Array.isArray(customTablesResponse.data)
-    ? customTablesResponse.data
     : [];
 
   return {
@@ -179,7 +170,6 @@ async function loadSidePanelData(): Promise<SidePanelData> {
     topSenders: topBankSenders,
     topMerchantsCount: uniqueMerchants.size,
     topCategoriesCount: topCategories.length,
-    tablesReportsCount: customTables.length,
   };
 }
 
@@ -203,7 +193,6 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   const [topSenders, setTopSenders] = useState<TopBankSender[]>([]);
   const [topMerchantsCount, setTopMerchantsCount] = useState(0);
   const [topCategoriesCount, setTopCategoriesCount] = useState(0);
-  const [tablesReportsCount, setTablesReportsCount] = useState(0);
   const [connectedCloudProviders, setConnectedCloudProviders] = useState<ConnectedCloudProviders>({
     googleDriveConnected: false,
     dropboxConnected: false,
@@ -227,7 +216,6 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           setTopSenders(data.topSenders);
           setTopMerchantsCount(data.topMerchantsCount);
           setTopCategoriesCount(data.topCategoriesCount);
-          setTablesReportsCount(data.tablesReportsCount);
           setCountsLoading(false);
         }
       } catch {
@@ -236,7 +224,6 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           setTopSenders([]);
           setTopMerchantsCount(0);
           setTopCategoriesCount(0);
-          setTablesReportsCount(0);
           setCountsLoading(false);
         }
       }
@@ -289,10 +276,10 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     const loadCloudProviders = async () => {
       if (!user) return;
 
-      const [dropboxStatus, googleDriveStatus, gmailStatus] = await Promise.allSettled([
+      const [dropboxStatus, googleDriveStatus, inboxStatus] = await Promise.allSettled([
         apiClient.get('/integrations/dropbox/status'),
         apiClient.get('/integrations/google-drive/status'),
-        apiClient.get('/integrations/gmail/status'),
+        apiClient.get('/integrations/imap/status'),
       ]);
 
       const isDropboxConnected =
@@ -301,15 +288,15 @@ export default function StatementsSidePanel({ activeItem }: Props) {
       const isGoogleDriveConnected =
         googleDriveStatus.status === 'fulfilled' &&
         Boolean(googleDriveStatus.value?.data?.connected ?? googleDriveStatus.value?.data?.active);
-      const isGmailConnected =
-        gmailStatus.status === 'fulfilled' &&
-        Boolean(gmailStatus.value?.data?.connected ?? gmailStatus.value?.data?.active);
+      const isInboxConnected =
+        inboxStatus.status === 'fulfilled' &&
+        Boolean(inboxStatus.value?.data?.connected ?? inboxStatus.value?.data?.active);
 
       if (isMounted) {
         setConnectedCloudProviders({
           dropboxConnected: isDropboxConnected,
           googleDriveConnected: isGoogleDriveConnected,
-          gmailConnected: isGmailConnected,
+          gmailConnected: isInboxConnected,
         });
       }
     };
@@ -378,47 +365,32 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   const handleGmailClick = useCallback(() => {
     if (connectedCloudProviders.gmailConnected) {
       apiClient
-        .post('/integrations/gmail/sync')
+        .post('/integrations/imap/sync')
         .then(response => {
-          const messagesFound = Number(response.data?.messagesFound ?? 0);
-          const jobsCreated = Number(response.data?.jobsCreated ?? 0);
-          const skipped = Number(response.data?.skipped ?? 0);
+          const scanned = Number(response.data?.scanned ?? 0);
+          const imported = Number(response.data?.imported ?? 0);
 
-          if (jobsCreated > 0 && typeof window !== 'undefined') {
-            const payload: GmailSyncSkeletonMeta = {
-              count: jobsCreated,
-              timestamp: Date.now(),
-            };
-            sessionStorage.setItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY, JSON.stringify(payload));
-            window.dispatchEvent(new CustomEvent(STATEMENTS_GMAIL_SYNC_EVENT, { detail: payload }));
-          }
-
-          if (jobsCreated > 0) {
-            toast.success(`Gmail sync started (${jobsCreated} receipts)`);
+          if (imported > 0) {
+            toast.success(`Inbox sync imported ${imported} receipt${imported === 1 ? '' : 's'}`);
             navigateToSubmit();
             return;
           }
 
-          if (messagesFound === 0) {
-            toast.error('No matching emails found in Gmail');
+          if (scanned === 0) {
+            toast.error('No unread emails found in IMAP inbox');
             return;
           }
 
-          if (messagesFound > 0 && skipped >= messagesFound) {
-            toast.error('All receipts available in Gmail are already synced');
-            return;
-          }
-
-          toast.error('Gmail sync finished with no new receipts');
+          toast.error('No new receipt attachments found in IMAP inbox');
           navigateToSubmit();
         })
         .catch(() => {
-          toast.error('Failed to sync Gmail');
+          toast.error('Failed to sync inbox');
         });
       return;
     }
 
-    router.push('/integrations/gmail');
+    router.push('/integrations/imap');
   }, [connectedCloudProviders.gmailConnected, navigateToSubmit, router]);
 
   const sidePanelConfig = useMemo<SidePanelPageConfig>(() => {
@@ -540,17 +512,6 @@ export default function StatementsSidePanel({ activeItem }: Props) {
               href: '/statements/top-categories',
               active: activeItem === 'top-categories',
             },
-            {
-              id: 'tables-reports',
-              label: tx(['sidePanel', 'tablesReports'], 'Tables reports'),
-              icon: <Table2 size={20} />,
-              badge: tablesReportsCount,
-              badgeLoading: countsLoading,
-              badgeVariant: 'default',
-              emphasis: 'low',
-              href: '/statements/tables-reports',
-              active: activeItem === 'tables-reports',
-            },
           ],
         },
       ],
@@ -575,7 +536,6 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     topSenders,
     topMerchantsCount,
     topCategoriesCount,
-    tablesReportsCount,
     connectedCloudProviders,
     handleCloudImport,
     handleGmailClick,

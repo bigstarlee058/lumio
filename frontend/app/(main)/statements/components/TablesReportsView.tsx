@@ -541,9 +541,9 @@ export default function TablesReportsView() {
                       </td>
                       <td style={{ padding: '12px 16px', color: c.ink500 }}>{row.tableName}</td>
                       <td style={{ padding: '12px 16px', textAlign: 'right' }}>{row.count}</td>
-                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>{formatAmount(row.average)}</td>
+                      <td style={{ padding: '12px 16px', textAlign: 'right' }}>{formatAmount(row.average, row.currency)}</td>
                       <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 500, color: c.ink900 }}>
-                        {formatAmount(row.total)}
+                        {formatAmount(row.total, row.currency)}
                       </td>
                       <td style={{ padding: '12px 16px', textAlign: 'right', color: c.ink500 }}>
                         {row.lastDate || '-'}

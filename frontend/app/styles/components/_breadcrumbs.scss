@@ -6,7 +6,7 @@
 
   &__list {
     margin: 0;
-    padding: 0.5rem 0.75rem 0.5rem 0;
+    padding: 0.5rem 0.75rem;
     display: inline-flex;
     min-width: max-content;
     list-style: none;
@@ -25,16 +25,6 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-
-    /* First item uses smaller left padding */
-    &:first-child {
-      .lumio-breadcrumbs__link,
-      .lumio-breadcrumbs__button,
-      .lumio-breadcrumbs__current,
-      .lumio-breadcrumbs__plain {
-        padding: 0.125rem 0.375rem 0.125rem 0;
-      }
-    }
   }
 
   &__link,
