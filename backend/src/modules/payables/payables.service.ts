@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
   NotificationCategory,
   NotificationSeverity,
@@ -165,17 +165,17 @@ export class PayablesService {
     toPayCount: number;
     overdueCount: number;
   }> {
-    const rows = await this.payableRepository
-      .createQueryBuilder('payable')
-      .select([
-        'payable.status AS status',
-        'payable.dueDate AS "dueDate"',
-        'payable.amount AS amount',
-        'payable.paidAt AS "paidAt"',
-      ])
-      .where('payable.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('payable.deletedAt IS NULL')
-      .getRawMany<Array<{ status: PayableStatus; dueDate: string | null; amount: string; paidAt: string | null }>>();
+    const rows = await this.payableRepository.find({
+      where: { workspaceId, deletedAt: IsNull() },
+      select: {
+        id: true,
+        status: true,
+        dueDate: true,
+        amount: true,
+        paidAt: true,
+        updatedAt: true,
+      },
+    });
 
     const now = new Date();
     const startOfToday = this.startOfDay(now);
@@ -191,15 +191,10 @@ export class PayablesService {
     let toPayCount = 0;
     let overdueCount = 0;
 
-    for (const row of rows as unknown as Array<{
-      status: PayableStatus;
-      dueDate: string | null;
-      amount: string;
-      paidAt: string | null;
-    }>) {
+    for (const row of rows) {
       const amount = Number(row.amount || 0);
       const dueDate = this.parseDate(row.dueDate);
-      const paidAt = this.parseDate(row.paidAt);
+      const paidAt = this.parseDate(row.paidAt ?? row.updatedAt);
       const effectiveOverdue =
         dueDate !== null &&
         dueDate < startOfToday &&

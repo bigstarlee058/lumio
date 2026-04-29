@@ -97,18 +97,38 @@ describe('ExchangeRatesService', () => {
       repo.findOne.mockResolvedValue(null);
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
-        json: async () => ({ rate: 512.34 }),
+        json: async () => ({ date: '2026-04-29', usd: { kzt: 512.34 } }),
       }) as any;
 
       const rate = await service.getRate('USD', 'KZT');
 
       expect(rate).toBe(512.34);
-      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('api.frankfurter.dev'));
+      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('@fawazahmed0/currency-api@latest'));
+      expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('/currencies/usd.json'));
       expect(repo.createQueryBuilder).toHaveBeenCalled();
       expect(cache.set).toHaveBeenCalledWith(
         expect.stringContaining('exchange_rate:USD:KZT'),
         512.34,
         expect.any(Number),
+      );
+    });
+
+    it('uses the public API fallback URL when the CDN request fails', async () => {
+      repo.findOne.mockResolvedValue(null);
+      global.fetch = jest
+        .fn()
+        .mockResolvedValueOnce({ ok: false, status: 503 })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ date: '2026-04-29', usd: { kzt: 511.22 } }),
+        }) as any;
+
+      const rate = await service.getRate('USD', 'KZT');
+
+      expect(rate).toBe(511.22);
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('latest.currency-api.pages.dev'),
       );
     });
 
@@ -120,6 +140,22 @@ describe('ExchangeRatesService', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             rateDate: new Date('2025-06-15'),
+          }),
+        }),
+      );
+    });
+
+    it('normalizes NIS to ILS for exchange-rate lookups', async () => {
+      repo.findOne.mockResolvedValue({ rate: '3.72' });
+
+      const rate = await service.getRate('USD', 'NIS');
+
+      expect(rate).toBe(3.72);
+      expect(repo.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            baseCurrency: 'USD',
+            targetCurrency: 'ILS',
           }),
         }),
       );

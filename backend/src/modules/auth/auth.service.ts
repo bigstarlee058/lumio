@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { OAuth2Client } from 'google-auth-library';
 import type { StringValue } from 'ms';
 import { IsNull, type Repository } from 'typeorm';
 import { DEV_DEFAULTS } from '../../common/utils/dev-defaults';
@@ -48,8 +47,20 @@ export interface UserSessionDto {
   isCurrent: boolean;
 }
 
+type GoogleTokenInfo = {
+  aud?: string;
+  email?: string;
+  email_verified?: boolean | 'true' | 'false';
+  sub?: string;
+  name?: string;
+  given_name?: string;
+  picture?: string;
+};
+
 const toJwtExpiresIn = (value: string | undefined, fallback: StringValue): StringValue =>
   (value || fallback) as StringValue;
+
+const DEFAULT_AUTH_SESSION_EXPIRES_IN = '30d' as const;
 
 const jwtSecret = () =>
   process.env.JWT_SECRET ||
@@ -267,14 +278,18 @@ export class AuthService {
       throw new BadRequestException('Google login is not configured');
     }
 
-    const googleClient = new OAuth2Client(clientId);
+    const tokenInfoResponse = await fetch(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(dto.credential)}`,
+    );
+    if (!tokenInfoResponse.ok) {
+      throw new UnauthorizedException('Invalid Google credential');
+    }
 
-    const ticket = await googleClient.verifyIdToken({
-      idToken: dto.credential,
-      audience: clientId,
-    });
+    const payload = (await tokenInfoResponse.json()) as GoogleTokenInfo;
+    if (payload.aud !== clientId) {
+      throw new UnauthorizedException('Google credential audience mismatch');
+    }
 
-    const payload = ticket.getPayload();
     const email = payload?.email?.trim().toLowerCase();
     const googleId = payload?.sub;
 
@@ -282,7 +297,7 @@ export class AuthService {
       throw new UnauthorizedException('Google account data is incomplete');
     }
 
-    if (payload?.email_verified === false) {
+    if (payload?.email_verified === false || payload?.email_verified === 'false') {
       throw new UnauthorizedException('Google account email is not verified');
     }
 
@@ -470,7 +485,7 @@ export class AuthService {
 
       const accessTokenOptions: JwtSignOptions = {
         secret: jwtSecret(),
-        expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, '1h'),
+        expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, DEFAULT_AUTH_SESSION_EXPIRES_IN),
       };
 
       const access_token = this.jwtService.sign(accessTokenPayload, accessTokenOptions);
@@ -578,7 +593,7 @@ export class AuthService {
 
     const accessTokenOptions: JwtSignOptions = {
       secret: jwtSecret(),
-      expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, '1h'),
+      expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, DEFAULT_AUTH_SESSION_EXPIRES_IN),
     };
 
     const refreshTokenOptions: JwtSignOptions = {

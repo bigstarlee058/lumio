@@ -17,7 +17,6 @@ export class ExchangeRatesService {
   private readonly logger = new Logger(ExchangeRatesService.name);
   private readonly apiKey: string | undefined;
   private readonly apiBaseUrl = 'https://v6.exchangerate-api.com/v6';
-  private readonly publicApiBaseUrl = 'https://api.frankfurter.dev/v2/rate';
 
   constructor(
     @InjectRepository(ExchangeRate)
@@ -30,8 +29,8 @@ export class ExchangeRatesService {
   }
 
   async getRate(from: string, to: string, date?: Date): Promise<number> {
-    const normalizedFrom = from.toUpperCase().trim();
-    const normalizedTo = to.toUpperCase().trim();
+    const normalizedFrom = this.normalizeCurrencyCode(from);
+    const normalizedTo = this.normalizeCurrencyCode(to);
 
     if (normalizedFrom === normalizedTo) {
       return 1;
@@ -78,7 +77,7 @@ export class ExchangeRatesService {
 
     const publicApiRate = await this.getRateFromPublicApi(normalizedFrom, normalizedTo, rateDate);
     if (publicApiRate) {
-      await this.saveRate(normalizedFrom, normalizedTo, publicApiRate, rateDate, 'frankfurter');
+      await this.saveRate(normalizedFrom, normalizedTo, publicApiRate, rateDate, 'currency-api');
       await this.cacheManager.set(cacheKey, publicApiRate, this.isToday(rateDate) ? 4 * 3600 : 0);
       return publicApiRate;
     }
@@ -194,22 +193,48 @@ export class ExchangeRatesService {
     to: string,
     rateDate: string,
   ): Promise<number | null> {
-    try {
-      const url = new URL(`${this.publicApiBaseUrl}/${from}/${to}`);
-      if (!this.isToday(rateDate)) {
-        url.searchParams.set('date', rateDate);
+    for (const url of this.buildPublicCurrencyApiUrls(from, rateDate)) {
+      const rate = await this.fetchPublicCurrencyRate(url, to);
+      if (rate) {
+        return rate;
       }
+    }
+    return null;
+  }
 
-      const response = await fetch(url.toString());
+  private buildPublicCurrencyApiUrls(from: string, rateDate: string): string[] {
+    const datePath = this.isToday(rateDate) ? 'latest' : rateDate;
+    const fromCode = from.toLowerCase();
+    const endpoint = `v1/currencies/${fromCode}.json`;
+    return [
+      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${datePath}/${endpoint}`,
+      `https://${datePath}.currency-api.pages.dev/${endpoint}`,
+    ];
+  }
+
+  private async fetchPublicCurrencyRate(url: string, to: string): Promise<number | null> {
+    try {
+      const response = await fetch(url);
       if (!response.ok) {
         return null;
       }
-
-      const data = (await response.json()) as { rate?: number };
-      return typeof data.rate === 'number' && Number.isFinite(data.rate) ? data.rate : null;
+      const targetKey = to.toLowerCase();
+      const data = (await response.json()) as Record<string, unknown>;
+      const baseKey = this.extractBaseCurrencyFromPublicCurrencyUrl(url);
+      const rates = baseKey ? data[baseKey] : undefined;
+      const rate =
+        rates && typeof rates === 'object' && !Array.isArray(rates)
+          ? (rates as Record<string, unknown>)[targetKey]
+          : data[targetKey];
+      return typeof rate === 'number' && Number.isFinite(rate) ? rate : null;
     } catch {
       return null;
     }
+  }
+
+  private extractBaseCurrencyFromPublicCurrencyUrl(url: string): string | null {
+    const match = url.match(/\/currencies\/([a-z]{3})\.json$/i);
+    return match ? match[1].toLowerCase() : null;
   }
 
   private async saveRate(
@@ -237,6 +262,14 @@ export class ExchangeRatesService {
 
   private toDateOnly(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+
+  private normalizeCurrencyCode(currency: string): string {
+    const normalized = currency.toUpperCase().trim();
+    if (normalized === 'NIS' || normalized === '\u20aa') {
+      return 'ILS';
+    }
+    return normalized;
   }
 
   private isToday(dateStr: string): boolean {

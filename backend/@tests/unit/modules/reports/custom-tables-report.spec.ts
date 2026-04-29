@@ -49,7 +49,7 @@ describe('ReportsService custom tables report', () => {
     expect(result.aggregatedRows).toEqual([]);
   });
 
-  it('groups rows by counterparty and source', async () => {
+  it('groups rows by counterparty, source, and currency', async () => {
     const customTableRepository = {
       find: jest.fn().mockResolvedValue([
         {
@@ -93,6 +93,13 @@ describe('ReportsService custom tables report', () => {
           position: 2,
         },
         {
+          tableId: 'table-1',
+          key: 'currency',
+          title: 'Currency',
+          type: CustomTableColumnType.TEXT,
+          position: 3,
+        },
+        {
           tableId: 'table-2',
           key: 'date',
           title: 'Date',
@@ -121,7 +128,15 @@ describe('ReportsService custom tables report', () => {
         id: 'row-1',
         tableId: 'table-1',
         rowNumber: 1,
-        data: { date: '2026-03-10', amount: '-100', counterparty: 'Vendor A' },
+        data: { date: '2026-03-10', amount: '-100', counterparty: 'Vendor A', currency: 'USD' },
+        createdAt: new Date('2026-03-10T00:00:00.000Z'),
+        updatedAt: new Date('2026-03-10T00:00:00.000Z'),
+      },
+      {
+        id: 'row-1-kzt',
+        tableId: 'table-1',
+        rowNumber: 4,
+        data: { date: '2026-03-10', amount: '-10', counterparty: 'Vendor A', currency: 'KZT' },
         createdAt: new Date('2026-03-10T00:00:00.000Z'),
         updatedAt: new Date('2026-03-10T00:00:00.000Z'),
       },
@@ -137,7 +152,7 @@ describe('ReportsService custom tables report', () => {
         id: 'row-3',
         tableId: 'table-1',
         rowNumber: 2,
-        data: { date: '2026-03-12', amount: '75', counterparty: 'Client B' },
+        data: { date: '2026-03-12', amount: '75', counterparty: 'Client B', currency: 'USD' },
         createdAt: new Date('2026-03-12T00:00:00.000Z'),
         updatedAt: new Date('2026-03-12T00:00:00.000Z'),
       },
@@ -148,7 +163,7 @@ describe('ReportsService custom tables report', () => {
         id: 'row-prev-1',
         tableId: 'table-1',
         rowNumber: 3,
-        data: { date: '2026-02-10', amount: '-20', counterparty: 'Vendor A' },
+        data: { date: '2026-02-10', amount: '-20', counterparty: 'Vendor A', currency: 'USD' },
         createdAt: new Date('2026-02-10T00:00:00.000Z'),
         updatedAt: new Date('2026-02-10T00:00:00.000Z'),
       },
@@ -194,13 +209,13 @@ describe('ReportsService custom tables report', () => {
     } as any);
 
     expect(result.totals).toEqual({
-      total: 225,
-      manualTotal: 175,
+      total: 235,
+      manualTotal: 185,
       googleSheetsTotal: 50,
-      operations: 3,
+      operations: 4,
     });
-    expect(result.sourceSplit).toEqual({ manual: 175, googleSheets: 50 });
-    expect(result.aggregatedRows).toHaveLength(3);
+    expect(result.sourceSplit).toEqual({ manual: 185, googleSheets: 50 });
+    expect(result.aggregatedRows).toHaveLength(4);
     expect(result.aggregatedRows[0]).toMatchObject({
       counterparty: 'Vendor A',
       source: 'manual',
@@ -208,9 +223,20 @@ describe('ReportsService custom tables report', () => {
       count: 1,
       tableId: 'table-1',
       tableName: 'Manual Table',
+      currency: 'USD',
     });
+    expect(result.aggregatedRows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          counterparty: 'Vendor A',
+          source: 'manual',
+          total: 10,
+          currency: 'KZT',
+        }),
+      ]),
+    );
     expect(result.timeseries).toEqual([
-      { date: '2026-03-10', amount: 100 },
+      { date: '2026-03-10', amount: 110 },
       { date: '2026-03-11', amount: 50 },
       { date: '2026-03-12', amount: 75 },
     ]);

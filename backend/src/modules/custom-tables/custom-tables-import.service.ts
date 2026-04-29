@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, type Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { randomUUID } from 'node:crypto';
+import * as XLSX from 'xlsx';
 import {
   ActorType,
   AuditAction,
@@ -100,6 +101,17 @@ interface A1RangeBounds {
   endRow: number;
   endCol: number;
 }
+
+interface PublicWorkbookData {
+  spreadsheetId: string;
+  worksheetName: string;
+  values: unknown[][];
+  effectiveRange: string;
+  bounds: A1RangeBounds;
+  sourceUrl: string;
+}
+
+const MAX_PUBLIC_WORKBOOK_BYTES = 25 * 1024 * 1024;
 
 const columnLettersToNumber = (lettersRaw: string): number => {
   const letters = lettersRaw.toUpperCase();
@@ -640,7 +652,409 @@ export class CustomTablesImportService {
     return GoogleSheetsImportLayoutType.FLAT;
   }
 
+  private buildPublicGoogleSheetsExportUrl(rawUrl: string): { exportUrl: string; spreadsheetId: string } {
+    let url: URL;
+    try {
+      url = new URL(rawUrl.trim());
+    } catch {
+      throw new BadRequestException('Укажите корректную ссылку Google Sheets');
+    }
+
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+      throw new BadRequestException('Поддерживаются только http/https ссылки Google Sheets');
+    }
+
+    if (url.hostname !== 'docs.google.com') {
+      throw new BadRequestException('Для импорта по ссылке поддерживается только docs.google.com');
+    }
+
+    const publishedMatch = url.pathname.match(/^\/spreadsheets\/d\/e\/([^/]+)/);
+    if (publishedMatch) {
+      if (!url.searchParams.get('output')) {
+        url.searchParams.set('output', 'xlsx');
+      }
+      return { exportUrl: url.toString(), spreadsheetId: publishedMatch[1] };
+    }
+
+    const standardMatch = url.pathname.match(/^\/spreadsheets\/d\/([^/]+)/);
+    if (!standardMatch) {
+      throw new BadRequestException('Не удалось найти spreadsheet id в ссылке Google Sheets');
+    }
+
+    const spreadsheetId = standardMatch[1];
+    const exportUrl = new URL(`https://docs.google.com/spreadsheets/d/${spreadsheetId}/export`);
+    exportUrl.searchParams.set('format', 'xlsx');
+    const gid = url.searchParams.get('gid') || url.hash.match(/gid=(\d+)/)?.[1];
+    if (gid) {
+      exportUrl.searchParams.set('gid', gid);
+    }
+    return { exportUrl: exportUrl.toString(), spreadsheetId };
+  }
+
+  private async fetchPublicWorkbook(rawUrl: string): Promise<Buffer> {
+    const { exportUrl } = this.buildPublicGoogleSheetsExportUrl(rawUrl);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    try {
+      const response = await fetch(exportUrl, { signal: controller.signal });
+      if (!response.ok) {
+        throw new BadRequestException(
+          'Не удалось скачать Google Sheet. Откройте доступ по ссылке или опубликуйте таблицу.',
+        );
+      }
+
+      const contentLength = Number(response.headers.get('content-length') || 0);
+      if (contentLength > MAX_PUBLIC_WORKBOOK_BYTES) {
+        throw new BadRequestException('Файл Google Sheets слишком большой для импорта');
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      if (buffer.length > MAX_PUBLIC_WORKBOOK_BYTES) {
+        throw new BadRequestException('Файл Google Sheets слишком большой для импорта');
+      }
+      return buffer;
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      throw new BadRequestException(
+        'Не удалось скачать Google Sheet. Проверьте, что доступ по ссылке включен.',
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private getWorkbookRangeBounds(
+    worksheetName: string,
+    range: string | undefined,
+    values: unknown[][],
+  ): A1RangeBounds {
+    if (range?.trim()) {
+      return parseA1Range(
+        range.includes('!') ? range.trim() : `${quoteSheetName(worksheetName)}!${range.trim()}`,
+      );
+    }
+
+    const rows = Math.max(values.length, 1);
+    const cols = Math.max(...values.map(row => (Array.isArray(row) ? row.length : 0)), 1);
+    return {
+      sheetName: worksheetName,
+      startRow: 1,
+      startCol: 1,
+      endRow: rows,
+      endCol: cols,
+    };
+  }
+
+  private cropWorkbookValues(values: unknown[][], bounds: A1RangeBounds): unknown[][] {
+    const startRow = Math.max(bounds.startRow - 1, 0);
+    const endRow = Math.max(bounds.endRow, bounds.startRow);
+    const startCol = Math.max(bounds.startCol - 1, 0);
+    const endCol = Math.max(bounds.endCol, bounds.startCol);
+
+    return values.slice(startRow, endRow).map(row => {
+      const source = Array.isArray(row) ? row : [];
+      return source.slice(startCol, endCol);
+    });
+  }
+
+  private async loadPublicWorkbookSource(dto: {
+    sourceUrl?: string;
+    worksheetName?: string;
+    range?: string;
+  }): Promise<PublicWorkbookData> {
+    if (!dto.sourceUrl?.trim()) {
+      throw new BadRequestException('Укажите ссылку Google Sheets для импорта');
+    }
+
+    const { spreadsheetId } = this.buildPublicGoogleSheetsExportUrl(dto.sourceUrl);
+    const buffer = await this.fetchPublicWorkbook(dto.sourceUrl);
+    let workbook: XLSX.WorkBook;
+    try {
+      workbook = XLSX.read(buffer, { type: 'buffer', raw: false });
+    } catch {
+      throw new BadRequestException('Не удалось прочитать экспорт Google Sheets');
+    }
+
+    if (!workbook.SheetNames.length) {
+      throw new BadRequestException('В Google Sheet не найдено листов для импорта');
+    }
+
+    const rangeSheet = dto.range?.includes('!') ? parseA1Range(dto.range).sheetName : '';
+    const requestedWorksheet = rangeSheet || dto.worksheetName?.trim() || workbook.SheetNames[0];
+    if (!workbook.SheetNames.includes(requestedWorksheet)) {
+      throw new BadRequestException(`Лист "${requestedWorksheet}" не найден в Google Sheet`);
+    }
+
+    const worksheet = workbook.Sheets[requestedWorksheet];
+    const rawValues = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      raw: false,
+      defval: null,
+      blankrows: false,
+    }) as unknown[][];
+    const normalizedValues = rawValues.map(row => (Array.isArray(row) ? row : []));
+    const bounds = this.getWorkbookRangeBounds(requestedWorksheet, dto.range, normalizedValues);
+    const values = this.cropWorkbookValues(normalizedValues, bounds);
+    const effectiveRange = `${quoteSheetName(bounds.sheetName)}!${numberToColumnLetters(bounds.startCol)}${bounds.startRow}:${numberToColumnLetters(bounds.endCol)}${bounds.endRow}`;
+
+    return {
+      spreadsheetId,
+      worksheetName: bounds.sheetName,
+      values,
+      effectiveRange,
+      bounds,
+      sourceUrl: dto.sourceUrl.trim(),
+    };
+  }
+
+  private buildPreviewFromValues(params: {
+    spreadsheetId: string;
+    worksheetName: string;
+    effectiveRange: string;
+    bounds: A1RangeBounds;
+    values: unknown[][];
+    dto: GoogleSheetsImportPreviewDto;
+  }) {
+    const { spreadsheetId, worksheetName, effectiveRange, bounds, values, dto } = params;
+    const rowsCount = Math.max(bounds.endRow - bounds.startRow + 1, 0);
+    const colsCount = Math.max(bounds.endCol - bounds.startCol + 1, 0);
+    const headerRowIndex = dto.headerRowIndex ?? 0;
+    const safeHeaderIndex = Math.min(Math.max(headerRowIndex, 0), Math.max(values.length - 1, 0));
+    const layout =
+      dto.layoutType && dto.layoutType !== GoogleSheetsImportLayoutType.AUTO
+        ? dto.layoutType
+        : this.detectLayout(values, safeHeaderIndex);
+
+    const sampleRowCount = 10;
+    const sample = values.slice(safeHeaderIndex + 1, safeHeaderIndex + 1 + sampleRowCount);
+    const columns = Array.from({ length: colsCount }).map((_, idx) => {
+      const colLetter = numberToColumnLetters(bounds.startCol + idx);
+      const headerValue = normalizeCellValue(values?.[safeHeaderIndex]?.[idx]);
+      const sampleValues = sample.map(row => normalizeCellValue(row?.[idx]));
+      return {
+        index: idx,
+        a1: colLetter,
+        title: headerValue || colLetter,
+        suggestedType: inferColumnType(sampleValues),
+        include: true,
+      };
+    });
+
+    return {
+      spreadsheetId,
+      worksheetName,
+      usedRange: {
+        a1: effectiveRange,
+        startRow: bounds.startRow,
+        startCol: bounds.startCol,
+        endRow: bounds.endRow,
+        endCol: bounds.endCol,
+        rowsCount,
+        colsCount,
+      },
+      layoutSuggested: layout,
+      headerRowIndex: safeHeaderIndex,
+      sampleRows: sample.map((row, idx) => ({
+        rowNumber: bounds.startRow + safeHeaderIndex + 1 + idx,
+        values: Array.from({ length: colsCount }).map((_, colIdx) =>
+          normalizeCellValue(row?.[colIdx]),
+        ),
+        styles: [],
+      })),
+      columns,
+      highlightedRows: [],
+    };
+  }
+
+  private async executePublicGoogleSheetsCommit(
+    workspaceId: string,
+    dto: GoogleSheetsImportCommitDto,
+    opts?: {
+      onProgress?: (progress: number, stage?: string) => void | Promise<void>;
+    },
+  ) {
+    const report = async (progress: number, stage?: string) => {
+      try {
+        await opts?.onProgress?.(Math.max(0, Math.min(100, Math.floor(progress))), stage);
+      } catch {
+        // ignore progress errors
+      }
+    };
+
+    if (!dto.importUserId) {
+      throw new BadRequestException('Не удалось определить пользователя для импорта');
+    }
+
+    await report(1, 'reading_values');
+    const source = await this.loadPublicWorkbookSource(dto);
+    const { values, bounds, effectiveRange, worksheetName } = source;
+    const rowsCount = Math.max(bounds.endRow - bounds.startRow + 1, 0);
+    const colsCount = Math.max(bounds.endCol - bounds.startCol + 1, 0);
+    const headerRowIndex = dto.headerRowIndex ?? 0;
+    const safeHeaderIndex = Math.min(Math.max(headerRowIndex, 0), Math.max(values.length - 1, 0));
+    const sampleForInference = values.slice(safeHeaderIndex + 1, safeHeaderIndex + 1 + 50);
+    const previewColumns = Array.from({ length: colsCount }).map((_, idx) => {
+      const colLetter = numberToColumnLetters(bounds.startCol + idx);
+      const headerValue = normalizeCellValue(values?.[safeHeaderIndex]?.[idx]);
+      const inferred = inferColumnType(
+        sampleForInference.map(row => normalizeCellValue(row?.[idx])),
+      );
+      return { index: idx, title: headerValue || colLetter, suggestedType: inferred, a1: colLetter };
+    });
+
+    const finalColumns = this.buildFinalColumns(
+      previewColumns.map(c => ({
+        index: c.index,
+        title: c.title,
+        suggestedType: c.suggestedType,
+      })),
+      dto.columns,
+    ).filter(c => c.include);
+
+    if (!finalColumns.length) {
+      throw new BadRequestException('Нужно выбрать хотя бы одну колонку для импорта');
+    }
+
+    await report(5, 'creating_table');
+    const categoryId =
+      dto.categoryId === null || dto.categoryId === undefined
+        ? null
+        : await this.resolveCategoryId(dto.importUserId, dto.categoryId);
+
+    let table: CustomTable;
+    try {
+      table = await this.customTableRepository.save(
+        this.customTableRepository.create({
+          userId: dto.importUserId,
+          workspaceId,
+          name: dto.name.trim(),
+          description: dto.description ?? null,
+          source: CustomTableSource.GOOGLE_SHEETS_IMPORT,
+          categoryId,
+        }),
+      );
+    } catch (error) {
+      this.throwHelpfulSchemaError(error);
+    }
+
+    await this.logIntegrationEvent({
+      userId: dto.importUserId,
+      workspaceId,
+      entityType: EntityType.CUSTOM_TABLE,
+      entityId: table.id,
+      action: AuditAction.CREATE,
+      diff: { before: null, after: table },
+      meta: {
+        source: 'google_sheets_public_url_import',
+        spreadsheetId: source.spreadsheetId,
+        worksheetName,
+        usedRange: effectiveRange,
+      },
+    });
+
+    const createdColumns = await this.customTableColumnRepository.save(
+      finalColumns.map((col, position) => {
+        const colLetter =
+          previewColumns[col.index]?.a1 || numberToColumnLetters(bounds.startCol + col.index);
+        return this.customTableColumnRepository.create({
+          tableId: table.id,
+          key: this.generateColumnKey(),
+          title: col.title,
+          type: col.suggestedType,
+          isRequired: false,
+          isUnique: false,
+          position,
+          config: {
+            source: {
+              kind: 'google_sheets_public_url',
+              spreadsheetId: source.spreadsheetId,
+              worksheetName,
+              colIndex: col.index,
+              colA1: colLetter,
+              headerRow: bounds.startRow + safeHeaderIndex,
+            },
+          },
+        });
+      }),
+    );
+
+    const keyByIndex = new Map<number, string>();
+    createdColumns.forEach(col => {
+      const sourceConfig = this.getColumnSourceConfig(col.config);
+      if (sourceConfig && typeof sourceConfig.colIndex === 'number') {
+        keyByIndex.set(sourceConfig.colIndex, col.key);
+      }
+    });
+
+    if (!dto.importData) {
+      await report(100, 'done');
+      return {
+        tableId: table.id,
+        columnsCreated: createdColumns.length,
+        rowsCreated: 0,
+        usedRange: { a1: effectiveRange, rowsCount, colsCount },
+      };
+    }
+
+    await report(10, 'importing_rows');
+    const rowsToInsert: RowInsertPayload[] = [];
+    for (let rowIdx = safeHeaderIndex + 1; rowIdx < values.length; rowIdx += 1) {
+      const sourceRowNumber = bounds.startRow + rowIdx;
+      const rowValues = values[rowIdx] || [];
+      const data: Record<string, string | null> = {};
+      for (const col of finalColumns) {
+        const key = keyByIndex.get(col.index);
+        if (!key) continue;
+        data[key] = normalizeCellValue(rowValues?.[col.index]);
+      }
+      rowsToInsert.push({ tableId: table.id, rowNumber: sourceRowNumber, data });
+    }
+
+    const chunkSize = 500;
+    for (let i = 0; i < rowsToInsert.length; i += chunkSize) {
+      const chunk = rowsToInsert.slice(i, i + chunkSize);
+      try {
+        await this.customTableRowRepository
+          .createQueryBuilder()
+          .insert()
+          .into(CustomTableRow)
+          .values(this.toRowInsertQueryPayload(chunk))
+          .execute();
+      } catch (error) {
+        this.throwHelpfulSchemaError(error);
+      }
+      const fraction = rowsToInsert.length
+        ? Math.min(1, (i + chunk.length) / rowsToInsert.length)
+        : 1;
+      await report(10 + fraction * 85, 'importing_rows');
+    }
+
+    await report(100, 'done');
+    return {
+      tableId: table.id,
+      columnsCreated: createdColumns.length,
+      rowsCreated: rowsToInsert.length,
+      usedRange: { a1: effectiveRange, rowsCount, colsCount },
+    };
+  }
+
   async previewGoogleSheets(workspaceId: string, dto: GoogleSheetsImportPreviewDto) {
+    if (dto.sourceUrl?.trim()) {
+      const source = await this.loadPublicWorkbookSource(dto);
+      return this.buildPreviewFromValues({
+        spreadsheetId: source.spreadsheetId,
+        worksheetName: source.worksheetName,
+        effectiveRange: source.effectiveRange,
+        bounds: source.bounds,
+        values: source.values,
+        dto,
+      });
+    }
+
+    if (!dto.googleSheetId) {
+      throw new BadRequestException('Укажите Google Sheet подключение или ссылку');
+    }
     const sheet = await this.requireGoogleSheet(workspaceId, dto.googleSheetId);
     const worksheetName = await this.resolveWorksheetName(sheet, dto.worksheetName);
     const range = this.buildRange(worksheetName, dto.range);
@@ -807,6 +1221,14 @@ export class CustomTablesImportService {
       onProgress?: (progress: number, stage?: string) => void | Promise<void>;
     },
   ) {
+    if (dto.sourceUrl?.trim()) {
+      return this.executePublicGoogleSheetsCommit(workspaceId, dto, opts);
+    }
+
+    if (!dto.googleSheetId) {
+      throw new BadRequestException('Укажите Google Sheet подключение или ссылку');
+    }
+
     const report = async (progress: number, stage?: string) => {
       try {
         await opts?.onProgress?.(Math.max(0, Math.min(100, Math.floor(progress))), stage);

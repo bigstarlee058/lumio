@@ -1,13 +1,9 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Dropbox } from 'dropbox';
-import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
-import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   ActorType,
@@ -28,26 +24,6 @@ import type { UpdateDropboxSettingsDto } from './dto/update-dropbox-settings.dto
 
 const DEFAULT_SYNC_TIME = '03:00';
 
-type DropboxApiClient = Dropbox & {
-  auth: {
-    setRefreshToken(refreshToken: string): void;
-    refreshAccessToken(): Promise<{ result: { access_token?: string; expires_in?: number } }>;
-    getAuthenticationUrl(
-      redirectUri: string,
-      state: string,
-      responseType: string,
-      tokenAccessType: string,
-      scope?: string,
-      includeGrantedScopes?: string,
-      usePkce?: boolean,
-    ): string;
-    getAccessTokenFromCode(
-      redirectUri: string,
-      code?: string,
-    ): Promise<{ result: { access_token?: string; refresh_token?: string; expires_in?: number } }>;
-  };
-};
-
 type DropboxApiError = {
   error?: { error_summary?: string };
   message?: string;
@@ -55,22 +31,41 @@ type DropboxApiError = {
 
 type DropboxFileMetadata = {
   '.tag': 'file';
+  path_lower?: string;
   name?: string;
   size?: number;
 };
 
-type DropboxDownloadResult = {
-  fileBinary?: Buffer | ArrayBuffer | Uint8Array;
-  fileBlob?: { arrayBuffer(): Promise<ArrayBuffer> };
+type DropboxTokenResponse = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
 };
+
+type DropboxMetadataResponse = DropboxFileMetadata | { '.tag': string };
+
+type DropboxCreateFolderResponse = {
+  metadata?: DropboxFileMetadata;
+};
+
+type DropboxLegacyClient = {
+  filesGetMetadata(args: { path: string }): Promise<{ result: DropboxMetadataResponse }>;
+  filesDownload?(args: { path: string }): Promise<{
+    result: { fileBinary?: Buffer | ArrayBuffer | Uint8Array };
+  }>;
+  filesUpload?(args: {
+    path: string;
+    contents: Buffer;
+    mode: { '.tag': 'add' };
+    autorename: boolean;
+  }): Promise<unknown>;
+};
+
+type DropboxClient = string | DropboxLegacyClient;
 
 @Injectable()
 export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   protected readonly logger = new Logger(DropboxService.name);
-
-  private asDropboxApiClient(client: Dropbox): DropboxApiClient {
-    return client as DropboxApiClient;
-  }
 
   private getDropboxErrorMessage(error: unknown): string {
     const dropboxError = error as DropboxApiError;
@@ -151,19 +146,20 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   protected async refreshAccessToken(
     refreshToken: string,
   ): Promise<{ accessToken: string; expiresAt?: Date }> {
-    const dbx = this.asDropboxApiClient(this.getDropboxClient());
-    dbx.auth.setRefreshToken(refreshToken);
-    const response = await dbx.auth.refreshAccessToken();
+    const response = await this.requestToken({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    });
 
-    const accessToken = response.result.access_token;
+    const accessToken = response.access_token;
     if (!accessToken) {
       throw new Error('Missing access token');
     }
 
     let expiresAt: Date | undefined;
-    if (response.result.expires_in) {
+    if (response.expires_in) {
       expiresAt = new Date();
-      expiresAt.setSeconds(expiresAt.getSeconds() + response.result.expires_in);
+      expiresAt.setSeconds(expiresAt.getSeconds() + response.expires_in);
     }
 
     return { accessToken, expiresAt };
@@ -173,18 +169,13 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     return 'Dropbox authorization expired';
   }
 
-  private getDropboxClient(accessToken?: string) {
+  private ensureDropboxConfig() {
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
     if (!clientId || !clientSecret) {
       throw new BadRequestException('Dropbox OAuth is not configured');
     }
-    return new Dropbox({
-      clientId,
-      clientSecret,
-      accessToken,
-      fetch: globalThis.fetch,
-    });
+    return { clientId, clientSecret };
   }
 
   getAuthUrl(user: User): string {
@@ -193,18 +184,15 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     if (!clientId || !redirectUri) {
       throw new BadRequestException('Dropbox OAuth is not configured');
     }
-    const dbx = this.getDropboxClient();
 
     return this.buildProviderAuthUrl(user, state =>
-      this.asDropboxApiClient(dbx).auth.getAuthenticationUrl(
-        redirectUri,
+      `https://www.dropbox.com/oauth2/authorize?${new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
+        token_access_type: 'offline',
         state,
-        'code',
-        'offline',
-        undefined,
-        undefined,
-        true,
-      ),
+      }).toString()}`,
     );
   }
 
@@ -222,37 +210,36 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
 
     const { redirectBase, user } = callbackContext;
 
-    const dbx = this.getDropboxClient();
     const redirectUri = this.getRedirectUri();
 
-    let tokenResponse: { result: { access_token?: string; refresh_token?: string; expires_in?: number } };
+    let tokenResponse: DropboxTokenResponse;
     try {
-      tokenResponse = await this.asDropboxApiClient(dbx).auth.getAccessTokenFromCode(
-        redirectUri,
-        params.code,
-      );
+      tokenResponse = await this.requestToken({
+        grant_type: 'authorization_code',
+        code: params.code || '',
+        redirect_uri: redirectUri,
+      });
     } catch (error) {
       this.logger.error(`Dropbox token exchange failed: ${error}`);
       return `${redirectBase}?status=error&reason=token_exchange_failed`;
     }
 
-    const accessToken = tokenResponse.result.access_token || '';
-    const refreshToken = tokenResponse.result.refresh_token || '';
+    const accessToken = tokenResponse.access_token || '';
+    const refreshToken = tokenResponse.refresh_token || '';
 
     if (!accessToken && !refreshToken) {
       return `${redirectBase}?status=error&reason=missing_tokens`;
     }
 
-    const workspaceId = user.workspaceId || null;
     const { integration: existing } = await this.findIntegrationForUser(user.id);
     const savedIntegration = await this.upsertConnectedIntegration(existing, user, [
       'files.content.read',
       'files.content.write',
     ]);
 
-    if (tokenResponse.result.expires_in) {
+    if (tokenResponse.expires_in) {
       const expiresAt = new Date();
-      expiresAt.setSeconds(expiresAt.getSeconds() + tokenResponse.result.expires_in);
+      expiresAt.setSeconds(expiresAt.getSeconds() + tokenResponse.expires_in);
       await this.saveEncryptedTokenRecord(existing?.token, savedIntegration.id, {
         accessToken,
         refreshToken,
@@ -281,26 +268,120 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     return this.buildIntegrationRedirect('connected');
   }
 
-  private async getDropboxClientWithAuth(integration: Integration) {
+  private async getDropboxClientWithAuth(integration: Integration): Promise<DropboxClient> {
     if (!integration.token) {
       throw new BadRequestException('Integration token missing');
     }
-    const accessToken = await this.ensureValidAccessToken(integration);
-    return this.getDropboxClient(accessToken);
+    return this.ensureValidAccessToken(integration);
+  }
+
+  private async requestToken(params: Record<string, string>): Promise<DropboxTokenResponse> {
+    const { clientId, clientSecret } = this.ensureDropboxConfig();
+    const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(params),
+    });
+    if (!response.ok) {
+      throw new Error(`Dropbox token request failed with status ${response.status}`);
+    }
+    return (await response.json()) as DropboxTokenResponse;
+  }
+
+  private async dropboxJson<T>(
+    accessToken: string,
+    endpoint: string,
+    payload: unknown,
+  ): Promise<T> {
+    const response = await fetch(`https://api.dropboxapi.com/2/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error(`Dropbox API request failed with status ${response.status}`);
+    }
+    return (await response.json()) as T;
+  }
+
+  private async dropboxContent(
+    accessToken: string,
+    endpoint: string,
+    payload: unknown,
+    body?: BodyInit,
+  ): Promise<Response> {
+    const response = await fetch(`https://content.dropboxapi.com/2/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Dropbox-API-Arg': JSON.stringify(payload),
+        ...(body ? { 'Content-Type': 'application/octet-stream' } : {}),
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error(`Dropbox content request failed with status ${response.status}`);
+    }
+    return response;
+  }
+
+  private requireAccessToken(client: DropboxClient): string {
+    if (typeof client !== 'string') {
+      throw new Error('Dropbox REST access token is unavailable');
+    }
+    return client;
+  }
+
+  private async getDropboxMetadata(
+    client: DropboxClient,
+    path: string,
+  ): Promise<DropboxMetadataResponse> {
+    if (typeof client !== 'string') {
+      const response = await client.filesGetMetadata({ path });
+      return response.result;
+    }
+
+    return this.dropboxJson<DropboxMetadataResponse>(client, 'files/get_metadata', { path });
+  }
+
+  private async downloadDropboxFile(client: DropboxClient, path: string): Promise<Buffer> {
+    if (typeof client !== 'string' && client.filesDownload) {
+      const response = await client.filesDownload({ path });
+      const binary = response.result.fileBinary;
+      if (Buffer.isBuffer(binary)) return binary;
+      if (binary instanceof Uint8Array) return Buffer.from(binary);
+      if (binary instanceof ArrayBuffer) return Buffer.from(binary);
+      return Buffer.from([]);
+    }
+
+    const download = await this.dropboxContent(this.requireAccessToken(client), 'files/download', {
+      path,
+    });
+    return Buffer.from(await download.arrayBuffer());
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DropboxSettings) {
     if (settings.folderId) return settings;
-    const dbx = await this.getDropboxClientWithAuth(integration);
+    const client = await this.getDropboxClientWithAuth(integration);
 
     try {
-      const response = await dbx.filesCreateFolderV2({
+      const response = await this.dropboxJson<DropboxCreateFolderResponse>(
+        this.requireAccessToken(client),
+        'files/create_folder_v2',
+        {
         path: '/Lumio',
         autorename: false,
-      });
+        },
+      );
 
-      const folderId = response.result.metadata.path_lower || null;
-      const folderName = response.result.metadata.name || null;
+      const folderId = response.metadata?.path_lower || null;
+      const folderName = response.metadata?.name || null;
       if (folderId) {
         settings.folderId = folderId;
         settings.folderName = folderName;
@@ -324,16 +405,16 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
       fileIds: dto.fileIds,
       uploadsDir,
       getClient: integration => this.getDropboxClientWithAuth(integration),
-      loadFile: async (dbx, fileId) => {
-        const meta = await dbx.filesGetMetadata({ path: fileId });
+      loadFile: async (client, fileId) => {
+        const meta = await this.getDropboxMetadata(client, fileId);
 
-        if (meta.result['.tag'] !== 'file') {
+        if (meta['.tag'] !== 'file') {
           return {
             result: this.buildImportResult(fileId, 'error', 'Not a file'),
           };
         }
 
-        const fileMetadata = meta.result as DropboxFileMetadata;
+        const fileMetadata = meta as DropboxFileMetadata;
         const originalName = fileMetadata.name || `dropbox-file-${fileId}`;
         const ext = path.extname(path.basename(originalName)).toLowerCase();
 
@@ -351,23 +432,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           mimeType,
           size: fileMetadata.size || 0,
           getContents: async () => {
-            const download = await dbx.filesDownload({ path: fileId });
-            const downloadResult = download.result as DropboxDownloadResult;
-            const binary = downloadResult.fileBinary || (await downloadResult.fileBlob?.arrayBuffer());
-
-            if (Buffer.isBuffer(binary)) {
-              return binary;
-            }
-
-            if (binary instanceof Uint8Array) {
-              return Buffer.from(binary);
-            }
-
-            if (binary instanceof ArrayBuffer) {
-              return Buffer.from(new Uint8Array(binary));
-            }
-
-            return Buffer.from([]);
+            return this.downloadDropboxFile(client, fileId);
           },
         };
       },
@@ -386,7 +451,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   }
 
   private async resolveDropboxFilename(
-    dbx: Dropbox,
+    client: DropboxClient,
     folderId: string | null,
     fileName: string,
   ): Promise<string> {
@@ -395,7 +460,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     }
     const filePath = `${folderId}/${fileName}`;
     try {
-      await dbx.filesGetMetadata({ path: filePath });
+      await this.getDropboxMetadata(client, filePath);
       const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13);
       const dot = fileName.lastIndexOf('.');
       if (dot === -1) {
@@ -434,12 +499,26 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           chunks.push(Buffer.from(chunk));
         }
 
-        await client.filesUpload({
-          path: uploadPath,
-          contents: Buffer.concat(chunks),
-          mode: { '.tag': 'add' },
-          autorename: true,
-        });
+        if (typeof client !== 'string' && client.filesUpload) {
+          await client.filesUpload({
+            path: uploadPath,
+            contents: Buffer.concat(chunks),
+            mode: { '.tag': 'add' },
+            autorename: true,
+          });
+          return;
+        }
+
+        await this.dropboxContent(
+          this.requireAccessToken(client),
+          'files/upload',
+          {
+            path: uploadPath,
+            mode: 'add',
+            autorename: true,
+          },
+          Buffer.concat(chunks),
+        );
       },
       saveSettings: settings => this.dropboxSettingsRepository.save(settings),
       createAuditEvent: uploaded =>

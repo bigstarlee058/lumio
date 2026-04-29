@@ -1,14 +1,8 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { drive } from '@googleapis/drive';
-import { OAuth2Client } from 'google-auth-library';
-import { pipeline } from 'stream/promises';
 import type { Repository } from 'typeorm';
 import { CloudStorageBaseService } from '../../common/services/cloud-storage-base.service';
 import { FileStorageService } from '../../common/services/file-storage.service';
-import { decryptText, encryptText } from '../../common/utils/encryption.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   ActorType,
@@ -30,6 +24,30 @@ import type { UpdateDriveSettingsDto } from './dto/update-drive-settings.dto';
 type GoogleDriveImportError = {
   response?: { data?: { message?: string } };
   message?: string;
+};
+
+type GoogleDriveFile = {
+  id?: string;
+  name?: string;
+  mimeType?: string;
+  size?: string;
+};
+
+type GoogleDriveFilesResponse = {
+  files?: GoogleDriveFile[];
+};
+
+type DriveClient = {
+  files: {
+    get(args: { fileId: string; fields?: string; alt?: string }): Promise<{ data: GoogleDriveFile | Buffer }>;
+  };
+};
+
+type GoogleTokenResponse = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+  scope?: string;
 };
 
 const DRIVE_SCOPES = [
@@ -122,18 +140,19 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   protected async refreshAccessToken(
     refreshToken: string,
   ): Promise<{ accessToken: string; expiresAt?: Date }> {
-    const client = this.getOAuthClient();
-    client.setCredentials({ refresh_token: refreshToken });
-    const { token } = await client.getAccessToken();
-    const accessToken = token || client.credentials.access_token;
+    const token = await this.requestToken({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    });
+    const accessToken = token.access_token;
     if (!accessToken) {
       throw new Error('Missing access token');
     }
 
     return {
       accessToken,
-      expiresAt: client.credentials.expiry_date
-        ? new Date(client.credentials.expiry_date)
+      expiresAt: token.expires_in
+        ? new Date(Date.now() + token.expires_in * 1000)
         : undefined,
     };
   }
@@ -142,26 +161,29 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     return 'Google Drive authorization expired';
   }
 
-  private getOAuthClient() {
+  private getOAuthConfig() {
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
     const redirectUri = this.getRedirectUri();
     if (!clientId || !clientSecret || !redirectUri) {
       throw new BadRequestException('Google Drive OAuth is not configured');
     }
-    return new OAuth2Client(clientId, clientSecret, redirectUri);
+    return { clientId, clientSecret, redirectUri };
   }
 
   getAuthUrl(user: User): string {
-    const client = this.getOAuthClient();
+    const { clientId, redirectUri } = this.getOAuthConfig();
 
     return this.buildProviderAuthUrl(user, state =>
-      client.generateAuthUrl({
+      `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        response_type: 'code',
         access_type: 'offline',
         prompt: 'consent',
-        scope: DRIVE_SCOPES,
+        scope: DRIVE_SCOPES.join(' '),
         state,
-      }),
+      }).toString()}`,
     );
   }
 
@@ -179,10 +201,12 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
 
     const { redirectBase, user } = callbackContext;
 
-    const client = this.getOAuthClient();
-    const { tokens } = await client.getToken(params.code);
-    const accessToken = tokens.access_token || '';
-    const refreshToken = tokens.refresh_token || '';
+    const token = await this.requestToken({
+      grant_type: 'authorization_code',
+      code: params.code || '',
+    });
+    const accessToken = token.access_token || '';
+    const refreshToken = token.refresh_token || '';
 
     if (!accessToken && !refreshToken) {
       return `${redirectBase}?status=error&reason=missing_tokens`;
@@ -193,13 +217,13 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     const savedIntegration = await this.upsertConnectedIntegration(
       existing,
       user,
-      tokens.scope ? tokens.scope.split(' ') : existing?.scopes || DRIVE_SCOPES,
+      token.scope ? token.scope.split(' ') : existing?.scopes || DRIVE_SCOPES,
     );
 
     await this.saveEncryptedTokenRecord(existing?.token, savedIntegration.id, {
       accessToken,
       refreshToken,
-      expiresAt: tokens.expiry_date ? new Date(tokens.expiry_date) : undefined,
+      expiresAt: token.expires_in ? new Date(Date.now() + token.expires_in * 1000) : undefined,
     });
 
     let settings = existing?.driveSettings || this.createSettingsRecord(savedIntegration.id);
@@ -218,34 +242,106 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     return this.buildIntegrationRedirect('connected');
   }
 
-  private async getDriveClient(integration: Integration) {
+  private async requestToken(params: Record<string, string>): Promise<GoogleTokenResponse> {
+    const { clientId, clientSecret, redirectUri } = this.getOAuthConfig();
+    const body = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      redirect_uri: redirectUri,
+      ...params,
+    });
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+
+    if (!response.ok) {
+      throw new BadRequestException('Failed to exchange Google Drive OAuth token');
+    }
+
+    return (await response.json()) as GoogleTokenResponse;
+  }
+
+  private async getDriveAccessToken(integration: Integration): Promise<string> {
     if (!integration.token) {
       throw new BadRequestException('Integration token missing');
     }
-    const accessToken = await this.ensureValidAccessToken(integration);
-    const refreshToken = decryptText(integration.token.refreshToken);
-    const client = this.getOAuthClient();
-    client.setCredentials({
-      access_token: accessToken,
-      refresh_token: refreshToken,
+    return this.ensureValidAccessToken(integration);
+  }
+
+  private async getDriveClient(integration: Integration): Promise<DriveClient> {
+    const accessToken = await this.getDriveAccessToken(integration);
+    return {
+      files: {
+        get: async args => {
+          if (args.alt === 'media') {
+            const response = await fetch(
+              `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(args.fileId)}?alt=media`,
+              { headers: { Authorization: `Bearer ${accessToken}` } },
+            );
+            if (!response.ok) {
+              throw new Error(`Google Drive download failed with status ${response.status}`);
+            }
+            return { data: Buffer.from(await response.arrayBuffer()) };
+          }
+
+          return {
+            data: await this.driveJson<GoogleDriveFile>(
+              accessToken,
+              `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(args.fileId)}?fields=${encodeURIComponent(args.fields || 'id,name,mimeType,size')}`,
+            ),
+          };
+        },
+      },
+    };
+  }
+
+  private async driveJson<T>(
+    accessToken: string,
+    url: string,
+    init: RequestInit = {},
+  ): Promise<T> {
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        ...(init.headers || {}),
+      },
     });
-    return drive({ version: 'v3', auth: client });
+    if (!response.ok) {
+      throw new Error(`Google Drive REST request failed with status ${response.status}`);
+    }
+    return (await response.json()) as T;
+  }
+
+  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DriveSettings) {
     if (settings.folderId) return settings;
-    const drive = await this.getDriveClient(integration);
+    const accessToken = await this.getDriveAccessToken(integration);
 
-    const response = await drive.files.create({
-      requestBody: {
+    const response = await this.driveJson<GoogleDriveFile>(
+      accessToken,
+      'https://www.googleapis.com/drive/v3/files?fields=id,name',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
         name: 'Lumio',
         mimeType: 'application/vnd.google-apps.folder',
+        }),
       },
-      fields: 'id,name',
-    });
+    );
 
-    const folderId = response.data.id || null;
-    const folderName = response.data.name || null;
+    const folderId = response.id || null;
+    const folderName = response.name || null;
     if (folderId) {
       settings.folderId = folderId;
       settings.folderName = folderName;
@@ -261,30 +357,20 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       fileIds: dto.fileIds,
       uploadsDir,
       getClient: integration => this.getDriveClient(integration),
-      loadFile: async (drive, fileId) => {
-        const meta = await drive.files.get({
+      loadFile: async (driveClient, fileId) => {
+        const metaResponse = await driveClient.files.get({
           fileId,
           fields: 'id,name,mimeType,size',
         });
+        const meta = metaResponse.data as GoogleDriveFile;
 
         return {
-          originalName: meta.data.name || `drive-file-${fileId}`,
-          mimeType: meta.data.mimeType || '',
-          size: meta.data.size ? Number.parseInt(meta.data.size, 10) : 0,
+          originalName: meta.name || `drive-file-${fileId}`,
+          mimeType: meta.mimeType || '',
+          size: meta.size ? Number.parseInt(meta.size, 10) : 0,
           getContents: async () => {
-            const tempName = `${Date.now()}-${fileId}`;
-            const tempPath = path.join(uploadsDir, tempName);
-            const download = await drive.files.get(
-              { fileId, alt: 'media' },
-              { responseType: 'stream' },
-            );
-
-            await pipeline(download.data as NodeJS.ReadableStream, fs.createWriteStream(tempPath));
-            try {
-              return await fs.promises.readFile(tempPath);
-            } finally {
-              await fs.promises.unlink(tempPath).catch(() => undefined);
-            }
+            const response = await driveClient.files.get({ fileId, alt: 'media' });
+            return response.data as Buffer;
           },
         };
       },
@@ -303,7 +389,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   }
 
   private async resolveDriveFilename(
-    driveClient: ReturnType<typeof drive>,
+    accessToken: string,
     folderId: string | null,
     fileName: string,
   ): Promise<string> {
@@ -312,13 +398,16 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     }
     const escapedName = fileName.replace(/'/g, "\\'");
     const q = `name = '${escapedName}' and '${folderId}' in parents and trashed = false`;
-    const res = await driveClient.files.list({
-      q,
-      spaces: 'drive',
-      fields: 'files(id,name)',
-      pageSize: 1,
-    });
-    if (res.data.files && res.data.files.length > 0) {
+    const res = await this.driveJson<GoogleDriveFilesResponse>(
+      accessToken,
+      `https://www.googleapis.com/drive/v3/files?${new URLSearchParams({
+        q,
+        spaces: 'drive',
+        fields: 'files(id,name)',
+        pageSize: '1',
+      }).toString()}`,
+    );
+    if (res.files && res.files.length > 0) {
       const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13);
       const dot = fileName.lastIndexOf('.');
       if (dot === -1) {
@@ -338,21 +427,32 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       integration,
       settings: integration.driveSettings,
       statementRepository: this.statementRepository,
-      getClient: currentIntegration => this.getDriveClient(currentIntegration),
+      getClient: currentIntegration => this.getDriveAccessToken(currentIntegration),
       getStatementStream: statement => this.fileStorageService.getStatementFileStream(statement),
-      uploadStatement: async ({ client, stream, fileName, mimeType, settings }) => {
-        const driveName = await this.resolveDriveFilename(client, settings.folderId || null, fileName);
-        await client.files.create({
-          requestBody: {
+      uploadStatement: async ({ client: accessToken, stream, fileName, mimeType, settings }) => {
+        const driveName = await this.resolveDriveFilename(accessToken, settings.folderId || null, fileName);
+        const metadata = {
             name: driveName,
             parents: settings.folderId ? [settings.folderId] : undefined,
+        };
+        const fileBuffer = await this.streamToBuffer(stream);
+        const body = new FormData();
+        body.append(
+          'metadata',
+          new Blob([JSON.stringify(metadata)], { type: 'application/json' }),
+        );
+        body.append('file', new Blob([new Uint8Array(fileBuffer)], { type: mimeType }));
+        const response = await fetch(
+          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+          {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken}` },
+            body,
           },
-          media: {
-            mimeType,
-            body: stream as NodeJS.ReadableStream,
-          },
-          fields: 'id',
-        });
+        );
+        if (!response.ok) {
+          throw new Error(`Google Drive upload failed with status ${response.status}`);
+        }
       },
       saveSettings: settings => this.driveSettingsRepository.save(settings),
       createAuditEvent: uploaded =>

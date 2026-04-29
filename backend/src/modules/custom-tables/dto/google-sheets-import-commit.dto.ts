@@ -8,6 +8,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   MaxLength,
   Min,
@@ -53,8 +54,17 @@ export class GoogleSheetsImportRowTagDto {
 }
 
 export class GoogleSheetsImportCommitDto {
+  @IsOptional()
   @IsUUID('4')
-  googleSheetId: string;
+  googleSheetId?: string;
+
+  @IsOptional()
+  @IsUrl({ require_tld: false, protocols: ['http', 'https'] })
+  sourceUrl?: string;
+
+  @IsOptional()
+  @IsUUID('4')
+  importUserId?: string;
 
   @IsOptional()
   @IsString()

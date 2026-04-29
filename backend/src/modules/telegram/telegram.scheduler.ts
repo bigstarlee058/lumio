@@ -21,10 +21,6 @@ export class TelegramScheduler {
 
   @Cron(CronExpression.EVERY_DAY_AT_8AM)
   async sendDailyReports(): Promise<void> {
-    if (!this.telegramService.isEnabled()) {
-      return;
-    }
-
     const today = new Date();
     const date = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, '0')}-${String(today.getUTCDate()).padStart(2, '0')}`;
 
@@ -68,10 +64,6 @@ export class TelegramScheduler {
 
   @Cron('0 9 1 * *')
   async sendMonthlyReports(): Promise<void> {
-    if (!this.telegramService.isEnabled()) {
-      return;
-    }
-
     const now = new Date();
     const year = now.getUTCFullYear();
     const month = now.getUTCMonth() + 1;

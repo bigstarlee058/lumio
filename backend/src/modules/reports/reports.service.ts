@@ -863,7 +863,7 @@ export class ReportsService {
         timeseriesMap.set(record.date, (timeseriesMap.get(record.date) || 0) + record.amount);
       }
 
-      const aggregateKey = `${record.source}:${record.counterparty.toLowerCase()}`;
+      const aggregateKey = `${record.source}:${record.currency || ''}:${record.counterparty.toLowerCase()}`;
       const current = aggregateMap.get(aggregateKey);
       if (current) {
         current.count += 1;

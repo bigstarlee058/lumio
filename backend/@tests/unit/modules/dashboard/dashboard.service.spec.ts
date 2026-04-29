@@ -57,9 +57,14 @@ describe('DashboardService', () => {
   const memberRepo = createRepoMock();
   const workspaceRepo = createRepoMock();
   const auditRepo = createRepoMock();
+  const exchangeRatesService = {
+    getRate: jest.fn(),
+  };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+    workspaceRepo.findOne.mockResolvedValue({ currency: 'KZT' });
+    exchangeRatesService.getRate.mockResolvedValue(1);
     service = new DashboardService(
       transactionRepo,
       statementRepo,
@@ -68,6 +73,7 @@ describe('DashboardService', () => {
       memberRepo,
       workspaceRepo,
       auditRepo,
+      exchangeRatesService as any,
     );
   });
 
@@ -319,9 +325,13 @@ describe('DashboardService', () => {
 
   it('getSnapshot calculates totals correctly from transactions, not wallets', async () => {
     // txResult (period income/expense) then balanceResult (all-time balance)
-    const txQb = createQueryBuilderMock({ income: '1200', expense: '200', unapprovedCash: '0' });
-    const balanceQb = createQueryBuilderMock({ totalBalance: '1500.5' });
-    const payableQb = createQueryBuilderMock({ totalPayable: '300', totalOverdue: '50' });
+    const txQb = createQueryBuilderMock([
+      { currency: 'USD', income: '1200', expense: '200', unapprovedCash: '0' },
+    ]);
+    const balanceQb = createQueryBuilderMock([{ currency: 'USD', balance: '1500.5' }]);
+    const payableQb = createQueryBuilderMock([
+      { currency: 'USD', totalPayable: '300', totalOverdue: '50' },
+    ]);
 
     transactionRepo.createQueryBuilder.mockReturnValueOnce(txQb).mockReturnValueOnce(balanceQb);
     payableRepo.createQueryBuilder.mockReturnValue(payableQb);
@@ -347,10 +357,52 @@ describe('DashboardService', () => {
     expect(walletRepo.createQueryBuilder).not.toHaveBeenCalled();
   });
 
+  it('getSnapshot converts grouped source currencies into the workspace currency', async () => {
+    const txQb = createQueryBuilderMock([
+      { currency: 'USD', income: '10', expense: '2', unapprovedCash: '1' },
+      { currency: 'KZT', income: '1000', expense: '500', unapprovedCash: '0' },
+    ]);
+    const balanceQb = createQueryBuilderMock([
+      { currency: 'USD', balance: '3' },
+      { currency: 'KZT', balance: '700' },
+    ]);
+    const payableQb = createQueryBuilderMock([
+      { currency: 'USD', totalPayable: '4', totalOverdue: '1' },
+      { currency: 'KZT', totalPayable: '200', totalOverdue: '50' },
+    ]);
+
+    transactionRepo.createQueryBuilder.mockReturnValueOnce(txQb).mockReturnValueOnce(balanceQb);
+    payableRepo.createQueryBuilder.mockReturnValue(payableQb);
+    workspaceRepo.findOne.mockResolvedValue({ currency: 'KZT' });
+    exchangeRatesService.getRate.mockResolvedValue(500);
+
+    const result = await (service as any).getSnapshot(
+      'ws-1',
+      new Date('2026-02-01'),
+      new Date('2026-03-01'),
+    );
+
+    expect(result).toMatchObject({
+      totalBalance: 2200,
+      income30d: 6000,
+      expense30d: 1500,
+      netFlow30d: 4500,
+      totalPayable: 2200,
+      totalOverdue: 550,
+      unapprovedCash: 500,
+      currency: 'KZT',
+    });
+    expect(exchangeRatesService.getRate).toHaveBeenCalledWith('USD', 'KZT');
+  });
+
   it('getSnapshot excludes error and processing statements from period totals', async () => {
-    const txQb = createQueryBuilderMock({ income: '1200', expense: '200', unapprovedCash: '0' });
-    const balanceQb = createQueryBuilderMock({ totalBalance: '1500.5' });
-    const payableQb = createQueryBuilderMock({ totalPayable: '300', totalOverdue: '50' });
+    const txQb = createQueryBuilderMock([
+      { currency: 'USD', income: '1200', expense: '200', unapprovedCash: '0' },
+    ]);
+    const balanceQb = createQueryBuilderMock([{ currency: 'USD', balance: '1500.5' }]);
+    const payableQb = createQueryBuilderMock([
+      { currency: 'USD', totalPayable: '300', totalOverdue: '50' },
+    ]);
 
     transactionRepo.createQueryBuilder.mockReturnValueOnce(txQb).mockReturnValueOnce(balanceQb);
     payableRepo.createQueryBuilder.mockReturnValue(payableQb);
@@ -364,9 +416,13 @@ describe('DashboardService', () => {
   });
 
   it('getSnapshot excludes duplicate transactions from period totals and total balance', async () => {
-    const txQb = createQueryBuilderMock({ income: '1200', expense: '200', unapprovedCash: '0' });
-    const balanceQb = createQueryBuilderMock({ totalBalance: '1500.5' });
-    const payableQb = createQueryBuilderMock({ totalPayable: '300', totalOverdue: '50' });
+    const txQb = createQueryBuilderMock([
+      { currency: 'USD', income: '1200', expense: '200', unapprovedCash: '0' },
+    ]);
+    const balanceQb = createQueryBuilderMock([{ currency: 'USD', balance: '1500.5' }]);
+    const payableQb = createQueryBuilderMock([
+      { currency: 'USD', totalPayable: '300', totalOverdue: '50' },
+    ]);
 
     transactionRepo.createQueryBuilder.mockReturnValueOnce(txQb).mockReturnValueOnce(balanceQb);
     payableRepo.createQueryBuilder.mockReturnValue(payableQb);
@@ -434,8 +490,8 @@ describe('DashboardService', () => {
 
   it('getCashFlow groups by date for 30d range', async () => {
     const rows = [
-      { date: '2026-02-01', income: '100', expense: '50' },
-      { date: '2026-02-02', income: '0', expense: '25' },
+      { date: '2026-02-01', currency: 'KZT', income: '100', expense: '50' },
+      { date: '2026-02-02', currency: 'KZT', income: '0', expense: '25' },
     ];
     const cashFlowQb = createQueryBuilderMock(rows);
     transactionRepo.createQueryBuilder.mockReturnValue(cashFlowQb);
@@ -459,8 +515,8 @@ describe('DashboardService', () => {
 
   it('getCashFlow groups by week for 90d range', async () => {
     const rows = [
-      { date: '2026-05', income: '500', expense: '200' },
-      { date: '2026-06', income: '300', expense: '100' },
+      { date: '2026-05', currency: 'KZT', income: '500', expense: '200' },
+      { date: '2026-06', currency: 'KZT', income: '300', expense: '100' },
     ];
     const cashFlowQb = createQueryBuilderMock(rows);
     transactionRepo.createQueryBuilder.mockReturnValue(cashFlowQb);
@@ -482,22 +538,10 @@ describe('DashboardService', () => {
     expect((service as any).getTransactionGroupFormat(90)).toBe("'IYYY-IW'");
   });
 
-  it('mapNamedAmountCountRows converts raw query rows into numeric summaries', () => {
-    expect(
-      (service as any).mapNamedAmountCountRows([
-        { name: 'Kaspi', amount: '50000.5', count: '10' },
-        { name: 'Halyk', amount: '', count: 'invalid' },
-      ]),
-    ).toEqual([
-      { name: 'Kaspi', amount: 50000.5, count: 10 },
-      { name: 'Halyk', amount: 0, count: 0 },
-    ]);
-  });
-
   it('getTopMerchants returns top 5 expense merchants sorted by amount', async () => {
     const rows = [
-      { name: 'Kaspi', amount: '50000', count: '10' },
-      { name: 'Halyk', amount: '30000', count: '5' },
+      { name: 'Kaspi', currency: 'KZT', amount: '50000', count: '10' },
+      { name: 'Halyk', currency: 'KZT', amount: '30000', count: '5' },
     ];
     const qb = createQueryBuilderMock(rows);
     transactionRepo.createQueryBuilder.mockReturnValue(qb);
@@ -512,7 +556,7 @@ describe('DashboardService', () => {
       { name: 'Kaspi', amount: 50000, count: 10 },
       { name: 'Halyk', amount: 30000, count: 5 },
     ]);
-    expect(qb.limit).toHaveBeenCalledWith(5);
+    expect(qb.limit).not.toHaveBeenCalled();
     expect(qb.andWhere).toHaveBeenCalledWith('s.status NOT IN (:...excludedStatuses)', {
       excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
     });
@@ -521,8 +565,8 @@ describe('DashboardService', () => {
 
   it('getTopCategories returns top 5 categories sorted by amount', async () => {
     const rows = [
-      { id: 'cat-1', name: 'Utilities', amount: '40000', count: '8' },
-      { id: null, name: 'Uncategorized', amount: '15000', count: '3' },
+      { id: 'cat-1', name: 'Utilities', currency: 'KZT', amount: '40000', count: '8' },
+      { id: null, name: 'Uncategorized', currency: 'KZT', amount: '15000', count: '3' },
     ];
     const qb = createQueryBuilderMock(rows);
     transactionRepo.createQueryBuilder.mockReturnValue(qb);
@@ -537,7 +581,7 @@ describe('DashboardService', () => {
       { id: 'cat-1', name: 'Utilities', amount: 40000, count: 8 },
       { id: null, name: 'Uncategorized', amount: 15000, count: 3 },
     ]);
-    expect(qb.limit).toHaveBeenCalledWith(5);
+    expect(qb.limit).not.toHaveBeenCalled();
     expect(qb.andWhere).toHaveBeenCalledWith('s.status NOT IN (:...excludedStatuses)', {
       excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
     });

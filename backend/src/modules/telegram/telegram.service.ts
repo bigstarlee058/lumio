@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { ReportStatus, ReportType, TelegramReport } from '../../entities/telegra
 import { User } from '../../entities/user.entity';
 import type { DailyReport } from '../reports/interfaces/daily-report.interface';
 import type { MonthlyReport } from '../reports/interfaces/monthly-report.interface';
+import { ApplicationSettingsService } from '../application-settings/application-settings.service';
 import { ReportsService } from '../reports/reports.service';
 import { StatementsService } from '../statements/statements.service';
 import type { ConnectTelegramDto } from './dto/connect-telegram.dto';
@@ -82,6 +83,8 @@ export class TelegramService {
     private readonly telegramReportRepository: Repository<TelegramReport>,
     private readonly reportsService: ReportsService,
     private readonly statementsService: StatementsService,
+    @Optional()
+    private readonly applicationSettingsService?: ApplicationSettingsService,
   ) {
     this.botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
     this.apiBase = this.botToken ? `https://api.telegram.org/bot${this.botToken}` : undefined;
@@ -94,8 +97,9 @@ export class TelegramService {
     }
   }
 
-  isEnabled(): boolean {
-    return Boolean(this.botToken);
+  async isEnabled(user?: User | null): Promise<boolean> {
+    const settings = await this.applicationSettingsService?.getTelegramSettings(user);
+    return Boolean(settings?.botToken || this.botToken);
   }
 
   async connectAccount(user: User, dto: ConnectTelegramDto): Promise<User> {
@@ -112,11 +116,12 @@ export class TelegramService {
 
     const savedUser = await this.userRepository.save(updatedUser);
 
-    if (this.botToken) {
+    if (await this.isEnabled(user)) {
       try {
         await this.sendMessage(
           dto.chatId,
           '✅ Telegram подключен. Мы будем отправлять отчёты в этот чат.',
+          user,
         );
       } catch (error: unknown) {
         this.logger.warn(`Failed to send confirmation message: ${getErrorMessage(error)}`);
@@ -134,7 +139,7 @@ export class TelegramService {
       );
     }
 
-    if (!this.botToken) {
+    if (!(await this.isEnabled(user))) {
       throw new BadRequestException('Telegram bot is not configured on the server');
     }
 
@@ -218,7 +223,8 @@ export class TelegramService {
     const savedRecord = await this.telegramReportRepository.save(record);
 
     try {
-      const result = await this.sendMessage(chatId, message);
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+      const result = await this.sendMessage(chatId, message, user);
       savedRecord.status = ReportStatus.SENT;
       savedRecord.sentAt = new Date();
       savedRecord.messageId = result.messageId;
@@ -246,12 +252,19 @@ export class TelegramService {
       .getOne();
   }
 
-  private async sendMessage(chatId: string, text: string): Promise<TelegramSendResult> {
-    if (!this.apiBase) {
+  private async sendMessage(
+    chatId: string,
+    text: string,
+    user?: User | null,
+  ): Promise<TelegramSendResult> {
+    const settings = await this.applicationSettingsService?.getTelegramSettings(user);
+    const botToken = settings?.botToken || this.botToken;
+    const apiBase = botToken ? `https://api.telegram.org/bot${botToken}` : undefined;
+    if (!apiBase) {
       throw new BadRequestException('Telegram bot is not configured');
     }
 
-    const timeoutMsRaw = Number.parseInt(process.env.TELEGRAM_TIMEOUT_MS || '10000', 10);
+    const timeoutMsRaw = settings?.timeoutMs || Number.parseInt(process.env.TELEGRAM_TIMEOUT_MS || '10000', 10);
     const timeoutMs = Number.isFinite(timeoutMsRaw) && timeoutMsRaw > 0 ? timeoutMsRaw : 10000;
 
     const sendOnce = async () => {
@@ -259,7 +272,7 @@ export class TelegramService {
       const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
 
       try {
-        const response = await fetch(`${this.apiBase}/sendMessage`, {
+        const response = await fetch(`${apiBase}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -310,7 +323,7 @@ export class TelegramService {
   }
 
   async handleUpdate(update: TelegramUpdatePayload): Promise<void> {
-    if (!this.isEnabled()) {
+    if (!(await this.isEnabled())) {
       return;
     }
 

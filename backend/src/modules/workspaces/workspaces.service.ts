@@ -4,12 +4,13 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { render } from '@react-email/render';
 import * as React from 'react';
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import type { Repository } from 'typeorm';
 import { randomUUID } from 'node:crypto';
 import { TimeoutError, retry, withTimeout } from '../../common/utils/async.util';
@@ -25,6 +26,7 @@ import {
 import { Integration, IntegrationToken } from '../../entities';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { AuditService } from '../audit/audit.service';
+import { ApplicationSettingsService } from '../application-settings/application-settings.service';
 import { BalanceService } from '../balance/balance.service';
 import { CategoriesService } from '../categories/categories.service';
 import type {
@@ -58,6 +60,8 @@ export class WorkspacesService {
     private readonly categoriesService: CategoriesService,
     private readonly taxRatesService: TaxRatesService,
     private readonly eventEmitter?: EventEmitter2,
+    @Optional()
+    private readonly applicationSettingsService?: ApplicationSettingsService,
   ) {}
 
   private async resolveActorName(userId: string): Promise<string> {
@@ -114,6 +118,20 @@ export class WorkspacesService {
       order: { createdAt: 'DESC' },
     });
 
+    const invitationResponses = await Promise.all(
+      invitations.map(async invite => ({
+        id: invite.id,
+        email: invite.email,
+        role: invite.role,
+        permissions: invite.permissions,
+        status: invite.status,
+        token: invite.token,
+        expiresAt: invite.expiresAt,
+        createdAt: invite.createdAt,
+        link: await this.buildInvitationLink(invite.token, requestAppOrigin, currentUser),
+      })),
+    );
+
     return {
       workspace: {
         id: workspace.id,
@@ -131,17 +149,7 @@ export class WorkspacesService {
         permissions: member.permissions,
         joinedAt: member.createdAt,
       })),
-      invitations: invitations.map(invite => ({
-        id: invite.id,
-        email: invite.email,
-        role: invite.role,
-        permissions: invite.permissions,
-        status: invite.status,
-        token: invite.token,
-        expiresAt: invite.expiresAt,
-        createdAt: invite.createdAt,
-        link: this.buildInvitationLink(invite.token, requestAppOrigin),
-      })),
+      invitations: invitationResponses,
     };
   }
 
@@ -430,13 +438,18 @@ export class WorkspacesService {
       existingInvitation.invitedById = currentUser.id;
       existingInvitation.token = randomUUID();
       const updated = await this.invitationRepository.save(existingInvitation);
-      const invitationLink = this.buildInvitationLink(updated.token, requestAppOrigin);
+      const invitationLink = await this.buildInvitationLink(
+        updated.token,
+        requestAppOrigin,
+        currentUser,
+      );
       await this.sendInvitationEmail({
         email,
         workspaceName: workspace.name,
         invitationLink,
         invitedBy: currentUser.name || currentUser.email,
         role,
+        user: currentUser,
       });
 
       this.eventEmitter?.emit('member.invited', {
@@ -462,13 +475,18 @@ export class WorkspacesService {
     });
 
     const savedInvitation = await this.invitationRepository.save(invitation);
-    const invitationLink = this.buildInvitationLink(savedInvitation.token, requestAppOrigin);
+    const invitationLink = await this.buildInvitationLink(
+      savedInvitation.token,
+      requestAppOrigin,
+      currentUser,
+    );
     await this.sendInvitationEmail({
       email,
       workspaceName: workspace.name,
       invitationLink,
       invitedBy: currentUser.name || currentUser.email,
       role,
+      user: currentUser,
     });
 
     this.eventEmitter?.emit('member.invited', {
@@ -487,16 +505,21 @@ export class WorkspacesService {
     return this.inviteMember(workspace.id, currentUser, dto, requestAppOrigin);
   }
 
-  private buildInvitationLink(token: string, requestAppOrigin?: string) {
+  private async buildInvitationLink(token: string, requestAppOrigin?: string, user?: User) {
+    const settingsOrigin = this.normalizeToOrigin(
+      (await this.applicationSettingsService?.getAppSettings(user))?.publicUrl,
+    );
     const envOrigin = this.normalizeToOrigin(process.env.APP_URL || process.env.FRONTEND_URL);
     const requestOrigin = this.normalizeToOrigin(requestAppOrigin);
 
     const baseOrigin =
-      (envOrigin && !this.isLocalhostOrigin(envOrigin)
-        ? envOrigin
+      (settingsOrigin && !this.isLocalhostOrigin(settingsOrigin)
+        ? settingsOrigin
+        : envOrigin && !this.isLocalhostOrigin(envOrigin)
+          ? envOrigin
         : requestOrigin && !this.isLocalhostOrigin(requestOrigin)
           ? requestOrigin
-          : envOrigin || requestOrigin) || 'http://localhost:3000';
+          : settingsOrigin || envOrigin || requestOrigin) || 'http://localhost:3000';
 
     return `${baseOrigin.replace(/\/$/, '')}/invite/${token}`;
   }
@@ -980,13 +1003,16 @@ export class WorkspacesService {
     invitationLink: string;
     invitedBy?: string | null;
     role?: WorkspaceRole | null;
+    user?: User;
   }) {
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const resendFrom = process.env.RESEND_FROM;
+    const smtp = await this.applicationSettingsService?.getSmtpSettings(params.user);
+    const smtpHost = smtp?.host || process.env.SMTP_HOST;
+    const smtpPort = smtp?.port || Number.parseInt(process.env.SMTP_PORT || '587', 10);
+    const smtpFrom = smtp?.from || process.env.SMTP_FROM;
 
-    if (!resendApiKey || !resendFrom) {
+    if (!smtpHost || !smtpFrom) {
       console.warn(
-        `[Workspaces] Resend не настроен (нужны RESEND_API_KEY и RESEND_FROM), ссылка приглашения для ${params.email}: ${params.invitationLink}`,
+        `[Workspaces] SMTP не настроен (нужны SMTP_HOST и SMTP_FROM), ссылка приглашения для ${params.email}: ${params.invitationLink}`,
       );
       return;
     }
@@ -1008,17 +1034,28 @@ export class WorkspacesService {
       roleLabel: params.role ? roleLabels[params.role] || params.role : null,
     });
 
-    const resend = new Resend(resendApiKey);
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: Number.isFinite(smtpPort) ? smtpPort : 587,
+      secure: smtp?.secure ?? process.env.SMTP_SECURE === 'true',
+      auth:
+        (smtp?.user && smtp?.pass) || (process.env.SMTP_USER && process.env.SMTP_PASS)
+          ? {
+              user: smtp?.user || process.env.SMTP_USER,
+              pass: smtp?.pass || process.env.SMTP_PASS,
+            }
+          : undefined,
+    });
 
     try {
       const html = await render(emailReact);
-      const timeoutMs = Number.parseInt(process.env.RESEND_TIMEOUT_MS || '10000', 10);
+      const timeoutMs = smtp?.timeoutMs || Number.parseInt(process.env.SMTP_TIMEOUT_MS || '10000', 10);
 
-      const { error } = await retry(
+      await retry(
         () =>
           withTimeout(
-            resend.emails.send({
-              from: resendFrom,
+            transporter.sendMail({
+              from: smtpFrom,
               to: params.email,
               subject: `Приглашение в рабочее пространство ${params.workspaceName}`,
               html,
@@ -1028,10 +1065,10 @@ export class WorkspacesService {
                 invitedBy: params.invitedBy,
                 roleLabel: params.role ? roleLabels[params.role] || params.role : null,
               }),
-              replyTo: process.env.RESEND_REPLY_TO || undefined,
+              replyTo: smtp?.replyTo || process.env.SMTP_REPLY_TO || undefined,
             }),
             Number.isFinite(timeoutMs) ? timeoutMs : 10000,
-            'Resend request timed out',
+            'SMTP request timed out',
           ),
         {
           retries: 1,
@@ -1040,16 +1077,9 @@ export class WorkspacesService {
           isRetryable: err => err instanceof TimeoutError,
         },
       );
-
-      if (error) {
-        console.warn(
-          '[Workspaces] Не удалось отправить email приглашения через Resend:',
-          error.message,
-        );
-      }
     } catch (error) {
       console.warn(
-        '[Workspaces] Не удалось отправить email приглашения через Resend:',
+        '[Workspaces] Не удалось отправить email приглашения через SMTP:',
         (error as Error)?.message,
       );
     }
