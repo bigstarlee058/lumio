@@ -368,7 +368,7 @@ export default function WorkspaceMembersView() {
     return (
       <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, fontSize: 14, color: 'var(--muted-foreground)' }}>
+          <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, fontSize: 14, color: 'var(--muted-foreground)' }}>
             Loading members...
           </Box>
         </Box>
@@ -380,7 +380,7 @@ export default function WorkspaceMembersView() {
     return (
       <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', bgcolor: 'var(--color-error-soft-bg)', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
+          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', borderRadius: tokens.radius.lg, bgcolor: 'var(--color-error-soft-bg)', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
             {fetchError || 'Failed to load workspace members'}
           </Box>
         </Box>
@@ -393,7 +393,7 @@ export default function WorkspaceMembersView() {
       <Box sx={{ maxWidth: 1024, px: 3, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
 
         {/* Header */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3 }}>
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
@@ -422,7 +422,7 @@ export default function WorkspaceMembersView() {
           <Box
             component="form"
             onSubmit={handleInvite}
-            sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
+            sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <Box
               sx={{
@@ -542,7 +542,7 @@ export default function WorkspaceMembersView() {
         )}
 
         {/* Search & Filter */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
             <TextField
               aria-label="Search members by email"
@@ -621,7 +621,7 @@ export default function WorkspaceMembersView() {
         </Box>
 
         {/* Members list */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {visibleMembers.length === 0 ? (
             <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
               No members match current filters.
@@ -644,6 +644,7 @@ export default function WorkspaceMembersView() {
                     justifyContent: 'space-between',
                     gap: 1.5,
                     border: '1px solid var(--border)',
+                    borderRadius: tokens.radius.md,
                     bgcolor: 'var(--background)',
                     px: 2,
                     py: 1.5,
@@ -800,7 +801,7 @@ export default function WorkspaceMembersView() {
         </Box>
 
         {/* Pending invitations */}
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Typography
             variant="caption"
             sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
@@ -831,6 +832,7 @@ export default function WorkspaceMembersView() {
                     justifyContent: 'space-between',
                     gap: 1.5,
                     border: '1px dashed var(--border)',
+                    borderRadius: tokens.radius.md,
                     px: 2,
                     py: 1.5,
                   }}

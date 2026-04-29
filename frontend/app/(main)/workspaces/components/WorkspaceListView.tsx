@@ -36,7 +36,7 @@ type WorkspaceListViewProps = { workspaces: WorkspaceItem[]; currentWorkspaceId:
 export function WorkspaceListView({ workspaces, currentWorkspaceId, createLabel, onWorkspaceClick, onCreateClick }: WorkspaceListViewProps): React.JSX.Element {
   return (
     <>
-      <Box sx={{ mb: 4, overflow: 'hidden', border: '1px solid var(--border)', bgcolor: 'var(--card)' }}>
+      <Box sx={{ mb: 4, overflow: 'hidden', border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)' }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: GRID_COLS, alignItems: 'center', borderBottom: '1px solid var(--border)', bgcolor: 'var(--muted)', px: 3, py: 1.5, fontSize: 14, color: 'var(--muted-foreground)' }}>
           <span>Workspace name</span><span>Owner</span><span>Workspace type</span><span className="sr-only">Actions</span>
         </Box>

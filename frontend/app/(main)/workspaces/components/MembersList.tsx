@@ -114,6 +114,7 @@ export function MembersList({
               justifyContent: 'space-between',
               gap: 1.5,
               border: '1px solid var(--border)',
+              borderRadius: tokens.radius.md,
               bgcolor: 'var(--background)',
               px: 2,
               py: 1.5,

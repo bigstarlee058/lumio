@@ -8,6 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { ChevronDown, Search } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import React, { useState } from 'react';
 import type { MemberRoleFilter, MemberSortBy } from './workspace-members.utils';
 
@@ -113,7 +114,7 @@ export function MembersSearchBar({
   onSortByChange,
 }: MembersSearchBarProps): React.ReactElement {
   return (
-    <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
         <TextField
           aria-label="Search members by email"

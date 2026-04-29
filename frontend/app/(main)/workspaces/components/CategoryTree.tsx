@@ -83,7 +83,7 @@ export function CategoryTree({
 }: CategoryTreeProps): React.ReactElement {
   return (
     <Box
-      sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 1 }}
+      sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 1 }}
       data-tour-id="categories-list"
     >
       <Box
@@ -183,6 +183,7 @@ export function CategoryTree({
                   justifyContent: 'space-between',
                   border: '1px solid var(--border)',
                   borderLeft: `3px solid ${categoryColor}`,
+                  borderRadius: tokens.radius.md,
                   px: 2,
                   py: 2,
                   bgcolor:
