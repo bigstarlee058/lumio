@@ -56,11 +56,7 @@
   }
 
   &__mobile {
-    display: block;
-
-    @media (min-width: 768px) {
-      display: none;
-    }
+    display: none;
   }
 
   &__desktop {
@@ -1211,19 +1207,6 @@
     min-width: 0;
   }
 
-  &__search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: #9ca3af;
-
-    @include dark {
-      color: $lumio-color-ink-400-dk;
-    }
-  }
-
   &__grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -1234,7 +1217,7 @@
     }
 
     @media (min-width: 1280px) {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       align-items: center;
     }
   }
@@ -1258,22 +1241,6 @@
     &:focus {
       outline: none;
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
-    }
-  }
-
-  &__sort-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: #94a3b8;
-
-    @include dark {
-      color: $lumio-color-ink-400-dk;
     }
   }
 }
@@ -2788,56 +2755,26 @@
     border-radius: $lumio-radius-md;
   }
 
-  &__mobile {
-    display: block;
-
-    @media (min-width: 768px) {
-      display: none;
-    }
-  }
-
-  &__mobile-btn {
-    width: 100%;
-    border-radius: $lumio-radius-md;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 20%, transparent);
-    }
-  }
-
   &__desktop-overlay {
     position: absolute;
     inset: 0;
-    display: none;
+    display: block;
     border-radius: $lumio-radius-md;
     z-index: 0;
     cursor: pointer;
     background: transparent;
     border: none;
 
-    @media (min-width: 768px) {
-      display: block;
-    }
   }
 
   &__desktop {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
     position: relative;
     z-index: 10;
     width: 100%;
     min-width: 0;
-
-    @media (min-width: 768px) {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
   }
 
   &__view-btn {
@@ -3126,7 +3063,7 @@
   }
 
   &__desktop-header {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 16px;
     padding: 4px 16px;
@@ -3140,9 +3077,6 @@
       color: $lumio-color-ink-400-dk;
     }
 
-    @media (min-width: 768px) {
-      display: flex;
-    }
   }
 
   &__pull-indicator {

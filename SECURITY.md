@@ -123,11 +123,13 @@ When deploying Lumio, please follow these security best practices:
 - Only allowed file types can be uploaded
 - Files are stored outside the web root
 
-### Google OAuth Integration
+### Open Protocol Integrations
 
-- OAuth tokens are securely stored and encrypted
-- Scopes are limited to minimum required permissions
-- Tokens are refreshed automatically before expiration
+- SMTP, IMAP, S3-compatible, WebDAV, AI API keys, and Telegram bot tokens must be stored encrypted
+- New user-facing integrations must be configurable through the UI; env-only integration credentials are fallback-only
+- Do not add closed SaaS SDKs for new integration work; prefer OSS libraries and open protocols
+- Integration credentials should be scoped to dedicated service accounts or buckets
+- Legacy OAuth tokens remain migration-compatible and should be removed after migration
 
 ## Security Updates
 

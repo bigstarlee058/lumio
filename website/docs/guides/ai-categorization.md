@@ -1,6 +1,6 @@
 ---
 title: AI Categorization
-description: Configure Gemini or OpenRouter
+description: Configure OpenAI-compatible OSS backends
 ---
 
 Lumio can auto-categorize transactions using AI models. The classification pipeline is optional and can be
@@ -8,18 +8,22 @@ enabled per workspace.
 
 ## Supported providers
 
-- Google Gemini
-- OpenRouter (OpenAI-compatible models)
+- Ollama
+- LocalAI
+- vLLM
+- Any OpenAI-compatible `/v1/chat/completions` endpoint
 
 ## Configuration
 
-Set one of the following:
+Open **Integrations → AI-compatible endpoint** and set:
 
-- `GEMINI_API_KEY`
-- `OPENROUTER_API_KEY`
+- Base URL
+- Model
+- API key if your endpoint requires authentication
+- Timeout
 
-Model selection is configured in the classification module. You can tune confidence thresholds and retry
-behavior using the AI settings in `backend/.env.all-options`.
+Env values such as `AI_BASE_URL` and `AI_MODEL` remain supported only as fallback defaults. You can tune
+confidence thresholds, concurrency, and circuit breaker behavior using the backend runtime settings.
 
 ## Quality controls
 

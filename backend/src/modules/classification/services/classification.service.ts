@@ -1,5 +1,5 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import type { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { Category, CategorySource, CategoryType } from '../../../entities/catego
 import { type Transaction, TransactionType } from '../../../entities/transaction.entity';
 import { Wallet } from '../../../entities/wallet.entity';
 import { AuditService } from '../../audit/audit.service';
+import { ApplicationSettingsService } from '../../application-settings/application-settings.service';
 import { CategoriesService } from '../../categories/categories.service';
 import {
   AiCategoryClassifier,
@@ -48,6 +49,8 @@ export class ClassificationService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly auditService: AuditService,
     private readonly categoriesService: CategoriesService,
+    @Optional()
+    private readonly applicationSettingsService?: ApplicationSettingsService,
   ) {}
 
   async classifyTransaction(
@@ -652,7 +655,15 @@ export class ClassificationService {
   ): Promise<Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>> {
     const resultByIndex = new Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>();
 
-    if (!transactions.length || !workspaceId || !this.aiCategoryClassifier.isAvailable()) {
+    if (!transactions.length || !workspaceId) {
+      return resultByIndex;
+    }
+
+    const aiSettings = await this.applicationSettingsService?.getAiSettingsForWorkspaceId(workspaceId);
+    if (aiSettings) {
+      this.aiCategoryClassifier.configureAiClient(aiSettings);
+    }
+    if (!this.aiCategoryClassifier.isAvailable()) {
       return resultByIndex;
     }
 

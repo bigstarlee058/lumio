@@ -28,6 +28,7 @@ export enum ReceiptSource {
   UPLOAD = 'upload',
   TELEGRAM = 'telegram',
   SCAN = 'scan',
+  IMAP = 'imap',
 }
 
 @Entity('receipts')

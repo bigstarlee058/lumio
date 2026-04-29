@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { gmail } from '@googleapis/gmail';
-import type { gmail_v1 } from '@googleapis/gmail';
 import type { Repository } from 'typeorm';
 import {
   GmailSettings,
@@ -27,43 +25,14 @@ export class GmailWatchService {
     private readonly gmailOAuthService: GmailOAuthService,
   ) {}
 
-  private getTopicName(): string {
-    const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID || '';
-    const topicName = process.env.PUBSUB_TOPIC_NAME || 'gmail-watch-notifications';
-    return `projects/${projectId}/topics/${topicName}`;
-  }
-
   async setupWatch(integration: Integration, userId: string): Promise<GmailWatchSubscription> {
     try {
-      const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmailClient = gmail({ version: 'v1', auth: client });
-
-      // Get user's email address
-      const profile = await gmailClient.users.getProfile({ userId: 'me' });
-      const emailAddress = profile.data.emailAddress || null;
-
-      // Get label ID from settings
+      await this.gmailOAuthService.getGmailClient(userId);
       const settings = await this.gmailSettingsRepository.findOne({
         where: { integrationId: integration.id },
       });
 
-      const topicName = this.getTopicName();
-
-      // Set up watch request
-      const watchRequest: gmail_v1.Params$Resource$Users$Watch = {
-        userId: 'me',
-        requestBody: {
-          topicName,
-          labelIds: settings?.labelId ? [settings.labelId] : ['INBOX'],
-        },
-      };
-
-      const response = await gmailClient.users.watch(watchRequest);
-
-      const expiration = new Date(Number(response.data.expiration));
-      const historyId = response.data.historyId || null;
-
-      // Create or update watch subscription
+      const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000);
       const existing = await this.watchSubscriptionRepository.findOne({
         where: { integrationId: integration.id },
       });
@@ -74,25 +43,23 @@ export class GmailWatchService {
           integrationId: integration.id,
         });
 
-      subscription.topicName = topicName;
-      subscription.subscriptionName = `gmail-watch-${integration.id}`;
+      subscription.topicName = 'imap-polling';
+      subscription.subscriptionName = `imap-polling-${integration.id}`;
       subscription.expiration = expiration;
-      subscription.historyId = historyId;
-      subscription.emailAddress = emailAddress;
+      subscription.historyId = settings?.historyId || null;
+      subscription.emailAddress = null;
       subscription.status = WatchSubscriptionStatus.ACTIVE;
 
       await this.watchSubscriptionRepository.save(subscription);
 
-      // Update Gmail settings
       if (settings) {
         settings.watchEnabled = true;
         settings.watchExpiration = expiration;
-        settings.historyId = historyId;
         await this.gmailSettingsRepository.save(settings);
       }
 
       this.logger.log(
-        `Gmail watch setup complete for integration ${integration.id}, expires at ${expiration}`,
+        `IMAP polling watch setup complete for integration ${integration.id}, expires at ${expiration}`,
       );
 
       return subscription;
@@ -109,18 +76,13 @@ export class GmailWatchService {
 
   async stopWatch(integration: Integration, userId: string): Promise<void> {
     try {
-      const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmailClient = gmail({ version: 'v1', auth: client });
+      await this.gmailOAuthService.getGmailClient(userId);
 
-      await gmailClient.users.stop({ userId: 'me' });
-
-      // Update subscription status
       await this.watchSubscriptionRepository.update(
         { integrationId: integration.id },
         { status: WatchSubscriptionStatus.EXPIRED },
       );
 
-      // Update settings
       await this.gmailSettingsRepository.update(
         { integrationId: integration.id },
         { watchEnabled: false, watchExpiration: null },
@@ -148,48 +110,7 @@ export class GmailWatchService {
         return;
       }
 
-      const { client } = await this.gmailOAuthService.getGmailClient(userId);
-      const gmailClient = gmail({ version: 'v1', auth: client });
-
-      // Fetch history since last historyId
-      const response = await gmailClient.users.history.list({
-        userId: 'me',
-        startHistoryId: settings.historyId,
-        historyTypes: ['messageAdded', 'labelAdded'],
-      });
-
-      const history = response.data.history || [];
-
-      // Process new messages with the receipt label
-      for (const record of history) {
-        if (record.messagesAdded) {
-          for (const added of record.messagesAdded) {
-            const message = added.message;
-            const labelIds = message?.labelIds || [];
-            const messageId = message?.id;
-
-            // Check if message has our receipt label
-            if (settings.labelId && messageId && labelIds.includes(settings.labelId)) {
-              // Create processing job
-              await this.jobRepository.save(
-                this.jobRepository.create({
-                  userId,
-                  status: ReceiptJobStatus.PENDING,
-                  payload: {
-                    integrationId: integration.id,
-                    gmailMessageId: messageId,
-                    historyId: newHistoryId,
-                  },
-                }),
-              );
-
-              this.logger.log(`Queued receipt processing for message ${messageId}`);
-            }
-          }
-        }
-      }
-
-      // Update history ID
+      await this.gmailOAuthService.getGmailClient(userId);
       settings.historyId = newHistoryId;
       settings.lastSyncAt = new Date();
       await this.gmailSettingsRepository.save(settings);

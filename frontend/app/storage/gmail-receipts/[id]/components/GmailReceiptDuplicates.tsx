@@ -2,6 +2,7 @@
 
 import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/StatementCategoryDrawer';
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
 import { Spinner } from '@/app/components/ui/spinner';
 import {
@@ -125,15 +126,10 @@ export function GmailReceiptDetails({
               onChange={e => setEditedData(prev => ({ ...prev, vendor: e.target.value }))}
               sx={{ '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: 'primary.main' } } }}
             />
-            <TextField
+            <CustomDatePicker
               label="Date"
-              size="small"
-              fullWidth
-              type="date"
               value={editedData.date ? editedData.date.split('T')[0] : ''}
-              onChange={e => setEditedData(prev => ({ ...prev, date: e.target.value }))}
-              InputLabelProps={{ shrink: true }}
-              sx={{ '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: 'primary.main' } } }}
+              onChange={value => setEditedData(prev => ({ ...prev, date: value }))}
             />
             <TextField
               label="Currency"

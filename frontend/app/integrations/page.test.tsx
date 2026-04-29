@@ -42,6 +42,8 @@ const integrationsTexts = vi.hoisted(() => ({
     available: 'No available integrations',
   },
   categories: {
+    ai: 'AI',
+    application: 'Application',
     storage: 'Storage',
     email: 'Email',
     spreadsheets: 'Spreadsheets',
@@ -51,22 +53,9 @@ const integrationsTexts = vi.hoisted(() => ({
   noResults: token('Nothing found'),
   noResultsDescription: token('No matching integrations found for "{{query}}".'),
   resetSearch: token('Reset search'),
+  banner: 'Use open protocols and self-hostable providers where possible.',
+  recommendedBadge: 'Recommended',
   cards: {
-    dropbox: {
-      description: 'Dropbox integration',
-      badge: 'Available',
-      actions: { connect: 'Connect', docs: 'Docs' },
-    },
-    googleDrive: {
-      description: 'Google Drive integration',
-      badge: 'Available',
-      actions: { connect: 'Connect', docs: 'Docs' },
-    },
-    googleSheets: {
-      description: 'Google Sheets integration',
-      badge: 'Available',
-      actions: { connect: 'Connect', docs: 'Docs' },
-    },
     telegram: {
       description: 'Telegram integration',
       badge: 'Available',
@@ -103,19 +92,19 @@ describe('IntegrationsPage', () => {
       await flushPromises();
     });
 
-    const gmailCard = container.querySelector('[data-integration-card="gmail"]') as HTMLElement;
-    expect(gmailCard).toBeTruthy();
+    const s3Card = container.querySelector('[data-integration-card="s3-compatible"]') as HTMLElement;
+    expect(s3Card).toBeTruthy();
 
     await act(async () => {
-      gmailCard.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      s3Card.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    expect(push).toHaveBeenCalledWith('/integrations/gmail');
+    expect(push).toHaveBeenCalledWith('/integrations/s3-compatible');
   });
 
-  it('disables connect action when integration is already connected', async () => {
+  it('disables configure action when integration is already connected', async () => {
     apiGet.mockImplementation((url: string) => {
-      if (url.includes('/integrations/gmail/status')) {
+      if (url.includes('/integrations/s3-compatible/status')) {
         return Promise.resolve({ data: { connected: true } });
       }
       return Promise.resolve({ data: { connected: false } });
@@ -133,15 +122,15 @@ describe('IntegrationsPage', () => {
       await flushPromises();
     });
 
-    const connectButton = Array.from(container.querySelectorAll('button')).find(button =>
-      button.textContent?.includes('Connect'),
+    const configureButton = Array.from(container.querySelectorAll('button')).find(button =>
+      button.textContent?.includes('Configure'),
     ) as HTMLButtonElement | undefined;
 
-    expect(connectButton).toBeTruthy();
-    expect(connectButton?.disabled).toBe(true);
+    expect(configureButton).toBeTruthy();
+    expect(configureButton?.disabled).toBe(true);
   });
 
-  it('uses a readable subtitle color in dark mode', async () => {
+  it('renders OSS protocol cards instead of legacy SaaS cards', async () => {
     apiGet.mockResolvedValue({ data: { connected: false } });
 
     const { default: IntegrationsPage } = await import('./page');
@@ -156,10 +145,14 @@ describe('IntegrationsPage', () => {
       await flushPromises();
     });
 
-    const subtitle = Array.from(container.querySelectorAll('p')).find(element =>
-      element.textContent?.includes('Connect external services'),
-    );
+    expect(container.textContent).toContain('S3-compatible storage');
+    expect(container.textContent).toContain('WebDAV storage');
+    expect(container.textContent).toContain('IMAP inbox');
+    expect(container.textContent).toContain('AI-compatible endpoint');
+    expect(container.textContent).toContain('SMTP email');
 
-    expect(subtitle?.className).toContain('dark:text-slate-400');
+    expect(container.textContent).not.toContain('Dropbox integration');
+    expect(container.textContent).not.toContain('Google Drive integration');
+    expect(container.textContent).not.toContain('Google Sheets integration');
   });
 });

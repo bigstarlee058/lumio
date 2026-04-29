@@ -14,6 +14,7 @@ function createRepositoryMock<T extends object>() {
   return {
     create: jest.fn((data: Partial<T>) => data as T),
     save: jest.fn(async (data: Partial<T>) => data as T),
+    find: jest.fn(),
     findOne: jest.fn(),
     softRemove: jest.fn(async (data: Partial<T>) => data as T),
     createQueryBuilder: jest.fn(),
@@ -426,33 +427,33 @@ describe('PayablesService', () => {
 
   describe('getSummary', () => {
     it('aggregates to-pay, overdue, due this week, and paid this month metrics', async () => {
-      const rawRows = [
+      const rows = [
         {
+          id: 'payable-to-pay',
           status: PayableStatus.TO_PAY,
-          dueDate: '2026-03-20',
-          amount: '1000',
+          dueDate: new Date('2026-03-20T00:00:00.000Z'),
+          amount: 1000,
           paidAt: null,
+          updatedAt: new Date('2026-03-01T10:00:00.000Z'),
         },
         {
+          id: 'payable-overdue',
           status: PayableStatus.OVERDUE,
-          dueDate: '2026-03-10',
-          amount: '2000',
+          dueDate: new Date('2026-03-10T00:00:00.000Z'),
+          amount: 2000,
           paidAt: null,
+          updatedAt: new Date('2026-03-01T10:00:00.000Z'),
         },
         {
+          id: 'payable-paid',
           status: PayableStatus.PAID,
-          dueDate: '2026-03-18',
-          amount: '3000',
-          paidAt: '2026-03-05T10:00:00.000Z',
+          dueDate: new Date('2026-03-18T00:00:00.000Z'),
+          amount: 3000,
+          paidAt: new Date('2026-03-05T10:00:00.000Z'),
+          updatedAt: new Date('2026-03-06T10:00:00.000Z'),
         },
-      ];
-      const queryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue(rawRows),
-      };
-      jest.spyOn(payableRepository, 'createQueryBuilder').mockReturnValue(queryBuilder as never);
+      ] as Payable[];
+      jest.spyOn(payableRepository, 'find').mockResolvedValue(rows);
       jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
 
       const result = await service.getSummary('workspace-1');
@@ -469,21 +470,17 @@ describe('PayablesService', () => {
     });
 
     it('does not count paid items edited this month when paidAt is outside the month', async () => {
-      const rawRows = [
+      const rows = [
         {
+          id: 'payable-paid',
           status: PayableStatus.PAID,
-          dueDate: '2026-03-18',
-          amount: '3000',
-          paidAt: '2026-02-28T23:00:00.000Z',
+          dueDate: new Date('2026-03-18T00:00:00.000Z'),
+          amount: 3000,
+          paidAt: new Date('2026-02-28T23:00:00.000Z'),
+          updatedAt: new Date('2026-03-06T10:00:00.000Z'),
         },
-      ];
-      const queryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue(rawRows),
-      };
-      jest.spyOn(payableRepository, 'createQueryBuilder').mockReturnValue(queryBuilder as never);
+      ] as Payable[];
+      jest.spyOn(payableRepository, 'find').mockResolvedValue(rows);
       jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
 
       const result = await service.getSummary('workspace-1');
@@ -492,28 +489,46 @@ describe('PayablesService', () => {
       jest.useRealTimers();
     });
 
+    it('falls back to updatedAt for legacy paid items without paidAt', async () => {
+      const rows = [
+        {
+          id: 'legacy-paid',
+          status: PayableStatus.PAID,
+          dueDate: new Date('2026-02-18T00:00:00.000Z'),
+          amount: 2500,
+          paidAt: null,
+          updatedAt: new Date('2026-03-06T10:00:00.000Z'),
+        },
+      ] as Payable[];
+      jest.spyOn(payableRepository, 'find').mockResolvedValue(rows);
+      jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
+
+      const result = await service.getSummary('workspace-1');
+
+      expect(result.paidThisMonth).toBe(2500);
+      jest.useRealTimers();
+    });
+
     it('treats past-due unpaid items as overdue immediately in summary', async () => {
-      const rawRows = [
+      const rows = [
         {
+          id: 'payable-past-due',
           status: PayableStatus.TO_PAY,
-          dueDate: '2026-03-10',
-          amount: '1500',
+          dueDate: new Date('2026-03-10T00:00:00.000Z'),
+          amount: 1500,
           paidAt: null,
+          updatedAt: new Date('2026-03-01T10:00:00.000Z'),
         },
         {
+          id: 'payable-scheduled',
           status: PayableStatus.SCHEDULED,
-          dueDate: '2026-03-19',
-          amount: '700',
+          dueDate: new Date('2026-03-19T00:00:00.000Z'),
+          amount: 700,
           paidAt: null,
+          updatedAt: new Date('2026-03-01T10:00:00.000Z'),
         },
-      ];
-      const queryBuilder = {
-        select: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest.fn().mockResolvedValue(rawRows),
-      };
-      jest.spyOn(payableRepository, 'createQueryBuilder').mockReturnValue(queryBuilder as never);
+      ] as Payable[];
+      jest.spyOn(payableRepository, 'find').mockResolvedValue(rows);
       jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
 
       const result = await service.getSummary('workspace-1');

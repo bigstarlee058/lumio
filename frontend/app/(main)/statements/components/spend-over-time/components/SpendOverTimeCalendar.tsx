@@ -1,7 +1,9 @@
 'use client';
 import type { JSX } from 'react';
-import { useMemo } from 'react';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { ChevronLeft, ChevronRight } from '@/app/components/icons';
 import type { SpendOverTimeRecord } from '@/app/(main)/statements/components/spend-over-time.utils';
 import { formatMoney } from '@/app/lib/analytics-common';
 import { tokens } from '@/lib/theme-tokens';
@@ -43,6 +45,8 @@ const toIso = (date: Date): string => {
 };
 
 const startOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
+const addMonths = (date: Date, delta: number): Date =>
+  new Date(date.getFullYear(), date.getMonth() + delta, 1);
 const getGridStart = (monthStart: Date): Date => {
   const day = monthStart.getDay();
   const diff = day === 0 ? -6 : 1 - day;
@@ -62,6 +66,34 @@ const monthFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 });
 
+const calendarNavButtonStyle: React.CSSProperties = {
+  width: 36,
+  height: 36,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: tokens.radius.md,
+  border: '1px solid var(--border-color)',
+  background: 'var(--card-bg)',
+  color: 'var(--foreground)',
+  cursor: 'pointer',
+};
+
+const calendarTodayButtonStyle: React.CSSProperties = {
+  height: 36,
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: tokens.radius.md,
+  border: '1px solid var(--border-color)',
+  background: 'var(--card-bg)',
+  color: 'var(--foreground)',
+  cursor: 'pointer',
+  padding: '0 12px',
+  fontSize: 13,
+  fontWeight: 600,
+};
+
 const buildDayMap = (records: SpendOverTimeRecord[]) => {
   const map = new Map<string, SpendOverTimeRecord[]>();
   records.forEach(record => {
@@ -76,9 +108,17 @@ const buildDayMap = (records: SpendOverTimeRecord[]) => {
 };
 
 export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }: Props): JSX.Element {
-  const visibleMonth = useMemo(() => getInitialMonth(records), [records]);
+  const initialMonth = useMemo(() => getInitialMonth(records), [records]);
+  const [visibleMonth, setVisibleMonth] = useState(initialMonth);
+
+  useEffect(() => {
+    setVisibleMonth(initialMonth);
+  }, [initialMonth]);
 
   const dayMap = useMemo(() => buildDayMap(records), [records]);
+  const goToPreviousMonth = () => setVisibleMonth(current => addMonths(current, -1));
+  const goToNextMonth = () => setVisibleMonth(current => addMonths(current, 1));
+  const goToLatestMonth = () => setVisibleMonth(initialMonth);
 
   const days = useMemo<CalendarDay[]>(() => {
     const monthStart = startOfMonth(visibleMonth);
@@ -114,9 +154,10 @@ export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }:
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           gap: 12,
           marginBottom: 18,
+          flexWrap: 'wrap',
         }}
       >
         <div>
@@ -126,6 +167,31 @@ export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }:
           <p style={{ margin: '6px 0 0', fontSize: 14, color: 'var(--muted-foreground)' }}>
             {monthFormatter.format(visibleMonth)}
           </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            type="button"
+            onClick={goToPreviousMonth}
+            aria-label="Previous month"
+            style={calendarNavButtonStyle}
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={goToLatestMonth}
+            style={calendarTodayButtonStyle}
+          >
+            Latest
+          </button>
+          <button
+            type="button"
+            onClick={goToNextMonth}
+            aria-label="Next month"
+            style={calendarNavButtonStyle}
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
       </div>
 

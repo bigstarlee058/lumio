@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OAuth2Client } from 'google-auth-library';
 import type { Repository } from 'typeorm';
 import { decryptText, encryptText } from '../../../common/utils/encryption.util';
 import {
@@ -23,6 +22,13 @@ const GMAIL_SCOPES = [
   'https://www.googleapis.com/auth/gmail.compose',
   'https://www.googleapis.com/auth/spreadsheets',
 ];
+
+type GoogleTokenResponse = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+  scope?: string;
+};
 
 @Injectable()
 export class GmailOAuthService extends OAuthIntegrationBaseService {
@@ -77,14 +83,32 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     return process.env.GMAIL_STATE_SECRET || process.env.JWT_SECRET || 'lumio-state';
   }
 
-  private getOAuthClient() {
+  private getOAuthConfig() {
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
     const redirectUri = this.getRedirectUri();
     if (!clientId || !clientSecret || !redirectUri) {
       throw new BadRequestException('Gmail OAuth is not configured');
     }
-    return new OAuth2Client(clientId, clientSecret, redirectUri);
+    return { clientId, clientSecret, redirectUri };
+  }
+
+  private async requestToken(params: Record<string, string>): Promise<GoogleTokenResponse> {
+    const { clientId, clientSecret, redirectUri } = this.getOAuthConfig();
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        ...params,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Google OAuth token request failed with status ${response.status}`);
+    }
+    return (await response.json()) as GoogleTokenResponse;
   }
 
   override async findIntegrationForUser(userId: string) {
@@ -96,19 +120,22 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
   }
 
   getAuthUrl(user: User): string {
-    const client = this.getOAuthClient();
+    const { clientId, redirectUri } = this.getOAuthConfig();
     const state = this.buildState({
       userId: user.id,
       workspaceId: user.workspaceId || null,
       redirect: `${this.getFrontendBaseUrl()}/integrations/gmail`,
     });
 
-    return client.generateAuthUrl({
+    return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'code',
       access_type: 'offline',
       prompt: 'consent',
-      scope: GMAIL_SCOPES,
+      scope: GMAIL_SCOPES.join(' '),
       state,
-    });
+    }).toString()}`;
   }
 
   async handleCallback(params: {
@@ -149,8 +176,10 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       return { redirectUrl: `${redirectBase}?status=error&reason=user_not_found` };
     }
 
-    const client = this.getOAuthClient();
-    const { tokens } = await client.getToken(params.code);
+    const tokens = await this.requestToken({
+      grant_type: 'authorization_code',
+      code: params.code,
+    });
     const accessToken = tokens.access_token || '';
     const refreshToken = tokens.refresh_token || '';
 
@@ -199,8 +228,8 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       tokenRecord.encryptedRefreshToken = encryptText(refreshToken);
       tokenRecord.refreshToken = refreshToken;
     }
-    if (tokens.expiry_date) {
-      tokenRecord.expiresAt = new Date(tokens.expiry_date);
+    if (tokens.expires_in) {
+      tokenRecord.expiresAt = new Date(Date.now() + tokens.expires_in * 1000);
     }
 
     await this.integrationTokenRepository.save(tokenRecord);
@@ -229,14 +258,16 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
   protected async refreshAccessToken(
     refreshToken: string,
   ): Promise<{ accessToken: string; expiresAt?: Date }> {
-    const client = this.getOAuthClient();
-    client.setCredentials({ refresh_token: refreshToken });
-
-    const { credentials } = await client.refreshAccessToken();
+    const credentials = await this.requestToken({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    });
 
     return {
       accessToken: credentials.access_token || '',
-      expiresAt: credentials.expiry_date ? new Date(credentials.expiry_date) : undefined,
+      expiresAt: credentials.expires_in
+        ? new Date(Date.now() + credentials.expires_in * 1000)
+        : undefined,
     };
   }
 
@@ -339,10 +370,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       accessToken = await this.refreshAccessTokenForIntegration(integration);
     }
 
-    const client = this.getOAuthClient();
-    client.setCredentials({ access_token: accessToken });
-
-    return { client, integration };
+    return { accessToken, integration };
   }
 
   async disconnect(userId: string): Promise<void> {

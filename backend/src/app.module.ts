@@ -38,10 +38,11 @@ import {
   Insight,
   Integration,
   IntegrationToken,
-    Notification,
-    NotificationPreference,
-    Payable,
-    ParsingRule,
+  OpenProtocolSettings,
+  Notification,
+  NotificationPreference,
+  Payable,
+  ParsingRule,
   Receipt,
   ReceiptProcessingJob,
   SharedLink,
@@ -52,10 +53,12 @@ import {
   User,
   Wallet,
   Workspace,
+  WorkspaceServiceSettings,
   WorkspaceInvitation,
   WorkspaceMember,
 } from './entities';
 import { AuditModule } from './modules/audit/audit.module';
+import { ApplicationSettingsModule } from './modules/application-settings/application-settings.module';
 import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
 import { BalanceModule } from './modules/balance/balance.module';
@@ -74,6 +77,7 @@ import { InsightsModule } from './modules/insights/insights.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HttpMetricsInterceptor } from './modules/observability/http-metrics.interceptor';
 import { ObservabilityModule } from './modules/observability/observability.module';
+import { OpenProtocolIntegrationsModule } from './modules/open-protocol-integrations/open-protocol-integrations.module';
 import { ParsingModule } from './modules/parsing/parsing.module';
 import { PayablesModule } from './modules/payables/payables.module';
 import { ReportsModule } from './modules/reports/reports.module';
@@ -142,10 +146,12 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       CustomTableColumn,
       CustomTableRow,
       Workspace,
+      WorkspaceServiceSettings,
       WorkspaceInvitation,
       WorkspaceMember,
       Integration,
       IntegrationToken,
+      OpenProtocolSettings,
       Insight,
       DriveSettings,
       DropboxSettings,
@@ -157,6 +163,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       ExchangeRate,
     ]),
     CommonModule,
+    ApplicationSettingsModule,
     AuthModule,
     AuditModule,
     BalanceModule,
@@ -183,6 +190,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     NotificationsModule,
     InsightsModule,
     ObservabilityModule,
+    OpenProtocolIntegrationsModule,
     DashboardModule,
     PayablesModule,
     ExchangeRatesModule,

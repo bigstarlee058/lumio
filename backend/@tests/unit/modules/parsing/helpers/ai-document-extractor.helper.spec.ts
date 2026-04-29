@@ -1,9 +1,12 @@
 import { AiDocumentExtractor } from '@/modules/parsing/helpers/ai-document-extractor.helper';
 
-const mockGenerateContent = jest.fn().mockResolvedValue({
-  response: {
-    text: () =>
-      JSON.stringify({
+const mockFetch = jest.fn().mockResolvedValue({
+  ok: true,
+  json: async () => ({
+    choices: [
+      {
+        message: {
+          content: JSON.stringify({
         documentType: 'receipt',
         transactionType: 'expense',
         totalAmount: 45.99,
@@ -15,17 +18,12 @@ const mockGenerateContent = jest.fn().mockResolvedValue({
           { description: 'Item 1', amount: 20 },
           { description: 'Item 2', amount: 22.49 },
         ],
-      }),
-  },
-});
-
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
-    getGenerativeModel: jest.fn().mockReturnValue({
-      generateContent: mockGenerateContent,
-    }),
-  })),
-}));
+          }),
+        },
+      },
+    ],
+  }),
+} as Response);
 
 const mockIsAiEnabled = jest.fn().mockReturnValue(true);
 const mockIsAiCircuitOpen = jest.fn().mockReturnValue(false);
@@ -44,10 +42,21 @@ jest.mock('@/modules/parsing/helpers/ai-runtime.util', () => ({
 }));
 
 describe('AiDocumentExtractor', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env.AI_BASE_URL = 'http://localhost:11434';
+    process.env.AI_MODEL = 'llama3.1';
+    global.fetch = mockFetch;
     mockIsAiEnabled.mockReturnValue(true);
     mockIsAiCircuitOpen.mockReturnValue(false);
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    process.env.AI_BASE_URL = '';
+    process.env.AI_MODEL = undefined;
   });
 
   it('is available when API key is provided and AI is enabled', () => {
@@ -55,7 +64,8 @@ describe('AiDocumentExtractor', () => {
     expect(extractor.isAvailable()).toBe(true);
   });
 
-  it('is not available without API key', () => {
+  it('is not available without an AI endpoint', () => {
+    process.env.AI_BASE_URL = '';
     const extractor = new AiDocumentExtractor(undefined);
     expect(extractor.isAvailable()).toBe(false);
   });
@@ -78,6 +88,6 @@ describe('AiDocumentExtractor', () => {
     const result = await extractor.extractFromText('some text');
 
     expect(result).toBeNull();
-    expect(mockGenerateContent).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

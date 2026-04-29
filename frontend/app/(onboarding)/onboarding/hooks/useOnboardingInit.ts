@@ -1,24 +1,17 @@
 import { DEFAULT_BACKGROUND } from '@/app/(main)/workspaces/constants';
+import type { User } from '@/app/hooks/useAuth';
 import { useEffect, useRef, useState } from 'react';
 import { resolveOnboardingBootstrapLocale } from '../lib/locale-bootstrap';
 import type { OnboardingData } from '../useOnboardingWizard';
 import {
   detectTimeZone,
+  EMPTY_INTEGRATION_STATE,
   fetchWorkspaceInitialData,
   refreshAllIntegrationStatuses,
   type OnboardingIntegrationKey,
 } from './useOnboardingActions';
 
 const DEFAULT_CURRENCY = 'USD';
-
-type User = {
-  id: string;
-  name?: string;
-  email?: string;
-  workspaceId?: string;
-  timeZone?: string;
-  onboardingCompletedAt?: string | null;
-};
 
 type OnboardingFlow = {
   shouldRedirectCompletedUser: boolean;
@@ -43,14 +36,6 @@ type UseOnboardingInitResult = {
   refreshIntegrationStatuses: () => Promise<void>;
 };
 
-const EMPTY_STATUSES: Record<OnboardingIntegrationKey, boolean> = {
-  dropbox: false,
-  googleDrive: false,
-  gmail: false,
-  googleSheets: false,
-  telegram: false,
-};
-
 export function useOnboardingInit({
   user,
   authLoading,
@@ -64,7 +49,7 @@ export function useOnboardingInit({
   const [bootstrapComplete, setBootstrapComplete] = useState(false);
   const [error, setError] = useState('');
   const [integrationStatuses, setIntegrationStatuses] =
-    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_STATUSES);
+    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
 
   const refreshIntegrationStatuses = async (): Promise<void> => {
     const nextStatuses = await refreshAllIntegrationStatuses();

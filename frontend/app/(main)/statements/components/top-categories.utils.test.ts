@@ -133,7 +133,7 @@ describe('top categories helpers', () => {
 
     expect(rows).toEqual<TopCategoryAggregateRow[]>([
       {
-        id: 'spend:bank:software',
+        id: 'spend:bank:USD:software',
         category: 'Software',
         sourceType: 'statement',
         sourceChannel: 'bank',
@@ -147,7 +147,7 @@ describe('top categories helpers', () => {
         icon: null,
       },
       {
-        id: 'spend:gmail:software',
+        id: 'spend:gmail:USD:software',
         category: 'Software',
         sourceType: 'gmail',
         sourceChannel: 'gmail',
@@ -161,7 +161,7 @@ describe('top categories helpers', () => {
         icon: null,
       },
       {
-        id: 'income:bank:sales',
+        id: 'income:bank:USD:sales',
         category: 'Sales',
         sourceType: 'statement',
         sourceChannel: 'bank',

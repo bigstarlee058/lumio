@@ -4,8 +4,16 @@
 import type React from 'react';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
+import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
+import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
+import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2, ExternalLink, Plug, Search, Star } from '@/app/components/icons';
+import { CheckCircle2, ExternalLink, Search, Star } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -26,119 +34,111 @@ export default function IntegrationsPage(): React.JSX.Element {
     // eslint-disable-next-line max-lines-per-function
     () => [
       {
-        key: 'dropbox',
-        name: 'Dropbox',
-        description: t.cards.dropbox.description,
-        badge: t.cards.dropbox.badge,
-        category: 'storage',
-        recommended: false,
-        icon: (
-          <Image
-            src="/icons/dropbox-icon.png"
-            alt="Dropbox"
-            width={32}
-            height={32}
-            style={{ borderRadius: tokens.radius.md }}
-          />
-        ),
-        actions: [
-          {
-            label: t.cards.dropbox.actions.connect,
-            href: '/integrations/dropbox',
-            primary: true,
-          },
-          {
-            label: t.cards.dropbox.actions.docs,
-            href: 'https://www.dropbox.com/developers/documentation',
-            external: true,
-          },
-        ],
-      },
-      {
-        key: 'google-drive',
-        name: 'Google Drive',
-        description: t.cards.googleDrive.description,
-        badge: t.cards.googleDrive.badge,
-        category: 'storage',
+        key: 'ai-compatible',
+        name: 'AI-compatible endpoint',
+        description: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.',
+        badge: 'Open protocol',
+        category: 'ai',
         recommended: true,
-        icon: (
-          <Image
-            src="/icons/google-drive-icon.png"
-            alt="Google Drive"
-            width={32}
-            height={32}
-            style={{ borderRadius: tokens.radius.md }}
-          />
-        ),
+        icon: <SmartToyOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        statusPath: '/settings/integrations/ai',
         actions: [
-          {
-            label: t.cards.googleDrive.actions.connect,
-            href: '/integrations/google-drive',
-            primary: true,
-          },
-          {
-            label: t.cards.googleDrive.actions.docs,
-            href: 'https://developers.google.com/drive/api/guides/about-sdk',
-            external: true,
-          },
-        ],
-      },
-      {
-        key: 'gmail',
-        name: 'Gmail',
-        description: 'Automatically import receipts and invoices from your Gmail inbox',
-        badge: 'Active',
-        category: 'email',
-        recommended: true,
-        icon: (
-          <Image
-            src="/icons/gmail.png"
-            alt="Gmail"
-            width={32}
-            height={32}
-            style={{ borderRadius: tokens.radius.md }}
-          />
-        ),
-        actions: [
-          {
-            label: 'Connect',
-            href: '/integrations/gmail',
-            primary: true,
-          },
+          { label: 'Configure', href: '/integrations/ai-compatible', primary: true },
           {
             label: 'Docs',
-            href: 'https://developers.google.com/gmail/api',
+            href: 'https://github.com/ollama/ollama/blob/main/docs/api.md',
             external: true,
           },
         ],
       },
       {
-        key: 'google-sheets',
-        name: 'Google Sheets',
-        description: t.cards.googleSheets.description,
-        badge: t.cards.googleSheets.badge,
-        category: 'spreadsheets',
+        key: 'smtp',
+        name: 'SMTP email',
+        description: 'Send invitations through any SMTP-compatible mail server.',
+        badge: 'Open protocol',
+        category: 'email',
         recommended: true,
-        icon: (
-          <Image
-            src="/icons/icons8-google-sheets-48.png"
-            alt="Google Sheets"
-            width={32}
-            height={32}
-            style={{ borderRadius: tokens.radius.md }}
-          />
-        ),
+        icon: <AlternateEmailOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        statusPath: '/settings/email/smtp',
         actions: [
+          { label: 'Configure', href: '/integrations/smtp', primary: true },
+          { label: 'Docs', href: 'https://datatracker.ietf.org/doc/html/rfc5321', external: true },
+        ],
+      },
+      {
+        key: 'app-url',
+        name: 'Application URL',
+        description: 'Configure the public URL used in invitations and shared links.',
+        badge: 'Workspace setting',
+        category: 'application',
+        recommended: true,
+        icon: <LinkOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        statusPath: '/settings/app',
+        actions: [{ label: 'Configure', href: '/integrations/app-url', primary: true }],
+      },
+      {
+        key: 's3-compatible',
+        name: 'S3-compatible storage',
+        description: 'Sync statements with an S3-compatible bucket such as MinIO.',
+        badge: 'OSS protocol',
+        category: 'storage',
+        recommended: true,
+        icon: <DnsOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        actions: [
+          { label: 'Configure', href: '/integrations/s3-compatible', primary: true },
           {
-            label: t.cards.googleSheets.actions.connect,
-            href: '/integrations/google-sheets',
-            primary: true,
-          },
-          {
-            label: t.cards.googleSheets.actions.docs,
-            href: 'https://support.google.com/docs',
+            label: 'Docs',
+            href: 'https://min.io/docs/minio/linux/developers/javascript/API.html',
             external: true,
           },
+        ],
+      },
+      {
+        key: 'webdav',
+        name: 'WebDAV storage',
+        description: 'Import and sync files through WebDAV-compatible storage such as Nextcloud.',
+        badge: 'Open protocol',
+        category: 'storage',
+        recommended: true,
+        icon: <CloudQueueOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        actions: [
+          { label: 'Configure', href: '/integrations/webdav', primary: true },
+          {
+            label: 'Docs',
+            href: 'https://datatracker.ietf.org/doc/html/rfc4918',
+            external: true,
+          },
+        ],
+      },
+      {
+        key: 'imap',
+        name: 'IMAP inbox',
+        description: 'Poll any IMAP mailbox for receipts and invoice attachments.',
+        badge: 'Open protocol',
+        category: 'email',
+        recommended: true,
+        icon: <MarkEmailUnreadOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        actions: [
+          { label: 'Configure', href: '/integrations/imap', primary: true },
+          {
+            label: 'Docs',
+            href: 'https://datatracker.ietf.org/doc/html/rfc9051',
+            external: true,
+          },
+        ],
+      },
+      {
+        key: 'workbook-import',
+        name: 'Workbook and Google Sheets import',
+        description: 'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.',
+        badge: 'File based',
+        category: 'spreadsheets',
+        recommended: true,
+        icon: <TableChartOutlinedIcon sx={{ fontSize: 32 }} aria-hidden="true" />,
+        actions: [
+          { label: 'Import from link', href: '/custom-tables/import/google-sheets', primary: true },
+          { label: 'Open tables', href: '/custom-tables', primary: false },
+          { label: 'Docs', href: '/custom-tables', external: false },
         ],
       },
       {
@@ -157,6 +157,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             style={{ borderRadius: tokens.radius.md }}
           />
         ),
+        statusPath: '/settings/notifications/telegram',
         actions: [
           { label: t.cards.telegram.actions.setup, href: '/settings/telegram', primary: true },
           {
@@ -183,9 +184,7 @@ export default function IntegrationsPage(): React.JSX.Element {
         // eslint-disable-next-line complexity
         integrationMeta.map(async m => {
           try {
-            // Try to call per-integration status endpoint. Backend endpoints used elsewhere:
-            // e.g. /integrations/dropbox/status, /integrations/google-drive/status, /integrations/gmail/status
-            const resp = await apiClient.get(`/integrations/${m.key}/status`);
+            const resp = await apiClient.get(m.statusPath || `/integrations/${m.key}/status`);
             const data = resp.data || {};
             // Support different shapes: { connected: boolean } or { status: 'connected' | ... }
             const connected =
@@ -241,6 +240,14 @@ export default function IntegrationsPage(): React.JSX.Element {
   const available = filteredIntegrations.filter(item => !item.active);
 
   const categories = [
+    {
+      key: 'ai',
+      label: 'AI',
+    },
+    {
+      key: 'application',
+      label: 'Application',
+    },
     {
       key: 'storage',
       label: t.categories.storage,
@@ -367,7 +374,7 @@ export default function IntegrationsPage(): React.JSX.Element {
             {item.actions.map(action =>
               action.external ? (
                 <a
-                  key={action.href}
+                  key={`${action.label}-${action.href}`}
                   href={action.href}
                   target="_blank"
                   rel="noreferrer"
@@ -389,7 +396,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                 </a>
               ) : action.primary && item.active ? (
                 <button
-                  key={action.href}
+                  key={`${action.label}-${action.href}`}
                   type="button"
                   disabled
                   style={{
@@ -410,7 +417,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                 </button>
               ) : action.primary ? (
                 <Link
-                  key={action.href}
+                  key={`${action.label}-${action.href}`}
                   href={action.href}
                   onClick={event => event.stopPropagation()}
                   style={{
@@ -429,7 +436,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                 </Link>
               ) : (
                 <Link
-                  key={action.href}
+                  key={`${action.label}-${action.href}`}
                   href={action.href}
                   onClick={event => event.stopPropagation()}
                   style={{
@@ -500,7 +507,7 @@ export default function IntegrationsPage(): React.JSX.Element {
               display: 'flex',
             }}
           >
-            <Plug style={{ height: 24, width: 24 }} />
+            <ExtensionOutlinedIcon sx={{ fontSize: 24 }} aria-hidden="true" />
           </Box>
           <Box>
             <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>
@@ -653,17 +660,7 @@ export default function IntegrationsPage(): React.JSX.Element {
                         }}
                         data-tour-id={undefined}
                       >
-                        {items.map(item => {
-                          const card = renderCard(item);
-                          if (item.key === 'google-sheets') {
-                            return (
-                              <Box key={item.key} data-tour-id="integration-card-google-sheets">
-                                {card}
-                              </Box>
-                            );
-                          }
-                          return card;
-                        })}
+                        {items.map(item => renderCard(item))}
                       </Box>
                     </Box>
                   );

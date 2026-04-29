@@ -89,7 +89,7 @@ export const createCategoryAggregateRows = (
   // eslint-disable-next-line complexity
   records.forEach(record => {
     const normalizedCategory = resolveCategoryName(record.category);
-    const key = `${record.flowType}:${record.sourceChannel}:${normalizedCategory.toLowerCase()}`;
+    const key = `${record.flowType}:${record.sourceChannel}:${record.currencyValue}:${normalizedCategory.toLowerCase()}`;
     const existing = aggregate.get(key);
     const date = record.dateValue || record.createdAt || '';
 

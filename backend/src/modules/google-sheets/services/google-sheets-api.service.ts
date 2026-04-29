@@ -1,9 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from 'google-auth-library';
-import { sheets } from '@googleapis/sheets';
-import { oauth2 } from '@googleapis/oauth2';
-import type { sheets_v4 } from '@googleapis/sheets';
 import type { Branch } from '../../../entities/branch.entity';
 import type { Category } from '../../../entities/category.entity';
 import type { Transaction } from '../../../entities/transaction.entity';
@@ -35,32 +31,78 @@ interface SheetRow {
   rubRate: number | null; // RUB Rate
 }
 
-type RefreshTokenError = {
-  response?: {
-    data?: {
-      error_description?: string;
-    };
-  };
-  message?: string;
-};
-
 type GoogleSheetsError = { code?: number; message?: string };
 type SheetCellValue = string | number | boolean | null;
 type SheetValues = SheetCellValue[][];
 
-interface RefreshTokenResponse {
-  tokens?: { access_token?: string | null };
-  access_token?: string | null;
-}
+type GoogleTokenResponse = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+};
 
-interface OAuth2ClientWithRefreshTokenMethod {
-  refreshToken(refreshToken?: string | null): Promise<RefreshTokenResponse>;
-}
+type GoogleSpreadsheet = {
+  properties?: { title?: string };
+  sheets?: Array<{
+    properties?: {
+      title?: string;
+      index?: number;
+      gridProperties?: {
+        rowCount?: number;
+        columnCount?: number;
+      };
+    };
+    data?: unknown[];
+  }>;
+};
+
+type GoogleValuesResponse = {
+  range?: string;
+  values?: SheetValues;
+};
+
+type GoogleUserInfoResponse = {
+  email?: string;
+};
+
+type SheetsClient = {
+  spreadsheets: {
+    get(args: {
+      spreadsheetId: string;
+      ranges?: string[];
+      includeGridData?: boolean;
+      fields?: string;
+    }): Promise<{ data: GoogleSpreadsheet }>;
+    values: {
+      get(args: {
+        spreadsheetId: string;
+        range: string;
+        valueRenderOption?: string;
+        dateTimeRenderOption?: string;
+      }): Promise<{ data: GoogleValuesResponse }>;
+      update(args: {
+        spreadsheetId: string;
+        range: string;
+        valueInputOption: string;
+        requestBody: { values: SheetValues };
+      }): Promise<{ data: unknown }>;
+      append(args: {
+        spreadsheetId: string;
+        range: string;
+        valueInputOption: string;
+        insertDataOption: string;
+        requestBody: { values: SheetValues };
+      }): Promise<{ data: unknown }>;
+    };
+  };
+};
 
 @Injectable()
 export class GoogleSheetsApiService {
   private readonly logger = new Logger(GoogleSheetsApiService.name);
-  private readonly oauth2Client: OAuth2Client;
+  private readonly clientId: string;
+  private readonly clientSecret: string;
+  private readonly redirectUri: string;
 
   private getErrorMessage(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
@@ -74,17 +116,16 @@ export class GoogleSheetsApiService {
   }
 
   constructor(private configService: ConfigService) {
-    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-    const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
-    const redirectUri =
+    this.clientId = this.configService.get<string>('GOOGLE_CLIENT_ID') || '';
+    this.clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET') || '';
+    this.redirectUri =
       this.configService.get<string>('GOOGLE_SHEETS_REDIRECT_URI') ||
-      this.configService.get<string>('GOOGLE_REDIRECT_URI');
+      this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
+      '';
 
-    if (!clientId || !clientSecret) {
+    if (!this.clientId || !this.clientSecret) {
       this.logger.warn('Google OAuth credentials not configured');
     }
-
-    this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
   }
 
   /**
@@ -96,26 +137,19 @@ export class GoogleSheetsApiService {
     }
 
     try {
-      this.oauth2Client.setCredentials({
+      const tokenResponse = await this.requestToken({
+        grant_type: 'refresh_token',
         refresh_token: refreshToken,
       });
-
-      const tokenResponse = await (
-        this.oauth2Client as unknown as OAuth2ClientWithRefreshTokenMethod
-      ).refreshToken(refreshToken);
-      const accessToken =
-        tokenResponse.tokens?.access_token || tokenResponse.access_token;
+      const accessToken = tokenResponse.access_token;
       if (!accessToken) {
         throw new Error('Access token не получен при обновлении');
       }
       return accessToken;
     } catch (error) {
-      const refreshError = error as RefreshTokenError;
       this.logger.error('Error refreshing access token:', error);
       throw new BadRequestException(
-        refreshError.response?.data?.error_description ||
-          refreshError.message ||
-          'Failed to refresh Google access token',
+        error instanceof Error ? error.message : 'Failed to refresh Google access token',
       );
     }
   }
@@ -123,12 +157,104 @@ export class GoogleSheetsApiService {
   /**
    * Get authenticated Google Sheets client
    */
-  private getSheetsClient(accessToken: string) {
-    this.oauth2Client.setCredentials({
-      access_token: accessToken,
-    });
+  private getSheetsClient(accessToken: string): SheetsClient {
+    return {
+      spreadsheets: {
+        get: async args => ({
+          data: await this.googleJson<GoogleSpreadsheet>(
+            accessToken,
+            `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}?${new URLSearchParams({
+              ...(args.ranges?.length ? { ranges: args.ranges[0] } : {}),
+              ...(args.includeGridData !== undefined
+                ? { includeGridData: String(args.includeGridData) }
+                : {}),
+              ...(args.fields ? { fields: args.fields } : {}),
+            }).toString()}`,
+          ),
+        }),
+        values: {
+          get: async args => ({
+            data: await this.googleJson<GoogleValuesResponse>(
+              accessToken,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams({
+                ...(args.valueRenderOption ? { valueRenderOption: args.valueRenderOption } : {}),
+                ...(args.dateTimeRenderOption
+                  ? { dateTimeRenderOption: args.dateTimeRenderOption }
+                  : {}),
+              }).toString()}`,
+            ),
+          }),
+          update: async args => ({
+            data: await this.googleJson(
+              accessToken,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams({
+                valueInputOption: args.valueInputOption,
+              }).toString()}`,
+              {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(args.requestBody),
+              },
+            ),
+          }),
+          append: async args => ({
+            data: await this.googleJson(
+              accessToken,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}:append?${new URLSearchParams({
+                valueInputOption: args.valueInputOption,
+                insertDataOption: args.insertDataOption,
+              }).toString()}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(args.requestBody),
+              },
+            ),
+          }),
+        },
+      },
+    };
+  }
 
-    return sheets({ version: 'v4', auth: this.oauth2Client });
+  private async googleJson<T>(
+    accessToken: string,
+    url: string,
+    init: RequestInit = {},
+  ): Promise<T> {
+    const response = await fetch(url, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        ...(init.headers || {}),
+      },
+    });
+    if (!response.ok) {
+      const error = new Error(`Google Sheets REST request failed with status ${response.status}`);
+      (error as GoogleSheetsError).code = response.status;
+      throw error;
+    }
+    return (await response.json()) as T;
+  }
+
+  private async requestToken(params: Record<string, string>): Promise<GoogleTokenResponse> {
+    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+      throw new BadRequestException('Google OAuth credentials are not configured');
+    }
+
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        redirect_uri: this.redirectUri,
+        ...params,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Google OAuth token request failed with status ${response.status}`);
+    }
+    return (await response.json()) as GoogleTokenResponse;
   }
 
   getAuthUrl(state?: string): string {
@@ -137,20 +263,30 @@ export class GoogleSheetsApiService {
       'https://www.googleapis.com/auth/drive.readonly',
     ];
 
-    return this.oauth2Client.generateAuthUrl({
+    if (!this.clientId || !this.redirectUri) {
+      throw new BadRequestException('Google OAuth credentials are not configured');
+    }
+
+    return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+      client_id: this.clientId,
+      redirect_uri: this.redirectUri,
+      response_type: 'code',
       access_type: 'offline',
       prompt: 'consent',
-      scope: scopes,
-      include_granted_scopes: true,
-      state,
-    });
+      scope: scopes.join(' '),
+      include_granted_scopes: 'true',
+      ...(state ? { state } : {}),
+    }).toString()}`;
   }
 
   async exchangeCodeForTokens(
     code: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      const { tokens } = await this.oauth2Client.getToken(code);
+      const tokens = await this.requestToken({
+        grant_type: 'authorization_code',
+        code,
+      });
       const accessToken = tokens.access_token || '';
       const refreshToken = tokens.refresh_token || '';
 
@@ -184,13 +320,13 @@ export class GoogleSheetsApiService {
   }
 
   async getUserInfo(accessToken: string): Promise<{ email: string | null }> {
-    this.oauth2Client.setCredentials({ access_token: accessToken });
-
     try {
-      const oauth2Client = oauth2({ version: 'v2', auth: this.oauth2Client });
-      const response = await oauth2Client.userinfo.get();
+      const response = await this.googleJson<GoogleUserInfoResponse>(
+        accessToken,
+        'https://www.googleapis.com/oauth2/v2/userinfo',
+      );
       return {
-        email: response.data.email || null,
+        email: response.email || null,
       };
     } catch (error) {
       this.logger.warn('Failed to read Google account info', error);
@@ -558,7 +694,7 @@ export class GoogleSheetsApiService {
     spreadsheetId: string,
     range: string,
     options?: { fields?: string },
-  ): Promise<{ accessToken: string; spreadsheet: sheets_v4.Schema$Spreadsheet }> {
+  ): Promise<{ accessToken: string; spreadsheet: GoogleSpreadsheet }> {
     const sheets = this.getSheetsClient(accessToken);
 
     try {

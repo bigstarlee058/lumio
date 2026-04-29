@@ -22,6 +22,7 @@ import {
   TOUR_STORAGE_KEY,
   updateTourProgress,
 } from './TourManagerHelpers';
+import { cleanupStableTourPopoverPositioning } from './TourPopoverPositioning';
 import { buildDriveStep, type StepContext } from './TourStepBuilder';
 
 export class TourManager {
@@ -41,6 +42,7 @@ export class TourManager {
   }
 
   private resetDriver(overrides?: TourDriverConfig): void {
+    cleanupStableTourPopoverPositioning();
     if (this.driverInstance?.isActive()) {
       this.driverInstance.destroy();
     }
@@ -87,6 +89,7 @@ export class TourManager {
     try {
       if (this.driverInstance.isActive()) {
         this.detachDismissListeners();
+        cleanupStableTourPopoverPositioning();
         this.driverInstance.destroy();
       }
     } catch (error) {
@@ -222,6 +225,7 @@ export class TourManager {
     this.isDestroying = true;
     const tourId = this.currentTour.id;
     this.detachDismissListeners();
+    cleanupStableTourPopoverPositioning();
     if (this.isTourFinished(tourId)) {
       this.markTourCompleted(tourId);
       this.trackEvent('tour_completed', { tourId });

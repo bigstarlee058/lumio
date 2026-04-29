@@ -66,6 +66,9 @@ type ExchangeRateResponse = {
 
 const normalizeCurrencyCode = (currency: string | null | undefined): string | null => {
   const normalized = String(currency || '').trim().toUpperCase();
+  if (normalized === 'NIS' || normalized === '\u20aa') {
+    return 'ILS';
+  }
   return /^[A-Z]{3}$/.test(normalized) ? normalized : null;
 };
 
@@ -82,6 +85,64 @@ const formatCurrentExchangeRateLabel = (from: string, to: string, rate: number):
     maximumFractionDigits: rate >= 10 ? 2 : 4,
   }).format(rate);
   return `1 ${from} = ${formattedRate} ${to}`;
+};
+
+const buildPublicCurrencyApiUrls = (from: string): string[] => {
+  const fromCode = from.toLowerCase();
+  const endpoint = `v1/currencies/${fromCode}.json`;
+  return [
+    `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/${endpoint}`,
+    `https://latest.currency-api.pages.dev/${endpoint}`,
+  ];
+};
+
+const extractPublicCurrencyRate = (
+  data: Record<string, unknown>,
+  from: string,
+  to: string,
+): number | null => {
+  const targetKey = to.toLowerCase();
+  const baseRates = data[from.toLowerCase()];
+  const rate =
+    baseRates && typeof baseRates === 'object' && !Array.isArray(baseRates)
+      ? (baseRates as Record<string, unknown>)[targetKey]
+      : data[targetKey];
+  return typeof rate === 'number' && Number.isFinite(rate) ? rate : null;
+};
+
+const fetchPublicExchangeRate = async (from: string, to: string): Promise<number | null> => {
+  for (const url of buildPublicCurrencyApiUrls(from)) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        continue;
+      }
+      const data = (await response.json()) as Record<string, unknown>;
+      const rate = extractPublicCurrencyRate(data, from, to);
+      if (rate !== null) {
+        return rate;
+      }
+    } catch {
+      // Try the next public mirror.
+    }
+  }
+  return null;
+};
+
+const fetchExchangeRate = async (from: string, to: string): Promise<number | null> => {
+  try {
+    const response = await api.get<ExchangeRateResponse>('/exchange-rates', {
+      params: { from, to },
+    });
+    const rate = Number(response.data.rate);
+    if (Number.isFinite(rate)) {
+      return rate;
+    }
+  } catch {
+    // Fall back to the public currency API so the table does not depend on
+    // optional server-side exchange-rate connectivity.
+  }
+  return fetchPublicExchangeRate(from, to);
 };
 
 function matchesSearch(s: Statement, q: string): boolean {
@@ -430,19 +491,35 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   );
   const exchangeRateTargetCurrency = normalizeCurrencyCode(currentWorkspace?.currency) ?? 'KZT';
   const exchangeRateSourceCurrencies = useMemo(() => {
-    if (!exchangeRateColumnVisible) return [];
-    return Array.from(
-      new Set(
-        paginatedDisplayStatements
-          .map(resolveStatementCurrency)
-          .filter((currency): currency is string => Boolean(currency) && currency !== exchangeRateTargetCurrency),
-      ),
-    ).sort();
+    if (!exchangeRateColumnVisible) {
+      return [];
+    }
+    const currencies = new Set<string>(['USD']);
+    for (const statement of paginatedDisplayStatements) {
+      const currency = resolveStatementCurrency(statement);
+      if (currency && currency !== exchangeRateTargetCurrency) {
+        currencies.add(currency);
+      }
+    }
+    return Array.from(currencies).sort();
   }, [exchangeRateColumnVisible, exchangeRateTargetCurrency, paginatedDisplayStatements]);
 
   useEffect(() => {
-    if (!exchangeRateColumnVisible || exchangeRateSourceCurrencies.length === 0) {
+    if (!exchangeRateColumnVisible) {
       setCurrentExchangeRateLabels({});
+      return;
+    }
+
+    const localLabels =
+      exchangeRateTargetCurrency === 'USD'
+        ? { 'USD:USD': formatCurrentExchangeRateLabel('USD', 'USD', 1) }
+        : {};
+    const sourceCurrenciesToLoad = exchangeRateSourceCurrencies.filter(
+      from => from !== exchangeRateTargetCurrency,
+    );
+
+    if (sourceCurrenciesToLoad.length === 0) {
+      setCurrentExchangeRateLabels(localLabels);
       return;
     }
 
@@ -451,28 +528,28 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
 
     const loadCurrentRates = async (): Promise<void> => {
       const entries = await Promise.all(
-        exchangeRateSourceCurrencies.map(async from => {
+        sourceCurrenciesToLoad.map(async from => {
           const key = `${from}:${target}`;
-          try {
-            const response = await api.get<ExchangeRateResponse>('/exchange-rates', {
-              params: { from, to: target },
-            });
-            const rate = Number(response.data.rate);
-            if (!Number.isFinite(rate)) return [key, null] as const;
-            return [key, formatCurrentExchangeRateLabel(from, target, rate)] as const;
-          } catch {
+          const rate = await fetchExchangeRate(from, target);
+          if (rate === null) {
             return [key, null] as const;
           }
+          return [key, formatCurrentExchangeRateLabel(from, target, rate)] as const;
         }),
       );
 
-      if (cancelled) return;
-      setCurrentExchangeRateLabels(
-        entries.reduce<Record<string, string>>((acc, [key, label]) => {
-          if (label) acc[key] = label;
+      if (cancelled) {
+        return;
+      }
+      setCurrentExchangeRateLabels({
+        ...localLabels,
+        ...entries.reduce<Record<string, string>>((acc, [key, label]) => {
+          if (label) {
+            acc[key] = label;
+          }
           return acc;
         }, {}),
-      );
+      });
     };
 
     void loadCurrentRates();

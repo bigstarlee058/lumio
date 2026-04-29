@@ -1,5 +1,6 @@
 'use client';
 
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import MuiButton from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -183,14 +184,12 @@ function DateFilterScreen({
   datePresets,
   dateModes,
   onUpdateFilters,
-  inputStyle,
 }: {
   filters: StatementFilters;
   labels: FiltersDrawerLabels;
   datePresets: FilterDatePresetOption[];
   dateModes: FilterDateModeOption[];
   onUpdateFilters: (next: Partial<StatementFilters>) => void;
-  inputStyle: React.CSSProperties;
 }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -222,11 +221,9 @@ function DateFilterScreen({
         ))}
         {filters.date?.mode ? (
           <Box sx={{ border: '1px solid', borderColor: 'divider', bgcolor: 'rgba(249,250,251,0.6)', px: 1.5, py: 1.5 }}>
-            <input
-              type="date"
+            <CustomDatePicker
               value={filters.date?.date || ''}
-              onChange={event => onUpdateFilters({ date: { mode: filters.date?.mode, date: event.target.value } })}
-              style={inputStyle}
+              onChange={value => onUpdateFilters({ date: { mode: filters.date?.mode, date: value } })}
             />
           </Box>
         ) : null}
@@ -530,7 +527,7 @@ function ScreenContent(props: ScreenContentProps) {
   const { screen, filters, labels, onUpdateFilters, toggleValue, inputStyle } = props;
   if (screen === 'type') return <TypeFilterScreen filters={filters} labels={labels} typeOptions={props.typeOptions} onUpdateFilters={onUpdateFilters} />;
   if (screen === 'status') return <StatusFilterScreen filters={filters} labels={labels} statusOptions={props.statusOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
-  if (screen === 'date') return <DateFilterScreen filters={filters} labels={labels} datePresets={props.datePresets} dateModes={props.dateModes} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
+  if (screen === 'date') return <DateFilterScreen filters={filters} labels={labels} datePresets={props.datePresets} dateModes={props.dateModes} onUpdateFilters={onUpdateFilters} />;
   if (screen === 'from' || screen === 'to') return <FromToFilterScreen screen={screen} filters={filters} labels={labels} fromOptions={props.fromOptions} toOptions={props.toOptions} onUpdateFilters={onUpdateFilters} toggleValue={toggleValue} />;
   if (screen === 'keywords') return <KeywordsFilterScreen filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;
   if (screen === 'amount') return <AmountFilterScreen filters={filters} labels={labels} onUpdateFilters={onUpdateFilters} inputStyle={inputStyle} />;

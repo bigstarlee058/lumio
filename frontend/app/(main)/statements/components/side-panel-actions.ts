@@ -35,7 +35,15 @@ export const executeCloudImport = async (
   }
 };
 
-export type GmailSyncResponse = { data?: { messagesFound?: unknown; jobsCreated?: unknown; skipped?: unknown } };
+export type GmailSyncResponse = {
+  data?: {
+    scanned?: unknown;
+    imported?: unknown;
+    messagesFound?: unknown;
+    jobsCreated?: unknown;
+    skipped?: unknown;
+  };
+};
 
 type GmailSyncCounts = { messagesFound: number; jobsCreated: number; skipped: number };
 
@@ -55,15 +63,32 @@ const handleGmailJobsCreated = (jobsCreated: number, navigateToSubmit: () => voi
   const payload: GmailSyncSkeletonMeta = { count: jobsCreated, timestamp: Date.now() };
   sessionStorage.setItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY, JSON.stringify(payload));
   window.dispatchEvent(new CustomEvent(STATEMENTS_GMAIL_SYNC_EVENT, { detail: payload }));
-  toast.success(`Gmail sync started (${jobsCreated} receipts)`);
+  toast.success(`Inbox sync started (${jobsCreated} receipts)`);
   navigateToSubmit();
 };
 
 export const handleGmailSyncResponse = (response: GmailSyncResponse, navigateToSubmit: () => void): void => {
+  const scanned = Number(response.data?.scanned ?? 0);
+  const imported = Number(response.data?.imported ?? 0);
+  if (imported > 0) {
+    toast.success(`Inbox sync imported ${imported} receipt${imported === 1 ? '' : 's'}`);
+    navigateToSubmit();
+    return;
+  }
+  if ('scanned' in (response.data ?? {})) {
+    if (scanned === 0) {
+      toast.error('No unread emails found in IMAP inbox');
+      return;
+    }
+    toast.error('No new receipt attachments found in IMAP inbox');
+    navigateToSubmit();
+    return;
+  }
+
   const { messagesFound, jobsCreated, skipped } = extractGmailCounts(response.data);
   if (jobsCreated > 0) { handleGmailJobsCreated(jobsCreated, navigateToSubmit); return; }
-  if (messagesFound === 0) { toast.error('No matching emails found in Gmail'); return; }
-  if (skipped >= messagesFound) { toast.error('All receipts available in Gmail are already synced'); return; }
-  toast.error('Gmail sync finished with no new receipts');
+  if (messagesFound === 0) { toast.error('No unread emails found in IMAP inbox'); return; }
+  if (skipped >= messagesFound) { toast.error('All receipts available in this inbox are already synced'); return; }
+  toast.error('Inbox sync finished with no new receipts');
   navigateToSubmit();
 };

@@ -3,12 +3,12 @@
 import type { SidePanelPageConfig } from '@/app/components/side-panel';
 import type { TopBankSender } from '@/app/lib/statement-insights';
 import type { ConnectedCloudProviders } from '@/app/lib/statement-upload-actions';
-import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, Table2, ThumbsUp, User } from '@/app/components/icons';
+import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, ThumbsUp, User } from '@/app/components/icons';
 import StatementsCircularUploadMenu from './StatementsCircularUploadMenu';
 
 type ActiveItem =
   | 'submit' | 'approve' | 'pay' | 'unapproved-cash' | 'spend-over-time'
-  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'tables-reports' | 'transactions';
+  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'transactions';
 
 // eslint-disable-next-line max-params -- tx is a translation function with a standard 2-arg signature
 export type TxFn = (path: string[], fallback: string) => string;
@@ -23,7 +23,6 @@ export interface SidePanelConfigParams {
   topSenders: TopBankSender[];
   topMerchantsCount: number;
   topCategoriesCount: number;
-  tablesReportsCount: number;
   connectedCloudProviders: ConnectedCloudProviders;
   handleCloudImport: (provider: Parameters<typeof StatementsCircularUploadMenu>[0]['onCloudImport'][0]) => Promise<void>;
   handleGmailClick: () => void;
@@ -44,7 +43,6 @@ const buildInsightItems = (p: SidePanelConfigParams): SidePanelPageConfig['secti
   { id: 'top-spenders', label: p.tx(['sidePanel', 'topSpenders'], 'Top spenders'), icon: User, badge: p.topSenders.length, badgeLoading: p.countsLoading, badgeVariant: 'default', emphasis: 'low', href: '/statements/top-spenders', active: p.activeItem === 'top-spenders' },
   { id: 'top-merchants', label: p.tx(['sidePanel', 'topMerchants'], 'Top merchants'), icon: <ShoppingCart size={20} />, badge: p.topMerchantsCount, badgeLoading: p.countsLoading, badgeVariant: 'default', emphasis: 'low', href: '/statements/top-merchants', active: p.activeItem === 'top-merchants' },
   { id: 'top-categories', label: p.tx(['sidePanel', 'topCategories'], 'Top categories'), icon: Folder, badge: p.topCategoriesCount, badgeLoading: p.countsLoading, badgeVariant: 'default', emphasis: 'low', href: '/statements/top-categories', active: p.activeItem === 'top-categories' },
-  { id: 'tables-reports', label: p.tx(['sidePanel', 'tablesReports'], 'Tables reports'), icon: <Table2 size={20} />, badge: p.tablesReportsCount, badgeLoading: p.countsLoading, badgeVariant: 'default', emphasis: 'low', href: '/statements/tables-reports', active: p.activeItem === 'tables-reports' },
 ];
 
 const buildSections = (p: SidePanelConfigParams): SidePanelPageConfig['sections'] => [

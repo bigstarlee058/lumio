@@ -62,11 +62,12 @@ const computeAggregatedRows = (records: TopSpenderRecord[], workspaceCurrency: s
   const aggregate = new Map<string, TopSpenderAggregateRow>();
   records.forEach(record => {
     const normalizedCompany = (record.company || '').trim() || 'Unknown';
-    const key = `${record.flowType}:${record.sourceChannel}:${normalizedCompany.toLowerCase()}`;
+    const recordCurrency = resolveCurrencyCode(record.currencyValue, workspaceCurrency);
+    const key = `${record.flowType}:${record.sourceChannel}:${recordCurrency}:${normalizedCompany.toLowerCase()}`;
     const existing = aggregate.get(key);
     const date = record.dateValue || record.createdAt || '';
     if (!existing) {
-      aggregate.set(key, { id: key, company: normalizedCompany, sourceType: record.sourceType, sourceChannel: record.sourceChannel, flowType: record.flowType, count: 1, total: record.amount, average: record.amount, lastDate: date, currency: resolveCurrencyCode(record.currencyValue, workspaceCurrency) });
+      aggregate.set(key, { id: key, company: normalizedCompany, sourceType: record.sourceType, sourceChannel: record.sourceChannel, flowType: record.flowType, count: 1, total: record.amount, average: record.amount, lastDate: date, currency: recordCurrency });
       return;
     }
     updateAggregateEntry(existing, record, date);

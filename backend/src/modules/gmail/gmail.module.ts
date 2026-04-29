@@ -59,7 +59,7 @@ import { GmailService } from './services/gmail.service';
     GmailSyncService,
     {
       provide: AiMerchantExtractor,
-      useFactory: () => new AiMerchantExtractor(process.env.GEMINI_API_KEY),
+      useFactory: () => new AiMerchantExtractor(process.env.AI_API_KEY),
     },
     GmailReceiptParserService,
     GmailReceiptDuplicateService,
@@ -69,6 +69,14 @@ import { GmailService } from './services/gmail.service';
     GmailReceiptProcessor,
     GmailScheduler,
   ],
-  exports: [GmailOAuthService, GmailService, GmailWatchService, GmailSyncService],
+  exports: [
+    GmailOAuthService,
+    GmailService,
+    GmailWatchService,
+    GmailSyncService,
+    GmailReceiptParserService,
+    GmailReceiptDuplicateService,
+    GmailReceiptCategoryService,
+  ],
 })
 export class GmailModule {}

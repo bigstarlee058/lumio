@@ -1,4 +1,15 @@
 import { DEFAULT_BACKGROUND } from '@/app/(main)/workspaces/constants';
+import {
+  Bot,
+  Cloud,
+  Cpu,
+  Database,
+  Globe,
+  Inbox,
+  Mail,
+  type LucideIcon,
+} from '@/app/components/icons';
+import type { User } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
 import { syncLocaleFromUser } from '@/app/lib/locale';
 import { resolveOnboardingBootstrapLocale } from '../lib/locale-bootstrap';
@@ -7,38 +18,140 @@ import type { OnboardingData } from '../useOnboardingWizard';
 const DEFAULT_CURRENCY = 'USD';
 
 export type OnboardingIntegrationKey =
-  | 'dropbox'
-  | 'googleDrive'
-  | 'gmail'
-  | 'googleSheets'
-  | 'telegram';
+  | 's3Compatible'
+  | 'webdav'
+  | 'imap'
+  | 'smtp'
+  | 'aiCompatible'
+  | 'telegram'
+  | 'appUrl';
+
+type StatusResponse = {
+  connected?: unknown;
+  configured?: unknown;
+  enabled?: unknown;
+  status?: unknown;
+};
+
+type StatusName = 'connected' | 'configured';
+
+const CONNECTED_STATUS_NAMES = new Set<StatusName>(['connected', 'configured']);
+
+type StatusPath =
+  | '/integrations/s3-compatible/status'
+  | '/integrations/webdav/status'
+  | '/integrations/imap/status'
+  | '/settings/email/smtp'
+  | '/settings/integrations/ai'
+  | '/settings/notifications/telegram'
+  | '/settings/app';
+
+type IntegrationPath =
+  | '/integrations/s3-compatible'
+  | '/integrations/webdav'
+  | '/integrations/imap'
+  | '/integrations/smtp'
+  | '/integrations/ai-compatible'
+  | '/settings/telegram'
+  | '/integrations/app-url';
 
 export type OnboardingIntegration = {
   key: OnboardingIntegrationKey;
-  apiKey: 'dropbox' | 'google-drive' | 'gmail' | 'google-sheets' | 'telegram';
-  iconSrc: string;
-  connectMode: 'oauth' | 'page';
-  path: string;
+  titleFallback: string;
+  descriptionFallback: string;
+  path: IntegrationPath;
+  statusPath: StatusPath;
+  icon: LucideIcon;
 };
 
 export const ONBOARDING_INTEGRATIONS: OnboardingIntegration[] = [
-  { key: 'dropbox', apiKey: 'dropbox', iconSrc: '/icons/dropbox-icon.png', connectMode: 'oauth', path: '/integrations/dropbox' },
-  { key: 'googleDrive', apiKey: 'google-drive', iconSrc: '/icons/google-drive-icon.png', connectMode: 'oauth', path: '/integrations/google-drive' },
-  { key: 'gmail', apiKey: 'gmail', iconSrc: '/icons/gmail.png', connectMode: 'oauth', path: '/integrations/gmail' },
-  { key: 'googleSheets', apiKey: 'google-sheets', iconSrc: '/icons/icons8-google-sheets-48.png', connectMode: 'page', path: '/integrations/google-sheets' },
-  { key: 'telegram', apiKey: 'telegram', iconSrc: '/icons/icons8-telegram-48.png', connectMode: 'page', path: '/settings/telegram' },
+  {
+    key: 's3Compatible',
+    titleFallback: 'S3-compatible storage',
+    descriptionFallback: 'Connect MinIO or any S3-compatible bucket for imports and sync.',
+    path: '/integrations/s3-compatible',
+    statusPath: '/integrations/s3-compatible/status',
+    icon: Database,
+  },
+  {
+    key: 'webdav',
+    titleFallback: 'WebDAV storage',
+    descriptionFallback: 'Connect Nextcloud or another WebDAV-compatible file store.',
+    path: '/integrations/webdav',
+    statusPath: '/integrations/webdav/status',
+    icon: Cloud,
+  },
+  {
+    key: 'imap',
+    titleFallback: 'IMAP inbox',
+    descriptionFallback: 'Import receipts from any IMAP-compatible mailbox.',
+    path: '/integrations/imap',
+    statusPath: '/integrations/imap/status',
+    icon: Inbox,
+  },
+  {
+    key: 'smtp',
+    titleFallback: 'SMTP email',
+    descriptionFallback: 'Send invitations through any SMTP-compatible mail server.',
+    path: '/integrations/smtp',
+    statusPath: '/settings/email/smtp',
+    icon: Mail,
+  },
+  {
+    key: 'aiCompatible',
+    titleFallback: 'AI-compatible endpoint',
+    descriptionFallback: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.',
+    path: '/integrations/ai-compatible',
+    statusPath: '/settings/integrations/ai',
+    icon: Cpu,
+  },
+  {
+    key: 'telegram',
+    titleFallback: 'Telegram',
+    descriptionFallback: 'Connect a bot for reports and notification delivery.',
+    path: '/settings/telegram',
+    statusPath: '/settings/notifications/telegram',
+    icon: Bot,
+  },
+  {
+    key: 'appUrl',
+    titleFallback: 'Application URL',
+    descriptionFallback: 'Set the public URL used in invitation and sharing links.',
+    path: '/integrations/app-url',
+    statusPath: '/settings/app',
+    icon: Globe,
+  },
 ];
 
 export const INTEGRATION_TITLE_FALLBACK: Record<OnboardingIntegrationKey, string> = {
-  dropbox: 'Dropbox',
-  googleDrive: 'Google Drive',
-  gmail: 'Gmail',
-  googleSheets: 'Google Sheets',
+  s3Compatible: 'S3-compatible storage',
+  webdav: 'WebDAV storage',
+  imap: 'IMAP inbox',
+  smtp: 'SMTP email',
+  aiCompatible: 'AI-compatible endpoint',
   telegram: 'Telegram',
+  appUrl: 'Application URL',
 };
 
-export const sleep = (ms: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, ms));
+export const INTEGRATION_DESCRIPTION_FALLBACK: Record<OnboardingIntegrationKey, string> = {
+  s3Compatible: 'Connect MinIO or any S3-compatible bucket for imports and sync.',
+  webdav: 'Connect Nextcloud or another WebDAV-compatible file store.',
+  imap: 'Import receipts from any IMAP-compatible mailbox.',
+  smtp: 'Send invitations through any SMTP-compatible mail server.',
+  aiCompatible: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.',
+  telegram: 'Connect a bot for reports and notification delivery.',
+  appUrl: 'Set the public URL used in invitation and sharing links.',
+};
+
+export const EMPTY_INTEGRATION_STATE: Record<OnboardingIntegrationKey, boolean> = {
+  s3Compatible: false,
+  webdav: false,
+  imap: false,
+  smtp: false,
+  aiCompatible: false,
+  telegram: false,
+  appUrl: false,
+};
 
 export function detectTimeZone(): string | null {
   try {
@@ -48,31 +161,22 @@ export function detectTimeZone(): string | null {
   }
 }
 
-function extractSheets(data: unknown): unknown[] {
-  if (Array.isArray(data)) return data as unknown[];
-  const d = data as { data?: unknown };
-  if (Array.isArray(d?.data)) return d.data as unknown[];
-  return [];
-}
-
-async function checkGoogleSheetsConnected(): Promise<boolean> {
-  const response = await apiClient.get('/google-sheets');
-  return extractSheets(response.data).length > 0;
-}
-
-function parseConnectedStatus(data: unknown): boolean {
-  const d = data as { connected?: unknown; status?: unknown };
-  return Boolean(d?.connected) || String(d?.status || '').toLowerCase() === 'connected';
+export function parseIntegrationConnectedStatus(data: unknown): boolean {
+  const d = data as StatusResponse | null;
+  const status = String(d?.status || '').toLowerCase() as StatusName;
+  return (
+    Boolean(d?.connected) ||
+    Boolean(d?.configured) ||
+    Boolean(d?.enabled) ||
+    CONNECTED_STATUS_NAMES.has(status)
+  );
 }
 
 export async function checkIntegrationConnected(
   integration: OnboardingIntegration,
 ): Promise<boolean> {
-  if (integration.apiKey === 'google-sheets') {
-    return checkGoogleSheetsConnected();
-  }
-  const response = await apiClient.get(`/integrations/${integration.apiKey}/status`);
-  return parseConnectedStatus(response.data);
+  const response = await apiClient.get(integration.statusPath);
+  return parseIntegrationConnectedStatus(response.data);
 }
 
 async function checkOneIntegration(
@@ -90,11 +194,7 @@ export async function refreshAllIntegrationStatuses(): Promise<
   Record<OnboardingIntegrationKey, boolean>
 > {
   const nextStatuses: Record<OnboardingIntegrationKey, boolean> = {
-    dropbox: false,
-    googleDrive: false,
-    gmail: false,
-    googleSheets: false,
-    telegram: false,
+    ...EMPTY_INTEGRATION_STATE,
   };
   await Promise.all(
     ONBOARDING_INTEGRATIONS.map(integration => checkOneIntegration(integration, nextStatuses)),
@@ -117,7 +217,7 @@ function extractWorkspaces(data: unknown): WorkspaceItem[] {
 }
 
 type FetchWorkspaceParams = {
-  userWorkspaceId: string | undefined;
+  userWorkspaceId: string | null | undefined;
   userLocale: string;
 };
 
@@ -155,59 +255,11 @@ export async function fetchWorkspaceInitialData({
   return initialData;
 }
 
-async function attemptPollCheck({
-  integration,
-  popup,
-  onConnected,
-}: {
-  integration: OnboardingIntegration;
-  popup: Window;
-  onConnected: () => Promise<void>;
-}): Promise<boolean> {
-  const connected = await checkIntegrationConnected(integration);
-  if (!connected) return false;
-  if (!popup.closed) {
-    popup.close();
-    window.focus();
-  }
-  await onConnected();
-  return true;
-}
-
-type PollParams = {
-  popup: Window;
-  integration: OnboardingIntegration;
-  onConnected: () => Promise<void>;
-};
-
-export async function pollForIntegrationConnection({
-  popup,
-  integration,
-  onConnected,
-}: PollParams): Promise<void> {
-  const maxAttempts = 40;
-  let attempt = 0;
-
-  const doPoll = async (): Promise<void> => {
-    if (attempt >= maxAttempts) return;
-    attempt += 1;
-    await sleep(2000);
-    try {
-      const done = await attemptPollCheck({ integration, popup, onConnected });
-      if (!done) await doPoll();
-    } catch {
-      await doPoll();
-    }
-  };
-
-  await doPoll();
-}
-
 type CompleteOnboardingParams = {
   data: OnboardingData;
   isCreateWorkspaceFlow: boolean;
   refreshWorkspaces: () => Promise<void>;
-  setUser: (user: unknown) => void;
+  setUser: (user: User | null) => void;
   onCreateWorkspaceDone: () => void;
   onOnboardingDone: () => void;
 };
@@ -239,7 +291,7 @@ type FlowParams = {
   workspaceName: string;
   workspaceCurrency: string;
   workspaceBackgroundImage: string;
-  setUser: (user: unknown) => void;
+  setUser: (user: User | null) => void;
   refreshWorkspaces: () => Promise<void>;
 };
 
@@ -248,14 +300,14 @@ async function applyUserFromResponse({
   setUser,
 }: {
   responseData: unknown;
-  setUser: (user: unknown) => void;
+  setUser: (user: User | null) => void;
 }): Promise<void> {
   const d = responseData as { user?: unknown };
   const updatedUser = d?.user;
   if (updatedUser) {
     localStorage.setItem('user', JSON.stringify(updatedUser));
     syncLocaleFromUser(updatedUser, { overwrite: true });
-    setUser(updatedUser);
+    setUser(updatedUser as User);
   }
 }
 
@@ -310,7 +362,7 @@ type IntegrationCard = {
   key: string;
   title: string;
   description: string;
-  iconSrc: string;
+  icon: LucideIcon;
   connected: boolean;
   loading: boolean;
   actionLabel: string;
@@ -342,8 +394,10 @@ function buildOneIntegrationCard({
   return {
     key: integration.key,
     title,
-    description: tx(['integrations', 'cards', integration.key, 'description']),
-    iconSrc: integration.iconSrc,
+    description:
+      tx(['integrations', 'cards', integration.key, 'description']) ||
+      INTEGRATION_DESCRIPTION_FALLBACK[integration.key],
+    icon: integration.icon,
     connected,
     loading: integrationLoading[integration.key],
     actionLabel,

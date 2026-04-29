@@ -132,6 +132,25 @@ describe('PDFThumbnail', () => {
     );
   });
 
+  it('can request a higher-resolution thumbnail without changing display size', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      blob: vi.fn().mockResolvedValue(new Blob(['thumbnail'], { type: 'image/png' })),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const root = createRoot(container);
+
+    await act(async () => {
+      root.render(<PDFThumbnail fileId="statement-hidpi" width={320} thumbnailWidth={640} height={460} />);
+      await Promise.resolve();
+    });
+
+    const frame = container.querySelector('[data-testid="pdf-thumbnail-frame"]') as HTMLDivElement | null;
+    expect(fetchMock.mock.calls[0]?.[0]).toContain('width=640');
+    expect(frame?.style.width).toBe('320px');
+  });
+
   it('uses backend dev api base url when NEXT_PUBLIC_API_URL is not set', async () => {
     vi.stubEnv('NODE_ENV', 'development');
     vi.stubEnv('NEXT_PUBLIC_API_URL', '');

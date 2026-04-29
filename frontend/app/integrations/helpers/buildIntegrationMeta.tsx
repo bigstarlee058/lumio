@@ -1,6 +1,13 @@
 'use client';
 
 import type React from 'react';
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
+import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
+import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import { IntegrationIcon } from '../components/IntegrationCard';
 import type { IntegrationAction } from '../components/IntegrationCard';
 
@@ -13,6 +20,7 @@ export interface IntegrationMeta {
   recommended: boolean;
   icon: React.ReactNode;
   actions: IntegrationAction[];
+  statusPath?: string;
 }
 
 interface CardT {
@@ -23,56 +31,52 @@ interface CardT {
 
 interface IntegrationsT {
   cards: {
-    dropbox: CardT;
-    googleDrive: CardT;
-    googleSheets: CardT;
     telegram: CardT;
   };
 }
 
-interface StorageEntryInput {
+const muiIconSx = { fontSize: 32 };
+
+function buildProtocolIcon(key: string): React.ReactNode {
+  switch (key) {
+    case 'ai-compatible':
+      return <SmartToyOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 'smtp':
+      return <AlternateEmailOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 'app-url':
+      return <LinkOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 's3-compatible':
+      return <DnsOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 'webdav':
+      return <CloudQueueOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 'imap':
+      return <MarkEmailUnreadOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    case 'workbook-import':
+      return <TableChartOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+    default:
+      return <CloudQueueOutlinedIcon sx={muiIconSx} aria-hidden="true" />;
+  }
+}
+
+function makeProtocolEntry(input: {
   key: string;
   name: string;
-  card: CardT;
-  iconSrc: string;
+  description: React.ReactNode;
+  badge: React.ReactNode;
+  category: string;
   docsHref: string;
-}
-
-function makeStorageEntry({ key, name, card, iconSrc, docsHref }: StorageEntryInput): IntegrationMeta {
+}): IntegrationMeta {
   return {
-    key,
-    name,
-    description: card.description,
-    badge: card.badge,
-    category: 'storage',
+    key: input.key,
+    name: input.name,
+    description: input.description,
+    badge: input.badge,
+    category: input.category,
     recommended: true,
-    icon: <IntegrationIcon src={iconSrc} alt={name} />,
+    icon: buildProtocolIcon(input.key),
     actions: [
-      { label: card.actions.connect, href: `/integrations/${key}`, primary: true },
-      { label: card.actions.docs, href: docsHref, external: true },
-    ],
-  };
-}
-
-function makeDropbox(card: CardT): IntegrationMeta {
-  return {
-    ...makeStorageEntry({ key: 'dropbox', name: 'Dropbox', card, iconSrc: '/icons/dropbox-icon.png', docsHref: 'https://www.dropbox.com/developers/documentation' }),
-    recommended: false,
-  };
-}
-
-function makeGmail(): IntegrationMeta {
-  return {
-    key: 'gmail',
-    name: 'Gmail',
-    description: 'Automatically import receipts and invoices from your Gmail inbox',
-    badge: 'Active',
-    category: 'email',
-    recommended: true,
-    icon: <IntegrationIcon src="/icons/gmail.png" alt="Gmail" />,
-    actions: [
-      { label: 'Connect', href: '/integrations/gmail', primary: true },
-      { label: 'Docs', href: 'https://developers.google.com/gmail/api', external: true },
+      { label: 'Configure', href: `/integrations/${input.key}`, primary: true },
+      { label: 'Docs', href: input.docsHref, external: true },
     ],
   };
 }
@@ -95,13 +99,13 @@ function makeTelegram(card: CardT): IntegrationMeta {
 
 export function buildIntegrationMeta(t: IntegrationsT): IntegrationMeta[] {
   return [
-    makeDropbox(t.cards.dropbox),
-    makeStorageEntry({ key: 'google-drive', name: 'Google Drive', card: t.cards.googleDrive, iconSrc: '/icons/google-drive-icon.png', docsHref: 'https://developers.google.com/drive/api/guides/about-sdk' }),
-    makeGmail(),
-    {
-      ...makeStorageEntry({ key: 'google-sheets', name: 'Google Sheets', card: t.cards.googleSheets, iconSrc: '/icons/icons8-google-sheets-48.png', docsHref: 'https://support.google.com/docs' }),
-      category: 'spreadsheets',
-    },
-    makeTelegram(t.cards.telegram),
+    { ...makeProtocolEntry({ key: 'ai-compatible', name: 'AI-compatible endpoint', description: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.', badge: 'Open protocol', category: 'ai', docsHref: 'https://github.com/ollama/ollama/blob/main/docs/api.md' }), statusPath: '/settings/integrations/ai' },
+    { ...makeProtocolEntry({ key: 'smtp', name: 'SMTP email', description: 'Send invitations through any SMTP-compatible mail server.', badge: 'Open protocol', category: 'email', docsHref: 'https://datatracker.ietf.org/doc/html/rfc5321' }), statusPath: '/settings/email/smtp' },
+    { ...makeProtocolEntry({ key: 'app-url', name: 'Application URL', description: 'Configure the public URL used in invitations and shared links.', badge: 'Workspace setting', category: 'application', docsHref: '/integrations/app-url' }), statusPath: '/settings/app' },
+    makeProtocolEntry({ key: 's3-compatible', name: 'S3-compatible storage', description: 'Sync statements with MinIO or another S3-compatible bucket.', badge: 'OSS protocol', category: 'storage', docsHref: 'https://min.io/docs/minio/linux/developers/javascript/API.html' }),
+    makeProtocolEntry({ key: 'webdav', name: 'WebDAV storage', description: 'Import and sync files through Nextcloud or another WebDAV-compatible server.', badge: 'Open protocol', category: 'storage', docsHref: 'https://datatracker.ietf.org/doc/html/rfc4918' }),
+    makeProtocolEntry({ key: 'imap', name: 'IMAP inbox', description: 'Poll any IMAP mailbox for receipt and invoice attachments.', badge: 'Open protocol', category: 'email', docsHref: 'https://datatracker.ietf.org/doc/html/rfc9051' }),
+    makeProtocolEntry({ key: 'workbook-import', name: 'Workbook and Google Sheets import', description: 'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.', badge: 'File based', category: 'spreadsheets', docsHref: '/custom-tables' }),
+    { ...makeTelegram(t.cards.telegram), statusPath: '/settings/notifications/telegram' },
   ];
 }

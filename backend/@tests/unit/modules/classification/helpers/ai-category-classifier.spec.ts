@@ -1,47 +1,47 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { BaseAiHelper } from '@/common/helpers/base-ai.helper';
 import {
   AI_CATEGORY_BATCH_SIZE,
   AiCategoryClassifier,
 } from '../../../../../src/modules/classification/helpers/ai-category-classifier.helper';
 
-const mockGenerateContent = jest.fn();
-const mockGetGenerativeModel = jest.fn(() => ({
-  generateContent: mockGenerateContent,
-}));
-
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn(() => ({
-    getGenerativeModel: mockGetGenerativeModel,
-  })),
-}));
+const mockFetch = jest.fn();
 
 function createAiResponse(payload: unknown) {
   return {
-    response: {
-      text: () => JSON.stringify(payload),
-    },
-  };
+    ok: true,
+    json: async () => ({ choices: [{ message: { content: JSON.stringify(payload) } }] }),
+  } as Response;
 }
 
 describe('AiCategoryClassifier', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.AI_PARSING_ENABLED = 'true';
     process.env.AI_TIMEOUT_MS = '100';
     process.env.AI_CIRCUIT_FAILURE_THRESHOLD = '100';
+    process.env.AI_BASE_URL = 'http://localhost:11434';
+    process.env.AI_MODEL = 'llama3.1';
+    global.fetch = mockFetch;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
   });
 
   afterAll(() => {
     process.env.AI_TIMEOUT_MS = undefined;
     process.env.AI_CIRCUIT_FAILURE_THRESHOLD = undefined;
     process.env.AI_PARSING_ENABLED = undefined;
+    process.env.AI_BASE_URL = '';
+    process.env.AI_MODEL = undefined;
   });
 
-  it('is unavailable without API key', () => {
+  it('is unavailable without an AI endpoint', () => {
+    process.env.AI_BASE_URL = '';
     const classifier = new AiCategoryClassifier(undefined);
     expect(classifier.isAvailable()).toBe(false);
-    expect(GoogleGenerativeAI).not.toHaveBeenCalled();
   });
 
   it('extends BaseAiHelper', () => {
@@ -56,11 +56,11 @@ describe('AiCategoryClassifier', () => {
     const result = await classifier.classifyBatch([], [{ id: 'cat-1', name: 'Rent' }]);
 
     expect(result).toEqual({ matches: [], failedCount: 0 });
-    expect(mockGenerateContent).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
   it('returns high-confidence matches mapped to category ids', async () => {
-    mockGenerateContent.mockResolvedValueOnce(
+    mockFetch.mockResolvedValueOnce(
       createAiResponse({
         classifications: [
           { index: 0, category: 'Rent', confidence: 0.97 },
@@ -99,7 +99,7 @@ describe('AiCategoryClassifier', () => {
   });
 
   it('filters out low-confidence and unknown categories', async () => {
-    mockGenerateContent.mockResolvedValueOnce(
+    mockFetch.mockResolvedValueOnce(
       createAiResponse({
         classifications: [
           { index: 0, category: 'Rent', confidence: 0.89 },
@@ -134,11 +134,10 @@ describe('AiCategoryClassifier', () => {
   });
 
   it('falls back when AI returns malformed JSON content', async () => {
-    mockGenerateContent.mockResolvedValueOnce({
-      response: {
-        text: () => 'not-json',
-      },
-    });
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: 'not-json' } }] }),
+    } as Response);
 
     const classifier = new AiCategoryClassifier('test-key');
     const result = await classifier.classifyBatch(
@@ -150,7 +149,7 @@ describe('AiCategoryClassifier', () => {
   });
 
   it('splits large input into multiple chunks', async () => {
-    mockGenerateContent.mockResolvedValue(createAiResponse({ classifications: [] }));
+    mockFetch.mockResolvedValue(createAiResponse({ classifications: [] }));
 
     const classifier = new AiCategoryClassifier('test-key');
     const transactions = Array.from({ length: AI_CATEGORY_BATCH_SIZE + 5 }, (_, index) => ({
@@ -161,7 +160,7 @@ describe('AiCategoryClassifier', () => {
 
     const result = await classifier.classifyBatch(transactions, [{ id: 'cat-1', name: 'Rent' }]);
 
-    expect(mockGenerateContent).toHaveBeenCalledTimes(2);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(result.failedCount).toBe(transactions.length);
   });
 });

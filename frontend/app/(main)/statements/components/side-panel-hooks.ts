@@ -28,7 +28,6 @@ export type StageData = {
   topSenders: TopBankSender[];
   merchants: number;
   categories: number;
-  tables: number;
 };
 
 export const EMPTY_STAGE_DATA: StageData = {
@@ -36,12 +35,11 @@ export const EMPTY_STAGE_DATA: StageData = {
   topSenders: [],
   merchants: 0,
   categories: 0,
-  tables: 0,
 };
 
 type ActiveItem =
   | 'submit' | 'approve' | 'pay' | 'unapproved-cash' | 'spend-over-time'
-  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'tables-reports' | 'transactions';
+  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'transactions';
 
 type StageCountsLoaderParams = {
   user: unknown;
@@ -64,7 +62,6 @@ export function useStageCountsLoader(p: StageCountsLoaderParams): void {
           topSenders: result.topBankSenders,
           merchants: result.uniqueMerchantsCount,
           categories: result.topCategoriesCount,
-          tables: result.customTablesCount,
         });
         setLoading(false);
       })
@@ -113,13 +110,13 @@ export function useCloudProvidersLoader(p: CloudProvidersLoaderParams): void {
     void Promise.allSettled([
       apiClient.get('/integrations/dropbox/status'),
       apiClient.get('/integrations/google-drive/status'),
-      apiClient.get('/integrations/gmail/status'),
-    ]).then(([dropbox, gdrive, gmail]) => {
+      apiClient.get('/integrations/imap/status'),
+    ]).then(([dropbox, gdrive, inbox]) => {
       if (!isMounted) return;
       setProviders({
         dropboxConnected: resolveCloudConnectionStatus(dropbox),
         googleDriveConnected: resolveCloudConnectionStatus(gdrive),
-        gmailConnected: resolveCloudConnectionStatus(gmail),
+        gmailConnected: resolveCloudConnectionStatus(inbox),
       });
     });
     return () => { isMounted = false; };
@@ -129,7 +126,7 @@ export function useCloudProvidersLoader(p: CloudProvidersLoaderParams): void {
 
 type ActiveItem =
   | 'submit' | 'approve' | 'pay' | 'unapproved-cash' | 'spend-over-time'
-  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'tables-reports' | 'transactions';
+  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'transactions';
 
 type PanelActionsParams = { activeItem: ActiveItem; connectedGmail: boolean };
 
@@ -163,10 +160,10 @@ export function useStatementsPanelActions(p: PanelActionsParams): PanelActions {
   }, [navigateToSubmit, router]);
 
   const handleGmailClick = useCallback((): void => {
-    if (!connectedGmail) { router.push('/integrations/gmail'); return; }
-    void apiClient.post('/integrations/gmail/sync')
+    if (!connectedGmail) { router.push('/integrations/imap'); return; }
+    void apiClient.post('/integrations/imap/sync')
       .then(response => handleGmailSyncResponse(response, navigateToSubmit))
-      .catch(() => toast.error('Failed to sync Gmail'));
+      .catch(() => toast.error('Failed to sync inbox'));
   }, [connectedGmail, navigateToSubmit, router]);
 
   return { navigateToSubmit, handleScanClick, handleCloudImport, handleGmailClick };

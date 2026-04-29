@@ -91,7 +91,6 @@ export function useOnboardingPage(): OnboardingPageState {
 
   const { integrationLoading, handleConnectIntegration } = useIntegrationConnect({
     refreshIntegrationStatuses,
-    onError: setError,
   });
 
   const { animatedBlockHeight, isStepTransitioning, stepBlockRef } = useStepAnimation({

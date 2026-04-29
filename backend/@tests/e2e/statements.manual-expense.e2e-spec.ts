@@ -2,10 +2,6 @@ jest.mock('franc', () => ({
   franc: () => 'und',
 }));
 
-jest.mock('@openrouter/sdk', () => ({
-  OpenRouter: jest.fn().mockImplementation(() => ({})),
-}));
-
 import { type INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
@@ -57,11 +53,11 @@ describe('Statements manual expense (e2e)', () => {
   afterAll(async () => {
     if (dataSource && userId) {
       await dataSource.query(
-        `DELETE FROM transactions WHERE statement_id IN (SELECT id FROM statements WHERE user_id = $1)`,
+        'DELETE FROM transactions WHERE statement_id IN (SELECT id FROM statements WHERE user_id = $1)',
         [userId],
       );
-      await dataSource.query(`DELETE FROM statements WHERE user_id = $1`, [userId]);
-      await dataSource.query(`DELETE FROM users WHERE id = $1`, [userId]);
+      await dataSource.query('DELETE FROM statements WHERE user_id = $1', [userId]);
+      await dataSource.query('DELETE FROM users WHERE id = $1', [userId]);
     }
 
     await app.close();

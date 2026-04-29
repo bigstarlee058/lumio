@@ -8,9 +8,9 @@ import { format, isValid, parseISO } from 'date-fns';
 
 const toDate = (s: string): Date | null => { if (!s) return null; const d = parseISO(s); return isValid(d) ? d : null; };
 const toStr = (d: Date | null): string => (d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
-import { Search, SlidersHorizontal, X } from '@/app/components/icons';
+import { X } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
-import type { PayablesFiltersState, PayablesSortOption } from './payables-utils';
+import type { PayablesFiltersState } from './payables-utils';
 
 interface PayableFiltersBarProps {
   value: PayablesFiltersState;
@@ -22,13 +22,11 @@ interface PayableFiltersBarProps {
     source: string;
     dueFrom: string;
     dueTo: string;
-    sort: string;
     reset: string;
     allStatuses: string;
     allSources: string;
     statusOptions: Record<PayableStatus, string>;
     sourceOptions: Record<PayableSource, string>;
-    sortOptions: Record<PayablesSortOption, string>;
   };
 }
 
@@ -46,12 +44,10 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
     <div className="lumio-payable-filters">
       <div className="lumio-payable-filters__inner">
         <div className="lumio-payable-filters__search">
-          <Search size={16} className="lumio-payable-filters__search-icon" />
           <Input
             value={value.search}
             onChange={event => update('search', event.target.value)}
             placeholder={labels.searchPlaceholder}
-            style={{ paddingLeft: 36 }}
             aria-label={labels.searchPlaceholder}
           />
         </div>
@@ -98,29 +94,12 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
             onChange={(d: Date | null) => update('dueDateTo', toStr(d))}
             slotProps={{ textField: { size: 'small' } as never }}
           />
-
-          <select
-            className="lumio-payable-filters__select"
-            value={value.sort}
-            onChange={event => update('sort', event.target.value as PayablesSortOption)}
-            aria-label={labels.sort}
-          >
-            {Object.entries(labels.sortOptions).map(([optionValue, optionLabel]) => (
-              <option key={optionValue} value={optionValue}>
-                {optionLabel}
-              </option>
-            ))}
-          </select>
         </div>
 
         <Button variant="ghost" onClick={onReset} style={{ flexShrink: 0 }}>
           <X size={16} />
           {labels.reset}
         </Button>
-      </div>
-      <div className="lumio-payable-filters__sort-label">
-        <SlidersHorizontal size={14} />
-        <span>{labels.sort}</span>
       </div>
     </div>
   );

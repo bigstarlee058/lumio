@@ -50,8 +50,8 @@ In Railway dashboard, add these variables to your backend service:
 # Generate with: openssl rand -base64 32
 JWT_SECRET=<generate-with-openssl>
 JWT_REFRESH_SECRET=<generate-with-openssl>
-JWT_EXPIRES_IN=1h
-JWT_REFRESH_EXPIRES_IN=7d
+JWT_EXPIRES_IN=30d
+JWT_REFRESH_EXPIRES_IN=30d
 
 # Database (Railway auto-generates, but verify these match)
 DATABASE_URL=postgresql://${{Postgres.PGUSER}}:${{Postgres.PGPASSWORD}}@${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/lumio
@@ -65,15 +65,11 @@ REDIS_PASSWORD=${{Redis.REDIS_PASSWORD}}
 NODE_ENV=production
 PORT=3000                     # Frontend/entry port (Railway may override)
 API_PORT=4000                 # Internal backend port (keep different from $PORT)
-FRONTEND_URL=https://<your-frontend-domain>
+FRONTEND_URL=https://<your-frontend-domain> # Bootstrap fallback; can be overridden in UI
 
-# Optional - Google Sheets OAuth
-GOOGLE_CLIENT_ID=<your-google-client-id>
-GOOGLE_CLIENT_SECRET=<your-google-client-secret>
-GOOGLE_REDIRECT_URI=https://<your-backend-domain>/api/v1/auth/google/callback
-
-# Optional - Telegram Bot
-TELEGRAM_BOT_TOKEN=<your-telegram-bot-token>
+# Optional bootstrap defaults only
+# Configure AI, SMTP, Telegram, S3-compatible storage, WebDAV, IMAP, and App URL from the UI.
+# Env values such as AI_BASE_URL, SMTP_HOST, TELEGRAM_BOT_TOKEN, S3_ENDPOINT, WEBDAV_URL, and IMAP_HOST are fallback-only.
 ```
 
 **⚠️ IMPORTANT: JWT_SECRET and JWT_REFRESH_SECRET must be set!**

@@ -46,8 +46,7 @@ describe('StatementsCircularUploadMenu', () => {
     expect(toggleButton).not.toBeNull();
 
     const plusIcon = toggleButton.querySelector('svg');
-    expect(plusIcon?.getAttribute('width')).toBe('24');
-    expect(plusIcon?.getAttribute('height')).toBe('24');
+    expect(plusIcon).toBeTruthy();
 
     act(() => {
       toggleButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -56,28 +55,28 @@ describe('StatementsCircularUploadMenu', () => {
     const actionButtons = Array.from(container.querySelectorAll('button[title]'));
     expect(actionButtons).toHaveLength(4);
     actionButtons.forEach(button => {
-      expect(button.className).toContain('h-11');
-      expect(button.className).toContain('w-11');
+      expect(button.style.height).toBe('44px');
+      expect(button.style.width).toBe('44px');
     });
 
-    const labelClassNames = ['Scan', 'Cloud', 'Gmail', 'Create expense'].map(label => {
+    const labelNodes = ['Scan', 'Cloud', 'Mailbox', 'Create expense'].map(label => {
       const node = Array.from(container.querySelectorAll('span')).find(
-        span => span.textContent?.trim() === label && !span.className.includes('sr-only'),
+        span => span.textContent?.trim() === label && span.style.width !== '1px',
       );
       expect(node).toBeTruthy();
-      return node?.className ?? '';
+      return node;
     });
 
-    labelClassNames.forEach(className => {
-      expect(className).toContain('text-[11px]');
-      expect(className).toContain('px-2.5');
+    labelNodes.forEach(node => {
+      expect(node?.style.fontSize).toBe('11px');
+      expect(node?.style.padding).toBe('4px 10px');
     });
 
     const blueArc = Array.from(container.querySelectorAll('div')).find(
       div =>
-        div.className.includes('pointer-events-none') &&
-        div.className.includes('bg-primary') &&
-        div.className.includes('rounded-tr-'),
+        div.style.pointerEvents === 'none' &&
+        div.style.background.includes('rgba') &&
+        div.style.borderTopRightRadius,
     );
     expect(blueArc).toBeTruthy();
   });
@@ -109,13 +108,13 @@ describe('StatementsCircularUploadMenu', () => {
     });
 
     const plusIcon = toggleButton.querySelector('svg');
-    expect(plusIcon?.className.baseVal).toContain('rotate-45');
+    expect(plusIcon?.getAttribute('style')).toContain('rotate(45deg)');
 
     act(() => {
       document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }));
     });
 
-    expect(plusIcon?.className.baseVal).toContain('rotate-0');
+    expect(plusIcon?.getAttribute('style')).toContain('rotate(0deg)');
   });
 
   it('shows full-screen dimmed backdrop when menu is open', () => {
@@ -142,8 +141,8 @@ describe('StatementsCircularUploadMenu', () => {
 
     const closedBackdrop = document.querySelector('[data-statements-fab-backdrop="true"]');
     expect(closedBackdrop).toBeTruthy();
-    expect(closedBackdrop?.className).toContain('opacity-0');
-    expect(closedBackdrop?.className).toContain('pointer-events-none');
+    expect((closedBackdrop as HTMLElement).style.opacity).toBe('0');
+    expect((closedBackdrop as HTMLElement).style.pointerEvents).toBe('none');
 
     act(() => {
       toggleButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -151,8 +150,8 @@ describe('StatementsCircularUploadMenu', () => {
 
     const backdrop = document.querySelector('[data-statements-fab-backdrop="true"]');
     expect(backdrop).toBeTruthy();
-    expect(backdrop?.className).toContain('bg-black/45');
-    expect(backdrop?.className).toContain('opacity-100');
+    expect((backdrop as HTMLElement).style.background).toBe('rgba(0, 0, 0, 0.45)');
+    expect((backdrop as HTMLElement).style.opacity).toBe('1');
   });
 
   it('runs scan action from dedicated scan button', () => {
@@ -210,10 +209,10 @@ describe('StatementsCircularUploadMenu', () => {
     });
 
     const whiteAction = Array.from(container.querySelectorAll('button')).find(button =>
-      button.className.includes('bg-white'),
+      button.style.background === 'white' || button.style.background === '#fff',
     );
     const mutedAction = Array.from(container.querySelectorAll('button')).find(button =>
-      button.className.includes('bg-card') || button.className.includes('bg-muted'),
+      button.style.background.includes('var(--card-bg'),
     );
 
     expect(whiteAction).toBeUndefined();

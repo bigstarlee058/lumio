@@ -110,6 +110,7 @@ export default function GoogleSheetsImportPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState('');
 
+  const [sourceUrl, setSourceUrl] = useState('');
   const [googleSheetId, setGoogleSheetId] = useState('');
   const [worksheetName, setWorksheetName] = useState('');
   const [worksheetOptions, setWorksheetOptions] = useState<WorksheetOption[]>([]);
@@ -137,8 +138,9 @@ export default function GoogleSheetsImportPage() {
     () => connections.find(c => c.id === googleSheetId) || null,
     [connections, googleSheetId],
   );
+  const hasSourceUrl = Boolean(sourceUrl.trim());
 
-  const canPreview = Boolean(googleSheetId && selectedConnection?.oauthConnected !== false);
+  const canPreview = Boolean(hasSourceUrl || (googleSheetId && selectedConnection?.oauthConnected !== false));
   const canCommit = Boolean(preview && tableName.trim() && columns.some(c => c.include));
 
   const loadConnections = async () => {
@@ -149,7 +151,6 @@ export default function GoogleSheetsImportPage() {
       setConnections(Array.isArray(items) ? items : []);
     } catch (error) {
       console.error('Failed to load google sheets connections:', error);
-      toast.error(t.toasts.loadConnectionsFailed.value);
     } finally {
       setLoadingConnections(false);
     }
@@ -205,7 +206,7 @@ export default function GoogleSheetsImportPage() {
   }, [selectedConnection]);
 
   const handlePreview = async () => {
-    if (!googleSheetId || selectedConnection?.oauthConnected === false) {
+    if (!hasSourceUrl && (!googleSheetId || selectedConnection?.oauthConnected === false)) {
       if (selectedConnection?.oauthConnected === false) {
         toast.error(t.toasts.oauthRequired.value);
       }
@@ -214,7 +215,8 @@ export default function GoogleSheetsImportPage() {
     setLoadingPreview(true);
     try {
       const response = await apiClient.post('/custom-tables/import/google-sheets/preview', {
-        googleSheetId,
+        sourceUrl: hasSourceUrl ? sourceUrl.trim() : undefined,
+        googleSheetId: hasSourceUrl ? undefined : googleSheetId,
         worksheetName: worksheetName.trim() || undefined,
         range: range.trim() || undefined,
         headerRowIndex,
@@ -224,7 +226,7 @@ export default function GoogleSheetsImportPage() {
       setPreview(data);
       setColumns(data.columns || []);
       setHeaderRowIndex(data.headerRowIndex ?? headerRowIndex);
-      const fallbackName = selectedConnection?.sheetName || t.defaults.tableName.value;
+      const fallbackName = hasSourceUrl ? t.defaults.tableName.value : selectedConnection?.sheetName || t.defaults.tableName.value;
       setTableName(prev => prev.trim() ? prev : fallbackName);
       toast.success(t.toasts.previewReady.value);
     } catch (error: unknown) {
@@ -240,7 +242,8 @@ export default function GoogleSheetsImportPage() {
     setCommitting(true);
     try {
       const response = await apiClient.post('/custom-tables/import/google-sheets/commit', {
-        googleSheetId,
+        sourceUrl: hasSourceUrl ? sourceUrl.trim() : undefined,
+        googleSheetId: hasSourceUrl ? undefined : googleSheetId,
         worksheetName: worksheetName.trim() || undefined,
         range: range.trim() || undefined,
         name: tableName.trim(),
@@ -378,56 +381,78 @@ export default function GoogleSheetsImportPage() {
           >
             <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900, marginBottom: 12 }}>{t.source.title}</Typography>
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.source.connectionLabel}</span>
-              <select
-                value={googleSheetId}
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>Google Sheets link</span>
+              <input
+                value={sourceUrl}
                 onChange={e => {
-                  setGoogleSheetId(e.target.value);
+                  setSourceUrl(e.target.value);
                   setPreview(null);
                   setColumns([]);
-                  setWorksheetOptions([]);
-                  setWorksheetName('');
                 }}
-                data-tour-id="gs-import-connection"
+                data-tour-id="gs-import-source-url"
                 style={inputStyle}
-              >
-                <option value="">{t.source.selectPlaceholder}</option>
-                {connections.map(c => (
-                  <option key={c.id} value={c.id} disabled={c.oauthConnected === false}>
-                    {c.sheetName}
-                    {c.oauthConnected === false ? t.source.oauthNeededSuffix.value : ''}
-                  </option>
-                ))}
-              </select>
+                placeholder="https://docs.google.com/spreadsheets/d/..."
+              />
+              <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>
+                Paste a shared or published Google Sheets link. Lumio imports a snapshot through the public export URL, without OAuth or Google SDK.
+              </span>
             </label>
 
-            {!connections.length && !loadingConnections ? (
-              <Box sx={{ mb: 1.5, border: `1px dashed ${c.ink150}`, bgcolor: c.ink50, p: 1.5, fontSize: 12, color: c.ink700 }}>
-                {t.source.emptyHint}{' '}
-                <Link href="/integrations/google-sheets" style={{ color: 'var(--mui-palette-primary-main)', textDecoration: 'none' }}>
-                  {t.source.emptyAction}
-                </Link>
-              </Box>
+            {connections.length || loadingConnections ? (
+              <label style={{ display: 'block', marginBottom: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>Legacy saved connection</span>
+                <select
+                  value={googleSheetId}
+                  onChange={e => {
+                    setGoogleSheetId(e.target.value);
+                    setSourceUrl('');
+                    setPreview(null);
+                    setColumns([]);
+                    setWorksheetOptions([]);
+                    setWorksheetName('');
+                  }}
+                  data-tour-id="gs-import-connection"
+                  style={inputStyle}
+                >
+                  <option value="">Use link above instead</option>
+                  {connections.map(c => (
+                    <option key={c.id} value={c.id} disabled={c.oauthConnected === false}>
+                      {c.sheetName}
+                      {c.oauthConnected === false ? t.source.oauthNeededSuffix.value : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
             ) : null}
 
             <label style={{ display: 'block', marginBottom: 12 }}>
               <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.source.worksheetLabel}</span>
-              <select
-                value={worksheetName}
-                onChange={e => setWorksheetName(e.target.value)}
-                data-tour-id="gs-import-worksheet"
-                style={{ ...inputStyle, opacity: (!selectedConnection || loadingWorksheets) ? 0.6 : 1 }}
-                disabled={!selectedConnection || loadingWorksheets}
-              >
-                <option value="">
-                  {loadingWorksheets ? t.source.worksheetLoading : t.source.worksheetPlaceholder}
-                </option>
-                {worksheetOptions.map(item => (
-                  <option key={item.title} value={item.title}>
-                    {item.title}
+              {hasSourceUrl ? (
+                <input
+                  value={worksheetName}
+                  onChange={e => setWorksheetName(e.target.value)}
+                  data-tour-id="gs-import-worksheet"
+                  style={inputStyle}
+                  placeholder="Leave empty to use the first worksheet"
+                />
+              ) : (
+                <select
+                  value={worksheetName}
+                  onChange={e => setWorksheetName(e.target.value)}
+                  data-tour-id="gs-import-worksheet"
+                  style={{ ...inputStyle, opacity: (!selectedConnection || loadingWorksheets) ? 0.6 : 1 }}
+                  disabled={!selectedConnection || loadingWorksheets}
+                >
+                  <option value="">
+                    {loadingWorksheets ? t.source.worksheetLoading : t.source.worksheetPlaceholder}
                   </option>
-                ))}
-              </select>
+                  {worksheetOptions.map(item => (
+                    <option key={item.title} value={item.title}>
+                      {item.title}
+                    </option>
+                  ))}
+                </select>
+              )}
               <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>{t.source.worksheetHelp}</span>
             </label>
 

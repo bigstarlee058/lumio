@@ -386,6 +386,35 @@ describe('AuthService', () => {
         expect.any(Object),
       );
     });
+
+    it('uses a 30 day access token by default', async () => {
+      const previousExpiresIn = process.env.JWT_EXPIRES_IN;
+      delete process.env.JWT_EXPIRES_IN;
+
+      try {
+        jest.spyOn(userRepository, 'findOne').mockResolvedValue({
+          ...mockUser,
+          passwordHash: await bcrypt.hash('password123', 10),
+        } as User);
+
+        await service.login({
+          email: 'test@example.com',
+          password: 'password123',
+        });
+
+        expect(jwtService.sign).toHaveBeenNthCalledWith(
+          1,
+          expect.any(Object),
+          expect.objectContaining({ expiresIn: '30d' }),
+        );
+      } finally {
+        if (previousExpiresIn === undefined) {
+          delete process.env.JWT_EXPIRES_IN;
+        } else {
+          process.env.JWT_EXPIRES_IN = previousExpiresIn;
+        }
+      }
+    });
   });
 
   describe('logout', () => {

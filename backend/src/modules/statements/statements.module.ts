@@ -30,6 +30,6 @@ import { StatementsService } from './statements.service';
   ],
   controllers: [StatementsController],
   providers: [StatementsService, ReceiptStatementService, FileStorageService, IdempotencyService],
-  exports: [StatementsService, ReceiptStatementService],
+  exports: [StatementsService, ReceiptStatementService, FileStorageService],
 })
 export class StatementsModule {}

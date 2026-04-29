@@ -13,6 +13,7 @@ export interface AnalyticsTracker {
 
 import type { Config as DriverConfig } from 'driver.js';
 import type { TourProgress, TourState } from './types';
+import { stabilizeTourPopover } from './TourPopoverPositioning';
 
 export function getDefaultTourState(): TourState {
   return { completedTours: [], lastInteraction: new Date().toISOString(), version: TOUR_STATE_VERSION };
@@ -79,6 +80,12 @@ export function buildDriverConfig(
     nextBtnText: merged.nextBtnText,
     prevBtnText: merged.prevBtnText,
     doneBtnText: merged.doneBtnText,
+    onPopoverRender: (popover, opts) => {
+      stabilizeTourPopover(popover, {
+        side: opts.state.activeStep?.popover?.side,
+        align: opts.state.activeStep?.popover?.align,
+      });
+    },
     onHighlighted,
     onDestroyed,
   };

@@ -1,6 +1,7 @@
 'use client';
 
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
@@ -128,8 +129,10 @@ function ColumnFieldEditor({ col, value, options, inputSx, setDraft }: {
 
   if (col.type === 'date') {
     return (
-      <input type="date" value={value ? String(value) : ''}
-        onChange={e => updateField(e.target.value.trim() || null)} style={inputSx} />
+      <CustomDatePicker
+        value={value ? String(value) : ''}
+        onChange={nextValue => updateField(nextValue.trim() || null)}
+      />
     );
   }
 

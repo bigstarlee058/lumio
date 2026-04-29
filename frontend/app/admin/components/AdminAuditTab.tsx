@@ -1,5 +1,6 @@
 'use client';
 
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import type { AuditEvent, AuditEventFilter } from '@/lib/api/audit';
 import { Box, Paper, TextField, Typography } from '@mui/material';
 import React from 'react';
@@ -91,14 +92,16 @@ function AuditFilters({ filters, labels, onFilterChange }: FilterProps): React.J
           onChange={(e) => onFilterChange({ key: 'actorLabel', value: e.target.value })} />
         <TextField label={labels.filterEntityId} size="small" value={filters.entityId || ''}
           onChange={(e) => onFilterChange({ key: 'entityId', value: e.target.value })} />
-        <TextField label={labels.filterDateFrom} type="date" size="small"
+        <CustomDatePicker
+          label={labels.filterDateFrom}
           value={filters.dateFrom || ''}
-          onChange={(e) => onFilterChange({ key: 'dateFrom', value: e.target.value })}
-          InputLabelProps={{ shrink: true }} />
-        <TextField label={labels.filterDateTo} type="date" size="small"
+          onChange={value => onFilterChange({ key: 'dateFrom', value })}
+        />
+        <CustomDatePicker
+          label={labels.filterDateTo}
           value={filters.dateTo || ''}
-          onChange={(e) => onFilterChange({ key: 'dateTo', value: e.target.value })}
-          InputLabelProps={{ shrink: true }} />
+          onChange={value => onFilterChange({ key: 'dateTo', value })}
+        />
       </Box>
     </Paper>
   );

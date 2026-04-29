@@ -16,23 +16,8 @@ JWT_SECRET=
 JWT_REFRESH_SECRET=
 DATABASE_URL=postgresql://user:password@host:5432/finflow
 
-# Optional integrations
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_REDIRECT_URI=
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-GEMINI_API_KEY=
-DROPBOX_CLIENT_ID=
-DROPBOX_CLIENT_SECRET=
-DROPBOX_REDIRECT_URI=
-NEXT_PUBLIC_DROPBOX_APP_KEY=
-TELEGRAM_BOT_TOKEN=
-SHEETS_WEBHOOK_TOKEN=
-SHEETS_WATCH_COLUMNS=
-SHEETS_ALLOWED_SPREADSHEET_IDS=
-SHEETS_ALLOWED_SHEETS=
-RESEND_API_KEY=
-RESEND_FROM=
+# User-managed integrations are configured in the UI.
+# Env integration values are fallback-only.
 ```
 
 ## Backend environment (backend/.env)
@@ -51,8 +36,9 @@ JWT_SECRET=
 JWT_REFRESH_SECRET=
 ```
 
-Integration variables include Gmail, Google Drive, Dropbox, Sheets, Telegram, and OpenRouter. See
-`backend/.env.all-options` for the full list.
+Configure OpenAI-compatible AI backends, SMTP, S3-compatible storage, WebDAV, IMAP, Telegram,
+and the public App URL from the Integrations/Settings UI. `backend/.env.all-options` remains useful
+for infrastructure settings and temporary fallback defaults.
 
 ## Frontend environment
 
@@ -62,7 +48,8 @@ by the compose file. For local dev, the default proxy route handles API calls.
 ## Secrets management
 
 - Never commit `.env` files or API keys.
-- Use Docker secrets or a secret manager for production.
-- Rotate OAuth client secrets and JWT keys regularly.
+- Use Docker secrets or a secret manager for infrastructure secrets.
+- Store integration credentials through the UI so they are encrypted per workspace.
+- Rotate protocol credentials and JWT keys regularly.
 
 Next: [Demo Mode](demo-mode)

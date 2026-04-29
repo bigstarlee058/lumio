@@ -1,14 +1,3 @@
-const mockGenerateContent = jest.fn();
-const mockGetGenerativeModel = jest.fn(() => ({
-  generateContent: mockGenerateContent,
-}));
-
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn(() => ({
-    getGenerativeModel: mockGetGenerativeModel,
-  })),
-}));
-
 const mockIsAiEnabled = jest.fn().mockReturnValue(true);
 const mockIsAiCircuitOpen = jest.fn().mockReturnValue(false);
 const mockRecordAiSuccess = jest.fn();
@@ -38,10 +27,21 @@ class TestAiHelper extends BaseAiHelper {
 }
 
 describe('BaseAiHelper', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env.AI_BASE_URL = 'http://localhost:11434';
+    process.env.AI_MODEL = 'llama3.1';
+    global.fetch = jest.fn();
     mockIsAiEnabled.mockReturnValue(true);
     mockIsAiCircuitOpen.mockReturnValue(false);
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    process.env.AI_BASE_URL = undefined;
+    process.env.AI_MODEL = undefined;
   });
 
   it('reports availability when model exists and AI is enabled', () => {
@@ -55,15 +55,14 @@ describe('BaseAiHelper', () => {
     const helper = new TestAiHelper('test-key');
 
     await expect(helper.call('hello')).resolves.toBeNull();
-    expect(mockGenerateContent).not.toHaveBeenCalled();
+    expect(global.fetch).not.toHaveBeenCalled();
   });
 
   it('records success and returns text content for successful request', async () => {
-    mockGenerateContent.mockResolvedValueOnce({
-      response: {
-        text: () => '{"ok":true}',
-      },
-    });
+    jest.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: '{"ok":true}' } }] }),
+    } as Response);
 
     const helper = new TestAiHelper('test-key');
 
@@ -72,11 +71,10 @@ describe('BaseAiHelper', () => {
   });
 
   it('records failure when response text is empty', async () => {
-    mockGenerateContent.mockResolvedValueOnce({
-      response: {
-        text: () => '',
-      },
-    });
+    jest.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: '' } }] }),
+    } as Response);
 
     const helper = new TestAiHelper('test-key');
 

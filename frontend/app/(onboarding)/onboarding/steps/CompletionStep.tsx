@@ -2,8 +2,7 @@
 
 import { useIntlayer } from '@/app/i18n';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2 } from '@/app/components/icons';
-import Image from 'next/image';
+import { CheckCircle2, type LucideIcon } from '@/app/components/icons';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
 import { tokens } from '@/lib/theme-tokens';
@@ -11,7 +10,7 @@ import { tokens } from '@/lib/theme-tokens';
 interface ConnectedIntegration {
   key: string;
   title: string;
-  iconSrc: string;
+  icon: LucideIcon;
 }
 
 interface CompletionStepProps {
@@ -147,31 +146,28 @@ export function CompletionStep({
           >
             {connectedIntegrations.length > 0 ? (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
-                {connectedIntegrations.map(integration => (
-                  <Box
-                    key={integration.key}
-                    sx={{
-                      display: 'inline-flex',
-                      height: 36,
-                      width: 36,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: tokens.radius.full,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      bgcolor: 'action.hover',
-                    }}
-                    title={integration.title}
-                  >
-                    <Image
-                      src={integration.iconSrc}
-                      alt={integration.title}
-                      width={18}
-                      height={18}
-                      style={{ borderRadius: tokens.radius.md }}
-                    />
-                  </Box>
-                ))}
+                {connectedIntegrations.map(integration => {
+                  const Icon = integration.icon;
+                  return (
+                    <Box
+                      key={integration.key}
+                      sx={{
+                        display: 'inline-flex',
+                        height: 36,
+                        width: 36,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: tokens.radius.full,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        bgcolor: 'action.hover',
+                      }}
+                      title={integration.title}
+                    >
+                      <Icon size={18} aria-hidden />
+                    </Box>
+                  );
+                })}
               </Box>
             ) : (
               <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>

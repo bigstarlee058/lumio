@@ -4,7 +4,6 @@ import { Spinner } from '@/app/components/ui/spinner';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { AlertCircle, FileText } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 import { apiBaseUrl } from '@/app/lib/api';
 
 interface PDFThumbnailProps {
@@ -13,6 +12,7 @@ interface PDFThumbnailProps {
   source?: 'statement' | 'gmail' | 'receipt';
   size?: number;
   width?: number;
+  thumbnailWidth?: number;
   height?: number;
   className?: string;
   errorMessage?: string;
@@ -148,7 +148,7 @@ function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
 
   if (errorMessage) {
     return (
-      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid var(--border-color)', borderRadius: tokens.radius.md, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
+      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid var(--border-color)', borderRadius: 0, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
         <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: 'var(--muted-foreground)' }} />
         <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>{errorMessage}</p>
       </div>
@@ -163,13 +163,13 @@ function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
 }
 
 export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
-  const { fileId, fileName, source = 'statement', size = 40, width, height, className = '', errorMessage, preservePageAspect = false } = props;
+  const { fileId, fileName, source = 'statement', size = 40, width, thumbnailWidth, height, className = '', errorMessage, preservePageAspect = false } = props;
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState<string | null>(null);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
 
-  const requestedWidth = clampWidth(width);
+  const requestedWidth = clampWidth(thumbnailWidth ?? width);
   const frameWidth = width ?? size;
   const maxFrameHeight = height ?? size;
   const resolvedFrameHeight =
@@ -192,7 +192,7 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
   }
 
   return (
-    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: tokens.radius.md, overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
+    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: 0, overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
       {loading && (
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Spinner size={16} sx={{ color: 'var(--text-secondary)' }} />
@@ -203,7 +203,7 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
           src={thumbnailDataUrl}
           alt={fileName || 'PDF thumbnail'}
           className={className}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'opacity 0.2s' }}
+          style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'auto', transition: 'opacity 0.2s' }}
         />
       )}
     </div>

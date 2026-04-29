@@ -222,6 +222,17 @@ const APPROVED_STATUSES = new Set(['completed', 'parsed', 'validated']);
 const NUMERIC_COLUMN_IDS = new Set<StatementColumnId>(['amount', 'exchangeRate']);
 const BOOLEAN_COLUMN_IDS = new Set<StatementColumnId>(['approved', 'billable', 'exported']);
 
+const normalizeExchangeRateCurrency = (...currencies: Array<string | null | undefined>): string | null => {
+  const normalized = firstNonEmpty(...currencies)?.toUpperCase();
+  if (!normalized) {
+    return null;
+  }
+  if (normalized === 'NIS' || normalized === '\u20aa') {
+    return 'ILS';
+  }
+  return normalized;
+};
+
 const columnCellStyle = (columnId: StatementColumnId): React.CSSProperties => {
   const common: React.CSSProperties = {
     minWidth: 0,
@@ -318,6 +329,7 @@ export function StatementsListItem({
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const PREVIEW_WIDTH = 430;
   const PREVIEW_HEIGHT = 620;
+  const PREVIEW_IMAGE_WIDTH = (PREVIEW_WIDTH - 16) * 2;
   const thumbnailButtonRef = useRef<HTMLButtonElement | null>(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewPosition, setPreviewPosition] = useState<{ top: number; left: number } | null>(
@@ -385,7 +397,6 @@ export function StatementsListItem({
   const resolvedDuplicateGroupLabel = duplicateGroupLabel || 'Group';
   const resolvedDuplicateGroupTone: DuplicateGroupTone = duplicateGroupTone || 'stone';
   const duplicateStyle = DUPLICATE_GROUP_STYLES[resolvedDuplicateGroupTone];
-  const duplicateGroupShort = resolvedDuplicateGroupLabel.replace(/^Group\s+/, '');
   const duplicateRoleLabel = resolvedDuplicateRole === 'primary' ? 'PRIMARY' : 'SUSPECTED';
   const duplicateBadgeLabel = isPossibleDuplicate
     ? `${resolvedDuplicateGroupLabel} · ${duplicateRoleLabel} #${duplicatePosition || 1}${duplicateGroupSize ? `/${duplicateGroupSize}` : ''}`
@@ -423,18 +434,21 @@ export function StatementsListItem({
     statement.transactionSummary?.description,
     statement.subject,
   );
-  const statementCurrency = firstNonEmpty(
+  const statementCurrency = normalizeExchangeRateCurrency(
     statement.currency,
     statement.parsedData?.currency,
     statement.parsingDetails?.metadataExtracted?.currency,
     statement.parsingDetails?.metadataExtracted?.headerDisplay?.currencyDisplay,
-  )?.toUpperCase();
-  const targetCurrency = firstNonEmpty(workspaceCurrency)?.toUpperCase();
+  );
+  const targetCurrency = normalizeExchangeRateCurrency(workspaceCurrency) ?? 'KZT';
+  const usdExchangeRateLabel = targetCurrency
+    ? currentExchangeRateLabels?.[`USD:${targetCurrency}`]
+    : null;
   const currentExchangeRateLabel =
     statementCurrency && targetCurrency
       ? currentExchangeRateLabels?.[`${statementCurrency}:${targetCurrency}`]
       : null;
-  const exchangeRateLabel = currentExchangeRateLabel ?? (statement.transactionSummary?.exchangeRateMixed
+  const exchangeRateLabel = usdExchangeRateLabel ?? currentExchangeRateLabel ?? (statement.transactionSummary?.exchangeRateMixed
     ? 'Mixed'
     : firstNonEmpty(statement.transactionSummary?.exchangeRate));
   const exportedToLabel = firstNonEmpty(
@@ -501,6 +515,7 @@ export function StatementsListItem({
                 fileName={statement.fileName}
                 source={previewSource}
                 width={PREVIEW_WIDTH - 16}
+                thumbnailWidth={PREVIEW_IMAGE_WIDTH}
                 height={PREVIEW_HEIGHT}
                 preservePageAspect
                 errorMessage="Unable to load document"
@@ -668,7 +683,8 @@ export function StatementsListItem({
     <div
       data-tour-id={dataTourId}
       className={`lumio-stmt-list-item${selected ? ' lumio-stmt-list-item--selected' : ''}${hasError && !isPossibleDuplicate ? ' lumio-stmt-list-item--error' : ''}`}
-      style={rowStyle}
+      style={{ ...rowStyle, cursor: viewDisabled ? 'default' : 'pointer' }}
+      onClick={handleView}
     >
       {isPossibleDuplicate ? (
         <span
@@ -678,103 +694,12 @@ export function StatementsListItem({
         />
       ) : null}
 
-      {/* Mobile Layout */}
-      <div data-testid={`statement-item-mobile-${statement.id}`} className="lumio-stmt-list-item__mobile">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ flexShrink: 0 }}>
-            {selectionDisabled ? (
-              <span style={{ display: 'inline-flex', height: 16, width: 16 }} />
-            ) : (
-              <Checkbox
-                checked={selected}
-                onCheckedChange={onToggleSelect}
-                style={{ height: 16, width: 16 }}
-              />
-            )}
-          </div>
-
-          <button
-            type="button"
-            data-testid={`statement-item-mobile-card-${statement.id}`}
-            onClick={handleView}
-            className="lumio-stmt-list-item__mobile-btn"
-            aria-label={actionLabel}
-            aria-disabled={viewDisabled}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 40, flexShrink: 0, color: c.danger }}>
-                <DocumentTypeIcon
-                  fileType={isReceipt ? 'pdf' : statement.fileType}
-                  fileName={statement.fileName}
-                  fileId={statement.id}
-                  source={previewSource}
-                  size={34}
-                />
-              </div>
-
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: c.ink900, display: 'flex', alignItems: 'center', gap: 6 }}>
-                    {isProcessing ? 'Processing...' : merchantLabel}
-                    {isPossibleDuplicate && (
-                      <MuiTooltip title={duplicateTooltipText} placement="top" enterDelay={150}>
-                        <span
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 4,
-                            borderRadius: tokens.radius.xs,
-                            padding: '2px 6px',
-                            fontSize: 10,
-                            letterSpacing: '0.05em',
-                            backgroundColor: duplicateStyle.badgeBg,
-                            color: duplicateStyle.badgeColor,
-                            ...duplicateRoleBadgeStyle,
-                          }}
-                        >
-                          {resolvedDuplicateRole === 'primary' ? (
-                            <CheckCircle2 size={12} />
-                          ) : (
-                            <CircleHelp size={12} />
-                          )}
-                          {duplicateGroupShort}
-                          {resolvedDuplicateRole === 'primary' ? 'P' : 'S'}
-                          {duplicatePosition ? `#${duplicatePosition}` : ''}
-                        </span>
-                      </MuiTooltip>
-                    )}
-                  </p>
-                  <p
-                    style={{
-                      flexShrink: 0,
-                      textAlign: 'right',
-                      fontSize: 15,
-                      fontWeight: 900,
-                      letterSpacing: '-0.025em',
-                      fontVariantNumeric: 'tabular-nums',
-                      color: isNegativeAmount || hasError || isMissingAmount ? c.danger : c.ink900,
-                    }}
-                  >
-                    {showAmountLoader ? <Spinner style={{ width: 16, height: 16, color: c.ink400 }} /> : amountLabel}
-                  </p>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 }}>
-                  <p style={{ fontSize: 12, color: c.ink500 }}>{dateLabel}</p>
-                  <StatusBadge
-                    status={statement.status}
-                    isProcessing={isProcessing}
-                    errorMessage={statement.errorMessage}
-                  />
-                </div>
-              </div>
-            </div>
-          </button>
-        </div>
-      </div>
-
       <button
         type="button"
-        onClick={handleView}
+        onClick={event => {
+          event.stopPropagation();
+          handleView();
+        }}
         className="lumio-stmt-list-item__desktop-overlay"
         aria-label={viewLabel}
         aria-disabled={viewDisabled}

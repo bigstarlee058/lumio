@@ -1,6 +1,7 @@
 'use client';
 
 import type React from 'react';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -104,55 +105,17 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
           mb: 2.5,
         }}
       >
-        {/* Date from */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-          <label
-            htmlFor="date-from"
-            style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
-          >
-            {text('dateFrom', 'Date from')}
-          </label>
-          <input
-            id="date-from"
-            type="date"
-            value={dateFrom}
-            onChange={e => setDateFrom(e.target.value)}
-            style={{
-              height: 36,
-              border: '1px solid var(--border)',
-              background: 'var(--card)',
-              padding: '0 12px',
-              fontSize: 14,
-              color: 'var(--foreground)',
-              outline: 'none',
-            }}
-          />
-        </Box>
+        <CustomDatePicker
+          label={text('dateFrom', 'Date from')}
+          value={dateFrom}
+          onChange={setDateFrom}
+        />
 
-        {/* Date to */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-          <label
-            htmlFor="date-to"
-            style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
-          >
-            {text('dateTo', 'Date to')}
-          </label>
-          <input
-            id="date-to"
-            type="date"
-            value={dateTo}
-            onChange={e => setDateTo(e.target.value)}
-            style={{
-              height: 36,
-              border: '1px solid var(--border)',
-              background: 'var(--card)',
-              padding: '0 12px',
-              fontSize: 14,
-              color: 'var(--foreground)',
-              outline: 'none',
-            }}
-          />
-        </Box>
+        <CustomDatePicker
+          label={text('dateTo', 'Date to')}
+          value={dateTo}
+          onChange={setDateTo}
+        />
 
         {/* Format */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>

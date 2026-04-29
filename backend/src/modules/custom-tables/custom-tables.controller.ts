@@ -95,7 +95,7 @@ export class CustomTablesController {
   ) {
     const job = await this.importJobsService.createGoogleSheetsJob(
       workspaceId,
-      dto as GoogleSheetsCommitJobPayload,
+      { ...dto, importUserId: user.id } as GoogleSheetsCommitJobPayload,
     );
     return { jobId: job.id };
   }

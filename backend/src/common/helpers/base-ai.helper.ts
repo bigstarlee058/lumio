@@ -1,4 +1,3 @@
-import { type GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { TimeoutError, retry, withTimeout } from '../utils/async.util';
 import {
   isAiCircuitOpen,
@@ -32,27 +31,70 @@ type AiContent = {
   parts: Array<AiInlineDataPart | AiTextPart>;
 };
 
-export abstract class BaseAiHelper {
-  protected geminiModel: GenerativeModel | null = null;
+type OpenAiMessageContent =
+  | string
+  | Array<
+      | { type: 'text'; text: string }
+      | { type: 'image_url'; image_url: { url: string } }
+    >;
 
-  constructor(apiKey: string | undefined = process.env.GEMINI_API_KEY) {
-    if (apiKey && isAiEnabled()) {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this.geminiModel = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash',
-      });
+type OpenAiChatMessage = {
+  role: 'user' | 'assistant';
+  content: OpenAiMessageContent;
+};
+
+type OpenAiChatResponse = {
+  choices?: Array<{
+    message?: {
+      content?: string | null;
+    };
+  }>;
+};
+
+export type BaseAiClientConfig = {
+  baseUrl?: string | null;
+  apiKey?: string | null;
+  model?: string | null;
+};
+
+export abstract class BaseAiHelper {
+  protected aiBaseUrl: string | null = null;
+  protected aiApiKey: string | null = null;
+  protected aiModel: string | null = null;
+
+  constructor(apiKey: string | undefined = process.env.AI_API_KEY) {
+    const baseUrl = process.env.AI_BASE_URL;
+    const model = process.env.AI_MODEL;
+
+    if (baseUrl && model && isAiEnabled()) {
+      this.aiBaseUrl = baseUrl.replace(/\/+$/, '');
+      this.aiApiKey = apiKey || null;
+      this.aiModel = model;
     }
   }
 
+  configureAiClient(config: BaseAiClientConfig): void {
+    if (config.baseUrl && config.model && isAiEnabled()) {
+      this.aiBaseUrl = config.baseUrl.replace(/\/+$/, '');
+      this.aiApiKey = config.apiKey || null;
+      this.aiModel = config.model;
+      return;
+    }
+
+    this.aiBaseUrl = null;
+    this.aiApiKey = null;
+    this.aiModel = null;
+  }
+
   isAvailable(): boolean {
-    return Boolean(this.geminiModel) && isAiEnabled() && !isAiCircuitOpen();
+    return Boolean(this.aiBaseUrl && this.aiModel) && isAiEnabled() && !isAiCircuitOpen();
   }
 
   protected async generateJsonContent(
     contents: AiContent[],
     options: GenerateJsonOptions,
   ): Promise<string | null> {
-    if (!this.geminiModel || !this.isAvailable()) {
+    if (!this.aiBaseUrl || !this.aiModel || !this.isAvailable()) {
       return null;
     }
 
@@ -61,12 +103,18 @@ export abstract class BaseAiHelper {
         () =>
           withTimeout(
             withAiConcurrency(() =>
-              this.geminiModel?.generateContent({
-                contents,
-                generationConfig: {
-                  temperature: 0,
-                  responseMimeType: 'application/json',
+              fetch(`${this.aiBaseUrl}/v1/chat/completions`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  ...(this.aiApiKey ? { Authorization: `Bearer ${this.aiApiKey}` } : {}),
                 },
+                body: JSON.stringify({
+                  model: this.aiModel,
+                  messages: this.toOpenAiMessages(contents),
+                  temperature: 0,
+                  response_format: { type: 'json_object' },
+                }),
               }),
             ),
             options.timeoutMs,
@@ -80,7 +128,13 @@ export abstract class BaseAiHelper {
         },
       );
 
-      const content = completion?.response?.text();
+      if (!completion.ok) {
+        recordAiFailure();
+        return null;
+      }
+
+      const response = (await completion.json()) as OpenAiChatResponse;
+      const content = response.choices?.[0]?.message?.content;
       if (!content) {
         recordAiFailure();
         return null;
@@ -92,5 +146,33 @@ export abstract class BaseAiHelper {
       recordAiFailure();
       return null;
     }
+  }
+
+  private toOpenAiMessages(contents: AiContent[]): OpenAiChatMessage[] {
+    return contents.map(content => ({
+      role: content.role === 'model' ? 'assistant' : 'user',
+      content: this.toOpenAiContent(content.parts),
+    }));
+  }
+
+  private toOpenAiContent(parts: Array<AiInlineDataPart | AiTextPart>): OpenAiMessageContent {
+    const openAiParts = parts.map(part => {
+      if ('text' in part) {
+        return { type: 'text' as const, text: part.text };
+      }
+
+      return {
+        type: 'image_url' as const,
+        image_url: {
+          url: `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`,
+        },
+      };
+    });
+
+    if (openAiParts.every(part => part.type === 'text')) {
+      return openAiParts.map(part => ('text' in part ? part.text : '')).join('\n');
+    }
+
+    return openAiParts;
   }
 }

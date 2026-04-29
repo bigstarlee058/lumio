@@ -115,7 +115,7 @@ export class DashboardService {
       where: { id: workspaceId },
       select: ['currency'],
     });
-    const targetCurrency = workspace?.currency || 'KZT';
+    const targetCurrency = this.normalizeCurrency(workspace?.currency);
 
     // Group income/expense by currency so we can convert each group
     const txRows = await this.transactionRepo
@@ -148,11 +148,9 @@ export class DashboardService {
     let expense = 0;
     let unapprovedCash = 0;
     for (const row of txRows) {
-      const cur = (row.currency || 'KZT').toUpperCase();
-      const rate = cur === targetCurrency ? 1 : await this.exchangeRatesService.getRate(cur, targetCurrency);
-      income += (Number.parseFloat(row.income) || 0) * rate;
-      expense += (Number.parseFloat(row.expense) || 0) * rate;
-      unapprovedCash += (Number.parseFloat(row.unapprovedCash) || 0) * rate;
+      income += await this.convertDashboardAmount(row.income, row.currency, targetCurrency);
+      expense += await this.convertDashboardAmount(row.expense, row.currency, targetCurrency);
+      unapprovedCash += await this.convertDashboardAmount(row.unapprovedCash, row.currency, targetCurrency);
     }
 
     // All-time balance grouped by currency
@@ -171,14 +169,13 @@ export class DashboardService {
 
     let totalBalance = 0;
     for (const row of balanceRows) {
-      const cur = (row.currency || 'KZT').toUpperCase();
-      const rate = cur === targetCurrency ? 1 : await this.exchangeRatesService.getRate(cur, targetCurrency);
-      totalBalance += (Number.parseFloat(row.balance) || 0) * rate;
+      totalBalance += await this.convertDashboardAmount(row.balance, row.currency, targetCurrency);
     }
 
-    const payableResult = await this.payableRepo
+    const payableRows = await this.payableRepo
       .createQueryBuilder('p')
       .select([
+        'p.currency AS currency',
         'COALESCE(SUM(CASE WHEN p.status IN (:...payStatuses) THEN p.amount ELSE 0 END), 0) AS "totalPayable"',
         'COALESCE(SUM(CASE WHEN p.status = :overdue THEN p.amount ELSE 0 END), 0) AS "totalOverdue"',
       ])
@@ -186,18 +183,56 @@ export class DashboardService {
       .andWhere('p.deletedAt IS NULL')
       .setParameter('payStatuses', [PayableStatus.TO_PAY, PayableStatus.SCHEDULED])
       .setParameter('overdue', PayableStatus.OVERDUE)
-      .getRawOne<{ totalPayable: string; totalOverdue: string }>();
+      .groupBy('p.currency')
+      .getRawMany<{ currency: string; totalPayable: string; totalOverdue: string }>();
+
+    let totalPayable = 0;
+    let totalOverdue = 0;
+    for (const row of payableRows) {
+      totalPayable += await this.convertDashboardAmount(row.totalPayable, row.currency, targetCurrency);
+      totalOverdue += await this.convertDashboardAmount(row.totalOverdue, row.currency, targetCurrency);
+    }
 
     return {
       totalBalance,
       income30d: income,
       expense30d: expense,
       netFlow30d: income - expense,
-      totalPayable: Number.parseFloat(payableResult?.totalPayable ?? '') || 0,
-      totalOverdue: Number.parseFloat(payableResult?.totalOverdue ?? '') || 0,
+      totalPayable,
+      totalOverdue,
       unapprovedCash,
       currency: targetCurrency,
     };
+  }
+
+  private normalizeCurrency(currency: string | null | undefined): string {
+    const normalized = String(currency || '').trim().toUpperCase();
+    return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
+  }
+
+  private async convertDashboardAmount(
+    amount: string | number | null | undefined,
+    sourceCurrency: string | null | undefined,
+    targetCurrency: string,
+  ): Promise<number> {
+    const value = typeof amount === 'number' ? amount : Number.parseFloat(amount ?? '');
+    if (!Number.isFinite(value) || value === 0) {
+      return 0;
+    }
+    const source = this.normalizeCurrency(sourceCurrency);
+    if (source === targetCurrency) {
+      return value;
+    }
+    const rate = await this.exchangeRatesService.getRate(source, targetCurrency);
+    return value * rate;
+  }
+
+  private async getWorkspaceCurrency(workspaceId: string): Promise<string> {
+    const workspace = await this.workspaceRepo.findOne({
+      where: { id: workspaceId },
+      select: ['currency'],
+    });
+    return this.normalizeCurrency(workspace?.currency);
   }
 
   private async getActions(userId: string, workspaceId: string): Promise<DashboardActionItem[]> {
@@ -298,6 +333,7 @@ export class DashboardService {
     days: number,
   ): Promise<DashboardCashFlowPoint[]> {
     const groupFormat = this.getTransactionGroupFormat(days);
+    const targetCurrency = await this.getWorkspaceCurrency(workspaceId);
 
     const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
 
@@ -305,6 +341,7 @@ export class DashboardService {
 
     const result = await query
       .select(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'date')
+      .addSelect('t.currency', 'currency')
       .addSelect(
         'COALESCE(SUM(CASE WHEN t.transactionType = :income THEN t.credit ELSE 0 END), 0)',
         'income',
@@ -314,16 +351,21 @@ export class DashboardService {
         'expense',
       )
       .groupBy(`TO_CHAR(t.transactionDate, ${groupFormat})`)
+      .addGroupBy('t.currency')
       .orderBy(`TO_CHAR(t.transactionDate, ${groupFormat})`, 'ASC')
       .setParameter('income', TransactionType.INCOME)
       .setParameter('expense', TransactionType.EXPENSE)
-      .getRawMany<{ date: string; income: string; expense: string }>();
+      .getRawMany<{ date: string; currency: string; income: string; expense: string }>();
 
-    return result.map(row => ({
-      date: row.date,
-      income: Number.parseFloat(row.income ?? '') || 0,
-      expense: Number.parseFloat(row.expense ?? '') || 0,
-    }));
+    const points = new Map<string, DashboardCashFlowPoint>();
+    for (const row of result) {
+      const point = points.get(row.date) ?? { date: row.date, income: 0, expense: 0 };
+      point.income += await this.convertDashboardAmount(row.income, row.currency, targetCurrency);
+      point.expense += await this.convertDashboardAmount(row.expense, row.currency, targetCurrency);
+      points.set(row.date, point);
+    }
+
+    return Array.from(points.values()).sort((a, b) => a.date.localeCompare(b.date));
   }
 
   private async getTopMerchants(
@@ -331,23 +373,36 @@ export class DashboardService {
     since: Date,
     endDate: Date,
   ): Promise<DashboardTopMerchant[]> {
+    const targetCurrency = await this.getWorkspaceCurrency(workspaceId);
     const query = this.transactionRepo.createQueryBuilder('t').innerJoin('t.statement', 's');
 
     this.applyActiveStatementTransactionFilters(query, workspaceId, since, endDate);
 
     const result = await query
       .select('t.counterpartyName', 'name')
+      .addSelect('t.currency', 'currency')
       .addSelect('COALESCE(SUM(t.debit), 0)', 'amount')
       .addSelect('COUNT(t.id)', 'count')
       .andWhere('t.transactionType = :expense', { expense: TransactionType.EXPENSE })
       .andWhere('t.counterpartyName IS NOT NULL')
       .andWhere("t.counterpartyName != ''")
       .groupBy('t.counterpartyName')
+      .addGroupBy('t.currency')
       .orderBy('amount', 'DESC')
-      .limit(5)
-      .getRawMany<{ name: string; amount: string; count: string }>();
+      .getRawMany<{ name: string; currency: string; amount: string; count: string }>();
 
-    return this.mapNamedAmountCountRows(result);
+    const rows = new Map<string, DashboardTopMerchant>();
+    for (const row of result) {
+      const key = row.name;
+      const existing = rows.get(key) ?? { name: key, amount: 0, count: 0 };
+      existing.amount += await this.convertDashboardAmount(row.amount, row.currency, targetCurrency);
+      existing.count += Number.parseInt(row.count, 10) || 0;
+      rows.set(key, existing);
+    }
+
+    return Array.from(rows.values())
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5);
   }
 
   private async getTopCategories(
@@ -355,6 +410,7 @@ export class DashboardService {
     since: Date,
     endDate: Date,
   ): Promise<DashboardTopCategory[]> {
+    const targetCurrency = await this.getWorkspaceCurrency(workspaceId);
     const query = this.transactionRepo
       .createQueryBuilder('t')
       .innerJoin('t.statement', 's')
@@ -365,21 +421,28 @@ export class DashboardService {
     const result = await query
       .select('c.id', 'id')
       .addSelect("COALESCE(c.name, 'Uncategorized')", 'name')
+      .addSelect('t.currency', 'currency')
       .addSelect('COALESCE(SUM(t.debit), 0)', 'amount')
       .addSelect('COUNT(t.id)', 'count')
       .andWhere('t.transactionType = :expense', { expense: TransactionType.EXPENSE })
       .groupBy('c.id')
       .addGroupBy('c.name')
+      .addGroupBy('t.currency')
       .orderBy('amount', 'DESC')
-      .limit(5)
-      .getRawMany<{ id: string | null; name: string; amount: string; count: string }>();
+      .getRawMany<{ id: string | null; name: string; currency: string; amount: string; count: string }>();
 
-    return result.map(row => ({
-      id: row.id || null,
-      name: row.name,
-      amount: Number.parseFloat(row.amount) || 0,
-      count: Number.parseInt(row.count, 10) || 0,
-    }));
+    const rows = new Map<string, DashboardTopCategory>();
+    for (const row of result) {
+      const key = row.id || row.name;
+      const existing = rows.get(key) ?? { id: row.id || null, name: row.name, amount: 0, count: 0 };
+      existing.amount += await this.convertDashboardAmount(row.amount, row.currency, targetCurrency);
+      existing.count += Number.parseInt(row.count, 10) || 0;
+      rows.set(key, existing);
+    }
+
+    return Array.from(rows.values())
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5);
   }
 
   private async getRecentActivity(workspaceId: string): Promise<DashboardRecentActivity[]> {
@@ -789,11 +852,4 @@ export class DashboardService {
     });
   }
 
-  private mapNamedAmountCountRows<T extends { name: string; amount: string; count: string }>(rows: T[]) {
-    return rows.map(row => ({
-      name: row.name,
-      amount: Number.parseFloat(row.amount) || 0,
-      count: Number.parseInt(row.count, 10) || 0,
-    }));
-  }
 }

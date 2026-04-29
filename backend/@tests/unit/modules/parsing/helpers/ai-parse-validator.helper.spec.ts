@@ -2,16 +2,8 @@ import { BaseAiHelper } from '@/common/helpers/base-ai.helper';
 import { AiParseValidator } from '@/modules/parsing/helpers/ai-parse-validator.helper';
 import type { ParsedStatement } from '@/modules/parsing/interfaces/parsed-statement.interface';
 
-const mockGenerateContent = jest.fn();
+const mockFetch = jest.fn();
 const mockExtractTextFromPdf = jest.fn();
-
-jest.mock('@google/generative-ai', () => ({
-  GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
-    getGenerativeModel: jest.fn().mockReturnValue({
-      generateContent: mockGenerateContent,
-    }),
-  })),
-}));
 
 jest.mock('@/common/utils/pdf-parser.util', () => ({
   extractTextFromPdf: (...args: unknown[]) => mockExtractTextFromPdf(...args),
@@ -34,6 +26,7 @@ jest.mock('@/modules/parsing/helpers/ai-runtime.util', () => ({
 }));
 
 describe('AiParseValidator', () => {
+  const originalFetch = global.fetch;
   const parsedStatement: ParsedStatement = {
     metadata: {
       accountNumber: 'KZ123',
@@ -46,17 +39,25 @@ describe('AiParseValidator', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    process.env.AI_BASE_URL = 'http://localhost:11434';
+    process.env.AI_MODEL = 'llama3.1';
+    global.fetch = mockFetch;
     mockIsAiEnabled.mockReturnValue(true);
     mockIsAiCircuitOpen.mockReturnValue(false);
     mockExtractTextFromPdf.mockResolvedValue('pdf text');
   });
 
+  afterEach(() => {
+    global.fetch = originalFetch;
+    process.env.AI_BASE_URL = undefined;
+    process.env.AI_MODEL = undefined;
+  });
+
   it('returns notes when AI responds with empty content', async () => {
-    mockGenerateContent.mockResolvedValueOnce({
-      response: {
-        text: () => '',
-      },
-    });
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ choices: [{ message: { content: '' } }] }),
+    } as Response);
 
     const validator = new AiParseValidator('fake-api-key');
     const result = await validator.reconcileFromPdf('/tmp/file.pdf', parsedStatement);
@@ -84,6 +85,6 @@ describe('AiParseValidator', () => {
       corrected: parsedStatement,
       notes: ['AI temporarily disabled (circuit breaker)'],
     });
-    expect(mockGenerateContent).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });
