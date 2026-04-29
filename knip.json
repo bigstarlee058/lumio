@@ -254,27 +254,6 @@
           "sidebars.*"
         ]
       }
-    },
-    "react-email-starter": {
-      "entry": [
-        "emails/**/*.{ts,tsx}",
-        "components/**/*.{ts,tsx}",
-        "package.json"
-      ],
-      "project": [
-        "**/*.{ts,tsx,js,jsx}"
-      ],
-      "ignoreBinaries": [
-        "email"
-      ],
-      "ignoreDependencies": [
-        "react",
-        "react-dom",
-        "react-email",
-        "@react-email/preview-server",
-        "@types/react",
-        "@types/react-dom"
-      ]
     }
   },
   "tags": [
