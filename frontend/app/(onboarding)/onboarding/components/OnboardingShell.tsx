@@ -6,13 +6,14 @@ import { OnboardingNavigation } from './OnboardingNavigation';
 import { OnboardingProgress } from './OnboardingProgress';
 import { OnboardingStepContent } from './OnboardingStepContent';
 import type { OnboardingData } from '../useOnboardingWizard';
+import type { LucideIcon } from '@/app/components/icons';
 import { tokens } from '@/lib/theme-tokens';
 
 type IntegrationCard = {
   key: string;
   title: string;
   description: string;
-  iconSrc: string;
+  icon: LucideIcon;
   connected: boolean;
   loading: boolean;
   actionLabel: string;

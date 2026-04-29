@@ -1,5 +1,5 @@
-import { normalizeLocale } from '@/app/lib/locale';
+import { normalizeLocale, type AppLocale } from '@/app/lib/locale';
 
-export function resolveOnboardingBootstrapLocale(appLocale: string | null | undefined): 'en' | 'ru' | 'kk' {
+export function resolveOnboardingBootstrapLocale(appLocale: string | null | undefined): AppLocale {
   return normalizeLocale(appLocale);
 }

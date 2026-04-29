@@ -13,6 +13,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
 import { OnboardingProgress } from './components/OnboardingProgress';
+import {
+  EMPTY_INTEGRATION_STATE,
+  INTEGRATION_DESCRIPTION_FALLBACK,
+  INTEGRATION_TITLE_FALLBACK,
+  ONBOARDING_INTEGRATIONS,
+  parseIntegrationConnectedStatus,
+  type OnboardingIntegrationKey,
+} from './hooks/useOnboardingActions';
 import { resolveOnboardingBootstrapLocale } from './lib/locale-bootstrap';
 import { resolveOnboardingFlow } from './lib/onboarding-flow';
 import { getNestedOnboardingValue, resolveOnboardingText } from './lib/resolveOnboardingText';
@@ -29,62 +37,6 @@ import {
 import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_CURRENCY = 'USD';
-
-type OnboardingIntegrationKey = 'dropbox' | 'googleDrive' | 'gmail' | 'googleSheets' | 'telegram';
-
-const ONBOARDING_INTEGRATIONS: Array<{
-  key: OnboardingIntegrationKey;
-  apiKey: 'dropbox' | 'google-drive' | 'gmail' | 'google-sheets' | 'telegram';
-  iconSrc: string;
-  connectMode: 'oauth' | 'page';
-  path: string;
-}> = [
-  {
-    key: 'dropbox',
-    apiKey: 'dropbox',
-    iconSrc: '/icons/dropbox-icon.png',
-    connectMode: 'oauth',
-    path: '/integrations/dropbox',
-  },
-  {
-    key: 'googleDrive',
-    apiKey: 'google-drive',
-    iconSrc: '/icons/google-drive-icon.png',
-    connectMode: 'oauth',
-    path: '/integrations/google-drive',
-  },
-  {
-    key: 'gmail',
-    apiKey: 'gmail',
-    iconSrc: '/icons/gmail.png',
-    connectMode: 'oauth',
-    path: '/integrations/gmail',
-  },
-  {
-    key: 'googleSheets',
-    apiKey: 'google-sheets',
-    iconSrc: '/icons/icons8-google-sheets-48.png',
-    connectMode: 'page',
-    path: '/integrations/google-sheets',
-  },
-  {
-    key: 'telegram',
-    apiKey: 'telegram',
-    iconSrc: '/icons/icons8-telegram-48.png',
-    connectMode: 'page',
-    path: '/settings/telegram',
-  },
-];
-
-const INTEGRATION_TITLE_FALLBACK: Record<OnboardingIntegrationKey, string> = {
-  dropbox: 'Dropbox',
-  googleDrive: 'Google Drive',
-  gmail: 'Gmail',
-  googleSheets: 'Google Sheets',
-  telegram: 'Telegram',
-};
-
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 function detectTimeZone(): string | null {
   try {
@@ -128,22 +80,10 @@ export default function OnboardingPage() {
   const hasStepMountedRef = useRef(false);
   const [integrationStatuses, setIntegrationStatuses] = useState<
     Record<OnboardingIntegrationKey, boolean>
-  >({
-    dropbox: false,
-    googleDrive: false,
-    gmail: false,
-    googleSheets: false,
-    telegram: false,
-  });
+  >(EMPTY_INTEGRATION_STATE);
   const [integrationLoading, setIntegrationLoading] = useState<
     Record<OnboardingIntegrationKey, boolean>
-  >({
-    dropbox: false,
-    googleDrive: false,
-    gmail: false,
-    googleSheets: false,
-    telegram: false,
-  });
+  >(EMPTY_INTEGRATION_STATE);
   const tx = useCallback(
     (path: string[], fallback = '', localeOverride?: string) =>
       resolveOnboardingText(
@@ -157,30 +97,13 @@ export default function OnboardingPage() {
   const checkIntegrationConnected = async (
     integration: (typeof ONBOARDING_INTEGRATIONS)[number],
   ): Promise<boolean> => {
-    if (integration.apiKey === 'google-sheets') {
-      const response = await apiClient.get('/google-sheets');
-      const sheets = Array.isArray(response.data)
-        ? response.data
-        : Array.isArray(response.data?.data)
-          ? response.data.data
-          : [];
-      return sheets.length > 0;
-    }
-
-    const response = await apiClient.get(`/integrations/${integration.apiKey}/status`);
-    const connected =
-      Boolean(response.data?.connected) ||
-      String(response.data?.status || '').toLowerCase() === 'connected';
-    return connected;
+    const response = await apiClient.get(integration.statusPath);
+    return parseIntegrationConnectedStatus(response.data);
   };
 
   const refreshIntegrationStatuses = async () => {
     const nextStatuses: Record<OnboardingIntegrationKey, boolean> = {
-      dropbox: false,
-      googleDrive: false,
-      gmail: false,
-      googleSheets: false,
-      telegram: false,
+      ...EMPTY_INTEGRATION_STATE,
     };
 
     await Promise.all(
@@ -417,8 +340,11 @@ export default function OnboardingPage() {
           ['integrations', 'cards', integration.key, 'title'],
           INTEGRATION_TITLE_FALLBACK[integration.key],
         ),
-        description: tx(['integrations', 'cards', integration.key, 'description']),
-        iconSrc: integration.iconSrc,
+        description: tx(
+          ['integrations', 'cards', integration.key, 'description'],
+          INTEGRATION_DESCRIPTION_FALLBACK[integration.key],
+        ),
+        icon: integration.icon,
         connected: integrationStatuses[integration.key],
         loading: integrationLoading[integration.key],
         actionLabel: integrationStatuses[integration.key]
@@ -439,45 +365,10 @@ export default function OnboardingPage() {
       return;
     }
 
-    if (integration.connectMode === 'page') {
-      window.open(integration.path, '_blank', 'noopener,noreferrer');
-      return;
-    }
-
     setIntegrationLoading(prev => ({ ...prev, [integration.key]: true }));
-
     try {
-      const response = await apiClient.get(`/integrations/${integration.apiKey}/connect`);
-      const url = response.data?.url;
-      if (!url) {
-        throw new Error('Missing OAuth URL');
-      }
-
-      const popup = window.open(url, `onboarding-${integration.apiKey}`, 'width=1100,height=760');
-      if (!popup) {
-        window.location.href = url;
-        return;
-      }
-
-      for (let attempt = 0; attempt < 40; attempt += 1) {
-        await sleep(2000);
-
-        try {
-          const connected = await checkIntegrationConnected(integration);
-          if (connected) {
-            if (!popup.closed) {
-              popup.close();
-              window.focus();
-            }
-            await refreshIntegrationStatuses();
-            break;
-          }
-        } catch {
-          // Keep polling while OAuth flow is running.
-        }
-      }
-    } catch {
-      setError(tx(['integrations', 'connectFailed'], 'Failed to connect integration.'));
+      window.open(integration.path, '_blank', 'noopener,noreferrer');
+      await refreshIntegrationStatuses();
     } finally {
       setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
     }
