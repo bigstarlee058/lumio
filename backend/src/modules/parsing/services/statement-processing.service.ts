@@ -655,7 +655,7 @@ export class StatementProcessingService {
         if (!aiEnabled) {
           addLog('info', 'AI reconciliation disabled (set AI_PARSING_ENABLED=1 to enable)');
         } else {
-          addLog('info', 'AI reconciliation skipped (no GEMINI_API_KEY set)');
+          addLog('info', 'AI reconciliation skipped (set AI_BASE_URL and AI_MODEL to enable)');
         }
         this.reportAi('validate', 'skipped');
       }

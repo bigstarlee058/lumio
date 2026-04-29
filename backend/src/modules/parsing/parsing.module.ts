@@ -73,7 +73,7 @@ import { UniversalExtractorService } from './services/universal-extractor.servic
     UniversalExtractorService,
     {
       provide: 'AI_DOCUMENT_EXTRACTOR',
-      useFactory: () => new AiDocumentExtractor(process.env.GEMINI_API_KEY),
+      useFactory: () => new AiDocumentExtractor(process.env.AI_API_KEY),
     },
   ],
   exports: [

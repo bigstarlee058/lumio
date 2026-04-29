@@ -1,86 +1,63 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { OpenRouter } from '@openrouter/sdk';
 
 type OpenRouterMessage = {
   role: 'system' | 'user' | 'assistant';
   content: string;
 };
 
-type OpenRouterChatApi = {
-  completions: {
-    create(input: { model: string; messages: OpenRouterMessage[] }): Promise<unknown>;
-  };
+type OpenAiCompatibleChatResponse = {
+  choices?: unknown[];
 };
 
 @Injectable()
 export class OpenRouterService {
-  private readonly apiKey: string | null;
-  private client: OpenRouter | null = null;
-  private clientInit: Promise<OpenRouter> | null = null;
+  private readonly apiKey: string | null = null;
+  private readonly baseUrl: string | null = null;
+  private readonly defaultModel: string | null = null;
   private readonly logger = new Logger(OpenRouterService.name);
 
   constructor(private readonly configService: ConfigService) {
-    this.apiKey = this.configService.get<string>('OPENROUTER_API_KEY') ?? null;
+    this.apiKey = this.configService.get<string>('AI_API_KEY') ?? null;
+    this.baseUrl = this.configService.get<string>('AI_BASE_URL')?.replace(/\/+$/, '') ?? null;
+    this.defaultModel = this.configService.get<string>('AI_MODEL') ?? null;
 
-    if (!this.apiKey) {
-      this.logger.warn('OPENROUTER_API_KEY is not defined. OpenRouter service will not function.');
+    if (!this.baseUrl || !this.defaultModel) {
+      this.logger.warn('AI_BASE_URL or AI_MODEL is not defined. AI chat service will not function.');
     }
   }
 
   isAvailable(): boolean {
-    return !!this.apiKey;
+    return !!this.baseUrl && !!this.defaultModel;
   }
 
-  async chat(messages: OpenRouterMessage[], model = 'openai/gpt-3.5-turbo') {
-    const client = await this.getClient();
+  async chat(messages: OpenRouterMessage[], model = this.defaultModel) {
+    if (!this.baseUrl || !model) {
+      throw new Error('AI client is not initialized (missing AI_BASE_URL or AI_MODEL)');
+    }
 
     try {
-      const chatApi = client.chat as unknown as OpenRouterChatApi;
-      const completion = await chatApi.completions.create({
-        model,
-        messages,
+      const response = await fetch(`${this.baseUrl}/v1/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0,
+        }),
       });
-      return completion;
+
+      if (!response.ok) {
+        throw new Error(`AI chat request failed with status ${response.status}`);
+      }
+
+      return (await response.json()) as OpenAiCompatibleChatResponse;
     } catch (error) {
-      this.logger.error('Failed to call OpenRouter API', error);
+      this.logger.error('Failed to call OpenAI-compatible AI API', error);
       throw error;
     }
-  }
-
-  private async getClient(): Promise<OpenRouter> {
-    if (!this.apiKey) {
-      throw new Error('OpenRouter client is not initialized (missing API key)');
-    }
-
-    if (this.client) {
-      return this.client;
-    }
-
-    if (!this.clientInit) {
-      this.clientInit = this.createClient();
-    }
-
-    try {
-      this.client = await this.clientInit;
-      return this.client;
-    } catch (error) {
-      this.clientInit = null;
-      this.logger.error('Failed to initialize OpenRouter client', error);
-      throw error;
-    }
-  }
-
-  private async createClient(): Promise<OpenRouter> {
-    const { OpenRouter } = await this.loadSdk();
-    return new OpenRouter({
-      apiKey: this.apiKey as string,
-    });
-  }
-
-  private async loadSdk(): Promise<typeof import('@openrouter/sdk')> {
-    // Use native dynamic import to load ESM from CommonJS output.
-    const load = new Function('return import("@openrouter/sdk")');
-    return load() as Promise<typeof import('@openrouter/sdk')>;
   }
 }

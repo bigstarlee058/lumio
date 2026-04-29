@@ -7,6 +7,7 @@ import { Category } from '../../entities/category.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { Wallet } from '../../entities/wallet.entity';
 import { AuditModule } from '../audit/audit.module';
+import { ApplicationSettingsModule } from '../application-settings/application-settings.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { CategorizationRulesController } from './categorization-rules.controller';
 import { ClassificationController } from './classification.controller';
@@ -25,6 +26,7 @@ import { ClassificationService } from './services/classification.service';
       User,
     ]),
     AuditModule,
+    ApplicationSettingsModule,
     CategoriesModule,
   ],
   controllers: [ClassificationController, CategorizationRulesController],
