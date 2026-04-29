@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { gmail } from '@googleapis/gmail';
-import { sheets } from '@googleapis/sheets';
 import { In, Repository } from 'typeorm';
+import * as XLSX from 'xlsx';
+import { resolveUploadsDir } from '../../../common/utils/uploads.util';
 import { Category, Receipt } from '../../../entities';
 import { GmailOAuthService } from './gmail-oauth.service';
 
@@ -59,40 +59,6 @@ export class GmailReceiptExportService {
         throw new Error('No receipts found');
       }
 
-      // Get OAuth client for the user via Gmail OAuth service (includes Sheets scope)
-      const { client: oauth2Client } = await this.gmailOAuthService.getGmailClient(userId);
-      const sheetsClient = sheets({ version: 'v4', auth: oauth2Client });
-
-      let finalSpreadsheetId = spreadsheetId;
-      let sheetUrl = '';
-
-      // Create new spreadsheet or use existing one
-      if (!finalSpreadsheetId) {
-        const createResponse = await sheetsClient.spreadsheets.create({
-          requestBody: {
-            properties: {
-              title: `Lumio Receipts Export - ${new Date().toISOString().split('T')[0]}`,
-            },
-            sheets: [
-              {
-                properties: {
-                  title: 'Receipts',
-                },
-              },
-            ],
-          },
-        });
-
-        if (!createResponse.data.spreadsheetId || !createResponse.data.spreadsheetUrl) {
-          throw new Error('Failed to create spreadsheet');
-        }
-
-        finalSpreadsheetId = createResponse.data.spreadsheetId;
-        sheetUrl = createResponse.data.spreadsheetUrl;
-      } else {
-        sheetUrl = `https://docs.google.com/spreadsheets/d/${finalSpreadsheetId}`;
-      }
-
       // Prepare header row
       const headers = [
         'Date',
@@ -113,53 +79,15 @@ export class GmailReceiptExportService {
         rows.push(this.formatReceiptRow(receipt));
       }
 
-      // Write data to sheet
-      await sheetsClient.spreadsheets.values.update({
-        spreadsheetId: finalSpreadsheetId,
-        range: 'Receipts!A1',
-        valueInputOption: 'RAW',
-        requestBody: {
-          values: rows,
-        },
-      });
-
-      // Format header row
-      await sheetsClient.spreadsheets.batchUpdate({
-        spreadsheetId: finalSpreadsheetId,
-        requestBody: {
-          requests: [
-            {
-              repeatCell: {
-                range: {
-                  sheetId: 0,
-                  startRowIndex: 0,
-                  endRowIndex: 1,
-                },
-                cell: {
-                  userEnteredFormat: {
-                    backgroundColor: { red: 0.2, green: 0.6, blue: 0.86 },
-                    textFormat: {
-                      foregroundColor: { red: 1, green: 1, blue: 1 },
-                      bold: true,
-                    },
-                  },
-                },
-                fields: 'userEnteredFormat(backgroundColor,textFormat)',
-              },
-            },
-            {
-              autoResizeDimensions: {
-                dimensions: {
-                  sheetId: 0,
-                  dimension: 'COLUMNS',
-                  startIndex: 0,
-                  endIndex: headers.length,
-                },
-              },
-            },
-          ],
-        },
-      });
+      const finalSpreadsheetId = spreadsheetId || `receipts-${Date.now()}`;
+      const exportsDir = path.join(resolveUploadsDir(), 'exports');
+      await fs.promises.mkdir(exportsDir, { recursive: true });
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.aoa_to_sheet(rows);
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Receipts');
+      const filePath = path.join(exportsDir, `${finalSpreadsheetId}.xlsx`);
+      XLSX.writeFile(workbook, filePath);
+      const sheetUrl = `/uploads/exports/${path.basename(filePath)}`;
 
       this.logger.log(`Exported ${receipts.length} receipts to spreadsheet ${finalSpreadsheetId}`);
 
@@ -203,7 +131,7 @@ export class GmailReceiptExportService {
       throw new Error('Receipt not found');
     }
 
-    const { client: oauth2Client, integration } = await this.gmailOAuthService.getGmailClient(userId);
+    const { accessToken, integration } = await this.gmailOAuthService.getGmailClient(userId);
 
     // Check for compose scope specifically for draft creation
     const scopes = Array.isArray(integration.scopes)
@@ -212,8 +140,6 @@ export class GmailReceiptExportService {
     if (!scopes.includes('https://www.googleapis.com/auth/gmail.compose')) {
       throw new Error('Gmail integration requires re-authentication to create drafts. Please reconnect Gmail.');
     }
-    const gmailClient = gmail({ version: 'v1', auth: oauth2Client });
-
     const parsedData = this.getParsedData(receipt);
     const vendor = parsedData.vendor || receipt.sender || 'Unknown';
     const amount = parsedData.amount ?? '';
@@ -259,15 +185,24 @@ export class GmailReceiptExportService {
 
     const raw = this.buildMimeMessage(subject, htmlBody, attachments);
 
-    const response = await gmailClient.users.drafts.create({
-      userId: 'me',
-      requestBody: {
-        message: { raw },
+    const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/drafts', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        message: { raw },
+      }),
     });
 
-    const draftId = response.data.id!;
-    const messageId = response.data.message?.id || draftId;
+    if (!response.ok) {
+      throw new Error(`Gmail draft creation failed with status ${response.status}`);
+    }
+
+    const draft = (await response.json()) as { id?: string; message?: { id?: string } };
+    const draftId = draft.id || '';
+    const messageId = draft.message?.id || draftId;
 
     this.logger.log(`Created Gmail draft ${draftId} for receipt ${receiptId}`);
 

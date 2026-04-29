@@ -22,8 +22,6 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
-import { gmail as gmailApi } from '@googleapis/gmail';
-import type { gmail_v1 } from '@googleapis/gmail';
 import { Repository } from 'typeorm';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -41,6 +39,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { BulkApproveDto } from './dto/bulk-approve.dto';
 import { ExportSheetsDto } from './dto/export-sheets.dto';
+import type { GmailApi } from './gmail-api.types';
 import { MarkDuplicateDto } from './dto/mark-duplicate.dto';
 import { ReparseMerchantsDto } from './dto/reparse-merchants.dto';
 import { UpdateGmailSettingsDto } from './dto/update-gmail-settings.dto';
@@ -172,7 +171,7 @@ export class GmailController {
     return Array.isArray(parsedData?.validationIssues) ? parsedData.validationIssues : [];
   }
 
-  private findMessageBody(part?: gmail_v1.Schema$MessagePart): string {
+  private findMessageBody(part?: GmailApi.MessagePart): string {
     if (!part) {
       return '';
     }
@@ -853,26 +852,19 @@ export class GmailController {
     if (attachments.length > 0) {
       for (const attachment of attachments) {
         try {
-          // Get attachment data from Gmail
-          const { client } = await this.gmailOAuthService.getGmailClient(user.id);
-          const gmailClient = gmailApi({
-            version: 'v1',
-            auth: client,
-          });
+          const data = await this.gmailService.getAttachmentData(
+            user.id,
+            receipt.gmailMessageId,
+            attachment.id,
+          );
 
-          const response = await gmailClient.users.messages.attachments.get({
-            userId: 'me',
-            messageId: receipt.gmailMessageId,
-            id: attachment.id,
-          });
-
-          if (response.data.data) {
+          if (data) {
             // Return base64 data for client-side rendering
             attachmentData.push({
               filename: attachment.filename,
               mimeType: attachment.mimeType,
               size: attachment.size,
-              data: response.data.data, // base64url encoded
+              data, // base64url encoded
             });
           }
         } catch (error) {

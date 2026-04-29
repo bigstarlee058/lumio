@@ -2,8 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { gmail_v1 } from '@googleapis/gmail';
-import { LessThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   ActorType,
   AuditAction,
@@ -13,10 +12,10 @@ import {
   ReceiptJobStatus,
   ReceiptProcessingJob,
   ReceiptStatus,
-  Workspace,
 } from '../../entities';
 import { AuditService } from '../audit/audit.service';
 import type { ReceiptUncategorizedEvent } from '../notifications/events/notification-events';
+import type { GmailApi } from './gmail-api.types';
 import { GmailReceiptCategoryService } from './services/gmail-receipt-category.service';
 import { GmailReceiptDuplicateService } from './services/gmail-receipt-duplicate.service';
 import { GmailReceiptParserService } from './services/gmail-receipt-parser.service';
@@ -48,7 +47,7 @@ export class GmailReceiptProcessor {
   ) {}
 
   private getHeaderValue(
-    headers: gmail_v1.Schema$MessagePartHeader[] | null | undefined,
+    headers: GmailApi.MessagePartHeader[] | null | undefined,
     name: string,
   ): string {
     return headers?.find(header => header.name?.toLowerCase() === name.toLowerCase())?.value || '';
@@ -148,7 +147,7 @@ export class GmailReceiptProcessor {
 
       // Find attachments
       const attachments: ReceiptAttachment[] = [];
-      const findAttachments = (part?: gmail_v1.Schema$MessagePart) => {
+      const findAttachments = (part?: GmailApi.MessagePart) => {
         if (!part) {
           return;
         }
@@ -361,10 +360,10 @@ export class GmailReceiptProcessor {
     }
   }
 
-  private extractEmailBody(payload?: gmail_v1.Schema$MessagePart): string | null {
+  private extractEmailBody(payload?: GmailApi.MessagePart): string | null {
     const bodies: { mimeType: string; data: string }[] = [];
 
-    const walk = (part?: gmail_v1.Schema$MessagePart) => {
+    const walk = (part?: GmailApi.MessagePart) => {
       if (part?.body?.data && (part.mimeType === 'text/plain' || part.mimeType === 'text/html')) {
         bodies.push({
           mimeType: part.mimeType,
