@@ -1,13 +1,89 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "90bf6daf0a791d6f73e230ad0905158c58059124"
+      "main": "74a9b7523eb4040f99819b753fbfa9fe7c6ea0bc"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-04-29T10:01:44.741Z",
+    "lastGeneratedAt": "2026-04-29T15:14:38.676Z",
     "minCommits": 5
   },
   "entries": [
+    {
+      "id": "changelog-2026-04-29-74a9b75",
+      "version": "main-74a9b75",
+      "branch": "main",
+      "date": "2026-04-29T15:14:38.676Z",
+      "title": "Release update - April 29, 2026",
+      "summary": "This release includes 1 feature.",
+      "markdown": "## Features\n- **frontend**: Update sidebar brand styling",
+      "commits": [
+        {
+          "sha": "aa7323eb8367c17b99b45fc128e5f645c1b5cca5",
+          "shortSha": "aa7323e",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-04-29T10:01:45Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "dee0855b17e185137ddce5583ee2066117ab6798",
+          "shortSha": "dee0855",
+          "subject": "feat(frontend): update sidebar brand styling",
+          "author": "symonbaikov",
+          "date": "2026-04-29T14:15:25+03:00",
+          "files": [
+            "frontend/app/components/Sidebar.tsx",
+            "frontend/app/layout.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
+        },
+        {
+          "sha": "4afba3c5323e94963b9bf8f6581eba3bde68910a",
+          "shortSha": "4afba3c",
+          "subject": "Merge pull request #70 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-29T14:18:55+03:00",
+          "files": []
+        },
+        {
+          "sha": "b80564cb7961866e078fa5c691abba74c1e37f0e",
+          "shortSha": "b80564c",
+          "subject": "chore: tighten dependency license scan",
+          "author": "symonbaikov",
+          "date": "2026-04-29T18:12:32+03:00",
+          "files": [
+            ".github/workflows/ci.yml",
+            "docs/security/ALLOWLISTS.md",
+            "knip.json",
+            "react-email-starter/emails/notion-magic-link.tsx",
+            "react-email-starter/emails/plaid-verify-identity.tsx",
+            "react-email-starter/emails/static/notion-logo.png",
+            "react-email-starter/emails/static/plaid-logo.png",
+            "react-email-starter/emails/static/plaid.png",
+            "react-email-starter/emails/static/stripe-logo.png",
+            "react-email-starter/emails/static/vercel-arrow.png",
+            "react-email-starter/emails/static/vercel-logo.png",
+            "react-email-starter/emails/static/vercel-team.png",
+            "react-email-starter/emails/static/vercel-user.png",
+            "react-email-starter/emails/stripe-welcome.tsx",
+            "react-email-starter/emails/vercel-invite-user.tsx",
+            "react-email-starter/package.json",
+            "react-email-starter/readme.md",
+            "react-email-starter/tsconfig.json"
+          ]
+        },
+        {
+          "sha": "74a9b7523eb4040f99819b753fbfa9fe7c6ea0bc",
+          "shortSha": "74a9b75",
+          "subject": "Merge pull request #71 from symonbaikov/fix/dark-mode-remaining-light-areas",
+          "author": "Symon Baikov",
+          "date": "2026-04-29T18:14:14+03:00",
+          "files": []
+        }
+      ]
+    },
     {
       "id": "changelog-2026-04-29-90bf6da",
       "version": "main-90bf6da",
