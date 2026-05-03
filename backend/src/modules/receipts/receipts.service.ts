@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { promises as fs } from 'node:fs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -36,6 +36,8 @@ const MANUAL_RECEIPT_WORKER_ID = 'manual-receipt-sync';
 
 @Injectable()
 export class ReceiptsService {
+  private readonly logger = new Logger(ReceiptsService.name);
+
   constructor(
     @InjectRepository(Receipt)
     private readonly receiptRepository: Repository<Receipt>,
@@ -158,11 +160,13 @@ export class ReceiptsService {
     receipt.transactionId = savedTransaction.id;
     const savedReceipt = await this.receiptRepository.save(receipt);
 
-    this.eventEmitter.emit('receipt.approved', {
-      workspaceId: savedReceipt.workspaceId,
-      receiptId: savedReceipt.id,
-      transactionId: savedTransaction.id,
-    } satisfies ReceiptApprovedEvent);
+    this.eventEmitter
+      .emitAsync('receipt.approved', {
+        workspaceId: savedReceipt.workspaceId,
+        receiptId: savedReceipt.id,
+        transactionId: savedTransaction.id,
+      } satisfies ReceiptApprovedEvent)
+      .catch((err) => this.logger.error('Failed to emit receipt.approved event', err));
 
     return {
       receipt: savedReceipt,
@@ -196,7 +200,14 @@ export class ReceiptsService {
         const savedTransaction = await this.createTransactionFromReceipt(receipt, workspaceId, categoryId);
         receipt.status = ReceiptStatus.APPROVED;
         receipt.transactionId = savedTransaction.id;
-        await this.receiptRepository.save(receipt);
+        const savedReceipt = await this.receiptRepository.save(receipt);
+        this.eventEmitter
+          .emitAsync('receipt.approved', {
+            workspaceId: receipt.workspaceId,
+            receiptId: savedReceipt.id,
+            transactionId: savedTransaction.id,
+          } satisfies ReceiptApprovedEvent)
+          .catch((err) => this.logger.error('Failed to emit receipt.approved event', err));
         results.approved += 1;
       } catch (error) {
         results.failed += 1;
