@@ -56,9 +56,6 @@ import {
   WorkspaceServiceSettings,
   WorkspaceInvitation,
   WorkspaceMember,
-  WebhookEndpoint,
-  WebhookSubscription,
-  WebhookDelivery,
 } from './entities';
 import { AuditModule } from './modules/audit/audit.module';
 import { ApplicationSettingsModule } from './modules/application-settings/application-settings.module';
@@ -165,9 +162,6 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       ReceiptProcessingJob,
       TaxRate,
       ExchangeRate,
-      WebhookEndpoint,
-      WebhookSubscription,
-      WebhookDelivery,
     ]),
     CommonModule,
     ApplicationSettingsModule,

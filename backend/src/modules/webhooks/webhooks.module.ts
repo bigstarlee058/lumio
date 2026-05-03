@@ -4,7 +4,6 @@ import { WebhookEndpoint } from '../../entities/webhook-endpoint.entity';
 import { WebhookSubscription } from '../../entities/webhook-subscription.entity';
 import { WebhookDelivery } from '../../entities/webhook-delivery.entity';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
-import { User } from '../../entities/user.entity';
 import { StatementsModule } from '../statements/statements.module';
 import { ReceiptsModule } from '../receipts/receipts.module';
 import { WebhookEndpointsService } from './services/webhook-endpoints.service';
@@ -22,7 +21,7 @@ import { WebhookDeliveriesController } from './webhook-deliveries.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WebhookEndpoint, WebhookSubscription, WebhookDelivery, WorkspaceMember, User]),
+    TypeOrmModule.forFeature([WebhookEndpoint, WebhookSubscription, WebhookDelivery, WorkspaceMember]),
     StatementsModule,
     ReceiptsModule,
   ],
