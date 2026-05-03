@@ -6,7 +6,7 @@ import { createHmac, randomUUID } from 'node:crypto';
 import { WebhookDelivery, WebhookDeliveryStatus } from '../../../entities/webhook-delivery.entity';
 import { WebhookSubscription } from '../../../entities/webhook-subscription.entity';
 
-const LOCK_ID = `processor-${randomUUID()}`;
+const LOCK_ID = `processor-${process.env.RAILWAY_SERVICE_INSTANCE_ID ?? process.env.HOSTNAME ?? randomUUID()}`;
 const HTTP_TIMEOUT_MS = parseInt(process.env.WEBHOOK_HTTP_TIMEOUT_MS ?? '10000', 10);
 
 @Injectable()
@@ -28,6 +28,8 @@ export class WebhookProcessorService {
     try {
       const delivery = await this.claimNextDelivery();
       if (delivery) await this.processDelivery(delivery);
+    } catch (err) {
+      this.logger.warn(`Webhook processor tick failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       this.running = false;
     }
@@ -39,9 +41,15 @@ export class WebhookProcessorService {
       SET status = 'processing', locked_at = now(), locked_by = $1
       WHERE id = (
         SELECT id FROM webhook_deliveries
-        WHERE status IN ('pending', 'failed')
+        WHERE (
+          status IN ('pending', 'failed')
           AND attempt_count < max_attempts
           AND (next_attempt_at IS NULL OR next_attempt_at <= now())
+        )
+        OR (
+          status = 'processing'
+          AND locked_at < now() - interval '15 minutes'
+        )
         ORDER BY created_at ASC
         LIMIT 1
         FOR UPDATE SKIP LOCKED
@@ -53,11 +61,11 @@ export class WebhookProcessorService {
 
   private async processDelivery(delivery: WebhookDelivery): Promise<void> {
     const sub = await this.subRepo.findOne({ where: { id: delivery.subscriptionId } });
-    if (!sub) {
+    if (!sub || !sub.isActive) {
       await this.deliveryRepo.save({
         ...delivery,
         status: WebhookDeliveryStatus.EXHAUSTED,
-        lastError: 'Subscription not found',
+        lastError: sub ? 'Subscription is inactive' : 'Subscription not found',
       });
       return;
     }
@@ -71,7 +79,6 @@ export class WebhookProcessorService {
     let success = false;
 
     try {
-      const { default: fetch } = await import('node-fetch');
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), HTTP_TIMEOUT_MS);
       try {
