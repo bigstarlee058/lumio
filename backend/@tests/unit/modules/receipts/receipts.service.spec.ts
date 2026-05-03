@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   Receipt,
   ReceiptProcessingJob,
@@ -66,6 +67,7 @@ describe('ReceiptsService', () => {
         { provide: getRepositoryToken(Transaction), useValue: transactionRepository },
         { provide: getRepositoryToken(Statement), useValue: statementRepository },
         { provide: ReceiptProcessorService, useValue: processorService },
+        { provide: EventEmitter2, useValue: { emit: jest.fn() } },
       ],
     }).compile();
 

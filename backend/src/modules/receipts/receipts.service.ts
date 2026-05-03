@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { promises as fs } from 'node:fs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   Receipt,
   ReceiptJobStatus,
@@ -15,6 +16,7 @@ import {
 import { normalizePagination } from '../../common/utils/pagination.util';
 import { ReceiptQueryDto } from './dto/receipt-query.dto';
 import { ReceiptProcessorService } from './services/receipt-processor.service';
+import { ReceiptApprovedEvent } from '../notifications/events/notification-events';
 
 type UploadParams = {
   userId: string;
@@ -44,6 +46,7 @@ export class ReceiptsService {
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
     private readonly receiptProcessor: ReceiptProcessorService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createFromUpload(params: UploadParams): Promise<Receipt> {
@@ -154,6 +157,12 @@ export class ReceiptsService {
     receipt.status = ReceiptStatus.APPROVED;
     receipt.transactionId = savedTransaction.id;
     const savedReceipt = await this.receiptRepository.save(receipt);
+
+    this.eventEmitter.emit('receipt.approved', {
+      workspaceId: savedReceipt.workspaceId,
+      receiptId: savedReceipt.id,
+      transactionId: savedTransaction.id,
+    } satisfies ReceiptApprovedEvent);
 
     return {
       receipt: savedReceipt,
