@@ -1,6 +1,12 @@
 import {
-  Column, CreateDateColumn, Entity, Index, JoinColumn,
-  ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { WebhookSubscription } from './webhook-subscription.entity';
 
@@ -32,7 +38,11 @@ export class WebhookDelivery {
   @Column({ type: 'jsonb' })
   payload: Record<string, unknown>;
 
-  @Column({ type: 'enum', enum: WebhookDeliveryStatus, default: WebhookDeliveryStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: WebhookDeliveryStatus,
+    default: WebhookDeliveryStatus.PENDING,
+  })
   status: WebhookDeliveryStatus;
 
   @Column({ name: 'attempt_count', type: 'int', default: 0 })
