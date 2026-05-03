@@ -15,6 +15,7 @@ export class WebhookDeliveriesController {
   @Post(':id/retry')
   @WorkspaceAuth(Permission.STATEMENT_EDIT)
   async retry(@Param('id') id: string, @WorkspaceId() workspaceId: string) {
+    await this.deliveryService.findOneScoped(id, workspaceId);
     await this.deliveryService.resetForRetry(id);
     return { success: true };
   }

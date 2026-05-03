@@ -43,7 +43,8 @@ export class WebhookEndpointsController {
     @WorkspaceId() workspaceId: string,
     @Body() dto: UpdateWebhookEndpointDto,
   ) {
-    return this.service.update(id, workspaceId, dto);
+    const { token, ...rest } = await this.service.update(id, workspaceId, dto);
+    return { ...rest, tokenPreview: token.slice(0, 8) + '...' };
   }
 
   @Delete(':id')

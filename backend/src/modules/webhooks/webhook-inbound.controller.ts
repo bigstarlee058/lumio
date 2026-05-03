@@ -40,6 +40,6 @@ export class WebhookInboundController {
     @Body() dto: WebhookReceiptUploadDto,
   ) {
     const result = await this.inboundService.uploadReceipt(req.webhookEndpoint, file ?? null, dto);
-    return { success: true, receipts: [{ receiptId: result.id, status: (result as any).status }] };
+    return { success: true, receipts: [{ receiptId: result.id, status: result.status }] };
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -35,6 +35,17 @@ export class WebhookDeliveryService {
       order: { createdAt: 'DESC' },
       take: 100,
     });
+  }
+
+  async findOneScoped(id: string, workspaceId: string): Promise<WebhookDelivery> {
+    const delivery = await this.repo
+      .createQueryBuilder('d')
+      .innerJoin('d.subscription', 'sub')
+      .where('d.id = :id', { id })
+      .andWhere('sub.workspaceId = :workspaceId', { workspaceId })
+      .getOne();
+    if (!delivery) throw new NotFoundException('Delivery not found');
+    return delivery;
   }
 
   async resetForRetry(id: string): Promise<void> {
