@@ -47,8 +47,8 @@ export class WebhookSubscriptionsService {
   async findActiveByWorkspaceAndEvent(workspaceId: string, event: WebhookEvent): Promise<WebhookSubscription[]> {
     return this.repo
       .createQueryBuilder('sub')
-      .where('sub.workspace_id = :workspaceId', { workspaceId })
-      .andWhere('sub.is_active = true')
+      .where('sub.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('sub.isActive = true')
       .andWhere(':event = ANY(sub.events)', { event })
       .getMany();
   }
