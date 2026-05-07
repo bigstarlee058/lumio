@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Repository } from 'typeorm';
+import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Receipt } from '../../../entities';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ReceiptDuplicateService {
 
   async findPotentialDuplicates(receipt: Receipt): Promise<Receipt[]> {
     try {
-      if (!receipt.parsedData?.amount || !receipt.parsedData?.date) {
+      if (!(receipt.parsedData?.amount && receipt.parsedData?.date)) {
         return [];
       }
 
@@ -57,11 +57,14 @@ export class ReceiptDuplicateService {
         }
 
         if (vendor && candidate.parsedData.vendor) {
-          const similarity = calculateStringSimilarity(vendor.toLowerCase(), candidate.parsedData.vendor.toLowerCase());
+          const similarity = calculateStringSimilarity(
+            vendor.toLowerCase(),
+            candidate.parsedData.vendor.toLowerCase(),
+          );
           if (similarity > 0.8) {
             duplicates.push(candidate);
           }
-        } else if (!vendor && !candidate.parsedData.vendor) {
+        } else if (!(vendor || candidate.parsedData.vendor)) {
           duplicates.push(candidate);
         }
       }

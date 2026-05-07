@@ -23,7 +23,9 @@ export interface AiExtractionResult {
   documentNumber?: string;
 }
 
-type RawAiLineItem = Partial<Record<'description' | 'quantity' | 'unitPrice' | 'amount' | 'tax', unknown>>;
+type RawAiLineItem = Partial<
+  Record<'description' | 'quantity' | 'unitPrice' | 'amount' | 'tax', unknown>
+>;
 type RawAiExtractionResult = Partial<
   Record<
     | 'documentType'
@@ -73,7 +75,6 @@ Rules:
 `;
 
 export class AiDocumentExtractor extends BaseAiHelper {
-
   async extractFromText(text: string): Promise<AiExtractionResult | null> {
     if (!this.isAvailable()) {
       return null;
@@ -115,7 +116,10 @@ export class AiDocumentExtractor extends BaseAiHelper {
   }
 
   private async callModel(
-    contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> }>,
+    contents: Array<{
+      role: 'user' | 'model';
+      parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }>;
+    }>,
   ): Promise<AiExtractionResult | null> {
     try {
       const timeoutMs = Number.parseInt(process.env.AI_TIMEOUT_MS || '20000', 10);
@@ -183,5 +187,4 @@ export class AiDocumentExtractor extends BaseAiHelper {
     }
     return undefined;
   }
-
 }

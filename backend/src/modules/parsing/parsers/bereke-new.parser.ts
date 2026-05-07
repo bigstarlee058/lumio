@@ -1,9 +1,6 @@
 import { BankName } from '../../../entities/statement.entity';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
-import {
-  BerekeBaseParser,
-  type BerekeCellMap,
-} from './bereke-base.parser';
+import { BerekeBaseParser, type BerekeCellMap } from './bereke-base.parser';
 
 type ColumnKey = 'date' | 'document' | 'counterparty' | 'bank' | 'debit' | 'credit' | 'purpose';
 
@@ -15,7 +12,9 @@ export class BerekeNewParser extends BerekeBaseParser<ColumnKey> {
   }
 
   protected matchesBankText(text: string): boolean {
-    return text.includes('bereke') || text.includes('береке') || text.includes('kz47914042204kz039ly');
+    return (
+      text.includes('bereke') || text.includes('береке') || text.includes('kz47914042204kz039ly')
+    );
   }
 
   protected getBalanceStartLabels(): string[] {
@@ -48,13 +47,27 @@ export class BerekeNewParser extends BerekeBaseParser<ColumnKey> {
 
   protected detectColumnKey(label: string): ColumnKey | null {
     const lower = label.toLowerCase();
-    if (lower.includes('дата')) return 'date';
-    if (lower.includes('номер')) return 'document';
-    if (lower.includes('банк') && lower.includes('контрагент')) return 'bank';
-    if (lower.includes('контрагент')) return 'counterparty';
-    if (lower.includes('дебет')) return 'debit';
-    if (lower.includes('кредит')) return 'credit';
-    if (lower.includes('назнач')) return 'purpose';
+    if (lower.includes('дата')) {
+      return 'date';
+    }
+    if (lower.includes('номер')) {
+      return 'document';
+    }
+    if (lower.includes('банк') && lower.includes('контрагент')) {
+      return 'bank';
+    }
+    if (lower.includes('контрагент')) {
+      return 'counterparty';
+    }
+    if (lower.includes('дебет')) {
+      return 'debit';
+    }
+    if (lower.includes('кредит')) {
+      return 'credit';
+    }
+    if (lower.includes('назнач')) {
+      return 'purpose';
+    }
     return null;
   }
 
@@ -76,7 +89,10 @@ export class BerekeNewParser extends BerekeBaseParser<ColumnKey> {
 
   protected isEndOfTable(text: string): boolean {
     const lower = text.toLowerCase();
-    return lower.includes('итого обороты') || (lower.includes('остаток') && !/\d{2}\.\d{2}\.\d{4}/.test(text));
+    return (
+      lower.includes('итого обороты') ||
+      (lower.includes('остаток') && !/\d{2}\.\d{2}\.\d{4}/.test(text))
+    );
   }
 
   protected resolveCounterpartyBlock(cells: BerekeCellMap<ColumnKey>): string {

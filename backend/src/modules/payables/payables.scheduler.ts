@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { EntityType } from '../../entities/audit-event.entity';
 import {
   NotificationCategory,
   NotificationSeverity,
   NotificationType,
 } from '../../entities/notification.entity';
-import { EntityType } from '../../entities/audit-event.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PayablesService } from './payables.service';
 
@@ -29,8 +29,8 @@ export class PayablesScheduler {
             type: NotificationType.PAYABLE_OVERDUE,
             category: NotificationCategory.WORKSPACE_ACTIVITY,
             severity: NotificationSeverity.WARN,
-            title: 'Payable overdue',
-            message: `${payable.vendor} is overdue`,
+            messageKey: 'payable.overdue',
+            messageParams: { vendor: payable.vendor },
             entityType: EntityType.PAYABLE,
             entityId: payable.id,
             meta: { payableId: payable.id },
@@ -51,8 +51,8 @@ export class PayablesScheduler {
             type: NotificationType.PAYABLE_DUE_SOON,
             category: NotificationCategory.WORKSPACE_ACTIVITY,
             severity: NotificationSeverity.INFO,
-            title: 'Payable due soon',
-            message: `${payable.vendor} is due soon`,
+            messageKey: 'payable.due_soon',
+            messageParams: { vendor: payable.vendor },
             entityType: EntityType.PAYABLE,
             entityId: payable.id,
             meta: { payableId: payable.id },
@@ -66,7 +66,10 @@ export class PayablesScheduler {
         }
       }
     } catch (error) {
-      this.logger.error('Failed to process payables scheduler', error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        'Failed to process payables scheduler',
+        error instanceof Error ? error.stack : undefined,
+      );
     }
   }
 }

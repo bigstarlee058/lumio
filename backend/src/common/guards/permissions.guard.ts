@@ -95,7 +95,9 @@ export class PermissionsGuard implements CanActivate {
     workspaceRole?: WorkspaceRole,
     workspaceMemberPermissions?: WorkspaceMemberPermissions | null,
   ): boolean {
-    if (!workspaceRole) return false;
+    if (!workspaceRole) {
+      return false;
+    }
 
     const hasAuditPermission = requiredPermissions.every(permission =>
       [PermissionEnum.AUDIT_VIEW, PermissionEnum.AUDIT_LOG_VIEW].includes(permission),
@@ -118,9 +120,15 @@ export class PermissionsGuard implements CanActivate {
       statementPermissions.has(permission),
     );
 
-    if (!isStatementPermission) return false;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(workspaceRole)) return true;
-    if (workspaceMemberPermissions?.canEditStatements === false) return false;
+    if (!isStatementPermission) {
+      return false;
+    }
+    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(workspaceRole)) {
+      return true;
+    }
+    if (workspaceMemberPermissions?.canEditStatements === false) {
+      return false;
+    }
     return true;
   }
 }

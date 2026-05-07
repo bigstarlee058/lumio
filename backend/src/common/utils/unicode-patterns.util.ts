@@ -112,28 +112,28 @@ const UNICODE_PATTERNS: UnicodePatterns = {
 
   // Date-related patterns
   dayNames: new RegExp(
-    `(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|mon|tue|wed|thu|fri|sat|sun|` +
-      `понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|пн|вт|ср|чт|пт|сб|вс|` +
-      `дүйсенбі|сейсенбі|сәрсенбі|бейсенбі|жұма|сенбі|жексенбі|` +
-      `lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|lun|mar|mer|jeu|ven|sam|dim|` +
-      `montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so|` +
-      `lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica|` +
-      `segunda|terça|quarta|quinta|sexta|sábado|domingo|seg|ter|qua|qui|sex|sáb|dom|` +
-      `pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar|pts|sal|çar|per|cum|cmt|paz)`,
+    '(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|mon|tue|wed|thu|fri|sat|sun|' +
+      'понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|пн|вт|ср|чт|пт|сб|вс|' +
+      'дүйсенбі|сейсенбі|сәрсенбі|бейсенбі|жұма|сенбі|жексенбі|' +
+      'lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|lun|mar|mer|jeu|ven|sam|dim|' +
+      'montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|mo|di|mi|do|fr|sa|so|' +
+      'lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica|' +
+      'segunda|terça|quarta|quinta|sexta|sábado|domingo|seg|ter|qua|qui|sex|sáb|dom|' +
+      'pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar|pts|sal|çar|per|cum|cmt|paz)',
     'giu',
   ),
 
   monthNames: new RegExp(
-    `(?:january|february|march|april|may|june|july|august|september|october|november|december|` +
-      `jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|` +
-      `январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь|` +
-      `янв|фев|мар|апр|мая|июн|июл|авг|сен|окт|ноя|дек|` +
-      `қаңтар|ақпан|наурыз|сәуір|мамыр|маусым|шілде|тамыз|қыркүйек|қазан|қараша|желтоқсан|` +
-      `janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre|` +
-      `januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember|` +
-      `gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|` +
-      `janeiro|fevereiro|março|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro|` +
-      `ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)`,
+    '(?:january|february|march|april|may|june|july|august|september|october|november|december|' +
+      'jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|' +
+      'январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь|' +
+      'янв|фев|мар|апр|мая|июн|июл|авг|сен|окт|ноя|дек|' +
+      'қаңтар|ақпан|наурыз|сәуір|мамыр|маусым|шілде|тамыз|қыркүйек|қазан|қараша|желтоқсан|' +
+      'janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre|decembre|' +
+      'januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember|' +
+      'gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre|' +
+      'janeiro|fevereiro|março|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro|' +
+      'ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik)',
     'giu',
   ),
 
@@ -184,7 +184,9 @@ export namespace UnicodeTextProcessor {
    * Normalize Unicode text for consistent processing
    */
   export function normalize(text: string): string {
-    if (!text) return text;
+    if (!text) {
+      return text;
+    }
 
     // Normalize Unicode (NFC form - canonical decomposition)
     let normalized = text.normalize('NFC');
@@ -211,15 +213,33 @@ export namespace UnicodeTextProcessor {
   export function detectScripts(text: string): string[] {
     const scripts: string[] = [];
 
-    if (UNICODE_PATTERNS.latin.test(text)) scripts.push('latin');
-    if (UNICODE_PATTERNS.cyrillic.test(text)) scripts.push('cyrillic');
-    if (UNICODE_PATTERNS.arabic.test(text)) scripts.push('arabic');
-    if (UNICODE_PATTERNS.chinese.test(text)) scripts.push('chinese');
-    if (UNICODE_PATTERNS.japanese.test(text)) scripts.push('japanese');
-    if (UNICODE_PATTERNS.korean.test(text)) scripts.push('korean');
-    if (UNICODE_PATTERNS.hebrew.test(text)) scripts.push('hebrew');
-    if (UNICODE_PATTERNS.thai.test(text)) scripts.push('thai');
-    if (UNICODE_PATTERNS.devanagari.test(text)) scripts.push('devanagari');
+    if (UNICODE_PATTERNS.latin.test(text)) {
+      scripts.push('latin');
+    }
+    if (UNICODE_PATTERNS.cyrillic.test(text)) {
+      scripts.push('cyrillic');
+    }
+    if (UNICODE_PATTERNS.arabic.test(text)) {
+      scripts.push('arabic');
+    }
+    if (UNICODE_PATTERNS.chinese.test(text)) {
+      scripts.push('chinese');
+    }
+    if (UNICODE_PATTERNS.japanese.test(text)) {
+      scripts.push('japanese');
+    }
+    if (UNICODE_PATTERNS.korean.test(text)) {
+      scripts.push('korean');
+    }
+    if (UNICODE_PATTERNS.hebrew.test(text)) {
+      scripts.push('hebrew');
+    }
+    if (UNICODE_PATTERNS.thai.test(text)) {
+      scripts.push('thai');
+    }
+    if (UNICODE_PATTERNS.devanagari.test(text)) {
+      scripts.push('devanagari');
+    }
 
     return scripts;
   }
@@ -257,7 +277,9 @@ export namespace UnicodeTextProcessor {
    * Clean and normalize text for parsing
    */
   export function cleanForParsing(text: string): string {
-    if (!text) return text;
+    if (!text) {
+      return text;
+    }
 
     let cleaned = normalize(text);
 

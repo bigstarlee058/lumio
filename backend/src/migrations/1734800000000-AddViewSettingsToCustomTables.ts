@@ -3,7 +3,9 @@ import { type MigrationInterface, type QueryRunner, TableColumn } from 'typeorm'
 export class AddViewSettingsToCustomTables1734800000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasCustomTables = await queryRunner.hasTable('custom_tables');
-    if (!hasCustomTables) return;
+    if (!hasCustomTables) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_tables');
     const hasColumn = table?.findColumnByName('view_settings');
@@ -22,7 +24,9 @@ export class AddViewSettingsToCustomTables1734800000000 implements MigrationInte
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const hasCustomTables = await queryRunner.hasTable('custom_tables');
-    if (!hasCustomTables) return;
+    if (!hasCustomTables) {
+      return;
+    }
     const table = await queryRunner.getTable('custom_tables');
     const hasColumn = table?.findColumnByName('view_settings');
     if (hasColumn) {

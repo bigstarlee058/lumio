@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { In, IsNull, type Repository } from 'typeorm';
 import { AuditEvent, EntityType } from '../../entities/audit-event.entity';
 import { Payable, PayableStatus } from '../../entities/payable.entity';
@@ -9,6 +8,7 @@ import { Statement, StatementStatus } from '../../entities/statement.entity';
 import { Transaction, TransactionType } from '../../entities/transaction.entity';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
 import { Workspace } from '../../entities/workspace.entity';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import type {
   DashboardActionItem,
   DashboardCashFlowPoint,
@@ -150,7 +150,11 @@ export class DashboardService {
     for (const row of txRows) {
       income += await this.convertDashboardAmount(row.income, row.currency, targetCurrency);
       expense += await this.convertDashboardAmount(row.expense, row.currency, targetCurrency);
-      unapprovedCash += await this.convertDashboardAmount(row.unapprovedCash, row.currency, targetCurrency);
+      unapprovedCash += await this.convertDashboardAmount(
+        row.unapprovedCash,
+        row.currency,
+        targetCurrency,
+      );
     }
 
     // All-time balance grouped by currency
@@ -189,8 +193,16 @@ export class DashboardService {
     let totalPayable = 0;
     let totalOverdue = 0;
     for (const row of payableRows) {
-      totalPayable += await this.convertDashboardAmount(row.totalPayable, row.currency, targetCurrency);
-      totalOverdue += await this.convertDashboardAmount(row.totalOverdue, row.currency, targetCurrency);
+      totalPayable += await this.convertDashboardAmount(
+        row.totalPayable,
+        row.currency,
+        targetCurrency,
+      );
+      totalOverdue += await this.convertDashboardAmount(
+        row.totalOverdue,
+        row.currency,
+        targetCurrency,
+      );
     }
 
     return {
@@ -206,7 +218,9 @@ export class DashboardService {
   }
 
   private normalizeCurrency(currency: string | null | undefined): string {
-    const normalized = String(currency || '').trim().toUpperCase();
+    const normalized = String(currency || '')
+      .trim()
+      .toUpperCase();
     return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
   }
 
@@ -235,7 +249,7 @@ export class DashboardService {
     return this.normalizeCurrency(workspace?.currency);
   }
 
-  private async getActions(userId: string, workspaceId: string): Promise<DashboardActionItem[]> {
+  private async getActions(_userId: string, workspaceId: string): Promise<DashboardActionItem[]> {
     const actions: DashboardActionItem[] = [];
 
     const pendingSubmit = await this.statementRepo.count({
@@ -395,7 +409,11 @@ export class DashboardService {
     for (const row of result) {
       const key = row.name;
       const existing = rows.get(key) ?? { name: key, amount: 0, count: 0 };
-      existing.amount += await this.convertDashboardAmount(row.amount, row.currency, targetCurrency);
+      existing.amount += await this.convertDashboardAmount(
+        row.amount,
+        row.currency,
+        targetCurrency,
+      );
       existing.count += Number.parseInt(row.count, 10) || 0;
       rows.set(key, existing);
     }
@@ -429,13 +447,23 @@ export class DashboardService {
       .addGroupBy('c.name')
       .addGroupBy('t.currency')
       .orderBy('amount', 'DESC')
-      .getRawMany<{ id: string | null; name: string; currency: string; amount: string; count: string }>();
+      .getRawMany<{
+        id: string | null;
+        name: string;
+        currency: string;
+        amount: string;
+        count: string;
+      }>();
 
     const rows = new Map<string, DashboardTopCategory>();
     for (const row of result) {
       const key = row.id || row.name;
       const existing = rows.get(key) ?? { id: row.id || null, name: row.name, amount: 0, count: 0 };
-      existing.amount += await this.convertDashboardAmount(row.amount, row.currency, targetCurrency);
+      existing.amount += await this.convertDashboardAmount(
+        row.amount,
+        row.currency,
+        targetCurrency,
+      );
       existing.count += Number.parseInt(row.count, 10) || 0;
       rows.set(key, existing);
     }
@@ -851,5 +879,4 @@ export class DashboardService {
       excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
     });
   }
-
 }

@@ -3,7 +3,10 @@ import { BankProfile } from './bank-profile.service';
 
 type FeatureFlagScalar = string | number | boolean;
 type FeatureFlagValue = FeatureFlagScalar | string[] | Record<string, unknown> | null;
-type FeatureStats = Record<string, { enabled: boolean; usageCount: number; lastUsed: string | null }>;
+type FeatureStats = Record<
+  string,
+  { enabled: boolean; usageCount: number; lastUsed: string | null }
+>;
 
 export interface FeatureFlagConfig {
   enabled: boolean;
@@ -482,7 +485,7 @@ export class FeatureFlagService {
     const bankContext = { ...context, bankId: bankProfile.id };
 
     // Check all feature flags with bank context
-    this.featureFlags.forEach((config, flagName) => {
+    this.featureFlags.forEach((_config, flagName) => {
       results[flagName] = this.isEnabled(flagName, bankContext);
     });
 
@@ -626,7 +629,7 @@ export class FeatureFlagService {
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);
   }
@@ -654,7 +657,7 @@ export class FeatureFlagService {
   getEnabledFeatures(context?: FeatureFlagContext): string[] {
     const enabled: string[] = [];
 
-    this.featureFlags.forEach((config, flagName) => {
+    this.featureFlags.forEach((_config, flagName) => {
       if (this.isEnabled(flagName, context).enabled) {
         enabled.push(flagName);
       }

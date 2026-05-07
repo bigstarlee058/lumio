@@ -95,9 +95,9 @@ export class GoogleSheetsController {
   @Post('connect')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async connect(
-    @Body() connectDto: ConnectSheetDto,
-    @CurrentUser() user: User,
-    @WorkspaceId() workspaceId: string,
+    @Body() _connectDto: ConnectSheetDto,
+    @CurrentUser() _user: User,
+    @WorkspaceId() _workspaceId: string,
   ) {
     throw new BadRequestException(
       'Подключение через этот endpoint больше не поддерживается. Используйте OAuth: GET /google-sheets/oauth/url → POST /google-sheets/oauth/callback',
@@ -131,7 +131,7 @@ export class GoogleSheetsController {
 
   @Get()
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
-  async findAll(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async findAll(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     const sheets = await this.googleSheetsService.findAll(workspaceId);
     return sheets.map(sheet => this.toPublicSheet(sheet));
   }
@@ -140,7 +140,7 @@ export class GoogleSheetsController {
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     const sheet = await this.googleSheetsService.findOne(id, workspaceId);
@@ -151,7 +151,7 @@ export class GoogleSheetsController {
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async sync(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() body?: { statementId?: string },
   ) {
@@ -170,7 +170,7 @@ export class GoogleSheetsController {
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async remove(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     await this.googleSheetsService.remove(id, workspaceId);

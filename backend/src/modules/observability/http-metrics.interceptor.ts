@@ -12,7 +12,9 @@ import { MetricsService } from './metrics.service';
 const getRouteLabel = (req: RoutedRequest): string => {
   const baseUrl = req.baseUrl || '';
   const routePath = req.route?.path || '';
-  if (routePath) return `${baseUrl}${routePath}`;
+  if (routePath) {
+    return `${baseUrl}${routePath}`;
+  }
   return (req.originalUrl || req.url || '').split('?')[0] || 'unknown';
 };
 

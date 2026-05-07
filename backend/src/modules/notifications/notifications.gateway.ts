@@ -56,7 +56,7 @@ export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisco
 
       client.data.userId = userId;
       client.join(this.getUserRoom(userId));
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn(`Socket ${client.id} rejected: invalid token`);
       client.disconnect();
     }

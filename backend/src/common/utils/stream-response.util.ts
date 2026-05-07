@@ -28,7 +28,10 @@ export function pipeFileStreamResponse(
   options: PipeFileStreamResponseOptions,
 ): void {
   res.setHeader('Content-Type', options.mimeType);
-  res.setHeader('Content-Disposition', buildContentDisposition(options.disposition, options.fileName));
+  res.setHeader(
+    'Content-Disposition',
+    buildContentDisposition(options.disposition, options.fileName),
+  );
 
   stream.on('error', (error: NodeJS.ErrnoException) => {
     const status = resolveStreamErrorStatus(error);
@@ -37,7 +40,8 @@ export function pipeFileStreamResponse(
       res.status(status).json({
         error: {
           code: status === HttpStatus.NOT_FOUND ? 'NOT_FOUND' : 'INTERNAL_SERVER_ERROR',
-          message: status === HttpStatus.NOT_FOUND ? 'File not found on disk' : options.errorMessage,
+          message:
+            status === HttpStatus.NOT_FOUND ? 'File not found on disk' : options.errorMessage,
         },
       });
       return;

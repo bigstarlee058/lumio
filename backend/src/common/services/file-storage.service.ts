@@ -22,7 +22,9 @@ const extractUploadsSuffix = (rawPath: string): string | null => {
   const normalized = rawPath.replace(/\\/g, '/');
   const marker = '/uploads/';
   const idx = normalized.lastIndexOf(marker);
-  if (idx === -1) return null;
+  if (idx === -1) {
+    return null;
+  }
   const suffix = normalized.slice(idx + marker.length);
   return suffix ? suffix : null;
 };
@@ -43,7 +45,9 @@ export class FileStorageService {
   ) {}
 
   resolveFilePath(rawPath: string | null | undefined): string | null {
-    if (!rawPath) return null;
+    if (!rawPath) {
+      return null;
+    }
 
     const cwd = process.cwd();
     const basename = path.basename(rawPath);
@@ -190,7 +194,9 @@ export class FileStorageService {
   }> {
     const tryFromDisk = async () => {
       const resolved = this.resolveFilePath(statement.filePath);
-      if (!resolved) return null;
+      if (!resolved) {
+        return null;
+      }
 
       if (statement.fileHash) {
         try {
@@ -212,10 +218,14 @@ export class FileStorageService {
     };
 
     const disk = await tryFromDisk();
-    if (disk) return disk;
+    if (disk) {
+      return disk;
+    }
 
     const restored = await this.restoreFile(statement);
-    if (restored) return restored;
+    if (restored) {
+      return restored;
+    }
 
     throw new NotFoundException('File content is unavailable');
   }

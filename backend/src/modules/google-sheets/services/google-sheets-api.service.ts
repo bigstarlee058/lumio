@@ -123,7 +123,7 @@ export class GoogleSheetsApiService {
       this.configService.get<string>('GOOGLE_REDIRECT_URI') ||
       '';
 
-    if (!this.clientId || !this.clientSecret) {
+    if (!(this.clientId && this.clientSecret)) {
       this.logger.warn('Google OAuth credentials not configured');
     }
   }
@@ -163,33 +163,39 @@ export class GoogleSheetsApiService {
         get: async args => ({
           data: await this.googleJson<GoogleSpreadsheet>(
             accessToken,
-            `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}?${new URLSearchParams({
-              ...(args.ranges?.length ? { ranges: args.ranges[0] } : {}),
-              ...(args.includeGridData !== undefined
-                ? { includeGridData: String(args.includeGridData) }
-                : {}),
-              ...(args.fields ? { fields: args.fields } : {}),
-            }).toString()}`,
+            `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}?${new URLSearchParams(
+              {
+                ...(args.ranges?.length ? { ranges: args.ranges[0] } : {}),
+                ...(args.includeGridData !== undefined
+                  ? { includeGridData: String(args.includeGridData) }
+                  : {}),
+                ...(args.fields ? { fields: args.fields } : {}),
+              },
+            ).toString()}`,
           ),
         }),
         values: {
           get: async args => ({
             data: await this.googleJson<GoogleValuesResponse>(
               accessToken,
-              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams({
-                ...(args.valueRenderOption ? { valueRenderOption: args.valueRenderOption } : {}),
-                ...(args.dateTimeRenderOption
-                  ? { dateTimeRenderOption: args.dateTimeRenderOption }
-                  : {}),
-              }).toString()}`,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams(
+                {
+                  ...(args.valueRenderOption ? { valueRenderOption: args.valueRenderOption } : {}),
+                  ...(args.dateTimeRenderOption
+                    ? { dateTimeRenderOption: args.dateTimeRenderOption }
+                    : {}),
+                },
+              ).toString()}`,
             ),
           }),
           update: async args => ({
             data: await this.googleJson(
               accessToken,
-              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams({
-                valueInputOption: args.valueInputOption,
-              }).toString()}`,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}?${new URLSearchParams(
+                {
+                  valueInputOption: args.valueInputOption,
+                },
+              ).toString()}`,
               {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -200,10 +206,12 @@ export class GoogleSheetsApiService {
           append: async args => ({
             data: await this.googleJson(
               accessToken,
-              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}:append?${new URLSearchParams({
-                valueInputOption: args.valueInputOption,
-                insertDataOption: args.insertDataOption,
-              }).toString()}`,
+              `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(args.spreadsheetId)}/values/${encodeURIComponent(args.range)}:append?${new URLSearchParams(
+                {
+                  valueInputOption: args.valueInputOption,
+                  insertDataOption: args.insertDataOption,
+                },
+              ).toString()}`,
               {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -237,7 +245,7 @@ export class GoogleSheetsApiService {
   }
 
   private async requestToken(params: Record<string, string>): Promise<GoogleTokenResponse> {
-    if (!this.clientId || !this.clientSecret || !this.redirectUri) {
+    if (!(this.clientId && this.clientSecret && this.redirectUri)) {
       throw new BadRequestException('Google OAuth credentials are not configured');
     }
 
@@ -263,7 +271,7 @@ export class GoogleSheetsApiService {
       'https://www.googleapis.com/auth/drive.readonly',
     ];
 
-    if (!this.clientId || !this.redirectUri) {
+    if (!(this.clientId && this.redirectUri)) {
       throw new BadRequestException('Google OAuth credentials are not configured');
     }
 
@@ -384,7 +392,7 @@ export class GoogleSheetsApiService {
     ];
 
     // Determine amount in KZT
-    const amountKZT = transaction.amount || transaction.debit || transaction.credit || 0;
+    const amountKzt = transaction.amount || transaction.debit || transaction.credit || 0;
 
     // Format date as DD.MM.YYYY
     const formattedDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
@@ -394,7 +402,7 @@ export class GoogleSheetsApiService {
       year: date.getFullYear(),
       monthNumber: date.getMonth() + 1,
       transactionDate: formattedDate,
-      amountKZT,
+      amountKZT: amountKzt,
       amountForeign: transaction.amountForeign,
       currencyCode: transaction.currency || 'KZT',
       exchangeRate: transaction.exchangeRate,
@@ -455,7 +463,9 @@ export class GoogleSheetsApiService {
   }
 
   private getSheetContext(accessToken: string, worksheetName: string | null) {
-    return createSheetWriteContext(accessToken, worksheetName, token => this.getSheetsClient(token));
+    return createSheetWriteContext(accessToken, worksheetName, token =>
+      this.getSheetsClient(token),
+    );
   }
 
   private async handleSheetWriteError(
@@ -682,9 +692,7 @@ export class GoogleSheetsApiService {
       }
 
       this.logger.error('Error reading values from Google Sheet:', error);
-      throw new BadRequestException(
-        `Failed to read Google Sheet values: ${sheetsError.message}`,
-      );
+      throw new BadRequestException(`Failed to read Google Sheet values: ${sheetsError.message}`);
     }
   }
 

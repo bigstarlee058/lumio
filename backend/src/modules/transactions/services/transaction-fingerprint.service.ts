@@ -164,7 +164,9 @@ export class TransactionFingerprintService {
     const candidates = new Map<string, Transaction>();
 
     for (const range of amountRanges) {
-      if (candidates.size >= limit) break;
+      if (candidates.size >= limit) {
+        break;
+      }
       const found = await this.transactionRepository.find({
         where: {
           workspaceId,
@@ -176,7 +178,9 @@ export class TransactionFingerprintService {
 
       for (const tx of found) {
         candidates.set(tx.id, tx);
-        if (candidates.size >= limit) break;
+        if (candidates.size >= limit) {
+          break;
+        }
       }
     }
 

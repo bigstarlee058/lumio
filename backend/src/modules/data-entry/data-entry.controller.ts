@@ -47,7 +47,7 @@ export class DataEntryController {
 
   @Get()
   async list(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('type') type?: DataEntryType,
     @Query('customTabId') customTabId?: string,
@@ -112,7 +112,7 @@ export class DataEntryController {
   @UseInterceptors(
     FileInterceptor('icon', {
       storage: diskStorage({
-        destination: (req, file, cb) => {
+        destination: (_req, _file, cb) => {
           const uploadsDir = process.env.UPLOADS_DIR || path.join(process.cwd(), 'uploads');
           const targetDir = path.join(uploadsDir, 'custom-field-icons');
           if (!fs.existsSync(targetDir)) {
@@ -120,12 +120,12 @@ export class DataEntryController {
           }
           cb(null, targetDir);
         },
-        filename: (req, file, cb) => {
+        filename: (_req, file, cb) => {
           const safeName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
           cb(null, safeName);
         },
       }),
-      fileFilter: (req, file, cb) => {
+      fileFilter: (_req, file, cb) => {
         if (!file.mimetype.startsWith('image/')) {
           return cb(new Error('Only images allowed'), false);
         }

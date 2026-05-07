@@ -237,7 +237,9 @@ export class CrossStatementDeduplicationService {
     );
     const daysDiff = dateDiff / (1000 * 60 * 60 * 24);
     scores.date = Math.max(0, 1 - daysDiff / 7);
-    if (scores.date > 0.8) matchedFields.push('date');
+    if (scores.date > 0.8) {
+      matchedFields.push('date');
+    }
 
     // Amount similarity (exact match or ±2%)
     const amount1 = t1.debit || t1.credit || t1.amount || 0;
@@ -249,7 +251,9 @@ export class CrossStatementDeduplicationService {
       const amountDiff = Math.abs(amount1 - amount2);
       const amountAvg = (Math.abs(amount1) + Math.abs(amount2)) / 2;
       scores.amount = Math.max(0, 1 - amountDiff / (amountAvg * 0.02));
-      if (scores.amount > 0.9) matchedFields.push('amount');
+      if (scores.amount > 0.9) {
+        matchedFields.push('amount');
+      }
     }
 
     // Counterparty similarity (Levenshtein-based fuzzy match)
@@ -257,19 +261,25 @@ export class CrossStatementDeduplicationService {
       t1.counterpartyName.toLowerCase(),
       t2.counterpartyName.toLowerCase(),
     );
-    if (scores.counterparty > 0.8) matchedFields.push('counterparty');
+    if (scores.counterparty > 0.8) {
+      matchedFields.push('counterparty');
+    }
 
     // Purpose similarity
     scores.purpose = this.stringSimilarity(
       t1.paymentPurpose.toLowerCase(),
       t2.paymentPurpose.toLowerCase(),
     );
-    if (scores.purpose > 0.7) matchedFields.push('purpose');
+    if (scores.purpose > 0.7) {
+      matchedFields.push('purpose');
+    }
 
     // Document number (if both have it)
     if (t1.documentNumber && t2.documentNumber) {
       scores.documentNumber = t1.documentNumber === t2.documentNumber ? 1.0 : 0;
-      if (scores.documentNumber === 1.0) matchedFields.push('documentNumber');
+      if (scores.documentNumber === 1.0) {
+        matchedFields.push('documentNumber');
+      }
     }
 
     // Calculate weighted overall similarity
@@ -312,8 +322,12 @@ export class CrossStatementDeduplicationService {
    * Calculate string similarity using Levenshtein distance
    */
   private stringSimilarity(s1: string, s2: string): number {
-    if (s1 === s2) return 1.0;
-    if (s1.length === 0 || s2.length === 0) return 0;
+    if (s1 === s2) {
+      return 1.0;
+    }
+    if (s1.length === 0 || s2.length === 0) {
+      return 0;
+    }
 
     const matrix: number[][] = [];
 

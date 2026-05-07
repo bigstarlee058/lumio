@@ -1,4 +1,3 @@
-import type { Repository } from 'typeorm';
 import {
   BalanceAccount,
   Category,
@@ -12,6 +11,7 @@ import {
   WorkspaceRole,
 } from '@/entities';
 import { DEFAULT_BALANCE_ACCOUNTS } from '@/modules/balance/balance-default-accounts';
+import type { Repository } from 'typeorm';
 
 export const DEMO_EMAIL = 'demo@lumio.dev';
 export const DEMO_PASSWORD = 'demo123';
@@ -175,7 +175,9 @@ export async function seedDemoData({
       const account = await balanceAccountRepository.save(
         balanceAccountRepository.create({
           workspaceId: workspace.id,
-          parentId: definition.parentCode ? (parentByCode.get(definition.parentCode)?.id ?? null) : null,
+          parentId: definition.parentCode
+            ? (parentByCode.get(definition.parentCode)?.id ?? null)
+            : null,
           code: definition.code,
           name: definition.name,
           nameEn: definition.nameEn,

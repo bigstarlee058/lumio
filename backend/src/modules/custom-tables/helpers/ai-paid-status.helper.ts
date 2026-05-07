@@ -41,18 +41,27 @@ const UNPAID_PATTERNS = [
 
 const heuristicPaidStatus = (input: PaidStatusInput): boolean | null => {
   const combined = `${input.counterparty || ''} ${input.comment || ''}`.trim();
-  if (!combined) return null;
+  if (!combined) {
+    return null;
+  }
   const normalized = combined.toLowerCase();
-  if (UNPAID_PATTERNS.some(re => re.test(normalized))) return false;
-  if (PAID_PATTERNS.some(re => re.test(normalized))) return true;
+  if (UNPAID_PATTERNS.some(re => re.test(normalized))) {
+    return false;
+  }
+  if (PAID_PATTERNS.some(re => re.test(normalized))) {
+    return true;
+  }
   return null;
 };
 
 export class AiPaidStatusClassifier extends BaseAiHelper {
   async classify(inputs: PaidStatusInput[]): Promise<PaidStatusResult[]> {
-    if (!inputs.length) return [];
+    if (!inputs.length) {
+      return [];
+    }
 
-    const fallback = () => inputs.map(input => ({ id: input.id, paid: heuristicPaidStatus(input) }));
+    const fallback = () =>
+      inputs.map(input => ({ id: input.id, paid: heuristicPaidStatus(input) }));
 
     if (!this.isAvailable()) {
       return fallback();
@@ -106,7 +115,9 @@ ${JSON.stringify({ items: sanitized })}`,
       const byId = new Map<string, boolean | null>();
       for (const item of rawResults) {
         const id = String(item?.id ?? item?.rowId ?? '').trim();
-        if (!id) continue;
+        if (!id) {
+          continue;
+        }
         let paid: boolean | null = null;
         if (typeof item?.paid === 'boolean') {
           paid = item.paid;
@@ -114,15 +125,21 @@ ${JSON.stringify({ items: sanitized })}`,
           paid = null;
         } else if (typeof item?.paid === 'string') {
           const normalized = item.paid.trim().toLowerCase();
-          if (['true', 'paid', 'yes', '1'].includes(normalized)) paid = true;
-          if (['false', 'unpaid', 'no', '0'].includes(normalized)) paid = false;
+          if (['true', 'paid', 'yes', '1'].includes(normalized)) {
+            paid = true;
+          }
+          if (['false', 'unpaid', 'no', '0'].includes(normalized)) {
+            paid = false;
+          }
         }
         byId.set(id, paid);
       }
 
       return inputs.map(input => ({
         id: input.id,
-        paid: byId.has(input.id) ? (byId.get(input.id) as boolean | null) : heuristicPaidStatus(input),
+        paid: byId.has(input.id)
+          ? (byId.get(input.id) as boolean | null)
+          : heuristicPaidStatus(input),
       }));
     } catch (error) {
       console.error('[AiPaidStatusClassifier] Failed to classify paid status:', error);

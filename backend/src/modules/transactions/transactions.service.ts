@@ -1,13 +1,14 @@
+import { randomUUID } from 'node:crypto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import type { Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
+import { TransactionType } from '../../entities/transaction.entity';
 import { User } from '../../entities/user.entity';
 import { WorkspaceMember, WorkspaceRole } from '../../entities/workspace-member.entity';
 import { AuditService } from '../audit/audit.service';
@@ -16,7 +17,6 @@ import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import type { DataDeletedEvent } from '../notifications/events/notification-events';
 import type { BulkUpdateItemDto } from './dto/bulk-update-transaction.dto';
 import type { UpdateTransactionDto } from './dto/update-transaction.dto';
-import { TransactionType } from '../../entities/transaction.entity';
 
 export type TransactionWithConversion = Transaction & {
   convertedAmount?: number;
@@ -61,15 +61,21 @@ export class TransactionsService {
       select: ['id', 'workspaceId'],
     });
     const workspaceId = user?.workspaceId ?? null;
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
 
     const membership = await this.workspaceMemberRepository.findOne({
       where: { workspaceId, userId },
       select: ['role', 'permissions'],
     });
 
-    if (!membership) return;
-    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
+    if (!membership) {
+      return;
+    }
+    if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) {
+      return;
+    }
 
     if (membership.permissions?.canEditStatements === false) {
       throw new ForbiddenException('Недостаточно прав для редактирования выписок');

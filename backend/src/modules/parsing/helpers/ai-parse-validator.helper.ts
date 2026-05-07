@@ -79,10 +79,12 @@ ${redactedPreview}`,
         metadata: {
           ...parsed.metadata,
           accountNumber: meta.accountNumber || parsed.metadata.accountNumber,
-          dateFrom: normalizeDate(meta.dateFrom || meta.date_from || '') || parsed.metadata.dateFrom,
+          dateFrom:
+            normalizeDate(meta.dateFrom || meta.date_from || '') || parsed.metadata.dateFrom,
           dateTo: normalizeDate(meta.dateTo || meta.date_to || '') || parsed.metadata.dateTo,
           balanceStart:
-            normalizeNumber(meta.balanceStart || meta.balance_start) ?? parsed.metadata.balanceStart,
+            normalizeNumber(meta.balanceStart || meta.balance_start) ??
+            parsed.metadata.balanceStart,
           balanceEnd:
             normalizeNumber(meta.balanceEnd || meta.balance_end) ?? parsed.metadata.balanceEnd,
           currency: meta.currency || parsed.metadata.currency || 'KZT',

@@ -158,7 +158,9 @@ export class KaspiParser extends BaseParser {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      if (!line) continue;
+      if (!line) {
+        continue;
+      }
 
       // Document number starts a new block
       const docMatch = line.match(/^(8\d{7})$/);
@@ -194,7 +196,7 @@ export class KaspiParser extends BaseParser {
       if (amountMatch && currentTransaction.transactionDate) {
         const amount = this.normalizeNumberValue(amountMatch[1]);
         if (amount && amount > 0) {
-          if (!currentTransaction.debit && !currentTransaction.credit) {
+          if (!(currentTransaction.debit || currentTransaction.credit)) {
             currentTransaction.debit = amount;
           }
         }

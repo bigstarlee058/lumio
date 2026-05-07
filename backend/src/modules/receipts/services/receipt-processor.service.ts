@@ -1,13 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs/promises';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs/promises';
 import { Repository } from 'typeorm';
-import {
-  Receipt,
-  ReceiptJobStatus,
-  ReceiptProcessingJob,
-  ReceiptStatus,
-} from '../../../entities';
+import { Receipt, ReceiptJobStatus, ReceiptProcessingJob, ReceiptStatus } from '../../../entities';
 import { UniversalExtractorService } from '../../parsing/services/universal-extractor.service';
 import { ReceiptCategoryService } from './receipt-category.service';
 import { ReceiptDuplicateService } from './receipt-duplicate.service';

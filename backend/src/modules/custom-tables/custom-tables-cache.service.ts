@@ -23,7 +23,9 @@ export class CustomTablesCacheService {
 
   private async getVersion(key: string): Promise<string> {
     const cached = await this.cacheManager.get<string>(key);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
     const next = Date.now().toString();
     await this.cacheManager.set(key, next, 0);
     return next;
@@ -63,7 +65,9 @@ export class CustomTablesCacheService {
 
   async getOrSet<T>(key: string, factory: () => Promise<T>): Promise<T> {
     const cached = await this.cacheManager.get<T>(key);
-    if (cached !== undefined && cached !== null) return cached;
+    if (cached !== undefined && cached !== null) {
+      return cached;
+    }
     const value = await factory();
     await this.cacheManager.set(key, value, this.ttlMs);
     return value;

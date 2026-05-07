@@ -47,7 +47,11 @@ export class ExchangeRatesService {
 
     // 2. Database
     const dbRate = await this.exchangeRateRepository.findOne({
-      where: { baseCurrency: normalizedFrom, targetCurrency: normalizedTo, rateDate: new Date(rateDate) },
+      where: {
+        baseCurrency: normalizedFrom,
+        targetCurrency: normalizedTo,
+        rateDate: new Date(rateDate),
+      },
     });
     if (dbRate) {
       const ttl = this.isToday(rateDate) ? 4 * 3600 : 0; // 4h for today, permanent for historical
@@ -98,12 +102,7 @@ export class ExchangeRatesService {
     return 1;
   }
 
-  async convert(
-    amount: number,
-    from: string,
-    to: string,
-    date?: Date,
-  ): Promise<ConvertResult> {
+  async convert(amount: number, from: string, to: string, date?: Date): Promise<ConvertResult> {
     const rate = await this.getRate(from, to, date);
     return { converted: amount * rate, rate, source: 'exchange-rates-service' };
   }
@@ -156,25 +155,27 @@ export class ExchangeRatesService {
     }
   }
 
-  private async getRateFromApi(
-    from: string,
-    to: string,
-    rateDate: string,
-  ): Promise<number | null> {
-    if (!this.apiKey) return null;
+  private async getRateFromApi(from: string, to: string, rateDate: string): Promise<number | null> {
+    if (!this.apiKey) {
+      return null;
+    }
 
     try {
       // Use latest rates endpoint (historical endpoint requires higher tier)
       const url = `${this.apiBaseUrl}/${this.apiKey}/latest/${from}`;
       const response = await fetch(url);
-      if (!response.ok) return null;
+      if (!response.ok) {
+        return null;
+      }
 
       const data = (await response.json()) as {
         result: string;
         conversion_rates: Record<string, number>;
       };
 
-      if (data.result !== 'success' || !data.conversion_rates[to]) return null;
+      if (data.result !== 'success' || !data.conversion_rates[to]) {
+        return null;
+      }
 
       const rate = data.conversion_rates[to];
       // Cache all rates from this response to avoid repeated API calls

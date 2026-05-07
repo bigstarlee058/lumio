@@ -1,9 +1,9 @@
+import { randomUUID } from 'node:crypto';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, type Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { randomUUID } from 'node:crypto';
-import * as XLSX from 'xlsx';
+import * as xlsx from 'xlsx';
 import {
   ActorType,
   AuditAction,
@@ -236,7 +236,9 @@ const toCssColorWithOpacity = (
   return `rgba(${rr}, ${gg}, ${bb}, ${alpha})`;
 };
 
-const extractSheetStyle = (format: GoogleSheetsCellFormatLike | null | undefined): SheetCellStyle => {
+const extractSheetStyle = (
+  format: GoogleSheetsCellFormatLike | null | undefined,
+): SheetCellStyle => {
   if (!format || typeof format !== 'object') return {};
   const style: SheetCellStyle = {};
 
@@ -299,7 +301,9 @@ export interface HighlightedRowInfo {
 
 type NormalizedRgbColor = { r: number; g: number; b: number; alpha: number };
 
-const normalizeRgbColor = (value: GoogleSheetsRgbColorLike | null | undefined): NormalizedRgbColor | null => {
+const normalizeRgbColor = (
+  value: GoogleSheetsRgbColorLike | null | undefined,
+): NormalizedRgbColor | null => {
   if (!value || typeof value !== 'object') return null;
   const r = clamp01(value.red);
   const g = clamp01(value.green);
@@ -584,7 +588,10 @@ export class CustomTablesImportService {
     return category.id;
   }
 
-  private async requireGoogleSheet(workspaceId: string, googleSheetId: string): Promise<GoogleSheet> {
+  private async requireGoogleSheet(
+    workspaceId: string,
+    googleSheetId: string,
+  ): Promise<GoogleSheet> {
     const sheet = await this.googleSheetRepository.findOne({
       where: { id: googleSheetId, workspaceId, isActive: true },
     });
@@ -652,7 +659,10 @@ export class CustomTablesImportService {
     return GoogleSheetsImportLayoutType.FLAT;
   }
 
-  private buildPublicGoogleSheetsExportUrl(rawUrl: string): { exportUrl: string; spreadsheetId: string } {
+  private buildPublicGoogleSheetsExportUrl(rawUrl: string): {
+    exportUrl: string;
+    spreadsheetId: string;
+  } {
     let url: URL;
     try {
       url = new URL(rawUrl.trim());
@@ -769,9 +779,9 @@ export class CustomTablesImportService {
 
     const { spreadsheetId } = this.buildPublicGoogleSheetsExportUrl(dto.sourceUrl);
     const buffer = await this.fetchPublicWorkbook(dto.sourceUrl);
-    let workbook: XLSX.WorkBook;
+    let workbook: xlsx.WorkBook;
     try {
-      workbook = XLSX.read(buffer, { type: 'buffer', raw: false });
+      workbook = xlsx.read(buffer, { type: 'buffer', raw: false });
     } catch {
       throw new BadRequestException('Не удалось прочитать экспорт Google Sheets');
     }
@@ -787,7 +797,7 @@ export class CustomTablesImportService {
     }
 
     const worksheet = workbook.Sheets[requestedWorksheet];
-    const rawValues = XLSX.utils.sheet_to_json(worksheet, {
+    const rawValues = xlsx.utils.sheet_to_json(worksheet, {
       header: 1,
       raw: false,
       defval: null,
@@ -900,7 +910,12 @@ export class CustomTablesImportService {
       const inferred = inferColumnType(
         sampleForInference.map(row => normalizeCellValue(row?.[idx])),
       );
-      return { index: idx, title: headerValue || colLetter, suggestedType: inferred, a1: colLetter };
+      return {
+        index: idx,
+        title: headerValue || colLetter,
+        suggestedType: inferred,
+        a1: colLetter,
+      };
     });
 
     const finalColumns = this.buildFinalColumns(
@@ -1130,7 +1145,10 @@ export class CustomTablesImportService {
       }
 
       const spreadsheet = grid.spreadsheet;
-      const sheetEntry = this.getSheetEntry(spreadsheet as GoogleSheetsSpreadsheetLike, worksheetName);
+      const sheetEntry = this.getSheetEntry(
+        spreadsheet as GoogleSheetsSpreadsheetLike,
+        worksheetName,
+      );
       const dataEntry = sheetEntry?.data?.[0];
       const gridRowData = Array.isArray(dataEntry?.rowData)
         ? (dataEntry.rowData as GoogleSheetsRowLike[])
@@ -1301,14 +1319,14 @@ export class CustomTablesImportService {
 
     let table: CustomTable;
     try {
-        table = await this.customTableRepository.save(
-          this.customTableRepository.create({
+      table = await this.customTableRepository.save(
+        this.customTableRepository.create({
           userId: sheet.userId,
-            name: dto.name.trim(),
-            description: dto.description ?? null,
-            source: CustomTableSource.GOOGLE_SHEETS_IMPORT,
-            categoryId,
-          }),
+          name: dto.name.trim(),
+          description: dto.description ?? null,
+          source: CustomTableSource.GOOGLE_SHEETS_IMPORT,
+          categoryId,
+        }),
       );
     } catch (error) {
       this.throwHelpfulSchemaError(error);
@@ -1387,7 +1405,10 @@ export class CustomTablesImportService {
       }
 
       const spreadsheet = grid.spreadsheet;
-      const sheetEntry = this.getSheetEntry(spreadsheet as GoogleSheetsSpreadsheetLike, worksheetName);
+      const sheetEntry = this.getSheetEntry(
+        spreadsheet as GoogleSheetsSpreadsheetLike,
+        worksheetName,
+      );
       const dataEntry = sheetEntry?.data?.[0];
       gridRowData = Array.isArray(dataEntry?.rowData)
         ? (dataEntry.rowData as GoogleSheetsRowLike[])

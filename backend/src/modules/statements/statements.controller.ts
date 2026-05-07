@@ -23,7 +23,6 @@ import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import { IdempotencyService } from '../../common/services/idempotency.service';
 import { validateFile } from '../../common/utils/file-validator.util';
-import { buildContentDisposition } from '../../common/utils/http-file.util';
 import { pipeFileStreamResponse } from '../../common/utils/stream-response.util';
 import { multerConfig } from '../../config/multer.config';
 import { EntityType } from '../../entities/audit-event.entity';
@@ -259,10 +258,7 @@ export class StatementsController {
 
   @Get('export-zip')
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
-  async exportZip(
-    @WorkspaceId() workspaceId: string,
-    @Res() res: Response,
-  ) {
+  async exportZip(@WorkspaceId() workspaceId: string, @Res() res: Response) {
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename="lumio-export.zip"');
     await this.statementsService.exportZip(workspaceId, res);
@@ -289,7 +285,7 @@ export class StatementsController {
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getFile(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Res() res: Response,
   ) {
@@ -316,7 +312,7 @@ export class StatementsController {
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async viewFile(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Res() res: Response,
   ) {
@@ -337,7 +333,7 @@ export class StatementsController {
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async getThumbnail(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('width') width: string | undefined,
     @Res() res: Response,
@@ -427,7 +423,7 @@ export class StatementsController {
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
   async findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.statementsService.findOne(id, workspaceId);

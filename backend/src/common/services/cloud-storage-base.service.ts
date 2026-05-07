@@ -1,13 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { BadRequestException } from '@nestjs/common';
-import { Integration, IntegrationProvider, IntegrationStatus, IntegrationToken, Statement, User } from '../../entities';
+import {
+  Integration,
+  IntegrationProvider,
+  IntegrationStatus,
+  IntegrationToken,
+  Statement,
+  User,
+} from '../../entities';
+import { validateFile } from '../utils/file-validator.util';
+import { normalizeFilename } from '../utils/filename.util';
 import {
   OAuthIntegrationBaseService,
   type OAuthRepositoryLike,
 } from './oauth-integration-base.service';
-import { validateFile } from '../utils/file-validator.util';
-import { normalizeFilename } from '../utils/filename.util';
 
 const DEFAULT_SYNC_TIME = '03:00';
 const DEFAULT_IMPORT_ALLOWED_MIME_TYPES = new Set([
@@ -103,7 +110,7 @@ export abstract class CloudStorageBaseService<
     let status = integration.status;
     if (
       status === IntegrationStatus.CONNECTED &&
-      (!integration.token?.refreshToken || !integration.token?.accessToken)
+      !(integration.token?.refreshToken && integration.token?.accessToken)
     ) {
       status = IntegrationStatus.NEEDS_REAUTH;
     }
@@ -139,10 +146,13 @@ export abstract class CloudStorageBaseService<
 
   async updateSettings(
     userId: string,
-    dto: Partial<Pick<TSettings, 'folderId' | 'folderName' | 'syncEnabled' | 'syncTime' | 'timeZone'>>,
+    dto: Partial<
+      Pick<TSettings, 'folderId' | 'folderName' | 'syncEnabled' | 'syncTime' | 'timeZone'>
+    >,
   ) {
     const integration = await this.ensureIntegration(userId);
-    let settings = this.getConnectedSettings(integration) || this.createSettingsRecord(integration.id);
+    let settings =
+      this.getConnectedSettings(integration) || this.createSettingsRecord(integration.id);
 
     if (dto.folderId !== undefined) {
       settings.folderId = dto.folderId || null;
@@ -290,11 +300,7 @@ export abstract class CloudStorageBaseService<
       };
     }
 
-    if (
-      args.size &&
-      Number.isFinite(args.size) &&
-      args.size > this.getMaxImportFileSizeBytes()
-    ) {
+    if (args.size && Number.isFinite(args.size) && args.size > this.getMaxImportFileSizeBytes()) {
       return {
         ok: false,
         result: this.buildImportResult(args.fileId, 'error', 'File size exceeds limit'),
@@ -478,13 +484,19 @@ export abstract class CloudStorageBaseService<
     return file;
   }
 
-  protected shouldSyncNow(now: Date, settings: CloudStorageSettingsLike, timeZone: string): boolean {
+  protected shouldSyncNow(
+    now: Date,
+    settings: CloudStorageSettingsLike,
+    timeZone: string,
+  ): boolean {
     const [hourStr, minuteStr] = (settings.syncTime || DEFAULT_SYNC_TIME).split(':');
     const syncHour = Number.parseInt(hourStr || '0', 10);
     const syncMinute = Number.parseInt(minuteStr || '0', 10);
 
     const nowParts = this.getTimeParts(now, timeZone);
-    const lastSyncParts = settings.lastSyncAt ? this.getTimeParts(settings.lastSyncAt, timeZone) : null;
+    const lastSyncParts = settings.lastSyncAt
+      ? this.getTimeParts(settings.lastSyncAt, timeZone)
+      : null;
     if (lastSyncParts?.dateKey === nowParts.dateKey) {
       return false;
     }

@@ -128,7 +128,7 @@ export class AddImportSessionAndFingerprint1738300000000 implements MigrationInt
 
       for (const tx of batch) {
         // Skip if missing required data
-        if (!tx.workspace_id || !tx.transaction_date) {
+        if (!(tx.workspace_id && tx.transaction_date)) {
           skippedCount++;
           continue;
         }
@@ -173,7 +173,7 @@ export class AddImportSessionAndFingerprint1738300000000 implements MigrationInt
         const fingerprint = hash.substring(0, 32);
 
         // Update transaction with fingerprint
-        await queryRunner.query(`UPDATE transactions SET fingerprint = $1 WHERE id = $2`, [
+        await queryRunner.query('UPDATE transactions SET fingerprint = $1 WHERE id = $2', [
           fingerprint,
           tx.id,
         ]);

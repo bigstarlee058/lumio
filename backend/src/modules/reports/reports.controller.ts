@@ -4,7 +4,6 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -54,7 +53,7 @@ export class ReportsController {
   @Get('statements/summary')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getStatementsSummary(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('days', new DefaultValuePipe(30), ParseIntPipe) days?: number,
   ) {
@@ -64,7 +63,7 @@ export class ReportsController {
   @Get('top-categories')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getTopCategories(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query() query: TopCategoriesQueryDto,
   ) {
@@ -74,7 +73,7 @@ export class ReportsController {
   @Get('spend-over-time')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getSpendOverTimeReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query() query: SpendOverTimeQueryDto,
   ) {
@@ -84,7 +83,7 @@ export class ReportsController {
   @Post('custom-tables/summary')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesSummary(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: CustomTablesSummaryDto,
   ) {
@@ -94,7 +93,7 @@ export class ReportsController {
   @Post('custom-tables/report')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: CustomTablesReportDto,
   ) {
@@ -104,7 +103,7 @@ export class ReportsController {
   @Post('custom-tables/report/drill-down')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomTablesReportDrillDown(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: CustomTablesReportDrillDownDto,
   ) {
@@ -113,17 +112,14 @@ export class ReportsController {
 
   @Get('custom-tables/available')
   @WorkspaceAuth(Permission.REPORT_VIEW)
-  async getAvailableCustomTables(
-    @CurrentUser() user: User,
-    @WorkspaceId() workspaceId: string,
-  ) {
+  async getAvailableCustomTables(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     return this.reportsService.getAvailableCustomTables(workspaceId);
   }
 
   @Get('daily')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getDailyReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('date') date?: string,
   ) {
@@ -139,7 +135,7 @@ export class ReportsController {
   @Get('monthly')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getMonthlyReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('year') year?: string,
     @Query('month') month?: string,
@@ -156,7 +152,7 @@ export class ReportsController {
   @Post('custom')
   @WorkspaceAuth(Permission.REPORT_VIEW)
   async getCustomReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: CustomReportDto,
   ) {
@@ -166,7 +162,7 @@ export class ReportsController {
   @Post('export')
   @WorkspaceAuth(Permission.REPORT_EXPORT)
   async exportReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: ExportReportDto,
     @Res() res: Response,
@@ -214,7 +210,7 @@ export class ReportsController {
   @Post('generate')
   @WorkspaceAuth(Permission.REPORT_EXPORT)
   async generateReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: GenerateReportDto,
     @Res() res: Response,
@@ -259,7 +255,7 @@ export class ReportsController {
   @Get('history/:reportId/download')
   @WorkspaceAuth(Permission.REPORT_EXPORT)
   async downloadHistoryReport(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Param('reportId') reportId: string,
     @Res() res: Response,
@@ -276,7 +272,7 @@ export class ReportsController {
 
   @Get('latest')
   @WorkspaceAuth(Permission.REPORT_VIEW)
-  async getLatestPeriod(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async getLatestPeriod(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     return this.reportsService.getLatestTransactionPeriod(workspaceId);
   }
 }

@@ -41,7 +41,7 @@ export class AiCategoryClassifier extends BaseAiHelper {
       return { matches: [], failedCount: 0 };
     }
 
-    if (!categories.length || !this.isAvailable()) {
+    if (!(categories.length && this.isAvailable())) {
       return { matches: [], failedCount: transactions.length };
     }
 
@@ -105,7 +105,7 @@ export class AiCategoryClassifier extends BaseAiHelper {
 
       for (const item of rawClassifications) {
         const index = Number(item?.index);
-        if (!Number.isFinite(index) || !validIndexes.has(index)) {
+        if (!(Number.isFinite(index) && validIndexes.has(index))) {
           continue;
         }
 
@@ -130,11 +130,16 @@ export class AiCategoryClassifier extends BaseAiHelper {
           categoryName,
           categoryId,
           confidence,
-          vendorNormalized: typeof item?.vendorNormalized === 'string' ? item.vendorNormalized.trim() : undefined,
+          vendorNormalized:
+            typeof item?.vendorNormalized === 'string' ? item.vendorNormalized.trim() : undefined,
           categoryHint: typeof item?.categoryHint === 'string' ? item.categoryHint : undefined,
           taxMentioned: typeof item?.taxMentioned === 'boolean' ? item.taxMentioned : undefined,
-          taxRate: typeof item?.taxRate === 'number' && Number.isFinite(item.taxRate) ? item.taxRate : undefined,
-          transactionNature: typeof item?.transactionNature === 'string' ? item.transactionNature : undefined,
+          taxRate:
+            typeof item?.taxRate === 'number' && Number.isFinite(item.taxRate)
+              ? item.taxRate
+              : undefined,
+          transactionNature:
+            typeof item?.transactionNature === 'string' ? item.transactionNature : undefined,
         });
       }
 

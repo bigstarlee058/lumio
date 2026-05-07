@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AuditAction,
-  type AuditEventDiff,
-  EntityType,
-} from '../../../entities/audit-event.entity';
+import { AuditAction, type AuditEventDiff, EntityType } from '../../../entities/audit-event.entity';
 import type { CreateAuditEventDto } from '../interfaces/audit-event.interface';
 
 const ENTITY_LABELS: Record<EntityType, string> = {
@@ -21,6 +17,8 @@ const ENTITY_LABELS: Record<EntityType, string> = {
   [EntityType.WALLET]: 'кошелек',
   [EntityType.CUSTOM_TABLE]: 'таблица',
   [EntityType.CUSTOM_TABLE_COLUMN]: 'колонка таблицы',
+  [EntityType.BUDGET]: 'бюджет',
+  [EntityType.SUBSCRIPTION]: 'подписка',
 };
 
 const ENTITY_GENITIVE_LABELS: Partial<Record<EntityType, string>> = {
@@ -184,7 +182,10 @@ export class AuditDescriptionService {
     return `Импортирована ${this.getEntityLabel(dto.entityType)}`;
   }
 
-  private getChangedFields(diff: AuditEventDiff | null | undefined, entityType: EntityType): string[] {
+  private getChangedFields(
+    diff: AuditEventDiff | null | undefined,
+    entityType: EntityType,
+  ): string[] {
     if (!diff || Array.isArray(diff)) {
       return [];
     }
@@ -195,11 +196,18 @@ export class AuditDescriptionService {
 
     return keys
       .filter(key => !TECHNICAL_FIELDS.has(key))
-      .filter(key => JSON.stringify((before as Record<string, unknown>)[key]) !== JSON.stringify((after as Record<string, unknown>)[key]))
+      .filter(
+        key =>
+          JSON.stringify((before as Record<string, unknown>)[key]) !==
+          JSON.stringify((after as Record<string, unknown>)[key]),
+      )
       .map(key => this.getFieldLabel(entityType, key));
   }
 
-  private getEntityName(diff: AuditEventDiff | null | undefined, meta?: Record<string, unknown> | null): string | null {
+  private getEntityName(
+    diff: AuditEventDiff | null | undefined,
+    meta?: Record<string, unknown> | null,
+  ): string | null {
     if (meta?.name && typeof meta.name === 'string') {
       return meta.name;
     }
@@ -217,9 +225,15 @@ export class AuditDescriptionService {
     const title = (candidate as Record<string, unknown>).title;
     const label = (candidate as Record<string, unknown>).label;
 
-    if (typeof name === 'string' && name.trim()) return name.trim();
-    if (typeof title === 'string' && title.trim()) return title.trim();
-    if (typeof label === 'string' && label.trim()) return label.trim();
+    if (typeof name === 'string' && name.trim()) {
+      return name.trim();
+    }
+    if (typeof title === 'string' && title.trim()) {
+      return title.trim();
+    }
+    if (typeof label === 'string' && label.trim()) {
+      return label.trim();
+    }
 
     return null;
   }

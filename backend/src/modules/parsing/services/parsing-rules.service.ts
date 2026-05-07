@@ -17,7 +17,9 @@ export class ParsingRulesService {
   async getRule(bankName: BankName, formatVersion?: string): Promise<ParsingRule | null> {
     const cacheKey = `parsing:rule:${bankName}:${formatVersion || ''}`;
     const cached = await this.cacheManager.get<ParsingRule>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const rule = await this.parsingRuleRepository.findOne({
       where: {
@@ -59,7 +61,9 @@ export class ParsingRulesService {
   async getAllRules(): Promise<ParsingRule[]> {
     const cacheKey = 'parsing:rules:all';
     const cached = await this.cacheManager.get<ParsingRule[]>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const rules = await this.parsingRuleRepository.find({
       where: { isActive: true },

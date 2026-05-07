@@ -5,8 +5,8 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
-import { Between, In, LessThanOrEqual, MoreThanOrEqual, type Repository } from 'typeorm';
-import * as XLSX from 'xlsx';
+import { Between, In, MoreThanOrEqual, type Repository } from 'typeorm';
+import * as xlsx from 'xlsx';
 import { formatMoney } from '../../common/utils/format-money.util';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import { Branch } from '../../entities/branch.entity';
@@ -272,37 +272,49 @@ export class ReportsService {
   }
 
   private normalizeText(value: unknown): string | null {
-    if (value === undefined || value === null) return null;
+    if (value === undefined || value === null) {
+      return null;
+    }
     const text = String(value).trim();
     return text.length ? text : null;
   }
 
   private parseNumber(value: unknown): number | null {
-    if (value === undefined || value === null) return null;
+    if (value === undefined || value === null) {
+      return null;
+    }
     if (typeof value === 'number') {
       return Number.isFinite(value) ? value : null;
     }
     const raw = String(value).trim();
-    if (!raw.length) return null;
+    if (!raw.length) {
+      return null;
+    }
 
     const normalized = raw
       .replace(/\u00a0/g, ' ')
       .replace(/\s+/g, '')
       .replace(/,/g, '.');
 
-    if (!/^[-+]?\d+(\.\d+)?$/.test(normalized)) return null;
+    if (!/^[-+]?\d+(\.\d+)?$/.test(normalized)) {
+      return null;
+    }
     const asNumber = Number(normalized);
     return Number.isFinite(asNumber) ? asNumber : null;
   }
 
   private parseDate(value: unknown): Date | null {
-    if (value === undefined || value === null) return null;
+    if (value === undefined || value === null) {
+      return null;
+    }
     if (value instanceof Date) {
       return Number.isNaN(value.getTime()) ? null : value;
     }
     if (typeof value === 'string') {
       const raw = value.trim();
-      if (!raw.length) return null;
+      if (!raw.length) {
+        return null;
+      }
       const v = raw.split('T')[0];
 
       const ymd = v.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -406,52 +418,92 @@ export class ReportsService {
   private scoreDateColumn(col: CustomTableColumn): number {
     const title = (col.title || '').toLowerCase();
     let score = 0;
-    if (col.type === CustomTableColumnType.DATE) score += 6;
-    if (/(^|[\s_])date([\s_]|$)/.test(title) || title.includes('дата')) score += 4;
-    if (title.includes('год') || title.includes('year')) score += 1;
-    if (title.includes('месяц') || title.includes('month')) score += 1;
+    if (col.type === CustomTableColumnType.DATE) {
+      score += 6;
+    }
+    if (/(^|[\s_])date([\s_]|$)/.test(title) || title.includes('дата')) {
+      score += 4;
+    }
+    if (title.includes('год') || title.includes('year')) {
+      score += 1;
+    }
+    if (title.includes('месяц') || title.includes('month')) {
+      score += 1;
+    }
     return score;
   }
 
   private scoreAmountColumn(col: CustomTableColumn): number {
     const title = (col.title || '').toLowerCase();
     let score = 0;
-    if (col.type === CustomTableColumnType.NUMBER) score += 6;
+    if (col.type === CustomTableColumnType.NUMBER) {
+      score += 6;
+    }
     if (
       title.includes('сумм') ||
       title.includes('amount') ||
       title.includes('итог') ||
       title.includes('total')
-    )
+    ) {
       score += 4;
-    if (title.includes('приход') || title.includes('доход')) score += 2;
-    if (title.includes('расход')) score += 2;
-    if (title.includes('год') || title.includes('year')) score -= 4;
-    if (title.includes('мсц') || title.includes('месяц') || title.includes('month')) score -= 3;
-    if (title.includes('курс') || title.includes('rate') || title.includes('обмен')) score -= 4;
-    if (title.includes('валют') || title.includes('currency')) score -= 3;
+    }
+    if (title.includes('приход') || title.includes('доход')) {
+      score += 2;
+    }
+    if (title.includes('расход')) {
+      score += 2;
+    }
+    if (title.includes('год') || title.includes('year')) {
+      score -= 4;
+    }
+    if (title.includes('мсц') || title.includes('месяц') || title.includes('month')) {
+      score -= 3;
+    }
+    if (title.includes('курс') || title.includes('rate') || title.includes('обмен')) {
+      score -= 4;
+    }
+    if (title.includes('валют') || title.includes('currency')) {
+      score -= 3;
+    }
     return score;
   }
 
   private scoreCategoryColumn(col: CustomTableColumn): number {
     const title = (col.title || '').toLowerCase();
     let score = 0;
-    if (title.includes('катег') || title.includes('category')) score += 6;
-    if (title.includes('статья') || title.includes('article')) score += 5;
-    if (title.includes('группа') || title.includes('group')) score += 2;
+    if (title.includes('катег') || title.includes('category')) {
+      score += 6;
+    }
+    if (title.includes('статья') || title.includes('article')) {
+      score += 5;
+    }
+    if (title.includes('группа') || title.includes('group')) {
+      score += 2;
+    }
     return score;
   }
 
   private scoreCounterpartyColumn(col: CustomTableColumn): number {
     const title = (col.title || '').toLowerCase();
     let score = 0;
-    if (title.includes('контраг') || title.includes('counterparty')) score += 6;
-    if (title.includes('постав') || title.includes('supplier')) score += 4;
-    if (title.includes('клиент') || title.includes('customer')) score += 4;
-    if (title.includes('merchant') || title.includes('получател') || title.includes('платель'))
+    if (title.includes('контраг') || title.includes('counterparty')) {
+      score += 6;
+    }
+    if (title.includes('постав') || title.includes('supplier')) {
       score += 4;
-    if (title.includes('кошел') || title.includes('wallet')) score -= 2;
-    if (title.includes('филиал') || title.includes('branch')) score -= 2;
+    }
+    if (title.includes('клиент') || title.includes('customer')) {
+      score += 4;
+    }
+    if (title.includes('merchant') || title.includes('получател') || title.includes('платель')) {
+      score += 4;
+    }
+    if (title.includes('кошел') || title.includes('wallet')) {
+      score -= 2;
+    }
+    if (title.includes('филиал') || title.includes('branch')) {
+      score -= 2;
+    }
     return score;
   }
 
@@ -478,7 +530,9 @@ export class ReportsService {
     const version = await this.getReportsVersion(workspaceId);
     const cacheKey = `reports:custom-tables:${workspaceId}:${version}:${JSON.stringify(dto)}`;
     const cached = await this.cacheManager.get<CustomTablesSummaryResponse>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const safeDays =
       Number.isFinite(dto.days) && (dto.days as number) > 0
@@ -564,15 +618,21 @@ export class ReportsService {
 
     for (const row of rows) {
       const table = tableById.get(row.tableId);
-      if (!table) continue;
+      if (!table) {
+        continue;
+      }
       const mapping = mappingByTableId.get(row.tableId);
       const dateValue = mapping?.dateKey ? row.data?.[mapping.dateKey] : null;
       const parsedDate = this.parseDate(dateValue) || row.updatedAt || row.createdAt;
-      if (parsedDate < since) continue;
+      if (parsedDate < since) {
+        continue;
+      }
 
       const amountValue = mapping?.amountKey ? row.data?.[mapping.amountKey] : null;
       const amountRaw = this.parseNumber(amountValue);
-      if (amountRaw === null) continue;
+      if (amountRaw === null) {
+        continue;
+      }
 
       const abs = Math.abs(amountRaw);
       const isIncome = amountRaw >= 0;
@@ -589,8 +649,11 @@ export class ReportsService {
       totals.rows += 1;
 
       const perTable = perTableMap.get(row.tableId) || { income: 0, expense: 0, rows: 0 };
-      if (isIncome) perTable.income += abs;
-      else perTable.expense += abs;
+      if (isIncome) {
+        perTable.income += abs;
+      } else {
+        perTable.expense += abs;
+      }
       perTable.rows += 1;
       perTableMap.set(row.tableId, perTable);
 
@@ -675,7 +738,9 @@ export class ReportsService {
     const version = await this.getReportsVersion(workspaceId);
     const cacheKey = `reports:custom-tables-report:${workspaceId}:${version}:${JSON.stringify(dto)}`;
     const cached = await this.cacheManager.get<CustomTablesReportResponse>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const safeDays =
       Number.isFinite(dto.days) && (dto.days as number) > 0
@@ -790,19 +855,29 @@ export class ReportsService {
     const toRecord = (row: CustomTableRow): ReportRecord | null => {
       const table = tableById.get(row.tableId);
       const mapping = mappingByTableId.get(row.tableId);
-      if (!table || !mapping?.amountKey) return null;
+      if (!(table && mapping?.amountKey)) {
+        return null;
+      }
 
       const rawAmount = this.parseNumber(row.data?.[mapping.amountKey]);
-      if (rawAmount === null) return null;
+      if (rawAmount === null) {
+        return null;
+      }
 
       const flow: 'expense' | 'income' = rawAmount < 0 ? 'expense' : 'income';
-      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') return null;
-      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') return null;
+      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') {
+        return null;
+      }
+      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') {
+        return null;
+      }
 
       const counterparty =
         this.normalizeText(mapping.counterpartyKey ? row.data?.[mapping.counterpartyKey] : null) ||
         'Unknown';
-      const category = this.normalizeText(mapping.categoryKey ? row.data?.[mapping.categoryKey] : null);
+      const category = this.normalizeText(
+        mapping.categoryKey ? row.data?.[mapping.categoryKey] : null,
+      );
       const parsedDate = mapping.dateKey
         ? this.parseDate(row.data?.[mapping.dateKey]) || row.updatedAt || row.createdAt
         : row.updatedAt || row.createdAt;
@@ -856,8 +931,11 @@ export class ReportsService {
     for (const record of records) {
       totals.total += record.amount;
       totals.operations += 1;
-      if (record.source === 'google_sheets_import') totals.googleSheetsTotal += record.amount;
-      else totals.manualTotal += record.amount;
+      if (record.source === 'google_sheets_import') {
+        totals.googleSheetsTotal += record.amount;
+      } else {
+        totals.manualTotal += record.amount;
+      }
 
       if (record.date) {
         timeseriesMap.set(record.date, (timeseriesMap.get(record.date) || 0) + record.amount);
@@ -893,13 +971,17 @@ export class ReportsService {
     for (const record of previousRecords) {
       previousTotals.total += record.amount;
       previousTotals.operations += 1;
-      if (record.source === 'google_sheets_import') previousTotals.googleSheetsTotal += record.amount;
-      else previousTotals.manualTotal += record.amount;
+      if (record.source === 'google_sheets_import') {
+        previousTotals.googleSheetsTotal += record.amount;
+      } else {
+        previousTotals.manualTotal += record.amount;
+      }
     }
 
     const toComparison = (current: number, previous: number) => {
       const delta = current - previous;
-      const percentage = previous === 0 ? (current > 0 ? 100 : 0) : Math.round((delta / previous) * 100);
+      const percentage =
+        previous === 0 ? (current > 0 ? 100 : 0) : Math.round((delta / previous) * 100);
       const trend: 'up' | 'down' | 'flat' = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
       return { delta, percentage, trend };
     };
@@ -1052,21 +1134,33 @@ export class ReportsService {
     for (const row of rows) {
       const table = tableById.get(row.tableId);
       const mapping = mappingByTableId.get(row.tableId);
-      if (!table || !mapping?.amountKey) continue;
+      if (!(table && mapping?.amountKey)) {
+        continue;
+      }
 
       const rawAmount = this.parseNumber(row.data?.[mapping.amountKey]);
-      if (rawAmount === null) continue;
+      if (rawAmount === null) {
+        continue;
+      }
 
       const flow: 'expense' | 'income' = rawAmount < 0 ? 'expense' : 'income';
-      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') continue;
-      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') continue;
+      if (flowType === CustomTableReportFlowType.EXPENSE && flow !== 'expense') {
+        continue;
+      }
+      if (flowType === CustomTableReportFlowType.INCOME && flow !== 'income') {
+        continue;
+      }
 
       const counterparty =
         this.normalizeText(mapping.counterpartyKey ? row.data?.[mapping.counterpartyKey] : null) ||
         'Unknown';
-      if (counterparty.toLowerCase() !== needle) continue;
+      if (counterparty.toLowerCase() !== needle) {
+        continue;
+      }
 
-      const category = this.normalizeText(mapping.categoryKey ? row.data?.[mapping.categoryKey] : null);
+      const category = this.normalizeText(
+        mapping.categoryKey ? row.data?.[mapping.categoryKey] : null,
+      );
       const parsedDate = mapping.dateKey
         ? this.parseDate(row.data?.[mapping.dateKey]) || row.updatedAt || row.createdAt
         : row.updatedAt || row.createdAt;
@@ -1144,7 +1238,9 @@ export class ReportsService {
     const version = await this.getReportsVersion(workspaceId);
     const cacheKey = `reports:daily:${workspaceId}:${version}:${date || 'latest'}`;
     const cached = await this.cacheManager.get<DailyReport>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const resolvedDate = date || (await this.getLatestTransactionDate(workspaceId));
     const reportDate = resolvedDate ? new Date(resolvedDate) : new Date();
@@ -1249,7 +1345,9 @@ export class ReportsService {
     const version = await this.getReportsVersion(workspaceId);
     const cacheKey = `reports:monthly:${workspaceId}:${version}:${year}:${month}`;
     const cached = await this.cacheManager.get<MonthlyReport>(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0, 23, 59, 59, 999);
@@ -1566,7 +1664,7 @@ export class ReportsService {
    * Export report to Excel or CSV
    */
   async exportReport(
-    workspaceId: string,
+    _workspaceId: string,
     dto: ExportReportDto,
     reportData: DailyReport | MonthlyReport | CustomReport,
   ): Promise<{ filePath: string; fileName: string }> {
@@ -1659,8 +1757,7 @@ export class ReportsService {
       transactionDate: transaction.transactionDate
         ? this.toDateKey(transaction.transactionDate as unknown as Date)
         : '',
-      transactionType:
-        transaction.transactionType === TransactionType.INCOME ? 'Приход' : 'Расход',
+      transactionType: transaction.transactionType === TransactionType.INCOME ? 'Приход' : 'Расход',
       counterpartyName: transaction.counterpartyName || '',
       counterpartyBin: transaction.counterpartyBin || '',
       paymentPurpose: transaction.paymentPurpose || '',
@@ -1708,9 +1805,9 @@ export class ReportsService {
     transactions: Transaction[],
     filePath: string,
   ): Promise<void> {
-    const workbook = XLSX.utils.book_new();
+    const workbook = xlsx.utils.book_new();
     const rows = this.mapWorkspaceTransactionRows(transactions);
-    const transactionSheet = XLSX.utils.json_to_sheet(
+    const transactionSheet = xlsx.utils.json_to_sheet(
       rows.map(row => ({
         '№': row.index,
         Дата: row.transactionDate,
@@ -1748,19 +1845,16 @@ export class ReportsService {
       { wch: 28 },
     ];
 
-    const summarySheet = XLSX.utils.json_to_sheet(this.buildWorkspaceSummaryRows(rows));
+    const summarySheet = xlsx.utils.json_to_sheet(this.buildWorkspaceSummaryRows(rows));
     summarySheet['!cols'] = [{ wch: 24 }, { wch: 18 }];
 
-    XLSX.utils.book_append_sheet(workbook, transactionSheet, 'Транзакции');
-    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Сводка');
+    xlsx.utils.book_append_sheet(workbook, transactionSheet, 'Транзакции');
+    xlsx.utils.book_append_sheet(workbook, summarySheet, 'Сводка');
 
-    XLSX.writeFile(workbook, filePath);
+    xlsx.writeFile(workbook, filePath);
   }
 
-  private async generateWorkspaceCsv(
-    transactions: Transaction[],
-    filePath: string,
-  ): Promise<void> {
+  private async generateWorkspaceCsv(transactions: Transaction[], filePath: string): Promise<void> {
     const rows = this.mapWorkspaceTransactionRows(transactions);
     const headers = [
       '№',
@@ -1808,10 +1902,7 @@ export class ReportsService {
     fs.writeFileSync(filePath, `\uFEFF${csvLines.join('\n')}`, 'utf-8');
   }
 
-  private async generateWorkspacePdf(
-    transactions: Transaction[],
-    filePath: string,
-  ): Promise<void> {
+  private async generateWorkspacePdf(transactions: Transaction[], filePath: string): Promise<void> {
     const rows = this.mapWorkspaceTransactionRows(transactions);
     const summaryRows = this.buildWorkspaceSummaryRows(rows);
     const pdfMakeModule = await import('pdfmake/build/pdfmake');
@@ -1939,17 +2030,18 @@ export class ReportsService {
             createCell('Категория', true),
           ],
         }),
-        ...rows.map(row =>
-          new TableRow({
-            children: [
-              createCell(String(row.index)),
-              createCell(row.transactionDate),
-              createCell(row.transactionType),
-              createCell(row.counterpartyName),
-              createCell(this.formatWorkspaceAmount(row.amount)),
-              createCell(row.category),
-            ],
-          }),
+        ...rows.map(
+          row =>
+            new TableRow({
+              children: [
+                createCell(String(row.index)),
+                createCell(row.transactionDate),
+                createCell(row.transactionType),
+                createCell(row.counterpartyName),
+                createCell(this.formatWorkspaceAmount(row.amount)),
+                createCell(row.category),
+              ],
+            }),
         ),
       ],
     });
@@ -1984,12 +2076,12 @@ export class ReportsService {
     reportData: DailyReport | MonthlyReport | CustomReport,
     filePath: string,
   ): Promise<void> {
-    const workbook = XLSX.utils.book_new();
+    const workbook = xlsx.utils.book_new();
 
     if ('date' in reportData) {
       // Daily report
       const dailyData = reportData as DailyReport;
-      const ws = XLSX.utils.json_to_sheet([
+      const ws = xlsx.utils.json_to_sheet([
         {
           Тип: 'Приходы',
           Сумма: dailyData.income.totalAmount,
@@ -2002,12 +2094,12 @@ export class ReportsService {
         },
         { Тип: 'Разница', Сумма: dailyData.summary.difference },
       ]);
-      XLSX.utils.book_append_sheet(workbook, ws, 'Отчёт');
+      xlsx.utils.book_append_sheet(workbook, ws, 'Отчёт');
     } else if ('month' in reportData) {
       // Monthly report
       const monthlyData = reportData as MonthlyReport;
-      const ws = XLSX.utils.json_to_sheet(monthlyData.dailyTrends);
-      XLSX.utils.book_append_sheet(workbook, ws, 'Динамика');
+      const ws = xlsx.utils.json_to_sheet(monthlyData.dailyTrends);
+      xlsx.utils.book_append_sheet(workbook, ws, 'Динамика');
     } else {
       // Custom report
       const customData = reportData as CustomReport;
@@ -2025,11 +2117,11 @@ export class ReportsService {
           });
         });
       });
-      const ws = XLSX.utils.json_to_sheet(rows);
-      XLSX.utils.book_append_sheet(workbook, ws, 'Отчёт');
+      const ws = xlsx.utils.json_to_sheet(rows);
+      xlsx.utils.book_append_sheet(workbook, ws, 'Отчёт');
     }
 
-    XLSX.writeFile(workbook, filePath);
+    xlsx.writeFile(workbook, filePath);
   }
 
   private async exportToCSV(
@@ -2711,7 +2803,9 @@ export class ReportsService {
   ): Promise<{ filePath: string; fileName: string; contentType: string }> {
     // 1. Get user workspace
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user?.workspaceId) throw new BadRequestException('No workspace');
+    if (!user?.workspaceId) {
+      throw new BadRequestException('No workspace');
+    }
 
     // 2. Query all transactions in [dateFrom, dateTo] scoped by workspaceId
     const dateFrom = new Date(dto.dateFrom);
@@ -2766,7 +2860,7 @@ export class ReportsService {
     let contentType: string;
 
     if (dto.format === 'excel') {
-      const wb = XLSX.utils.book_new();
+      const wb = xlsx.utils.book_new();
       const rows: (string | number)[][] = [];
 
       rows.push(['P&L Report', '', '', user.workspaceId]);
@@ -2791,12 +2885,12 @@ export class ReportsService {
       rows.push([]);
       rows.push(['NET INCOME', '', netIncome]);
 
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'P&L');
+      const ws = xlsx.utils.aoa_to_sheet(rows);
+      xlsx.utils.book_append_sheet(wb, ws, 'P&L');
 
       fileName = `pnl-${dto.dateFrom}-${dto.dateTo}.xlsx`;
       filePath = path.join(os.tmpdir(), fileName);
-      XLSX.writeFile(wb, filePath);
+      xlsx.writeFile(wb, filePath);
       contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     } else {
       // csv
@@ -2837,7 +2931,9 @@ export class ReportsService {
     dto: GenerateReportDto,
   ): Promise<{ filePath: string; fileName: string; contentType: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user?.workspaceId) throw new BadRequestException('No workspace');
+    if (!user?.workspaceId) {
+      throw new BadRequestException('No workspace');
+    }
 
     if (dto.format === 'pdf') {
       throw new BadRequestException('PDF export not yet supported');
@@ -2865,7 +2961,9 @@ export class ReportsService {
         bucketMap.set(dateKey, { income: 0, expense: 0 });
       }
       const bucket = bucketMap.get(dateKey);
-      if (!bucket) continue;
+      if (!bucket) {
+        continue;
+      }
       const amount = Math.abs(Number(t.amount || 0));
       if (t.transactionType === TransactionType.INCOME) {
         bucket.income += amount;
@@ -2888,7 +2986,7 @@ export class ReportsService {
     let contentType: string;
 
     if (dto.format === 'excel') {
-      const wb = XLSX.utils.book_new();
+      const wb = xlsx.utils.book_new();
       const rows: (string | number)[][] = [];
 
       rows.push(['Cash Flow Statement', '', '', user.workspaceId]);
@@ -2903,12 +3001,12 @@ export class ReportsService {
       rows.push([]);
       rows.push(['TOTAL', totalIncome, totalExpense, totalNet]);
 
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'Cash Flow');
+      const ws = xlsx.utils.aoa_to_sheet(rows);
+      xlsx.utils.book_append_sheet(wb, ws, 'Cash Flow');
 
       fileName = `cash-flow-${dto.dateFrom}-${dto.dateTo}.xlsx`;
       filePath = path.join(os.tmpdir(), fileName);
-      XLSX.writeFile(wb, filePath);
+      xlsx.writeFile(wb, filePath);
       contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     } else {
       // csv
@@ -2945,7 +3043,9 @@ export class ReportsService {
     dto: GenerateReportDto,
   ): Promise<{ filePath: string; fileName: string; contentType: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user?.workspaceId) throw new BadRequestException('No workspace');
+    if (!user?.workspaceId) {
+      throw new BadRequestException('No workspace');
+    }
 
     if (dto.format === 'pdf') {
       throw new BadRequestException('PDF export not yet supported');
@@ -2975,7 +3075,9 @@ export class ReportsService {
         categoryMap.set(categoryName, { total: 0, count: 0 });
       }
       const entry = categoryMap.get(categoryName);
-      if (!entry) continue;
+      if (!entry) {
+        continue;
+      }
       entry.total += amount;
       entry.count += 1;
     }
@@ -2997,7 +3099,7 @@ export class ReportsService {
     let contentType: string;
 
     if (dto.format === 'excel') {
-      const wb = XLSX.utils.book_new();
+      const wb = xlsx.utils.book_new();
       const rows: (string | number)[][] = [];
 
       rows.push(['Expense by Category', '', '', user.workspaceId]);
@@ -3012,12 +3114,12 @@ export class ReportsService {
       rows.push([]);
       rows.push(['TOTAL', totalExpenses, categoryRows.reduce((s, r) => s + r.count, 0), 100]);
 
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(wb, ws, 'Expense by Category');
+      const ws = xlsx.utils.aoa_to_sheet(rows);
+      xlsx.utils.book_append_sheet(wb, ws, 'Expense by Category');
 
       fileName = `expense-by-category-${dto.dateFrom}-${dto.dateTo}.xlsx`;
       filePath = path.join(os.tmpdir(), fileName);
-      XLSX.writeFile(wb, filePath);
+      xlsx.writeFile(wb, filePath);
       contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     } else {
       // csv
@@ -3089,7 +3191,7 @@ export class ReportsService {
       where: { id: reportId, workspaceId: user.workspaceId },
     });
 
-    if (!report?.filePath || !report.fileName || !fs.existsSync(report.filePath)) {
+    if (!(report?.filePath && report.fileName && fs.existsSync(report.filePath))) {
       throw new NotFoundException('Report file not found');
     }
 

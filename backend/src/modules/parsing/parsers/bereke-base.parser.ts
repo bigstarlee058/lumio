@@ -71,15 +71,16 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
     combinedText: string,
   ): string;
 
-  protected abstract resolveBankBlock(cells: BerekeCellMap<ColumnKey>, combinedText: string): string;
+  protected abstract resolveBankBlock(
+    cells: BerekeCellMap<ColumnKey>,
+    combinedText: string,
+  ): string;
 
   protected sanitizePurpose(purpose: string): string {
     return purpose;
   }
 
-  protected resolveCounterpartyNameForGroup(
-    context: TransactionGroupContext<ColumnKey>,
-  ): string {
+  protected resolveCounterpartyNameForGroup(context: TransactionGroupContext<ColumnKey>): string {
     return this.resolveCounterpartyName(
       context.counterpartyDetails.name,
       context.purpose,
@@ -172,7 +173,9 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
       const aiTransactions = await this.aiExtractor.extractTransactions(normalizedText);
       if (aiTransactions.length) {
         transactions =
-          transactions.length > 0 ? mergeTransactions(transactions, aiTransactions) : aiTransactions;
+          transactions.length > 0
+            ? mergeTransactions(transactions, aiTransactions)
+            : aiTransactions;
         console.log(
           `[${this.parserName}] AI extraction succeeded with ${transactions.length} transactions`,
         );
@@ -224,7 +227,8 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
     rows: PdfTextRow[],
   ): { transactions: ParsedTransaction[]; groupsDetected: number } {
     const structuredRows = this.prepareStructuredRows(text, rows);
-    const { cleanRows, headerIndex, dataRows } = this.prepareRowsForTransactionParsing(structuredRows);
+    const { cleanRows, headerIndex, dataRows } =
+      this.prepareRowsForTransactionParsing(structuredRows);
     console.log(`[${this.parserName}] Processing ${cleanRows.length} non-empty lines of text`);
 
     const columnBoundaries =
@@ -310,16 +314,12 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
     const boundaries: ColumnBoundary<ColumnKey>[] = [];
     columns.forEach((column, index) => {
       const prevMid = index === 0 ? 0 : columns[index - 1].mid;
-      const nextMid =
-        index === columns.length - 1 ? column.mid + 2000 : columns[index + 1].mid;
+      const nextMid = index === columns.length - 1 ? column.mid + 2000 : columns[index + 1].mid;
       boundaries.push({
         key: column.key,
         label: column.label,
         start: index === 0 ? 0 : (prevMid + column.mid) / 2,
-        end:
-          index === columns.length - 1
-            ? Number.POSITIVE_INFINITY
-            : (column.mid + nextMid) / 2,
+        end: index === columns.length - 1 ? Number.POSITIVE_INFINITY : (column.mid + nextMid) / 2,
         mid: column.mid,
       });
     });
@@ -572,7 +572,11 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
       .filter((value): value is number => value !== null);
   }
 
-  protected extractPurposeFromText(text: string, counterpartyBlock?: string, bankBlock?: string): string {
+  protected extractPurposeFromText(
+    text: string,
+    counterpartyBlock?: string,
+    bankBlock?: string,
+  ): string {
     let purpose = text;
 
     if (counterpartyBlock) {
@@ -598,7 +602,11 @@ export abstract class BerekeBaseParser<ColumnKey extends string> extends BasePar
     return match ? match[0] : null;
   }
 
-  protected resolveCounterpartyName(rawName: string, purpose: string, combinedText: string): string {
+  protected resolveCounterpartyName(
+    rawName: string,
+    purpose: string,
+    combinedText: string,
+  ): string {
     if (!this.isUnknownCounterparty(rawName)) {
       return rawName.trim();
     }

@@ -3,7 +3,7 @@ import { ExtractedMetadata } from '../interfaces/enhanced-parsed-statement.inter
 import { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import { ChecksumValidationResult } from './checksum-validation.service';
 import { ColumnValidationResult } from './column-validation.service';
-import { DuplicationQualityMetrics, DuplicationResult } from './intelligent-deduplication.service';
+import { DuplicationResult } from './intelligent-deduplication.service';
 import { NormalizationResult } from './statement-normalization.service';
 
 interface QualityMetricsResults {
@@ -537,7 +537,8 @@ export class QualityMetricsService {
     }
 
     const totalIssues = validation.inconsistencies?.length || 0;
-    const criticalIssues = validation.inconsistencies?.filter(i => i.severity === 'high').length || 0;
+    const criticalIssues =
+      validation.inconsistencies?.filter(i => i.severity === 'high').length || 0;
     const warnings =
       validation.inconsistencies?.filter(i => i.severity === 'medium' || i.severity === 'low')
         .length || 0;

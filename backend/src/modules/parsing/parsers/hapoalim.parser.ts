@@ -17,9 +17,9 @@ const DETECTION_MARKERS = [
   'isracard',
   'hapoalim',
   'isracard.co.il',
-  'רכישות בחו"ל',     // "Foreign purchases" — unique to Israeli card statements
-  'מסטרקארד',          // "Mastercard" in Hebrew
-  'סה"כ חיוב לתאריך',  // "Total charge for date" — Isracard-specific
+  'רכישות בחו"ל', // "Foreign purchases" — unique to Israeli card statements
+  'מסטרקארד', // "Mastercard" in Hebrew
+  'סה"כ חיוב לתאריך', // "Total charge for date" — Isracard-specific
 ];
 
 /** Section header patterns */
@@ -88,9 +88,7 @@ export class HapoalimParser extends BaseParser {
     let transactions: ParsedTransaction[] = [];
     if (confidence >= MIN_OCR_CONFIDENCE) {
       transactions = this.parseTransactionsFromText(text);
-      console.log(
-        `[HapoalimParser] OCR text parsing: ${transactions.length} transactions`,
-      );
+      console.log(`[HapoalimParser] OCR text parsing: ${transactions.length} transactions`);
     }
 
     // Fall back to AI vision if no transactions or low confidence
@@ -99,9 +97,7 @@ export class HapoalimParser extends BaseParser {
       try {
         const imageBuffer = await fs.promises.readFile(filePath);
         transactions = await this.aiExtractor.extractFromImage(imageBuffer);
-        console.log(
-          `[HapoalimParser] AI vision: ${transactions.length} transactions`,
-        );
+        console.log(`[HapoalimParser] AI vision: ${transactions.length} transactions`);
       } catch (error) {
         console.error('[HapoalimParser] AI vision failed:', error);
       }
@@ -112,9 +108,7 @@ export class HapoalimParser extends BaseParser {
       console.log('[HapoalimParser] Falling back to AI text extraction...');
       try {
         transactions = await this.aiExtractor.extractTransactions(text);
-        console.log(
-          `[HapoalimParser] AI text: ${transactions.length} transactions`,
-        );
+        console.log(`[HapoalimParser] AI text: ${transactions.length} transactions`);
       } catch (error) {
         console.error('[HapoalimParser] AI text extraction failed:', error);
       }
@@ -236,7 +230,10 @@ export class HapoalimParser extends BaseParser {
 
   private parseTransactionsFromText(text: string): ParsedTransaction[] {
     const transactions: ParsedTransaction[] = [];
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const lines = text
+      .split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(Boolean);
 
     let currentSection: 'foreign' | 'domestic' | 'none' = 'none';
 
@@ -318,12 +315,11 @@ export class HapoalimParser extends BaseParser {
 
     // Detect currency from symbol
     const currencySymbol = foreignAmountMatch?.[0]?.slice(-1);
-    const foreignCurrency =
-      currencySymbol === '€' ? 'EUR' : currencySymbol === '£' ? 'GBP' : 'USD';
+    const foreignCurrency = currencySymbol === '€' ? 'EUR' : currencySymbol === '£' ? 'GBP' : 'USD';
 
     // Extract exchange rate (decimal number like 3.1820)
     const rateMatch = line.match(/\b(\d\.\d{3,5})\b/);
-    const exchangeRate = rateMatch ? normalizeNumber(rateMatch[1]) ?? undefined : undefined;
+    const exchangeRate = rateMatch ? (normalizeNumber(rateMatch[1]) ?? undefined) : undefined;
 
     // Extract NIS charge — typically the last number or a negative number at end
     const allAmounts = Array.from(line.matchAll(/-?[\d,]+\.\d{2}/g)).map(m => m[0]);
@@ -372,9 +368,7 @@ export class HapoalimParser extends BaseParser {
     if (!transactionDate) return null;
 
     // Extract amounts — look for numbers with decimals
-    const amounts = Array.from(line.matchAll(/([\d,]+\.\d{2})/g)).map(m =>
-      normalizeNumber(m[1]),
-    );
+    const amounts = Array.from(line.matchAll(/([\d,]+\.\d{2})/g)).map(m => normalizeNumber(m[1]));
 
     if (amounts.length === 0) return null;
 
@@ -407,9 +401,7 @@ export class HapoalimParser extends BaseParser {
     // Clean up remaining text for merchant name
     const counterpartyName = this.cleanMerchantName(remaining);
 
-    const paymentPurpose = [counterpartyName, installmentInfo]
-      .filter(Boolean)
-      .join(' | ');
+    const paymentPurpose = [counterpartyName, installmentInfo].filter(Boolean).join(' | ');
 
     return {
       transactionDate,

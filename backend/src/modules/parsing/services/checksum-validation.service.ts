@@ -351,7 +351,9 @@ export class ChecksumValidationService {
     transactionTotals: TransactionTotals,
     openingBalance?: number,
   ): number | null {
-    if (openingBalance === undefined) return null;
+    if (openingBalance === undefined) {
+      return null;
+    }
 
     // For most account types, closing balance = opening balance + credits - debits
     return openingBalance + transactionTotals.totalCredit - transactionTotals.totalDebit;

@@ -5,13 +5,17 @@ import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { AuditModule } from '../audit/audit.module';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { PayablesController } from './payables.controller';
 import { PayablesExportService } from './payables-export.service';
+import { PayablesController } from './payables.controller';
 import { PayablesScheduler } from './payables.scheduler';
 import { PayablesService } from './payables.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Payable, Transaction, Statement]), AuditModule, NotificationsModule],
+  imports: [
+    TypeOrmModule.forFeature([Payable, Transaction, Statement]),
+    AuditModule,
+    NotificationsModule,
+  ],
   controllers: [PayablesController],
   providers: [PayablesService, PayablesExportService, PayablesScheduler],
   exports: [PayablesService],

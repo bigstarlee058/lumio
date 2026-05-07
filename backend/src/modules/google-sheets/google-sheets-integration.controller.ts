@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   Body,
   Controller,
@@ -11,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Observable } from 'rxjs';
-import { randomUUID } from 'node:crypto';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
 import { AuditService } from '../audit/audit.service';

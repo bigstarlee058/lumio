@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, type JwtModuleOptions } from '@nestjs/jwt';
-import type { StringValue } from 'ms';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import type { StringValue } from 'ms';
 import { devDefault } from '../../common/utils/dev-defaults';
 import { AuthSession, User, Workspace, WorkspaceInvitation, WorkspaceMember } from '../../entities';
 import { CategoriesModule } from '../categories/categories.module';
-import { AuthController } from './auth.controller';
 import { AuthDevBootstrapService } from './auth-dev-bootstrap.service';
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';

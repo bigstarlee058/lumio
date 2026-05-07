@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
 import archiver = require('archiver');
+import { randomUUID } from 'node:crypto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   BadRequestException,
@@ -17,8 +18,8 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import type { Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
 import { FileStorageService } from '../../common/services/file-storage.service';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import { calculateFileHash } from '../../common/utils/file-hash.util';
 import { getFileTypeFromMime, validateFile } from '../../common/utils/file-validator.util';
 import { normalizeFilename } from '../../common/utils/filename.util';
@@ -38,7 +39,6 @@ import type {
 import { StatementProcessingService } from '../parsing/services/statement-processing.service';
 import type { ConvertDroppedSampleDto } from './dto/convert-dropped-sample.dto';
 import type { CreateManualExpenseDto } from './dto/create-manual-expense.dto';
-import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { FilterStatementsDto } from './dto/filter-statements.dto';
 import type { UpdateStatementDto } from './dto/update-statement.dto';
 import { ReceiptStatementService } from './services/receipt-statement.service';
@@ -224,7 +224,13 @@ export class StatementsService {
   }
 
   private async ensureCanEditStatements(userId: string, workspaceId: string): Promise<void> {
-    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditStatements', 'Недостаточно прав для редактирования выписок');
+    await ensureCanEdit(
+      this.workspaceMemberRepository,
+      workspaceId,
+      userId,
+      'canEditStatements',
+      'Недостаточно прав для редактирования выписок',
+    );
   }
 
   private async ensureCanModify(
@@ -566,14 +572,18 @@ export class StatementsService {
 
     const transactionType = debit ? TransactionType.EXPENSE : TransactionType.INCOME;
     const amount = debit || credit || 0;
-    const originalTransaction = sample?.transaction as Record<string, string | number | null | undefined> | undefined;
+    const originalTransaction = sample?.transaction as
+      | Record<string, string | number | null | undefined>
+      | undefined;
 
     const transaction = this.transactionRepository.create({
       workspaceId,
       statementId: statement.id,
       transactionDate: new Date(transactionDate.toISOString().slice(0, 10)),
       documentNumber:
-        payload.transaction.documentNumber || (originalTransaction?.documentNumber as string) || null,
+        payload.transaction.documentNumber ||
+        (originalTransaction?.documentNumber as string) ||
+        null,
       counterpartyName:
         payload.transaction.counterpartyName?.trim() ||
         String(originalTransaction?.counterpartyName || '').trim() ||
@@ -754,7 +764,7 @@ export class StatementsService {
       action: AuditAction.IMPORT,
       diff: { before: null, after: savedStatement },
       meta: {
-        fileName: file.originalname,
+        fileName: normalizeFilename(file.originalname),
         fileSize: file.size,
       },
       severity: Severity.INFO,
@@ -1069,7 +1079,8 @@ export class StatementsService {
   }
 
   async findOne(id: string, workspaceId: string): Promise<Statement> {
-    const statementRepository = this.statementRepository as StatementRepositoryWithOptionalQueryBuilder;
+    const statementRepository = this
+      .statementRepository as StatementRepositoryWithOptionalQueryBuilder;
 
     if (typeof statementRepository.createQueryBuilder !== 'function') {
       const statement = await this.statementRepository.findOne({
@@ -1544,7 +1555,8 @@ export class StatementsService {
 
     for (const statement of statements) {
       try {
-        const { stream, fileName } = await this.fileStorageService.getStatementFileStream(statement);
+        const { stream, fileName } =
+          await this.fileStorageService.getStatementFileStream(statement);
         const isReceipt = statement.fileType === FileType.IMAGE || !statement.bankName;
         const folder = isReceipt ? 'receipts' : (statement.bankName ?? 'other');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

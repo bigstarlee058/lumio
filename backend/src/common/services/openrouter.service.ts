@@ -22,8 +22,10 @@ export class OpenRouterService {
     this.baseUrl = this.configService.get<string>('AI_BASE_URL')?.replace(/\/+$/, '') ?? null;
     this.defaultModel = this.configService.get<string>('AI_MODEL') ?? null;
 
-    if (!this.baseUrl || !this.defaultModel) {
-      this.logger.warn('AI_BASE_URL or AI_MODEL is not defined. AI chat service will not function.');
+    if (!(this.baseUrl && this.defaultModel)) {
+      this.logger.warn(
+        'AI_BASE_URL or AI_MODEL is not defined. AI chat service will not function.',
+      );
     }
   }
 
@@ -32,7 +34,7 @@ export class OpenRouterService {
   }
 
   async chat(messages: OpenRouterMessage[], model = this.defaultModel) {
-    if (!this.baseUrl || !model) {
+    if (!(this.baseUrl && model)) {
       throw new Error('AI client is not initialized (missing AI_BASE_URL or AI_MODEL)');
     }
 

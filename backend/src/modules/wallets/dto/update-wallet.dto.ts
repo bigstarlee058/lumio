@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 import { CreateWalletDto } from './create-wallet.dto';
 
 export class UpdateWalletDto extends PartialType(CreateWalletDto) {

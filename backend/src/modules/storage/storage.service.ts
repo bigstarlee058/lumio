@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { In, MoreThan, type Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import {
   Category,
@@ -111,10 +111,7 @@ export class StorageService {
   /**
    * Get all files (statements) in storage for a user
    */
-  async getStorageFiles(
-    userId: string,
-    filters?: StorageViewFilters,
-  ) {
+  async getStorageFiles(userId: string, filters?: StorageViewFilters) {
     try {
       const { workspaceId } = await this.getUserContext(userId);
 
@@ -208,8 +205,7 @@ export class StorageService {
             (isWorkspacePeer &&
               workspaceRole &&
               [WorkspaceRole.OWNER, WorkspaceRole.ADMIN].includes(workspaceRole.role)) ||
-            permission?.canReshare ||
-            false;
+            permission?.canReshare;
 
           const fileAvailability = this.fileStorageService.buildAvailability
             ? this.fileStorageService.buildAvailability(
@@ -985,7 +981,9 @@ export class StorageService {
     startedAt: number,
     source: 'disk' | 'db' | 'restored' | 'unknown' = 'unknown',
   ) {
-    if (!this.metricsService?.storageFileAccessDurationSeconds) return;
+    if (!this.metricsService?.storageFileAccessDurationSeconds) {
+      return;
+    }
     const duration = (Date.now() - startedAt) / 1000;
     this.metricsService.storageFileAccessDurationSeconds.observe(
       { action, source, result },
@@ -1080,16 +1078,24 @@ export class StorageService {
     await this.checkFileAccess(userId, link.statementId, 'share');
 
     // Update fields
-    if (dto.permission !== undefined) link.permission = dto.permission;
+    if (dto.permission !== undefined) {
+      link.permission = dto.permission;
+    }
     if (dto.expiresAt !== undefined) {
       link.expiresAt = dto.expiresAt ? new Date(dto.expiresAt) : null;
     }
     if (dto.password !== undefined) {
       link.password = dto.password ? await bcrypt.hash(dto.password, 10) : null;
     }
-    if (dto.status !== undefined) link.status = dto.status;
-    if (dto.allowAnonymous !== undefined) link.allowAnonymous = dto.allowAnonymous;
-    if (dto.description !== undefined) link.description = dto.description;
+    if (dto.status !== undefined) {
+      link.status = dto.status;
+    }
+    if (dto.allowAnonymous !== undefined) {
+      link.allowAnonymous = dto.allowAnonymous;
+    }
+    if (dto.description !== undefined) {
+      link.description = dto.description;
+    }
 
     return await this.sharedLinkRepository.save(link);
   }
@@ -1241,12 +1247,18 @@ export class StorageService {
     await this.checkFileAccess(userId, permission.statementId, 'share');
 
     // Update fields
-    if (dto.permissionType !== undefined) permission.permissionType = dto.permissionType;
-    if (dto.canReshare !== undefined) permission.canReshare = dto.canReshare;
+    if (dto.permissionType !== undefined) {
+      permission.permissionType = dto.permissionType;
+    }
+    if (dto.canReshare !== undefined) {
+      permission.canReshare = dto.canReshare;
+    }
     if (dto.expiresAt !== undefined) {
       permission.expiresAt = dto.expiresAt ? new Date(dto.expiresAt) : null;
     }
-    if (dto.isActive !== undefined) permission.isActive = dto.isActive;
+    if (dto.isActive !== undefined) {
+      permission.isActive = dto.isActive;
+    }
 
     return await this.filePermissionRepository.save(permission);
   }
@@ -1331,7 +1343,7 @@ export class StorageService {
     // Check file permissions
     const permission = await this.getUserPermissionForStatement(userId, statementId);
 
-    if (!permission || !permission.isActive) {
+    if (!permission?.isActive) {
       throw new ForbiddenException('You do not have access to this file');
     }
 

@@ -2,13 +2,12 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import { In, type Repository } from 'typeorm';
-import * as XLSX from 'xlsx';
+import * as xlsx from 'xlsx';
 import {
   ActorType,
   AuditAction,
   BalanceAccount,
   BalanceAccountType,
-  BalanceAutoSource,
   BalanceSnapshot,
   EntityType,
   Statement,
@@ -381,7 +380,9 @@ export class BalanceService {
     const roots: BalanceAccountNode[] = [];
     for (const account of accounts) {
       const node = nodesById.get(account.id);
-      if (!node) continue;
+      if (!node) {
+        continue;
+      }
 
       if (account.parentId && nodesById.has(account.parentId)) {
         nodesById.get(account.parentId)?.children.push(node);
@@ -576,13 +577,13 @@ export class BalanceService {
       data.isBalanced ? labels.yes : labels.no,
     ]);
 
-    const worksheet = XLSX.utils.aoa_to_sheet(rows);
+    const worksheet = xlsx.utils.aoa_to_sheet(rows);
     worksheet['!cols'] = [{ wch: 46 }, { wch: 16 }, { wch: 46 }, { wch: 16 }];
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Balance');
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'Balance');
 
-    return XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
+    return xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' }) as Buffer;
   }
 
   private async exportAsPdf(data: BalanceSheetResponse, locale?: string): Promise<Buffer> {

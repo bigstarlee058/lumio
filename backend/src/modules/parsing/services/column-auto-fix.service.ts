@@ -224,7 +224,7 @@ export class ColumnAutoFixService {
         });
       }
 
-      if (!hasDebit && !hasCredit) {
+      if (!(hasDebit || hasCredit)) {
         issues.push({
           type: 'empty_critical_field',
           field: 'amount',
@@ -291,17 +291,26 @@ export class ColumnAutoFixService {
     issue: ColumnIssue,
     schema: ColumnSchema[],
   ): Promise<boolean> {
-    return forEachIssueRowWithSchema(transactions, issue, schema, ({ columnSchema, transaction }) => {
-      const inferredValue = this.inferMissingValue(transaction, issue.field, schema);
+    return forEachIssueRowWithSchema(
+      transactions,
+      issue,
+      schema,
+      ({ columnSchema, transaction }) => {
+        const inferredValue = this.inferMissingValue(transaction, issue.field, schema);
 
-      if (inferredValue !== null) {
-        this.setTransactionField(transaction, issue.field, inferredValue);
-      } else if (columnSchema.defaultValue !== undefined) {
-        this.setTransactionField(transaction, issue.field, columnSchema.defaultValue);
-      } else {
-        this.setTransactionField(transaction, issue.field, this.getIntelligentDefault(issue.field, transaction));
-      }
-    });
+        if (inferredValue !== null) {
+          this.setTransactionField(transaction, issue.field, inferredValue);
+        } else if (columnSchema.defaultValue !== undefined) {
+          this.setTransactionField(transaction, issue.field, columnSchema.defaultValue);
+        } else {
+          this.setTransactionField(
+            transaction,
+            issue.field,
+            this.getIntelligentDefault(issue.field, transaction),
+          );
+        }
+      },
+    );
   }
 
   private async fixDataTypeMismatch(
@@ -309,20 +318,25 @@ export class ColumnAutoFixService {
     issue: ColumnIssue,
     schema: ColumnSchema[],
   ): Promise<boolean> {
-    return forEachIssueRowWithSchema(transactions, issue, schema, ({ columnSchema, transaction }) => {
-      const currentValue = this.getTransactionField(transaction, issue.field);
-      const convertedValue = this.convertDataType(currentValue, columnSchema.dataType);
+    return forEachIssueRowWithSchema(
+      transactions,
+      issue,
+      schema,
+      ({ columnSchema, transaction }) => {
+        const currentValue = this.getTransactionField(transaction, issue.field);
+        const convertedValue = this.convertDataType(currentValue, columnSchema.dataType);
 
-      if (convertedValue !== null) {
-        this.setTransactionField(transaction, issue.field, convertedValue);
-      }
-    });
+        if (convertedValue !== null) {
+          this.setTransactionField(transaction, issue.field, convertedValue);
+        }
+      },
+    );
   }
 
   private async fixMisalignedColumn(
-    transactions: ParsedTransaction[],
-    issue: ColumnIssue,
-    schema: ColumnSchema[],
+    _transactions: ParsedTransaction[],
+    _issue: ColumnIssue,
+    _schema: ColumnSchema[],
   ): Promise<boolean> {
     // This would involve more complex column alignment logic
     // For now, we'll implement basic realignment based on patterns
@@ -331,7 +345,7 @@ export class ColumnAutoFixService {
 
   private async applyAdvancedFixes(
     transactions: ParsedTransaction[],
-    schema: ColumnSchema[],
+    _schema: ColumnSchema[],
   ): Promise<{
     correctedData: ParsedTransaction[];
     fixAttempts: FixAttempt[];
@@ -507,7 +521,7 @@ export class ColumnAutoFixService {
           transaction.debit = 0;
         }
         affectedRows++;
-      } else if (!hasDebit && !hasCredit) {
+      } else if (!(hasDebit || hasCredit)) {
         // Try to infer from payment purpose
         const isExpense =
           /(?:списание|расход|оплата|payment|expense|withdrawal|покупка|purchase)/i.test(
@@ -576,7 +590,9 @@ export class ColumnAutoFixService {
     schema: ColumnSchema[],
   ): TransactionFieldValue {
     const columnSchema = schema.find(col => col.name === fieldName);
-    if (!columnSchema || !columnSchema.inferFrom) return null;
+    if (!columnSchema?.inferFrom) {
+      return null;
+    }
 
     // Try to infer from related fields
     for (const sourceField of columnSchema.inferFrom) {
@@ -592,7 +608,7 @@ export class ColumnAutoFixService {
   private inferFromSource(
     sourceValue: TransactionFieldValue,
     targetField: string,
-    sourceField: string,
+    _sourceField: string,
   ): TransactionFieldValue {
     // Implement specific inference logic based on field relationships
     if (typeof sourceValue !== 'string') {
@@ -712,7 +728,9 @@ export class ColumnAutoFixService {
     expectedType: ColumnSchema['dataType'],
     pattern?: RegExp,
   ): boolean {
-    if (value === null || value === undefined) return true;
+    if (value === null || value === undefined) {
+      return true;
+    }
 
     switch (expectedType) {
       case 'string':
@@ -732,7 +750,9 @@ export class ColumnAutoFixService {
     value: TransactionFieldValue,
     targetType: ColumnSchema['dataType'],
   ): TransactionFieldValue {
-    if (value === null || value === undefined) return value;
+    if (value === null || value === undefined) {
+      return value;
+    }
 
     try {
       switch (targetType) {
@@ -748,7 +768,9 @@ export class ColumnAutoFixService {
           }
           return null;
         case 'boolean':
-          if (typeof value === 'boolean') return value;
+          if (typeof value === 'boolean') {
+            return value;
+          }
           {
             const str = String(value).toLowerCase();
             return ['true', '1', 'yes', 'да'].includes(str);

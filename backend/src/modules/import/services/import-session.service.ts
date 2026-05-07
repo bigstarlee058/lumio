@@ -414,8 +414,12 @@ export class ImportSessionService {
 
     // Step 3: Classify transactions as exact matches
     for (const classification of classifications) {
-      if (classification.status === 'failed') continue;
-      if (!classification.fingerprint) continue;
+      if (classification.status === 'failed') {
+        continue;
+      }
+      if (!classification.fingerprint) {
+        continue;
+      }
 
       const existing = existingByFingerprint.get(classification.fingerprint);
       if (existing) {
@@ -482,7 +486,9 @@ export class ImportSessionService {
     }
 
     for (const classification of classifications) {
-      if (classification.status !== 'new') continue;
+      if (classification.status !== 'new') {
+        continue;
+      }
 
       const conflict = conflictsByIndex.get(classification.index);
       if (conflict) {
@@ -578,7 +584,9 @@ export class ImportSessionService {
       const existingById = new Map<string, Transaction>();
 
       const loadExisting = async (id?: string | null): Promise<Transaction | undefined> => {
-        if (!id) return undefined;
+        if (!id) {
+          return undefined;
+        }
         if (existingById.has(id)) {
           return existingById.get(id);
         }

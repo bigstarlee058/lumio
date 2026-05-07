@@ -13,11 +13,11 @@ export class DbMetricsCollector {
   @Interval(15_000)
   collectPoolMetrics(): void {
     const pool = (this.dataSource.driver as any).master;
-    if (!pool) return;
+    if (!pool) {
+      return;
+    }
 
-    this.metricsService.dbPoolActiveConnections.set(
-      pool.totalCount - pool.idleCount,
-    );
+    this.metricsService.dbPoolActiveConnections.set(pool.totalCount - pool.idleCount);
     this.metricsService.dbPoolIdleConnections.set(pool.idleCount);
     this.metricsService.dbPoolWaitingQueries.set(pool.waitingCount);
   }

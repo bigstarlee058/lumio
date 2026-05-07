@@ -3,7 +3,9 @@ import { type MigrationInterface, type QueryRunner, Table, TableIndex } from 'ty
 export class AddCustomTableImportJobs1735000000003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasTable = await queryRunner.hasTable('custom_table_import_jobs');
-    if (hasTable) return;
+    if (hasTable) {
+      return;
+    }
 
     await queryRunner.createTable(
       new Table({

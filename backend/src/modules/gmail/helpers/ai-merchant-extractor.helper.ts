@@ -1,8 +1,6 @@
 import { BaseAiHelper } from '../../../common/helpers/base-ai.helper';
 import { stripHtmlForAi, unwrapAiJson } from '../../../common/utils/ai-response.util';
-import {
-  redactSensitive,
-} from '../../parsing/helpers/ai-runtime.util';
+import { redactSensitive } from '../../parsing/helpers/ai-runtime.util';
 
 export type MerchantExtractionInput = {
   pdfText?: string | null;
@@ -26,7 +24,6 @@ const JUNK_VENDOR_PATTERN =
   /^(page\s+\d+(\s+of\s+\d+)?|receipt|invoice|order|payment|confirmation|date|unknown|n\/a|na|\d+)$/i;
 
 export class AiMerchantExtractor extends BaseAiHelper {
-
   async extractMerchant(input: MerchantExtractionInput): Promise<MerchantExtractionResult | null> {
     if (!this.isAvailable()) {
       return null;
@@ -139,5 +136,4 @@ ${blocks.join('\n\n')}`;
       return null;
     }
   }
-
 }

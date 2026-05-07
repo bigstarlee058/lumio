@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExchangeRate } from '../../entities/exchange-rate.entity';
-import { ExchangeRatesController } from './exchange-rates.controller';
 import { ExchangeRatesSyncService } from './exchange-rates-sync.service';
+import { ExchangeRatesController } from './exchange-rates.controller';
 import { ExchangeRatesService } from './exchange-rates.service';
 
 @Module({

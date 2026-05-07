@@ -1,12 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import { PayableSource, PayableStatus } from '../../../entities/payable.entity';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { CreatePayableDto } from './create-payable.dto';
 
 export class UpdatePayableDto extends PartialType(CreatePayableDto) {

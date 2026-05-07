@@ -12,14 +12,13 @@ import { Transaction } from '../../../../entities/transaction.entity';
 import { ClassificationService } from '../../../classification/services/classification.service';
 import { GoogleSheetsService } from '../../../google-sheets/google-sheets.service';
 import { MetricsService } from '../../../observability/metrics.service';
-import {
-  ExtractedMetadata,
-  MetadataExtractionService,
-} from '../metadata-extraction.service';
+import { ExtractedMetadata, MetadataExtractionService } from '../metadata-extraction.service';
 import { ParserFactoryService } from '../parser-factory.service';
 import { StatementProcessingService } from '../statement-processing.service';
 
-type RepositoryMock<T> = Partial<Record<'findOne' | 'save' | 'create' | 'find' | 'count', jest.Mock>>;
+type RepositoryMock<T> = Partial<
+  Record<'findOne' | 'save' | 'create' | 'find' | 'count', jest.Mock>
+>;
 
 type ParserFactoryAccess = {
   parserFactory: Pick<ParserFactoryService, 'getParser' | 'detectBankAndFormat'>;

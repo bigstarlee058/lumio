@@ -1,15 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, QueryFailedError, type Repository } from 'typeorm';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import { User, WorkspaceMember } from '../../entities';
 import { DataEntryCustomField } from '../../entities/data-entry-custom-field.entity';
 import { DataEntry, type DataEntryType } from '../../entities/data-entry.entity';
 import type { CreateDataEntryCustomFieldDto } from './dto/create-data-entry-custom-field.dto';
-import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { CreateDataEntryDto } from './dto/create-data-entry.dto';
 import type { UpdateDataEntryCustomFieldDto } from './dto/update-data-entry-custom-field.dto';
 
@@ -52,7 +48,13 @@ export class DataEntryService {
   ) {}
 
   private async ensureCanEditDataEntry(workspaceId: string, userId: string): Promise<void> {
-    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditDataEntry', 'Недостаточно прав для редактирования ввода данных');
+    await ensureCanEdit(
+      this.workspaceMemberRepository,
+      workspaceId,
+      userId,
+      'canEditDataEntry',
+      'Недостаточно прав для редактирования ввода данных',
+    );
   }
 
   async create(workspaceId: string, userId: string, dto: CreateDataEntryDto): Promise<DataEntry> {
@@ -186,7 +188,9 @@ export class DataEntryService {
       where: { id: userId },
       select: ['id', 'dataEntryHiddenBaseTabs'],
     });
-    if (!user) throw new NotFoundException('Пользователь не найден');
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
 
     const current = Array.isArray(user.dataEntryHiddenBaseTabs) ? user.dataEntryHiddenBaseTabs : [];
 
@@ -237,10 +241,14 @@ export class DataEntryService {
   ): Promise<DataEntryCustomField> {
     await this.ensureCanEditDataEntry(workspaceId, userId);
     const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, workspaceId } });
-    if (!item) throw new NotFoundException('Колонка не найдена');
+    if (!item) {
+      throw new NotFoundException('Колонка не найдена');
+    }
     if (dto.name !== undefined) {
       const name = dto.name.trim();
-      if (!name.length) throw new BadRequestException('Укажите название колонки');
+      if (!name.length) {
+        throw new BadRequestException('Укажите название колонки');
+      }
       item.name = name;
     }
     if (dto.icon !== undefined) {
@@ -262,7 +270,9 @@ export class DataEntryService {
   async removeCustomField(workspaceId: string, userId: string, id: string): Promise<void> {
     await this.ensureCanEditDataEntry(workspaceId, userId);
     const item = await this.dataEntryCustomFieldRepository.findOne({ where: { id, workspaceId } });
-    if (!item) throw new NotFoundException('Колонка не найдена');
+    if (!item) {
+      throw new NotFoundException('Колонка не найдена');
+    }
     await this.dataEntryRepository.delete({ workspaceId, customTabId: id });
     await this.dataEntryCustomFieldRepository.delete(id);
   }

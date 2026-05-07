@@ -573,7 +573,7 @@ export class MetadataExtractionService {
   // Method to extract metadata from structured data (like parsed PDF tables)
   async extractMetadataFromStructuredData(
     data: StructuredDataRow[],
-    locale?: string,
+    _locale?: string,
   ): Promise<Partial<ExtractedMetadata>> {
     // Implementation for structured data extraction
     // This would analyze headers, first rows, and summary rows
@@ -630,23 +630,37 @@ export class MetadataExtractionService {
     const englishChars = (text.match(/[a-z]/gi) || []).length;
     const totalChars = text.replace(/\s/g, '').length;
 
-    if (totalChars === 0) return 'en';
+    if (totalChars === 0) {
+      return 'en';
+    }
 
     const russianRatio = russianChars / totalChars;
     const kazakhRatio = kazakhChars / totalChars;
     const englishRatio = englishChars / totalChars;
 
-    if (kazakhRatio > 0.1) return 'kk';
-    if (russianRatio > 0.3) return 'ru';
-    if (englishRatio > 0.5) return 'en';
+    if (kazakhRatio > 0.1) {
+      return 'kk';
+    }
+    if (russianRatio > 0.3) {
+      return 'ru';
+    }
+    if (englishRatio > 0.5) {
+      return 'en';
+    }
 
     return 'en'; // fallback
   }
 
   private getDefaultLocale(metadata: Partial<ExtractedMetadata>): string {
-    if (metadata.institution?.locale) return metadata.institution.locale;
-    if (metadata.institution?.country === 'KZ') return 'ru';
-    if (metadata.institution?.country === 'RU') return 'ru';
+    if (metadata.institution?.locale) {
+      return metadata.institution.locale;
+    }
+    if (metadata.institution?.country === 'KZ') {
+      return 'ru';
+    }
+    if (metadata.institution?.country === 'RU') {
+      return 'ru';
+    }
     return 'en';
   }
 
@@ -661,10 +675,18 @@ export class MetadataExtractionService {
   private determineDocumentType(metadata: Partial<ExtractedMetadata>): string {
     const rawHeader = (metadata.rawHeader || '').toLowerCase();
 
-    if (rawHeader.includes('выписка') || rawHeader.includes('statement')) return 'statement';
-    if (rawHeader.includes('отчет') || rawHeader.includes('report')) return 'report';
-    if (rawHeader.includes('справка') || rawHeader.includes('certificate')) return 'certificate';
-    if (rawHeader.includes('движение') || rawHeader.includes('history')) return 'history';
+    if (rawHeader.includes('выписка') || rawHeader.includes('statement')) {
+      return 'statement';
+    }
+    if (rawHeader.includes('отчет') || rawHeader.includes('report')) {
+      return 'report';
+    }
+    if (rawHeader.includes('справка') || rawHeader.includes('certificate')) {
+      return 'certificate';
+    }
+    if (rawHeader.includes('движение') || rawHeader.includes('history')) {
+      return 'history';
+    }
 
     return 'statement'; // default
   }

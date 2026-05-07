@@ -55,10 +55,11 @@ export class GmailService {
       const { accessToken } = await this.gmailOAuthService.getGmailClient(userId);
 
       // Get or create label
-      const labelsResponse = await this.gmailJson<GmailLabelsResponse>(accessToken, 'users/me/labels');
-      const existingLabel = labelsResponse.labels?.find(
-        label => label.name === 'Lumio/Receipts',
+      const labelsResponse = await this.gmailJson<GmailLabelsResponse>(
+        accessToken,
+        'users/me/labels',
       );
+      const existingLabel = labelsResponse.labels?.find(label => label.name === 'Lumio/Receipts');
 
       let labelId: string;
       if (existingLabel?.id) {
@@ -71,9 +72,9 @@ export class GmailService {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-            name: 'Lumio/Receipts',
-            labelListVisibility: 'labelShow',
-            messageListVisibility: 'show',
+              name: 'Lumio/Receipts',
+              labelListVisibility: 'labelShow',
+              messageListVisibility: 'show',
             }),
           },
         );
@@ -248,17 +249,13 @@ export class GmailService {
   ): Promise<void> {
     const { accessToken } = await this.gmailOAuthService.getGmailClient(userId);
 
-    await this.gmailJson(
-      accessToken,
-      `users/me/messages/${encodeURIComponent(messageId)}/modify`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    await this.gmailJson(accessToken, `users/me/messages/${encodeURIComponent(messageId)}/modify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         addLabelIds,
         removeLabelIds,
-        }),
-      },
-    );
+      }),
+    });
   }
 }

@@ -17,7 +17,7 @@ export class GmailWebhookGuard implements CanActivate {
     // Get authorization header
     const authHeader = request.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader?.startsWith('Bearer ')) {
       this.logger.warn('Missing or invalid authorization header');
       throw new UnauthorizedException('Invalid webhook authentication');
     }

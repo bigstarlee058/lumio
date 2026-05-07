@@ -533,7 +533,7 @@ export class ChecksumAutoFixService {
       return {
         success: true,
         correctedData,
-        reasoning: `Adjusted small amount transaction to fix balance mismatch`,
+        reasoning: 'Adjusted small amount transaction to fix balance mismatch',
       };
     }
 
@@ -546,8 +546,8 @@ export class ChecksumAutoFixService {
 
   private async applyAdvancedFixes(
     transactions: ParsedTransaction[],
-    metadata: ParsedStatementMetadata | undefined,
-    calculatedTotals: CalculatedTotals,
+    _metadata: ParsedStatementMetadata | undefined,
+    _calculatedTotals: CalculatedTotals,
   ): Promise<{ data: ParsedTransaction[]; fixes: AutoFix[] }> {
     const fixes: AutoFix[] = [];
     let correctedData = [...transactions];
@@ -632,7 +632,7 @@ export class ChecksumAutoFixService {
       const hasDebit = transaction.debit && transaction.debit > 0;
       const hasCredit = transaction.credit && transaction.credit > 0;
 
-      if (!hasDebit && !hasCredit) {
+      if (!(hasDebit || hasCredit)) {
         // Try to extract amount from payment purpose
         const amount = this.extractAmountFromText(transaction.paymentPurpose || '');
         if (amount && amount > 0) {

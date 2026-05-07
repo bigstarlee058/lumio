@@ -1,17 +1,17 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { normalizePagination } from '../../common/utils/pagination.util';
+import { EntityType } from '../../entities/audit-event.entity';
 import {
   NotificationCategory,
   NotificationSeverity,
   NotificationType,
 } from '../../entities/notification.entity';
-import { EntityType } from '../../entities/audit-event.entity';
 import { Payable, PayableSource, PayableStatus } from '../../entities/payable.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { normalizePagination } from '../../common/utils/pagination.util';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { ExportFormat, FilterPayablesDto, PayablesSortOption } from './dto/filter-payables.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
@@ -129,8 +129,8 @@ export class PayablesService {
         type: NotificationType.PAYABLE_MARKED_PAID,
         category: NotificationCategory.WORKSPACE_ACTIVITY,
         severity: NotificationSeverity.INFO,
-        title: 'Payable marked as paid',
-        message: `${saved.vendor} was marked as paid`,
+        messageKey: 'payable.marked_paid',
+        messageParams: { vendor: saved.vendor },
         entityType: EntityType.PAYABLE,
         entityId: saved.id,
         meta: {
@@ -182,7 +182,9 @@ export class PayablesService {
     const endOfWeek = new Date(startOfToday);
     endOfWeek.setUTCDate(endOfWeek.getUTCDate() + 6);
     const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-    const endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999));
+    const endOfMonth = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999),
+    );
 
     let toPay = 0;
     let overdue = 0;
@@ -211,7 +213,12 @@ export class PayablesService {
         }
       }
 
-      if (row.status === PayableStatus.PAID && paidAt && paidAt >= startOfMonth && paidAt <= endOfMonth) {
+      if (
+        row.status === PayableStatus.PAID &&
+        paidAt &&
+        paidAt >= startOfMonth &&
+        paidAt <= endOfMonth
+      ) {
         paidThisMonth += amount;
       }
     }
@@ -241,7 +248,6 @@ export class PayablesService {
         return queryBuilder.orderBy('payable.amount', 'DESC');
       case PayablesSortOption.VENDOR_ASC:
         return queryBuilder.orderBy('payable.vendor', 'ASC');
-      case PayablesSortOption.DUE_DATE_ASC:
       default:
         return queryBuilder.orderBy('payable.dueDate', 'ASC', 'NULLS LAST');
     }
@@ -316,7 +322,10 @@ export class PayablesService {
   }
 
   async markDueSoonNotified(id: string): Promise<void> {
-    const payable = await this.payableRepository.findOne({ where: { id }, select: ['id', 'dueSoonNotifiedAt'] });
+    const payable = await this.payableRepository.findOne({
+      where: { id },
+      select: ['id', 'dueSoonNotifiedAt'],
+    });
     if (!payable) {
       throw new NotFoundException('Payable not found');
     }
@@ -347,9 +356,9 @@ export class PayablesService {
 
     if (filters.search) {
       queryBuilder.andWhere(
-        '(LOWER(payable.vendor) LIKE :search OR LOWER(COALESCE(payable.comment, \'\')) LIKE :search)',
+        "(LOWER(payable.vendor) LIKE :search OR LOWER(COALESCE(payable.comment, '')) LIKE :search)",
         {
-        search: `%${filters.search.toLowerCase()}%`,
+          search: `%${filters.search.toLowerCase()}%`,
         },
       );
     }
@@ -385,7 +394,8 @@ export class PayablesService {
     return {
       ...dto,
       dueDate: dto.dueDate !== undefined ? this.parseDate(dto.dueDate) : undefined,
-      linkedTransactionId: dto.linkedTransactionId === undefined ? undefined : dto.linkedTransactionId,
+      linkedTransactionId:
+        dto.linkedTransactionId === undefined ? undefined : dto.linkedTransactionId,
       comment: dto.comment === undefined ? undefined : dto.comment,
       statementId: dto.statementId === undefined ? undefined : dto.statementId,
       paidAt: willBePaid ? current.paidAt || new Date() : null,
@@ -424,7 +434,10 @@ export class PayablesService {
     }
   }
 
-  private async assertStatementInWorkspace(workspaceId: string, statementId: string | null): Promise<void> {
+  private async assertStatementInWorkspace(
+    workspaceId: string,
+    statementId: string | null,
+  ): Promise<void> {
     if (!statementId) {
       return;
     }

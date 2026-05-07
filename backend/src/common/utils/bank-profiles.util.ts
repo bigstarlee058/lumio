@@ -470,7 +470,7 @@ export class BankProfileService {
   /**
    * Create custom profile dynamically
    */
-  createCustomProfile(profileData: Partial<BankProfile>, profileId: string): BankProfile {
+  createCustomProfile(profileData: Partial<BankProfile>, _profileId: string): BankProfile {
     const defaultProfile: BankProfile = {
       name: 'Custom Bank',
       country: 'Unknown',

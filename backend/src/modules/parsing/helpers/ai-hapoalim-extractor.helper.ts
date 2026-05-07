@@ -122,13 +122,14 @@ export class AiHapoalimExtractor extends BaseAiHelper {
       return rawTransactions
         .map((tx: Record<string, unknown>): ParsedTransaction | null => {
           const mapped = mapParsedTransaction(tx, { normalizeDate, normalizeNumber });
-          if (!mapped) return null;
+          if (!mapped) {
+            return null;
+          }
 
           // Carry over foreign amount and exchange rate if present
           const amountForeign =
             typeof tx.amount_foreign === 'number' ? Math.abs(tx.amount_foreign) : undefined;
-          const exchangeRate =
-            typeof tx.exchange_rate === 'number' ? tx.exchange_rate : undefined;
+          const exchangeRate = typeof tx.exchange_rate === 'number' ? tx.exchange_rate : undefined;
 
           return {
             ...mapped,

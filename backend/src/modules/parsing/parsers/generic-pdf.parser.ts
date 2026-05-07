@@ -91,4 +91,3 @@ export class GenericPdfParser extends BaseParser {
     };
   }
 }
-

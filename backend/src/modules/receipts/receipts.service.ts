@@ -1,18 +1,21 @@
-import { Injectable } from '@nestjs/common';
 import { promises as fs } from 'node:fs';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { normalizeFilename } from '../../common/utils/filename.util';
+import { normalizePagination } from '../../common/utils/pagination.util';
 import {
   Receipt,
   ReceiptJobStatus,
   ReceiptProcessingJob,
-  Statement,
   ReceiptSource,
   ReceiptStatus,
+  Statement,
   Transaction,
   TransactionType,
 } from '../../entities';
-import { normalizePagination } from '../../common/utils/pagination.util';
+import { ReceiptApprovedEvent } from '../notifications/events/notification-events';
 import { ReceiptQueryDto } from './dto/receipt-query.dto';
 import { ReceiptProcessorService } from './services/receipt-processor.service';
 
@@ -34,6 +37,8 @@ const MANUAL_RECEIPT_WORKER_ID = 'manual-receipt-sync';
 
 @Injectable()
 export class ReceiptsService {
+  private readonly logger = new Logger(ReceiptsService.name);
+
   constructor(
     @InjectRepository(Receipt)
     private readonly receiptRepository: Repository<Receipt>,
@@ -44,6 +49,7 @@ export class ReceiptsService {
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
     private readonly receiptProcessor: ReceiptProcessorService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createFromUpload(params: UploadParams): Promise<Receipt> {
@@ -57,7 +63,12 @@ export class ReceiptsService {
     });
 
     const savedReceipt = await this.receiptRepository.save(receipt);
-    const job = await this.createManualJob(savedReceipt.id, params.userId, 'manual-upload', params.language);
+    const job = await this.createManualJob(
+      savedReceipt.id,
+      params.userId,
+      'manual-upload',
+      params.language,
+    );
     await this.receiptProcessor.processReceipt(job);
 
     return (
@@ -77,7 +88,12 @@ export class ReceiptsService {
     });
 
     const savedReceipt = await this.receiptRepository.save(receipt);
-    const job = await this.createManualJob(savedReceipt.id, params.userId, 'manual-scan', params.language);
+    const job = await this.createManualJob(
+      savedReceipt.id,
+      params.userId,
+      'manual-scan',
+      params.language,
+    );
     await this.receiptProcessor.processReceipt(job);
 
     return (
@@ -155,6 +171,14 @@ export class ReceiptsService {
     receipt.transactionId = savedTransaction.id;
     const savedReceipt = await this.receiptRepository.save(receipt);
 
+    this.eventEmitter
+      .emitAsync('receipt.approved', {
+        workspaceId: savedReceipt.workspaceId,
+        receiptId: savedReceipt.id,
+        transactionId: savedTransaction.id,
+      } satisfies ReceiptApprovedEvent)
+      .catch(err => this.logger.error('Failed to emit receipt.approved event', err));
+
     return {
       receipt: savedReceipt,
       transaction: savedTransaction,
@@ -170,7 +194,9 @@ export class ReceiptsService {
 
     for (const receiptId of receiptIds) {
       try {
-        const receipt = await this.receiptRepository.findOne({ where: { id: receiptId, workspaceId } });
+        const receipt = await this.receiptRepository.findOne({
+          where: { id: receiptId, workspaceId },
+        });
 
         if (!receipt) {
           results.failed += 1;
@@ -178,16 +204,27 @@ export class ReceiptsService {
           continue;
         }
 
-        if (!receipt.parsedData?.amount || !receipt.parsedData?.date) {
+        if (!(receipt.parsedData?.amount && receipt.parsedData?.date)) {
           results.failed += 1;
           results.errors.push({ receiptId, error: 'Missing required data' });
           continue;
         }
 
-        const savedTransaction = await this.createTransactionFromReceipt(receipt, workspaceId, categoryId);
+        const savedTransaction = await this.createTransactionFromReceipt(
+          receipt,
+          workspaceId,
+          categoryId,
+        );
         receipt.status = ReceiptStatus.APPROVED;
         receipt.transactionId = savedTransaction.id;
-        await this.receiptRepository.save(receipt);
+        const savedReceipt = await this.receiptRepository.save(receipt);
+        this.eventEmitter
+          .emitAsync('receipt.approved', {
+            workspaceId: receipt.workspaceId,
+            receiptId: savedReceipt.id,
+            transactionId: savedTransaction.id,
+          } satisfies ReceiptApprovedEvent)
+          .catch(err => this.logger.error('Failed to emit receipt.approved event', err));
         results.approved += 1;
       } catch (error) {
         results.failed += 1;
@@ -236,7 +273,7 @@ export class ReceiptsService {
     const attachment = receipt.metadata?.attachments?.[0];
     const filePath = receipt.attachmentPaths?.[0];
 
-    if (!attachment || !filePath) {
+    if (!(attachment && filePath)) {
       return null;
     }
 
@@ -285,7 +322,7 @@ export class ReceiptsService {
       source: params.source,
       gmailMessageId: null,
       gmailThreadId: null,
-      subject: params.file.originalname,
+      subject: normalizeFilename(params.file.originalname),
       sender: params.source === ReceiptSource.SCAN ? 'camera-scan' : 'manual-upload',
       receivedAt: new Date(),
       status: ReceiptStatus.NEW,
@@ -294,7 +331,7 @@ export class ReceiptsService {
         attachments: [
           {
             id: params.file.filename,
-            filename: params.file.originalname,
+            filename: normalizeFilename(params.file.originalname),
             mimeType: params.file.mimetype,
             size: params.file.size,
           },
@@ -313,7 +350,11 @@ export class ReceiptsService {
     categoryId?: string,
   ) {
     const transactionType =
-      receipt.parsedData?.transactionType === 'income' ? TransactionType.INCOME : TransactionType.EXPENSE;
+      receipt.parsedData?.transactionType === 'income'
+        ? TransactionType.INCOME
+        : TransactionType.EXPENSE;
+    const amount = receipt.parsedData?.amount ?? null;
+    const isExpense = transactionType === TransactionType.EXPENSE;
 
     const transaction = this.transactionRepository.create({
       statementId: null,
@@ -321,7 +362,9 @@ export class ReceiptsService {
       transactionDate: receipt.parsedData?.date ? new Date(receipt.parsedData.date) : new Date(),
       counterpartyName: receipt.parsedData?.vendor || receipt.subject || 'Unknown',
       paymentPurpose: receipt.parsedData?.vendor || receipt.subject || '',
-      amount: receipt.parsedData?.amount ?? null,
+      debit: isExpense ? amount : null,
+      credit: isExpense ? null : amount,
+      amount,
       currency: receipt.parsedData?.currency || 'KZT',
       categoryId: categoryId ?? (receipt.parsedData?.categoryId || null),
       transactionType,

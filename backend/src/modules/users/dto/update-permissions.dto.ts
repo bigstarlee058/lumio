@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional } from 'class-validator';
+import { IsArray, IsEnum } from 'class-validator';
 import { Permission } from '../../../common/enums/permissions.enum';
 
 export class UpdatePermissionsDto {

@@ -5,7 +5,9 @@ export class AllowDuplicateStatementFileHash1735200000001 implements MigrationIn
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('statements');
-    if (!table) return;
+    if (!table) {
+      return;
+    }
 
     const unique = table.uniques.find(
       u => u.columnNames.length === 1 && u.columnNames[0] === 'file_hash',
@@ -25,12 +27,16 @@ export class AllowDuplicateStatementFileHash1735200000001 implements MigrationIn
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('statements');
-    if (!table) return;
+    if (!table) {
+      return;
+    }
 
     const hasUnique = table.uniques.some(
       u => u.columnNames.length === 1 && u.columnNames[0] === 'file_hash',
     );
-    if (hasUnique) return;
+    if (hasUnique) {
+      return;
+    }
 
     await queryRunner.createUniqueConstraint(
       table,

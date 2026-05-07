@@ -5,13 +5,17 @@ const DEFAULT_FAILURE_THRESHOLD = 3;
 const DEFAULT_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 
 function parsePositiveInt(value: string | undefined, fallback: number) {
-  if (!value) return fallback;
+  if (!value) {
+    return fallback;
+  }
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
 function parsePositiveMs(value: string | undefined, fallback: number) {
-  if (!value) return fallback;
+  if (!value) {
+    return fallback;
+  }
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
@@ -68,7 +72,9 @@ export function isAiEnabled(): boolean {
 }
 
 function maskMiddle(value: string, visible = 2): string {
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
   if (value.length <= visible * 2) {
     return '*'.repeat(value.length);
   }
@@ -81,7 +87,9 @@ function maskMiddle(value: string, visible = 2): string {
  * Redact obvious PII (IBAN/BIN/IIN/card) before sending to external AI.
  */
 export function redactSensitive(text: string): string {
-  if (!text) return text;
+  if (!text) {
+    return text;
+  }
   let sanitized = text;
   // IBAN KZ************************ last4
   sanitized = sanitized.replace(

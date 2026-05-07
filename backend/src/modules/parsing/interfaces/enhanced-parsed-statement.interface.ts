@@ -1,8 +1,4 @@
-import {
-  ParsedStatement,
-  ParsedStatementMetadata,
-  ParsedTransaction,
-} from './parsed-statement.interface';
+import { ParsedStatementMetadata, ParsedTransaction } from './parsed-statement.interface';
 
 // Enhanced metadata interfaces for better API response
 export interface ExtractedMetadata {
@@ -29,7 +25,14 @@ export interface ExtractedMetadata {
   customFields?: Record<string, unknown>;
 }
 
-type TransformationValue = string | number | boolean | Date | null | undefined | Record<string, unknown>;
+type TransformationValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | null
+  | undefined
+  | Record<string, unknown>;
 
 export interface StatementPeriod {
   dateFrom: Date;
@@ -526,17 +529,19 @@ function getQualityCategory(
   score: number,
   thresholds: QualityThresholds = QUALITY_THRESHOLDS,
 ): 'excellent' | 'good' | 'fair' | 'poor' {
-  if (score >= thresholds.excellent) return 'excellent';
-  if (score >= thresholds.good) return 'good';
-  if (score >= thresholds.fair) return 'fair';
+  if (score >= thresholds.excellent) {
+    return 'excellent';
+  }
+  if (score >= thresholds.good) {
+    return 'good';
+  }
+  if (score >= thresholds.fair) {
+    return 'fair';
+  }
   return 'poor';
 }
 
-function formatAmountForDisplay(
-  amount: number,
-  currency?: string,
-  locale = 'en-US',
-): string {
+function formatAmountForDisplay(amount: number, currency?: string, locale = 'en-US'): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency || 'USD',

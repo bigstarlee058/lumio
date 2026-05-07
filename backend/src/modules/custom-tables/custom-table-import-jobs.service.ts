@@ -34,7 +34,9 @@ export class CustomTableImportJobsService {
     private readonly jobRepository: Repository<CustomTableImportJob>,
   ) {}
 
-  private toJobResultPatch(result: ImportJobResult): QueryDeepPartialEntity<Record<string, unknown>> {
+  private toJobResultPatch(
+    result: ImportJobResult,
+  ): QueryDeepPartialEntity<Record<string, unknown>> {
     return result as QueryDeepPartialEntity<Record<string, unknown>>;
   }
 
@@ -57,7 +59,9 @@ export class CustomTableImportJobsService {
 
   async getJobForUser(userId: string, jobId: string): Promise<CustomTableImportJob> {
     const job = await this.jobRepository.findOne({ where: { id: jobId, userId } });
-    if (!job) throw new NotFoundException('Job не найден');
+    if (!job) {
+      throw new NotFoundException('Job не найден');
+    }
     return job;
   }
 
@@ -65,12 +69,16 @@ export class CustomTableImportJobsService {
     const update: JobProgressUpdate = {
       lockedAt: new Date(),
     };
-    if (patch.progress !== undefined) update.progress = patch.progress;
-    if (patch.stage !== undefined) update.stage = patch.stage;
+    if (patch.progress !== undefined) {
+      update.progress = patch.progress;
+    }
+    if (patch.stage !== undefined) {
+      update.stage = patch.stage;
+    }
     // Heartbeat for stale-lock recovery: keep locked_at fresh while the job is actively reporting progress.
     try {
       await this.jobRepository.update({ id: jobId }, update);
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn(`Failed to update job progress jobId=${jobId}`);
     }
   }

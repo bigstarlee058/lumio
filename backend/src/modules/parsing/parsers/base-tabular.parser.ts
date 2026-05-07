@@ -96,7 +96,7 @@ export abstract class BaseTabularParser extends BaseParser {
   }
 
   protected parseRow(
-    row: unknown,
+    _row: unknown,
     columnMapping: TabularColumnMapping,
     getValue: (index: number) => unknown,
     sourceLabel = 'tabular',

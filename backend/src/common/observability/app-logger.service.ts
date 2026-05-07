@@ -23,7 +23,9 @@ const levelPriority: Record<Level, number> = {
 
 const normalizeLogLevel = (value: string | undefined): Level => {
   const v = (value || '').toLowerCase();
-  if (v === 'error' || v === 'warn' || v === 'debug' || v === 'verbose') return v;
+  if (v === 'error' || v === 'warn' || v === 'debug' || v === 'verbose') {
+    return v;
+  }
   return 'log';
 };
 
@@ -58,12 +60,16 @@ export class AppLogger implements LoggerService {
   }
 
   private shouldLog(level: Level): boolean {
-    if (this.logLevels && !this.logLevels.includes(level)) return false;
+    if (this.logLevels && !this.logLevels.includes(level)) {
+      return false;
+    }
     return levelPriority[level] >= levelPriority[this.minLevel];
   }
 
   private write(level: Level, message: LoggerMessage, context?: string, trace?: string): void {
-    if (!this.shouldLog(level)) return;
+    if (!this.shouldLog(level)) {
+      return;
+    }
 
     const store = RequestContext.get();
     const base = {

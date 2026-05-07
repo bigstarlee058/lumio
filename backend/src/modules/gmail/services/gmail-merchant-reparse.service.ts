@@ -200,5 +200,4 @@ export class GmailMerchantReparseService {
 
     return false;
   }
-
 }

@@ -106,8 +106,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       typeof rawMessage === 'string'
         ? rawMessage
         : ((isMessageWithDetails(rawMessage) ? rawMessage.message : undefined) ??
-            localizedByStatus[status]?.[locale] ??
-            'Error');
+          localizedByStatus[status]?.[locale] ??
+          'Error');
 
     if (Array.isArray(extractedMessage)) {
       return localizedByStatus[status]?.[locale] ?? 'Error';

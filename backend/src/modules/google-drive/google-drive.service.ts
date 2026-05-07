@@ -11,7 +11,6 @@ import {
   EntityType,
   Integration,
   IntegrationProvider,
-  IntegrationStatus,
   IntegrationToken,
   Statement,
   User,
@@ -19,7 +18,6 @@ import {
 import { AuditService } from '../audit/audit.service';
 import { StatementsService } from '../statements/statements.service';
 import type { ImportDriveFilesDto } from './dto/import-drive-files.dto';
-import type { UpdateDriveSettingsDto } from './dto/update-drive-settings.dto';
 
 type GoogleDriveImportError = {
   response?: { data?: { message?: string } };
@@ -39,7 +37,9 @@ type GoogleDriveFilesResponse = {
 
 type DriveClient = {
   files: {
-    get(args: { fileId: string; fields?: string; alt?: string }): Promise<{ data: GoogleDriveFile | Buffer }>;
+    get(args: { fileId: string; fields?: string; alt?: string }): Promise<{
+      data: GoogleDriveFile | Buffer;
+    }>;
   };
 };
 
@@ -151,9 +151,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
 
     return {
       accessToken,
-      expiresAt: token.expires_in
-        ? new Date(Date.now() + token.expires_in * 1000)
-        : undefined,
+      expiresAt: token.expires_in ? new Date(Date.now() + token.expires_in * 1000) : undefined,
     };
   }
 
@@ -174,16 +172,18 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
   getAuthUrl(user: User): string {
     const { clientId, redirectUri } = this.getOAuthConfig();
 
-    return this.buildProviderAuthUrl(user, state =>
-      `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
-        client_id: clientId,
-        redirect_uri: redirectUri,
-        response_type: 'code',
-        access_type: 'offline',
-        prompt: 'consent',
-        scope: DRIVE_SCOPES.join(' '),
-        state,
-      }).toString()}`,
+    return this.buildProviderAuthUrl(
+      user,
+      state =>
+        `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          access_type: 'offline',
+          prompt: 'consent',
+          scope: DRIVE_SCOPES.join(' '),
+          state,
+        }).toString()}`,
     );
   }
 
@@ -297,11 +297,7 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
     };
   }
 
-  private async driveJson<T>(
-    accessToken: string,
-    url: string,
-    init: RequestInit = {},
-  ): Promise<T> {
+  private async driveJson<T>(accessToken: string, url: string, init: RequestInit = {}): Promise<T> {
     const response = await fetch(url, {
       ...init,
       headers: {
@@ -334,8 +330,8 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-        name: 'Lumio',
-        mimeType: 'application/vnd.google-apps.folder',
+          name: 'Lumio',
+          mimeType: 'application/vnd.google-apps.folder',
         }),
       },
     );
@@ -430,17 +426,18 @@ export class GoogleDriveService extends CloudStorageBaseService<DriveSettings> {
       getClient: currentIntegration => this.getDriveAccessToken(currentIntegration),
       getStatementStream: statement => this.fileStorageService.getStatementFileStream(statement),
       uploadStatement: async ({ client: accessToken, stream, fileName, mimeType, settings }) => {
-        const driveName = await this.resolveDriveFilename(accessToken, settings.folderId || null, fileName);
+        const driveName = await this.resolveDriveFilename(
+          accessToken,
+          settings.folderId || null,
+          fileName,
+        );
         const metadata = {
-            name: driveName,
-            parents: settings.folderId ? [settings.folderId] : undefined,
+          name: driveName,
+          parents: settings.folderId ? [settings.folderId] : undefined,
         };
         const fileBuffer = await this.streamToBuffer(stream);
         const body = new FormData();
-        body.append(
-          'metadata',
-          new Blob([JSON.stringify(metadata)], { type: 'application/json' }),
-        );
+        body.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
         body.append('file', new Blob([new Uint8Array(fileBuffer)], { type: mimeType }));
         const response = await fetch(
           'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',

@@ -16,12 +16,13 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { getDatabaseConfig } from './config/database.config';
 import {
+  ApiKey,
   AuditEvent,
   AuthSession,
   BalanceAccount,
   BalanceSnapshot,
   Branch,
-  ExchangeRate,
+  Budget,
   Category,
   CategoryLearning,
   CustomTable,
@@ -30,6 +31,7 @@ import {
   DataEntry,
   DriveSettings,
   DropboxSettings,
+  ExchangeRate,
   FilePermission,
   GmailSettings,
   GmailWatchSubscription,
@@ -38,38 +40,41 @@ import {
   Insight,
   Integration,
   IntegrationToken,
-  OpenProtocolSettings,
   Notification,
   NotificationPreference,
-  Payable,
+  OpenProtocolSettings,
   ParsingRule,
+  Payable,
   Receipt,
   ReceiptProcessingJob,
   SharedLink,
   Statement,
+  Subscription,
   TaxRate,
   TelegramReport,
   Transaction,
   User,
   Wallet,
   Workspace,
-  WorkspaceServiceSettings,
   WorkspaceInvitation,
   WorkspaceMember,
+  WorkspaceServiceSettings,
 } from './entities';
-import { AuditModule } from './modules/audit/audit.module';
+import { ApiKeysModule } from './modules/api-keys/api-keys.module';
 import { ApplicationSettingsModule } from './modules/application-settings/application-settings.module';
+import { AuditModule } from './modules/audit/audit.module';
 import { AuditInterceptor } from './modules/audit/interceptors/audit.interceptor';
 import { AuthModule } from './modules/auth/auth.module';
 import { BalanceModule } from './modules/balance/balance.module';
 import { BranchesModule } from './modules/branches/branches.module';
+import { BudgetsModule } from './modules/budgets/budgets.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { CustomTablesModule } from './modules/custom-tables/custom-tables.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
 import { DataEntryModule } from './modules/data-entry/data-entry.module';
 import { DropboxModule } from './modules/dropbox/dropbox.module';
+import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
 import { GmailModule } from './modules/gmail/gmail.module';
 import { GoogleDriveModule } from './modules/google-drive/google-drive.module';
 import { GoogleSheetsModule } from './modules/google-sheets/google-sheets.module';
@@ -80,15 +85,17 @@ import { ObservabilityModule } from './modules/observability/observability.modul
 import { OpenProtocolIntegrationsModule } from './modules/open-protocol-integrations/open-protocol-integrations.module';
 import { ParsingModule } from './modules/parsing/parsing.module';
 import { PayablesModule } from './modules/payables/payables.module';
-import { ReportsModule } from './modules/reports/reports.module';
 import { ReceiptsModule } from './modules/receipts/receipts.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { StatementsModule } from './modules/statements/statements.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { TaxRatesModule } from './modules/tax-rates/tax-rates.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UsersModule } from './modules/users/users.module';
 import { WalletsModule } from './modules/wallets/wallets.module';
+import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { WorkspacesModule } from './modules/workspaces/workspaces.module';
 
 @Module({
@@ -121,6 +128,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([
+      ApiKey,
       User,
       Statement,
       Transaction,
@@ -161,6 +169,8 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
       ReceiptProcessingJob,
       TaxRate,
       ExchangeRate,
+      Budget,
+      Subscription,
     ]),
     CommonModule,
     ApplicationSettingsModule,
@@ -178,6 +188,7 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     ReceiptsModule,
     CategoriesModule,
     BranchesModule,
+    BudgetsModule,
     WalletsModule,
     TransactionsModule,
     ReportsModule,
@@ -194,6 +205,9 @@ import { WorkspacesModule } from './modules/workspaces/workspaces.module';
     DashboardModule,
     PayablesModule,
     ExchangeRatesModule,
+    SubscriptionsModule,
+    WebhooksModule,
+    ApiKeysModule,
   ],
   controllers: [AppController],
   providers: [

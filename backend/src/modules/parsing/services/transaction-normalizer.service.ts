@@ -124,7 +124,9 @@ export class TransactionNormalizer {
   }
 
   private async normalizeDate(date: Date, locale?: string): Promise<DateParseResult | null> {
-    if (!date) return null;
+    if (!date) {
+      return null;
+    }
 
     try {
       // If date is already valid, just return it
@@ -147,7 +149,7 @@ export class TransactionNormalizer {
 
   private async normalizeAmounts(
     transaction: ParsedTransaction,
-    locale?: string,
+    _locale?: string,
   ): Promise<{
     debit?: AmountParseResult;
     credit?: AmountParseResult;
@@ -267,7 +269,7 @@ export class TransactionNormalizer {
     const hasDebit = transaction.debit && transaction.debit > 0;
     const hasCredit = transaction.credit && transaction.credit > 0;
 
-    if (!hasDebit && !hasCredit) {
+    if (!(hasDebit || hasCredit)) {
       // If no amounts specified, check if we can infer from context
       if (transaction.paymentPurpose) {
         const isExpense = /(?:списание|расход|оплата|payment|expense|withdrawal)/i.test(

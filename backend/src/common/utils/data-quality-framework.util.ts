@@ -238,7 +238,9 @@ export class DataQualityFramework {
     let duplicateRows = 0;
 
     for (const row of data) {
-      if (!Array.isArray(row)) continue;
+      if (!Array.isArray(row)) {
+        continue;
+      }
 
       const rowString = row.join('').trim();
 
@@ -314,11 +316,15 @@ export class DataQualityFramework {
     const sample = data.slice(0, sampleSize);
 
     for (const row of sample) {
-      if (!Array.isArray(row) || row.length === 0) continue;
+      if (!Array.isArray(row) || row.length === 0) {
+        continue;
+      }
 
       for (let i = 0; i < row.length && i < 10; i++) {
         const cell = row[i]?.toString().trim();
-        if (!cell) continue;
+        if (!cell) {
+          continue;
+        }
 
         totalDataPoints++;
 
@@ -356,7 +362,7 @@ export class DataQualityFramework {
   }
 
   private detectQualityIssues(
-    data: string[][],
+    _data: string[][],
     context: {
       rowMetrics: RowMetrics;
       columnMetrics: ColumnMetrics;
@@ -429,15 +435,19 @@ export class DataQualityFramework {
       issues.push({
         type: 'currency_mismatch',
         severity: 'low',
-        description: `Currency symbol inconsistency detected`,
+        description: 'Currency symbol inconsistency detected',
         suggestion: 'Standardize currency symbols or extract currency to separate field',
       });
     }
 
     if (context.strictMode) {
       issues.forEach(issue => {
-        if (issue.severity === 'medium') issue.severity = 'high';
-        if (issue.severity === 'low') issue.severity = 'medium';
+        if (issue.severity === 'medium') {
+          issue.severity = 'high';
+        }
+        if (issue.severity === 'low') {
+          issue.severity = 'medium';
+        }
       });
     }
 
@@ -489,10 +499,14 @@ export class DataQualityFramework {
           .filter(Boolean)
       : [];
 
-    if (missingColumns.length === 0) return null;
+    if (missingColumns.length === 0) {
+      return null;
+    }
 
     const fixedData = data.map(row => {
-      if (!Array.isArray(row)) return row;
+      if (!Array.isArray(row)) {
+        return row;
+      }
       const fixedRow = [...row];
       for (let i = 0; i < missingColumns.length; i++) {
         fixedRow.push('');
@@ -510,11 +524,15 @@ export class DataQualityFramework {
 
   private async fixColumnInconsistency(data: string[][]): Promise<QualityFix | null> {
     const columnCounts = data.map(row => (Array.isArray(row) ? row.length : 0));
-    if (columnCounts.length === 0) return null;
+    if (columnCounts.length === 0) {
+      return null;
+    }
 
     const modeCount = this.calculateMode(columnCounts);
     const fixedData = data.map(row => {
-      if (!Array.isArray(row)) return row;
+      if (!Array.isArray(row)) {
+        return row;
+      }
       const currentLength = row.length;
       if (currentLength < modeCount) {
         return [...row, ...Array(modeCount - currentLength).fill('')];
@@ -539,7 +557,9 @@ export class DataQualityFramework {
 
   private async fixEmptyRows(data: string[][]): Promise<QualityFix> {
     const fixedData = data.filter(row => {
-      if (!Array.isArray(row)) return true;
+      if (!Array.isArray(row)) {
+        return true;
+      }
       return row.join('').trim().length > 0;
     });
 
@@ -642,10 +662,18 @@ export class DataQualityFramework {
   private generateSummary(metrics: QualityMetrics): string {
     const { overallQuality } = metrics;
 
-    if (overallQuality >= 0.9) return 'Excellent data quality';
-    if (overallQuality >= 0.8) return 'Good data quality';
-    if (overallQuality >= 0.7) return 'Fair data quality';
-    if (overallQuality >= 0.5) return 'Poor data quality';
+    if (overallQuality >= 0.9) {
+      return 'Excellent data quality';
+    }
+    if (overallQuality >= 0.8) {
+      return 'Good data quality';
+    }
+    if (overallQuality >= 0.7) {
+      return 'Fair data quality';
+    }
+    if (overallQuality >= 0.5) {
+      return 'Poor data quality';
+    }
     return 'Very poor data quality';
   }
 

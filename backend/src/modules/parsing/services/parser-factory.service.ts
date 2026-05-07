@@ -54,7 +54,10 @@ export class ParserFactoryService {
     return Boolean(hasDate && hasAmount);
   }
 
-  private detectBankByName(text: string): { bank: 'kaspi' | 'bereke' | 'hapoalim' | null; evidence: string[] } {
+  private detectBankByName(text: string): {
+    bank: 'kaspi' | 'bereke' | 'hapoalim' | null;
+    evidence: string[];
+  } {
     const evidence: string[] = [];
     let bank: 'kaspi' | 'bereke' | 'hapoalim' | null = null;
 
@@ -94,7 +97,10 @@ export class ParserFactoryService {
     return { bank, evidence };
   }
 
-  private detectBankByBic(text: string): { bank: 'kaspi' | 'bereke' | 'hapoalim' | null; evidence: string[] } {
+  private detectBankByBic(text: string): {
+    bank: 'kaspi' | 'bereke' | 'hapoalim' | null;
+    evidence: string[];
+  } {
     const evidence: string[] = [];
     let bank: 'kaspi' | 'bereke' | null = null;
 
@@ -267,7 +273,7 @@ export class ParserFactoryService {
           if (
             await new BerekeNewParser().canParse(BankName.BEREKE_NEW, fileType, filePath, textLower)
           ) {
-            console.log(`[ParserFactory] Detected: Bereke Bank (new format)`);
+            console.log('[ParserFactory] Detected: Bereke Bank (new format)');
             return {
               bankName: BankName.BEREKE_NEW,
               formatVersion: 'new',
@@ -279,7 +285,7 @@ export class ParserFactoryService {
           if (
             await new BerekeOldParser().canParse(BankName.BEREKE_OLD, fileType, filePath, textLower)
           ) {
-            console.log(`[ParserFactory] Detected: Bereke Bank (old format)`);
+            console.log('[ParserFactory] Detected: Bereke Bank (old format)');
             return {
               bankName: BankName.BEREKE_OLD,
               formatVersion: 'old',
@@ -288,7 +294,7 @@ export class ParserFactoryService {
               otherBankMentions: otherBankMentions.length ? otherBankMentions : undefined,
             };
           }
-          console.log(`[ParserFactory] Detected: Bereke Bank (format unknown)`);
+          console.log('[ParserFactory] Detected: Bereke Bank (format unknown)');
           return {
             bankName: BankName.BEREKE_NEW,
             detectedBy,
@@ -297,7 +303,7 @@ export class ParserFactoryService {
           };
         }
       } catch (error) {
-        console.error(`[ParserFactory] Error reading file content:`, error);
+        console.error('[ParserFactory] Error reading file content:', error);
       }
     }
 
@@ -306,7 +312,7 @@ export class ParserFactoryService {
       const textLower = cachedText.toLowerCase();
       const nameDetection = this.detectBankByName(textLower);
       if (nameDetection.bank === 'hapoalim') {
-        console.log(`[ParserFactory] Detected: Bank Hapoalim (image-ocr-name)`);
+        console.log('[ParserFactory] Detected: Bank Hapoalim (image-ocr-name)');
         return {
           bankName: BankName.HAPOALIM,
           detectedBy: 'image-ocr-name',
@@ -325,7 +331,7 @@ export class ParserFactoryService {
         parser instanceof KaspiParser &&
         (await parser.canParse(BankName.KASPI, fileType, filePath, cachedText))
       ) {
-        console.log(`[ParserFactory] Detected: Kaspi Bank`);
+        console.log('[ParserFactory] Detected: Kaspi Bank');
         return { bankName: BankName.KASPI };
       }
 
@@ -333,22 +339,22 @@ export class ParserFactoryService {
         parser instanceof HapoalimParser &&
         (await parser.canParse(BankName.HAPOALIM, fileType, filePath, cachedText))
       ) {
-        console.log(`[ParserFactory] Detected: Bank Hapoalim`);
+        console.log('[ParserFactory] Detected: Bank Hapoalim');
         return { bankName: BankName.HAPOALIM };
       }
 
       if (await parser.canParse(BankName.BEREKE_NEW, fileType, filePath, cachedText)) {
-        console.log(`[ParserFactory] Detected: Bereke Bank (new format)`);
+        console.log('[ParserFactory] Detected: Bereke Bank (new format)');
         return { bankName: BankName.BEREKE_NEW, formatVersion: 'new' };
       }
       if (await parser.canParse(BankName.BEREKE_OLD, fileType, filePath, cachedText)) {
-        console.log(`[ParserFactory] Detected: Bereke Bank (old format)`);
+        console.log('[ParserFactory] Detected: Bereke Bank (old format)');
         return { bankName: BankName.BEREKE_OLD, formatVersion: 'old' };
       }
     }
 
     // Default to other if can't detect
-    console.log(`[ParserFactory] Could not detect bank, defaulting to OTHER`);
+    console.log('[ParserFactory] Could not detect bank, defaulting to OTHER');
     return { bankName: BankName.OTHER };
   }
 }

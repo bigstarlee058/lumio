@@ -1,7 +1,13 @@
 import * as crypto from 'crypto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Integration,
+  IntegrationProvider,
+  IntegrationStatus,
+  IntegrationToken,
+  User,
+} from '../../entities';
 import { decryptText, encryptText } from '../utils/encryption.util';
-import { Integration, IntegrationProvider, IntegrationStatus, IntegrationToken, User } from '../../entities';
 
 export type OAuthRepositoryLike<T> = {
   findOne: (args: unknown) => Promise<T | null>;
@@ -50,7 +56,7 @@ export abstract class OAuthIntegrationBaseService {
 
   protected parseState(state: string): Record<string, unknown> {
     const [encoded, signature] = (state || '').split('.');
-    if (!encoded || !signature) {
+    if (!(encoded && signature)) {
       throw new BadRequestException('Invalid OAuth state');
     }
 
@@ -158,7 +164,7 @@ export abstract class OAuthIntegrationBaseService {
       return { redirectUrl: this.buildIntegrationRedirect('error', params.error) };
     }
 
-    if (!params.code || !params.state) {
+    if (!(params.code && params.state)) {
       return { redirectUrl: this.buildIntegrationRedirect('error', 'missing_code') };
     }
 

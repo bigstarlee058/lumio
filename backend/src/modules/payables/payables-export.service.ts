@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable } from '@nestjs/common';
-import * as XLSX from 'xlsx';
-import { Payable } from '../../entities/payable.entity';
+import * as xlsx from 'xlsx';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
+import { Payable } from '../../entities/payable.entity';
 import { ExportFormat } from './dto/filter-payables.dto';
 
 @Injectable()
@@ -34,8 +34,8 @@ export class PayablesExportService {
     }));
 
     if (format === ExportFormat.CSV) {
-      const worksheet = XLSX.utils.json_to_sheet(rows);
-      const csv = XLSX.utils.sheet_to_csv(worksheet);
+      const worksheet = xlsx.utils.json_to_sheet(rows);
+      const csv = xlsx.utils.sheet_to_csv(worksheet);
       fs.writeFileSync(filePath, csv, 'utf-8');
       return {
         filePath,
@@ -44,10 +44,10 @@ export class PayablesExportService {
       };
     }
 
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(rows);
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Payables');
-    XLSX.writeFile(workbook, filePath);
+    const workbook = xlsx.utils.book_new();
+    const worksheet = xlsx.utils.json_to_sheet(rows);
+    xlsx.utils.book_append_sheet(workbook, worksheet, 'Payables');
+    xlsx.writeFile(workbook, filePath);
 
     return {
       filePath,

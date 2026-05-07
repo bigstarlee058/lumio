@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
-import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
+import { deletedResponse } from '../../common/utils/responses.util';
 import type { User } from '../../entities/user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CreateWalletDto } from './dto/create-wallet.dto';
@@ -17,7 +17,7 @@ export class WalletsController {
   @WorkspaceAuth(Permission.WALLET_CREATE)
   async create(
     @Body() createDto: CreateWalletDto,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.walletsService.create(workspaceId, createDto);
@@ -25,7 +25,7 @@ export class WalletsController {
 
   @Get()
   @WorkspaceAuth(Permission.WALLET_VIEW)
-  async findAll(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async findAll(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     return this.walletsService.findAll(workspaceId);
   }
 
@@ -33,7 +33,7 @@ export class WalletsController {
   @WorkspaceAuth(Permission.WALLET_VIEW)
   async findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.walletsService.findOne(id, workspaceId);
@@ -44,7 +44,7 @@ export class WalletsController {
   async update(
     @Param('id') id: string,
     @Body() updateDto: UpdateWalletDto,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.walletsService.update(id, workspaceId, updateDto);
@@ -54,7 +54,7 @@ export class WalletsController {
   @WorkspaceAuth(Permission.WALLET_DELETE)
   async remove(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     await this.walletsService.remove(id, workspaceId);
