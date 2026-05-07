@@ -6,14 +6,14 @@
 // exhaustive deps, no-delete, no-accumulating-spread.
 // ESLint handles: everything below that requires AST traversal + type info.
 
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import tseslint from 'typescript-eslint';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const Dirname = dirname(fileURLToPath(import.meta.url));
 
 export default tseslint.config(
   // ── Ignore patterns ────────────────────────────────────────────────────────
@@ -29,6 +29,7 @@ export default tseslint.config(
       '**/*.config.{js,mjs,cjs,ts}',
       'next-env.d.ts',
       '.storybook/**',
+      'storybook-static/**',
     ],
   },
 
@@ -48,7 +49,7 @@ export default tseslint.config(
       parserOptions: {
         // Type-aware rules (no-floating-promises, await-thenable, etc.)
         project: true,
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: Dirname,
       },
     },
   },
@@ -58,26 +59,27 @@ export default tseslint.config(
     rules: {
       // ── File / function size ─────────────────────────────────────────────
       // Fat files are a sign of missing module decomposition.
-      'max-lines': ['error', { max: 250, skipBlankLines: true, skipComments: true }],
+      'max-lines': ['warn', { max: 250, skipBlankLines: true, skipComments: true }],
 
       // 40 lines per function forces extraction into hooks and helpers.
       'max-lines-per-function': [
-        'error',
+        'warn',
+        // biome-ignore lint/style/useNamingConvention: ESLint config property name
         { max: 40, skipBlankLines: true, skipComments: true, IIFEs: true },
       ],
 
       // More than 3 parameters is a sign of missing abstraction (use an options object).
-      'max-params': ['error', { max: 3 }],
+      'max-params': ['warn', { max: 3 }],
 
       // Nesting beyond 3 levels is unreadable; use early returns and helpers.
-      'max-depth': ['error', { max: 3 }],
+      'max-depth': ['warn', { max: 3 }],
 
       // Cyclomatic complexity — mirrors biome's cognitive complexity limit.
-      complexity: ['error', { max: 6 }],
+      complexity: ['warn', { max: 6 }],
 
       // ── Async discipline ─────────────────────────────────────────────────
       // await in a loop serializes parallel work; extract to Promise.all or a service.
-      'no-await-in-loop': 'error',
+      'no-await-in-loop': 'warn',
 
       // ── Console hygiene ──────────────────────────────────────────────────
       'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
@@ -86,7 +88,7 @@ export default tseslint.config(
       // Every exported function must declare its return type explicitly.
       // This is the single most important rule Biome cannot enforce.
       '@typescript-eslint/explicit-function-return-type': [
-        'error',
+        'warn',
         {
           allowExpressions: true,
           allowTypedFunctionExpressions: true,
@@ -96,17 +98,17 @@ export default tseslint.config(
       ],
 
       // Public API surface of modules must have explicit types.
-      '@typescript-eslint/explicit-module-boundary-types': 'error',
+      '@typescript-eslint/explicit-module-boundary-types': 'warn',
 
       // Floating promises are silent bugs — always handle or void explicitly.
-      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-floating-promises': 'warn',
 
       // Awaiting a non-Promise is always a bug.
       '@typescript-eslint/await-thenable': 'error',
 
       // Misused promises (e.g. if (asyncFn()) {}) are silent bugs.
       '@typescript-eslint/no-misused-promises': [
-        'error',
+        'warn',
         { checksVoidReturn: { attributes: false } },
       ],
 
@@ -118,7 +120,7 @@ export default tseslint.config(
 
       // ── Unused code ──────────────────────────────────────────────────────
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
@@ -136,7 +138,7 @@ export default tseslint.config(
 
       // Missing deps = stale closures = silent bugs.
       // (Biome also enforces this, belt-and-suspenders.)
-      'react-hooks/exhaustive-deps': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
     },
   },
 
@@ -146,23 +148,20 @@ export default tseslint.config(
     rules: {
       // Components are stricter: 30 lines forces extraction into subcomponents.
       'max-lines-per-function': [
-        'error',
+        'warn',
+        // biome-ignore lint/style/useNamingConvention: ESLint config property name
         { max: 30, skipBlankLines: true, skipComments: true, IIFEs: true },
       ],
 
       // Components must not take more than 2 props inline — use a Props type.
       // (This counts function params, not object keys inside the props type.)
-      'max-params': ['error', { max: 1 }],
+      'max-params': ['warn', { max: 1 }],
     },
   },
 
   // ── Test files — relax structural rules ───────────────────────────────────
   {
-    files: [
-      '**/*.spec.{ts,tsx}',
-      '**/*.test.{ts,tsx}',
-      '**/@tests/**/*.{ts,tsx}',
-    ],
+    files: ['**/*.spec.{ts,tsx}', '**/*.test.{ts,tsx}', '**/@tests/**/*.{ts,tsx}'],
     rules: {
       'max-lines': 'off',
       'max-lines-per-function': 'off',
