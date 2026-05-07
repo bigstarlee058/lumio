@@ -1,11 +1,12 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "97a933f3006965c4eea7f2bbc7ed8bbbbdc2dd4d"
+      "main": "1625783c61904b7a06f84303a2a589b41c23a905"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
     "lastGeneratedAt": "2026-05-07T12:38:36.582Z",
-    "minCommits": 5
+    "minCommits": 5,
+    "lastRecoveryAt": "2026-05-07T18:30:33.797Z"
   },
   "entries": [
     {
@@ -23,7 +24,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-05-06T10:45:22Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "4246cddaa41968d71301fb102693ed27e130b555",
@@ -149,7 +152,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-05-03T18:27:45Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "6b0e324859c52ad3e1a7c6a03d92171759fe96af",
@@ -381,7 +386,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-29T15:14:39Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "7923e42e537392a769a29d27685dc21b7dabb926",
@@ -525,7 +532,9 @@
           "subject": "fix(webhooks): use entity property names in QueryBuilder (workspaceId, isActive)",
           "author": "symonbaikov",
           "date": "2026-05-03T13:52:16+03:00",
-          "files": ["backend/src/modules/webhooks/services/webhook-subscriptions.service.ts"]
+          "files": [
+            "backend/src/modules/webhooks/services/webhook-subscriptions.service.ts"
+          ]
         },
         {
           "sha": "07c55528eedfac1a06695465b0d6785a28ed4f2a",
@@ -533,7 +542,9 @@
           "subject": "feat(webhooks): add WebhookEventsListener bridging EventEmitter2 to outbound queue",
           "author": "symonbaikov",
           "date": "2026-05-03T13:56:03+03:00",
-          "files": ["backend/src/modules/webhooks/webhook-events.listener.ts"]
+          "files": [
+            "backend/src/modules/webhooks/webhook-events.listener.ts"
+          ]
         },
         {
           "sha": "d1d9974088b173175ab36b95235eb7596c943d22",
@@ -552,7 +563,9 @@
           "subject": "fix(webhooks): add error handling to WebhookEventsListener handlers",
           "author": "symonbaikov",
           "date": "2026-05-03T14:00:16+03:00",
-          "files": ["backend/src/modules/webhooks/webhook-events.listener.ts"]
+          "files": [
+            "backend/src/modules/webhooks/webhook-events.listener.ts"
+          ]
         },
         {
           "sha": "d2a108691d897e0f8c57b7c48bc77850b10fb906",
@@ -560,7 +573,9 @@
           "subject": "fix(webhooks): fix processor runtime issues and stale lock recovery",
           "author": "symonbaikov",
           "date": "2026-05-03T14:03:17+03:00",
-          "files": ["backend/src/modules/webhooks/services/webhook-processor.service.ts"]
+          "files": [
+            "backend/src/modules/webhooks/services/webhook-processor.service.ts"
+          ]
         },
         {
           "sha": "92727a9f13c6d7f9721f7402c4938365a8e3bd18",
@@ -579,7 +594,9 @@
           "subject": "fix(webhooks): fix inbound service issues (unused repo, mime type, size limit, cleanup)",
           "author": "symonbaikov",
           "date": "2026-05-03T14:09:34+03:00",
-          "files": ["backend/src/modules/webhooks/webhook-inbound.service.ts"]
+          "files": [
+            "backend/src/modules/webhooks/webhook-inbound.service.ts"
+          ]
         },
         {
           "sha": "5066ad709f2034e02b908d697a4c0c70e7d4cf18",
@@ -613,7 +630,10 @@
           "subject": "feat(webhooks): wire WebhooksModule into app",
           "author": "symonbaikov",
           "date": "2026-05-03T14:50:28+03:00",
-          "files": ["backend/src/app.module.ts", "backend/src/modules/webhooks/webhooks.module.ts"]
+          "files": [
+            "backend/src/app.module.ts",
+            "backend/src/modules/webhooks/webhooks.module.ts"
+          ]
         },
         {
           "sha": "8cfdb90eb71440c8204316eed5824f813c87a918",
@@ -621,7 +641,10 @@
           "subject": "chore(webhooks): remove redundant entity registrations from AppModule",
           "author": "symonbaikov",
           "date": "2026-05-03T14:52:58+03:00",
-          "files": ["backend/src/app.module.ts", "backend/src/modules/webhooks/webhooks.module.ts"]
+          "files": [
+            "backend/src/app.module.ts",
+            "backend/src/modules/webhooks/webhooks.module.ts"
+          ]
         },
         {
           "sha": "9518e2c1a9acb7a3d4e2c0ae403ebf9d0cf2ce13",
@@ -709,7 +732,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-29T10:01:45Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "dee0855b17e185137ddce5583ee2066117ab6798",
@@ -783,7 +808,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-28T17:33:40Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "f911b2eb52946edcf7837ae6a79f42b3e5f106d7",
@@ -791,7 +818,9 @@
           "subject": "fix(statements): use commonjs archiver import",
           "author": "symonbaikov",
           "date": "2026-04-28T20:39:11+03:00",
-          "files": ["backend/src/modules/statements/statements.service.ts"]
+          "files": [
+            "backend/src/modules/statements/statements.service.ts"
+          ]
         },
         {
           "sha": "382b83506482d60a08b097b98c31887c514bf994",
@@ -1038,7 +1067,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-28T17:03:51Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "eaae0255cedb242b08cfd04d8eed537062431fcc",
@@ -1105,7 +1136,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-27T22:58:36Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "cdf2f561c7ede553bc56105f8a0a8c8d5608e38b",
@@ -1283,7 +1316,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-26T22:14:22Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "aea86be171ad8539508354c4bc97d91c91a138b9",
@@ -1291,7 +1326,9 @@
           "subject": "fix(lint): restore noExcessiveCognitiveComplexity threshold to 15",
           "author": "symonbaikov",
           "date": "2026-04-28T01:53:29+03:00",
-          "files": ["biome.json"]
+          "files": [
+            "biome.json"
+          ]
         },
         {
           "sha": "eae395d12d4c19346f56f812c7d5c50045706f4d",
@@ -1359,7 +1396,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-26T21:18:37Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "5216aa543411c913004d8a3b6dce2139906759b5",
@@ -1367,7 +1406,10 @@
           "subject": "fix(mobile): make TopBar logo a link to dashboard",
           "author": "symonbaikov",
           "date": "2026-04-27T00:51:06+03:00",
-          "files": ["frontend/app/components/TopBar.tsx", "frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/components/TopBar.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "1c825b95a7001bfba05d1208dbe9aa90dac40dc8",
@@ -1392,7 +1434,9 @@
           "subject": "feat(topbar): show user name + avatar in trigger, User Actions title in dropdown",
           "author": "symonbaikov",
           "date": "2026-04-27T01:12:28+03:00",
-          "files": ["frontend/app/components/navigation/UserMenu.tsx"]
+          "files": [
+            "frontend/app/components/navigation/UserMenu.tsx"
+          ]
         },
         {
           "sha": "cf2b218a3f639c666e3ce9dd39c2f1b920f2b086",
@@ -1419,7 +1463,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-26T10:14:54Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "519906781fe0c9b9c3a7c02c0a35297155c6ba38",
@@ -1427,7 +1473,9 @@
           "subject": "fix(ci): make electron build independent of CI on push events",
           "author": "symonbaikov",
           "date": "2026-04-26T13:26:18+03:00",
-          "files": [".github/workflows/electron-build.yml"]
+          "files": [
+            ".github/workflows/electron-build.yml"
+          ]
         },
         {
           "sha": "bd13fa6235520d80932c93502b707e1195eda73b",
@@ -1468,7 +1516,10 @@
           "subject": "feat(mobile): integrate bottom bar, hide old sidebar/hamburger on mobile",
           "author": "symonbaikov",
           "date": "2026-04-26T22:54:24+03:00",
-          "files": ["frontend/app/layout.tsx", "frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/layout.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "1b2d928a31c9d9911de9d1377e6c04dbcdf8b2d7",
@@ -1476,7 +1527,9 @@
           "subject": "fix(mobile): hide bottom bar on auth/onboarding pages",
           "author": "symonbaikov",
           "date": "2026-04-26T22:56:46+03:00",
-          "files": ["frontend/app/components/mobile/MobileBottomBar.tsx"]
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx"
+          ]
         },
         {
           "sha": "6a9408f9a692af617476464d2b5e665a7d78720a",
@@ -1506,7 +1559,10 @@
           "subject": "feat(mobile): replace breadcrumbs with logo in TopBar on mobile",
           "author": "symonbaikov",
           "date": "2026-04-26T23:16:53+03:00",
-          "files": ["frontend/app/components/TopBar.tsx", "frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/components/TopBar.tsx",
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "1c5c1fe745f302654082d4572ef032b977467b67",
@@ -1514,7 +1570,9 @@
           "subject": "fix(mobile): hide user menu button, push icons right in TopBar",
           "author": "symonbaikov",
           "date": "2026-04-26T23:23:09+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "6678d3bf5cc15e9edc245541663e39429725b02f",
@@ -1522,7 +1580,9 @@
           "subject": "fix(mobile): show only hamburger icon in user menu, hide text label",
           "author": "symonbaikov",
           "date": "2026-04-26T23:24:33+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "023133faaa6a6f595a1aaf2002e645b9523b2fb3",
@@ -1541,7 +1601,9 @@
           "subject": "fix(mobile): strip container from hamburger, plain icon button",
           "author": "symonbaikov",
           "date": "2026-04-26T23:26:15+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "46b8d512c504e8d5e964d9bffb7d62f6635c3e3c",
@@ -1549,7 +1611,9 @@
           "subject": "fix(mobile): force override hamburger button size with !important",
           "author": "symonbaikov",
           "date": "2026-04-26T23:27:16+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "383d7194076ec7d7f2ef8e02b87cc7d2836b4706",
@@ -1557,7 +1621,9 @@
           "subject": "fix(mobile): convert Sections button to icon-only circle",
           "author": "symonbaikov",
           "date": "2026-04-26T23:29:15+03:00",
-          "files": ["frontend/app/components/side-panel/MainSidePanelLayout.tsx"]
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx"
+          ]
         },
         {
           "sha": "9e3a728af4a2d9b0faf12670606461d9b8cd59c1",
@@ -1587,7 +1653,9 @@
           "subject": "fix(mobile): remove floating side panel open button",
           "author": "symonbaikov",
           "date": "2026-04-27T00:16:56+03:00",
-          "files": ["frontend/app/components/side-panel/MainSidePanelLayout.tsx"]
+          "files": [
+            "frontend/app/components/side-panel/MainSidePanelLayout.tsx"
+          ]
         },
         {
           "sha": "f3ed63260c340065e3f7e97e273c07f748d54461",
@@ -1595,7 +1663,9 @@
           "subject": "fix(mobile): cap DrawerShell width to viewport on small screens",
           "author": "symonbaikov",
           "date": "2026-04-27T00:17:04+03:00",
-          "files": ["frontend/app/components/ui/drawer-shell.tsx"]
+          "files": [
+            "frontend/app/components/ui/drawer-shell.tsx"
+          ]
         },
         {
           "sha": "1da153d6357c4e5592444dfc7503810bd3b35699",
@@ -1614,7 +1684,9 @@
           "subject": "fix(mobile): correct FAB action hrefs to open expense drawer",
           "author": "symonbaikov",
           "date": "2026-04-27T00:17:23+03:00",
-          "files": ["frontend/app/components/mobile/MobileBottomBar.tsx"]
+          "files": [
+            "frontend/app/components/mobile/MobileBottomBar.tsx"
+          ]
         },
         {
           "sha": "33b767119abff133c2a3bada32d6ee62bac86323",
@@ -1641,7 +1713,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-25T16:16:16Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "1769ba8a0cfc572a482f5a054fa781afe675c520",
@@ -1732,7 +1806,9 @@
           "subject": "ci(electron): add cross-platform build workflow with auto-release",
           "author": "symonbaikov",
           "date": "2026-04-26T12:17:48+03:00",
-          "files": [".github/workflows/electron-build.yml"]
+          "files": [
+            ".github/workflows/electron-build.yml"
+          ]
         },
         {
           "sha": "831e4f7b6429c26da05bf7e3f7b8feefefc15334",
@@ -1759,7 +1835,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-25T14:47:32Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "f8c38cea9fa380ab4bdcf74d4c936cf3a01b5ec6",
@@ -1767,7 +1845,9 @@
           "subject": "feat(scss): add comprehensive dark mode to shell layout",
           "author": "symonbaikov",
           "date": "2026-04-25T17:55:25+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "aa54460085c0ac57c97c543dcf36dbde308d85db",
@@ -1894,7 +1974,9 @@
           "subject": "fix(frontend): fix last 8 hardcoded border colors in statements and receipts",
           "author": "symonbaikov",
           "date": "2026-04-25T18:18:08+03:00",
-          "files": ["frontend/app/(main)/statements/components/StatementsListItem.tsx"]
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx"
+          ]
         },
         {
           "sha": "9dfd256ca2a34a40dfaa52a4fdaac7114fd3a7a8",
@@ -1953,7 +2035,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-25T11:07:17Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "2691df1769680b0deea5863bd95db2cfa2d7c207",
@@ -2266,7 +2350,9 @@
           "subject": "refactor(backend): replace isomorphic-fetch with native fetch",
           "author": "symonbaikov",
           "date": "2026-04-25T17:46:19+03:00",
-          "files": ["backend/src/modules/dropbox/dropbox.service.ts"]
+          "files": [
+            "backend/src/modules/dropbox/dropbox.service.ts"
+          ]
         },
         {
           "sha": "d8dc7bac11eff197adc529dd26e314f4df47620b",
@@ -2274,7 +2360,9 @@
           "subject": "fix(backend): fix TypeScript cast error in workspace-crud-base",
           "author": "symonbaikov",
           "date": "2026-04-25T17:46:19+03:00",
-          "files": ["backend/src/common/services/workspace-crud-base.service.ts"]
+          "files": [
+            "backend/src/common/services/workspace-crud-base.service.ts"
+          ]
         },
         {
           "sha": "2e26dc64005c5947b5a7332ae83eb749a682c289",
@@ -2307,7 +2395,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-25T09:00:07Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "3f8944f6bf20c5ddb7be9220a1ad71007c5e6dd5",
@@ -2315,7 +2405,10 @@
           "subject": "chore: add sass dependency for SCSS migration",
           "author": "symonbaikov",
           "date": "2026-04-25T12:29:21+03:00",
-          "files": ["frontend/package-lock.json", "frontend/package.json"]
+          "files": [
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
         },
         {
           "sha": "b107dd9883c747ee6861897f7d89cc04801d7045",
@@ -2323,7 +2416,9 @@
           "subject": "feat(scss): add light-mode SCSS variables",
           "author": "symonbaikov",
           "date": "2026-04-25T12:31:19+03:00",
-          "files": ["frontend/app/styles/abstracts/_variables.scss"]
+          "files": [
+            "frontend/app/styles/abstracts/_variables.scss"
+          ]
         },
         {
           "sha": "b6ca68b55f9a0082bfdcf013d1e38e41010d20a3",
@@ -2331,7 +2426,9 @@
           "subject": "feat(scss): add dark-mode SCSS variables",
           "author": "symonbaikov",
           "date": "2026-04-25T12:33:07+03:00",
-          "files": ["frontend/app/styles/abstracts/_variables-dark.scss"]
+          "files": [
+            "frontend/app/styles/abstracts/_variables-dark.scss"
+          ]
         },
         {
           "sha": "eee33c718e029c499f8bf55eac36d211ddc0de36",
@@ -2350,7 +2447,9 @@
           "subject": "feat(scss): add JS theme tokens for inline styles migration",
           "author": "symonbaikov",
           "date": "2026-04-25T12:35:36+03:00",
-          "files": ["frontend/lib/theme-tokens.ts"]
+          "files": [
+            "frontend/lib/theme-tokens.ts"
+          ]
         },
         {
           "sha": "9da1fc429bcc9d984d8a7cc5276fbde27e2cc20e",
@@ -2392,7 +2491,10 @@
           "subject": "feat(i18n): expand locale foundation to support 10 languages",
           "author": "symonbaikov",
           "date": "2026-04-25T12:41:18+03:00",
-          "files": ["frontend/app/lib/locale.ts", "frontend/intlayer.config.ts"]
+          "files": [
+            "frontend/app/lib/locale.ts",
+            "frontend/intlayer.config.ts"
+          ]
         },
         {
           "sha": "349f336703eeab1d203f245d6e6cb7f67c129222",
@@ -2411,7 +2513,9 @@
           "subject": "fix(frontend): explicit null check in isSupportedLocale guard",
           "author": "symonbaikov",
           "date": "2026-04-25T12:43:42+03:00",
-          "files": ["frontend/app/lib/locale.ts"]
+          "files": [
+            "frontend/app/lib/locale.ts"
+          ]
         },
         {
           "sha": "aa402d6e6ed6bdf14722e6e170b89bdef52fd13d",
@@ -2457,7 +2561,9 @@
           "subject": "feat(scss): convert breadcrumbs, language-switcher, notification-dropdown, audit-panel to SCSS",
           "author": "symonbaikov",
           "date": "2026-04-25T12:44:52+03:00",
-          "files": ["frontend/app/styles/components/_audit-panel.scss"]
+          "files": [
+            "frontend/app/styles/components/_audit-panel.scss"
+          ]
         },
         {
           "sha": "719b25c3698e6a1d230498ec4ffa27d0713b387f",
@@ -2539,7 +2645,9 @@
           "subject": "fix: add sk self-reference in navigation.content.ts languages.sk entry",
           "author": "symonbaikov",
           "date": "2026-04-25T12:54:46+03:00",
-          "files": ["frontend/app/components/navigation.content.ts"]
+          "files": [
+            "frontend/app/components/navigation.content.ts"
+          ]
         },
         {
           "sha": "710f3b5d6cc1c56460f5a252c911394addc55279",
@@ -2547,7 +2655,9 @@
           "subject": "feat(scss): convert lumio-sidebar shell to SCSS layout",
           "author": "symonbaikov",
           "date": "2026-04-25T12:55:44+03:00",
-          "files": ["frontend/app/styles/layout/_shell.scss"]
+          "files": [
+            "frontend/app/styles/layout/_shell.scss"
+          ]
         },
         {
           "sha": "5285b12f7ec669bec8ece06b9668e60544873b10",
@@ -2555,7 +2665,9 @@
           "subject": "feat(scss): convert lumio-transaction-table to SCSS",
           "author": "symonbaikov",
           "date": "2026-04-25T12:58:07+03:00",
-          "files": ["frontend/app/styles/components/_transaction-table.scss"]
+          "files": [
+            "frontend/app/styles/components/_transaction-table.scss"
+          ]
         },
         {
           "sha": "9c7ec0bea177ef260feec458b5a31e912576aef2",
@@ -2678,7 +2790,9 @@
           "subject": "feat(scss): convert lumio-statements to SCSS",
           "author": "symonbaikov",
           "date": "2026-04-25T13:04:27+03:00",
-          "files": ["frontend/app/styles/components/_statements.scss"]
+          "files": [
+            "frontend/app/styles/components/_statements.scss"
+          ]
         },
         {
           "sha": "97c937be7ded5fa03f97602bd2d255d055159796",
@@ -2924,7 +3038,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-24T21:58:22Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "81f87c9577ce3fb3b7027f08c5d29022fa17a55b",
@@ -2977,7 +3093,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-04-25T11:59:48+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         }
       ]
     },
@@ -2996,7 +3114,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-24T14:36:23Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "84c625a49bc3e23b3f2d838f1d85a7a934c75d1d",
@@ -3004,7 +3124,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-04-25T00:02:28+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "43cc1b261baf1234ecd97c7be7b455c532cf4bb8",
@@ -3012,7 +3134,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-04-25T00:04:19+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "e7e7d71b84bb15f3f5aac9d77bffef97cc029deb",
@@ -3020,7 +3144,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-04-25T00:55:20+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "85f9b6f801e8f590d4fc1132eb4d1a6df494ba35",
@@ -3067,7 +3193,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-24T11:23:39Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "58bbb94d57b7628e84438bb49d46b84ac025283f",
@@ -3349,7 +3477,9 @@
           "subject": "fix(backend): replace inline import() type with top-level import",
           "author": "symonbaikov",
           "date": "2026-04-24T17:29:31+03:00",
-          "files": ["backend/src/modules/parsing/services/statement-processing.service.ts"]
+          "files": [
+            "backend/src/modules/parsing/services/statement-processing.service.ts"
+          ]
         },
         {
           "sha": "afa805fec68802e0e8c064746d6142c937a35f9a",
@@ -3405,7 +3535,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-23T21:48:16Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "a749b7044612f3ffd86610aee6bd0555242b2d6c",
@@ -3426,7 +3558,10 @@
           "subject": "fix(observability): use sed instead of envsubst for Prometheus",
           "author": "symonbaikov",
           "date": "2026-04-24T00:51:18+03:00",
-          "files": ["observability/prometheus/Dockerfile", "observability/prometheus/entrypoint.sh"]
+          "files": [
+            "observability/prometheus/Dockerfile",
+            "observability/prometheus/entrypoint.sh"
+          ]
         },
         {
           "sha": "f5f8ce331338e70782a08a0082b981b384eeb5ab",
@@ -3456,7 +3591,9 @@
           "subject": "feat(parsing): add Hebrew language support to OCR service",
           "author": "symonbaikov",
           "date": "2026-04-24T14:21:42+03:00",
-          "files": ["backend/src/modules/parsing/services/ocr.service.ts"]
+          "files": [
+            "backend/src/modules/parsing/services/ocr.service.ts"
+          ]
         },
         {
           "sha": "ae03e617f3a2328cb8fa77fa52ed6652e82e4d08",
@@ -3464,7 +3601,9 @@
           "subject": "feat(parsing): add DD/MM/YY date format support",
           "author": "symonbaikov",
           "date": "2026-04-24T14:21:52+03:00",
-          "files": ["backend/src/common/utils/number-normalizer.util.ts"]
+          "files": [
+            "backend/src/common/utils/number-normalizer.util.ts"
+          ]
         },
         {
           "sha": "82d17bbcb212085837d4bf01b078d948f4ab7070",
@@ -3509,7 +3648,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-23T21:01:35Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "88538b147cac5798bfedd9acaeba769259d984c0",
@@ -3517,7 +3658,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-04-24T00:10:47+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "c0b660b710a554cb357e102fbe9bf09af391bfc8",
@@ -3584,7 +3727,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-22T06:45:34Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "d200b7d31cd284c4a10be7836efca0896bcea99b",
@@ -3592,7 +3737,9 @@
           "subject": "fix: remove duplicate React import in EntityHistoryTimeline",
           "author": "symonbaikov",
           "date": "2026-04-23T22:39:28+03:00",
-          "files": ["frontend/app/audit/components/EntityHistoryTimeline.tsx"]
+          "files": [
+            "frontend/app/audit/components/EntityHistoryTimeline.tsx"
+          ]
         },
         {
           "sha": "f3e61f4646bf55afa35f5bd69591621d7480ae8d",
@@ -3750,7 +3897,9 @@
           "subject": "docs: update README to reflect current project state",
           "author": "symonbaikov",
           "date": "2026-04-24T00:00:54+03:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "c7e60974716f5a440a6eec5b81c3d1435a18ecfe",
@@ -3771,7 +3920,10 @@
           "subject": "fix: update Dockerfile and intlayer config",
           "author": "symonbaikov",
           "date": "2026-04-24T00:01:10+03:00",
-          "files": ["Dockerfile", "frontend/intlayer.config.ts"]
+          "files": [
+            "Dockerfile",
+            "frontend/intlayer.config.ts"
+          ]
         }
       ]
     },
@@ -3790,7 +3942,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-22T05:17:52Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "cd2ad647e7ab9bc7d72815331f3eb73a2f57471a",
@@ -3832,7 +3986,9 @@
           "subject": "fix(categories): make toggle switch knob visibly white",
           "author": "symonbaikov",
           "date": "2026-04-22T09:44:16+03:00",
-          "files": ["frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx"]
+          "files": [
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx"
+          ]
         },
         {
           "sha": "3fdd21b3c68034b3b421e77e2cc7f30ecc6824ee",
@@ -3939,7 +4095,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-13T20:09:04Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "3434d1c3c00c32c466fe99c95e07c076e5f7a0b1",
@@ -3947,7 +4105,9 @@
           "subject": "chore: update CLAUDE.md with streamlined behavioral guidelines",
           "author": "symonbaikov",
           "date": "2026-04-22T08:15:47+03:00",
-          "files": ["CLAUDE.md"]
+          "files": [
+            "CLAUDE.md"
+          ]
         },
         {
           "sha": "7ea31cf4fd06e759c59ecf61f49bc805bdddb0df",
@@ -4650,7 +4810,9 @@
           "subject": "docs: add codebase excellence refactor plan",
           "author": "symonbaikov",
           "date": "2026-04-22T08:17:11+03:00",
-          "files": ["docs/plans/2026-04-17-codebase-excellence-refactor-plan.md"]
+          "files": [
+            "docs/plans/2026-04-17-codebase-excellence-refactor-plan.md"
+          ]
         }
       ]
     },
@@ -4669,7 +4831,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-11T13:30:10Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "17d3e6ce26cb35a5fca2dea8b55ab6d711ebfebd",
@@ -4677,7 +4841,9 @@
           "subject": "chore(frontend): capture MUI/BEM refactor baseline audit",
           "author": "symonbaikov",
           "date": "2026-04-11T17:53:01+03:00",
-          "files": ["docs/superpowers/plans/2026-04-11-mui-bem-refactor-audit.txt"]
+          "files": [
+            "docs/superpowers/plans/2026-04-11-mui-bem-refactor-audit.txt"
+          ]
         },
         {
           "sha": "d6713acbdafe44ba988d7db857a29fc68de4f88e",
@@ -4685,7 +4851,10 @@
           "subject": "feat(frontend): add @mui/x-date-pickers",
           "author": "symonbaikov",
           "date": "2026-04-11T17:53:11+03:00",
-          "files": ["frontend/package-lock.json", "frontend/package.json"]
+          "files": [
+            "frontend/package-lock.json",
+            "frontend/package.json"
+          ]
         },
         {
           "sha": "6581939cbf123c5c0c31457c68e9b1b4deb86d3e",
@@ -4705,7 +4874,9 @@
           "subject": "feat(frontend): set borderRadius:0 overrides in MUI theme",
           "author": "symonbaikov",
           "date": "2026-04-11T17:56:21+03:00",
-          "files": ["frontend/app/theme.ts"]
+          "files": [
+            "frontend/app/theme.ts"
+          ]
         },
         {
           "sha": "ee58aee80d7ff10911bd3060ba67882cb5029132",
@@ -4713,7 +4884,9 @@
           "subject": "feat(frontend): import tokens.css and base.css into globals",
           "author": "symonbaikov",
           "date": "2026-04-11T17:56:45+03:00",
-          "files": ["frontend/app/globals.css"]
+          "files": [
+            "frontend/app/globals.css"
+          ]
         },
         {
           "sha": "6dc4a0ceacc63b2d2fa78fbdfbb48c7f0373aef1",
@@ -4721,7 +4894,9 @@
           "subject": "feat(frontend): wrap app in MUI LocalizationProvider",
           "author": "symonbaikov",
           "date": "2026-04-11T18:00:46+03:00",
-          "files": ["frontend/app/providers.tsx"]
+          "files": [
+            "frontend/app/providers.tsx"
+          ]
         },
         {
           "sha": "2b73f263671474a44466033d30249dfea797b4ae",
@@ -4729,7 +4904,9 @@
           "subject": "fix(frontend): add missing dark mode surface tokens in tokens.css",
           "author": "symonbaikov",
           "date": "2026-04-11T18:06:02+03:00",
-          "files": ["frontend/app/styles/tokens.css"]
+          "files": [
+            "frontend/app/styles/tokens.css"
+          ]
         },
         {
           "sha": "52ef9c07675a3d2d34936e9acfa72ea8e5e77e5b",
@@ -4737,7 +4914,9 @@
           "subject": "refactor(frontend): migrate Button primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T18:55:32+03:00",
-          "files": ["frontend/app/components/ui/button.tsx"]
+          "files": [
+            "frontend/app/components/ui/button.tsx"
+          ]
         },
         {
           "sha": "2bed20f8ef9f28cda978f528da54e057cd9184fd",
@@ -4745,7 +4924,9 @@
           "subject": "refactor(frontend): migrate Input primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T18:58:54+03:00",
-          "files": ["frontend/app/components/ui/input.tsx"]
+          "files": [
+            "frontend/app/components/ui/input.tsx"
+          ]
         },
         {
           "sha": "424affdcc25bd78b4a028a8cd4e27bead5bcb617",
@@ -4753,7 +4934,9 @@
           "subject": "refactor(frontend): migrate Select primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:00:13+03:00",
-          "files": ["frontend/app/components/ui/select.tsx"]
+          "files": [
+            "frontend/app/components/ui/select.tsx"
+          ]
         },
         {
           "sha": "a355f26c7a2c1f90356b2726beb80026e9b653d7",
@@ -4761,7 +4944,9 @@
           "subject": "refactor(frontend): migrate Checkbox primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:03:01+03:00",
-          "files": ["frontend/app/components/ui/checkbox.tsx"]
+          "files": [
+            "frontend/app/components/ui/checkbox.tsx"
+          ]
         },
         {
           "sha": "4de9912a339810e4f6b82531486dd6fc0686978a",
@@ -4769,7 +4954,9 @@
           "subject": "refactor(frontend): migrate Card primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:04:07+03:00",
-          "files": ["frontend/app/components/ui/card.tsx"]
+          "files": [
+            "frontend/app/components/ui/card.tsx"
+          ]
         },
         {
           "sha": "c2126bfd7d061d833e932168c3902c725e8c5a9f",
@@ -4788,7 +4975,9 @@
           "subject": "refactor(frontend): migrate DrawerShell primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:09:04+03:00",
-          "files": ["frontend/app/components/ui/drawer-shell.tsx"]
+          "files": [
+            "frontend/app/components/ui/drawer-shell.tsx"
+          ]
         },
         {
           "sha": "230129ba2a0d2a6e4d6f377085052f2197102874",
@@ -4796,7 +4985,9 @@
           "subject": "refactor(frontend): migrate DropdownMenu primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:11:52+03:00",
-          "files": ["frontend/app/components/ui/dropdown-menu.tsx"]
+          "files": [
+            "frontend/app/components/ui/dropdown-menu.tsx"
+          ]
         },
         {
           "sha": "71db2db6b198dab4eb2c81f8850afc875eaf5ce6",
@@ -4815,7 +5006,9 @@
           "subject": "refactor(frontend): migrate Badge primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:15:14+03:00",
-          "files": ["frontend/app/components/ui/badge.tsx"]
+          "files": [
+            "frontend/app/components/ui/badge.tsx"
+          ]
         },
         {
           "sha": "9493b93a2527cb4de47af6cf66f74055bc2a1b2b",
@@ -4823,7 +5016,9 @@
           "subject": "refactor(frontend): migrate Alert primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:16:15+03:00",
-          "files": ["frontend/app/components/ui/alert.tsx"]
+          "files": [
+            "frontend/app/components/ui/alert.tsx"
+          ]
         },
         {
           "sha": "4b36899749d7c4f753325f164d2db14e88785229",
@@ -4831,7 +5026,9 @@
           "subject": "refactor(frontend): migrate Separator primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:17:19+03:00",
-          "files": ["frontend/app/components/ui/separator.tsx"]
+          "files": [
+            "frontend/app/components/ui/separator.tsx"
+          ]
         },
         {
           "sha": "b0b54357cf109c3cb475fe58dd7f97644962406e",
@@ -4839,7 +5036,9 @@
           "subject": "refactor(frontend): migrate Spinner primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:19:38+03:00",
-          "files": ["frontend/app/components/ui/spinner.tsx"]
+          "files": [
+            "frontend/app/components/ui/spinner.tsx"
+          ]
         },
         {
           "sha": "7f57c118150d4c688725dd7167351f9c6c6444c8",
@@ -4847,7 +5046,9 @@
           "subject": "refactor(frontend): migrate Label primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:21:55+03:00",
-          "files": ["frontend/app/components/ui/label.tsx"]
+          "files": [
+            "frontend/app/components/ui/label.tsx"
+          ]
         },
         {
           "sha": "91a2b8a331ce44e86ca5016b8139c6e6ec6cb5b0",
@@ -4855,7 +5056,9 @@
           "subject": "refactor(frontend): migrate FilterChipButton primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:25:34+03:00",
-          "files": ["frontend/app/components/ui/filter-chip-button.tsx"]
+          "files": [
+            "frontend/app/components/ui/filter-chip-button.tsx"
+          ]
         },
         {
           "sha": "8ae15e59b6f79fda411c2eb1d3a1f3fbaf38c6b7",
@@ -4863,7 +5066,9 @@
           "subject": "refactor(frontend): migrate DetailActionButton primitive to MUI",
           "author": "symonbaikov",
           "date": "2026-04-11T19:26:41+03:00",
-          "files": ["frontend/app/components/ui/detail-action-button.tsx"]
+          "files": [
+            "frontend/app/components/ui/detail-action-button.tsx"
+          ]
         },
         {
           "sha": "35b73c7b01c57c62db1e7654c94391c47a439d90",
@@ -4908,7 +5113,9 @@
           "subject": "refactor(frontend): migrate TransactionsView pagination footer to MUI sx",
           "author": "symonbaikov",
           "date": "2026-04-12T20:22:03+03:00",
-          "files": ["frontend/app/components/TransactionsView.tsx"]
+          "files": [
+            "frontend/app/components/TransactionsView.tsx"
+          ]
         },
         {
           "sha": "878fd1d2f9574080f813b11ec9b8ee2e5d819722",
@@ -5007,7 +5214,10 @@
           "subject": "refactor(frontend): migrate auth pages to MUI",
           "author": "symonbaikov",
           "date": "2026-04-12T20:36:13+03:00",
-          "files": ["frontend/app/(auth)/login/page.tsx", "frontend/app/(auth)/register/page.tsx"]
+          "files": [
+            "frontend/app/(auth)/login/page.tsx",
+            "frontend/app/(auth)/register/page.tsx"
+          ]
         },
         {
           "sha": "6e0dc11ac2ab57001342a01fe068514e2140b383",
@@ -5051,7 +5261,9 @@
           "subject": "refactor(frontend): migrate statements drawers to MUI",
           "author": "symonbaikov",
           "date": "2026-04-12T21:15:33+03:00",
-          "files": ["frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx"]
+          "files": [
+            "frontend/app/(main)/statements/components/CreateExpenseDrawer.tsx"
+          ]
         },
         {
           "sha": "9df46de50bf0f9eb3fe23dd21150fad087a6fabf",
@@ -5128,7 +5340,9 @@
           "subject": "refactor(frontend): replace tailwind-merge with clsx in cn() utility",
           "author": "symonbaikov",
           "date": "2026-04-12T22:14:25+03:00",
-          "files": ["frontend/app/lib/utils.ts"]
+          "files": [
+            "frontend/app/lib/utils.ts"
+          ]
         },
         {
           "sha": "7f8d8d0ef75a64beb5118081d65869daf493fdf6",
@@ -5148,7 +5362,9 @@
           "subject": "refactor(frontend): purge Tailwind directives from globals.css",
           "author": "symonbaikov",
           "date": "2026-04-12T22:18:40+03:00",
-          "files": ["frontend/app/globals.css"]
+          "files": [
+            "frontend/app/globals.css"
+          ]
         },
         {
           "sha": "d4f91af2892b152b087cbdb47583683198e019aa",
@@ -5246,7 +5462,9 @@
           "subject": "fix(frontend): align useEditableCell ref type with React 19",
           "author": "symonbaikov",
           "date": "2026-04-12T22:27:56+03:00",
-          "files": ["frontend/app/(main)/custom-tables/[id]/components/cells/useEditableCell.ts"]
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/components/cells/useEditableCell.ts"
+          ]
         },
         {
           "sha": "87a6a13bf970d8edbbe3472530ff7c74f7132a46",
@@ -5362,7 +5580,9 @@
           "subject": "refactor(frontend): add lumio-statements BEM block styles",
           "author": "symonbaikov",
           "date": "2026-04-13T07:14:21+03:00",
-          "files": ["frontend/app/styles/blocks/lumio-statements.css"]
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
         },
         {
           "sha": "75f75acf61781dc70eeb8628c8cda346d77eeb2f",
@@ -5525,7 +5745,9 @@
           "subject": "refactor(frontend): complete UnapprovedCashView migration to MUI inline styles",
           "author": "symonbaikov",
           "date": "2026-04-13T07:40:25+03:00",
-          "files": ["frontend/app/(main)/statements/components/UnapprovedCashView.tsx"]
+          "files": [
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx"
+          ]
         },
         {
           "sha": "fb61581ef595174d3810da8114f339bde0f0567b",
@@ -5699,7 +5921,10 @@
           "subject": "refactor(frontend): replace hardcoded white in shared components, audit, admin, transactions",
           "author": "symonbaikov",
           "date": "2026-04-13T17:08:27+03:00",
-          "files": ["frontend/app/admin/page.tsx", "frontend/app/global-error.tsx"]
+          "files": [
+            "frontend/app/admin/page.tsx",
+            "frontend/app/global-error.tsx"
+          ]
         },
         {
           "sha": "b53a7978c363e9537f5d14a6f52e8dd09a1d8a56",
@@ -5718,7 +5943,9 @@
           "subject": "refactor(frontend): replace hardcoded white in CSS block files with design tokens",
           "author": "symonbaikov",
           "date": "2026-04-13T17:10:21+03:00",
-          "files": ["frontend/app/styles/blocks/lumio-statements.css"]
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
         },
         {
           "sha": "225cf13f2959cd17b103d03523fb6764cb253799",
@@ -5740,7 +5967,9 @@
           "subject": "fix(frontend): fix #fff fallbacks in lumio-statements.css CSS vars",
           "author": "symonbaikov",
           "date": "2026-04-13T17:11:52+03:00",
-          "files": ["frontend/app/styles/blocks/lumio-statements.css"]
+          "files": [
+            "frontend/app/styles/blocks/lumio-statements.css"
+          ]
         },
         {
           "sha": "22c1b556f83a45b9d7278cd250ea8e04536e826e",
@@ -5768,7 +5997,9 @@
           "subject": "fix(frontend): fix conditional #fff backgrounds in StoragePageContent",
           "author": "symonbaikov",
           "date": "2026-04-13T17:14:07+03:00",
-          "files": ["frontend/app/storage/StoragePageContent.tsx"]
+          "files": [
+            "frontend/app/storage/StoragePageContent.tsx"
+          ]
         },
         {
           "sha": "e88a5c647d6f4be65c6125f0609745f42e37b54a",
@@ -5872,7 +6103,9 @@
           "subject": "fix(frontend): remove redundant borderRadius: 0 from mobile checkbox",
           "author": "symonbaikov",
           "date": "2026-04-13T17:31:18+03:00",
-          "files": ["frontend/app/(main)/statements/components/StatementsListItem.tsx"]
+          "files": [
+            "frontend/app/(main)/statements/components/StatementsListItem.tsx"
+          ]
         },
         {
           "sha": "95d13c81c255f925e9a462cdca609a134c226fd4",
@@ -5880,7 +6113,9 @@
           "subject": "refactor(frontend): use theme tokens in navigation CSS",
           "author": "symonbaikov",
           "date": "2026-04-13T17:32:57+03:00",
-          "files": ["frontend/app/styles/blocks/lumio-navigation.css"]
+          "files": [
+            "frontend/app/styles/blocks/lumio-navigation.css"
+          ]
         },
         {
           "sha": "1a29dcbcc26e0eb6b3bf198e7ad3a08be9ba4806",
@@ -5900,7 +6135,9 @@
           "subject": "fix(frontend): add contentClassName prop to ModalShellProps",
           "author": "symonbaikov",
           "date": "2026-04-13T17:38:21+03:00",
-          "files": ["frontend/app/components/ui/modal-shell.tsx"]
+          "files": [
+            "frontend/app/components/ui/modal-shell.tsx"
+          ]
         },
         {
           "sha": "1b427965a1f86e8204d0f65fa911f7f2e51f9a72",
@@ -5930,7 +6167,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-06T19:57:58Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "a4f2d7082f85d87d159e5047ecb8e9191f323a70",
@@ -6173,7 +6412,9 @@
           "subject": "refactor(frontend): remove unused destructured values from CustomTable page",
           "author": "symonbaikov",
           "date": "2026-04-06T07:58:03+03:00",
-          "files": ["frontend/app/(main)/custom-tables/[id]/page.tsx"]
+          "files": [
+            "frontend/app/(main)/custom-tables/[id]/page.tsx"
+          ]
         },
         {
           "sha": "9e310da2f2a33666a0ce1331cbd8f0f36175a3c7",
@@ -6324,7 +6565,9 @@
           "subject": "refactor(frontend): replace inline helpers with shared imports in Navigation.tsx (PR 3b)",
           "author": "symonbaikov",
           "date": "2026-04-06T11:13:57+03:00",
-          "files": ["frontend/app/components/Navigation.tsx"]
+          "files": [
+            "frontend/app/components/Navigation.tsx"
+          ]
         },
         {
           "sha": "a2097baec4e748b0467a8a42350654afdbdcfb13",
@@ -6332,7 +6575,9 @@
           "subject": "refactor(frontend): replace inline helpers with shared imports in UnapprovedCashView (PR 3d)",
           "author": "symonbaikov",
           "date": "2026-04-06T11:16:41+03:00",
-          "files": ["frontend/app/(main)/statements/components/UnapprovedCashView.tsx"]
+          "files": [
+            "frontend/app/(main)/statements/components/UnapprovedCashView.tsx"
+          ]
         },
         {
           "sha": "861e673c810bbb5f5fdf51d9cbaeb07cad989dba",
@@ -6438,7 +6683,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-04T01:09:01Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "1a462633560876d48332573c162678537d949b4f",
@@ -6825,7 +7072,9 @@
           "subject": "fix(frontend): use system locale fallback in formatDateTime utility",
           "author": "symonbaikov",
           "date": "2026-04-05T09:52:46+03:00",
-          "files": ["frontend/app/lib/format-datetime.ts"]
+          "files": [
+            "frontend/app/lib/format-datetime.ts"
+          ]
         },
         {
           "sha": "2a147fa022c0c85341aee4b02f34a375f28589af",
@@ -6947,7 +7196,9 @@
           "subject": "fix(frontend): throw on missing Drive picker token instead of silently failing",
           "author": "symonbaikov",
           "date": "2026-04-05T10:13:00+03:00",
-          "files": ["frontend/app/components/GoogleDriveStorageWidget.tsx"]
+          "files": [
+            "frontend/app/components/GoogleDriveStorageWidget.tsx"
+          ]
         },
         {
           "sha": "3d5d71158807b933706ad549947848a4b279a5c6",
@@ -6955,7 +7206,9 @@
           "subject": "fix(frontend): reset imageError on src change and add role=img to LogoAvatar fallback",
           "author": "symonbaikov",
           "date": "2026-04-05T10:13:28+03:00",
-          "files": ["frontend/app/components/LogoAvatar.tsx"]
+          "files": [
+            "frontend/app/components/LogoAvatar.tsx"
+          ]
         },
         {
           "sha": "461055b622fa5ec18489bdd44bd591086599ac07",
@@ -7028,7 +7281,9 @@
           "subject": "docs: add TransactionTab refactor design spec",
           "author": "symonbaikov",
           "date": "2026-04-05T13:22:12+03:00",
-          "files": ["docs/superpowers/specs/2026-04-05-transaction-tab-refactor-design.md"]
+          "files": [
+            "docs/superpowers/specs/2026-04-05-transaction-tab-refactor-design.md"
+          ]
         },
         {
           "sha": "0087a55438e350b9fabb02ad17fb9cd79315c447",
@@ -7036,7 +7291,9 @@
           "subject": "docs: add DetailsDrawer refactor design spec",
           "author": "symonbaikov",
           "date": "2026-04-05T13:35:38+03:00",
-          "files": ["docs/superpowers/specs/2026-04-05-details-drawer-refactor-design.md"]
+          "files": [
+            "docs/superpowers/specs/2026-04-05-details-drawer-refactor-design.md"
+          ]
         },
         {
           "sha": "3e51d807deb760f9cf72e10bee4277e5794b43d9",
@@ -7115,7 +7372,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-04-02T08:50:15Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "b13a771a17d025654a5e5eeecca5282cb7797363",
@@ -7365,7 +7624,10 @@
           "subject": "fix(onboarding): fix locale",
           "author": "symonbaikov",
           "date": "2026-04-01T22:29:22+03:00",
-          "files": ["frontend/app/providers.test.tsx", "frontend/app/providers.tsx"]
+          "files": [
+            "frontend/app/providers.test.tsx",
+            "frontend/app/providers.tsx"
+          ]
         },
         {
           "sha": "add25da4257a707113a88ccbca26bf951a0b4d03",
@@ -7514,7 +7776,9 @@
           "subject": "chore(changelog): update generated changelog [skip ci]",
           "author": "github-actions[bot]",
           "date": "2026-03-05T22:23:31Z",
-          "files": ["frontend/public/changelog.json"]
+          "files": [
+            "frontend/public/changelog.json"
+          ]
         },
         {
           "sha": "1b7ff6f31c8bab6add16f84544e19a299fc2898e",
@@ -7535,7 +7799,9 @@
           "subject": "update README.md",
           "author": "Symon Baikov",
           "date": "2026-03-06T01:15:12+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "0b6ab6e0c70f889b88228ba0e3e70a379c1b28de",
@@ -7616,7 +7882,9 @@
           "subject": "Update README.md with new image and maintainability badge",
           "author": "Symon Baikov",
           "date": "2026-03-06T02:11:01+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "7264b64671936222a522f39eb420d5fc1985d25d",
@@ -7624,7 +7892,9 @@
           "subject": "update README",
           "author": "Symon Baikov",
           "date": "2026-03-06T02:23:13+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "ec5c5f25734b4a79310770b767e590f8f3456cb3",
@@ -7632,7 +7902,9 @@
           "subject": "Update README.md",
           "author": "Symon Baikov",
           "date": "2026-03-06T02:31:10+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "a46fa33d5d806762564b41fb56bab79e08084f63",
@@ -7640,7 +7912,9 @@
           "subject": "Include humanitarian aid information in README",
           "author": "Symon Baikov",
           "date": "2026-03-06T02:33:24+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "a2b95ce77b7566f5acf060bf530617615ef08821",
@@ -7663,7 +7937,9 @@
           "subject": "Add favicon image to README",
           "author": "Symon Baikov",
           "date": "2026-03-06T11:05:04+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "0b80563e4f84b26f8289260bbdb7531214875ec0",
@@ -7671,7 +7947,9 @@
           "subject": "Add badges to README for project visibility",
           "author": "Symon Baikov",
           "date": "2026-03-06T11:05:40+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "3631729af7d826f9a2a50bc3a2f2160bc69a1cf4",
@@ -7679,7 +7957,9 @@
           "subject": "Add demo GIF to README",
           "author": "Symon Baikov",
           "date": "2026-03-06T12:38:20+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "c3974bf4acf8eef6a257ba6d7aa41393d7608157",
@@ -7687,7 +7967,9 @@
           "subject": "Change project links in README for badges",
           "author": "Symon Baikov",
           "date": "2026-03-06T13:11:43+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "d36db86d9cf1df69449727c6af17039761008d4e",
@@ -7695,7 +7977,9 @@
           "subject": "Include humanitarian aid information in README",
           "author": "Symon Baikov",
           "date": "2026-03-06T14:04:03+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "a626fff0c73ab4f026160944e993d29bcfeb0c52",
@@ -7703,7 +7987,9 @@
           "subject": "Add banner image to README",
           "author": "Symon Baikov",
           "date": "2026-03-06T14:15:14+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "54591fbedd227d887ceca3e722e26bc848049450",
@@ -7711,7 +7997,9 @@
           "subject": "fix(docker): add dev stage to backend Dockerfile for devDependencies",
           "author": "symonbaikov",
           "date": "2026-03-06T15:56:30+02:00",
-          "files": ["backend/Dockerfile"]
+          "files": [
+            "backend/Dockerfile"
+          ]
         },
         {
           "sha": "6189206b858e04fc25f11685a3b31b8ac610b994",
@@ -7719,7 +8007,9 @@
           "subject": "fix(docker): remove Task 3 dependencies from Dockerfile",
           "author": "symonbaikov",
           "date": "2026-03-06T16:00:41+02:00",
-          "files": ["backend/Dockerfile"]
+          "files": [
+            "backend/Dockerfile"
+          ]
         },
         {
           "sha": "59568ebbe6865fc3b7cfb3e82fed34a8896f0415",
@@ -7727,7 +8017,9 @@
           "subject": "fix(docker): update docker-compose.dev.yml to target dev stage",
           "author": "symonbaikov",
           "date": "2026-03-06T16:04:31+02:00",
-          "files": ["docker-compose.dev.yml"]
+          "files": [
+            "docker-compose.dev.yml"
+          ]
         },
         {
           "sha": "4a3a2c66a94aee91cefc5c17b14138112a85aa44",
@@ -7748,7 +8040,10 @@
           "subject": "fix(seed): use compiled scripts for all tools, fix local fallback",
           "author": "symonbaikov",
           "date": "2026-03-06T16:16:01+02:00",
-          "files": ["Makefile", "backend/package.json"]
+          "files": [
+            "Makefile",
+            "backend/package.json"
+          ]
         },
         {
           "sha": "a5b9dc780cff707f7cd1291b79e5f97d4c4895e0",
@@ -7756,7 +8051,9 @@
           "subject": "fix(frontend): add serverExternalPackages for intlayer node:fs compat",
           "author": "symonbaikov",
           "date": "2026-03-06T16:22:05+02:00",
-          "files": ["frontend/next.config.js"]
+          "files": [
+            "frontend/next.config.js"
+          ]
         },
         {
           "sha": "8c907a804a2a48a72a03a6800ad39ae3338b47a1",
@@ -7764,7 +8061,9 @@
           "subject": "Change image width and height in README",
           "author": "Symon Baikov",
           "date": "2026-03-06T18:15:59+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "086a40e55c0ab8c2e15303c09eaf5eb69a699675",
@@ -7772,7 +8071,10 @@
           "subject": "fix(seed): compile scripts locally before running in dev",
           "author": "symonbaikov",
           "date": "2026-03-06T23:03:21+02:00",
-          "files": ["Makefile", "backend/package.json"]
+          "files": [
+            "Makefile",
+            "backend/package.json"
+          ]
         },
         {
           "sha": "1ad74799b8acd13cbacd1e3aed2a16e518da00c9",
@@ -7780,7 +8082,9 @@
           "subject": "update files",
           "author": "symonbaikov",
           "date": "2026-03-06T23:26:52+02:00",
-          "files": [".opencode/plans/2026-03-06-fix-quick-dev-startup.md"]
+          "files": [
+            ".opencode/plans/2026-03-06-fix-quick-dev-startup.md"
+          ]
         },
         {
           "sha": "0f1be17edb89311aa2ac53e7a5ee3fb6dbe7a9c9",
@@ -7796,7 +8100,9 @@
           "subject": "update README.me",
           "author": "symonbaikov",
           "date": "2026-03-06T23:40:37+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "a7c9f031eb972ec1534ee72e7037071428f56831",
@@ -7804,7 +8110,9 @@
           "subject": "update README.me",
           "author": "symonbaikov",
           "date": "2026-03-06T23:50:58+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "cdbfc770d54ac6b632ddfba6c0332b39342ad949",
@@ -7812,7 +8120,9 @@
           "subject": "update README.me",
           "author": "symonbaikov",
           "date": "2026-03-06T23:58:37+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "9ac0f8313ae06df1a0e58b700ffa6e042e967990",
@@ -7965,7 +8275,9 @@
           "subject": "Update README with demo GIF version warning",
           "author": "Symon Baikov",
           "date": "2026-03-07T10:19:09+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "4b2bb7b9415b20e96fc20f33987e5c28d1bfcb50",
@@ -7973,7 +8285,9 @@
           "subject": "Update demo GIF notice in README",
           "author": "Symon Baikov",
           "date": "2026-03-07T11:53:27+02:00",
-          "files": ["README.md"]
+          "files": [
+            "README.md"
+          ]
         },
         {
           "sha": "328c204c10418d1c87951f5aa319ec4fe594a484",
@@ -7981,7 +8295,10 @@
           "subject": "add informative message",
           "author": "symonbaikov",
           "date": "2026-03-08T00:15:47+02:00",
-          "files": ["frontend/app/page.content.ts", "frontend/app/page.tsx"]
+          "files": [
+            "frontend/app/page.content.ts",
+            "frontend/app/page.tsx"
+          ]
         },
         {
           "sha": "db44634ca460a228a7faa897e38347464fb78001",
@@ -8030,7 +8347,9 @@
           "subject": "update frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx",
           "author": "symonbaikov",
           "date": "2026-03-12T20:02:33+02:00",
-          "files": ["frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx"]
+          "files": [
+            "frontend/app/(main)/workspaces/components/WorkspaceCategoriesView.tsx"
+          ]
         },
         {
           "sha": "29d46c8872dc560e4d6ed4d1e69463f5000c1bb8",
@@ -8472,7 +8791,9 @@
           "subject": "Create FUNDING.yml",
           "author": "Symon Baikov",
           "date": "2026-03-23T19:00:35+02:00",
-          "files": [".github/FUNDING.yml"]
+          "files": [
+            ".github/FUNDING.yml"
+          ]
         },
         {
           "sha": "fa2cbc84bf269fda4a3767b4d8426784475f7a9a",
