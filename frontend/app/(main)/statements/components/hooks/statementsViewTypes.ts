@@ -1,7 +1,7 @@
-import type { StatementExpenseMode } from '@/app/lib/statement-expense-drawer';
-import type { StatementStage } from '@/app/lib/statement-workflow';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { usePullToRefresh } from '@/app/hooks/usePullToRefresh';
+import type { StatementExpenseMode } from '@/app/lib/statement-expense-drawer';
+import type { StatementStage } from '@/app/lib/statement-workflow';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import type { ReadonlyURLSearchParams } from 'next/navigation';
 import type { RefObject } from 'react';
@@ -31,7 +31,12 @@ export interface StatementsStatement {
   bankName: string;
   fileType: string;
   currency?: string | null;
-  category?: { id?: string | null; name?: string | null; color?: string | null; icon?: string | null } | null;
+  category?: {
+    id?: string | null;
+    name?: string | null;
+    color?: string | null;
+    icon?: string | null;
+  } | null;
   tags?: Array<{ id?: string; name?: string; color?: string | null }>;
   googleSheet?: { id?: string; sheetName?: string | null; worksheetName?: string | null } | null;
   transactionSummary?: {
@@ -40,13 +45,24 @@ export interface StatementsStatement {
     exchangeRateMixed?: boolean;
     cardLabel?: string | null;
   } | null;
-  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
+  user?: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    avatarUrl?: string | null;
+  } | null;
   errorMessage?: string | null;
   parsingDetails?: {
     logEntries?: Array<{ timestamp: string; level: string; message: string }>;
     detectedBy?: string;
     parserUsed?: string;
-    importPreview?: { source?: string; merchant?: string; attachments?: number; description?: string; categoryId?: string };
+    importPreview?: {
+      source?: string;
+      merchant?: string;
+      attachments?: number;
+      description?: string;
+      categoryId?: string;
+    };
     metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } };
   };
   gmailMessageId?: string;

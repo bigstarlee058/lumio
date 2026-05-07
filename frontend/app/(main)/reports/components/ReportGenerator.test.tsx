@@ -1,8 +1,7 @@
+import { Circle } from '@/app/components/icons';
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { Circle } from '@/app/components/icons';
 
 const EmptyIcon = Circle;
 
@@ -31,7 +30,7 @@ describe('ReportGenerator', () => {
           id: 'pnl',
           name: 'PnL localise',
           description: 'Description locale',
-           icon: EmptyIcon,
+          icon: EmptyIcon,
           category: 'financial',
           formats: ['excel', 'pdf'],
         }}

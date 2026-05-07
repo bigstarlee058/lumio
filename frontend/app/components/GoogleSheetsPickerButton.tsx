@@ -30,18 +30,24 @@ export function GoogleSheetsPickerButton({
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const getErrorMessage = (error: unknown) => {
-    if (!error || typeof error !== 'object') return 'Google Picker is unavailable';
+    if (!error || typeof error !== 'object') {
+      return 'Google Picker is unavailable';
+    }
     return (error as { message?: string }).message || 'Google Picker is unavailable';
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleClick = async () => {
-    if (!accessToken || !apiKey || disabled) return;
+    if (!(accessToken && apiKey) || disabled) {
+      return;
+    }
 
     try {
       setLoading(true);
       const selection = await pickSpreadsheet({ accessToken, apiKey });
-      if (!selection) return;
+      if (!selection) {
+        return;
+      }
       await onPick(selection);
     } catch (error: unknown) {
       onError(getErrorMessage(error));

@@ -1,12 +1,15 @@
 'use client';
 
+import { Download, FileText, FileUp, TrendingDown, TrendingUp } from '@/app/components/icons';
+import {
+  formatAmount,
+  formatDate,
+} from '@/app/components/transactions/helpers/transactionFormatters';
 import { Button } from '@/app/components/ui/button';
 import { Spinner } from '@/app/components/ui/spinner';
-import { formatAmount, formatDate } from '@/app/components/transactions/helpers/transactionFormatters';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { resolveBankLogo } from '@bank-logos';
-import { Download, FileText, FileUp, TrendingDown, TrendingUp } from '@/app/components/icons';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { StatementDetails, Transaction } from './types';
 
 interface SummaryBarProps {
@@ -60,7 +63,15 @@ export default function SummaryBar({
 
     const currency = transactions[0]?.currency || 'KZT';
 
-    return { totalParsed, totalWarnings, totalErrors, uncategorized, debitTotal, creditTotal, currency };
+    return {
+      totalParsed,
+      totalWarnings,
+      totalErrors,
+      uncategorized,
+      debitTotal,
+      creditTotal,
+      currency,
+    };
   }, [transactions]);
 
   return (

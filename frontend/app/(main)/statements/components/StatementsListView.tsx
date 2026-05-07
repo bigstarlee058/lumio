@@ -2,21 +2,21 @@
 
 import CreateExpenseDrawer from '@/app/(main)/statements/components/CreateExpenseDrawer';
 import { PDFPreviewModal } from '@/app/components/PDFPreviewModal';
+import { RefreshCcw } from '@/app/components/icons';
+import { useKeyboardShortcuts } from '@/app/hooks/use-keyboard-shortcuts';
 import { useLockBodyScroll } from '@/app/hooks/useLockBodyScroll';
 import apiClient from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import { resolveLabel } from '@/app/lib/side-panel-utils';
 import type { ManualExpenseDraft } from '@/app/lib/statement-expense-drawer';
 import type { StatementStage } from '@/app/lib/statement-workflow';
-import { RefreshCcw } from '@/app/components/icons';
 import { useRouter, useSearchParams } from 'next/navigation';
-import type { JSX } from 'react';
 import toast from 'react-hot-toast';
 import { StatementsListHeader } from './StatementsListHeader';
 import { StatementsListTable } from './StatementsListTable';
 import { isGmailStatement, resolveStatementViewAction } from './StatementsListView.utils';
-import { uploadScanDrawerFiles as runUploadScanDrawerFiles } from './statement-upload';
 import { useStatementsView } from './hooks/useStatementsView';
+import { uploadScanDrawerFiles as runUploadScanDrawerFiles } from './statement-upload';
 
 type Props = { stage: StatementStage };
 
@@ -39,10 +39,14 @@ function buildManualExpenseFormData(
   formData.append('merchant', payload.draft.merchant.trim());
   formData.append('description', payload.draft.description.trim());
   formData.append('categoryId', payload.draft.categoryId);
-  if (resolvedTaxRateId) formData.append('taxRateId', resolvedTaxRateId);
+  if (resolvedTaxRateId) {
+    formData.append('taxRateId', resolvedTaxRateId);
+  }
   formData.append('date', payload.date);
   formData.append('allowDuplicates', payload.allowDuplicates ? 'true' : 'false');
-  payload.files.forEach(file => { formData.append('files', file); });
+  payload.files.forEach(file => {
+    formData.append('files', file);
+  });
   return formData;
 }
 
@@ -51,11 +55,15 @@ async function trySingleEndpoint(
   formData: FormData,
 ): Promise<'ok' | 'skip' | 'fail'> {
   try {
-    await apiClient.post(endpoint, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    await apiClient.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return 'ok';
   } catch (error: unknown) {
     const status = getApiErrorStatus(error);
-    if (status === 404 || status === 405) return 'skip';
+    if (status === 404 || status === 405) {
+      return 'skip';
+    }
     console.error('Failed to create manual expense:', error);
     return 'fail';
   }
@@ -68,9 +76,7 @@ async function submitManualExpense(
 ): Promise<void> {
   const formData = buildManualExpenseFormData(payload, taxRateId);
   const endpoints = ['/statements/manual-expense', '/expenses/manual', '/expenses'];
-  const results = await Promise.allSettled(
-    endpoints.map(ep => trySingleEndpoint(ep, formData)),
-  );
+  const results = await Promise.allSettled(endpoints.map(ep => trySingleEndpoint(ep, formData)));
 
   for (const result of results) {
     if (result.status === 'fulfilled' && result.value === 'ok') {
@@ -100,7 +106,9 @@ function PullToRefreshIndicator({
   pullRefreshing,
   isReadyToRefresh,
 }: PullIndicatorProps): React.JSX.Element | null {
-  if (!isMobile || (pullDistance <= 0 && !pullRefreshing)) return null;
+  if (!isMobile || (pullDistance <= 0 && !pullRefreshing)) {
+    return null;
+  }
   const badgeClass = `lumio-stmt-list-view__pull-badge${isReadyToRefresh || pullRefreshing ? ' lumio-stmt-list-view__pull-badge--ready' : ''}`;
   const label = pullRefreshing
     ? 'Refreshing...'
@@ -110,7 +118,10 @@ function PullToRefreshIndicator({
   return (
     <div className="lumio-stmt-list-view__pull-indicator">
       <div className={badgeClass}>
-        <RefreshCcw size={14} style={pullRefreshing ? { animation: 'spin 1s linear infinite' } : {}} />
+        <RefreshCcw
+          size={14}
+          style={pullRefreshing ? { animation: 'spin 1s linear infinite' } : {}}
+        />
         <span>{label}</span>
       </div>
     </div>
@@ -126,13 +137,29 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
 
   useLockBodyScroll(v.expenseDrawerOpen);
 
+  useKeyboardShortcuts({
+    'Shift+x': () => v.handleToggleSelectAll(true),
+    'Shift+Delete': () => {
+      void v.handleDeleteSelected();
+    },
+  });
+
   const { t, filterState, listHeaderLabels, paginationLabels, uploadLabels } = v;
 
   const refreshAfterCreate = async (): Promise<void> => {
     v.setPage(1);
     try {
-      const ok = await v.loadStatements({ search: v.search, notifyOnCompletion: false, showErrorToast: false });
-      if (!ok) throw new Error('refresh-failed');
+      const ok = await v.loadStatements({
+        search: v.search,
+        notifyOnCompletion: false,
+        showErrorToast: false,
+      });
+      if (!ok) {
+        throw new Error('refresh-failed');
+      }
+      if (stage === 'submit') {
+        await v.loadGmailReceipts({ silent: true, showErrorToast: false });
+      }
     } catch (err) {
       console.error('Failed to refresh statements:', err);
       toast.error(resolveLabel(t.refreshFailed, 'Failed to refresh statements'));
@@ -143,7 +170,9 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
     void v.loadStatements({ silent: true, search: v.search, showErrorToast: false });
   };
 
-  const onUploadSuccess = (msg: string): void => { toast.success(msg); };
+  const onUploadSuccess = (msg: string): void => {
+    toast.success(msg);
+  };
 
   const uploadScanDrawerFiles = async (payload: {
     files: File[];
@@ -194,8 +223,14 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
 
   const reviewDuplicateLabel = resolveLabel(v.t.actions?.reviewDuplicate, 'Review');
   const markDuplicateLabel = resolveLabel(v.t.actions?.markDuplicate, 'Mark as duplicate');
-  const markNotDuplicateLabel = resolveLabel(v.t.actions?.markNotDuplicate, 'Mark as not duplicate');
-  const dismissDuplicateLabel = resolveLabel(v.t.actions?.dismissDuplicate, markNotDuplicateLabel || 'Dismiss');
+  const markNotDuplicateLabel = resolveLabel(
+    v.t.actions?.markNotDuplicate,
+    'Mark as not duplicate',
+  );
+  const dismissDuplicateLabel = resolveLabel(
+    v.t.actions?.dismissDuplicate,
+    markNotDuplicateLabel || 'Dismiss',
+  );
   const mergeDuplicatesLabel = resolveLabel(v.t.actions?.mergeDuplicates, 'Merge duplicates');
   const selectDuplicatesLabel = resolveLabel(v.t.actions?.selectDuplicates, 'Select duplicates');
   const viewLabel = resolveLabel(v.t.actions?.view, 'View');
@@ -255,20 +290,37 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
         onDateDropdownChange={filterState.setDateDropdownOpen}
         onFromDropdownChange={filterState.setFromDropdownOpen}
         onFiltersDrawerClose={() => filterState.setFiltersDrawerOpen(false)}
-        onFiltersDrawerOpen={() => { filterState.setDraftFilters(filterState.appliedFilters); filterState.setFiltersDrawerScreen('root'); filterState.setFiltersDrawerOpen(true); }}
+        onFiltersDrawerOpen={() => {
+          filterState.setDraftFilters(filterState.appliedFilters);
+          filterState.setFiltersDrawerScreen('root');
+          filterState.setFiltersDrawerOpen(true);
+        }}
         onFiltersBack={() => filterState.setFiltersDrawerScreen('root')}
         onFiltersSelect={field => filterState.setFiltersDrawerScreen(field)}
         onUpdateFilters={filterState.updateFilter}
         onResetAllFilters={filterState.resetAllFilters}
-        onViewResults={() => { filterState.applyFilterChanges(); filterState.setFiltersDrawerOpen(false); }}
+        onViewResults={() => {
+          filterState.applyFilterChanges();
+          filterState.setFiltersDrawerOpen(false);
+        }}
         onApplyType={() => filterState.applyAndClose(() => filterState.setTypeDropdownOpen(false))}
-        onResetType={() => filterState.resetAndClose('type', () => filterState.setTypeDropdownOpen(false))}
-        onApplyStatus={() => filterState.applyAndClose(() => filterState.setStatusDropdownOpen(false))}
-        onResetStatus={() => filterState.resetAndClose('statuses', () => filterState.setStatusDropdownOpen(false))}
+        onResetType={() =>
+          filterState.resetAndClose('type', () => filterState.setTypeDropdownOpen(false))
+        }
+        onApplyStatus={() =>
+          filterState.applyAndClose(() => filterState.setStatusDropdownOpen(false))
+        }
+        onResetStatus={() =>
+          filterState.resetAndClose('statuses', () => filterState.setStatusDropdownOpen(false))
+        }
         onApplyDate={() => filterState.applyAndClose(() => filterState.setDateDropdownOpen(false))}
-        onResetDate={() => filterState.resetAndClose('date', () => filterState.setDateDropdownOpen(false))}
+        onResetDate={() =>
+          filterState.resetAndClose('date', () => filterState.setDateDropdownOpen(false))
+        }
         onApplyFrom={() => filterState.applyAndClose(() => filterState.setFromDropdownOpen(false))}
-        onResetFrom={() => filterState.resetAndClose('from', () => filterState.setFromDropdownOpen(false))}
+        onResetFrom={() =>
+          filterState.resetAndClose('from', () => filterState.setFromDropdownOpen(false))
+        }
         onColumnsClose={() => filterState.setColumnsDrawerOpen(false)}
         onColumnsOpen={filterState.handleColumnsOpen}
         onColumnsToggle={filterState.updateColumnsToggle}
@@ -309,12 +361,17 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
             receipt: listHeaderLabels.receipt,
             scanning: listHeaderLabels.scanning,
             emptyTitle: resolveLabel(t.empty?.title, 'No statements yet'),
-            emptyDescription: resolveLabel(t.empty?.description, 'Upload your first statement to get started'),
+            emptyDescription: resolveLabel(
+              t.empty?.description,
+              'Upload your first statement to get started',
+            ),
             paginationShown: paginationLabels.shown,
             paginationPageOf: paginationLabels.pageOf,
           }}
           onToggleSelectAll={v.handleToggleSelectAll}
-          onToggleSortDirection={() => v.setDateSortDirection(cur => (cur === 'desc' ? 'asc' : 'desc'))}
+          onToggleSortDirection={() =>
+            v.setDateSortDirection(cur => (cur === 'desc' ? 'asc' : 'desc'))
+          }
           onToggleStatement={v.handleToggleStatement}
           onView={handleView}
           onIconClick={handleIconClick}

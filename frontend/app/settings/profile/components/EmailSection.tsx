@@ -2,12 +2,12 @@
 
 import { Alert } from '@/app/components/ui/alert';
 import { Spinner } from '@/app/components/ui/spinner';
-import type { FormEvent } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import type { FormEvent } from 'react';
 
 type Props = {
   t: {
@@ -40,7 +40,11 @@ export function EmailSection({
   handleEmailSubmit,
 }: Props) {
   return (
-    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handleEmailSubmit}>
+    <Box
+      component="form"
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+      onSubmit={handleEmailSubmit}
+    >
       {emailMessage && <Alert variant="success">{emailMessage}</Alert>}
       {emailError && <Alert variant="error">{emailError}</Alert>}
 

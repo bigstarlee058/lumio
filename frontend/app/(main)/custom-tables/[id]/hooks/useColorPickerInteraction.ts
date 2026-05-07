@@ -17,9 +17,15 @@ export interface UseColorPickerInteractionReturn {
   handleColorPickerChange: (next: string) => void;
 }
 
-export function useColorPickerInteraction({ rows, setColorPickerRowId }: UseColorPickerInteractionParams): UseColorPickerInteractionReturn {
+export function useColorPickerInteraction({
+  rows,
+  setColorPickerRowId,
+}: UseColorPickerInteractionParams): UseColorPickerInteractionReturn {
   const [colorPickerValue, setColorPickerValue] = useState('#ff8a00');
-  const [colorPickerAnchorPosition, setColorPickerAnchorPosition] = useState<{ top: number; left: number } | null>(null);
+  const [colorPickerAnchorPosition, setColorPickerAnchorPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
 
   const openColorPickerForRow = useCallback(
     (rowId: string, event: { clientX: number; clientY: number }): void => {
@@ -36,7 +42,15 @@ export function useColorPickerInteraction({ rows, setColorPickerRowId }: UseColo
     setColorPickerAnchorPosition(null);
   }, [setColorPickerRowId]);
 
-  const handleColorPickerChange = useCallback((next: string): void => { setColorPickerValue(next); }, []);
+  const handleColorPickerChange = useCallback((next: string): void => {
+    setColorPickerValue(next);
+  }, []);
 
-  return { colorPickerValue, colorPickerAnchorPosition, openColorPickerForRow, handleColorPickerClose, handleColorPickerChange };
+  return {
+    colorPickerValue,
+    colorPickerAnchorPosition,
+    openColorPickerForRow,
+    handleColorPickerClose,
+    handleColorPickerChange,
+  };
 }

@@ -1,9 +1,9 @@
 'use client';
 
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
+import { GripVertical } from '@/app/components/icons';
 import { useDraggable } from '@dnd-kit/core';
 import { Box, Typography } from '@mui/material';
-import { GripVertical } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import type { StorageFile } from '../storageHelpers';

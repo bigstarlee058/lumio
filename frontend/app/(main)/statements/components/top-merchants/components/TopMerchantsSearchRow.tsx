@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 import type { useTopMerchantsViewModel } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsViewModel';
 import { Search } from '@/app/components/icons';
@@ -10,12 +9,41 @@ export function TopMerchantsSearchRow({ vm }: Props): React.JSX.Element {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ position: 'relative', flex: 1 }}>
-        <Search style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--muted-foreground)', pointerEvents: 'none' }} />
-        <input type="text" value={vm.searchInput} onChange={e => vm.setSearchInput(e.target.value)}
-          placeholder={vm.labels.searchPlaceholder} aria-label={vm.labels.searchPlaceholder} className="lumio-view-page__search-input" />
+        <Search
+          style={{
+            position: 'absolute',
+            left: 16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 16,
+            height: 16,
+            color: 'var(--muted-foreground)',
+            pointerEvents: 'none',
+          }}
+        />
+        <input
+          type="text"
+          value={vm.searchInput}
+          onChange={e => vm.setSearchInput(e.target.value)}
+          placeholder={vm.labels.searchPlaceholder}
+          aria-label={vm.labels.searchPlaceholder}
+          className="lumio-view-page__search-input"
+        />
       </div>
       <div style={{ width: 240 }}>
-        <label htmlFor="top-merchants-workspace-filter" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}>{vm.labels.workspace}</label>
+        <label
+          htmlFor="top-merchants-workspace-filter"
+          style={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {vm.labels.workspace}
+        </label>
         <select
           id="top-merchants-workspace-filter"
           value={vm.workspaceFilter}
@@ -25,7 +53,9 @@ export function TopMerchantsSearchRow({ vm }: Props): React.JSX.Element {
           <option value="current">{vm.labels.currentWorkspace}</option>
           <option value="all">{vm.labels.allWorkspaces}</option>
           {vm.workspaces.map(ws => (
-            <option key={ws.id} value={ws.id}>{ws.name ?? ws.id}</option>
+            <option key={ws.id} value={ws.id}>
+              {ws.name ?? ws.id}
+            </option>
           ))}
         </select>
       </div>

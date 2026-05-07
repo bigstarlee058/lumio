@@ -1,12 +1,12 @@
 'use client';
 
+import { ShieldCheck } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { safeInternalPath } from '@/app/lib/safe-path';
 import { Alert, Box, Button, Card, CardContent, Container, Stack, Typography } from '@mui/material';
-import { ShieldCheck } from '@/app/components/icons';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 

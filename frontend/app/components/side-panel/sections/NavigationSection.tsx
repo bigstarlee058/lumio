@@ -1,13 +1,13 @@
 'use client';
 
 import { ChevronRight } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import Link from 'next/link';
 import React from 'react';
 import { Spinner } from '../../ui/spinner';
 import type { NavigationItem, NavigationSection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
-import Link from 'next/link';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function, complexity
 function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; depth?: number }) {
@@ -38,9 +38,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
         </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        {item.badgeLoading && (
-          <Spinner size={14} style={{ color: 'var(--muted-foreground)' }} />
-        )}
+        {item.badgeLoading && <Spinner size={14} style={{ color: 'var(--muted-foreground)' }} />}
         {!item.badgeLoading && item.badge !== undefined && Number(item.badge) > 0 && (
           <span
             style={{
@@ -85,7 +83,6 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
     fontSize: 14,
     textDecoration: 'none',
     transition: 'background-color 200ms',
-    outline: 'none',
     border: 'none',
     cursor: item.disabled ? 'not-allowed' : 'pointer',
     opacity: item.disabled ? 0.5 : 1,
@@ -117,12 +114,7 @@ function NavigationItemComponent({ item, depth = 0 }: { item: NavigationItem; de
           {content}
         </Link>
       ) : (
-        <button
-          type="button"
-          onClick={handleClick}
-          disabled={item.disabled}
-          style={itemStyle}
-        >
+        <button type="button" onClick={handleClick} disabled={item.disabled} style={itemStyle}>
           {content}
         </button>
       )}

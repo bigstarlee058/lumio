@@ -4,10 +4,12 @@ import ConfirmModal from '@/app/components/ConfirmModal';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import type { JSX } from 'react';
 import type { RollbackState } from '../hooks/useAuditRollback';
 
-type MsgProps = { rollbackTarget: NonNullable<RollbackState['rollbackTarget']>; rollbackError: string | null };
+type MsgProps = {
+  rollbackTarget: NonNullable<RollbackState['rollbackTarget']>;
+  rollbackError: string | null;
+};
 function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): React.JSX.Element {
   return (
     <Stack spacing={1.5}>
@@ -21,7 +23,9 @@ function RollbackMessage({ rollbackTarget, rollbackError }: MsgProps): React.JSX
         </Alert>
       )}
       {rollbackError && (
-        <Typography variant="body2" style={{ color: 'var(--destructive)' }}>{rollbackError}</Typography>
+        <Typography variant="body2" style={{ color: 'var(--destructive)' }}>
+          {rollbackError}
+        </Typography>
       )}
     </Stack>
   );
@@ -34,7 +38,14 @@ export function AuditRollbackModal({ rollback }: { rollback: RollbackState }): R
       onClose={rollback.cancelRollback}
       onConfirm={rollback.confirmRollback}
       title="Confirm rollback"
-      message={rollback.rollbackTarget && <RollbackMessage rollbackTarget={rollback.rollbackTarget} rollbackError={rollback.rollbackError} />}
+      message={
+        rollback.rollbackTarget && (
+          <RollbackMessage
+            rollbackTarget={rollback.rollbackTarget}
+            rollbackError={rollback.rollbackError}
+          />
+        )
+      }
       confirmText={rollback.rollbackLoading ? 'Rolling back...' : 'Rollback'}
       cancelText="Cancel"
       isDestructive

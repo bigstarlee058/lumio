@@ -28,7 +28,8 @@ export const tokens = {
   },
 
   font: {
-    family: '"Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+    family:
+      '"Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
     familyMono: '"Geist Mono", ui-monospace, "SF Mono", Menlo, monospace',
   },
 

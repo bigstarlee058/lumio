@@ -1,15 +1,6 @@
+import { parseCurrencyCell, parseDateCell, parseNumberCell, parsePaidCell } from './pasteParser';
+import type { PasteColumnMapping, PasteErrorKey, PastePreviewCell } from './pasteTypes';
 import type { CustomTableCellValue, CustomTableRowPatch } from './stylingUtils';
-import {
-  parseCurrencyCell,
-  parseDateCell,
-  parseNumberCell,
-  parsePaidCell,
-} from './pasteParser';
-import type {
-  PasteColumnMapping,
-  PasteErrorKey,
-  PastePreviewCell,
-} from './pasteTypes';
 
 // ---------------------------------------------------------------------------
 // Row data builder
@@ -46,10 +37,18 @@ const parsePaidField = (v: string): CellParseResult => {
 };
 
 const parseCellByField = (col: PasteColumnMapping, editedValue: string): CellParseResult => {
-  if (col.field === 'date') return parseDateField(editedValue);
-  if (col.field === 'amount') return parseAmountField(editedValue);
-  if (col.field === 'currency') return parseCurrencyField(editedValue, col.options);
-  if (col.field === 'paid') return parsePaidField(editedValue);
+  if (col.field === 'date') {
+    return parseDateField(editedValue);
+  }
+  if (col.field === 'amount') {
+    return parseAmountField(editedValue);
+  }
+  if (col.field === 'currency') {
+    return parseCurrencyField(editedValue, col.options);
+  }
+  if (col.field === 'paid') {
+    return parsePaidField(editedValue);
+  }
   const trimmed = editedValue.trim();
   return { parsedValue: trimmed || null, errorFlag: false, errorKey: null };
 };
@@ -76,10 +75,16 @@ type RowAcc = {
 
 const processColumn = (col: PasteColumnMapping, editedValue: string, acc: RowAcc): void => {
   const { parsedValue, errorFlag, errorKey } = parseCellByField(col, editedValue);
-  if (errorFlag && errorKey) acc.errors[errorKey] += 1;
-  if (errorFlag) acc.hasError = true;
+  if (errorFlag && errorKey) {
+    acc.errors[errorKey] += 1;
+  }
+  if (errorFlag) {
+    acc.hasError = true;
+  }
   acc.cells.push({ value: editedValue.trim(), error: errorFlag, sourceIndex: col.sourceIndex });
-  if (col.columnKey) acc.rowData[col.columnKey] = parsedValue;
+  if (col.columnKey) {
+    acc.rowData[col.columnKey] = parsedValue;
+  }
 };
 
 export type BuildRowArgs = {
@@ -89,7 +94,12 @@ export type BuildRowArgs = {
   edits: Record<string, string>;
 };
 
-export const buildRowData = ({ row, rowIndex, mappedColumns, edits }: BuildRowArgs): ParsedRowResult => {
+export const buildRowData = ({
+  row,
+  rowIndex,
+  mappedColumns,
+  edits,
+}: BuildRowArgs): ParsedRowResult => {
   const acc: RowAcc = {
     rowData: {},
     cells: [],

@@ -1,13 +1,13 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { CheckCircle, Clock, Send, Bot as TelegramIcon } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { Bot as TelegramIcon, CheckCircle, Clock, Send } from '@/app/components/icons';
 import {
   Alert,
   Box,
@@ -257,7 +257,9 @@ export default function TelegramSettingsPage() {
                 fullWidth
                 type="password"
                 label="Bot token"
-                placeholder={botConfigured ? 'Configured, leave blank to keep current token' : '123456:ABC'}
+                placeholder={
+                  botConfigured ? 'Configured, leave blank to keep current token' : '123456:ABC'
+                }
                 value={botToken}
                 onChange={e => setBotToken(e.target.value)}
               />
@@ -422,9 +424,7 @@ export default function TelegramSettingsPage() {
                           label={getStatusLabel(report.status)}
                         />
                       </TableCell>
-                      <TableCell>
-                        {formatTelegramDate(report.sentAt || report.createdAt)}
-                      </TableCell>
+                      <TableCell>{formatTelegramDate(report.sentAt || report.createdAt)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

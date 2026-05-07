@@ -1,7 +1,7 @@
 'use client';
 
-import Skeleton from '@mui/material/Skeleton';
 import { tokens } from '@/lib/theme-tokens';
+import Skeleton from '@mui/material/Skeleton';
 
 function CheckboxPlaceholder(): React.JSX.Element {
   return (
@@ -86,9 +86,7 @@ function DesktopSkeletonLeft(): React.JSX.Element {
         <div style={{ width: 16, display: 'flex', justifyContent: 'center' }}>
           <CheckboxPlaceholder />
         </div>
-        <div
-          style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
+        <div style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Skeleton variant="rounded" width={28} height={28} />
         </div>
       </div>
@@ -116,7 +114,9 @@ interface StatementsGmailSyncProps {
 export function StatementsGmailSync({
   gmailSyncSkeletonKeys,
 }: StatementsGmailSyncProps): React.JSX.Element | null {
-  if (gmailSyncSkeletonKeys.length === 0) return null;
+  if (gmailSyncSkeletonKeys.length === 0) {
+    return null;
+  }
 
   return (
     <>

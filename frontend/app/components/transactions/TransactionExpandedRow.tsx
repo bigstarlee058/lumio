@@ -19,7 +19,11 @@ function ExpandedField({ label, value, mono }: FieldProps): React.ReactElement {
   return (
     <div className="lumio-tx-table__expanded-field">
       <label>{label}</label>
-      <span style={{ fontFamily: mono ? 'var(--font-mono)' : undefined, color: 'var(--foreground)' }}>{value}</span>
+      <span
+        style={{ fontFamily: mono ? 'var(--font-mono)' : undefined, color: 'var(--foreground)' }}
+      >
+        {value}
+      </span>
     </div>
   );
 }

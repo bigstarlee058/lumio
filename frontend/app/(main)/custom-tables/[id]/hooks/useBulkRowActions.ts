@@ -4,7 +4,7 @@ import apiClient from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
-import type { CustomTableGridRow, CustomTableRowPatch } from '../utils/stylingUtils';
+import type { CustomTableGridRow } from '../utils/stylingUtils';
 import { getClassificationResults } from '../utils/tableHelpers';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
 
@@ -68,7 +68,9 @@ export function useBulkRowActions({
   const [bulkMarking, setBulkMarking] = useState<'paid' | 'unpaid' | null>(null);
 
   const deleteRow = useCallback(async () => {
-    if (!tableId || !deleteRowTarget) return;
+    if (!(tableId && deleteRowTarget)) {
+      return;
+    }
     if (deleteRowTarget.id?.startsWith('temp-')) {
       setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
       setSelectedRowIds(prev => prev.filter(id => id !== deleteRowTarget.id));
@@ -109,9 +111,13 @@ export function useBulkRowActions({
   ]);
 
   const deleteSelectedRows = useCallback(async () => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     const ids = bulkDeleteRowIds.length ? bulkDeleteRowIds : selectedRowIds;
-    if (!ids.length) return;
+    if (!ids.length) {
+      return;
+    }
     const toastId = toast.loading(messages.bulkDeleteLoading);
     try {
       const tempIds = ids.filter(id => id.startsWith('temp-'));
@@ -168,8 +174,12 @@ export function useBulkRowActions({
   ]);
 
   const ensurePaidStatusColumnKey = useCallback(async (): Promise<string> => {
-    if (paidColKey) return paidColKey;
-    if (!tableId) throw new Error('Missing tableId');
+    if (paidColKey) {
+      return paidColKey;
+    }
+    if (!tableId) {
+      throw new Error('Missing tableId');
+    }
     const toastId = toast.loading(messages.creatingPaidColumn);
     try {
       const response = await apiClient.post(`/custom-tables/${tableId}/columns`, {
@@ -197,7 +207,9 @@ export function useBulkRowActions({
 
   const classifyPaidStatuses = useCallback(
     async (rowIds: string[]): Promise<Map<string, boolean | null>> => {
-      if (!tableId || !rowIds.length) return new Map();
+      if (!(tableId && rowIds.length)) {
+        return new Map();
+      }
       try {
         const response = await apiClient.post(`/custom-tables/${tableId}/rows/paid-classify`, {
           rowIds,
@@ -212,7 +224,9 @@ export function useBulkRowActions({
   );
 
   const applyPaidUpdates = (succeededMap: Map<string, boolean>, colKey: string): void => {
-    if (!succeededMap.size) { return; }
+    if (!succeededMap.size) {
+      return;
+    }
     setRows(prev =>
       prev.map(row =>
         succeededMap.has(row.id)
@@ -244,9 +258,11 @@ export function useBulkRowActions({
 
   const markSelectedRowsPaid = useCallback(
     async (paid: boolean) => {
-      if (!tableId || !selectedRowIds.length || bulkMarking) { return; }
+      if (!(tableId && selectedRowIds.length) || bulkMarking) {
+        return;
+      }
       const ids = [...selectedRowIds];
-      const markingLabel = paid ? 'paid' as const : 'unpaid' as const;
+      const markingLabel = paid ? ('paid' as const) : ('unpaid' as const);
       const loadingMessage = paid ? messages.markingPaid : messages.markingUnpaid;
       const successMessage = paid ? messages.markedPaid : messages.markedUnpaid;
       setBulkMarking(markingLabel);

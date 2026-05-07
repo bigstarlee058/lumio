@@ -54,7 +54,9 @@ type ResolveCategoryFlowInput = {
   transactionType?: 'income' | 'expense' | 'transfer' | 'unknown' | null;
 };
 
-export const resolveCategoryFlow = (input: ResolveCategoryFlowInput): { flowType: 'income' | 'spend'; amount: number } => {
+export const resolveCategoryFlow = (
+  input: ResolveCategoryFlowInput,
+): { flowType: 'income' | 'spend'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.debit,
@@ -75,7 +77,9 @@ export const dedupeCategoryReceiptRecords = (
   existingTransactionIds: Set<string>,
 ): TopCategoryRecord[] => {
   return receipts.filter(receipt => {
-    if (!receipt.transactionId) return true;
+    if (!receipt.transactionId) {
+      return true;
+    }
     return !existingTransactionIds.has(receipt.transactionId);
   });
 };
@@ -131,7 +135,10 @@ export const createCategoryAggregateRows = (
   return Array.from(aggregate.values());
 };
 
-export const sortCategoryRows = (rows: TopCategoryAggregateRow[], key: CategorySortKey): TopCategoryAggregateRow[] => {
+export const sortCategoryRows = (
+  rows: TopCategoryAggregateRow[],
+  key: CategorySortKey,
+): TopCategoryAggregateRow[] => {
   return sortAggregateRows(rows, key);
 };
 

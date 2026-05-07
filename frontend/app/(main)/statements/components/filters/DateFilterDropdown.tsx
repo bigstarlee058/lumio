@@ -3,15 +3,15 @@
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { parseISO, isValid, format } from 'date-fns';
 import { ChevronRight } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format, isValid, parseISO } from 'date-fns';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,
   StatementFilterDatePreset,
 } from './statement-filters';
-import { tokens } from '@/lib/theme-tokens';
 
 type DatePresetOption = {
   value: StatementFilterDatePreset;
@@ -47,7 +47,9 @@ const ensureDate = (value?: StatementFilterDate | null): StatementFilterDate => 
 const resolveFallbackDate = () => new Date().toISOString().slice(0, 10);
 
 const toDateObj = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const parsed = parseISO(value);
   return isValid(parsed) ? parsed : null;
 };
@@ -126,8 +128,12 @@ export function DateFilterDropdown({
                     cursor: 'pointer',
                     transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'none';
+                  }}
                 >
                   <span>{option.label}</span>
                   <ChevronRight size={20} style={{ color: 'var(--muted-foreground)' }} />
@@ -160,10 +166,7 @@ export function DateFilterDropdown({
                     onChange({
                       mode: current.mode,
                       date: dateStr,
-                      dateTo:
-                        current.mode === 'on'
-                          ? toIsoDate(endValue)
-                          : current.dateTo,
+                      dateTo: current.mode === 'on' ? toIsoDate(endValue) : current.dateTo,
                     });
                   }
                 }}

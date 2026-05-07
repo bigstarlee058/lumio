@@ -7,8 +7,8 @@ import { getIntlayer } from 'react-intlayer';
 import { IntlayerServerProvider } from 'react-intlayer/server';
 import AppChrome from './components/AppChrome';
 import DynamicPageTitle from './components/DynamicPageTitle';
-import MobileBottomBar from './components/mobile/MobileBottomBar';
 import TopBar from './components/TopBar';
+import MobileBottomBar from './components/mobile/MobileBottomBar';
 import { Providers } from './providers';
 
 const geist = Geist({

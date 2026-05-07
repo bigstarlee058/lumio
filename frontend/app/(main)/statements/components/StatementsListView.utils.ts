@@ -90,7 +90,9 @@ export const isStatementParsingInProgress = (statement: Pick<StatementLike, 'sta
 export const isReceiptProcessing = (
   statement: Pick<StatementLike, 'source' | 'status'>,
 ): boolean => {
-  if (statement.source !== 'gmail' && statement.source !== 'scan') return false;
+  if (statement.source !== 'gmail' && statement.source !== 'scan') {
+    return false;
+  }
   const status = (statement.status || '').toLowerCase();
   return status === 'new' || status === 'processing';
 };
@@ -120,7 +122,9 @@ export const resolveStatementCurrency = (statement: StatementLike): string =>
   ).toString();
 
 export const parseAmountValue = (value?: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : null;
 };
@@ -129,7 +133,9 @@ export const parseAmountValue = (value?: number | string | null): number | null 
 export const formatStatementAmount = (statement: StatementLike): string => {
   if (statement.source === 'gmail' || statement.source === 'scan') {
     const amount = parseAmountValue(statement.parsedData?.amount ?? null);
-    if (amount === null) return '-';
+    if (amount === null) {
+      return '-';
+    }
     const currency = resolveStatementCurrency(statement);
     const formatted = new Intl.NumberFormat(undefined, {
       minimumFractionDigits: 2,
@@ -142,7 +148,9 @@ export const formatStatementAmount = (statement: StatementLike): string => {
     const debit = parseAmountValue(statement.totalDebit);
     const credit = parseAmountValue(statement.totalCredit);
     const hasResolvedAmount = (debit !== null && debit > 0) || (credit !== null && credit > 0);
-    if (!hasResolvedAmount) return '-';
+    if (!hasResolvedAmount) {
+      return '-';
+    }
   }
 
   const debit = parseAmountValue(statement.totalDebit);
@@ -159,15 +167,28 @@ export const formatStatementAmount = (statement: StatementLike): string => {
   return `${formatted}${currency || ''}`;
 };
 
+const resolveReceiptDateValue = (statement: StatementLike): string => {
+  // Scan receipts: use upload time so newly uploaded items appear at the top.
+  // Gmail receipts: use parsed transaction date (close to received date).
+  if (statement.source === 'scan') {
+    return statement.receivedAt || statement.createdAt || statement.parsedData?.date || '';
+  }
+  return statement.parsedData?.date || statement.receivedAt || statement.createdAt || '';
+};
+
 // eslint-disable-next-line complexity
 export const formatStatementDate = (statement: StatementLike): string => {
   const dateValue =
     statement.source === 'gmail' || statement.source === 'scan'
-      ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
+      ? resolveReceiptDateValue(statement)
       : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
-  if (!dateValue) return '—';
+  if (!dateValue) {
+    return '—';
+  }
   const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) {
+    return '—';
+  }
   return date.toLocaleDateString();
 };
 
@@ -175,16 +196,20 @@ export const formatStatementDate = (statement: StatementLike): string => {
 export const resolveStatementSortDate = (statement: StatementLike): number => {
   const dateValue =
     statement.source === 'gmail' || statement.source === 'scan'
-      ? statement.parsedData?.date || statement.receivedAt || statement.createdAt
+      ? resolveReceiptDateValue(statement)
       : statement.statementDateTo || statement.statementDateFrom || statement.createdAt || '';
   const date = dateValue ? new Date(dateValue) : null;
-  if (!date || Number.isNaN(date.getTime())) return 0;
+  if (!date || Number.isNaN(date.getTime())) {
+    return 0;
+  }
   return date.getTime();
 };
 
 export const getBankDisplayName = (bankName: string): string => {
   const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
+  if (!resolved) {
+    return bankName;
+  }
   return resolved.key !== 'other' ? resolved.displayName : bankName;
 };
 
@@ -221,14 +246,16 @@ export const getBulkActionErrorOptions = (id: string): { id: string } => ({ id }
 export const getExportEndpoint = (
   statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>,
 ): string =>
-  isScanReceiptStatement(statement)
+  statement.source === 'gmail' || isScanReceiptStatement(statement)
     ? `/receipts/${statement.id}/file`
     : `/statements/${statement.id}/file`;
 
 export const getDeleteEndpoint = (
   statement: Pick<StatementLike, 'id' | 'source' | 'receiptSource'>,
 ): string =>
-  isScanReceiptStatement(statement) ? `/receipts/${statement.id}` : `/statements/${statement.id}`;
+  statement.source === 'gmail' || isScanReceiptStatement(statement)
+    ? `/receipts/${statement.id}`
+    : `/statements/${statement.id}`;
 
 // ---------------------------------------------------------------------------
 // Category helpers
@@ -303,7 +330,9 @@ export const resolveStatementViewAction = (
 };
 
 export const paginateStatements = <T>(statements: T[], page: number, pageSize: number): T[] => {
-  if (pageSize <= 0) return [];
+  if (pageSize <= 0) {
+    return [];
+  }
   const currentPage = Math.max(1, page);
   const start = (currentPage - 1) * pageSize;
   return statements.slice(start, start + pageSize);
@@ -333,7 +362,11 @@ export const reconcileFiltersWithColumns = ({
   columns: StatementColumn[];
   appliedFilters: StatementFilters;
   draftFilters: StatementFilters;
-}): { allowedFilterKeys: Array<keyof StatementFilters>; nextAppliedFilters: StatementFilters; nextDraftFilters: StatementFilters } => {
+}): {
+  allowedFilterKeys: Array<keyof StatementFilters>;
+  nextAppliedFilters: StatementFilters;
+  nextDraftFilters: StatementFilters;
+} => {
   const visibleColumnIds = columns.filter(column => column.visible).map(column => column.id);
   const allowedFilterKeys = getAllowedStatementFilterKeys(visibleColumnIds as StatementColumnId[]);
 
@@ -388,7 +421,7 @@ export const buildUploadLabels = (t: IntlayerDict): Record<string, string> => ({
 });
 
 // eslint-disable-next-line complexity, max-lines-per-function, max-params
-export const buildFilterOptionLabels = (t: IntlayerDict, tx: TxFn): Record<string, string> => ({
+export const buildFilterOptionLabels = (_t: IntlayerDict, tx: TxFn): Record<string, string> => ({
   apply: tx(['filters', 'apply'], 'Apply'),
   reset: tx(['filters', 'reset'], 'Reset'),
   resetFilters: tx(['filters', 'resetFilters'], 'Reset filters'),
@@ -522,9 +555,7 @@ export const buildHasOptions = (
   { value: 'currency', label: labels.hasCurrency },
 ];
 
-export const buildColumnLabels = (
-  labels: Record<string, string>,
-): Record<string, string> => ({
+export const buildColumnLabels = (labels: Record<string, string>): Record<string, string> => ({
   receipt: labels.columnReceipt,
   date: labels.columnDate,
   merchant: labels.columnMerchant,
@@ -544,7 +575,12 @@ export const buildColumnLabels = (
 });
 
 interface StatementForFromOptions {
-  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
+  user?: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    avatarUrl?: string | null;
+  } | null;
   bankName: string;
   source?: string;
   receiptSource?: string;
@@ -563,7 +599,14 @@ export const buildFromOptions = (
 }> => {
   const seen = new Map<
     string,
-    { id: string; label: string; description?: string | null; avatarUrl?: string | null; iconUrl?: string | null; bankName?: string | null }
+    {
+      id: string;
+      label: string;
+      description?: string | null;
+      avatarUrl?: string | null;
+      iconUrl?: string | null;
+      bankName?: string | null;
+    }
   >();
 
   for (const statement of stagedStatements) {
@@ -582,7 +625,9 @@ export const buildFromOptions = (
       const key = `bank:${statement.bankName}`;
       if (!seen.has(key)) {
         const isGmail = statement.source === 'gmail';
-        const isStore = statement.source === 'scan' && statement.receiptSource !== 'gmail';
+        const hasRealBank = statement.bankName !== 'other';
+        const isStore =
+          statement.source === 'scan' && statement.receiptSource !== 'gmail' && !hasRealBank;
         seen.set(key, {
           id: key,
           label: isGmail ? 'Gmail' : isStore ? 'Receipt' : getBankDisplayName(statement.bankName),
@@ -601,16 +646,18 @@ export const buildFromOptions = (
 interface StatementForCurrencyOptions {
   parsedData?: { currency?: string };
   currency?: string | null;
-  parsingDetails?: { metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } } };
+  parsingDetails?: {
+    metadataExtracted?: { currency?: string; headerDisplay?: { currencyDisplay?: string } };
+  };
 }
 
-export const buildCurrencyOptions = (
-  stagedStatements: StatementForCurrencyOptions[],
-): string[] => {
+export const buildCurrencyOptions = (stagedStatements: StatementForCurrencyOptions[]): string[] => {
   const unique = new Set<string>();
   for (const statement of stagedStatements) {
     const currency = resolveStatementCurrency(statement);
-    if (currency) unique.add(currency);
+    if (currency) {
+      unique.add(currency);
+    }
   }
   return Array.from(unique.values());
 };
@@ -618,20 +665,50 @@ export const buildCurrencyOptions = (
 // eslint-disable-next-line complexity
 export const computeActiveFilterCount = (appliedFilters: StatementFilters): number => {
   let count = 0;
-  if (appliedFilters.type) count += 1;
-  if (appliedFilters.statuses.length > 0) count += 1;
-  if (appliedFilters.date?.preset || appliedFilters.date?.mode) count += 1;
-  if (appliedFilters.from.length > 0) count += 1;
-  if (appliedFilters.to.length > 0) count += 1;
-  if (appliedFilters.keywords.trim()) count += 1;
-  if (appliedFilters.amountMin !== null || appliedFilters.amountMax !== null) count += 1;
-  if (appliedFilters.approved !== null) count += 1;
-  if (appliedFilters.billable !== null) count += 1;
-  if (appliedFilters.groupBy) count += 1;
-  if (appliedFilters.has.length > 0) count += 1;
-  if (appliedFilters.currencies.length > 0) count += 1;
-  if (appliedFilters.exported !== null) count += 1;
-  if (appliedFilters.paid !== null) count += 1;
-  if (appliedFilters.limit !== null) count += 1;
+  if (appliedFilters.type) {
+    count += 1;
+  }
+  if (appliedFilters.statuses.length > 0) {
+    count += 1;
+  }
+  if (appliedFilters.date?.preset || appliedFilters.date?.mode) {
+    count += 1;
+  }
+  if (appliedFilters.from.length > 0) {
+    count += 1;
+  }
+  if (appliedFilters.to.length > 0) {
+    count += 1;
+  }
+  if (appliedFilters.keywords.trim()) {
+    count += 1;
+  }
+  if (appliedFilters.amountMin !== null || appliedFilters.amountMax !== null) {
+    count += 1;
+  }
+  if (appliedFilters.approved !== null) {
+    count += 1;
+  }
+  if (appliedFilters.billable !== null) {
+    count += 1;
+  }
+  if (appliedFilters.groupBy) {
+    count += 1;
+  }
+  if (appliedFilters.has.length > 0) {
+    count += 1;
+  }
+  if (appliedFilters.currencies.length > 0) {
+    count += 1;
+  }
+  if (appliedFilters.exported !== null) {
+    count += 1;
+  }
+  if (appliedFilters.paid !== null) {
+    count += 1;
+  }
+  if (appliedFilters.limit !== null) {
+    count += 1;
+  }
   return count;
 };

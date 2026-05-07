@@ -1,11 +1,10 @@
 'use client';
 
+import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
-import { cn } from '@/app/lib/utils';
 import Link from 'next/link';
-import { tokens } from '@/lib/theme-tokens';
 
 interface DataHealthTabProps {
   data: DashboardData;
@@ -107,21 +106,42 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
         <Link
           href="/statements"
           className="ff-dashboard-sans"
-          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', textDecoration: 'none' }}
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: 'var(--muted-foreground)',
+            transition: 'color 150ms',
+            textDecoration: 'none',
+          }}
         >
           Upload / Parse
         </Link>
         <Link
           href="/statements/approve"
           className="ff-dashboard-sans"
-          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', textDecoration: 'none' }}
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: 'var(--muted-foreground)',
+            transition: 'color 150ms',
+            textDecoration: 'none',
+          }}
         >
           Review Queue ({dataHealth.statementsPendingReview})
         </Link>
         <button
           type="button"
           className="ff-dashboard-sans"
-          style={{ fontSize: 12, fontWeight: 500, color: 'var(--muted-foreground)', transition: 'color 150ms', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+          style={{
+            fontSize: 12,
+            fontWeight: 500,
+            color: 'var(--muted-foreground)',
+            transition: 'color 150ms',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+          }}
         >
           Export
         </button>
@@ -165,14 +185,27 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
                 <Typography
                   component="span"
                   className="ff-dashboard-mono"
-                  sx={{ color: 'text.secondary', fontSize: 11, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', lineHeight: 1 }}
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase',
+                    lineHeight: 1,
+                  }}
                 >
                   {label}
                 </Typography>
 
                 <Typography
                   className="ff-dashboard-mono"
-                  sx={{ color: 'text.primary', fontSize: 40, fontWeight: 700, lineHeight: 1, mt: '20px' }}
+                  sx={{
+                    color: 'text.primary',
+                    fontSize: 40,
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    mt: '20px',
+                  }}
                 >
                   {isLoading ? '—' : value}
                 </Typography>
@@ -215,7 +248,14 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
           <Typography
             component="span"
             className="ff-dashboard-mono"
-            sx={{ color: 'text.secondary', fontSize: 11, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', lineHeight: 1 }}
+            sx={{
+              color: 'text.secondary',
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+            }}
           >
             LAST UPLOAD
           </Typography>
@@ -224,13 +264,26 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
             <>
               <Typography
                 className="ff-dashboard-mono"
-                sx={{ color: 'text.primary', fontSize: 56, fontWeight: 700, lineHeight: 1.1, mt: '90px', letterSpacing: '-0.02em' }}
+                sx={{
+                  color: 'text.primary',
+                  fontSize: 56,
+                  fontWeight: 700,
+                  lineHeight: 1.1,
+                  mt: '90px',
+                  letterSpacing: '-0.02em',
+                }}
               >
                 {getRelativeTime(dataHealth.lastUploadDate)}
               </Typography>
               <Typography
                 className="ff-dashboard-sans"
-                sx={{ color: 'text.secondary', fontSize: 13, fontWeight: 500, mt: 'auto', pb: '20px' }}
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  mt: 'auto',
+                  pb: '20px',
+                }}
               >
                 {new Date(dataHealth.lastUploadDate).toLocaleDateString('en-US', {
                   year: 'numeric',
@@ -250,7 +303,13 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
               <Link
                 href="/statements/submit"
                 className="ff-dashboard-sans"
-                style={{ color: '#C05A3C', fontSize: 13, fontWeight: 500, transition: 'color 150ms', textDecoration: 'none' }}
+                style={{
+                  color: '#C05A3C',
+                  fontSize: 13,
+                  fontWeight: 500,
+                  transition: 'color 150ms',
+                  textDecoration: 'none',
+                }}
               >
                 Upload your first statement →
               </Link>
@@ -276,7 +335,14 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
           <Typography
             component="span"
             className="ff-dashboard-mono"
-            sx={{ color: 'rgba(255,255,255,0.75)', fontSize: 11, fontWeight: 600, letterSpacing: '1.4px', textTransform: 'uppercase', lineHeight: 1 }}
+            sx={{
+              color: 'rgba(255,255,255,0.75)',
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '1.4px',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+            }}
           >
             UNAPPROVED CASH
           </Typography>
@@ -303,7 +369,15 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
             <Link
               href="/statements/approve"
               className="ff-dashboard-sans"
-              style={{ color: 'var(--muted-foreground)', fontSize: 13, fontWeight: 500, marginTop: 'auto', paddingBottom: 20, transition: 'color 150ms', textDecoration: 'none' }}
+              style={{
+                color: 'var(--muted-foreground)',
+                fontSize: 13,
+                fontWeight: 500,
+                marginTop: 'auto',
+                paddingBottom: 20,
+                transition: 'color 150ms',
+                textDecoration: 'none',
+              }}
             >
               Review &amp; approve cash →
             </Link>
@@ -317,7 +391,14 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
           <Typography
             component="h2"
             className="ff-dashboard-mono"
-            sx={{ mb: 2, color: 'text.primary', fontSize: 16, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+            sx={{
+              mb: 2,
+              color: 'text.primary',
+              fontSize: 16,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
           >
             ACTION REQUIRED
           </Typography>
@@ -339,7 +420,17 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
                 key={href}
                 href={href}
                 className="ff-dashboard-sans"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', transition: 'background-color 150ms', textDecoration: 'none' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  transition: 'background-color 150ms',
+                  textDecoration: 'none',
+                }}
               >
                 <span>{label}</span>
                 <span style={{ color: '#C05A3C' }}>→</span>

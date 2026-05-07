@@ -38,7 +38,9 @@ export function useStorageTrash(
 
   // Remove selected ids that no longer exist in the file list
   useEffect(() => {
-    if (!isTrashView) return;
+    if (!isTrashView) {
+      return;
+    }
     setSelectedTrashIds(prev => prev.filter(id => files.some(file => file.id === id)));
   }, [files, isTrashView]);
 

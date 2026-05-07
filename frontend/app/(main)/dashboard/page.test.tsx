@@ -1,6 +1,6 @@
+import { render, screen } from '@testing-library/react';
 // @vitest-environment jsdom
 import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import '@/app/test/setup';
 import DashboardPage from './page';

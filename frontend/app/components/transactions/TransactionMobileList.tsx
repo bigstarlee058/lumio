@@ -26,28 +26,65 @@ interface TransactionMobileListProps {
 }
 
 export function TransactionMobileList({
-  transactions, allTransactionsCount, categories, selectedIds, expandedIds,
-  allSelected, someSelected, handlers, formatters,
-  onSelectAll, onToggleSort,
-  noResultsLabel, uncategorizedLabel, columnBinLabel, columnDateLabel, columnDateSortLabel,
+  transactions,
+  allTransactionsCount,
+  categories,
+  selectedIds,
+  expandedIds,
+  allSelected,
+  someSelected,
+  handlers,
+  formatters,
+  onSelectAll,
+  onToggleSort,
+  noResultsLabel,
+  uncategorizedLabel,
+  columnBinLabel,
+  columnDateLabel,
+  columnDateSortLabel,
 }: TransactionMobileListProps): React.ReactElement {
   return (
     <div className="lumio-tx-mobile">
       <div className="lumio-tx-mobile__header">
         <div className="lumio-tx-mobile__header-left">
-          <Checkbox checked={allSelected} indeterminate={someSelected && !allSelected} onCheckedChange={onSelectAll} style={{ height: 20, width: 20 }} aria-label="Select all rows" />
-          <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{selectedIds.length}/{allTransactionsCount}</span>
+          <Checkbox
+            checked={allSelected}
+            indeterminate={someSelected && !allSelected}
+            onCheckedChange={onSelectAll}
+            style={{ height: 20, width: 20 }}
+            aria-label="Select all rows"
+          />
+          <span style={{ fontSize: 14, color: 'var(--foreground)' }}>
+            {selectedIds.length}/{allTransactionsCount}
+          </span>
         </div>
-        <button type="button" onClick={() => onToggleSort('date')} className="lumio-tx-mobile__header-sort">
+        <button
+          type="button"
+          onClick={() => onToggleSort('date')}
+          className="lumio-tx-mobile__header-sort"
+        >
           {columnDateSortLabel}
         </button>
       </div>
       <div className="lumio-tx-mobile__list">
-        {transactions.length === 0
-          ? <div className="lumio-tx-mobile__empty">{noResultsLabel}</div>
-          : transactions.map(tx => (
-            <TransactionMobileCard key={tx.id} tx={tx} isExpanded={expandedIds.has(tx.id)} isSelected={selectedIds.includes(tx.id)} categories={categories} handlers={handlers} formatters={formatters} uncategorizedLabel={uncategorizedLabel} columnBinLabel={columnBinLabel} columnDateLabel={columnDateLabel} />
-          ))}
+        {transactions.length === 0 ? (
+          <div className="lumio-tx-mobile__empty">{noResultsLabel}</div>
+        ) : (
+          transactions.map(tx => (
+            <TransactionMobileCard
+              key={tx.id}
+              tx={tx}
+              isExpanded={expandedIds.has(tx.id)}
+              isSelected={selectedIds.includes(tx.id)}
+              categories={categories}
+              handlers={handlers}
+              formatters={formatters}
+              uncategorizedLabel={uncategorizedLabel}
+              columnBinLabel={columnBinLabel}
+              columnDateLabel={columnDateLabel}
+            />
+          ))
+        )}
       </div>
     </div>
   );

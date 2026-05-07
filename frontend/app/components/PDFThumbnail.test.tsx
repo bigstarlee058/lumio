@@ -57,7 +57,10 @@ describe('PDFThumbnail', () => {
   });
 
   it('renders the shared spinner while the thumbnail is loading', async () => {
-    vi.stubGlobal('fetch', vi.fn(() => new Promise(() => undefined)));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise(() => undefined)),
+    );
 
     const root = createRoot(container);
 
@@ -142,11 +145,15 @@ describe('PDFThumbnail', () => {
     const root = createRoot(container);
 
     await act(async () => {
-      root.render(<PDFThumbnail fileId="statement-hidpi" width={320} thumbnailWidth={640} height={460} />);
+      root.render(
+        <PDFThumbnail fileId="statement-hidpi" width={320} thumbnailWidth={640} height={460} />,
+      );
       await Promise.resolve();
     });
 
-    const frame = container.querySelector('[data-testid="pdf-thumbnail-frame"]') as HTMLDivElement | null;
+    const frame = container.querySelector(
+      '[data-testid="pdf-thumbnail-frame"]',
+    ) as HTMLDivElement | null;
     expect(fetchMock.mock.calls[0]?.[0]).toContain('width=640');
     expect(frame?.style.width).toBe('320px');
   });
@@ -176,12 +183,12 @@ describe('PDFThumbnail', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const { PDFThumbnail: FreshPDFThumbnail } = await import('./PDFThumbnail');
+    const { PDFThumbnail: freshPdfThumbnail } = await import('./PDFThumbnail');
     const root = createRoot(container);
 
     try {
       await act(async () => {
-        root.render(<FreshPDFThumbnail fileId="statement-dev" width={320} height={460} />);
+        root.render(<freshPdfThumbnail fileId="statement-dev" width={320} height={460} />);
         await Promise.resolve();
       });
 
@@ -233,8 +240,8 @@ describe('PDFThumbnail', () => {
   });
 
   it('preserves the document page proportions in preview mode', async () => {
-    const originalCreateObjectURL = URL.createObjectURL;
-    const originalRevokeObjectURL = URL.revokeObjectURL;
+    const originalCreateObjectUrl = URL.createObjectURL;
+    const originalRevokeObjectUrl = URL.revokeObjectURL;
     const originalImage = globalThis.Image;
 
     vi.stubGlobal(
@@ -296,8 +303,8 @@ describe('PDFThumbnail', () => {
         expect(frame?.style.height).toBe('587px');
       });
     } finally {
-      URL.createObjectURL = originalCreateObjectURL;
-      URL.revokeObjectURL = originalRevokeObjectURL;
+      URL.createObjectURL = originalCreateObjectUrl;
+      URL.revokeObjectURL = originalRevokeObjectUrl;
       vi.stubGlobal('Image', originalImage);
     }
   });

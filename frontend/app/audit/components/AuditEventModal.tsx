@@ -2,11 +2,11 @@
 
 import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
 import type { AuditEvent } from '@/lib/api/audit';
-import React from 'react';
+import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
+import React from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { relativeTime } from '../utils/relativeTime';
-import { tokens } from '@/lib/theme-tokens';
 
 interface AuditEventModalProps {
   event: AuditEvent | null;
@@ -16,11 +16,19 @@ interface AuditEventModalProps {
   rollbackLoading?: boolean;
 }
 
-export function AuditEventModal({ event, isOpen, onClose, onRollback, rollbackLoading }: AuditEventModalProps) {
+export function AuditEventModal({
+  event,
+  isOpen,
+  onClose,
+  onRollback,
+  rollbackLoading,
+}: AuditEventModalProps) {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
 
-  if (!event) return null;
+  if (!event) {
+    return null;
+  }
   const formatted = formatAuditEvent(event);
 
   const rowStyle: React.CSSProperties = {

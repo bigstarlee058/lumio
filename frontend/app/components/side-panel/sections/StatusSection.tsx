@@ -1,11 +1,11 @@
 'use client';
 
+import { tokens } from '@/lib/theme-tokens';
 import { useMemo } from 'react';
 import type { StatusItem, StatusSection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
 import { STATUS_COLOR_MAP } from './helpers/section-constants';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function
 function StatusItemComponent({ item }: { item: StatusItem }) {
@@ -59,7 +59,9 @@ function StatusItemComponent({ item }: { item: StatusItem }) {
         )}
       </div>
       {formattedTime && (
-        <span style={{ fontSize: 12, color: 'var(--muted-foreground)', flexShrink: 0 }}>{formattedTime}</span>
+        <span style={{ fontSize: 12, color: 'var(--muted-foreground)', flexShrink: 0 }}>
+          {formattedTime}
+        </span>
       )}
     </div>
   );

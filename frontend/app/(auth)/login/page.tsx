@@ -3,32 +3,38 @@
 
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { syncLocaleFromUser } from '@/app/lib/locale';
 import { safeInternalPath } from '@/app/lib/safe-path';
+import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line complexity
 function extractInviteTokenFromNext(nextPath: string | null): string | null {
-  if (!nextPath) return null;
+  if (!nextPath) {
+    return null;
+  }
   try {
     const url = new URL(nextPath, 'http://localhost');
     const segments = url.pathname.split('/').filter(Boolean);
-    if (segments[0] !== 'invite') return null;
+    if (segments[0] !== 'invite') {
+      return null;
+    }
     return segments[1] || null;
   } catch {
     const pathOnly = nextPath.split('?')[0]?.split('#')[0] || '';
     const segments = pathOnly.split('/').filter(Boolean);
-    if (segments[0] !== 'invite') return null;
+    if (segments[0] !== 'invite') {
+      return null;
+    }
     return segments[1] || null;
   }
 }

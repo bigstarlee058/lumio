@@ -1,15 +1,24 @@
 // Computation helpers extracted from StoragePageContent
 
-import { Chip, Box } from '@mui/material';
-import React from 'react';
-import { DEFAULT_TRASH_TTL_DAYS, MS_PER_DAY, NO_FOLDER, type FileAvailability, type StorageFile } from '../storageHelpers';
-import { getAvailabilityChipStyle, getStatusChipStyle } from './storageStyling';
-import { getAvailabilityLabel, getAvailabilityTooltip } from './storageFormatters';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, Chip } from '@mui/material';
+import React from 'react';
+import {
+  DEFAULT_TRASH_TTL_DAYS,
+  type FileAvailability,
+  MS_PER_DAY,
+  NO_FOLDER,
+  type StorageFile,
+} from '../storageHelpers';
+import { getAvailabilityLabel, getAvailabilityTooltip } from './storageFormatters';
+import { getAvailabilityChipStyle, getStatusChipStyle } from './storageStyling';
 
 // ─── Folder / Tag counts ──────────────────────────────────────────────────────
 
-export function buildFolderCounts(files: StorageFile[]): { counts: Record<string, number>; noFolder: number } {
+export function buildFolderCounts(files: StorageFile[]): {
+  counts: Record<string, number>;
+  noFolder: number;
+} {
   const counts: Record<string, number> = {};
   let noFolder = 0;
   for (const file of files) {
@@ -38,29 +47,55 @@ interface FilterParams {
   files: StorageFile[];
   isTrashView: boolean;
   searchQuery: string;
-  filters: { status: string; bank: string; categoryId: string; ownership: string; folderId: string };
+  filters: {
+    status: string;
+    bank: string;
+    categoryId: string;
+    ownership: string;
+    folderId: string;
+  };
 }
 
-export function buildFilteredFiles({ files, isTrashView, searchQuery, filters }: FilterParams): StorageFile[] {
+export function buildFilteredFiles({
+  files,
+  isTrashView,
+  searchQuery,
+  filters,
+}: FilterParams): StorageFile[] {
   // eslint-disable-next-line complexity
   return files.filter(file => {
     const isDeleted = !!file.deletedAt;
-    if (isTrashView ? !isDeleted : isDeleted) return false;
+    if (isTrashView ? !isDeleted : isDeleted) {
+      return false;
+    }
     const q = searchQuery.toLowerCase();
     const matchesSearch =
       file.fileName.toLowerCase().includes(q) ||
       (file.bankName || '').toLowerCase().includes(q) ||
       (file.metadata?.accountNumber || '').toLowerCase().includes(q) ||
       (file.category?.name || '').toLowerCase().includes(q) ||
-      (file.tags || []).map(t => t.name.toLowerCase()).join(' ').includes(q);
+      (file.tags || [])
+        .map(t => t.name.toLowerCase())
+        .join(' ')
+        .includes(q);
     const matchesStatus = !filters.status || file.status === filters.status;
     const matchesBank = !filters.bank || file.bankName === filters.bank;
     const matchesCategory = !filters.categoryId || file.categoryId === filters.categoryId;
-    const matchesOwnership = !filters.ownership || (filters.ownership === 'owned' ? file.isOwner : !file.isOwner);
+    const matchesOwnership =
+      !filters.ownership || (filters.ownership === 'owned' ? file.isOwner : !file.isOwner);
     const matchesFolder = filters.folderId
-      ? filters.folderId === NO_FOLDER ? !file.folderId : file.folderId === filters.folderId
+      ? filters.folderId === NO_FOLDER
+        ? !file.folderId
+        : file.folderId === filters.folderId
       : true;
-    return matchesSearch && matchesStatus && matchesBank && matchesCategory && matchesOwnership && matchesFolder;
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesBank &&
+      matchesCategory &&
+      matchesOwnership &&
+      matchesFolder
+    );
   });
 }
 
@@ -73,8 +108,12 @@ interface SortParams {
 export function buildSortedFiles({ filteredFiles, sort, locale }: SortParams): StorageFile[] {
   const multiplier = sort.direction === 'asc' ? 1 : -1;
   return [...filteredFiles].sort((a, b) => {
-    if (sort.field === 'fileName') return a.fileName.localeCompare(b.fileName, locale) * multiplier;
-    if (sort.field === 'bankName') return a.bankName.localeCompare(b.bankName, locale) * multiplier;
+    if (sort.field === 'fileName') {
+      return a.fileName.localeCompare(b.fileName, locale) * multiplier;
+    }
+    if (sort.field === 'bankName') {
+      return a.bankName.localeCompare(b.bankName, locale) * multiplier;
+    }
     return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * multiplier;
   });
 }
@@ -110,7 +149,11 @@ interface FolderModalFilesParams {
   activeFolderId: string | null;
 }
 
-export function buildFolderModalFiles({ files, folderFileQuery, activeFolderId }: FolderModalFilesParams): StorageFile[] {
+export function buildFolderModalFiles({
+  files,
+  folderFileQuery,
+  activeFolderId,
+}: FolderModalFilesParams): StorageFile[] {
   const query = folderFileQuery.trim().toLowerCase();
   // eslint-disable-next-line complexity
   return files.filter(file => {
@@ -120,13 +163,20 @@ export function buildFolderModalFiles({ files, folderFileQuery, activeFolderId }
         : activeFolderId === NO_FOLDER
           ? !file.folderId
           : file.folderId === activeFolderId;
-    if (!matchesFolder) return false;
-    if (!query) return true;
+    if (!matchesFolder) {
+      return false;
+    }
+    if (!query) {
+      return true;
+    }
     return (
       file.fileName.toLowerCase().includes(query) ||
       file.bankName.toLowerCase().includes(query) ||
       (file.folder?.name || '').toLowerCase().includes(query) ||
-      (file.tags || []).map(t => t.name.toLowerCase()).join(' ').includes(query)
+      (file.tags || [])
+        .map(t => t.name.toLowerCase())
+        .join(' ')
+        .includes(query)
     );
   });
 }
@@ -134,15 +184,25 @@ export function buildFolderModalFiles({ files, folderFileQuery, activeFolderId }
 // ─── Render functions ─────────────────────────────────────────────────────────
 
 interface AvailabilityChipLabels {
-  both: string; disk: string; db: string; missing: string;
+  both: string;
+  disk: string;
+  db: string;
+  missing: string;
 }
 
 interface AvailabilityChipTooltips {
-  both: string; disk: string; db: string; missing: string;
+  both: string;
+  disk: string;
+  db: string;
+  missing: string;
 }
 
 interface StatusChipLabels {
-  completed: string; processing: string; error: string; uploaded: string; parsed: string;
+  completed: string;
+  processing: string;
+  error: string;
+  uploaded: string;
+  parsed: string;
 }
 
 interface RenderFunctionParams {
@@ -155,7 +215,12 @@ interface RenderFunctionParams {
     };
     availability: {
       labels: AvailabilityChipLabels;
-      tooltips: { both: { value: string }; disk: { value: string }; db: { value: string }; missing: { value: string } };
+      tooltips: {
+        both: { value: string };
+        disk: { value: string };
+        db: { value: string };
+        missing: { value: string };
+      };
     };
     statusLabels: StatusChipLabels;
   };
@@ -164,17 +229,31 @@ interface RenderFunctionParams {
 }
 
 function resolveLocale(locale: string): string {
-  if (locale === 'kk') return 'kk-KZ';
-  if (locale === 'ru') return 'ru-RU';
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
   return 'en-US';
 }
 
-function buildRenderTrashExpiryBadge({ locale, trashTtlDays, t }: Pick<RenderFunctionParams, 'locale' | 'trashTtlDays' | 't'>): (deletedAt?: string | null) => React.ReactNode {
+function buildRenderTrashExpiryBadge({
+  locale,
+  trashTtlDays,
+  t,
+}: Pick<RenderFunctionParams, 'locale' | 'trashTtlDays' | 't'>): (
+  deletedAt?: string | null,
+) => React.ReactNode {
   // eslint-disable-next-line complexity
   return function renderTrashExpiryBadge(deletedAt?: string | null): React.ReactNode {
-    if (!deletedAt) return null;
+    if (!deletedAt) {
+      return null;
+    }
     const deletedDate = new Date(deletedAt);
-    if (Number.isNaN(deletedDate.getTime())) return null;
+    if (Number.isNaN(deletedDate.getTime())) {
+      return null;
+    }
     const days = trashTtlDays || DEFAULT_TRASH_TTL_DAYS;
     const expiresAt = new Date(deletedDate.getTime() + days * MS_PER_DAY);
     const daysLeft = Math.ceil((expiresAt.getTime() - Date.now()) / MS_PER_DAY);
@@ -191,41 +270,96 @@ function buildRenderTrashExpiryBadge({ locale, trashTtlDays, t }: Pick<RenderFun
       label,
       size: 'small',
       title: expiresAt.toLocaleDateString(resolveLocale(locale)),
-      sx: { borderRadius: tokens.radius.full, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
+      sx: {
+        borderRadius: tokens.radius.full,
+        fontSize: 11,
+        fontWeight: 600,
+        height: 'auto',
+        py: 0.25,
+        ...chipSx,
+      },
     });
   };
 }
 
-function buildRenderAvailabilityChip({ t }: Pick<RenderFunctionParams, 't'>): (availability?: FileAvailability) => React.ReactNode {
+function buildRenderAvailabilityChip({
+  t,
+}: Pick<RenderFunctionParams, 't'>): (availability?: FileAvailability) => React.ReactNode {
   const labels: AvailabilityChipLabels = t.availability.labels;
-  const tooltips: AvailabilityChipTooltips = { both: t.availability.tooltips.both.value, disk: t.availability.tooltips.disk.value, db: t.availability.tooltips.db.value, missing: t.availability.tooltips.missing.value };
+  const tooltips: AvailabilityChipTooltips = {
+    both: t.availability.tooltips.both.value,
+    disk: t.availability.tooltips.disk.value,
+    db: t.availability.tooltips.db.value,
+    missing: t.availability.tooltips.missing.value,
+  };
   return function renderAvailabilityChip(availability?: FileAvailability): React.ReactNode {
-    if (!availability) return null;
+    if (!availability) {
+      return null;
+    }
     const { status } = availability;
     const { dotColor, chipSx } = getAvailabilityChipStyle(status);
     return React.createElement(Chip, {
-      label: React.createElement(Box, { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
-        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: tokens.radius.full, bgcolor: dotColor, flexShrink: 0 } }),
+      label: React.createElement(
+        Box,
+        { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
+        React.createElement(Box, {
+          sx: {
+            width: 8,
+            height: 8,
+            borderRadius: tokens.radius.full,
+            bgcolor: dotColor,
+            flexShrink: 0,
+          },
+        }),
         getAvailabilityLabel(status, labels),
       ),
       size: 'small',
       title: getAvailabilityTooltip(status, tooltips),
-      sx: { borderRadius: tokens.radius.full, fontSize: 11, fontWeight: 600, height: 'auto', py: 0.25, ...chipSx },
+      sx: {
+        borderRadius: tokens.radius.full,
+        fontSize: 11,
+        fontWeight: 600,
+        height: 'auto',
+        py: 0.25,
+        ...chipSx,
+      },
     });
   };
 }
 
-function buildRenderStatusBadge({ boundGetStatusLabel, getStatusTone }: Pick<RenderFunctionParams, 'boundGetStatusLabel' | 'getStatusTone'>): (status: string) => React.ReactNode {
+function buildRenderStatusBadge({
+  boundGetStatusLabel,
+  getStatusTone,
+}: Pick<RenderFunctionParams, 'boundGetStatusLabel' | 'getStatusTone'>): (
+  status: string,
+) => React.ReactNode {
   return function renderStatusBadge(status: string): React.ReactNode {
     const tone = getStatusTone(status);
     const { dotColor, chipSx } = getStatusChipStyle(tone);
     return React.createElement(Chip, {
-      label: React.createElement(Box, { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
-        React.createElement(Box, { sx: { width: 8, height: 8, borderRadius: tokens.radius.full, bgcolor: dotColor, flexShrink: 0 } }),
+      label: React.createElement(
+        Box,
+        { sx: { display: 'inline-flex', alignItems: 'center', gap: 0.5 } },
+        React.createElement(Box, {
+          sx: {
+            width: 8,
+            height: 8,
+            borderRadius: tokens.radius.full,
+            bgcolor: dotColor,
+            flexShrink: 0,
+          },
+        }),
         boundGetStatusLabel(status),
       ),
       size: 'small',
-      sx: { borderRadius: tokens.radius.full, fontSize: 12, fontWeight: 500, height: 'auto', py: 0.5, ...chipSx },
+      sx: {
+        borderRadius: tokens.radius.full,
+        fontSize: 12,
+        fontWeight: 500,
+        height: 'auto',
+        py: 0.5,
+        ...chipSx,
+      },
     });
   };
 }

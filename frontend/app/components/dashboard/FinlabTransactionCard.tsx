@@ -1,11 +1,11 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Info } from '@/app/components/icons';
 import type { DashboardRange } from '@/app/hooks/useDashboard';
 import { gmailReceiptsApi } from '@/app/lib/api';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
-import { Info } from '@/app/components/icons';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { BrandLogoAvatar } from '../BrandLogoAvatar';
 import { PeriodDropdown } from './PeriodDropdown';
@@ -67,7 +67,16 @@ export function FinlabTransactionCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 17 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.75,
+            color: 'var(--foreground)',
+            fontWeight: 700,
+            fontSize: 17,
+          }}
+        >
           Last Transaction
           <Info size={16} color="var(--muted-foreground)" />
         </Box>
@@ -76,11 +85,15 @@ export function FinlabTransactionCard({
 
       {isLoading ? (
         <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading...</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            Loading...
+          </Typography>
         </Box>
       ) : receipts.length === 0 ? (
         <Box sx={{ display: 'flex', height: 200, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No receipts found</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            No receipts found
+          </Typography>
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -98,14 +111,32 @@ export function FinlabTransactionCard({
               receivedAt instanceof Date && !Number.isNaN(receivedAt.valueOf());
 
             return (
-              <Box key={receipt.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Box
+                key={receipt.id}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <BrandLogoAvatar sender={receipt.sender} vendorName={vendorLabel} size={48} />
                   <div>
-                    <Typography sx={{ fontSize: 15, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+                    <Typography
+                      sx={{
+                        fontSize: 15,
+                        fontWeight: 700,
+                        color: 'var(--foreground)',
+                        letterSpacing: '-0.01em',
+                        lineHeight: 1.2,
+                      }}
+                    >
                       {vendorLabel}
                     </Typography>
-                    <Typography sx={{ fontSize: 13, color: 'var(--muted-foreground)', fontWeight: 500, mt: 0.5 }}>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        color: 'var(--muted-foreground)',
+                        fontWeight: 500,
+                        mt: 0.5,
+                      }}
+                    >
                       Gmail receipt
                     </Typography>
                   </div>
@@ -122,7 +153,14 @@ export function FinlabTransactionCard({
                           })
                         : '—'}
                     </Typography>
-                    <Typography sx={{ fontSize: 13, color: 'var(--muted-foreground)', fontWeight: 500, mt: 0.5 }}>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        color: 'var(--muted-foreground)',
+                        fontWeight: 500,
+                        mt: 0.5,
+                      }}
+                    >
                       {hasValidReceivedAt
                         ? receivedAt?.toLocaleTimeString('en-US', {
                             hour: '2-digit',
@@ -133,7 +171,15 @@ export function FinlabTransactionCard({
                   </Box>
 
                   <Box sx={{ width: 96, textAlign: 'right' }}>
-                    <Typography component="span" sx={{ fontSize: 16, fontWeight: 700, color: 'var(--foreground)', display: 'block' }}>
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: 'var(--foreground)',
+                        display: 'block',
+                      }}
+                    >
                       {amount == null ? '—' : formatAmount(amount)}
                     </Typography>
                   </Box>

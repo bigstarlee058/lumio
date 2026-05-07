@@ -1,6 +1,10 @@
 import apiClient from '@/app/lib/api';
+import type {
+  CustomTableGridRow,
+  CustomTableRowPatch,
+  CustomTableRowStyles,
+} from '../utils/stylingUtils';
 import { getCreatedRowResponse } from '../utils/tableHelpers';
-import type { CustomTableGridRow, CustomTableRowPatch, CustomTableRowStyles } from '../utils/stylingUtils';
 
 export function applyRowDataPatch(
   rows: CustomTableGridRow[],
@@ -26,33 +30,51 @@ export function hasPaidColChange(
 }
 
 function extractPayload(data: unknown): unknown {
-  if (!data || typeof data !== 'object') return data;
+  if (!data || typeof data !== 'object') {
+    return data;
+  }
   const d = data as Record<string, unknown>;
-  return d['data'] ?? d['item'] ?? data;
+  return d.data ?? d.item ?? data;
 }
 
-export function parseCreateRowResponse(
-  data: unknown,
-  rowCount: number,
-): CustomTableGridRow | null {
+export function parseCreateRowResponse(data: unknown, rowCount: number): CustomTableGridRow | null {
   const payload = extractPayload(data);
   const raw = Array.isArray(payload) ? payload[0] : payload;
   const created = getCreatedRowResponse(raw);
-  if (!created) return null;
+  if (!created) {
+    return null;
+  }
   created.rowNumber = created.rowNumber || rowCount + 1;
   return created;
 }
 
-export async function createRowRequest(tableId: string, rowCount: number): Promise<CustomTableGridRow> {
+export async function createRowRequest(
+  tableId: string,
+  rowCount: number,
+): Promise<CustomTableGridRow> {
   const response = await apiClient.post(`/custom-tables/${tableId}/rows`, { data: {} });
   const created = parseCreateRowResponse(response.data, rowCount);
-  if (!created) throw new Error('Invalid create row response');
+  if (!created) {
+    throw new Error('Invalid create row response');
+  }
   return created;
 }
 
-export interface UpdateCellRequestParams { tableId: string; rowId: string; columnKey: string; value: unknown; }
-export async function updateCellRequest({ tableId, rowId, columnKey, value }: UpdateCellRequestParams): Promise<void> {
-  await apiClient.patch(`/custom-tables/${tableId}/rows/${rowId}`, { data: { [columnKey]: value } });
+export interface UpdateCellRequestParams {
+  tableId: string;
+  rowId: string;
+  columnKey: string;
+  value: unknown;
+}
+export async function updateCellRequest({
+  tableId,
+  rowId,
+  columnKey,
+  value,
+}: UpdateCellRequestParams): Promise<void> {
+  await apiClient.patch(`/custom-tables/${tableId}/rows/${rowId}`, {
+    data: { [columnKey]: value },
+  });
 }
 
 export async function updateRowPatchRequest(

@@ -1,13 +1,12 @@
 'use client';
 
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 interface ServiceIntegrationSuggestionsProps {
   onSkip: () => void;
@@ -82,7 +81,11 @@ export function ServiceIntegrationSuggestions({
                 />
               </Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)', mb: 0.5 }}>
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  sx={{ color: 'var(--foreground)', mb: 0.5 }}
+                >
                   {integration.name}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', mb: 1.5 }}>
@@ -103,11 +106,7 @@ export function ServiceIntegrationSuggestions({
       </Stack>
 
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
-        <Button
-          variant="text"
-          onClick={onSkip}
-          sx={{ color: 'var(--muted-foreground)' }}
-        >
+        <Button variant="text" onClick={onSkip} sx={{ color: 'var(--muted-foreground)' }}>
           Skip for now
         </Button>
       </Box>

@@ -4,8 +4,8 @@ import {
   deriveVisibleFilterScreens,
   isReceiptDerivedStatement,
   paginateStatements,
-  resolveStatementViewAction,
   reconcileFiltersWithColumns,
+  resolveStatementViewAction,
 } from './StatementsListView.utils';
 import { DEFAULT_STATEMENT_FILTERS } from './filters/statement-filters';
 

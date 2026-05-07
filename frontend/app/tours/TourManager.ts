@@ -4,13 +4,7 @@
 
 import { type DriveStep, type Driver, driver } from 'driver.js';
 import {
-  type TourConfig,
-  type TourDriverConfig,
-  type TourProgress,
-  type TourState,
-  type TourStep,
-} from './types';
-import {
+  TOUR_STORAGE_KEY,
   buildDriverConfig,
   createDismissListeners,
   getAnalyticsTracker,
@@ -19,11 +13,17 @@ import {
   markTourCompleted,
   saveTourStartProgress,
   saveTourState,
-  TOUR_STORAGE_KEY,
   updateTourProgress,
 } from './TourManagerHelpers';
 import { cleanupStableTourPopoverPositioning } from './TourPopoverPositioning';
-import { buildDriveStep, type StepContext } from './TourStepBuilder';
+import { type StepContext, buildDriveStep } from './TourStepBuilder';
+import {
+  type TourConfig,
+  type TourDriverConfig,
+  type TourProgress,
+  type TourState,
+  type TourStep,
+} from './types';
 
 export class TourManager {
   private driverInstance!: Driver;
@@ -48,8 +48,12 @@ export class TourManager {
     }
     const config = buildDriverConfig(
       overrides,
-      () => { this.lastStepIndex = this.driverInstance.getActiveIndex() ?? -1; },
-      () => { this.handleTourDestroyed(); },
+      () => {
+        this.lastStepIndex = this.driverInstance.getActiveIndex() ?? -1;
+      },
+      () => {
+        this.handleTourDestroyed();
+      },
     );
     this.driverInstance = driver(config);
   }
@@ -72,7 +76,9 @@ export class TourManager {
 
   resumeTour(): boolean {
     const state = this.loadState();
-    if (!state?.currentProgress || state.currentProgress.completed) return false;
+    if (!state?.currentProgress || state.currentProgress.completed) {
+      return false;
+    }
     const { tourId, currentStep } = state.currentProgress;
     void this.startTour(tourId, currentStep);
     this.trackEvent('tour_resumed', { tourId });
@@ -101,9 +107,15 @@ export class TourManager {
     this.actualStepsCount = 0;
   }
 
-  nextStep(): void { this.driverInstance.moveNext(); }
-  previousStep(): void { this.driverInstance.movePrevious(); }
-  isActive(): boolean { return this.driverInstance.isActive(); }
+  nextStep(): void {
+    this.driverInstance.moveNext();
+  }
+  previousStep(): void {
+    this.driverInstance.movePrevious();
+  }
+  isActive(): boolean {
+    return this.driverInstance.isActive();
+  }
 
   getActiveStepIndex(): number | null {
     const index = this.driverInstance.getActiveIndex();
@@ -117,9 +129,13 @@ export class TourManager {
 
   resetTour(tourId: string): void {
     const state = this.loadState();
-    if (!state) return;
+    if (!state) {
+      return;
+    }
     state.completedTours = state.completedTours.filter(id => id !== tourId);
-    if (state.currentProgress?.tourId === tourId) state.currentProgress = undefined;
+    if (state.currentProgress?.tourId === tourId) {
+      state.currentProgress = undefined;
+    }
     this.saveState(state);
   }
 
@@ -182,13 +198,21 @@ export class TourManager {
     this.isDestroying = false;
     this.lastStepIndex = -1;
     this.currentTour = tour;
-    if (driverConfig) this.resetDriver(driverConfig);
+    if (driverConfig) {
+      this.resetDriver(driverConfig);
+    }
     return tour;
   }
 
-  async startTour(tourId: string, startFromStep = 0, driverConfig?: TourDriverConfig): Promise<void> {
+  async startTour(
+    tourId: string,
+    startFromStep = 0,
+    driverConfig?: TourDriverConfig,
+  ): Promise<void> {
     const tour = this.prepareForTour(tourId, driverConfig);
-    if (!tour) return;
+    if (!tour) {
+      return;
+    }
 
     const driveSteps = this.convertToDriverSteps(tour.steps);
     if (driveSteps.length === 0) {
@@ -208,20 +232,28 @@ export class TourManager {
 
   private getProgressIndex(tourId: string): number | undefined {
     const state = this.loadState();
-    if (state?.currentProgress?.tourId !== tourId) return undefined;
+    if (state?.currentProgress?.tourId !== tourId) {
+      return undefined;
+    }
     return state.currentProgress.currentStep;
   }
 
   private isTourFinished(tourId: string): boolean {
-    if (this.actualStepsCount <= 0) return false;
+    if (this.actualStepsCount <= 0) {
+      return false;
+    }
     const lastStep = this.actualStepsCount - 1;
-    if (this.lastStepIndex >= lastStep) return true;
+    if (this.lastStepIndex >= lastStep) {
+      return true;
+    }
     const progressIndex = this.getProgressIndex(tourId);
     return typeof progressIndex === 'number' && progressIndex >= lastStep;
   }
 
   private handleTourDestroyed(): void {
-    if (!this.currentTour || this.isDestroying) return;
+    if (!this.currentTour || this.isDestroying) {
+      return;
+    }
     this.isDestroying = true;
     const tourId = this.currentTour.id;
     this.detachDismissListeners();
@@ -237,7 +269,9 @@ export class TourManager {
   }
 
   private attachDismissListeners(): void {
-    if (this.dismissOnClick || this.dismissOnVisibilityChange) return;
+    if (this.dismissOnClick || this.dismissOnVisibilityChange) {
+      return;
+    }
     const listeners = createDismissListeners(
       () => this.driverInstance.isActive(),
       () => this.stopTour(),
@@ -259,16 +293,28 @@ export class TourManager {
     }
   }
 
-  private markTourCompleted(tourId: string): void { markTourCompleted(tourId); }
-
-  private updateProgress(stepIndex: number): void {
-    if (this.currentTour) updateTourProgress(this.currentTour.id, stepIndex);
+  private markTourCompleted(tourId: string): void {
+    markTourCompleted(tourId);
   }
 
-  private saveProgress(progress: TourProgress): void { saveTourStartProgress(progress); }
-  private loadState(): TourState | null { return loadTourState(); }
-  private saveState(state: TourState): void { saveTourState(state); }
-  private getDefaultState(): TourState { return getDefaultTourState(); }
+  private updateProgress(stepIndex: number): void {
+    if (this.currentTour) {
+      updateTourProgress(this.currentTour.id, stepIndex);
+    }
+  }
+
+  private saveProgress(progress: TourProgress): void {
+    saveTourStartProgress(progress);
+  }
+  private loadState(): TourState | null {
+    return loadTourState();
+  }
+  private saveState(state: TourState): void {
+    saveTourState(state);
+  }
+  private getDefaultState(): TourState {
+    return getDefaultTourState();
+  }
 
   private trackEvent(event: string, data: Partial<{ tourId: string; stepIndex?: number }>): void {
     const analytics = getAnalyticsTracker();

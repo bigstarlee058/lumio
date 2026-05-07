@@ -15,7 +15,9 @@ import type {
 // ---------------------------------------------------------------------------
 
 export const parseNumber = (value?: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : null;
 };
@@ -23,7 +25,9 @@ export const parseNumber = (value?: number | string | null): number | null => {
 export const isGmailReceipt = (s: StatementFilterItem): boolean => s.source === 'gmail';
 
 export const isStoreReceipt = (s: StatementFilterItem): boolean => {
-  if (s.source !== 'scan') return false;
+  if (s.source !== 'scan') {
+    return false;
+  }
   return s.receiptSource !== 'gmail';
 };
 
@@ -38,14 +42,20 @@ const resolveReceiptDateValue = (s: StatementFilterItem): string =>
   s.parsedData?.date || s.receivedAt || s.createdAt || '';
 
 export const resolveStatementDateValue = (s: StatementFilterItem): string => {
-  if (s.source === 'gmail' || s.source === 'scan') return resolveReceiptDateValue(s);
+  if (s.source === 'gmail' || s.source === 'scan') {
+    return resolveReceiptDateValue(s);
+  }
   return s.statementDateTo || s.statementDateFrom || s.createdAt || '';
 };
 
 export const toDateOnly = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return null;
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
   const day = `${date.getDate()}`.padStart(2, '0');
@@ -63,14 +73,13 @@ export const resolveStatementCurrency = (s: StatementFilterItem): string =>
   (s.currency || getMetadataCurrency(s) || '').toString();
 
 export const compareGroupValues = (a: unknown, b: unknown): number => {
-  if (typeof a === 'number' && typeof b === 'number') return a - b;
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a - b;
+  }
   return String(a).localeCompare(String(b));
 };
 
-export const resolveGroupSortValue = (
-  s: StatementFilterItem,
-  groupBy: string,
-): number | string => {
+export const resolveGroupSortValue = (s: StatementFilterItem, groupBy: string): number | string => {
   const groupMap: Record<string, () => number | string> = {
     date: () => toDateOnly(resolveStatementDateValue(s))?.getTime() ?? 0,
     status: () => (s.status || '').toLowerCase(),
@@ -88,10 +97,18 @@ export const resolveGroupSortValue = (
 
 export const matchesKeywords = (s: StatementFilterItem, rawQuery: string): boolean => {
   const query = rawQuery.trim().toLowerCase();
-  if (!query) return true;
+  if (!query) {
+    return true;
+  }
   const candidates = [
-    s.fileName, s.subject, s.sender, s.parsedData?.vendor,
-    s.bankName, s.status, s.user?.name, s.user?.email,
+    s.fileName,
+    s.subject,
+    s.sender,
+    s.parsedData?.vendor,
+    s.bankName,
+    s.status,
+    s.user?.name,
+    s.user?.email,
   ]
     .filter(Boolean)
     .map(v => v?.toString().toLowerCase() || '');
@@ -99,7 +116,9 @@ export const matchesKeywords = (s: StatementFilterItem, rawQuery: string): boole
 };
 
 export const matchesToken = (token: string, s: StatementFilterItem): boolean => {
-  if (token.startsWith('user:')) return s.user?.id === token.replace('user:', '');
+  if (token.startsWith('user:')) {
+    return s.user?.id === token.replace('user:', '');
+  }
   if (token.startsWith('bank:')) {
     return (s.bankName || '').toLowerCase() === token.replace('bank:', '').toLowerCase();
   }
@@ -120,7 +139,7 @@ const hasCurrencyField = (s: StatementFilterItem): boolean =>
 const HAS_CHECKERS: Record<string, (s: StatementFilterItem) => boolean> = {
   errors: hasErrors,
   processingDetails: hasProcessingDetails,
-  transactions: (s) => (s.totalTransactions || 0) > 0,
+  transactions: s => (s.totalTransactions || 0) > 0,
   dateRange: hasDateRange,
   currency: hasCurrencyField,
 };
@@ -161,7 +180,11 @@ const matchesOnMode = (d: Date, filterDate: Date, filterDateTo: Date | null): bo
   return d.getTime() === filterDate.getTime();
 };
 
-type ModeFilterParams = { mode: StatementFilterDateMode; filterDate: Date; filterDateTo: Date | null };
+type ModeFilterParams = {
+  mode: StatementFilterDateMode;
+  filterDate: Date;
+  filterDateTo: Date | null;
+};
 
 export const applyModeFilter = <T extends StatementFilterItem>(
   result: T[],
@@ -169,9 +192,15 @@ export const applyModeFilter = <T extends StatementFilterItem>(
 ): T[] =>
   result.filter(s => {
     const d = toDateOnly(resolveStatementDateValue(s));
-    if (!d) return false;
-    if (params.mode === 'on') return matchesOnMode(d, params.filterDate, params.filterDateTo);
-    if (params.mode === 'after') return d.getTime() > params.filterDate.getTime();
+    if (!d) {
+      return false;
+    }
+    if (params.mode === 'on') {
+      return matchesOnMode(d, params.filterDate, params.filterDateTo);
+    }
+    if (params.mode === 'after') {
+      return d.getTime() > params.filterDate.getTime();
+    }
     const beforeDate = params.filterDateTo || params.filterDate;
     return d.getTime() < beforeDate.getTime();
   });
@@ -190,7 +219,9 @@ export const applyDateFilter = <T extends StatementFilterItem>(
   }
   if (dateFilter.mode && dateFilter.date) {
     const filterDate = toDateOnly(dateFilter.date);
-    if (!filterDate) return result;
+    if (!filterDate) {
+      return result;
+    }
     const filterDateTo = toDateOnly(dateFilter.dateTo ?? null);
     return applyModeFilter(result, { mode: dateFilter.mode, filterDate, filterDateTo });
   }
@@ -210,14 +241,23 @@ export const applyApprovedFilter = <T extends StatementFilterItem>(
 ): T[] =>
   result.filter(s => {
     const status = (s.status || '').toLowerCase();
-    if (!status) return false;
+    if (!status) {
+      return false;
+    }
     return approved ? APPROVED_STATUSES.has(status) : NOT_APPROVED_STATUSES.has(status);
   });
 
-export const applyTypeFilter = <T extends StatementFilterItem>(result: T[], typeValue: string): T[] =>
+export const applyTypeFilter = <T extends StatementFilterItem>(
+  result: T[],
+  typeValue: string,
+): T[] =>
   result.filter(s => {
-    if (typeValue === 'gmail') return isGmailReceipt(s);
-    if (typeValue === 'receipt') return isStoreReceipt(s);
+    if (typeValue === 'gmail') {
+      return isGmailReceipt(s);
+    }
+    if (typeValue === 'receipt') {
+      return isStoreReceipt(s);
+    }
     return (s.fileType || '').toLowerCase() === typeValue;
   });
 
@@ -226,8 +266,12 @@ export const applyTokenFilters = <T extends StatementFilterItem>(
   filters: StatementFilters,
 ): T[] => {
   let out = result;
-  if (filters.from.length > 0) out = out.filter(s => filters.from.some(t => matchesToken(t, s)));
-  if (filters.to.length > 0) out = out.filter(s => filters.to.some(t => matchesToken(t, s)));
+  if (filters.from.length > 0) {
+    out = out.filter(s => filters.from.some(t => matchesToken(t, s)));
+  }
+  if (filters.to.length > 0) {
+    out = out.filter(s => filters.to.some(t => matchesToken(t, s)));
+  }
   if (filters.currencies.length > 0) {
     const normalized = filters.currencies.map(v => v.toLowerCase());
     out = out.filter(s => normalized.includes(resolveStatementCurrency(s).toLowerCase()));
@@ -285,12 +329,18 @@ export const applyTextAndAmountFilters = <T extends StatementFilterItem>(
   if (filters.has.length > 0) {
     out = out.filter(s => filters.has.every(t => matchesHasToken(t, s)));
   }
-  if (filters.keywords.trim()) out = out.filter(s => matchesKeywords(s, filters.keywords));
+  if (filters.keywords.trim()) {
+    out = out.filter(s => matchesKeywords(s, filters.keywords));
+  }
   if (filters.amountMin !== null || filters.amountMax !== null) {
     out = out.filter(s => {
       const amount = resolveStatementAmount(s);
-      if (filters.amountMin !== null && amount < filters.amountMin) return false;
-      if (filters.amountMax !== null && amount > filters.amountMax) return false;
+      if (filters.amountMin !== null && amount < filters.amountMin) {
+        return false;
+      }
+      if (filters.amountMax !== null && amount > filters.amountMax) {
+        return false;
+      }
       return true;
     });
   }

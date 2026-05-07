@@ -62,8 +62,8 @@ vi.mock('next/navigation', () => ({
 describe('ReceiptDocumentPage', () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
-  let originalCreateObjectURL: typeof URL.createObjectURL;
-  let originalRevokeObjectURL: typeof URL.revokeObjectURL;
+  let originalCreateObjectUrl: typeof URL.createObjectURL;
+  let originalRevokeObjectUrl: typeof URL.revokeObjectURL;
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -72,8 +72,8 @@ describe('ReceiptDocumentPage', () => {
     document.body.appendChild(container);
     root = createRoot(container);
 
-    originalCreateObjectURL = URL.createObjectURL;
-    originalRevokeObjectURL = URL.revokeObjectURL;
+    originalCreateObjectUrl = URL.createObjectURL;
+    originalRevokeObjectUrl = URL.revokeObjectURL;
 
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
@@ -103,12 +103,12 @@ describe('ReceiptDocumentPage', () => {
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
       writable: true,
-      value: originalCreateObjectURL,
+      value: originalCreateObjectUrl,
     });
     Object.defineProperty(URL, 'revokeObjectURL', {
       configurable: true,
       writable: true,
-      value: originalRevokeObjectURL,
+      value: originalRevokeObjectUrl,
     });
     vi.unstubAllGlobals();
   });
@@ -186,8 +186,9 @@ describe('ReceiptDocumentPage', () => {
       element.className.includes('grid gap-3 text-sm text-slate-600'),
     );
 
-    const columnsLayout = Array.from(container.querySelectorAll('div')).find(element =>
-      element.className.includes('items-stretch') && element.className.includes('xl:grid-cols-'),
+    const columnsLayout = Array.from(container.querySelectorAll('div')).find(
+      element =>
+        element.className.includes('items-stretch') && element.className.includes('xl:grid-cols-'),
     );
 
     expect(pageLayout).toBeFalsy();
@@ -245,19 +246,22 @@ describe('ReceiptDocumentPage', () => {
       await Promise.resolve();
     });
 
-    const previewShell = Array.from(container.querySelectorAll('div')).find(element =>
-      element.className.includes('min-h-[420px]') && element.className.includes('rounded-3xl'),
+    const previewShell = Array.from(container.querySelectorAll('div')).find(
+      element =>
+        element.className.includes('min-h-[420px]') && element.className.includes('rounded-3xl'),
     );
-    const previewCanvas = Array.from(container.querySelectorAll('div')).find(element =>
-      element.className.includes('overflow-auto') && element.className.includes('p-4'),
+    const previewCanvas = Array.from(container.querySelectorAll('div')).find(
+      element => element.className.includes('overflow-auto') && element.className.includes('p-4'),
     );
-    const parsedFieldsShell = Array.from(container.querySelectorAll('section')).find(element =>
-      element.className.includes('p-6') && element.textContent?.includes('Parsed fields'),
+    const parsedFieldsShell = Array.from(container.querySelectorAll('section')).find(
+      element =>
+        element.className.includes('p-6') && element.textContent?.includes('Parsed fields'),
     );
-    const headerSection = Array.from(container.querySelectorAll('div')).find(element =>
-      element.className.includes('border-b') &&
-      element.className.includes('pb-6') &&
-      element.textContent?.includes('Back to statements'),
+    const headerSection = Array.from(container.querySelectorAll('div')).find(
+      element =>
+        element.className.includes('border-b') &&
+        element.className.includes('pb-6') &&
+        element.textContent?.includes('Back to statements'),
     );
 
     expect(headerSection?.className).toContain('dark:border-slate-700/60');
@@ -434,12 +438,7 @@ describe('ReceiptDocumentPage', () => {
       await Promise.resolve();
     });
 
-    const actionLabels = [
-      'Back to statements',
-      'Download',
-      'Export to table',
-      'Approve receipt',
-    ];
+    const actionLabels = ['Back to statements', 'Download', 'Export to table', 'Approve receipt'];
 
     for (const label of actionLabels) {
       const actionButton = Array.from(container.querySelectorAll('button')).find(button =>
@@ -504,7 +503,9 @@ describe('ReceiptDocumentPage', () => {
       await Promise.resolve();
     });
 
-    const previewImage = container.querySelector('img[alt="Large receipt preview"]') as HTMLImageElement;
+    const previewImage = container.querySelector(
+      'img[alt="Large receipt preview"]',
+    ) as HTMLImageElement;
 
     expect(previewImage).toBeTruthy();
     expect(previewImage.className).toContain('h-auto');
@@ -587,7 +588,9 @@ describe('ReceiptDocumentPage', () => {
       await Promise.resolve();
     });
 
-    const updatedCurrencyTrigger = container.querySelector('[aria-label="Currency"]') as HTMLElement;
+    const updatedCurrencyTrigger = container.querySelector(
+      '[aria-label="Currency"]',
+    ) as HTMLElement;
 
     expect(updatedCurrencyTrigger.textContent).toContain('USD');
     expect(apiMocks.mockApiPatch).toHaveBeenCalledWith('/receipts/receipt-1', {
@@ -769,8 +772,8 @@ describe('ReceiptDocumentPage', () => {
     );
     expect(apiMocks.mockApiPost).not.toHaveBeenCalled();
 
-    const confirmExportButton = Array.from(document.body.querySelectorAll('button')).find(button =>
-      button.textContent?.trim() === 'Export',
+    const confirmExportButton = Array.from(document.body.querySelectorAll('button')).find(
+      button => button.textContent?.trim() === 'Export',
     );
 
     expect(confirmExportButton).toBeTruthy();

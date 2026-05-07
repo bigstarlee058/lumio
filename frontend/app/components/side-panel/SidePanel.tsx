@@ -1,6 +1,5 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import {
   AlertCircle,
   ChevronLeft,
@@ -9,12 +8,13 @@ import {
   PanelLeftOpen,
   RefreshCw,
 } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
+import { tokens } from '@/lib/theme-tokens';
 import React, { isValidElement, useCallback, useMemo, useState } from 'react';
 import { useSidePanel } from './SidePanelContext';
 import { SectionRenderer } from './sections';
 import type { ActionItem, SidePanelProps } from './types';
 import { getWidthValue } from './types';
-import { tokens } from '@/lib/theme-tokens';
 
 // ============================================================================
 // Helper Components
@@ -140,12 +140,26 @@ export function SidePanel({
     >
       {/* Collapsed state - just show toggle button */}
       {isCollapsed ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: '16px 0',
+          }}
+        >
           {showCollapseToggle && (
             <button
               type="button"
               onClick={handleToggleCollapsed}
-              style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md }}
+              style={{
+                padding: 8,
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                color: 'var(--muted-foreground)',
+                borderRadius: tokens.radius.md,
+              }}
               aria-label="Expand panel"
             >
               {position === 'left' ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
@@ -155,24 +169,56 @@ export function SidePanel({
       ) : (
         <>
           {topContent ? (
-            <div style={{ flexShrink: 0, borderBottom: '1px solid var(--border-color)', padding: '12px 16px' }}>
+            <div
+              style={{
+                flexShrink: 0,
+                borderBottom: '1px solid var(--border-color)',
+                padding: '12px 16px',
+              }}
+            >
               {topContent}
             </div>
           ) : null}
 
           {/* Header */}
           {(config?.header || showCollapseToggle) && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 8px', flexShrink: 0 }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '20px 24px 8px',
+                flexShrink: 0,
+              }}
+            >
               {config?.header && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0, flex: 1 }}
+                >
                   {config.header.icon && (
-                    <div style={{ padding: 8, backgroundColor: 'rgba(var(--primary-rgb),0.1)', flexShrink: 0 }}>
+                    <div
+                      style={{
+                        padding: 8,
+                        backgroundColor: 'rgba(var(--primary-rgb),0.1)',
+                        flexShrink: 0,
+                      }}
+                    >
                       <RenderIcon icon={config.header.icon} size={18} />
                     </div>
                   )}
                   <div style={{ minWidth: 0 }}>
                     {config.header.title && (
-                      <h2 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>
+                      <h2
+                        style={{
+                          fontSize: 18,
+                          fontWeight: 500,
+                          color: 'var(--foreground)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          margin: 0,
+                        }}
+                      >
                         {config.header.title}
                       </h2>
                     )}
@@ -189,7 +235,15 @@ export function SidePanel({
                     onClick={action.onClick}
                     disabled={action.disabled || action.loading}
                     title={action.tooltip || action.label}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md, opacity: (action.disabled || action.loading) ? 0.5 : 1 }}
+                    style={{
+                      padding: 8,
+                      border: 'none',
+                      background: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--muted-foreground)',
+                      borderRadius: tokens.radius.md,
+                      opacity: action.disabled || action.loading ? 0.5 : 1,
+                    }}
                   >
                     {action.loading ? (
                       <Spinner size={16} />
@@ -204,7 +258,14 @@ export function SidePanel({
                   <button
                     type="button"
                     onClick={handleToggleCollapsed}
-                    style={{ padding: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--muted-foreground)', borderRadius: tokens.radius.md }}
+                    style={{
+                      padding: 8,
+                      border: 'none',
+                      background: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--muted-foreground)',
+                      borderRadius: tokens.radius.md,
+                    }}
                     aria-label="Collapse panel"
                   >
                     {position === 'left' ? (
@@ -221,22 +282,71 @@ export function SidePanel({
           {/* Content */}
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none' }}>
             {loading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 0' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '48px 0',
+                }}
+              >
                 <Spinner size={32} />
-                <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>Loading...</p>
+                <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>
+                  Loading...
+                </p>
               </div>
             ) : error ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '48px 16px',
+                }}
+              >
                 <AlertCircle size={40} style={{ color: 'var(--destructive)', marginBottom: 12 }} />
-                <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', textAlign: 'center', margin: '0 0 4px' }}>
+                <p
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: 'var(--foreground)',
+                    textAlign: 'center',
+                    margin: '0 0 4px',
+                  }}
+                >
                   Error loading content
                 </p>
-                <p style={{ fontSize: 12, color: 'var(--muted-foreground)', textAlign: 'center', margin: '0 0 16px' }}>{error}</p>
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: 'var(--muted-foreground)',
+                    textAlign: 'center',
+                    margin: '0 0 16px',
+                  }}
+                >
+                  {error}
+                </p>
                 {onRetry && (
                   <button
                     type="button"
                     onClick={onRetry}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--primary)', backgroundColor: 'rgba(var(--primary-rgb),0.1)', border: 'none', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '6px 12px',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: 'var(--primary)',
+                      backgroundColor: 'rgba(var(--primary-rgb),0.1)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: tokens.radius.md,
+                    }}
                   >
                     <RefreshCw size={14} />
                     Retry
@@ -244,8 +354,24 @@ export function SidePanel({
                 )}
               </div>
             ) : filteredSections.length === 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '48px 16px' }}>
-                <p style={{ fontSize: 14, color: 'var(--muted-foreground)', textAlign: 'center', margin: 0 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  padding: '48px 16px',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: 'var(--muted-foreground)',
+                    textAlign: 'center',
+                    margin: 0,
+                  }}
+                >
                   No content available
                 </p>
               </div>
@@ -280,7 +406,7 @@ export function SidePanel({
                         border: 'none',
                         cursor: 'pointer',
                         borderRadius: tokens.radius.md,
-                        opacity: (action.disabled || action.loading) ? 0.5 : 1,
+                        opacity: action.disabled || action.loading ? 0.5 : 1,
                         ...(action.variant === 'primary'
                           ? { backgroundColor: 'var(--primary)', color: 'white' }
                           : { backgroundColor: 'var(--muted)', color: 'var(--foreground)' }),

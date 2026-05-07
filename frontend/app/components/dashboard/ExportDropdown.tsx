@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import apiClient from '@/app/lib/api';
-import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { Download, FileSpreadsheet, FileText, FileType2 } from '@/app/components/icons';
+import apiClient from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
+import { Button, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import React from 'react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -39,9 +40,15 @@ const EXPORT_ITEMS: Array<{
 ];
 
 // eslint-disable-next-line max-params
-const resolveText = (token: Token | undefined, fallback: string): string => token?.value || fallback;
+const resolveText = (token: Token | undefined, fallback: string): string =>
+  token?.value || fallback;
 
-const EXPORT_EXTENSIONS: Record<ExportFormat, string> = { excel: 'xlsx', pdf: 'pdf', csv: 'csv', docx: 'docx' };
+const EXPORT_EXTENSIONS: Record<ExportFormat, string> = {
+  excel: 'xlsx',
+  pdf: 'pdf',
+  csv: 'csv',
+  docx: 'docx',
+};
 
 // eslint-disable-next-line max-params
 const resolveDownloadFileName = (format: ExportFormat, contentDisposition?: string): string => {
@@ -73,7 +80,11 @@ function triggerDownload(blob: Blob, fileName: string): void {
 async function runExport(format: ExportFormat, t: ExportDropdownProps['t']): Promise<void> {
   const toastId = toast.loading(resolveText(t?.downloading, 'Downloading...'));
   try {
-    const response = await apiClient.post('/reports/workspace-export', { format }, { responseType: 'blob' });
+    const response = await apiClient.post(
+      '/reports/workspace-export',
+      { format },
+      { responseType: 'blob' },
+    );
     const fileName = resolveDownloadFileName(format, response.headers?.['content-disposition']);
     triggerDownload(new Blob([response.data]), fileName);
     toast.success(resolveText(t?.success, 'File downloaded successfully'), { id: toastId });
@@ -83,15 +94,27 @@ async function runExport(format: ExportFormat, t: ExportDropdownProps['t']): Pro
   }
 }
 
-function ExportMenuItems({ t, onExport }: { t: ExportDropdownProps['t']; onExport: (fmt: ExportFormat) => void }): React.JSX.Element {
+function ExportMenuItems({
+  t,
+  onExport,
+}: { t: ExportDropdownProps['t']; onExport: (fmt: ExportFormat) => void }): React.JSX.Element {
   return (
     <>
       {EXPORT_ITEMS.map(item => {
         const Icon = item.icon;
-        const label = resolveText(t?.[item.labelKey] as Token | undefined, ITEM_FALLBACKS[item.key]);
+        const label = resolveText(
+          t?.[item.labelKey] as Token | undefined,
+          ITEM_FALLBACKS[item.key],
+        );
         return (
-          <MenuItem key={item.key} data-testid={`dropdown-item-${item.key}`} onClick={() => onExport(item.key)}>
-            <ListItemIcon><Icon size={16} /></ListItemIcon>
+          <MenuItem
+            key={item.key}
+            data-testid={`dropdown-item-${item.key}`}
+            onClick={() => onExport(item.key)}
+          >
+            <ListItemIcon>
+              <Icon size={16} />
+            </ListItemIcon>
             <ListItemText>{label}</ListItemText>
           </MenuItem>
         );
@@ -114,10 +137,39 @@ export function ExportDropdown({ t }: ExportDropdownProps): React.JSX.Element {
 
   return (
     <>
-      <Button variant="outlined" disabled={isLoading} onClick={event => setAnchorEl(event.currentTarget)} startIcon={<Download size={14} style={{ opacity: isLoading ? 0.6 : 1 }} />} sx={{ fontFamily: 'var(--font-dashboard-mono)', fontSize: 13, fontWeight: 500, px: 2.5, py: 1.25, borderColor: 'var(--border-color)', color: 'var(--foreground)', '&:hover': { backgroundColor: 'var(--muted)' }, '&.Mui-disabled': { opacity: 0.6 } }}>
-        {isLoading ? resolveText(t?.downloading, 'Downloading...') : resolveText(t?.button, 'Export')}
+      <Button
+        variant="outlined"
+        disabled={isLoading}
+        onClick={event => setAnchorEl(event.currentTarget)}
+        startIcon={<Download size={18} style={{ opacity: isLoading ? 0.6 : 1 }} />}
+        sx={{
+          height: 48,
+          fontFamily: 'var(--font-dashboard-mono)',
+          fontSize: 14,
+          fontWeight: 600,
+          lineHeight: 1,
+          px: 2.5,
+          py: 0,
+          borderColor: 'var(--border-color)',
+          borderRadius: tokens.radius.md,
+          color: 'var(--foreground)',
+          textTransform: 'none',
+          '&:hover': { backgroundColor: 'var(--muted)' },
+          '&.Mui-disabled': { opacity: 0.6 },
+        }}
+      >
+        {isLoading
+          ? resolveText(t?.downloading, 'Downloading...')
+          : resolveText(t?.button, 'Export')}
       </Button>
-      <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)} aria-label={resolveText(t?.title, 'Export data')} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }} transformOrigin={{ vertical: 'top', horizontal: 'left' }}>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => setAnchorEl(null)}
+        aria-label={resolveText(t?.title, 'Export data')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
         <ExportMenuItems t={t} onExport={handleExport} />
       </Menu>
     </>

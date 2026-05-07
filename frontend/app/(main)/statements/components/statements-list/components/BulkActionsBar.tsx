@@ -1,8 +1,16 @@
 /* eslint-disable max-lines */
 'use client';
 
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Download,
+  GitMerge,
+  Trash2,
+  X,
+} from '@/app/components/icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight, Copy, Download, GitMerge, Trash2, X } from '@/app/components/icons';
 
 interface DuplicateActionsProps {
   mergeDuplicatesLabel: string;
@@ -11,7 +19,10 @@ interface DuplicateActionsProps {
   onDismissDuplicates: () => void;
 }
 
-function MergeButton({ label, onClick }: { label: string; onClick: () => void }): React.JSX.Element {
+function MergeButton({
+  label,
+  onClick,
+}: { label: string; onClick: () => void }): React.JSX.Element {
   return (
     <button type="button" onClick={onClick} className="lumio-stmt-list-view__bulk-menu-btn">
       <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -25,7 +36,10 @@ function MergeButton({ label, onClick }: { label: string; onClick: () => void })
   );
 }
 
-function DismissButton({ label, onClick }: { label: string; onClick: () => void }): React.JSX.Element {
+function DismissButton({
+  label,
+  onClick,
+}: { label: string; onClick: () => void }): React.JSX.Element {
   return (
     <button type="button" onClick={onClick} className="lumio-stmt-list-view__bulk-menu-btn">
       <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -77,9 +91,7 @@ function StandardActions({
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Copy size={16} style={{ color: 'var(--primary)' }} />
-          <span
-            style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--primary)' }}
-          >
+          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--primary)' }}>
             {markDuplicateLabel}
           </span>
         </span>
@@ -92,7 +104,9 @@ function StandardActions({
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Download size={16} style={{ color: 'var(--muted-foreground)' }} />
-          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
+          <span
+            style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}
+          >
             Export
           </span>
         </span>
@@ -105,7 +119,9 @@ function StandardActions({
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Trash2 size={16} style={{ color: 'var(--destructive)' }} />
-          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--destructive)' }}>
+          <span
+            style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--destructive)' }}
+          >
             Delete
           </span>
         </span>
@@ -218,10 +234,14 @@ function useOutsideClick({
 }): React.RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const handle = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        onClose();
+      }
     };
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);

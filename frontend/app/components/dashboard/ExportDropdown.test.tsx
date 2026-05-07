@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const apiPost = vi.fn();
@@ -23,8 +22,8 @@ vi.mock('react-hot-toast', () => ({
 }));
 
 describe('ExportDropdown', () => {
-  const createObjectURL = vi.fn(() => 'blob:url');
-  const revokeObjectURL = vi.fn();
+  const createObjectUrl = vi.fn(() => 'blob:url');
+  const revokeObjectUrl = vi.fn();
   const originalCreateElement = document.createElement.bind(document);
   let anchorElement: HTMLAnchorElement | null = null;
   let clickSpy: ReturnType<typeof vi.fn>;
@@ -37,9 +36,9 @@ describe('ExportDropdown', () => {
     toastSuccess.mockReset();
     toastError.mockReset();
     toastLoading.mockReturnValue('toast-id');
-    createObjectURL.mockReset();
-    createObjectURL.mockReturnValue('blob:url');
-    revokeObjectURL.mockReset();
+    createObjectUrl.mockReset();
+    createObjectUrl.mockReturnValue('blob:url');
+    revokeObjectUrl.mockReset();
     clickSpy = vi.fn();
     removeSpy = vi.fn();
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -47,12 +46,12 @@ describe('ExportDropdown', () => {
     Object.defineProperty(window.URL, 'createObjectURL', {
       configurable: true,
       writable: true,
-      value: createObjectURL,
+      value: createObjectUrl,
     });
     Object.defineProperty(window.URL, 'revokeObjectURL', {
       configurable: true,
       writable: true,
-      value: revokeObjectURL,
+      value: revokeObjectUrl,
     });
 
     vi.spyOn(document, 'createElement').mockImplementation(tagName => {
@@ -115,12 +114,12 @@ describe('ExportDropdown', () => {
     });
 
     expect(toastLoading).toHaveBeenCalledWith('Downloading...');
-    expect(createObjectURL).toHaveBeenCalled();
+    expect(createObjectUrl).toHaveBeenCalled();
     expect(clickSpy).toHaveBeenCalled();
     expect(removeSpy).toHaveBeenCalled();
     expect(anchorElement?.href).toBe('blob:url');
     expect(anchorElement?.download).toBe('workspace-transactions-2026-04-01.pdf');
-    expect(revokeObjectURL).toHaveBeenCalledTimes(1);
+    expect(revokeObjectUrl).toHaveBeenCalledTimes(1);
     expect(toastSuccess).toHaveBeenCalledWith('File downloaded successfully', { id: 'toast-id' });
   });
 
@@ -161,16 +160,18 @@ describe('ExportDropdown', () => {
 
     render(
       <ExportDropdown
-        t={{
-          title: { value: 'Export data' },
-          excel: { value: 'Excel (.xlsx)' },
-          pdf: { value: 'PDF' },
-          csv: { value: 'CSV' },
-          docx: { value: 'Word (.docx)' },
-          downloading: { value: 'Downloading...' },
-          success: { value: 'File downloaded successfully' },
-          error: { value: 'Download failed' },
-        } as Partial<Parameters<typeof ExportDropdown>[0]['t']>}
+        t={
+          {
+            title: { value: 'Export data' },
+            excel: { value: 'Excel (.xlsx)' },
+            pdf: { value: 'PDF' },
+            csv: { value: 'CSV' },
+            docx: { value: 'Word (.docx)' },
+            downloading: { value: 'Downloading...' },
+            success: { value: 'File downloaded successfully' },
+            error: { value: 'Download failed' },
+          } as Partial<Parameters<typeof ExportDropdown>[0]['t']>
+        }
       />,
     );
 

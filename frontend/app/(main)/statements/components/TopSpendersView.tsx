@@ -1,7 +1,5 @@
 'use client';
 
-import type { JSX } from 'react';
-
 import { TopSpendersContent } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersContent';
 import { TopSpendersDrillDown } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersDrillDown';
 import { TopSpendersFiltersDrawer } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersFiltersDrawer';
@@ -23,7 +21,17 @@ function TopSpendersBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed var(--border-color)', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
+      <div
+        style={{
+          border: '1px dashed var(--border-color)',
+          background: 'var(--card-bg)',
+          padding: 48,
+          textAlign: 'center',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+          borderRadius: tokens.radius.lg,
+        }}
+      >
         {vm.labels.noData}
       </div>
     );

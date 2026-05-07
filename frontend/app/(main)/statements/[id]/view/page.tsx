@@ -1,15 +1,14 @@
 'use client';
 
+import { ArrowLeft } from '@/app/components/icons';
 import TransactionsPageView from '@/app/components/transactions/TransactionsPageView';
 import type { Category, StatementDetails, Transaction } from '@/app/components/transactions/types';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
 import api, { apiBaseUrl } from '@/app/lib/api';
-import { ArrowLeft } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
-import React, { use, useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
-
 
 interface RawStatement {
   id: string;
@@ -70,7 +69,9 @@ export default function ViewStatementPage({
   const statementId = resolvedParams.id;
 
   const fetchData = async () => {
-    if (!statementId) return;
+    if (!statementId) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -154,7 +155,9 @@ export default function ViewStatementPage({
   };
 
   const handleDownload = async () => {
-    if (!statementId) return;
+    if (!statementId) {
+      return;
+    }
     const toastId = toast.loading(t.loading.value);
     try {
       const token = localStorage.getItem('access_token');
@@ -186,8 +189,19 @@ export default function ViewStatementPage({
 
   if (loading) {
     return (
-      <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
-        <div style={{ display: 'flex', height: '100%', minHeight: 320, alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        className="container-shared"
+        style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            height: '100%',
+            minHeight: 320,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
         </div>
       </div>
@@ -196,10 +210,11 @@ export default function ViewStatementPage({
 
   if (error || !statement) {
     return (
-      <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
-        <div className="lumio-stmt-view__error-box">
-          {error || t.statementNotFound.value}
-        </div>
+      <div
+        className="container-shared"
+        style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}
+      >
+        <div className="lumio-stmt-view__error-box">{error || t.statementNotFound.value}</div>
         <button
           type="button"
           onClick={() => router.back()}
@@ -213,14 +228,13 @@ export default function ViewStatementPage({
   }
 
   return (
-    <div className="container-shared" style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}>
+    <div
+      className="container-shared"
+      style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '32px 16px' }}
+    >
       {/* Back Button */}
       <div style={{ marginBottom: 24 }}>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="lumio-stmt-view__back-btn"
-        >
+        <button type="button" onClick={() => router.back()} className="lumio-stmt-view__back-btn">
           <ArrowLeft size={16} />
           {t.backToStatements.value}
         </button>

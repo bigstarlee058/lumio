@@ -2,8 +2,8 @@
 
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import type { StatementGroupBy } from '../create-from-statements-utils';
 import {
@@ -34,10 +34,7 @@ interface UseCreateFromStatementsParams {
   };
 }
 
-export function useCreateFromStatements({
-  loadTables,
-  messages,
-}: UseCreateFromStatementsParams): {
+export function useCreateFromStatements({ loadTables, messages }: UseCreateFromStatementsParams): {
   statements: StatementItem[];
   statementsLoading: boolean;
   creatingFromStatements: boolean;

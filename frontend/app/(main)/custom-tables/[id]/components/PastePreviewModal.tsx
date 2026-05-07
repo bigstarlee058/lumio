@@ -24,15 +24,32 @@ function PasteTableCell({
   const textColor = cell.error ? '#b91c1c' : 'var(--foreground)';
 
   return (
-    <td style={{ padding: '8px 12px', borderRight: '1px solid var(--muted)', background: bgColor, color: textColor }}>
+    <td
+      style={{
+        padding: '8px 12px',
+        borderRight: '1px solid var(--muted)',
+        background: bgColor,
+        color: textColor,
+      }}
+    >
       {cell.sourceIndex !== null ? (
         <input
           value={cell.value}
           onChange={event => onCellChange(rowIndex, cell.sourceIndex as number, event.target.value)}
-          style={{ width: '100%', background: 'transparent', border: 'none', padding: 0, outline: 'none', fontSize: 14, color: textColor }}
+          style={{
+            width: '100%',
+            background: 'transparent',
+            border: 'none',
+            padding: 0,
+            outline: 'none',
+            fontSize: 14,
+            color: textColor,
+          }}
         />
       ) : (
-        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cell.value || '\u2014'}</div>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {cell.value || '\u2014'}
+        </div>
       )}
     </td>
   );
@@ -76,14 +93,33 @@ export function PastePreviewModal({
       contentSx={{ display: 'flex', flexDirection: 'column', height: '100%', p: 0, gap: 0 }}
       title={
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.015em', color: 'var(--foreground)' }}>
+          <Typography
+            style={{
+              fontSize: 20,
+              fontWeight: 600,
+              letterSpacing: '-0.015em',
+              color: 'var(--foreground)',
+            }}
+          >
             {pastePreview
               ? `${tx(t, ['paste', 'titlePrefix'], '')}${pastePreview.totalRows}${tx(t, ['paste', 'titleSuffix'], '')}`
               : tx(t, ['paste', 'titleFallback'], 'Paste preview')}
           </Typography>
           {pastePreview?.hasHeadersToggle && (
             <Box
-              sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer', bgcolor: 'var(--muted)', px: 1.5, py: 0.75, border: '1px solid var(--border-color)' }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                fontSize: 14,
+                fontWeight: 500,
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                bgcolor: 'var(--muted)',
+                px: 1.5,
+                py: 0.75,
+                border: '1px solid var(--border-color)',
+              }}
             >
               <Checkbox
                 checked={pasteUseHeaders}
@@ -112,17 +148,54 @@ export function PastePreviewModal({
       }
     >
       {pasteParsing && (
-        <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center', gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1.5,
+          }}
+        >
           <Spinner className="h-6 w-6 text-primary" />
-          <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{tx(t, ['paste', 'parsing'], 'Parsing...')}</Typography>
+          <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            {tx(t, ['paste', 'parsing'], 'Parsing...')}
+          </Typography>
         </Box>
       )}
       {!pasteParsing && pastePreview && (
         <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {pastePreview.hasErrors && (
-            <Box sx={{ flexShrink: 0, px: 3, py: 1.5, borderBottom: '1px solid var(--muted)', bgcolor: 'background.paper' }}>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, border: '1px solid var(--color-warning-soft-border)', bgcolor: 'var(--color-warning-soft-bg)', p: 1.5 }}>
-                <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-warning-soft-text)', whiteSpace: 'nowrap', paddingTop: 2 }}>
+            <Box
+              sx={{
+                flexShrink: 0,
+                px: 3,
+                py: 1.5,
+                borderBottom: '1px solid var(--muted)',
+                bgcolor: 'background.paper',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 1.5,
+                  border: '1px solid var(--color-warning-soft-border)',
+                  bgcolor: 'var(--color-warning-soft-bg)',
+                  p: 1.5,
+                }}
+              >
+                <Typography
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--color-warning-soft-text)',
+                    whiteSpace: 'nowrap',
+                    paddingTop: 2,
+                  }}
+                >
                   {tx(t, ['paste', 'errorsTitle'], 'Errors')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, rowGap: 0.25 }}>
@@ -131,10 +204,22 @@ export function PastePreviewModal({
                     .map(key => (
                       <Box
                         key={key}
-                        sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(251,191,36,0.2)', px: 1, py: 0.25, fontSize: 12, fontWeight: 500, color: 'var(--color-warning-soft-text)' }}
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 0.5,
+                          bgcolor: 'rgba(251,191,36,0.2)',
+                          px: 1,
+                          py: 0.25,
+                          fontSize: 12,
+                          fontWeight: 500,
+                          color: 'var(--color-warning-soft-text)',
+                        }}
                       >
                         <span>{tx(t, ['paste', 'errors', key], key)}:</span>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>{pastePreview.errors[key]}</span>
+                        <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>
+                          {pastePreview.errors[key]}
+                        </span>
                       </Box>
                     ))}
                 </Box>
@@ -144,18 +229,45 @@ export function PastePreviewModal({
 
           <Box sx={{ flex: 1, position: 'relative', bgcolor: 'rgba(249,250,251,0.3)' }}>
             {pastePreview.totalRows === 0 ? (
-              <Box sx={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--muted-foreground)',
+                }}
+              >
                 {tx(t, ['paste', 'noRows'], 'No rows found')}
               </Box>
             ) : (
               <Box sx={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
                 <table style={{ minWidth: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
-                  <thead style={{ position: 'sticky', top: 0, zIndex: 10, background: 'var(--card-bg)', borderBottom: '1px solid var(--border-color)' }}>
+                  <thead
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 10,
+                      background: 'var(--card-bg)',
+                      borderBottom: '1px solid var(--border-color)',
+                    }}
+                  >
                     <tr>
                       {pastePreview.columns.map(col => (
                         <th
                           key={`${col.field}-${col.columnKey}`}
-                          style={{ padding: '12px', textAlign: 'left', minWidth: 180, borderRight: '1px solid var(--muted)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}
+                          style={{
+                            padding: '12px',
+                            textAlign: 'left',
+                            minWidth: 180,
+                            borderRight: '1px solid var(--muted)',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            color: 'var(--muted-foreground)',
+                          }}
                         >
                           {col.label}
                         </th>
@@ -179,10 +291,22 @@ export function PastePreviewModal({
                       <tr>
                         <td
                           colSpan={pastePreview.columns.length}
-                          style={{ padding: '24px', textAlign: 'center', fontSize: 12, color: 'var(--muted-foreground)', background: 'rgba(249,250,251,0.3)' }}
+                          style={{
+                            padding: '24px',
+                            textAlign: 'center',
+                            fontSize: 12,
+                            color: 'var(--muted-foreground)',
+                            background: 'rgba(249,250,251,0.3)',
+                          }}
                         >
                           {tx(t, ['paste', 'moreRowsPrefix'], '')}
-                          <span style={{ fontWeight: 600, color: 'var(--text-secondary)', margin: '0 4px' }}>
+                          <span
+                            style={{
+                              fontWeight: 600,
+                              color: 'var(--text-secondary)',
+                              margin: '0 4px',
+                            }}
+                          >
                             {pastePreview.extraRowsCount}
                           </span>
                           {tx(t, ['paste', 'moreRowsSuffix'], '')}

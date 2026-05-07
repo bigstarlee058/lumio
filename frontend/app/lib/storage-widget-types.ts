@@ -58,6 +58,7 @@ export type StorageWidgetProvider = {
    * and returns the provider-specific sub-object.
    */
   // biome-ignore lint/suspicious/noExplicitAny: intlayer output type is opaque
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getTranslations: (t: any) => any;
   /** Human-readable provider name used as fallback string suffix */
   providerName: string;

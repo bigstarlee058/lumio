@@ -1,27 +1,27 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { DetailActionButton } from '@/app/components/ui/detail-action-button';
-import { ReceiptParsedDataForm } from '@/app/components/receipts/ReceiptParsedDataForm';
-import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
-import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
-import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Box, Typography } from '@mui/material';
 import { ArrowLeft, Download, Table } from '@/app/components/icons';
-import { useParams, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import toast from 'react-hot-toast';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
+import { ReceiptParsedDataForm } from '@/app/components/receipts/ReceiptParsedDataForm';
 import type {
   EditableReceiptLineItem,
   EditableReceiptParsedData,
   ReceiptCategoryOption,
 } from '@/app/components/receipts/receipt-types';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
+import { Spinner } from '@/app/components/ui/spinner';
+import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
+import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
+import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useTheme } from 'next-themes';
+import { useParams, useRouter } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 
 type ReceiptExportColumn = {
   title: string;
@@ -29,7 +29,6 @@ type ReceiptExportColumn = {
 };
 
 type ReceiptExportRow = Record<string, string | number>;
-
 
 function buildLineItems(receipt: ReceiptRecord | null): EditableReceiptLineItem[] {
   return normalizeReceiptLineItems(receipt?.parsedData).map((item, index) => ({
@@ -71,7 +70,10 @@ function buildParsedDataPayload(formValue: EditableReceiptParsedData) {
   };
 }
 
-function buildReceiptExportData(receipt: ReceiptRecord, formValue: EditableReceiptParsedData): {
+function buildReceiptExportData(
+  receipt: ReceiptRecord,
+  formValue: EditableReceiptParsedData,
+): {
   columns: ReceiptExportColumn[];
   rows: ReceiptExportRow[];
 } {
@@ -346,7 +348,9 @@ export default function ReceiptDocumentPage() {
 
   const persistParsedData = useCallback(
     async (nextValue: EditableReceiptParsedData) => {
-      if (!receipt) return;
+      if (!receipt) {
+        return;
+      }
 
       const nextPayload = buildParsedDataPayload(nextValue);
       const serializedPayload = JSON.stringify(nextPayload);
@@ -394,7 +398,9 @@ export default function ReceiptDocumentPage() {
   );
 
   const handleApprove = async () => {
-    if (!receipt) return;
+    if (!receipt) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -414,7 +420,9 @@ export default function ReceiptDocumentPage() {
   };
 
   const handleDownload = async () => {
-    if (!receipt) return;
+    if (!receipt) {
+      return;
+    }
 
     try {
       const response = await fetch(`${apiBaseUrl}/receipts/${receipt.id}/file`, {
@@ -431,7 +439,8 @@ export default function ReceiptDocumentPage() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = receipt.metadata?.attachments?.[0]?.filename || receipt.subject || `${receipt.id}`;
+      link.download =
+        receipt.metadata?.attachments?.[0]?.filename || receipt.subject || `${receipt.id}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -452,7 +461,7 @@ export default function ReceiptDocumentPage() {
     try {
       const exportData = buildReceiptExportData(receipt, formValue);
 
-      if (!exportData.columns.length || !exportData.rows.length) {
+      if (!(exportData.columns.length && exportData.rows.length)) {
         toast.error('There are no parsed receipt fields to export yet');
         return;
       }
@@ -480,23 +489,29 @@ export default function ReceiptDocumentPage() {
         ),
       );
 
-      const columnKeyByTitle = exportData.columns.reduce<Record<string, string>>((acc, column, index) => {
-        const payload = createdColumns[index]?.data?.data || createdColumns[index]?.data;
-        const key = payload?.key;
-        if (key) {
-          acc[column.title] = key;
-        }
-        return acc;
-      }, {});
-
-      const rows = exportData.rows.map(row => {
-        const data = Object.entries(row).reduce<Record<string, string | number>>((acc, [title, value]) => {
-          const key = columnKeyByTitle[title];
-          if (key && value !== undefined && value !== '') {
-            acc[key] = value;
+      const columnKeyByTitle = exportData.columns.reduce<Record<string, string>>(
+        (acc, column, index) => {
+          const payload = createdColumns[index]?.data?.data || createdColumns[index]?.data;
+          const key = payload?.key;
+          if (key) {
+            acc[column.title] = key;
           }
           return acc;
-        }, {});
+        },
+        {},
+      );
+
+      const rows = exportData.rows.map(row => {
+        const data = Object.entries(row).reduce<Record<string, string | number>>(
+          (acc, [title, value]) => {
+            const key = columnKeyByTitle[title];
+            if (key && value !== undefined && value !== '') {
+              acc[key] = value;
+            }
+            return acc;
+          },
+          {},
+        );
 
         return { data };
       });
@@ -517,8 +532,25 @@ export default function ReceiptDocumentPage() {
 
   if (loading) {
     return (
-      <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
-        <Box sx={{ display: 'flex', height: '100%', minHeight: 320, alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        className="container-shared"
+        sx={{
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          px: { xs: 2, sm: 3, lg: 4 },
+          py: 4,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            height: '100%',
+            minHeight: 320,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Spinner className="h-20 w-20 text-primary" />
         </Box>
       </Box>
@@ -527,15 +559,44 @@ export default function ReceiptDocumentPage() {
 
   if (error || !receipt) {
     return (
-      <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
-        <Box sx={{ mb: 2, border: `1px solid ${c.dangerSoft}`, bgcolor: c.dangerSoft, p: 2, color: c.danger }}>
+      <Box
+        className="container-shared"
+        sx={{
+          height: '100%',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          px: { xs: 2, sm: 3, lg: 4 },
+          py: 4,
+        }}
+      >
+        <Box
+          sx={{
+            mb: 2,
+            border: `1px solid ${c.dangerSoft}`,
+            bgcolor: c.dangerSoft,
+            p: 2,
+            color: c.danger,
+          }}
+        >
           {error || 'Receipt not found'}
         </Box>
         <Box
           component="button"
           type="button"
           onClick={() => router.back()}
-          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            fontSize: 13,
+            fontWeight: 500,
+            color: c.ink500,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            p: 0,
+            '&:hover': { color: c.ink700 },
+          }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back
@@ -549,7 +610,16 @@ export default function ReceiptDocumentPage() {
   const canExportToTable = Boolean(receipt);
 
   return (
-    <Box className="container-shared" sx={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', px: { xs: 2, sm: 3, lg: 4 }, py: 4 }}>
+    <Box
+      className="container-shared"
+      sx={{
+        height: '100%',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        px: { xs: 2, sm: 3, lg: 4 },
+        py: 4,
+      }}
+    >
       <Box sx={{ display: 'flex', width: '100%', flexDirection: 'column', gap: 3 }}>
         <Box
           sx={{
@@ -567,7 +637,19 @@ export default function ReceiptDocumentPage() {
               component="button"
               type="button"
               onClick={() => router.back()}
-              sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                fontSize: 13,
+                fontWeight: 500,
+                color: c.ink500,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                p: 0,
+                '&:hover': { color: c.ink700 },
+              }}
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Back
@@ -586,7 +668,13 @@ export default function ReceiptDocumentPage() {
               </Typography>
               <Typography
                 component="h1"
-                style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: c.ink900 }}
+                style={{
+                  marginTop: 8,
+                  fontSize: 30,
+                  fontWeight: 600,
+                  letterSpacing: '-0.025em',
+                  color: c.ink900,
+                }}
               >
                 {receipt.subject}
               </Typography>
@@ -624,7 +712,10 @@ export default function ReceiptDocumentPage() {
             gridTemplateColumns: { xs: '1fr', xl: 'minmax(360px, 0.95fr) minmax(0, 1.05fr)' },
           }}
         >
-          <Box component="section" sx={{ display: 'flex', height: '100%', minHeight: 0, flexDirection: 'column' }}>
+          <Box
+            component="section"
+            sx={{ display: 'flex', height: '100%', minHeight: 0, flexDirection: 'column' }}
+          >
             <Box
               sx={{
                 display: 'flex',
@@ -655,8 +746,26 @@ export default function ReceiptDocumentPage() {
             </Box>
           </Box>
 
-          <Box component="section" sx={{ height: '100%', border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3 }}>
-            <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, borderBottom: `1px solid ${c.ink150}`, pb: 2 }}>
+          <Box
+            component="section"
+            sx={{
+              height: '100%',
+              border: `1px solid ${c.ink150}`,
+              bgcolor: 'background.paper',
+              p: 3,
+            }}
+          >
+            <Box
+              sx={{
+                mb: 2.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 2,
+                borderBottom: `1px solid ${c.ink150}`,
+                pb: 2,
+              }}
+            >
               <Box>
                 <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
                   Parsed fields
@@ -682,9 +791,7 @@ export default function ReceiptDocumentPage() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>
-          Confirm export
-        </DialogTitle>
+        <DialogTitle sx={{ fontSize: 22, fontWeight: 600 }}>Confirm export</DialogTitle>
         <DialogContent dividers>
           <Typography style={{ fontSize: 16, lineHeight: 2, color: c.ink800 }}>
             Are you sure you want to export this statement to a custom table?

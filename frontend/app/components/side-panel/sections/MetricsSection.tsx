@@ -2,8 +2,8 @@
 
 import React from 'react';
 import type { ChartItem, MetricsSection, SummaryItem } from '../types';
-import { SectionWrapper } from './components/SectionWrapper';
 import { SummaryItemComponent } from './SummarySection';
+import { SectionWrapper } from './components/SectionWrapper';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Element | null {
@@ -13,7 +13,9 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+            {item.title}
+          </span>
           <span style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{value}%</span>
         </div>
         <div style={{ height: 8, backgroundColor: 'var(--border-color)', overflow: 'hidden' }}>
@@ -40,7 +42,9 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+          {item.title}
+        </span>
         <svg width="100%" height={height} aria-label={item.title} role="img">
           <polyline
             fill="none"
@@ -66,7 +70,9 @@ export function ChartItemComponent({ item }: { item: ChartItem }): React.JSX.Ele
   if (item.type === 'custom' && item.customRenderer) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.title}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+          {item.title}
+        </span>
         {item.customRenderer(item.data)}
       </div>
     );
@@ -79,7 +85,9 @@ export function isChartItem(item: SummaryItem | ChartItem): item is ChartItem {
   return 'type' in item && typeof (item as ChartItem).data !== 'undefined';
 }
 
-export function MetricsSectionRenderer({ section }: { section: MetricsSection }): React.JSX.Element {
+export function MetricsSectionRenderer({
+  section,
+}: { section: MetricsSection }): React.JSX.Element {
   return (
     <SectionWrapper section={section}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

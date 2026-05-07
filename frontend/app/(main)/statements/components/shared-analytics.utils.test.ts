@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  type AggregateSortKey,
   buildPreviousPeriodRange,
   formatDateISO,
   getComparisonDelta,
@@ -8,7 +9,6 @@ import {
   resolveAmountFlow,
   resolveSourceChannel,
   sortAggregateRows,
-  type AggregateSortKey,
 } from './shared-analytics.utils';
 
 type AggregateRow = {

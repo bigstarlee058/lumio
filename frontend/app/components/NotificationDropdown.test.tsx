@@ -53,7 +53,9 @@ vi.mock('@mui/material', async () => {
     ...actual,
     Menu: ({ open, children }: { open: boolean; children: React.ReactNode }) => {
       menuMocks.lastOpen = open;
-      if (!open) return null;
+      if (!open) {
+        return null;
+      }
       return <div data-testid="notification-menu">{children}</div>;
     },
   };

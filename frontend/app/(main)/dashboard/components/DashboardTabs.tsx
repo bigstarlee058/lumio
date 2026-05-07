@@ -6,8 +6,23 @@ import type { DashboardTabId } from '../hooks/useDashboardPage';
 
 type DashboardTabsProps = { activeTab: DashboardTabId; onTabChange: (tab: DashboardTabId) => void };
 
-const TAB_SX = { fontSize: '13px', letterSpacing: '1px', fontWeight: 600, fontFamily: 'var(--font-dashboard-mono)', textTransform: 'uppercase' as const, color: 'var(--muted-foreground)', minWidth: 'auto', padding: '0 0 16px 0', '&.Mui-selected': { color: 'var(--foreground)' } };
-const TABS_SX = { minHeight: '48px', '& .MuiTabs-indicator': { backgroundColor: 'var(--primary)', height: '2px' }, '& .MuiTabs-flexContainer': { gap: '40px' }, '& .MuiTab-root:hover': { backgroundColor: 'transparent !important', color: 'var(--foreground)' } };
+const TAB_SX = {
+  fontSize: '13px',
+  letterSpacing: '1px',
+  fontWeight: 600,
+  fontFamily: 'var(--font-dashboard-mono)',
+  textTransform: 'uppercase' as const,
+  color: 'var(--muted-foreground)',
+  minWidth: 'auto',
+  padding: '0 0 16px 0',
+  '&.Mui-selected': { color: 'var(--foreground)' },
+};
+const TABS_SX = {
+  minHeight: '48px',
+  '& .MuiTabs-indicator': { backgroundColor: 'var(--primary)', height: '2px' },
+  '& .MuiTabs-flexContainer': { gap: '40px' },
+  '& .MuiTab-root:hover': { backgroundColor: 'transparent !important', color: 'var(--foreground)' },
+};
 
 export function DashboardTabs({ activeTab, onTabChange }: DashboardTabsProps): React.JSX.Element {
   // eslint-disable-next-line max-params

@@ -54,14 +54,18 @@ export type InvitePermissions = {
 };
 
 export const getApiMessage = (err: unknown, fallback: string): string => {
-  if (!err || typeof err !== 'object') return fallback;
+  if (!err || typeof err !== 'object') {
+    return fallback;
+  }
   const response = (err as { response?: { data?: { message?: string } } }).response;
   return response?.data?.message ?? fallback;
 };
 
 const confirmOwnerRoleChange = (currentRole: WorkspaceRole, nextRole: WorkspaceRole): boolean => {
   const affectsOwnerRole = currentRole === 'owner' || nextRole === 'owner';
-  if (!affectsOwnerRole) return true;
+  if (!affectsOwnerRole) {
+    return true;
+  }
   return window.confirm('This change affects Owner role. Confirm role update before continuing.');
 };
 
@@ -75,7 +79,11 @@ type UseMemberManagementReturn = {
   updatingRoleMemberId: string | null;
   resendingInvitationId: string | null;
   revokingInvitationId: string | null;
-  handleInvite: (params: { email: string; role: WorkspaceRole; permissions: InvitePermissions }) => Promise<void>;
+  handleInvite: (params: {
+    email: string;
+    role: WorkspaceRole;
+    permissions: InvitePermissions;
+  }) => Promise<void>;
   handleChangeMemberRole: (member: WorkspaceMember, nextRole: WorkspaceRole) => Promise<void>;
   handleRemoveMember: (memberId: string) => Promise<void>;
   handleResendInvitation: (invite: WorkspaceInvitation) => Promise<void>;
@@ -83,7 +91,11 @@ type UseMemberManagementReturn = {
   copyInviteLink: (params: { token: string; link?: string }) => Promise<void>;
 };
 
-async function apiWithToast<T>(fn: () => Promise<T>, successMsg: string, errMsg: string): Promise<void> {
+async function apiWithToast<T>(
+  fn: () => Promise<T>,
+  successMsg: string,
+  errMsg: string,
+): Promise<void> {
   try {
     await fn();
     toast.success(successMsg);
@@ -92,18 +104,50 @@ async function apiWithToast<T>(fn: () => Promise<T>, successMsg: string, errMsg:
   }
 }
 
-function useMemberActions({ overview, onRefresh }: HookParams): Pick<UseMemberManagementReturn, 'removingMemberId' | 'updatingRoleMemberId' | 'handleInvite' | 'handleChangeMemberRole' | 'handleRemoveMember'> {
+function useMemberActions({
+  overview,
+  onRefresh,
+}: HookParams): Pick<
+  UseMemberManagementReturn,
+  | 'removingMemberId'
+  | 'updatingRoleMemberId'
+  | 'handleInvite'
+  | 'handleChangeMemberRole'
+  | 'handleRemoveMember'
+> {
   const [removingMemberId, setRemovingMemberId] = useState<string | null>(null);
   const [updatingRoleMemberId, setUpdatingRoleMemberId] = useState<string | null>(null);
   const wid = overview?.workspace.id;
 
-  const handleInvite = async ({ email, role, permissions }: { email: string; role: WorkspaceRole; permissions: InvitePermissions }): Promise<void> => {
-    if (!wid) return;
-    await apiWithToast(() => apiClient.post(`/workspaces/${wid}/invitations`, { email, role, permissions: role === 'member' ? permissions : undefined }).then(() => onRefresh()), 'Invitation sent', 'Failed to send invitation');
+  const handleInvite = async ({
+    email,
+    role,
+    permissions,
+  }: { email: string; role: WorkspaceRole; permissions: InvitePermissions }): Promise<void> => {
+    if (!wid) {
+      return;
+    }
+    await apiWithToast(
+      () =>
+        apiClient
+          .post(`/workspaces/${wid}/invitations`, {
+            email,
+            role,
+            permissions: role === 'member' ? permissions : undefined,
+          })
+          .then(() => onRefresh()),
+      'Invitation sent',
+      'Failed to send invitation',
+    );
   };
 
-  const handleChangeMemberRole = async (member: WorkspaceMember, nextRole: WorkspaceRole): Promise<void> => {
-    if (!wid || member.role === nextRole || !confirmOwnerRoleChange(member.role, nextRole)) return;
+  const handleChangeMemberRole = async (
+    member: WorkspaceMember,
+    nextRole: WorkspaceRole,
+  ): Promise<void> => {
+    if (!wid || member.role === nextRole || !confirmOwnerRoleChange(member.role, nextRole)) {
+      return;
+    }
     setUpdatingRoleMemberId(member.id);
     try {
       await apiClient.patch(`/workspaces/${wid}/members/${member.id}/role`, { role: nextRole });
@@ -117,7 +161,9 @@ function useMemberActions({ overview, onRefresh }: HookParams): Pick<UseMemberMa
   };
 
   const handleRemoveMember = async (memberId: string): Promise<void> => {
-    if (!wid) return;
+    if (!wid) {
+      return;
+    }
     setRemovingMemberId(memberId);
     try {
       await apiClient.delete(`/workspaces/${wid}/members/${memberId}`);
@@ -130,19 +176,41 @@ function useMemberActions({ overview, onRefresh }: HookParams): Pick<UseMemberMa
     }
   };
 
-  return { removingMemberId, updatingRoleMemberId, handleInvite, handleChangeMemberRole, handleRemoveMember };
+  return {
+    removingMemberId,
+    updatingRoleMemberId,
+    handleInvite,
+    handleChangeMemberRole,
+    handleRemoveMember,
+  };
 }
 
-function useInvitationActions({ overview, onRefresh }: HookParams): Pick<UseMemberManagementReturn, 'resendingInvitationId' | 'revokingInvitationId' | 'handleResendInvitation' | 'handleRevokeInvitation' | 'copyInviteLink'> {
+function useInvitationActions({
+  overview,
+  onRefresh,
+}: HookParams): Pick<
+  UseMemberManagementReturn,
+  | 'resendingInvitationId'
+  | 'revokingInvitationId'
+  | 'handleResendInvitation'
+  | 'handleRevokeInvitation'
+  | 'copyInviteLink'
+> {
   const [resendingInvitationId, setResendingInvitationId] = useState<string | null>(null);
   const [revokingInvitationId, setRevokingInvitationId] = useState<string | null>(null);
   const wid = overview?.workspace.id;
 
   const handleResendInvitation = async (invite: WorkspaceInvitation): Promise<void> => {
-    if (!wid) return;
+    if (!wid) {
+      return;
+    }
     setResendingInvitationId(invite.id);
     try {
-      await apiClient.post(`/workspaces/${wid}/invitations`, { email: invite.email, role: invite.role, permissions: invite.role === 'member' ? invite.permissions : undefined });
+      await apiClient.post(`/workspaces/${wid}/invitations`, {
+        email: invite.email,
+        role: invite.role,
+        permissions: invite.role === 'member' ? invite.permissions : undefined,
+      });
       toast.success('Invitation resent');
       await onRefresh();
     } catch (err) {
@@ -153,24 +221,46 @@ function useInvitationActions({ overview, onRefresh }: HookParams): Pick<UseMemb
   };
 
   const handleRevokeInvitation = async (invitationId: string): Promise<void> => {
-    if (!wid || !window.confirm('Revoke this invitation?')) return;
+    if (!(wid && window.confirm('Revoke this invitation?'))) {
+      return;
+    }
     setRevokingInvitationId(invitationId);
-    try { await apiClient.delete(`/workspaces/${wid}/invitations/${invitationId}`); toast.success('Invitation revoked'); await onRefresh(); }
-    catch (err) { toast.error(getApiMessage(err, 'Failed to revoke invitation')); }
-    finally { setRevokingInvitationId(null); }
+    try {
+      await apiClient.delete(`/workspaces/${wid}/invitations/${invitationId}`);
+      toast.success('Invitation revoked');
+      await onRefresh();
+    } catch (err) {
+      toast.error(getApiMessage(err, 'Failed to revoke invitation'));
+    } finally {
+      setRevokingInvitationId(null);
+    }
   };
 
-  const copyInviteLink = async ({ token, link: provided }: { token: string; link?: string }): Promise<void> => {
+  const copyInviteLink = async ({
+    token,
+    link: provided,
+  }: { token: string; link?: string }): Promise<void> => {
     try {
       await navigator.clipboard.writeText(provided || `${window.location.origin}/invite/${token}`);
       toast.success('Link copied');
-    } catch { toast.error('Failed to copy link'); }
+    } catch {
+      toast.error('Failed to copy link');
+    }
   };
 
-  return { resendingInvitationId, revokingInvitationId, handleResendInvitation, handleRevokeInvitation, copyInviteLink };
+  return {
+    resendingInvitationId,
+    revokingInvitationId,
+    handleResendInvitation,
+    handleRevokeInvitation,
+    copyInviteLink,
+  };
 }
 
-export function useMemberManagement({ overview, onRefresh }: HookParams): UseMemberManagementReturn {
+export function useMemberManagement({
+  overview,
+  onRefresh,
+}: HookParams): UseMemberManagementReturn {
   const memberActions = useMemberActions({ overview, onRefresh });
   const invitationActions = useInvitationActions({ overview, onRefresh });
   return { ...memberActions, ...invitationActions };

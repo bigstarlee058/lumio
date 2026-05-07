@@ -7,12 +7,12 @@
 // Re-export from side-panel-utils — these already exist there and are identical
 export { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 
+import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
 import type {
   GmailReceipt,
   StatementMeta,
   Transaction,
 } from '@/app/(main)/statements/types/statement-types';
-import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 
 /** Normalizes a raw currency string to a 3-letter ISO code, falling back to KZT. */

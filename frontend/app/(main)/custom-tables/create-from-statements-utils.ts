@@ -43,9 +43,13 @@ const FILE_SOURCE_FALLBACKS: Array<{ pattern: RegExp; label: string }> = [
 ];
 
 const parseDate = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
   return parsed;
 };
 
@@ -55,8 +59,12 @@ const normalizeFileBase = (fileName: string) => {
 };
 
 const shortenTechnicalToken = (token: string) => {
-  if (!TECHNICAL_TOKEN_REGEX.test(token)) return token;
-  if (token.length <= 14) return token;
+  if (!TECHNICAL_TOKEN_REGEX.test(token)) {
+    return token;
+  }
+  if (token.length <= 14) {
+    return token;
+  }
   return `${token.slice(0, 6)}...${token.slice(-4)}`;
 };
 
@@ -76,10 +84,14 @@ const shortenReadableFileName = (fileName: string, maxLength = 42) => {
 
 const resolveSourceLabel = (statement: StatementSelectionInput): string => {
   const bankName = statement.bankName?.trim();
-  if (bankName) return bankName;
+  if (bankName) {
+    return bankName;
+  }
 
   const byFileName = FILE_SOURCE_FALLBACKS.find(item => item.pattern.test(statement.fileName));
-  if (byFileName) return byFileName.label;
+  if (byFileName) {
+    return byFileName.label;
+  }
 
   return 'Unknown source';
 };
@@ -91,7 +103,9 @@ const resolvePeriodLabel = (statement: StatementSelectionInput): string => {
 
   const start = from || to || fallback;
   const end = to || from || fallback;
-  if (!start || !end) return 'Unknown period';
+  if (!(start && end)) {
+    return 'Unknown period';
+  }
 
   const sameMonth =
     start.getUTCFullYear() === end.getUTCFullYear() && start.getUTCMonth() === end.getUTCMonth();
@@ -177,8 +191,12 @@ export const filterStatementSelectionOptions = (
   return options.filter(option => {
     const sourceMatches =
       !source || source === 'all' || option.sourceLabel.toLowerCase() === source;
-    if (!sourceMatches) return false;
-    if (!query) return true;
+    if (!sourceMatches) {
+      return false;
+    }
+    if (!query) {
+      return true;
+    }
     return option.searchText.includes(query);
   });
 };

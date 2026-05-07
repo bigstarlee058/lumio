@@ -5,7 +5,10 @@ type TxFn = (path: string[], fallback: string) => string;
 const LABEL_PATHS: Record<string, [string[], string]> = {
   title: [['topMerchants', 'title'], 'Top merchants'],
   subtitle: [['topMerchants', 'subtitle'], 'Spending analytics by merchants and counterparties.'],
-  searchPlaceholder: [['topMerchants', 'searchPlaceholder'], 'Search by merchant, sender or subject'],
+  searchPlaceholder: [
+    ['topMerchants', 'searchPlaceholder'],
+    'Search by merchant, sender or subject',
+  ],
   totalSpend: [['topMerchants', 'totalSpend'], 'Total spend'],
   statementsSpend: [['topMerchants', 'statementsSpend'], 'Statements'],
   receiptsSpend: [['topMerchants', 'receiptsSpend'], 'Receipts'],
@@ -58,5 +61,7 @@ export const buildTopMerchantsLabels = (tx: TxFn): Record<string, string> =>
     Object.entries(LABEL_PATHS).map(([k, [p, f]]) => [k, p.length === 0 ? f : tx(p, f)]),
   );
 
-export const createTx = (t: unknown): TxFn =>
-  (path, fallback) => resolveLabel(getNestedValue(t, path), fallback);
+export const createTx =
+  (t: unknown): TxFn =>
+  (path, fallback) =>
+    resolveLabel(getNestedValue(t, path), fallback);

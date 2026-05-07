@@ -1,11 +1,22 @@
-import { applyStatementsFilters, type StatementFilterItem, type StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
+import {
+  type StatementFilterItem,
+  type StatementFilters,
+  applyStatementsFilters,
+} from '@/app/(main)/statements/components/filters/statement-filters';
 import {
   getBankDisplayName,
   mapGmailReceiptToMerchantRecord,
   mapTransactionToRecord,
 } from '@/app/(main)/statements/components/top-merchants/helpers/top-merchants-mappers';
-import type { TopMerchantFlowType, TopMerchantRecord } from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
-import type { GmailReceipt, StatementMeta, Transaction } from '@/app/(main)/statements/types/statement-types';
+import type {
+  TopMerchantFlowType,
+  TopMerchantRecord,
+} from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
+import type {
+  GmailReceipt,
+  StatementMeta,
+  Transaction,
+} from '@/app/(main)/statements/types/statement-types';
 import { useMemo } from 'react';
 
 type StatementWithWorkspace = StatementMeta & StatementFilterItem;
@@ -42,7 +53,9 @@ const matchesQuery = (r: TopMerchantRecord, query: string): boolean =>
 
 const filterByQuery = (records: TopMerchantRecord[], searchInput: string): TopMerchantRecord[] => {
   const query = searchInput.trim().toLowerCase();
-  if (!query) return records;
+  if (!query) {
+    return records;
+  }
   return records.filter(r => matchesQuery(r, query));
 };
 
@@ -56,8 +69,14 @@ const getUserDescription = (user: TopMerchantRecord['user']): string | null => {
 
 const buildUserOption = (record: TopMerchantRecord): FromOption | null => {
   const uid = record.user?.id;
-  if (!uid) return null;
-  return { id: `user:${uid}`, label: getUserLabel(record.user), description: getUserDescription(record.user) };
+  if (!uid) {
+    return null;
+  }
+  return {
+    id: `user:${uid}`,
+    label: getUserLabel(record.user),
+    description: getUserDescription(record.user),
+  };
 };
 
 const buildBankOption = (bank: string): FromOption => ({
@@ -71,9 +90,13 @@ const buildFromOptions = (allRecords: TopMerchantRecord[]): FromOption[] => {
   const seen = new Map<string, FromOption>();
   allRecords.forEach(record => {
     const userOpt = buildUserOption(record);
-    if (userOpt && !seen.has(userOpt.id)) seen.set(userOpt.id, userOpt);
+    if (userOpt && !seen.has(userOpt.id)) {
+      seen.set(userOpt.id, userOpt);
+    }
     const bank = record.bankName;
-    if (bank && !seen.has(`bank:${bank}`)) seen.set(`bank:${bank}`, buildBankOption(bank));
+    if (bank && !seen.has(`bank:${bank}`)) {
+      seen.set(`bank:${bank}`, buildBankOption(bank));
+    }
   });
   return Array.from(seen.values());
 };
@@ -93,22 +116,55 @@ export const useTopMerchantsRecords = ({
       const meta = item.statementId ? statementById.get(item.statementId) : undefined;
       return mapTransactionToRecord(item, meta as StatementMeta | undefined, workspaceCurrency);
     });
-    const txStatementIds = new Set(transactions.map(t => t.statementId).filter((id): id is string => Boolean(id)));
-    const mappedReceipts = gmailReceipts.filter(r => !txStatementIds.has(r.id)).map(r => mapGmailReceiptToMerchantRecord(r, workspaceCurrency));
+    const txStatementIds = new Set(
+      transactions.map(t => t.statementId).filter((id): id is string => Boolean(id)),
+    );
+    const mappedReceipts = gmailReceipts
+      .filter(r => !txStatementIds.has(r.id))
+      .map(r => mapGmailReceiptToMerchantRecord(r, workspaceCurrency));
     return [...mappedTransactions, ...mappedReceipts];
   }, [statements, transactions, gmailReceipts, workspaceCurrency]);
 
-  const filteredRecords = useMemo(() => filterByQuery(applyStatementsFilters<TopMerchantRecord>(allRecords, appliedFilters), searchInput), [allRecords, appliedFilters, searchInput]);
+  const filteredRecords = useMemo(
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopMerchantRecord>(allRecords, appliedFilters),
+        searchInput,
+      ),
+    [allRecords, appliedFilters, searchInput],
+  );
 
-  const flowFilteredRecords = useMemo(() => filteredRecords.filter(r => r.flowType === activeFlowType), [filteredRecords, activeFlowType]);
+  const flowFilteredRecords = useMemo(
+    () => filteredRecords.filter(r => r.flowType === activeFlowType),
+    [filteredRecords, activeFlowType],
+  );
 
-  const recordsWithoutDateFilter = useMemo(() => filterByQuery(applyStatementsFilters<TopMerchantRecord>(allRecords, { ...appliedFilters, date: null }), searchInput), [allRecords, appliedFilters, searchInput]);
+  const recordsWithoutDateFilter = useMemo(
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopMerchantRecord>(allRecords, { ...appliedFilters, date: null }),
+        searchInput,
+      ),
+    [allRecords, appliedFilters, searchInput],
+  );
 
-  const flowRecordsWithoutDateFilter = useMemo(() => recordsWithoutDateFilter.filter(r => r.flowType === activeFlowType), [recordsWithoutDateFilter, activeFlowType]);
+  const flowRecordsWithoutDateFilter = useMemo(
+    () => recordsWithoutDateFilter.filter(r => r.flowType === activeFlowType),
+    [recordsWithoutDateFilter, activeFlowType],
+  );
 
   const fromOptions = useMemo(() => buildFromOptions(allRecords), [allRecords]);
 
-  const currencyOptions = useMemo(() => Array.from(new Set(allRecords.map(r => r.currencyValue).filter(Boolean))), [allRecords]);
+  const currencyOptions = useMemo(
+    () => Array.from(new Set(allRecords.map(r => r.currencyValue).filter(Boolean))),
+    [allRecords],
+  );
 
-  return { allRecords, flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions };
+  return {
+    allRecords,
+    flowFilteredRecords,
+    flowRecordsWithoutDateFilter,
+    fromOptions,
+    currencyOptions,
+  };
 };

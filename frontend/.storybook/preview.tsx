@@ -1,5 +1,4 @@
 import type { Preview } from '@storybook/react';
-import React from 'react';
 import '../app/globals.css';
 import { StorybookProviders } from './decorators/StorybookProviders';
 

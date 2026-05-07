@@ -85,6 +85,6 @@ describe('createCategoriesTour', () => {
     expect(source).toContain('data-tour-id="categories-add-button"');
     expect(source).toContain('data-tour-id="categories-search"');
     expect(source).toContain('data-tour-id="categories-list"');
-    expect(source).toContain('data-tour-id={index === 0 ? \'category-toggle\' : undefined}');
+    expect(source).toContain("data-tour-id={index === 0 ? 'category-toggle' : undefined}");
   });
 });

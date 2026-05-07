@@ -36,8 +36,12 @@ export const buildQuickTabs = (params: {
 }): QuickTab[] => {
   const { labels, paidColKey, tabCounts } = params;
   const tabs: QuickTab[] = [{ id: 'all', label: labels.all }];
-  if (!paidColKey) return tabs;
-  if (typeof tabCounts.paid !== 'number' || typeof tabCounts.unpaid !== 'number') return tabs;
+  if (!paidColKey) {
+    return tabs;
+  }
+  if (typeof tabCounts.paid !== 'number' || typeof tabCounts.unpaid !== 'number') {
+    return tabs;
+  }
 
   tabs.push(
     {
@@ -62,8 +66,12 @@ export const normalizeActiveTabId = (
   quickTabs: QuickTab[],
   columnsTabId: string,
 ): string => {
-  if (activeTabId === columnsTabId) return activeTabId;
-  if (activeTabId === 'all') return activeTabId;
+  if (activeTabId === columnsTabId) {
+    return activeTabId;
+  }
+  if (activeTabId === 'all') {
+    return activeTabId;
+  }
   return quickTabs.some(tab => tab.id === activeTabId) ? activeTabId : 'all';
 };
 
@@ -72,6 +80,8 @@ export const getActiveTabFilter = (
   quickTabs: QuickTab[],
   columnsTabId: string,
 ): RowFilter | null => {
-  if (activeTabId === 'all' || activeTabId === columnsTabId) return null;
+  if (activeTabId === 'all' || activeTabId === columnsTabId) {
+    return null;
+  }
   return quickTabs.find(tab => tab.id === activeTabId)?.filter ?? null;
 };

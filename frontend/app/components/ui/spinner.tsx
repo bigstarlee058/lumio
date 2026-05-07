@@ -1,7 +1,6 @@
 'use client';
 
 import CircularProgress, { type CircularProgressProps } from '@mui/material/CircularProgress';
-import * as React from 'react';
 
 export interface SpinnerProps extends Omit<CircularProgressProps, 'aria-label'> {
   label?: string;

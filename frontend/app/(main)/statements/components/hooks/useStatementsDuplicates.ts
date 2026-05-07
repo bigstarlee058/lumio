@@ -1,10 +1,7 @@
 'use client';
 
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
-import {
-  getStatementDisplayMerchant,
-  getStatementMerchantLabel,
-} from '@/app/lib/statement-status';
+import { getStatementDisplayMerchant, getStatementMerchantLabel } from '@/app/lib/statement-status';
 import { useMemo, useState } from 'react';
 import {
   DUPLICATE_GROUP_TONES,
@@ -60,11 +57,14 @@ function buildDuplicateGroupsFromStatements(
     const amountLabel = formatStatementAmount(statement);
     const override = duplicateOverrides[statement.id]?.state;
 
-    if (override === 'not_duplicate') continue;
+    if (override === 'not_duplicate') {
+      continue;
+    }
 
-    const isZeroAmount =
-      amountLabel === '-' || amountLabel === '0' || amountLabel === '0.00';
-    if (isZeroAmount || isProcessingReceipt || statement.status === 'processing') continue;
+    const isZeroAmount = amountLabel === '-' || amountLabel === '0' || amountLabel === '0.00';
+    if (isZeroAmount || isProcessingReceipt || statement.status === 'processing') {
+      continue;
+    }
 
     const resolvedName = buildResolvedName(isReceipt, statement);
     const merchantLabel = isReceipt
@@ -82,13 +82,15 @@ function buildDuplicateGroupsFromStatements(
     }
   }
 
-  return buildMetaFromGroups(duplicateGroups, duplicateOverrides, isKnownStatement, duplicateReason);
+  return buildMetaFromGroups(
+    duplicateGroups,
+    duplicateOverrides,
+    isKnownStatement,
+    duplicateReason,
+  );
 }
 
-function buildResolvedName(
-  isReceipt: boolean,
-  statement: StatementForDuplicates,
-): string {
+function buildResolvedName(isReceipt: boolean, statement: StatementForDuplicates): string {
   if (isReceipt) {
     return resolveGmailMerchantLabel({
       vendor: statement.parsedData?.vendor,
@@ -118,7 +120,9 @@ function buildMetaFromGroups(
   let duplicateGroupOrder = 0;
 
   duplicateGroups.forEach(group => {
-    if (group.length < 2) return;
+    if (group.length < 2) {
+      return;
+    }
 
     const sortedGroup = [...group].sort((a, b) => {
       if (a.createdAtTimestamp === b.createdAtTimestamp) {
@@ -158,8 +162,12 @@ function applyManualOverrides(
   isKnownStatement: Set<string>,
 ): void {
   Object.entries(duplicateOverrides).forEach(([statementId, override]) => {
-    if (override?.state !== 'duplicate') return;
-    if (!isKnownStatement.has(statementId) || metaById.has(statementId)) return;
+    if (override?.state !== 'duplicate') {
+      return;
+    }
+    if (!isKnownStatement.has(statementId) || metaById.has(statementId)) {
+      return;
+    }
 
     const manualGroupKey = override.groupKey ?? `manual:${statementId}`;
     const manualGroupLabel = override.groupLabel ?? 'Group Manual';

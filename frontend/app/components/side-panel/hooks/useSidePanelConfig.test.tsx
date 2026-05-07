@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 // @vitest-environment jsdom

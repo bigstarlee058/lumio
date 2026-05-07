@@ -1,6 +1,4 @@
 'use client';
-
-import React from 'react';
 import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types

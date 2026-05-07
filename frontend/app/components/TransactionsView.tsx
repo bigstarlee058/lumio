@@ -1,7 +1,9 @@
 'use client';
 
+import { Search as SearchIcon } from '@/app/components/icons';
 import { AppPagination } from '@/app/components/ui/pagination';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import {
   Box,
   Chip,
@@ -15,9 +17,7 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import { Search as SearchIcon } from '@/app/components/icons';
 import React, { useMemo, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface Transaction {
   id: string;
@@ -124,7 +124,9 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
     const presentKeys = new Set<string>();
     transactions.forEach(tx => {
       Object.keys(tx).forEach(key => {
-        if (key === 'id') return;
+        if (key === 'id') {
+          return;
+        }
         presentKeys.add(key);
       });
     });
@@ -318,7 +320,9 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <span style={{ fontSize: 14, color: 'var(--foreground)' }}>{t.pagination.rowsPerPage.value}:</span>
+            <span style={{ fontSize: 14, color: 'var(--foreground)' }}>
+              {t.pagination.rowsPerPage.value}:
+            </span>
             <select
               value={rowsPerPage}
               onChange={e => {
@@ -330,7 +334,6 @@ export default function TransactionsView({ transactions }: TransactionsViewProps
                 border: '1px solid var(--border-color)',
                 padding: '2px 8px',
                 fontSize: 14,
-                outline: 'none',
               }}
             >
               <option value={10}>10</option>

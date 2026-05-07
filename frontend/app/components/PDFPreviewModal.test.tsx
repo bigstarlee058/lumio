@@ -43,17 +43,17 @@ vi.mock('./ui/modal-shell', () => ({
 describe('PDFPreviewModal manual attach flow', () => {
   let container: HTMLDivElement;
   let root: ReturnType<typeof createRoot>;
-  let originalCreateObjectURL: typeof URL.createObjectURL;
-  let originalRevokeObjectURL: typeof URL.revokeObjectURL;
-  let PDFPreviewModal: typeof import('./PDFPreviewModal').PDFPreviewModal;
+  let originalCreateObjectUrl: typeof URL.createObjectURL;
+  let originalRevokeObjectUrl: typeof URL.revokeObjectURL;
+  let pdfPreviewModal: typeof import('./PDFPreviewModal').PDFPreviewModal;
 
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
-    originalCreateObjectURL = URL.createObjectURL;
-    originalRevokeObjectURL = URL.revokeObjectURL;
+    originalCreateObjectUrl = URL.createObjectURL;
+    originalRevokeObjectUrl = URL.revokeObjectURL;
 
     vi.stubGlobal('alert', vi.fn());
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }));
@@ -77,19 +77,19 @@ describe('PDFPreviewModal manual attach flow', () => {
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
       writable: true,
-      value: originalCreateObjectURL,
+      value: originalCreateObjectUrl,
     });
     Object.defineProperty(URL, 'revokeObjectURL', {
       configurable: true,
       writable: true,
-      value: originalRevokeObjectURL,
+      value: originalRevokeObjectUrl,
     });
     vi.unstubAllGlobals();
   });
 
   async function loadComponent() {
     const module = await import('./PDFPreviewModal');
-    PDFPreviewModal = module.PDFPreviewModal;
+    pdfPreviewModal = module.PDFPreviewModal;
   }
 
   it('builds source-specific file endpoints', async () => {
@@ -100,7 +100,9 @@ describe('PDFPreviewModal manual attach flow', () => {
     expect(module.getFileEndpoint?.('statement', 'statement-1')).toBe(
       '/api/v1/statements/statement-1/file',
     );
-    expect(module.getFileEndpoint?.('receipt', 'receipt-1')).toBe('/api/v1/receipts/receipt-1/file');
+    expect(module.getFileEndpoint?.('receipt', 'receipt-1')).toBe(
+      '/api/v1/receipts/receipt-1/file',
+    );
     expect(module.getFileEndpoint?.('gmail', 'gmail-1')).toBe(
       '/api/v1/integrations/gmail/receipts/gmail-1/file',
     );
@@ -110,7 +112,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="statement-1"
@@ -139,7 +141,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="statement-1"
@@ -192,7 +194,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="receipt-1"
@@ -222,7 +224,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="receipt-image-1"
@@ -253,7 +255,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="receipt-image-2"
@@ -264,15 +266,19 @@ describe('PDFPreviewModal manual attach flow', () => {
       await Promise.resolve();
     });
 
-    const storeReceiptImage = container.querySelector('img[alt="store-receipt.jpg"]') as HTMLImageElement;
+    const storeReceiptImage = container.querySelector(
+      'img[alt="store-receipt.jpg"]',
+    ) as HTMLImageElement;
 
     expect(storeReceiptImage).toBeTruthy();
-    expect(storeReceiptImage.className).toContain('lumio-pdf-preview-modal__image-preview--receipt');
+    expect(storeReceiptImage.className).toContain(
+      'lumio-pdf-preview-modal__image-preview--receipt',
+    );
     expect(storeReceiptImage.className).not.toContain('max-h-[78vh]');
 
     await act(async () => {
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="receipt-image-3"
@@ -283,11 +289,15 @@ describe('PDFPreviewModal manual attach flow', () => {
       await Promise.resolve();
     });
 
-    const gmailReceiptImage = container.querySelector('img[alt="gmail-receipt.jpg"]') as HTMLImageElement;
+    const gmailReceiptImage = container.querySelector(
+      'img[alt="gmail-receipt.jpg"]',
+    ) as HTMLImageElement;
 
     expect(gmailReceiptImage).toBeTruthy();
     expect(gmailReceiptImage.className).toContain('lumio-pdf-preview-modal__image-preview');
-    expect(gmailReceiptImage.className).not.toContain('lumio-pdf-preview-modal__image-preview--receipt');
+    expect(gmailReceiptImage.className).not.toContain(
+      'lumio-pdf-preview-modal__image-preview--receipt',
+    );
   });
 
   it('uses dark surface classes for the preview shell and canvas', async () => {
@@ -300,7 +310,7 @@ describe('PDFPreviewModal manual attach flow', () => {
     await act(async () => {
       await loadComponent();
       root.render(
-        <PDFPreviewModal
+        <pdfPreviewModal
           isOpen
           onClose={vi.fn()}
           fileId="receipt-1"

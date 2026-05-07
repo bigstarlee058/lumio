@@ -70,7 +70,15 @@ export function AppearanceSection({
               {t.appearanceCard.followsSystem.value}
             </Typography>
             {appearanceLoading ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'text.secondary' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  fontSize: 14,
+                  color: 'text.secondary',
+                }}
+              >
                 <Spinner size={16} />
                 <span>{t.appearanceCard.active.value}</span>
               </Box>

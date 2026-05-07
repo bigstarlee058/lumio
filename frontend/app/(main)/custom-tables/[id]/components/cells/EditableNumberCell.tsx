@@ -34,7 +34,9 @@ export function EditableNumberCell({ row, column, onUpdateCell, style }: Editabl
     onUpdateCell,
     toInputString: v => (v === null || v === undefined ? '' : String(v)),
     parseValue: raw => {
-      if (raw.trim() === '') return null;
+      if (raw.trim() === '') {
+        return null;
+      }
       const num = Number(raw);
       return Number.isNaN(num) ? null : num;
     },
@@ -56,7 +58,6 @@ export function EditableNumberCell({ row, column, onUpdateCell, style }: Editabl
           height: '100%',
           padding: '4px 8px',
           border: '2px solid #3b82f6',
-          outline: 'none',
           background: 'var(--color-info-soft-bg)',
           textAlign: 'right',
           ...style,

@@ -38,17 +38,17 @@ import {
   resolveStatementSortDate,
 } from '../StatementsListView.utils';
 import { mapGmailReceiptsToStatements } from '../gmail-receipt-mapping';
+import {
+  STATEMENTS_PAGE_SIZE as PAGE_SIZE,
+  type StatementsStatement as Statement,
+  type UseStatementsViewParams,
+} from './statementsViewTypes';
 import { useManualExpenseOptions } from './useManualExpenseOptions';
 import { useStatementPreview } from './useStatementPreview';
 import { useStatementSelection } from './useStatementSelection';
 import { useStatementsDuplicates } from './useStatementsDuplicates';
 import { useStatementsFilterState } from './useStatementsFilterState';
 import { useStatementsListData } from './useStatementsListData';
-import {
-  type StatementsStatement as Statement,
-  type UseStatementsViewParams,
-  STATEMENTS_PAGE_SIZE as PAGE_SIZE,
-} from './statementsViewTypes';
 
 interface StagedStatementsParams {
   statements: Statement[];
@@ -65,7 +65,9 @@ type ExchangeRateResponse = {
 };
 
 const normalizeCurrencyCode = (currency: string | null | undefined): string | null => {
-  const normalized = String(currency || '').trim().toUpperCase();
+  const normalized = String(currency || '')
+    .trim()
+    .toUpperCase();
   if (normalized === 'NIS' || normalized === '\u20aa') {
     return 'ILS';
   }
@@ -164,7 +166,9 @@ function buildStagedStatements({
     return getStatementStage(s.id) === stage && !isReceiptDerivedStatement(s);
   });
 
-  if (stage !== 'submit') return baseStatements;
+  if (stage !== 'submit') {
+    return baseStatements;
+  }
 
   const q = search.trim().toLowerCase();
   const receiptFiltered =
@@ -179,7 +183,9 @@ function sortStatements(statements: Statement[], direction: 'asc' | 'desc'): Sta
   const factor = direction === 'asc' ? 1 : -1;
   return [...statements].sort((l, r) => {
     const diff = resolveStatementSortDate(l) - resolveStatementSortDate(r);
-    if (diff !== 0) return diff * factor;
+    if (diff !== 0) {
+      return diff * factor;
+    }
     return l.id.localeCompare(r.id) * factor;
   });
 }
@@ -280,7 +286,9 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   const [dateSortDirection, setDateSortDirection] = useState<'desc' | 'asc'>('desc');
   const [expenseDrawerOpen, setExpenseDrawerOpen] = useState(false);
   const [expenseDrawerMode, setExpenseDrawerMode] = useState<StatementExpenseMode>('scan');
-  const [currentExchangeRateLabels, setCurrentExchangeRateLabels] = useState<Record<string, string>>({});
+  const [currentExchangeRateLabels, setCurrentExchangeRateLabels] = useState<
+    Record<string, string>
+  >({});
   const listScrollRef = useRef<HTMLDivElement | null>(null);
 
   const tx = (path: string[], fallback: string): string =>
@@ -336,7 +344,9 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
 
   // Load manual expense options when user is available
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     void loadManualExpenseOptions();
   }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -358,9 +368,13 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
 
   // Open expense drawer from URL params
   useEffect(() => {
-    if (stage !== 'submit') return;
+    if (stage !== 'submit') {
+      return;
+    }
     const requestedMode = searchParams.get('openExpenseDrawer');
-    if (!requestedMode) return;
+    if (!requestedMode) {
+      return;
+    }
     setExpenseDrawerMode(resolveExpenseDrawerMode(requestedMode));
     setExpenseDrawerOpen(true);
     const nextParams = new URLSearchParams(searchParams.toString());
@@ -371,8 +385,12 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
 
   // Clear Gmail sync skeletons
   useEffect(() => {
-    if (stage !== 'submit' || gmailSyncSkeletonKeys.length === 0) return;
-    if (gmailReceipts.length === 0) return;
+    if (stage !== 'submit' || gmailSyncSkeletonKeys.length === 0) {
+      return;
+    }
+    if (gmailReceipts.length === 0) {
+      return;
+    }
     setGmailSyncSkeletonKeys([]);
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
@@ -380,8 +398,11 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   }, [stage, gmailReceipts.length, gmailSyncSkeletonKeys.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const receiptStatements = useMemo<Statement[]>(() => {
-    if (stage !== 'submit') return [];
-    return mapGmailReceiptsToStatements(gmailReceipts);
+    if (stage !== 'submit') {
+      return [];
+    }
+    const mapped = mapGmailReceiptsToStatements(gmailReceipts);
+    return mapped;
   }, [gmailReceipts, stage]);
 
   const stagedStatements = useMemo(
@@ -411,7 +432,9 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
 
   // Clamp page
   useEffect(() => {
-    if (page > totalPagesCount) setPage(totalPagesCount);
+    if (page > totalPagesCount) {
+      setPage(totalPagesCount);
+    }
   }, [page, totalPagesCount]);
 
   const { setDuplicateOverrides, duplicateMetaById } = useStatementsDuplicates({
@@ -447,8 +470,12 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     setDuplicateOverrides,
     search,
     stage,
-    onRefreshStatements: async opts => { await loadStatements({ ...opts }); },
-    onRefreshGmail: async opts => { await loadGmailReceipts({ ...opts }); },
+    onRefreshStatements: async opts => {
+      await loadStatements({ ...opts });
+    },
+    onRefreshGmail: async opts => {
+      await loadGmailReceipts({ ...opts });
+    },
   });
 
   const {
@@ -482,7 +509,8 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     [filterState.columns],
   );
   const columnsWithLabels = useMemo(
-    () => filterState.draftColumns.map(col => ({ ...col, label: columnLabels[col.id] ?? col.label })),
+    () =>
+      filterState.draftColumns.map(col => ({ ...col, label: columnLabels[col.id] ?? col.label })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterState.draftColumns],
   );

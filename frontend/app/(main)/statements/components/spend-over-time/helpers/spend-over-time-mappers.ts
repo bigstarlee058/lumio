@@ -1,12 +1,12 @@
 import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
-import {
-  resolveSourceChannel,
-} from '@/app/(main)/statements/components/shared-analytics.utils';
-import type { GmailReceipt, StatementMeta, Transaction } from '@/app/(main)/statements/types/statement-types';
-import {
-  resolveSpendOverTimeFlow,
-} from '@/app/(main)/statements/components/spend-over-time.utils';
+import { resolveSourceChannel } from '@/app/(main)/statements/components/shared-analytics.utils';
+import { resolveSpendOverTimeFlow } from '@/app/(main)/statements/components/spend-over-time.utils';
 import type { SpendOverTimeRecord } from '@/app/(main)/statements/components/spend-over-time.utils';
+import type {
+  GmailReceipt,
+  StatementMeta,
+  Transaction,
+} from '@/app/(main)/statements/types/statement-types';
 import {
   getTransactionCurrency,
   getTransactionDate,
@@ -21,10 +21,16 @@ import { resolveBankLogo } from '@bank-logos';
 
 export const getBankDisplayName = (bankName?: string | null): string => {
   const raw = (bankName ?? '').trim();
-  if (!raw) return 'Unknown';
-  if (raw.toLowerCase() === 'gmail') return 'Gmail';
+  if (!raw) {
+    return 'Unknown';
+  }
+  if (raw.toLowerCase() === 'gmail') {
+    return 'Gmail';
+  }
   const resolved = resolveBankLogo(raw);
-  if (!resolved) return raw;
+  if (!resolved) {
+    return raw;
+  }
   return resolved.key !== 'other' ? resolved.displayName : raw;
 };
 
@@ -36,7 +42,8 @@ const opt = (v: string | null | undefined): string | null => (v ? v : null);
 
 const getMetaStatus = (meta: StatementMeta | undefined): string | null => opt(meta?.status);
 const getMetaBankName = (meta: StatementMeta | undefined): string | null => opt(meta?.bankName);
-const getMetaDateTo = (meta: StatementMeta | undefined): string | null => opt(meta?.statementDateTo);
+const getMetaDateTo = (meta: StatementMeta | undefined): string | null =>
+  opt(meta?.statementDateTo);
 const getMetaCreatedAt = (meta: StatementMeta | undefined, item: Transaction): string | null =>
   opt(meta?.createdAt) ?? opt(item.createdAt);
 const getMetaDateFrom = (meta: StatementMeta | undefined, item: Transaction): string | null =>
@@ -48,7 +55,10 @@ const getMetaExportedPaid = (meta: StatementMeta | undefined): MetaExportedPaid 
   paid: meta?.paid ?? null,
 });
 
-type MetaParsingUser = { parsingDetails: StatementFilterItem['parsingDetails']; user: StatementFilterItem['user'] };
+type MetaParsingUser = {
+  parsingDetails: StatementFilterItem['parsingDetails'];
+  user: StatementFilterItem['user'];
+};
 const getMetaParsingUser = (meta: StatementMeta | undefined): MetaParsingUser => ({
   parsingDetails: (meta?.parsingDetails ?? null) as StatementFilterItem['parsingDetails'],
   user: (meta?.user ?? null) as StatementFilterItem['user'],
@@ -86,17 +96,69 @@ type TxRecordInput = {
   dateValue: string;
 };
 
-const buildTransactionSpendRecord = ({ item, meta, merchant, fileType, flow, currency, dateValue }: TxRecordInput): SpendOverTimeRecord => {
+const buildTransactionSpendRecord = ({
+  item,
+  meta,
+  merchant,
+  fileType,
+  flow,
+  currency,
+  dateValue,
+}: TxRecordInput): SpendOverTimeRecord => {
   const ep = getMetaExportedPaid(meta);
   const pu = getMetaParsingUser(meta);
   const ws = getMetaWorkspace(meta, item);
   const fa = getFlowAmounts(flow);
-  return { id: item.id, source: 'statement', fileName: merchant, subject: null, sender: null, status: getMetaStatus(meta), fileType, createdAt: getMetaCreatedAt(meta, item), statementDateFrom: getMetaDateFrom(meta, item), statementDateTo: getMetaDateTo(meta), bankName: getMetaBankName(meta), totalDebit: fa.totalDebit, totalCredit: fa.totalCredit, currency, exported: ep.exported, paid: ep.paid, parsingDetails: pu.parsingDetails, user: pu.user, receivedAt: null, parsedData: { vendor: merchant, date: item.transactionDate ?? null }, sourceType: 'statement', sourceChannel: resolveSourceChannel({ sourceType: 'statement', fileType }), flowType: flow.flowType, amount: flow.amount, currencyValue: currency, dateValue, transactionId: item.id, workspaceId: ws.workspaceId, workspaceName: ws.workspaceName, merchant, paymentPurpose: item.paymentPurpose ?? null };
+  return {
+    id: item.id,
+    source: 'statement',
+    fileName: merchant,
+    subject: null,
+    sender: null,
+    status: getMetaStatus(meta),
+    fileType,
+    createdAt: getMetaCreatedAt(meta, item),
+    statementDateFrom: getMetaDateFrom(meta, item),
+    statementDateTo: getMetaDateTo(meta),
+    bankName: getMetaBankName(meta),
+    totalDebit: fa.totalDebit,
+    totalCredit: fa.totalCredit,
+    currency,
+    exported: ep.exported,
+    paid: ep.paid,
+    parsingDetails: pu.parsingDetails,
+    user: pu.user,
+    receivedAt: null,
+    parsedData: { vendor: merchant, date: item.transactionDate ?? null },
+    sourceType: 'statement',
+    sourceChannel: resolveSourceChannel({ sourceType: 'statement', fileType }),
+    flowType: flow.flowType,
+    amount: flow.amount,
+    currencyValue: currency,
+    dateValue,
+    transactionId: item.id,
+    workspaceId: ws.workspaceId,
+    workspaceName: ws.workspaceName,
+    merchant,
+    paymentPurpose: item.paymentPurpose ?? null,
+  };
 };
 
-export const mapTransactionToSpendRecord = (item: Transaction, meta: StatementMeta | undefined, workspaceCurrency: string): SpendOverTimeRecord | null => {
-  const flow = resolveSpendOverTimeFlow({ sourceType: 'statement', debit: item.debit, credit: item.credit, amount: item.amount, transactionType: item.transactionType });
-  if (flow.amount <= 0) return null;
+export const mapTransactionToSpendRecord = (
+  item: Transaction,
+  meta: StatementMeta | undefined,
+  workspaceCurrency: string,
+): SpendOverTimeRecord | null => {
+  const flow = resolveSpendOverTimeFlow({
+    sourceType: 'statement',
+    debit: item.debit,
+    credit: item.credit,
+    amount: item.amount,
+    transactionType: item.transactionType,
+  });
+  if (flow.amount <= 0) {
+    return null;
+  }
   const merchant = buildTxMerchant(item);
   const fileType = buildTxFileType(meta, item);
   const currency = getTransactionCurrency(item, meta, workspaceCurrency);
@@ -108,7 +170,13 @@ export const mapTransactionToSpendRecord = (item: Transaction, meta: StatementMe
 // Gmail receipt mapper
 // ---------------------------------------------------------------------------
 
-type GmailParsedFields = { amount?: number; transactionType?: 'income' | 'expense' | 'transfer' | 'unknown'; vendor?: string; date?: string; currency?: string };
+type GmailParsedFields = {
+  amount?: number;
+  transactionType?: 'income' | 'expense' | 'transfer' | 'unknown';
+  vendor?: string;
+  date?: string;
+  currency?: string;
+};
 
 const extractGmailParsed = (receipt: GmailReceipt): GmailParsedFields => ({
   amount: receipt.parsedData?.amount,
@@ -129,17 +197,75 @@ type GmailSpendRecordInput = {
   parsedDate: string | undefined;
 };
 
-const buildGmailSpendRecord = ({ receipt, merchant, flow, currency, parsedDate }: GmailSpendRecordInput): SpendOverTimeRecord => {
+const buildGmailSpendRecord = ({
+  receipt,
+  merchant,
+  flow,
+  currency,
+  parsedDate,
+}: GmailSpendRecordInput): SpendOverTimeRecord => {
   const fa = getFlowAmounts(flow);
   const dateValue = resolveGmailDateValue(parsedDate, receipt.receivedAt);
-  return { id: receipt.id, source: 'gmail', fileName: merchant, subject: receipt.subject, sender: receipt.sender, status: receipt.status, fileType: 'gmail', createdAt: receipt.receivedAt, statementDateFrom: parsedDate ?? receipt.receivedAt, statementDateTo: null, bankName: 'gmail', totalDebit: fa.totalDebit, totalCredit: fa.totalCredit, currency, exported: null, paid: null, parsingDetails: null, user: null, receivedAt: receipt.receivedAt, parsedData: { vendor: merchant, date: parsedDate ?? receipt.receivedAt }, sourceType: 'gmail', sourceChannel: 'gmail', flowType: flow.flowType, amount: flow.amount, currencyValue: currency, dateValue, transactionId: receipt.transactionId ?? null, workspaceId: receipt.workspaceId, workspaceName: receipt.workspaceName, merchant, paymentPurpose: merchant };
+  return {
+    id: receipt.id,
+    source: 'gmail',
+    fileName: merchant,
+    subject: receipt.subject,
+    sender: receipt.sender,
+    status: receipt.status,
+    fileType: 'gmail',
+    createdAt: receipt.receivedAt,
+    statementDateFrom: parsedDate ?? receipt.receivedAt,
+    statementDateTo: null,
+    bankName: 'gmail',
+    totalDebit: fa.totalDebit,
+    totalCredit: fa.totalCredit,
+    currency,
+    exported: null,
+    paid: null,
+    parsingDetails: null,
+    user: null,
+    receivedAt: receipt.receivedAt,
+    parsedData: { vendor: merchant, date: parsedDate ?? receipt.receivedAt },
+    sourceType: 'gmail',
+    sourceChannel: 'gmail',
+    flowType: flow.flowType,
+    amount: flow.amount,
+    currencyValue: currency,
+    dateValue,
+    transactionId: receipt.transactionId ?? null,
+    workspaceId: receipt.workspaceId,
+    workspaceName: receipt.workspaceName,
+    merchant,
+    paymentPurpose: merchant,
+  };
 };
 
-export const mapGmailReceiptToSpendRecord = (receipt: GmailReceipt, workspaceCurrency: string): SpendOverTimeRecord | null => {
-  const { amount, transactionType, vendor, date: parsedDate, currency: parsedCurrency } = extractGmailParsed(receipt);
-  const flow = resolveSpendOverTimeFlow({ sourceType: 'gmail', amount: amount ?? 0, transactionType });
-  if (flow.amount <= 0) return null;
-  const merchant = resolveGmailMerchantLabel({ vendor, sender: receipt.sender, subject: receipt.subject, fallback: 'Gmail receipt' });
+export const mapGmailReceiptToSpendRecord = (
+  receipt: GmailReceipt,
+  workspaceCurrency: string,
+): SpendOverTimeRecord | null => {
+  const {
+    amount,
+    transactionType,
+    vendor,
+    date: parsedDate,
+    currency: parsedCurrency,
+  } = extractGmailParsed(receipt);
+  const flow = resolveSpendOverTimeFlow({
+    sourceType: 'gmail',
+    amount: amount ?? 0,
+    transactionType,
+  });
+  if (flow.amount <= 0) {
+    return null;
+  }
+  const merchant = resolveGmailMerchantLabel({
+    vendor,
+    sender: receipt.sender,
+    subject: receipt.subject,
+    fallback: 'Gmail receipt',
+  });
   const currency = resolveCurrencyCode(parsedCurrency, workspaceCurrency);
   return buildGmailSpendRecord({ receipt, merchant, flow, currency, parsedDate });
 };

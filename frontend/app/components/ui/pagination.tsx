@@ -1,7 +1,8 @@
 'use client';
 
-import MuiPagination, { type PaginationProps as MuiPaginationProps } from '@mui/material/Pagination';
-import * as React from 'react';
+import MuiPagination, {
+  type PaginationProps as MuiPaginationProps,
+} from '@mui/material/Pagination';
 
 type AppPaginationProps = Omit<MuiPaginationProps, 'count' | 'onChange'> & {
   page: number;

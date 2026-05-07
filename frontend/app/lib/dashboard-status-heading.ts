@@ -52,7 +52,8 @@ export const resolveDashboardStatusHeading = ({
   const daysSinceUpload = Math.floor(
     (now - new Date(lastUploadDate).getTime()) / (1000 * 60 * 60 * 24),
   );
-  const hasAction = (type: string) => data.actions.some(action => action.type === type && action.count > 0);
+  const hasAction = (type: string) =>
+    data.actions.some(action => action.type === type && action.count > 0);
 
   if (data.snapshot.totalOverdue > 0) {
     return 'overdue';

@@ -15,21 +15,53 @@ interface StatementOptionTextProps {
   formatLabel: FormatLabelFn;
 }
 
-function StatementOptionText({ option, labels, formatLabel }: StatementOptionTextProps): React.JSX.Element {
+function StatementOptionText({
+  option,
+  labels,
+  formatLabel,
+}: StatementOptionTextProps): React.JSX.Element {
   return (
     <Box sx={{ minWidth: 0, flex: 1 }}>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+      <Box
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: 14,
+          fontWeight: 600,
+          color: 'var(--foreground)',
+        }}
+      >
         {option.title}
       </Box>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>
+      <Box
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: 12,
+          color: 'var(--muted-foreground)',
+        }}
+      >
         {labels.sourceLabel}: {option.sourceLabel} - {labels.periodLabel}: {option.periodLabel}
       </Box>
-      <Box style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>
+      <Box
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: 12,
+          color: 'var(--muted-foreground)',
+        }}
+      >
         {labels.fileLabel}: {option.fileLabel}
       </Box>
       {option.duplicateCount > 1 ? (
         <Box style={{ fontSize: 12, color: 'var(--color-warning-soft-text)' }}>
-          {formatLabel({ template: labels.duplicateUploads, values: { count: option.duplicateCount } })}
+          {formatLabel({
+            template: labels.duplicateUploads,
+            values: { count: option.duplicateCount },
+          })}
         </Box>
       ) : null}
     </Box>
@@ -58,7 +90,9 @@ function StatementGroupItem({
       component="button"
       type="button"
       disabled={option.disabled}
-      onClick={() => onToggleStatement({ representativeId: option.representativeId, checked: !checked })}
+      onClick={() =>
+        onToggleStatement({ representativeId: option.representativeId, checked: !checked })
+      }
       sx={{
         display: 'flex',
         width: '100%',

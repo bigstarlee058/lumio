@@ -208,7 +208,10 @@ export function Step1Content({
       >
         <span>{labels.hint}</span>
         <span>
-          {formatLabel({ template: labels.selectedLabel, values: { count: selectedStatementSummary.selectedCount } })}
+          {formatLabel({
+            template: labels.selectedLabel,
+            values: { count: selectedStatementSummary.selectedCount },
+          })}
         </span>
       </Box>
     </Box>

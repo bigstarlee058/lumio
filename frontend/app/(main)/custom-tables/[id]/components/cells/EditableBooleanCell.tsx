@@ -43,11 +43,7 @@ export function EditableBooleanCell({
         ...style,
       }}
     >
-      <Checkbox
-        checked={checked}
-        onCheckedChange={handleChange}
-        className="h-5 w-5"
-      />
+      <Checkbox checked={checked} onCheckedChange={handleChange} className="h-5 w-5" />
     </div>
   );
 }

@@ -1,10 +1,7 @@
 'use client';
 
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
-import {
-  isLowConfidenceDocument,
-  normalizeReceiptLineItems,
-} from '@/app/lib/financial-document';
+import { isLowConfidenceDocument, normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import type { AuditEvent } from '@/lib/api/audit';
 import { fetchEntityHistory } from '@/lib/api/audit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -68,7 +65,9 @@ const createLineItemId = (): string =>
     : `line-${Math.random().toString(36).slice(2, 10)}`;
 
 export const parseAmountValue = (value?: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : null;
 };
@@ -77,7 +76,9 @@ export const isIdEmpty = (id?: string | null): boolean =>
   !id || id === 'null' || id === 'undefined' || id === '0' || id === '';
 
 export const buildGmailMessageLink = (gmailMessageId?: string | null): string | null => {
-  if (!gmailMessageId) return null;
+  if (!gmailMessageId) {
+    return null;
+  }
   return `https://mail.google.com/mail/u/0/#inbox/${gmailMessageId}`;
 };
 
@@ -187,7 +188,9 @@ export function useGmailReceiptData({
   }, [loadData]);
 
   useEffect(() => {
-    if (!receiptId) return;
+    if (!receiptId) {
+      return;
+    }
     setHistoryLoading(true);
     fetchEntityHistory('receipt', receiptId)
       .then(events => setHistoryEvents(events || []))
@@ -213,9 +216,7 @@ export function useGmailReceiptData({
 
   const confidence = receipt?.parsedData?.confidence;
   const confidencePercent =
-    typeof confidence === 'number'
-      ? Math.round(Math.min(1, Math.max(0, confidence)) * 100)
-      : null;
+    typeof confidence === 'number' ? Math.round(Math.min(1, Math.max(0, confidence)) * 100) : null;
   const warningCount = (receipt?.parsedData?.validationIssues || []).length;
   const isLowConfidence = isLowConfidenceDocument(confidence ?? null);
   const transactionType = receipt?.parsedData?.transactionType || 'expense';
@@ -232,13 +233,30 @@ export function useGmailReceiptData({
 
   const readinessDetails = useMemo(() => {
     const segments: string[] = [];
-    if (!hasCategory) segments.push('No category selected.');
-    if (hasDisabledCategory) segments.push('Selected category is disabled. Choose an active one.');
-    if (isLowConfidence) segments.push(`Confidence is ${confidencePercent}%, review required.`);
-    if (warningCount > 0) segments.push(`${warningCount} parsing warning(s) detected.`);
-    if (lineItems.length === 0) segments.push('No line items. Add at least one line item.');
+    if (!hasCategory) {
+      segments.push('No category selected.');
+    }
+    if (hasDisabledCategory) {
+      segments.push('Selected category is disabled. Choose an active one.');
+    }
+    if (isLowConfidence) {
+      segments.push(`Confidence is ${confidencePercent}%, review required.`);
+    }
+    if (warningCount > 0) {
+      segments.push(`${warningCount} parsing warning(s) detected.`);
+    }
+    if (lineItems.length === 0) {
+      segments.push('No line items. Add at least one line item.');
+    }
     return segments;
-  }, [hasCategory, hasDisabledCategory, isLowConfidence, confidencePercent, warningCount, lineItems.length]);
+  }, [
+    hasCategory,
+    hasDisabledCategory,
+    isLowConfidence,
+    confidencePercent,
+    warningCount,
+    lineItems.length,
+  ]);
 
   const readinessTitle =
     readinessSeverity === 'error'

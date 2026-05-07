@@ -1,6 +1,9 @@
 'use client';
 
-import { useStatementFilters, type UseStatementFiltersReturn } from '@/app/(main)/statements/hooks/useStatementFilters';
+import {
+  type UseStatementFiltersReturn,
+  useStatementFilters,
+} from '@/app/(main)/statements/hooks/useStatementFilters';
 import { useEffect, useState } from 'react';
 
 export type TopAnalyticsStateReturn<TFlow extends string, TSort extends string> = {
@@ -28,6 +31,20 @@ export function useTopAnalyticsState<TFlow extends string, TSort extends string>
   const [searchInput, setSearchInput] = useState('');
   const [workspaceFilter, setWorkspaceFilter] = useState<string>('current');
   const filterState = useStatementFilters(filterStorageKey);
-  useEffect(() => { setSelectedRowId(null); }, [activeFlowType, workspaceFilter]);
-  return { activeFlowType, setActiveFlowType, sortKey, setSortKey, selectedRowId, setSelectedRowId, searchInput, setSearchInput, workspaceFilter, setWorkspaceFilter, filterState };
+  useEffect(() => {
+    setSelectedRowId(null);
+  }, [activeFlowType, workspaceFilter]);
+  return {
+    activeFlowType,
+    setActiveFlowType,
+    sortKey,
+    setSortKey,
+    selectedRowId,
+    setSelectedRowId,
+    searchInput,
+    setSearchInput,
+    workspaceFilter,
+    setWorkspaceFilter,
+    filterState,
+  };
 }

@@ -1,21 +1,21 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import MuiButton from '@mui/material/Button';
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from '@/app/components/icons';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { Input } from '@/app/components/ui/input';
 import { Select } from '@/app/components/ui/select';
 import {
   type CurrencySearchItem,
   buildCurrencySearchIndex,
 } from '@/app/lib/statement-expense-drawer';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, IconButton, Typography } from '@mui/material';
-import { Check, ChevronDown, ChevronLeft, Plus, Search, Trash2 } from '@/app/components/icons';
+import MuiButton from '@mui/material/Button';
+import { useTheme } from 'next-themes';
 import { useMemo, useState } from 'react';
 import type { EditableReceiptParsedData, ReceiptCategoryOption } from './receipt-types';
-import { tokens } from '@/lib/theme-tokens';
-import { useTheme } from 'next-themes';
 
 const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
@@ -93,9 +93,14 @@ export function ReceiptParsedDataForm({
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
+        <Box
+          sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}
+        >
           <Box>
-            <label htmlFor="receipt-vendor" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-vendor"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Vendor
             </label>
             <Input
@@ -107,16 +112,24 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
+            <label
+              htmlFor="receipt-date-picker"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
+              Date
+            </label>
             <CustomDatePicker
               value={value.date}
               onChange={date => onChange({ ...value, date })}
-              label="Date"
               containerTestId="receipt-date-picker"
             />
           </Box>
 
           <Box>
-            <label htmlFor="receipt-amount" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-amount"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Amount
             </label>
             <Input
@@ -134,7 +147,10 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-currency-trigger" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-currency-trigger"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Currency
             </label>
             <Box
@@ -145,20 +161,29 @@ export function ReceiptParsedDataForm({
               onClick={() => setCurrencyDrawerOpen(true)}
               sx={{
                 display: 'flex',
-                height: 40,
+                height: 36,
                 width: '100%',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                border: `1px solid ${c.ink150}`,
-                bgcolor: 'background.paper',
+                border: '1px solid rgba(0, 0, 0, 0.23)',
+                borderRadius: tokens.radius.md,
+                bgcolor: 'transparent',
                 px: 1.5,
                 py: 1,
-                fontSize: 14,
+                fontSize: 13,
                 cursor: 'pointer',
-                '&:hover': { bgcolor: 'action.hover' },
+                '&:hover': { borderColor: 'text.primary' },
+                '&:focus-visible': {
+                  borderColor: 'primary.main',
+                  boxShadow: `0 0 0 3px ${c.primary50}`,
+                  outline: 'none',
+                },
               }}
             >
-              <Box component="span" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <Box
+                component="span"
+                style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
                 {selectedCurrencyItem?.code || value.currency || 'Select a currency'}
               </Box>
               <ChevronDown style={{ width: 16, height: 16, color: c.ink400 }} />
@@ -184,7 +209,10 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-payment-method" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-payment-method"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Payment method
             </label>
             <Select
@@ -202,7 +230,10 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-transaction-type" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-transaction-type"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Transaction type
             </label>
             <Select
@@ -212,7 +243,8 @@ export function ReceiptParsedDataForm({
               onChange={event =>
                 onChange({
                   ...value,
-                  transactionType: event.target.value as EditableReceiptParsedData['transactionType'],
+                  transactionType: event.target
+                    .value as EditableReceiptParsedData['transactionType'],
                 })
               }
             >
@@ -224,7 +256,10 @@ export function ReceiptParsedDataForm({
           </Box>
 
           <Box>
-            <label htmlFor="receipt-category" style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+            <label
+              htmlFor="receipt-category"
+              style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}
+            >
               Category
             </label>
             <Select
@@ -244,8 +279,12 @@ export function ReceiptParsedDataForm({
         </Box>
 
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>Line items</Typography>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}
+          >
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
+              Line items
+            </Typography>
             <MuiButton
               variant="text"
               size="small"
@@ -268,10 +307,26 @@ export function ReceiptParsedDataForm({
             </MuiButton>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, border: `1px solid ${c.ink150}`, bgcolor: 'var(--muted)', p: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+              border: `1px solid ${c.ink150}`,
+              bgcolor: 'var(--muted)',
+              p: 2,
+            }}
+          >
             {/* eslint-disable-next-line max-lines-per-function, max-params */}
             {value.lineItems.map((lineItem, index) => (
-              <Box key={lineItem.id} sx={{ display: 'grid', gap: 1.5, gridTemplateColumns: { xs: '1fr', md: 'minmax(0,1fr) 120px 44px' } }}>
+              <Box
+                key={lineItem.id}
+                sx={{
+                  display: 'grid',
+                  gap: 1.5,
+                  gridTemplateColumns: { xs: '1fr', md: 'minmax(0,1fr) 120px 44px' },
+                }}
+              >
                 <Input
                   aria-label={index === 0 ? 'Line item description' : undefined}
                   value={lineItem.description}
@@ -307,7 +362,9 @@ export function ReceiptParsedDataForm({
                   onClick={() =>
                     onChange({
                       ...value,
-                      lineItems: value.lineItems.filter(currentItem => currentItem.id !== lineItem.id),
+                      lineItems: value.lineItems.filter(
+                        currentItem => currentItem.id !== lineItem.id,
+                      ),
                     })
                   }
                 >
@@ -346,9 +403,29 @@ export function ReceiptParsedDataForm({
         }
       >
         <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', pb: 2 }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+              overflowY: 'auto',
+              pb: 2,
+            }}
+          >
             <Box sx={{ position: 'relative' }}>
-              <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: c.ink400, pointerEvents: 'none' }} />
+              <Search
+                style={{
+                  position: 'absolute',
+                  left: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: 16,
+                  height: 16,
+                  color: c.ink400,
+                  pointerEvents: 'none',
+                }}
+              />
               <input
                 type="text"
                 value={currencySearch}
@@ -357,10 +434,10 @@ export function ReceiptParsedDataForm({
                 style={{
                   width: '100%',
                   border: `1px solid ${c.ink150}`,
+                  borderRadius: tokens.radius.md,
                   background: 'var(--card-bg)',
                   padding: '12px 16px 12px 40px',
                   fontSize: 14,
-                  outline: 'none',
                 }}
               />
             </Box>
@@ -380,6 +457,7 @@ export function ReceiptParsedDataForm({
                   py: 2,
                   textAlign: 'left',
                   border: 'none',
+                  borderRadius: tokens.radius.md,
                   cursor: 'pointer',
                 }}
               >
@@ -392,7 +470,9 @@ export function ReceiptParsedDataForm({
 
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
               <Box>
-                <Typography style={{ paddingLeft: 4, fontSize: 14, color: c.ink400 }}>Recents</Typography>
+                <Typography style={{ paddingLeft: 4, fontSize: 14, color: c.ink400 }}>
+                  Recents
+                </Typography>
                 <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {recentCurrencyItems.map(item => (
                     <Box
@@ -409,12 +489,15 @@ export function ReceiptParsedDataForm({
                         py: 1.5,
                         textAlign: 'left',
                         border: 'none',
+                        borderRadius: tokens.radius.md,
                         bgcolor: 'transparent',
                         cursor: 'pointer',
                         '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
-                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
+                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>
+                        {item.label}
+                      </Typography>
                     </Box>
                   ))}
                 </Box>
@@ -440,16 +523,21 @@ export function ReceiptParsedDataForm({
                         py: 1.5,
                         textAlign: 'left',
                         border: 'none',
+                        borderRadius: tokens.radius.md,
                         bgcolor: 'transparent',
                         cursor: 'pointer',
                         '&:hover': { bgcolor: 'action.hover' },
                       }}
                     >
-                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>{item.label}</Typography>
+                      <Typography style={{ fontSize: 16, fontWeight: 600 }}>
+                        {item.label}
+                      </Typography>
                     </Box>
                   ))
                 ) : (
-                  <Typography sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: c.ink400 }}>
+                  <Typography
+                    sx={{ bgcolor: 'var(--muted)', p: 1.5, fontSize: 14, color: c.ink400 }}
+                  >
                     No currencies found
                   </Typography>
                 )}

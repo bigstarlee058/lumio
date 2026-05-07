@@ -4,7 +4,8 @@ const POPOVER_MARGIN = 16;
 const POSITION_RECHECK_DELAY_MS = 80;
 const POPOVER_MAX_WIDTH = 400;
 const POPOVER_MIN_WIDTH = 240;
-const POPOVER_MOVE_TRANSITION = 'left 220ms cubic-bezier(0.22, 1, 0.36, 1), top 220ms cubic-bezier(0.22, 1, 0.36, 1)';
+const POPOVER_MOVE_TRANSITION =
+  'left 220ms cubic-bezier(0.22, 1, 0.36, 1), top 220ms cubic-bezier(0.22, 1, 0.36, 1)';
 
 let activeCleanup: (() => void) | null = null;
 
@@ -46,10 +47,14 @@ const clipRectToViewport = (rect: DOMRect): TourBounds => {
 
 function getUsableElementBounds(selector: string): TourBounds | null {
   const element = document.querySelector(selector);
-  if (!(element instanceof HTMLElement)) return null;
+  if (!(element instanceof HTMLElement)) {
+    return null;
+  }
 
   const bounds = clipRectToViewport(element.getBoundingClientRect());
-  if (bounds.width < 280 || bounds.height < 180) return null;
+  if (bounds.width < 280 || bounds.height < 180) {
+    return null;
+  }
   return bounds;
 }
 
@@ -91,9 +96,11 @@ function forcePopoverInteractivity(popover: PopoverDOM): void {
     element.style.zIndex = '2147483647';
   });
 
-  [popover.footer, popover.footerButtons, popover.previousButton, popover.nextButton].forEach(element => {
-    element.style.position ||= 'relative';
-  });
+  [popover.footer, popover.footerButtons, popover.previousButton, popover.nextButton].forEach(
+    element => {
+      element.style.position ||= 'relative';
+    },
+  );
 
   popover.closeButton.style.position = 'absolute';
   popover.closeButton.style.top = '0';
@@ -107,14 +114,22 @@ function forcePopoverInteractivity(popover: PopoverDOM): void {
 }
 
 function alignInline(targetRect: DOMRect, popoverRect: DOMRect, align: Alignment): number {
-  if (align === 'center') return targetRect.left + targetRect.width / 2 - popoverRect.width / 2;
-  if (align === 'end') return targetRect.right - popoverRect.width;
+  if (align === 'center') {
+    return targetRect.left + targetRect.width / 2 - popoverRect.width / 2;
+  }
+  if (align === 'end') {
+    return targetRect.right - popoverRect.width;
+  }
   return targetRect.left;
 }
 
 function alignBlock(targetRect: DOMRect, popoverRect: DOMRect, align: Alignment): number {
-  if (align === 'center') return targetRect.top + targetRect.height / 2 - popoverRect.height / 2;
-  if (align === 'end') return targetRect.bottom - popoverRect.height;
+  if (align === 'center') {
+    return targetRect.top + targetRect.height / 2 - popoverRect.height / 2;
+  }
+  if (align === 'end') {
+    return targetRect.bottom - popoverRect.height;
+  }
   return targetRect.top;
 }
 
@@ -126,7 +141,11 @@ function setPopoverPosition(wrapper: HTMLElement, left: number, top: number): vo
   wrapper.style.transform = 'none';
 }
 
-function centerPopoverInBounds(wrapper: HTMLElement, popoverRect: DOMRect, bounds: TourBounds): void {
+function centerPopoverInBounds(
+  wrapper: HTMLElement,
+  popoverRect: DOMRect,
+  bounds: TourBounds,
+): void {
   setPopoverPosition(
     wrapper,
     bounds.left + (bounds.width - popoverRect.width) / 2,
@@ -152,20 +171,22 @@ export function positionTourPopoverNearElement(
   const gap = 12;
   const side = placement.side ?? 'bottom';
   const align = placement.align ?? 'start';
-  const left = side === 'right'
-    ? targetRect.right + gap
-    : side === 'left'
-      ? targetRect.left - popoverRect.width - gap
-      : side === 'over'
-        ? targetRect.left + targetRect.width / 2 - popoverRect.width / 2
-        : alignInline(targetRect, popoverRect, align);
-  const top = side === 'bottom'
-    ? targetRect.bottom + gap
-    : side === 'top'
-      ? targetRect.top - popoverRect.height - gap
-      : side === 'over'
-        ? targetRect.top + targetRect.height / 2 - popoverRect.height / 2
-        : alignBlock(targetRect, popoverRect, align);
+  const left =
+    side === 'right'
+      ? targetRect.right + gap
+      : side === 'left'
+        ? targetRect.left - popoverRect.width - gap
+        : side === 'over'
+          ? targetRect.left + targetRect.width / 2 - popoverRect.width / 2
+          : alignInline(targetRect, popoverRect, align);
+  const top =
+    side === 'bottom'
+      ? targetRect.bottom + gap
+      : side === 'top'
+        ? targetRect.top - popoverRect.height - gap
+        : side === 'over'
+          ? targetRect.top + targetRect.height / 2 - popoverRect.height / 2
+          : alignBlock(targetRect, popoverRect, align);
 
   setPopoverPosition(wrapper, left, top);
   clampTourPopoverToBounds(wrapper, bounds);
@@ -182,8 +203,16 @@ export function clampTourPopoverToBounds(
     return;
   }
 
-  const left = clamp(rect.left, bounds.left + margin, bounds.left + bounds.width - rect.width - margin);
-  const top = clamp(rect.top, bounds.top + margin, bounds.top + bounds.height - rect.height - margin);
+  const left = clamp(
+    rect.left,
+    bounds.left + margin,
+    bounds.left + bounds.width - rect.width - margin,
+  );
+  const top = clamp(
+    rect.top,
+    bounds.top + margin,
+    bounds.top + bounds.height - rect.height - margin,
+  );
 
   if (Math.abs(left - rect.left) < 1 && Math.abs(top - rect.top) < 1) {
     return;
@@ -196,10 +225,7 @@ export function clampTourPopoverToBounds(
   wrapper.style.transform = 'none';
 }
 
-export function clampTourPopoverToViewport(
-  wrapper: HTMLElement,
-  margin = POPOVER_MARGIN,
-): void {
+export function clampTourPopoverToViewport(wrapper: HTMLElement, margin = POPOVER_MARGIN): void {
   clampTourPopoverToBounds(wrapper, viewportBounds(), margin);
 }
 
@@ -208,10 +234,7 @@ export function cleanupStableTourPopoverPositioning(): void {
   activeCleanup = null;
 }
 
-export function stabilizeTourPopover(
-  popover: PopoverDOM,
-  placement?: TourPopoverPlacement,
-): void {
+export function stabilizeTourPopover(popover: PopoverDOM, placement?: TourPopoverPlacement): void {
   cleanupStableTourPopoverPositioning();
 
   const { wrapper } = popover;

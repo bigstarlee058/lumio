@@ -1,8 +1,18 @@
 /* eslint-disable max-lines */
 'use client';
 
-import type React from 'react';
 import { GoogleSheetsPickerButton } from '@/app/components/GoogleSheetsPickerButton';
+import {
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  FileSpreadsheet,
+  Plug,
+  RefreshCcw,
+  Trash2,
+} from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
@@ -15,22 +25,12 @@ import {
   type WorksheetOption,
   getDefaultWorksheetName,
 } from '@/app/lib/googleSheetsSelection';
+import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, Stack, Typography } from '@mui/material';
-import {
-  AlertCircle,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  ExternalLink,
-  FileSpreadsheet,
-  Plug,
-  RefreshCcw,
-  Trash2,
-} from '@/app/components/icons';
+import { useTheme } from 'next-themes';
+import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
 
 interface GoogleSheetConnection {
   id: string;
@@ -279,7 +279,9 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
           <Typography style={{ color: c.ink800, fontWeight: 600, marginBottom: 8 }}>
             {t.loginRequired.title}
           </Typography>
-          <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.loginRequired.subtitle}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink700 }}>
+            {t.loginRequired.subtitle}
+          </Typography>
         </Box>
       </Box>
     );
@@ -313,18 +315,12 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
       {(error || success) && (
         <Stack spacing={1} sx={{ mb: 2 }}>
           {success && (
-            <Alert
-              severity="success"
-              icon={<CheckCircle2 style={{ height: 16, width: 16 }} />}
-            >
+            <Alert severity="success" icon={<CheckCircle2 style={{ height: 16, width: 16 }} />}>
               {success}
             </Alert>
           )}
           {error && (
-            <Alert
-              severity="error"
-              icon={<AlertCircle style={{ height: 16, width: 16 }} />}
-            >
+            <Alert severity="error" icon={<AlertCircle style={{ height: 16, width: 16 }} />}>
               {error}
             </Alert>
           )}
@@ -726,7 +722,12 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
             data-tour-id="gs-integration-list"
           >
             <Box
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 1.5,
+              }}
             >
               <Typography style={{ fontSize: 16, fontWeight: 600, color: c.ink900 }}>
                 {t.list.title}
@@ -778,7 +779,12 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                   >
                     <Stack spacing={1.5}>
                       <Box
-                        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          justifyContent: 'space-between',
+                          gap: 1,
+                        }}
                       >
                         <Box>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -825,7 +831,14 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                               </Box>
                             )}
                           </Box>
-                          <Typography style={{ fontSize: 12, color: c.ink500, marginTop: 4, wordBreak: 'break-all' }}>
+                          <Typography
+                            style={{
+                              fontSize: 12,
+                              color: c.ink500,
+                              marginTop: 4,
+                              wordBreak: 'break-all',
+                            }}
+                          >
                             ID: {item.sheetId}
                           </Typography>
                           {item.worksheetName ? (
@@ -885,8 +898,12 @@ export default function GoogleSheetsIntegrationPage(): React.JSX.Element {
                             fontSize: 12,
                             fontWeight: 600,
                             color: 'var(--color-primary)',
-                            cursor: syncingId === item.id || item.oauthConnected === false ? 'not-allowed' : 'pointer',
-                            opacity: syncingId === item.id || item.oauthConnected === false ? 0.6 : 1,
+                            cursor:
+                              syncingId === item.id || item.oauthConnected === false
+                                ? 'not-allowed'
+                                : 'pointer',
+                            opacity:
+                              syncingId === item.id || item.oauthConnected === false ? 0.6 : 1,
                           }}
                         >
                           {syncingId === item.id ? (

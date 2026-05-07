@@ -71,8 +71,13 @@ export function useCurrencySelection({
     setCurrencyDrawerOpen(false);
   };
 
-  const openCurrencyDrawer = (): void => { setCurrencyDrawerOpen(true); };
-  const closeCurrencyDrawer = (): void => { setCurrencyDrawerOpen(false); setCurrencySearch(''); };
+  const openCurrencyDrawer = (): void => {
+    setCurrencyDrawerOpen(true);
+  };
+  const closeCurrencyDrawer = (): void => {
+    setCurrencyDrawerOpen(false);
+    setCurrencySearch('');
+  };
 
   return {
     currencyDrawerOpen,

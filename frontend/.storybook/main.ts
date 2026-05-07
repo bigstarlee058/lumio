@@ -30,6 +30,7 @@ const config: StorybookConfig = {
       os: false,
       crypto: false,
       stream: false,
+      tty: false,
       util: false,
       buffer: false,
     };

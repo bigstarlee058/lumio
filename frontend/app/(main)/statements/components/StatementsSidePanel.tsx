@@ -1,25 +1,34 @@
 'use client';
 
+import {
+  Ban,
+  Banknote,
+  CalendarRange,
+  Folder,
+  Send,
+  ShoppingCart,
+  ThumbsUp,
+  User,
+} from '@/app/components/icons';
 import { type SidePanelPageConfig, useSidePanelConfig } from '@/app/components/side-panel';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { payablesApi } from '@/app/lib/payables-api';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   type OpenExpenseDrawerEventDetail,
   STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT,
   type StatementExpenseMode,
   resolveExpenseDrawerMode,
 } from '@/app/lib/statement-expense-drawer';
-import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import { type TopBankSender, getTopBankSenders } from '@/app/lib/statement-insights';
 import {
   type CloudImportProvider,
   type ConnectedCloudProviders,
 } from '@/app/lib/statement-upload-actions';
 import { countStatementStages, getStatementStageMap } from '@/app/lib/statement-workflow';
-import { Ban, Banknote, CalendarRange, Folder, Send, ShoppingCart, ThumbsUp, User } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -75,11 +84,7 @@ type TransactionListItem = {
   credit?: number | string | null;
 };
 
-
-async function fetchAllPaginated<T>(
-  endpoint: string,
-  pageSize = 500,
-): Promise<T[]> {
+async function fetchAllPaginated<T>(endpoint: string, pageSize = 500): Promise<T[]> {
   const allItems: T[] = [];
   let page = 1;
   let total = Number.POSITIVE_INFINITY;
@@ -93,7 +98,9 @@ async function fetchAllPaginated<T>(
     const batch: T[] = Array.isArray(raw) ? raw : [];
     allItems.push(...batch);
     total = Number(response.data?.total ?? allItems.length);
-    if (batch.length < pageSize) break;
+    if (batch.length < pageSize) {
+      break;
+    }
     page += 1;
   }
 
@@ -274,7 +281,9 @@ export default function StatementsSidePanel({ activeItem }: Props) {
     let isMounted = true;
 
     const loadCloudProviders = async () => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       const [dropboxStatus, googleDriveStatus, inboxStatus] = await Promise.allSettled([
         apiClient.get('/integrations/dropbox/status'),
@@ -309,7 +318,9 @@ export default function StatementsSidePanel({ activeItem }: Props) {
   }, [user]);
 
   const openExpenseDrawer = useCallback((mode: StatementExpenseMode) => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     const detail: OpenExpenseDrawerEventDetail = {
       mode: resolveExpenseDrawerMode(mode),
     };
@@ -409,7 +420,8 @@ export default function StatementsSidePanel({ activeItem }: Props) {
           title: workQueueTitle,
           titleClassName:
             'text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-600 dark:text-gray-300',
-          className: 'rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] px-1 pt-1',
+          className:
+            'rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] px-1 pt-1',
           items: [
             {
               id: 'submit',

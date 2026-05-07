@@ -1,4 +1,3 @@
-import type { AuditAction } from '@/lib/api/audit';
 import {
   Copy,
   Download,
@@ -12,6 +11,7 @@ import {
   Upload,
 } from '@/app/components/icons';
 import type { LucideIcon } from '@/app/components/icons';
+import type { AuditAction } from '@/lib/api/audit';
 
 export const ACTION_ICON_MAP: Record<AuditAction, LucideIcon> = {
   create: PlusCircle,

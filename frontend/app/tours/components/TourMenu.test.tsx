@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TourMenu } from './TourMenu';
 
 const pushMock = vi.fn();
@@ -63,7 +63,8 @@ const createTour = (id: string, name: string, page: string) => ({
 });
 
 vi.mock('../statements-tour', () => ({
-  createStatementsTour: () => createTour('statements-tour', 'Statements Tour', '/statements/submit'),
+  createStatementsTour: () =>
+    createTour('statements-tour', 'Statements Tour', '/statements/submit'),
 }));
 vi.mock('../custom-tables-tour', () => ({
   createCustomTablesTour: () =>
@@ -73,18 +74,28 @@ vi.mock('../reports-tour', () => ({
   createReportsTour: () => createTour('reports-tour', 'Reports Tour', '/reports'),
 }));
 vi.mock('../categories-tour', () => ({
-  createCategoriesTour: () => createTour('categories-tour', 'Categories Tour', '/workspaces/categories'),
+  createCategoriesTour: () =>
+    createTour('categories-tour', 'Categories Tour', '/workspaces/categories'),
 }));
 vi.mock('../integrations-tour', () => ({
-  createIntegrationsTour: () => createTour('integrations-tour', 'Integrations Tour', '/integrations'),
+  createIntegrationsTour: () =>
+    createTour('integrations-tour', 'Integrations Tour', '/integrations'),
 }));
 vi.mock('../google-sheets-import-tour', () => ({
   createGoogleSheetsImportTour: () =>
-    createTour('google-sheets-import-tour', 'Google Sheets Import Tour', '/custom-tables/import/google-sheets'),
+    createTour(
+      'google-sheets-import-tour',
+      'Google Sheets Import Tour',
+      '/custom-tables/import/google-sheets',
+    ),
 }));
 vi.mock('../google-sheets-integration-tour', () => ({
   createGoogleSheetsIntegrationTour: () =>
-    createTour('google-sheets-integration-tour', 'Google Sheets Integration Tour', '/integrations/google-sheets'),
+    createTour(
+      'google-sheets-integration-tour',
+      'Google Sheets Integration Tour',
+      '/integrations/google-sheets',
+    ),
 }));
 vi.mock('../settings-tour', () => ({
   createSettingsTour: () => createTour('settings-tour', 'Workspace Tour', '/workspaces/overview'),
@@ -109,14 +120,17 @@ describe('TourMenu', () => {
 
     expect(pushMock).toHaveBeenCalledWith('/workspaces/overview');
 
-    await waitFor(() => {
-      expect(startTourMock).toHaveBeenCalledWith('settings-tour', 0, {
-        nextBtnText: 'Next',
-        prevBtnText: 'Previous',
-        doneBtnText: 'Done',
-        progressText: '{{current}} / {{total}}',
-      });
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(startTourMock).toHaveBeenCalledWith('settings-tour', 0, {
+          nextBtnText: 'Next',
+          prevBtnText: 'Previous',
+          doneBtnText: 'Done',
+          progressText: '{{current}} / {{total}}',
+        });
+      },
+      { timeout: 2000 },
+    );
   });
 
   it('does not show upload and storage tours in the menu', async () => {

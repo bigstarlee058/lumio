@@ -18,7 +18,7 @@ export const DroppableFolderButton = React.memo(
   ({
     folderId,
     isNoFolder,
-    active: _active,
+    active: Active,
     children,
     className,
     style,

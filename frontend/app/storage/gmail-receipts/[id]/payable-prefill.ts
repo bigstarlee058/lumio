@@ -27,14 +27,20 @@ type EditableReceiptDataLike = {
 };
 
 const parseAmountValue = (value?: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : null;
 };
 
 const toDateOnly = (value?: string | null) => {
-  if (!value) return undefined;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (!value) {
+    return undefined;
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
 
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString().slice(0, 10);
@@ -48,7 +54,9 @@ export const buildPayablePrefillFromReceipt = ({
   editedData: EditableReceiptDataLike;
 }): CreatePayableInput | null => {
   const transactionType = receipt.parsedData?.transactionType || 'expense';
-  if (transactionType === 'income') return null;
+  if (transactionType === 'income') {
+    return null;
+  }
 
   const lineItemsTotal = editedData.lineItems.reduce((sum, item) => sum + (item.amount || 0), 0);
   const amount =
@@ -56,7 +64,9 @@ export const buildPayablePrefillFromReceipt = ({
       ? lineItemsTotal
       : (parseAmountValue(editedData.amount ?? receipt.parsedData?.amount ?? null) ?? 0);
 
-  if (!(amount > 0)) return null;
+  if (!(amount > 0)) {
+    return null;
+  }
 
   return {
     vendor: editedData.vendor || receipt.parsedData?.vendor || receipt.subject,

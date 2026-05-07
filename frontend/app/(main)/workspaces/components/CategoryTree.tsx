@@ -1,27 +1,39 @@
 'use client';
 
+import { ChevronRight, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
-import { ChevronRight, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
 import type { Category, CategoryUsageCount } from './hooks/useCategoryManagement';
-import { tokens } from '@/lib/theme-tokens';
 
 const SOURCE_BADGE_COLORS: Record<
   NonNullable<Category['source']>,
   { bg: string; color: string; border: string }
 > = {
-  system: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
-  parsing: { bg: 'var(--color-warning-soft-bg)', color: '#d97706', border: 'var(--color-warning-soft-border)' },
+  system: {
+    bg: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+    border: 'var(--color-info-soft-border)',
+  },
+  parsing: {
+    bg: 'var(--color-warning-soft-bg)',
+    color: '#d97706',
+    border: 'var(--color-warning-soft-border)',
+  },
   user: { bg: 'var(--muted)', color: 'var(--text-secondary)', border: 'var(--border-color)' },
 };
 
 const resolveIconUrl = (iconValue?: string): string | null => {
-  if (!iconValue) return null;
-  if (iconValue.startsWith('http')) return iconValue;
+  if (!iconValue) {
+    return null;
+  }
+  if (iconValue.startsWith('http')) {
+    return iconValue;
+  }
   if (iconValue.startsWith('/uploads')) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const base = apiUrl.replace(/\/api\/v1$/, '') || '';
@@ -31,8 +43,12 @@ const resolveIconUrl = (iconValue?: string): string | null => {
 };
 
 const getBadgeSource = (category: Category): NonNullable<Category['source']> | null => {
-  if (category.source === 'parsing') return 'parsing';
-  if (category.isSystem || category.source === 'system') return 'system';
+  if (category.source === 'parsing') {
+    return 'parsing';
+  }
+  if (category.isSystem || category.source === 'system') {
+    return 'system';
+  }
   return null;
 };
 
@@ -40,8 +56,12 @@ const getBadgeLabel = (
   category: Category,
   labels: { parsing: string; system: string },
 ): string | null => {
-  if (category.source === 'parsing') return labels.parsing;
-  if (category.isSystem || category.source === 'system') return labels.system;
+  if (category.source === 'parsing') {
+    return labels.parsing;
+  }
+  if (category.isSystem || category.source === 'system') {
+    return labels.system;
+  }
   return null;
 };
 
@@ -83,7 +103,12 @@ export function CategoryTree({
 }: CategoryTreeProps): React.ReactElement {
   return (
     <Box
-      sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 1 }}
+      sx={{
+        border: '1px solid var(--border)',
+        borderRadius: tokens.radius.lg,
+        bgcolor: 'var(--card)',
+        p: 1,
+      }}
       data-tour-id="categories-list"
     >
       <Box
@@ -133,11 +158,7 @@ export function CategoryTree({
           >
             <SearchIcon size={32} />
           </Box>
-          <Typography
-            variant="h6"
-            fontWeight={500}
-            sx={{ color: 'var(--foreground)', mb: 3 }}
-          >
+          <Typography variant="h6" fontWeight={500} sx={{ color: 'var(--foreground)', mb: 3 }}>
             {labels.noData}
           </Typography>
           <button
@@ -171,7 +192,10 @@ export function CategoryTree({
             const isToggling = togglingIds.has(category.id);
             const iconTint = alpha(categoryColor, isEnabled ? 0.16 : 0.12);
             const badgeSource = getBadgeSource(category);
-            const badgeLabel = getBadgeLabel(category, { parsing: labels.parsing, system: labels.system });
+            const badgeLabel = getBadgeLabel(category, {
+              parsing: labels.parsing,
+              system: labels.system,
+            });
             const badgeColors = badgeSource ? SOURCE_BADGE_COLORS[badgeSource] : null;
 
             return (
@@ -187,9 +211,7 @@ export function CategoryTree({
                   px: 2,
                   py: 2,
                   bgcolor:
-                    index % 2 === 0
-                      ? 'var(--card)'
-                      : 'rgba(var(--muted-rgb,243,244,246),0.4)',
+                    index % 2 === 0 ? 'var(--card)' : 'rgba(var(--muted-rgb,243,244,246),0.4)',
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

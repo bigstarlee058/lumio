@@ -3,18 +3,18 @@
 
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { syncLocaleFromUser } from '@/app/lib/locale';
 import { safeInternalPath } from '@/app/lib/safe-path';
+import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import AuthLayout from '../AuthLayout';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 function RegisterPageContent(): React.JSX.Element {
@@ -36,7 +36,9 @@ function RegisterPageContent(): React.JSX.Element {
   const [inviteLoading, setInviteLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.name === 'email' && emailLocked) return;
+    if (e.target.name === 'email' && emailLocked) {
+      return;
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -44,7 +46,9 @@ function RegisterPageContent(): React.JSX.Element {
   };
 
   useEffect(() => {
-    if (!inviteToken) return;
+    if (!inviteToken) {
+      return;
+    }
 
     setInviteLoading(true);
     apiClient

@@ -1,6 +1,5 @@
 'use client';
 
-import type React from 'react';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
@@ -8,6 +7,7 @@ import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
+import type React from 'react';
 import { IntegrationIcon } from '../components/IntegrationCard';
 import type { IntegrationAction } from '../components/IntegrationCard';
 
@@ -26,7 +26,12 @@ export interface IntegrationMeta {
 interface CardT {
   description: React.ReactNode;
   badge: React.ReactNode;
-  actions: { connect?: React.ReactNode; docs?: React.ReactNode; setup?: React.ReactNode; guide?: React.ReactNode };
+  actions: {
+    connect?: React.ReactNode;
+    docs?: React.ReactNode;
+    setup?: React.ReactNode;
+    guide?: React.ReactNode;
+  };
 }
 
 interface IntegrationsT {
@@ -99,13 +104,72 @@ function makeTelegram(card: CardT): IntegrationMeta {
 
 export function buildIntegrationMeta(t: IntegrationsT): IntegrationMeta[] {
   return [
-    { ...makeProtocolEntry({ key: 'ai-compatible', name: 'AI-compatible endpoint', description: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.', badge: 'Open protocol', category: 'ai', docsHref: 'https://github.com/ollama/ollama/blob/main/docs/api.md' }), statusPath: '/settings/integrations/ai' },
-    { ...makeProtocolEntry({ key: 'smtp', name: 'SMTP email', description: 'Send invitations through any SMTP-compatible mail server.', badge: 'Open protocol', category: 'email', docsHref: 'https://datatracker.ietf.org/doc/html/rfc5321' }), statusPath: '/settings/email/smtp' },
-    { ...makeProtocolEntry({ key: 'app-url', name: 'Application URL', description: 'Configure the public URL used in invitations and shared links.', badge: 'Workspace setting', category: 'application', docsHref: '/integrations/app-url' }), statusPath: '/settings/app' },
-    makeProtocolEntry({ key: 's3-compatible', name: 'S3-compatible storage', description: 'Sync statements with MinIO or another S3-compatible bucket.', badge: 'OSS protocol', category: 'storage', docsHref: 'https://min.io/docs/minio/linux/developers/javascript/API.html' }),
-    makeProtocolEntry({ key: 'webdav', name: 'WebDAV storage', description: 'Import and sync files through Nextcloud or another WebDAV-compatible server.', badge: 'Open protocol', category: 'storage', docsHref: 'https://datatracker.ietf.org/doc/html/rfc4918' }),
-    makeProtocolEntry({ key: 'imap', name: 'IMAP inbox', description: 'Poll any IMAP mailbox for receipt and invoice attachments.', badge: 'Open protocol', category: 'email', docsHref: 'https://datatracker.ietf.org/doc/html/rfc9051' }),
-    makeProtocolEntry({ key: 'workbook-import', name: 'Workbook and Google Sheets import', description: 'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.', badge: 'File based', category: 'spreadsheets', docsHref: '/custom-tables' }),
+    {
+      ...makeProtocolEntry({
+        key: 'ai-compatible',
+        name: 'AI-compatible endpoint',
+        description: 'Use Ollama, LocalAI, vLLM, or another OpenAI-compatible backend.',
+        badge: 'Open protocol',
+        category: 'ai',
+        docsHref: 'https://github.com/ollama/ollama/blob/main/docs/api.md',
+      }),
+      statusPath: '/settings/integrations/ai',
+    },
+    {
+      ...makeProtocolEntry({
+        key: 'smtp',
+        name: 'SMTP email',
+        description: 'Send invitations through any SMTP-compatible mail server.',
+        badge: 'Open protocol',
+        category: 'email',
+        docsHref: 'https://datatracker.ietf.org/doc/html/rfc5321',
+      }),
+      statusPath: '/settings/email/smtp',
+    },
+    {
+      ...makeProtocolEntry({
+        key: 'app-url',
+        name: 'Application URL',
+        description: 'Configure the public URL used in invitations and shared links.',
+        badge: 'Workspace setting',
+        category: 'application',
+        docsHref: '/integrations/app-url',
+      }),
+      statusPath: '/settings/app',
+    },
+    makeProtocolEntry({
+      key: 's3-compatible',
+      name: 'S3-compatible storage',
+      description: 'Sync statements with MinIO or another S3-compatible bucket.',
+      badge: 'OSS protocol',
+      category: 'storage',
+      docsHref: 'https://min.io/docs/minio/linux/developers/javascript/API.html',
+    }),
+    makeProtocolEntry({
+      key: 'webdav',
+      name: 'WebDAV storage',
+      description: 'Import and sync files through Nextcloud or another WebDAV-compatible server.',
+      badge: 'Open protocol',
+      category: 'storage',
+      docsHref: 'https://datatracker.ietf.org/doc/html/rfc4918',
+    }),
+    makeProtocolEntry({
+      key: 'imap',
+      name: 'IMAP inbox',
+      description: 'Poll any IMAP mailbox for receipt and invoice attachments.',
+      badge: 'Open protocol',
+      category: 'email',
+      docsHref: 'https://datatracker.ietf.org/doc/html/rfc9051',
+    }),
+    makeProtocolEntry({
+      key: 'workbook-import',
+      name: 'Workbook and Google Sheets import',
+      description:
+        'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.',
+      badge: 'File based',
+      category: 'spreadsheets',
+      docsHref: '/custom-tables',
+    }),
     { ...makeTelegram(t.cards.telegram), statusPath: '/settings/notifications/telegram' },
   ];
 }

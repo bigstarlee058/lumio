@@ -35,7 +35,10 @@ export function ModalFooter({
   const createLabel = creatingFromStatements
     ? labels.creating
     : selectedStatementSummary.totalRows > 0
-      ? formatLabel({ template: labels.createWithRows, values: { rows: selectedStatementSummary.totalRows } })
+      ? formatLabel({
+          template: labels.createWithRows,
+          values: { rows: selectedStatementSummary.totalRows },
+        })
       : labels.create;
 
   return (

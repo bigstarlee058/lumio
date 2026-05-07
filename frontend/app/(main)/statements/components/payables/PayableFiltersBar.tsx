@@ -1,12 +1,18 @@
 'use client';
 
-import React from 'react';
 import { Input } from '@/app/components/ui/input';
 import type { PayableSource, PayableStatus } from '@/app/lib/payables-api';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
+import React from 'react';
 
-const toDate = (s: string): Date | null => { if (!s) return null; const d = parseISO(s); return isValid(d) ? d : null; };
+const toDate = (s: string): Date | null => {
+  if (!s) {
+    return null;
+  }
+  const d = parseISO(s);
+  return isValid(d) ? d : null;
+};
 const toStr = (d: Date | null): string => (d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
 import { X } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
@@ -31,7 +37,12 @@ interface PayableFiltersBarProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps): React.JSX.Element {
+function PayableFiltersBar({
+  value,
+  onChange,
+  onReset,
+  labels,
+}: PayableFiltersBarProps): React.JSX.Element {
   // eslint-disable-next-line max-params
   const update = <K extends keyof PayablesFiltersState>(
     key: K,

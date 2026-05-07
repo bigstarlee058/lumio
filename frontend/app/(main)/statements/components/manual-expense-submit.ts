@@ -22,10 +22,14 @@ export function buildManualExpenseFormData({ payload, taxRateId }: FormDataParam
   formData.append('merchant', payload.draft.merchant.trim());
   formData.append('description', payload.draft.description.trim());
   formData.append('categoryId', payload.draft.categoryId);
-  if (taxRateId) formData.append('taxRateId', taxRateId);
+  if (taxRateId) {
+    formData.append('taxRateId', taxRateId);
+  }
   formData.append('date', payload.date);
   formData.append('allowDuplicates', payload.allowDuplicates ? 'true' : 'false');
-  payload.files.forEach(file => { formData.append('files', file); });
+  payload.files.forEach(file => {
+    formData.append('files', file);
+  });
   return formData;
 }
 
@@ -39,11 +43,15 @@ export async function trySingleEndpoint({
   formData,
 }: TrySingleEndpointParams): Promise<'ok' | 'skip' | 'fail'> {
   try {
-    await apiClient.post(endpoint, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+    await apiClient.post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return 'ok';
   } catch (error: unknown) {
     const status = getApiErrorStatus(error);
-    if (status === 404 || status === 405) return 'skip';
+    if (status === 404 || status === 405) {
+      return 'skip';
+    }
     console.error('Failed to create manual expense:', error);
     return 'fail';
   }

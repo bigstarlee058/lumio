@@ -13,10 +13,7 @@ import type {
   DuplicateOverride,
 } from '@/app/(main)/statements/components/hooks/useStatementSelection';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
-import {
-  getStatementDisplayMerchant,
-  getStatementMerchantLabel,
-} from '@/app/lib/statement-status';
+import { getStatementDisplayMerchant, getStatementMerchantLabel } from '@/app/lib/statement-status';
 import { useMemo, useState } from 'react';
 
 // ---------------------------------------------------------------------------
@@ -83,11 +80,11 @@ function buildGroupSignature(
   const amountLabel = formatStatementAmount(
     statement as Parameters<typeof formatStatementAmount>[0],
   );
-  if (isAmountSkippable(amountLabel) || statement.status === 'processing') return null;
+  if (isAmountSkippable(amountLabel) || statement.status === 'processing') {
+    return null;
+  }
   const merchantLabel = resolveMerchantLabel(statement, scanningLabel);
-  const dateLabel = formatStatementDate(
-    statement as Parameters<typeof formatStatementDate>[0],
-  );
+  const dateLabel = formatStatementDate(statement as Parameters<typeof formatStatementDate>[0]);
   return `${merchantLabel}::${amountLabel}::${dateLabel}`;
 }
 
@@ -98,13 +95,20 @@ function buildDuplicateGroups(
 ): Map<string, GroupEntry[]> {
   const groups = new Map<string, GroupEntry[]>();
   for (const statement of statements) {
-    if (overrides[statement.id]?.state === 'not_duplicate') continue;
+    if (overrides[statement.id]?.state === 'not_duplicate') {
+      continue;
+    }
     const signature = buildGroupSignature(statement, scanningLabel);
-    if (!signature) continue;
+    if (!signature) {
+      continue;
+    }
     const ts = resolveCreatedAtMs(statement.createdAt);
     const existing = groups.get(signature);
-    if (existing) existing.push({ statement, createdAtTimestamp: ts });
-    else groups.set(signature, [{ statement, createdAtTimestamp: ts }]);
+    if (existing) {
+      existing.push({ statement, createdAtTimestamp: ts });
+    } else {
+      groups.set(signature, [{ statement, createdAtTimestamp: ts }]);
+    }
   }
   return groups;
 }
@@ -147,16 +151,15 @@ function populateMetaFromGroups(
 ): void {
   let order = 0;
   groups.forEach((group, groupKey) => {
-    if (group.length < 2) return;
+    if (group.length < 2) {
+      return;
+    }
     populateMetaFromGroup(group, groupKey, order, metaById);
     order += 1;
   });
 }
 
-function buildManualMeta(
-  statementId: string,
-  override: DuplicateOverride,
-): DuplicateMeta {
+function buildManualMeta(statementId: string, override: DuplicateOverride): DuplicateMeta {
   return {
     position: override.position || 1,
     total: override.total || 1,
@@ -175,8 +178,12 @@ function applyManualOverrides(
   metaById: Map<string, DuplicateMeta>,
 ): void {
   for (const [id, override] of Object.entries(overrides)) {
-    if (override?.state !== 'duplicate') continue;
-    if (!isKnown.has(id) || metaById.has(id)) continue;
+    if (override?.state !== 'duplicate') {
+      continue;
+    }
+    if (!isKnown.has(id) || metaById.has(id)) {
+      continue;
+    }
     metaById.set(id, buildManualMeta(id, override));
   }
 }

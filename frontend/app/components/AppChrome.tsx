@@ -7,7 +7,9 @@ import Sidebar, { SidebarContent } from './Sidebar';
 const SIDEBAR_OPEN_EVENT = 'lumio-sidebar-open';
 
 function shouldHideChrome(pathname: string | null) {
-  if (!pathname) return false;
+  if (!pathname) {
+    return false;
+  }
   return (
     pathname.startsWith('/onboarding') ||
     pathname.startsWith('/login') ||
@@ -32,7 +34,9 @@ export default function AppChrome() {
     return () => window.removeEventListener(SIDEBAR_OPEN_EVENT, handler);
   }, []);
 
-  if (hidden) return null;
+  if (hidden) {
+    return null;
+  }
 
   return (
     <>

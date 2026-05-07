@@ -108,25 +108,35 @@ export interface Statement {
 }
 
 export const normalizeDateInput = (value?: string | Date | null): string => {
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
   const date = typeof value === 'string' ? new Date(value) : value;
   return Number.isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0];
 };
 
 export const normalizeNumberInput = (value?: number | string | null): string => {
-  if (value === null || value === undefined) return '';
+  if (value === null || value === undefined) {
+    return '';
+  }
   return typeof value === 'string' ? value : value.toString();
 };
 
 export const parseNullableNumber = (value: string): number | null => {
-  if (value.trim() === '') return null;
+  if (value.trim() === '') {
+    return null;
+  }
   const parsed = Number.parseFloat(value);
   return Number.isFinite(parsed) ? parsed : null;
 };
 
 export const resolveLocale = (locale: string): string => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
   return 'en-US';
 };
 
@@ -143,7 +153,9 @@ export const filterEnabledCategories = (items: CategoryOption[]): CategoryOption
 };
 
 export const formatDate = (dateString?: string | null): string => {
-  if (!dateString) return '';
+  if (!dateString) {
+    return '';
+  }
   try {
     return new Date(dateString).toLocaleDateString('ru-RU');
   } catch {
@@ -152,7 +164,9 @@ export const formatDate = (dateString?: string | null): string => {
 };
 
 export const formatNumber = (num: number | null | undefined, locale: string): string => {
-  if (num === null || num === undefined) return '—';
+  if (num === null || num === undefined) {
+    return '—';
+  }
   return new Intl.NumberFormat(resolveLocale(locale), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -163,7 +177,9 @@ export const formatLabel = (
   template: string | undefined,
   replacements: Record<string, string | number>,
 ): string => {
-  if (!template) return '';
+  if (!template) {
+    return '';
+  }
   return Object.entries(replacements).reduce(
     (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
     template,

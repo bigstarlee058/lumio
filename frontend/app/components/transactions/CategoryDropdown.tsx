@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, ChevronDown } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +12,6 @@ import {
 } from '../ui/dropdown-menu';
 import { resolveCategoryDisplay } from './helpers/transactionFormatters';
 import type { Category, Transaction, UpdateCategoryFn } from './types';
-import { tokens } from '@/lib/theme-tokens';
 
 interface CategoryDropdownProps {
   tx: Transaction;
@@ -27,14 +27,30 @@ interface CategoryMenuItemsProps {
   onUpdateCategory?: UpdateCategoryFn;
 }
 
-function CategoryMenuItems({ tx, categories, onUpdateCategory }: CategoryMenuItemsProps): React.ReactElement {
+function CategoryMenuItems({
+  tx,
+  categories,
+  onUpdateCategory,
+}: CategoryMenuItemsProps): React.ReactElement {
   return (
     <div className="lumio-tx-cat-menu">
       {categories
         .filter(cat => cat.isEnabled !== false)
         .map(cat => (
-          <DropdownMenuItem key={cat.id} onClick={() => onUpdateCategory?.(tx.id, cat.id)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ height: 8, width: 8, borderRadius: tokens.radius.full, display: 'inline-block', backgroundColor: cat.color }} />
+          <DropdownMenuItem
+            key={cat.id}
+            onClick={() => onUpdateCategory?.(tx.id, cat.id)}
+            style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            <span
+              style={{
+                height: 8,
+                width: 8,
+                borderRadius: tokens.radius.full,
+                display: 'inline-block',
+                backgroundColor: cat.color,
+              }}
+            />
             {cat.name}
             {tx.category?.id === cat.id && <Check size={12} style={{ marginLeft: 'auto' }} />}
           </DropdownMenuItem>
@@ -43,13 +59,21 @@ function CategoryMenuItems({ tx, categories, onUpdateCategory }: CategoryMenuIte
   );
 }
 
-export function CategoryDropdown({ tx, categories, label, align = 'end', onUpdateCategory }: CategoryDropdownProps): React.ReactElement {
+export function CategoryDropdown({
+  tx,
+  categories,
+  label,
+  align = 'end',
+  onUpdateCategory,
+}: CategoryDropdownProps): React.ReactElement {
   const { triggerLabel, style } = resolveCategoryDisplay(tx, label);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button type="button" className="lumio-tx-cat-dropdown" style={style}>
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{triggerLabel}</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {triggerLabel}
+          </span>
           <ChevronDown size={12} style={{ flexShrink: 0, opacity: 0.5 }} />
         </button>
       </DropdownMenuTrigger>

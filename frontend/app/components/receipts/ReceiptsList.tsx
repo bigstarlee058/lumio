@@ -22,7 +22,13 @@ const SKELETON_KEYS = [
 export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: ReceiptsListProps) {
   if (isLoading) {
     return (
-      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' } }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' },
+        }}
+      >
         {SKELETON_KEYS.map(key => (
           <Box
             key={key}
@@ -53,7 +59,9 @@ export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: Rec
           textAlign: 'center',
         }}
       >
-        <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>No receipts yet</Typography>
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+          No receipts yet
+        </Typography>
         <Typography style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
           Upload a receipt or scan one with your camera to start reviewing extracted data.
         </Typography>
@@ -62,7 +70,13 @@ export function ReceiptsList({ receipts, isLoading = false, onOpenReceipt }: Rec
   }
 
   return (
-    <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' } }}>
+    <Box
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(3, 1fr)' },
+      }}
+    >
       {receipts.map(receipt => (
         <ReceiptCard key={receipt.id} receipt={receipt} onOpen={onOpenReceipt} />
       ))}

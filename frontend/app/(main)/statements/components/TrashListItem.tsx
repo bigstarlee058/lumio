@@ -1,8 +1,8 @@
 'use client';
 
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
-import { Checkbox } from '@/app/components/ui/checkbox';
 import { BriefcaseBusiness, FileText, RotateCcw, Table2, Trash2 } from '@/app/components/icons';
+import { Checkbox } from '@/app/components/ui/checkbox';
 import type React from 'react';
 import type { TrashEntityType } from './trash-utils';
 
@@ -32,7 +32,10 @@ type Props = {
   deleteLabel: string;
 };
 
-const ENTITY_ICON_BY_TYPE: Record<TrashEntityType, React.ComponentType<{ size?: number; color?: string }>> = {
+const ENTITY_ICON_BY_TYPE: Record<
+  TrashEntityType,
+  React.ComponentType<{ size?: number; color?: string }>
+> = {
   statement: FileText,
   table: Table2,
   workspace: BriefcaseBusiness,
@@ -84,9 +87,29 @@ export function TrashListItem({
         <div className="lumio-trash-item__file-col">
           <BankLogoAvatar bankName={item.bankName} size={20} />
           <div style={{ minWidth: 0 }}>
-            <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 600, color: 'var(--foreground)' }}>{item.fileName}</p>
+            <p
+              style={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                fontWeight: 600,
+                color: 'var(--foreground)',
+              }}
+            >
+              {item.fileName}
+            </p>
             {bankDisplayName ? (
-              <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--muted-foreground)' }}>{bankDisplayName}</p>
+              <p
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: 12,
+                  color: 'var(--muted-foreground)',
+                }}
+              >
+                {bankDisplayName}
+              </p>
             ) : null}
           </div>
         </div>

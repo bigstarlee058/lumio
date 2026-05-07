@@ -7,10 +7,16 @@ import { isAbortError } from '../utils/pasteUtils';
 import type { CustomTableGridRow } from '../utils/stylingUtils';
 
 const getRowIdentity = (row: unknown): string => {
-  if (!row || typeof row !== 'object') return '';
+  if (!row || typeof row !== 'object') {
+    return '';
+  }
   const record = row as Record<string, unknown>;
-  if (typeof record.id === 'string') return record.id;
-  if (typeof record.rowNumber === 'number') return String(record.rowNumber);
+  if (typeof record.id === 'string') {
+    return record.id;
+  }
+  if (typeof record.rowNumber === 'number') {
+    return String(record.rowNumber);
+  }
   return '';
 };
 
@@ -68,17 +74,21 @@ export function useTableGrid({
     }
   };
 
-  const extractRows = (response: { data?: { items?: unknown[]; data?: { items?: unknown[] } } }): unknown[] => {
+  const extractRows = (response: {
+    data?: { items?: unknown[]; data?: { items?: unknown[] } };
+  }): unknown[] => {
     const items = response.data?.items || response.data?.data?.items || [];
     return Array.isArray(items) ? items : [];
   };
 
-  const dedupeRows = <T,>(merged: T[]): T[] => {
+  const dedupeRows = <T>(merged: T[]): T[] => {
     const seen = new Set<string>();
     const result: T[] = [];
     for (const row of merged) {
       const id = getRowIdentity(row);
-      if (!id || seen.has(id)) { continue; }
+      if (!id || seen.has(id)) {
+        continue;
+      }
       seen.add(id);
       result.push(row);
     }
@@ -101,18 +111,24 @@ export function useTableGrid({
   };
 
   const canStartLoad = (shouldReset: boolean): boolean => {
-    if (!tableId) { return false; }
+    if (!tableId) {
+      return false;
+    }
     return shouldReset || !loadingRowsRef.current;
   };
 
   const loadRows = useCallback(
     async (opts?: { reset?: boolean; filtersParam?: string }) => {
       const shouldReset = Boolean(opts?.reset);
-      if (!canStartLoad(shouldReset)) { return; }
+      if (!canStartLoad(shouldReset)) {
+        return;
+      }
 
       rowsRequestSeqRef.current += 1;
       const requestId = rowsRequestSeqRef.current;
-      if (shouldReset) { rowsAbortControllerRef.current?.abort(); }
+      if (shouldReset) {
+        rowsAbortControllerRef.current?.abort();
+      }
 
       const controller = new AbortController();
       rowsAbortControllerRef.current = controller;
@@ -127,7 +143,9 @@ export function useTableGrid({
           signal: controller.signal,
           params: { cursor, limit: 50, filters },
         });
-        if (isStaleRequest(controller, requestId)) { return; }
+        if (isStaleRequest(controller, requestId)) {
+          return;
+        }
         const next = extractRows(response);
         applyFetchedRows(next, shouldReset);
         setHasMore(next.length >= 50);
@@ -142,7 +160,9 @@ export function useTableGrid({
 
   // Reset and reload when filters or tableId changes
   useEffect(() => {
-    if (!isAuthenticated || !tableId) return;
+    if (!(isAuthenticated && tableId)) {
+      return;
+    }
     setHasMore(true);
     setRows([]);
     const timer = window.setTimeout(() => {

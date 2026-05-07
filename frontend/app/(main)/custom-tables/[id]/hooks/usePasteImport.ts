@@ -20,16 +20,19 @@ function extractBatchInsertResult(
 ): { normalizedRows: CustomTableGridRow[]; createdCount: number } {
   const payload = (response.data || {}) as Record<string, unknown>;
   const dataPayload = (payload.data || {}) as Record<string, unknown>;
-  const createdRows =
-    payload.rows || dataPayload.rows || payload.items || dataPayload.items || [];
+  const createdRows = payload.rows || dataPayload.rows || payload.items || dataPayload.items || [];
   const normalizedRows = getResponseItems(createdRows);
-  const createdCount =
-    (payload.created ?? dataPayload.created ?? normalizedRows.length ?? fallbackCount) as number;
+  const createdCount = (payload.created ??
+    dataPayload.created ??
+    normalizedRows.length ??
+    fallbackCount) as number;
   return { normalizedRows, createdCount };
 }
 
 function isTabularText(text: string): boolean {
-  if (!text) { return false; }
+  if (!text) {
+    return false;
+  }
   const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   return normalized.includes('\t') || normalized.split('\n').length > 1;
 }
@@ -151,15 +154,26 @@ export function usePasteImport({
 
   const startPastePreview = useCallback(
     (text: string) => {
-      if (!orderedColumns.length) return;
+      if (!orderedColumns.length) {
+        return;
+      }
       const { rows } = parseClipboardRows(text);
-      if (!rows.length) return;
+      if (!rows.length) {
+        return;
+      }
       setPasteRawRows(rows);
       setPastePreviewOpen(true);
       setPasteParsing(true);
       setPasteEdits({});
       window.setTimeout(() => {
-        const initial = buildPastePreview({ rawRows: rows, useHeaders: false, orderedColumns, mappingSelection: null, edits: {}, defaults: pasteDefaults });
+        const initial = buildPastePreview({
+          rawRows: rows,
+          useHeaders: false,
+          orderedColumns,
+          mappingSelection: null,
+          edits: {},
+          defaults: pasteDefaults,
+        });
         const shouldUseHeaders = initial.preview.headersDetected;
         if (shouldUseHeaders) {
           const withHeaders = buildPastePreview({
@@ -187,7 +201,9 @@ export function usePasteImport({
   const handlePasteHeadersToggle = useCallback(
     (checked: boolean) => {
       setPasteUseHeaders(checked);
-      if (!pasteRawRows.length) return;
+      if (!pasteRawRows.length) {
+        return;
+      }
       setPasteEdits({});
       buildPreviewAsync(pasteRawRows, checked, null, {});
     },
@@ -196,7 +212,9 @@ export function usePasteImport({
 
   const rebuildPasteWithState = useCallback(
     (nextMapping: Record<number, PasteMappingSelection>, nextEdits: Record<string, string>) => {
-      if (!pasteRawRows.length) return;
+      if (!pasteRawRows.length) {
+        return;
+      }
       buildPreviewAsync(pasteRawRows, pasteUseHeaders, nextMapping, nextEdits);
     },
     [pasteRawRows, pasteUseHeaders, buildPreviewAsync],
@@ -221,7 +239,9 @@ export function usePasteImport({
         const deduped: CustomTableGridRow[] = [];
         for (const row of merged) {
           const id = row.id || String(row.rowNumber);
-          if (!id || seen.has(id)) continue;
+          if (!id || seen.has(id)) {
+            continue;
+          }
           seen.add(id);
           deduped.push(row);
         }
@@ -234,7 +254,9 @@ export function usePasteImport({
 
   const rollbackRows = useCallback(
     async (rowIds: string[]) => {
-      if (!tableId || !rowIds.length) return;
+      if (!(tableId && rowIds.length)) {
+        return;
+      }
       try {
         await Promise.all(
           rowIds.map(rowId => apiClient.delete(`/custom-tables/${tableId}/rows/${rowId}`)),
@@ -249,9 +271,15 @@ export function usePasteImport({
     [tableId, refreshStats, setRows, messages.undoFailed],
   );
 
-  const createNewColumns = async (newColumns: typeof pastePreview extends null ? never : NonNullable<typeof pastePreview>['columns']): Promise<Map<string, string>> => {
+  const createNewColumns = async (
+    newColumns: typeof pastePreview extends null
+      ? never
+      : NonNullable<typeof pastePreview>['columns'],
+  ): Promise<Map<string, string>> => {
     const placeholderToKey = new Map<string, string>();
-    if (!newColumns.length) { return placeholderToKey; }
+    if (!newColumns.length) {
+      return placeholderToKey;
+    }
     const created = await Promise.all(
       newColumns.map(col =>
         apiClient.post(`/custom-tables/${tableId}/columns`, {
@@ -264,13 +292,18 @@ export function usePasteImport({
       const payload = created[i].data?.data || created[i].data;
       const key = payload?.key;
       const placeholderKey = newColumns[i]?.columnKey || '';
-      if (key && placeholderKey) { placeholderToKey.set(placeholderKey, key); }
+      if (key && placeholderKey) {
+        placeholderToKey.set(placeholderKey, key);
+      }
     }
     await loadTable();
     return placeholderToKey;
   };
 
-  const buildPayloadRows = (dataRows: Record<string, unknown>[], keyMap: Map<string, string>): { data: CustomTableRowPatch }[] =>
+  const buildPayloadRows = (
+    dataRows: Record<string, unknown>[],
+    keyMap: Map<string, string>,
+  ): { data: CustomTableRowPatch }[] =>
     dataRows.map(row => {
       const data: CustomTableRowPatch = {};
       for (const [key, value] of Object.entries(row)) {
@@ -280,9 +313,16 @@ export function usePasteImport({
     });
 
   const handlePasteAdd = useCallback(async () => {
-    if (!tableId || !pastePreview || pasteApplying) { return; }
-    if (!pastePreview.dataRows.length) { toast.error(messages.noRows); return; }
-    if (pastePreview.hasErrors) { return; }
+    if (!(tableId && pastePreview) || pasteApplying) {
+      return;
+    }
+    if (!pastePreview.dataRows.length) {
+      toast.error(messages.noRows);
+      return;
+    }
+    if (pastePreview.hasErrors) {
+      return;
+    }
 
     const newColumns = pastePreview.columns.filter(col => col.mode === 'new');
     if (newColumns.some(col => !col.newTitle?.trim())) {
@@ -294,12 +334,21 @@ export function usePasteImport({
     try {
       const keyMap = await createNewColumns(newColumns);
       const payloadRows = buildPayloadRows(pastePreview.dataRows, keyMap);
-      const response = await apiClient.post(`/custom-tables/${tableId}/rows/batch`, { rows: payloadRows });
-      const { normalizedRows, createdCount } = extractBatchInsertResult(response, pastePreview.dataRows.length);
-      if (normalizedRows.length) { appendRows(normalizedRows); }
+      const response = await apiClient.post(`/custom-tables/${tableId}/rows/batch`, {
+        rows: payloadRows,
+      });
+      const { normalizedRows, createdCount } = extractBatchInsertResult(
+        response,
+        pastePreview.dataRows.length,
+      );
+      if (normalizedRows.length) {
+        appendRows(normalizedRows);
+      }
       resetPastePreview();
       await refreshStats();
-      onInsertSuccess(createdCount, () => rollbackRows(normalizedRows.map(r => r.id).filter(Boolean)));
+      onInsertSuccess(createdCount, () =>
+        rollbackRows(normalizedRows.map(r => r.id).filter(Boolean)),
+      );
     } catch (error) {
       console.error('Failed to batch insert rows:', error);
       toast.error(messages.insertFailed);
@@ -324,10 +373,16 @@ export function usePasteImport({
   // Global paste event listener
   useEffect(() => {
     const onPaste = (event: ClipboardEvent) => {
-      if (pastePreviewOpen || pasteApplying || !orderedColumns.length) { return; }
-      if (isEditableTarget(event.target)) { return; }
+      if (pastePreviewOpen || pasteApplying || !orderedColumns.length) {
+        return;
+      }
+      if (isEditableTarget(event.target)) {
+        return;
+      }
       const clipboardText = event.clipboardData?.getData('text/plain') || '';
-      if (!isTabularText(clipboardText)) { return; }
+      if (!isTabularText(clipboardText)) {
+        return;
+      }
       event.preventDefault();
       startPastePreview(clipboardText);
     };

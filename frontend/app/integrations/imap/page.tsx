@@ -1,5 +1,5 @@
-import type React from 'react';
 import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
+import type React from 'react';
 import { ProtocolIntegrationPage } from '../open-protocol-page';
 
 export default function ImapIntegrationPage(): React.JSX.Element {

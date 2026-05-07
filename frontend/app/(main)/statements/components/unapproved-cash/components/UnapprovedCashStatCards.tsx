@@ -1,5 +1,5 @@
-import type { UnapprovedReasonId } from '../../unapproved-cash-utils';
 import { tokens } from '@/lib/theme-tokens';
+import type { UnapprovedReasonId } from '../../unapproved-cash-utils';
 
 interface UnapprovedCashStatCardsProps {
   totalCount: number;

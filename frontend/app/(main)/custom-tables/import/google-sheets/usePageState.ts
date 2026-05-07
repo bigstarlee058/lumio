@@ -6,7 +6,13 @@ import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleS
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import type { Category, GoogleSheetConnection, LayoutType, PreviewColumn, PreviewResponse } from './types';
+import type {
+  Category,
+  GoogleSheetConnection,
+  LayoutType,
+  PreviewColumn,
+  PreviewResponse,
+} from './types';
 
 // ---------------------------------------------------------------------------
 // API helpers
@@ -35,9 +41,16 @@ const fetchWorksheets = async (sheetId: string): Promise<WorksheetOption[]> => {
 // ---------------------------------------------------------------------------
 
 type CommitParams = {
-  googleSheetId: string; worksheetName: string; range: string; tableName: string;
-  tableDescription: string; categoryId: string; headerRowIndex: number;
-  importData: boolean; layoutType: LayoutType; columns: PreviewColumn[];
+  googleSheetId: string;
+  worksheetName: string;
+  range: string;
+  tableName: string;
+  tableDescription: string;
+  categoryId: string;
+  headerRowIndex: number;
+  importData: boolean;
+  layoutType: LayoutType;
+  columns: PreviewColumn[];
 };
 
 const buildCommitPayload = (p: CommitParams): Record<string, unknown> => ({
@@ -50,7 +63,12 @@ const buildCommitPayload = (p: CommitParams): Record<string, unknown> => ({
   headerRowIndex: p.headerRowIndex,
   importData: p.importData,
   layoutType: p.layoutType,
-  columns: p.columns.map(c => ({ index: c.index, title: c.title, type: c.suggestedType, include: c.include })),
+  columns: p.columns.map(c => ({
+    index: c.index,
+    title: c.title,
+    type: c.suggestedType,
+    include: c.include,
+  })),
 });
 
 // ---------------------------------------------------------------------------
@@ -68,12 +86,21 @@ type PollHandlerArgs = {
 
 type PollResult = { status: string; tableId?: string; errorMsg?: string; shouldContinue: boolean };
 
-const extractPollResult = ({ payload, cancelled, setJobStatus, setJobProgress, setJobStage, setJobError }: PollHandlerArgs): PollResult => {
-  if (cancelled) return { status: '', shouldContinue: false };
+const extractPollResult = ({
+  payload,
+  cancelled,
+  setJobStatus,
+  setJobProgress,
+  setJobStage,
+  setJobError,
+}: PollHandlerArgs): PollResult => {
+  if (cancelled) {
+    return { status: '', shouldContinue: false };
+  }
   const p = payload;
   const status = String(p?.status || '');
   setJobStatus(status);
-  setJobProgress(typeof p?.progress === 'number' ? p.progress as number : 0);
+  setJobProgress(typeof p?.progress === 'number' ? (p.progress as number) : 0);
   setJobStage(String(p?.stage || ''));
   setJobError(String(p?.error || ''));
   const tableId = (p?.result as Record<string, unknown>)?.tableId as string | undefined;
@@ -141,7 +168,6 @@ export type PageStateReturn = {
   resetConnection: () => void;
 };
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type React from 'react';
 
 export const usePageState = (msgs: PageMessages): PageStateReturn => {
@@ -185,13 +211,17 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
       .then(setConnections)
       .catch(() => toast.error(msgs.loadConnectionsFailed))
       .finally(() => setLoadingConnections(false));
-    void fetchCategories().then(setCategories).catch(() => {});
+    void fetchCategories()
+      .then(setCategories)
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Connection change effect
   useEffect(() => {
-    if (!selectedConnection) return;
+    if (!selectedConnection) {
+      return;
+    }
     setWorksheetName(prev => prev || selectedConnection.worksheetName || '');
     setTableName(prev => prev || selectedConnection.sheetName || msgs.defaultTableName);
   }, [selectedConnection, msgs.defaultTableName]);
@@ -199,13 +229,16 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
   // Worksheet load
   useEffect(() => {
     if (!selectedConnection?.sheetId || selectedConnection.oauthConnected === false) {
-      setWorksheetOptions([]); return;
+      setWorksheetOptions([]);
+      return;
     }
     setLoadingWorksheets(true);
     void fetchWorksheets(selectedConnection.sheetId)
       .then(items => {
         setWorksheetOptions(items);
-        setWorksheetName(cur => getDefaultWorksheetName(cur || selectedConnection.worksheetName || '', items));
+        setWorksheetName(cur =>
+          getDefaultWorksheetName(cur || selectedConnection.worksheetName || '', items),
+        );
       })
       .catch(() => setWorksheetOptions([]))
       .finally(() => setLoadingWorksheets(false));
@@ -213,7 +246,9 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
 
   // Job poller
   useEffect(() => {
-    if (!jobId) return;
+    if (!jobId) {
+      return;
+    }
     let cancelled = false;
     let timer: number | null = null;
     const handlePollResult = (result: PollResult): void => {
@@ -226,28 +261,65 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
       }
     };
     const poll = (): void => {
-      void apiClient.get(`/custom-tables/import/jobs/${jobId}`).then(res => {
-        const payload = res.data?.data || res.data;
-        const result = extractPollResult({ payload, cancelled, setJobStatus, setJobProgress, setJobStage, setJobError });
-        if (!result.shouldContinue) { handlePollResult(result); return; }
-        timer = window.setTimeout(poll, 1500);
-      }).catch(() => { if (!cancelled) timer = window.setTimeout(poll, 1500); });
+      void apiClient
+        .get(`/custom-tables/import/jobs/${jobId}`)
+        .then(res => {
+          const payload = res.data?.data || res.data;
+          const result = extractPollResult({
+            payload,
+            cancelled,
+            setJobStatus,
+            setJobProgress,
+            setJobStage,
+            setJobError,
+          });
+          if (!result.shouldContinue) {
+            handlePollResult(result);
+            return;
+          }
+          timer = window.setTimeout(poll, 1500);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            timer = window.setTimeout(poll, 1500);
+          }
+        });
     };
     poll();
-    return () => { cancelled = true; if (timer) window.clearTimeout(timer); };
+    return () => {
+      cancelled = true;
+      if (timer) {
+        window.clearTimeout(timer);
+      }
+    };
   }, [jobId, router, msgs.importDone, msgs.importError]);
 
   const handlePreview = (): void => {
-    if (!googleSheetId) return;
-    if (selectedConnection?.oauthConnected === false) { toast.error(msgs.oauthRequired); return; }
+    if (!googleSheetId) {
+      return;
+    }
+    if (selectedConnection?.oauthConnected === false) {
+      toast.error(msgs.oauthRequired);
+      return;
+    }
     setLoadingPreview(true);
-    const params = { googleSheetId, worksheetName: worksheetName.trim() || undefined, range: range.trim() || undefined, headerRowIndex, layoutType };
-    void apiClient.post('/custom-tables/import/google-sheets/preview', params)
+    const params = {
+      googleSheetId,
+      worksheetName: worksheetName.trim() || undefined,
+      range: range.trim() || undefined,
+      headerRowIndex,
+      layoutType,
+    };
+    void apiClient
+      .post('/custom-tables/import/google-sheets/preview', params)
       .then(res => {
         const data: PreviewResponse = res.data?.data || res.data;
-        setPreview(data); setColumns(data.columns || []);
+        setPreview(data);
+        setColumns(data.columns || []);
         setHeaderRowIndex(data.headerRowIndex ?? headerRowIndex);
-        if (!tableName.trim()) setTableName(selectedConnection?.sheetName || msgs.defaultTableName);
+        if (!tableName.trim()) {
+          setTableName(selectedConnection?.sheetName || msgs.defaultTableName);
+        }
         toast.success(msgs.previewReady);
       })
       .catch((err: unknown) => toast.error(getApiErrorMessage(err, msgs.previewFailed)))
@@ -255,14 +327,35 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
   };
 
   const handleCommit = (): void => {
-    if (!preview || !canCommit) return;
+    if (!(preview && canCommit)) {
+      return;
+    }
     setCommitting(true);
-    const payload = buildCommitPayload({ googleSheetId, worksheetName, range, tableName, tableDescription, categoryId, headerRowIndex, importData, layoutType, columns });
-    void apiClient.post('/custom-tables/import/google-sheets/commit', payload)
+    const payload = buildCommitPayload({
+      googleSheetId,
+      worksheetName,
+      range,
+      tableName,
+      tableDescription,
+      categoryId,
+      headerRowIndex,
+      importData,
+      layoutType,
+      columns,
+    });
+    void apiClient
+      .post('/custom-tables/import/google-sheets/commit', payload)
       .then(res => {
         const result = res.data?.data || res.data;
-        if (!result?.jobId) { toast.error(msgs.importStartFailed); return; }
-        setJobId(result.jobId); setJobStatus('pending'); setJobProgress(0); setJobStage('queued'); setJobError('');
+        if (!result?.jobId) {
+          toast.error(msgs.importStartFailed);
+          return;
+        }
+        setJobId(result.jobId);
+        setJobStatus('pending');
+        setJobProgress(0);
+        setJobStage('queued');
+        setJobError('');
         toast.success(msgs.importStarted);
       })
       .catch((err: unknown) => toast.error(getApiErrorMessage(err, msgs.importFailed)))
@@ -270,17 +363,52 @@ export const usePageState = (msgs: PageMessages): PageStateReturn => {
   };
 
   const resetConnection = (): void => {
-    setPreview(null); setColumns([]); setWorksheetOptions([]); setWorksheetName('');
+    setPreview(null);
+    setColumns([]);
+    setWorksheetOptions([]);
+    setWorksheetName('');
   };
 
   return {
-    connections, loadingConnections, categories, categoryId, setCategoryId,
-    googleSheetId, setGoogleSheetId, worksheetName, setWorksheetName,
-    worksheetOptions, loadingWorksheets, range, setRange, layoutType, setLayoutType,
-    headerRowIndex, setHeaderRowIndex, preview, setPreview, columns, setColumns,
-    tableName, setTableName, tableDescription, setTableDescription,
-    importData, setImportData, loadingPreview, committing,
-    jobId, jobStatus, jobProgress, jobStage, jobError,
-    selectedConnection, canPreview, canCommit, handlePreview, handleCommit, resetConnection,
+    connections,
+    loadingConnections,
+    categories,
+    categoryId,
+    setCategoryId,
+    googleSheetId,
+    setGoogleSheetId,
+    worksheetName,
+    setWorksheetName,
+    worksheetOptions,
+    loadingWorksheets,
+    range,
+    setRange,
+    layoutType,
+    setLayoutType,
+    headerRowIndex,
+    setHeaderRowIndex,
+    preview,
+    setPreview,
+    columns,
+    setColumns,
+    tableName,
+    setTableName,
+    tableDescription,
+    setTableDescription,
+    importData,
+    setImportData,
+    loadingPreview,
+    committing,
+    jobId,
+    jobStatus,
+    jobProgress,
+    jobStage,
+    jobError,
+    selectedConnection,
+    canPreview,
+    canCommit,
+    handlePreview,
+    handleCommit,
+    resetConnection,
   };
 };

@@ -9,8 +9,8 @@
  * Usage: replace `from '@/app/components/icons'` with `from '@/app/components/icons'`
  */
 
-import React from 'react';
 import type { SvgIconProps } from '@mui/material';
+import React from 'react';
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -25,8 +25,8 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import BalanceIcon from '@mui/icons-material/Balance';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import BlockIcon from '@mui/icons-material/Block';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookIcon from '@mui/icons-material/Book';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BusinessIcon from '@mui/icons-material/Business';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -56,10 +56,10 @@ import EmailIcon from '@mui/icons-material/Email';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import FlagIcon from '@mui/icons-material/Flag';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import FlagIcon from '@mui/icons-material/Flag';
 import FolderIcon from '@mui/icons-material/Folder';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
@@ -70,10 +70,6 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 import MuiImageIcon from '@mui/icons-material/Image';
 import InboxIcon from '@mui/icons-material/Inbox';
-import PaymentsIcon from '@mui/icons-material/Payments';
-import PiggyBankIcon from '@mui/icons-material/Savings';
-import SecurityIcon from '@mui/icons-material/Security';
-import StorageIcon from '@mui/icons-material/Storage';
 import InfoIcon from '@mui/icons-material/Info';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -95,6 +91,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import OutletIcon from '@mui/icons-material/Outlet';
 import PaletteIcon from '@mui/icons-material/Palette';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
@@ -106,17 +103,20 @@ import PublicIcon from '@mui/icons-material/Public';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SaveIcon from '@mui/icons-material/Save';
+import PiggyBankIcon from '@mui/icons-material/Savings';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import SearchIcon from '@mui/icons-material/Search';
+import SecurityIcon from '@mui/icons-material/Security';
 import SendIcon from '@mui/icons-material/Send';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ShareIcon from '@mui/icons-material/Share';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import SortIcon from '@mui/icons-material/Sort';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
 import StarIcon from '@mui/icons-material/Star';
+import StorageIcon from '@mui/icons-material/Storage';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import TabletIcon from '@mui/icons-material/Tablet';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -157,7 +157,7 @@ function wrap(MuiIcon: React.ComponentType<SvgIconProps>): LucideIcon {
   return function LucideCompatIcon({
     size,
     color,
-    strokeWidth: _strokeWidth,
+    strokeWidth: StrokeWidth,
     sx,
     ...rest
   }: LucideProps) {
@@ -329,4 +329,3 @@ export const PiggyBank = wrap(PiggyBankIcon);
 export const Shield = wrap(SecurityIcon);
 export const ShieldAlert = wrap(SecurityIcon);
 export const ShieldOff = wrap(SecurityIcon);
-

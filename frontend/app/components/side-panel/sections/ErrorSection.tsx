@@ -1,10 +1,10 @@
 'use client';
 
 import { X } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import type { ErrorItem, ErrorSection } from '../types';
 import { SectionWrapper } from './components/SectionWrapper';
-import { ERROR_BG, ERROR_BORDER, ERROR_ICON_COLOR, ERROR_ICONS } from './helpers/section-constants';
-import { tokens } from '@/lib/theme-tokens';
+import { ERROR_BG, ERROR_BORDER, ERROR_ICONS, ERROR_ICON_COLOR } from './helpers/section-constants';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function
 function ErrorItemComponent({ item }: { item: ErrorItem }) {
@@ -26,19 +26,38 @@ function ErrorItemComponent({ item }: { item: ErrorItem }) {
           style={{ flexShrink: 0, marginTop: 2, color: ERROR_ICON_COLOR[item.severity] }}
         />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', margin: 0 }}>{item.title}</p>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: 8,
+            }}
+          >
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', margin: 0 }}>
+              {item.title}
+            </p>
             {item.dismissible && item.onDismiss && (
               <button
                 type="button"
                 onClick={item.onDismiss}
-                style={{ color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                style={{
+                  color: 'var(--muted-foreground)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
               >
                 <X size={14} />
               </button>
             )}
           </div>
-          <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, marginBottom: 0 }}>{item.message}</p>
+          <p
+            style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, marginBottom: 0 }}
+          >
+            {item.message}
+          </p>
           {item.action && (
             <button
               type="button"
@@ -75,7 +94,15 @@ export function ErrorSectionRenderer({ section }: { section: ErrorSection }) {
           <ErrorItemComponent key={item.id} item={item} />
         ))}
         {section.maxItems && section.items.length > section.maxItems && (
-          <p style={{ fontSize: 12, color: 'var(--muted-foreground)', textAlign: 'center', padding: '4px 0', margin: 0 }}>
+          <p
+            style={{
+              fontSize: 12,
+              color: 'var(--muted-foreground)',
+              textAlign: 'center',
+              padding: '4px 0',
+              margin: 0,
+            }}
+          >
             +{section.items.length - section.maxItems} more
           </p>
         )}

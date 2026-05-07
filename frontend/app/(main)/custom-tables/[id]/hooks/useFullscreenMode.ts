@@ -27,32 +27,51 @@ function removeFullscreenClasses(): void {
 }
 
 function isKeyboardTargetIgnored(target: HTMLElement | null): boolean {
-  if (!target) return false;
+  if (!target) {
+    return false;
+  }
   const tag = target.tagName.toLowerCase();
-  return ['input', 'textarea', 'select'].includes(tag) || (isContentEditableTarget(target) && target.isContentEditable);
+  return (
+    ['input', 'textarea', 'select'].includes(tag) ||
+    (isContentEditableTarget(target) && target.isContentEditable)
+  );
 }
 
 export function useFullscreenMode({
-  isFullscreen, user, normalizedActiveTabId, columnsTabId, handleBackNavigation,
+  isFullscreen,
+  user,
+  normalizedActiveTabId,
+  columnsTabId,
+  handleBackNavigation,
 }: UseFullscreenModeParams): UseFullscreenModeReturn {
   const [isPrintMode, setIsPrintMode] = useState(false);
 
   const handlePrintTable = useCallback((): void => {
     setIsPrintMode(true);
-    requestAnimationFrame(() => { requestAnimationFrame(() => { window.print(); }); });
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+      });
+    });
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     applyFullscreenClasses(isFullscreen, normalizedActiveTabId, columnsTabId);
     return () => removeFullscreenClasses();
   }, [isFullscreen, user, normalizedActiveTabId, columnsTabId]);
 
   useEffect(() => {
-    if (!isFullscreen) return;
+    if (!isFullscreen) {
+      return;
+    }
     const onKeyDown = (event: KeyboardEvent): void => {
       const target = event.target as HTMLElement | null;
-      if (isKeyboardTargetIgnored(target)) return;
+      if (isKeyboardTargetIgnored(target)) {
+        return;
+      }
       handleFullscreenEscapeNavigation(event.key, handleBackNavigation);
     };
     window.addEventListener('keydown', onKeyDown);

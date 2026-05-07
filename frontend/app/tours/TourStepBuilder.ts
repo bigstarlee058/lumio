@@ -3,8 +3,8 @@
  */
 
 import type { DriveStep } from 'driver.js';
-import type { TourStep } from './types';
 import { resolveText } from './TourManagerHelpers';
+import type { TourStep } from './types';
 
 type AdvanceCallback = () => void;
 type DetachSetter = (fn: (() => void) | null) => void;
@@ -17,10 +17,14 @@ interface ClickAdvanceConfig {
 }
 
 function attachClickAdvance({ step, index, advance, setDetach }: ClickAdvanceConfig): void {
-  if (!step.advanceOn) return;
+  if (!step.advanceOn) {
+    return;
+  }
 
   const eventName = step.advanceOn.event ?? 'click';
-  if (eventName !== 'click') return;
+  if (eventName !== 'click') {
+    return;
+  }
 
   const target = document.querySelector(step.advanceOn.selector);
   if (!target) {
@@ -99,7 +103,12 @@ function buildStepHandlers(
   return { onHighlighted, onDeselected };
 }
 
-function buildPopover(step: TourStep, advance: AdvanceCallback, movePrevious: () => void, centered = false): DriveStep['popover'] {
+function buildPopover(
+  step: TourStep,
+  advance: AdvanceCallback,
+  movePrevious: () => void,
+  centered = false,
+): DriveStep['popover'] {
   const onNextClick = (): void => {
     const result = step.onNext ? step.onNext() : undefined;
     if (result instanceof Promise) {

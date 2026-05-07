@@ -1,8 +1,12 @@
-import { applyStatementsFilters, type StatementFilterItem, type StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
+  type StatementFilterItem,
+  type StatementFilters,
+  applyStatementsFilters,
+} from '@/app/(main)/statements/components/filters/statement-filters';
+import {
+  getBankDisplayName,
   mapReceiptToRecord,
   mapStatementToRecord,
-  getBankDisplayName,
 } from '@/app/(main)/statements/components/top-spenders/helpers/top-spenders-mappers';
 import type {
   TopSpenderFlowType,
@@ -11,7 +15,10 @@ import type {
 import type { GmailReceipt } from '@/app/(main)/statements/types/statement-types';
 import { useMemo } from 'react';
 
-type StatementWithWorkspace = StatementFilterItem & { workspaceId?: string; workspaceName?: string };
+type StatementWithWorkspace = StatementFilterItem & {
+  workspaceId?: string;
+  workspaceName?: string;
+};
 
 type Params = {
   statements: StatementWithWorkspace[];
@@ -43,7 +50,9 @@ const matchesQuery = (r: TopSpenderRecord, query: string): boolean =>
 
 const filterByQuery = (records: TopSpenderRecord[], searchInput: string): TopSpenderRecord[] => {
   const query = searchInput.trim().toLowerCase();
-  if (!query) return records;
+  if (!query) {
+    return records;
+  }
   return records.filter(r => matchesQuery(r, query));
 };
 
@@ -57,8 +66,14 @@ const getUserDescription = (user: TopSpenderRecord['user']): string | null => {
 
 const buildUserOption = (record: TopSpenderRecord): FromOption | null => {
   const uid = record.user?.id;
-  if (!uid) return null;
-  return { id: `user:${uid}`, label: getUserLabel(record.user), description: getUserDescription(record.user) };
+  if (!uid) {
+    return null;
+  }
+  return {
+    id: `user:${uid}`,
+    label: getUserLabel(record.user),
+    description: getUserDescription(record.user),
+  };
 };
 
 const buildBankOption = (bank: string): FromOption => ({
@@ -72,9 +87,13 @@ const buildFromOptions = (allRecords: TopSpenderRecord[]): FromOption[] => {
   const seen = new Map<string, FromOption>();
   allRecords.forEach(record => {
     const userOpt = buildUserOption(record);
-    if (userOpt && !seen.has(userOpt.id)) seen.set(userOpt.id, userOpt);
+    if (userOpt && !seen.has(userOpt.id)) {
+      seen.set(userOpt.id, userOpt);
+    }
     const bank = record.bankName;
-    if (bank && !seen.has(`bank:${bank}`)) seen.set(`bank:${bank}`, buildBankOption(bank));
+    if (bank && !seen.has(`bank:${bank}`)) {
+      seen.set(`bank:${bank}`, buildBankOption(bank));
+    }
   });
   return Array.from(seen.values());
 };
@@ -89,22 +108,55 @@ export const useTopSpendersRecords = ({
 }: Params): RecordsReturn => {
   const allRecords = useMemo<TopSpenderRecord[]>(() => {
     const mappedStatements = statements.map(item => mapStatementToRecord(item, workspaceCurrency));
-    const existingIds = new Set(mappedStatements.filter(r => r.sourceType === 'gmail').map(r => r.id));
-    const mappedReceipts = gmailReceipts.filter(r => !existingIds.has(r.id)).map(r => mapReceiptToRecord(r, workspaceCurrency));
+    const existingIds = new Set(
+      mappedStatements.filter(r => r.sourceType === 'gmail').map(r => r.id),
+    );
+    const mappedReceipts = gmailReceipts
+      .filter(r => !existingIds.has(r.id))
+      .map(r => mapReceiptToRecord(r, workspaceCurrency));
     return [...mappedStatements, ...mappedReceipts];
   }, [statements, gmailReceipts, workspaceCurrency]);
 
-  const filteredRecords = useMemo(() => filterByQuery(applyStatementsFilters<TopSpenderRecord>(allRecords, appliedFilters), searchInput), [allRecords, appliedFilters, searchInput]);
+  const filteredRecords = useMemo(
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopSpenderRecord>(allRecords, appliedFilters),
+        searchInput,
+      ),
+    [allRecords, appliedFilters, searchInput],
+  );
 
-  const flowFilteredRecords = useMemo(() => filteredRecords.filter(r => r.flowType === activeFlowType), [filteredRecords, activeFlowType]);
+  const flowFilteredRecords = useMemo(
+    () => filteredRecords.filter(r => r.flowType === activeFlowType),
+    [filteredRecords, activeFlowType],
+  );
 
-  const recordsWithoutDateFilter = useMemo(() => filterByQuery(applyStatementsFilters<TopSpenderRecord>(allRecords, { ...appliedFilters, date: null }), searchInput), [allRecords, appliedFilters, searchInput]);
+  const recordsWithoutDateFilter = useMemo(
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopSpenderRecord>(allRecords, { ...appliedFilters, date: null }),
+        searchInput,
+      ),
+    [allRecords, appliedFilters, searchInput],
+  );
 
-  const flowRecordsWithoutDateFilter = useMemo(() => recordsWithoutDateFilter.filter(r => r.flowType === activeFlowType), [recordsWithoutDateFilter, activeFlowType]);
+  const flowRecordsWithoutDateFilter = useMemo(
+    () => recordsWithoutDateFilter.filter(r => r.flowType === activeFlowType),
+    [recordsWithoutDateFilter, activeFlowType],
+  );
 
   const fromOptions = useMemo(() => buildFromOptions(allRecords), [allRecords]);
 
-  const currencyOptions = useMemo(() => Array.from(new Set(allRecords.map(r => r.currencyValue).filter(Boolean))), [allRecords]);
+  const currencyOptions = useMemo(
+    () => Array.from(new Set(allRecords.map(r => r.currencyValue).filter(Boolean))),
+    [allRecords],
+  );
 
-  return { allRecords, flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions };
+  return {
+    allRecords,
+    flowFilteredRecords,
+    flowRecordsWithoutDateFilter,
+    fromOptions,
+    currencyOptions,
+  };
 };

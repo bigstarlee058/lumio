@@ -2,11 +2,11 @@
 
 import { type ChangelogEntry, ChangelogModal } from '@/app/components/ChangelogModal';
 import { CalendarDays, Clock3, FileText } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
 
 type Props = {
@@ -111,7 +111,14 @@ export function ChangelogSection({
                 },
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 1.5,
+                }}
+              >
                 <Box sx={{ minWidth: 0 }}>
                   <Typography
                     variant="h6"
@@ -154,11 +161,27 @@ export function ChangelogSection({
               </Box>
 
               <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, fontSize: 12, color: 'text.secondary' }}>
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    fontSize: 12,
+                    color: 'text.secondary',
+                  }}
+                >
                   <CalendarDays style={{ width: 14, height: 14 }} />
                   {entry.dateLabel}
                 </Box>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, fontSize: 12, color: 'text.secondary' }}>
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    fontSize: 12,
+                    color: 'text.secondary',
+                  }}
+                >
                   <Clock3 style={{ width: 14, height: 14 }} />
                   {openDetailsText}
                 </Box>

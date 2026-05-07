@@ -2,7 +2,10 @@ import { type RefObject, useEffect, useRef } from 'react';
 
 type MenuParams = { menuOpen: boolean; onClose: () => void };
 
-export function useMenuClickOutside({ menuOpen, onClose }: MenuParams): RefObject<HTMLDivElement | null> {
+export function useMenuClickOutside({
+  menuOpen,
+  onClose,
+}: MenuParams): RefObject<HTMLDivElement | null> {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -11,7 +14,9 @@ export function useMenuClickOutside({ menuOpen, onClose }: MenuParams): RefObjec
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) onClose();
     };
     document.addEventListener('mousedown', handleClick);
-    return (): void => { document.removeEventListener('mousedown', handleClick); };
+    return (): void => {
+      document.removeEventListener('mousedown', handleClick);
+    };
   }, [menuOpen, onClose]);
 
   return menuRef;

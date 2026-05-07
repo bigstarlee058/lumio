@@ -10,7 +10,9 @@ export default function WorkspacesPage() {
   const { currentWorkspace, loading } = useWorkspace();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
     router.replace(getWorkspacesRootRedirectPath(Boolean(currentWorkspace)));
   }, [currentWorkspace, loading, router]);
 

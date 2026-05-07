@@ -1,9 +1,16 @@
 'use client';
 
-import { ChevronDown, ChevronRight, Copy, Download, GitMerge, Trash2, X } from '@/app/components/icons';
-import type { JSX } from 'react';
-import { useTheme } from 'next-themes';
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Download,
+  GitMerge,
+  Trash2,
+  X,
+} from '@/app/components/icons';
 import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
 
 interface Props {
   selectedCount: number;
@@ -38,9 +45,7 @@ function DesktopDuplicateActions({
       <button type="button" onClick={onMerge} className="lumio-stmt-list-view__bulk-menu-btn">
         <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <GitMerge size={16} style={{ color: 'var(--primary)' }} />
-          <span
-            style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--primary)' }}
-          >
+          <span style={{ fontSize: 16, fontWeight: 600, lineHeight: 1, color: 'var(--primary)' }}>
             {mergeDuplicatesLabel}
           </span>
         </span>

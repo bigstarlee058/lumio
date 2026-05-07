@@ -3,18 +3,18 @@
 import apiClient from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import type { StatementCategoryNode } from '@/app/lib/statement-categories';
-import {
-  type ManualExpenseDraft,
-  type TaxRateOption,
-} from '@/app/lib/statement-expense-drawer';
+import { type ManualExpenseDraft, type TaxRateOption } from '@/app/lib/statement-expense-drawer';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { type StatementCategoryWithEnabled, filterEnabledCategories } from '../../../StatementsListView.utils';
+import {
+  type StatementCategoryWithEnabled,
+  filterEnabledCategories,
+} from '../../StatementsListView.utils';
 import {
   uploadReceiptScanFiles as runUploadReceiptScanFiles,
   uploadScanDrawerFiles as runUploadScanDrawerFiles,
   uploadStatementFiles as runUploadStatementFiles,
-} from '../../../statement-upload';
+} from '../../statement-upload';
 
 interface UploadLabels {
   pickAtLeastOne: string;
@@ -69,7 +69,9 @@ function buildManualExpenseFormData({
   fd.append('merchant', draft.merchant.trim());
   fd.append('description', draft.description.trim());
   fd.append('categoryId', draft.categoryId);
-  if (resolvedTaxRateId) fd.append('taxRateId', resolvedTaxRateId);
+  if (resolvedTaxRateId) {
+    fd.append('taxRateId', resolvedTaxRateId);
+  }
   fd.append('date', date);
   fd.append('allowDuplicates', allowDuplicates ? 'true' : 'false');
   files.forEach(f => fd.append('files', f));
@@ -84,7 +86,9 @@ async function tryPostToEndpoint(endpoint: string, formData: FormData): Promise<
     return true;
   } catch (error: unknown) {
     const status = getApiErrorStatus(error);
-    if (status === 404 || status === 405) return false;
+    if (status === 404 || status === 405) {
+      return false;
+    }
     console.error('Failed to create manual expense:', error);
     throw new Error('Failed to create manual expense');
   }
@@ -101,20 +105,22 @@ export function useExpenseActions({
   const [manualExpenseTaxRates, setManualExpenseTaxRates] = useState<TaxRateOption[]>([]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     const load = async (): Promise<void> => {
       try {
         const [categoriesRes, taxRatesRes] = await Promise.all([
           apiClient.get('/categories', { params: { type: 'expense' } }),
           apiClient.get('/tax-rates'),
         ]);
-        const rawCategories = (
-          categoriesRes.data?.data || categoriesRes.data || []
-        ) as StatementCategoryWithEnabled[];
+        const rawCategories = (categoriesRes.data?.data ||
+          categoriesRes.data ||
+          []) as StatementCategoryWithEnabled[];
         setManualExpenseCategories(filterEnabledCategories(rawCategories));
-        const rawTaxRates = (
-          taxRatesRes.data?.data || taxRatesRes.data || []
-        ) as Array<TaxRateOption & { rate: number | string }>;
+        const rawTaxRates = (taxRatesRes.data?.data || taxRatesRes.data || []) as Array<
+          TaxRateOption & { rate: number | string }
+        >;
         setManualExpenseTaxRates(
           rawTaxRates.map(r => ({
             ...r,
@@ -171,8 +177,7 @@ export function useExpenseActions({
     files: File[];
     allowDuplicates: boolean;
   }): Promise<void> => {
-    const fallbackTaxRateId =
-      manualExpenseTaxRates.find(r => r.isEnabled && r.isDefault)?.id || '';
+    const fallbackTaxRateId = manualExpenseTaxRates.find(r => r.isEnabled && r.isDefault)?.id || '';
     const resolvedTaxRateId = payload.draft.taxRateId || fallbackTaxRateId;
     const formData = buildManualExpenseFormData({
       draft: payload.draft,

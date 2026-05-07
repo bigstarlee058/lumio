@@ -105,7 +105,11 @@ async function fetchWorksheets(spreadsheetId: string): Promise<WorksheetOption[]
 function useConnectionsState(
   errorSetter: (msg: string | null) => void,
   tErrors: UseGoogleSheetsPageInput['t']['errors'],
-): { connections: GoogleSheetConnection[]; loadingList: boolean; loadConnections: () => Promise<void> } {
+): {
+  connections: GoogleSheetConnection[];
+  loadingList: boolean;
+  loadConnections: () => Promise<void>;
+} {
   const [connections, setConnections] = useState<GoogleSheetConnection[]>([]);
   const [loadingList, setLoadingList] = useState(false);
 
@@ -132,7 +136,10 @@ interface AuthStateReturn {
   startOauth: () => Promise<void>;
 }
 
-function useAuthState(tErrors: UseGoogleSheetsPageInput['t']['errors'], tToasts: UseGoogleSheetsPageInput['t']['toasts']): AuthStateReturn {
+function useAuthState(
+  tErrors: UseGoogleSheetsPageInput['t']['errors'],
+  tToasts: UseGoogleSheetsPageInput['t']['toasts'],
+): AuthStateReturn {
   const [authStatus, setAuthStatus] = useState<AuthStatus>({ connected: false, email: null });
   const [pickerAccessToken, setPickerAccessToken] = useState('');
   const [pickerApiKey, setPickerApiKey] = useState('');
@@ -172,7 +179,14 @@ function useAuthState(tErrors: UseGoogleSheetsPageInput['t']['errors'], tToasts:
     }
   };
 
-  return { authStatus, pickerAccessToken, pickerApiKey, connectingAccount, loadAuthStatus, startOauth };
+  return {
+    authStatus,
+    pickerAccessToken,
+    pickerApiKey,
+    connectingAccount,
+    loadAuthStatus,
+    startOauth,
+  };
 }
 
 interface SpreadsheetStateReturn {
@@ -220,11 +234,24 @@ function useSpreadsheetState(
     await loadWorksheets(selection.spreadsheetId);
   };
 
-  return { selectedSpreadsheet, worksheets, worksheetName, sheetName, loadingWorksheets, setWorksheetName, setSheetName, handleSpreadsheetPick };
+  return {
+    selectedSpreadsheet,
+    worksheets,
+    worksheetName,
+    sheetName,
+    loadingWorksheets,
+    setWorksheetName,
+    setSheetName,
+    handleSpreadsheetPick,
+  };
 }
 
 // eslint-disable-next-line max-lines-per-function
-export function useGoogleSheetsPage({ user, t, copy }: UseGoogleSheetsPageInput): GoogleSheetsPageHandlers {
+export function useGoogleSheetsPage({
+  user,
+  t,
+  copy,
+}: UseGoogleSheetsPageInput): GoogleSheetsPageHandlers {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -232,8 +259,24 @@ export function useGoogleSheetsPage({ user, t, copy }: UseGoogleSheetsPageInput)
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const { connections, loadingList, loadConnections } = useConnectionsState(setError, t.errors);
-  const { authStatus, pickerAccessToken, pickerApiKey, connectingAccount, loadAuthStatus, startOauth } = useAuthState(t.errors, t.toasts);
-  const { selectedSpreadsheet, worksheets, worksheetName, sheetName, loadingWorksheets, setWorksheetName, setSheetName, handleSpreadsheetPick } = useSpreadsheetState(setError, copy.errors);
+  const {
+    authStatus,
+    pickerAccessToken,
+    pickerApiKey,
+    connectingAccount,
+    loadAuthStatus,
+    startOauth,
+  } = useAuthState(t.errors, t.toasts);
+  const {
+    selectedSpreadsheet,
+    worksheets,
+    worksheetName,
+    sheetName,
+    loadingWorksheets,
+    setWorksheetName,
+    setSheetName,
+    handleSpreadsheetPick,
+  } = useSpreadsheetState(setError, copy.errors);
 
   useEffect((): void => {
     if (!user) return;
@@ -304,14 +347,42 @@ export function useGoogleSheetsPage({ user, t, copy }: UseGoogleSheetsPageInput)
     }
   };
 
-  const emptyState = useMemo(() => !loadingList && connections.length === 0, [loadingList, connections]);
-  const pickerState = getGoogleSheetsPickerState({ connected: authStatus.connected, accessToken: pickerAccessToken, apiKey: pickerApiKey });
+  const emptyState = useMemo(
+    () => !loadingList && connections.length === 0,
+    [loadingList, connections],
+  );
+  const pickerState = getGoogleSheetsPickerState({
+    connected: authStatus.connected,
+    accessToken: pickerAccessToken,
+    apiKey: pickerApiKey,
+  });
 
   return {
-    authStatus, pickerAccessToken, pickerApiKey, selectedSpreadsheet, worksheets, worksheetName,
-    sheetName, connections, loadingList, connectingAccount, loadingWorksheets, submitting,
-    syncingId, removingId, error, success, emptyState, pickerState,
-    setWorksheetName, setSheetName, startOauth, handleSpreadsheetPick, handleConnect,
-    handleSync, handleRemove, loadConnections,
+    authStatus,
+    pickerAccessToken,
+    pickerApiKey,
+    selectedSpreadsheet,
+    worksheets,
+    worksheetName,
+    sheetName,
+    connections,
+    loadingList,
+    connectingAccount,
+    loadingWorksheets,
+    submitting,
+    syncingId,
+    removingId,
+    error,
+    success,
+    emptyState,
+    pickerState,
+    setWorksheetName,
+    setSheetName,
+    startOauth,
+    handleSpreadsheetPick,
+    handleConnect,
+    handleSync,
+    handleRemove,
+    loadConnections,
   };
 }

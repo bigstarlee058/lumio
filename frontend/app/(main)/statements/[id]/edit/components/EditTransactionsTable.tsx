@@ -10,7 +10,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import type { BranchOption, CategoryOption, FieldChangeParams, Transaction } from '../editHelpers';
 import type { ColumnLabels } from '../helpers/transactionDisplayHelpers';
-import { getColumnLabels, getEditTableLabels, getEditedTransaction } from '../helpers/transactionDisplayHelpers';
+import {
+  getColumnLabels,
+  getEditTableLabels,
+  getEditedTransaction,
+} from '../helpers/transactionDisplayHelpers';
 import { TransactionRow } from './TransactionRow';
 
 const CELL_HEADER_SX = {
@@ -28,17 +32,36 @@ type TableHeaderRowProps = {
   onSelectAll: () => void;
 };
 
-function TableHeaderRow({ colLabels, selectedRows, transactions, onSelectAll }: TableHeaderRowProps): React.ReactElement {
+function TableHeaderRow({
+  colLabels,
+  selectedRows,
+  transactions,
+  onSelectAll,
+}: TableHeaderRowProps): React.ReactElement {
   return (
-    <TableRow sx={{ bgcolor: theme => theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50], borderBottom: '1px solid', borderBottomColor: 'divider' }}>
+    <TableRow
+      sx={{
+        bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
+        borderBottom: '1px solid',
+        borderBottomColor: 'divider',
+      }}
+    >
       <TableCell padding="checkbox">
-        <Checkbox checked={selectedRows.size === transactions.length && transactions.length > 0} indeterminate={selectedRows.size > 0 && selectedRows.size < transactions.length} onCheckedChange={onSelectAll} />
+        <Checkbox
+          checked={selectedRows.size === transactions.length && transactions.length > 0}
+          indeterminate={selectedRows.size > 0 && selectedRows.size < transactions.length}
+          onCheckedChange={onSelectAll}
+        />
       </TableCell>
       <TableCell sx={CELL_HEADER_SX}>{colLabels.date}</TableCell>
       <TableCell sx={CELL_HEADER_SX}>{colLabels.counterparty}</TableCell>
       <TableCell sx={CELL_HEADER_SX}>{colLabels.paymentPurpose}</TableCell>
-      <TableCell align="right" sx={CELL_HEADER_SX}>{colLabels.expense}</TableCell>
-      <TableCell align="right" sx={CELL_HEADER_SX}>{colLabels.income}</TableCell>
+      <TableCell align="right" sx={CELL_HEADER_SX}>
+        {colLabels.expense}
+      </TableCell>
+      <TableCell align="right" sx={CELL_HEADER_SX}>
+        {colLabels.income}
+      </TableCell>
       <TableCell sx={CELL_HEADER_SX}>{colLabels.category}</TableCell>
       <TableCell sx={CELL_HEADER_SX}>{colLabels.actions}</TableCell>
     </TableRow>
@@ -66,25 +89,66 @@ export type EditTransactionsTableProps = {
   onFieldChange: (params: FieldChangeParams) => void;
 };
 
-export function EditTransactionsTable({ transactions, editingRow, editedData, selectedRows, categories, branches, wallets, locale, formatNumber, columns, labels, onSelectAll, onRowSelect, onEdit, onSave, onCancel, onDelete, onFieldChange }: EditTransactionsTableProps): React.ReactElement {
+export function EditTransactionsTable({
+  transactions,
+  editingRow,
+  editedData,
+  selectedRows,
+  categories,
+  branches,
+  wallets,
+  locale,
+  formatNumber,
+  columns,
+  labels,
+  onSelectAll,
+  onRowSelect,
+  onEdit,
+  onSave,
+  onCancel,
+  onDelete,
+  onFieldChange,
+}: EditTransactionsTableProps): React.ReactElement {
   const colLabels = getColumnLabels(columns);
   const editLabels = getEditTableLabels(labels);
   return (
-    <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
+    <TableContainer
+      component={Paper}
+      elevation={0}
+      sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}
+    >
       <Table size="small">
         <TableHead>
-          <TableHeaderRow colLabels={colLabels} selectedRows={selectedRows} transactions={transactions} onSelectAll={onSelectAll} />
+          <TableHeaderRow
+            colLabels={colLabels}
+            selectedRows={selectedRows}
+            transactions={transactions}
+            onSelectAll={onSelectAll}
+          />
         </TableHead>
         <TableBody>
           {transactions.map(transaction => (
             <TransactionRow
-              key={transaction.id} transaction={transaction} isEditing={editingRow === transaction.id}
-              edited={getEditedTransaction(editedData, transaction)} selectedRows={selectedRows}
-              categories={categories} branches={branches} wallets={wallets}
-              locale={locale} formatNumber={formatNumber}
-              confirmDeleteLabel={editLabels.confirmDelete} notSelectedLabel={editLabels.notSelected}
-              noCategoryLabel={editLabels.noCategory} assignCategoryLabel={editLabels.assignCategory}
-              onRowSelect={onRowSelect} onEdit={onEdit} onSave={onSave} onCancel={onCancel} onDelete={onDelete} onFieldChange={onFieldChange}
+              key={transaction.id}
+              transaction={transaction}
+              isEditing={editingRow === transaction.id}
+              edited={getEditedTransaction(editedData, transaction)}
+              selectedRows={selectedRows}
+              categories={categories}
+              branches={branches}
+              wallets={wallets}
+              locale={locale}
+              formatNumber={formatNumber}
+              confirmDeleteLabel={editLabels.confirmDelete}
+              notSelectedLabel={editLabels.notSelected}
+              noCategoryLabel={editLabels.noCategory}
+              assignCategoryLabel={editLabels.assignCategory}
+              onRowSelect={onRowSelect}
+              onEdit={onEdit}
+              onSave={onSave}
+              onCancel={onCancel}
+              onDelete={onDelete}
+              onFieldChange={onFieldChange}
             />
           ))}
         </TableBody>

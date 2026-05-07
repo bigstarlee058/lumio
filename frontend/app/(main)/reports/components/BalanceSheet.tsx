@@ -1,18 +1,24 @@
 /* eslint-disable max-lines */
 'use client';
 
-import type React from 'react';
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import {
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  RefreshCcw,
+} from '@/app/components/icons';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
+import { tokens } from '@/lib/theme-tokens';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { CalendarDays, ChevronDown, ChevronRight, Download, RefreshCcw } from '@/app/components/icons';
+import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import apiClient from '../../../lib/api';
-import { tokens } from '@/lib/theme-tokens';
 
 type BalanceExportFormat = 'excel' | 'pdf';
 
@@ -47,8 +53,12 @@ type BalanceSheetResponse = {
 };
 
 const resolveLocale = (locale: string): string => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
   return 'en-US';
 };
 
@@ -60,7 +70,10 @@ const toDateInputValue = (date: Date): string => {
 };
 
 // eslint-disable-next-line max-params
-const collectEditableValues = (accounts: BalanceAccountNode[], result: Record<string, string>): void => {
+const collectEditableValues = (
+  accounts: BalanceAccountNode[],
+  result: Record<string, string>,
+): void => {
   for (const account of accounts) {
     if (account.isEditable) {
       result[account.id] = account.amount.toFixed(2);
@@ -72,7 +85,10 @@ const collectEditableValues = (accounts: BalanceAccountNode[], result: Record<st
 };
 
 // eslint-disable-next-line max-params
-const collectExpandableDefaults = (accounts: BalanceAccountNode[], result: Record<string, boolean>): void => {
+const collectExpandableDefaults = (
+  accounts: BalanceAccountNode[],
+  result: Record<string, boolean>,
+): void => {
   for (const account of accounts) {
     if (account.isExpandable || account.children.length > 0) {
       result[account.id] = true;
@@ -84,7 +100,9 @@ const collectExpandableDefaults = (accounts: BalanceAccountNode[], result: Recor
 };
 
 const parseContentDispositionFileName = (contentDisposition?: string): string | null => {
-  if (!contentDisposition) return null;
+  if (!contentDisposition) {
+    return null;
+  }
 
   const utfMatch = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
   if (utfMatch?.[1]) {
@@ -181,7 +199,9 @@ function BalanceSheet(): React.JSX.Element {
   const saveSnapshot = useCallback(
     async (accountId: string): Promise<void> => {
       const rawValue = editableValues[accountId];
-      if (rawValue === undefined) return;
+      if (rawValue === undefined) {
+        return;
+      }
 
       const normalized = rawValue.replace(',', '.').trim();
       const parsed = Number.parseFloat(normalized);
@@ -274,8 +294,19 @@ function BalanceSheet(): React.JSX.Element {
       const isSection = level === 0;
 
       return (
-        <Box key={account.id} sx={{ borderBottom: '1px solid var(--border)', '&:last-child': { borderBottom: 'none' } }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5, py: 1.5 }}>
+        <Box
+          key={account.id}
+          sx={{ borderBottom: '1px solid var(--border)', '&:last-child': { borderBottom: 'none' } }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1.5,
+              py: 1.5,
+            }}
+          >
             <Box
               sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1 }}
               style={{ paddingLeft: `${level * 18}px` }}
@@ -331,8 +362,7 @@ function BalanceSheet(): React.JSX.Element {
                       textAlign: 'right',
                       fontSize: 14,
                       color: 'var(--foreground)',
-                      outline: 'none',
-                      }}
+                    }}
                     value={editableValues[account.id] ?? '0.00'}
                     onChange={event =>
                       setEditableValues(prev => ({
@@ -349,8 +379,12 @@ function BalanceSheet(): React.JSX.Element {
                     disabled={savingAccountId === account.id}
                     aria-label={account.name}
                   />
-                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--muted-foreground)' }}>₸</span>
-                  {savingAccountId === account.id && <CircularProgress size={16} sx={{ color: 'var(--primary)' }} />}
+                  <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--muted-foreground)' }}>
+                    ₸
+                  </span>
+                  {savingAccountId === account.id && (
+                    <CircularProgress size={16} sx={{ color: 'var(--primary)' }} />
+                  )}
                 </Box>
               ) : (
                 <span
@@ -381,7 +415,9 @@ function BalanceSheet(): React.JSX.Element {
   );
 
   const balanceWarning = useMemo(() => {
-    if (!sheet || sheet.isBalanced) return null;
+    if (!sheet || sheet.isBalanced) {
+      return null;
+    }
     return `${text('balanceDifference', 'Balance difference')}: ${formatCurrency(sheet.difference)}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formatCurrency, sheet]);
@@ -389,7 +425,15 @@ function BalanceSheet(): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }} data-tour-id="reports-balance">
       <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: { md: 'space-between' }, gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: { md: 'center' },
+            justifyContent: { md: 'space-between' },
+            gap: 1.5,
+          }}
+        >
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
             <Box
               sx={{
@@ -406,7 +450,12 @@ function BalanceSheet(): React.JSX.Element {
             >
               <CalendarDays size={16} style={{ color: 'var(--muted-foreground)' }} />
               <select
-                style={{ border: 'none', background: 'transparent', fontSize: 14, color: 'var(--foreground)', outline: 'none' }}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 14,
+                  color: 'var(--foreground)',
+                }}
                 value={filterMode}
                 onChange={event => setFilterMode(event.target.value as 'now' | 'date')}
               >
@@ -464,7 +513,11 @@ function BalanceSheet(): React.JSX.Element {
                 borderRadius: tokens.radius.md,
               }}
             >
-              {exportingFormat ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : <Download size={16} />}
+              {exportingFormat ? (
+                <CircularProgress size={16} sx={{ color: 'inherit' }} />
+              ) : (
+                <Download size={16} />
+              )}
               {text('exportBalance', 'Export balance')}
             </button>
 
@@ -484,14 +537,34 @@ function BalanceSheet(): React.JSX.Element {
               >
                 <button
                   type="button"
-                  style={{ display: 'block', width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    fontSize: 14,
+                    color: 'var(--foreground)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
                   onClick={() => void downloadExport('excel')}
                 >
                   {text('exportExcel', 'Excel')}
                 </button>
                 <button
                   type="button"
-                  style={{ display: 'block', width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: 14, color: 'var(--foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '8px 12px',
+                    textAlign: 'left',
+                    fontSize: 14,
+                    color: 'var(--foreground)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
                   onClick={() => void downloadExport('pdf')}
                 >
                   {text('exportPdf', 'PDF')}
@@ -502,7 +575,10 @@ function BalanceSheet(): React.JSX.Element {
         </Box>
 
         {saveHint && (
-          <Typography variant="caption" sx={{ mt: 1, display: 'block', color: 'var(--muted-foreground)' }}>
+          <Typography
+            variant="caption"
+            sx={{ mt: 1, display: 'block', color: 'var(--muted-foreground)' }}
+          >
             {saveHint}
           </Typography>
         )}
@@ -513,13 +589,31 @@ function BalanceSheet(): React.JSX.Element {
       {balanceWarning && <Alert severity="warning">{balanceWarning}</Alert>}
 
       {loading ? (
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', px: 2, py: 5, display: 'flex', justifyContent: 'center' }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            bgcolor: 'var(--card)',
+            px: 2,
+            py: 5,
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           <CircularProgress size={24} />
         </Box>
       ) : sheet ? (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, 1fr)' }, gap: 2 }}>
+        <Box
+          sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', xl: 'repeat(2, 1fr)' }, gap: 2 }}
+        >
           <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
-            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box
+              sx={{
+                mb: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                 {text('assets', 'Assets')} {formatCurrency(sheet.assets.total)}
               </Typography>
@@ -533,7 +627,14 @@ function BalanceSheet(): React.JSX.Element {
           </Box>
 
           <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', p: 2 }}>
-            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box
+              sx={{
+                mb: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <Typography variant="h6" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                 {text('liabilities', 'Liabilities')} {formatCurrency(sheet.liabilities.total)}
               </Typography>
@@ -547,7 +648,15 @@ function BalanceSheet(): React.JSX.Element {
           </Box>
         </Box>
       ) : (
-        <Box sx={{ border: '1px solid var(--border)', bgcolor: 'var(--card)', px: 2, py: 5, textAlign: 'center' }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            bgcolor: 'var(--card)',
+            px: 2,
+            py: 5,
+            textAlign: 'center',
+          }}
+        >
           <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
             {text('noData', 'No data')}
           </Typography>

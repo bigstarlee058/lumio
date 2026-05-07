@@ -123,7 +123,7 @@ const content = {
       en: 'Opening balance',
       kk: 'Бастапқы қалдық',
       de: 'Anfangssaldo',
-      fr: 'Solde d\'ouverture',
+      fr: "Solde d'ouverture",
       es: 'Saldo inicial',
       pt: 'Saldo inicial',
       tr: 'Açılış bakiyesi',

@@ -77,7 +77,10 @@ type UseCategoryManagementReturn = {
   handleIconFileChange: (file: File) => Promise<void>;
 };
 
-function useCategoryData(userId: string | undefined, loadFailed: string): {
+function useCategoryData(
+  userId: string | undefined,
+  loadFailed: string,
+): {
   categories: Category[];
   setCategories: (v: Category[]) => void;
   loading: boolean;
@@ -107,13 +110,18 @@ function useCategoryData(userId: string | undefined, loadFailed: string): {
   }, [loadFailed]);
 
   useEffect(() => {
-    if (userId) void loadCategories();
+    if (userId) {
+      void loadCategories();
+    }
   }, [userId, loadCategories]);
 
   return { categories, setCategories, loading, usageCounts, setUsageCounts, loadCategories };
 }
 
-function useCategoryForm(toastMessages: ToastMessages, loadCategories: () => Promise<void>): {
+function useCategoryForm(
+  toastMessages: ToastMessages,
+  loadCategories: () => Promise<void>,
+): {
   dialogOpen: boolean;
   editingCategory: Category | null;
   formData: CategoryFormData;
@@ -132,13 +140,25 @@ function useCategoryForm(toastMessages: ToastMessages, loadCategories: () => Pro
   const handleSave = async (): Promise<void> => {
     try {
       const { withoutIcon, ...restFormData } = formData;
-      const data = { ...restFormData, icon: withoutIcon ? undefined : restFormData.icon, parentId: restFormData.parentId || undefined };
-      if (editingCategory) { await apiClient.put(`/categories/${editingCategory.id}`, data); toast.success(toastMessages.updated); }
-      else { await apiClient.post('/categories', data); toast.success(toastMessages.created); }
+      const data = {
+        ...restFormData,
+        icon: withoutIcon ? undefined : restFormData.icon,
+        parentId: restFormData.parentId || undefined,
+      };
+      if (editingCategory) {
+        await apiClient.put(`/categories/${editingCategory.id}`, data);
+        toast.success(toastMessages.updated);
+      } else {
+        await apiClient.post('/categories', data);
+        toast.success(toastMessages.created);
+      }
       await loadCategories();
       setDialogOpen(false);
       setEditingCategory(null);
-    } catch (err) { console.error('Failed to save category:', err); toast.error(toastMessages.saveFailed); }
+    } catch (err) {
+      console.error('Failed to save category:', err);
+      toast.error(toastMessages.saveFailed);
+    }
   };
 
   const handleIconFileChange = async (file: File): Promise<void> => {
@@ -146,20 +166,52 @@ function useCategoryForm(toastMessages: ToastMessages, loadCategories: () => Pro
     fd.append('icon', file);
     setUploadingIcon(true);
     try {
-      const response = await apiClient.post('/data-entry/custom-fields/icon', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const response = await apiClient.post('/data-entry/custom-fields/icon', fd, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       const url = response.data?.url || response.data;
-      if (url) { setFormData(prev => ({ ...prev, icon: url, withoutIcon: false })); toast.success(toastMessages.iconUploaded); }
-    } catch (err) { console.error('Failed to upload icon:', err); toast.error(toastMessages.iconUploadFailed); }
-    finally { setUploadingIcon(false); }
+      if (url) {
+        setFormData(prev => ({ ...prev, icon: url, withoutIcon: false }));
+        toast.success(toastMessages.iconUploaded);
+      }
+    } catch (err) {
+      console.error('Failed to upload icon:', err);
+      toast.error(toastMessages.iconUploadFailed);
+    } finally {
+      setUploadingIcon(false);
+    }
   };
 
-  return { dialogOpen, editingCategory, formData, uploadingIcon, setDialogOpen, setEditingCategory, setFormData, handleSave, handleIconFileChange };
+  return {
+    dialogOpen,
+    editingCategory,
+    formData,
+    uploadingIcon,
+    setDialogOpen,
+    setEditingCategory,
+    setFormData,
+    handleSave,
+    handleIconFileChange,
+  };
 }
 
-type ToggleHookParams = { toastMessages: ToastMessages; categories: Category[]; setCategories: (v: Category[]) => void; loadCategories: () => Promise<void> };
-type ToggleState = { togglingIds: Set<string>; setTogglingIds: (fn: (p: Set<string>) => Set<string>) => void; disableConfirm: { category: Category; usage: CategoryUsageCount } | null; setDisableConfirm: (v: { category: Category; usage: CategoryUsageCount } | null) => void };
+type ToggleHookParams = {
+  toastMessages: ToastMessages;
+  categories: Category[];
+  setCategories: (v: Category[]) => void;
+  loadCategories: () => Promise<void>;
+};
+type ToggleState = {
+  togglingIds: Set<string>;
+  setTogglingIds: (fn: (p: Set<string>) => Set<string>) => void;
+  disableConfirm: { category: Category; usage: CategoryUsageCount } | null;
+  setDisableConfirm: (v: { category: Category; usage: CategoryUsageCount } | null) => void;
+};
 
-function usePerformToggle(params: ToggleHookParams, state: ToggleState): (category: Category, nextEnabled: boolean) => Promise<void> {
+function usePerformToggle(
+  params: ToggleHookParams,
+  state: ToggleState,
+): (category: Category, nextEnabled: boolean) => Promise<void> {
   const { toastMessages, categories, setCategories } = params;
   const { setTogglingIds, setDisableConfirm } = state;
   return async (category: Category, nextEnabled: boolean): Promise<void> => {
@@ -167,15 +219,35 @@ function usePerformToggle(params: ToggleHookParams, state: ToggleState): (catego
     setTogglingIds(prev => new Set(prev).add(category.id));
     try {
       await apiClient.put(`/categories/${category.id}`, { isEnabled: nextEnabled });
-      setCategories(categories.map(item => (item.id === category.id ? { ...item, isEnabled: nextEnabled } : item)));
-    } catch (err) { console.error('Failed to toggle:', err); toast.error(toastMessages.saveFailed); }
-    finally { setTogglingIds(prev => { const next = new Set(prev); next.delete(category.id); return next; }); }
+      setCategories(
+        categories.map(item =>
+          item.id === category.id ? { ...item, isEnabled: nextEnabled } : item,
+        ),
+      );
+    } catch (err) {
+      console.error('Failed to toggle:', err);
+      toast.error(toastMessages.saveFailed);
+    } finally {
+      setTogglingIds(prev => {
+        const next = new Set(prev);
+        next.delete(category.id);
+        return next;
+      });
+    }
   };
 }
 
-function useCategoryToggle({ toastMessages, categories, setCategories, loadCategories }: ToggleHookParams): {
-  togglingIds: Set<string>; selectedIds: Set<string>; disableConfirm: { category: Category; usage: CategoryUsageCount } | null;
-  setSelectedIds: (v: Set<string>) => void; setDisableConfirm: (v: { category: Category; usage: CategoryUsageCount } | null) => void;
+function useCategoryToggle({
+  toastMessages,
+  categories,
+  setCategories,
+  loadCategories,
+}: ToggleHookParams): {
+  togglingIds: Set<string>;
+  selectedIds: Set<string>;
+  disableConfirm: { category: Category; usage: CategoryUsageCount } | null;
+  setSelectedIds: (v: Set<string>) => void;
+  setDisableConfirm: (v: { category: Category; usage: CategoryUsageCount } | null) => void;
   performToggle: (category: Category, nextEnabled: boolean) => Promise<void>;
   handleToggleEnabled: (category: Category) => Promise<void>;
   handleBulkEnable: (enable: boolean) => Promise<void>;
@@ -183,40 +255,97 @@ function useCategoryToggle({ toastMessages, categories, setCategories, loadCateg
 } {
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [disableConfirm, setDisableConfirm] = useState<{ category: Category; usage: CategoryUsageCount } | null>(null);
+  const [disableConfirm, setDisableConfirm] = useState<{
+    category: Category;
+    usage: CategoryUsageCount;
+  } | null>(null);
   const state: ToggleState = { togglingIds, setTogglingIds, disableConfirm, setDisableConfirm };
-  const performToggle = usePerformToggle({ toastMessages, categories, setCategories, loadCategories }, state);
+  const performToggle = usePerformToggle(
+    { toastMessages, categories, setCategories, loadCategories },
+    state,
+  );
 
   const handleToggleEnabled = async (category: Category): Promise<void> => {
-    if (togglingIds.has(category.id)) return;
+    if (togglingIds.has(category.id)) {
+      return;
+    }
     const nextEnabled = category.isEnabled === false;
     if (!nextEnabled) {
       try {
         const response = await apiClient.get(`/categories/${category.id}/usage-count`);
         const usage = response.data as CategoryUsageCount;
-        if (usage.total > 0) { setDisableConfirm({ category, usage }); return; }
-      } catch (err) { console.error('Failed to get usage count:', err); }
+        if (usage.total > 0) {
+          setDisableConfirm({ category, usage });
+          return;
+        }
+      } catch (err) {
+        console.error('Failed to get usage count:', err);
+      }
     }
     await performToggle(category, nextEnabled);
   };
 
   const handleBulkEnable = async (enable: boolean): Promise<void> => {
-    try { await Promise.all(Array.from(selectedIds).map(id => apiClient.put(`/categories/${id}`, { isEnabled: enable }))); toast.success(enable ? 'Categories enabled' : 'Categories disabled'); await loadCategories(); setSelectedIds(new Set()); }
-    catch (err) { console.error('Bulk toggle failed:', err); toast.error(toastMessages.saveFailed); }
+    try {
+      await Promise.all(
+        Array.from(selectedIds).map(id =>
+          apiClient.put(`/categories/${id}`, { isEnabled: enable }),
+        ),
+      );
+      toast.success(enable ? 'Categories enabled' : 'Categories disabled');
+      await loadCategories();
+      setSelectedIds(new Set());
+    } catch (err) {
+      console.error('Bulk toggle failed:', err);
+      toast.error(toastMessages.saveFailed);
+    }
   };
 
   const handleBulkDelete = async (): Promise<void> => {
-    if (!window.confirm('Are you sure you want to delete selected custom categories?')) return;
-    try { const ids = Array.from(selectedIds).filter(id => !categories.find(c => c.id === id)?.isSystem); await Promise.all(ids.map(id => apiClient.delete(`/categories/${id}`))); toast.success('Categories deleted'); await loadCategories(); setSelectedIds(new Set()); }
-    catch (err) { console.error('Bulk delete failed:', err); toast.error('Failed to delete some categories'); }
+    if (!window.confirm('Are you sure you want to delete selected custom categories?')) {
+      return;
+    }
+    try {
+      const ids = Array.from(selectedIds).filter(
+        id => !categories.find(c => c.id === id)?.isSystem,
+      );
+      await Promise.all(ids.map(id => apiClient.delete(`/categories/${id}`)));
+      toast.success('Categories deleted');
+      await loadCategories();
+      setSelectedIds(new Set());
+    } catch (err) {
+      console.error('Bulk delete failed:', err);
+      toast.error('Failed to delete some categories');
+    }
   };
 
-  return { togglingIds, selectedIds, disableConfirm, setSelectedIds, setDisableConfirm, performToggle, handleToggleEnabled, handleBulkEnable, handleBulkDelete };
+  return {
+    togglingIds,
+    selectedIds,
+    disableConfirm,
+    setSelectedIds,
+    setDisableConfirm,
+    performToggle,
+    handleToggleEnabled,
+    handleBulkEnable,
+    handleBulkDelete,
+  };
 }
 
-export function useCategoryManagement({ userId, toastMessages }: UseCategoryManagementParams): UseCategoryManagementReturn {
-  const { categories, setCategories, loading, usageCounts, loadCategories } = useCategoryData(userId, toastMessages.loadFailed);
+export function useCategoryManagement({
+  userId,
+  toastMessages,
+}: UseCategoryManagementParams): UseCategoryManagementReturn {
+  const { categories, setCategories, loading, usageCounts, loadCategories } = useCategoryData(
+    userId,
+    toastMessages.loadFailed,
+  );
   const formHook = useCategoryForm(toastMessages, loadCategories);
-  const toggleHook = useCategoryToggle({ toastMessages, categories, setCategories, loadCategories });
+  const toggleHook = useCategoryToggle({
+    toastMessages,
+    categories,
+    setCategories,
+    loadCategories,
+  });
   return { categories, loading, usageCounts, loadCategories, ...formHook, ...toggleHook };
 }

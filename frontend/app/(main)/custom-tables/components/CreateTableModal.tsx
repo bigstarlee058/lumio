@@ -64,7 +64,9 @@ export function CreateTableModal({
   onFormChange,
   onSubmit,
 }: CreateTableModalProps): React.JSX.Element | null {
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">

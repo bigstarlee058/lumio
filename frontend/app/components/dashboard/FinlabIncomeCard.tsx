@@ -1,9 +1,9 @@
 'use client';
 
+import { Info } from '@/app/components/icons';
+import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
-import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
@@ -81,13 +81,29 @@ export function FinlabIncomeCard({
     >
       <div>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--text-secondary)', fontWeight: 500, fontSize: 14 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.75,
+              color: 'var(--text-secondary)',
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
             Income Analysis
             <Info size={14} color="var(--muted-foreground)" />
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: 32, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>
+          <Typography
+            sx={{
+              fontSize: 32,
+              fontWeight: 700,
+              color: 'var(--foreground)',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {formatAmount(totalIncome)}
           </Typography>
           <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -106,7 +122,9 @@ export function FinlabIncomeCard({
               ⬈ {pct > 0 ? '+' : ''}
               {pct.toFixed(1)}%
             </span>
-            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500 }}>VS This Month</Typography>
+            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500 }}>
+              VS This Month
+            </Typography>
           </Box>
         </Box>
       </div>
@@ -116,7 +134,9 @@ export function FinlabIncomeCard({
           <PeriodDropdown value={range} onChange={onRangeChange} />
         </Box>
         {option ? (
-          <Box sx={{ height: 80, width: '100%', borderTop: '1px solid rgba(232,232,232,0.6)', pt: 1 }}>
+          <Box
+            sx={{ height: 80, width: '100%', borderTop: '1px solid rgba(232,232,232,0.6)', pt: 1 }}
+          >
             <ReactECharts option={option} style={{ height: '80px', width: '100%' }} />
           </Box>
         ) : (

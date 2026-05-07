@@ -1,13 +1,5 @@
 'use client';
 
-import { type SidePanelPageConfig, useSidePanelConfig } from '@/app/components/side-panel';
-import { useIntlayer } from '@/app/i18n';
-import {
-  type CustomTableSortOrder,
-  type CustomTableSourceFilter,
-  dispatchCustomTableViewEvent,
-} from '@/app/lib/custom-table-actions';
-import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import {
   ArrowDown,
   ArrowUp,
@@ -16,6 +8,14 @@ import {
   Pencil,
   Table as TableIcon,
 } from '@/app/components/icons';
+import { type SidePanelPageConfig, useSidePanelConfig } from '@/app/components/side-panel';
+import { useIntlayer } from '@/app/i18n';
+import {
+  type CustomTableSortOrder,
+  type CustomTableSourceFilter,
+  dispatchCustomTableViewEvent,
+} from '@/app/lib/custom-table-actions';
+import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
 import { useMemo } from 'react';
 
 type Props = {

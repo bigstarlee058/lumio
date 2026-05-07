@@ -73,10 +73,7 @@ export function buildDailyTrendOption(
   };
 }
 
-export function buildRosePieOption(
-  categories: CategoryPoint[],
-  isDark: boolean,
-): object | null {
+export function buildRosePieOption(categories: CategoryPoint[], isDark: boolean): object | null {
   if (!categories.length) return null;
 
   const top10 = categories.slice(0, 10);

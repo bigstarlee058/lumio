@@ -7,8 +7,12 @@ export function getColumnOptions(column: CustomTableColumn): string[] {
 }
 
 function normalizeMultiSelect(value: unknown): string[] {
-  if (Array.isArray(value)) return value.map((v) => String(v));
-  if (value === null || value === undefined || value === '') return [];
+  if (Array.isArray(value)) {
+    return value.map(v => String(v));
+  }
+  if (value === null || value === undefined || value === '') {
+    return [];
+  }
   return [String(value)];
 }
 
@@ -25,8 +29,8 @@ function normalizeText(value: unknown): string {
 }
 
 const normalizers: Record<string, (value: unknown) => unknown> = {
-  boolean: (v) => Boolean(v),
-  number: (v) => (v === null || v === undefined || v === '' ? null : Number(v)),
+  boolean: v => Boolean(v),
+  number: v => (v === null || v === undefined || v === '' ? null : Number(v)),
   multi_select: normalizeMultiSelect,
   date: normalizeNullableString,
   select: normalizeSelect,
@@ -39,19 +43,26 @@ export function normalizeValue(type: ColumnType, value: unknown): unknown {
 
 function formatMultiSelect(value: unknown): string {
   const arr = Array.isArray(value) ? value : [value];
-  const text = arr.map((v) => String(v)).filter(Boolean).join(', ');
+  const text = arr
+    .map(v => String(v))
+    .filter(Boolean)
+    .join(', ');
   return text || '—';
 }
 
 const formatters: Record<string, (value: unknown) => string> = {
-  boolean: (v) => (v ? 'Yes' : 'No'),
+  boolean: v => (v ? 'Yes' : 'No'),
   multi_select: formatMultiSelect,
 };
 
 export function formatValue(type: ColumnType, value: unknown): string {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) {
+    return '—';
+  }
   const formatter = formatters[type];
-  if (formatter) return formatter(value);
+  if (formatter) {
+    return formatter(value);
+  }
   const text = String(value);
   return text.trim() ? text : '—';
 }
@@ -61,7 +72,9 @@ function arraysEqual(a: unknown[], b: unknown[]): boolean {
 }
 
 function valuesEqual(before: unknown, after: unknown): boolean {
-  if (Array.isArray(before) && Array.isArray(after)) return arraysEqual(before, after);
+  if (Array.isArray(before) && Array.isArray(after)) {
+    return arraysEqual(before, after);
+  }
   return before === after;
 }
 
@@ -75,7 +88,11 @@ interface ComputePatchParams {
   draft: Record<string, unknown>;
 }
 
-export function computePatch({ orderedColumns, baseData, draft }: ComputePatchParams): Record<string, unknown> {
+export function computePatch({
+  orderedColumns,
+  baseData,
+  draft,
+}: ComputePatchParams): Record<string, unknown> {
   const next: Record<string, unknown> = {};
   for (const col of orderedColumns) {
     const key = col.key;

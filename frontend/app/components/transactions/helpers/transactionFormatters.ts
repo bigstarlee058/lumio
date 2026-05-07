@@ -45,13 +45,17 @@ export function buildCategoryStyle(options: CategoryStyleOptions): React.CSSProp
   const { hasDisabledCategory, color } = options;
   return {
     backgroundColor: hasDisabledCategory ? '#fee2e2' : color ? `${color}15` : '#e5e7eb',
-    color: hasDisabledCategory ? '#b91c1c' : color ?? '#374151',
+    color: hasDisabledCategory ? '#b91c1c' : (color ?? '#374151'),
   };
 }
 
 // Derives display label + style for a category trigger button.
 // Extracted from CategoryDropdown to keep the component complexity under the limit.
-function buildCategoryLabel(name: string | undefined, hasDisabled: boolean, fallback: string): string {
+function buildCategoryLabel(
+  name: string | undefined,
+  hasDisabled: boolean,
+  fallback: string,
+): string {
   if (hasDisabled) return `${name ?? ''} — select category`;
   return name ?? fallback;
 }
@@ -62,10 +66,17 @@ export function resolveCategoryDisplay(
 ): { triggerLabel: string; style: React.CSSProperties } {
   const hasDisabledCategory = tx.category?.isEnabled === false;
   const triggerLabel = buildCategoryLabel(tx.category?.name, hasDisabledCategory, fallbackLabel);
-  return { triggerLabel, style: buildCategoryStyle({ hasDisabledCategory, color: tx.category?.color }) };
+  return {
+    triggerLabel,
+    style: buildCategoryStyle({ hasDisabledCategory, color: tx.category?.color }),
+  };
 }
 
-export function resolveDisplayAmount(tx: Transaction, rawAmount: number, showConverted: boolean): number {
+export function resolveDisplayAmount(
+  tx: Transaction,
+  rawAmount: number,
+  showConverted: boolean,
+): number {
   if (!showConverted || tx.convertedAmount === undefined) return rawAmount;
   return tx.convertedAmount;
 }

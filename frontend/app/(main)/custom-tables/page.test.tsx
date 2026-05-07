@@ -140,7 +140,11 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
   } | null>(null);
 
   return {
-    DropdownMenu: ({ children, open, onOpenChange }: { children: React.ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void }) => {
+    DropdownMenu: ({
+      children,
+      open,
+      onOpenChange,
+    }: { children: React.ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void }) => {
       const [internalOpen, setInternalOpen] = ReactModule.useState(false);
       const isControlled = typeof open === 'boolean';
       const resolvedOpen = isControlled ? open : internalOpen;
@@ -159,7 +163,9 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!ReactModule.isValidElement(children)) return <>{children}</>;
+      if (!ReactModule.isValidElement(children)) {
+        return <>{children}</>;
+      }
 
       const child = children as React.ReactElement<{ onClick?: (event: React.MouseEvent) => void }>;
 
@@ -172,10 +178,15 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuContent: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!context?.open) return null;
+      if (!context?.open) {
+        return null;
+      }
       return <div>{children}</div>;
     },
-    DropdownMenuItem: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => {
+    DropdownMenuItem: ({
+      children,
+      onClick,
+    }: { children: React.ReactNode; onClick?: () => void }) => {
       const context = ReactModule.useContext(DropdownContext);
       return (
         <button

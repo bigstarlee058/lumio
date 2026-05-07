@@ -42,10 +42,39 @@ export function usePasteState(): UsePasteStateReturn {
   );
 
   const resetPastePreview = useCallback((): void => {
-    setPastePreviewOpen(false); setPastePreview(null); setPasteRawRows([]); setPasteUseHeaders(false);
-    setPasteParsing(false); setPasteApplying(false); setPasteMapping({}); setPasteEdits({});
-    if (pastePreviewTimerRef.current) { window.clearTimeout(pastePreviewTimerRef.current); pastePreviewTimerRef.current = null; }
+    setPastePreviewOpen(false);
+    setPastePreview(null);
+    setPasteRawRows([]);
+    setPasteUseHeaders(false);
+    setPasteParsing(false);
+    setPasteApplying(false);
+    setPasteMapping({});
+    setPasteEdits({});
+    if (pastePreviewTimerRef.current) {
+      window.clearTimeout(pastePreviewTimerRef.current);
+      pastePreviewTimerRef.current = null;
+    }
   }, []);
 
-  return { pastePreviewOpen, setPastePreviewOpen, pasteParsing, setPasteParsing, pasteApplying, setPasteApplying, pasteRawRows, setPasteRawRows, pasteUseHeaders, setPasteUseHeaders, pastePreview, setPastePreview, pasteMapping, setPasteMapping, pasteEdits, setPasteEdits, pastePreviewTimerRef, hasMissingPasteColumnTitles, resetPastePreview };
+  return {
+    pastePreviewOpen,
+    setPastePreviewOpen,
+    pasteParsing,
+    setPasteParsing,
+    pasteApplying,
+    setPasteApplying,
+    pasteRawRows,
+    setPasteRawRows,
+    pasteUseHeaders,
+    setPasteUseHeaders,
+    pastePreview,
+    setPastePreview,
+    pasteMapping,
+    setPasteMapping,
+    pasteEdits,
+    setPasteEdits,
+    pastePreviewTimerRef,
+    hasMissingPasteColumnTitles,
+    resetPastePreview,
+  };
 }

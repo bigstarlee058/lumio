@@ -3,8 +3,8 @@ import type { JSX } from 'react';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChevronLeft, ChevronRight } from '@/app/components/icons';
 import type { SpendOverTimeRecord } from '@/app/(main)/statements/components/spend-over-time.utils';
+import { ChevronLeft, ChevronRight } from '@/app/components/icons';
 import { formatMoney } from '@/app/lib/analytics-common';
 import { tokens } from '@/lib/theme-tokens';
 
@@ -31,9 +31,13 @@ type CalendarDay = {
 const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const toDateOnly = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
   return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 };
 
@@ -98,7 +102,9 @@ const buildDayMap = (records: SpendOverTimeRecord[]) => {
   const map = new Map<string, SpendOverTimeRecord[]>();
   records.forEach(record => {
     const date = toDateOnly(record.dateValue || record.createdAt || null);
-    if (!date) return;
+    if (!date) {
+      return;
+    }
     const iso = toIso(date);
     const current = map.get(iso) ?? [];
     current.push(record);
@@ -107,7 +113,12 @@ const buildDayMap = (records: SpendOverTimeRecord[]) => {
   return map;
 };
 
-export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }: Props): JSX.Element {
+export function SpendOverTimeCalendar({
+  records,
+  currency,
+  onDayClick,
+  labels,
+}: Props): JSX.Element {
   const initialMonth = useMemo(() => getInitialMonth(records), [records]);
   const [visibleMonth, setVisibleMonth] = useState(initialMonth);
 
@@ -124,14 +135,22 @@ export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }:
     const monthStart = startOfMonth(visibleMonth);
     const gridStart = getGridStart(monthStart);
     return Array.from({ length: 42 }, (_, index) => {
-      const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + index);
+      const date = new Date(
+        gridStart.getFullYear(),
+        gridStart.getMonth(),
+        gridStart.getDate() + index,
+      );
       const iso = toIso(date);
       const dayRecords = [...(dayMap.get(iso) ?? [])].sort((a, b) => b.amount - a.amount);
-      const currencies = Array.from(new Set(dayRecords.map(record => record.currencyValue).filter(Boolean)));
+      const currencies = Array.from(
+        new Set(dayRecords.map(record => record.currencyValue).filter(Boolean)),
+      );
       return {
         iso,
         dayNumber: date.getDate(),
-        inCurrentMonth: date.getMonth() === visibleMonth.getMonth() && date.getFullYear() === visibleMonth.getFullYear(),
+        inCurrentMonth:
+          date.getMonth() === visibleMonth.getMonth() &&
+          date.getFullYear() === visibleMonth.getFullYear(),
         records: dayRecords,
         total: Number(dayRecords.reduce((sum, record) => sum + record.amount, 0).toFixed(2)),
         currencies,
@@ -177,11 +196,7 @@ export function SpendOverTimeCalendar({ records, currency, onDayClick, labels }:
           >
             <ChevronLeft size={18} />
           </button>
-          <button
-            type="button"
-            onClick={goToLatestMonth}
-            style={calendarTodayButtonStyle}
-          >
+          <button type="button" onClick={goToLatestMonth} style={calendarTodayButtonStyle}>
             Latest
           </button>
           <button

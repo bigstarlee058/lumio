@@ -22,10 +22,26 @@ function PreviewItem({ option }: { option: StatementOption }): React.JSX.Element
         py: 0.5,
       }}
     >
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 12, color: 'var(--foreground)' }}>
+      <span
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: 12,
+          color: 'var(--foreground)',
+        }}
+      >
         {option.title}
       </span>
-      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--foreground)', flexShrink: 0, marginLeft: 8 }}>
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 500,
+          color: 'var(--foreground)',
+          flexShrink: 0,
+          marginLeft: 8,
+        }}
+      >
         {option.rowsLabel}
       </span>
     </Box>
@@ -38,17 +54,27 @@ interface PreviewStatsProps {
   formatLabel: FormatLabelFn;
 }
 
-function PreviewStats({ selectedStatementSummary, labels, formatLabel }: PreviewStatsProps): React.JSX.Element {
+function PreviewStats({
+  selectedStatementSummary,
+  labels,
+  formatLabel,
+}: PreviewStatsProps): React.JSX.Element {
   return (
     <>
       <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
         {labels.previewTitle}
       </Typography>
       <Typography style={{ marginTop: 4, fontSize: 14, color: 'var(--foreground)' }}>
-        {formatLabel({ template: labels.previewSummary, values: { statements: selectedStatementSummary.selectedCount } })}
+        {formatLabel({
+          template: labels.previewSummary,
+          values: { statements: selectedStatementSummary.selectedCount },
+        })}
       </Typography>
       <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
-        {formatLabel({ template: labels.previewRows, values: { rows: selectedStatementSummary.totalRows } })}
+        {formatLabel({
+          template: labels.previewRows,
+          values: { rows: selectedStatementSummary.totalRows },
+        })}
       </Typography>
       <Typography style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>
         {labels.previewEditable}
@@ -77,7 +103,16 @@ function SelectionPreview({
         labels={labels}
         formatLabel={formatLabel}
       />
-      <Box sx={{ mt: 1.5, maxHeight: 128, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+      <Box
+        sx={{
+          mt: 1.5,
+          maxHeight: 128,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.5,
+        }}
+      >
         {selectedStatementPreviewItems.map(option => (
           <PreviewItem key={option.representativeId} option={option} />
         ))}
@@ -93,7 +128,12 @@ interface Step2FormFieldsProps {
   onFormChange: (patch: Partial<CreateFromStatementsForm>) => void;
 }
 
-function Step2FormFields({ form, namingHintLabel, labels, onFormChange }: Step2FormFieldsProps): React.JSX.Element {
+function Step2FormFields({
+  form,
+  namingHintLabel,
+  labels,
+  onFormChange,
+}: Step2FormFieldsProps): React.JSX.Element {
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, md: 4 }}>

@@ -1,7 +1,7 @@
 'use client';
 
-import apiClient from '@/app/lib/api';
 import type { User } from '@/app/hooks/useAuth';
+import apiClient from '@/app/lib/api';
 import {
   THEME_STORAGE_EVENT,
   type ThemePreference,

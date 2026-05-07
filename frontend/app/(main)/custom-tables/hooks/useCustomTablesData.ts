@@ -201,7 +201,9 @@ export function useCustomTablesData(
     const missing = paginatedItems.filter(
       table => typeof rowsCountByTableId[table.id] !== 'number',
     );
-    if (missing.length === 0) return;
+    if (missing.length === 0) {
+      return;
+    }
 
     const loadRowsCount = async () => {
       const entries = await Promise.all(
@@ -218,7 +220,9 @@ export function useCustomTablesData(
         }),
       );
 
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
 
       setRowsCountByTableId(prev => {
         const next = { ...prev };

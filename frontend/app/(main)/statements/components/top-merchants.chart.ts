@@ -62,9 +62,13 @@ export function buildTopMerchantsTrendChart(
   const points = new Map<string, number>();
   records.forEach(record => {
     const rawDate = record.dateValue || record.createdAt || '';
-    if (!rawDate) return;
+    if (!rawDate) {
+      return;
+    }
     const parsed = new Date(rawDate);
-    if (Number.isNaN(parsed.getTime())) return;
+    if (Number.isNaN(parsed.getTime())) {
+      return;
+    }
     const dateKey = parsed.toISOString().split('T')[0];
     points.set(dateKey, (points.get(dateKey) || 0) + record.amount);
   });

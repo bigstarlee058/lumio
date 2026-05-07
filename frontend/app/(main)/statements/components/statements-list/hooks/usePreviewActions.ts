@@ -17,9 +17,9 @@ interface StatementForPreview {
 
 function resolveAllowAttach(statement: StatementForPreview): boolean {
   const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
-  const isManual = !isReceipt && isManualExpenseStatement(
-    statement as Parameters<typeof isManualExpenseStatement>[0],
-  );
+  const isManual =
+    !isReceipt &&
+    isManualExpenseStatement(statement as Parameters<typeof isManualExpenseStatement>[0]);
   const attachCount = Number(statement.parsingDetails?.importPreview?.attachments ?? 0);
   const isEmptyManual =
     attachCount === 0 || statement.fileName?.toLowerCase().startsWith('manual-expense-');

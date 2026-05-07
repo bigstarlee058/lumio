@@ -17,7 +17,11 @@ export interface UseMobileSelectionReturn {
   handleMobileSelectRow: (rowId: string, checked: boolean) => void;
 }
 
-export function useMobileSelection({ rows, selectedRowIds, onSelectedRowIdsChange }: UseMobileSelectionParams): UseMobileSelectionReturn {
+export function useMobileSelection({
+  rows,
+  selectedRowIds,
+  onSelectedRowIdsChange,
+}: UseMobileSelectionParams): UseMobileSelectionReturn {
   const selectedRowsSet = useMemo(() => new Set(selectedRowIds), [selectedRowIds]);
 
   const allRowsSelectedMobile = useMemo(
@@ -39,11 +43,20 @@ export function useMobileSelection({ rows, selectedRowIds, onSelectedRowIdsChang
 
   const handleMobileSelectRow = useCallback(
     (rowId: string, checked: boolean): void => {
-      if (checked) { onSelectedRowIdsChange({ rowIds: Array.from(new Set([...selectedRowIds, rowId])) }); return; }
+      if (checked) {
+        onSelectedRowIdsChange({ rowIds: Array.from(new Set([...selectedRowIds, rowId])) });
+        return;
+      }
       onSelectedRowIdsChange({ rowIds: selectedRowIds.filter(id => id !== rowId) });
     },
     [onSelectedRowIdsChange, selectedRowIds],
   );
 
-  return { selectedRowsSet, allRowsSelectedMobile, someRowsSelectedMobile, handleMobileSelectAll, handleMobileSelectRow };
+  return {
+    selectedRowsSet,
+    allRowsSelectedMobile,
+    someRowsSelectedMobile,
+    handleMobileSelectAll,
+    handleMobileSelectRow,
+  };
 }

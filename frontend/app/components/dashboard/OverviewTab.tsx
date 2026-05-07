@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, complexity, max-lines, max-lines-per-function */
 'use client';
 
+import { BudgetSummaryWidget } from '@/app/(main)/dashboard/components/BudgetSummaryWidget';
 import {
   AlertTriangle,
   ArrowRight,
@@ -397,6 +398,9 @@ export function OverviewTab({
             />
           </div>
         </div>
+
+        {/* ── Budget summary ── */}
+        <BudgetSummaryWidget />
 
         {/* ── Quick actions ── */}
         <QuickActionsCard actions={s.mappedActions} emptyColor={c.ink400} />

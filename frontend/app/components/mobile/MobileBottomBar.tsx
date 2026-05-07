@@ -19,9 +19,19 @@ import { MobileMenuDrawer } from './MobileMenuDrawer';
 const HIDDEN_PATHS = ['/onboarding', '/login', '/register', '/shared', '/invite'];
 
 const FAB_ACTIONS = [
-  { id: 'upload', label: 'Upload', icon: Upload, href: '/statements/submit?openExpenseDrawer=scan' },
+  {
+    id: 'upload',
+    label: 'Upload',
+    icon: Upload,
+    href: '/statements/submit?openExpenseDrawer=scan',
+  },
   { id: 'scan', label: 'Scan', icon: ScanLine, href: '/statements/submit?openExpenseDrawer=scan' },
-  { id: 'expense', label: 'Expense', icon: Receipt, href: '/statements/submit?openExpenseDrawer=manual' },
+  {
+    id: 'expense',
+    label: 'Expense',
+    icon: Receipt,
+    href: '/statements/submit?openExpenseDrawer=manual',
+  },
 ] as const;
 
 export default function MobileBottomBar() {
@@ -55,15 +65,13 @@ export default function MobileBottomBar() {
     <>
       {/* FAB backdrop */}
       {fabOpen && (
-        <div
-          className="lumio-bottom-bar__fab-backdrop"
-          onClick={closeFab}
-          aria-hidden="true"
-        />
+        <div className="lumio-bottom-bar__fab-backdrop" onClick={closeFab} aria-hidden="true" />
       )}
 
       {/* FAB radial menu (upward) */}
-      <div className={`lumio-bottom-bar__fab-menu${fabOpen ? ' lumio-bottom-bar__fab-menu--open' : ''}`}>
+      <div
+        className={`lumio-bottom-bar__fab-menu${fabOpen ? ' lumio-bottom-bar__fab-menu--open' : ''}`}
+      >
         {FAB_ACTIONS.map((action, index) => (
           <button
             key={action.id}

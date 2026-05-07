@@ -100,8 +100,12 @@ export function StatementsPageExample(): React.JSX.Element {
   return (
     <PageWithSidePanel sidePanelConfig={sidePanelConfig} sidePanelWidth="md">
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Statements</Typography>
-        <Typography sx={{ color: 'text.secondary' }}>Current filter: {statusFilter || 'All'}</Typography>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
+          Statements
+        </Typography>
+        <Typography sx={{ color: 'text.secondary' }}>
+          Current filter: {statusFilter || 'All'}
+        </Typography>
         {/* Rest of page content */}
       </Box>
     </PageWithSidePanel>
@@ -113,7 +117,7 @@ export function StatementsPageExample(): React.JSX.Element {
 // ============================================================================
 
 export function ReportsPageExample(): React.JSX.Element {
-  const [activeTab, _setActiveTab] = useState('sheets');
+  const [activeTab, SetActiveTab] = useState('sheets');
 
   const sidePanelConfig = useMemo(
     () =>
@@ -132,7 +136,9 @@ export function ReportsPageExample(): React.JSX.Element {
       sidePanelPosition="right"
     >
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Reports - {activeTab}</Typography>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
+          Reports - {activeTab}
+        </Typography>
         {/* Rest of page content */}
       </Box>
     </PageWithSidePanel>
@@ -144,7 +150,7 @@ export function ReportsPageExample(): React.JSX.Element {
 // ============================================================================
 
 export function StoragePageExample(): React.JSX.Element {
-  const [activeFolderId, _setActiveFolderId] = useState('');
+  const [activeFolderId, SetActiveFolderId] = useState('');
 
   const sidePanelConfig = useMemo(
     () =>
@@ -163,8 +169,12 @@ export function StoragePageExample(): React.JSX.Element {
       defaultCollapsed={false}
     >
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Storage</Typography>
-        <Typography sx={{ color: 'text.secondary' }}>Active folder: {activeFolderId || 'All Files'}</Typography>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
+          Storage
+        </Typography>
+        <Typography sx={{ color: 'text.secondary' }}>
+          Active folder: {activeFolderId || 'All Files'}
+        </Typography>
         {/* Rest of page content */}
       </Box>
     </PageWithSidePanel>
@@ -177,8 +187,8 @@ export function StoragePageExample(): React.JSX.Element {
 
 // eslint-disable-next-line max-lines-per-function
 export function SettingsPageExample(): React.JSX.Element {
-  const [activeSection, _setActiveSection] = useState('profile');
-  const [_settings, _setSettings] = useState({
+  const [activeSection, SetActiveSection] = useState('profile');
+  const [Settings, SetSettings] = useState({
     notifications: true,
     emailNotifications: false,
     darkMode: false,
@@ -203,7 +213,9 @@ export function SettingsPageExample(): React.JSX.Element {
       sidePanelPosition="left"
     >
       <Box className="container-shared" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>Settings - {activeSection}</Typography>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
+          Settings - {activeSection}
+        </Typography>
         {/* Rest of page content based on activeSection */}
       </Box>
     </PageWithSidePanel>
@@ -222,7 +234,9 @@ interface AppLayoutWithSidePanelProps {
  * Example of how to wrap the entire app with the SidePanelProvider.
  * This should be added to the app's providers or layout.
  */
-export function AppLayoutWithSidePanel({ children }: AppLayoutWithSidePanelProps): React.JSX.Element {
+export function AppLayoutWithSidePanel({
+  children,
+}: AppLayoutWithSidePanelProps): React.JSX.Element {
   // Optional: Get user permissions from auth context
   const checkPermission = (permission: string): boolean => {
     // In a real app, check against user's permissions

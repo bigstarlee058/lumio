@@ -1,7 +1,7 @@
 'use client';
 
-import type React from 'react';
 import { getApiErrorMessage } from '@/app/lib/api-error';
+import type React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '../lib/api';
 
@@ -40,7 +40,10 @@ interface WorkspaceContextType {
   clearWorkspace: () => void;
   refreshWorkspaces: () => Promise<void>;
   toggleFavorite: (workspaceId: string) => Promise<void>;
-  updateWorkspaceBackground: (params: { workspaceId: string; backgroundImage: string }) => Promise<void>;
+  updateWorkspaceBackground: (params: {
+    workspaceId: string;
+    backgroundImage: string;
+  }) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
@@ -84,7 +87,10 @@ async function fetchAndSetWorkspaces({
 }
 
 async function apiSwitchWorkspace(
-  { workspaceId, refreshWorkspaces }: { workspaceId: string; refreshWorkspaces: () => Promise<void> },
+  {
+    workspaceId,
+    refreshWorkspaces,
+  }: { workspaceId: string; refreshWorkspaces: () => Promise<void> },
   workspaces: Workspace[],
   setters: WorkspaceSetters,
 ): Promise<void> {
@@ -115,7 +121,9 @@ async function apiToggleFavorite(
     const response = await api.patch(`/workspaces/${workspaceId}/favorite`);
     const isFavorite: boolean = response.data.isFavorite;
     setters.setWorkspaces(prev => prev.map(w => (w.id === workspaceId ? { ...w, isFavorite } : w)));
-    setters.setCurrentWorkspace(prev => (prev?.id === workspaceId ? { ...prev, isFavorite } : prev));
+    setters.setCurrentWorkspace(prev =>
+      prev?.id === workspaceId ? { ...prev, isFavorite } : prev,
+    );
   } catch (err) {
     console.error('Failed to toggle favorite:', err);
     throw err;

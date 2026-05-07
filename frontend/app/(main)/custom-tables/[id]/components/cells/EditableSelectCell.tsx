@@ -1,8 +1,8 @@
 'use client';
 
+import { ChevronDown } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import type { Column, Row, Table } from '@tanstack/react-table';
-import { ChevronDown } from '@/app/components/icons';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import type { CustomTableCellValue, CustomTableGridRow } from '../../utils/stylingUtils';
 
@@ -109,14 +109,36 @@ export function EditableSelectCell({
         }}
         aria-label="Open select options"
       >
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayValue}</span>
-        <ChevronDown className="h-4 w-4" style={{ color: 'var(--muted-foreground)', flexShrink: 0, marginLeft: 8 }} />
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {displayValue}
+        </span>
+        <ChevronDown
+          className="h-4 w-4"
+          style={{ color: 'var(--muted-foreground)', flexShrink: 0, marginLeft: 8 }}
+        />
       </button>
 
       {isOpen && (
-        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, width: '100%', minWidth: 200, background: 'var(--card-bg)', border: '1px solid var(--border-color)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', zIndex: 20, maxHeight: 240, overflowY: 'auto' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            marginTop: 4,
+            width: '100%',
+            minWidth: 200,
+            background: 'var(--card-bg)',
+            border: '1px solid var(--border-color)',
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+            zIndex: 20,
+            maxHeight: 240,
+            overflowY: 'auto',
+          }}
+        >
           {options.length === 0 ? (
-            <div style={{ padding: '8px 12px', fontSize: 14, color: 'var(--muted-foreground)' }}>No options available</div>
+            <div style={{ padding: '8px 12px', fontSize: 14, color: 'var(--muted-foreground)' }}>
+              No options available
+            </div>
           ) : (
             options.map(option => {
               const isSelected = multiple

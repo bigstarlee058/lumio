@@ -6,13 +6,13 @@ import {
   systemNotificationSettings,
   workspaceNotificationSettings,
 } from '@/app/settings/profile/profileHelpers';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Checkbox from '@mui/material/Checkbox';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { tokens } from '@/lib/theme-tokens';
 
 type NotificationKey = keyof NotificationPreferences;
 type NotificationItem = { label: string; description: string };

@@ -54,8 +54,12 @@ describe('usePullToRefresh', () => {
     expect(latestHook).toBeTruthy();
 
     await act(async () => {
-      latestHook?.handlers.onTouchStart(createTouchEvent(0) as unknown as React.TouchEvent<Element>);
-      latestHook?.handlers.onTouchMove(createTouchEvent(60) as unknown as React.TouchEvent<Element>);
+      latestHook?.handlers.onTouchStart(
+        createTouchEvent(0) as unknown as React.TouchEvent<Element>,
+      );
+      latestHook?.handlers.onTouchMove(
+        createTouchEvent(60) as unknown as React.TouchEvent<Element>,
+      );
     });
 
     await act(async () => {

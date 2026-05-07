@@ -98,7 +98,9 @@ export function useStorageFolders(
 
   // Wheel-based folder reordering when a folder is "picked" in the modal
   useEffect(() => {
-    if (!pickedFolderId || !isFolderModalOpen) return;
+    if (!(pickedFolderId && isFolderModalOpen)) {
+      return;
+    }
 
     const handleWheelMove = (idx: number, deltaY: number): void => {
       const now = Date.now();
@@ -113,9 +115,13 @@ export function useStorageFolders(
 
     const handleWheel = (e: WheelEvent): void => {
       const now = Date.now();
-      if (now - lastWheelTime.current < 80) return;
+      if (now - lastWheelTime.current < 80) {
+        return;
+      }
       const idx = folders.findIndex(f => f.id === pickedFolderId);
-      if (idx === -1 || Math.abs(e.deltaY) < 10) return;
+      if (idx === -1 || Math.abs(e.deltaY) < 10) {
+        return;
+      }
       handleWheelMove(idx, e.deltaY);
     };
 
@@ -209,7 +215,9 @@ export function useStorageFolders(
       const newName = response.data?.name || name;
       setFiles(prev =>
         prev.map(file => {
-          if (file.folderId !== folderId) return file;
+          if (file.folderId !== folderId) {
+            return file;
+          }
           const folder = file.folder
             ? { ...file.folder, name: newName }
             : { id: folderId, name: newName };
@@ -260,7 +268,9 @@ export function useStorageFolders(
   const handleDeleteFolder = async (): Promise<void> => {
     const targetFolder = folderToDelete;
     const removeContents = deleteFolderWithContents;
-    if (!targetFolder) return;
+    if (!targetFolder) {
+      return;
+    }
     const toastId = toast.loading(messages.folderDeleteLoading);
     try {
       await api.delete(`/storage/folders/${targetFolder.id}`, {
@@ -295,7 +305,9 @@ export function useStorageFolders(
 
   const handleMoveFolderIdx = (fromId: string, toIdx: number, finalize = true): void => {
     const fromIdx = folders.findIndex(f => f.id === fromId);
-    if (fromIdx === -1) return;
+    if (fromIdx === -1) {
+      return;
+    }
     const newFolders = [...folders];
     const [movedFolder] = newFolders.splice(fromIdx, 1);
     newFolders.splice(toIdx, 0, movedFolder);
@@ -341,7 +353,9 @@ export function useStorageFolders(
   const canEditFolder = (folder: FolderOption): boolean => folder.userId !== null;
 
   const clampFolderName = (value: string, previous: string): string => {
-    if (value.length <= FOLDER_NAME_MAX) return value;
+    if (value.length <= FOLDER_NAME_MAX) {
+      return value;
+    }
     if (previous.length <= FOLDER_NAME_MAX) {
       toast.error(messages.folderNameTooLong);
     }

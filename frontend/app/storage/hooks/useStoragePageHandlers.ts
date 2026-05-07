@@ -1,15 +1,15 @@
 'use client';
 
-import { useCallback } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { useCallback } from 'react';
+import type { PermissionLabels, StatusLabels } from '../helpers/storageFormatters';
 import { DEFAULT_FILTERS, NO_FOLDER, type StorageFile } from '../storageHelpers';
 import type { UseStorageDndReturn } from './useStorageDnd';
-import type { UseStorageFoldersReturn } from './useStorageFolders';
 import type { UseStorageFiltersReturn } from './useStorageFilters';
+import type { UseStorageFoldersReturn } from './useStorageFolders';
 import type { StorageModalsState } from './useStorageModals';
 import type { UseStorageTagsReturn } from './useStorageTags';
 import type { UseStorageTrashReturn } from './useStorageTrash';
-import type { StatusLabels, PermissionLabels } from '../helpers/storageFormatters';
 
 interface PageHandlersParams {
   setActiveModal: (modal: 'folders' | null) => void;
@@ -30,7 +30,10 @@ export interface PageHandlersReturn {
   handleDragStart: (event: DragStartEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
   toggleTrashSelection: (fileId: string) => void;
-  buildToggleSelectAllTrash: (allTrashSelected: boolean, selectableTrashIds: string[]) => () => void;
+  buildToggleSelectAllTrash: (
+    allTrashSelected: boolean,
+    selectableTrashIds: string[],
+  ) => () => void;
   handleFilterChange: (field: keyof typeof DEFAULT_FILTERS, value: string) => void;
   handleResetFilters: () => void;
   handleApplyFilters: () => void;
@@ -61,14 +64,17 @@ export function useStoragePageHandlers({
   trashHook,
   modalsHook,
 }: PageHandlersParams): PageHandlersReturn {
-  const openModal = useCallback((modal: 'folders'): void => {
-    filtersHook.setFilterOpen(false);
-    setActiveModal(modal);
-    foldersHook.clearFolderMoveFeedback();
-    foldersHook.setActiveFolderId(null);
-    foldersHook.setFolderFileQuery('');
-    dndHook.setFolderDropTargetId(null);
-  }, [filtersHook, setActiveModal, foldersHook, dndHook]);
+  const openModal = useCallback(
+    (modal: 'folders'): void => {
+      filtersHook.setFilterOpen(false);
+      setActiveModal(modal);
+      foldersHook.clearFolderMoveFeedback();
+      foldersHook.setActiveFolderId(null);
+      foldersHook.setFolderFileQuery('');
+      dndHook.setFolderDropTargetId(null);
+    },
+    [filtersHook, setActiveModal, foldersHook, dndHook],
+  );
 
   const closeModal = useCallback((): void => {
     setActiveModal(null);
@@ -86,45 +92,69 @@ export function useStoragePageHandlers({
     foldersHook.clearFolderMoveFeedback();
   }, [setActiveModal, dndHook, foldersHook, tagsHook]);
 
-  const canEditFile = useCallback((file: StorageFile): boolean => (
-    !file.deletedAt && (file.isOwner || file.permissionType === 'editor')
-  ), []);
+  const canEditFile = useCallback(
+    (file: StorageFile): boolean =>
+      !file.deletedAt && (file.isOwner || file.permissionType === 'editor'),
+    [],
+  );
 
-  const handleDragStart = useCallback((event: DragStartEvent): void => {
-    const file = event.active.data.current?.file as StorageFile | undefined;
-    if (file) dndHook.setDraggingFile(file);
-  }, [dndHook]);
+  const handleDragStart = useCallback(
+    (event: DragStartEvent): void => {
+      const file = event.active.data.current?.file as StorageFile | undefined;
+      if (file) {
+        dndHook.setDraggingFile(file);
+      }
+    },
+    [dndHook],
+  );
 
   // eslint-disable-next-line complexity
-  const handleDragEnd = useCallback((event: DragEndEvent): void => {
-    const { active, over } = event;
-    if (!over) { dndHook.setDraggingFile(null); return; }
-    const file = active.data.current?.file as StorageFile | undefined;
-    const folderId = over.data.current?.folderId as string | undefined;
-    const isNoFolder = over.data.current?.isNoFolder as boolean | undefined;
-    if (file && (folderId || isNoFolder)) {
-      buildDragEndMoveLogic({ foldersHook, file, folderId, isNoFolder });
-    }
-    dndHook.setDraggingFile(null);
-    if (dndHook.folderModalFromDrag) closeModal();
-  }, [dndHook, foldersHook, closeModal]);
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent): void => {
+      const { active, over } = event;
+      if (!over) {
+        dndHook.setDraggingFile(null);
+        return;
+      }
+      const file = active.data.current?.file as StorageFile | undefined;
+      const folderId = over.data.current?.folderId as string | undefined;
+      const isNoFolder = over.data.current?.isNoFolder as boolean | undefined;
+      if (file && (folderId || isNoFolder)) {
+        buildDragEndMoveLogic({ foldersHook, file, folderId, isNoFolder });
+      }
+      dndHook.setDraggingFile(null);
+      if (dndHook.folderModalFromDrag) {
+        closeModal();
+      }
+    },
+    [dndHook, foldersHook, closeModal],
+  );
 
-  const toggleTrashSelection = useCallback((fileId: string): void => {
-    trashHook.setSelectedTrashIds(prev =>
-      prev.includes(fileId) ? prev.filter(id => id !== fileId) : [...prev, fileId],
-    );
-  }, [trashHook]);
+  const toggleTrashSelection = useCallback(
+    (fileId: string): void => {
+      trashHook.setSelectedTrashIds(prev =>
+        prev.includes(fileId) ? prev.filter(id => id !== fileId) : [...prev, fileId],
+      );
+    },
+    [trashHook],
+  );
 
-  const buildToggleSelectAllTrash = useCallback((allTrashSelected: boolean, selectableTrashIds: string[]): (() => void) => {
-    return (): void => {
-      trashHook.setSelectedTrashIds(allTrashSelected ? [] : selectableTrashIds);
-    };
-  }, [trashHook]);
+  const buildToggleSelectAllTrash = useCallback(
+    (allTrashSelected: boolean, selectableTrashIds: string[]): (() => void) => {
+      return (): void => {
+        trashHook.setSelectedTrashIds(allTrashSelected ? [] : selectableTrashIds);
+      };
+    },
+    [trashHook],
+  );
 
-  const handleFilterChange = useCallback((field: keyof typeof DEFAULT_FILTERS, value: string): void => {
-    filtersHook.setStagedFilters(prev => ({ ...prev, [field]: value }));
-    filtersHook.setActiveViewId(null);
-  }, [filtersHook]);
+  const handleFilterChange = useCallback(
+    (field: keyof typeof DEFAULT_FILTERS, value: string): void => {
+      filtersHook.setStagedFilters(prev => ({ ...prev, [field]: value }));
+      filtersHook.setActiveViewId(null);
+    },
+    [filtersHook],
+  );
 
   const handleResetFilters = useCallback((): void => {
     filtersHook.setStagedFilters({ ...DEFAULT_FILTERS });
@@ -137,11 +167,14 @@ export function useStoragePageHandlers({
     filtersHook.setFilterOpen(false);
   }, [filtersHook]);
 
-  const handlePreviewOpen = useCallback((fileId: string, fileName: string): void => {
-    modalsHook.setPreviewFileId(fileId);
-    modalsHook.setPreviewFileName(fileName);
-    modalsHook.setPreviewModalOpen(true);
-  }, [modalsHook]);
+  const handlePreviewOpen = useCallback(
+    (fileId: string, fileName: string): void => {
+      modalsHook.setPreviewFileId(fileId);
+      modalsHook.setPreviewFileName(fileName);
+      modalsHook.setPreviewModalOpen(true);
+    },
+    [modalsHook],
+  );
 
   return {
     openModal,
@@ -161,8 +194,20 @@ export function useStoragePageHandlers({
 // ─── Label helpers ────────────────────────────────────────────────────────────
 
 interface StorageTranslations {
-  statusLabels: { completed: { value: string }; processing: { value: string }; error: { value: string }; uploaded: { value: string }; parsed: { value: string } };
-  permission: { owner: { value: string }; editor: { value: string }; viewer: { value: string }; downloader: { value: string }; access: { value: string } };
+  statusLabels: {
+    completed: { value: string };
+    processing: { value: string };
+    error: { value: string };
+    uploaded: { value: string };
+    parsed: { value: string };
+  };
+  permission: {
+    owner: { value: string };
+    editor: { value: string };
+    viewer: { value: string };
+    downloader: { value: string };
+    access: { value: string };
+  };
 }
 
 export function buildStatusLabels(t: StorageTranslations): StatusLabels {

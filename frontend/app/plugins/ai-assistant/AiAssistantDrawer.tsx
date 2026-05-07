@@ -1,11 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { useIntlayer } from '@/app/i18n';
-import { Box, Typography } from '@mui/material';
 import {
-  BarChart3,
   DollarSign,
   Landmark,
   PiggyBank,
@@ -13,10 +8,14 @@ import {
   TrendingUp,
   Users,
 } from '@/app/components/icons';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Typography } from '@mui/material';
+import type React from 'react';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import { promptTemplates } from './prompt-templates';
-import { tokens } from '@/lib/theme-tokens';
 
 const CHATGPT_URL = 'https://chatgpt.com/';
 const MAX_URL_LENGTH = 6000;
@@ -38,46 +37,73 @@ export function AiAssistantDrawer({ isOpen, onClose }: AiAssistantDrawerProps) {
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
   const cards: CardDef[] = [
-    { key: 'expense-summary', title: t.cards.expenseSummary.title, description: t.cards.expenseSummary.description, icon: <DollarSign size={20} /> },
-    { key: 'cash-flow', title: t.cards.cashFlow.title, description: t.cards.cashFlow.description, icon: <TrendingUp size={20} /> },
-    { key: 'top-counterparties', title: t.cards.topCounterparties.title, description: t.cards.topCounterparties.description, icon: <Users size={20} /> },
-    { key: 'tax-preparation', title: t.cards.taxPreparation.title, description: t.cards.taxPreparation.description, icon: <Landmark size={20} /> },
-    { key: 'anomaly-detection', title: t.cards.anomalyDetection.title, description: t.cards.anomalyDetection.description, icon: <ShieldAlert size={20} /> },
-    { key: 'budget-recommendations', title: t.cards.budgetRecommendations.title, description: t.cards.budgetRecommendations.description, icon: <PiggyBank size={20} /> },
+    {
+      key: 'expense-summary',
+      title: t.cards.expenseSummary.title,
+      description: t.cards.expenseSummary.description,
+      icon: <DollarSign size={20} />,
+    },
+    {
+      key: 'cash-flow',
+      title: t.cards.cashFlow.title,
+      description: t.cards.cashFlow.description,
+      icon: <TrendingUp size={20} />,
+    },
+    {
+      key: 'top-counterparties',
+      title: t.cards.topCounterparties.title,
+      description: t.cards.topCounterparties.description,
+      icon: <Users size={20} />,
+    },
+    {
+      key: 'tax-preparation',
+      title: t.cards.taxPreparation.title,
+      description: t.cards.taxPreparation.description,
+      icon: <Landmark size={20} />,
+    },
+    {
+      key: 'anomaly-detection',
+      title: t.cards.anomalyDetection.title,
+      description: t.cards.anomalyDetection.description,
+      icon: <ShieldAlert size={20} />,
+    },
+    {
+      key: 'budget-recommendations',
+      title: t.cards.budgetRecommendations.title,
+      description: t.cards.budgetRecommendations.description,
+      icon: <PiggyBank size={20} />,
+    },
   ];
 
-  const handleCardClick = useCallback(async (key: string) => {
-    const template = promptTemplates.find(pt => pt.key === key);
-    if (!template) return;
+  const handleCardClick = useCallback(
+    async (key: string) => {
+      const template = promptTemplates.find(pt => pt.key === key);
+      if (!template) return;
 
-    setLoadingKey(key);
-    try {
-      const prompt = await template.buildPrompt();
-      const encoded = encodeURIComponent(prompt);
-      const url = `${CHATGPT_URL}?q=${encoded}`;
+      setLoadingKey(key);
+      try {
+        const prompt = await template.buildPrompt();
+        const encoded = encodeURIComponent(prompt);
+        const url = `${CHATGPT_URL}?q=${encoded}`;
 
-      if (url.length > MAX_URL_LENGTH) {
-        await navigator.clipboard.writeText(prompt);
-        toast.success(String(t.copied));
-        window.open(CHATGPT_URL, '_blank', 'noopener,noreferrer');
-      } else {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        if (url.length > MAX_URL_LENGTH) {
+          await navigator.clipboard.writeText(prompt);
+          toast.success(String(t.copied));
+          window.open(CHATGPT_URL, '_blank', 'noopener,noreferrer');
+        } else {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+      } catch {
+        toast.error('Failed to load data');
+      } finally {
+        setLoadingKey(null);
       }
-    } catch {
-      toast.error('Failed to load data');
-    } finally {
-      setLoadingKey(null);
-    }
-  }, [t.copied]);
+    },
+    [t.copied],
+  );
 
   return (
-    <DrawerShell
-      isOpen={isOpen}
-      onClose={onClose}
-      title={t.title}
-      position="right"
-      width="lg"
-    >
+    <DrawerShell isOpen={isOpen} onClose={onClose} title={t.title} position="right" width="lg">
       <Box sx={{ px: 2, pb: 2 }}>
         <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)', mb: 2.5 }}>
           {t.subtitle}
@@ -95,7 +121,9 @@ export function AiAssistantDrawer({ isOpen, onClose }: AiAssistantDrawerProps) {
             return (
               <Box
                 key={card.key}
-                onClick={() => { if (!isLoading) void handleCardClick(card.key); }}
+                onClick={() => {
+                  if (!isLoading) void handleCardClick(card.key);
+                }}
                 sx={{
                   border: '1px solid var(--border-color, #e5e7eb)',
                   borderRadius: tokens.radius.lg,

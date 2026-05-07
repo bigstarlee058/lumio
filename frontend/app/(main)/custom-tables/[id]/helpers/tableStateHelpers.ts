@@ -5,7 +5,9 @@ import type { CustomTableColumn, CustomTableGridRow } from '../utils/stylingUtil
 
 export function buildRowSelectionState(selectedRowIds: string[]): RowSelectionState {
   const next: RowSelectionState = {};
-  for (const id of selectedRowIds) next[id] = true;
+  for (const id of selectedRowIds) {
+    next[id] = true;
+  }
   return next;
 }
 
@@ -14,7 +16,9 @@ export function buildNextSelectedIds(
   prev: RowSelectionState,
 ): string[] {
   const next = typeof updater === 'function' ? updater(prev) : updater;
-  return Object.entries(next).filter(([, v]) => v).map(([k]) => k);
+  return Object.entries(next)
+    .filter(([, v]) => v)
+    .map(([k]) => k);
 }
 
 function isMissingCellValue(raw: unknown): boolean {
@@ -22,22 +26,34 @@ function isMissingCellValue(raw: unknown): boolean {
 }
 
 function formatDateCell(raw: unknown): string {
-  if (typeof raw !== 'string' && typeof raw !== 'number') return String(raw);
+  if (typeof raw !== 'string' && typeof raw !== 'number') {
+    return String(raw);
+  }
   const date = new Date(raw as string | number);
-  if (Number.isNaN(date.getTime())) return String(raw);
+  if (Number.isNaN(date.getTime())) {
+    return String(raw);
+  }
   return date.toLocaleDateString();
 }
 
 function formatTypedCellValue(column: CustomTableColumn, raw: unknown): string {
-  if (column.type === 'boolean') return raw ? 'Yes' : 'No';
-  if (column.type === 'date') return formatDateCell(raw);
-  if (column.type === 'multi_select' && Array.isArray(raw)) return raw.join(', ');
+  if (column.type === 'boolean') {
+    return raw ? 'Yes' : 'No';
+  }
+  if (column.type === 'date') {
+    return formatDateCell(raw);
+  }
+  if (column.type === 'multi_select' && Array.isArray(raw)) {
+    return raw.join(', ');
+  }
   return String(raw);
 }
 
 export function formatMobileCellValue(column: CustomTableColumn, row: CustomTableGridRow): string {
   const raw = row.data?.[column.key];
-  if (isMissingCellValue(raw)) return '—';
+  if (isMissingCellValue(raw)) {
+    return '—';
+  }
   return formatTypedCellValue(column, raw);
 }
 
@@ -57,11 +73,17 @@ export function buildStickyOffsets(
   const cols = table.getAllLeafColumns();
   let leftOffset = 0;
   for (const col of cols) {
-    if (leftSet.has(col.id)) { left[col.id] = leftOffset; leftOffset += col.getSize(); }
+    if (leftSet.has(col.id)) {
+      left[col.id] = leftOffset;
+      leftOffset += col.getSize();
+    }
   }
   let rightOffset = 0;
   for (let i = cols.length - 1; i >= 0; i -= 1) {
-    if (rightSet.has(cols[i].id)) { right[cols[i].id] = rightOffset; rightOffset += cols[i].getSize(); }
+    if (rightSet.has(cols[i].id)) {
+      right[cols[i].id] = rightOffset;
+      rightOffset += cols[i].getSize();
+    }
   }
   return { left, right };
 }

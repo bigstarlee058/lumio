@@ -12,7 +12,11 @@ const DEFAULT_COLS = 3;
 const DEFAULT_ROWS = 5;
 const DEFAULT_DENSITY = 0.4;
 
-export const WindowGrid = ({ cols = DEFAULT_COLS, rows = DEFAULT_ROWS, density = DEFAULT_DENSITY }: WindowGridProps): React.JSX.Element => (
+export const WindowGrid = ({
+  cols = DEFAULT_COLS,
+  rows = DEFAULT_ROWS,
+  density = DEFAULT_DENSITY,
+}: WindowGridProps): React.JSX.Element => (
   <div
     style={{
       width: '100%',
@@ -27,7 +31,6 @@ export const WindowGrid = ({ cols = DEFAULT_COLS, rows = DEFAULT_ROWS, density =
   >
     {[...Array(cols * rows).keys()].map(i => (
       <div
-        // biome-ignore lint/suspicious/noArrayIndexKey: pure visual decoration
         key={i}
         style={{
           background:

@@ -1,5 +1,3 @@
-// @vitest-environment jsdom
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -268,9 +266,10 @@ describe('EditStatementPage locale', () => {
     const { default: EditStatementPage } = await import('./page');
 
     apiGet.mockImplementation(
-      () => new Promise(() => {
-        // Keep the page in loading state for this test.
-      }),
+      () =>
+        new Promise(() => {
+          // Keep the page in loading state for this test.
+        }),
     );
 
     await act(async () => {
@@ -435,8 +434,8 @@ describe('EditStatementPage locale', () => {
       await flushPromises();
     });
 
-    const payButton = Array.from(container.querySelectorAll('button')).find(button =>
-      button.textContent?.trim() === 'Pay',
+    const payButton = Array.from(container.querySelectorAll('button')).find(
+      button => button.textContent?.trim() === 'Pay',
     );
 
     expect(payButton).toBeTruthy();

@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function GlobalNavHeight() {
   useEffect(() => {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {
+      return;
+    }
 
     const root = document.documentElement;
     const nav = document.querySelector<HTMLElement>('[data-global-nav]');

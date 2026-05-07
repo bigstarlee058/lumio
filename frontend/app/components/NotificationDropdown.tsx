@@ -1,14 +1,14 @@
 'use client';
 
+import { AlertTriangle, Bell, CircleAlert, Info } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useNotifications } from '@/app/hooks/useNotifications';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import { Divider, Menu } from '@mui/material';
-import { AlertTriangle, Bell, CircleAlert, Info } from '@/app/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 type NotificationDropdownProps = {
   triggerClassName?: string;
@@ -24,19 +24,27 @@ function formatRelativeTime(value: string, locale: string, justNowLabel: string)
 
   const diffMs = Date.now() - date.getTime();
   const minutes = Math.floor(diffMs / (1000 * 60));
-  if (minutes < 1) return justNowLabel;
+  if (minutes < 1) {
+    return justNowLabel;
+  }
 
   const relativeTime = new Intl.RelativeTimeFormat(locale === 'kk' ? 'kk-KZ' : locale, {
     numeric: 'auto',
   });
 
-  if (minutes < 60) return relativeTime.format(-minutes, 'minute');
+  if (minutes < 60) {
+    return relativeTime.format(-minutes, 'minute');
+  }
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return relativeTime.format(-hours, 'hour');
+  if (hours < 24) {
+    return relativeTime.format(-hours, 'hour');
+  }
 
   const days = Math.floor(hours / 24);
-  if (days < 7) return relativeTime.format(-days, 'day');
+  if (days < 7) {
+    return relativeTime.format(-days, 'day');
+  }
 
   return date.toLocaleDateString(locale === 'kk' ? 'kk-KZ' : locale);
 }
@@ -55,7 +63,9 @@ function extractReceiptName(message: string): string | null {
 
 function extractCount(message: string): number | null {
   const match = message.match(/\d+/);
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
   const value = Number(match[0]);
   return Number.isFinite(value) ? value : null;
 }
@@ -64,7 +74,7 @@ function resolveTranslationValue(
   value: string | { value?: string } | undefined,
   fallback: string,
 ): string {
-  return typeof value === 'string' ? value : value?.value ?? fallback;
+  return typeof value === 'string' ? value : (value?.value ?? fallback);
 }
 
 export function NotificationDropdown({
@@ -108,7 +118,7 @@ export function NotificationDropdown({
     }
 
     if (notification.entityType === 'receipt' && notification.entityId) {
-      return `/statements`;
+      return '/statements';
     }
 
     if (notification.entityType === 'category') {
@@ -146,7 +156,9 @@ export function NotificationDropdown({
   };
 
   const unreadLabel = useMemo(() => {
-    if (unreadCount > 99) return '99+';
+    if (unreadCount > 99) {
+      return '99+';
+    }
     return String(unreadCount);
   }, [unreadCount]);
 
@@ -230,9 +242,7 @@ export function NotificationDropdown({
             <Spinner size={12} sx={{ color: 'white' }} />
           </span>
         ) : unreadCount > 0 ? (
-          <span className="lumio-notification-dropdown__badge">
-            {unreadLabel}
-          </span>
+          <span className="lumio-notification-dropdown__badge">{unreadLabel}</span>
         ) : null}
       </button>
 
@@ -271,15 +281,11 @@ export function NotificationDropdown({
 
         <div className="lumio-notification-dropdown__list">
           {loading && notifications.length === 0 ? (
-            <div className="lumio-notification-dropdown__empty">
-              {t.loading.value}
-            </div>
+            <div className="lumio-notification-dropdown__empty">{t.loading.value}</div>
           ) : null}
 
           {!loading && notifications.length === 0 ? (
-            <div className="lumio-notification-dropdown__empty">
-              {t.empty.value}
-            </div>
+            <div className="lumio-notification-dropdown__empty">{t.empty.value}</div>
           ) : null}
 
           {notifications.map(notification => {

@@ -38,7 +38,16 @@ export function StatusFilterDropdown({
 
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
-      <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div
+        style={{
+          maxHeight: 320,
+          overflowY: 'auto',
+          paddingRight: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        }}
+      >
         {options.map(option => {
           const isSelected = selected.has(option.value);
           return (

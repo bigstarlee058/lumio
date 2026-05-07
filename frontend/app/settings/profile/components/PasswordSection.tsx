@@ -2,13 +2,13 @@
 
 import { Alert } from '@/app/components/ui/alert';
 import { Spinner } from '@/app/components/ui/spinner';
-import type { FormEvent } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import type { FormEvent } from 'react';
 
 type Passwords = { current: string; next: string; confirm: string };
 
@@ -42,7 +42,11 @@ export function PasswordSection({
   handlePasswordSubmit,
 }: Props) {
   return (
-    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handlePasswordSubmit}>
+    <Box
+      component="form"
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+      onSubmit={handlePasswordSubmit}
+    >
       {passwordMessage && <Alert variant="success">{passwordMessage}</Alert>}
       {passwordError && <Alert variant="error">{passwordError}</Alert>}
       <Alert variant="warning">

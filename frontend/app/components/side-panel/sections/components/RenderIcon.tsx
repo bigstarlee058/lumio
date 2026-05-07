@@ -1,7 +1,7 @@
 'use client';
 
-import type { NavigationItem } from '../../types';
 import React, { isValidElement } from 'react';
+import type { NavigationItem } from '../../types';
 
 /** Render icon - handles both LucideIcon and ReactNode */
 export function RenderIcon({

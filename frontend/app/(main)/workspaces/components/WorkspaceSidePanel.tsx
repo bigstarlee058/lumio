@@ -1,9 +1,9 @@
 'use client';
 
+import { Building2, FolderOpen, LayoutGrid, Users } from '@/app/components/icons';
 import { type SidePanelPageConfig, useSidePanelConfig } from '@/app/components/side-panel';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { type WorkspaceTabId, getWorkspaceTabItems } from '@/app/lib/workspace-tabs';
-import { Building2, FolderOpen, LayoutGrid, Users } from '@/app/components/icons';
 import { useMemo } from 'react';
 
 type Props = {
@@ -28,7 +28,8 @@ export default function WorkspaceSidePanel({
         {
           id: 'workspace-tabs',
           type: 'navigation',
-          className: 'rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] px-1 pt-1',
+          className:
+            'rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] px-1 pt-1',
           items: tabItems.map(item => ({
             ...item,
             icon: item.id === 'overview' ? Building2 : item.id === 'members' ? Users : FolderOpen,

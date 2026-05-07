@@ -1,12 +1,21 @@
 'use client';
 
+import {
+  Check,
+  ChevronRight,
+  FolderOpen,
+  Lock,
+  Plus,
+  Search as SearchIcon,
+  Tag,
+} from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
-import { getNestedValue, getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
-import { Check, ChevronRight, FolderOpen, Lock, Plus, Search as SearchIcon, Tag } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import {
   Box,
   Button,
@@ -26,7 +35,6 @@ import {
 } from '@mui/material';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { tokens } from '@/lib/theme-tokens';
 
 interface Category {
   id: string;
@@ -40,9 +48,20 @@ interface Category {
   parentId?: string;
 }
 
-const SOURCE_BADGE_COLORS: Record<NonNullable<Category['source']>, { bg: string; color: string; border: string }> = {
-  system: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
-  parsing: { bg: 'var(--color-warning-soft-bg)', color: '#d97706', border: 'var(--color-warning-soft-border)' },
+const SOURCE_BADGE_COLORS: Record<
+  NonNullable<Category['source']>,
+  { bg: string; color: string; border: string }
+> = {
+  system: {
+    bg: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+    border: 'var(--color-info-soft-border)',
+  },
+  parsing: {
+    bg: 'var(--color-warning-soft-bg)',
+    color: '#d97706',
+    border: 'var(--color-warning-soft-border)',
+  },
   user: { bg: 'var(--muted)', color: 'var(--text-secondary)', border: 'var(--border-color)' },
 };
 
@@ -53,8 +72,12 @@ interface CategoryUsageCount {
 }
 
 const resolveIconUrl = (iconValue?: string) => {
-  if (!iconValue) return null;
-  if (iconValue.startsWith('http')) return iconValue;
+  if (!iconValue) {
+    return null;
+  }
+  if (iconValue.startsWith('http')) {
+    return iconValue;
+  }
   if (iconValue.startsWith('/uploads')) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
     const base = apiUrl.replace(/\/api\/v1$/, '') || '';
@@ -152,8 +175,12 @@ export default function WorkspaceCategoriesView() {
   };
 
   const getCategoryBadgeSource = (category: Category): NonNullable<Category['source']> | null => {
-    if (category.source === 'parsing') return 'parsing';
-    if (category.isSystem || category.source === 'system') return 'system';
+    if (category.source === 'parsing') {
+      return 'parsing';
+    }
+    if (category.isSystem || category.source === 'system') {
+      return 'system';
+    }
     return null;
   };
 
@@ -331,7 +358,9 @@ export default function WorkspaceCategoriesView() {
   };
 
   const handleBulkDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete selected custom categories?')) return;
+    if (!window.confirm('Are you sure you want to delete selected custom categories?')) {
+      return;
+    }
     try {
       const customIds = Array.from(selectedIds).filter(
         id => !categories.find(c => c.id === id)?.isSystem,
@@ -352,7 +381,9 @@ export default function WorkspaceCategoriesView() {
 
   const handleIconFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     const fd = new FormData();
     fd.append('icon', file);
@@ -380,9 +411,16 @@ export default function WorkspaceCategoriesView() {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 6 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-
         {/* Page header */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: { lg: 'flex-start' }, justifyContent: { lg: 'space-between' }, gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
+            alignItems: { lg: 'flex-start' },
+            justifyContent: { lg: 'space-between' },
+            gap: 2,
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
             <Box
               sx={{
@@ -403,7 +441,10 @@ export default function WorkspaceCategoriesView() {
               <Typography variant="h5" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
                 {t.title}
               </Typography>
-              <Typography variant="body2" sx={{ mt: 0.5, maxWidth: 672, color: 'var(--muted-foreground)' }}>
+              <Typography
+                variant="body2"
+                sx={{ mt: 0.5, maxWidth: 672, color: 'var(--muted-foreground)' }}
+              >
                 {t.subtitle}
               </Typography>
             </Box>
@@ -435,7 +476,15 @@ export default function WorkspaceCategoriesView() {
         </Box>
 
         {/* Search + bulk actions */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, alignItems: { lg: 'center' }, justifyContent: { lg: 'space-between' }, gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
+            alignItems: { lg: 'center' },
+            justifyContent: { lg: 'space-between' },
+            gap: 2,
+          }}
+        >
           <Box sx={{ position: 'relative', width: '100%', maxWidth: 448 }}>
             <SearchIcon
               size={16}
@@ -460,7 +509,6 @@ export default function WorkspaceCategoriesView() {
                 padding: '10px 16px 10px 40px',
                 fontSize: 14,
                 color: 'var(--foreground)',
-                outline: 'none',
                 borderRadius: tokens.radius.md,
                 boxSizing: 'border-box',
               }}
@@ -468,27 +516,58 @@ export default function WorkspaceCategoriesView() {
           </Box>
           {selectedIds.size > 0 && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" fontWeight={500} sx={{ mr: 1, color: 'var(--muted-foreground)' }}>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ mr: 1, color: 'var(--muted-foreground)' }}
+              >
                 {selectedIds.size} selected
               </Typography>
               <button
                 type="button"
                 onClick={() => handleBulkEnable(true)}
-                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  padding: '6px 12px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  cursor: 'pointer',
+                  borderRadius: tokens.radius.md,
+                }}
               >
                 Enable
               </button>
               <button
                 type="button"
                 onClick={() => handleBulkEnable(false)}
-                style={{ border: '1px solid var(--border)', background: 'var(--card)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  padding: '6px 12px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  cursor: 'pointer',
+                  borderRadius: tokens.radius.md,
+                }}
               >
                 Disable
               </button>
               <button
                 type="button"
                 onClick={handleBulkDelete}
-                style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'var(--color-error-soft-bg)', padding: '6px 12px', fontSize: 14, fontWeight: 500, color: 'var(--destructive)', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{
+                  border: '1px solid rgba(239,68,68,0.3)',
+                  background: 'var(--color-error-soft-bg)',
+                  padding: '6px 12px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--destructive)',
+                  cursor: 'pointer',
+                  borderRadius: tokens.radius.md,
+                }}
               >
                 Delete Custom
               </button>
@@ -497,14 +576,47 @@ export default function WorkspaceCategoriesView() {
         </Box>
 
         {/* Info banner */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)', borderRadius: tokens.radius.md, px: 1.5, py: 1, fontSize: 14, color: 'var(--primary)' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.75,
+            bgcolor: 'rgba(var(--primary-rgb,22,129,24),0.1)',
+            borderRadius: tokens.radius.md,
+            px: 1.5,
+            py: 1,
+            fontSize: 14,
+            color: 'var(--primary)',
+          }}
+        >
           Disabling a category will hide it from statements and reports.
         </Box>
 
         {/* Category list */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 1 }} data-tour-id="categories-list">
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 1,
+          }}
+          data-tour-id="categories-list"
+        >
           {/* Table header */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--muted-foreground)' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1.5,
+              fontSize: 12,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: 'var(--muted-foreground)',
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Checkbox
                 aria-label="Select all categories"
@@ -546,7 +658,19 @@ export default function WorkspaceCategoriesView() {
               <button
                 type="button"
                 onClick={() => handleOpenDialog()}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--border)', background: 'var(--card)', padding: '8px 16px', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', cursor: 'pointer', borderRadius: tokens.radius.md }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  border: '1px solid var(--border)',
+                  background: 'var(--card)',
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  cursor: 'pointer',
+                  borderRadius: tokens.radius.md,
+                }}
               >
                 <Plus size={16} />
                 {t.add}
@@ -577,7 +701,8 @@ export default function WorkspaceCategoriesView() {
                       borderRadius: tokens.radius.md,
                       px: 2,
                       py: 2,
-                      bgcolor: index % 2 === 0 ? 'var(--card)' : 'rgba(var(--muted-rgb,243,244,246),0.4)',
+                      bgcolor:
+                        index % 2 === 0 ? 'var(--card)' : 'rgba(var(--muted-rgb,243,244,246),0.4)',
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -613,7 +738,11 @@ export default function WorkspaceCategoriesView() {
                       ) : null}
                       <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                          <Typography
+                            variant="body1"
+                            fontWeight={600}
+                            sx={{ color: 'var(--foreground)' }}
+                          >
                             {getCategoryDisplayName(category, locale)}
                           </Typography>
                           {badgeLabel && badgeColors && (
@@ -636,7 +765,10 @@ export default function WorkspaceCategoriesView() {
                             </Box>
                           )}
                         </Box>
-                        <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', mt: 0.25 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{ color: 'var(--muted-foreground)', display: 'block', mt: 0.25 }}
+                        >
                           {usageCounts[category.id]?.total ? (
                             <span>Used in {usageCounts[category.id].total} transactions</span>
                           ) : (
@@ -818,7 +950,16 @@ export default function WorkspaceCategoriesView() {
                 ))}
               </Box>
               <Box sx={{ mt: 1.5 }}>
-                <label style={{ display: 'inline-flex', cursor: 'pointer', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--foreground)' }}>
+                <label
+                  style={{
+                    display: 'inline-flex',
+                    cursor: 'pointer',
+                    alignItems: 'center',
+                    gap: 8,
+                    fontSize: 14,
+                    color: 'var(--foreground)',
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={formData.withoutIcon}

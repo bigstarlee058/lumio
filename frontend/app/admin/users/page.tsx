@@ -1,9 +1,8 @@
 'use client';
 
-import CircularProgress from '@mui/material/CircularProgress';
+import { Pencil } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useIntlayer, useLocale } from '@/app/i18n';
-import { Pencil } from '@/app/components/icons';
 import {
   Alert,
   Box,
@@ -18,7 +17,6 @@ import {
   FormControlLabel,
   FormGroup,
   IconButton,
-  InputLabel,
   MenuItem,
   Paper,
   Select,
@@ -31,6 +29,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useEffect, useState } from 'react';
 import apiClient from '../../lib/api';
 
@@ -93,7 +92,6 @@ export default function UsersManagementPage() {
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
-
   useEffect(() => {
     loadUsers();
   }, []);
@@ -125,7 +123,9 @@ export default function UsersManagementPage() {
   };
 
   const handleSavePermissions = async () => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -144,7 +144,9 @@ export default function UsersManagementPage() {
   };
 
   const handleResetPermissions = async () => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
 
     setSaving(true);
     try {

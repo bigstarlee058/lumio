@@ -1,9 +1,9 @@
 'use client';
 
+import { tokens } from '@/lib/theme-tokens';
 import type { SettingsSection, SettingsSelectItem, SettingsToggleItem } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
-import { tokens } from '@/lib/theme-tokens';
 
 function isToggleItem(item: SettingsToggleItem | SettingsSelectItem): item is SettingsToggleItem {
   return 'checked' in item;
@@ -12,7 +12,15 @@ function isToggleItem(item: SettingsToggleItem | SettingsSelectItem): item is Se
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-lines-per-function, complexity
 function SettingsToggleComponent({ item }: { item: SettingsToggleItem }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 0' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+        padding: '8px 0',
+      }}
+    >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
         {item.icon && <RenderIcon icon={item.icon} size={16} />}
         <div style={{ minWidth: 0 }}>
@@ -89,10 +97,14 @@ function SettingsSelectComponent({ item }: { item: SettingsSelectItem }) {
     <div style={{ padding: '8px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         {item.icon && <RenderIcon icon={item.icon} size={16} />}
-        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>{item.label}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
+          {item.label}
+        </span>
       </div>
       {item.description && (
-        <p style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 8, marginTop: 0 }}>
+        <p
+          style={{ fontSize: 12, color: 'var(--muted-foreground)', marginBottom: 8, marginTop: 0 }}
+        >
           {item.description}
         </p>
       )}
@@ -107,7 +119,6 @@ function SettingsSelectComponent({ item }: { item: SettingsSelectItem }) {
           border: '1px solid var(--border-color)',
           backgroundColor: 'var(--card-bg)',
           color: 'var(--foreground)',
-          outline: 'none',
           opacity: item.disabled ? 0.5 : 1,
         }}
       >

@@ -22,12 +22,16 @@ export function useGmailIntegration(): GmailIntegrationState {
       try {
         setGmailLoading(true);
         const resp = await api.get('/integrations/gmail/status');
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
         setGmailStatus((resp.data as GmailStatus) || null);
       } catch {
         // ignore
       } finally {
-        if (mounted) setGmailLoading(false);
+        if (mounted) {
+          setGmailLoading(false);
+        }
       }
     };
     void load();

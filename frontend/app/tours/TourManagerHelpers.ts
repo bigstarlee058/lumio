@@ -12,11 +12,15 @@ export interface AnalyticsTracker {
 }
 
 import type { Config as DriverConfig } from 'driver.js';
-import type { TourProgress, TourState } from './types';
 import { stabilizeTourPopover } from './TourPopoverPositioning';
+import type { TourProgress, TourState } from './types';
 
 export function getDefaultTourState(): TourState {
-  return { completedTours: [], lastInteraction: new Date().toISOString(), version: TOUR_STATE_VERSION };
+  return {
+    completedTours: [],
+    lastInteraction: new Date().toISOString(),
+    version: TOUR_STATE_VERSION,
+  };
 }
 
 export function saveTourState(state: TourState): void {
@@ -31,7 +35,9 @@ export function saveTourState(state: TourState): void {
 export function loadTourState(): TourState | null {
   try {
     const stored = localStorage.getItem(TOUR_STORAGE_KEY);
-    if (!stored) return null;
+    if (!stored) {
+      return null;
+    }
     const state = JSON.parse(stored) as TourState;
     if (state.version !== TOUR_STATE_VERSION) {
       console.warn('Tour state version mismatch, resetting');
@@ -47,8 +53,12 @@ export function loadTourState(): TourState | null {
 export function serializeProgress(progress: TourProgress): TourProgress {
   return {
     ...progress,
-    startedAt: progress.startedAt instanceof Date ? progress.startedAt.toISOString() : progress.startedAt,
-    completedAt: progress.completedAt instanceof Date ? progress.completedAt.toISOString() : progress.completedAt,
+    startedAt:
+      progress.startedAt instanceof Date ? progress.startedAt.toISOString() : progress.startedAt,
+    completedAt:
+      progress.completedAt instanceof Date
+        ? progress.completedAt.toISOString()
+        : progress.completedAt,
   };
 }
 import type { TourDriverConfig } from './types';
@@ -105,7 +115,9 @@ export function toAllowedButtons(value?: string[]): AllowedButtons[] | undefined
 export function getPreferredLang(): string {
   if (typeof document !== 'undefined') {
     const lang = document.documentElement?.lang;
-    if (lang) return lang;
+    if (lang) {
+      return lang;
+    }
   }
   return 'ru';
 }
@@ -136,7 +148,9 @@ function hasLocaleKeys(record: Record<string, unknown>): boolean {
 }
 
 function resolveLocaleMap(record: Record<string, unknown>): string | null {
-  if (!hasLocaleKeys(record)) return null;
+  if (!hasLocaleKeys(record)) {
+    return null;
+  }
   const lang = getPreferredLang();
   return resolveText(record[lang] ?? record.ru ?? record.en ?? record.kk);
 }
@@ -151,8 +165,12 @@ function resolveObjectInput(record: Record<string, unknown>, input: unknown): st
 }
 
 export function resolveText(input: unknown): string {
-  if (typeof input === 'string') return input;
-  if (input == null) return '';
+  if (typeof input === 'string') {
+    return input;
+  }
+  if (input == null) {
+    return '';
+  }
 
   if (typeof input === 'object') {
     return resolveObjectInput(input as Record<string, unknown>, input);
@@ -216,13 +234,19 @@ export function createDismissListeners(
 ): DismissListeners {
   return {
     onClick: (event: MouseEvent): void => {
-      if (!isActive()) return;
+      if (!isActive()) {
+        return;
+      }
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.driver-popover')) return;
+      if (target?.closest('.driver-popover')) {
+        return;
+      }
       stopTour();
     },
     onVisibilityChange: (): void => {
-      if (document.visibilityState === 'hidden' && isActive()) stopTour();
+      if (document.visibilityState === 'hidden' && isActive()) {
+        stopTour();
+      }
     },
   };
 }

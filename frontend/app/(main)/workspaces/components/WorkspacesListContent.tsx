@@ -7,15 +7,15 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
-import { SORT_FNS, type SortableWorkspace, type SortOption } from './workspace-list.helpers';
 import { WorkspaceGridView } from './WorkspaceGridView';
-import { WorkspaceListFilters, type ViewMode } from './WorkspaceListFilters';
+import { type ViewMode, WorkspaceListFilters } from './WorkspaceListFilters';
 import { WorkspaceListView } from './WorkspaceListView';
+import { SORT_FNS, type SortOption, type SortableWorkspace } from './workspace-list.helpers';
 
 type TranslationValue = string | { value?: string };
 
 const resolveTranslation = (value: TranslationValue | undefined, fallback: string): string =>
-  typeof value === 'string' ? value : value?.value ?? fallback;
+  typeof value === 'string' ? value : (value?.value ?? fallback);
 
 type Props = {
   embedded?: boolean;
@@ -24,11 +24,19 @@ type Props = {
   onCloseEmbedded?: () => void;
 };
 
-function useWorkspaceListState({ workspaces }: { workspaces: (SortableWorkspace & { name: string; description?: string | null })[] }): {
-  searchQuery: string; viewMode: ViewMode; sortOption: SortOption; showSortMenu: boolean;
-  filteredWorkspaces: typeof workspaces; sortedWorkspaces: typeof workspaces;
-  setSearchQuery: (v: string) => void; setViewMode: (v: ViewMode) => void;
-  setSortOption: (v: SortOption) => void; toggleSortMenu: () => void;
+function useWorkspaceListState({
+  workspaces,
+}: { workspaces: (SortableWorkspace & { name: string; description?: string | null })[] }): {
+  searchQuery: string;
+  viewMode: ViewMode;
+  sortOption: SortOption;
+  showSortMenu: boolean;
+  filteredWorkspaces: typeof workspaces;
+  sortedWorkspaces: typeof workspaces;
+  setSearchQuery: (v: string) => void;
+  setViewMode: (v: ViewMode) => void;
+  setSortOption: (v: SortOption) => void;
+  toggleSortMenu: () => void;
 } {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
@@ -36,22 +44,44 @@ function useWorkspaceListState({ workspaces }: { workspaces: (SortableWorkspace 
   const [showSortMenu, setShowSortMenu] = useState(false);
 
   const filteredWorkspaces = useMemo(() => {
-    if (!searchQuery.trim()) return workspaces;
+    if (!searchQuery.trim()) {
+      return workspaces;
+    }
     const q = searchQuery.toLowerCase();
-    return workspaces.filter(w => w.name.toLowerCase().includes(q) || w.description?.toLowerCase().includes(q));
+    return workspaces.filter(
+      w => w.name.toLowerCase().includes(q) || w.description?.toLowerCase().includes(q),
+    );
   }, [workspaces, searchQuery]);
 
-  const sortedWorkspaces = useMemo(() => [...filteredWorkspaces].sort(SORT_FNS[sortOption]), [filteredWorkspaces, sortOption]);
+  const sortedWorkspaces = useMemo(
+    () => [...filteredWorkspaces].sort(SORT_FNS[sortOption]),
+    [filteredWorkspaces, sortOption],
+  );
   const toggleSortMenu = (): void => setShowSortMenu(v => !v);
-  return { searchQuery, viewMode, sortOption, showSortMenu, filteredWorkspaces, sortedWorkspaces, setSearchQuery, setViewMode, setSortOption, toggleSortMenu };
+  return {
+    searchQuery,
+    viewMode,
+    sortOption,
+    showSortMenu,
+    filteredWorkspaces,
+    sortedWorkspaces,
+    setSearchQuery,
+    setViewMode,
+    setSortOption,
+    toggleSortMenu,
+  };
 }
 
 function LoadingView({ loadingLabel }: { loadingLabel: string }): React.JSX.Element {
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Box
+      sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
       <Box sx={{ textAlign: 'center' }}>
         <CircularProgress size={100} />
-        <Typography variant="body2" sx={{ mt: 2, color: 'var(--text-secondary)' }}>{loadingLabel}</Typography>
+        <Typography variant="body2" sx={{ mt: 2, color: 'var(--text-secondary)' }}>
+          {loadingLabel}
+        </Typography>
       </Box>
     </Box>
   );
@@ -70,50 +100,134 @@ type BodyProps = {
   onFavoriteToggle: (id: string) => Promise<void>;
 };
 
-function WorkspaceListBody({ ls, allCount, currentWorkspaceId, createLabel, noWorkspacesLabel, searchPlaceholder, embedded, onWorkspaceClick, onCreateClick, onFavoriteToggle }: BodyProps): React.JSX.Element {
+function WorkspaceListBody({
+  ls,
+  allCount,
+  currentWorkspaceId,
+  createLabel,
+  noWorkspacesLabel,
+  searchPlaceholder,
+  embedded,
+  onWorkspaceClick,
+  onCreateClick,
+  onFavoriteToggle,
+}: BodyProps): React.JSX.Element {
   const showGrid = ls.viewMode === 'grid' || allCount === 0;
   return (
     <Box sx={{ maxWidth: '100%', px: 3, py: 4 }}>
       {allCount > 0 && (
-        <WorkspaceListFilters searchQuery={ls.searchQuery} searchPlaceholder={searchPlaceholder} embedded={embedded} viewMode={ls.viewMode} sortOption={ls.sortOption} showSortMenu={ls.showSortMenu} onSearchChange={ls.setSearchQuery} onSortSelect={opt => { ls.setSortOption(opt); ls.toggleSortMenu(); }} onSortMenuToggle={ls.toggleSortMenu} onViewModeSelect={ls.setViewMode} />
+        <WorkspaceListFilters
+          searchQuery={ls.searchQuery}
+          searchPlaceholder={searchPlaceholder}
+          embedded={embedded}
+          viewMode={ls.viewMode}
+          sortOption={ls.sortOption}
+          showSortMenu={ls.showSortMenu}
+          onSearchChange={ls.setSearchQuery}
+          onSortSelect={opt => {
+            ls.setSortOption(opt);
+            ls.toggleSortMenu();
+          }}
+          onSortMenuToggle={ls.toggleSortMenu}
+          onViewModeSelect={ls.setViewMode}
+        />
       )}
       {showGrid ? (
-        <WorkspaceGridView workspaces={ls.sortedWorkspaces} allWorkspacesEmpty={allCount === 0} filteredEmpty={ls.filteredWorkspaces.length === 0} createLabel={createLabel} noWorkspacesLabel={noWorkspacesLabel} onWorkspaceClick={onWorkspaceClick} onCreateClick={onCreateClick} onFavoriteToggle={onFavoriteToggle} />
+        <WorkspaceGridView
+          workspaces={ls.sortedWorkspaces}
+          allWorkspacesEmpty={allCount === 0}
+          filteredEmpty={ls.filteredWorkspaces.length === 0}
+          createLabel={createLabel}
+          noWorkspacesLabel={noWorkspacesLabel}
+          onWorkspaceClick={onWorkspaceClick}
+          onCreateClick={onCreateClick}
+          onFavoriteToggle={onFavoriteToggle}
+        />
       ) : (
-        <WorkspaceListView workspaces={ls.sortedWorkspaces} currentWorkspaceId={currentWorkspaceId} createLabel={createLabel} onWorkspaceClick={onWorkspaceClick} onCreateClick={onCreateClick} />
+        <WorkspaceListView
+          workspaces={ls.sortedWorkspaces}
+          currentWorkspaceId={currentWorkspaceId}
+          createLabel={createLabel}
+          onWorkspaceClick={onWorkspaceClick}
+          onCreateClick={onCreateClick}
+        />
       )}
     </Box>
   );
 }
 
-function useWorkspaceNav({ switchWorkspace, onWorkspaceActivated, redirectPathOnSelect }: { switchWorkspace: (id: string) => Promise<void>; onWorkspaceActivated?: () => void; redirectPathOnSelect: string | null | undefined }): { handleWorkspaceClick: (id: string) => void } {
+function useWorkspaceNav({
+  switchWorkspace,
+  onWorkspaceActivated,
+  redirectPathOnSelect,
+}: {
+  switchWorkspace: (id: string) => Promise<void>;
+  onWorkspaceActivated?: () => void;
+  redirectPathOnSelect: string | null | undefined;
+}): { handleWorkspaceClick: (id: string) => void } {
   const router = useRouter();
   const handleWorkspaceClick = (id: string): void => {
     void switchWorkspace(id)
-      .then(() => { onWorkspaceActivated?.(); if (redirectPathOnSelect) router.push(redirectPathOnSelect); })
-      .catch((error: unknown) => { console.error('Failed to switch workspace:', error); });
+      .then(() => {
+        onWorkspaceActivated?.();
+        if (redirectPathOnSelect) {
+          router.push(redirectPathOnSelect);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('Failed to switch workspace:', error);
+      });
   };
   return { handleWorkspaceClick };
 }
 
 // eslint-disable-next-line max-lines-per-function, complexity
-export default function WorkspacesListContent({ embedded, redirectPathOnSelect = '/workspaces/overview', onWorkspaceActivated }: Props): React.JSX.Element {
+export default function WorkspacesListContent({
+  embedded,
+  redirectPathOnSelect = '/workspaces/overview',
+  onWorkspaceActivated,
+}: Props): React.JSX.Element {
   const content = useIntlayer('workspaces-selector');
   const { currentWorkspace, workspaces, loading, switchWorkspace, toggleFavorite } = useWorkspace();
   const router = useRouter();
   const ls = useWorkspaceListState({ workspaces });
-  const { handleWorkspaceClick } = useWorkspaceNav({ switchWorkspace, onWorkspaceActivated, redirectPathOnSelect });
-  const handleCreateWorkspace = (): void => { router.push('/onboarding?mode=create-workspace'); };
+  const { handleWorkspaceClick } = useWorkspaceNav({
+    switchWorkspace,
+    onWorkspaceActivated,
+    redirectPathOnSelect,
+  });
+  const handleCreateWorkspace = (): void => {
+    router.push('/onboarding?mode=create-workspace');
+  };
   const loadingLabel = resolveTranslation(content.loading, 'Loading workspaces...');
   const createLabel = resolveTranslation(content.createWorkspace, 'Create workspace');
   const noWorkspacesLabel = resolveTranslation(content.noWorkspaces, 'You have no workspaces yet');
   const searchPlaceholder = resolveTranslation(content.searchPlaceholder, 'Search workspaces...');
 
-  if (loading) return <LoadingView loadingLabel={loadingLabel} />;
+  if (loading) {
+    return <LoadingView loadingLabel={loadingLabel} />;
+  }
 
   return (
-    <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflow: 'hidden', pt: embedded ? 2 : 0 }}>
-      <WorkspaceListBody ls={ls} allCount={workspaces.length} currentWorkspaceId={currentWorkspace?.id} createLabel={createLabel} noWorkspacesLabel={noWorkspacesLabel} searchPlaceholder={searchPlaceholder} embedded={Boolean(embedded)} onWorkspaceClick={handleWorkspaceClick} onCreateClick={handleCreateWorkspace} onFavoriteToggle={toggleFavorite} />
+    <Box
+      sx={{
+        height: 'calc(100vh - var(--global-nav-height, 0px))',
+        overflow: 'hidden',
+        pt: embedded ? 2 : 0,
+      }}
+    >
+      <WorkspaceListBody
+        ls={ls}
+        allCount={workspaces.length}
+        currentWorkspaceId={currentWorkspace?.id}
+        createLabel={createLabel}
+        noWorkspacesLabel={noWorkspacesLabel}
+        searchPlaceholder={searchPlaceholder}
+        embedded={Boolean(embedded)}
+        onWorkspaceClick={handleWorkspaceClick}
+        onCreateClick={handleCreateWorkspace}
+        onFavoriteToggle={toggleFavorite}
+      />
     </Box>
   );
 }

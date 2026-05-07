@@ -1,13 +1,19 @@
 'use client';
 
 import { Pencil, Trash2 } from '@/app/components/icons';
-import type { DeleteRowFn, OpenColorPickerFn } from '../../utils/columnDefinitions.types';
 import { tokens } from '@/lib/theme-tokens';
+import type { DeleteRowFn, OpenColorPickerFn } from '../../utils/columnDefinitions.types';
 
 const BTN_STYLE: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  borderRadius: tokens.radius.sm, padding: 4, color: 'var(--muted-foreground)',
-  background: 'none', border: 'none', cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: tokens.radius.sm,
+  padding: 4,
+  color: 'var(--muted-foreground)',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
   transition: 'background-color 0.2s, color 0.2s',
 };
 
@@ -19,13 +25,29 @@ interface ActionsCellProps {
   onDeleteRow: DeleteRowFn;
 }
 
-export function ActionsCell({ rowId, colorTooltipLabel, deleteLabel, onOpenColorPicker, onDeleteRow }: ActionsCellProps): React.JSX.Element {
+export function ActionsCell({
+  rowId,
+  colorTooltipLabel,
+  deleteLabel,
+  onOpenColorPicker,
+  onDeleteRow,
+}: ActionsCellProps): React.JSX.Element {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-      <button type="button" onClick={event => onOpenColorPicker(rowId, event)} style={BTN_STYLE} title={colorTooltipLabel}>
+      <button
+        type="button"
+        onClick={event => onOpenColorPicker(rowId, event)}
+        style={BTN_STYLE}
+        title={colorTooltipLabel}
+      >
         <Pencil size={16} />
       </button>
-      <button type="button" onClick={() => onDeleteRow(rowId)} style={BTN_STYLE} title={deleteLabel}>
+      <button
+        type="button"
+        onClick={() => onDeleteRow(rowId)}
+        style={BTN_STYLE}
+        title={deleteLabel}
+      >
         <Trash2 size={16} />
       </button>
     </div>

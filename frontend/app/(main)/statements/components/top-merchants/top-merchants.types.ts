@@ -1,5 +1,9 @@
 import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
-import type { AggregateSortKey, SourceChannel, SourceType } from '@/app/(main)/statements/components/shared-analytics.utils';
+import type {
+  AggregateSortKey,
+  SourceChannel,
+  SourceType,
+} from '@/app/(main)/statements/components/shared-analytics.utils';
 
 export type { AggregateSortKey };
 export type TopMerchantFlowType = 'spend' | 'income';

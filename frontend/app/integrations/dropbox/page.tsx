@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { AlertCircle } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -8,15 +9,14 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getChooserDocName, pickDropboxFolder } from '@/app/lib/dropboxChooser';
 import { formatDateTime } from '@/app/lib/format-datetime';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { AlertCircle } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { useTheme } from 'next-themes';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
-import { tokens } from '@/lib/theme-tokens';
 
 type DropboxSettings = {
   folderId?: string | null;
@@ -109,9 +109,7 @@ function DropboxSettingsPanel({
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
       }}
     >
-      <Box
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
-      >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
           {t.settings?.title || 'Settings'}
         </Typography>
@@ -137,9 +135,7 @@ function DropboxSettingsPanel({
         </button>
       </Box>
 
-      <Box
-        sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}
-      >
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
         <Stack spacing={0.5}>
           <Typography style={{ fontSize: 14, color: c.ink500 }}>
             {t.settings?.folder || 'Folder'}
@@ -166,7 +162,9 @@ function DropboxSettingsPanel({
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
             <Checkbox
               checked={status?.settings?.syncEnabled ?? true}
-              onCheckedChange={checked => void onUpdateSettings({ syncEnabled: checked as boolean })}
+              onCheckedChange={checked =>
+                void onUpdateSettings({ syncEnabled: checked as boolean })
+              }
               disabled={!status?.connected || saving}
             />
             <Typography style={{ fontSize: 14, color: c.ink800 }}>
@@ -223,11 +221,12 @@ function DropboxInfoPanel({ t }: { t: DropboxPageT }): React.JSX.Element {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-        <AlertCircle style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }} />
+        <AlertCircle
+          style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }}
+        />
         <Stack spacing={1}>
           <Typography style={{ fontSize: 14, color: c.ink700 }}>
-            {t.settings?.syncEnabled ||
-              'Enable automatic sync to upload new statements to Dropbox'}
+            {t.settings?.syncEnabled || 'Enable automatic sync to upload new statements to Dropbox'}
           </Typography>
           <Typography style={{ fontSize: 14, color: c.ink700 }}>
             {t.settings?.folderPlaceholder || 'Pick a folder to organize your synced files'}
@@ -308,7 +307,8 @@ export default function DropboxIntegrationPage(): React.JSX.Element {
     // eslint-disable-next-line complexity
     () => {
       if (!status) return '';
-      if (status.status === 'needs_reauth') return t.status?.needsReauth?.value || 'Needs re-authentication';
+      if (status.status === 'needs_reauth')
+        return t.status?.needsReauth?.value || 'Needs re-authentication';
       if (status.connected) return t.status?.connected?.value || 'Connected';
       return t.status?.disconnected?.value || 'Disconnected';
     },
@@ -321,7 +321,16 @@ export default function DropboxIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'primary.main', color: '#fff', opacity: 0.1, display: 'flex' }}>
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: tokens.radius.full,
+            bgcolor: 'primary.main',
+            color: '#fff',
+            opacity: 0.1,
+            display: 'flex',
+          }}
+        >
           <Image src="/icons/dropbox-icon.png" alt="Dropbox" width={24} height={24} />
         </Box>
         <Box>

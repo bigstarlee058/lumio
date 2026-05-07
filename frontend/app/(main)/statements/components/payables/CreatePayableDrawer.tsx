@@ -1,10 +1,10 @@
 /* eslint-disable max-lines */
 'use client';
 
+import CustomDatePicker from '@/app/components/CustomDatePicker';
+import { ChevronLeft } from '@/app/components/icons';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { Input } from '@/app/components/ui/input';
-import CustomDatePicker from '@/app/components/CustomDatePicker';
-import MuiButton from '@mui/material/Button';
 import type {
   CreatePayableInput,
   Payable,
@@ -12,7 +12,7 @@ import type {
   PayableStatus,
   UpdatePayableInput,
 } from '@/app/lib/payables-api';
-import { ChevronLeft } from '@/app/components/icons';
+import MuiButton from '@mui/material/Button';
 import React, { useEffect, useMemo, useState } from 'react';
 
 interface CreatePayableDrawerProps {
@@ -65,7 +65,9 @@ const toFormState = (
   payable?: Payable | null,
   initialValues?: CreatePayableInput | null,
 ): PayableFormState => {
-  if (!payable && !initialValues) return createEmptyState();
+  if (!(payable || initialValues)) {
+    return createEmptyState();
+  }
 
   if (!payable && initialValues) {
     return {
@@ -103,14 +105,18 @@ export function CreatePayableDrawer({
   const [form, setForm] = useState<PayableFormState>(() => toFormState(payable, initialValues));
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     setForm(toFormState(payable, initialValues));
   }, [initialValues, open, payable]);
 
   const canSubmit = useMemo(() => form.vendor.trim().length > 0 && Number(form.amount) > 0, [form]);
 
   const handleSubmit = async (): Promise<void> => {
-    if (!canSubmit) return;
+    if (!canSubmit) {
+      return;
+    }
 
     await onSubmit({
       vendor: form.vendor.trim(),
@@ -130,7 +136,12 @@ export function CreatePayableDrawer({
       position="right"
       width="lg"
       showCloseButton={false}
-      sx={{ maxWidth: '100%', borderLeft: 0, bgcolor: 'background.paper', '@media (min-width:600px)': { maxWidth: 512 } }}
+      sx={{
+        maxWidth: '100%',
+        borderLeft: 0,
+        bgcolor: 'background.paper',
+        '@media (min-width:600px)': { maxWidth: 512 },
+      }}
       title={
         <div className="lumio-payable-drawer__title-wrap">
           <button

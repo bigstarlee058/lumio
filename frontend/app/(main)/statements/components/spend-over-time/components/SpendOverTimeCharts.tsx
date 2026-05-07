@@ -1,11 +1,16 @@
 'use client';
-import type { JSX } from 'react';
 
 import dynamic from 'next/dynamic';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
-type ChartCardProps = { title: string; option: object; theme: string; height: number; wide?: boolean };
+type ChartCardProps = {
+  title: string;
+  option: object;
+  theme: string;
+  height: number;
+  wide?: boolean;
+};
 function ChartCard({ title, option, theme, height, wide }: ChartCardProps): React.JSX.Element {
   return (
     <div className={wide ? 'lumio-view-page__chart-card--wide' : 'lumio-view-page__chart-card'}>
@@ -27,7 +32,15 @@ type Props = {
   periodChartTitle: string;
 };
 
-export function SpendOverTimeCharts({ trendChart, sourceChart, periodsChart, chartTheme, trendTitle, sourceSplitTitle, periodChartTitle }: Props): React.JSX.Element {
+export function SpendOverTimeCharts({
+  trendChart,
+  sourceChart,
+  periodsChart,
+  chartTheme,
+  trendTitle,
+  sourceSplitTitle,
+  periodChartTitle,
+}: Props): React.JSX.Element {
   return (
     <div className="lumio-view-page__chart-grid-wrapper">
       <div className="lumio-view-page__chart-grid">

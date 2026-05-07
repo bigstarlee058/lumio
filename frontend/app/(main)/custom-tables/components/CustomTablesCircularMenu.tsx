@@ -111,9 +111,7 @@ function FabActionItem({
   onClick: () => void;
   children: React.ReactNode;
 }) {
-  const transform = isOpen
-    ? `translate(${offset.x}px, ${offset.y}px)`
-    : closedOffset;
+  const transform = isOpen ? `translate(${offset.x}px, ${offset.y}px)` : closedOffset;
 
   return (
     <div
@@ -159,7 +157,9 @@ export default function CustomTablesCircularMenu({
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') { return; }
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
     const mq = window.matchMedia('(min-width: 1024px)');
     setIsDesktopViewport(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsDesktopViewport(e.matches);
@@ -168,7 +168,9 @@ export default function CustomTablesCircularMenu({
   }, []);
 
   useEffect(() => {
-    if (!isOpen) { return; }
+    if (!isOpen) {
+      return;
+    }
 
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Element | null;
@@ -178,7 +180,9 @@ export default function CustomTablesCircularMenu({
     };
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { setIsOpen(false); }
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
     };
 
     document.addEventListener('pointerdown', handlePointerDown);
@@ -226,15 +230,41 @@ export default function CustomTablesCircularMenu({
     <div style={containerStyle}>
       <div style={arcStyle} />
 
-      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[0]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.importGoogleSheets} onClick={handleAction(onImportGoogleSheets)}>
-        <Image src="/icons/icons8-google-sheets-48.png" alt="Google Sheets" width={18} height={18} />
+      <FabActionItem
+        isOpen={isOpen}
+        offset={ACTION_OFFSETS[0]}
+        closedOffset={sizes.closedOffset}
+        bottom={sizes.bottom}
+        label={text.importGoogleSheets}
+        onClick={handleAction(onImportGoogleSheets)}
+      >
+        <Image
+          src="/icons/icons8-google-sheets-48.png"
+          alt="Google Sheets"
+          width={18}
+          height={18}
+        />
       </FabActionItem>
 
-      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[1]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.fromStatement} onClick={handleAction(onImportFromStatement)}>
+      <FabActionItem
+        isOpen={isOpen}
+        offset={ACTION_OFFSETS[1]}
+        closedOffset={sizes.closedOffset}
+        bottom={sizes.bottom}
+        label={text.fromStatement}
+        onClick={handleAction(onImportFromStatement)}
+      >
         <FileSpreadsheet size={18} style={{ color: 'var(--color-primary)' }} />
       </FabActionItem>
 
-      <FabActionItem isOpen={isOpen} offset={ACTION_OFFSETS[2]} closedOffset={sizes.closedOffset} bottom={sizes.bottom} label={text.createTable} onClick={handleAction(onCreateEmpty)}>
+      <FabActionItem
+        isOpen={isOpen}
+        offset={ACTION_OFFSETS[2]}
+        closedOffset={sizes.closedOffset}
+        bottom={sizes.bottom}
+        label={text.createTable}
+        onClick={handleAction(onCreateEmpty)}
+      >
         <TableIcon size={18} style={{ color: 'var(--color-primary)' }} />
       </FabActionItem>
 
@@ -272,7 +302,9 @@ export default function CustomTablesCircularMenu({
     </div>
   );
 
-  if (placement === 'floating' && !isDesktopViewport) { return null; }
+  if (placement === 'floating' && !isDesktopViewport) {
+    return null;
+  }
 
   if (placement === 'floating' && portalReady) {
     const portalTarget = document.getElementById('fab-portal') ?? document.body;

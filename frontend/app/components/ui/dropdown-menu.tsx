@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { Check } from '@/app/components/icons';
 import Divider from '@mui/material/Divider';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,7 +9,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import RadioButton from '@mui/material/Radio';
 import Typography from '@mui/material/Typography';
-import { Check } from '@/app/components/icons';
 import * as React from 'react';
 
 /* ─── Context ────────────────────────────────────────────────────────────── */
@@ -47,7 +47,12 @@ interface DropdownMenuProps {
   defaultOpen?: boolean;
 }
 
-function DropdownMenu({ children, open: openProp, onOpenChange, defaultOpen = false }: DropdownMenuProps): React.JSX.Element {
+function DropdownMenu({
+  children,
+  open: openProp,
+  onOpenChange,
+  defaultOpen = false,
+}: DropdownMenuProps): React.JSX.Element {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
 
@@ -106,7 +111,11 @@ function DropdownMenuTrigger({ children, asChild }: DropdownMenuTriggerProps): R
   }
 
   return (
-    <button type="button" onClick={handleClick} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+    <button
+      type="button"
+      onClick={handleClick}
+      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+    >
       {children}
     </button>
   );
@@ -166,7 +175,10 @@ interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLLIElement> {
 
 const DropdownMenuItem = React.forwardRef<HTMLLIElement, DropdownMenuItemProps>(
   // eslint-disable-next-line max-params
-  ({ children, inset, disabled, onClick, onSelect, className, style, ...props }, ref): React.JSX.Element => {
+  (
+    { children, inset, disabled, onClick, onSelect, className, style, ...props },
+    ref,
+  ): React.JSX.Element => {
     const { onClose } = React.useContext(DropdownMenuContext);
 
     const handleClick = (e: React.MouseEvent<HTMLLIElement>): void => {
@@ -202,7 +214,10 @@ interface DropdownMenuCheckboxItemProps extends React.HTMLAttributes<HTMLLIEleme
 
 const DropdownMenuCheckboxItem = React.forwardRef<HTMLLIElement, DropdownMenuCheckboxItemProps>(
   // eslint-disable-next-line max-params
-  ({ children, checked, onCheckedChange, disabled, className, ...props }, ref): React.JSX.Element => (
+  (
+    { children, checked, onCheckedChange, disabled, className, ...props },
+    ref,
+  ): React.JSX.Element => (
     <MenuItem
       ref={ref}
       disabled={disabled}
@@ -211,7 +226,11 @@ const DropdownMenuCheckboxItem = React.forwardRef<HTMLLIElement, DropdownMenuChe
       {...(props as object)}
     >
       <ListItemIcon>
-        {checked ? <Check size={16} /> : <span style={{ width: 16, height: 16, display: 'inline-block' }} />}
+        {checked ? (
+          <Check size={16} />
+        ) : (
+          <span style={{ width: 16, height: 16, display: 'inline-block' }} />
+        )}
       </ListItemIcon>
       {children}
     </MenuItem>
@@ -320,13 +339,18 @@ interface DropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLHRElement>
 
 const DropdownMenuSeparator = React.forwardRef<HTMLHRElement, DropdownMenuSeparatorProps>(
   // eslint-disable-next-line max-params
-  ({ className, ...props }, ref): React.JSX.Element => <Divider ref={ref} className={className} {...(props as object)} />,
+  ({ className, ...props }, ref): React.JSX.Element => (
+    <Divider ref={ref} className={className} {...(props as object)} />
+  ),
 );
 DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';
 
 /* ─── DropdownMenuShortcut ──────────────────────────────────────────────── */
 
-const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element => (
+const DropdownMenuShortcut = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>): React.JSX.Element => (
   <span
     style={{ marginLeft: 'auto', fontSize: 12, opacity: 0.6 }}
     className={className}
@@ -337,9 +361,15 @@ DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
 
 /* ─── Sub-menu stubs (used only in stories) ─────────────────────────────── */
 
-const DropdownMenuGroup = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
-const DropdownMenuPortal = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
-const DropdownMenuSub = ({ children }: { children: React.ReactNode }): React.JSX.Element => <>{children}</>;
+const DropdownMenuGroup = ({ children }: { children: React.ReactNode }): React.JSX.Element => (
+  <>{children}</>
+);
+const DropdownMenuPortal = ({ children }: { children: React.ReactNode }): React.JSX.Element => (
+  <>{children}</>
+);
+const DropdownMenuSub = ({ children }: { children: React.ReactNode }): React.JSX.Element => (
+  <>{children}</>
+);
 
 const DropdownMenuSubTrigger = React.forwardRef<
   HTMLLIElement,
@@ -347,10 +377,16 @@ const DropdownMenuSubTrigger = React.forwardRef<
 >(
   // eslint-disable-next-line max-params
   ({ children, inset, className, ...props }, ref): React.JSX.Element => (
-  <MenuItem ref={ref} className={className} style={{ paddingLeft: inset ? 32 : undefined }} {...(props as object)}>
-    {children}
-  </MenuItem>
-));
+    <MenuItem
+      ref={ref}
+      className={className}
+      style={{ paddingLeft: inset ? 32 : undefined }}
+      {...(props as object)}
+    >
+      {children}
+    </MenuItem>
+  ),
+);
 DropdownMenuSubTrigger.displayName = 'DropdownMenuSubTrigger';
 
 interface DropdownMenuSubContentProps {
@@ -358,9 +394,10 @@ interface DropdownMenuSubContentProps {
   className?: string;
 }
 
-const DropdownMenuSubContent = ({ children, className }: DropdownMenuSubContentProps): React.JSX.Element => (
-  <div className={className}>{children}</div>
-);
+const DropdownMenuSubContent = ({
+  children,
+  className,
+}: DropdownMenuSubContentProps): React.JSX.Element => <div className={className}>{children}</div>;
 
 export {
   DropdownMenu,

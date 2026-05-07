@@ -161,7 +161,9 @@ export function useExpenseForm({
     [taxRates],
   );
   const selectedTaxRate = useMemo(() => {
-    if (!manualDraft.taxRateId) return defaultTaxRate;
+    if (!manualDraft.taxRateId) {
+      return defaultTaxRate;
+    }
     return taxRates.find(taxRate => taxRate.id === manualDraft.taxRateId) || null;
   }, [manualDraft.taxRateId, taxRates, defaultTaxRate]);
 
@@ -170,8 +172,12 @@ export function useExpenseForm({
   const currencyQuery = currencySearch.trim().toLowerCase();
 
   const selectedMatchesSearch = useMemo(() => {
-    if (!selectedCurrencyItem) return false;
-    if (!currencyQuery) return true;
+    if (!selectedCurrencyItem) {
+      return false;
+    }
+    if (!currencyQuery) {
+      return true;
+    }
     return selectedCurrencyItem.searchText.includes(currencyQuery);
   }, [selectedCurrencyItem, currencyQuery]);
 
@@ -215,18 +221,6 @@ export function useExpenseForm({
     setCurrencySearch('');
     setManualDraft(createDefaultManualDraft(resolvedDefaultCurrency));
   }, [open, initialMode, resolvedDefaultCurrency]);
-
-  useEffect(() => {
-    if (!open || mode !== 'manual' || manualStep !== 'amount' || currencyPickerOpen) return;
-
-    const frame = window.requestAnimationFrame(() => {
-      manualAmountInputRef.current?.focus();
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-    };
-  }, [open, mode, manualStep, currencyPickerOpen]);
 
   const pushRecentCurrency = (currencyCode: string): void => {
     setManualRecentCurrencies(prev => [
@@ -280,7 +274,9 @@ export function useExpenseForm({
   };
 
   const handleFilesSelected = (selected: FileList | null): void => {
-    if (!selected) return;
+    if (!selected) {
+      return;
+    }
     setFiles(Array.from(selected));
     setError(null);
   };
@@ -318,7 +314,7 @@ export function useExpenseForm({
   };
 
   const handleSubmitManual = async (): Promise<void> => {
-    if (!manualValidation.amount || !manualValidation.merchant || !manualValidation.category) {
+    if (!(manualValidation.amount && manualValidation.merchant && manualValidation.category)) {
       setError('Amount, merchant, and category are required');
       return;
     }

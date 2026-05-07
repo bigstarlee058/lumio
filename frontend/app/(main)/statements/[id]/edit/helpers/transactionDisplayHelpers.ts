@@ -17,20 +17,30 @@ export function isMultilineField(field: keyof Transaction): boolean {
   return field === 'paymentPurpose' || field === 'comments';
 }
 
-export function getEditValue(edited: Partial<Transaction>, tx: Transaction, field: keyof Transaction): string {
+export function getEditValue(
+  edited: Partial<Transaction>,
+  tx: Transaction,
+  field: keyof Transaction,
+): string {
   const v = edited[field] ?? tx[field];
   return v != null ? String(v) : '';
 }
 
 function getCategoryDisplay(tx: Transaction, locale: string): string {
-  if (!tx.category?.name) return '—';
+  if (!tx.category?.name) {
+    return '—';
+  }
   return getCategoryDisplayName(
     { name: tx.category.name, source: tx.category.source, isSystem: tx.category.isSystem },
     locale,
   );
 }
 
-type FieldDisplayFn = (tx: Transaction, locale: string, fmt: (n?: number | null) => string) => string;
+type FieldDisplayFn = (
+  tx: Transaction,
+  locale: string,
+  fmt: (n?: number | null) => string,
+) => string;
 const fieldDisplayMap: Partial<Record<keyof Transaction, FieldDisplayFn>> = {
   transactionDate: (tx, locale) =>
     new Date(tx.transactionDate).toLocaleDateString(resolveLocale(locale)),
@@ -49,7 +59,9 @@ type DisplayParams = {
 };
 export function getFieldDisplay({ tx, field, locale, fmt }: DisplayParams): string {
   const fn = fieldDisplayMap[field];
-  if (fn) return fn(tx, locale, fmt);
+  if (fn) {
+    return fn(tx, locale, fmt);
+  }
   return String(tx[field] ?? '—');
 }
 
@@ -72,13 +84,22 @@ export function getCategoryChipSx(isDisabled: boolean): ChipSx {
   };
 }
 
-function colVal(columns: Record<string, { value?: string }>, key: string, fallback: string): string {
+function colVal(
+  columns: Record<string, { value?: string }>,
+  key: string,
+  fallback: string,
+): string {
   return columns[key]?.value ?? fallback;
 }
 
 export type ColumnLabels = {
-  date: string; counterparty: string; paymentPurpose: string;
-  expense: string; income: string; category: string; actions: string;
+  date: string;
+  counterparty: string;
+  paymentPurpose: string;
+  expense: string;
+  income: string;
+  category: string;
+  actions: string;
 };
 export function getColumnLabels(columns: Record<string, { value?: string }>): ColumnLabels {
   return {
@@ -92,12 +113,23 @@ export function getColumnLabels(columns: Record<string, { value?: string }>): Co
   };
 }
 
-function labelVal(labels: Record<string, { value?: string } | undefined>, key: string, fallback: string): string {
+function labelVal(
+  labels: Record<string, { value?: string } | undefined>,
+  key: string,
+  fallback: string,
+): string {
   return labels[key]?.value ?? fallback;
 }
 
-export type EditTableLabels = { confirmDelete: string; notSelected: string; noCategory: string; assignCategory: string };
-export function getEditTableLabels(labels: Record<string, { value?: string } | undefined>): EditTableLabels {
+export type EditTableLabels = {
+  confirmDelete: string;
+  notSelected: string;
+  noCategory: string;
+  assignCategory: string;
+};
+export function getEditTableLabels(
+  labels: Record<string, { value?: string } | undefined>,
+): EditTableLabels {
   return {
     confirmDelete: labelVal(labels, 'confirmDeleteOne', 'Delete transaction?'),
     notSelected: labelVal(labels, 'notSelected', 'Not selected'),

@@ -1,6 +1,6 @@
 'use client';
 
-import type React from 'react';
+import { Clock3, MoonStar, Sparkles, Sun } from '@/app/components/icons';
 import {
   type ThemePreference,
   getScheduledTheme,
@@ -8,8 +8,8 @@ import {
   getStoredThemeTimeZone,
 } from '@/app/lib/theme-preference';
 import { cn } from '@/app/lib/utils';
-import { Clock3, MoonStar, Sparkles, Sun } from '@/app/components/icons';
 import { useTheme } from 'next-themes';
+import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 type ModeToggleProps = {
@@ -34,15 +34,22 @@ const DEFAULT_LABELS = {
   followsSystem: 'Light theme turns on at 07:00, dark theme at 19:00',
 } as const;
 
-function ThemePreviewCard({ selectedTheme, currentTheme, copy }: {
+function ThemePreviewCard({
+  selectedTheme,
+  currentTheme,
+  copy,
+}: {
   selectedTheme: ThemePreference;
   currentTheme: 'dark' | 'light';
   copy: typeof DEFAULT_LABELS;
 }) {
   const isDark = currentTheme === 'dark';
-  const themeLabel = selectedTheme === 'auto'
-    ? `${copy.auto} · ${isDark ? copy.dark : copy.light}`
-    : selectedTheme === 'dark' ? copy.dark : copy.light;
+  const themeLabel =
+    selectedTheme === 'auto'
+      ? `${copy.auto} · ${isDark ? copy.dark : copy.light}`
+      : selectedTheme === 'dark'
+        ? copy.dark
+        : copy.light;
   const cardBg = isDark
     ? 'border-sky-400/25 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900'
     : 'border-slate-300/80 bg-gradient-to-br from-slate-100 via-white to-sky-50';
@@ -53,7 +60,9 @@ function ThemePreviewCard({ selectedTheme, currentTheme, copy }: {
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">{copy.active}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          {copy.active}
+        </p>
         <div className="inline-flex items-center gap-1 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
           <Sparkles className="h-3.5 w-3.5" />
           <span>{themeLabel}</span>

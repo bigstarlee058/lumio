@@ -8,7 +8,9 @@ export type ExportColumn = {
 
 export const getExportColumn = (value: unknown): ExportColumn | null => {
   const record = getRecord(value);
-  if (!record || typeof record.key !== 'string') return null;
+  if (!record || typeof record.key !== 'string') {
+    return null;
+  }
 
   return {
     key: record.key,
@@ -18,10 +20,14 @@ export const getExportColumn = (value: unknown): ExportColumn | null => {
 };
 
 export const formatUpdatedDate = (value?: string | null): string => {
-  if (!value) return '—';
+  if (!value) {
+    return '—';
+  }
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) {
+    return '—';
+  }
 
   const day = String(date.getUTCDate()).padStart(2, '0');
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -31,10 +37,14 @@ export const formatUpdatedDate = (value?: string | null): string => {
 };
 
 export const formatUpdatedBadge = (value?: string | null): string => {
-  if (!value) return '—';
+  if (!value) {
+    return '—';
+  }
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) {
+    return '—';
+  }
 
   const now = new Date();
   const isSameDay =

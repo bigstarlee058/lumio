@@ -1,12 +1,6 @@
 import apiClient from '@/app/lib/api';
 
-export type AuditJsonValue =
-  | string
-  | number
-  | boolean
-  | null
-  | AuditJsonObject
-  | AuditJsonValue[];
+export type AuditJsonValue = string | number | boolean | null | AuditJsonObject | AuditJsonValue[];
 
 export type AuditJsonObject = { [key: string]: AuditJsonValue };
 
@@ -80,9 +74,7 @@ type ApiErrorLike = {
 };
 
 const isForbiddenApiError = (error: unknown): boolean =>
-  typeof error === 'object' &&
-  error !== null &&
-  (error as ApiErrorLike).response?.status === 403;
+  typeof error === 'object' && error !== null && (error as ApiErrorLike).response?.status === 403;
 
 export interface AuditEvent {
   id: string;

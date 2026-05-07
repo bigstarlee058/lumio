@@ -92,7 +92,9 @@ export function useTourCompletedState(open: boolean): TourCompletedState {
     const updateCompleted = (): void => {
       const completed = new Set<string>();
       registeredTours.forEach(tour => {
-        if (tourManager.isTourCompleted(tour.id)) completed.add(tour.id);
+        if (tourManager.isTourCompleted(tour.id)) {
+          completed.add(tour.id);
+        }
       });
       setCompletedTours(completed);
     };
@@ -100,7 +102,9 @@ export function useTourCompletedState(open: boolean): TourCompletedState {
     updateCompleted();
 
     const handleStorageChange = (e: StorageEvent): void => {
-      if (e.key === 'lumio_tour_state') updateCompleted();
+      if (e.key === 'lumio_tour_state') {
+        updateCompleted();
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -108,7 +112,9 @@ export function useTourCompletedState(open: boolean): TourCompletedState {
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      if (interval) clearInterval(interval);
+      if (interval) {
+        clearInterval(interval);
+      }
     };
   }, [open]);
 

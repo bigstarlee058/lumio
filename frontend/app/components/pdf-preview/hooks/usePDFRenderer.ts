@@ -1,6 +1,10 @@
 import { type ComponentType, useEffect, useState } from 'react';
 
-type ReactPdfModule = { Document: ComponentType<Record<string, unknown>>; Page: ComponentType<Record<string, unknown>>; pdfjs: { version: string; GlobalWorkerOptions: { workerSrc: string } } };
+type ReactPdfModule = {
+  Document: ComponentType<Record<string, unknown>>;
+  Page: ComponentType<Record<string, unknown>>;
+  pdfjs: { version: string; GlobalWorkerOptions: { workerSrc: string } };
+};
 
 export type { ReactPdfModule };
 
@@ -13,7 +17,11 @@ async function loadReactPdf(): Promise<ReactPdfModule> {
 }
 
 type RendererParams = { isOpen: boolean; pdfRendererFailed: string };
-type RendererResult = { DocumentComponent: ComponentType<Record<string, unknown>> | undefined; PageComponent: ComponentType<Record<string, unknown>> | undefined; rendererError: string | null };
+type RendererResult = {
+  DocumentComponent: ComponentType<Record<string, unknown>> | undefined;
+  PageComponent: ComponentType<Record<string, unknown>> | undefined;
+  rendererError: string | null;
+};
 
 export function usePDFRenderer({ isOpen, pdfRendererFailed }: RendererParams): RendererResult {
   const [pdfModule, setPdfModule] = useState<ReactPdfModule | null>(null);
@@ -22,8 +30,16 @@ export function usePDFRenderer({ isOpen, pdfRendererFailed }: RendererParams): R
   useEffect(() => {
     if (!isOpen || pdfModule || isJsdomEnvironment) return;
     let active = true;
-    void loadReactPdf().then(m => { if (active) setPdfModule(m); }).catch(() => { if (active) setRendererError(pdfRendererFailed); });
-    return (): void => { active = false; };
+    void loadReactPdf()
+      .then(m => {
+        if (active) setPdfModule(m);
+      })
+      .catch(() => {
+        if (active) setRendererError(pdfRendererFailed);
+      });
+    return (): void => {
+      active = false;
+    };
   }, [isOpen, pdfModule, pdfRendererFailed]);
 
   return { DocumentComponent: pdfModule?.Document, PageComponent: pdfModule?.Page, rendererError };

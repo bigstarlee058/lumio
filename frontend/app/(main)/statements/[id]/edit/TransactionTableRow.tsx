@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function */
 'use client';
 
-import {
-  CheckCircle2,
-  Pencil,
-  Trash2,
-  TriangleAlert,
-  XCircle,
-} from '@/app/components/icons';
+import { CheckCircle2, Pencil, Trash2, TriangleAlert, XCircle } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { getCategoryDisplayName } from '@/app/lib/statement-categories';
 import {
@@ -85,7 +79,9 @@ function EditCell({
       >
         <MenuItem value="">{labels.notSelected?.value || 'Not selected'}</MenuItem>
         {options.map(opt => (
-          <MenuItem key={opt.id} value={opt.id}>{opt.name}</MenuItem>
+          <MenuItem key={opt.id} value={opt.id}>
+            {opt.name}
+          </MenuItem>
         ))}
       </TextField>
     );
@@ -226,7 +222,12 @@ export function TransactionTableRow({
         {isEditing ? (
           <EditCell {...editCellProps} field="transactionDate" />
         ) : (
-          <DisplayCell transaction={transaction} field="transactionDate" locale={locale} formatNumber={formatNumber} />
+          <DisplayCell
+            transaction={transaction}
+            field="transactionDate"
+            locale={locale}
+            formatNumber={formatNumber}
+          />
         )}
       </TableCell>
       <TableCell sx={{ minWidth: 150 }}>
@@ -253,7 +254,10 @@ export function TransactionTableRow({
       <TableCell align="right" sx={{ color: 'error.600', fontWeight: 600, fontSize: '0.9375rem' }}>
         {transaction.debit ? formatNumber(transaction.debit) : '—'}
       </TableCell>
-      <TableCell align="right" sx={{ color: 'success.600', fontWeight: 600, fontSize: '0.9375rem' }}>
+      <TableCell
+        align="right"
+        sx={{ color: 'success.600', fontWeight: 600, fontSize: '0.9375rem' }}
+      >
         {transaction.credit ? formatNumber(transaction.credit) : '—'}
       </TableCell>
       <TableCell sx={{ minWidth: 150 }}>
@@ -268,16 +272,28 @@ export function TransactionTableRow({
       <TableCell>
         {isEditing ? (
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton size="small" onClick={() => onSave(transaction.id)} sx={{ color: 'success.600', '&:hover': { bgcolor: 'success.50' } }}>
+            <IconButton
+              size="small"
+              onClick={() => onSave(transaction.id)}
+              sx={{ color: 'success.600', '&:hover': { bgcolor: 'success.50' } }}
+            >
               <CheckCircle2 size={18} />
             </IconButton>
-            <IconButton size="small" onClick={onCancel} sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}>
+            <IconButton
+              size="small"
+              onClick={onCancel}
+              sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}
+            >
               <XCircle size={18} />
             </IconButton>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton size="small" onClick={() => onEdit(transaction)} sx={{ color: 'primary.600', '&:hover': { bgcolor: 'primary.50' } }}>
+            <IconButton
+              size="small"
+              onClick={() => onEdit(transaction)}
+              sx={{ color: 'primary.600', '&:hover': { bgcolor: 'primary.50' } }}
+            >
               <Pencil size={18} />
             </IconButton>
             <IconButton

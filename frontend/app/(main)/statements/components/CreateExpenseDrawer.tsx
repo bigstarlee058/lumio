@@ -2,18 +2,6 @@
 
 import StatementCategoryDrawer from '@/app/(main)/statements/[id]/edit/StatementCategoryDrawer';
 import { useExpenseForm } from '@/app/(main)/statements/components/hooks/useExpenseForm';
-import { Button } from '@/app/components/ui/button';
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { useIsMobile } from '@/app/hooks/useIsMobile';
-import { type StatementCategoryNode } from '@/app/lib/statement-categories';
-import {
-  type ManualExpenseDraft,
-  type StatementExpenseMode,
-  type TaxRateOption,
-  sanitizeManualAmountInput,
-} from '@/app/lib/statement-expense-drawer';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { format, isValid, parseISO } from 'date-fns';
 import {
   Camera,
   Check,
@@ -28,8 +16,20 @@ import {
   ScanLine,
   Search,
 } from '@/app/components/icons';
-import { useRef } from 'react';
+import { Button } from '@/app/components/ui/button';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { useIsMobile } from '@/app/hooks/useIsMobile';
+import { type StatementCategoryNode } from '@/app/lib/statement-categories';
+import {
+  type ManualExpenseDraft,
+  type StatementExpenseMode,
+  type TaxRateOption,
+  sanitizeManualAmountInput,
+} from '@/app/lib/statement-expense-drawer';
 import { tokens } from '@/lib/theme-tokens';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format, isValid, parseISO } from 'date-fns';
+import { useRef } from 'react';
 
 type Props = {
   open: boolean;
@@ -128,7 +128,6 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        
         title={
           <div className="lumio-payable-drawer__title-wrap">
             <button
@@ -216,7 +215,9 @@ export default function CreateExpenseDrawer({
                           onClick={() => handleSelectCurrency(item.code)}
                           className="lumio-expense-drawer__currency-item"
                         >
-                          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
+                          <span
+                            style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}
+                          >
                             {item.label}
                           </span>
                         </button>
@@ -236,15 +237,15 @@ export default function CreateExpenseDrawer({
                           onClick={() => handleSelectCurrency(item.code)}
                           className="lumio-expense-drawer__currency-item"
                         >
-                          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
+                          <span
+                            style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}
+                          >
                             {item.label}
                           </span>
                         </button>
                       ))
                     ) : (
-                      <p className="lumio-expense-drawer__no-result">
-                        No currencies found
-                      </p>
+                      <p className="lumio-expense-drawer__no-result">No currencies found</p>
                     )}
                   </div>
                 </div>
@@ -327,13 +328,48 @@ export default function CreateExpenseDrawer({
                     />
                   </div>
                 ) : (
-                  <label style={{ display: 'flex', cursor: 'pointer', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '2px dashed', borderColor: 'color-mix(in srgb, var(--primary) 40%, transparent)', background: 'rgba(0,0,0,0.04)', padding: '48px 24px', textAlign: 'center' }}>
+                  <label
+                    style={{
+                      display: 'flex',
+                      cursor: 'pointer',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: tokens.radius.lg,
+                      border: '2px dashed',
+                      borderColor: 'color-mix(in srgb, var(--primary) 40%, transparent)',
+                      background: 'rgba(0,0,0,0.04)',
+                      padding: '48px 24px',
+                      textAlign: 'center',
+                    }}
+                  >
                     <Receipt size={56} style={{ color: 'var(--muted-foreground)' }} />
-                    <p style={{ marginTop: 24, fontSize: 30, fontWeight: 600, lineHeight: 1, color: 'var(--foreground)' }}>
+                    <p
+                      style={{
+                        marginTop: 24,
+                        fontSize: 30,
+                        fontWeight: 600,
+                        lineHeight: 1,
+                        color: 'var(--foreground)',
+                      }}
+                    >
                       Upload receipts
                     </p>
-                    <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>or drag and drop them here</p>
-                    <span style={{ marginTop: 24, display: 'inline-flex', borderRadius: tokens.radius.md, background: 'var(--primary)', padding: '10px 28px', fontSize: 14, fontWeight: 600, color: '#fff' }}>
+                    <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
+                      or drag and drop them here
+                    </p>
+                    <span
+                      style={{
+                        marginTop: 24,
+                        display: 'inline-flex',
+                        borderRadius: tokens.radius.md,
+                        background: 'var(--primary)',
+                        padding: '10px 28px',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: '#fff',
+                      }}
+                    >
                       Choose files
                     </span>
                     <input
@@ -349,15 +385,45 @@ export default function CreateExpenseDrawer({
                 )}
               </>
             ) : manualStep === 'amount' ? (
-              <div style={{ display: 'flex', minHeight: '100%', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  minHeight: '100%',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flex: 1,
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   <label htmlFor="expense-manual-amount" className="sr-only">
                     Amount
                   </label>
                   <div style={{ margin: '0 auto', width: 290, maxWidth: '100%' }}>
-                    <div style={{ display: 'flex', height: 96, width: '100%', alignItems: 'flex-end', justifyContent: 'center', gap: 8 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        height: 96,
+                        width: '100%',
+                        alignItems: 'flex-end',
+                        justifyContent: 'center',
+                        gap: 8,
+                      }}
+                    >
                       <span
-                        style={{ flexShrink: 0, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)', fontSize: manualAmountFontSize }}
+                        style={{
+                          flexShrink: 0,
+                          lineHeight: 1,
+                          fontWeight: 600,
+                          color: 'var(--foreground)',
+                          fontSize: manualAmountFontSize,
+                        }}
                       >
                         {selectedCurrencySymbol}
                       </span>
@@ -373,14 +439,40 @@ export default function CreateExpenseDrawer({
                           }))
                         }
                         placeholder="0"
-                        style={{ minWidth: 0, flex: 1, border: 0, background: 'transparent', padding: 0, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)', outline: 'none', fontSize: manualAmountFontSize }}
+                        style={{
+                          minWidth: 0,
+                          flex: 1,
+                          border: 0,
+                          background: 'transparent',
+                          padding: 0,
+                          lineHeight: 1,
+                          fontWeight: 600,
+                          color: 'var(--foreground)',
+                          fontSize: manualAmountFontSize,
+                        }}
                       />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setCurrencyPickerOpen(true)}
-                      style={{ marginTop: 48, display: 'inline-flex', height: 64, width: '100%', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--muted)', padding: '0 24px', fontSize: 18, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer' }}
+                      style={{
+                        marginTop: 48,
+                        display: 'inline-flex',
+                        height: 64,
+                        width: '100%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        borderRadius: tokens.radius.md,
+                        border: '1px solid var(--border-color, var(--border-color))',
+                        background: 'var(--muted)',
+                        padding: '0 24px',
+                        fontSize: 18,
+                        fontWeight: 600,
+                        color: 'var(--foreground)',
+                        cursor: 'pointer',
+                      }}
                     >
                       {manualDraft.currency}
                       <ChevronDown size={20} style={{ color: 'var(--muted-foreground)' }} />
@@ -390,9 +482,42 @@ export default function CreateExpenseDrawer({
               </div>
             ) : (
               <>
-                <label style={{ position: 'relative', display: 'flex', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'rgba(0,0,0,0.04)', padding: '32px 24px', textAlign: 'center' }}>
-                  <FileText size={56} style={{ color: 'color-mix(in srgb, var(--muted-foreground) 60%, transparent)' }} />
-                  <span style={{ position: 'absolute', left: '50%', top: '50%', display: 'flex', height: 40, width: 40, transform: 'translate(8px, 4px)', alignItems: 'center', justifyContent: 'center', borderRadius: tokens.radius.full, background: 'var(--primary)', color: '#fff' }}>
+                <label
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    cursor: 'pointer',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: tokens.radius.lg,
+                    border: '1px solid var(--border-color, var(--border-color))',
+                    background: 'rgba(0,0,0,0.04)',
+                    padding: '32px 24px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <FileText
+                    size={56}
+                    style={{
+                      color: 'color-mix(in srgb, var(--muted-foreground) 60%, transparent)',
+                    }}
+                  />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: '50%',
+                      display: 'flex',
+                      height: 40,
+                      width: 40,
+                      transform: 'translate(8px, 4px)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: tokens.radius.full,
+                      background: 'var(--primary)',
+                      color: '#fff',
+                    }}
+                  >
                     <Plus size={20} />
                   </span>
                   <input
@@ -405,17 +530,47 @@ export default function CreateExpenseDrawer({
                   />
                 </label>
 
-                <div style={{ overflow: 'hidden', borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--card-bg, #fff)' }}>
+                <div
+                  style={{
+                    overflow: 'hidden',
+                    borderRadius: tokens.radius.lg,
+                    border: '1px solid var(--border-color, var(--border-color))',
+                    background: 'var(--card-bg, #fff)',
+                  }}
+                >
                   <button
                     type="button"
                     onClick={() => setManualStep('amount')}
-                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 16px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                      transition: 'background-color 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'var(--muted)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     <div>
                       <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Amount</p>
-                      <p style={{ marginTop: 4, fontSize: 30, lineHeight: 1, fontWeight: 600, color: 'var(--foreground)' }}>
+                      <p
+                        style={{
+                          marginTop: 4,
+                          fontSize: 30,
+                          lineHeight: 1,
+                          fontWeight: 600,
+                          color: 'var(--foreground)',
+                        }}
+                      >
                         {selectedCurrencySymbol}
                         {manualDraft.amount || '0.00'}
                       </p>
@@ -423,10 +578,18 @@ export default function CreateExpenseDrawer({
                     <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
+                  <div
+                    style={{ height: 1, background: 'var(--border-color, var(--border-color))' }}
+                  />
 
                   <div style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
                       <label
                         htmlFor="expense-manual-description"
                         style={{ fontSize: 14, color: 'var(--muted-foreground)' }}
@@ -445,14 +608,31 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Optional"
-                      style={{ marginTop: 6, width: '100%', border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
+                      style={{
+                        marginTop: 6,
+                        width: '100%',
+                        border: 0,
+                        background: 'transparent',
+                        padding: 0,
+                        fontSize: 24,
+                        lineHeight: 1,
+                        color: 'var(--foreground)',
+                      }}
                     />
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
+                  <div
+                    style={{ height: 1, background: 'var(--border-color, var(--border-color))' }}
+                  />
 
                   <div style={{ padding: '12px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
                       <label
                         htmlFor="expense-manual-merchant"
                         style={{ fontSize: 14, color: 'var(--muted-foreground)' }}
@@ -471,57 +651,128 @@ export default function CreateExpenseDrawer({
                         }))
                       }
                       placeholder="Required"
-                      style={{ marginTop: 6, width: '100%', border: 0, background: 'transparent', padding: 0, fontSize: 24, lineHeight: 1, color: 'var(--foreground)', outline: 'none' }}
+                      style={{
+                        marginTop: 6,
+                        width: '100%',
+                        border: 0,
+                        background: 'transparent',
+                        padding: 0,
+                        fontSize: 24,
+                        lineHeight: 1,
+                        color: 'var(--foreground)',
+                      }}
                     />
                     {!manualValidation.merchant ? (
-                      <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>This field is required</p>
+                      <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>
+                        This field is required
+                      </p>
                     ) : null}
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
+                  <div
+                    style={{ height: 1, background: 'var(--border-color, var(--border-color))' }}
+                  />
 
                   <button
                     type="button"
                     onClick={() => setCategoryDrawerOpen(true)}
-                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 16px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                      transition: 'background-color 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'var(--muted)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Category</p>
-                      <p style={{ marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 24, lineHeight: 1, color: 'var(--foreground)' }}>
+                      <p
+                        style={{
+                          marginTop: 6,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: 24,
+                          lineHeight: 1,
+                          color: 'var(--foreground)',
+                        }}
+                      >
                         {selectedCategoryName || 'Required'}
                       </p>
                       {!manualValidation.category ? (
-                        <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>This field is required</p>
+                        <p style={{ marginTop: 4, fontSize: 12, color: 'var(--destructive)' }}>
+                          This field is required
+                        </p>
                       ) : null}
                     </div>
                     <ChevronRight size={24} style={{ color: 'var(--muted-foreground)' }} />
                   </button>
 
-                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
+                  <div
+                    style={{ height: 1, background: 'var(--border-color, var(--border-color))' }}
+                  />
 
                   <div style={{ padding: '12px 16px' }}>
                     <DatePicker
                       label="Date"
                       value={manualDate ? parseISO(manualDate) : null}
-                      onChange={(d: Date | null) => setManualDate(d && isValid(d) ? format(d, 'yyyy-MM-dd') : '')}
+                      onChange={(d: Date | null) =>
+                        setManualDate(d && isValid(d) ? format(d, 'yyyy-MM-dd') : '')
+                      }
                       slotProps={{ textField: { size: 'small', fullWidth: true } as never }}
                     />
                   </div>
 
-                  <div style={{ height: 1, background: 'var(--border-color, var(--border-color))' }} />
+                  <div
+                    style={{ height: 1, background: 'var(--border-color, var(--border-color))' }}
+                  />
 
                   <button
                     type="button"
                     onClick={() => setTaxRateDrawerOpen(true)}
-                    style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', textAlign: 'left', cursor: 'pointer', background: 'none', border: 'none', transition: 'background-color 0.15s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--muted)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 16px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                      transition: 'background-color 0.15s',
+                    }}
+                    onMouseEnter={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'var(--muted)';
+                    }}
+                    onMouseLeave={e => {
+                      (e.currentTarget as HTMLElement).style.background = 'none';
+                    }}
                   >
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Tax</p>
-                      <p style={{ marginTop: 6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 24, lineHeight: 1, color: 'var(--foreground)' }}>
+                      <p
+                        style={{
+                          marginTop: 6,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontSize: 24,
+                          lineHeight: 1,
+                          color: 'var(--foreground)',
+                        }}
+                      >
                         {selectedTaxRate
                           ? `${selectedTaxRate.name} (${Number(selectedTaxRate.rate || 0).toFixed(0)}%)${selectedTaxRate.isDefault ? ' - Default' : ''}`
                           : 'Optional'}
@@ -534,17 +785,49 @@ export default function CreateExpenseDrawer({
             )}
 
             {files.length > 0 && !currencyPickerOpen ? (
-              <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color, var(--border-color))', background: 'var(--card-bg, #fff)', padding: '12px' }}>
-                <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
+              <div
+                style={{
+                  borderRadius: tokens.radius.lg,
+                  border: '1px solid var(--border-color, var(--border-color))',
+                  background: 'var(--card-bg, #fff)',
+                  padding: '12px',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    color: 'var(--muted-foreground)',
+                  }}
+                >
                   Selected files
                 </p>
                 <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {files.map(file => (
                     <div
                       key={`${file.name}-${file.size}`}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.sm, border: '1px solid var(--border-color, var(--border-color))', padding: '8px 12px', fontSize: 14 }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderRadius: tokens.radius.sm,
+                        border: '1px solid var(--border-color, var(--border-color))',
+                        padding: '8px 12px',
+                        fontSize: 14,
+                      }}
                     >
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--foreground)' }}>{file.name}</span>
+                      <span
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          color: 'var(--foreground)',
+                        }}
+                      >
+                        {file.name}
+                      </span>
                       <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </span>
@@ -555,7 +838,16 @@ export default function CreateExpenseDrawer({
             ) : null}
 
             {error ? (
-              <div style={{ borderRadius: tokens.radius.sm, border: '1px solid #fecaca', background: 'var(--color-error-soft-bg)', padding: '8px 12px', fontSize: 14, color: 'var(--destructive)' }}>
+              <div
+                style={{
+                  borderRadius: tokens.radius.sm,
+                  border: '1px solid #fecaca',
+                  background: 'var(--color-error-soft-bg)',
+                  padding: '8px 12px',
+                  fontSize: 14,
+                  color: 'var(--destructive)',
+                }}
+              >
                 {error}
               </div>
             ) : null}
@@ -614,7 +906,6 @@ export default function CreateExpenseDrawer({
           noResults: 'No categories found',
         }}
         width="lg"
-        
         showAllOption={false}
       />
 
@@ -624,7 +915,6 @@ export default function CreateExpenseDrawer({
         position="right"
         width="lg"
         showCloseButton={false}
-        
         title={
           <div className="lumio-payable-drawer__title-wrap">
             <button
@@ -635,7 +925,9 @@ export default function CreateExpenseDrawer({
             >
               <ChevronLeft size={20} />
             </button>
-            <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>Tax rate</span>
+            <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+              Tax rate
+            </span>
           </div>
         }
       >

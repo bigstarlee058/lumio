@@ -3,14 +3,14 @@
 import { useIntlayer } from '@/app/i18n';
 import { useTheme } from 'next-themes';
 import { useCallback, useMemo, useState } from 'react';
-import { useTanStackLabels } from './useTanStackLabels';
-import { useCustomTableState, type UseCustomTableStateReturn } from './useCustomTableState';
 import type {
   CustomTableCellValue,
   CustomTableColumn,
   CustomTableGridRow,
   CustomTableRowStyles,
 } from '../utils/stylingUtils';
+import { type UseCustomTableStateReturn, useCustomTableState } from './useCustomTableState';
+import { useTanStackLabels } from './useTanStackLabels';
 import type { CommonLabels } from './useTanStackLabels';
 
 interface RawCb {
@@ -54,17 +54,40 @@ function useBuildAdapters(p: RawCb): {
   deleteRow: (o: { rowId: string }) => void;
   deleteCol: ((o: { columnKey: string }) => void) | undefined;
 } {
-  const cell = useCallback((o: { rowId: string; columnKey: string; value: CustomTableCellValue }) => p.onUpdateCell(o.rowId, o.columnKey, o.value), [p.onUpdateCell]); // eslint-disable-line react-hooks/exhaustive-deps
-  const style = useCallback((o: { rowId: string; styles: CustomTableRowStyles }) => p.onUpdateRowStyle(o.rowId, o.styles), [p.onUpdateRowStyle]); // eslint-disable-line react-hooks/exhaustive-deps
-  const width = useCallback((o: { columnKey: string; width: number }) => p.onPersistColumnWidth(o.columnKey, o.width), [p.onPersistColumnWidth]); // eslint-disable-line react-hooks/exhaustive-deps
-  const rename = useCallback((o: { columnKey: string; nextTitle: string }) => p.onRenameColumnTitle(o.columnKey, o.nextTitle), [p.onRenameColumnTitle]); // eslint-disable-line react-hooks/exhaustive-deps
-  const selection = useCallback((o: { rowIds: string[] }) => p.onSelectedRowIdsChange(o.rowIds), [p.onSelectedRowIdsChange]); // eslint-disable-line react-hooks/exhaustive-deps
+  const cell = useCallback(
+    (o: { rowId: string; columnKey: string; value: CustomTableCellValue }) =>
+      p.onUpdateCell(o.rowId, o.columnKey, o.value),
+    [p.onUpdateCell],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
+  const style = useCallback(
+    (o: { rowId: string; styles: CustomTableRowStyles }) => p.onUpdateRowStyle(o.rowId, o.styles),
+    [p.onUpdateRowStyle],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
+  const width = useCallback(
+    (o: { columnKey: string; width: number }) => p.onPersistColumnWidth(o.columnKey, o.width),
+    [p.onPersistColumnWidth],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
+  const rename = useCallback(
+    (o: { columnKey: string; nextTitle: string }) =>
+      p.onRenameColumnTitle(o.columnKey, o.nextTitle),
+    [p.onRenameColumnTitle],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
+  const selection = useCallback(
+    (o: { rowIds: string[] }) => p.onSelectedRowIdsChange(o.rowIds),
+    [p.onSelectedRowIdsChange],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
   const deleteRow = useCallback((o: { rowId: string }) => p.onDeleteRow(o.rowId), [p.onDeleteRow]); // eslint-disable-line react-hooks/exhaustive-deps
-  const deleteCol = useMemo(() => p.onDeleteColumn ? (o: { columnKey: string }) => p.onDeleteColumn?.(o.columnKey) : undefined, [p.onDeleteColumn]); // eslint-disable-line react-hooks/exhaustive-deps
+  const deleteCol = useMemo(
+    () =>
+      p.onDeleteColumn ? (o: { columnKey: string }) => p.onDeleteColumn?.(o.columnKey) : undefined,
+    [p.onDeleteColumn],
+  ); // eslint-disable-line react-hooks/exhaustive-deps
   return { cell, style, width, rename, selection, deleteRow, deleteCol };
 }
 
-export function useCustomTableTanStack(params: UseCustomTableTanStackParams): UseCustomTableTanStackReturn {
+export function useCustomTableTanStack(
+  params: UseCustomTableTanStackParams,
+): UseCustomTableTanStackReturn {
   const t = useIntlayer('customTableDetailPage');
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -73,15 +96,27 @@ export function useCustomTableTanStack(params: UseCustomTableTanStackParams): Us
   const adapters = useBuildAdapters(params);
 
   const state = useCustomTableState({
-    rows: params.rows, columns: params.columns, selectedRowIds: params.selectedRowIds,
-    columnWidths: params.columnWidths, stickyLeftColumnIds: params.stickyLeftColumnIds,
-    stickyRightColumnIds: params.stickyRightColumnIds, loadingRows: params.loadingRows,
-    hasMore: params.hasMore, isDark, onCreateRow: params.onCreateRow,
-    onAddColumnClick: params.onAddColumnClick, onLoadMore: params.onLoadMore,
-    colorPickerRowId, setColorPickerRowId, columnLabels,
-    onUpdateCell: adapters.cell, onUpdateRowStyle: adapters.style,
-    onDeleteRow: adapters.deleteRow, onPersistColumnWidth: adapters.width,
-    onSelectedRowIdsChange: adapters.selection, onRenameColumnTitle: adapters.rename,
+    rows: params.rows,
+    columns: params.columns,
+    selectedRowIds: params.selectedRowIds,
+    columnWidths: params.columnWidths,
+    stickyLeftColumnIds: params.stickyLeftColumnIds,
+    stickyRightColumnIds: params.stickyRightColumnIds,
+    loadingRows: params.loadingRows,
+    hasMore: params.hasMore,
+    isDark,
+    onCreateRow: params.onCreateRow,
+    onAddColumnClick: params.onAddColumnClick,
+    onLoadMore: params.onLoadMore,
+    colorPickerRowId,
+    setColorPickerRowId,
+    columnLabels,
+    onUpdateCell: adapters.cell,
+    onUpdateRowStyle: adapters.style,
+    onDeleteRow: adapters.deleteRow,
+    onPersistColumnWidth: adapters.width,
+    onSelectedRowIdsChange: adapters.selection,
+    onRenameColumnTitle: adapters.rename,
     onDeleteColumn: adapters.deleteCol,
   });
 

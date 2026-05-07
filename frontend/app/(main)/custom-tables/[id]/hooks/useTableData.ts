@@ -52,7 +52,9 @@ export function useTableData({
   }, []);
 
   const loadTable = useCallback(async () => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await apiClient.get(`/custom-tables/${tableId}`);

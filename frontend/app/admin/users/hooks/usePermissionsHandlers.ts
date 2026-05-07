@@ -4,8 +4,13 @@ import { useState } from 'react';
 import apiClient from '../../../lib/api';
 
 interface User {
-  id: string; email: string; name: string; role: string;
-  isActive: boolean; permissions: string[] | null; createdAt: string;
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  isActive: boolean;
+  permissions: string[] | null;
+  createdAt: string;
 }
 
 export interface PermissionsHandlers {
@@ -25,7 +30,10 @@ async function fetchUserPermissions(userId: string): Promise<string[]> {
   return response.data.customPermissions || [];
 }
 
-export function usePermissionsHandlers({ loadUsers, errorMessages }: {
+export function usePermissionsHandlers({
+  loadUsers,
+  errorMessages,
+}: {
   loadUsers: () => Promise<void>;
   errorMessages: { loadPermissions: string; savePermissions: string; resetPermissions: string };
 }): PermissionsHandlers {
@@ -37,35 +45,64 @@ export function usePermissionsHandlers({ loadUsers, errorMessages }: {
   const handleEditPermissions = async (user: User): Promise<void> => {
     try {
       setSelectedPermissions(await fetchUserPermissions(user.id));
-      setEditingUser(user); setPermissionsDialogOpen(true);
-    } catch { console.error(errorMessages.loadPermissions); }
+      setEditingUser(user);
+      setPermissionsDialogOpen(true);
+    } catch {
+      console.error(errorMessages.loadPermissions);
+    }
   };
 
   const handleSavePermissions = async (): Promise<void> => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
     setSaving(true);
     try {
-      await apiClient.put(`/users/${editingUser.id}/permissions`, { permissions: selectedPermissions });
-      setPermissionsDialogOpen(false); setEditingUser(null); void loadUsers();
-    } catch { console.error(errorMessages.savePermissions); }
-    finally { setSaving(false); }
+      await apiClient.put(`/users/${editingUser.id}/permissions`, {
+        permissions: selectedPermissions,
+      });
+      setPermissionsDialogOpen(false);
+      setEditingUser(null);
+      void loadUsers();
+    } catch {
+      console.error(errorMessages.savePermissions);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleResetPermissions = async (): Promise<void> => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
     setSaving(true);
     try {
       await apiClient.post(`/users/${editingUser.id}/permissions/reset`);
-      setPermissionsDialogOpen(false); setEditingUser(null); void loadUsers();
-    } catch { console.error(errorMessages.resetPermissions); }
-    finally { setSaving(false); }
+      setPermissionsDialogOpen(false);
+      setEditingUser(null);
+      void loadUsers();
+    } catch {
+      console.error(errorMessages.resetPermissions);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return {
-    editingUser, selectedPermissions, saving, permissionsDialogOpen, handleEditPermissions,
-    handleSavePermissions, handleResetPermissions,
+    editingUser,
+    selectedPermissions,
+    saving,
+    permissionsDialogOpen,
+    handleEditPermissions,
+    handleSavePermissions,
+    handleResetPermissions,
     handleTogglePermission: (permission: string): void =>
-      setSelectedPermissions((prev) => prev.includes(permission) ? prev.filter((p) => p !== permission) : [...prev, permission]),
-    handleCloseDialog: (): void => { setPermissionsDialogOpen(false); setEditingUser(null); },
+      setSelectedPermissions(prev =>
+        prev.includes(permission) ? prev.filter(p => p !== permission) : [...prev, permission],
+      ),
+    handleCloseDialog: (): void => {
+      setPermissionsDialogOpen(false);
+      setEditingUser(null);
+    },
   };
 }

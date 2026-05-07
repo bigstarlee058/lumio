@@ -21,14 +21,21 @@ export default function WorkspaceTabShell({ activeItem, children }: Props) {
   const [isAllWorkspacesOpen, setIsAllWorkspacesOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !currentWorkspace) {
+    if (!(loading || currentWorkspace)) {
       router.replace('/workspaces/list');
     }
   }, [currentWorkspace, loading, router]);
 
   if (loading || !currentWorkspace) {
     return (
-      <Box sx={{ minHeight: 'calc(100vh - var(--global-nav-height, 0px))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          minHeight: 'calc(100vh - var(--global-nav-height, 0px))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <CircularProgress size={80} />
       </Box>
     );

@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import StatementsCircularUploadMenu from '@/app/(main)/statements/components/StatementsCircularUploadMenu';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import StatementsCircularUploadMenu from '@/app/(main)/statements/components/StatementsCircularUploadMenu';
 import { createStatementsTour } from './statements-tour';
 
 type StatementsTourPayload = Parameters<typeof createStatementsTour>[0];
@@ -158,7 +158,7 @@ describe('createStatementsTour', () => {
       expect(source).toContain(`${stepKey}: {\n        title: t({`);
       expect(source).toContain(`${stepKey}: {\n        title: t({\n          ru:`);
       expect(source).toContain(`${stepKey}: {\n        title: t({\n          ru:`);
-      expect(source).toContain(`description: t({`);
+      expect(source).toContain('description: t({');
     });
 
     expect(source).not.toContain('uploadButton: {');
@@ -199,7 +199,9 @@ describe('createStatementsTour', () => {
     expect(listViewSource).toContain('data-tour-id="search-bar"');
     expect(listViewSource).toContain('data-tour-id="statements-filters"');
     expect(listViewSource).toContain('data-tour-id="statements-table"');
-    expect(listViewSource).toContain("dataTourId={index === 0 ? 'statement-row-primary' : undefined}");
+    expect(listViewSource).toContain(
+      "dataTourId={index === 0 ? 'statement-row-primary' : undefined}",
+    );
     expect(listItemSource).toContain('data-tour-id={dataTourId}');
   });
 });
@@ -231,7 +233,9 @@ describe('StatementsCircularUploadMenu', () => {
     );
 
     expect(
-      panelContainer.querySelector('[aria-label="Open upload actions"]')?.getAttribute('data-tour-id'),
+      panelContainer
+        .querySelector('[aria-label="Open upload actions"]')
+        ?.getAttribute('data-tour-id'),
     ).toBe('statements-upload-trigger');
 
     const anchoredButtons = Array.from(
@@ -270,7 +274,9 @@ describe('StatementsCircularUploadMenu', () => {
     );
 
     expect(
-      panelContainer.querySelector('[aria-label="Open upload actions"]')?.getAttribute('data-tour-id'),
+      panelContainer
+        .querySelector('[aria-label="Open upload actions"]')
+        ?.getAttribute('data-tour-id'),
     ).toBeNull();
 
     const anchoredButtons = Array.from(

@@ -132,7 +132,12 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }, [mobileSidePanelOpen]);
 
-  useMountAnimation(mobileSidePanelOpen, mobileSidePanelMounted, setMobileSidePanelMounted, setMobileSidePanelVisible);
+  useMountAnimation(
+    mobileSidePanelOpen,
+    mobileSidePanelMounted,
+    setMobileSidePanelMounted,
+    setMobileSidePanelVisible,
+  );
 
   React.useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -271,7 +276,6 @@ function MainSidePanelLayoutInner({ children }: { children: React.ReactNode }) {
               style={isStatementsPage ? { height: '100%' } : undefined}
             />
           </Box>
-
         </>
       ) : null}
       <div style={{ flex: 1, ...(isStatementsPage ? { height: '100%', overflow: 'hidden' } : {}) }}>

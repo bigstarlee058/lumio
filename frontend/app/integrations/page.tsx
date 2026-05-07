@@ -1,9 +1,10 @@
 /* eslint-disable max-lines */
 'use client';
 
-import type React from 'react';
+import { CheckCircle2, ExternalLink, Search, Star } from '@/app/components/icons';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
@@ -13,13 +14,12 @@ import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutl
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import { Box, Stack, Typography } from '@mui/material';
-import { CheckCircle2, ExternalLink, Search, Star } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function IntegrationsPage(): React.JSX.Element {
@@ -130,7 +130,8 @@ export default function IntegrationsPage(): React.JSX.Element {
       {
         key: 'workbook-import',
         name: 'Workbook and Google Sheets import',
-        description: 'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.',
+        description:
+          'Import custom tables from XLSX, CSV, ODS, or a shared Google Sheets link without OAuth.',
         badge: 'File based',
         category: 'spreadsheets',
         recommended: true,
@@ -292,8 +293,7 @@ export default function IntegrationsPage(): React.JSX.Element {
         p: 2,
         bgcolor: 'background.paper',
         boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
-        cursor:
-          item.primaryAction?.href && !item.primaryAction.external ? 'pointer' : 'default',
+        cursor: item.primaryAction?.href && !item.primaryAction.external ? 'pointer' : 'default',
         '&:hover': {
           boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
         },
@@ -565,7 +565,13 @@ export default function IntegrationsPage(): React.JSX.Element {
           }}
         >
           <Star
-            style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 2, flexShrink: 0 }}
+            style={{
+              height: 20,
+              width: 20,
+              color: 'var(--color-primary)',
+              marginTop: 2,
+              flexShrink: 0,
+            }}
           />
           <Box>
             <Typography style={{ fontSize: 14, fontWeight: 500, color: c.ink900 }}>
@@ -578,7 +584,9 @@ export default function IntegrationsPage(): React.JSX.Element {
       <Stack spacing={4}>
         {active.length > 0 || !searchQuery ? (
           <Box data-tour-id="integrations-connected">
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}>
+            <Typography
+              style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}
+            >
               {t.sections.connected}
             </Typography>
             {active.length === 0 && !searchQuery ? (
@@ -590,7 +598,9 @@ export default function IntegrationsPage(): React.JSX.Element {
                   p: 2,
                 }}
               >
-                <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.empty.connected}</Typography>
+                <Typography style={{ fontSize: 14, color: c.ink700 }}>
+                  {t.empty.connected}
+                </Typography>
               </Box>
             ) : (
               <Stack spacing={3}>
@@ -624,7 +634,9 @@ export default function IntegrationsPage(): React.JSX.Element {
 
         {available.length > 0 || !searchQuery ? (
           <Box data-tour-id="integrations-available">
-            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}>
+            <Typography
+              style={{ fontSize: 14, fontWeight: 600, color: c.ink800, marginBottom: 12 }}
+            >
               {t.sections.available}
             </Typography>
             {available.length === 0 && !searchQuery ? (
@@ -636,7 +648,9 @@ export default function IntegrationsPage(): React.JSX.Element {
                   p: 2,
                 }}
               >
-                <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.empty.available}</Typography>
+                <Typography style={{ fontSize: 14, color: c.ink700 }}>
+                  {t.empty.available}
+                </Typography>
               </Box>
             ) : (
               <Stack spacing={3}>

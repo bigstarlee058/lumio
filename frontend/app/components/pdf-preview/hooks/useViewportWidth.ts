@@ -9,11 +9,15 @@ export function useViewportWidth(isOpen: boolean): ViewportResult {
   useEffect(() => {
     if (!isOpen || !viewportRef.current) return;
     const node = viewportRef.current;
-    const update = (): void => { setPageWidth(Math.max(520, Math.min(1080, Math.floor(node.clientWidth - 120)))); };
+    const update = (): void => {
+      setPageWidth(Math.max(520, Math.min(1080, Math.floor(node.clientWidth - 120))));
+    };
     update();
     const observer = new ResizeObserver(update);
     observer.observe(node);
-    return (): void => { observer.disconnect(); };
+    return (): void => {
+      observer.disconnect();
+    };
   }, [isOpen]);
 
   return { viewportRef, pageWidth };

@@ -5,7 +5,13 @@ import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import type { BuildingProps } from './shared';
 
-export const ModernSlanted = ({ delay, duration, w = 120, h = 300, ...pos }: BuildingProps): React.JSX.Element => (
+export const ModernSlanted = ({
+  delay,
+  duration,
+  w = 120,
+  h = 300,
+  ...pos
+}: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

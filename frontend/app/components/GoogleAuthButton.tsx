@@ -1,9 +1,9 @@
 'use client';
 
-import apiClient from '@/app/lib/api';
-import { syncLocaleFromUser } from '@/app/lib/locale';
-import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { Spinner } from '@/app/components/ui/spinner';
+import apiClient from '@/app/lib/api';
+import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
+import { syncLocaleFromUser } from '@/app/lib/locale';
 import { Box } from '@mui/material';
 import Script from 'next/script';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -88,9 +88,13 @@ export function GoogleAuthButton({
   );
 
   const renderGoogleButton = useCallback(() => {
-    if (!scriptLoaded || !clientId || !buttonRef.current) return;
+    if (!(scriptLoaded && clientId && buttonRef.current)) {
+      return;
+    }
     const google = window.google;
-    if (!google?.accounts?.id) return;
+    if (!google?.accounts?.id) {
+      return;
+    }
 
     buttonRef.current.innerHTML = '';
     google.accounts.id.initialize({

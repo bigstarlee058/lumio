@@ -51,9 +51,13 @@ export function useColumnManagement({
   });
 
   const createColumn = useCallback(async () => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     const title = newColumn.title.trim();
-    if (!title) return;
+    if (!title) {
+      return;
+    }
     const toastId = toast.loading(messages.addColumnLoading);
     try {
       await apiClient.post(`/custom-tables/${tableId}/columns`, { title, type: newColumn.type });
@@ -68,7 +72,9 @@ export function useColumnManagement({
   }, [tableId, newColumn, loadTable, messages]);
 
   const deleteColumn = useCallback(async () => {
-    if (!tableId || !deleteColumnTarget) return;
+    if (!(tableId && deleteColumnTarget)) {
+      return;
+    }
     const toastId = toast.loading(messages.deleteColumnLoading);
     try {
       await apiClient.delete(`/custom-tables/${tableId}/columns/${deleteColumnTarget.id}`);
@@ -83,9 +89,13 @@ export function useColumnManagement({
 
   const renameColumnTitleFromGrid = useCallback(
     async (columnKey: string, nextTitle: string) => {
-      if (!tableId) return;
+      if (!tableId) {
+        return;
+      }
       const colId = orderedColumns.find(c => c.key === columnKey)?.id;
-      if (!colId) return;
+      if (!colId) {
+        return;
+      }
       try {
         await apiClient.patch(`/custom-tables/${tableId}/columns/${colId}`, { title: nextTitle });
         await loadTable();

@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  resolveMerchantFlow,
-} from './top-merchants.utils';
+import { resolveMerchantFlow } from './top-merchants.utils';
 
 describe('top merchants helpers', () => {
   it('resolves merchant flow using debit, credit and transaction type', () => {
@@ -36,5 +34,4 @@ describe('top merchants helpers', () => {
       }),
     ).toEqual({ flowType: 'income', amount: 95 });
   });
-
 });

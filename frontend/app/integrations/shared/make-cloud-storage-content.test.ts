@@ -29,7 +29,7 @@ describe('makeCloudStorageContent', () => {
         kk: 'Dropbox Chooser қолжетімсіз',
       },
     });
-    
+
     const drive = makeCloudStorageContent({
       key: 'googleDriveIntegrationPage',
       name: { ru: 'Google Drive', en: 'Google Drive', kk: 'Google Drive' },

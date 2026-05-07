@@ -184,7 +184,9 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!ReactModule.isValidElement(children)) return <>{children}</>;
+      if (!ReactModule.isValidElement(children)) {
+        return <>{children}</>;
+      }
 
       const child = children as React.ReactElement<{ onClick?: (event: React.MouseEvent) => void }>;
 
@@ -197,7 +199,9 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuContent: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!context?.open) return null;
+      if (!context?.open) {
+        return null;
+      }
       return <div>{children}</div>;
     },
     DropdownMenuItem: ({
@@ -274,14 +278,14 @@ describe('PayablesView', () => {
   });
 
   it('loads summary and list data', async () => {
-    const createObjectURL = vi.fn(() => 'blob:payables');
-    const revokeObjectURL = vi.fn();
+    const createObjectUrl = vi.fn(() => 'blob:payables');
+    const revokeObjectUrl = vi.fn();
     Object.defineProperty(window.URL, 'createObjectURL', {
-      value: createObjectURL,
+      value: createObjectUrl,
       writable: true,
     });
     Object.defineProperty(window.URL, 'revokeObjectURL', {
-      value: revokeObjectURL,
+      value: revokeObjectUrl,
       writable: true,
     });
 
@@ -309,14 +313,14 @@ describe('PayablesView', () => {
   });
 
   it('exports all filtered rows without page params and keeps the default sort', async () => {
-    const createObjectURL = vi.fn(() => 'blob:payables');
-    const revokeObjectURL = vi.fn();
+    const createObjectUrl = vi.fn(() => 'blob:payables');
+    const revokeObjectUrl = vi.fn();
     Object.defineProperty(window.URL, 'createObjectURL', {
-      value: createObjectURL,
+      value: createObjectUrl,
       writable: true,
     });
     Object.defineProperty(window.URL, 'revokeObjectURL', {
-      value: revokeObjectURL,
+      value: revokeObjectUrl,
       writable: true,
     });
 

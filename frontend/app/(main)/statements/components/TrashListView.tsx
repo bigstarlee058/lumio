@@ -1,6 +1,7 @@
 'use client';
 
 import ConfirmModal from '@/app/components/ConfirmModal';
+import { RotateCcw, Search, Trash2 } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { AppPagination } from '@/app/components/ui/pagination';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -13,8 +14,9 @@ import {
   toggleSelectAllVisible,
   toggleStatementSelection,
 } from '@/app/lib/statement-selection';
+import { tokens } from '@/lib/theme-tokens';
 import { resolveBankLogo } from '@bank-logos';
-import { RotateCcw, Search, Trash2 } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { TrashListItem, type TrashListItemModel } from './TrashListItem';
@@ -23,8 +25,6 @@ import {
   resolvePermanentDeletionDate,
   resolveTrashEntityType,
 } from './trash-utils';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
 
 const PAGE_SIZE = 30;
 const DEFAULT_TRASH_TTL_DAYS = 30;
@@ -43,7 +43,9 @@ type TrashFile = TrashListItemModel & {
 
 const getBankDisplayName = (bankName: string) => {
   const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
+  if (!resolved) {
+    return bankName;
+  }
   return resolved.key !== 'other' ? resolved.displayName : bankName;
 };
 
@@ -237,7 +239,9 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     void loadTrashFiles();
   }, [user]);
 
@@ -304,7 +308,9 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   const removeFilesFromState = (ids: string[]) => {
-    if (ids.length === 0) return;
+    if (ids.length === 0) {
+      return;
+    }
     setFiles(prev => prev.filter(file => !ids.includes(file.id)));
     setSelectedIds(prev => prev.filter(id => !ids.includes(id)));
   };
@@ -323,7 +329,9 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   const handleBulkRestore = async () => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0) {
+      return;
+    }
     const toastId = toast.loading(labels.restoreLoading);
 
     try {
@@ -339,13 +347,17 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   const openDeleteConfirm = (ids: string[]) => {
-    if (ids.length === 0) return;
+    if (ids.length === 0) {
+      return;
+    }
     setPendingDeleteIds(ids);
     setDeleteConfirmOpen(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (pendingDeleteIds.length === 0) return;
+    if (pendingDeleteIds.length === 0) {
+      return;
+    }
 
     const ids = [...pendingDeleteIds];
     const toastId = toast.loading(labels.deleteLoading);
@@ -398,9 +410,13 @@ export default function TrashListView({ onCountChange }: Props) {
   };
 
   const formatDateTime = (value?: string | Date | null) => {
-    if (!value) return '—';
+    if (!value) {
+      return '—';
+    }
     const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
+    if (Number.isNaN(date.getTime())) {
+      return '—';
+    }
     return date.toLocaleString(localeCode, {
       year: 'numeric',
       month: 'short',
@@ -513,7 +529,9 @@ export default function TrashListView({ onCountChange }: Props) {
                   style={{ height: 16, width: 16, borderRadius: tokens.radius.xs }}
                   aria-label={labels.selectAll}
                 />
-                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>{labels.selectAll}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink700 }}>
+                  {labels.selectAll}
+                </span>
               </div>
 
               <div className="lumio-trash-list__thead">
@@ -529,7 +547,9 @@ export default function TrashListView({ onCountChange }: Props) {
                   />
                 </div>
                 <div style={{ width: 176 }}>{labels.typeHeader}</div>
-                <div style={{ width: 440, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div
+                  style={{ width: 440, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+                >
                   <span>{labels.deletedAtHeader}</span>
                   <span>{labels.autoDeleteHeader}</span>
                 </div>
@@ -588,7 +608,9 @@ export default function TrashListView({ onCountChange }: Props) {
       <ConfirmModal
         isOpen={deleteConfirmOpen}
         onClose={() => {
-          if (confirmLoading) return;
+          if (confirmLoading) {
+            return;
+          }
           setDeleteConfirmOpen(false);
           setPendingDeleteIds([]);
         }}
@@ -606,7 +628,9 @@ export default function TrashListView({ onCountChange }: Props) {
       <ConfirmModal
         isOpen={emptyConfirmOpen}
         onClose={() => {
-          if (confirmLoading) return;
+          if (confirmLoading) {
+            return;
+          }
           setEmptyConfirmOpen(false);
         }}
         onConfirm={() => {

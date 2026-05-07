@@ -5,7 +5,13 @@ import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import type { BuildingProps } from './shared';
 
-export const SteppedSkyscraper = ({ delay, duration, w = 140, h = 350, ...pos }: BuildingProps): React.JSX.Element => (
+export const SteppedSkyscraper = ({
+  delay,
+  duration,
+  w = 140,
+  h = 350,
+  ...pos
+}: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}

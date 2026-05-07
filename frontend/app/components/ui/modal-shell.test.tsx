@@ -1,4 +1,3 @@
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -44,7 +43,9 @@ describe('ModalShell', () => {
 
   it('uses the shared spinner in a loading confirm action', async () => {
     await act(async () => {
-      root.render(<ModalFooter onConfirm={() => undefined} isConfirmLoading confirmText="Saving" />);
+      root.render(
+        <ModalFooter onConfirm={() => undefined} isConfirmLoading confirmText="Saving" />,
+      );
       await Promise.resolve();
     });
 

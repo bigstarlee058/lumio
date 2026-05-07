@@ -4,11 +4,27 @@ import { payablesApi } from '@/app/lib/payables-api';
 import { isStageActionBlocked, setStatementStage } from '@/app/lib/statement-workflow';
 import type { StatementStageAction, StatementStageActionId } from '@/app/lib/statement-workflow';
 import { toast } from 'react-hot-toast';
+import type {
+  BranchOption,
+  CategoryOption,
+  Statement,
+  Transaction,
+  WalletOption,
+} from '../editHelpers';
+import {
+  formatDate,
+  normalizeDateInput,
+  normalizeNumberInput,
+  parseNullableNumber,
+} from '../editHelpers';
 import { buildPayableFromStatement } from '../payable-from-statement';
-import type { CategoryOption, BranchOption, WalletOption, Statement, Transaction } from '../editHelpers';
-import { formatDate, normalizeDateInput, normalizeNumberInput, parseNullableNumber } from '../editHelpers';
 
-type MetaForm = { balanceStart: string; balanceEnd: string; statementDateFrom: string; statementDateTo: string };
+type MetaForm = {
+  balanceStart: string;
+  balanceEnd: string;
+  statementDateFrom: string;
+  statementDateTo: string;
+};
 
 function extractApiData<T>(res: { data?: { data?: T } | T }): T {
   const d = res.data as { data?: T } | undefined;
@@ -21,32 +37,59 @@ function extractListData<T>(res: { data?: { data?: T[] } | T[] }): T[] {
 }
 
 function extractMeta(statementData: Statement | null): Record<string, unknown> {
-  const details = statementData?.parsingDetails as { metadataExtracted?: Record<string, unknown> } | undefined;
+  const details = statementData?.parsingDetails as
+    | { metadataExtracted?: Record<string, unknown> }
+    | undefined;
   return details?.metadataExtracted ?? {};
 }
 
-function resolveField(primary: unknown, fallback: unknown): unknown { return primary ?? fallback; }
+function resolveField(primary: unknown, fallback: unknown): unknown {
+  return primary ?? fallback;
+}
 
-function buildMetadataForm(statementData: Statement | null, meta: Record<string, unknown>): MetaForm {
+function buildMetadataForm(
+  statementData: Statement | null,
+  meta: Record<string, unknown>,
+): MetaForm {
   return {
-    balanceStart: normalizeNumberInput(resolveField(statementData?.balanceStart, meta.balanceStart)),
+    balanceStart: normalizeNumberInput(
+      resolveField(statementData?.balanceStart, meta.balanceStart),
+    ),
     balanceEnd: normalizeNumberInput(resolveField(statementData?.balanceEnd, meta.balanceEnd)),
-    statementDateFrom: normalizeDateInput(resolveField(statementData?.statementDateFrom, meta.dateFrom)),
+    statementDateFrom: normalizeDateInput(
+      resolveField(statementData?.statementDateFrom, meta.dateFrom),
+    ),
     statementDateTo: normalizeDateInput(resolveField(statementData?.statementDateTo, meta.dateTo)),
   };
 }
 
-type LoadSetters = { setLoading: (v: boolean) => void; setOptionsLoading: (v: boolean) => void; setStatement: (v: Statement | null) => void; setTransactions: (v: Transaction[]) => void; setCategories: (v: CategoryOption[]) => void; setBranches: (v: BranchOption[]) => void; setWallets: (v: WalletOption[]) => void; setMetadataForm: (v: MetaForm) => void; setError: (v: string) => void };
+type LoadSetters = {
+  setLoading: (v: boolean) => void;
+  setOptionsLoading: (v: boolean) => void;
+  setStatement: (v: Statement | null) => void;
+  setTransactions: (v: Transaction[]) => void;
+  setCategories: (v: CategoryOption[]) => void;
+  setBranches: (v: BranchOption[]) => void;
+  setWallets: (v: WalletOption[]) => void;
+  setMetadataForm: (v: MetaForm) => void;
+  setError: (v: string) => void;
+};
 type LoadMessages = { loadDataError: string };
 
-export async function loadStatementData(statementId: string, messages: LoadMessages, set: LoadSetters): Promise<void> {
+export async function loadStatementData(
+  statementId: string,
+  messages: LoadMessages,
+  set: LoadSetters,
+): Promise<void> {
   try {
     set.setLoading(true);
     set.setOptionsLoading(true);
     const [sRes, tRes, cRes, bRes, wRes] = await Promise.all([
       apiClient.get(`/statements/${statementId}`),
       apiClient.get(`/transactions?statement_id=${statementId}&limit=1000`),
-      apiClient.get('/categories'), apiClient.get('/branches'), apiClient.get('/wallets'),
+      apiClient.get('/categories'),
+      apiClient.get('/branches'),
+      apiClient.get('/wallets'),
     ]);
     const statementData = extractApiData<Statement>(sRes);
     set.setStatement(statementData);
@@ -63,7 +106,9 @@ export async function loadStatementData(statementId: string, messages: LoadMessa
   }
 }
 
-function getExportTableId(response: { data?: { tableId?: string; id?: string } }): string | undefined {
+function getExportTableId(response: { data?: { tableId?: string; id?: string } }):
+  | string
+  | undefined {
   return response?.data?.tableId ?? response?.data?.id;
 }
 
@@ -72,20 +117,51 @@ function buildExportName(prefix: string, fileName: string): string {
   return raw.length > 120 ? raw.slice(0, 120) : raw;
 }
 
-type ExportMsgs = { exportLoading: string; exportSuccess: string; exportFailure: string; exportDescription: string; statementNamePrefix: string };
-type ExportArgs = { statementId: string; statement: Statement | null; router: { push: (p: string) => void }; messages: ExportMsgs; setExportingToTable: (v: boolean) => void };
+type ExportMsgs = {
+  exportLoading: string;
+  exportSuccess: string;
+  exportFailure: string;
+  exportDescription: string;
+  statementNamePrefix: string;
+};
+type ExportArgs = {
+  statementId: string;
+  statement: Statement | null;
+  router: { push: (p: string) => void };
+  messages: ExportMsgs;
+  setExportingToTable: (v: boolean) => void;
+};
 
-export async function exportToCustomTable({ statementId, statement, router, messages, setExportingToTable }: ExportArgs): Promise<void> {
-  if (!statement) return;
+export async function exportToCustomTable({
+  statementId,
+  statement,
+  router,
+  messages,
+  setExportingToTable,
+}: ExportArgs): Promise<void> {
+  if (!statement) {
+    return;
+  }
   setExportingToTable(true);
   const toastId = toast.loading(messages.exportLoading);
   try {
     const name = buildExportName(messages.statementNamePrefix, statement.fileName);
-    const description = messages.exportDescription.replace('{{dateFrom}}', formatDate(statement.statementDateFrom)).replace('{{dateTo}}', formatDate(statement.statementDateTo));
-    const response = await apiClient.post('/custom-tables/from-statements', { statementIds: [statementId], name, description });
+    const description = messages.exportDescription
+      .replace('{{dateFrom}}', formatDate(statement.statementDateFrom))
+      .replace('{{dateTo}}', formatDate(statement.statementDateTo));
+    const response = await apiClient.post('/custom-tables/from-statements', {
+      statementIds: [statementId],
+      name,
+      description,
+    });
     const tableId = getExportTableId(response);
-    if (tableId) { toast.success(messages.exportSuccess, { id: toastId }); router.push(`/custom-tables/${tableId}`); }
-    else { toast.error(messages.exportFailure, { id: toastId }); router.push('/custom-tables'); }
+    if (tableId) {
+      toast.success(messages.exportSuccess, { id: toastId });
+      router.push(`/custom-tables/${tableId}`);
+    } else {
+      toast.error(messages.exportFailure, { id: toastId });
+      router.push('/custom-tables');
+    }
   } catch (err) {
     console.error('Export to custom table failed:', err);
     toast.error(messages.exportFailure, { id: toastId });
@@ -94,46 +170,124 @@ export async function exportToCustomTable({ statementId, statement, router, mess
   }
 }
 
-type SampleResult = { statement?: Statement; data?: { statement?: Statement; transaction?: Transaction }; transaction?: Transaction };
-function resolveUpdatedStatement(data: SampleResult): Statement | undefined { return data?.statement ?? data?.data?.statement; }
-function resolveCreatedTransaction(data: SampleResult): Transaction | undefined { return data?.transaction ?? data?.data?.transaction; }
-function extractDroppedSampleResult(data: SampleResult): { updatedStatement?: Statement; createdTransaction?: Transaction } {
-  return { updatedStatement: resolveUpdatedStatement(data), createdTransaction: resolveCreatedTransaction(data) };
+type SampleResult = {
+  statement?: Statement;
+  data?: { statement?: Statement; transaction?: Transaction };
+  transaction?: Transaction;
+};
+function resolveUpdatedStatement(data: SampleResult): Statement | undefined {
+  return data?.statement ?? data?.data?.statement;
+}
+function resolveCreatedTransaction(data: SampleResult): Transaction | undefined {
+  return data?.transaction ?? data?.data?.transaction;
+}
+function extractDroppedSampleResult(data: SampleResult): {
+  updatedStatement?: Statement;
+  createdTransaction?: Transaction;
+} {
+  return {
+    updatedStatement: resolveUpdatedStatement(data),
+    createdTransaction: resolveCreatedTransaction(data),
+  };
 }
 
-type ConvertArgs = { statementId: string; sample: { transaction?: unknown }; index: number; warning?: string; loadData: () => Promise<void>; setStatement: (v: Statement | null) => void; setTransactions: (fn: (prev: Transaction[]) => Transaction[]) => void; setSuccess: (v: boolean) => void };
+type ConvertArgs = {
+  statementId: string;
+  sample: { transaction?: unknown };
+  index: number;
+  warning?: string;
+  loadData: () => Promise<void>;
+  setStatement: (v: Statement | null) => void;
+  setTransactions: (fn: (prev: Transaction[]) => Transaction[]) => void;
+  setSuccess: (v: boolean) => void;
+};
 
-export async function convertDroppedSampleAction({ statementId, sample, index, warning, loadData, setStatement, setTransactions, setSuccess }: ConvertArgs): Promise<void> {
-  const response = await apiClient.post(`/statements/${statementId}/convert-dropped-sample`, { index, warning, transaction: sample.transaction });
+export async function convertDroppedSampleAction({
+  statementId,
+  sample,
+  index,
+  warning,
+  loadData,
+  setStatement,
+  setTransactions,
+  setSuccess,
+}: ConvertArgs): Promise<void> {
+  const response = await apiClient.post(`/statements/${statementId}/convert-dropped-sample`, {
+    index,
+    warning,
+    transaction: sample.transaction,
+  });
   const { updatedStatement, createdTransaction } = extractDroppedSampleResult(response.data);
-  if (updatedStatement) setStatement(updatedStatement);
-  if (createdTransaction) { setTransactions(prev => [createdTransaction, ...prev]); }
-  else { await loadData(); }
+  if (updatedStatement) {
+    setStatement(updatedStatement);
+  }
+  if (createdTransaction) {
+    setTransactions(prev => [createdTransaction, ...prev]);
+  } else {
+    await loadData();
+  }
   setSuccess(true);
   setTimeout(() => setSuccess(false), 3000);
 }
 
-const STAGE_ERROR: Record<string, string> = { pay: 'Failed to create payable', default: 'Failed to update stage' };
+const STAGE_ERROR: Record<string, string> = {
+  pay: 'Failed to create payable',
+  default: 'Failed to update stage',
+};
 
-type StageArgs = { action: StatementStageAction; stageActionToasts: Record<StatementStageActionId, string>; missingCategoryCount: number; statement: Statement | null; transactions: Transaction[]; router: { push: (p: string) => void }; setStageActionLoadingId: (v: StatementStageActionId | null) => void; setCurrentStage: (v: string) => void };
+type StageArgs = {
+  action: StatementStageAction;
+  stageActionToasts: Record<StatementStageActionId, string>;
+  missingCategoryCount: number;
+  statement: Statement | null;
+  transactions: Transaction[];
+  router: { push: (p: string) => void };
+  setStageActionLoadingId: (v: StatementStageActionId | null) => void;
+  setCurrentStage: (v: string) => void;
+};
 
-function isStageActionReady(statement: Statement | null, actionId: string, missingCount: number): statement is Statement {
+function isStageActionReady(
+  statement: Statement | null,
+  actionId: string,
+  missingCount: number,
+): statement is Statement {
   return Boolean(statement?.id) && !isStageActionBlocked(actionId, missingCount);
 }
 
-async function handlePayStageAction(statement: Statement, transactions: Transaction[], setId: (v: null) => void): Promise<boolean> {
+async function handlePayStageAction(
+  statement: Statement,
+  transactions: Transaction[],
+  setId: (v: null) => void,
+): Promise<boolean> {
   const payableDraft = buildPayableFromStatement({ statement, transactions });
-  if (!payableDraft) { toast.error('No expense amount available to create payable'); setId(null); return false; }
+  if (!payableDraft) {
+    toast.error('No expense amount available to create payable');
+    setId(null);
+    return false;
+  }
   await payablesApi.create(payableDraft);
   return true;
 }
 
-export async function processStageAction({ action, stageActionToasts, missingCategoryCount, statement, transactions, router, setStageActionLoadingId, setCurrentStage }: StageArgs): Promise<void> {
-  if (!isStageActionReady(statement, action.id, missingCategoryCount)) return;
+export async function processStageAction({
+  action,
+  stageActionToasts,
+  missingCategoryCount,
+  statement,
+  transactions,
+  router,
+  setStageActionLoadingId,
+  setCurrentStage,
+}: StageArgs): Promise<void> {
+  if (!isStageActionReady(statement, action.id, missingCategoryCount)) {
+    return;
+  }
   setStageActionLoadingId(action.id);
   try {
     if (action.id === 'pay') {
-      if (!(await handlePayStageAction(statement, transactions, setStageActionLoadingId))) return;
+      if (!(await handlePayStageAction(statement, transactions, setStageActionLoadingId))) {
+        return;
+      }
     }
     setStatementStage(statement.id, action.nextStage);
     setCurrentStage(action.nextStage);
@@ -147,7 +301,11 @@ export async function processStageAction({ action, stageActionToasts, missingCat
   }
 }
 
-function resolveSelectedCategory(responseCategory: unknown, flatCategories: { id: string; name: string }[], categoryId: string): unknown {
+function resolveSelectedCategory(
+  responseCategory: unknown,
+  flatCategories: { id: string; name: string }[],
+  categoryId: string,
+): unknown {
   return responseCategory ?? flatCategories.find(c => c.id === categoryId) ?? null;
 }
 
@@ -155,15 +313,49 @@ function canUpdateCategory(statement: Statement | null, saving: boolean): statem
   return Boolean(statement?.id) && !saving;
 }
 
-type CategoryArgs = { statement: Statement | null; categoryId: string; flatCategories: { id: string; name: string }[]; messages: { categoryUpdated: string; categoryUpdateFailed: string }; statementCategorySaving: boolean; setStatementCategorySaving: (v: boolean) => void; setStatement: React.Dispatch<React.SetStateAction<Statement | null>>; setError: (v: string) => void };
+type CategoryArgs = {
+  statement: Statement | null;
+  categoryId: string;
+  flatCategories: { id: string; name: string }[];
+  messages: { categoryUpdated: string; categoryUpdateFailed: string };
+  statementCategorySaving: boolean;
+  setStatementCategorySaving: (v: boolean) => void;
+  setStatement: React.Dispatch<React.SetStateAction<Statement | null>>;
+  setError: (v: string) => void;
+};
 
-export async function updateStatementCategoryAction({ statement, categoryId, flatCategories, messages, statementCategorySaving, setStatementCategorySaving, setStatement, setError }: CategoryArgs): Promise<void> {
-  if (!canUpdateCategory(statement, statementCategorySaving)) return;
+export async function updateStatementCategoryAction({
+  statement,
+  categoryId,
+  flatCategories,
+  messages,
+  statementCategorySaving,
+  setStatementCategorySaving,
+  setStatement,
+  setError,
+}: CategoryArgs): Promise<void> {
+  if (!canUpdateCategory(statement, statementCategorySaving)) {
+    return;
+  }
   try {
     setStatementCategorySaving(true);
-    const response = await apiClient.patch(`/storage/files/${statement.id}/category`, { categoryId: categoryId || null });
-    const selectedCategory = resolveSelectedCategory(response.data?.category, flatCategories, categoryId);
-    setStatement(prev => prev ? { ...prev, categoryId: response.data?.categoryId ?? (categoryId || null), category: selectedCategory } : prev);
+    const response = await apiClient.patch(`/storage/files/${statement.id}/category`, {
+      categoryId: categoryId || null,
+    });
+    const selectedCategory = resolveSelectedCategory(
+      response.data?.category,
+      flatCategories,
+      categoryId,
+    );
+    setStatement(prev =>
+      prev
+        ? {
+            ...prev,
+            categoryId: response.data?.categoryId ?? (categoryId || null),
+            category: selectedCategory,
+          }
+        : prev,
+    );
     toast.success(messages.categoryUpdated);
   } catch (err: unknown) {
     setError(getApiErrorMessage(err, '') || messages.categoryUpdateFailed);
@@ -172,9 +364,17 @@ export async function updateStatementCategoryAction({ statement, categoryId, fla
   }
 }
 
-type AutoSaveArgs = { statementId: string; formData: MetaForm; setStatement: (v: Statement | null) => void };
+type AutoSaveArgs = {
+  statementId: string;
+  formData: MetaForm;
+  setStatement: (v: Statement | null) => void;
+};
 
-export async function metadataAutoSave({ statementId, formData, setStatement }: AutoSaveArgs): Promise<void> {
+export async function metadataAutoSave({
+  statementId,
+  formData,
+  setStatement,
+}: AutoSaveArgs): Promise<void> {
   try {
     const payload = {
       balanceStart: parseNullableNumber(formData.balanceStart),

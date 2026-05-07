@@ -1,9 +1,9 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { Download as DownloadIcon, Lock as LockIcon } from '@/app/components/icons';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import { getApiErrorMessage } from '@/app/lib/api-error';
-import { Download as DownloadIcon, Lock as LockIcon } from '@/app/components/icons';
 import {
   Alert,
   Box,
@@ -176,7 +176,9 @@ export default function SharedFilePage() {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              onKeyPress={e => { if (e.key === 'Enter') handlePasswordSubmit(); }}
+              onKeyPress={e => {
+                if (e.key === 'Enter') handlePasswordSubmit();
+              }}
             />
 
             <Button

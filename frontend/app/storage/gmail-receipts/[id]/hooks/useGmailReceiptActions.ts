@@ -1,11 +1,15 @@
 'use client';
 
 import { gmailReceiptsApi } from '@/app/lib/api';
-import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { parseAmountValue } from './useGmailReceiptData';
-import type { GmailReceipt, EditableReceiptData, ReceiptCategoryOption } from './useGmailReceiptData';
+import type {
+  EditableReceiptData,
+  GmailReceipt,
+  ReceiptCategoryOption,
+} from './useGmailReceiptData';
 
 export interface UseGmailReceiptActionsProps {
   receiptId: string;
@@ -86,7 +90,9 @@ export function useGmailReceiptActions({
   };
 
   const handleSubmitDocument = async (): Promise<void> => {
-    if (!receipt) return;
+    if (!receipt) {
+      return;
+    }
     const amount = parseAmountValue(editedData.amount ?? receipt.parsedData?.amount ?? null);
     if (amount === null || amount <= 0) {
       toast.error('Amount is required before submit');
@@ -111,7 +117,9 @@ export function useGmailReceiptActions({
   };
 
   const handleCategorySelect = async (categoryId: string): Promise<void> => {
-    if (!receipt || categorySaving) return;
+    if (!receipt || categorySaving) {
+      return;
+    }
 
     const selected = categories.find(c => c.id === categoryId);
 

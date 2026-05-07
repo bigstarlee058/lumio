@@ -1,18 +1,23 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { AppPagination } from '@/app/components/ui/pagination';
-import { Box, Chip, Typography } from '@mui/material';
 import { Search, Trash2 } from '@/app/components/icons';
+import { AppPagination } from '@/app/components/ui/pagination';
+import { Spinner } from '@/app/components/ui/spinner';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Chip, Typography } from '@mui/material';
 import React from 'react';
 import { Checkbox } from '../../components/ui/checkbox';
-import type { CategoryOption, StorageFile, TagOption } from '../storageHelpers';
-import { formatFileSize, getTagChipStyle, getBankDisplayName, truncateFileNameForDisplay } from '../storageHelpers';
-import { DraggableFileRow } from './DraggableFileRow';
 import { formatPaginationLabel } from '../helpers/storageFormatters';
 import { getAvailabilityChipStyle, getStatusChipStyle } from '../helpers/storageStyling';
-import { tokens } from '@/lib/theme-tokens';
+import type { CategoryOption, StorageFile, TagOption } from '../storageHelpers';
+import {
+  formatFileSize,
+  getBankDisplayName,
+  getTagChipStyle,
+  truncateFileNameForDisplay,
+} from '../storageHelpers';
+import { DraggableFileRow } from './DraggableFileRow';
 
 export interface StorageFileTableProps {
   loading: boolean;
@@ -140,11 +145,21 @@ export function StorageFileTable({
 }: StorageFileTableProps): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Box sx={{ bgcolor: 'background.paper', border: '1px solid var(--border-color)', overflow: 'visible' }}>
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          border: '1px solid var(--border-color)',
+          overflow: 'visible',
+        }}
+      >
         {loading ? (
           <LoadingState />
         ) : filteredFiles.length === 0 ? (
-          <EmptyState isTrashView={isTrashView} title={emptyStateTitle} subtitle={emptyStateSubtitle} />
+          <EmptyState
+            isTrashView={isTrashView}
+            title={emptyStateTitle}
+            subtitle={emptyStateSubtitle}
+          />
         ) : (
           <TableBody
             isTrashView={isTrashView}
@@ -227,10 +242,29 @@ interface EmptyStateProps {
 function EmptyState({ isTrashView, title, subtitle }: EmptyStateProps): React.JSX.Element {
   return (
     <Box sx={{ textAlign: 'center', py: 8, px: 3 }}>
-      <Box sx={{ mx: 'auto', width: 64, height: 64, color: 'var(--muted-foreground)', mb: 2, bgcolor: 'var(--muted)', borderRadius: tokens.radius.full, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {isTrashView ? <Trash2 style={{ width: 32, height: 32 }} /> : <Search style={{ width: 32, height: 32 }} />}
+      <Box
+        sx={{
+          mx: 'auto',
+          width: 64,
+          height: 64,
+          color: 'var(--muted-foreground)',
+          mb: 2,
+          bgcolor: 'var(--muted)',
+          borderRadius: tokens.radius.full,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {isTrashView ? (
+          <Trash2 style={{ width: 32, height: 32 }} />
+        ) : (
+          <Search style={{ width: 32, height: 32 }} />
+        )}
       </Box>
-      <Typography style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{title}</Typography>
+      <Typography style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>
+        {title}
+      </Typography>
       <Typography style={{ marginTop: 4, color: 'var(--text-secondary)' }}>{subtitle}</Typography>
     </Box>
   );
@@ -356,7 +390,10 @@ function TableBody({
               <th style={{ ...thStyle, width: 48 }}>
                 <Checkbox
                   checked={allTrashSelected}
-                  indeterminate={selectedTrashIdsInView.length > 0 && selectedTrashIdsInView.length < selectableTrashIds.length}
+                  indeterminate={
+                    selectedTrashIdsInView.length > 0 &&
+                    selectedTrashIdsInView.length < selectableTrashIds.length
+                  }
                   onCheckedChange={onToggleSelectAllTrash}
                   className="h-4 w-4"
                   aria-label={trashSelectAllLabel}
@@ -384,7 +421,7 @@ function TableBody({
               isTrashView={isTrashView}
               selectedTrashIds={selectedTrashIds}
               toggleTrashSelection={onToggleTrashSelection}
-              setPreviewFileId={(id) => id && onPreviewOpen(id, file.fileName)}
+              setPreviewFileId={id => id && onPreviewOpen(id, file.fileName)}
               setPreviewFileName={() => undefined}
               setPreviewModalOpen={() => undefined}
               canEditFile={canEditFile}
@@ -448,19 +485,43 @@ function PaginationFooter({
   paginationPageOfTemplate,
   onPageChange,
 }: PaginationFooterProps): React.JSX.Element {
-  const shownLabel = totalItems === 0
-    ? emptyStateTitle
-    : formatPaginationLabel(paginationShownTemplate, { from: rangeStart, to: rangeEnd, count: totalItems });
-  const pageOfLabel = formatPaginationLabel(paginationPageOfTemplate, { page: currentPage, count: totalPagesCount });
+  const shownLabel =
+    totalItems === 0
+      ? emptyStateTitle
+      : formatPaginationLabel(paginationShownTemplate, {
+          from: rangeStart,
+          to: rangeEnd,
+          count: totalItems,
+        });
+  const pageOfLabel = formatPaginationLabel(paginationPageOfTemplate, {
+    page: currentPage,
+    count: totalPagesCount,
+  });
 
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { md: 'center' }, justifyContent: 'space-between', gap: 1.5, px: 3, py: 2, borderTop: '1px solid var(--border-color)' }}
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        alignItems: { md: 'center' },
+        justifyContent: 'space-between',
+        gap: 1.5,
+        px: 3,
+        py: 2,
+        borderTop: '1px solid var(--border-color)',
+      }}
       data-tour-id="pagination"
     >
       <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{shownLabel}</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
+        <Typography
+          style={{
+            fontSize: 14,
+            color: 'var(--text-secondary)',
+            minWidth: 120,
+            textAlign: 'center',
+          }}
+        >
           {pageOfLabel}
         </Typography>
         <AppPagination page={currentPage} total={totalPagesCount} onChange={onPageChange} />

@@ -97,11 +97,15 @@ export const DATE_PRESETS = [
 ] as const;
 
 export function loadTablesReportsFilters(): TablesReportsFilters {
-  if (typeof window === 'undefined') return { ...DEFAULT_TABLES_REPORTS_FILTERS };
+  if (typeof window === 'undefined') {
+    return { ...DEFAULT_TABLES_REPORTS_FILTERS };
+  }
 
   try {
     const raw = localStorage.getItem(TABLES_REPORTS_FILTERS_STORAGE_KEY);
-    if (!raw) return { ...DEFAULT_TABLES_REPORTS_FILTERS };
+    if (!raw) {
+      return { ...DEFAULT_TABLES_REPORTS_FILTERS };
+    }
     return {
       ...DEFAULT_TABLES_REPORTS_FILTERS,
       ...(JSON.parse(raw) as Partial<TablesReportsFilters>),
@@ -112,7 +116,9 @@ export function loadTablesReportsFilters(): TablesReportsFilters {
 }
 
 export function saveTablesReportsFilters(filters: TablesReportsFilters): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
   localStorage.setItem(TABLES_REPORTS_FILTERS_STORAGE_KEY, JSON.stringify(filters));
 }
 
@@ -129,19 +135,29 @@ export function getSourceLabel(source: string): string {
 }
 
 export function getComparisonColor(trend: TablesReportTrend): string {
-  if (trend === 'up') return 'text-emerald-600';
-  if (trend === 'down') return 'text-red-500';
+  if (trend === 'up') {
+    return 'text-emerald-600';
+  }
+  if (trend === 'down') {
+    return 'text-red-500';
+  }
   return 'text-gray-400';
 }
 
 export function getComparisonArrow(trend: TablesReportTrend): string {
-  if (trend === 'up') return '↑';
-  if (trend === 'down') return '↓';
+  if (trend === 'up') {
+    return '↑';
+  }
+  if (trend === 'down') {
+    return '↓';
+  }
   return '–';
 }
 
 export function resolveDays(preset: number): number {
-  if (preset !== -1) return preset;
+  if (preset !== -1) {
+    return preset;
+  }
 
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 1);

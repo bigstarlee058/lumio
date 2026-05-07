@@ -26,31 +26,62 @@ interface UseReceiptDetailReturn {
   handleApprove: () => Promise<void>;
 }
 
-export function useReceiptDetail({ isOpen, receipt, onClose, onUpdated }: UseReceiptDetailParams): UseReceiptDetailReturn {
+export function useReceiptDetail({
+  isOpen,
+  receipt,
+  onClose,
+  onUpdated,
+}: UseReceiptDetailParams): UseReceiptDetailReturn {
   const [categories, setCategories] = useState<ReceiptCategoryOption[]>([]);
   const [formValue, setFormValue] = useState<EditableReceiptParsedData>(buildInitialForm(receipt));
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { setFormValue(buildInitialForm(receipt)); }, [receipt]);
+  useEffect(() => {
+    setFormValue(buildInitialForm(receipt));
+  }, [receipt]);
 
   const previewUrl = useReceiptPreview({ isOpen, receipt });
 
   useEffect(() => {
     if (!isOpen) return;
     let active = true;
-    apiClient.get('/categories')
-      .then(r => { if (active) setCategories(r.data ?? []); })
-      .catch(() => { if (active) setCategories([]); });
-    return () => { active = false; };
+    apiClient
+      .get('/categories')
+      .then(r => {
+        if (active) setCategories(r.data ?? []);
+      })
+      .catch(() => {
+        if (active) setCategories([]);
+      });
+    return () => {
+      active = false;
+    };
   }, [isOpen]);
 
   const payload = useMemo(() => buildParsedDataPayload(formValue), [formValue]);
 
-  const handleFormChange = (nextValue: EditableReceiptParsedData): void => { setFormValue(nextValue); };
+  const handleFormChange = (nextValue: EditableReceiptParsedData): void => {
+    setFormValue(nextValue);
+  };
 
   const { handleCurrencyChange, handleSaveDraft, handleReject, handleApprove } = useReceiptActions({
-    receipt, payload, saving, setSaving, onClose, onUpdated,
+    receipt,
+    payload,
+    saving,
+    setSaving,
+    onClose,
+    onUpdated,
   });
 
-  return { categories, formValue, saving, previewUrl, handleFormChange, handleCurrencyChange, handleSaveDraft, handleReject, handleApprove };
+  return {
+    categories,
+    formValue,
+    saving,
+    previewUrl,
+    handleFormChange,
+    handleCurrencyChange,
+    handleSaveDraft,
+    handleReject,
+    handleApprove,
+  };
 }

@@ -1,6 +1,6 @@
+import { tokens } from '@/lib/theme-tokens';
 // Styling helpers extracted from StoragePageContent
 import type { SxProps, Theme } from '@mui/material';
-import { tokens } from '@/lib/theme-tokens';
 
 export function tagChipSx(isActive: boolean): SxProps<Theme> {
   return {
@@ -90,7 +90,11 @@ const STATUS_CHIP_MAP: Record<string, SxProps<Theme>> = {
 };
 
 const STATUS_DOT_DEFAULT = '#9ca3af';
-const STATUS_CHIP_DEFAULT: SxProps<Theme> = { bgcolor: '#f3f4f6', color: '#374151', border: '1px solid #e5e7eb' };
+const STATUS_CHIP_DEFAULT: SxProps<Theme> = {
+  bgcolor: '#f3f4f6',
+  color: '#374151',
+  border: '1px solid #e5e7eb',
+};
 
 export function getStatusChipStyle(tone: string): StatusChipStyle {
   return {

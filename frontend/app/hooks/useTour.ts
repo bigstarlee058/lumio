@@ -53,9 +53,15 @@ function useTourBaseActions(
   );
 
   const resumeTour = useCallback((): boolean => tourManager.resumeTour(), [tourManager]);
-  const stopTour = useCallback((): void => { tourManager.stopTour(); }, [tourManager]);
-  const nextStep = useCallback((): void => { tourManager.nextStep(); }, [tourManager]);
-  const previousStep = useCallback((): void => { tourManager.previousStep(); }, [tourManager]);
+  const stopTour = useCallback((): void => {
+    tourManager.stopTour();
+  }, [tourManager]);
+  const nextStep = useCallback((): void => {
+    tourManager.nextStep();
+  }, [tourManager]);
+  const previousStep = useCallback((): void => {
+    tourManager.previousStep();
+  }, [tourManager]);
 
   const resetTour = useCallback(
     (customTourId?: string): void => {
@@ -105,7 +111,10 @@ export function useTour(tourId?: string): UseTourReturn {
   useTourStateSync({ tourId, tourManager, setIsActive, setCurrentStep, setIsCompleted, isActive });
 
   const startTour = useCallback(
-    (customTourId?: string): void => { base.startTour(customTourId); setIsActive(true); },
+    (customTourId?: string): void => {
+      base.startTour(customTourId);
+      setIsActive(true);
+    },
     [base],
   );
   const resumeTour = useCallback((): boolean => {
@@ -114,17 +123,29 @@ export function useTour(tourId?: string): UseTourReturn {
     return resumed;
   }, [base]);
   const stopTour = useCallback((): void => {
-    base.stopTour(); setIsActive(false); setCurrentStep(null);
+    base.stopTour();
+    setIsActive(false);
+    setCurrentStep(null);
   }, [base]);
   const resetTour = useCallback(
-    (customTourId?: string): void => { base.resetTour(customTourId); setIsCompleted(false); },
+    (customTourId?: string): void => {
+      base.resetTour(customTourId);
+      setIsCompleted(false);
+    },
     [base],
   );
 
   return {
-    startTour, resumeTour, stopTour, resetTour,
-    nextStep: base.nextStep, previousStep: base.previousStep,
-    isActive, currentStep, isCompleted, tourManager,
+    startTour,
+    resumeTour,
+    stopTour,
+    resetTour,
+    nextStep: base.nextStep,
+    previousStep: base.previousStep,
+    isActive,
+    currentStep,
+    isCompleted,
+    tourManager,
   };
 }
 
@@ -140,7 +161,9 @@ export function useAutoTour(
 
   useEffect(() => {
     if (!isCompleted && condition) {
-      const timer = setTimeout(() => { startTour(); }, delay);
+      const timer = setTimeout(() => {
+        startTour();
+      }, delay);
       return () => clearTimeout(timer);
     }
   }, [isCompleted, condition, delay, startTour]);
@@ -151,7 +174,9 @@ export function useAutoTour(
  */
 export function useRegisterTours(tours: TourConfig[]): void {
   const tourManager = getTourManager();
-  useEffect(() => { tourManager.registerTours(tours); }, [tours, tourManager]);
+  useEffect(() => {
+    tourManager.registerTours(tours);
+  }, [tours, tourManager]);
 }
 
 /**
@@ -160,6 +185,8 @@ export function useRegisterTours(tours: TourConfig[]): void {
 export function useAvailableTours(): TourConfig[] {
   const tourManager = getTourManager();
   const [tours, setTours] = useState<TourConfig[]>([]);
-  useEffect(() => { setTours(tourManager.getAllTours()); }, [tourManager]);
+  useEffect(() => {
+    setTours(tourManager.getAllTours());
+  }, [tourManager]);
   return tours;
 }

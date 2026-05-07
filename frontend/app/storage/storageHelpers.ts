@@ -150,7 +150,9 @@ export const colorPickerPopoverSlotProps: PopoverProps['slotProps'] = {
 
 export const getBankDisplayName = (bankName: string): string => {
   const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
+  if (!resolved) {
+    return bankName;
+  }
   return resolved.key !== 'other' ? resolved.displayName : bankName;
 };
 
@@ -177,7 +179,9 @@ export const getAvailabilityDot = (status: FileAvailabilityStatus): string => {
 };
 
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
+  if (bytes === 0) {
+    return '0 B';
+  }
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -185,7 +189,9 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 export const getTagChipStyle = (tag: TagOption): CSSProperties | undefined => {
-  if (!tag.color) return undefined;
+  if (!tag.color) {
+    return undefined;
+  }
   return {
     borderColor: tag.color,
     color: tag.color,
@@ -193,8 +199,12 @@ export const getTagChipStyle = (tag: TagOption): CSSProperties | undefined => {
 };
 
 export const truncateFileNameForDisplay = (name: string, maxLength = 15): string => {
-  if (!name) return '';
-  if (name.length <= maxLength) return name;
+  if (!name) {
+    return '';
+  }
+  if (name.length <= maxLength) {
+    return name;
+  }
   const truncated = name.slice(0, Math.max(0, maxLength - 1));
   return `${truncated}…`;
 };
@@ -208,8 +218,14 @@ export const tagChipClass = (isActive: boolean): string =>
 
 export const getStatusTone = (status: string): 'success' | 'warning' | 'error' | 'default' => {
   const normalized = status.toLowerCase();
-  if (normalized === 'completed' || normalized === 'parsed') return 'success';
-  if (normalized === 'processing' || normalized === 'uploaded') return 'warning';
-  if (normalized === 'error') return 'error';
+  if (normalized === 'completed' || normalized === 'parsed') {
+    return 'success';
+  }
+  if (normalized === 'processing' || normalized === 'uploaded') {
+    return 'warning';
+  }
+  if (normalized === 'error') {
+    return 'error';
+  }
   return 'default';
 };

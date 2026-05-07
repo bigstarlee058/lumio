@@ -3,11 +3,36 @@
 import { memo } from 'react';
 import { ClockTower } from './buildings/ClockTower';
 import { GothicBuilding } from './buildings/GothicBuilding';
-import { DomeBuilding, ModernSlanted, StandardBuilding, SteppedSkyscraper } from './buildings/small-buildings';
+import {
+  DomeBuilding,
+  ModernSlanted,
+  StandardBuilding,
+  SteppedSkyscraper,
+} from './buildings/small-buildings';
 
-const CONTAINER_STYLE: React.CSSProperties = { position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 };
-const BACK_LAYER_STYLE: React.CSSProperties = { position: 'absolute', left: 0, right: 0, bottom: 0, height: 384, opacity: 0.3 };
-const FRONT_LAYER_STYLE: React.CSSProperties = { position: 'absolute', left: 0, right: 0, bottom: 0, height: 320, opacity: 0.6 };
+const CONTAINER_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  inset: 0,
+  overflow: 'hidden',
+  pointerEvents: 'none',
+  zIndex: 0,
+};
+const BACK_LAYER_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: 384,
+  opacity: 0.3,
+};
+const FRONT_LAYER_STYLE: React.CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: 320,
+  opacity: 0.6,
+};
 
 function BackLayer(): React.JSX.Element {
   return (

@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 import { formatPercentage } from '@/app/(main)/statements/components/analytics/analytics-format';
 import type { getComparisonDelta } from '@/app/(main)/statements/components/shared-analytics.utils';
@@ -22,8 +21,12 @@ const TREND_COLORS: Record<string, string> = {
 };
 
 const resolveDeltaPrefix = (delta: number): string => {
-  if (delta > 0) return '+';
-  if (delta < 0) return '-';
+  if (delta > 0) {
+    return '+';
+  }
+  if (delta < 0) {
+    return '-';
+  }
   return '';
 };
 
@@ -35,7 +38,9 @@ export function AnalyticsComparisonLine({
   vsPreviousPeriodLabel,
 }: Props): React.JSX.Element {
   if (!item) {
-    return <p style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{noDataLabel}</p>;
+    return (
+      <p style={{ marginTop: 4, fontSize: 12, color: 'var(--muted-foreground)' }}>{noDataLabel}</p>
+    );
   }
 
   const deltaColor = TREND_COLORS[item.trend] ?? 'var(--muted-foreground)';

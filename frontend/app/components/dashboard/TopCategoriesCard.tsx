@@ -1,8 +1,8 @@
 'use client';
 
+import type { DashboardData } from '@/app/hooks/useDashboard';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardData } from '@/app/hooks/useDashboard';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 
@@ -64,7 +64,16 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
   if (!option) {
     return (
       <Box
-        sx={{ display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
+        sx={{
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 13,
+          color: 'var(--muted-foreground)',
+          fontFamily: 'var(--font-dashboard-sans)',
+        }}
       >
         No category data
       </Box>
@@ -74,15 +83,36 @@ export function TopCategoriesCard({ categories }: TopCategoriesCardProps) {
   return (
     <Box sx={{ display: 'flex', height: '100%', width: '100%', position: 'relative' }}>
       <ReactECharts style={{ height: '100%', width: '100%' }} option={option} notMerge lazyUpdate />
-      <Box sx={{ pointerEvents: 'none', position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          pointerEvents: 'none',
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Box sx={{ textAlign: 'center', pb: 0.5, pr: '80px' }}>
           <Typography
-            sx={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-mono)' }}
+            sx={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '2px',
+              color: 'var(--muted-foreground)',
+              fontFamily: 'var(--font-dashboard-mono)',
+            }}
           >
             TOTAL
           </Typography>
           <Typography
-            sx={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
+            sx={{
+              fontSize: 14,
+              fontWeight: 700,
+              color: 'var(--foreground)',
+              fontFamily: 'var(--font-dashboard-sans)',
+            }}
           >
             Categories
           </Typography>

@@ -1,5 +1,4 @@
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
-import { resolveLabel } from '@/app/lib/side-panel-utils';
 import { hasProcessingStatements } from '@/app/lib/statement-status';
 import {
   type GmailSyncSkeletonMeta,
@@ -103,7 +102,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
     showErrorToast?: boolean;
   }): Promise<boolean> => {
     const { silent, notifyOnCompletion, search: searchOverride, showErrorToast } = opts || {};
-    if (!silent) setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
 
     let didLoad = true;
     try {
@@ -132,7 +133,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
         toast.error(loadListErrorLabel);
       }
     } finally {
-      if (!silent) setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
 
     return didLoad;
@@ -143,7 +146,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
     showErrorToast?: boolean;
   }): Promise<void> => {
     const { silent, showErrorToast } = opts || {};
-    if (!silent) setGmailLoading(true);
+    if (!silent) {
+      setGmailLoading(true);
+    }
 
     try {
       const response = await gmailReceiptsApi.listReceipts({
@@ -152,14 +157,17 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
         includeInvalid: false,
       });
       const receipts = Array.isArray(response.data?.receipts) ? response.data.receipts : [];
-      setGmailReceipts(receipts.filter(hasGmailReceiptAmount));
+      const filtered = receipts.filter(hasGmailReceiptAmount);
+      setGmailReceipts(filtered);
     } catch (error) {
       console.error('Failed to load Gmail receipts:', error);
       if (showErrorToast !== false) {
         toast.error(loadListErrorLabel);
       }
     } finally {
-      if (!silent) setGmailLoading(false);
+      if (!silent) {
+        setGmailLoading(false);
+      }
     }
   };
 
@@ -177,7 +185,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Initial load when user/search/filters/stage change
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     void loadStatements({ search });
     if (stage === 'submit') {
       void loadGmailReceipts({ silent: true, showErrorToast: false });
@@ -187,9 +197,13 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Read gmail sync skeleton count from sessionStorage on mount/stage change
   useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
+    if (typeof window === 'undefined' || stage !== 'submit') {
+      return;
+    }
     const raw = sessionStorage.getItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      return;
+    }
     try {
       const parsed = JSON.parse(raw) as GmailSyncSkeletonMeta | null;
       if (parsed && parsed.count > 0) {
@@ -202,11 +216,15 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Listen for live gmail sync events to show skeleton placeholders
   useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
+    if (typeof window === 'undefined' || stage !== 'submit') {
+      return;
+    }
 
     const handleGmailSyncEvent = (event: Event) => {
       const detail = (event as CustomEvent<GmailSyncSkeletonMeta>).detail;
-      if (!detail || detail.count <= 0) return;
+      if (!detail || detail.count <= 0) {
+        return;
+      }
       setGmailSyncSkeletonKeys(buildGmailSyncSkeletonKeys(Math.min(detail.count, pageSize)));
     };
 
@@ -218,7 +236,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Poll statements when any are processing
   useEffect(() => {
-    if (!user || !shouldPollStatements) return;
+    if (!(user && shouldPollStatements)) {
+      return;
+    }
 
     const intervalId = window.setInterval(() => {
       void loadStatements({ silent: true, search, showErrorToast: false }).catch(err => {
@@ -232,7 +252,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Poll gmail receipts when on submit stage
   useEffect(() => {
-    if (!user || stage !== 'submit') return;
+    if (!user || stage !== 'submit') {
+      return;
+    }
 
     const intervalId = window.setInterval(() => {
       void loadGmailReceipts({ silent: true, showErrorToast: false }).catch(err => {

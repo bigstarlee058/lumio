@@ -92,7 +92,9 @@ describe('IntegrationsPage', () => {
       await flushPromises();
     });
 
-    const s3Card = container.querySelector('[data-integration-card="s3-compatible"]') as HTMLElement;
+    const s3Card = container.querySelector(
+      '[data-integration-card="s3-compatible"]',
+    ) as HTMLElement;
     expect(s3Card).toBeTruthy();
 
     await act(async () => {

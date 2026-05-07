@@ -72,8 +72,12 @@ export type RowFilterOp =
 export type RowFilter = { col: string; op: RowFilterOp; value?: unknown };
 
 export const isPlainObject = (value: unknown): value is Record<string, unknown> => {
-  if (!value || typeof value !== 'object') return false;
-  if (Array.isArray(value)) return false;
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+  if (Array.isArray(value)) {
+    return false;
+  }
   return true;
 };
 
@@ -82,9 +86,12 @@ export const mergeSheetStyle = (
   override: SheetStyle | null | undefined,
 ): SheetStyle => {
   const merged: SheetStyle = { ...(base || {}) };
-  if (!override) return merged;
+  if (!override) {
+    return merged;
+  }
   for (const [key, value] of Object.entries(override)) {
     if (value === null) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete merged[key];
     } else if (value !== undefined) {
       const existing = merged[key];
@@ -100,11 +107,21 @@ export const mergeSheetStyle = (
 
 export const mapHorizontalAlignment = (value: unknown): CSSProperties['textAlign'] | undefined => {
   const raw = typeof value === 'string' ? value.trim().toUpperCase() : '';
-  if (!raw) return undefined;
-  if (raw === 'LEFT') return 'left';
-  if (raw === 'CENTER') return 'center';
-  if (raw === 'RIGHT') return 'right';
-  if (raw === 'JUSTIFY') return 'justify';
+  if (!raw) {
+    return undefined;
+  }
+  if (raw === 'LEFT') {
+    return 'left';
+  }
+  if (raw === 'CENTER') {
+    return 'center';
+  }
+  if (raw === 'RIGHT') {
+    return 'right';
+  }
+  if (raw === 'JUSTIFY') {
+    return 'justify';
+  }
   return undefined;
 };
 
@@ -112,21 +129,33 @@ export const mapVerticalAlignment = (
   value: unknown,
 ): CSSProperties['verticalAlign'] | undefined => {
   const raw = typeof value === 'string' ? value.trim().toUpperCase() : '';
-  if (!raw) return undefined;
-  if (raw === 'TOP') return 'top';
-  if (raw === 'MIDDLE' || raw === 'CENTER') return 'middle';
-  if (raw === 'BOTTOM') return 'bottom';
+  if (!raw) {
+    return undefined;
+  }
+  if (raw === 'TOP') {
+    return 'top';
+  }
+  if (raw === 'MIDDLE' || raw === 'CENTER') {
+    return 'middle';
+  }
+  if (raw === 'BOTTOM') {
+    return 'bottom';
+  }
   return undefined;
 };
 
 export const mapFontFamily = (value: string): string | undefined => {
   const trimmed = value.trim();
-  if (!trimmed) return undefined;
+  if (!trimmed) {
+    return undefined;
+  }
   const quoted =
     /[\s"]/g.test(trimmed) && !trimmed.includes(',')
       ? `"${trimmed.replace(/"/g, '\\"')}"`
       : trimmed;
-  if (trimmed.includes(',')) return trimmed;
+  if (trimmed.includes(',')) {
+    return trimmed;
+  }
   return `${quoted}, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
 };
 
@@ -137,11 +166,17 @@ const extractTextDecoration = (
   const strikethrough = typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
   if (underline === true || strikethrough === true) {
     const parts: string[] = [];
-    if (underline === true) { parts.push('underline'); }
-    if (strikethrough === true) { parts.push('line-through'); }
+    if (underline === true) {
+      parts.push('underline');
+    }
+    if (strikethrough === true) {
+      parts.push('line-through');
+    }
     return parts.join(' ') as CSSProperties['textDecorationLine'];
   }
-  if (underline === false || strikethrough === false) { return 'none'; }
+  if (underline === false || strikethrough === false) {
+    return 'none';
+  }
   return undefined;
 };
 
@@ -162,8 +197,7 @@ export const sheetStyleToCss = (style: SheetStyle) => {
   const textProps = tf ? extractTextFormatCss(tf) : {};
 
   return {
-    backgroundColor:
-      typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined,
+    backgroundColor: typeof style.backgroundColor === 'string' ? style.backgroundColor : undefined,
     textAlign: mapHorizontalAlignment(style.horizontalAlignment),
     verticalAlign: mapVerticalAlignment(style.verticalAlignment),
     ...textProps,

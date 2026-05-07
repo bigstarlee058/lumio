@@ -79,7 +79,9 @@ const NUMERIC_FILE_TYPES = ['csv', 'xls', 'xlsx', 'ofx', 'qif'];
 const PENDING_CONFIRMATION_STATUSES = ['uploaded', 'parsed', 'validated'];
 
 const isPresentId = (value?: string | null): boolean => {
-  if (!value) return false;
+  if (!value) {
+    return false;
+  }
   const normalized = value.trim().toLowerCase();
   return (
     normalized !== '' && normalized !== 'null' && normalized !== 'undefined' && normalized !== '0'
@@ -88,7 +90,9 @@ const isPresentId = (value?: string | null): boolean => {
 
 // eslint-disable-next-line complexity
 const parseNumberish = (value?: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
   const normalized = typeof value === 'string' ? value.replace(',', '.').trim() : value;
   const parsed = typeof normalized === 'string' ? Number(normalized) : normalized;
   return Number.isFinite(parsed) ? Number(parsed) : null;
@@ -97,29 +101,41 @@ const parseNumberish = (value?: number | string | null): number | null => {
 // eslint-disable-next-line complexity
 const resolveAmount = (transaction: UnapprovedQueueTransaction): number | null => {
   const explicitAmount = parseNumberish(transaction.amount);
-  if (explicitAmount !== null) return Math.abs(explicitAmount);
+  if (explicitAmount !== null) {
+    return Math.abs(explicitAmount);
+  }
 
   const debit = parseNumberish(transaction.debit);
-  if (debit !== null && debit !== 0) return Math.abs(debit);
+  if (debit !== null && debit !== 0) {
+    return Math.abs(debit);
+  }
 
   const credit = parseNumberish(transaction.credit);
-  if (credit !== null && credit !== 0) return Math.abs(credit);
+  if (credit !== null && credit !== 0) {
+    return Math.abs(credit);
+  }
 
   return null;
 };
 
 const resolveDate = (value?: string | Date | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const date = value instanceof Date ? value : new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
 const resolveStatementAmount = (statement: UnapprovedStatementMeta): number | null => {
   const totalDebit = parseNumberish(statement.totalDebit);
-  if (totalDebit !== null && totalDebit !== 0) return Math.abs(totalDebit);
+  if (totalDebit !== null && totalDebit !== 0) {
+    return Math.abs(totalDebit);
+  }
 
   const totalCredit = parseNumberish(statement.totalCredit);
-  if (totalCredit !== null && totalCredit !== 0) return Math.abs(totalCredit);
+  if (totalCredit !== null && totalCredit !== 0) {
+    return Math.abs(totalCredit);
+  }
 
   return totalDebit !== null
     ? Math.abs(totalDebit)
@@ -131,14 +147,17 @@ const resolveStatementAmount = (statement: UnapprovedStatementMeta): number | nu
 const resolveStatementDate = (statement: UnapprovedStatementMeta): Date | null =>
   resolveDate(statement.statementDateTo || statement.statementDateFrom || statement.createdAt);
 
-const normalizeStatementStatus = (status?: string | null): string => (status || '').trim().toLowerCase();
+const normalizeStatementStatus = (status?: string | null): string =>
+  (status || '').trim().toLowerCase();
 
 const isPendingConfirmationStatement = (statement?: UnapprovedStatementMeta | null) =>
   PENDING_CONFIRMATION_STATUSES.includes(normalizeStatementStatus(statement?.status));
 
 const hasUnknownMerchant = (counterpartyName?: string | null): boolean => {
   const normalized = (counterpartyName || '').trim().toLowerCase();
-  if (!normalized) return true;
+  if (!normalized) {
+    return true;
+  }
   return UNKNOWN_MERCHANT_MARKERS.some(marker => normalized.includes(marker));
 };
 
@@ -150,18 +169,34 @@ const hasValidCurrency = (currency?: string | null): boolean => {
 export const resolveUnapprovedSource = (
   statement?: UnapprovedStatementMeta | null,
 ): UnapprovedSource => {
-  if (!statement) return 'unknown';
+  if (!statement) {
+    return 'unknown';
+  }
 
   const sourceHint = (statement.sourceHint || '').trim().toLowerCase();
-  if (sourceHint.includes('gmail')) return 'gmail';
-  if (sourceHint.includes('manual')) return 'manual';
-  if (sourceHint.includes('pdf')) return 'pdf';
-  if (sourceHint.includes('bank') || sourceHint.includes('statement')) return 'bank';
+  if (sourceHint.includes('gmail')) {
+    return 'gmail';
+  }
+  if (sourceHint.includes('manual')) {
+    return 'manual';
+  }
+  if (sourceHint.includes('pdf')) {
+    return 'pdf';
+  }
+  if (sourceHint.includes('bank') || sourceHint.includes('statement')) {
+    return 'bank';
+  }
 
   const fileType = (statement.fileType || '').trim().toLowerCase();
-  if (!fileType) return 'unknown';
-  if (fileType.includes('pdf')) return 'pdf';
-  if (NUMERIC_FILE_TYPES.some(type => fileType.includes(type))) return 'bank';
+  if (!fileType) {
+    return 'unknown';
+  }
+  if (fileType.includes('pdf')) {
+    return 'pdf';
+  }
+  if (NUMERIC_FILE_TYPES.some(type => fileType.includes(type))) {
+    return 'bank';
+  }
 
   return 'unknown';
 };
@@ -245,7 +280,9 @@ export const buildUnapprovedStatementQueue = ({
   const transactionsByStatementId = new Map<string, UnapprovedQueueTransaction[]>();
 
   transactions.forEach(transaction => {
-    if (!transaction.statementId) return;
+    if (!transaction.statementId) {
+      return;
+    }
     const items = transactionsByStatementId.get(transaction.statementId) || [];
     items.push(transaction);
     transactionsByStatementId.set(transaction.statementId, items);
@@ -296,13 +333,17 @@ export const buildUnapprovedStatementQueue = ({
 };
 
 const startOfDay = (dateValue: string): Date | null => {
-  if (!dateValue) return null;
+  if (!dateValue) {
+    return null;
+  }
   const date = new Date(`${dateValue}T00:00:00`);
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
 const endOfDay = (dateValue: string): Date | null => {
-  if (!dateValue) return null;
+  if (!dateValue) {
+    return null;
+  }
   const date = new Date(`${dateValue}T23:59:59.999`);
   return Number.isNaN(date.getTime()) ? null : date;
 };
@@ -313,7 +354,9 @@ export const matchesUnapprovedFilters = (
 ): boolean => {
   if (filters.reasons.length > 0) {
     const hasReason = filters.reasons.some(reason => item.reasons.includes(reason));
-    if (!hasReason) return false;
+    if (!hasReason) {
+      return false;
+    }
   }
 
   if (filters.source !== 'all' && item.source !== filters.source) {

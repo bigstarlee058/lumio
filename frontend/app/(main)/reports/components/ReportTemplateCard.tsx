@@ -1,11 +1,11 @@
 'use client';
 
-import type React from 'react';
+import type { LucideIcon } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import type { LucideIcon } from '@/app/components/icons';
-import { tokens } from '@/lib/theme-tokens';
+import type React from 'react';
 
 export interface ReportTemplate {
   id: string;
@@ -23,7 +23,11 @@ interface ReportTemplateCardProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTemplateCardProps): React.JSX.Element {
+export function ReportTemplateCard({
+  template,
+  onSelect,
+  isSelected,
+}: ReportTemplateCardProps): React.JSX.Element {
   return (
     <Paper
       data-tour-id={template.id === 'pnl' ? 'reports-template-pnl' : undefined}
@@ -32,9 +36,7 @@ export function ReportTemplateCard({ template, onSelect, isSelected }: ReportTem
       sx={{
         cursor: 'pointer',
         borderRadius: tokens.radius.lg,
-        border: isSelected
-          ? '1px solid var(--primary)'
-          : '1px solid var(--border)',
+        border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
         bgcolor: 'var(--card)',
         p: 2.5,
         display: 'flex',

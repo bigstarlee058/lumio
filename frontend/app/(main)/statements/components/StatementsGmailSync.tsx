@@ -1,8 +1,7 @@
 'use client';
 
-import Skeleton from '@mui/material/Skeleton';
-import type { JSX } from 'react';
 import { tokens } from '@/lib/theme-tokens';
+import Skeleton from '@mui/material/Skeleton';
 
 interface Props {
   skeletonKeys: string[];
@@ -101,7 +100,9 @@ function GmailSyncSkeletonRowDesktop(): React.JSX.Element {
 }
 
 export function StatementsGmailSync({ skeletonKeys }: Props): React.JSX.Element | null {
-  if (skeletonKeys.length === 0) return null;
+  if (skeletonKeys.length === 0) {
+    return null;
+  }
 
   return (
     <>

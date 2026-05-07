@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import type { DashboardData } from '@/app/hooks/useDashboard';
+import { describe, expect, it } from 'vitest';
 import { resolveDashboardStatusHeading } from './dashboard-status-heading';
 
 const createDashboardData = (overrides?: Partial<DashboardData>): DashboardData => ({

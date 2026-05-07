@@ -17,7 +17,9 @@ interface CurrencyDisplayContextType {
 
 const CurrencyDisplayContext = createContext<CurrencyDisplayContextType | undefined>(undefined);
 
-export function CurrencyDisplayProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
+export function CurrencyDisplayProvider({
+  children,
+}: { children: React.ReactNode }): React.JSX.Element {
   const { currentWorkspace } = useWorkspace();
   const workspaceCurrency = resolveCurrencyCode(currentWorkspace?.currency);
 
@@ -36,7 +38,9 @@ export function CurrencyDisplayProvider({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <CurrencyDisplayContext.Provider value={{ showConverted, toggleShowConverted, workspaceCurrency }}>
+    <CurrencyDisplayContext.Provider
+      value={{ showConverted, toggleShowConverted, workspaceCurrency }}
+    >
       {children}
     </CurrencyDisplayContext.Provider>
   );

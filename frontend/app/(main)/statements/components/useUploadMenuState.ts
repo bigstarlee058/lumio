@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 
 function getIsDesktop(): boolean {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return true;
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return true;
+  }
   return window.matchMedia('(min-width: 1024px)').matches;
 }
 
 function useDesktopViewport(): boolean {
   const [isDesktop, setIsDesktop] = useState(getIsDesktop);
   useEffect(() => {
-    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
     const mq = window.matchMedia('(min-width: 1024px)');
     const handler = (e: MediaQueryListEvent): void => setIsDesktop(e.matches);
     setIsDesktop(mq.matches);
@@ -20,13 +24,19 @@ function useDesktopViewport(): boolean {
 
 function useCloseOnOutsideClick(isOpen: boolean, onClose: () => void): void {
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      return;
+    }
     const handlePointerDown = (e: PointerEvent): void => {
       if (!(e.target as Element | null)?.closest('[data-statements-fab-interactive="true"]')) {
         onClose();
       }
     };
-    const handleEscape = (e: KeyboardEvent): void => { if (e.key === 'Escape') onClose(); };
+    const handleEscape = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleEscape);
     return () => {
@@ -48,7 +58,9 @@ export function useUploadMenuState(): UploadMenuState {
   const [portalReady, setPortalReady] = useState(false);
   const isDesktopViewport = useDesktopViewport();
   const close = (): void => setIsOpen(false);
-  useEffect(() => { setPortalReady(true); }, []);
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
   useCloseOnOutsideClick(isOpen, close);
   return { isOpen, setIsOpen, portalReady, isDesktopViewport };
 }

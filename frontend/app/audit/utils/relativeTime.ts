@@ -7,9 +7,15 @@ export function relativeTime(dateString: string): string {
   const then = new Date(dateString).getTime();
   const diff = now - then;
 
-  if (diff < MINUTE) return 'Just now';
-  if (diff < HOUR) return `${Math.floor(diff / MINUTE)} min ago`;
-  if (diff < DAY) return `${Math.floor(diff / HOUR)}h ago`;
+  if (diff < MINUTE) {
+    return 'Just now';
+  }
+  if (diff < HOUR) {
+    return `${Math.floor(diff / MINUTE)} min ago`;
+  }
+  if (diff < DAY) {
+    return `${Math.floor(diff / HOUR)}h ago`;
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -18,8 +24,12 @@ export function relativeTime(dateString: string): string {
   const thenDate = new Date(dateString);
   thenDate.setHours(0, 0, 0, 0);
 
-  if (thenDate.getTime() === yesterday.getTime()) return 'Yesterday';
-  if (diff < 7 * DAY) return `${Math.floor(diff / DAY)} days ago`;
+  if (thenDate.getTime() === yesterday.getTime()) {
+    return 'Yesterday';
+  }
+  if (diff < 7 * DAY) {
+    return `${Math.floor(diff / DAY)} days ago`;
+  }
 
   return new Date(dateString).toLocaleDateString('en-US', {
     month: 'short',

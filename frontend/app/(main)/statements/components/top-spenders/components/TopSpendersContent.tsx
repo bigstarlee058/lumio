@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 import { TopSpendersLeaderboard } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersLeaderboard';
 import { TopSpendersStatCards } from '@/app/(main)/statements/components/top-spenders/components/TopSpendersStatCards';
@@ -10,9 +9,24 @@ type Props = { vm: ReturnType<typeof useTopSpendersViewModel> };
 function TopSpendersLeaderboardSection({ vm }: Props): React.JSX.Element {
   const isIncomeView = vm.activeFlowType === 'income';
   const { labels, workspaceCurrency } = vm;
-  const sourceLabels = { sourceBank: labels.sourceBank, sourceReceipt: labels.sourceReceipt, sourceGmailInbox: labels.sourceGmailInbox };
-  const columnLabels = { company: labels.company, source: labels.source, operations: labels.operations, average: labels.average, amount: labels.amount, lastOperation: labels.lastOperation };
-  const sortLabels = { sortByAmount: labels.sortByAmount, sortByAverage: labels.sortByAverage, sortByOperations: labels.sortByOperations };
+  const sourceLabels = {
+    sourceBank: labels.sourceBank,
+    sourceReceipt: labels.sourceReceipt,
+    sourceGmailInbox: labels.sourceGmailInbox,
+  };
+  const columnLabels = {
+    company: labels.company,
+    source: labels.source,
+    operations: labels.operations,
+    average: labels.average,
+    amount: labels.amount,
+    lastOperation: labels.lastOperation,
+  };
+  const sortLabels = {
+    sortByAmount: labels.sortByAmount,
+    sortByAverage: labels.sortByAverage,
+    sortByOperations: labels.sortByOperations,
+  };
   return (
     <TopSpendersLeaderboard
       rows={vm.sortedAggregatedRows}

@@ -98,11 +98,23 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
   }, [data, resolvedTheme]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', position: 'relative' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+      }}
+    >
       {!option ? (
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span
-            style={{ fontSize: 18, color: 'var(--muted-foreground)', fontFamily: 'var(--font-dashboard-sans)' }}
+            style={{
+              fontSize: 18,
+              color: 'var(--muted-foreground)',
+              fontFamily: 'var(--font-dashboard-sans)',
+            }}
           >
             {emptyLabel}
           </span>

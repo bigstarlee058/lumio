@@ -33,13 +33,23 @@ const resolveKeyFromName = (bankName: string): BankLogoKey => {
   const n = normalize(bankName);
 
   // Backend enum values
-  if (n === 'kaspi' || n.includes('kaspi')) return 'kaspi';
-  if (n === 'bereke new' || n === 'bereke old' || n.includes('bereke')) return 'bereke';
-  if (n === 'other') return 'other';
+  if (n === 'kaspi' || n.includes('kaspi')) {
+    return 'kaspi';
+  }
+  if (n === 'bereke new' || n === 'bereke old' || n.includes('bereke')) {
+    return 'bereke';
+  }
+  if (n === 'other') {
+    return 'other';
+  }
 
   // Common aliases / noisy variants
-  if (n.includes('kaspi bank')) return 'kaspi';
-  if (n.includes('bereke bank')) return 'bereke';
+  if (n.includes('kaspi bank')) {
+    return 'kaspi';
+  }
+  if (n.includes('bereke bank')) {
+    return 'bereke';
+  }
 
   return 'other';
 };

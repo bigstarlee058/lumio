@@ -47,26 +47,50 @@ export interface HandlerDeps {
 }
 
 function validateFolderName(name: string, messages: Messages): boolean {
-  if (!name) { toast.error(messages.folderNameRequired); return false; }
-  if (name.length > FOLDER_NAME_MAX) { toast.error(messages.folderNameTooLong); return false; }
+  if (!name) {
+    toast.error(messages.folderNameRequired);
+    return false;
+  }
+  if (name.length > FOLDER_NAME_MAX) {
+    toast.error(messages.folderNameTooLong);
+    return false;
+  }
   return true;
 }
 
-function applyFolderRename(prev: FolderOption[], folderId: string, data: Partial<FolderOption>): FolderOption[] {
-  return prev.map((f) => (f.id === folderId ? { ...f, ...data } : f));
+function applyFolderRename(
+  prev: FolderOption[],
+  folderId: string,
+  data: Partial<FolderOption>,
+): FolderOption[] {
+  return prev.map(f => (f.id === folderId ? { ...f, ...data } : f));
 }
 
-function applyFilesFolderRename(prev: StorageFile[], folderId: string, newName: string): StorageFile[] {
-  return prev.map((file) => {
-    if (file.folderId !== folderId) return file;
-    const folder = file.folder ? { ...file.folder, name: newName } : { id: folderId, name: newName };
+function applyFilesFolderRename(
+  prev: StorageFile[],
+  folderId: string,
+  newName: string,
+): StorageFile[] {
+  return prev.map(file => {
+    if (file.folderId !== folderId) {
+      return file;
+    }
+    const folder = file.folder
+      ? { ...file.folder, name: newName }
+      : { id: folderId, name: newName };
     return { ...file, folder };
   });
 }
 
-function applyFolderDelete(prev: StorageFile[], folderId: string, removeContents: boolean): StorageFile[] {
-  if (removeContents) return prev.filter((f) => f.folderId !== folderId);
-  return prev.map((f) => (f.folderId === folderId ? { ...f, folderId: null, folder: null } : f));
+function applyFolderDelete(
+  prev: StorageFile[],
+  folderId: string,
+  removeContents: boolean,
+): StorageFile[] {
+  if (removeContents) {
+    return prev.filter(f => f.folderId !== folderId);
+  }
+  return prev.map(f => (f.folderId === folderId ? { ...f, folderId: null, folder: null } : f));
 }
 
 export async function loadFoldersHandler(
@@ -84,10 +108,12 @@ export async function loadFoldersHandler(
 
 export async function createFolderHandler(deps: HandlerDeps): Promise<void> {
   const name = deps.newFolderName.trim();
-  if (!validateFolderName(name, deps.messages)) return;
+  if (!validateFolderName(name, deps.messages)) {
+    return;
+  }
   try {
     const response = await api.post('/storage/folders', { name });
-    deps.setFolders((prev) => [...prev, response.data].sort((a, b) => a.name.localeCompare(b.name)));
+    deps.setFolders(prev => [...prev, response.data].sort((a, b) => a.name.localeCompare(b.name)));
     deps.setNewFolderName('');
     toast.success(deps.messages.folderCreated);
   } catch (error) {
@@ -98,11 +124,13 @@ export async function createFolderHandler(deps: HandlerDeps): Promise<void> {
 
 export async function renameFolderHandler(deps: HandlerDeps, folderId: string): Promise<void> {
   const name = deps.editingFolderName.trim();
-  if (!validateFolderName(name, deps.messages)) return;
+  if (!validateFolderName(name, deps.messages)) {
+    return;
+  }
   try {
     const response = await api.patch(`/storage/folders/${folderId}`, { name });
-    deps.setFolders((prev) => applyFolderRename(prev, folderId, response.data));
-    deps.setFiles((prev) => applyFilesFolderRename(prev, folderId, response.data?.name || name));
+    deps.setFolders(prev => applyFolderRename(prev, folderId, response.data));
+    deps.setFiles(prev => applyFilesFolderRename(prev, folderId, response.data?.name || name));
     deps.setEditingFolderId(null);
     deps.setEditingFolderName('');
     toast.success(deps.messages.folderRenamed);
@@ -113,11 +141,13 @@ export async function renameFolderHandler(deps: HandlerDeps, folderId: string): 
 }
 
 export async function updateFolderTagHandler(
-  deps: HandlerDeps, folderId: string, tagId: string | null,
+  deps: HandlerDeps,
+  folderId: string,
+  tagId: string | null,
 ): Promise<void> {
   try {
     const response = await api.patch(`/storage/folders/${folderId}`, { tagId });
-    deps.setFolders((prev) => applyFolderRename(prev, folderId, response.data));
+    deps.setFolders(prev => applyFolderRename(prev, folderId, response.data));
     deps.setFolderTagPickerId(null);
   } catch (error) {
     console.error('Failed to update folder tag:', error);
@@ -128,15 +158,26 @@ export async function updateFolderTagHandler(
 export async function deleteFolderHandler(deps: HandlerDeps): Promise<void> {
   const targetFolder = deps.folderToDelete;
   const removeContents = deps.deleteFolderWithContents;
-  if (!targetFolder) return;
+  if (!targetFolder) {
+    return;
+  }
   const toastId = toast.loading(deps.messages.folderDeleteLoading);
   try {
-    await api.delete(`/storage/folders/${targetFolder.id}`, { params: { deleteFiles: removeContents } });
-    deps.setFolders((prev) => prev.filter((f) => f.id !== targetFolder.id));
-    deps.setFiles((prev) => applyFolderDelete(prev, targetFolder.id, removeContents));
-    if (deps.activeFolderId === targetFolder.id) deps.setActiveFolderId('');
-    if (deps.editingFolderId === targetFolder.id) { deps.setEditingFolderId(null); deps.setEditingFolderName(''); }
-    if (deps.folderTagPickerId === targetFolder.id) deps.setFolderTagPickerId(null);
+    await api.delete(`/storage/folders/${targetFolder.id}`, {
+      params: { deleteFiles: removeContents },
+    });
+    deps.setFolders(prev => prev.filter(f => f.id !== targetFolder.id));
+    deps.setFiles(prev => applyFolderDelete(prev, targetFolder.id, removeContents));
+    if (deps.activeFolderId === targetFolder.id) {
+      deps.setActiveFolderId('');
+    }
+    if (deps.editingFolderId === targetFolder.id) {
+      deps.setEditingFolderId(null);
+      deps.setEditingFolderName('');
+    }
+    if (deps.folderTagPickerId === targetFolder.id) {
+      deps.setFolderTagPickerId(null);
+    }
     toast.success(deps.messages.folderDeleted, { id: toastId });
   } catch (error) {
     console.error('Failed to delete folder:', error);
@@ -145,17 +186,25 @@ export async function deleteFolderHandler(deps: HandlerDeps): Promise<void> {
 }
 
 export async function moveToFolderHandler(
-  deps: HandlerDeps, fileId: string, folderId: string | null,
+  deps: HandlerDeps,
+  fileId: string,
+  folderId: string | null,
 ): Promise<void> {
   try {
     await api.patch(`/storage/files/${fileId}/folder`, { folderId });
-    deps.setFiles((prev) => prev.map((file) => {
-      if (file.id !== fileId) return file;
-      const folder = folderId ? (deps.folders.find((f) => f.id === folderId) ?? null) : null;
-      return { ...file, folderId, folder };
-    }));
-    const folderName = folderId ? deps.folders.find((f) => f.id === folderId)?.name : null;
-    const message = folderName ? `${deps.messages.fileMovedTo} "${folderName}"` : deps.messages.folderUpdated;
+    deps.setFiles(prev =>
+      prev.map(file => {
+        if (file.id !== fileId) {
+          return file;
+        }
+        const folder = folderId ? (deps.folders.find(f => f.id === folderId) ?? null) : null;
+        return { ...file, folderId, folder };
+      }),
+    );
+    const folderName = folderId ? deps.folders.find(f => f.id === folderId)?.name : null;
+    const message = folderName
+      ? `${deps.messages.fileMovedTo} "${folderName}"`
+      : deps.messages.folderUpdated;
     toast.success(message);
     deps.setFolderMoveMessage('success', message);
   } catch (error) {

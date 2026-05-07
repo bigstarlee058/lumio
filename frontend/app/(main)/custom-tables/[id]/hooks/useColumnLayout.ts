@@ -2,8 +2,11 @@
 
 import { useMemo } from 'react';
 import {
-  buildDisplayColumns, checkColumnsDefault, computeGridWidths,
-  computeOrderedVisibleColumns, findSpecialColumnKeys,
+  buildDisplayColumns,
+  checkColumnsDefault,
+  computeGridWidths,
+  computeOrderedVisibleColumns,
+  findSpecialColumnKeys,
 } from '../helpers/columnLayoutHelpers';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
 
@@ -28,8 +31,12 @@ interface UseColumnLayoutParams {
 }
 
 export function useColumnLayout({
-  orderedColumns, columnOrder, hiddenColumnKeys,
-  getColumnWidth, paidColKey, t,
+  orderedColumns,
+  columnOrder,
+  hiddenColumnKeys,
+  getColumnWidth,
+  paidColKey,
+  t,
 }: UseColumnLayoutParams): UseColumnLayoutReturn {
   const orderedVisibleColumns = useMemo(
     () => computeOrderedVisibleColumns(orderedColumns, columnOrder, hiddenColumnKeys),
@@ -56,5 +63,14 @@ export function useColumnLayout({
     () => computeGridWidths(orderedColumns, getColumnWidth),
     [orderedColumns, getColumnWidth],
   );
-  return { orderedVisibleColumns, isColumnsDefault, displayColumns, dateColKey, counterpartyColKey, stickyLeftColumnIds, stickyRightColumnIds, gridColumnWidths };
+  return {
+    orderedVisibleColumns,
+    isColumnsDefault,
+    displayColumns,
+    dateColKey,
+    counterpartyColKey,
+    stickyLeftColumnIds,
+    stickyRightColumnIds,
+    gridColumnWidths,
+  };
 }

@@ -49,21 +49,39 @@ export const resolveTablePurpose = (item: TableRegistryItem): string => {
 export const resolveSourceSummary = (item: TableRegistryItem): string => {
   const source = (item.source || '').toLowerCase();
 
-  if (source === 'google_sheets_import') return 'Google Sheets';
-  if (source.includes('statement')) return 'Statements';
-  if (source.includes('receipt')) return 'Receipts';
-  if (source === 'manual') return 'Manual';
-  if (source) return source.replace(/_/g, ' ');
+  if (source === 'google_sheets_import') {
+    return 'Google Sheets';
+  }
+  if (source.includes('statement')) {
+    return 'Statements';
+  }
+  if (source.includes('receipt')) {
+    return 'Receipts';
+  }
+  if (source === 'manual') {
+    return 'Manual';
+  }
+  if (source) {
+    return source.replace(/_/g, ' ');
+  }
   return 'Manual';
 };
 
 const isGenericTableName = (name?: string | null): boolean => {
   const normalized = (name || '').trim();
-  if (!normalized) return true;
+  if (!normalized) {
+    return true;
+  }
 
-  if (/^\d+$/.test(normalized)) return true;
-  if (/^table\s*\d*$/i.test(normalized)) return true;
-  if (/^export\s*\d*$/i.test(normalized)) return true;
+  if (/^\d+$/.test(normalized)) {
+    return true;
+  }
+  if (/^table\s*\d*$/i.test(normalized)) {
+    return true;
+  }
+  if (/^export\s*\d*$/i.test(normalized)) {
+    return true;
+  }
 
   return normalized.length < 3;
 };

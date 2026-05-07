@@ -44,14 +44,19 @@ export interface TransactionListItem {
 export const resolveCloudConnectionStatus = (
   result: PromiseSettledResult<{ data?: { connected?: unknown; active?: unknown } }>,
 ): boolean => {
-  if (result.status !== 'fulfilled') return false;
+  if (result.status !== 'fulfilled') {
+    return false;
+  }
   const data = result.value?.data;
   return Boolean(data?.connected ?? data?.active);
 };
 
 type PageResult = { batch: unknown[]; total: number };
 
-const extractPageData = (responseData: { data?: unknown; total?: unknown }): { items: unknown; total: number | undefined } => ({
+const extractPageData = (responseData: { data?: unknown; total?: unknown }): {
+  items: unknown;
+  total: number | undefined;
+} => ({
   items: responseData?.data || responseData,
   total: responseData?.total as number | undefined,
 });
@@ -67,25 +72,45 @@ const fetchPage = async (endpoint: string, page: number, pageSize: number): Prom
 type FetchState = { acc: unknown[]; page: number; pageSize: number; total: number };
 
 const fetchNextPages = async (endpoint: string, state: FetchState): Promise<unknown[]> => {
-  if (state.acc.length >= state.total) return state.acc;
+  if (state.acc.length >= state.total) {
+    return state.acc;
+  }
   const { batch, total: newTotal } = await fetchPage(endpoint, state.page, state.pageSize);
   const next = [...state.acc, ...batch];
-  if (batch.length < state.pageSize) return next;
-  return fetchNextPages(endpoint, { acc: next, page: state.page + 1, pageSize: state.pageSize, total: newTotal });
+  if (batch.length < state.pageSize) {
+    return next;
+  }
+  return fetchNextPages(endpoint, {
+    acc: next,
+    page: state.page + 1,
+    pageSize: state.pageSize,
+    total: newTotal,
+  });
 };
 
 export const fetchAllPages = async (endpoint: string): Promise<unknown[]> => {
   const pageSize = 500;
   const { batch, total } = await fetchPage(endpoint, 1, pageSize);
-  if (batch.length >= total || batch.length < pageSize) return batch;
+  if (batch.length >= total || batch.length < pageSize) {
+    return batch;
+  }
   return fetchNextPages(endpoint, { acc: batch, page: 2, pageSize, total });
 };
 
 type StatementMeta = {
-  id: string; fileName: null; bankName: string | null; status: string | null | undefined;
-  errorMessage: string | null | undefined; fileType: string | null | undefined; currency: null;
-  totalDebit: number | string | null; totalCredit: number | string | null;
-  statementDateFrom: null; statementDateTo: null; createdAt: null; sourceHint: string | null;
+  id: string;
+  fileName: null;
+  bankName: string | null;
+  status: string | null | undefined;
+  errorMessage: string | null | undefined;
+  fileType: string | null | undefined;
+  currency: null;
+  totalDebit: number | string | null;
+  totalCredit: number | string | null;
+  statementDateFrom: null;
+  statementDateTo: null;
+  createdAt: null;
+  sourceHint: string | null;
 };
 
 const getSourceHint = (s: StatementListItem): string | null =>
@@ -107,7 +132,10 @@ const toStatementMeta = (s: StatementListItem): StatementMeta => ({
   sourceHint: getSourceHint(s),
 });
 
-export const buildUnapprovedCount = (allStatements: StatementListItem[], transactions: TransactionListItem[]): number => {
+export const buildUnapprovedCount = (
+  allStatements: StatementListItem[],
+  transactions: TransactionListItem[],
+): number => {
   const statements = allStatements.filter(s => Boolean(s.id)).map(toStatementMeta);
   return buildUnapprovedStatementQueue({ statements, transactions }).length;
 };
@@ -121,11 +149,15 @@ type StageCountsResult = {
 };
 
 const loadTopCategoriesCount = async (): Promise<number> => {
-  const res = await apiClient.get('/reports/top-categories', { params: { type: 'expense', limit: 100 } });
+  const res = await apiClient.get('/reports/top-categories', {
+    params: { type: 'expense', limit: 100 },
+  });
   return Array.isArray(res.data?.categories) ? res.data.categories.length : 0;
 };
 
-const loadMerchantsAndUnapproved = async (allStatements: StatementListItem[]): Promise<{ uniqueMerchantsCount: number; unapprovedCashCount: number }> => {
+const loadMerchantsAndUnapproved = async (
+  allStatements: StatementListItem[],
+): Promise<{ uniqueMerchantsCount: number; unapprovedCashCount: number }> => {
   const transactions = (await fetchAllPages('/transactions')) as TransactionListItem[];
   const uniqueMerchantsCount = new Set(
     transactions.map(item => (item.counterpartyName || '').trim().toLowerCase()).filter(Boolean),

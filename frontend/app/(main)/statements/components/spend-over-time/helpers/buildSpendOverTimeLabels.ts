@@ -4,8 +4,14 @@ type TxFn = (path: string[], fallback: string) => string;
 
 const LABEL_PATHS: Record<string, [string[], string]> = {
   title: [['spendOverTimeAnalytics', 'title'], 'Spend over time'],
-  subtitle: [['spendOverTimeAnalytics', 'subtitle'], 'Track spend and income dynamics with the same filters and drill-down as Top merchants.'],
-  searchPlaceholder: [['spendOverTimeAnalytics', 'searchPlaceholder'], 'Search by merchant, sender or subject'],
+  subtitle: [
+    ['spendOverTimeAnalytics', 'subtitle'],
+    'Track spend and income dynamics with the same filters and drill-down as Top merchants.',
+  ],
+  searchPlaceholder: [
+    ['spendOverTimeAnalytics', 'searchPlaceholder'],
+    'Search by merchant, sender or subject',
+  ],
   totalSpend: [['spendOverTimeAnalytics', 'totalSpend'], 'Total spend'],
   totalIncome: [['spendOverTimeAnalytics', 'totalIncome'], 'Total income'],
   statementsAmount: [['spendOverTimeAnalytics', 'statementsAmount'], 'Statements'],
@@ -13,7 +19,10 @@ const LABEL_PATHS: Record<string, [string[], string]> = {
   totalOperations: [['spendOverTimeAnalytics', 'totalOperations'], 'Operations'],
   avgPerPeriod: [['spendOverTimeAnalytics', 'avgPerPeriod'], 'Average per period'],
   calendarTitle: [['spendOverTimeAnalytics', 'calendarTitle'], 'Calendar view'],
-  calendarEmptyMonth: [['spendOverTimeAnalytics', 'calendarEmptyMonth'], 'No operations in this month'],
+  calendarEmptyMonth: [
+    ['spendOverTimeAnalytics', 'calendarEmptyMonth'],
+    'No operations in this month',
+  ],
   calendarOperations: [['spendOverTimeAnalytics', 'calendarOperations'], 'operations'],
   periodChart: [['spendOverTimeAnalytics', 'periodChart'], 'Top periods'],
   trendTitle: [['spendOverTimeAnalytics', 'trendTitle'], 'Trend'],
@@ -41,7 +50,10 @@ const LABEL_PATHS: Record<string, [string[], string]> = {
   sourceReceipt: [['spendOverTimeAnalytics', 'sourceReceipt'], 'Receipt'],
   sourceGmailInbox: [['spendOverTimeAnalytics', 'sourceGmailInbox'], 'Gmail'],
   emptyStateTitle: [['spendOverTime', 'emptyStateTitle'], 'No data for selected period'],
-  emptyStateDescription: [['spendOverTime', 'emptyStateDescription'], 'Upload statements or apply another filter'],
+  emptyStateDescription: [
+    ['spendOverTime', 'emptyStateDescription'],
+    'Upload statements or apply another filter',
+  ],
   emptyStateUploadCta: [['spendOverTime', 'emptyStateUploadCta'], 'Go to statement upload'],
   emptyStateResetCta: [['spendOverTime', 'emptyStateResetCta'], 'Reset filters'],
   close: [['common', 'close'], 'Close'],
@@ -60,5 +72,7 @@ export const buildSpendOverTimeLabels = (tx: TxFn): Record<string, string> =>
     Object.entries(LABEL_PATHS).map(([k, [p, f]]) => [k, p.length === 0 ? f : tx(p, f)]),
   );
 
-export const createTx = (t: unknown): TxFn =>
-  (path, fallback) => resolveLabel(getNestedValue(t, path), fallback);
+export const createTx =
+  (t: unknown): TxFn =>
+  (path, fallback) =>
+    resolveLabel(getNestedValue(t, path), fallback);

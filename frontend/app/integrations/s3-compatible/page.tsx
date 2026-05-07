@@ -1,5 +1,5 @@
-import type React from 'react';
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
+import type React from 'react';
 import { ProtocolIntegrationPage } from '../open-protocol-page';
 
 export default function S3CompatibleIntegrationPage(): React.JSX.Element {
@@ -15,7 +15,12 @@ export default function S3CompatibleIntegrationPage(): React.JSX.Element {
       importPath="/integrations/s3-compatible/import"
       syncPath="/integrations/s3-compatible/sync"
       fields={[
-        { name: 'endpoint', label: 'Endpoint', placeholder: 'http://localhost:9000', required: true },
+        {
+          name: 'endpoint',
+          label: 'Endpoint',
+          placeholder: 'http://localhost:9000',
+          required: true,
+        },
         { name: 'region', label: 'Region', placeholder: 'us-east-1' },
         { name: 'bucket', label: 'Bucket', placeholder: 'lumio', required: true },
         { name: 'prefix', label: 'Prefix', placeholder: 'statements' },

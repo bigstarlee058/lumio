@@ -330,7 +330,7 @@ const content = {
       en: 'Parsing Metadata',
       kk: 'Тану метадеректері',
       de: 'Parsing-Metadaten',
-      fr: 'Métadonnées d\'analyse',
+      fr: "Métadonnées d'analyse",
       es: 'Metadatos de análisis',
       pt: 'Metadados de análise',
       tr: 'Ayrıştırma Meta Verileri',

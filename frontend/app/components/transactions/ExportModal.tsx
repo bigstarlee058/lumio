@@ -1,8 +1,8 @@
 'use client';
 
-import { useIntlayer } from '@/app/i18n';
 import { FileSpreadsheet, Table } from '@/app/components/icons';
-import React, { useState } from 'react';
+import { useIntlayer } from '@/app/i18n';
+import { useState } from 'react';
 import { ModalFooter, ModalShell } from '../ui/modal-shell';
 
 interface ExportModalProps {
@@ -49,7 +49,13 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
               type="radio"
               name="export-type"
               value="table"
-              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
+              style={{
+                position: 'absolute',
+                width: 1,
+                height: 1,
+                overflow: 'hidden',
+                clip: 'rect(0,0,0,0)',
+              }}
               checked={selectedType === 'table'}
               onChange={() => setSelectedType('table')}
             />
@@ -62,7 +68,9 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
                 {t.exportToTableDescription.value}
               </span>
             </span>
-            <span className={`lumio-export-modal__radio${selectedType === 'table' ? ' lumio-export-modal__radio--selected' : ''}`}>
+            <span
+              className={`lumio-export-modal__radio${selectedType === 'table' ? ' lumio-export-modal__radio--selected' : ''}`}
+            >
               {selectedType === 'table' && (
                 <span className="lumio-export-modal__radio-dot">
                   <span className="lumio-export-modal__radio-inner" />
@@ -79,7 +87,13 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
               type="radio"
               name="export-type"
               value="excel"
-              style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}
+              style={{
+                position: 'absolute',
+                width: 1,
+                height: 1,
+                overflow: 'hidden',
+                clip: 'rect(0,0,0,0)',
+              }}
               checked={selectedType === 'excel'}
               onChange={() => setSelectedType('excel')}
             />
@@ -88,11 +102,11 @@ export default function ExportModal({ open, onClose, onExport }: ExportModalProp
                 <FileSpreadsheet size={16} color="#16a34a" />
                 Excel / CSV
               </span>
-              <span className="lumio-export-modal__option-desc">
-                {t.downloadFile.value}
-              </span>
+              <span className="lumio-export-modal__option-desc">{t.downloadFile.value}</span>
             </span>
-            <span className={`lumio-export-modal__radio${selectedType === 'excel' ? ' lumio-export-modal__radio--selected' : ''}`}>
+            <span
+              className={`lumio-export-modal__radio${selectedType === 'excel' ? ' lumio-export-modal__radio--selected' : ''}`}
+            >
               {selectedType === 'excel' && (
                 <span className="lumio-export-modal__radio-dot">
                   <span className="lumio-export-modal__radio-inner" />

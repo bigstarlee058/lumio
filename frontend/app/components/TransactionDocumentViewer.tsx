@@ -1,5 +1,6 @@
 'use client';
 
+import { Calendar, Landmark, Receipt, TrendingDown, TrendingUp } from '@/app/components/icons';
 import {
   Box,
   Chip,
@@ -14,8 +15,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { Calendar, Landmark, Receipt, TrendingDown, TrendingUp } from '@/app/components/icons';
-import React from 'react';
 
 import { useIntlayer } from '@/app/i18n';
 
@@ -88,7 +87,9 @@ export default function TransactionDocumentViewer({
   const t = useIntlayer('transactionDocumentViewer');
 
   const formatNumber = (value: number | undefined | null, currency = 'KZT') => {
-    if (value === undefined || value === null) return '—';
+    if (value === undefined || value === null) {
+      return '—';
+    }
     return `${new Intl.NumberFormat(locale, {
       style: 'decimal',
       minimumFractionDigits: 2,
@@ -97,7 +98,9 @@ export default function TransactionDocumentViewer({
   };
 
   const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return '—';
+    if (!dateString) {
+      return '—';
+    }
     try {
       const date = new Date(dateString);
       return new Intl.DateTimeFormat(locale, {
@@ -318,7 +321,10 @@ export default function TransactionDocumentViewer({
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TrendingUp size={20} style={{ color: 'var(--mui-palette-success-main)', marginRight: 8 }} />
+              <TrendingUp
+                size={20}
+                style={{ color: 'var(--mui-palette-success-main)', marginRight: 8 }}
+              />
               <Typography variant="caption" color="success.dark">
                 {t.income}
               </Typography>
@@ -350,7 +356,10 @@ export default function TransactionDocumentViewer({
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TrendingDown size={20} style={{ color: 'var(--mui-palette-error-main)', marginRight: 8 }} />
+              <TrendingDown
+                size={20}
+                style={{ color: 'var(--mui-palette-error-main)', marginRight: 8 }}
+              />
               <Typography variant="caption" color="error.dark">
                 {t.expenses}
               </Typography>
@@ -400,7 +409,10 @@ export default function TransactionDocumentViewer({
             borderColor: 'grey.200',
             bgcolor: netChange >= 0 ? 'success.50' : 'error.50',
             '@media print': {
-              backgroundColor: netChange >= 0 ? 'var(--color-success-soft-bg) !important' : 'var(--color-error-soft-bg) !important',
+              backgroundColor:
+                netChange >= 0
+                  ? 'var(--color-success-soft-bg) !important'
+                  : 'var(--color-error-soft-bg) !important',
               WebkitPrintColorAdjust: 'exact',
               printColorAdjust: 'exact',
               pageBreakInside: 'avoid',
@@ -594,7 +606,7 @@ export default function TransactionDocumentViewer({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transactions.map((transaction, index) => (
+                {transactions.map((transaction, _index) => (
                   <TableRow
                     key={transaction.id}
                     sx={{
@@ -618,7 +630,10 @@ export default function TransactionDocumentViewer({
                   >
                     <TableCell sx={{ minWidth: 100 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Calendar size={16} style={{ color: 'var(--mui-palette-text-secondary)' }} />
+                        <Calendar
+                          size={16}
+                          style={{ color: 'var(--mui-palette-text-secondary)' }}
+                        />
                         <Typography variant="body2" fontWeight="500">
                           {formatDate(transaction.transactionDate)}
                         </Typography>

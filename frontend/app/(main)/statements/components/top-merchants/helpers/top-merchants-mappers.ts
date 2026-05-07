@@ -1,10 +1,14 @@
+import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
   resolveMerchantFlow,
   resolveSourceChannel,
 } from '@/app/(main)/statements/components/top-merchants.utils';
 import type { TopMerchantRecord } from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
-import type { StatementFilterItem } from '@/app/(main)/statements/components/filters/statement-filters';
-import type { GmailReceipt, StatementMeta, Transaction } from '@/app/(main)/statements/types/statement-types';
+import type {
+  GmailReceipt,
+  StatementMeta,
+  Transaction,
+} from '@/app/(main)/statements/types/statement-types';
 import {
   getTransactionCurrency,
   getTransactionDate,
@@ -18,10 +22,16 @@ const opt = (v: string | null | undefined): string | null => (v ? v : null);
 
 export const getBankDisplayName = (bankName?: string | null): string => {
   const raw = (bankName ?? '').trim();
-  if (!raw) return 'Unknown';
-  if (raw.toLowerCase() === 'gmail') return 'Gmail';
+  if (!raw) {
+    return 'Unknown';
+  }
+  if (raw.toLowerCase() === 'gmail') {
+    return 'Gmail';
+  }
   const resolved = resolveBankLogo(raw);
-  if (!resolved) return raw;
+  if (!resolved) {
+    return raw;
+  }
   return resolved.key !== 'other' ? resolved.displayName : raw;
 };
 
@@ -36,7 +46,8 @@ const buildTransactionFileType = (meta: StatementMeta | undefined, item: Transac
 // Helpers to extract meta-optional fields with controlled complexity per function:
 const getMetaStatus = (meta: StatementMeta | undefined): string | null => opt(meta?.status);
 const getMetaBankName = (meta: StatementMeta | undefined): string | null => opt(meta?.bankName);
-const getMetaDateTo = (meta: StatementMeta | undefined): string | null => opt(meta?.statementDateTo);
+const getMetaDateTo = (meta: StatementMeta | undefined): string | null =>
+  opt(meta?.statementDateTo);
 const getMetaCreatedAt = (meta: StatementMeta | undefined, item: Transaction): string | null =>
   opt(meta?.createdAt) ?? opt(item.createdAt);
 const getMetaDateFrom = (meta: StatementMeta | undefined, item: Transaction): string | null =>
@@ -48,7 +59,10 @@ const getMetaExportedPaid = (meta: StatementMeta | undefined): MetaExportedPaid 
   paid: meta?.paid ?? null,
 });
 
-type MetaParsingUser = { parsingDetails: StatementFilterItem['parsingDetails']; user: StatementFilterItem['user'] };
+type MetaParsingUser = {
+  parsingDetails: StatementFilterItem['parsingDetails'];
+  user: StatementFilterItem['user'];
+};
 const getMetaParsingUser = (meta: StatementMeta | undefined): MetaParsingUser => ({
   parsingDetails: (meta?.parsingDetails ?? null) as StatementFilterItem['parsingDetails'],
   user: (meta?.user ?? null) as StatementFilterItem['user'],
@@ -71,21 +85,80 @@ type TransactionRecordInput = {
   flow: ReturnType<typeof resolveMerchantFlow>;
 };
 
-const buildTransactionRecord = ({ item, meta, merchant, amount, currency, dateValue, fileType, flow }: TransactionRecordInput): TopMerchantRecord => {
+const buildTransactionRecord = ({
+  item,
+  meta,
+  merchant,
+  amount,
+  currency,
+  dateValue,
+  fileType,
+  flow,
+}: TransactionRecordInput): TopMerchantRecord => {
   const ep = getMetaExportedPaid(meta);
   const pu = getMetaParsingUser(meta);
   const ws = getMetaWorkspace(meta, item);
-  return { id: item.id, source: 'statement', fileName: merchant, subject: null, sender: null, status: getMetaStatus(meta), fileType, createdAt: getMetaCreatedAt(meta, item), statementDateFrom: getMetaDateFrom(meta, item), statementDateTo: getMetaDateTo(meta), bankName: getMetaBankName(meta), totalDebit: amount, totalCredit: null, currency, exported: ep.exported, paid: ep.paid, parsingDetails: pu.parsingDetails, user: pu.user, receivedAt: null, parsedData: { vendor: merchant, date: item.transactionDate ?? null }, merchant, amount, currencyValue: currency, dateValue, paymentPurpose: item.paymentPurpose, sourceType: 'statement', sourceChannel: resolveSourceChannel({ sourceType: 'statement', fileType }), flowType: flow.flowType, workspaceId: ws.workspaceId, workspaceName: ws.workspaceName };
+  return {
+    id: item.id,
+    source: 'statement',
+    fileName: merchant,
+    subject: null,
+    sender: null,
+    status: getMetaStatus(meta),
+    fileType,
+    createdAt: getMetaCreatedAt(meta, item),
+    statementDateFrom: getMetaDateFrom(meta, item),
+    statementDateTo: getMetaDateTo(meta),
+    bankName: getMetaBankName(meta),
+    totalDebit: amount,
+    totalCredit: null,
+    currency,
+    exported: ep.exported,
+    paid: ep.paid,
+    parsingDetails: pu.parsingDetails,
+    user: pu.user,
+    receivedAt: null,
+    parsedData: { vendor: merchant, date: item.transactionDate ?? null },
+    merchant,
+    amount,
+    currencyValue: currency,
+    dateValue,
+    paymentPurpose: item.paymentPurpose,
+    sourceType: 'statement',
+    sourceChannel: resolveSourceChannel({ sourceType: 'statement', fileType }),
+    flowType: flow.flowType,
+    workspaceId: ws.workspaceId,
+    workspaceName: ws.workspaceName,
+  };
 };
 
-export const mapTransactionToRecord = (item: Transaction, meta: StatementMeta | undefined, workspaceCurrency: string): TopMerchantRecord => {
+export const mapTransactionToRecord = (
+  item: Transaction,
+  meta: StatementMeta | undefined,
+  workspaceCurrency: string,
+): TopMerchantRecord => {
   const merchant = getMerchantName(item.counterpartyName);
-  const flow = resolveMerchantFlow({ sourceType: 'statement', debit: item.debit, credit: item.credit, amount: item.amount, transactionType: item.transactionType });
+  const flow = resolveMerchantFlow({
+    sourceType: 'statement',
+    debit: item.debit,
+    credit: item.credit,
+    amount: item.amount,
+    transactionType: item.transactionType,
+  });
   const amount = flow.amount;
   const dateValue = getTransactionDate(item, meta);
   const currency = getTransactionCurrency(item, meta, workspaceCurrency);
   const fileType = buildTransactionFileType(meta, item);
-  return buildTransactionRecord({ item, meta, merchant, amount, currency, dateValue, fileType, flow });
+  return buildTransactionRecord({
+    item,
+    meta,
+    merchant,
+    amount,
+    currency,
+    dateValue,
+    fileType,
+    flow,
+  });
 };
 
 type ReceiptParsedFields = { vendor?: string; date?: string; currency?: string; amount?: number };
@@ -96,13 +169,37 @@ const extractReceiptParsed = (receipt: GmailReceipt): ReceiptParsedFields => ({
   amount: receipt.parsedData?.amount,
 });
 
-export const mapGmailReceiptToMerchantRecord = (receipt: GmailReceipt, workspaceCurrency: string): TopMerchantRecord => {
+export const mapGmailReceiptToMerchantRecord = (
+  receipt: GmailReceipt,
+  workspaceCurrency: string,
+): TopMerchantRecord => {
   const mapped = mapGmailReceiptToStatement(receipt, workspaceCurrency);
-  const { vendor: parsedVendor, date: parsedDate, currency: parsedCurrency, amount: parsedAmount } = extractReceiptParsed(receipt);
-  const merchant = resolveGmailMerchantLabel({ vendor: parsedVendor, sender: receipt.sender, subject: receipt.subject, fallback: mapped.fileName });
+  const {
+    vendor: parsedVendor,
+    date: parsedDate,
+    currency: parsedCurrency,
+    amount: parsedAmount,
+  } = extractReceiptParsed(receipt);
+  const merchant = resolveGmailMerchantLabel({
+    vendor: parsedVendor,
+    sender: receipt.sender,
+    subject: receipt.subject,
+    fallback: mapped.fileName,
+  });
   const flow = resolveMerchantFlow({ sourceType: 'gmail', amount: parsedAmount ?? 0 });
   const amount = flow.amount;
   const dateValue = parsedDate ?? receipt.receivedAt ?? '';
   const currency = resolveCurrencyCode(parsedCurrency, workspaceCurrency);
-  return { ...mapped, merchant, amount, currencyValue: currency, dateValue, sourceType: 'gmail', sourceChannel: resolveSourceChannel({ sourceType: 'gmail', fileType: 'gmail' }), flowType: flow.flowType, workspaceId: receipt.workspaceId, workspaceName: receipt.workspaceName };
+  return {
+    ...mapped,
+    merchant,
+    amount,
+    currencyValue: currency,
+    dateValue,
+    sourceType: 'gmail',
+    sourceChannel: resolveSourceChannel({ sourceType: 'gmail', fileType: 'gmail' }),
+    flowType: flow.flowType,
+    workspaceId: receipt.workspaceId,
+    workspaceName: receipt.workspaceName,
+  };
 };

@@ -86,15 +86,33 @@ function DeleteFolderMessage({
   onSetDeleteFolderWithContents: (v: boolean) => void;
 }): React.JSX.Element {
   if (!folderToDelete) {
-    return <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{messageFallback}</Typography>;
+    return (
+      <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+        {messageFallback}
+      </Typography>
+    );
   }
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
       <Typography style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-        {messagePrefix}{folderToDelete.name}{messageSuffix}
+        {messagePrefix}
+        {folderToDelete.name}
+        {messageSuffix}
       </Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'var(--text-secondary)' }}>
-        <Checkbox checked={deleteFolderWithContents} onCheckedChange={onSetDeleteFolderWithContents} className="h-4 w-4" />
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          fontSize: 14,
+          color: 'var(--text-secondary)',
+        }}
+      >
+        <Checkbox
+          checked={deleteFolderWithContents}
+          onCheckedChange={onSetDeleteFolderWithContents}
+          className="h-4 w-4"
+        />
         {withContentsLabel}
       </Box>
     </Box>
@@ -102,23 +120,64 @@ function DeleteFolderMessage({
 }
 
 export function StorageConfirmModals({
-  deleteFolderModalOpen, folderToDelete, deleteFolderWithContents,
-  deleteModalOpen, fileToDelete, permanentDeleteModalOpen, fileToDeletePermanently,
-  bulkDeleteModalOpen, emptyTrashModalOpen, deleteTagModalOpen, tagToDelete,
+  deleteFolderModalOpen,
+  folderToDelete,
+  deleteFolderWithContents,
+  deleteModalOpen,
+  fileToDelete,
+  permanentDeleteModalOpen,
+  fileToDeletePermanently,
+  bulkDeleteModalOpen,
+  emptyTrashModalOpen,
+  deleteTagModalOpen,
+  tagToDelete,
   selectedTrashCount,
-  folderDeleteTitle, folderDeleteMessagePrefix, folderDeleteMessageSuffix,
-  folderDeleteWithContentsLabel, folderDeleteMessageFallback, folderDeleteConfirm, folderDeleteCancel,
-  deleteTitle, deleteMessagePrefix, deleteMessageSuffix, deleteMessageFallback, deleteConfirm, deleteCancel,
-  permanentDeleteTitle, permanentDeleteMessagePrefix, permanentDeleteMessageSuffix,
-  permanentDeleteMessageFallback, permanentDeleteConfirm, permanentDeleteCancel,
-  bulkDeleteTitle, bulkDeleteMessageTemplate, bulkDeleteConfirm, bulkDeleteCancel,
-  emptyTrashTitle, emptyTrashMessage, emptyTrashConfirm, emptyTrashCancel,
-  tagDeleteTitle, tagDeleteMessagePrefix, tagDeleteMessageSuffix,
-  tagDeleteMessageFallback, tagDeleteConfirm, tagDeleteCancel,
-  onCloseDeleteFolder, onConfirmDeleteFolder, onSetDeleteFolderWithContents,
-  onCloseDelete, onConfirmDelete, onClosePermanentDelete, onConfirmPermanentDelete,
-  onCloseBulkDelete, onConfirmBulkDelete, onCloseEmptyTrash, onConfirmEmptyTrash,
-  onCloseDeleteTag, onConfirmDeleteTag,
+  folderDeleteTitle,
+  folderDeleteMessagePrefix,
+  folderDeleteMessageSuffix,
+  folderDeleteWithContentsLabel,
+  folderDeleteMessageFallback,
+  folderDeleteConfirm,
+  folderDeleteCancel,
+  deleteTitle,
+  deleteMessagePrefix,
+  deleteMessageSuffix,
+  deleteMessageFallback,
+  deleteConfirm,
+  deleteCancel,
+  permanentDeleteTitle,
+  permanentDeleteMessagePrefix,
+  permanentDeleteMessageSuffix,
+  permanentDeleteMessageFallback,
+  permanentDeleteConfirm,
+  permanentDeleteCancel,
+  bulkDeleteTitle,
+  bulkDeleteMessageTemplate,
+  bulkDeleteConfirm,
+  bulkDeleteCancel,
+  emptyTrashTitle,
+  emptyTrashMessage,
+  emptyTrashConfirm,
+  emptyTrashCancel,
+  tagDeleteTitle,
+  tagDeleteMessagePrefix,
+  tagDeleteMessageSuffix,
+  tagDeleteMessageFallback,
+  tagDeleteConfirm,
+  tagDeleteCancel,
+  onCloseDeleteFolder,
+  onConfirmDeleteFolder,
+  onSetDeleteFolderWithContents,
+  onCloseDelete,
+  onConfirmDelete,
+  onClosePermanentDelete,
+  onConfirmPermanentDelete,
+  onCloseBulkDelete,
+  onConfirmBulkDelete,
+  onCloseEmptyTrash,
+  onConfirmEmptyTrash,
+  onCloseDeleteTag,
+  onConfirmDeleteTag,
 }: StorageConfirmModalsProps): React.JSX.Element {
   const deleteFileMsg = fileToDelete
     ? `${deleteMessagePrefix}${fileToDelete.fileName}${deleteMessageSuffix}`
@@ -138,16 +197,71 @@ export function StorageConfirmModals({
         onClose={onCloseDeleteFolder}
         onConfirm={onConfirmDeleteFolder}
         title={folderDeleteTitle}
-        message={<DeleteFolderMessage folderToDelete={folderToDelete} deleteFolderWithContents={deleteFolderWithContents} messagePrefix={folderDeleteMessagePrefix} messageSuffix={folderDeleteMessageSuffix} messageFallback={folderDeleteMessageFallback} withContentsLabel={folderDeleteWithContentsLabel} onSetDeleteFolderWithContents={onSetDeleteFolderWithContents} />}
+        message={
+          <DeleteFolderMessage
+            folderToDelete={folderToDelete}
+            deleteFolderWithContents={deleteFolderWithContents}
+            messagePrefix={folderDeleteMessagePrefix}
+            messageSuffix={folderDeleteMessageSuffix}
+            messageFallback={folderDeleteMessageFallback}
+            withContentsLabel={folderDeleteWithContentsLabel}
+            onSetDeleteFolderWithContents={onSetDeleteFolderWithContents}
+          />
+        }
         confirmText={folderDeleteConfirm}
         cancelText={folderDeleteCancel}
         isDestructive
       />
-      <ConfirmModal isOpen={deleteModalOpen} onClose={onCloseDelete} onConfirm={onConfirmDelete} title={deleteTitle} message={deleteFileMsg} confirmText={deleteConfirm} cancelText={deleteCancel} isDestructive />
-      <ConfirmModal isOpen={permanentDeleteModalOpen} onClose={onClosePermanentDelete} onConfirm={onConfirmPermanentDelete} title={permanentDeleteTitle} message={permanentDeleteMsg} confirmText={permanentDeleteConfirm} cancelText={permanentDeleteCancel} isDestructive />
-      <ConfirmModal isOpen={bulkDeleteModalOpen} onClose={onCloseBulkDelete} onConfirm={onConfirmBulkDelete} title={bulkDeleteTitle} message={bulkDeleteMsg} confirmText={bulkDeleteConfirm} cancelText={bulkDeleteCancel} isDestructive />
-      <ConfirmModal isOpen={emptyTrashModalOpen} onClose={onCloseEmptyTrash} onConfirm={onConfirmEmptyTrash} title={emptyTrashTitle} message={emptyTrashMessage} confirmText={emptyTrashConfirm} cancelText={emptyTrashCancel} isDestructive />
-      <ConfirmModal isOpen={deleteTagModalOpen} onClose={onCloseDeleteTag} onConfirm={onConfirmDeleteTag} title={tagDeleteTitle} message={tagDeleteMsg} confirmText={tagDeleteConfirm} cancelText={tagDeleteCancel} isDestructive />
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={onCloseDelete}
+        onConfirm={onConfirmDelete}
+        title={deleteTitle}
+        message={deleteFileMsg}
+        confirmText={deleteConfirm}
+        cancelText={deleteCancel}
+        isDestructive
+      />
+      <ConfirmModal
+        isOpen={permanentDeleteModalOpen}
+        onClose={onClosePermanentDelete}
+        onConfirm={onConfirmPermanentDelete}
+        title={permanentDeleteTitle}
+        message={permanentDeleteMsg}
+        confirmText={permanentDeleteConfirm}
+        cancelText={permanentDeleteCancel}
+        isDestructive
+      />
+      <ConfirmModal
+        isOpen={bulkDeleteModalOpen}
+        onClose={onCloseBulkDelete}
+        onConfirm={onConfirmBulkDelete}
+        title={bulkDeleteTitle}
+        message={bulkDeleteMsg}
+        confirmText={bulkDeleteConfirm}
+        cancelText={bulkDeleteCancel}
+        isDestructive
+      />
+      <ConfirmModal
+        isOpen={emptyTrashModalOpen}
+        onClose={onCloseEmptyTrash}
+        onConfirm={onConfirmEmptyTrash}
+        title={emptyTrashTitle}
+        message={emptyTrashMessage}
+        confirmText={emptyTrashConfirm}
+        cancelText={emptyTrashCancel}
+        isDestructive
+      />
+      <ConfirmModal
+        isOpen={deleteTagModalOpen}
+        onClose={onCloseDeleteTag}
+        onConfirm={onConfirmDeleteTag}
+        title={tagDeleteTitle}
+        message={tagDeleteMsg}
+        confirmText={tagDeleteConfirm}
+        cancelText={tagDeleteCancel}
+        isDestructive
+      />
     </>
   );
 }
