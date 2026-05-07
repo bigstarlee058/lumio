@@ -1,13 +1,14 @@
 'use client';
 
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, Button, Stack } from '@mui/material';
 
 interface OnboardingNavigationProps {
   currentStep: number;
   totalSteps: number;
   isSubmitting: boolean;
   showSkip: boolean;
+  showSkipAll?: boolean;
   canExitOnBack?: boolean;
   onBack: () => void;
   onNext: () => void;
@@ -28,6 +29,7 @@ export function OnboardingNavigation({
   totalSteps,
   isSubmitting,
   showSkip,
+  showSkipAll = true,
   canExitOnBack = false,
   onBack,
   onNext,
@@ -41,7 +43,9 @@ export function OnboardingNavigation({
 
   return (
     <Stack spacing={2} sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2.5 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}
+      >
         <Button
           variant="outlined"
           onClick={onBack}
@@ -104,7 +108,7 @@ export function OnboardingNavigation({
         </Box>
       </Box>
 
-      {!isLastStep ? (
+      {!isLastStep && showSkipAll ? (
         <button
           type="button"
           onClick={onSkipAll}

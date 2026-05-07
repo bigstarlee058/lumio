@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react';
-import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { OnboardingNavigation } from './OnboardingNavigation';
@@ -30,7 +29,7 @@ describe('OnboardingNavigation', () => {
         onSkip={vi.fn()}
         onSkipAll={vi.fn()}
         labels={labels}
-      />, 
+      />,
     );
 
     const backButton = screen.getByRole('button', { name: 'Back' });

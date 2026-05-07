@@ -15,11 +15,7 @@ const STANDARD_STEP_KEYS: OnboardingStepKey[] = [
   'completion',
 ];
 
-const CREATE_WORKSPACE_STEP_KEYS: OnboardingStepKey[] = [
-  'workspace',
-  'integrations',
-  'completion',
-];
+const CREATE_WORKSPACE_STEP_KEYS: OnboardingStepKey[] = ['workspace', 'integrations', 'completion'];
 
 export function resolveOnboardingFlow(
   modeParam: string | null | undefined,

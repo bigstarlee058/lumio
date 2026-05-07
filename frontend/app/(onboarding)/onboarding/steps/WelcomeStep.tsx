@@ -1,10 +1,10 @@
 'use client';
 
-import { useIntlayer } from '@/app/i18n';
-import { Box, Stack, Typography } from '@mui/material';
 import { CheckCircle2, ShieldCheck, Sparkles, Workflow } from '@/app/components/icons';
-import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
+import { useIntlayer } from '@/app/i18n';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, Stack, Typography } from '@mui/material';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 
 export function WelcomeStep() {
   const t = useIntlayer('onboardingPage');
@@ -50,7 +50,10 @@ export function WelcomeStep() {
             }}
           >
             <Sparkles style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
-            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+            <Typography
+              style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}
+              sx={{ color: 'text.primary' }}
+            >
               {text(['welcome', 'points', 'fastSetup'], 'Quick initial setup')}
             </Typography>
           </Box>
@@ -64,7 +67,10 @@ export function WelcomeStep() {
             }}
           >
             <Workflow style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
-            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+            <Typography
+              style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}
+              sx={{ color: 'text.primary' }}
+            >
               {text(['welcome', 'points', 'integrations'], 'Connect services in one click')}
             </Typography>
           </Box>
@@ -77,8 +83,13 @@ export function WelcomeStep() {
               p: 2,
             }}
           >
-            <ShieldCheck style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }} />
-            <Typography style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }} sx={{ color: 'text.primary' }}>
+            <ShieldCheck
+              style={{ height: 20, width: 20, color: 'var(--mui-palette-primary-main)' }}
+            />
+            <Typography
+              style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}
+              sx={{ color: 'text.primary' }}
+            >
               {text(['welcome', 'points', 'control'], 'Clear start and full control')}
             </Typography>
           </Box>
@@ -93,18 +104,35 @@ export function WelcomeStep() {
             p: 2,
           }}
         >
-          <Typography style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }} sx={{ color: 'text.primary' }}>
+          <Typography
+            style={{ marginBottom: 12, fontSize: 14, fontWeight: 600 }}
+            sx={{ color: 'text.primary' }}
+          >
             {text(['welcome', 'nextTitle'], 'What happens next')}
           </Typography>
           <Stack component="ul" spacing={1} style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <CheckCircle2
+                style={{
+                  height: 16,
+                  width: 16,
+                  color: 'var(--mui-palette-primary-main)',
+                  flexShrink: 0,
+                }}
+              />
               <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
                 {text(['welcome', 'nextSteps', 'language'], 'Pick interface language and timezone')}
               </Typography>
             </Box>
             <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <CheckCircle2
+                style={{
+                  height: 16,
+                  width: 16,
+                  color: 'var(--mui-palette-primary-main)',
+                  flexShrink: 0,
+                }}
+              />
               <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
                 {text(
                   ['welcome', 'nextSteps', 'workspace'],
@@ -113,7 +141,14 @@ export function WelcomeStep() {
               </Typography>
             </Box>
             <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CheckCircle2 style={{ height: 16, width: 16, color: 'var(--mui-palette-primary-main)', flexShrink: 0 }} />
+              <CheckCircle2
+                style={{
+                  height: 16,
+                  width: 16,
+                  color: 'var(--mui-palette-primary-main)',
+                  flexShrink: 0,
+                }}
+              />
               <Typography style={{ fontSize: 14 }} sx={{ color: 'text.secondary' }}>
                 {text(
                   ['welcome', 'nextSteps', 'integrations'],

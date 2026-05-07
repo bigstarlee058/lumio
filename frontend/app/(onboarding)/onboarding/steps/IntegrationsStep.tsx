@@ -3,9 +3,9 @@
 import type { LucideIcon } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface OnboardingIntegrationCard {
   key: string;
@@ -71,7 +71,14 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                   boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
                 }}
               >
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    justifyContent: 'space-between',
+                    gap: 1.5,
+                  }}
+                >
                   <Box sx={{ minWidth: 0 }}>
                     <Box
                       sx={{
@@ -86,10 +93,16 @@ export function IntegrationsStep({ cards, onConnect }: IntegrationsStepProps) {
                     >
                       <Icon size={24} aria-hidden />
                     </Box>
-                    <Typography style={{ fontSize: 14, fontWeight: 600 }} sx={{ color: 'text.primary' }}>
+                    <Typography
+                      style={{ fontSize: 14, fontWeight: 600 }}
+                      sx={{ color: 'text.primary' }}
+                    >
                       {card.title}
                     </Typography>
-                    <Typography style={{ marginTop: 4, fontSize: 14 }} sx={{ color: 'text.secondary' }}>
+                    <Typography
+                      style={{ marginTop: 4, fontSize: 14 }}
+                      sx={{ color: 'text.secondary' }}
+                    >
                       {card.description}
                     </Typography>
                   </Box>

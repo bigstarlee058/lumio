@@ -1,8 +1,8 @@
+import type { LucideProps } from '@/app/components/icons';
 // @vitest-environment jsdom
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import type { LucideProps } from '@/app/components/icons';
 
 import { IntegrationsStep, type OnboardingIntegrationCard } from './IntegrationsStep';
 
@@ -11,7 +11,11 @@ vi.mock('@/app/i18n', () => ({
     integrations: {
       title: { value: { en: 'Connect your integrations' } },
       subtitle: { value: { en: 'Pick services you want to set up now.' } },
-      helper: { value: { en: 'If you skip this step, you can connect integrations later in Settings -> Integrations.' } },
+      helper: {
+        value: {
+          en: 'If you skip this step, you can connect integrations later in Settings -> Integrations.',
+        },
+      },
       connectedBadge: { value: { en: 'Connected' } },
       availableBadge: { value: { en: 'Available' } },
     },
@@ -22,7 +26,12 @@ const TestIcon = (_props: LucideProps): React.ReactElement => (
   <svg data-testid="integration-test-icon" />
 );
 
-const LEGACY_CARD_TITLES = ['Drop' + 'box', `Google ${'Drive'}`, 'G' + 'mail', `Google ${'Sheets'}`];
+const LEGACY_CARD_TITLES = [
+  'Drop' + 'box',
+  `Google ${'Drive'}`,
+  'G' + 'mail',
+  `Google ${'Sheets'}`,
+];
 
 function makeCards(): OnboardingIntegrationCard[] {
   return [

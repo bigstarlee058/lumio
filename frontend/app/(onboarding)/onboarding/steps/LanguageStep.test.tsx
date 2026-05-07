@@ -4,14 +4,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { LanguageStep } from './LanguageStep';
 
 vi.mock('@mui/material/Autocomplete', () => ({
-  default: ({ renderInput, inputId }: { renderInput: (p: { inputProps: { id: string } }) => unknown; inputId?: string }) =>
+  default: ({
+    renderInput,
+    inputId,
+  }: { renderInput: (p: { inputProps: { id: string } }) => unknown; inputId?: string }) =>
     renderInput({ inputProps: { id: inputId ?? 'autocomplete' } }),
 }));
 
 vi.mock('@mui/material/TextField', () => ({
-  default: ({ inputProps }: { inputProps?: { id?: string } }) => (
-    <input id={inputProps?.id} />
-  ),
+  default: ({ inputProps }: { inputProps?: { id?: string } }) => <input id={inputProps?.id} />,
 }));
 
 vi.mock('react-intlayer', () => ({

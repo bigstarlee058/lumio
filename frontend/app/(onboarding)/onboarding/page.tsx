@@ -1,16 +1,17 @@
 'use client';
 
 import { DEFAULT_BACKGROUND } from '@/app/(main)/workspaces/constants';
-import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
+import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { OnboardingIntegrationConnection } from './components/OnboardingIntegrationConnection';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
 import { OnboardingProgress } from './components/OnboardingProgress';
 import {
@@ -18,8 +19,8 @@ import {
   INTEGRATION_DESCRIPTION_FALLBACK,
   INTEGRATION_TITLE_FALLBACK,
   ONBOARDING_INTEGRATIONS,
-  parseIntegrationConnectedStatus,
   type OnboardingIntegrationKey,
+  parseIntegrationConnectedStatus,
 } from './hooks/useOnboardingActions';
 import { resolveOnboardingBootstrapLocale } from './lib/locale-bootstrap';
 import { resolveOnboardingFlow } from './lib/onboarding-flow';
@@ -29,12 +30,7 @@ import { IntegrationsStep } from './steps/IntegrationsStep';
 import { LanguageStep } from './steps/LanguageStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { WorkspaceStep } from './steps/WorkspaceStep';
-import {
-  type OnboardingData,
-  type SupportedLocale,
-  useOnboardingWizard,
-} from './useOnboardingWizard';
-import { tokens } from '@/lib/theme-tokens';
+import { type OnboardingData, useOnboardingWizard } from './useOnboardingWizard';
 
 const DEFAULT_CURRENCY = 'USD';
 
@@ -78,12 +74,13 @@ export default function OnboardingPage() {
   const [isStepTransitioning, setIsStepTransitioning] = useState(false);
   const stepBlockRef = useRef<HTMLDivElement | null>(null);
   const hasStepMountedRef = useRef(false);
-  const [integrationStatuses, setIntegrationStatuses] = useState<
-    Record<OnboardingIntegrationKey, boolean>
-  >(EMPTY_INTEGRATION_STATE);
-  const [integrationLoading, setIntegrationLoading] = useState<
-    Record<OnboardingIntegrationKey, boolean>
-  >(EMPTY_INTEGRATION_STATE);
+  const [integrationStatuses, setIntegrationStatuses] =
+    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
+  const [integrationLoading, setIntegrationLoading] =
+    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
+  const [activeIntegrationKey, setActiveIntegrationKey] = useState<OnboardingIntegrationKey | null>(
+    null,
+  );
   const tx = useCallback(
     (path: string[], fallback = '', localeOverride?: string) =>
       resolveOnboardingText(
@@ -94,14 +91,15 @@ export default function OnboardingPage() {
     [data.locale, t],
   );
 
-  const checkIntegrationConnected = async (
-    integration: (typeof ONBOARDING_INTEGRATIONS)[number],
-  ): Promise<boolean> => {
-    const response = await apiClient.get(integration.statusPath);
-    return parseIntegrationConnectedStatus(response.data);
-  };
+  const checkIntegrationConnected = useCallback(
+    async (integration: (typeof ONBOARDING_INTEGRATIONS)[number]): Promise<boolean> => {
+      const response = await apiClient.get(integration.statusPath);
+      return parseIntegrationConnectedStatus(response.data);
+    },
+    [],
+  );
 
-  const refreshIntegrationStatuses = async () => {
+  const refreshIntegrationStatuses = useCallback(async () => {
     const nextStatuses: Record<OnboardingIntegrationKey, boolean> = {
       ...EMPTY_INTEGRATION_STATE,
     };
@@ -117,7 +115,7 @@ export default function OnboardingPage() {
     );
 
     setIntegrationStatuses(nextStatuses);
-  };
+  }, [checkIntegrationConnected]);
 
   useEffect(() => {
     if (authLoading) {
@@ -233,6 +231,7 @@ export default function OnboardingPage() {
     flow.shouldRedirectCompletedUser,
     isCreateWorkspaceFlow,
     appLocale,
+    refreshIntegrationStatuses,
     setLocale,
     t,
     updateData,
@@ -254,7 +253,7 @@ export default function OnboardingPage() {
     return () => {
       window.clearInterval(timer);
     };
-  }, [currentStep, flow.stepKeys]);
+  }, [currentStep, flow.stepKeys, refreshIntegrationStatuses]);
 
   const stepLabels = useMemo(() => {
     const stepLabelMap = {
@@ -273,10 +272,16 @@ export default function OnboardingPage() {
   const languageStepIndex = flow.stepKeys.indexOf('language');
   const integrationsStepIndex = flow.stepKeys.indexOf('integrations');
   const completionStepIndex = flow.stepKeys.indexOf('completion');
-  const showSkipButton = currentStep > 0 && !isLastStep;
+  const isIntegrationConnectionView =
+    currentStep === integrationsStepIndex && activeIntegrationKey !== null;
+  const showSkipButton = currentStep > 0 && !isLastStep && !isIntegrationConnectionView;
   const canExitOnBack = isCreateWorkspaceFlow && currentStep === 0;
   const isWorkspaceLayoutStep = currentStep === workspaceStepIndex;
-  const wizardTargetMaxWidth = isWorkspaceLayoutStep && !workspaceCurrencyPickerOpen ? 1520 : 1160;
+  const wizardTargetMaxWidth = isIntegrationConnectionView
+    ? 960
+    : isWorkspaceLayoutStep && !workspaceCurrencyPickerOpen
+      ? 1520
+      : 1160;
   const isWorkspaceCurrencyPickerView = isWorkspaceLayoutStep && workspaceCurrencyPickerOpen;
   const hideMainNavigation = isWorkspaceLayoutStep && workspaceCurrencyPickerOpen;
 
@@ -295,7 +300,7 @@ export default function OnboardingPage() {
     return () => {
       window.clearTimeout(timer);
     };
-  }, [currentStep]);
+  }, [activeIntegrationKey, currentStep]);
 
   useLayoutEffect(() => {
     const node = stepBlockRef.current;
@@ -330,7 +335,7 @@ export default function OnboardingPage() {
       observer?.disconnect();
       window.removeEventListener('resize', measure);
     };
-  }, [currentStep, hideMainNavigation, isWorkspaceCurrencyPickerView]);
+  }, [activeIntegrationKey, currentStep, hideMainNavigation, isWorkspaceCurrencyPickerView]);
 
   const integrationCards = useMemo(
     () =>
@@ -365,14 +370,15 @@ export default function OnboardingPage() {
       return;
     }
 
+    setIsStepTransitioning(true);
     setIntegrationLoading(prev => ({ ...prev, [integration.key]: true }));
-    try {
-      window.open(integration.path, '_blank', 'noopener,noreferrer');
-      await refreshIntegrationStatuses();
-    } finally {
-      setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
-    }
+    setActiveIntegrationKey(integration.key);
+    setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
   };
+
+  const handleIntegrationConnectionStatusChange = useCallback(async () => {
+    await refreshIntegrationStatuses();
+  }, [refreshIntegrationStatuses]);
 
   const completeOnboarding = async () => {
     setError('');
@@ -453,11 +459,23 @@ export default function OnboardingPage() {
       return;
     }
 
+    if (isIntegrationConnectionView) {
+      void refreshIntegrationStatuses();
+      setActiveIntegrationKey(null);
+    }
+
     setIsStepTransitioning(true);
     goNext();
   };
 
   const handleBack = () => {
+    if (isIntegrationConnectionView) {
+      setIsStepTransitioning(true);
+      setActiveIntegrationKey(null);
+      void refreshIntegrationStatuses();
+      return;
+    }
+
     if (canExitOnBack) {
       router.back();
       return;
@@ -468,11 +486,13 @@ export default function OnboardingPage() {
   };
 
   const handleSkip = () => {
+    setActiveIntegrationKey(null);
     setIsStepTransitioning(true);
     goNext();
   };
 
   const handleSkipAll = () => {
+    setActiveIntegrationKey(null);
     setIsStepTransitioning(true);
     skipAll();
   };
@@ -539,7 +559,12 @@ export default function OnboardingPage() {
           }}
         >
           <Typography
-            style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em' }}
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.18em',
+            }}
             sx={{ color: 'primary.main' }}
           >
             LUMIO
@@ -565,10 +590,7 @@ export default function OnboardingPage() {
           <OnboardingProgress currentStep={currentStep} stepLabels={stepLabels} />
 
           {error ? (
-            <Alert
-              severity="error"
-              sx={{ mt: 2 }}
-            >
+            <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           ) : null}
@@ -616,10 +638,17 @@ export default function OnboardingPage() {
                     />
                   ) : null}
                   {currentStep === integrationsStepIndex ? (
-                    <IntegrationsStep
-                      cards={integrationCards}
-                      onConnect={handleConnectIntegration}
-                    />
+                    activeIntegrationKey ? (
+                      <OnboardingIntegrationConnection
+                        integrationKey={activeIntegrationKey}
+                        onConnectionStatusChange={handleIntegrationConnectionStatusChange}
+                      />
+                    ) : (
+                      <IntegrationsStep
+                        cards={integrationCards}
+                        onConnect={handleConnectIntegration}
+                      />
+                    )
                   ) : null}
                   {currentStep === completionStepIndex ? (
                     <CompletionStep
@@ -663,7 +692,11 @@ export default function OnboardingPage() {
                       skip: tx(['navigation', 'skip'], 'Skip'),
                       skipAll: tx(['navigation', 'skipAll'], 'Skip all'),
                       saving: tx(['navigation', 'saving'], 'Saving...'),
+                      ...(isIntegrationConnectionView
+                        ? { next: tx(['navigation', 'continue'], 'Continue') }
+                        : {}),
                     }}
+                    showSkipAll={!isIntegrationConnectionView}
                   />
                 </Box>
               ) : null}

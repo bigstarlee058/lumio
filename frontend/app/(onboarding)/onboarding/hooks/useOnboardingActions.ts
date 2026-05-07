@@ -6,8 +6,8 @@ import {
   Database,
   Globe,
   Inbox,
-  Mail,
   type LucideIcon,
+  Mail,
 } from '@/app/components/icons';
 import type { User } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
@@ -210,9 +210,13 @@ type WorkspaceItem = {
 };
 
 function extractWorkspaces(data: unknown): WorkspaceItem[] {
-  if (Array.isArray(data)) return data as WorkspaceItem[];
+  if (Array.isArray(data)) {
+    return data as WorkspaceItem[];
+  }
   const d = data as { data?: unknown };
-  if (Array.isArray(d?.data)) return d.data as WorkspaceItem[];
+  if (Array.isArray(d?.data)) {
+    return d.data as WorkspaceItem[];
+  }
   return [];
 }
 
@@ -228,9 +232,15 @@ function applyWorkspaceToInitialData({
   workspace: WorkspaceItem | null;
   initialData: Partial<OnboardingData>;
 }): void {
-  if (workspace?.name) initialData.workspaceName = workspace.name;
-  if (workspace?.currency) initialData.workspaceCurrency = String(workspace.currency).toUpperCase();
-  if (workspace?.backgroundImage) initialData.workspaceBackgroundImage = String(workspace.backgroundImage);
+  if (workspace?.name) {
+    initialData.workspaceName = workspace.name;
+  }
+  if (workspace?.currency) {
+    initialData.workspaceCurrency = String(workspace.currency).toUpperCase();
+  }
+  if (workspace?.backgroundImage) {
+    initialData.workspaceBackgroundImage = String(workspace.backgroundImage);
+  }
 }
 
 export async function fetchWorkspaceInitialData({
@@ -277,12 +287,26 @@ export async function completeOnboarding({
   const workspaceBackgroundImage = (data.workspaceBackgroundImage || '').trim();
 
   if (isCreateWorkspaceFlow) {
-    await runCreateWorkspaceFlow({ data, workspaceName, workspaceCurrency, workspaceBackgroundImage, setUser, refreshWorkspaces });
+    await runCreateWorkspaceFlow({
+      data,
+      workspaceName,
+      workspaceCurrency,
+      workspaceBackgroundImage,
+      setUser,
+      refreshWorkspaces,
+    });
     onCreateWorkspaceDone();
     return;
   }
 
-  await runMainOnboardingFlow({ data, workspaceName, workspaceCurrency, workspaceBackgroundImage, setUser, refreshWorkspaces });
+  await runMainOnboardingFlow({
+    data,
+    workspaceName,
+    workspaceCurrency,
+    workspaceBackgroundImage,
+    setUser,
+    refreshWorkspaces,
+  });
   onOnboardingDone();
 }
 
@@ -336,7 +360,11 @@ async function runCreateWorkspaceFlow({
     localStorage.setItem('currentWorkspaceId', createdId);
   }
 
-  try { await refreshWorkspaces(); } catch { /* noop */ }
+  try {
+    await refreshWorkspaces();
+  } catch {
+    /* noop */
+  }
 }
 
 async function runMainOnboardingFlow({
@@ -355,7 +383,11 @@ async function runMainOnboardingFlow({
     workspaceBackgroundImage: workspaceBackgroundImage || undefined,
   });
   await applyUserFromResponse({ responseData: response.data, setUser });
-  try { await refreshWorkspaces(); } catch { /* noop */ }
+  try {
+    await refreshWorkspaces();
+  } catch {
+    /* noop */
+  }
 }
 
 type IntegrationCard = {
@@ -387,7 +419,8 @@ function buildOneIntegrationCard({
 }): IntegrationCard {
   const connected = integrationStatuses[integration.key];
   const title =
-    tx(['integrations', 'cards', integration.key, 'title']) || INTEGRATION_TITLE_FALLBACK[integration.key];
+    tx(['integrations', 'cards', integration.key, 'title']) ||
+    INTEGRATION_TITLE_FALLBACK[integration.key];
   const actionLabel = connected
     ? tx(['integrations', 'connectedBadge']) || 'Connected'
     : tx(['integrations', 'cards', integration.key, 'action']) || 'Connect';

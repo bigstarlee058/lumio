@@ -11,7 +11,9 @@ type UseIntegrationConnectParams = {
 
 type UseIntegrationConnectResult = {
   integrationLoading: Record<OnboardingIntegrationKey, boolean>;
+  activeIntegrationKey: OnboardingIntegrationKey | null;
   handleConnectIntegration: (integrationKey: string) => Promise<void>;
+  handleCloseIntegration: () => Promise<void>;
 };
 
 export function useIntegrationConnect({
@@ -19,19 +21,37 @@ export function useIntegrationConnect({
 }: UseIntegrationConnectParams): UseIntegrationConnectResult {
   const [integrationLoading, setIntegrationLoading] =
     useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
+  const [activeIntegrationKey, setActiveIntegrationKey] = useState<OnboardingIntegrationKey | null>(
+    null,
+  );
 
-  const handleConnectIntegration = useCallback(async (integrationKey: string): Promise<void> => {
-    const integration = ONBOARDING_INTEGRATIONS.find(item => item.key === integrationKey);
-    if (!integration) return;
+  const handleConnectIntegration = useCallback(
+    async (integrationKey: string): Promise<void> => {
+      const integration = ONBOARDING_INTEGRATIONS.find(item => item.key === integrationKey);
+      if (!integration) {
+        return;
+      }
 
-    setIntegrationLoading(prev => ({ ...prev, [integration.key]: true }));
-    try {
-      window.open(integration.path, '_blank', 'noopener,noreferrer');
-      await refreshIntegrationStatuses();
-    } finally {
-      setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
-    }
+      setIntegrationLoading(prev => ({ ...prev, [integration.key]: true }));
+      try {
+        setActiveIntegrationKey(integration.key);
+        await refreshIntegrationStatuses();
+      } finally {
+        setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
+      }
+    },
+    [refreshIntegrationStatuses],
+  );
+
+  const handleCloseIntegration = useCallback(async (): Promise<void> => {
+    setActiveIntegrationKey(null);
+    await refreshIntegrationStatuses();
   }, [refreshIntegrationStatuses]);
 
-  return { integrationLoading, handleConnectIntegration };
+  return {
+    integrationLoading,
+    activeIntegrationKey,
+    handleConnectIntegration,
+    handleCloseIntegration,
+  };
 }

@@ -38,24 +38,29 @@ export function useStepAnimation({
 
   useLayoutEffect((): (() => void) => {
     const node = stepBlockRef.current;
-    if (!node) return (): void => {};
+    if (!node) {
+      return (): void => {};
+    }
 
     let frame = 0;
     const measure = (): void => {
-      if (frame) window.cancelAnimationFrame(frame);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
       frame = window.requestAnimationFrame((): void => {
         setAnimatedBlockHeight(node.scrollHeight);
       });
     };
 
     measure();
-    const observer =
-      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
     observer?.observe(node);
     window.addEventListener('resize', measure);
 
     return (): void => {
-      if (frame) window.cancelAnimationFrame(frame);
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
       observer?.disconnect();
       window.removeEventListener('resize', measure);
     };

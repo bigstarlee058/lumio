@@ -16,7 +16,12 @@ import {
   parseIntegrationConnectedStatus,
 } from './useOnboardingActions';
 
-const LEGACY_CARD_TITLES = ['Drop' + 'box', `Google ${'Drive'}`, 'G' + 'mail', `Google ${'Sheets'}`];
+const LEGACY_CARD_TITLES = [
+  'Drop' + 'box',
+  `Google ${'Drive'}`,
+  'G' + 'mail',
+  `Google ${'Sheets'}`,
+];
 
 describe('onboarding integration actions', () => {
   it('uses current OSS and protocol integrations only', () => {

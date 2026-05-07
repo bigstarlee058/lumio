@@ -1,11 +1,11 @@
 'use client';
 
-import { useIntlayer } from '@/app/i18n';
-import { Box, Stack, Typography } from '@mui/material';
 import { CheckCircle2, type LucideIcon } from '@/app/components/icons';
+import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Stack, Typography } from '@mui/material';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
-import { tokens } from '@/lib/theme-tokens';
 
 interface ConnectedIntegration {
   key: string;
@@ -54,7 +54,9 @@ export function CompletionStep({
             p: 1.5,
           }}
         >
-          <CheckCircle2 style={{ height: 28, width: 28, color: 'var(--mui-palette-primary-main)' }} />
+          <CheckCircle2
+            style={{ height: 28, width: 28, color: 'var(--mui-palette-primary-main)' }}
+          />
         </Box>
 
         <Box>
@@ -86,7 +88,13 @@ export function CompletionStep({
           }}
         >
           <Typography
-            style={{ marginBottom: 12, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}
+            style={{
+              marginBottom: 12,
+              fontSize: 12,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+            }}
             sx={{ color: 'text.secondary' }}
           >
             {text(['completion', 'summaryTitle'], 'Your setup')}
@@ -126,7 +134,10 @@ export function CompletionStep({
             </li>
             <li>
               <Typography style={{ fontSize: 14 }} sx={{ color: 'text.primary' }}>
-                {text(['completion', 'summary', 'background'], 'Workspace background: {value}').replace(
+                {text(
+                  ['completion', 'summary', 'background'],
+                  'Workspace background: {value}',
+                ).replace(
                   '{value}',
                   workspaceBackgroundImage
                     ? text(['completion', 'backgroundSet'], 'set')
@@ -141,9 +152,7 @@ export function CompletionStep({
             </li>
           </Stack>
 
-          <Box
-            sx={{ mt: 2, borderTop: '1px solid', borderColor: 'divider', pt: 1.5 }}
-          >
+          <Box sx={{ mt: 2, borderTop: '1px solid', borderColor: 'divider', pt: 1.5 }}>
             {connectedIntegrations.length > 0 ? (
               <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
                 {connectedIntegrations.map(integration => {
