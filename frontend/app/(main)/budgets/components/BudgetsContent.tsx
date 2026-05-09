@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import type React from 'react';
 import type { ReactNode } from 'react';
-import type { BudgetFormData, BudgetItem } from '../hooks/useBudgetsPage';
+import type { BudgetDrawerIntent, BudgetFormData, BudgetItem } from '../hooks/useBudgetsPage';
 import { BudgetCard } from './BudgetCard';
 import { BudgetFormDrawer } from './BudgetFormDrawer';
 
@@ -19,11 +19,13 @@ interface BudgetsContentProps {
   error: string | null;
   dialogOpen: boolean;
   editingBudget: BudgetItem | null;
+  drawerIntent: BudgetDrawerIntent;
   formData: BudgetFormData;
   saving: boolean;
   setFormData: (data: BudgetFormData) => void;
   openCreate: () => void;
   openEdit: (budget: BudgetItem) => void;
+  openSpendingUpdate: (budget: BudgetItem) => void;
   closeDialog: () => void;
   handleSave: () => void;
   handleDelete: (id: string) => void;
@@ -38,6 +40,7 @@ interface BudgetSummary {
   totalLimit: number;
   totalSpent: number;
   overBudgetCount: number;
+  currency: string;
 }
 
 interface AmountFormatInput {
@@ -47,7 +50,13 @@ interface AmountFormatInput {
 
 type BudgetListStateProps = Pick<
   BudgetsContentProps,
-  'budgets' | 'loading' | 'error' | 'openCreate' | 'openEdit' | 'handleDelete'
+  | 'budgets'
+  | 'loading'
+  | 'error'
+  | 'openCreate'
+  | 'openEdit'
+  | 'openSpendingUpdate'
+  | 'handleDelete'
 >;
 
 function SummaryCard({ label, value }: SummaryCardProps): React.JSX.Element {
@@ -80,10 +89,11 @@ function formatAmount({ amount, currency }: AmountFormatInput): string {
 }
 
 function getBudgetSummary(budgets: BudgetItem[]): BudgetSummary {
-  const summary = { totalLimit: 0, totalSpent: 0, overBudgetCount: 0 };
+  const summary = { totalLimit: 0, totalSpent: 0, overBudgetCount: 0, currency: 'KZT' };
 
   for (const budget of budgets) {
-    summary.totalLimit += budget.limitAmount;
+    summary.currency = budget.workspaceCurrency ?? budget.currency;
+    summary.totalLimit += budget.limitAmountWorkspace ?? budget.limitAmount;
     summary.totalSpent += budget.spentAmount;
     if (budget.percentUsed >= 100) {
       summary.overBudgetCount += 1;
@@ -154,11 +164,11 @@ function SummaryGrid({ summary }: { summary: BudgetSummary }): React.JSX.Element
     >
       <SummaryCard
         label="Total limit"
-        value={formatAmount({ amount: summary.totalLimit, currency: 'KZT' })}
+        value={formatAmount({ amount: summary.totalLimit, currency: summary.currency })}
       />
       <SummaryCard
         label="Spent"
-        value={formatAmount({ amount: summary.totalSpent, currency: 'KZT' })}
+        value={formatAmount({ amount: summary.totalSpent, currency: summary.currency })}
       />
       <SummaryCard label="Over budget" value={summary.overBudgetCount} />
     </Box>
@@ -197,8 +207,12 @@ function EmptyState({ openCreate }: Pick<BudgetsContentProps, 'openCreate'>): Re
 function BudgetGrid({
   budgets,
   openEdit,
+  openSpendingUpdate,
   handleDelete,
-}: Pick<BudgetListStateProps, 'budgets' | 'openEdit' | 'handleDelete'>): React.JSX.Element {
+}: Pick<
+  BudgetListStateProps,
+  'budgets' | 'openEdit' | 'openSpendingUpdate' | 'handleDelete'
+>): React.JSX.Element {
   return (
     <Box
       sx={{
@@ -213,7 +227,13 @@ function BudgetGrid({
       }}
     >
       {budgets.map(budget => (
-        <BudgetCard key={budget.id} budget={budget} onEdit={openEdit} onDelete={handleDelete} />
+        <BudgetCard
+          key={budget.id}
+          budget={budget}
+          onEdit={openEdit}
+          onUpdateSpent={openSpendingUpdate}
+          onDelete={handleDelete}
+        />
       ))}
     </Box>
   );
@@ -225,6 +245,7 @@ function BudgetListState({
   error,
   openCreate,
   openEdit,
+  openSpendingUpdate,
   handleDelete,
 }: BudgetListStateProps): React.JSX.Element {
   if (loading) {
@@ -239,7 +260,14 @@ function BudgetListState({
     return <EmptyState openCreate={openCreate} />;
   }
 
-  return <BudgetGrid budgets={budgets} openEdit={openEdit} handleDelete={handleDelete} />;
+  return (
+    <BudgetGrid
+      budgets={budgets}
+      openEdit={openEdit}
+      openSpendingUpdate={openSpendingUpdate}
+      handleDelete={handleDelete}
+    />
+  );
 }
 
 export function BudgetsContent(props: BudgetsContentProps): React.JSX.Element {
@@ -264,6 +292,7 @@ export function BudgetsContent(props: BudgetsContentProps): React.JSX.Element {
       <BudgetFormDrawer
         open={props.dialogOpen}
         editing={props.editingBudget}
+        intent={props.drawerIntent}
         formData={props.formData}
         saving={props.saving}
         onFormChange={props.setFormData}

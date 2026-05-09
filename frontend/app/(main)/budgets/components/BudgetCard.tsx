@@ -1,6 +1,6 @@
 'use client';
 
-import { Pencil, Trash2 } from '@/app/components/icons';
+import { Pencil, Trash2, Wallet } from '@/app/components/icons';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -36,9 +36,18 @@ function formatAmount({ amount, currency }: { amount: number; currency: string }
   }).format(amount)} ${currency}`;
 }
 
+function getDisplayCurrency(budget: BudgetItem): string {
+  return budget.workspaceCurrency ?? budget.currency;
+}
+
+function getDisplayLimitAmount(budget: BudgetItem): number {
+  return budget.limitAmountWorkspace ?? budget.limitAmount;
+}
+
 interface BudgetCardProps {
   budget: BudgetItem;
   onEdit: (budget: BudgetItem) => void;
+  onUpdateSpent: (budget: BudgetItem) => void;
   onDelete: (id: string) => void;
 }
 
@@ -50,7 +59,10 @@ function BudgetCardHeader({ budget }: { budget: BudgetItem }): React.ReactElemen
           {budget.name}
         </Typography>
         <Typography variant="h6" fontWeight={700} color="primary">
-          {formatAmount({ amount: budget.limitAmount, currency: budget.currency })}
+          {formatAmount({
+            amount: getDisplayLimitAmount(budget),
+            currency: getDisplayCurrency(budget),
+          })}
           <Typography component="span" variant="body2" color="text.secondary">
             {' '}
             limit
@@ -72,11 +84,11 @@ function BudgetProgress({ budget }: { budget: BudgetItem }): React.ReactElement 
         variant="determinate"
         value={progressValue}
         color={color}
-        sx={{ height: 8, borderRadius: 4, mb: 1 }}
+        sx={{ height: 8, borderRadius: '3px', mb: 1 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
         <Typography variant="body2" color="text.secondary">
-          {formatAmount({ amount: budget.spentAmount, currency: budget.currency })} spent
+          {formatAmount({ amount: budget.spentAmount, currency: getDisplayCurrency(budget) })} spent
         </Typography>
         <Typography variant="body2" fontWeight={600} color={`${color}.main`}>
           {Math.round(budget.percentUsed)}%
@@ -86,9 +98,17 @@ function BudgetProgress({ budget }: { budget: BudgetItem }): React.ReactElement 
   );
 }
 
-function BudgetActions({ budget, onEdit, onDelete }: BudgetCardProps): React.ReactElement {
+function BudgetActions({
+  budget,
+  onEdit,
+  onUpdateSpent,
+  onDelete,
+}: BudgetCardProps): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <IconButton size="small" onClick={() => onUpdateSpent(budget)} aria-label="Update spending">
+        <Wallet size={16} />
+      </IconButton>
       <IconButton size="small" onClick={() => onEdit(budget)} aria-label="Edit budget">
         <Pencil size={16} />
       </IconButton>

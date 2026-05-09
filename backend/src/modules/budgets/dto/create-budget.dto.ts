@@ -12,6 +12,11 @@ export class CreateBudgetDto {
   @Min(0)
   limitAmount: number;
 
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  manualSpentAmount?: number;
+
   @IsEnum(BudgetPeriodType)
   periodType: BudgetPeriodType;
 

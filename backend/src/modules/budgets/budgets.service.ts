@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { Repository } from 'typeorm';
+import type { FindOptionsWhere, Repository } from 'typeorm';
 import { assertFound } from '../../common/utils/assert-found.util';
 import { Budget, BudgetPeriodType } from '../../entities/budget.entity';
 import {
@@ -10,13 +10,17 @@ import {
   NotificationType,
 } from '../../entities/notification.entity';
 import { Transaction, TransactionType } from '../../entities/transaction.entity';
+import { Workspace } from '../../entities/workspace.entity';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { CreateBudgetDto } from './dto/create-budget.dto';
 import type { UpdateBudgetDto } from './dto/update-budget.dto';
 
 export interface BudgetWithSpending extends Budget {
+  limitAmountWorkspace: number;
   spentAmount: number;
   percentUsed: number;
+  workspaceCurrency: string;
 }
 
 @Injectable()
@@ -28,7 +32,10 @@ export class BudgetsService {
     private readonly budgetRepository: Repository<Budget>,
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly notificationsService: NotificationsService,
+    private readonly exchangeRatesService: ExchangeRatesService,
   ) {}
 
   async create(workspaceId: string, userId: string, dto: CreateBudgetDto): Promise<Budget> {
@@ -54,6 +61,7 @@ export class BudgetsService {
       name: dto.name,
       categoryId: dto.categoryId,
       limitAmount: dto.limitAmount,
+      manualSpentAmount: dto.manualSpentAmount ?? 0,
       currency: dto.currency || 'KZT',
       periodType: dto.periodType,
       currentPeriodStart: start,
@@ -86,6 +94,24 @@ export class BudgetsService {
       where: { id, workspaceId },
     });
     assertFound(budget, 'Budget');
+
+    const nextCategoryId = dto.categoryId ?? budget.categoryId;
+    const nextPeriodType = dto.periodType ?? budget.periodType;
+    if (nextCategoryId !== budget.categoryId || nextPeriodType !== budget.periodType) {
+      const existing = await this.budgetRepository.findOne({
+        where: {
+          workspaceId,
+          categoryId: nextCategoryId,
+          periodType: nextPeriodType,
+        },
+      });
+      if (existing && existing.id !== budget.id) {
+        throw new ConflictException(
+          `Budget for this category with period "${nextPeriodType}" already exists`,
+        );
+      }
+    }
+
     Object.assign(budget, dto);
     return this.budgetRepository.save(budget);
   }
@@ -104,21 +130,27 @@ export class BudgetsService {
   }
 
   async checkBudgetAlerts(workspaceId: string, categoryId?: string): Promise<void> {
-    const where: Record<string, unknown> = { workspaceId };
+    const where: FindOptionsWhere<Budget> = { workspaceId };
     if (categoryId) {
       where.categoryId = categoryId;
     }
 
     const budgets = await this.budgetRepository.find({
-      where: where as any,
+      where,
       relations: ['category'],
     });
 
     for (const budget of budgets) {
+      await this.resetBudgetForNewPeriodIfNeeded(budget, new Date());
       const { start, end } = this.computePeriodRange(budget.periodType, new Date());
-      const spentAmount = await this.computeSpending(workspaceId, budget.categoryId, start, end);
-      const percentUsed =
-        Number(budget.limitAmount) > 0 ? (spentAmount / Number(budget.limitAmount)) * 100 : 0;
+      const workspaceCurrency = await this.getWorkspaceCurrency(workspaceId);
+      const limitAmount = await this.convertToWorkspaceCurrency(
+        Number(budget.limitAmount),
+        budget.currency,
+        workspaceCurrency,
+      );
+      const spentAmount = await this.computeTotalSpending(budget, start, end, workspaceCurrency);
+      const percentUsed = limitAmount > 0 ? (spentAmount / limitAmount) * 100 : 0;
 
       if (percentUsed >= 100 && !budget.alertAt100Sent) {
         budget.alertAt100Sent = true;
@@ -135,7 +167,7 @@ export class BudgetsService {
           meta: {
             budgetId: budget.id,
             categoryName: budget.category?.name,
-            limitAmount: budget.limitAmount,
+            limitAmount,
             spentAmount,
             percentUsed: Math.round(percentUsed),
           },
@@ -155,7 +187,7 @@ export class BudgetsService {
           meta: {
             budgetId: budget.id,
             categoryName: budget.category?.name,
-            limitAmount: budget.limitAmount,
+            limitAmount,
             spentAmount,
             percentUsed: Math.round(percentUsed),
           },
@@ -174,14 +206,7 @@ export class BudgetsService {
     let resetCount = 0;
 
     for (const budget of budgets) {
-      const { start } = this.computePeriodRange(budget.periodType, now);
-      const currentStart = new Date(budget.currentPeriodStart);
-
-      if (start.getTime() > currentStart.getTime()) {
-        budget.currentPeriodStart = start;
-        budget.alertAt80Sent = false;
-        budget.alertAt100Sent = false;
-        await this.budgetRepository.save(budget);
+      if (await this.resetBudgetForNewPeriodIfNeeded(budget, now)) {
         resetCount++;
       }
     }
@@ -192,20 +217,44 @@ export class BudgetsService {
   }
 
   private async attachSpending(budget: Budget): Promise<BudgetWithSpending> {
+    await this.resetBudgetForNewPeriodIfNeeded(budget, new Date());
     const { start, end } = this.computePeriodRange(budget.periodType, new Date());
-    const spentAmount = await this.computeSpending(
+    const workspaceCurrency = await this.getWorkspaceCurrency(budget.workspaceId);
+    const limitAmount = await this.convertToWorkspaceCurrency(
+      Number(budget.limitAmount),
+      budget.currency,
+      workspaceCurrency,
+    );
+    const spentAmount = await this.computeTotalSpending(budget, start, end, workspaceCurrency);
+    const percentUsed = limitAmount > 0 ? (spentAmount / limitAmount) * 100 : 0;
+
+    return Object.assign(budget, {
+      limitAmountWorkspace: Math.round(limitAmount * 100) / 100,
+      spentAmount: Math.round(spentAmount * 100) / 100,
+      percentUsed: Math.round(percentUsed * 100) / 100,
+      workspaceCurrency,
+    });
+  }
+
+  private async computeTotalSpending(
+    budget: Budget,
+    start: Date,
+    end: Date,
+    workspaceCurrency: string,
+  ): Promise<number> {
+    const transactionSpent = await this.computeSpending(
       budget.workspaceId,
       budget.categoryId,
       start,
       end,
+      workspaceCurrency,
     );
-    const limitAmount = Number(budget.limitAmount);
-    const percentUsed = limitAmount > 0 ? (spentAmount / limitAmount) * 100 : 0;
-
-    return Object.assign(budget, {
-      spentAmount: Math.round(spentAmount * 100) / 100,
-      percentUsed: Math.round(percentUsed * 100) / 100,
-    });
+    const manualSpent = await this.convertToWorkspaceCurrency(
+      Number(budget.manualSpentAmount ?? 0),
+      budget.currency,
+      workspaceCurrency,
+    );
+    return transactionSpent + manualSpent;
   }
 
   private async computeSpending(
@@ -213,19 +262,77 @@ export class BudgetsService {
     categoryId: string,
     start: Date,
     end: Date,
+    workspaceCurrency: string,
   ): Promise<number> {
-    const result = await this.transactionRepository
+    const rows = await this.transactionRepository
       .createQueryBuilder('t')
-      .select('COALESCE(SUM(ABS(t.amount)), 0)', 'total')
+      .select('t.currency', 'currency')
+      .addSelect('COALESCE(SUM(ABS(t.amount)), 0)', 'total')
       .where('t.workspace_id = :workspaceId', { workspaceId })
       .andWhere('t.category_id = :categoryId', { categoryId })
       .andWhere('t.transaction_type = :type', { type: TransactionType.EXPENSE })
       .andWhere('t.transaction_date >= :start', { start })
       .andWhere('t.transaction_date <= :end', { end })
       .andWhere('t.is_duplicate = false')
-      .getRawOne();
+      .groupBy('t.currency')
+      .getRawMany<{ currency: string | null; total: string }>();
 
-    return Number.parseFloat(result?.total ?? '0');
+    let total = 0;
+    for (const row of rows) {
+      total += await this.convertToWorkspaceCurrency(
+        Number.parseFloat(row.total ?? '0'),
+        row.currency,
+        workspaceCurrency,
+      );
+    }
+    return total;
+  }
+
+  private async getWorkspaceCurrency(workspaceId: string): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: ['currency'],
+    });
+    return this.normalizeCurrency(workspace?.currency);
+  }
+
+  private async convertToWorkspaceCurrency(
+    amount: number,
+    sourceCurrency: string | null | undefined,
+    targetCurrency: string,
+  ): Promise<number> {
+    if (!Number.isFinite(amount) || amount === 0) {
+      return 0;
+    }
+    const source = this.normalizeCurrency(sourceCurrency);
+    if (source === targetCurrency) {
+      return amount;
+    }
+    const rate = await this.exchangeRatesService.getRate(source, targetCurrency);
+    return amount * rate;
+  }
+
+  private normalizeCurrency(currency: string | null | undefined): string {
+    const normalized = String(currency || '')
+      .trim()
+      .toUpperCase();
+    return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
+  }
+
+  private async resetBudgetForNewPeriodIfNeeded(budget: Budget, date: Date): Promise<boolean> {
+    const { start } = this.computePeriodRange(budget.periodType, date);
+    const currentStart = new Date(budget.currentPeriodStart);
+
+    if (start.getTime() <= currentStart.getTime()) {
+      return false;
+    }
+
+    budget.currentPeriodStart = start;
+    budget.manualSpentAmount = 0;
+    budget.alertAt80Sent = false;
+    budget.alertAt100Sent = false;
+    await this.budgetRepository.save(budget);
+    return true;
   }
 
   private computePeriodRange(periodType: BudgetPeriodType, date: Date): { start: Date; end: Date } {
