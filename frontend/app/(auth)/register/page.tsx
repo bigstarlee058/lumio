@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { AuthGreeting } from '@/app/components/AuthGreeting';
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { useIntlayer } from '@/app/i18n';
@@ -169,16 +170,7 @@ function RegisterPageContent(): React.JSX.Element {
         </Typography>
       </Box>
 
-      <Typography
-        component="h1"
-        variant="h4"
-        gutterBottom
-        fontWeight="800"
-        color="text.primary"
-        align="center"
-      >
-        {t.title}
-      </Typography>
+      <AuthGreeting />
       <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
         {t.subtitle}
       </Typography>

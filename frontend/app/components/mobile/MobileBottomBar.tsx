@@ -91,7 +91,10 @@ export default function MobileBottomBar() {
         ))}
       </div>
 
-      <nav className="lumio-bottom-bar" aria-label="Mobile navigation">
+      <nav
+        className={`lumio-bottom-bar${fabOpen ? ' lumio-bottom-bar--fab-open' : ''}`}
+        aria-label="Mobile navigation"
+      >
         {/* Tab 1: Dashboard */}
         <Link
           href="/dashboard"

@@ -17,10 +17,28 @@
     background: $lumio-color-surface;
     border-top: 1px solid $lumio-color-border;
     z-index: 40;
+    isolation: isolate;
 
     @include dark {
       background: $lumio-color-surface-dk;
       border-top-color: $lumio-color-border-dk;
+    }
+  }
+
+  &--fab-open::before {
+    @media (max-width: 1023px) {
+      position: absolute;
+      inset: -1px 0 0;
+      z-index: 1;
+      content: '';
+      background: rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+  }
+
+  &--fab-open {
+    @media (max-width: 1023px) {
+      border-top-color: rgba(0, 0, 0, 0.4);
     }
   }
 
@@ -37,6 +55,8 @@
     transition: color 0.15s;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 0;
 
     @include dark {
       color: $lumio-color-ink-400-dk;
@@ -68,6 +88,8 @@
     cursor: pointer;
     transition: transform 0.1s, background 0.15s;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 2;
 
     @include dark {
       background: $lumio-color-primary-dk;

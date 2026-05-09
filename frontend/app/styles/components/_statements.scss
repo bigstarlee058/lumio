@@ -1524,6 +1524,11 @@
   &__field-group {
     display: grid;
     gap: 8px;
+
+    &--floating-select {
+      display: block;
+      position: relative;
+    }
   }
 
   &__field-label {
@@ -1533,6 +1538,24 @@
 
     @include dark {
       color: $lumio-color-ink-700-dk;
+    }
+  }
+
+  &__field-group--floating-select &__field-label {
+    position: absolute;
+    z-index: 1;
+    top: -7px;
+    left: 12px;
+    padding: 0 4px;
+    background: $lumio-color-surface;
+    font-size: 12px;
+    line-height: 1;
+    color: #64748b;
+    pointer-events: none;
+
+    @include dark {
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-ink-500-dk;
     }
   }
 
@@ -1547,6 +1570,7 @@
   }
 
   &__select {
+    width: 100%;
     height: 40px;
     border-radius: $lumio-radius-md;
     border: 1px solid $color-border;
@@ -1563,6 +1587,33 @@
     }
 
     &:focus {
+      box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
+    }
+  }
+
+  &__currency-trigger {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    align-items: center;
+    border-radius: $lumio-radius-md;
+    border: 1px solid $color-border;
+    background: $lumio-color-surface;
+    padding: 0 12px;
+    color: $color-foreground;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+
+    @include dark {
+      border-color: $lumio-color-border-dk;
+      background: $lumio-color-surface-dk;
+      color: $lumio-color-text-primary-dk;
+    }
+
+    &:focus-visible {
+      border-color: $color-primary;
       box-shadow: 0 0 0 2px color-mix(in srgb, $color-primary 30%, transparent);
     }
   }

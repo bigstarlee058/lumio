@@ -1,6 +1,7 @@
 'use client';
 
 import { BarChart3, DollarSign, PieChart, Scale } from '@/app/components/icons';
+import { sharedMuiTabsSx } from '@/app/components/ui/mui-tabs';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import Box from '@mui/material/Box';
@@ -139,17 +140,9 @@ export default function ReportsPage(): React.JSX.Element {
             setTab(v);
             setSelectedTemplate(null);
           }}
-          sx={{
-            '& .MuiTab-root': {
-              textTransform: 'none',
-              fontWeight: 600,
-              fontSize: '0.875rem',
-              color: 'var(--muted-foreground)',
-              minHeight: 48,
-              '&.Mui-selected': { color: 'var(--primary)' },
-            },
-            '& .MuiTabs-indicator': { backgroundColor: 'var(--primary)' },
-          }}
+          variant="scrollable"
+          scrollButtons={false}
+          sx={sharedMuiTabsSx}
         >
           <Tab value="templates" label={text('tabTemplates', 'Templates')} />
           <Tab

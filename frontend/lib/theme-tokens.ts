@@ -12,11 +12,11 @@ export const tokens = {
   // ── Static (same in both themes) ───────────────────────────
   radius: {
     none: '0',
-    xs: '6px',
-    sm: '8px',
-    md: '10px',
-    lg: '14px',
-    xl: '20px',
+    xs: '3px',
+    sm: '3px',
+    md: '3px',
+    lg: '3px',
+    xl: '3px',
     full: '999px',
   },
   space: {

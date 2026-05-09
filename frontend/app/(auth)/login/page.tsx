@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { AuthGreeting } from '@/app/components/AuthGreeting';
 import { AuthLanguageSwitcher } from '@/app/components/AuthLanguageSwitcher';
 import { GoogleAuthButton } from '@/app/components/GoogleAuthButton';
 import { useIntlayer } from '@/app/i18n';
@@ -12,9 +13,8 @@ import { safeInternalPath } from '@/app/lib/safe-path';
 import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, Button, Divider, Link, TextField, Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import AuthLayout from '../AuthLayout';
 
 // eslint-disable-next-line complexity
@@ -51,22 +51,6 @@ function LoginPageContent(): React.JSX.Element {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const googleEnabled = Boolean(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
-
-  const [helloIndex, setHelloIndex] = useState(0);
-
-  const GREETINGS = [
-    { text: 'Добро пожаловать', lang: 'ru' },
-    { text: 'Қош келдіңіз', lang: 'kk' },
-    { text: 'Welcome', lang: 'en' },
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHelloIndex(prev => (prev + 1) % GREETINGS.length);
-    }, 4000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // eslint-disable-next-line max-lines-per-function, complexity
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
@@ -131,6 +115,7 @@ function LoginPageContent(): React.JSX.Element {
         <Box
           sx={{
             p: 2,
+            borderRadius: tokens.radius.md,
             bgcolor: 'rgba(255,255,255,0.1)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
@@ -143,6 +128,7 @@ function LoginPageContent(): React.JSX.Element {
         <Box
           sx={{
             p: 2,
+            borderRadius: tokens.radius.md,
             bgcolor: 'rgba(255,255,255,0.1)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
@@ -177,31 +163,7 @@ function LoginPageContent(): React.JSX.Element {
         </Typography>
       </Box>
 
-      <Box
-        sx={{
-          height: 50,
-          mb: 2,
-          display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'column',
-          position: 'relative',
-        }}
-      >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={helloIndex}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            style={{ position: 'absolute', width: '100%', textAlign: 'center' }}
-          >
-            <Typography variant="h4" fontWeight="800" color="text.primary">
-              {GREETINGS[helloIndex].text}
-            </Typography>
-          </motion.div>
-        </AnimatePresence>
-      </Box>
+      <AuthGreeting />
 
       <Typography variant="body1" color="text.secondary" align="center" sx={{ mb: 4 }}>
         {t.subtitle}
@@ -238,7 +200,7 @@ function LoginPageContent(): React.JSX.Element {
           value={email}
           onChange={e => setEmail(e.target.value)}
           InputProps={{
-            sx: { borderRadius: 0 },
+            sx: { borderRadius: tokens.radius.md },
           }}
           sx={{ mb: 2 }}
         />
@@ -254,7 +216,7 @@ function LoginPageContent(): React.JSX.Element {
           value={password}
           onChange={e => setPassword(e.target.value)}
           InputProps={{
-            sx: { borderRadius: 0 },
+            sx: { borderRadius: tokens.radius.md },
           }}
           sx={{ mb: 3 }}
         />
@@ -265,7 +227,7 @@ function LoginPageContent(): React.JSX.Element {
           size="large"
           sx={{
             py: 1.5,
-            borderRadius: 0,
+            borderRadius: tokens.radius.md,
             fontSize: '1rem',
             fontWeight: 'bold',
             textTransform: 'none',

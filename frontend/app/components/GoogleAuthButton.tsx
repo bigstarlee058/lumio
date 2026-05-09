@@ -106,7 +106,7 @@ export function GoogleAuthButton({
     google.accounts.id.renderButton(buttonRef.current, {
       theme: 'outline',
       size: 'large',
-      shape: 'pill',
+      shape: 'rectangular',
       text: 'continue_with',
       width: 320,
       logo_alignment: 'left',

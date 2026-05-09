@@ -70,9 +70,14 @@ export function AuthLanguageSwitcher() {
           setLanguageModalOpen(true);
         }}
         sx={{
-          borderRadius: tokens.radius.full,
+          width: 48,
+          height: 48,
+          borderRadius: `${tokens.radius.full} !important`,
           color: 'text.secondary',
-          '&:hover': { color: 'text.primary' },
+          '&:hover': {
+            borderRadius: `${tokens.radius.full} !important`,
+            color: 'text.primary',
+          },
         }}
       >
         <Globe size={20} suppressHydrationWarning />

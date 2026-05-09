@@ -17,7 +17,7 @@ const getSharedOptions = (
 ): Pick<ThemeOptions, 'shape' | 'typography' | 'components'> => {
   const c = mode === 'dark' ? tokens.dark.color : tokens.color;
   return {
-    shape: { borderRadius: 10 },
+    shape: { borderRadius: 3 },
     typography: {
       fontFamily:
         'var(--font-geist), "Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -130,7 +130,7 @@ const getSharedOptions = (
       MuiChip: {
         styleOverrides: {
           root: {
-            borderRadius: tokens.radius.full,
+            borderRadius: tokens.radius.md,
             height: 22,
             fontSize: '11.5px',
             fontWeight: 500,
