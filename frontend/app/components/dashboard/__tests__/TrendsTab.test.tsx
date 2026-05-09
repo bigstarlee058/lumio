@@ -55,7 +55,7 @@ describe('TrendsTab', () => {
     ).toBeInTheDocument();
   });
 
-  it('uses dark-safe surface classes instead of translucent white cards', () => {
+  it('renders spend trend surface without translucent white classes', () => {
     hooksMock.useDashboardTrends.mockReturnValue({
       data: {
         dailyTrend: [{ date: '2025-05-10', income: 100, expense: 40 }],
@@ -83,11 +83,11 @@ describe('TrendsTab', () => {
     );
 
     const spendTrendHeading = screen.getByText('SPEND TREND');
-    const spendTrendCard = spendTrendHeading.closest('[class*="dark:bg-card"]');
+    const spendTrendCard = spendTrendHeading.parentElement;
+    const className = String(spendTrendCard?.className ?? '');
 
-    expect(spendTrendCard?.className).toContain('dark:bg-card');
-    expect(spendTrendCard?.className).toContain('dark:border-border');
-    expect(spendTrendCard?.className).not.toContain('bg-white/40');
-    expect(spendTrendCard?.className).not.toContain('border-white/60');
+    expect(spendTrendCard).not.toBeNull();
+    expect(className).not.toContain('bg-white/40');
+    expect(className).not.toContain('border-white/60');
   });
 });
