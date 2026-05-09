@@ -75,6 +75,18 @@ describe('StatementsListView utils', () => {
     });
   });
 
+  it('includes route category filters in server request params', () => {
+    const result = buildStatementRequestParams({
+      appliedFilters: DEFAULT_STATEMENT_FILTERS,
+      categoryId: 'uncategorized',
+      search: '',
+    });
+
+    expect(result).toEqual({
+      categoryId: 'uncategorized',
+    });
+  });
+
   it('omits ui-only receipt and gmail bank filters from server request params', () => {
     const result = buildStatementRequestParams({
       appliedFilters: {

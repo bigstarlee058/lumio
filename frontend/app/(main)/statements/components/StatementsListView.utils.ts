@@ -278,9 +278,11 @@ export const filterEnabledCategories = (
 
 export const buildStatementRequestParams = ({
   appliedFilters,
+  categoryId,
   search,
 }: {
   appliedFilters: StatementFilters;
+  categoryId?: string | null;
   search?: string;
 }): Record<string, unknown> => {
   const serverSafeFilters: StatementFilters = {
@@ -295,6 +297,7 @@ export const buildStatementRequestParams = ({
 
   return {
     ...serializeStatementFiltersToQuery(serverSafeFilters),
+    ...(categoryId ? { categoryId } : {}),
     ...(search ? { search } : {}),
   };
 };

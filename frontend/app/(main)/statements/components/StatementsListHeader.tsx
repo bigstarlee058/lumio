@@ -11,7 +11,7 @@ import { FromFilterDropdown } from '@/app/(main)/statements/components/filters/F
 import { StatusFilterDropdown } from '@/app/(main)/statements/components/filters/StatusFilterDropdown';
 import { TypeFilterDropdown } from '@/app/(main)/statements/components/filters/TypeFilterDropdown';
 import type { StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
-import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal } from '@/app/components/icons';
+import { ChevronDown, Columns2, Copy, Search, SlidersHorizontal, X } from '@/app/components/icons';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { SHORTCUT_FOCUS_SEARCH, SHORTCUT_OPEN_FILTERS } from '@/app/lib/keyboard-shortcuts';
@@ -99,6 +99,7 @@ interface Props {
   loading: boolean;
   draftFilters: StatementFilters;
   activeFilterCount: number;
+  routeFilterLabel: string | null;
   typeDropdownOpen: boolean;
   statusDropdownOpen: boolean;
   dateDropdownOpen: boolean;
@@ -138,6 +139,7 @@ interface Props {
   onFromDropdownChange: (open: boolean) => void;
   onFiltersDrawerClose: () => void;
   onFiltersDrawerOpen: () => void;
+  onResetRouteFilter: () => void;
   onFiltersBack: () => void;
   onFiltersSelect: (field: string) => void;
   onUpdateFilters: (next: Partial<StatementFilters>) => void;
@@ -221,6 +223,7 @@ export function StatementsListHeader({
   loading,
   draftFilters,
   activeFilterCount,
+  routeFilterLabel,
   typeDropdownOpen,
   statusDropdownOpen,
   dateDropdownOpen,
@@ -260,6 +263,7 @@ export function StatementsListHeader({
   onFromDropdownChange,
   onFiltersDrawerClose,
   onFiltersDrawerOpen,
+  onResetRouteFilter,
   onFiltersBack,
   onFiltersSelect,
   onUpdateFilters,
@@ -359,6 +363,8 @@ export function StatementsListHeader({
             }
             applyLabel={filterOptionLabels.apply}
             resetLabel={filterOptionLabels.reset}
+            routeFilterLabel={routeFilterLabel}
+            onResetRouteFilter={onResetRouteFilter}
           />
 
           <StatusFilterDropdown
@@ -379,6 +385,8 @@ export function StatementsListHeader({
             }
             applyLabel={filterOptionLabels.apply}
             resetLabel={filterOptionLabels.reset}
+            routeFilterLabel={routeFilterLabel}
+            onResetRouteFilter={onResetRouteFilter}
           />
 
           <DateFilterDropdown
@@ -400,6 +408,8 @@ export function StatementsListHeader({
             }
             applyLabel={filterOptionLabels.apply}
             resetLabel={filterOptionLabels.reset}
+            routeFilterLabel={routeFilterLabel}
+            onResetRouteFilter={onResetRouteFilter}
           />
 
           <FromFilterDropdown
@@ -420,6 +430,8 @@ export function StatementsListHeader({
             }
             applyLabel={filterOptionLabels.apply}
             resetLabel={filterOptionLabels.reset}
+            routeFilterLabel={routeFilterLabel}
+            onResetRouteFilter={onResetRouteFilter}
           />
 
           {loading || duplicateStatementIds.length > 0 ? (
@@ -478,6 +490,32 @@ export function StatementsListHeader({
             ) : null}
           </button>
 
+          {routeFilterLabel ? (
+            <button
+              type="button"
+              onClick={onResetRouteFilter}
+              title={`${filterOptionLabels.reset}: ${routeFilterLabel}`}
+              aria-label={`${filterOptionLabels.reset}: ${routeFilterLabel}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                whiteSpace: 'nowrap',
+                borderRadius: tokens.radius.full,
+                padding: '6px 10px',
+                fontSize: 13,
+                fontWeight: 600,
+                color: 'var(--primary)',
+                cursor: 'pointer',
+                background: 'color-mix(in srgb, var(--primary) 10%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--primary) 22%, transparent)',
+              }}
+            >
+              {routeFilterLabel}
+              <X size={14} />
+            </button>
+          ) : null}
+
           <button
             type="button"
             style={{
@@ -513,6 +551,8 @@ export function StatementsListHeader({
         onUpdateFilters={onUpdateFilters}
         onResetAll={onResetAllFilters}
         onViewResults={onViewResults}
+        routeFilterLabel={routeFilterLabel}
+        onResetRouteFilter={onResetRouteFilter}
         typeOptions={typeOptions}
         statusOptions={statusOptions}
         datePresets={datePresets}
@@ -527,6 +567,7 @@ export function StatementsListHeader({
           viewResults: filterOptionLabels.viewResults,
           saveSearch: filterOptionLabels.saveSearch,
           resetFilters: filterOptionLabels.resetFilters,
+          reset: filterOptionLabels.reset,
           general: filterOptionLabels.drawerGeneral,
           expenses: filterOptionLabels.drawerExpenses,
           reports: filterOptionLabels.drawerReports,

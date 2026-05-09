@@ -25,6 +25,7 @@ interface StatementRecord {
 
 interface UseStatementsListDataParams {
   appliedFilters: StatementFilters;
+  categoryId?: string | null;
   search: string;
   stage: string;
   user: unknown;
@@ -61,6 +62,7 @@ export interface UseStatementsListDataResult<T extends StatementRecord = Stateme
 
 export function useStatementsListData<T extends StatementRecord = StatementRecord>({
   appliedFilters,
+  categoryId,
   search,
   stage,
   user,
@@ -109,7 +111,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
     let didLoad = true;
     try {
       const response = await apiClient.get('/statements', {
-        params: buildStatementRequestParams({ appliedFilters, search: searchOverride }),
+        params: buildStatementRequestParams({ appliedFilters, categoryId, search: searchOverride }),
       });
 
       const rawData = response.data?.data || response.data || [];
@@ -155,6 +157,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
         limit: pageSize,
         offset: Math.max(0, (page - 1) * pageSize),
         includeInvalid: false,
+        ...(categoryId ? { categoryId } : {}),
       });
       const receipts = Array.isArray(response.data?.receipts) ? response.data.receipts : [];
       const filtered = receipts.filter(hasGmailReceiptAmount);
@@ -193,7 +196,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
       void loadGmailReceipts({ silent: true, showErrorToast: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, search, appliedFilters, stage]);
+  }, [user, search, appliedFilters, categoryId, stage]);
 
   // Read gmail sync skeleton count from sessionStorage on mount/stage change
   useEffect(() => {
@@ -248,7 +251,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
     return () => window.clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, shouldPollStatements, search, appliedFilters]);
+  }, [user, shouldPollStatements, search, appliedFilters, categoryId]);
 
   // Poll gmail receipts when on submit stage
   useEffect(() => {
@@ -264,7 +267,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
     return () => window.clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, stage]);
+  }, [user, stage, categoryId]);
 
   return {
     statements,

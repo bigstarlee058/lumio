@@ -103,6 +103,7 @@ export interface DashboardNotification {
 
 export interface DashboardTrends {
   dailyTrend: Array<{ date: string; income: number; expense: number }>;
+  forecast: Array<{ date: string; income: number; expense: number }>;
   categories: Array<{ name: string; amount: number; count: number }>;
   counterparties: Array<{ name: string; amount: number; count: number }>;
   sources: {

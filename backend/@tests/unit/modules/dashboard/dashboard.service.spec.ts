@@ -45,7 +45,12 @@ const createExpectedWindow = (days: number, targetDate: string | Date) => {
   return { since, endDate };
 };
 
-const formatDateOnly = (date: Date) => date.toISOString().slice(0, 10);
+const formatDateOnly = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 describe('DashboardService', () => {
   let service: DashboardService;
@@ -456,8 +461,10 @@ describe('DashboardService', () => {
   it('getActions returns only non-zero action items', async () => {
     statementRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(2);
     payableRepo.count.mockResolvedValueOnce(0);
-    const uncategorizedQb = createQueryBuilderMock(3);
+    const uncategorizedQb = createQueryBuilderMock(2);
+    const uncategorizedReceiptQb = createQueryBuilderMock(1);
     transactionRepo.createQueryBuilder.mockReturnValue(uncategorizedQb);
+    receiptRepo.createQueryBuilder.mockReturnValue(uncategorizedReceiptQb);
     receiptRepo.count.mockResolvedValueOnce(1);
 
     const result = await (service as any).getActions('user-1', 'ws-1');
@@ -469,13 +476,21 @@ describe('DashboardService', () => {
       'receipts_pending_review',
     ]);
     expect(result).toHaveLength(3);
+    expect(result.find((item: any) => item.type === 'transactions_uncategorized')).toMatchObject({
+      href: '/statements/submit?categoryId=uncategorized',
+    });
+    expect(result.find((item: any) => item.type === 'receipts_pending_review')).toMatchObject({
+      href: '/statements/submit',
+    });
   });
 
   it('getActions links overdue payments to the overdue payables filter', async () => {
     statementRepo.count.mockResolvedValueOnce(0).mockResolvedValueOnce(0);
     payableRepo.count.mockResolvedValueOnce(2);
     const uncategorizedQb = createQueryBuilderMock(0);
+    const uncategorizedReceiptQb = createQueryBuilderMock(0);
     transactionRepo.createQueryBuilder.mockReturnValue(uncategorizedQb);
+    receiptRepo.createQueryBuilder.mockReturnValue(uncategorizedReceiptQb);
     receiptRepo.count.mockResolvedValueOnce(0);
 
     const result = await (service as any).getActions('user-1', 'ws-1');
@@ -499,13 +514,14 @@ describe('DashboardService', () => {
     const result = await (service as any).getCashFlow(
       'ws-1',
       new Date('2026-02-01'),
-      new Date('2026-03-01'),
+      new Date('2026-02-03'),
       30,
     );
 
     expect(result).toEqual([
       { date: '2026-02-01', income: 100, expense: 50 },
       { date: '2026-02-02', income: 0, expense: 25 },
+      { date: '2026-02-03', income: 0, expense: 0 },
     ]);
     expect(cashFlowQb.andWhere).toHaveBeenCalledWith('s.status NOT IN (:...excludedStatuses)', {
       excludedStatuses: [StatementStatus.ERROR, StatementStatus.PROCESSING],
@@ -523,14 +539,18 @@ describe('DashboardService', () => {
 
     const result = await (service as any).getCashFlow(
       'ws-1',
-      new Date('2025-11-01'),
-      new Date('2026-02-01'),
+      new Date('2026-01-27'),
+      new Date('2026-02-09'),
       90,
     );
 
     // Verify the query builder was called (weekly grouping used IYYY-IW format)
     expect(cashFlowQb.select).toHaveBeenCalledWith("TO_CHAR(t.transactionDate, 'IYYY-IW')", 'date');
-    expect(result).toHaveLength(2);
+    expect(result).toEqual([
+      { date: '2026-05', income: 500, expense: 200 },
+      { date: '2026-06', income: 300, expense: 100 },
+      { date: '2026-07', income: 0, expense: 0 },
+    ]);
   });
 
   it('getTransactionGroupFormat switches to weekly buckets for 90-day ranges', () => {
@@ -711,14 +731,16 @@ describe('DashboardService', () => {
       .mockReturnValueOnce(
         createQueryBuilderMock([{ name: 'Client A', amount: '100', count: '1' }]),
       )
-      .mockReturnValueOnce(createQueryBuilderMock({ income: '100', expense: '40', rows: '2' }));
+      .mockReturnValueOnce(createQueryBuilderMock({ income: '100', expense: '40', rows: '2' }))
+      .mockReturnValueOnce(createQueryBuilderMock([]));
 
     const result = await service.getTrends('ws-1', 30);
     const adjustedWindow = createExpectedWindow(30, '2026-02-10T08:30:00Z');
 
     expect((service as any).getLatestTransactionDate).toHaveBeenCalledWith('ws-1');
     expect(result).toEqual({
-      dailyTrend: [{ date: '2026-02-10', income: 100, expense: 40 }],
+      dailyTrend: expect.arrayContaining([{ date: '2026-02-10', income: 100, expense: 40 }]),
+      forecast: [],
       categories: [{ name: 'Utilities', amount: 40, count: 1 }],
       counterparties: [{ name: 'Client A', amount: 100, count: 1 }],
       sources: {
@@ -731,6 +753,8 @@ describe('DashboardService', () => {
       effectiveEndDate: formatDateOnly(adjustedWindow.endDate),
       effectiveSince: formatDateOnly(adjustedWindow.since),
     });
+    expect(result.dailyTrend).toHaveLength(31);
+    expect(result.dailyTrend[0]).toEqual({ date: '2026-01-11', income: 0, expense: 0 });
 
     jest.useRealTimers();
   });
@@ -757,10 +781,12 @@ describe('DashboardService', () => {
 
   it('getDataHealth counts pending review and parsing warnings from actual statement conditions', async () => {
     const warningsQb = createQueryBuilderMock(4);
+    const uncategorizedReceiptQb = createQueryBuilderMock(4);
 
     transactionRepo.createQueryBuilder
       .mockReturnValueOnce(createQueryBuilderMock(2))
       .mockReturnValueOnce(createQueryBuilderMock({ unapprovedCash: '0' }));
+    receiptRepo.createQueryBuilder.mockReturnValue(uncategorizedReceiptQb);
     statementRepo.count.mockResolvedValueOnce(1).mockResolvedValueOnce(3).mockResolvedValueOnce(2);
     receiptRepo.count.mockResolvedValueOnce(5);
     statementRepo.findOne.mockResolvedValue({ createdAt: new Date('2026-03-17T00:00:00Z') });
@@ -769,7 +795,7 @@ describe('DashboardService', () => {
     const result = await (service as any).getDataHealth('ws-1');
 
     expect(result).toMatchObject({
-      uncategorizedTransactions: 2,
+      uncategorizedTransactions: 6,
       statementsWithErrors: 1,
       statementsPendingReview: 3,
       statementsPendingSubmit: 2,
@@ -796,6 +822,13 @@ describe('DashboardService', () => {
         status: In([ReceiptStatus.NEW, ReceiptStatus.NEEDS_REVIEW]),
       },
     });
+    expect(uncategorizedReceiptQb.andWhere).toHaveBeenCalledWith(
+      "NULLIF(TRIM(r.parsed_data->>'amount'), '') IS NOT NULL",
+    );
+    expect(uncategorizedReceiptQb.andWhere).toHaveBeenCalledWith(
+      "NULLIF(r.parsed_data ->> 'categoryId', '') IS NULL",
+    );
+    expect(uncategorizedReceiptQb.andWhere).toHaveBeenCalledWith('rt.category_id IS NULL');
     expect(warningsQb.andWhere).toHaveBeenCalledWith(
       "jsonb_array_length(COALESCE(s.parsing_details->'warnings', '[]'::jsonb)) > 0",
     );

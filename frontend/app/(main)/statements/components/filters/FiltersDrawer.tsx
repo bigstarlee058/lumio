@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import MuiButton from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import { ActiveRouteFilter } from './ActiveRouteFilter';
 import { FilterOptionRow } from './FilterOptionRow';
 import { FilterRow } from './FilterRow';
 import { FilterSection } from './FilterSection';
@@ -22,6 +23,7 @@ type FiltersDrawerLabels = {
   viewResults: string;
   saveSearch: string;
   resetFilters: string;
+  reset?: string;
   general: string;
   expenses: string;
   reports: string;
@@ -90,6 +92,8 @@ type FiltersDrawerProps = {
   currencyOptions: string[];
   labels: FiltersDrawerLabels;
   activeCount: number;
+  routeFilterLabel?: string | null;
+  onResetRouteFilter?: () => void;
 };
 
 const BOOLEAN_FILTER_KEYS = ['approved', 'billable', 'exported', 'paid'] as const;
@@ -863,6 +867,8 @@ export function FiltersDrawer({
   currencyOptions,
   labels,
   activeCount,
+  routeFilterLabel,
+  onResetRouteFilter,
 }: FiltersDrawerProps) {
   const isRoot = screen === 'root';
   const allowedScreens = new Set(visibleScreens || []);
@@ -972,6 +978,13 @@ export function FiltersDrawer({
               pb: 14,
             }}
           >
+            {routeFilterLabel && onResetRouteFilter ? (
+              <ActiveRouteFilter
+                label={routeFilterLabel}
+                resetLabel={labels.reset ?? labels.resetFilters}
+                onReset={onResetRouteFilter}
+              />
+            ) : null}
             <FilterSection title={labels.general}>
               <RootFilterRows
                 rows={filterRows.general}
@@ -1006,6 +1019,15 @@ export function FiltersDrawer({
             }}
           >
             <Box sx={{ bgcolor: 'transparent', p: 0 }}>
+              {routeFilterLabel && onResetRouteFilter ? (
+                <Box sx={{ mb: 2.5 }}>
+                  <ActiveRouteFilter
+                    label={routeFilterLabel}
+                    resetLabel={labels.reset ?? labels.resetFilters}
+                    onReset={onResetRouteFilter}
+                  />
+                </Box>
+              ) : null}
               <ScreenContent
                 screen={screen}
                 filters={filters}

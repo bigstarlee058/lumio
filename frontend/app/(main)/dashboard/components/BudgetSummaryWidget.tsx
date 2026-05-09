@@ -54,7 +54,7 @@ export function BudgetSummaryWidget() {
       <Box
         sx={{
           p: 2.5,
-          borderRadius: 2,
+          borderRadius: '3px',
           border: '1px solid',
           borderColor: 'divider',
           bgcolor: 'background.paper',
@@ -80,7 +80,7 @@ export function BudgetSummaryWidget() {
     <Box
       sx={{
         p: 2.5,
-        borderRadius: 2,
+        borderRadius: '3px',
         border: '1px solid',
         borderColor: 'divider',
         bgcolor: 'background.paper',
@@ -116,7 +116,7 @@ export function BudgetSummaryWidget() {
               variant="determinate"
               value={Math.min(b.percentUsed, 100)}
               color={getColor(b.percentUsed)}
-              sx={{ height: 6, borderRadius: 3 }}
+              sx={{ height: 6, borderRadius: '3px' }}
             />
           </Box>
         ))}

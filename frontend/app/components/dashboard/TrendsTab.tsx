@@ -41,6 +41,107 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
   const dailyTrendOption = useMemo(() => {
     if (!trendsData?.dailyTrend?.length) return null;
     const isDark = resolvedTheme === 'dark';
+
+    const actual = trendsData.dailyTrend;
+    const forecast = trendsData.forecast ?? [];
+    const hasForecast = forecast.length > 0;
+    const lastActual = actual[actual.length - 1];
+
+    const allDates = [...actual.map(p => p.date), ...forecast.map(p => p.date)];
+
+    const incomeActual = [...actual.map(p => p.income), ...forecast.map(() => null)];
+    const expenseActual = [...actual.map(p => p.expense), ...forecast.map(() => null)];
+
+    const incomeForecast = hasForecast
+      ? [...actual.slice(0, -1).map(() => null), lastActual.income, ...forecast.map(p => p.income)]
+      : [];
+    const expenseForecast = hasForecast
+      ? [
+          ...actual.slice(0, -1).map(() => null),
+          lastActual.expense,
+          ...forecast.map(p => p.expense),
+        ]
+      : [];
+
+    const incomeColor = isDark ? '#34D399' : '#1a1a1a';
+    const expenseColor = '#D13D56';
+    const showPointSymbols = actual.length <= 2;
+
+    const series: object[] = [
+      {
+        name: 'Income',
+        type: 'line',
+        smooth: true,
+        symbol: showPointSymbols ? 'circle' : 'none',
+        symbolSize: showPointSymbols ? 7 : 0,
+        showSymbol: showPointSymbols,
+        data: incomeActual,
+        areaStyle: { color: isDark ? 'rgba(52,211,153,0.1)' : 'rgba(26,26,26,0.05)' },
+        lineStyle: { color: incomeColor, width: 2 },
+        itemStyle: { color: incomeColor },
+        ...(hasForecast
+          ? {
+              markLine: {
+                data: [{ xAxis: lastActual.date }],
+                lineStyle: {
+                  color: isDark ? '#4A5568' : '#A0AEC0',
+                  type: 'dashed' as const,
+                  width: 1,
+                },
+                label: {
+                  show: true,
+                  formatter: 'Forecast →',
+                  fontSize: 10,
+                  color: isDark ? '#8899AA' : '#718096',
+                  fontFamily: 'var(--font-dashboard-sans)',
+                },
+                symbol: 'none',
+                silent: true,
+              },
+            }
+          : {}),
+      },
+      {
+        name: 'Expense',
+        type: 'line',
+        smooth: true,
+        symbol: showPointSymbols ? 'circle' : 'none',
+        symbolSize: showPointSymbols ? 7 : 0,
+        showSymbol: showPointSymbols,
+        data: expenseActual,
+        areaStyle: { color: 'rgba(209,61,86,0.08)' },
+        lineStyle: { color: expenseColor, width: 2 },
+        itemStyle: { color: expenseColor },
+      },
+    ];
+
+    if (hasForecast) {
+      series.push(
+        {
+          name: 'Income (forecast)',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          data: incomeForecast,
+          areaStyle: { color: isDark ? 'rgba(52,211,153,0.05)' : 'rgba(26,26,26,0.02)' },
+          lineStyle: { color: incomeColor, width: 2, type: 'dashed' as const },
+          itemStyle: { color: incomeColor },
+          legendHoverLink: false,
+        },
+        {
+          name: 'Expense (forecast)',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          data: expenseForecast,
+          areaStyle: { color: 'rgba(209,61,86,0.04)' },
+          lineStyle: { color: expenseColor, width: 2, type: 'dashed' as const },
+          itemStyle: { color: expenseColor },
+          legendHoverLink: false,
+        },
+      );
+    }
+
     return {
       backgroundColor: 'transparent',
       tooltip: {
@@ -65,7 +166,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       grid: { left: 40, right: 0, top: 40, bottom: 24 },
       xAxis: {
         type: 'category',
-        data: trendsData.dailyTrend.map(p => p.date),
+        data: allDates,
         axisLabel: {
           color: isDark ? '#8899AA' : 'var(--muted-foreground)',
           fontSize: 10,
@@ -82,28 +183,7 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
         },
         splitLine: { lineStyle: { color: isDark ? '#2A3442' : '#D1CCC4' } },
       },
-      series: [
-        {
-          name: 'Income',
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          data: trendsData.dailyTrend.map(p => p.income),
-          areaStyle: { color: isDark ? 'rgba(52,211,153,0.1)' : 'rgba(26,26,26,0.05)' },
-          lineStyle: { color: isDark ? '#34D399' : '#1a1a1a', width: 2 },
-          itemStyle: { color: isDark ? '#34D399' : '#1a1a1a' },
-        },
-        {
-          name: 'Expense',
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          data: trendsData.dailyTrend.map(p => p.expense),
-          areaStyle: { color: 'rgba(209,61,86,0.08)' },
-          lineStyle: { color: '#D13D56', width: 2 },
-          itemStyle: { color: '#D13D56' },
-        },
-      ],
+      series,
     };
   }, [resolvedTheme, trendsData]);
 

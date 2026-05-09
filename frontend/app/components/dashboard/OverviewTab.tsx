@@ -122,7 +122,7 @@ function StatCard({
 
 const ACTION_ICON_MAP: Record<string, React.ComponentType<{ size: number }>> = {
   payments_overdue: AlertTriangle,
-  uncategorized_transactions: Tag,
+  transactions_uncategorized: Tag,
   parsing_warnings: Flag,
   receipts_pending_review: Receipt,
 };

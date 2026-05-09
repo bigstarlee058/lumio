@@ -372,7 +372,7 @@ export class GmailController {
 
       if (categoryId === 'uncategorized') {
         queryBuilder.andWhere(
-          "COALESCE(NULLIF(receipt.parsed_data ->> 'categoryId', ''), transaction.category_id) IS NULL",
+          "COALESCE(NULLIF(receipt.parsed_data ->> 'categoryId', ''), transaction.category_id::text) IS NULL",
         );
       } else {
         queryBuilder.andWhere(

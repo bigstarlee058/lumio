@@ -252,6 +252,7 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
         loading={v.loading}
         draftFilters={filterState.draftFilters}
         activeFilterCount={v.activeFilterCount}
+        routeFilterLabel={v.routeFilterLabel}
         typeDropdownOpen={filterState.typeDropdownOpen}
         statusDropdownOpen={filterState.statusDropdownOpen}
         dateDropdownOpen={filterState.dateDropdownOpen}
@@ -298,7 +299,11 @@ export default function StatementsListView({ stage }: Props): React.JSX.Element 
         onFiltersBack={() => filterState.setFiltersDrawerScreen('root')}
         onFiltersSelect={field => filterState.setFiltersDrawerScreen(field)}
         onUpdateFilters={filterState.updateFilter}
-        onResetAllFilters={filterState.resetAllFilters}
+        onResetRouteFilter={v.resetRouteCategoryFilter}
+        onResetAllFilters={() => {
+          filterState.resetAllFilters();
+          v.resetRouteCategoryFilter();
+        }}
         onViewResults={() => {
           filterState.applyFilterChanges();
           filterState.setFiltersDrawerOpen(false);

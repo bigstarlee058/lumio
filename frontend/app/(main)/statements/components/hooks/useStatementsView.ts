@@ -15,7 +15,7 @@ import {
 } from '@/app/lib/statement-expense-drawer';
 import { STATEMENTS_GMAIL_SYNC_STORAGE_KEY } from '@/app/lib/statement-upload-actions';
 import { type StatementStage, getStatementStage } from '@/app/lib/statement-workflow';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   buildColumnLabels,
   buildCurrencyOptions,
@@ -265,6 +265,8 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   isReadyToRefresh: boolean;
   // computed
   activeFilterCount: number;
+  routeFilterLabel: string | null;
+  resetRouteCategoryFilter: () => void;
   visibleFilterScreens: string[];
   fromOptions: ReturnType<typeof buildFromOptions>;
   currencyOptions: string[];
@@ -311,6 +313,30 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   const { manualExpenseCategories, manualExpenseTaxRates, loadManualExpenseOptions } =
     useManualExpenseOptions();
   const { preview, openPreview, closePreview } = useStatementPreview();
+  const routeCategoryId = useMemo(() => {
+    const categoryId = searchParams.get('categoryId');
+    if (categoryId) {
+      return categoryId;
+    }
+    return searchParams.get('missingCategory') === 'true' ? 'uncategorized' : null;
+  }, [searchParams]);
+  const routeFilterLabel =
+    routeCategoryId === 'uncategorized'
+      ? 'Missing category'
+      : routeCategoryId
+        ? 'Category filter'
+        : null;
+  const resetRouteCategoryFilter = useCallback((): void => {
+    if (!routeCategoryId) {
+      return;
+    }
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete('categoryId');
+    nextParams.delete('missingCategory');
+    const nextQuery = nextParams.toString();
+    router.replace(nextQuery ? `/statements/${stage}?${nextQuery}` : `/statements/${stage}`);
+    setPage(1);
+  }, [routeCategoryId, router, searchParams, stage]);
 
   const {
     statements,
@@ -323,6 +349,7 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     refreshActiveStatements,
   } = useStatementsListData<Statement>({
     appliedFilters: filterState.appliedFilters,
+    categoryId: routeCategoryId,
     search,
     stage,
     user,
@@ -490,8 +517,8 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
   });
 
   const activeFilterCount = useMemo(
-    () => computeActiveFilterCount(filterState.appliedFilters),
-    [filterState.appliedFilters],
+    () => computeActiveFilterCount(filterState.appliedFilters) + (routeCategoryId ? 1 : 0),
+    [filterState.appliedFilters, routeCategoryId],
   );
 
   const visibleFilterScreens = useMemo(
@@ -652,6 +679,8 @@ export function useStatementsView({ stage, router, searchParams }: UseStatements
     pullRefreshing,
     isReadyToRefresh,
     activeFilterCount,
+    routeFilterLabel,
+    resetRouteCategoryFilter,
     visibleFilterScreens,
     fromOptions,
     currencyOptions,

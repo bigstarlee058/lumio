@@ -73,29 +73,33 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
     },
   ];
 
-  const quickLinks: Array<{ label: string; href: string }> = [];
+  const quickLinks: Array<{ id: string; label: string; href: string }> = [];
   if (dataHealth.uncategorizedTransactions > 0) {
     quickLinks.push({
+      id: 'uncategorized-transactions',
       label: `Review ${dataHealth.uncategorizedTransactions} uncategorized transaction${dataHealth.uncategorizedTransactions !== 1 ? 's' : ''}`,
-      href: '/statements?missingCategory=true',
+      href: '/statements/submit?categoryId=uncategorized',
     });
   }
   if (dataHealth.statementsWithErrors > 0) {
     quickLinks.push({
+      id: 'statement-errors',
       label: `Fix ${dataHealth.statementsWithErrors} statement error${dataHealth.statementsWithErrors !== 1 ? 's' : ''}`,
       href: '/statements?status=error',
     });
   }
   if (dataHealth.statementsPendingReview > 0) {
     quickLinks.push({
+      id: 'pending-statements',
       label: `Review ${dataHealth.statementsPendingReview} pending statement${dataHealth.statementsPendingReview !== 1 ? 's' : ''}`,
       href: '/statements/approve',
     });
   }
   if (dataHealth.receiptsPendingReview > 0) {
     quickLinks.push({
+      id: 'pending-receipts',
       label: `Review ${dataHealth.receiptsPendingReview} receipt${dataHealth.receiptsPendingReview !== 1 ? 's' : ''}`,
-      href: '/statements?missingCategory=true',
+      href: '/statements/submit',
     });
   }
 
@@ -415,9 +419,9 @@ export function DataHealthTab({ data, formatAmount, isLoading }: DataHealthTabPr
               '& > a + a': { borderTop: '1px solid var(--border)' },
             }}
           >
-            {quickLinks.map(({ label, href }) => (
+            {quickLinks.map(({ id, label, href }) => (
               <Link
-                key={href}
+                key={id}
                 href={href}
                 className="ff-dashboard-sans"
                 style={{

@@ -7,6 +7,7 @@ import { ChevronRight } from '@/app/components/icons';
 import { tokens } from '@/lib/theme-tokens';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
+import { ActiveRouteFilter } from './ActiveRouteFilter';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,
@@ -35,6 +36,8 @@ type DateFilterDropdownProps = {
   trigger: React.ReactNode;
   applyLabel: string;
   resetLabel: string;
+  routeFilterLabel?: string | null;
+  onResetRouteFilter?: () => void;
 };
 
 const ensureDate = (value?: StatementFilterDate | null): StatementFilterDate => ({
@@ -69,6 +72,8 @@ export function DateFilterDropdown({
   trigger,
   applyLabel,
   resetLabel,
+  routeFilterLabel,
+  onResetRouteFilter,
 }: DateFilterDropdownProps) {
   const current = ensureDate(value);
 
@@ -77,6 +82,15 @@ export function DateFilterDropdown({
 
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
+      {routeFilterLabel && onResetRouteFilter ? (
+        <div style={{ marginBottom: 12 }}>
+          <ActiveRouteFilter
+            label={routeFilterLabel}
+            resetLabel={resetLabel}
+            onReset={onResetRouteFilter}
+          />
+        </div>
+      ) : null}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {presets.map(option => (

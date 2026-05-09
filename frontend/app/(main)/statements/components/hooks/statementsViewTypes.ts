@@ -152,6 +152,8 @@ export interface StatementsViewState {
   pullRefreshing: boolean;
   isReadyToRefresh: boolean;
   activeFilterCount: number;
+  routeFilterLabel: string | null;
+  resetRouteCategoryFilter: () => void;
   visibleFilterScreens: string[];
   fromOptions: ReturnType<typeof useStatementsFilterState>['draftColumns'];
   currencyOptions: string[];

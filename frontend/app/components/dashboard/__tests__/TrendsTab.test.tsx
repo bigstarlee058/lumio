@@ -27,6 +27,7 @@ describe('TrendsTab', () => {
     hooksMock.useDashboardTrends.mockReturnValue({
       data: {
         dailyTrend: [{ date: '2025-05-10', income: 100, expense: 40 }],
+        forecast: [],
         categories: [{ name: 'Office', amount: 40, count: 1 }],
         counterparties: [{ name: 'Client', amount: 100, count: 1 }],
         sources: {
@@ -58,6 +59,7 @@ describe('TrendsTab', () => {
     hooksMock.useDashboardTrends.mockReturnValue({
       data: {
         dailyTrend: [{ date: '2025-05-10', income: 100, expense: 40 }],
+        forecast: [],
         categories: [{ name: 'Office', amount: 40, count: 1 }],
         counterparties: [{ name: 'Client', amount: 100, count: 1 }],
         sources: {

@@ -17,6 +17,7 @@ describe('GmailController - Receipts List Endpoint', () => {
   const queryBuilder = {
     where: jest.fn(),
     andWhere: jest.fn(),
+    leftJoin: jest.fn(),
     orderBy: jest.fn(),
     take: jest.fn(),
     skip: jest.fn(),
@@ -36,6 +37,7 @@ describe('GmailController - Receipts List Endpoint', () => {
   beforeEach(async () => {
     queryBuilder.where.mockReturnValue(queryBuilder);
     queryBuilder.andWhere.mockReturnValue(queryBuilder);
+    queryBuilder.leftJoin.mockReturnValue(queryBuilder);
     queryBuilder.orderBy.mockReturnValue(queryBuilder);
     queryBuilder.take.mockReturnValue(queryBuilder);
     queryBuilder.skip.mockReturnValue(queryBuilder);
@@ -114,6 +116,23 @@ describe('GmailController - Receipts List Endpoint', () => {
 
     expect(queryBuilder.andWhere).toHaveBeenCalledWith(
       "NULLIF(TRIM(receipt.parsed_data->>'amount'), '') IS NULL",
+    );
+  });
+
+  it('filters uncategorized receipts with compatible category id types', async () => {
+    await (controller as any).listReceipts(
+      mockUser as User,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      'uncategorized',
+    );
+
+    expect(queryBuilder.leftJoin).toHaveBeenCalledWith('receipt.transaction', 'transaction');
+    expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+      "COALESCE(NULLIF(receipt.parsed_data ->> 'categoryId', ''), transaction.category_id::text) IS NULL",
     );
   });
 });

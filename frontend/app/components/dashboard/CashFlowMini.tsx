@@ -26,6 +26,7 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
     const axisLine = isDark ? '#2A3442' : '#D1CCC4';
     const incomeLine = isDark ? '#34D399' : '#0D9568';
     const expenseLine = '#D13D56';
+    const showPointSymbols = data.length <= 2;
 
     const fmt = (v: number) =>
       new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(v);
@@ -77,7 +78,9 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
           name: 'Income',
           type: 'line',
           smooth: true,
-          symbol: 'none',
+          symbol: showPointSymbols ? 'circle' : 'none',
+          symbolSize: showPointSymbols ? 7 : 0,
+          showSymbol: showPointSymbols,
           data: data.map(point => point.income),
           areaStyle: { color: isDark ? 'rgba(52,211,153,0.12)' : 'rgba(13,149,104,0.08)' },
           lineStyle: { color: incomeLine, width: 2 },
@@ -87,7 +90,9 @@ export function CashFlowMini({ data, emptyLabel, onUploadClick }: CashFlowMiniPr
           name: 'Expense',
           type: 'line',
           smooth: true,
-          symbol: 'none',
+          symbol: showPointSymbols ? 'circle' : 'none',
+          symbolSize: showPointSymbols ? 7 : 0,
+          showSymbol: showPointSymbols,
           data: data.map(point => point.expense),
           areaStyle: { color: 'rgba(209,61,86,0.08)' },
           lineStyle: { color: expenseLine, width: 2 },

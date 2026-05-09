@@ -93,4 +93,31 @@ describe('CashFlowMini', () => {
     expect(option?.yAxis?.splitLine?.lineStyle?.color).toBe('#2A3442');
     expect(option?.series?.[0]?.lineStyle?.color).toBe('#34D399');
   });
+
+  it('shows point symbols when the series is too sparse to draw a visible line', async () => {
+    const { CashFlowMini } = await import('./CashFlowMini');
+
+    render(
+      <CashFlowMini
+        emptyLabel="No data"
+        data={[{ date: '2026-05-06', income: 0, expense: 100 }]}
+      />,
+    );
+
+    const [props] = chartPropsSpy.mock.calls.at(-1) ?? [];
+    const option = props?.option as
+      | { series?: Array<{ symbol?: string; showSymbol?: boolean; symbolSize?: number }> }
+      | undefined;
+
+    expect(option?.series?.[0]).toMatchObject({
+      symbol: 'circle',
+      showSymbol: true,
+      symbolSize: 7,
+    });
+    expect(option?.series?.[1]).toMatchObject({
+      symbol: 'circle',
+      showSymbol: true,
+      symbolSize: 7,
+    });
+  });
 });
