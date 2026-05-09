@@ -2,6 +2,8 @@ import { Statement } from '@/entities/statement.entity';
 import { Transaction } from '@/entities/transaction.entity';
 import { NotificationCategory, NotificationSeverity, NotificationType } from '@/entities/notification.entity';
 import { Payable, PayableSource, PayableStatus } from '@/entities/payable.entity';
+import { Workspace } from '@/entities/workspace.entity';
+import { ExchangeRatesService } from '@/modules/exchange-rates/exchange-rates.service';
 import { NotificationsService } from '@/modules/notifications/notifications.service';
 import { PayablesExportService } from '@/modules/payables/payables-export.service';
 import { PayablesService } from '@/modules/payables/payables.service';
@@ -29,6 +31,8 @@ describe('PayablesService', () => {
   let exportService: { exportPayables: jest.Mock };
   let transactionRepository: Repository<Transaction>;
   let statementRepository: Repository<Statement>;
+  let workspaceRepository: Repository<Workspace>;
+  let exchangeRatesService: { getRate: jest.Mock };
 
   const transactionEntity = {
     id: 'tx-1',
@@ -76,6 +80,16 @@ describe('PayablesService', () => {
           useValue: createRepositoryMock<Statement>(),
         },
         {
+          provide: getRepositoryToken(Workspace),
+          useValue: createRepositoryMock<Workspace>(),
+        },
+        {
+          provide: ExchangeRatesService,
+          useValue: {
+            getRate: jest.fn(),
+          },
+        },
+        {
           provide: NotificationsService,
           useValue: {
             createForWorkspaceMembers: jest.fn(),
@@ -94,12 +108,16 @@ describe('PayablesService', () => {
     payableRepository = testingModule.get(getRepositoryToken(Payable));
     transactionRepository = testingModule.get(getRepositoryToken(Transaction));
     statementRepository = testingModule.get(getRepositoryToken(Statement));
+    workspaceRepository = testingModule.get(getRepositoryToken(Workspace));
+    exchangeRatesService = testingModule.get(ExchangeRatesService);
     notificationsService = testingModule.get(NotificationsService);
     exportService = testingModule.get(PayablesExportService);
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({ currency: 'KZT' } as Workspace);
+    exchangeRatesService.getRate.mockResolvedValue(1);
   });
 
   afterAll(async () => {
@@ -463,9 +481,72 @@ describe('PayablesService', () => {
         overdue: 2000,
         dueThisWeek: 1000,
         paidThisMonth: 3000,
+        paidTotal: 3000,
         toPayCount: 1,
         overdueCount: 1,
+        paidTotalCount: 1,
       });
+      jest.useRealTimers();
+    });
+
+    it('converts summary amounts from payable currency into workspace currency', async () => {
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({ currency: 'USD' } as Workspace);
+      jest
+        .spyOn(payableRepository, 'find')
+        .mockResolvedValue([
+          {
+            id: 'payable-kzt-paid',
+            status: PayableStatus.PAID,
+            dueDate: new Date('2026-03-18T00:00:00.000Z'),
+            amount: 1000,
+            currency: 'KZT',
+            paidAt: new Date('2026-03-05T10:00:00.000Z'),
+            updatedAt: new Date('2026-03-06T10:00:00.000Z'),
+          },
+          {
+            id: 'payable-usd-to-pay',
+            status: PayableStatus.TO_PAY,
+            dueDate: new Date('2026-03-20T00:00:00.000Z'),
+            amount: 10,
+            currency: 'USD',
+            paidAt: null,
+            updatedAt: new Date('2026-03-01T10:00:00.000Z'),
+          },
+        ] as Payable[]);
+      exchangeRatesService.getRate.mockResolvedValueOnce(0.002);
+      jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
+
+      const result = await service.getSummary('workspace-1');
+
+      expect(result.toPay).toBe(10);
+      expect(result.dueThisWeek).toBe(10);
+      expect(result.paidThisMonth).toBe(2);
+      expect(result.paidTotal).toBe(2);
+      expect(exchangeRatesService.getRate).toHaveBeenCalledWith('KZT', 'USD');
+      jest.useRealTimers();
+    });
+
+    it('converts summary amounts in the reverse currency direction', async () => {
+      jest.spyOn(workspaceRepository, 'findOne').mockResolvedValue({ currency: 'KZT' } as Workspace);
+      jest.spyOn(payableRepository, 'find').mockResolvedValue([
+        {
+          id: 'payable-usd',
+          status: PayableStatus.TO_PAY,
+          dueDate: new Date('2026-03-20T00:00:00.000Z'),
+          amount: 10,
+          currency: 'USD',
+          paidAt: null,
+          updatedAt: new Date('2026-03-01T10:00:00.000Z'),
+        },
+      ] as Payable[]);
+      exchangeRatesService.getRate.mockResolvedValueOnce(500);
+      jest.useFakeTimers().setSystemTime(new Date('2026-03-17T12:00:00.000Z'));
+
+      const result = await service.getSummary('workspace-1');
+
+      expect(result.toPay).toBe(5000);
+      expect(result.dueThisWeek).toBe(5000);
+      expect(exchangeRatesService.getRate).toHaveBeenCalledWith('USD', 'KZT');
       jest.useRealTimers();
     });
 
@@ -486,6 +567,8 @@ describe('PayablesService', () => {
       const result = await service.getSummary('workspace-1');
 
       expect(result.paidThisMonth).toBe(0);
+      expect(result.paidTotal).toBe(3000);
+      expect(result.paidTotalCount).toBe(1);
       jest.useRealTimers();
     });
 
@@ -506,6 +589,8 @@ describe('PayablesService', () => {
       const result = await service.getSummary('workspace-1');
 
       expect(result.paidThisMonth).toBe(2500);
+      expect(result.paidTotal).toBe(2500);
+      expect(result.paidTotalCount).toBe(1);
       jest.useRealTimers();
     });
 
@@ -538,8 +623,10 @@ describe('PayablesService', () => {
         overdue: 1500,
         dueThisWeek: 700,
         paidThisMonth: 0,
+        paidTotal: 0,
         toPayCount: 1,
         overdueCount: 1,
+        paidTotalCount: 0,
       });
       jest.useRealTimers();
     });

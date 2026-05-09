@@ -21,6 +21,7 @@ export interface SubscriptionItem {
 
 export interface SubscriptionSummary {
   totalMonthlyCost: number;
+  currency: string;
   activeCount: number;
   upcomingCount: number;
 }
@@ -47,6 +48,7 @@ export function useSubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [summary, setSummary] = useState<SubscriptionSummary>({
     totalMonthlyCost: 0,
+    currency: 'KZT',
     activeCount: 0,
     upcomingCount: 0,
   });
@@ -70,7 +72,12 @@ export function useSubscriptionsPage() {
       setSubscriptions(subsRes.data?.data ?? subsRes.data ?? []);
       setSummary(
         summaryRes.data?.data ??
-          summaryRes.data ?? { totalMonthlyCost: 0, activeCount: 0, upcomingCount: 0 },
+          summaryRes.data ?? {
+            totalMonthlyCost: 0,
+            currency: 'KZT',
+            activeCount: 0,
+            upcomingCount: 0,
+          },
       );
     } catch {
       setError('Failed to load subscriptions');

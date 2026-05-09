@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payable } from '../../entities/payable.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
+import { Workspace } from '../../entities/workspace.entity';
 import { AuditModule } from '../audit/audit.module';
+import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { PayablesExportService } from './payables-export.service';
 import { PayablesController } from './payables.controller';
@@ -12,8 +14,9 @@ import { PayablesService } from './payables.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Payable, Transaction, Statement]),
+    TypeOrmModule.forFeature([Payable, Transaction, Statement, Workspace]),
     AuditModule,
+    ExchangeRatesModule,
     NotificationsModule,
   ],
   controllers: [PayablesController],

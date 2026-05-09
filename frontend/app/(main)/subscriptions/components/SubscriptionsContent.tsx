@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from '@/app/components/icons';
+import { sharedMuiTabsSx } from '@/app/components/ui/mui-tabs';
 import {
   Box,
   Button,
@@ -157,7 +158,10 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
           mb: 3,
         }}
       >
-        <SummaryCard label="Monthly cost" value={formatAmount(summary.totalMonthlyCost, 'KZT')} />
+        <SummaryCard
+          label="Monthly cost"
+          value={formatAmount(summary.totalMonthlyCost, summary.currency)}
+        />
         <SummaryCard label="Active" value={summary.activeCount} />
         <SummaryCard label="Upcoming (7 days)" value={summary.upcomingCount} />
       </Box>
@@ -168,20 +172,7 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
         onChange={(_, v) => setStatusFilter(v)}
         variant="scrollable"
         scrollButtons={false}
-        sx={{
-          mb: { xs: 2, sm: 2 },
-          width: '100%',
-          maxWidth: '100%',
-          minWidth: 0,
-          overflow: 'hidden',
-          '& .MuiTabs-scroller': { overflowX: 'auto !important' },
-          '& .MuiTabs-flexContainer': { width: 'max-content' },
-          '& .MuiTab-root': {
-            minWidth: { xs: 104, md: 90 },
-            px: { xs: 1.5, md: 2 },
-            fontSize: { xs: 16, md: 14 },
-          },
-        }}
+        sx={sharedMuiTabsSx}
       >
         <Tab value="all" label="All" />
         <Tab value="detected" label="Detected" />

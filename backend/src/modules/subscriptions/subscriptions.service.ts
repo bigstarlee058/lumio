@@ -12,6 +12,8 @@ import {
   SubscriptionFrequency,
   SubscriptionStatus,
 } from '../../entities/subscription.entity';
+import { Workspace } from '../../entities/workspace.entity';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import type { UpdateSubscriptionDto } from './dto/update-subscription.dto';
@@ -23,7 +25,10 @@ export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription)
     private readonly subscriptionRepository: Repository<Subscription>,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly notificationsService: NotificationsService,
+    private readonly exchangeRatesService: ExchangeRatesService,
   ) {}
 
   async create(
@@ -113,16 +118,24 @@ export class SubscriptionsService {
 
   async getSummary(workspaceId: string): Promise<{
     totalMonthlyCost: number;
+    currency: string;
     activeCount: number;
     upcomingCount: number;
   }> {
+    const currency = await this.getWorkspaceCurrency(workspaceId);
     const active = await this.subscriptionRepository.find({
       where: { workspaceId, status: SubscriptionStatus.ACTIVE },
     });
 
-    const totalMonthlyCost = active.reduce((sum, sub) => {
-      return sum + this.normalizeToMonthly(Number(sub.amount), sub.frequency);
-    }, 0);
+    let totalMonthlyCost = 0;
+    for (const sub of active) {
+      const convertedAmount = await this.convertToWorkspaceCurrency(
+        Number(sub.amount),
+        sub.currency,
+        currency,
+      );
+      totalMonthlyCost += this.normalizeToMonthly(convertedAmount, sub.frequency);
+    }
 
     const now = new Date();
     const weekAhead = new Date(now);
@@ -138,6 +151,7 @@ export class SubscriptionsService {
 
     return {
       totalMonthlyCost: Math.round(totalMonthlyCost * 100) / 100,
+      currency,
       activeCount: active.length,
       upcomingCount,
     };
@@ -241,6 +255,37 @@ export class SubscriptionsService {
       case SubscriptionFrequency.ANNUAL:
         return amount / 12;
     }
+  }
+
+  private async getWorkspaceCurrency(workspaceId: string): Promise<string> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: ['currency'],
+    });
+    return this.normalizeCurrency(workspace?.currency);
+  }
+
+  private async convertToWorkspaceCurrency(
+    amount: number,
+    sourceCurrency: string | null | undefined,
+    targetCurrency: string,
+  ): Promise<number> {
+    if (!Number.isFinite(amount) || amount === 0) {
+      return 0;
+    }
+    const source = this.normalizeCurrency(sourceCurrency);
+    if (source === targetCurrency) {
+      return amount;
+    }
+    const rate = await this.exchangeRatesService.getRate(source, targetCurrency);
+    return amount * rate;
+  }
+
+  private normalizeCurrency(currency: string | null | undefined): string {
+    const normalized = String(currency || '')
+      .trim()
+      .toUpperCase();
+    return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
   }
 
   private addInterval(date: Date, frequency: SubscriptionFrequency): Date {

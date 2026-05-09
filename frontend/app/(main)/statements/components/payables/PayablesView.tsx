@@ -36,8 +36,10 @@ const DEFAULT_SUMMARY: PayablesSummary = {
   overdue: 0,
   dueThisWeek: 0,
   paidThisMonth: 0,
+  paidTotal: 0,
   toPayCount: 0,
   overdueCount: 0,
+  paidTotalCount: 0,
 };
 
 const PAGE_SIZE = 20;
@@ -166,12 +168,11 @@ export function PayablesView(): React.JSX.Element {
       export: tx(['payables', 'export'], 'Export'),
       exportCsv: tx(['payables', 'exportCsv'], 'Export CSV'),
       exportXlsx: tx(['payables', 'exportXlsx'], 'Export XLSX'),
-      searchPlaceholder: tx(['payables', 'searchPlaceholder'], 'Search vendor or comment'),
       summary: {
         toPay: tx(['payables', 'summary', 'toPay'], 'To Pay'),
         overdue: tx(['payables', 'summary', 'overdue'], 'Overdue'),
         dueThisWeek: tx(['payables', 'summary', 'dueThisWeek'], 'Due This Week'),
-        paidThisMonth: tx(['payables', 'summary', 'paidThisMonth'], 'Paid This Month'),
+        paidTotal: tx(['payables', 'summary', 'paidThisMonth'], 'Paid'),
         itemsSuffix: tx(['payables', 'summary', 'itemsSuffix'], 'items'),
       },
       filters: {
@@ -606,10 +607,7 @@ export function PayablesView(): React.JSX.Element {
             value={filters}
             onChange={handleFiltersChange}
             onReset={() => handleFiltersChange(DEFAULT_PAYABLES_FILTERS)}
-            labels={{
-              searchPlaceholder: labels.searchPlaceholder,
-              ...labels.filters,
-            }}
+            labels={labels.filters}
           />
 
           <PayablesList

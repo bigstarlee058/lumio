@@ -14,7 +14,7 @@ interface PayableSummaryCardsProps {
     toPay: string;
     overdue: string;
     dueThisWeek: string;
-    paidThisMonth: string;
+    paidTotal: string;
     itemsSuffix: string;
   };
 }
@@ -23,7 +23,7 @@ const cardIcons = {
   toPay: Banknote,
   overdue: Clock3,
   dueThisWeek: CalendarClock,
-  paidThisMonth: CheckCircle2,
+  paidTotal: CheckCircle2,
 } as const;
 
 // eslint-disable-next-line max-lines-per-function

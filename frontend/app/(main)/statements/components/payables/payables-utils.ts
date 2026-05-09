@@ -181,5 +181,5 @@ export const getSummaryCardItems = (summary: PayablesSummary): readonly SummaryC
     { key: 'toPay', value: summary.toPay, count: summary.toPayCount },
     { key: 'overdue', value: summary.overdue, count: summary.overdueCount },
     { key: 'dueThisWeek', value: summary.dueThisWeek },
-    { key: 'paidThisMonth', value: summary.paidThisMonth },
+    { key: 'paidTotal', value: summary.paidTotal, count: summary.paidTotalCount },
   ] as readonly SummaryCardItem[];

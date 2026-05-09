@@ -59,6 +59,20 @@ export class ExchangeRatesService {
       return Number(dbRate.rate);
     }
 
+    const reverseDbRate = await this.exchangeRateRepository.findOne({
+      where: {
+        baseCurrency: normalizedTo,
+        targetCurrency: normalizedFrom,
+        rateDate: new Date(rateDate),
+      },
+    });
+    const reverseRate = Number(reverseDbRate?.rate);
+    if (Number.isFinite(reverseRate) && reverseRate > 0) {
+      const invertedRate = 1 / reverseRate;
+      await this.cacheManager.set(cacheKey, invertedRate, this.isToday(rateDate) ? 4 * 3600 : 0);
+      return invertedRate;
+    }
+
     // 3. Try to compute via USD base (e.g., EUR→KZT = (1/USD→EUR) * USD→KZT)
     if (normalizedFrom !== 'USD' && normalizedTo !== 'USD') {
       const rateFromUsd = await this.getRateFromApi('USD', normalizedFrom, rateDate);
@@ -96,6 +110,18 @@ export class ExchangeRatesService {
         `Using stale rate ${normalizedFrom}→${normalizedTo} from ${latestRate.rateDate}`,
       );
       return Number(latestRate.rate);
+    }
+
+    const latestReverseRate = await this.exchangeRateRepository.findOne({
+      where: { baseCurrency: normalizedTo, targetCurrency: normalizedFrom },
+      order: { rateDate: 'DESC' },
+    });
+    const latestReverseRateValue = Number(latestReverseRate?.rate);
+    if (Number.isFinite(latestReverseRateValue) && latestReverseRateValue > 0) {
+      this.logger.warn(
+        `Using stale inverse rate ${normalizedTo}→${normalizedFrom} from ${latestReverseRate?.rateDate}`,
+      );
+      return 1 / latestReverseRateValue;
     }
 
     this.logger.warn(`No rate found for ${normalizedFrom}→${normalizedTo}, returning 1`);
