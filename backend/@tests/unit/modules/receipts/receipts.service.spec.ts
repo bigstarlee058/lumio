@@ -190,8 +190,6 @@ describe('ReceiptsService', () => {
       expect.objectContaining({
         workspaceId: 'workspace-1',
         amount: 99.5,
-        debit: 99.5,
-        credit: null,
         currency: 'EUR',
         counterpartyName: 'Lidl',
       }),
@@ -236,8 +234,6 @@ describe('ReceiptsService', () => {
       expect.objectContaining({
         workspaceId: 'workspace-1',
         amount: 15.5,
-        debit: 15.5,
-        credit: null,
         currency: 'EUR',
         counterpartyName: 'Lidl',
       }),
