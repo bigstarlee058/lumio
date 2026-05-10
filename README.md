@@ -70,7 +70,7 @@ Lumio is a full-stack financial operations platform built for teams that need to
 
 ### Core capabilities
 
-- **Multi-format Statement Import** — PDF, CSV, XLSX, and image files. Native parsers for Kaspi Bank and Bereke Bank. Generic AI PDF parser for any other bank.
+- **Multi-format Statement Import** — PDF, CSV, XLSX, and image files. Native parsers for Kaspi Bank, Bereke Bank, and Bank Hapoalim / Isracard. Generic AI PDF parser for any other bank.
 - **OCR for Image Statements** — Tesseract.js text extraction from scanned documents and photos.
 - **Idempotent Uploads** — SHA-256 file hashing prevents duplicate imports.
 - **Transaction Deduplication** — Fingerprint-based duplicate detection with confidence scoring, merge, and mark-as-duplicate workflows.
@@ -79,6 +79,10 @@ Lumio is a full-stack financial operations platform built for teams that need to
 - **Granular RBAC** — Roles: owner, admin, member, viewer. Per-user permission overrides.
 - **Dashboard & Reports** — Cash flow, top categories, trends, custom report builder with CSV/XLSX export.
 - **Audit Log** — Complete event trail with one-click rollback for supported operations.
+- **Webhooks** — Outbound event delivery to subscribed endpoints with token-based authentication.
+- **API Keys** — Programmatic access via `lum_`-prefixed, SHA-256 hashed keys with revocation support.
+- **Budgets** — Budget tracking with manual spend recording and alerts.
+- **Subscriptions** — Recurring billing detection and management with frequency-based tracking.
 - **Docker Ready** — One-command deployment with Docker Compose.
 
 <details>
@@ -145,6 +149,7 @@ Setting expectations upfront:
 | Kaspi Bank | PDF | `KaspiParser` — native table extraction |
 | Bereke Bank (new format) | PDF | `BerekeNewParser` — native |
 | Bereke Bank (legacy format) | PDF | `BerekeOldParser` — native |
+| Bank Hapoalim / Isracard | PDF | `HapoalimParser` — native (Hebrew) |
 | Any bank | CSV | `CsvParser` — generic delimiter detection |
 | Any bank | XLSX / XLS | `ExcelParser` — generic |
 | Any bank | PDF | `GenericPdfParser` — AI-assisted via OpenAI-compatible endpoint |
@@ -210,7 +215,9 @@ Setting expectations upfront:
 lumio/
 ├── backend/                         # NestJS API server
 │   ├── src/
-│   │   ├── modules/                 # 30 feature modules
+│   │   ├── modules/                 # 36 feature modules
+│   │   │   ├── api-keys/            # Programmatic API key management
+│   │   │   ├── application-settings/ # Runtime system configuration
 │   │   │   ├── auth/                # JWT auth, refresh tokens, session management
 │   │   │   ├── users/               # User CRUD, avatars, permission overrides
 │   │   │   ├── workspaces/          # Multi-tenant workspaces, RBAC, invitations
@@ -218,10 +225,11 @@ lumio/
 │   │   │   ├── transactions/        # Transaction CRUD, search, deduplication
 │   │   │   ├── categories/          # Hierarchical category management
 │   │   │   ├── classification/      # AI auto-categorization + ML learning rules
-│   │   │   ├── parsing/             # Multi-format file parsers (Kaspi, Bereke, CSV, AI)
+│   │   │   ├── parsing/             # Multi-format file parsers (Kaspi, Bereke, Hapoalim, CSV, AI)
 │   │   │   ├── dashboard/           # Dashboard stats, trends, cash flow
 │   │   │   ├── reports/             # Financial reports, export (CSV/XLSX)
 │   │   │   ├── balance/             # Balance sheet accounts & snapshots
+│   │   │   ├── budgets/             # Budget tracking & alerts
 │   │   │   ├── storage/             # File storage, versioning, shared links
 │   │   │   ├── gmail/               # Legacy receipt sync & parsing
 │   │   │   ├── google-drive/        # Legacy Drive migration compatibility
@@ -238,13 +246,16 @@ lumio/
 │   │   │   ├── branches/            # Branch reference data
 │   │   │   ├── wallets/             # Wallet reference data
 │   │   │   ├── tax-rates/           # Tax rate reference data
-│   │   │   ├── payables/           # Accounts payable workflow
-│   │   │   ├── receipts/           # Receipt management & browser
+│   │   │   ├── payables/            # Accounts payable workflow
+│   │   │   ├── receipts/            # Receipt management & browser
+│   │   │   ├── subscriptions/       # Recurring billing detection & management
+│   │   │   ├── webhooks/            # Outbound event delivery to endpoints
+│   │   │   ├── open-protocol-integrations/ # S3, WebDAV, IMAP protocol handlers
 │   │   │   └── observability/       # Prometheus metrics endpoint
-│   │   ├── entities/                # 51 TypeORM entities
+│   │   ├── entities/                # 59 TypeORM entities
 │   │   ├── common/                  # Guards, decorators, interceptors, filters
 │   │   ├── config/                  # App configuration
-│   │   └── migrations/              # 82 database migrations (auto-applied on startup)
+│   │   └── migrations/              # 90 database migrations (auto-applied on startup)
 │   ├── scripts/                     # Admin, seed, parse debug, storage repair
 │   └── @tests/                      # Unit and E2E test suites
 ├── frontend/                        # Next.js application
@@ -273,10 +284,13 @@ lumio/
 │   │   └── stories/                 # Storybook stories (*.stories.tsx)
 │   └── public/                      # Static assets, bank logos
 ├── docs/
-│   ├── plans/                       # 30 feature design & implementation plans
+│   ├── plans/                       # 38 feature design & implementation plans
 │   ├── CI/                          # CI/CD pipeline documentation
 │   ├── security/                    # CVE allowlists, license exceptions
 │   └── statements-examples/         # Sample bank statement files for testing
+├── electron/                        # Electron desktop app wrapper
+├── mcp-server/                      # Claude MCP server integration
+├── website/                         # Marketing / documentation website
 ├── observability/                   # Prometheus & Grafana configuration
 ├── scripts/                         # Shell helper scripts
 │   ├── generate-env.sh              # Generate .env files with random secrets
@@ -551,7 +565,7 @@ make update            # Update npm dependencies
 
 ### Database Migrations
 
-Lumio uses TypeORM migrations exclusively (`synchronize: false`). Migrations run automatically on every startup unless `RUN_MIGRATIONS=false` is set. There are currently 82 migrations covering the entire schema history.
+Lumio uses TypeORM migrations exclusively (`synchronize: false`). Migrations run automatically on every startup unless `RUN_MIGRATIONS=false` is set. There are currently 90 migrations covering the entire schema history.
 
 ```bash
 # Apply all pending migrations (Docker)
@@ -709,8 +723,8 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
 ┌──────────▼────────────┐   ┌──────────▼────────────┐
 │   PostgreSQL 14       │   │     Redis 7           │
 │                       │   │                       │
-│  - 51 TypeORM entities│   │  - Session cache      │
-│  - 82 migrations      │   │  - Rate limiting      │
+│  - 59 TypeORM entities│   │  - Session cache      │
+│  - 90 migrations      │   │  - Rate limiting      │
 │  - Full-text search   │   │  - Bull queues        │
 └───────────────────────┘   └───────────────────────┘
 
@@ -741,7 +755,7 @@ Stories live in `frontend/app/stories/` and follow the `*.stories.tsx` naming co
 - SHA-256 `fileHash` on statements for idempotent re-upload detection
 - `Idempotency-Key` header supported on upload endpoints (stored in `IdempotencyKey` entity)
 - Transaction fingerprinting for cross-statement duplicate detection
-- 51 TypeORM entities covering all domain objects (see `backend/src/entities/`)
+- 59 TypeORM entities covering all domain objects (see `backend/src/entities/`)
 
 ### Parsing Pipeline
 
@@ -854,7 +868,7 @@ See [RAILWAY.md](RAILWAY.md) for step-by-step instructions.
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | Community guidelines |
 | [CHANGELOG.md](CHANGELOG.md) | Release history |
 | [RAILWAY.md](RAILWAY.md) | Railway deployment step-by-step |
-| [docs/plans/](docs/plans/) | 30 feature design and implementation plan documents |
+| [docs/plans/](docs/plans/) | 38 feature design and implementation plan documents |
 | [docs/CI/](docs/CI/) | CI/CD pipeline documentation |
 | [docs/security/](docs/security/) | CVE allowlists and license exceptions |
 
