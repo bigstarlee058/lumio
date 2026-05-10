@@ -1,0 +1,42 @@
+echo "Running pre-push regression tests..."
+echo ""
+
+# Only run backend tests related to changed files (compared to remote)
+remote_ref=$(git rev-parse @{upstream} 2>/dev/null || git rev-parse origin/main 2>/dev/null)
+
+if [ -n "$remote_ref" ]; then
+  changed_files=$(git diff --name-only "$remote_ref" HEAD -- backend/src/)
+else
+  changed_files=""
+fi
+
+backend_log=$(mktemp)
+backend_exit=0
+
+if [ -z "$changed_files" ]; then
+  echo "No backend source changes — skipping backend tests"
+else
+  npm --prefix backend run test:unit --bail > "$backend_log" 2>&1
+  backend_exit=$?
+fi
+
+echo "-------------------------------------------"
+if [ $backend_exit -eq 0 ]; then
+  echo "Backend tests passed"
+else
+  echo "Backend tests FAILED"
+  echo ""
+  tail -30 "$backend_log"
+  echo ""
+fi
+echo "-------------------------------------------"
+
+rm -f "$backend_log"
+
+if [ $backend_exit -ne 0 ]; then
+  echo ""
+  echo "Push blocked. Fix failing tests or use 'git push --no-verify' to skip."
+  exit 1
+fi
+
+echo "All tests passed. Pushing..."
