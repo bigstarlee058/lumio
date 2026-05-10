@@ -134,7 +134,9 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
   };
 
   const handleDelete = async (): Promise<void> => {
-    if (!fileToDelete) return;
+    if (!fileToDelete) {
+      return;
+    }
     const toastId = toast.loading(messages.deleteLoading);
     try {
       await api.post(`/storage/files/${fileToDelete.id}/trash`);
@@ -153,7 +155,9 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
   };
 
   const handlePermanentDelete = async (): Promise<void> => {
-    if (!fileToDeletePermanently) return;
+    if (!fileToDeletePermanently) {
+      return;
+    }
     const toastId = toast.loading(messages.trashDeleteLoading);
     try {
       await api.delete(`/storage/files/${fileToDeletePermanently.id}/trash`);
@@ -179,7 +183,9 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
   };
 
   const handleBulkRestore = async (ids: string[]): Promise<void> => {
-    if (!ids.length) return;
+    if (!ids.length) {
+      return;
+    }
     const toastId = toast.loading(messages.trashRestoreLoading);
     try {
       await api.post('/storage/files/trash/bulk/restore', { statementIds: ids });
@@ -192,7 +198,9 @@ export function useStorageFiles(messages: UseStorageFilesMessages): UseStorageFi
   };
 
   const handleBulkDeleteFromTrash = async (ids: string[]): Promise<void> => {
-    if (!ids.length) return;
+    if (!ids.length) {
+      return;
+    }
     const toastId = toast.loading(messages.trashDeleteLoading);
     try {
       await api.post('/storage/files/bulk/trash/delete', { statementIds: ids });

@@ -1,12 +1,12 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { ArrowUpRight } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardActionItem } from '@/app/hooks/useDashboard';
-import { ArrowUpRight } from '@/app/components/icons';
-import Link from 'next/link';
 import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Link from 'next/link';
 
 type ActionPriority = 'critical' | 'warning' | 'info' | 'success';
 
@@ -34,7 +34,12 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
   if (!isLoading && actions.length === 0) {
     return (
       <Typography
-        sx={{ fontSize: 13, fontWeight: 500, color: '#34d399', fontFamily: 'var(--font-dashboard-sans)' }}
+        sx={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#34d399',
+          fontFamily: 'var(--font-dashboard-sans)',
+        }}
       >
         {emptyLabel}
       </Typography>
@@ -51,16 +56,38 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
           <Link
             key={action.type}
             href={action.href}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', transition: 'opacity 150ms', textDecoration: 'none' }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '4px 0',
+              transition: 'opacity 150ms',
+              textDecoration: 'none',
+            }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
               <Box
                 component="span"
-                sx={{ height: 6, width: 6, borderRadius: tokens.radius.full, flexShrink: 0, backgroundColor: dotColor, display: 'inline-block' }}
+                sx={{
+                  height: 6,
+                  width: 6,
+                  borderRadius: tokens.radius.full,
+                  flexShrink: 0,
+                  backgroundColor: dotColor,
+                  display: 'inline-block',
+                }}
               />
               <Typography
                 component="span"
-                sx={{ fontSize: 13, color: 'text.primary', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'var(--font-dashboard-sans)' }}
+                sx={{
+                  fontSize: 13,
+                  color: 'text.primary',
+                  fontWeight: 500,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontFamily: 'var(--font-dashboard-sans)',
+                }}
               >
                 {isLoading ? (
                   <Spinner style={{ width: 12, height: 12, display: 'inline' }} />
@@ -72,7 +99,16 @@ export function ActionRequired({ actions, emptyLabel, isLoading }: ActionRequire
                 )}
               </Typography>
             </Box>
-            <ArrowUpRight size={12} style={{ marginLeft: 8, flexShrink: 0, color: 'var(--muted-foreground)', opacity: 0, transition: 'opacity 150ms' }} />
+            <ArrowUpRight
+              size={12}
+              style={{
+                marginLeft: 8,
+                flexShrink: 0,
+                color: 'var(--muted-foreground)',
+                opacity: 0,
+                transition: 'opacity 150ms',
+              }}
+            />
           </Link>
         );
       })}

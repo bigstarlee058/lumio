@@ -2,8 +2,9 @@
 
 import { Alert, AlertTitle, Dialog, DialogTitle, Typography } from '@mui/material';
 import { useMemo } from 'react';
-import { CurrencyPickerDrawer } from './components/CurrencyPickerDrawer';
 import { DroppedSampleForm } from './DroppedSampleForm';
+import { WarningsList } from './WarningsList';
+import { CurrencyPickerDrawer } from './components/CurrencyPickerDrawer';
 import {
   extractTxKey,
   formatDroppedSampleText,
@@ -11,8 +12,10 @@ import {
   isRepairableWarning,
   toDroppedSample,
 } from './helpers/warning-formatters';
-import { useParsingWarningsPanel, type EditableWarningEntry } from './hooks/useParsingWarningsPanel';
-import { WarningsList } from './WarningsList';
+import {
+  type EditableWarningEntry,
+  useParsingWarningsPanel,
+} from './hooks/useParsingWarningsPanel';
 
 // ---------------------------------------------------------------------------
 // Core types
@@ -80,21 +83,47 @@ type FallbackCtx = {
   sampleKeyByTxKey: Map<string, string>;
 };
 
-const buildFallbackEntries = ({ warnings, sampleKeyByReason, sampleKeyByTxKey }: FallbackCtx): EditableWarningEntry[] =>
+const buildFallbackEntries = ({
+  warnings,
+  sampleKeyByReason,
+  sampleKeyByTxKey,
+}: FallbackCtx): EditableWarningEntry[] =>
   // eslint-disable-next-line max-params, complexity
   warnings.flatMap((warning, warningIndex) => {
     const warningTxKey = extractTxKey(warning);
-    const matchedKey = sampleKeyByReason.get(warning) ?? (warningTxKey ? sampleKeyByTxKey.get(warningTxKey) : undefined);
-    if (matchedKey || (!isRepairableWarning(warning) && !isBalanceMismatchWarning(warning))) return [];
-    const entry: EditableWarningEntry = { key: `warning:${warningIndex}`, sample: { reason: warning }, reason: warning, txKey: warningTxKey, action: isBalanceMismatchWarning(warning) ? 'resolve' : 'convert' };
+    const matchedKey =
+      sampleKeyByReason.get(warning) ??
+      (warningTxKey ? sampleKeyByTxKey.get(warningTxKey) : undefined);
+    if (matchedKey || !(isRepairableWarning(warning) || isBalanceMismatchWarning(warning))) {
+      return [];
+    }
+    const entry: EditableWarningEntry = {
+      key: `warning:${warningIndex}`,
+      sample: { reason: warning },
+      reason: warning,
+      txKey: warningTxKey,
+      action: isBalanceMismatchWarning(warning) ? 'resolve' : 'convert',
+    };
     return [entry];
   });
 
-const buildEditableEntries = ({ droppedSamples, warnings }: { droppedSamples: Array<string | ParsingDroppedSample>; warnings: string[] }): EditableWarningEntry[] => {
+const buildEditableEntries = ({
+  droppedSamples,
+  warnings,
+}: {
+  droppedSamples: Array<string | ParsingDroppedSample>;
+  warnings: string[];
+}): EditableWarningEntry[] => {
   // eslint-disable-next-line max-params
   const sampleEntries: EditableWarningEntry[] = droppedSamples.map((sample, index) => {
     const normalized = toDroppedSample(sample);
-    return { key: `sample:${index}`, sample: normalized, reason: normalized.reason, txKey: extractTxKey(normalized.reason), action: 'convert' };
+    return {
+      key: `sample:${index}`,
+      sample: normalized,
+      reason: normalized.reason,
+      txKey: extractTxKey(normalized.reason),
+      action: 'convert',
+    };
   });
 
   const sampleKeyByReason = new Map(sampleEntries.map(e => [e.reason, e.key] as const));
@@ -119,9 +148,17 @@ type ConvertDialogProps = {
 function ConvertDialog({ panel }: ConvertDialogProps): React.JSX.Element {
   const { isDialogOpen, selectedEntry, selectedDraft, selectedWarning } = panel;
   return (
-    <Dialog open={isDialogOpen} onClose={() => panel.setSelectedWarning(null)} fullWidth maxWidth="md">
+    <Dialog
+      open={isDialogOpen}
+      onClose={() => panel.setSelectedWarning(null)}
+      fullWidth
+      maxWidth="md"
+    >
       <DialogTitle>Convert dropped row</DialogTitle>
-      {isDialogOpen && selectedEntry !== null && selectedDraft !== null && selectedWarning !== null ? (
+      {isDialogOpen &&
+      selectedEntry !== null &&
+      selectedDraft !== null &&
+      selectedWarning !== null ? (
         <DroppedSampleForm
           selectedWarning={selectedWarning.warning}
           entryKey={selectedEntry.key}
@@ -131,7 +168,9 @@ function ConvertDialog({ panel }: ConvertDialogProps): React.JSX.Element {
           onUpdateDraft={panel.updateDraft}
           onOpenCurrencyPicker={() => panel.setCurrencyPickerOpen(true)}
           onCancel={() => panel.setSelectedWarning(null)}
-          onConvert={() => { void panel.handleConvert(); }}
+          onConvert={() => {
+            void panel.handleConvert();
+          }}
         />
       ) : null}
     </Dialog>
@@ -153,16 +192,28 @@ export function ParsingWarningsPanel({
   title = 'Parsing warnings',
   helperText = 'Review the flagged rows before submitting this statement.',
 }: ParsingWarningsPanelProps): React.JSX.Element | null {
-  const editableEntries = useMemo(() => buildEditableEntries({ droppedSamples, warnings }), [droppedSamples, warnings]);
-  const panel = useParsingWarningsPanel({ warnings, editableEntries, onConvertDroppedSample, onResolveWarning });
+  const editableEntries = useMemo(
+    () => buildEditableEntries({ droppedSamples, warnings }),
+    [droppedSamples, warnings],
+  );
+  const panel = useParsingWarningsPanel({
+    warnings,
+    editableEntries,
+    onConvertDroppedSample,
+    onResolveWarning,
+  });
 
-  if (warnings.length === 0 && droppedSamples.length === 0) return null;
+  if (warnings.length === 0 && droppedSamples.length === 0) {
+    return null;
+  }
 
   return (
     <>
       <Alert severity="warning" variant="outlined" sx={{ mt: 3, alignItems: 'flex-start' }}>
         <AlertTitle sx={{ mb: 0.5 }}>{title}</AlertTitle>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>{helperText}</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+          {helperText}
+        </Typography>
         <WarningsList
           warnings={warnings}
           editableEntryByReason={panel.editableEntryByReason}
@@ -176,7 +227,9 @@ export function ParsingWarningsPanel({
         <ConvertDialog panel={panel} />
       </Alert>
       <CurrencyPickerDrawer
-        isOpen={panel.currencyPickerOpen && panel.selectedEntry !== null && panel.selectedDraft !== null}
+        isOpen={
+          panel.currencyPickerOpen && panel.selectedEntry !== null && panel.selectedDraft !== null
+        }
         onClose={panel.handleCloseCurrencyPicker}
         currencySearch={panel.currencySearch}
         onSearchChange={panel.setCurrencySearch}

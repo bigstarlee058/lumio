@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Repository } from 'typeorm';
+import { calculateStringSimilarity } from '../../../common/utils/string-similarity.util';
 import { Category, Receipt, Transaction } from '../../../entities';
 
 type CategoryQueryMode = 'direct' | 'via-statement';
@@ -33,7 +33,11 @@ export class ReceiptCategoryService {
         return null;
       }
 
-      const historicalMatch = await this.matchByHistoricalData(vendor, receipt.workspaceId, categories);
+      const historicalMatch = await this.matchByHistoricalData(
+        vendor,
+        receipt.workspaceId,
+        categories,
+      );
       if (historicalMatch) {
         return historicalMatch;
       }
@@ -50,10 +54,7 @@ export class ReceiptCategoryService {
     }
   }
 
-  private getCategories(
-    workspaceId: string,
-    queryMode: CategoryQueryMode,
-  ): Promise<Category[]> {
+  private getCategories(workspaceId: string, queryMode: CategoryQueryMode): Promise<Category[]> {
     if (queryMode === 'via-statement') {
       return this.categoryRepository
         .createQueryBuilder('category')
@@ -96,7 +97,9 @@ export class ReceiptCategoryService {
       }
     }
 
-    const mostCommonCategoryId = Object.entries(categoryCounts).sort(([, a], [, b]) => b - a)[0]?.[0];
+    const mostCommonCategoryId = Object.entries(categoryCounts).sort(
+      ([, a], [, b]) => b - a,
+    )[0]?.[0];
 
     if (mostCommonCategoryId) {
       return categories.find(category => category.id === mostCommonCategoryId) || null;

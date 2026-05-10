@@ -70,7 +70,7 @@ export function useStorageViews(
   const applyView = (view: StorageView) => {
     const storedFilters = view.filters ?? {};
     const rawFilters = storedFilters.filters ?? {};
-    const { tagIds: _tagIds, ...restFilters } = rawFilters;
+    const { tagIds: TagIds, ...restFilters } = rawFilters;
     const nextFilters = { ...DEFAULT_FILTERS, ...restFilters };
     setFilters(nextFilters);
     setStagedFilters(nextFilters);

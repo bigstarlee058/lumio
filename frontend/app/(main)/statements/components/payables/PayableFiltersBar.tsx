@@ -1,12 +1,17 @@
 'use client';
 
-import React from 'react';
-import { Input } from '@/app/components/ui/input';
 import type { PayableSource, PayableStatus } from '@/app/lib/payables-api';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format, isValid, parseISO } from 'date-fns';
+import React from 'react';
 
-const toDate = (s: string): Date | null => { if (!s) return null; const d = parseISO(s); return isValid(d) ? d : null; };
+const toDate = (s: string): Date | null => {
+  if (!s) {
+    return null;
+  }
+  const d = parseISO(s);
+  return isValid(d) ? d : null;
+};
 const toStr = (d: Date | null): string => (d && isValid(d) ? format(d, 'yyyy-MM-dd') : '');
 import { X } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
@@ -17,7 +22,6 @@ interface PayableFiltersBarProps {
   onChange: (next: PayablesFiltersState) => void;
   onReset: () => void;
   labels: {
-    searchPlaceholder: string;
     status: string;
     source: string;
     dueFrom: string;
@@ -31,7 +35,12 @@ interface PayableFiltersBarProps {
 }
 
 // eslint-disable-next-line max-lines-per-function
-function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersBarProps): React.JSX.Element {
+function PayableFiltersBar({
+  value,
+  onChange,
+  onReset,
+  labels,
+}: PayableFiltersBarProps): React.JSX.Element {
   // eslint-disable-next-line max-params
   const update = <K extends keyof PayablesFiltersState>(
     key: K,
@@ -43,15 +52,6 @@ function PayableFiltersBar({ value, onChange, onReset, labels }: PayableFiltersB
   return (
     <div className="lumio-payable-filters">
       <div className="lumio-payable-filters__inner">
-        <div className="lumio-payable-filters__search">
-          <Input
-            value={value.search}
-            onChange={event => update('search', event.target.value)}
-            placeholder={labels.searchPlaceholder}
-            aria-label={labels.searchPlaceholder}
-          />
-        </div>
-
         <div className="lumio-payable-filters__grid">
           <select
             className="lumio-payable-filters__select"

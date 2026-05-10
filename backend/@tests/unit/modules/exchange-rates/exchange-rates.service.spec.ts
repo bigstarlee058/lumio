@@ -76,11 +76,28 @@ describe('ExchangeRatesService', () => {
       expect(cache.set).toHaveBeenCalled();
     });
 
+    it('uses inverse database rate when only the reverse pair exists', async () => {
+      repo.findOne
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({ rate: '500', rateDate: '2026-03-17' });
+
+      const rate = await service.getRate('KZT', 'USD');
+
+      expect(rate).toBe(0.002);
+      expect(cache.set).toHaveBeenCalledWith(
+        expect.stringContaining('exchange_rate:KZT:USD'),
+        0.002,
+        expect.any(Number),
+      );
+    });
+
     it('returns stale DB rate as last resort before fallback to 1', async () => {
       // First findOne (exact date) returns null
-      // Second findOne (latest by date) returns a stale rate
+      // Second findOne (reverse exact date) returns null
+      // Third findOne (latest by date) returns a stale rate
       repo.findOne
         .mockResolvedValueOnce(null) // exact date lookup
+        .mockResolvedValueOnce(null) // reverse exact date lookup
         .mockResolvedValueOnce({ rate: '3.50', rateDate: '2025-01-01' }); // latest rate
 
       const rate = await service.getRate('USD', 'ILS');
@@ -200,6 +217,7 @@ describe('ExchangeRatesService', () => {
       repo.findOne
         .mockResolvedValueOnce({ rate: '3.67' }) // USD->ILS
         .mockResolvedValueOnce(null) // EUR->ILS exact
+        .mockResolvedValueOnce(null) // ILS->EUR exact
         .mockResolvedValueOnce({ rate: '4.05' }); // EUR->ILS latest
 
       const results = await service.bulkConvert(

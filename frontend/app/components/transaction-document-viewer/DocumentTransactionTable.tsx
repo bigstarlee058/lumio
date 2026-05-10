@@ -1,6 +1,16 @@
 'use client';
 
-import { Box, Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell, Typography } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import React from 'react';
 import { DocumentTransactionRow } from './DocumentTransactionRow';
 import type { Transaction } from './types';
@@ -37,44 +47,123 @@ type DocumentTransactionTableProps = {
 };
 
 // eslint-disable-next-line max-lines-per-function
-export function DocumentTransactionTable({ transactions, formatDate, formatNumber, labels, totalExpense, totalIncome }: DocumentTransactionTableProps): React.JSX.Element {
+export function DocumentTransactionTable({
+  transactions,
+  formatDate,
+  formatNumber,
+  labels,
+  totalExpense,
+  totalIncome,
+}: DocumentTransactionTableProps): React.JSX.Element {
   return (
-    <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'grey.200', overflow: 'hidden', '@media print': { pageBreakInside: 'auto' } }}>
-      <Box sx={{ p: 3, bgcolor: 'grey.50', borderBottom: '1px solid', borderBottomColor: 'grey.200', '@media print': { backgroundColor: '#f5f5f5 !important', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } }}>
-        <Typography variant="h6" fontWeight="700" color="text.primary">{labels.transactionList}</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{labels.transactionListDescription}</Typography>
+    <Paper
+      elevation={0}
+      sx={{
+        border: '1px solid',
+        borderColor: 'grey.200',
+        overflow: 'hidden',
+        '@media print': { pageBreakInside: 'auto' },
+      }}
+    >
+      <Box
+        sx={{
+          p: 3,
+          bgcolor: 'grey.50',
+          borderBottom: '1px solid',
+          borderBottomColor: 'grey.200',
+          '@media print': {
+            backgroundColor: '#f5f5f5 !important',
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact',
+          },
+        }}
+      >
+        <Typography variant="h6" fontWeight="700" color="text.primary">
+          {labels.transactionList}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {labels.transactionListDescription}
+        </Typography>
       </Box>
       <TableContainer sx={{ '@media print': { overflow: 'visible' } }}>
         <Table sx={{ minWidth: 650, '@media print': { fontSize: '0.85rem' } }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: 'grey.100', '@media print': { backgroundColor: '#f5f5f5 !important', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact' } }}>
+            <TableRow
+              sx={{
+                bgcolor: 'grey.100',
+                '@media print': {
+                  backgroundColor: '#f5f5f5 !important',
+                  WebkitPrintColorAdjust: 'exact',
+                  printColorAdjust: 'exact',
+                },
+              }}
+            >
               <TableCell sx={CELL_HEADER_SX}>{labels.colDate}</TableCell>
               <TableCell sx={CELL_HEADER_SX}>{labels.colDocNumber}</TableCell>
               <TableCell sx={CELL_HEADER_SX}>{labels.colCounterparty}</TableCell>
               <TableCell sx={CELL_HEADER_SX}>{labels.colBin}</TableCell>
               <TableCell sx={CELL_HEADER_SX}>{labels.colPurpose}</TableCell>
-              <TableCell align="right" sx={CELL_HEADER_SX}>{labels.colDebit}</TableCell>
-              <TableCell align="right" sx={CELL_HEADER_SX}>{labels.colCredit}</TableCell>
+              <TableCell align="right" sx={CELL_HEADER_SX}>
+                {labels.colDebit}
+              </TableCell>
+              <TableCell align="right" sx={CELL_HEADER_SX}>
+                {labels.colCredit}
+              </TableCell>
               <TableCell sx={CELL_HEADER_SX}>{labels.colCurrency}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {transactions.map(tx => (
-              <DocumentTransactionRow key={tx.id} transaction={tx} formatDate={formatDate} formatNumber={formatNumber} />
+              <DocumentTransactionRow
+                key={tx.id}
+                transaction={tx}
+                formatDate={formatDate}
+                formatNumber={formatNumber}
+              />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      <Box sx={{ p: 3, bgcolor: 'grey.50', borderTop: '2px solid', borderTopColor: 'grey.300', '@media print': { backgroundColor: '#f5f5f5 !important', WebkitPrintColorAdjust: 'exact', printColorAdjust: 'exact', pageBreakInside: 'avoid' } }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: 4, alignItems: 'center' }}>
-          <Typography variant="body1" fontWeight="700" color="text.primary">{labels.total}</Typography>
+      <Box
+        sx={{
+          p: 3,
+          bgcolor: 'grey.50',
+          borderTop: '2px solid',
+          borderTopColor: 'grey.300',
+          '@media print': {
+            backgroundColor: '#f5f5f5 !important',
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact',
+            pageBreakInside: 'avoid',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '1fr auto auto',
+            gap: 4,
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="body1" fontWeight="700" color="text.primary">
+            {labels.total}
+          </Typography>
           <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="caption" color="text.secondary" display="block">{labels.totalExpenses}</Typography>
-            <Typography variant="h6" fontWeight="700" color="error.main">{formatNumber(totalExpense)}</Typography>
+            <Typography variant="caption" color="text.secondary" display="block">
+              {labels.totalExpenses}
+            </Typography>
+            <Typography variant="h6" fontWeight="700" color="error.main">
+              {formatNumber(totalExpense)}
+            </Typography>
           </Box>
           <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="caption" color="text.secondary" display="block">{labels.totalIncome}</Typography>
-            <Typography variant="h6" fontWeight="700" color="success.main">{formatNumber(totalIncome)}</Typography>
+            <Typography variant="caption" color="text.secondary" display="block">
+              {labels.totalIncome}
+            </Typography>
+            <Typography variant="h6" fontWeight="700" color="success.main">
+              {formatNumber(totalIncome)}
+            </Typography>
           </Box>
         </Box>
       </Box>

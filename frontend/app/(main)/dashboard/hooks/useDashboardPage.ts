@@ -12,9 +12,9 @@ import { resolveDashboardStatusHeading } from '@/app/lib/dashboard-status-headin
 import { useCallback, useMemo, useState } from 'react';
 import {
   fillTemplate,
+  resolveDashboardGreetingData,
   resolveGreetingState,
   resolveLocale,
-  resolveDashboardGreetingData,
   statusHeadingFallback,
   text,
 } from '../helpers/dashboard-helpers';
@@ -31,28 +31,74 @@ export function useDashboardPage() {
   const isMobile = useIsMobile();
   const { data, loading, error, refresh, range } = useDashboard('30d');
   const [activeTab, setActiveTab] = useState<DashboardTabId>('overview');
-  const isRedirecting = useDashboardRedirect({ user, authLoading, currentWorkspace, workspaceLoading });
-  const { handlers: pullHandlers, pullDistance, isRefreshing: pullRefreshing, isReadyToRefresh } = usePullToRefresh({
-    enabled: isMobile, onRefresh: () => { void refresh(); },
+  const isRedirecting = useDashboardRedirect({
+    user,
+    authLoading,
+    currentWorkspace,
+    workspaceLoading,
+  });
+  const {
+    handlers: pullHandlers,
+    pullDistance,
+    isRefreshing: pullRefreshing,
+    isReadyToRefresh,
+  } = usePullToRefresh({
+    enabled: isMobile,
+    onRefresh: () => {
+      void refresh();
+    },
   });
   const formatAmount = useCallback(
-    (value: number): string => new Intl.NumberFormat(resolveLocale(locale), {
-      style: 'currency', currency: data?.snapshot?.currency ?? 'KZT',
-      minimumFractionDigits: 0, maximumFractionDigits: 0,
-    }).format(value),
+    (value: number): string =>
+      new Intl.NumberFormat(resolveLocale(locale), {
+        style: 'currency',
+        currency: data?.snapshot?.currency ?? 'KZT',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(value),
     [locale, data?.snapshot?.currency],
   );
   // eslint-disable-next-line complexity
   const { statusHeading, greetingSubtitle, effectivePeriod } = useMemo(() => {
-    const greetingData = resolveDashboardGreetingData({ lastUploadDate: data?.dataHealth?.lastUploadDate ?? null, pendingReviewCount: data?.dataHealth?.statementsPendingReview ?? 0 });
+    const greetingData = resolveDashboardGreetingData({
+      lastUploadDate: data?.dataHealth?.lastUploadDate ?? null,
+      pendingReviewCount: data?.dataHealth?.statementsPendingReview ?? 0,
+    });
     const greetingState = resolveGreetingState(greetingData);
     const greetingName = user?.name ?? text(t.greeting?.fallbackName) ?? 'User';
     const count = String(data?.dataHealth?.statementsPendingReview ?? 0);
-    const subtitle = fillTemplate(text(t.greeting?.[greetingState]?.subtitle), { name: greetingName, count, days: '14' });
-    const headingKey = resolveDashboardStatusHeading({ data: data as DashboardData | null, error, loading });
+    const subtitle = fillTemplate(text(t.greeting?.[greetingState]?.subtitle), {
+      name: greetingName,
+      count,
+      days: '14',
+    });
+    const headingKey = resolveDashboardStatusHeading({
+      data: data as DashboardData | null,
+      error,
+      loading,
+    });
     const heading = text(t.statusHeading?.[headingKey]) || statusHeadingFallback[headingKey];
     const period = resolveDashboardEffectivePeriod(data?.effectiveSince, data?.effectiveEndDate);
     return { statusHeading: heading, greetingSubtitle: subtitle, effectivePeriod: period };
   }, [data, error, loading, t, user?.name]);
-  return { data, loading, error, refresh, range, activeTab, setActiveTab, isMobile, pullHandlers, pullDistance, pullRefreshing, isReadyToRefresh, isRedirecting, formatAmount, statusHeading, greetingSubtitle, effectivePeriod, t };
+  return {
+    data,
+    loading,
+    error,
+    refresh,
+    range,
+    activeTab,
+    setActiveTab,
+    isMobile,
+    pullHandlers,
+    pullDistance,
+    pullRefreshing,
+    isReadyToRefresh,
+    isRedirecting,
+    formatAmount,
+    statusHeading,
+    greetingSubtitle,
+    effectivePeriod,
+    t,
+  };
 }

@@ -1,18 +1,19 @@
 'use client';
 
 import { StatementsListItem } from '@/app/(main)/statements/components/StatementsListItem';
-import type { DuplicateMeta } from '@/app/(main)/statements/components/hooks/useStatementSelection';
 import {
+  formatPaginationLabel,
   formatStatementAmount,
   formatStatementDate,
   getBankDisplayName,
   isGmailStatement,
   isReceiptProcessing,
   isStatementParsingInProgress,
-  formatPaginationLabel,
 } from '@/app/(main)/statements/components/StatementsListView.utils';
-import { AppPagination } from '@/app/components/ui/pagination';
+import type { DuplicateMeta } from '@/app/(main)/statements/components/hooks/useStatementSelection';
+import { ArrowDown, File } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { AppPagination } from '@/app/components/ui/pagination';
 import { Spinner } from '@/app/components/ui/spinner';
 import { resolveGmailMerchantLabel } from '@/app/lib/gmail-merchant';
 import {
@@ -20,9 +21,8 @@ import {
   getStatementMerchantLabel,
   isManualExpenseStatement,
 } from '@/app/lib/statement-status';
-import { ArrowDown, File } from '@/app/components/icons';
-import { StatementsGmailSync } from './StatementsGmailSync';
 import { tokens } from '@/lib/theme-tokens';
+import { StatementsGmailSync } from './StatementsGmailSync';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -131,8 +131,9 @@ function buildMerchantLabel({
 
 function resolveIsManualExpense(statement: StatementForTable): boolean {
   const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
-  return !isReceipt && isManualExpenseStatement(
-    statement as Parameters<typeof isManualExpenseStatement>[0],
+  return (
+    !isReceipt &&
+    isManualExpenseStatement(statement as Parameters<typeof isManualExpenseStatement>[0])
   );
 }
 
@@ -166,10 +167,14 @@ function EmptyState({
       >
         <File size={32} />
       </div>
-      <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{emptyLabels.title}</h3>
+      <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>
+        {emptyLabels.title}
+      </h3>
       <p style={{ marginTop: 4, color: 'var(--muted-foreground)' }}>{emptyLabels.description}</p>
       {stage === 'submit' && hasGmailReceipts ? (
-        <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>Gmail receipts are loaded</p>
+        <p style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
+          Gmail receipts are loaded
+        </p>
       ) : null}
     </div>
   );
@@ -211,35 +216,75 @@ function TableHeader({
             />
           </div>
           <div
-            style={{ width: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}
+            style={{
+              width: 32,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--muted-foreground)',
+            }}
           >
             <span className="sr-only">{listHeaderLabels.receipt}</span>
           </div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted-foreground)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              color: 'var(--muted-foreground)',
+            }}
+          >
             {listHeaderLabels.merchant}
             <span style={{ padding: '0 4px', color: 'var(--border-color)' }}>•</span>
             <button
               type="button"
               data-testid="statements-date-sort"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', background: 'none', border: 'none', color: 'inherit', padding: 0 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                color: 'inherit',
+                padding: 0,
+              }}
               onClick={onSortDate}
               aria-label={`Sort by date ${dateSortDirection === 'desc' ? 'ascending' : 'descending'}`}
             >
               {listHeaderLabels.date}
               <ArrowDown
                 size={12}
-                style={{ transition: 'transform 0.2s', transform: dateSortDirection === 'asc' ? 'rotate(180deg)' : 'none' }}
+                style={{
+                  transition: 'transform 0.2s',
+                  transform: dateSortDirection === 'asc' ? 'rotate(180deg)' : 'none',
+                }}
               />
             </button>
           </div>
         </div>
       </div>
       <div
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 24, flexShrink: 0, width: 420, paddingLeft: 16 }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: 24,
+          flexShrink: 0,
+          width: 420,
+          paddingLeft: 16,
+        }}
       >
-        <div style={{ width: 128, textAlign: 'right', color: 'var(--muted-foreground)', paddingRight: 4 }}>
+        <div
+          style={{
+            width: 128,
+            textAlign: 'right',
+            color: 'var(--muted-foreground)',
+            paddingRight: 4,
+          }}
+        >
           {listHeaderLabels.amount}
         </div>
         <div style={{ width: 144, textAlign: 'right', color: 'var(--muted-foreground)' }}>
@@ -270,10 +315,21 @@ function PaginationBar({
   return (
     <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
       <div style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
-        {formatPaginationLabel(paginationLabels.shown, { from: rangeStart, to: rangeEnd, count: total })}
+        {formatPaginationLabel(paginationLabels.shown, {
+          from: rangeStart,
+          to: rangeEnd,
+          count: total,
+        })}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
+        <span
+          style={{
+            fontSize: 14,
+            color: 'var(--text-secondary)',
+            minWidth: 120,
+            textAlign: 'center',
+          }}
+        >
           {formatPaginationLabel(paginationLabels.pageOf, { page, count: totalPagesCount })}
         </span>
         <AppPagination page={page} total={totalPagesCount} onChange={onPageChange} />
@@ -309,10 +365,16 @@ function StatementRow({
 }: RowProps): React.JSX.Element {
   const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
   const merchantLabel = buildMerchantLabel({ statement, scanningLabel: listHeaderLabels.scanning });
-  const amountLabel = formatStatementAmount(statement as Parameters<typeof formatStatementAmount>[0]);
+  const amountLabel = formatStatementAmount(
+    statement as Parameters<typeof formatStatementAmount>[0],
+  );
   const dateLabel = formatStatementDate(statement as Parameters<typeof formatStatementDate>[0]);
-  const isProcessingReceipt = isReceiptProcessing(statement as Parameters<typeof isReceiptProcessing>[0]);
-  const isProcessingStatement = isStatementParsingInProgress(statement as Parameters<typeof isStatementParsingInProgress>[0]);
+  const isProcessingReceipt = isReceiptProcessing(
+    statement as Parameters<typeof isReceiptProcessing>[0],
+  );
+  const isProcessingStatement = isStatementParsingInProgress(
+    statement as Parameters<typeof isStatementParsingInProgress>[0],
+  );
 
   return (
     <StatementsListItem
@@ -401,7 +463,9 @@ export function StatementsListTable({
             onCheckedChange={onToggleSelectAll}
             aria-label="Select all statements"
           />
-          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>
+            Select all
+          </span>
         </div>
         <TableHeader
           allVisibleSelected={allVisibleSelected}

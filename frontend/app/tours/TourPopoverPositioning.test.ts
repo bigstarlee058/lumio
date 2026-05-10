@@ -13,8 +13,12 @@ function setViewport(width: number, height: number): void {
 function createPopoverRect(rect: DOMRectInit): HTMLElement {
   const popover = document.createElement('div');
   popover.getBoundingClientRect = () => {
-    const left = popover.style.left ? Number.parseFloat(popover.style.left) : rect.left ?? rect.x ?? 0;
-    const top = popover.style.top ? Number.parseFloat(popover.style.top) : rect.top ?? rect.y ?? 0;
+    const left = popover.style.left
+      ? Number.parseFloat(popover.style.left)
+      : (rect.left ?? rect.x ?? 0);
+    const top = popover.style.top
+      ? Number.parseFloat(popover.style.top)
+      : (rect.top ?? rect.y ?? 0);
     const width = rect.width ?? 0;
     const height = rect.height ?? 0;
     return {

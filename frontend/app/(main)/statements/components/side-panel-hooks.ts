@@ -4,16 +4,19 @@
  */
 import apiClient from '@/app/lib/api';
 import { payablesApi } from '@/app/lib/payables-api';
-import type { TopBankSender } from '@/app/lib/statement-insights';
 import {
   type OpenExpenseDrawerEventDetail,
   STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT,
   type StatementExpenseMode,
   resolveExpenseDrawerMode,
 } from '@/app/lib/statement-expense-drawer';
-import { type CloudImportProvider, type ConnectedCloudProviders } from '@/app/lib/statement-upload-actions';
-import { useCallback, useEffect } from 'react';
+import type { TopBankSender } from '@/app/lib/statement-insights';
+import {
+  type CloudImportProvider,
+  type ConnectedCloudProviders,
+} from '@/app/lib/statement-upload-actions';
 import { useRouter } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { executeCloudImport, handleGmailSyncResponse } from './side-panel-actions';
 import {
@@ -38,8 +41,15 @@ export const EMPTY_STAGE_DATA: StageData = {
 };
 
 type ActiveItem =
-  | 'submit' | 'approve' | 'pay' | 'unapproved-cash' | 'spend-over-time'
-  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'transactions';
+  | 'submit'
+  | 'approve'
+  | 'pay'
+  | 'unapproved-cash'
+  | 'spend-over-time'
+  | 'top-spenders'
+  | 'top-merchants'
+  | 'top-categories'
+  | 'transactions';
 
 type StageCountsLoaderParams = {
   user: unknown;
@@ -53,10 +63,15 @@ export function useStageCountsLoader(p: StageCountsLoaderParams): void {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    if (!user) { setLoading(false); return; }
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     loadStageCounts()
       .then(result => {
-        if (!isMounted) return;
+        if (!isMounted) {
+          return;
+        }
         setData({
           counts: { ...result.counts, unapprovedCash: result.unapprovedCashCount },
           topSenders: result.topBankSenders,
@@ -65,9 +80,16 @@ export function useStageCountsLoader(p: StageCountsLoaderParams): void {
         });
         setLoading(false);
       })
-      .catch(() => { if (isMounted) { setData(EMPTY_STAGE_DATA); setLoading(false); } });
-    return () => { isMounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .catch(() => {
+        if (isMounted) {
+          setData(EMPTY_STAGE_DATA);
+          setLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, activeItem]);
 }
 
@@ -82,18 +104,29 @@ export function usePayCountLoader(p: PayCountLoaderParams): void {
   const { user, workspaceId, setPayCount, setLoading } = p;
   useEffect(() => {
     let isMounted = true;
-    if (!user) { setPayCount(0); setLoading(false); return; }
+    if (!user) {
+      setPayCount(0);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    payablesApi.getSummary()
+    payablesApi
+      .getSummary()
       .then(summary => {
         if (isMounted) {
           setPayCount((summary.toPayCount || 0) + (summary.overdueCount || 0));
           setLoading(false);
         }
       })
-      .catch(() => { if (isMounted) setLoading(false); });
-    return () => { isMounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      .catch(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, workspaceId]);
 }
 
@@ -106,27 +139,40 @@ export function useCloudProvidersLoader(p: CloudProvidersLoaderParams): void {
   const { user, setProviders } = p;
   useEffect(() => {
     let isMounted = true;
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     void Promise.allSettled([
       apiClient.get('/integrations/dropbox/status'),
       apiClient.get('/integrations/google-drive/status'),
       apiClient.get('/integrations/imap/status'),
     ]).then(([dropbox, gdrive, inbox]) => {
-      if (!isMounted) return;
+      if (!isMounted) {
+        return;
+      }
       setProviders({
         dropboxConnected: resolveCloudConnectionStatus(dropbox),
         googleDriveConnected: resolveCloudConnectionStatus(gdrive),
         gmailConnected: resolveCloudConnectionStatus(inbox),
       });
     });
-    return () => { isMounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 }
 
 type ActiveItem =
-  | 'submit' | 'approve' | 'pay' | 'unapproved-cash' | 'spend-over-time'
-  | 'top-spenders' | 'top-merchants' | 'top-categories' | 'transactions';
+  | 'submit'
+  | 'approve'
+  | 'pay'
+  | 'unapproved-cash'
+  | 'spend-over-time'
+  | 'top-spenders'
+  | 'top-merchants'
+  | 'top-categories'
+  | 'transactions';
 
 type PanelActionsParams = { activeItem: ActiveItem; connectedGmail: boolean };
 
@@ -142,26 +188,48 @@ export function useStatementsPanelActions(p: PanelActionsParams): PanelActions {
   const router = useRouter();
 
   const openExpenseDrawer = useCallback((mode: StatementExpenseMode): void => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     const detail: OpenExpenseDrawerEventDetail = { mode: resolveExpenseDrawerMode(mode) };
     window.dispatchEvent(new CustomEvent(STATEMENTS_OPEN_EXPENSE_DRAWER_EVENT, { detail }));
   }, []);
 
-  const navigateToSubmit = useCallback((mode?: StatementExpenseMode): void => {
-    if (activeItem === 'submit') { if (mode) openExpenseDrawer(mode); return; }
-    router.push(`/statements/submit${mode ? `?openExpenseDrawer=${mode}` : ''}`);
-  }, [activeItem, openExpenseDrawer, router]);
+  const navigateToSubmit = useCallback(
+    (mode?: StatementExpenseMode): void => {
+      if (activeItem === 'submit') {
+        if (mode) {
+          openExpenseDrawer(mode);
+        }
+        return;
+      }
+      router.push(`/statements/submit${mode ? `?openExpenseDrawer=${mode}` : ''}`);
+    },
+    [activeItem, openExpenseDrawer, router],
+  );
 
-  const handleScanClick = useCallback((): void => { navigateToSubmit('scan'); }, [navigateToSubmit]);
+  const handleScanClick = useCallback((): void => {
+    navigateToSubmit('scan');
+  }, [navigateToSubmit]);
 
-  const handleCloudImport = useCallback(async (provider: CloudImportProvider | null): Promise<void> => {
-    if (!provider) { router.push('/integrations'); return; }
-    await executeCloudImport(provider, navigateToSubmit);
-  }, [navigateToSubmit, router]);
+  const handleCloudImport = useCallback(
+    async (provider: CloudImportProvider | null): Promise<void> => {
+      if (!provider) {
+        router.push('/integrations');
+        return;
+      }
+      await executeCloudImport(provider, navigateToSubmit);
+    },
+    [navigateToSubmit, router],
+  );
 
   const handleGmailClick = useCallback((): void => {
-    if (!connectedGmail) { router.push('/integrations/imap'); return; }
-    void apiClient.post('/integrations/imap/sync')
+    if (!connectedGmail) {
+      router.push('/integrations/imap');
+      return;
+    }
+    void apiClient
+      .post('/integrations/imap/sync')
       .then(response => handleGmailSyncResponse(response, navigateToSubmit))
       .catch(() => toast.error('Failed to sync inbox'));
   }, [connectedGmail, navigateToSubmit, router]);

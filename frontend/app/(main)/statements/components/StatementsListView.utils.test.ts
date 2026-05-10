@@ -4,8 +4,8 @@ import {
   deriveVisibleFilterScreens,
   isReceiptDerivedStatement,
   paginateStatements,
-  resolveStatementViewAction,
   reconcileFiltersWithColumns,
+  resolveStatementViewAction,
 } from './StatementsListView.utils';
 import { DEFAULT_STATEMENT_FILTERS } from './filters/statement-filters';
 
@@ -72,6 +72,18 @@ describe('StatementsListView utils', () => {
 
     expect(result).toEqual({
       statuses: ['processing'],
+    });
+  });
+
+  it('includes route category filters in server request params', () => {
+    const result = buildStatementRequestParams({
+      appliedFilters: DEFAULT_STATEMENT_FILTERS,
+      categoryId: 'uncategorized',
+      search: '',
+    });
+
+    expect(result).toEqual({
+      categoryId: 'uncategorized',
     });
   });
 

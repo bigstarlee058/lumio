@@ -4,9 +4,9 @@
 
 'use client';
 
+import { Circle, Disc } from '@/app/components/icons';
 import { useIntlayer } from '@/app/i18n';
 import { Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { Circle, Disc } from '@/app/components/icons';
 import { useRouter } from 'next/navigation';
 import { cloneElement, isValidElement, useCallback, useState } from 'react';
 import type { MouseEvent, ReactElement, ReactNode } from 'react';
@@ -52,7 +52,11 @@ function TourTrigger(props: {
     );
   }
 
-  return <button type="button" onClick={onClick}>{trigger as ReactNode}</button>;
+  return (
+    <button type="button" onClick={onClick}>
+      {trigger as ReactNode}
+    </button>
+  );
 }
 
 function TourMenuItem(props: {
@@ -101,24 +105,29 @@ function useTourSelectHandler(
   navigationTexts: ReturnType<typeof useIntlayer>,
 ): (tourId: string) => void {
   const router = useRouter();
-  return useCallback((tourId: string): void => {
-    const tourManager = getTourManager();
-    const tour = tours.find(t => t.id === tourId);
-    handleClose();
-    if (tourManager.isTourCompleted(tourId)) tourManager.resetTour(tourId);
-    void (async (): Promise<void> => {
-      if (tour?.page && !window.location.pathname.startsWith(tour.page)) {
-        router.push(tour.page);
-        await new Promise(resolve => setTimeout(resolve, 800));
+  return useCallback(
+    (tourId: string): void => {
+      const tourManager = getTourManager();
+      const tour = tours.find(t => t.id === tourId);
+      handleClose();
+      if (tourManager.isTourCompleted(tourId)) {
+        tourManager.resetTour(tourId);
       }
-      void tourManager.startTour(tourId, 0, {
-        nextBtnText: navigationTexts.tour.buttons.next.value,
-        prevBtnText: navigationTexts.tour.buttons.prev.value,
-        doneBtnText: navigationTexts.tour.buttons.done.value,
-        progressText: navigationTexts.tour.progressText?.value ?? '{{current}} / {{total}}',
-      });
-    })();
-  }, [tours, handleClose, router, navigationTexts]);
+      void (async (): Promise<void> => {
+        if (tour?.page && !window.location.pathname.startsWith(tour.page)) {
+          router.push(tour.page);
+          await new Promise(resolve => setTimeout(resolve, 800));
+        }
+        void tourManager.startTour(tourId, 0, {
+          nextBtnText: navigationTexts.tour.buttons.next.value,
+          prevBtnText: navigationTexts.tour.buttons.prev.value,
+          doneBtnText: navigationTexts.tour.buttons.done.value,
+          progressText: navigationTexts.tour.progressText?.value ?? '{{current}} / {{total}}',
+        });
+      })();
+    },
+    [tours, handleClose, router, navigationTexts],
+  );
 }
 
 export function TourMenu({ trigger, className = '' }: TourMenuProps): ReactElement {
@@ -130,7 +139,9 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps): ReactEleme
   useTourRegistration({ statementsTexts, tourTexts });
   const { tours, completedTours } = useTourCompletedState(open);
 
-  const handleClose = useCallback((): void => { setAnchorEl(null); }, []);
+  const handleClose = useCallback((): void => {
+    setAnchorEl(null);
+  }, []);
   const handleClick = useCallback((event: MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   }, []);
@@ -149,7 +160,9 @@ export function TourMenu({ trigger, className = '' }: TourMenuProps): ReactEleme
         PaperProps={{ sx: { minWidth: 250, mt: 1 } }}
       >
         {tours.length === 0 && (
-          <MenuItem disabled><ListItemText primary="Tours not found" /></MenuItem>
+          <MenuItem disabled>
+            <ListItemText primary="Tours not found" />
+          </MenuItem>
         )}
         {tours.map((tour, index) => (
           <div key={tour.id}>

@@ -18,9 +18,13 @@ function hashString(str: string): number {
 }
 
 export function getInitials(label: string): string {
-  if (!label) return '?';
+  if (!label) {
+    return '?';
+  }
   const parts = label.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 

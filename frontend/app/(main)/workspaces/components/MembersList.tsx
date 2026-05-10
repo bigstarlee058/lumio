@@ -1,16 +1,16 @@
 'use client';
 
+import { ChevronDown, MoreHorizontal } from '@/app/components/icons';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { ChevronDown, MoreHorizontal } from '@/app/components/icons';
 import { useState } from 'react';
 import type { WorkspaceMember, WorkspaceRole } from './hooks/useMemberManagement';
-import { tokens } from '@/lib/theme-tokens';
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
   owner: {
@@ -18,7 +18,11 @@ const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }>
     color: 'var(--primary)',
     border: 'rgba(var(--primary-rgb,22,129,24),0.2)',
   },
-  admin: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
+  admin: {
+    bg: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+    border: 'var(--color-info-soft-border)',
+  },
   member: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
   viewer: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
 };
@@ -73,16 +77,17 @@ export function MembersList({
     {},
   );
 
-  const handleMemberMenuAction = async (
-    member: WorkspaceMember,
-    action: string,
-  ): Promise<void> => {
+  const handleMemberMenuAction = async (member: WorkspaceMember, action: string): Promise<void> => {
     if (action === 'remove') {
-      if (!window.confirm('Remove this member from workspace?')) return;
+      if (!window.confirm('Remove this member from workspace?')) {
+        return;
+      }
       await onRemoveMember(member.id);
       return;
     }
-    if (!action.startsWith('role:')) return;
+    if (!action.startsWith('role:')) {
+      return;
+    }
     const role = action.replace('role:', '') as WorkspaceRole;
     await onChangeMemberRole(member, role);
   };
@@ -268,9 +273,7 @@ export function MembersList({
               <Menu
                 anchorEl={memberMenuAnchorMap[member.id]}
                 open={Boolean(memberMenuAnchorMap[member.id])}
-                onClose={() =>
-                  setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))
-                }
+                onClose={() => setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))}
                 aria-label={`Member actions for ${member.email || member.id}`}
               >
                 {canManageRole &&

@@ -22,14 +22,20 @@ type TransactionLike = {
 };
 
 const toNumber = (value?: number | string | null) => {
-  if (value === null || value === undefined || value === '') return 0;
+  if (value === null || value === undefined || value === '') {
+    return 0;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
 const toDateOnly = (value?: string | null) => {
-  if (!value) return undefined;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  if (!value) {
+    return undefined;
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString().slice(0, 10);
 };
@@ -41,7 +47,9 @@ export const buildPayableFromStatement = ({
   statement: StatementLike;
   transactions: TransactionLike[];
 }): CreatePayableInput | null => {
-  const expenseTransactions = transactions.filter(transaction => transaction.transactionType === 'expense');
+  const expenseTransactions = transactions.filter(
+    transaction => transaction.transactionType === 'expense',
+  );
   const amount = expenseTransactions.reduce(
     (sum, transaction) => sum + Math.max(toNumber(transaction.debit), toNumber(transaction.credit)),
     0,

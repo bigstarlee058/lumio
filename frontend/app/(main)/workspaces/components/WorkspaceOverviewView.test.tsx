@@ -11,7 +11,7 @@ const clearWorkspaceMock = vi.hoisted(() => vi.fn());
 vi.mock('next/image', () => ({
   default: ({
     alt,
-    fill: _fill,
+    fill: Fill,
     ...props
   }: React.ImgHTMLAttributes<HTMLImageElement> & { fill?: boolean }) => (
     <img {...props} alt={alt ?? ''} />
@@ -131,9 +131,11 @@ describe('WorkspaceOverviewView', () => {
     const title = await screen.findByText('Select a currency');
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement;
     const recentsLabel = screen.getByText('Recents');
-    const selectedButton = screen.getAllByRole('button').find(button =>
-      button.textContent?.includes('EUR - €') && button.className.includes('bg-muted'),
-    ) as HTMLButtonElement;
+    const selectedButton = screen
+      .getAllByRole('button')
+      .find(
+        button => button.textContent?.includes('EUR - €') && button.className.includes('bg-muted'),
+      ) as HTMLButtonElement;
 
     expect(title.className).toContain('text-foreground');
     expect(title.className).not.toContain('text-[#0f3428]');
@@ -168,9 +170,9 @@ describe('WorkspaceOverviewView', () => {
     expect(confirmSpy).not.toHaveBeenCalled();
 
     const confirmButton = screen.getByRole('button', { name: /^delete$/i });
-    const nameInput = screen.getByRole('dialog').querySelector(
-      '#delete-workspace-name',
-    ) as HTMLInputElement;
+    const nameInput = screen
+      .getByRole('dialog')
+      .querySelector('#delete-workspace-name') as HTMLInputElement;
 
     expect(confirmButton).toBeDisabled();
 

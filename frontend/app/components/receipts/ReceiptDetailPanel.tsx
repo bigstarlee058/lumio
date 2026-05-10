@@ -1,13 +1,13 @@
 'use client';
 
 import { PDFPreviewModal } from '@/app/components/PDFPreviewModal';
+import { FileImage, FileText } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import apiClient, { apiBaseUrl, receiptsApi, type ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import { Box, Divider, Typography } from '@mui/material';
-import { FileImage, FileText } from '@/app/components/icons';
+import { Box, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ReceiptParsedDataForm } from './ReceiptParsedDataForm';
@@ -106,14 +106,11 @@ export function ReceiptDetailPanel({
 
     const loadPreview = async () => {
       try {
-        const response = await fetch(
-          `${apiBaseUrl}/receipts/${receipt.id}/file`,
-          {
-            method: 'GET',
-            headers: getWorkspaceHeaders(),
-            credentials: 'include',
-          },
-        );
+        const response = await fetch(`${apiBaseUrl}/receipts/${receipt.id}/file`, {
+          method: 'GET',
+          headers: getWorkspaceHeaders(),
+          credentials: 'include',
+        });
 
         if (!response.ok) {
           return;
@@ -262,7 +259,11 @@ export function ReceiptDetailPanel({
           <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'var(--muted)', p: 2.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ bgcolor: 'background.paper', p: 1.5, color: 'var(--text-secondary)' }}>
-                {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
+                {isPdf ? (
+                  <FileText style={{ width: 20, height: 20 }} />
+                ) : (
+                  <FileImage style={{ width: 20, height: 20 }} />
+                )}
               </Box>
               <Box sx={{ minWidth: 0 }}>
                 <Typography
@@ -277,7 +278,9 @@ export function ReceiptDetailPanel({
                 >
                   {receipt.subject}
                 </Typography>
-                <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{receipt.source}</Typography>
+                <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+                  {receipt.source}
+                </Typography>
               </Box>
             </Box>
           </Box>
@@ -310,29 +313,47 @@ export function ReceiptDetailPanel({
                 <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   Original document preview
                 </Typography>
-                <Typography style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}>
+                <Typography
+                  style={{ marginTop: 8, fontSize: 14, color: 'var(--muted-foreground)' }}
+                >
                   Preparing image preview...
                 </Typography>
               </Box>
             )}
           </Box>
 
-          <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2.5 }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, fontSize: 14, color: 'var(--text-secondary)' }}>
+          <Box
+            sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2.5 }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1.5,
+                fontSize: 14,
+                color: 'var(--text-secondary)',
+              }}
+            >
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Status</Typography>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                  Status
+                </Typography>
                 <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {receipt.status}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Received</Typography>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                  Received
+                </Typography>
                 <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {new Date(receipt.receivedAt).toLocaleDateString()}
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Language</Typography>
+                <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                  Language
+                </Typography>
                 <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}>
                   {receipt.language || 'Auto'}
                 </Typography>

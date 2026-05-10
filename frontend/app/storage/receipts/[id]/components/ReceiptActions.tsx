@@ -1,21 +1,21 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { DetailActionButton } from '@/app/components/ui/detail-action-button';
-import type { ReceiptRecord } from '@/app/lib/api';
+import { ArrowLeft, Download, Table } from '@/app/components/icons';
 import type { EditableReceiptParsedData } from '@/app/components/receipts/receipt-types';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
+import { Spinner } from '@/app/components/ui/spinner';
+import type { ReceiptRecord } from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Box, Typography } from '@mui/material';
-import { ArrowLeft, Download, Table } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
 import { buildExportData, createExportTable } from './export-helpers';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
 
 interface ExportConfirmDialogProps {
   open: boolean;
@@ -24,7 +24,12 @@ interface ExportConfirmDialogProps {
   onConfirm: () => void;
 }
 
-function ExportConfirmDialog({ open, exportingToTable, onClose, onConfirm }: ExportConfirmDialogProps): React.ReactElement {
+function ExportConfirmDialog({
+  open,
+  exportingToTable,
+  onClose,
+  onConfirm,
+}: ExportConfirmDialogProps): React.ReactElement {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
@@ -36,10 +41,45 @@ function ExportConfirmDialog({ open, exportingToTable, onClose, onConfirm }: Exp
         </Typography>
       </DialogContent>
       <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
-        <Box component="button" type="button" onClick={onClose} sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: c.ink700, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
+        <Box
+          component="button"
+          type="button"
+          onClick={onClose}
+          sx={{
+            border: `1px solid ${c.ink150}`,
+            bgcolor: 'background.paper',
+            px: 3,
+            py: 1.25,
+            fontSize: 16,
+            fontWeight: 500,
+            color: c.ink700,
+            cursor: 'pointer',
+            '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+          }}
+        >
           Cancel
         </Box>
-        <Box component="button" type="button" onClick={onConfirm} disabled={exportingToTable} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'primary.main', px: 3, py: 1.25, fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { cursor: 'not-allowed', opacity: 0.5 } }}>
+        <Box
+          component="button"
+          type="button"
+          onClick={onConfirm}
+          disabled={exportingToTable}
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 1,
+            bgcolor: 'primary.main',
+            px: 3,
+            py: 1.25,
+            fontSize: 16,
+            fontWeight: 500,
+            color: '#fff',
+            cursor: 'pointer',
+            border: 'none',
+            '&:hover': { bgcolor: 'primary.dark' },
+            '&:disabled': { cursor: 'not-allowed', opacity: 0.5 },
+          }}
+        >
           {exportingToTable ? <Spinner className="h-4 w-4" /> : null}
           Export
         </Box>
@@ -56,7 +96,10 @@ interface ReceiptActionsProps {
   onDownload: () => Promise<void>;
 }
 
-function useExportToTable({ receipt, formValue }: { receipt: ReceiptRecord; formValue: EditableReceiptParsedData }): {
+function useExportToTable({
+  receipt,
+  formValue,
+}: { receipt: ReceiptRecord; formValue: EditableReceiptParsedData }): {
   exportingToTable: boolean;
   exportConfirmOpen: boolean;
   setExportConfirmOpen: (v: boolean) => void;
@@ -70,7 +113,7 @@ function useExportToTable({ receipt, formValue }: { receipt: ReceiptRecord; form
     setExportingToTable(true);
     try {
       const exportData = buildExportData({ receipt, formValue });
-      if (!exportData.columns.length || !exportData.rows.length) {
+      if (!(exportData.columns.length && exportData.rows.length)) {
         toast.error('There are no parsed receipt fields to export yet');
         return;
       }
@@ -85,8 +128,15 @@ function useExportToTable({ receipt, formValue }: { receipt: ReceiptRecord; form
   return { exportingToTable, exportConfirmOpen, setExportConfirmOpen, handleExportToTable };
 }
 
-export function ReceiptActions({ receipt, formValue, saving, onApprove, onDownload }: ReceiptActionsProps): React.ReactElement {
-  const { exportingToTable, exportConfirmOpen, setExportConfirmOpen, handleExportToTable } = useExportToTable({ receipt, formValue });
+export function ReceiptActions({
+  receipt,
+  formValue,
+  saving,
+  onApprove,
+  onDownload,
+}: ReceiptActionsProps): React.ReactElement {
+  const { exportingToTable, exportConfirmOpen, setExportConfirmOpen, handleExportToTable } =
+    useExportToTable({ receipt, formValue });
 
   return (
     <>
@@ -95,7 +145,11 @@ export function ReceiptActions({ receipt, formValue, saving, onApprove, onDownlo
           <Download className="h-4 w-4" />
           Download
         </DetailActionButton>
-        <DetailActionButton type="button" onClick={() => setExportConfirmOpen(true)} disabled={exportingToTable}>
+        <DetailActionButton
+          type="button"
+          onClick={() => setExportConfirmOpen(true)}
+          disabled={exportingToTable}
+        >
           <Table className="h-4 w-4" />
           Export to table
         </DetailActionButton>
@@ -108,7 +162,10 @@ export function ReceiptActions({ receipt, formValue, saving, onApprove, onDownlo
         open={exportConfirmOpen}
         exportingToTable={exportingToTable}
         onClose={() => setExportConfirmOpen(false)}
-        onConfirm={() => { setExportConfirmOpen(false); void handleExportToTable(); }}
+        onConfirm={() => {
+          setExportConfirmOpen(false);
+          void handleExportToTable();
+        }}
       />
     </>
   );
@@ -119,10 +176,27 @@ function ReceiptHeaderTitle({ receipt }: { receipt: ReceiptRecord }): React.Reac
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box>
-      <Typography style={{ fontSize: 12, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.2em', color: c.ink500 }}>
+      <Typography
+        style={{
+          fontSize: 12,
+          fontWeight: 500,
+          textTransform: 'uppercase',
+          letterSpacing: '0.2em',
+          color: c.ink500,
+        }}
+      >
         Receipt details
       </Typography>
-      <Typography component="h1" style={{ marginTop: 8, fontSize: 30, fontWeight: 600, letterSpacing: '-0.025em', color: c.ink900 }}>
+      <Typography
+        component="h1"
+        style={{
+          marginTop: 8,
+          fontSize: 30,
+          fontWeight: 600,
+          letterSpacing: '-0.025em',
+          color: c.ink900,
+        }}
+      >
         {receipt.subject}
       </Typography>
       <Typography style={{ marginTop: 8, fontSize: 14, color: c.ink700 }}>
@@ -140,25 +214,59 @@ interface ReceiptPageHeaderProps {
   onDownload: () => Promise<void>;
 }
 
-export function ReceiptPageHeader({ receipt, formValue, saving, onApprove, onDownload }: ReceiptPageHeaderProps): React.ReactElement {
+export function ReceiptPageHeader({
+  receipt,
+  formValue,
+  saving,
+  onApprove,
+  onDownload,
+}: ReceiptPageHeaderProps): React.ReactElement {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, borderBottom: `1px solid ${c.ink150}`, pb: 3, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' } }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        gap: 2,
+        borderBottom: `1px solid ${c.ink150}`,
+        pb: 3,
+        alignItems: { sm: 'center' },
+        justifyContent: { sm: 'space-between' },
+      }}
+    >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
         <Box
           component="button"
           type="button"
           onClick={() => router.back()}
-          sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 13, fontWeight: 500, color: c.ink500, background: 'none', border: 'none', cursor: 'pointer', p: 0, '&:hover': { color: c.ink700 } }}
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            fontSize: 13,
+            fontWeight: 500,
+            color: c.ink500,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            p: 0,
+            '&:hover': { color: c.ink700 },
+          }}
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back
         </Box>
         <ReceiptHeaderTitle receipt={receipt} />
       </Box>
-      <ReceiptActions receipt={receipt} formValue={formValue} saving={saving} onApprove={onApprove} onDownload={onDownload} />
+      <ReceiptActions
+        receipt={receipt}
+        formValue={formValue}
+        saving={saving}
+        onApprove={onApprove}
+        onDownload={onDownload}
+      />
     </Box>
   );
 }

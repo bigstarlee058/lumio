@@ -1,14 +1,14 @@
 'use client';
 
+import { Check, ChevronLeft, Globe, Search } from '@/app/components/icons';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { useIntlayer, useLocale } from '@/app/i18n';
+import { type AppLocale as AppLanguage, DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/app/lib/locale';
+import { tokens } from '@/lib/theme-tokens';
 import IconButton from '@mui/material/IconButton';
-import { Check, ChevronLeft, Globe, Search } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
-import { type AppLocale as AppLanguage, SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
 export function AuthLanguageSwitcher() {
@@ -19,23 +19,22 @@ export function AuthLanguageSwitcher() {
 
   useLockBodyScroll(languageModalOpen);
 
-  const languages = useMemo(
-    () => {
-      const available = availableLocales.map(String);
-      return SUPPORTED_LOCALES
-        .filter(code => available.includes(code))
-        .map(code => ({
-          code,
-          label: (languageNames as Record<string, { value: string }>)[code]?.value ?? code,
-          ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
-        }));
-    },
-    [availableLocales, languageModal.defaultLanguageNote, languageNames],
-  );
+  const languages = useMemo(() => {
+    const available = availableLocales.map(String);
+    return SUPPORTED_LOCALES.filter(code => available.includes(code)).map(code => ({
+      code,
+      label: (languageNames as Record<string, { value: string }>)[code]?.value ?? code,
+      ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
+    }));
+  }, [availableLocales, languageModal.defaultLanguageNote, languageNames]);
 
   const currentLanguageLabel = useMemo(() => {
     const currentCode = (locale || DEFAULT_LOCALE) as AppLanguage;
-    return languages.find(l => l.code === currentCode)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+    return (
+      languages.find(l => l.code === currentCode)?.label ??
+      (languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ??
+      DEFAULT_LOCALE
+    );
   }, [locale, languages, languageNames]);
 
   const filteredLanguages = useMemo(() => {
@@ -52,7 +51,10 @@ export function AuthLanguageSwitcher() {
     setLocale(code);
     setLanguageModalOpen(false);
     setLanguageSearch('');
-    const selectedLabel = languages.find(l => l.code === code)?.label ?? ((languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+    const selectedLabel =
+      languages.find(l => l.code === code)?.label ??
+      (languageNames as Record<string, { value: string }>)[DEFAULT_LOCALE]?.value ??
+      DEFAULT_LOCALE;
     toast.success(`${languageModal.savedToastPrefix.value}: ${selectedLabel}`);
     setTimeout(() => {
       window.location.reload();
@@ -67,7 +69,16 @@ export function AuthLanguageSwitcher() {
           setLanguageSearch('');
           setLanguageModalOpen(true);
         }}
-        sx={{ borderRadius: tokens.radius.full, color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
+        sx={{
+          width: 48,
+          height: 48,
+          borderRadius: `${tokens.radius.full} !important`,
+          color: 'text.secondary',
+          '&:hover': {
+            borderRadius: `${tokens.radius.full} !important`,
+            color: 'text.primary',
+          },
+        }}
       >
         <Globe size={20} suppressHydrationWarning />
       </IconButton>
@@ -102,7 +113,10 @@ export function AuthLanguageSwitcher() {
         <div className="lumio-language-switcher__body">
           <div className="lumio-language-switcher__scroll-area">
             <div className="lumio-language-switcher__search-wrapper">
-              <Search className="lumio-language-switcher__search-icon" style={{ width: 20, height: 20 }} />
+              <Search
+                className="lumio-language-switcher__search-icon"
+                style={{ width: 20, height: 20 }}
+              />
               <input
                 type="text"
                 value={languageSearch}
@@ -129,9 +143,7 @@ export function AuthLanguageSwitcher() {
                   );
                 })
               ) : (
-                <p className="lumio-language-switcher__empty">
-                  No languages found
-                </p>
+                <p className="lumio-language-switcher__empty">No languages found</p>
               )}
             </div>
           </div>

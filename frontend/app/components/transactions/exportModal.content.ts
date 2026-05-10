@@ -77,7 +77,7 @@ const content = {
       en: 'Choose an export format for the current transaction selection:',
       kk: 'Ағымдағы транзакциялар таңдауы үшін экспорт форматын таңдаңыз:',
       de: 'Wählen Sie ein Exportformat für die aktuelle Transaktionsauswahl:',
-      fr: 'Choisissez un format d\'export pour la sélection de transactions actuelle :',
+      fr: "Choisissez un format d'export pour la sélection de transactions actuelle :",
       es: 'Elija un formato de exportación para la selección de transacciones actual:',
       pt: 'Escolha um formato de exportação para a seleção de transações atual:',
       tr: 'Mevcut işlem seçimi için bir dışa aktarma formatı seçin:',

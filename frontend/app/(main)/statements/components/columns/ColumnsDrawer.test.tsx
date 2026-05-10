@@ -44,10 +44,12 @@ describe('ColumnsDrawer', () => {
         onToggle={vi.fn()}
         onReorder={vi.fn()}
         labels={{ title: 'Columns', save: 'Save' }}
-        columns={[
-          { id: 'receipt', label: 'Receipt', visible: true },
-          { id: 'date', label: 'Date', visible: true },
-        ] as ColumnsDrawerProps['columns']}
+        columns={
+          [
+            { id: 'receipt', label: 'Receipt', visible: true },
+            { id: 'date', label: 'Date', visible: true },
+          ] as ColumnsDrawerProps['columns']
+        }
       />,
     );
 

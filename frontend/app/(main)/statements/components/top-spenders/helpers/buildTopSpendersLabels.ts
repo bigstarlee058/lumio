@@ -5,7 +5,10 @@ type TxFn = (path: string[], fallback: string) => string;
 // Module-level constant — not a function, exempt from max-lines-per-function.
 const LABEL_PATHS: Record<string, [string[], string]> = {
   title: [['topSpenders', 'title'], 'Top spenders'],
-  subtitle: [['topSpenders', 'subtitle'], 'See where money goes by receipts, statements and dates.'],
+  subtitle: [
+    ['topSpenders', 'subtitle'],
+    'See where money goes by receipts, statements and dates.',
+  ],
   searchPlaceholder: [['topSpenders', 'searchPlaceholder'], 'Search company, bank or sender'],
   totalSpend: [['topSpenders', 'totalSpend'], 'Total spend'],
   statementsSpend: [['topSpenders', 'statementsSpend'], 'Statements'],
@@ -59,5 +62,7 @@ export const buildTopSpendersLabels = (tx: TxFn): Record<string, string> =>
     Object.entries(LABEL_PATHS).map(([k, [p, f]]) => [k, p.length === 0 ? f : tx(p, f)]),
   );
 
-export const createTx = (t: unknown): TxFn =>
-  (path, fallback) => resolveLabel(getNestedValue(t, path), fallback);
+export const createTx =
+  (t: unknown): TxFn =>
+  (path, fallback) =>
+    resolveLabel(getNestedValue(t, path), fallback);

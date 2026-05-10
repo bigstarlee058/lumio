@@ -1,4 +1,3 @@
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -208,8 +207,8 @@ describe('StatementsCircularUploadMenu', () => {
       toggleButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    const whiteAction = Array.from(container.querySelectorAll('button')).find(button =>
-      button.style.background === 'white' || button.style.background === '#fff',
+    const whiteAction = Array.from(container.querySelectorAll('button')).find(
+      button => button.style.background === 'white' || button.style.background === '#fff',
     );
     const mutedAction = Array.from(container.querySelectorAll('button')).find(button =>
       button.style.background.includes('var(--card-bg'),

@@ -30,8 +30,16 @@ function FolderMoveFeedbackBanner({
 }): React.JSX.Element {
   const sx =
     folderMoveFeedback.tone === 'success'
-      ? { borderColor: 'var(--color-success-soft-border)', bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' }
-      : { borderColor: '#fecaca', bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)' };
+      ? {
+          borderColor: 'var(--color-success-soft-border)',
+          bgcolor: 'var(--color-success-soft-bg)',
+          color: 'var(--color-success-soft-text)',
+        }
+      : {
+          borderColor: '#fecaca',
+          bgcolor: 'var(--color-error-soft-bg)',
+          color: 'var(--destructive)',
+        };
   return (
     <Box
       role={folderMoveFeedback.tone === 'error' ? 'alert' : 'status'}
@@ -42,10 +50,22 @@ function FolderMoveFeedbackBanner({
   );
 }
 
-function buildFolderListHandlers(props: StorageFoldersSidebarProps): Pick<FolderListProps,
-  | 'onSetActiveFolderId' | 'onSetPickedFolderId' | 'onSetEditingFolderName' | 'onSetFolderTagPickerId'
-  | 'onRenameFolder' | 'onCancelEditFolder' | 'onUpdateFolderTag' | 'onConfirmDeleteFolder'
-  | 'onStartEditFolder' | 'onHandleFolderContextMenu' | 'canEditFolder' | 'clampFolderName'
+function buildFolderListHandlers(
+  props: StorageFoldersSidebarProps,
+): Pick<
+  FolderListProps,
+  | 'onSetActiveFolderId'
+  | 'onSetPickedFolderId'
+  | 'onSetEditingFolderName'
+  | 'onSetFolderTagPickerId'
+  | 'onRenameFolder'
+  | 'onCancelEditFolder'
+  | 'onUpdateFolderTag'
+  | 'onConfirmDeleteFolder'
+  | 'onStartEditFolder'
+  | 'onHandleFolderContextMenu'
+  | 'canEditFolder'
+  | 'clampFolderName'
 > {
   return {
     onSetActiveFolderId: props.onSetActiveFolderId,
@@ -107,10 +127,18 @@ function buildFilesPanelProps(props: StorageFoldersSidebarProps): FolderFilesPan
 
 export function StorageFoldersSidebar(props: StorageFoldersSidebarProps): React.JSX.Element {
   const { folderMoveFeedback, newFolderName, folderCreatePlaceholder, folderCreateTooltip } = props;
-  const { draggingFile, dragDropSubtitleLabel, onSetNewFolderName, onCreateFolder, clampFolderName } = props;
+  const {
+    draggingFile,
+    dragDropSubtitleLabel,
+    onSetNewFolderName,
+    onCreateFolder,
+    clampFolderName,
+  } = props;
 
   return (
-    <Box sx={{ flex: 1, overflowY: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      sx={{ flex: 1, overflowY: 'auto', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
+    >
       {folderMoveFeedback && <FolderMoveFeedbackBanner folderMoveFeedback={folderMoveFeedback} />}
       <NewFolderInput
         newFolderName={newFolderName}

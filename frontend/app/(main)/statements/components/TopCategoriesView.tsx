@@ -1,14 +1,12 @@
 'use client';
 
-import type { JSX } from 'react';
-
 import { TopCategoriesContent } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesContent';
 import { TopCategoriesDrillDown } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesDrillDown';
 import { TopCategoriesFiltersDrawer } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesFiltersDrawer';
 import { TopCategoriesPageHeader } from '@/app/(main)/statements/components/top-categories/components/TopCategoriesPageHeader';
 import {
-  useTopCategoriesViewModel,
   type TopCategoriesViewModelReturn,
+  useTopCategoriesViewModel,
 } from '@/app/(main)/statements/components/top-categories/hooks/useTopCategoriesViewModel';
 import { Spinner } from '@/app/components/ui/spinner';
 import { tokens } from '@/lib/theme-tokens';
@@ -25,7 +23,17 @@ function TopCategoriesBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed var(--border-color)', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
+      <div
+        style={{
+          border: '1px dashed var(--border-color)',
+          background: 'var(--card-bg)',
+          padding: 48,
+          textAlign: 'center',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+          borderRadius: tokens.radius.lg,
+        }}
+      >
         {vm.labels.noData}
       </div>
     );

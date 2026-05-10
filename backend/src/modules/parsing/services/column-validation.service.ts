@@ -151,7 +151,11 @@ export class ColumnValidationService {
     value: unknown,
     schema: ColumnSchema,
     rowNumber: number,
-  ): Promise<{ isValid: boolean; inconsistencies: ColumnInconsistency[]; correctedValue?: unknown }> {
+  ): Promise<{
+    isValid: boolean;
+    inconsistencies: ColumnInconsistency[];
+    correctedValue?: unknown;
+  }> {
     const inconsistencies: ColumnInconsistency[] = [];
 
     // Check required fields
@@ -449,7 +453,7 @@ export class ColumnValidationService {
       } else {
         corrections.debit = undefined;
       }
-    } else if (!hasDebit && !hasCredit) {
+    } else if (!(hasDebit || hasCredit)) {
       inconsistencies.push({
         type: 'missing_column',
         field: 'debit/credit',
@@ -520,7 +524,9 @@ export class ColumnValidationService {
     // Check for consistent currency usage
     const currencies = new Set<string>();
     transactions.forEach(tx => {
-      if (tx.currency) currencies.add(tx.currency);
+      if (tx.currency) {
+        currencies.add(tx.currency);
+      }
     });
 
     if (currencies.size > 1) {
@@ -576,7 +582,9 @@ export class ColumnValidationService {
   }
 
   private parseBoolean(value: unknown): boolean | undefined {
-    if (typeof value === 'boolean') return value;
+    if (typeof value === 'boolean') {
+      return value;
+    }
 
     const strValue = String(value).toLowerCase().trim();
 

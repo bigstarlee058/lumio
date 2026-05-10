@@ -13,13 +13,6 @@ type AmountCandidate = {
   score: number;
 };
 
-export interface ReceiptAmountHelperFields {
-  extractCurrencyValue?: (text: string) => string | undefined;
-  parseAmountFragmentValue?: (
-    fragment: string,
-  ) => Promise<{ amount: number; currency?: string } | null>;
-}
-
 export const DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY: Record<string, string> = {
   $: 'USD',
   '€': 'EUR',
@@ -115,7 +108,7 @@ export function extractAmountFragments(
   );
 }
 
-export function extractBestNumberPart(text: string, numberPattern: string): string | undefined {
+function extractBestNumberPart(text: string, numberPattern: string): string | undefined {
   const numberRegex = new RegExp(numberPattern, 'g');
   const matches = text.match(numberRegex);
   if (!matches || matches.length === 0) {
@@ -190,17 +183,6 @@ export function createReceiptAmountHelpers(
   };
 }
 
-export function assignReceiptAmountHelpers(
-  target: ReceiptAmountHelperFields,
-  amountParser: ReceiptAmountParserLike,
-  numberPattern: string,
-  symbolToCurrency: Record<string, string> = DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
-): void {
-  const helpers = createReceiptAmountHelpers(amountParser, numberPattern, symbolToCurrency);
-  target.extractCurrencyValue = helpers.extractCurrency;
-  target.parseAmountFragmentValue = helpers.parseAmountFragment;
-}
-
 export function selectTopAmountCandidate<T extends AmountCandidate>(
   candidates: T[],
 ): T | undefined {
@@ -229,7 +211,9 @@ export async function extractAmountWithCurrency(
       includeNumbersWithoutCurrency: boolean,
       currencyTokenPattern: string,
     ) => string[];
-    parseAmountFragment: (fragment: string) => Promise<{ amount: number; currency?: string } | null>;
+    parseAmountFragment: (
+      fragment: string,
+    ) => Promise<{ amount: number; currency?: string } | null>;
     getCurrencyTokenPattern: () => string;
     hasTotalKeyword: (line: string) => boolean;
   },

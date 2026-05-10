@@ -520,23 +520,25 @@ describe('StatementsListView Gmail sync skeleton', () => {
   });
 
   it('applies the receipt type filter to local receipts without including gmail receipts', async () => {
-    apiMocks.mockApiGet.mockImplementation((url: string, config?: { params?: Record<string, unknown> }) => {
-      if (url === '/categories' || url === '/tax-rates') {
+    apiMocks.mockApiGet.mockImplementation(
+      (url: string, config?: { params?: Record<string, unknown> }) => {
+        if (url === '/categories' || url === '/tax-rates') {
+          return Promise.resolve({ data: [] });
+        }
+
+        if (url === '/statements') {
+          expect(config?.params).toMatchObject({
+            type: 'receipt',
+            statuses: ['processing'],
+            keywords: 'alex',
+          });
+
+          return Promise.resolve({ data: { data: [], total: 0 } });
+        }
+
         return Promise.resolve({ data: [] });
-      }
-
-      if (url === '/statements') {
-        expect(config?.params).toMatchObject({
-          type: 'receipt',
-          statuses: ['processing'],
-          keywords: 'alex',
-        });
-
-        return Promise.resolve({ data: { data: [], total: 0 } });
-      }
-
-      return Promise.resolve({ data: [] });
-    });
+      },
+    );
 
     apiMocks.mockListReceipts.mockResolvedValue({
       data: {

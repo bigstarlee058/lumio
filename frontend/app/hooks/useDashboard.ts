@@ -1,7 +1,7 @@
 'use client';
 
 import apiClient from '@/app/lib/api';
-import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
+import { type MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 
 export type DashboardRange = '7d' | '30d' | '90d';
@@ -103,6 +103,7 @@ export interface DashboardNotification {
 
 export interface DashboardTrends {
   dailyTrend: Array<{ date: string; income: number; expense: number }>;
+  forecast: Array<{ date: string; income: number; expense: number }>;
   categories: Array<{ name: string; amount: number; count: number }>;
   counterparties: Array<{ name: string; amount: number; count: number }>;
   sources: {
@@ -153,7 +154,7 @@ export function useDashboardTrends(days = 30): TrendsState {
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days, currentWorkspace?.id]);
 
   useEffect(() => {
@@ -219,22 +220,37 @@ export function useDashboard(
     (r: DashboardRange = range, date: string | null = targetDate): void => {
       void executeDashboardLoad(r, date, setters);
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [range, targetDate, currentWorkspace?.id],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [range, targetDate, currentWorkspace?.id],
   );
 
-  useEffect(() => { setRange(controlledRange); }, [controlledRange]);
-  useEffect(() => { setTargetDate(controlledDate ?? null); }, [controlledDate]);
-  useEffect(() => { load(range, targetDate); }, [load, range, targetDate]);
+  useEffect(() => {
+    setRange(controlledRange);
+  }, [controlledRange]);
+  useEffect(() => {
+    setTargetDate(controlledDate ?? null);
+  }, [controlledDate]);
+  useEffect(() => {
+    load(range, targetDate);
+  }, [load, range, targetDate]);
 
-  const changeRange = useCallback((newRange: DashboardRange): void => { setRange(newRange); }, []);
+  const changeRange = useCallback((newRange: DashboardRange): void => {
+    setRange(newRange);
+  }, []);
   const changeTargetDate = useCallback((newDate: string | null): void => {
     setTargetDate(newDate);
   }, []);
 
   return {
-    data, loading, error,
-    refresh: (): void => { load(range, targetDate); },
-    range, changeRange, targetDate, changeTargetDate,
+    data,
+    loading,
+    error,
+    refresh: (): void => {
+      load(range, targetDate);
+    },
+    range,
+    changeRange,
+    targetDate,
+    changeTargetDate,
   };
 }

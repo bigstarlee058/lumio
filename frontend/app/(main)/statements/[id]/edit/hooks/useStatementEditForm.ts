@@ -4,6 +4,7 @@ import { useAutoSave } from '@/app/hooks/useAutoSave';
 import { getStatementStage } from '@/app/lib/statement-workflow';
 import type { StatementStageAction, StatementStageActionId } from '@/app/lib/statement-workflow';
 import { useCallback, useEffect } from 'react';
+import type { Transaction } from '../editHelpers';
 import {
   convertDroppedSampleAction,
   exportToCustomTable,
@@ -19,9 +20,8 @@ import {
   deleteTransactionAction,
   saveTransactionAction,
 } from './statement-edit-sync';
-import { useStatementFormState } from './useStatementFormState';
 import type { UseStatementEditFormReturn } from './useStatementEditFormTypes';
-import type { Transaction } from '../editHelpers';
+import { useStatementFormState } from './useStatementFormState';
 
 export type { UseStatementEditFormReturn } from './useStatementEditFormTypes';
 
@@ -56,17 +56,21 @@ export function useStatementEditForm({
   const s = useStatementFormState();
 
   const loadData = useCallback(async (): Promise<void> => {
-    await loadStatementData(statementId, { loadDataError: messages.loadDataError }, {
-      setLoading: s.setLoading,
-      setOptionsLoading: s.setOptionsLoading,
-      setStatement: s.setStatement,
-      setTransactions: s.setTransactions,
-      setCategories: s.setCategories,
-      setBranches: s.setBranches,
-      setWallets: s.setWallets,
-      setMetadataForm: s.setMetadataForm,
-      setError: s.setError,
-    });
+    await loadStatementData(
+      statementId,
+      { loadDataError: messages.loadDataError },
+      {
+        setLoading: s.setLoading,
+        setOptionsLoading: s.setOptionsLoading,
+        setStatement: s.setStatement,
+        setTransactions: s.setTransactions,
+        setCategories: s.setCategories,
+        setBranches: s.setBranches,
+        setWallets: s.setWallets,
+        setMetadataForm: s.setMetadataForm,
+        setError: s.setError,
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statementId]);
 
@@ -95,14 +99,21 @@ export function useStatementEditForm({
 
   const handleExportToCustomTable = async (): Promise<void> => {
     await exportToCustomTable({
-      statementId, statement: s.statement, router, messages,
+      statementId,
+      statement: s.statement,
+      router,
+      messages,
       setExportingToTable: s.setExportingToTable,
     });
   };
 
   const handleRowSelect = (id: string): void => {
     const next = new Set(s.selectedRows);
-    if (next.has(id)) { next.delete(id); } else { next.add(id); }
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
     s.setSelectedRows(next);
   };
 
@@ -124,18 +135,27 @@ export function useStatementEditForm({
     field: keyof Transaction,
     value: Transaction[keyof Transaction],
   ): void => {
-    s.setEditedData(prev => ({ ...prev, [transactionId]: { ...prev[transactionId], [field]: value } }));
+    s.setEditedData(prev => ({
+      ...prev,
+      [transactionId]: { ...prev[transactionId], [field]: value },
+    }));
   };
 
   const handleSave = async (transactionId: string): Promise<void> => {
     await saveTransactionAction(transactionId, {
-      setTransactions: s.setTransactions, setEditingRow: s.setEditingRow,
-      setSuccess: s.setSuccess, setError: s.setError, editedData: s.editedData,
+      setTransactions: s.setTransactions,
+      setEditingRow: s.setEditingRow,
+      setSuccess: s.setSuccess,
+      setError: s.setError,
+      editedData: s.editedData,
       messages: { saveTransactionError: messages.saveTransactionError },
     });
   };
 
-  const handleCancel = (): void => { s.setEditingRow(null); s.setEditedData({}); };
+  const handleCancel = (): void => {
+    s.setEditingRow(null);
+    s.setEditedData({});
+  };
 
   const handleMetadataChange = (field: string, value: string): void => {
     s.setMetadataForm(prev => ({ ...prev, [field]: value }));
@@ -160,8 +180,14 @@ export function useStatementEditForm({
   const handleConvertDroppedSample = useCallback(
     async (sample: { transaction?: unknown }, index: number, warning?: string): Promise<void> => {
       await convertDroppedSampleAction({
-        statementId, sample, index, warning, loadData,
-        setStatement: s.setStatement, setTransactions: s.setTransactions, setSuccess: s.setSuccess,
+        statementId,
+        sample,
+        index,
+        warning,
+        loadData,
+        setStatement: s.setStatement,
+        setTransactions: s.setTransactions,
+        setSuccess: s.setSuccess,
       });
     },
     [statementId, loadData, s.setStatement, s.setTransactions, s.setSuccess],
@@ -169,38 +195,55 @@ export function useStatementEditForm({
 
   const handleDelete = async (transactionId: string): Promise<void> => {
     await deleteTransactionAction(transactionId, {
-      setTransactions: s.setTransactions, setSuccess: s.setSuccess, setError: s.setError,
+      setTransactions: s.setTransactions,
+      setSuccess: s.setSuccess,
+      setError: s.setError,
       messages: { deleteTransactionError: messages.deleteTransactionError },
     });
   };
 
   const handleBulkUpdate = async (): Promise<void> => {
     await bulkUpdateAction(loadData, {
-      selectedRows: s.selectedRows, editedData: s.editedData, setSaving: s.setSaving,
-      setSelectedRows: s.setSelectedRows, setEditedData: s.setEditedData,
-      setSuccess: s.setSuccess, setError: s.setError,
+      selectedRows: s.selectedRows,
+      editedData: s.editedData,
+      setSaving: s.setSaving,
+      setSelectedRows: s.setSelectedRows,
+      setEditedData: s.setEditedData,
+      setSuccess: s.setSuccess,
+      setError: s.setError,
       messages: { updateTransactionsError: messages.updateTransactionsError },
     });
   };
 
   const handleBulkDelete = async (confirmMessage: string): Promise<void> => {
     await bulkDeleteAction(confirmMessage, loadData, {
-      selectedRows: s.selectedRows, setTransactions: s.setTransactions, setSaving: s.setSaving,
-      setSelectedRows: s.setSelectedRows, setSuccess: s.setSuccess, setError: s.setError,
+      selectedRows: s.selectedRows,
+      setTransactions: s.setTransactions,
+      setSaving: s.setSaving,
+      setSelectedRows: s.setSelectedRows,
+      setSuccess: s.setSuccess,
+      setError: s.setError,
       messages: { deleteTransactionsError: messages.deleteTransactionsError },
     });
   };
 
   const handleOpenBulkCategory = (): void => {
-    if (s.selectedRows.size === 0) return;
+    if (s.selectedRows.size === 0) {
+      return;
+    }
     s.setBulkCategoryDialogOpen(true);
   };
 
   const handleApplyBulkCategory = async (): Promise<void> => {
     await applyBulkCategoryAction(loadData, {
-      bulkCategoryId: s.bulkCategoryId, selectedRows: s.selectedRows, setSaving: s.setSaving,
-      setSelectedRows: s.setSelectedRows, setBulkCategoryDialogOpen: s.setBulkCategoryDialogOpen,
-      setBulkCategoryId: s.setBulkCategoryId, setSuccess: s.setSuccess, setError: s.setError,
+      bulkCategoryId: s.bulkCategoryId,
+      selectedRows: s.selectedRows,
+      setSaving: s.setSaving,
+      setSelectedRows: s.setSelectedRows,
+      setBulkCategoryDialogOpen: s.setBulkCategoryDialogOpen,
+      setBulkCategoryId: s.setBulkCategoryId,
+      setSuccess: s.setSuccess,
+      setError: s.setError,
       messages: { assignCategoryError: messages.assignCategoryError },
     });
   };
@@ -211,9 +254,14 @@ export function useStatementEditForm({
     missingCategoryCount: number,
   ): Promise<void> => {
     await processStageAction({
-      action, stageActionToasts, missingCategoryCount, statement: s.statement,
-      transactions: s.transactions, router,
-      setStageActionLoadingId: s.setStageActionLoadingId, setCurrentStage: s.setCurrentStage,
+      action,
+      stageActionToasts,
+      missingCategoryCount,
+      statement: s.statement,
+      transactions: s.transactions,
+      router,
+      setStageActionLoadingId: s.setStageActionLoadingId,
+      setCurrentStage: s.setCurrentStage,
     });
   };
 
@@ -222,40 +270,74 @@ export function useStatementEditForm({
     flattenedStatementCategories: { id: string; name: string }[],
   ): Promise<void> => {
     await updateStatementCategoryAction({
-      statement: s.statement, categoryId, flatCategories: flattenedStatementCategories,
-      messages: { categoryUpdated: messages.categoryUpdated, categoryUpdateFailed: messages.categoryUpdateFailed },
+      statement: s.statement,
+      categoryId,
+      flatCategories: flattenedStatementCategories,
+      messages: {
+        categoryUpdated: messages.categoryUpdated,
+        categoryUpdateFailed: messages.categoryUpdateFailed,
+      },
       statementCategorySaving: s.statementCategorySaving,
       setStatementCategorySaving: s.setStatementCategorySaving,
-      setStatement: s.setStatement, setError: s.setError,
+      setStatement: s.setStatement,
+      setError: s.setError,
     });
   };
 
   return {
-    statement: s.statement, setStatement: s.setStatement,
-    transactions: s.transactions, setTransactions: s.setTransactions,
-    loading: s.loading, saving: s.saving, exportingToTable: s.exportingToTable,
+    statement: s.statement,
+    setStatement: s.setStatement,
+    transactions: s.transactions,
+    setTransactions: s.setTransactions,
+    loading: s.loading,
+    saving: s.saving,
+    exportingToTable: s.exportingToTable,
     optionsLoading: s.optionsLoading,
-    error: s.error, setError: s.setError,
-    success: s.success, setSuccess: s.setSuccess,
-    selectedRows: s.selectedRows, setSelectedRows: s.setSelectedRows,
-    editingRow: s.editingRow, editedData: s.editedData,
-    categories: s.categories, branches: s.branches, wallets: s.wallets,
+    error: s.error,
+    setError: s.setError,
+    success: s.success,
+    setSuccess: s.setSuccess,
+    selectedRows: s.selectedRows,
+    setSelectedRows: s.setSelectedRows,
+    editingRow: s.editingRow,
+    editedData: s.editedData,
+    categories: s.categories,
+    branches: s.branches,
+    wallets: s.wallets,
     bulkCategoryDialogOpen: s.bulkCategoryDialogOpen,
     setBulkCategoryDialogOpen: s.setBulkCategoryDialogOpen,
     statementCategoryDrawerOpen: s.statementCategoryDrawerOpen,
     setStatementCategoryDrawerOpen: s.setStatementCategoryDrawerOpen,
     statementCategorySaving: s.statementCategorySaving,
-    stageActionLoadingId: s.stageActionLoadingId, currentStage: s.currentStage,
-    bulkCategoryId: s.bulkCategoryId, setBulkCategoryId: s.setBulkCategoryId,
-    metadataForm: s.metadataForm, setMetadataForm: s.setMetadataForm,
-    exportConfirmOpen: s.exportConfirmOpen, setExportConfirmOpen: s.setExportConfirmOpen,
+    stageActionLoadingId: s.stageActionLoadingId,
+    currentStage: s.currentStage,
+    bulkCategoryId: s.bulkCategoryId,
+    setBulkCategoryId: s.setBulkCategoryId,
+    metadataForm: s.metadataForm,
+    setMetadataForm: s.setMetadataForm,
+    exportConfirmOpen: s.exportConfirmOpen,
+    setExportConfirmOpen: s.setExportConfirmOpen,
     parsingDetailsExpanded: s.parsingDetailsExpanded,
     setParsingDetailsExpanded: s.setParsingDetailsExpanded,
-    balanceStartInputRef: s.balanceStartInputRef, balanceEndInputRef: s.balanceEndInputRef,
-    loadData, handleExportToCustomTable, handleRowSelect, handleSelectAll, handleEdit,
-    handleFieldChange, handleSave, handleCancel, handleMetadataChange,
-    handleResolveParsingWarning, handleConvertDroppedSample, handleDelete,
-    handleBulkUpdate, handleBulkDelete, handleOpenBulkCategory, handleApplyBulkCategory,
-    handleStageAction, handleStatementCategorySelect,
+    balanceStartInputRef: s.balanceStartInputRef,
+    balanceEndInputRef: s.balanceEndInputRef,
+    loadData,
+    handleExportToCustomTable,
+    handleRowSelect,
+    handleSelectAll,
+    handleEdit,
+    handleFieldChange,
+    handleSave,
+    handleCancel,
+    handleMetadataChange,
+    handleResolveParsingWarning,
+    handleConvertDroppedSample,
+    handleDelete,
+    handleBulkUpdate,
+    handleBulkDelete,
+    handleOpenBulkCategory,
+    handleApplyBulkCategory,
+    handleStageAction,
+    handleStatementCategorySelect,
   };
 }

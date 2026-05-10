@@ -1,15 +1,5 @@
 'use client';
 
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
-import { useWorkspace } from '@/app/contexts/WorkspaceContext';
-import apiClient from '@/app/lib/api';
-import {
-  type CurrencySearchItem,
-  buildCurrencySearchIndex,
-} from '@/app/lib/statement-expense-drawer';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import {
   Building2,
   Check,
@@ -20,12 +10,22 @@ import {
   Search,
   Trash2,
 } from '@/app/components/icons';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { ModalFooter, ModalShell } from '@/app/components/ui/modal-shell';
+import { useWorkspace } from '@/app/contexts/WorkspaceContext';
+import apiClient from '@/app/lib/api';
+import {
+  type CurrencySearchItem,
+  buildCurrencySearchIndex,
+} from '@/app/lib/statement-expense-drawer';
+import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AVAILABLE_BACKGROUNDS } from '../constants';
 import { BackgroundSelector } from './BackgroundSelector';
-import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_RECENT_CURRENCIES = ['KZT', 'USD', 'EUR', 'RUB'] as const;
 
@@ -74,7 +74,9 @@ export default function WorkspaceOverviewView() {
   ]);
 
   useEffect(() => {
-    if (!currentWorkspace) return;
+    if (!currentWorkspace) {
+      return;
+    }
     setName(currentWorkspace.name ?? '');
     setDescription(currentWorkspace.description ?? '');
     setCurrency(currentWorkspace.currency ?? '');
@@ -91,8 +93,12 @@ export default function WorkspaceOverviewView() {
   const currencyQuery = currencySearch.trim().toLowerCase();
 
   const selectedMatchesSearch = useMemo(() => {
-    if (!selectedCurrencyItem) return false;
-    if (!currencyQuery) return true;
+    if (!selectedCurrencyItem) {
+      return false;
+    }
+    if (!currencyQuery) {
+      return true;
+    }
     return selectedCurrencyItem.searchText.includes(currencyQuery);
   }, [selectedCurrencyItem, currencyQuery]);
 
@@ -128,7 +134,9 @@ export default function WorkspaceOverviewView() {
     deleteConfirmationName.trim() === (currentWorkspace?.name ?? '');
 
   const handleSave = async () => {
-    if (!currentWorkspace || !name.trim()) return;
+    if (!(currentWorkspace && name.trim())) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -148,8 +156,12 @@ export default function WorkspaceOverviewView() {
   };
 
   const handleDelete = async () => {
-    if (!currentWorkspace) return;
-    if (!isDeleteConfirmationMatched) return;
+    if (!currentWorkspace) {
+      return;
+    }
+    if (!isDeleteConfirmationMatched) {
+      return;
+    }
 
     setDeleting(true);
     try {
@@ -174,7 +186,9 @@ export default function WorkspaceOverviewView() {
   };
 
   const closeDeleteModal = () => {
-    if (deleting) return;
+    if (deleting) {
+      return;
+    }
     setDeleteModalOpen(false);
     setDeleteConfirmationName('');
   };
@@ -193,7 +207,9 @@ export default function WorkspaceOverviewView() {
   };
 
   const handleBackgroundChange = async (background: string) => {
-    if (!currentWorkspace) return;
+    if (!currentWorkspace) {
+      return;
+    }
     setSavingBackground(true);
     try {
       await updateWorkspaceBackground(currentWorkspace.id, background);
@@ -206,7 +222,9 @@ export default function WorkspaceOverviewView() {
     }
   };
 
-  if (!currentWorkspace) return null;
+  if (!currentWorkspace) {
+    return null;
+  }
 
   return (
     <Box
@@ -221,7 +239,15 @@ export default function WorkspaceOverviewView() {
         data-tour-id="workspace-side-panel"
       >
         {/* Header card */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2, mb: 1.5 }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 2,
+            mb: 1.5,
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
             <Box
               sx={{
@@ -253,7 +279,13 @@ export default function WorkspaceOverviewView() {
 
         {/* Background section */}
         <Box
-          sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2, mb: 1.5 }}
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 2,
+            mb: 1.5,
+          }}
           data-tour-id="workspace-background"
         >
           <Box
@@ -343,12 +375,25 @@ export default function WorkspaceOverviewView() {
 
         {/* Settings section */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 2 }}>
+          <Box
+            sx={{
+              border: '1px solid var(--border)',
+              borderRadius: tokens.radius.lg,
+              bgcolor: 'var(--card)',
+              p: 2,
+            }}
+          >
             {/* Workspace name */}
             <Box sx={{ mb: 1.5 }}>
               <label
                 htmlFor="workspace-name"
-                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
+                style={{
+                  display: 'block',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  marginBottom: 6,
+                }}
               >
                 Workspace name
               </label>
@@ -375,7 +420,13 @@ export default function WorkspaceOverviewView() {
             <Box sx={{ mb: 1.5 }}>
               <label
                 htmlFor="workspace-description"
-                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
+                style={{
+                  display: 'block',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  marginBottom: 6,
+                }}
               >
                 Description
               </label>
@@ -403,7 +454,13 @@ export default function WorkspaceOverviewView() {
             <Box sx={{ mb: 1.5 }}>
               <label
                 htmlFor="workspace-currency-trigger"
-                style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
+                style={{
+                  display: 'block',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: 'var(--foreground)',
+                  marginBottom: 6,
+                }}
               >
                 Default currency
               </label>
@@ -428,15 +485,22 @@ export default function WorkspaceOverviewView() {
                   boxSizing: 'border-box',
                 }}
               >
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                >
                   {selectedCurrencyItem?.label || notSelectedLabel}
                 </span>
-                <ChevronDown size={16} style={{ color: 'var(--muted-foreground)', flexShrink: 0 }} />
+                <ChevronDown
+                  size={16}
+                  style={{ color: 'var(--muted-foreground)', flexShrink: 0 }}
+                />
               </button>
             </Box>
 
             {/* Save button */}
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5, pt: 0.5 }}>
+            <Box
+              sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5, pt: 0.5 }}
+            >
               <button
                 type="button"
                 onClick={handleSave}
@@ -479,10 +543,17 @@ export default function WorkspaceOverviewView() {
                 p: 2,
               }}
             >
-              <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--destructive)', mb: 0.5 }}>
+              <Typography
+                variant="body2"
+                fontWeight={500}
+                sx={{ color: 'var(--destructive)', mb: 0.5 }}
+              >
                 Danger Zone
               </Typography>
-              <Typography variant="caption" sx={{ color: 'var(--destructive)', display: 'block', mb: 1.5 }}>
+              <Typography
+                variant="caption"
+                sx={{ color: 'var(--destructive)', display: 'block', mb: 1.5 }}
+              >
                 This will permanently delete the workspace and all related data. This action cannot
                 be undone.
               </Typography>
@@ -525,7 +596,14 @@ export default function WorkspaceOverviewView() {
             <button
               type="button"
               onClick={() => setShowBackgroundPicker(false)}
-              style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{
+                borderRadius: tokens.radius.full,
+                padding: 8,
+                color: 'var(--muted-foreground)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
               aria-label="Close background drawer"
             >
               <ChevronLeft size={20} />
@@ -573,7 +651,14 @@ export default function WorkspaceOverviewView() {
                 setCurrencyDrawerOpen(false);
                 setCurrencySearch('');
               }}
-              style={{ borderRadius: tokens.radius.full, padding: 8, color: 'var(--muted-foreground)', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{
+                borderRadius: tokens.radius.full,
+                padding: 8,
+                color: 'var(--muted-foreground)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+              }}
               aria-label="Close currency drawer"
             >
               <ChevronLeft size={20} />
@@ -670,7 +755,10 @@ export default function WorkspaceOverviewView() {
             {/* Recents */}
             {currencyQuery.length === 0 && recentCurrencyItems.length > 0 ? (
               <Box sx={{ mb: 1.5 }}>
-                <Typography variant="body2" sx={{ color: 'var(--muted-foreground)', px: 0.5, mb: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: 'var(--muted-foreground)', px: 0.5, mb: 1 }}
+                >
                   Recents
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -692,7 +780,11 @@ export default function WorkspaceOverviewView() {
                         textAlign: 'left',
                       }}
                     >
-                      <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                      <Typography
+                        variant="body1"
+                        fontWeight={600}
+                        sx={{ color: 'var(--foreground)' }}
+                      >
                         {item.label}
                       </Typography>
                     </button>
@@ -724,7 +816,11 @@ export default function WorkspaceOverviewView() {
                       textAlign: 'left',
                     }}
                   >
-                    <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                    <Typography
+                      variant="body1"
+                      fontWeight={600}
+                      sx={{ color: 'var(--foreground)' }}
+                    >
                       {notSelectedLabel}
                     </Typography>
                   </button>
@@ -749,7 +845,11 @@ export default function WorkspaceOverviewView() {
                         textAlign: 'left',
                       }}
                     >
-                      <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
+                      <Typography
+                        variant="body1"
+                        fontWeight={600}
+                        sx={{ color: 'var(--foreground)' }}
+                      >
                         {item.label}
                       </Typography>
                     </button>
@@ -775,7 +875,12 @@ export default function WorkspaceOverviewView() {
         closeOnBackdropClick={!deleting}
         closeOnEscape={!deleting}
         title="Delete workspace?"
-        paperSx={{ borderRadius: tokens.radius.xl, border: '1px solid var(--border)', bgcolor: 'var(--card)', boxShadow: 24 }}
+        paperSx={{
+          borderRadius: tokens.radius.xl,
+          border: '1px solid var(--border)',
+          bgcolor: 'var(--card)',
+          boxShadow: 24,
+        }}
         footer={
           <ModalFooter
             onCancel={closeDeleteModal}
@@ -796,7 +901,13 @@ export default function WorkspaceOverviewView() {
           <Box>
             <label
               htmlFor="delete-workspace-name"
-              style={{ display: 'block', fontSize: 14, fontWeight: 500, color: 'var(--foreground)', marginBottom: 6 }}
+              style={{
+                display: 'block',
+                fontSize: 14,
+                fontWeight: 500,
+                color: 'var(--foreground)',
+                marginBottom: 6,
+              }}
             >
               Workspace name
             </label>

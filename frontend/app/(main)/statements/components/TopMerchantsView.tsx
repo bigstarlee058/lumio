@@ -1,14 +1,12 @@
 'use client';
 
-import type { JSX } from 'react';
-
 import { TopMerchantsContent } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsContent';
 import { TopMerchantsDrillDown } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsDrillDown';
 import { TopMerchantsFiltersDrawer } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsFiltersDrawer';
 import { TopMerchantsPageHeader } from '@/app/(main)/statements/components/top-merchants/components/TopMerchantsPageHeader';
 import {
-  useTopMerchantsViewModel,
   type TopMerchantsViewModelReturn,
+  useTopMerchantsViewModel,
 } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsViewModel';
 import { Spinner } from '@/app/components/ui/spinner';
 import { tokens } from '@/lib/theme-tokens';
@@ -25,7 +23,17 @@ function TopMerchantsBody({ vm }: VmProps): React.JSX.Element {
   }
   if (vm.flowFilteredRecords.length === 0) {
     return (
-      <div style={{ border: '1px dashed var(--border-color)', background: 'var(--card-bg)', padding: 48, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)', borderRadius: tokens.radius.lg }}>
+      <div
+        style={{
+          border: '1px dashed var(--border-color)',
+          background: 'var(--card-bg)',
+          padding: 48,
+          textAlign: 'center',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+          borderRadius: tokens.radius.lg,
+        }}
+      >
         {vm.labels.noData}
       </div>
     );

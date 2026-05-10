@@ -31,7 +31,9 @@ export class CreateDataEntryDto {
 
   @ValidateIf((o: Pick<CreateDataEntryDto, 'customFieldValue'>) => {
     const raw = o.customFieldValue;
-    if (raw === undefined || raw === null) return false;
+    if (raw === undefined || raw === null) {
+      return false;
+    }
     return String(raw).trim().length > 0;
   })
   @IsString()

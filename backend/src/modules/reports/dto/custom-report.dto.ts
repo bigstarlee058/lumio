@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsDateString, IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
 
 export enum ReportGroupBy {
   CATEGORY = 'category',

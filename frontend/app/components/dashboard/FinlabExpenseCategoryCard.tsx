@@ -1,13 +1,13 @@
 'use client';
 
+import { Info } from '@/app/components/icons';
+import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
-import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
-import { tokens } from '@/lib/theme-tokens';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -62,7 +62,16 @@ export function FinlabExpenseCategoryCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 16 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.75,
+            color: 'var(--foreground)',
+            fontWeight: 700,
+            fontSize: 16,
+          }}
+        >
           Expense Category
           <Info size={16} color="var(--muted-foreground)" />
         </Box>
@@ -71,7 +80,9 @@ export function FinlabExpenseCategoryCard({
 
       {!categories.length ? (
         <Box sx={{ display: 'flex', height: 160, alignItems: 'center', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No data available</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            No data available
+          </Typography>
         </Box>
       ) : (
         <Box
@@ -96,34 +107,73 @@ export function FinlabExpenseCategoryCard({
                 pointerEvents: 'none',
               }}
             >
-              <Typography sx={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)' }}>100%</Typography>
-              <Typography sx={{ fontSize: 10, color: 'var(--muted-foreground)', fontWeight: 500 }}>Data Recorded</Typography>
+              <Typography sx={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)' }}>
+                100%
+              </Typography>
+              <Typography sx={{ fontSize: 10, color: 'var(--muted-foreground)', fontWeight: 500 }}>
+                Data Recorded
+              </Typography>
             </Box>
           </Box>
 
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1.5, minWidth: 0, pr: 2, width: '100%' }}>
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1.5,
+              minWidth: 0,
+              pr: 2,
+              width: '100%',
+            }}
+          >
             {categories.slice(0, 4).map((cat, idx) => {
               const pct = ((cat.amount / total) * 100).toFixed(1);
               return (
                 <Box
                   key={cat.id ?? cat.name ?? `cat-${idx}`}
-                  sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 2,
+                  }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                     <Box
-                      sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, flexShrink: 0, bgcolor: COLORS[idx % COLORS.length] }}
+                      sx={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: tokens.radius.full,
+                        flexShrink: 0,
+                        bgcolor: COLORS[idx % COLORS.length],
+                      }}
                     />
                     <Typography
                       component="span"
-                      sx={{ fontSize: 14, color: 'var(--text-secondary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      sx={{
+                        fontSize: 14,
+                        color: 'var(--text-secondary)',
+                        fontWeight: 500,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
                     >
                       {cat.name ?? 'Other'}{' '}
-                      <span style={{ color: 'var(--muted-foreground)', fontSize: 12 }}>({pct}%)</span>
+                      <span style={{ color: 'var(--muted-foreground)', fontSize: 12 }}>
+                        ({pct}%)
+                      </span>
                     </Typography>
                   </Box>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 14, fontWeight: 700, color: 'var(--foreground)', whiteSpace: 'nowrap' }}
+                    sx={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: 'var(--foreground)',
+                      whiteSpace: 'nowrap',
+                    }}
                   >
                     {formatAmount(cat.amount)}
                   </Typography>

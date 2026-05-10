@@ -10,8 +10,8 @@ import {
 } from '../../../entities/audit-event.entity';
 import { Category } from '../../../entities/category.entity';
 import { CustomTableColumn } from '../../../entities/custom-table-column.entity';
-import { CustomTable } from '../../../entities/custom-table.entity';
 import { CustomTableRow } from '../../../entities/custom-table-row.entity';
+import { CustomTable } from '../../../entities/custom-table.entity';
 import { Statement } from '../../../entities/statement.entity';
 import { Transaction } from '../../../entities/transaction.entity';
 import { Workspace } from '../../../entities/workspace.entity';
@@ -143,10 +143,7 @@ export class RollbackService {
           if (!snapshot?.before) {
             return { success: false, message: 'Missing before state for rollback' };
           }
-          await repository.update(
-            event.entityId,
-            snapshot.before as QueryDeepPartialEntity<T>,
-          );
+          await repository.update(event.entityId, snapshot.before as QueryDeepPartialEntity<T>);
           return { success: true, message: 'Update rolled back' };
         }
         case AuditAction.DELETE: {
@@ -155,7 +152,7 @@ export class RollbackService {
           }
           let restored = repository.create(snapshot.before as DeepPartial<T>);
           if (event.entityType === EntityType.STATEMENT && 'deletedAt' in restored) {
-            const { deletedAt: _deletedAt, ...rest } = restored as unknown as SnapshotRecord;
+            const { deletedAt: DeletedAt, ...rest } = restored as unknown as SnapshotRecord;
             restored = rest as unknown as typeof restored;
           }
           await repository.save(restored);

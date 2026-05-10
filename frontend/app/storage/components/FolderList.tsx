@@ -43,76 +43,176 @@ export interface FolderListProps {
 }
 
 const allBtnBaseSx = {
-  display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
-  border: '1px solid', px: 2, py: 1.5, fontSize: 14, fontWeight: 500, cursor: 'pointer',
+  display: 'flex',
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  border: '1px solid',
+  px: 2,
+  py: 1.5,
+  fontSize: 14,
+  fontWeight: 500,
+  cursor: 'pointer',
 };
 
-function FolderListHeader({ folderListTitleLabel, pickedFolderId, scrollHintLabel, foldersCount }: {
-  folderListTitleLabel: React.ReactNode; pickedFolderId: string | null;
-  scrollHintLabel: string; foldersCount: number;
+function FolderListHeader({
+  folderListTitleLabel,
+  pickedFolderId,
+  scrollHintLabel,
+  foldersCount,
+}: {
+  folderListTitleLabel: React.ReactNode;
+  pickedFolderId: string | null;
+  scrollHintLabel: string;
+  foldersCount: number;
 }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 0.5 }}>
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{folderListTitleLabel}</Typography>
+        <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+          {folderListTitleLabel}
+        </Typography>
         {pickedFolderId && (
-          <Typography style={{ marginTop: 2, fontSize: 12, fontWeight: 700, color: 'var(--color-primary, #168118)', letterSpacing: '-0.025em' }}>
+          <Typography
+            style={{
+              marginTop: 2,
+              fontSize: 12,
+              fontWeight: 700,
+              color: 'var(--color-primary, #168118)',
+              letterSpacing: '-0.025em',
+            }}
+          >
             {scrollHintLabel}
           </Typography>
         )}
       </Box>
-      <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{foldersCount}</Typography>
+      <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+        {foldersCount}
+      </Typography>
     </Box>
   );
 }
 
-function buildItemProps({ props, folder }: { props: FolderListProps; folder: FolderOption }): FolderItemProps {
+function buildItemProps({
+  props,
+  folder,
+}: { props: FolderListProps; folder: FolderOption }): FolderItemProps {
   return {
-    folder, tags: props.tags, activeFolderId: props.activeFolderId, pickedFolderId: props.pickedFolderId,
-    editingFolderId: props.editingFolderId, editingFolderName: props.editingFolderName,
-    folderTagPickerId: props.folderTagPickerId, folderCount: props.folderCounts.counts[folder.id] ?? 0,
-    dragAndDropLabel: props.dragAndDropLabel, doneLabel: props.doneLabel, fileMovedToLabel: props.fileMovedToLabel,
-    tagsTitle: props.tagsTitle, tagsClearLabel: props.tagsClearLabel,
-    onSetActiveFolderId: props.onSetActiveFolderId, onSetPickedFolderId: props.onSetPickedFolderId,
-    onSetEditingFolderName: props.onSetEditingFolderName, onSetFolderTagPickerId: props.onSetFolderTagPickerId,
-    onRenameFolder: props.onRenameFolder, onCancelEditFolder: props.onCancelEditFolder,
-    onUpdateFolderTag: props.onUpdateFolderTag, onConfirmDeleteFolder: props.onConfirmDeleteFolder,
-    onStartEditFolder: props.onStartEditFolder, onHandleFolderContextMenu: props.onHandleFolderContextMenu,
-    canEditFolder: props.canEditFolder, clampFolderName: props.clampFolderName,
+    folder,
+    tags: props.tags,
+    activeFolderId: props.activeFolderId,
+    pickedFolderId: props.pickedFolderId,
+    editingFolderId: props.editingFolderId,
+    editingFolderName: props.editingFolderName,
+    folderTagPickerId: props.folderTagPickerId,
+    folderCount: props.folderCounts.counts[folder.id] ?? 0,
+    dragAndDropLabel: props.dragAndDropLabel,
+    doneLabel: props.doneLabel,
+    fileMovedToLabel: props.fileMovedToLabel,
+    tagsTitle: props.tagsTitle,
+    tagsClearLabel: props.tagsClearLabel,
+    onSetActiveFolderId: props.onSetActiveFolderId,
+    onSetPickedFolderId: props.onSetPickedFolderId,
+    onSetEditingFolderName: props.onSetEditingFolderName,
+    onSetFolderTagPickerId: props.onSetFolderTagPickerId,
+    onRenameFolder: props.onRenameFolder,
+    onCancelEditFolder: props.onCancelEditFolder,
+    onUpdateFolderTag: props.onUpdateFolderTag,
+    onConfirmDeleteFolder: props.onConfirmDeleteFolder,
+    onStartEditFolder: props.onStartEditFolder,
+    onHandleFolderContextMenu: props.onHandleFolderContextMenu,
+    canEditFolder: props.canEditFolder,
+    clampFolderName: props.clampFolderName,
   };
 }
 
 function FolderListItems({ props }: { props: FolderListProps }): React.JSX.Element {
   const { folders, folderListEmptyLabel } = props;
   if (folders.length === 0) {
-    return <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{folderListEmptyLabel}</Typography>;
+    return (
+      <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+        {folderListEmptyLabel}
+      </Typography>
+    );
   }
-  return <>{folders.map((folder) => <FolderItem key={folder.id} {...buildItemProps({ props, folder })} />)}</>;
+  return (
+    <>
+      {folders.map(folder => (
+        <FolderItem key={folder.id} {...buildItemProps({ props, folder })} />
+      ))}
+    </>
+  );
 }
 
 function FolderListBody(props: FolderListProps): React.JSX.Element {
-  const { files, activeFolderId, folderCounts, foldersAllLabel, foldersNoneLabel, onSetActiveFolderId } = props;
+  const {
+    files,
+    activeFolderId,
+    folderCounts,
+    foldersAllLabel,
+    foldersNoneLabel,
+    onSetActiveFolderId,
+  } = props;
   const isAllActive = activeFolderId === '';
   const isNoFolderActive = activeFolderId === NO_FOLDER;
   return (
-    <Box sx={{ mt: 1.5, px: 0.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxHeight: '45vh', overflowY: 'auto' }}>
-      <Box component="button" type="button" onClick={() => onSetActiveFolderId('')} sx={{
-        ...allBtnBaseSx,
-        bgcolor: isAllActive ? 'rgba(22,129,24,0.1)' : 'transparent',
-        color: isAllActive ? 'primary.main' : 'var(--foreground)',
-        borderColor: isAllActive ? 'rgba(22,129,24,0.4)' : 'var(--muted)',
-      }}>
+    <Box
+      sx={{
+        mt: 1.5,
+        px: 0.5,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+        maxHeight: '45vh',
+        overflowY: 'auto',
+      }}
+    >
+      <Box
+        component="button"
+        type="button"
+        onClick={() => onSetActiveFolderId('')}
+        sx={{
+          ...allBtnBaseSx,
+          bgcolor: isAllActive ? 'rgba(22,129,24,0.1)' : 'transparent',
+          color: isAllActive ? 'primary.main' : 'var(--foreground)',
+          borderColor: isAllActive ? 'rgba(22,129,24,0.4)' : 'var(--muted)',
+        }}
+      >
         <Box component="span">{foldersAllLabel}</Box>
-        <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{files.length}</Typography>
+        <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+          {files.length}
+        </Typography>
       </Box>
-      <DroppableFolderButton isNoFolder active={isNoFolderActive} onClick={() => onSetActiveFolderId(NO_FOLDER)}
-        style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px', fontSize: 14, fontWeight: 500, cursor: 'pointer',
+      <DroppableFolderButton
+        isNoFolder
+        active={isNoFolderActive}
+        onClick={() => onSetActiveFolderId(NO_FOLDER)}
+        style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 16px',
+          fontSize: 14,
+          fontWeight: 500,
+          cursor: 'pointer',
           background: isNoFolderActive ? 'rgba(22,129,24,0.05)' : 'transparent',
-          color: isNoFolderActive ? '#168118' : 'var(--foreground)', border: 'none' }}>
-        <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+          color: isNoFolderActive ? '#168118' : 'var(--foreground)',
+          border: 'none',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <Box component="span">{foldersNoneLabel}</Box>
-          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{folderCounts.noFolder}</Typography>
+          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+            {folderCounts.noFolder}
+          </Typography>
         </Box>
       </DroppableFolderButton>
       <FolderListItems props={props} />
@@ -125,8 +225,12 @@ export function FolderList(props: FolderListProps): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box sx={{ border: '1px solid var(--border-color)', p: 1.5 }}>
-        <FolderListHeader folderListTitleLabel={folderListTitleLabel} pickedFolderId={pickedFolderId}
-          scrollHintLabel={scrollHintLabel} foldersCount={folders.length} />
+        <FolderListHeader
+          folderListTitleLabel={folderListTitleLabel}
+          pickedFolderId={pickedFolderId}
+          scrollHintLabel={scrollHintLabel}
+          foldersCount={folders.length}
+        />
         <FolderListBody {...props} />
       </Box>
     </Box>

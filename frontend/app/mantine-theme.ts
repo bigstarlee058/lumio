@@ -110,7 +110,7 @@ export const getAppSurfaceTokens = (mode: AppThemeMode) => TOKENS[mode];
 export const mantineTheme = createTheme({
   primaryColor: 'ocean',
   primaryShade: { light: 6, dark: 4 },
-  defaultRadius: 'md',
+  defaultRadius: '3px',
   cursorType: 'pointer',
   fontFamily:
     'var(--font-manrope), "Manrope", "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
@@ -134,13 +134,13 @@ export const mantineCssVariablesResolver: CSSVariablesResolver = () => {
 
   return {
     variables: {
-      '--radius': '0.5rem',
-      '--radius-sm': '0.5rem',
-      '--radius-md': '0.5rem',
-      '--radius-lg': '0.5rem',
-      '--radius-xl': '0.5rem',
-      '--radius-2xl': '0.5rem',
-      '--radius-3xl': '0.5rem',
+      '--radius': '3px',
+      '--radius-sm': '3px',
+      '--radius-md': '3px',
+      '--radius-lg': '3px',
+      '--radius-xl': '3px',
+      '--radius-2xl': '3px',
+      '--radius-3xl': '3px',
       '--radius-full': '9999px',
       '--global-nav-height': '104px',
     },

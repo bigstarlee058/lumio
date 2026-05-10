@@ -1,4 +1,3 @@
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -73,7 +72,9 @@ describe('SpendOverTimeCalendar', () => {
 
     expect(container.textContent).toContain('December 2025');
 
-    const previous = container.querySelector('button[aria-label="Previous month"]') as HTMLButtonElement;
+    const previous = container.querySelector(
+      'button[aria-label="Previous month"]',
+    ) as HTMLButtonElement;
     const next = container.querySelector('button[aria-label="Next month"]') as HTMLButtonElement;
     const latest = Array.from(container.querySelectorAll('button')).find(
       button => button.textContent?.trim() === 'Latest',

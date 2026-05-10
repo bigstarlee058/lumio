@@ -307,7 +307,7 @@ export class UniversalDateParser {
         if (result && this.isValidDate(result.date)) {
           return result;
         }
-      } catch (error) {
+      } catch (_error) {
         // Continue to next strategy
       }
     }
@@ -325,7 +325,11 @@ export class UniversalDateParser {
   }
 
   private createDate(year: string | number, month: string | number, day: string | number): Date {
-    return new Date(Number.parseInt(String(year), 10), Number.parseInt(String(month), 10) - 1, Number.parseInt(String(day), 10));
+    return new Date(
+      Number.parseInt(String(year), 10),
+      Number.parseInt(String(month), 10) - 1,
+      Number.parseInt(String(day), 10),
+    );
   }
 
   private parseISO8601(dateString: string): DateParseResult | null {
@@ -360,12 +364,16 @@ export class UniversalDateParser {
 
     for (const loc of locales) {
       const monthData = this.monthNames[loc];
-      if (!monthData) continue;
+      if (!monthData) {
+        continue;
+      }
 
       for (const [monthName, monthNumber] of Object.entries(monthData)) {
         // Create regex for this month name
         const monthRegex = new RegExp(`\\b${monthName}\\b`, 'i');
-        if (!monthRegex.test(dateString)) continue;
+        if (!monthRegex.test(dateString)) {
+          continue;
+        }
 
         // Try different patterns with this month
         const patterns = [

@@ -12,7 +12,6 @@ import {
   EntityType,
   Integration,
   IntegrationProvider,
-  IntegrationStatus,
   IntegrationToken,
   Statement,
   User,
@@ -20,7 +19,6 @@ import {
 import { AuditService } from '../audit/audit.service';
 import { StatementsService } from '../statements/statements.service';
 import type { ImportDropboxFilesDto } from './dto/import-dropbox-files.dto';
-import type { UpdateDropboxSettingsDto } from './dto/update-dropbox-settings.dto';
 
 const DEFAULT_SYNC_TIME = '03:00';
 
@@ -172,7 +170,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   private ensureDropboxConfig() {
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
-    if (!clientId || !clientSecret) {
+    if (!(clientId && clientSecret)) {
       throw new BadRequestException('Dropbox OAuth is not configured');
     }
     return { clientId, clientSecret };
@@ -181,18 +179,20 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   getAuthUrl(user: User): string {
     const clientId = this.getClientId();
     const redirectUri = this.getRedirectUri();
-    if (!clientId || !redirectUri) {
+    if (!(clientId && redirectUri)) {
       throw new BadRequestException('Dropbox OAuth is not configured');
     }
 
-    return this.buildProviderAuthUrl(user, state =>
-      `https://www.dropbox.com/oauth2/authorize?${new URLSearchParams({
-        client_id: clientId,
-        redirect_uri: redirectUri,
-        response_type: 'code',
-        token_access_type: 'offline',
-        state,
-      }).toString()}`,
+    return this.buildProviderAuthUrl(
+      user,
+      state =>
+        `https://www.dropbox.com/oauth2/authorize?${new URLSearchParams({
+          client_id: clientId,
+          redirect_uri: redirectUri,
+          response_type: 'code',
+          token_access_type: 'offline',
+          state,
+        }).toString()}`,
     );
   }
 
@@ -227,7 +227,7 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     const accessToken = tokenResponse.access_token || '';
     const refreshToken = tokenResponse.refresh_token || '';
 
-    if (!accessToken && !refreshToken) {
+    if (!(accessToken || refreshToken)) {
       return `${redirectBase}?status=error&reason=missing_tokens`;
     }
 
@@ -354,9 +354,15 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
     if (typeof client !== 'string' && client.filesDownload) {
       const response = await client.filesDownload({ path });
       const binary = response.result.fileBinary;
-      if (Buffer.isBuffer(binary)) return binary;
-      if (binary instanceof Uint8Array) return Buffer.from(binary);
-      if (binary instanceof ArrayBuffer) return Buffer.from(binary);
+      if (Buffer.isBuffer(binary)) {
+        return binary;
+      }
+      if (binary instanceof Uint8Array) {
+        return Buffer.from(binary);
+      }
+      if (binary instanceof ArrayBuffer) {
+        return Buffer.from(binary);
+      }
       return Buffer.from([]);
     }
 
@@ -367,7 +373,9 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
   }
 
   private async ensureDefaultFolder(integration: Integration, settings: DropboxSettings) {
-    if (settings.folderId) return settings;
+    if (settings.folderId) {
+      return settings;
+    }
     const client = await this.getDropboxClientWithAuth(integration);
 
     try {
@@ -375,8 +383,8 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
         this.requireAccessToken(client),
         'files/create_folder_v2',
         {
-        path: '/Lumio',
-        autorename: false,
+          path: '/Lumio',
+          autorename: false,
         },
       );
 
@@ -493,7 +501,9 @@ export class DropboxService extends CloudStorageBaseService<DropboxSettings> {
           fileName,
         );
 
-        const uploadPath = settings.folderId ? `${settings.folderId}/${dropboxName}` : `/${dropboxName}`;
+        const uploadPath = settings.folderId
+          ? `${settings.folderId}/${dropboxName}`
+          : `/${dropboxName}`;
         const chunks: Buffer[] = [];
         for await (const chunk of stream) {
           chunks.push(Buffer.from(chunk));

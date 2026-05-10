@@ -66,7 +66,9 @@ export function useUsersManagement(errorMessages: {
   };
 
   const handleSavePermissions = async (): Promise<void> => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
     setSaving(true);
     try {
       await apiClient.put(`/users/${editingUser.id}/permissions`, {
@@ -84,7 +86,9 @@ export function useUsersManagement(errorMessages: {
   };
 
   const handleResetPermissions = async (): Promise<void> => {
-    if (!editingUser) return;
+    if (!editingUser) {
+      return;
+    }
     setSaving(true);
     try {
       await apiClient.post(`/users/${editingUser.id}/permissions/reset`);

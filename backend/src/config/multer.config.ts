@@ -1,7 +1,6 @@
-import * as fs from 'fs';
+import { randomUUID } from 'node:crypto';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
-import { randomUUID } from 'node:crypto';
 import { resolveUploadsDir } from '../common/utils/uploads.util';
 
 // Allow overriding upload dir for production (e.g. mounted volume)

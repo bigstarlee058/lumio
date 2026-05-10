@@ -32,7 +32,9 @@ export interface StorageFolderState {
   folderFileQuery: string;
   setFolderFileQuery: React.Dispatch<React.SetStateAction<string>>;
   folderContextMenu: { x: number; y: number; folder: FolderOption } | null;
-  setFolderContextMenu: React.Dispatch<React.SetStateAction<{ x: number; y: number; folder: FolderOption } | null>>;
+  setFolderContextMenu: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number; folder: FolderOption } | null>
+  >;
   pickedFolderId: string | null;
   setPickedFolderId: React.Dispatch<React.SetStateAction<string | null>>;
   setFolderMoveMessage: (tone: 'success' | 'error', message: string) => void;
@@ -52,35 +54,68 @@ export function useStorageFolderState(): StorageFolderState {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const [folderFileQuery, setFolderFileQuery] = useState('');
   const [folderContextMenu, setFolderContextMenu] = useState<{
-    x: number; y: number; folder: FolderOption;
+    x: number;
+    y: number;
+    folder: FolderOption;
   } | null>(null);
   const [pickedFolderId, setPickedFolderId] = useState<string | null>(null);
   const feedbackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearFolderMoveFeedback = useCallback((): void => {
-    if (feedbackTimeout.current) { clearTimeout(feedbackTimeout.current); feedbackTimeout.current = null; }
+    if (feedbackTimeout.current) {
+      clearTimeout(feedbackTimeout.current);
+      feedbackTimeout.current = null;
+    }
     setFolderMoveFeedback(null);
   }, []);
 
-  const setFolderMoveMessage = useCallback((tone: 'success' | 'error', message: string): void => {
-    clearFolderMoveFeedback();
-    setFolderMoveFeedback({ tone, message });
-    feedbackTimeout.current = setTimeout(() => { setFolderMoveFeedback(null); feedbackTimeout.current = null; }, 3500);
-  }, [clearFolderMoveFeedback]);
+  const setFolderMoveMessage = useCallback(
+    (tone: 'success' | 'error', message: string): void => {
+      clearFolderMoveFeedback();
+      setFolderMoveFeedback({ tone, message });
+      feedbackTimeout.current = setTimeout(() => {
+        setFolderMoveFeedback(null);
+        feedbackTimeout.current = null;
+      }, 3500);
+    },
+    [clearFolderMoveFeedback],
+  );
 
   return {
-    folders, setFolders, newFolderName, setNewFolderName, editingFolderId, setEditingFolderId,
-    editingFolderName, setEditingFolderName, folderTagPickerId, setFolderTagPickerId,
-    deleteFolderModalOpen, setDeleteFolderModalOpen, folderToDelete, setFolderToDelete,
-    deleteFolderWithContents, setDeleteFolderWithContents, folderMoveFeedback,
-    activeFolderId, setActiveFolderId, folderFileQuery, setFolderFileQuery,
-    folderContextMenu, setFolderContextMenu, pickedFolderId, setPickedFolderId,
-    setFolderMoveMessage, clearFolderMoveFeedback,
+    folders,
+    setFolders,
+    newFolderName,
+    setNewFolderName,
+    editingFolderId,
+    setEditingFolderId,
+    editingFolderName,
+    setEditingFolderName,
+    folderTagPickerId,
+    setFolderTagPickerId,
+    deleteFolderModalOpen,
+    setDeleteFolderModalOpen,
+    folderToDelete,
+    setFolderToDelete,
+    deleteFolderWithContents,
+    setDeleteFolderWithContents,
+    folderMoveFeedback,
+    activeFolderId,
+    setActiveFolderId,
+    folderFileQuery,
+    setFolderFileQuery,
+    folderContextMenu,
+    setFolderContextMenu,
+    pickedFolderId,
+    setPickedFolderId,
+    setFolderMoveMessage,
+    clearFolderMoveFeedback,
   };
 }
 
 export function useFolderWheelReorder({
-  pickedFolderId, isFolderModalOpen, setFolders,
+  pickedFolderId,
+  isFolderModalOpen,
+  setFolders,
 }: {
   pickedFolderId: string | null;
   isFolderModalOpen: boolean;
@@ -88,15 +123,23 @@ export function useFolderWheelReorder({
 }): void {
   const lastWheelTime = useRef<number>(0);
   useEffect(() => {
-    if (!pickedFolderId || !isFolderModalOpen) return undefined;
+    if (!(pickedFolderId && isFolderModalOpen)) {
+      return undefined;
+    }
     const handleWheel = (e: WheelEvent): void => {
       const now = Date.now();
-      if (now - lastWheelTime.current < 80 || Math.abs(e.deltaY) < 10) return;
-      setFolders((prev) => {
-        const idx = prev.findIndex((f) => f.id === pickedFolderId);
-        if (idx === -1) return prev;
+      if (now - lastWheelTime.current < 80 || Math.abs(e.deltaY) < 10) {
+        return;
+      }
+      setFolders(prev => {
+        const idx = prev.findIndex(f => f.id === pickedFolderId);
+        if (idx === -1) {
+          return prev;
+        }
         const nextIdx = e.deltaY > 0 ? idx + 1 : idx - 1;
-        if (nextIdx < 0 || nextIdx >= prev.length) return prev;
+        if (nextIdx < 0 || nextIdx >= prev.length) {
+          return prev;
+        }
         lastWheelTime.current = now;
         const next = [...prev];
         const [moved] = next.splice(idx, 1);
@@ -110,17 +153,25 @@ export function useFolderWheelReorder({
 }
 
 export function useFolderContextMenuDismiss({
-  folderContextMenu, setFolderContextMenu,
+  folderContextMenu,
+  setFolderContextMenu,
 }: {
   folderContextMenu: { x: number; y: number; folder: FolderOption } | null;
-  setFolderContextMenu: React.Dispatch<React.SetStateAction<{ x: number; y: number; folder: FolderOption } | null>>;
+  setFolderContextMenu: React.Dispatch<
+    React.SetStateAction<{ x: number; y: number; folder: FolderOption } | null>
+  >;
 }): void {
   useEffect(() => {
     const hide = (): void => setFolderContextMenu(null);
-    if (!folderContextMenu) return undefined;
+    if (!folderContextMenu) {
+      return undefined;
+    }
     window.addEventListener('click', hide);
     window.addEventListener('scroll', hide, true);
-    return () => { window.removeEventListener('click', hide); window.removeEventListener('scroll', hide, true); };
+    return () => {
+      window.removeEventListener('click', hide);
+      window.removeEventListener('scroll', hide, true);
+    };
   }, [folderContextMenu, setFolderContextMenu]);
 }
 
@@ -130,14 +181,19 @@ export function buildMoveFolderIdx(
   folderUpdatedMsg: string,
 ): (fromId: string, toIdx: number, finalize?: boolean) => void {
   return (fromId: string, toIdx: number, finalize = true): void => {
-    setFolders((prev) => {
-      const fromIdx = prev.findIndex((f) => f.id === fromId);
-      if (fromIdx === -1) return prev;
+    setFolders(prev => {
+      const fromIdx = prev.findIndex(f => f.id === fromId);
+      if (fromIdx === -1) {
+        return prev;
+      }
       const next = [...prev];
       const [moved] = next.splice(fromIdx, 1);
       next.splice(toIdx, 0, moved);
       return next;
     });
-    if (finalize) { setPickedFolderId(null); toast.success(folderUpdatedMsg); }
+    if (finalize) {
+      setPickedFolderId(null);
+      toast.success(folderUpdatedMsg);
+    }
   };
 }

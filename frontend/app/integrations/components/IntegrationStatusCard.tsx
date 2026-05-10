@@ -1,11 +1,11 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { Box, Button, Stack, Typography } from '@mui/material';
 import { CheckCircle2, Link2Off, RefreshCcw, XCircle } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 import type { IntegrationStatus } from '../types';
-import { tokens } from '@/lib/theme-tokens';
 
 type IntegrationStatusCardProps = {
   status: IntegrationStatus | null;
@@ -64,7 +64,9 @@ export function IntegrationStatusCard({
             <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
               {title}
             </Typography>
-            <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{statusLabel}</Typography>
+            <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+              {statusLabel}
+            </Typography>
           </Box>
         </Box>
 
@@ -103,11 +105,7 @@ export function IntegrationStatusCard({
                   onClick={onDisconnect}
                   disabled={saving}
                   startIcon={
-                    saving ? (
-                      <Spinner size={16} />
-                    ) : (
-                      <Link2Off style={{ height: 16, width: 16 }} />
-                    )
+                    saving ? <Spinner size={16} /> : <Link2Off style={{ height: 16, width: 16 }} />
                   }
                   sx={{
                     borderRadius: tokens.radius.md,
@@ -129,11 +127,7 @@ export function IntegrationStatusCard({
                 onClick={onConnect}
                 disabled={saving}
                 startIcon={
-                  saving ? (
-                    <Spinner size={16} />
-                  ) : (
-                    <RefreshCcw style={{ height: 16, width: 16 }} />
-                  )
+                  saving ? <Spinner size={16} /> : <RefreshCcw style={{ height: 16, width: 16 }} />
                 }
                 sx={{
                   borderRadius: tokens.radius.md,
@@ -149,7 +143,12 @@ export function IntegrationStatusCard({
 
           {!status?.connected && disconnectedHint && (
             <Typography
-              style={{ fontSize: 12, color: 'var(--muted-foreground)', maxWidth: 280, textAlign: 'right' }}
+              style={{
+                fontSize: 12,
+                color: 'var(--muted-foreground)',
+                maxWidth: 280,
+                textAlign: 'right',
+              }}
             >
               {disconnectedHint}
             </Typography>

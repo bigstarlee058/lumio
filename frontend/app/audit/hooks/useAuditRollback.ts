@@ -16,16 +16,26 @@ export type RollbackState = {
 
 type RollbackParams = { onAfterRollback: () => unknown; onCloseDrawer: () => void };
 
-export function useAuditRollback({ onAfterRollback, onCloseDrawer }: RollbackParams): RollbackState {
+export function useAuditRollback({
+  onAfterRollback,
+  onCloseDrawer,
+}: RollbackParams): RollbackState {
   const [rollbackTarget, setRollbackTarget] = useState<AuditEvent | null>(null);
   const [rollbackLoading, setRollbackLoading] = useState(false);
   const [rollbackError, setRollbackError] = useState<string | null>(null);
 
-  const handleRollback = (event: AuditEvent): void => { setRollbackTarget(event); setRollbackError(null); };
-  const cancelRollback = (): void => { setRollbackTarget(null); };
+  const handleRollback = (event: AuditEvent): void => {
+    setRollbackTarget(event);
+    setRollbackError(null);
+  };
+  const cancelRollback = (): void => {
+    setRollbackTarget(null);
+  };
 
   const confirmRollback = async (): Promise<void> => {
-    if (!rollbackTarget) return;
+    if (!rollbackTarget) {
+      return;
+    }
     setRollbackLoading(true);
     setRollbackError(null);
     try {
@@ -42,5 +52,12 @@ export function useAuditRollback({ onAfterRollback, onCloseDrawer }: RollbackPar
     }
   };
 
-  return { rollbackTarget, rollbackLoading, rollbackError, handleRollback, confirmRollback, cancelRollback };
+  return {
+    rollbackTarget,
+    rollbackLoading,
+    rollbackError,
+    handleRollback,
+    confirmRollback,
+    cancelRollback,
+  };
 }

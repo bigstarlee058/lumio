@@ -103,7 +103,7 @@ export const extractAmountFragments = (
   line: string,
   includeNumbersWithoutCurrency: boolean,
   currencyTokenPattern: string,
-  numberPattern = NUMBER_PATTERN,
+  _numberPattern = NUMBER_PATTERN,
 ): string[] => {
   const withCurrencyPattern = new RegExp(
     `${currencyTokenPattern}\\s*(?:${NUMBER_PATTERN})|(?:${NUMBER_PATTERN})\\s*${currencyTokenPattern}`,
@@ -137,9 +137,7 @@ export const extractLineItemsFromLines = async (args: {
   numberPattern: string;
   hasTotalKeyword: (line: string) => boolean;
   isTaxLine?: (line: string) => boolean;
-  parseAmountFragment: (
-    fragment: string,
-  ) => Promise<{ amount: number; currency?: string } | null>;
+  parseAmountFragment: (fragment: string) => Promise<{ amount: number; currency?: string } | null>;
   extractCurrency: (text: string) => string | undefined;
   skipTaxLines?: boolean;
 }): Promise<Array<{ description: string; amount: number }>> => {

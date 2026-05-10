@@ -36,6 +36,14 @@
   --surface-success-glow: #{$color-surface-success-glow};
   --text-primary:       #{$lumio-color-text-primary};
   --text-secondary:     #{$lumio-color-text-secondary};
+  --radius:             #{$lumio-radius-md};
+  --radius-sm:          #{$lumio-radius-sm};
+  --radius-md:          #{$lumio-radius-md};
+  --radius-lg:          #{$lumio-radius-lg};
+  --radius-xl:          #{$lumio-radius-xl};
+  --radius-2xl:         #{$lumio-radius-xl};
+  --radius-3xl:         #{$lumio-radius-xl};
+  --radius-full:        #{$lumio-radius-full};
 
   /* Dashboard palette */
   --ff-dash-primary:       #{$ff-dash-primary};
@@ -99,6 +107,14 @@
   --surface-success-glow: rgba(52, 211, 153, 0.2);
   --text-primary:       #{$lumio-color-text-primary-dk};
   --text-secondary:     #{$lumio-color-text-secondary-dk};
+  --radius:             #{$lumio-radius-md};
+  --radius-sm:          #{$lumio-radius-sm};
+  --radius-md:          #{$lumio-radius-md};
+  --radius-lg:          #{$lumio-radius-lg};
+  --radius-xl:          #{$lumio-radius-xl};
+  --radius-2xl:         #{$lumio-radius-xl};
+  --radius-3xl:         #{$lumio-radius-xl};
+  --radius-full:        #{$lumio-radius-full};
 
   /* ── Semantic soft status palette (dark) ── */
   --color-warning-soft-bg:     rgba(245, 158, 11, 0.12);
@@ -225,6 +241,43 @@ input[type='checkbox']:not(.PrivateSwitchBase-input) {
 // ── Layout utility classes ────────────────────────────────────
 .container-shared { width: 100%; }
 .bg-white { background-color: $color-card-bg !important; }
+
+// ── Radius normalization for rectangular controls ────────────
+button,
+select,
+textarea,
+input:not([type='checkbox']):not([type='radio']) {
+  border-radius: $lumio-radius-md !important;
+}
+
+.rounded,
+.rounded-sm,
+.rounded-md,
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl {
+  border-radius: $lumio-radius-md !important;
+}
+
+.MuiButton-root,
+.MuiIconButton-root,
+.MuiOutlinedInput-root,
+.MuiFilledInput-root,
+.MuiInputBase-root,
+.MuiTextField-root,
+.MuiSelect-root {
+  border-radius: $lumio-radius-md !important;
+}
+
+button[data-statements-fab-interactive="true"] {
+  border-radius: $lumio-radius-full !important;
+}
+
+.lumio-bottom-bar__fab,
+.lumio-bottom-bar__fab-action {
+  border-radius: $lumio-radius-full !important;
+}
 
 // ── Body state classes ────────────────────────────────────────
 body.body-scroll-locked {

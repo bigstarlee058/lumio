@@ -1,5 +1,5 @@
-import type React from 'react';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
+import type React from 'react';
 import { ProtocolIntegrationPage } from '../open-protocol-page';
 
 export default function AppUrlIntegrationPage(): React.JSX.Element {

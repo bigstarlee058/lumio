@@ -1,22 +1,24 @@
 'use client';
 
 import { Download } from '@/app/components/icons';
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { AuditEventDrawer } from './components/AuditEventDrawer';
 import { AuditFilterBar } from './components/AuditFilterBar';
 import { AuditRollbackModal } from './components/AuditRollbackModal';
 import { AuditTimeline } from './components/AuditTimeline';
 import { useAuditLoader } from './hooks/useAuditLoader';
 import { useAuditRollback } from './hooks/useAuditRollback';
-import { tokens } from '@/lib/theme-tokens';
 
 export default function AuditPage() {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   const loader = useAuditLoader();
-  const [selectedEvent, setSelectedEvent] = useState<import('@/lib/api/audit').AuditEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<import('@/lib/api/audit').AuditEvent | null>(
+    null,
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const rollback = useAuditRollback({
@@ -41,7 +43,8 @@ export default function AuditPage() {
         <div>
           <h1 className="audit-page__title">Activity log</h1>
           <p className="audit-page__subtitle">
-            Complete trail of what happened in your workspace. One-click rollback for supported operations.
+            Complete trail of what happened in your workspace. One-click rollback for supported
+            operations.
           </p>
         </div>
         <button
@@ -92,7 +95,9 @@ export default function AuditPage() {
       {/* Timeline */}
       <div className="audit-timeline-card">
         {loader.loading ? (
-          <div className="audit-empty" style={{ padding: '32px 0' }}>Loading…</div>
+          <div className="audit-empty" style={{ padding: '32px 0' }}>
+            Loading…
+          </div>
         ) : (
           <AuditTimeline
             events={loader.events}

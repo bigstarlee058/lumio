@@ -20,11 +20,20 @@ export function buildEventRow(event: AuditEvent, batchId: string | null): AuditT
 
 export function buildBatchGroup(batchId: string, batchEvents: AuditEvent[]): BatchGroupResult {
   const sorted = [...batchEvents].sort(sortByDate);
-  const group: AuditTableRow = { type: 'group', id: `batch-${batchId}`, batchId, count: batchEvents.length, createdAt: sorted[0]?.createdAt ?? new Date().toISOString() };
+  const group: AuditTableRow = {
+    type: 'group',
+    id: `batch-${batchId}`,
+    batchId,
+    count: batchEvents.length,
+    createdAt: sorted[0]?.createdAt ?? new Date().toISOString(),
+  };
   return { group, sorted };
 }
 
-export function buildGroupedData(events: AuditEvent[], expandedBatches: Set<string>): AuditTableRow[] {
+export function buildGroupedData(
+  events: AuditEvent[],
+  expandedBatches: Set<string>,
+): AuditTableRow[] {
   const rows: AuditTableRow[] = [];
   const batchGroups = new Map<string, AuditEvent[]>();
   for (const event of events) {
@@ -40,7 +49,9 @@ export function buildGroupedData(events: AuditEvent[], expandedBatches: Set<stri
     const { group, sorted } = buildBatchGroup(batchId, batchEvents);
     rows.push(group);
     if (expandedBatches.has(batchId)) {
-      sorted.forEach(event => { rows.push(buildEventRow(event, batchId)); });
+      sorted.forEach(event => {
+        rows.push(buildEventRow(event, batchId));
+      });
     }
   }
   return rows.sort(sortRowsByDate);

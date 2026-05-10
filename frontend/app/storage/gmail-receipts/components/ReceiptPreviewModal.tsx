@@ -1,10 +1,10 @@
 'use client';
 
-import { gmailReceiptsApi } from '@/app/lib/api';
-import { Box, IconButton, Typography } from '@mui/material';
 import { X, ZoomIn, ZoomOut } from '@/app/components/icons';
-import { useEffect, useState } from 'react';
+import { gmailReceiptsApi } from '@/app/lib/api';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, IconButton, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 interface ReceiptPreviewModalProps {
   receiptId: string;
@@ -24,7 +24,10 @@ interface ReceiptPreviewResponse {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalProps): React.JSX.Element {
+export function ReceiptPreviewModal({
+  receiptId,
+  onClose,
+}: ReceiptPreviewModalProps): React.JSX.Element {
   const [preview, setPreview] = useState<ReceiptPreviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [zoom, setZoom] = useState(100);
@@ -70,7 +73,9 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
   const renderPreviewContent = (): React.JSX.Element => {
     if (loading) {
       return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+        >
           <Typography style={{ color: 'var(--muted-foreground)' }}>Loading preview...</Typography>
         </Box>
       );
@@ -78,8 +83,12 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
 
     if (!preview) {
       return (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography style={{ color: 'var(--muted-foreground)' }}>Failed to load preview</Typography>
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+        >
+          <Typography style={{ color: 'var(--muted-foreground)' }}>
+            Failed to load preview
+          </Typography>
         </Box>
       );
     }
@@ -96,15 +105,35 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
             const dataUrl = `data:${attachment.mimeType};base64,${base64Data}`;
 
             return (
-              <Box key={`${attachment.filename}-${idx}`} sx={{ bgcolor: 'background.paper', border: '1px solid var(--border-color)', borderRadius: tokens.radius.lg }}>
-                <Box sx={{ p: 1.5, borderBottom: '1px solid var(--border-color)', bgcolor: 'var(--muted)' }}>
-                  <Typography style={{ fontSize: 14, fontWeight: 500 }}>{attachment.filename}</Typography>
+              <Box
+                key={`${attachment.filename}-${idx}`}
+                sx={{
+                  bgcolor: 'background.paper',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: tokens.radius.lg,
+                }}
+              >
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderBottom: '1px solid var(--border-color)',
+                    bgcolor: 'var(--muted)',
+                  }}
+                >
+                  <Typography style={{ fontSize: 14, fontWeight: 500 }}>
+                    {attachment.filename}
+                  </Typography>
                 </Box>
                 <Box sx={{ p: 2 }}>
                   {isPdf ? (
                     <iframe
                       src={dataUrl}
-                      style={{ width: '100%', height: 600, border: '1px solid var(--border-color)', borderRadius: tokens.radius.md }}
+                      style={{
+                        width: '100%',
+                        height: 600,
+                        border: '1px solid var(--border-color)',
+                        borderRadius: tokens.radius.md,
+                      }}
                       title={attachment.filename}
                     />
                   ) : isImage ? (
@@ -116,7 +145,9 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
                   ) : (
                     <Box sx={{ textAlign: 'center', color: 'var(--muted-foreground)', py: 4 }}>
                       <Typography>Preview not available for this file type</Typography>
-                      <Typography style={{ fontSize: 14, marginTop: 8 }}>{attachment.mimeType}</Typography>
+                      <Typography style={{ fontSize: 14, marginTop: 8 }}>
+                        {attachment.mimeType}
+                      </Typography>
                     </Box>
                   )}
                 </Box>
@@ -129,7 +160,14 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
 
     if (preview.emailBody) {
       return (
-        <Box sx={{ bgcolor: 'background.paper', border: '1px solid var(--border-color)', borderRadius: tokens.radius.lg, overflow: 'hidden' }}>
+        <Box
+          sx={{
+            bgcolor: 'background.paper',
+            border: '1px solid var(--border-color)',
+            borderRadius: tokens.radius.lg,
+            overflow: 'hidden',
+          }}
+        >
           <iframe
             title="Receipt email preview"
             style={{ width: '100%', height: 600, border: 'none' }}
@@ -143,7 +181,9 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
     return (
       <Box sx={{ textAlign: 'center', color: 'var(--muted-foreground)', py: 4 }}>
         <Typography>No preview available</Typography>
-        {preview.snippet ? <Typography style={{ marginTop: 8, fontSize: 14 }}>{preview.snippet}</Typography> : null}
+        {preview.snippet ? (
+          <Typography style={{ marginTop: 8, fontSize: 14 }}>{preview.snippet}</Typography>
+        ) : null}
       </Box>
     );
   };
@@ -179,17 +219,42 @@ export function ReceiptPreviewModal({ receiptId, onClose }: ReceiptPreviewModalP
           flexDirection: 'column',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2, borderBottom: '1px solid var(--border-color)' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            p: 2,
+            borderBottom: '1px solid var(--border-color)',
+          }}
+        >
           <Typography style={{ fontSize: 18, fontWeight: 700 }}>Receipt Preview</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton size="small" onClick={handleZoomOut} title="Zoom Out" sx={{ borderRadius: tokens.radius.sm }}>
+            <IconButton
+              size="small"
+              onClick={handleZoomOut}
+              title="Zoom Out"
+              sx={{ borderRadius: tokens.radius.sm }}
+            >
               <ZoomOut style={{ width: 20, height: 20 }} />
             </IconButton>
-            <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>{zoom}%</Typography>
-            <IconButton size="small" onClick={handleZoomIn} title="Zoom In" sx={{ borderRadius: tokens.radius.sm }}>
+            <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+              {zoom}%
+            </Typography>
+            <IconButton
+              size="small"
+              onClick={handleZoomIn}
+              title="Zoom In"
+              sx={{ borderRadius: tokens.radius.sm }}
+            >
               <ZoomIn style={{ width: 20, height: 20 }} />
             </IconButton>
-            <IconButton size="small" onClick={onClose} title="Close" sx={{ ml: 2, borderRadius: tokens.radius.sm }}>
+            <IconButton
+              size="small"
+              onClick={onClose}
+              title="Close"
+              sx={{ ml: 2, borderRadius: tokens.radius.sm }}
+            >
               <X style={{ width: 20, height: 20 }} />
             </IconButton>
           </Box>

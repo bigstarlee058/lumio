@@ -1,7 +1,7 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import { Copy } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
 
 interface StatementsDuplicateGroupProps {
   loading: boolean;
@@ -16,7 +16,9 @@ export function StatementsDuplicateGroup({
   selectDuplicatesLabel,
   onSelectDetectedDuplicates,
 }: StatementsDuplicateGroupProps): React.JSX.Element | null {
-  if (!loading && duplicateStatementIds.length === 0) return null;
+  if (!loading && duplicateStatementIds.length === 0) {
+    return null;
+  }
 
   return (
     <button

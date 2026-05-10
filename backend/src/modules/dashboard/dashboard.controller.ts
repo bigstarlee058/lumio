@@ -24,7 +24,7 @@ export class DashboardController {
 
   @Get('trends')
   async getTrends(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('days', new DefaultValuePipe(30), ParseIntPipe) days: number,
   ) {

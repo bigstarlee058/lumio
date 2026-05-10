@@ -78,7 +78,9 @@ export function useStorageFilters(
 
   const handleSortChange = (value: string) => {
     const [field, direction] = value.split(':') as [SortField, SortDirection];
-    if (!field || !direction) return;
+    if (!(field && direction)) {
+      return;
+    }
     setSort({ field, direction });
     setActiveViewId(null);
   };

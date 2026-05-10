@@ -1,9 +1,12 @@
 'use client';
 
+import { Send as SendIcon } from '@/app/components/icons';
+import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { useAuth } from '@/app/hooks/useAuth';
 import apiClient from '@/app/lib/api';
 import { normalizeAvatarUrl } from '@/app/lib/avatar-url';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -13,8 +16,6 @@ import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { Send as SendIcon } from '@/app/components/icons';
-import { ChevronDown, MailPlus, MoreHorizontal, Search, Users } from '@/app/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -22,7 +23,6 @@ import {
   type MemberSortBy,
   filterAndSortMembers,
 } from './workspace-members.utils';
-import { tokens } from '@/lib/theme-tokens';
 
 type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
 
@@ -97,8 +97,16 @@ const PERMISSION_LABELS: Record<keyof InvitePermissions, string> = {
 };
 
 const ROLE_COLORS: Record<string, { bg: string; color: string; border: string }> = {
-  owner: { bg: 'rgba(var(--primary-rgb,22,129,24),0.1)', color: 'var(--primary)', border: 'rgba(var(--primary-rgb,22,129,24),0.2)' },
-  admin: { bg: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: 'var(--color-info-soft-border)' },
+  owner: {
+    bg: 'rgba(var(--primary-rgb,22,129,24),0.1)',
+    color: 'var(--primary)',
+    border: 'rgba(var(--primary-rgb,22,129,24),0.2)',
+  },
+  admin: {
+    bg: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+    border: 'var(--color-info-soft-border)',
+  },
   member: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
   viewer: { bg: 'var(--muted)', color: 'var(--foreground)', border: 'var(--border-color)' },
 };
@@ -126,15 +134,21 @@ const getInitials = (value?: string) =>
     .join('');
 
 const getApiMessage = (err: unknown, fallback: string) => {
-  if (!err || typeof err !== 'object') return fallback;
+  if (!err || typeof err !== 'object') {
+    return fallback;
+  }
   const response = (err as { response?: { data?: { message?: string } } }).response;
   return response?.data?.message ?? fallback;
 };
 
 const formatDate = (value?: string) => {
-  if (!value) return 'N/A';
+  if (!value) {
+    return 'N/A';
+  }
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'N/A';
+  if (Number.isNaN(date.getTime())) {
+    return 'N/A';
+  }
 
   return date.toLocaleDateString(undefined, {
     year: 'numeric',
@@ -163,8 +177,12 @@ export default function WorkspaceMembersView() {
   const [sortBy, setSortBy] = useState<MemberSortBy>('name');
   const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
   const [roleMenuAnchor, setRoleMenuAnchor] = useState<null | HTMLElement>(null);
-  const [memberMenuAnchorMap, setMemberMenuAnchorMap] = useState<Record<string, HTMLElement | null>>({});
-  const [roleMenuAnchorMap, setRoleMenuAnchorMap] = useState<Record<string, HTMLElement | null>>({});
+  const [memberMenuAnchorMap, setMemberMenuAnchorMap] = useState<
+    Record<string, HTMLElement | null>
+  >({});
+  const [roleMenuAnchorMap, setRoleMenuAnchorMap] = useState<Record<string, HTMLElement | null>>(
+    {},
+  );
   const [invitePermissions, setInvitePermissions] = useState<InvitePermissions>({
     canEditStatements: true,
     canEditCustomTables: true,
@@ -209,10 +227,18 @@ export default function WorkspaceMembersView() {
   }, []);
 
   const canRemoveMember = (member: WorkspaceOverview['members'][number]) => {
-    if (!overview) return false;
-    if (!isOwnerOrAdmin) return false;
-    if (member.role === 'owner') return false;
-    if (member.id === user?.id) return false;
+    if (!overview) {
+      return false;
+    }
+    if (!isOwnerOrAdmin) {
+      return false;
+    }
+    if (member.role === 'owner') {
+      return false;
+    }
+    if (member.id === user?.id) {
+      return false;
+    }
 
     if (overview.workspace.ownerId === user?.id) {
       return true;
@@ -222,8 +248,12 @@ export default function WorkspaceMembersView() {
   };
 
   const getAllowedRoleTargets = (member: WorkspaceOverview['members'][number]): WorkspaceRole[] => {
-    if (!isOwnerOrAdmin) return [];
-    if (member.id === user?.id) return [];
+    if (!isOwnerOrAdmin) {
+      return [];
+    }
+    if (member.id === user?.id) {
+      return [];
+    }
 
     if (isWorkspaceOwner) {
       return ALL_ROLES;
@@ -239,7 +269,9 @@ export default function WorkspaceMembersView() {
   const handleInvite = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!overview?.workspace.id) return;
+    if (!overview?.workspace.id) {
+      return;
+    }
 
     setInviteLoading(true);
     try {
@@ -263,8 +295,12 @@ export default function WorkspaceMembersView() {
     member: WorkspaceOverview['members'][number],
     nextRole: WorkspaceRole,
   ) => {
-    if (!overview?.workspace.id) return;
-    if (member.role === nextRole) return;
+    if (!overview?.workspace.id) {
+      return;
+    }
+    if (member.role === nextRole) {
+      return;
+    }
 
     const affectsOwnerRole = member.role === 'owner' || nextRole === 'owner';
     if (
@@ -289,7 +325,9 @@ export default function WorkspaceMembersView() {
   };
 
   const handleRemoveMember = async (memberId: string) => {
-    if (!overview?.workspace.id) return;
+    if (!overview?.workspace.id) {
+      return;
+    }
 
     setRemovingMemberId(memberId);
     try {
@@ -304,7 +342,9 @@ export default function WorkspaceMembersView() {
   };
 
   const handleResendInvitation = async (invite: WorkspaceOverview['invitations'][number]) => {
-    if (!overview?.workspace.id) return;
+    if (!overview?.workspace.id) {
+      return;
+    }
 
     setResendingInvitationId(invite.id);
     try {
@@ -323,8 +363,12 @@ export default function WorkspaceMembersView() {
   };
 
   const handleRevokeInvitation = async (invitationId: string) => {
-    if (!overview?.workspace.id) return;
-    if (!window.confirm('Revoke this invitation?')) return;
+    if (!overview?.workspace.id) {
+      return;
+    }
+    if (!window.confirm('Revoke this invitation?')) {
+      return;
+    }
 
     setRevokingInvitationId(invitationId);
     try {
@@ -343,12 +387,16 @@ export default function WorkspaceMembersView() {
     action: string,
   ) => {
     if (action === 'remove') {
-      if (!window.confirm('Remove this member from workspace?')) return;
+      if (!window.confirm('Remove this member from workspace?')) {
+        return;
+      }
       await handleRemoveMember(member.id);
       return;
     }
 
-    if (!action.startsWith('role:')) return;
+    if (!action.startsWith('role:')) {
+      return;
+    }
 
     const role = action.replace('role:', '') as WorkspaceRole;
     await handleChangeMemberRole(member, role);
@@ -366,9 +414,24 @@ export default function WorkspaceMembersView() {
 
   if (loading) {
     return (
-      <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+      <Box
+        sx={{
+          height: 'calc(100vh - var(--global-nav-height, 0px))',
+          overflowY: 'auto',
+          bgcolor: 'var(--background)',
+        }}
+      >
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, fontSize: 14, color: 'var(--muted-foreground)' }}>
+          <Box
+            sx={{
+              border: '1px solid var(--border)',
+              borderRadius: tokens.radius.lg,
+              bgcolor: 'var(--card)',
+              p: 3,
+              fontSize: 14,
+              color: 'var(--muted-foreground)',
+            }}
+          >
             Loading members...
           </Box>
         </Box>
@@ -378,9 +441,24 @@ export default function WorkspaceMembersView() {
 
   if (!overview) {
     return (
-      <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+      <Box
+        sx={{
+          height: 'calc(100vh - var(--global-nav-height, 0px))',
+          overflowY: 'auto',
+          bgcolor: 'var(--background)',
+        }}
+      >
         <Box sx={{ maxWidth: 1024, px: 3, py: 4 }}>
-          <Box sx={{ border: '1px solid rgba(239,68,68,0.3)', borderRadius: tokens.radius.lg, bgcolor: 'var(--color-error-soft-bg)', p: 3, fontSize: 14, color: 'var(--destructive)' }}>
+          <Box
+            sx={{
+              border: '1px solid rgba(239,68,68,0.3)',
+              borderRadius: tokens.radius.lg,
+              bgcolor: 'var(--color-error-soft-bg)',
+              p: 3,
+              fontSize: 14,
+              color: 'var(--destructive)',
+            }}
+          >
             {fetchError || 'Failed to load workspace members'}
           </Box>
         </Box>
@@ -389,12 +467,32 @@ export default function WorkspaceMembersView() {
   }
 
   return (
-    <Box sx={{ height: 'calc(100vh - var(--global-nav-height, 0px))', overflowY: 'auto', bgcolor: 'var(--background)' }}>
+    <Box
+      sx={{
+        height: 'calc(100vh - var(--global-nav-height, 0px))',
+        overflowY: 'auto',
+        bgcolor: 'var(--background)',
+      }}
+    >
       <Box sx={{ maxWidth: 1024, px: 3, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
-
         {/* Header */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 3,
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1.5,
+            }}
+          >
             <Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                 <Users size={20} style={{ color: 'var(--foreground)' }} />
@@ -422,7 +520,15 @@ export default function WorkspaceMembersView() {
           <Box
             component="form"
             onSubmit={handleInvite}
-            sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
+            sx={{
+              border: '1px solid var(--border)',
+              borderRadius: tokens.radius.lg,
+              bgcolor: 'var(--card)',
+              p: 3,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
           >
             <Box
               sx={{
@@ -432,7 +538,14 @@ export default function WorkspaceMembersView() {
               }}
             >
               {/* Email */}
-              <Box sx={{ gridColumn: { xs: '1', sm: '1 / -1' }, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+              <Box
+                sx={{
+                  gridColumn: { xs: '1', sm: '1 / -1' },
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 0.75,
+                }}
+              >
                 <label
                   htmlFor="invite-email"
                   style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)' }}
@@ -499,9 +612,24 @@ export default function WorkspaceMembersView() {
                 <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
                   Access permissions
                 </Typography>
-                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1 }}>
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                    gap: 1,
+                  }}
+                >
                   {(Object.keys(PERMISSION_LABELS) as Array<keyof InvitePermissions>).map(key => (
-                    <Box key={key} sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, fontSize: 14, color: 'var(--foreground)' }}>
+                    <Box
+                      key={key}
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        fontSize: 14,
+                        color: 'var(--foreground)',
+                      }}
+                    >
                       <Checkbox
                         checked={invitePermissions[key]}
                         onCheckedChange={checked =>
@@ -520,7 +648,16 @@ export default function WorkspaceMembersView() {
             )}
 
             {!isOwnerOrAdmin && (
-              <Box sx={{ border: '1px solid #fbbf24', bgcolor: 'var(--color-warning-soft-bg)', p: 1.5, fontSize: 14, color: 'var(--color-warning-soft-text)', borderRadius: tokens.radius.md }}>
+              <Box
+                sx={{
+                  border: '1px solid #fbbf24',
+                  bgcolor: 'var(--color-warning-soft-bg)',
+                  p: 1.5,
+                  fontSize: 14,
+                  color: 'var(--color-warning-soft-text)',
+                  borderRadius: tokens.radius.md,
+                }}
+              >
                 Only owner or admin can invite new members.
               </Box>
             )}
@@ -540,7 +677,17 @@ export default function WorkspaceMembersView() {
         )}
 
         {/* Search & Filter */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: { xs: 2, sm: 3 },
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1.5,
+          }}
+        >
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
             <TextField
               aria-label="Search members by email"
@@ -578,7 +725,10 @@ export default function WorkspaceMembersView() {
                 <MenuItem
                   key={option.key}
                   selected={option.key === sortBy}
-                  onClick={() => { setSortBy(option.key); setSortMenuAnchor(null); }}
+                  onClick={() => {
+                    setSortBy(option.key);
+                    setSortMenuAnchor(null);
+                  }}
                 >
                   {option.label}
                 </MenuItem>
@@ -605,7 +755,10 @@ export default function WorkspaceMembersView() {
                 <MenuItem
                   key={option.key}
                   selected={option.key === roleFilter}
-                  onClick={() => { setRoleFilter(option.key); setRoleMenuAnchor(null); }}
+                  onClick={() => {
+                    setRoleFilter(option.key);
+                    setRoleMenuAnchor(null);
+                  }}
                 >
                   {option.label}
                 </MenuItem>
@@ -619,7 +772,17 @@ export default function WorkspaceMembersView() {
         </Box>
 
         {/* Members list */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1.5,
+          }}
+        >
           {visibleMembers.length === 0 ? (
             <Typography variant="body2" sx={{ color: 'var(--muted-foreground)' }}>
               No members match current filters.
@@ -677,13 +840,40 @@ export default function WorkspaceMembersView() {
                       )}
                     </Box>
                     <Box sx={{ minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography
+                        variant="body2"
+                        fontWeight={500}
+                        sx={{
+                          color: 'var(--foreground)',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         {member.name || member.email}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'var(--muted-foreground)',
+                          display: 'block',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         {member.email}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'var(--muted-foreground)',
+                          display: 'block',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
                         Timezone: {member.timeZone || 'Auto'}
                       </Typography>
                     </Box>
@@ -698,7 +888,12 @@ export default function WorkspaceMembersView() {
                             <button
                               type="button"
                               disabled={roleUpdating}
-                              onClick={e => setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))}
+                              onClick={e =>
+                                setRoleMenuAnchorMap(prev => ({
+                                  ...prev,
+                                  [member.id]: e.currentTarget,
+                                }))
+                              }
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -720,7 +915,9 @@ export default function WorkspaceMembersView() {
                             <Menu
                               anchorEl={roleMenuAnchorMap[member.id]}
                               open={Boolean(roleMenuAnchorMap[member.id])}
-                              onClose={() => setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))}
+                              onClose={() =>
+                                setRoleMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))
+                              }
                               aria-label={`Change role for ${member.email || member.id}`}
                             >
                               {roleTargets.map(role => (
@@ -758,28 +955,33 @@ export default function WorkspaceMembersView() {
                     <IconButton
                       size="small"
                       aria-label={`Actions for ${member.email || member.id}`}
-                      onClick={e => setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))}
+                      onClick={e =>
+                        setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: e.currentTarget }))
+                      }
                     >
                       <MoreHorizontal size={16} />
                     </IconButton>
                     <Menu
                       anchorEl={memberMenuAnchorMap[member.id]}
                       open={Boolean(memberMenuAnchorMap[member.id])}
-                      onClose={() => setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))}
+                      onClose={() =>
+                        setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }))
+                      }
                       aria-label={`Member actions for ${member.email || member.id}`}
                     >
-                      {canManageRole && roleTargets.map(role => (
-                        <MenuItem
-                          key={`role:${role}`}
-                          disabled={role === member.role}
-                          onClick={() => {
-                            setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }));
-                            void handleMemberMenuAction(member, `role:${role}`);
-                          }}
-                        >
-                          Set as {getRoleLabel(role)}
-                        </MenuItem>
-                      ))}
+                      {canManageRole &&
+                        roleTargets.map(role => (
+                          <MenuItem
+                            key={`role:${role}`}
+                            disabled={role === member.role}
+                            onClick={() => {
+                              setMemberMenuAnchorMap(prev => ({ ...prev, [member.id]: null }));
+                              void handleMemberMenuAction(member, `role:${role}`);
+                            }}
+                          >
+                            Set as {getRoleLabel(role)}
+                          </MenuItem>
+                        ))}
                       <MenuItem
                         disabled={!canRemove || removingMemberId === member.id}
                         onClick={() => {
@@ -799,10 +1001,25 @@ export default function WorkspaceMembersView() {
         </Box>
 
         {/* Pending invitations */}
-        <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.lg,
+            bgcolor: 'var(--card)',
+            p: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1.5,
+          }}
+        >
           <Typography
             variant="caption"
-            sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}
+            sx={{
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'var(--muted-foreground)',
+            }}
           >
             Pending invitations
           </Typography>
@@ -836,14 +1053,25 @@ export default function WorkspaceMembersView() {
                   }}
                 >
                   <Box>
-                    <Typography variant="body2" fontWeight={500} sx={{ color: 'var(--foreground)' }}>
+                    <Typography
+                      variant="body2"
+                      fontWeight={500}
+                      sx={{ color: 'var(--foreground)' }}
+                    >
                       {invite.email}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block' }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ color: 'var(--muted-foreground)', display: 'block' }}
+                    >
                       Role: {getRoleLabel(invite.role)}
                     </Typography>
-                    <Typography variant="caption" sx={{ color: 'var(--muted-foreground)', display: 'block' }}>
-                      Invited {formatDate(invite.createdAt)} · Expires {formatDate(invite.expiresAt)}
+                    <Typography
+                      variant="caption"
+                      sx={{ color: 'var(--muted-foreground)', display: 'block' }}
+                    >
+                      Invited {formatDate(invite.createdAt)} · Expires{' '}
+                      {formatDate(invite.expiresAt)}
                     </Typography>
                   </Box>
 

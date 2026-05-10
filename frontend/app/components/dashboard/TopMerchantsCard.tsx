@@ -1,8 +1,8 @@
 'use client';
 
+import type { DashboardData } from '@/app/hooks/useDashboard';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardData } from '@/app/hooks/useDashboard';
 
 interface TopMerchantsCardProps {
   merchants: NonNullable<DashboardData['topMerchants']>;
@@ -19,11 +19,19 @@ export function TopMerchantsCard({
 }: TopMerchantsCardProps) {
   if (!merchants.length) {
     return (
-      <Box sx={{ height: '100%', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
+      <Box
+        sx={{
+          height: '100%',
+          border: '1px solid var(--border-color)',
+          bgcolor: 'background.paper',
+        }}
+      >
         <Box
           sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}
         >
-          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>{emptyLabel}</Typography>
+          <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            {emptyLabel}
+          </Typography>
         </Box>
       </Box>
     );
@@ -32,7 +40,9 @@ export function TopMerchantsCard({
   const maxAmount = Math.max(...merchants.map(m => m.amount));
 
   return (
-    <Box sx={{ height: '100%', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
+    <Box
+      sx={{ height: '100%', border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}
+    >
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>

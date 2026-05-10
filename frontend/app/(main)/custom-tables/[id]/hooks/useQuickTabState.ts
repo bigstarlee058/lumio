@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { tx } from '../utils/tableHelpers';
-import type { TabCounts } from './useTabStats';
 import {
   type QuickTab,
   buildQuickTabs,
   getActiveTabFilter,
   normalizeActiveTabId,
 } from '../utils/quickTabs';
+import { tx } from '../utils/tableHelpers';
+import type { TabCounts } from './useTabStats';
 
 interface UseQuickTabStateParams {
   paidColKey: string | null;
@@ -33,7 +33,12 @@ function buildTabLabels(t: unknown): { all: string; paid: string; unpaid: string
   };
 }
 
-export function useQuickTabState({ paidColKey, t, tabCounts, columnsTabId }: UseQuickTabStateParams): UseQuickTabStateReturn {
+export function useQuickTabState({
+  paidColKey,
+  t,
+  tabCounts,
+  columnsTabId,
+}: UseQuickTabStateParams): UseQuickTabStateReturn {
   const [activeTabId, setActiveTabId] = useState('all');
 
   const quickTabs = useMemo<QuickTab[]>(() => {
@@ -48,7 +53,9 @@ export function useQuickTabState({ paidColKey, t, tabCounts, columnsTabId }: Use
   );
 
   useEffect(() => {
-    if (normalizedActiveTabId !== activeTabId) setActiveTabId(normalizedActiveTabId);
+    if (normalizedActiveTabId !== activeTabId) {
+      setActiveTabId(normalizedActiveTabId);
+    }
   }, [activeTabId, normalizedActiveTabId]);
 
   const activeTabFilter = useMemo(

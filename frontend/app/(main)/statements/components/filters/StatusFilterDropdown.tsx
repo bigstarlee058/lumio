@@ -3,6 +3,7 @@
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
+import { ActiveRouteFilter } from './ActiveRouteFilter';
 
 type StatusFilterOption = {
   value: string;
@@ -20,6 +21,8 @@ type StatusFilterDropdownProps = {
   trigger: React.ReactNode;
   applyLabel: string;
   resetLabel: string;
+  routeFilterLabel?: string | null;
+  onResetRouteFilter?: () => void;
 };
 
 export function StatusFilterDropdown({
@@ -33,12 +36,32 @@ export function StatusFilterDropdown({
   trigger,
   applyLabel,
   resetLabel,
+  routeFilterLabel,
+  onResetRouteFilter,
 }: StatusFilterDropdownProps) {
   const selected = new Set(values);
 
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
-      <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+      {routeFilterLabel && onResetRouteFilter ? (
+        <div style={{ marginBottom: 12 }}>
+          <ActiveRouteFilter
+            label={routeFilterLabel}
+            resetLabel={resetLabel}
+            onReset={onResetRouteFilter}
+          />
+        </div>
+      ) : null}
+      <div
+        style={{
+          maxHeight: 320,
+          overflowY: 'auto',
+          paddingRight: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        }}
+      >
         {options.map(option => {
           const isSelected = selected.has(option.value);
           return (

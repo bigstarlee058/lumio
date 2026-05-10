@@ -3,7 +3,6 @@
 import MuiCard from '@mui/material/Card';
 import MuiCardActions from '@mui/material/CardActions';
 import MuiCardContent from '@mui/material/CardContent';
-import MuiCardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 
@@ -24,12 +23,7 @@ Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, style, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={className}
-      style={style}
-      {...props}
-    >
+    <div ref={ref} className={className} style={style} {...props}>
       {children}
     </div>
   ),

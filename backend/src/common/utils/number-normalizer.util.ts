@@ -89,7 +89,7 @@ export function normalizeDate(dateStr: string): Date | null {
   const trimmed = dateStr.trim();
   const dateTimeMatch = trimmed.match(/(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}):(\d{2}))?/);
   if (dateTimeMatch) {
-    const [_, dd, mm, yyyy, hh = '00', min = '00', ss = '00'] = dateTimeMatch;
+    const [, dd, mm, yyyy, hh = '00', min = '00', ss = '00'] = dateTimeMatch;
     return new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min), Number(ss));
   }
 

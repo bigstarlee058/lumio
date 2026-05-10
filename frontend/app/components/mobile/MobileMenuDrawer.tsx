@@ -92,7 +92,9 @@ export function MobileMenuDrawer({ open, onClose }: MobileMenuDrawerProps) {
 
         <div className="lumio-mobile-drawer__footer">
           <Link href="/settings/profile" className="lumio-mobile-drawer__item" onClick={onClose}>
-            <span className="lumio-mobile-drawer__item-icon"><Settings size={18} /></span>
+            <span className="lumio-mobile-drawer__item-icon">
+              <Settings size={18} />
+            </span>
             <span>Settings</span>
           </Link>
           <button
@@ -103,7 +105,9 @@ export function MobileMenuDrawer({ open, onClose }: MobileMenuDrawerProps) {
               onClose();
             }}
           >
-            <span className="lumio-mobile-drawer__item-icon"><HelpCircle size={18} /></span>
+            <span className="lumio-mobile-drawer__item-icon">
+              <HelpCircle size={18} />
+            </span>
             <span>Help</span>
           </button>
         </div>

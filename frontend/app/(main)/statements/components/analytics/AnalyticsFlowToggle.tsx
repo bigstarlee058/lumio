@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 type Props = {
   activeFlow: string;
@@ -8,7 +7,12 @@ type Props = {
   onFlowChange: (flow: string) => void;
 };
 
-export function AnalyticsFlowToggle({ activeFlow, spendLabel, incomeLabel, onFlowChange }: Props): React.JSX.Element {
+export function AnalyticsFlowToggle({
+  activeFlow,
+  spendLabel,
+  incomeLabel,
+  onFlowChange,
+}: Props): React.JSX.Element {
   return (
     <div className="lumio-view-page__period-tabs">
       <button

@@ -1,17 +1,17 @@
 'use client';
 
-import type React from 'react';
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import { Download, X } from '@/app/components/icons';
 import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { Download, X } from '@/app/components/icons';
+import type React from 'react';
 import { useState } from 'react';
 import type { ReportTemplate } from './ReportTemplateCard';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface ReportGenerateParams {
   templateId: string;
@@ -33,7 +33,11 @@ const FORMAT_OPTIONS: Array<{ value: 'pdf' | 'excel' | 'csv'; label: string }> =
 ];
 
 // eslint-disable-next-line max-lines-per-function
-export function ReportGenerator({ template, onClose, onGenerate }: ReportGeneratorProps): React.JSX.Element {
+export function ReportGenerator({
+  template,
+  onClose,
+  onGenerate,
+}: ReportGeneratorProps): React.JSX.Element {
   const t = useIntlayer('reportsPage');
   const labels = t.labels as Record<string, { value?: string } | undefined>;
   // eslint-disable-next-line max-params
@@ -73,7 +77,9 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
         p: 3,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2.5 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2.5 }}
+      >
         <Box>
           <Typography variant="body1" fontWeight={600} sx={{ color: 'var(--foreground)' }}>
             {template.name}
@@ -111,15 +117,19 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
           onChange={setDateFrom}
         />
 
-        <CustomDatePicker
-          label={text('dateTo', 'Date to')}
-          value={dateTo}
-          onChange={setDateTo}
-        />
+        <CustomDatePicker label={text('dateTo', 'Date to')} value={dateTo} onChange={setDateTo} />
 
         {/* Format */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-          <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--muted-foreground)' }}>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'var(--muted-foreground)',
+            }}
+          >
             {text('format', 'Format')}
           </span>
           <Box sx={{ display: 'flex', gap: 1 }} data-tour-id="reports-format">
@@ -131,7 +141,8 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
                 style={{
                   flex: 1,
                   height: 36,
-                  border: format === opt.value ? '1px solid var(--primary)' : '1px solid var(--border)',
+                  border:
+                    format === opt.value ? '1px solid var(--primary)' : '1px solid var(--border)',
                   background: format === opt.value ? 'var(--primary)' : 'var(--card)',
                   color: format === opt.value ? '#fff' : 'var(--muted-foreground)',
                   fontSize: 11,
@@ -153,10 +164,18 @@ export function ReportGenerator({ template, onClose, onGenerate }: ReportGenerat
           variant="contained"
           onClick={handleGenerate}
           disabled={generating}
-          startIcon={generating ? <CircularProgress size={16} sx={{ color: 'inherit' }} /> : <Download size={16} />}
+          startIcon={
+            generating ? (
+              <CircularProgress size={16} sx={{ color: 'inherit' }} />
+            ) : (
+              <Download size={16} />
+            )
+          }
           data-tour-id="reports-generate-button"
         >
-          {generating ? text('generating', 'Generating…') : text('generateAndDownload', 'Generate & Download')}
+          {generating
+            ? text('generating', 'Generating…')
+            : text('generateAndDownload', 'Generate & Download')}
         </Button>
         <Button variant="text" onClick={onClose} disabled={generating}>
           {text('cancel', 'Cancel')}

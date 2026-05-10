@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import '@/app/components/dashboard/test-setup';
 

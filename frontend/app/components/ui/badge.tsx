@@ -17,9 +17,7 @@ export interface BadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   label?: ChipProps['label'];
 }
 
-const variantToChipProps = (
-  variant: BadgeVariant,
-): Pick<ChipProps, 'variant' | 'color' | 'sx'> => {
+const variantToChipProps = (variant: BadgeVariant): Pick<ChipProps, 'variant' | 'color' | 'sx'> => {
   switch (variant) {
     case 'default':
       return { variant: 'filled', color: 'primary', sx: { opacity: 0.9 } };

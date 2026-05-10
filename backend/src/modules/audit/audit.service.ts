@@ -1,7 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
+import { normalizePagination } from '../../common/utils/pagination.util';
 import {
   ActorType,
   AuditAction,
@@ -12,14 +13,13 @@ import {
 } from '../../entities/audit-event.entity';
 import { User } from '../../entities/user.entity';
 import { Workspace } from '../../entities/workspace.entity';
+import { AuditDescriptionService } from './description/audit-description.service';
 import type {
   AuditEventFilter,
   CreateAuditEventDto,
   RollbackResult,
 } from './interfaces/audit-event.interface';
-import { AuditDescriptionService } from './description/audit-description.service';
 import { RollbackService } from './rollback/rollback.service';
-import { normalizePagination } from '../../common/utils/pagination.util';
 
 @Injectable()
 export class AuditService {
@@ -261,7 +261,7 @@ export class AuditService {
   }
 
   private async resolveActorLabel(dto: CreateAuditEventDto): Promise<string> {
-    if (dto.actorLabel && dto.actorLabel.trim()) {
+    if (dto.actorLabel?.trim()) {
       return dto.actorLabel.trim();
     }
 
@@ -270,8 +270,12 @@ export class AuditService {
         where: { id: dto.actorId },
         select: ['id', 'email', 'name'],
       });
-      if (user?.email) return user.email;
-      if (user?.name) return user.name;
+      if (user?.email) {
+        return user.email;
+      }
+      if (user?.name) {
+        return user.name;
+      }
       return 'User';
     }
 
@@ -283,8 +287,12 @@ export class AuditService {
   }
 
   private isUndoable(action: AuditAction, entityType: EntityType): boolean {
-    if (action === AuditAction.ROLLBACK) return false;
-    if (action === AuditAction.UPDATE || action === AuditAction.DELETE) return true;
+    if (action === AuditAction.ROLLBACK) {
+      return false;
+    }
+    if (action === AuditAction.UPDATE || action === AuditAction.DELETE) {
+      return true;
+    }
     if (action === AuditAction.CREATE) {
       return [
         EntityType.TABLE_ROW,

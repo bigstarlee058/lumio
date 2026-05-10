@@ -7,8 +7,8 @@ import {
   detectLocaleFromText,
 } from '../../../common/utils/language-detector.util';
 import {
-  detectFieldType,
   type FieldType,
+  detectFieldType,
   getFieldSynonyms,
   getLanguagePatterns,
 } from '../../../common/utils/language-patterns.util';
@@ -17,10 +17,7 @@ import {
   normalizeNumber,
   normalizeNumberAdvanced,
 } from '../../../common/utils/number-normalizer.util';
-import {
-  UnicodeFieldDetector,
-  UnicodeTextProcessor,
-} from '../../../common/utils/unicode-patterns.util';
+import { UnicodeTextProcessor } from '../../../common/utils/unicode-patterns.util';
 import type { BankName, FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
 import type { IParser } from '../interfaces/parser.interface';
@@ -98,7 +95,9 @@ export abstract class BaseParser implements IParser {
   }
 
   protected detectCurrency(text: string): string | null {
-    if (!text) return null;
+    if (!text) {
+      return null;
+    }
 
     // Match ISO 4217 codes at word boundaries — ordered by specificity
     const codeMatch = text.match(
@@ -109,11 +108,21 @@ export abstract class BaseParser implements IParser {
     }
 
     // Unambiguous currency symbols
-    if (text.includes('₸')) return 'KZT';
-    if (text.includes('₽')) return 'RUB';
-    if (text.includes('€')) return 'EUR';
-    if (text.includes('£')) return 'GBP';
-    if (text.includes('¥')) return 'JPY';
+    if (text.includes('₸')) {
+      return 'KZT';
+    }
+    if (text.includes('₽')) {
+      return 'RUB';
+    }
+    if (text.includes('€')) {
+      return 'EUR';
+    }
+    if (text.includes('£')) {
+      return 'GBP';
+    }
+    if (text.includes('¥')) {
+      return 'JPY';
+    }
 
     return null;
   }
@@ -166,7 +175,7 @@ export abstract class BaseParser implements IParser {
     rawHeader?: string;
     normalizedHeader?: string;
   } {
-    if (!rows || !rows.length) {
+    if (!rows?.length) {
       return {};
     }
     const firstRowWithData = rows.find(

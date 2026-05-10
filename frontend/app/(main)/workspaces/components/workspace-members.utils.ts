@@ -28,7 +28,9 @@ const getDisplayName = (member: WorkspaceMemberListItem) =>
 const getRoleRank = (role: string) => ROLE_SORT_ORDER[role] ?? 99;
 
 const getJoinedAtTimestamp = (value?: string) => {
-  if (!value) return 0;
+  if (!value) {
+    return 0;
+  }
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) ? timestamp : 0;
 };
@@ -54,13 +56,17 @@ export const filterAndSortMembers = <T extends WorkspaceMemberListItem>(
     .sort((left, right) => {
       if (options.sortBy === 'role') {
         const byRole = getRoleRank(left.role) - getRoleRank(right.role);
-        if (byRole !== 0) return byRole;
+        if (byRole !== 0) {
+          return byRole;
+        }
       }
 
       if (options.sortBy === 'joinedAt') {
         const byJoinDate =
           getJoinedAtTimestamp(right.joinedAt) - getJoinedAtTimestamp(left.joinedAt);
-        if (byJoinDate !== 0) return byJoinDate;
+        if (byJoinDate !== 0) {
+          return byJoinDate;
+        }
       }
 
       return getDisplayName(left).localeCompare(getDisplayName(right));

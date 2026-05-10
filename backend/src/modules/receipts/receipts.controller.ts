@@ -159,11 +159,7 @@ export class ReceiptsController {
 
   @Get(':id/file')
   @WorkspaceAuth(Permission.STATEMENT_VIEW)
-  async getFile(
-    @Param('id') id: string,
-    @WorkspaceId() workspaceId: string,
-    @Res() res: Response,
-  ) {
+  async getFile(@Param('id') id: string, @WorkspaceId() workspaceId: string, @Res() res: Response) {
     const filePayload = await this.receiptsService.getFilePayload(id, workspaceId);
 
     if (!filePayload) {

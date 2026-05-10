@@ -1,5 +1,7 @@
 'use client';
 
+import { ChevronDown, Search } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -7,8 +9,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { ChevronDown, Search } from '@/app/components/icons';
-import { tokens } from '@/lib/theme-tokens';
 import React, { useState } from 'react';
 import type { MemberRoleFilter, MemberSortBy } from './workspace-members.utils';
 
@@ -60,7 +60,10 @@ function SortMenu({ sortBy, onSortByChange }: SortMenuProps): React.ReactElement
           <MenuItem
             key={option.key}
             selected={option.key === sortBy}
-            onClick={() => { onSortByChange(option.key); setAnchor(null); }}
+            onClick={() => {
+              onSortByChange(option.key);
+              setAnchor(null);
+            }}
           >
             {option.label}
           </MenuItem>
@@ -93,7 +96,10 @@ function RoleMenu({ roleFilter, onRoleFilterChange }: RoleMenuProps): React.Reac
           <MenuItem
             key={option.key}
             selected={option.key === roleFilter}
-            onClick={() => { onRoleFilterChange(option.key); setAnchor(null); }}
+            onClick={() => {
+              onRoleFilterChange(option.key);
+              setAnchor(null);
+            }}
           >
             {option.label}
           </MenuItem>
@@ -114,7 +120,17 @@ export function MembersSearchBar({
   onSortByChange,
 }: MembersSearchBarProps): React.ReactElement {
   return (
-    <Box sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.lg, bgcolor: 'var(--card)', p: { xs: 2, sm: 3 }, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <Box
+      sx={{
+        border: '1px solid var(--border)',
+        borderRadius: tokens.radius.lg,
+        bgcolor: 'var(--card)',
+        p: { xs: 2, sm: 3 },
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.5,
+      }}
+    >
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1.5 }}>
         <TextField
           aria-label="Search members by email"
@@ -124,7 +140,13 @@ export function MembersSearchBar({
           size="small"
           variant="outlined"
           sx={{ width: { xs: '100%', sm: 320 } }}
-          InputProps={{ startAdornment: (<InputAdornment position="start"><Search size={16} style={{ color: 'var(--muted-foreground)' }} /></InputAdornment>) }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search size={16} style={{ color: 'var(--muted-foreground)' }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <SortMenu sortBy={sortBy} onSortByChange={onSortByChange} />
         <RoleMenu roleFilter={roleFilter} onRoleFilterChange={onRoleFilterChange} />

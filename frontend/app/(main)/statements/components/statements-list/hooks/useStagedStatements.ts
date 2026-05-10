@@ -1,12 +1,12 @@
 'use client';
 
-import type { StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
 import {
   applyStatementsFilters,
   isReceiptDerivedStatement,
   paginateStatements,
   resolveStatementSortDate,
 } from '@/app/(main)/statements/components/StatementsListView.utils';
+import type { StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
 import { type StatementStage, getStatementStage } from '@/app/lib/statement-workflow';
 import { useMemo } from 'react';
 
@@ -42,12 +42,11 @@ interface UseStagedStatementsResult<T extends StatementForStaging> {
   rangeEnd: number;
 }
 
-function filterReceiptsBySearch<T extends StatementForStaging>(
-  receipts: T[],
-  search: string,
-): T[] {
+function filterReceiptsBySearch<T extends StatementForStaging>(receipts: T[], search: string): T[] {
   const q = search.trim().toLowerCase();
-  if (!q) return receipts;
+  if (!q) {
+    return receipts;
+  }
   return receipts.filter(
     s =>
       s.fileName.toLowerCase().includes(q) ||
@@ -66,7 +65,9 @@ function sortByDate<T extends StatementForStaging>(
     const diff =
       resolveStatementSortDate(l as Parameters<typeof resolveStatementSortDate>[0]) -
       resolveStatementSortDate(r as Parameters<typeof resolveStatementSortDate>[0]);
-    if (diff !== 0) return diff * factor;
+    if (diff !== 0) {
+      return diff * factor;
+    }
     return l.id.localeCompare(r.id) * factor;
   });
 }
@@ -85,7 +86,9 @@ export function useStagedStatements<T extends StatementForStaging>({
     const base = statements.filter(
       s => getStatementStage(s.id) === stage && !isReceiptDerivedStatement(s),
     ) as T[];
-    if (stage !== 'submit') return base;
+    if (stage !== 'submit') {
+      return base;
+    }
 
     const filtered = filterReceiptsBySearch(receiptStatements as T[], search);
     return [...filtered, ...base].sort(

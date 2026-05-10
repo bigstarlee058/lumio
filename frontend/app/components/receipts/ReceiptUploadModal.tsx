@@ -1,16 +1,16 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { FileImage, FileText, UploadCloud, X } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { ModalShell } from '@/app/components/ui/modal-shell';
 import { Select } from '@/app/components/ui/select';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, IconButton, Typography } from '@mui/material';
-import { FileImage, FileText, UploadCloud, X } from '@/app/components/icons';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useReceiptUpload } from './hooks/useReceiptUpload';
-import { tokens } from '@/lib/theme-tokens';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ACCEPTED_TYPES = new Set([
@@ -186,7 +186,10 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <label htmlFor="receipt-language" style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>
+          <label
+            htmlFor="receipt-language"
+            style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}
+          >
             OCR language
           </label>
           <Select
@@ -204,14 +207,32 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
         </Box>
 
         {visibleError ? (
-          <Box sx={{ border: '1px solid #fecaca', bgcolor: 'var(--color-error-soft-bg)', px: 2, py: 1.5 }}>
-            <Typography style={{ fontSize: 14, color: 'var(--destructive)' }}>{visibleError}</Typography>
+          <Box
+            sx={{
+              border: '1px solid #fecaca',
+              bgcolor: 'var(--color-error-soft-bg)',
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography style={{ fontSize: 14, color: 'var(--destructive)' }}>
+              {visibleError}
+            </Typography>
           </Box>
         ) : null}
 
         {uploading ? (
-          <Box sx={{ border: '1px solid var(--color-info-soft-border)', bgcolor: 'var(--color-info-soft-bg)', px: 2, py: 1.5 }}>
-            <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-info-soft-text)' }}>
+          <Box
+            sx={{
+              border: '1px solid var(--color-info-soft-border)',
+              bgcolor: 'var(--color-info-soft-bg)',
+              px: 2,
+              py: 1.5,
+            }}
+          >
+            <Typography
+              style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-info-soft-text)' }}
+            >
               Uploading... {progress}%
             </Typography>
           </Box>
@@ -236,7 +257,14 @@ export function ReceiptUploadModal({ isOpen, onClose, onUploaded }: ReceiptUploa
                   }}
                 >
                   <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
-                    <Box sx={{ borderRadius: tokens.radius.full, bgcolor: 'var(--muted)', p: 1, color: 'var(--text-secondary)' }}>
+                    <Box
+                      sx={{
+                        borderRadius: tokens.radius.full,
+                        bgcolor: 'var(--muted)',
+                        p: 1,
+                        color: 'var(--text-secondary)',
+                      }}
+                    >
                       {isPdf ? (
                         <FileText style={{ width: 16, height: 16 }} />
                       ) : (

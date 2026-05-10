@@ -1,12 +1,23 @@
-import { applyStatementsFilters, type StatementFilterItem, type StatementFilters } from '@/app/(main)/statements/components/filters/statement-filters';
+import {
+  type StatementFilterItem,
+  type StatementFilters,
+  applyStatementsFilters,
+} from '@/app/(main)/statements/components/filters/statement-filters';
+import type {
+  TopCategoryFlowType,
+  TopCategoryRecord,
+} from '@/app/(main)/statements/components/top-categories.utils';
+import { dedupeCategoryReceiptRecords } from '@/app/(main)/statements/components/top-categories.utils';
 import {
   getBankDisplayName,
   mapGmailReceiptToCategoryRecord,
   mapTransactionToCategoryRecord,
 } from '@/app/(main)/statements/components/top-categories/helpers/top-categories-mappers';
-import type { TopCategoryFlowType, TopCategoryRecord } from '@/app/(main)/statements/components/top-categories.utils';
-import { dedupeCategoryReceiptRecords } from '@/app/(main)/statements/components/top-categories.utils';
-import type { GmailReceipt, StatementMeta, Transaction } from '@/app/(main)/statements/types/statement-types';
+import type {
+  GmailReceipt,
+  StatementMeta,
+  Transaction,
+} from '@/app/(main)/statements/types/statement-types';
 import { useMemo } from 'react';
 
 type StatementWithWorkspace = StatementMeta & StatementFilterItem;
@@ -44,7 +55,9 @@ const matchesQuery = (r: TopCategoryRecord, query: string): boolean =>
 
 const filterByQuery = (records: TopCategoryRecord[], searchInput: string): TopCategoryRecord[] => {
   const query = searchInput.trim().toLowerCase();
-  if (!query) return records;
+  if (!query) {
+    return records;
+  }
   return records.filter(r => matchesQuery(r, query));
 };
 
@@ -58,8 +71,14 @@ const getUserDescription = (user: TopCategoryRecord['user']): string | null => {
 
 const buildUserOption = (record: TopCategoryRecord): CategoryFromOption | null => {
   const uid = record.user?.id;
-  if (!uid) return null;
-  return { id: `user:${uid}`, label: getUserLabel(record.user), description: getUserDescription(record.user) };
+  if (!uid) {
+    return null;
+  }
+  return {
+    id: `user:${uid}`,
+    label: getUserLabel(record.user),
+    description: getUserDescription(record.user),
+  };
 };
 
 const buildBankOption = (bank: string): CategoryFromOption => ({
@@ -73,21 +92,39 @@ const buildFromOptions = (allRecords: TopCategoryRecord[]): CategoryFromOption[]
   const seen = new Map<string, CategoryFromOption>();
   allRecords.forEach(record => {
     const userOpt = buildUserOption(record);
-    if (userOpt && !seen.has(userOpt.id)) seen.set(userOpt.id, userOpt);
+    if (userOpt && !seen.has(userOpt.id)) {
+      seen.set(userOpt.id, userOpt);
+    }
     const bank = record.bankName;
-    if (bank && !seen.has(`bank:${bank}`)) seen.set(`bank:${bank}`, buildBankOption(bank));
+    if (bank && !seen.has(`bank:${bank}`)) {
+      seen.set(`bank:${bank}`, buildBankOption(bank));
+    }
   });
   return Array.from(seen.values());
 };
 
-type BuildAllParams = { statements: StatementWithWorkspace[]; transactions: Transaction[]; gmailReceipts: GmailReceipt[]; workspaceCurrency: string };
+type BuildAllParams = {
+  statements: StatementWithWorkspace[];
+  transactions: Transaction[];
+  gmailReceipts: GmailReceipt[];
+  workspaceCurrency: string;
+};
 
-const buildAllCategoryRecords = ({ statements, transactions, gmailReceipts, workspaceCurrency }: BuildAllParams): TopCategoryRecord[] => {
+const buildAllCategoryRecords = ({
+  statements,
+  transactions,
+  gmailReceipts,
+  workspaceCurrency,
+}: BuildAllParams): TopCategoryRecord[] => {
   const statementById = new Map(statements.map(s => [s.id, s]));
   const mappedTransactions = transactions
     .map(item => {
       const meta = item.statementId ? statementById.get(item.statementId) : undefined;
-      return mapTransactionToCategoryRecord(item, meta as StatementMeta | undefined, workspaceCurrency);
+      return mapTransactionToCategoryRecord(
+        item,
+        meta as StatementMeta | undefined,
+        workspaceCurrency,
+      );
     })
     .filter((r): r is TopCategoryRecord => r !== null);
   const existingTransactionIds = new Set(transactions.map(t => t.id).filter(Boolean));
@@ -115,7 +152,11 @@ export const useTopCategoriesRecords = ({
   );
 
   const filteredRecords = useMemo(
-    () => filterByQuery(applyStatementsFilters<TopCategoryRecord>(allRecords, appliedFilters), searchInput),
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopCategoryRecord>(allRecords, appliedFilters),
+        searchInput,
+      ),
     [allRecords, appliedFilters, searchInput],
   );
 
@@ -125,7 +166,11 @@ export const useTopCategoriesRecords = ({
   );
 
   const recordsWithoutDateFilter = useMemo(
-    () => filterByQuery(applyStatementsFilters<TopCategoryRecord>(allRecords, { ...appliedFilters, date: null }), searchInput),
+    () =>
+      filterByQuery(
+        applyStatementsFilters<TopCategoryRecord>(allRecords, { ...appliedFilters, date: null }),
+        searchInput,
+      ),
     [allRecords, appliedFilters, searchInput],
   );
 
@@ -141,5 +186,11 @@ export const useTopCategoriesRecords = ({
     [allRecords],
   );
 
-  return { allRecords, flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions };
+  return {
+    allRecords,
+    flowFilteredRecords,
+    flowRecordsWithoutDateFilter,
+    fromOptions,
+    currencyOptions,
+  };
 };

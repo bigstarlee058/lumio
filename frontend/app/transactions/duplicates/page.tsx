@@ -1,15 +1,14 @@
 'use client';
 
+import { RefreshCw } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
+import apiClient from '@/app/lib/api';
+import { getApiErrorMessage } from '@/app/lib/api-error';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Spinner } from '@/app/components/ui/spinner';
-import apiClient from '@/app/lib/api';
-import { getApiErrorMessage } from '@/app/lib/api-error';
-import { CheckCircle2, RefreshCw } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
-import DuplicateGroupCard from './components/DuplicateGroupCard';
 
 interface DuplicateTransaction {
   id: string;
@@ -125,7 +124,9 @@ export default function TransactionDuplicatesPage() {
       <Box sx={{ mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>Duplicate Transactions</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              Duplicate Transactions
+            </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
               Review and manage duplicate transactions detected across statements
             </Typography>
@@ -144,31 +145,43 @@ export default function TransactionDuplicatesPage() {
 
         {/* Alerts */}
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
         )}
 
         {success && (
-          <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>
+          <Alert severity="success" sx={{ mb: 2 }}>
+            {success}
+          </Alert>
         )}
 
         {/* Summary Card */}
-        <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3, mb: 3 }}>
+        <Box
+          sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3, mb: 3 }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Box>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Total Groups</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Total Groups
+                </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {loading ? <Spinner size={16} /> : duplicateGroups.length}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Selected</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Selected
+                </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {loading ? <Spinner size={16} /> : selectedGroups.size}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>Total Duplicates</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  Total Duplicates
+                </Typography>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   {loading ? (
                     <Spinner size={16} />
@@ -188,7 +201,9 @@ export default function TransactionDuplicatesPage() {
                 disabled={selectedGroups.size === 0 || marking}
                 startIcon={marking ? <Spinner size={16} /> : undefined}
               >
-                {marking ? 'Marking...' : `Mark ${selectedGroups.size} Group${selectedGroups.size !== 1 ? 's' : ''} as Duplicate`}
+                {marking
+                  ? 'Marking...'
+                  : `Mark ${selectedGroups.size} Group${selectedGroups.size !== 1 ? 's' : ''} as Duplicate`}
               </Button>
             </Box>
           </Box>

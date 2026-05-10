@@ -9,13 +9,8 @@ function extractSortAmount(tx: Transaction): number {
 // Checks all searchable text fields against a lowercase query.
 // Uses Array.some to avoid || chains in the filter predicate (each || adds +1 complexity).
 function matchesSearch(tx: Transaction, q: string): boolean {
-  const fields = [
-    tx.counterpartyName,
-    tx.paymentPurpose,
-    tx.counterpartyBin,
-    tx.documentNumber,
-  ];
-  return fields.some(field => field != null && field.toLowerCase().includes(q));
+  const fields = [tx.counterpartyName, tx.paymentPurpose, tx.counterpartyBin, tx.documentNumber];
+  return fields.some(field => field?.toLowerCase().includes(q));
 }
 
 export function applySearchFilter(transactions: Transaction[], search: string): Transaction[] {
@@ -33,7 +28,10 @@ export function applyStatusFilter(
   return transactions;
 }
 
-export function applyCategoryFilter(transactions: Transaction[], category: string | null): Transaction[] {
+export function applyCategoryFilter(
+  transactions: Transaction[],
+  category: string | null,
+): Transaction[] {
   if (!category) return transactions;
   return transactions.filter(tx => tx.category?.id === category);
 }

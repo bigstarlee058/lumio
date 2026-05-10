@@ -61,11 +61,11 @@ async function fetchAllPages<T>(
       headers,
     });
     const batch = getItems(response.data);
-    results.push(
-      ...batch.map(item => ({ ...(item as object), workspaceId, workspaceName }) as T),
-    );
+    results.push(...batch.map(item => ({ ...(item as object), workspaceId, workspaceName }) as T));
     total = getTotal(response.data, results.length);
-    if (batch.length < pageSize) break;
+    if (batch.length < pageSize) {
+      break;
+    }
     page += 1;
     offset += pageSize;
   }
@@ -96,7 +96,9 @@ export function useAnalyticsData({
   const workspaceTargets = useMemo<WorkspaceTarget[]>(() => {
     if (workspaceFilter === 'all') {
       const all = workspaces.map(ws => ({ id: ws.id, name: ws.name || 'Workspace' }));
-      if (all.length > 0) return all;
+      if (all.length > 0) {
+        return all;
+      }
     }
     if (workspaceFilter === 'current') {
       if (currentWorkspace?.id) {
@@ -106,7 +108,13 @@ export function useAnalyticsData({
     }
     const selected = workspaces.find(ws => ws.id === workspaceFilter);
     return [{ id: workspaceFilter, name: selected?.name || currentWorkspaceLabel }];
-  }, [workspaceFilter, workspaces, currentWorkspace?.id, currentWorkspace?.name, currentWorkspaceLabel]);
+  }, [
+    workspaceFilter,
+    workspaces,
+    currentWorkspace?.id,
+    currentWorkspace?.name,
+    currentWorkspaceLabel,
+  ]);
 
   const workspaceTargetKey = useMemo(
     () => workspaceTargets.map(t => t.id).join(','),
@@ -119,7 +127,9 @@ export function useAnalyticsData({
 
     // eslint-disable-next-line max-lines-per-function, complexity
     const loadData = async (): Promise<void> => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       if (workspaceTargets.length === 0) {
         setStatements([]);
@@ -151,8 +161,7 @@ export function useAnalyticsData({
               const raw = (items as { data?: unknown }).data ?? data ?? [];
               return Array.isArray(raw) ? raw : [];
             },
-            (data, fetched) =>
-              Number((data as { total?: unknown }).total ?? fetched),
+            (data, fetched) => Number((data as { total?: unknown }).total ?? fetched),
             page => ({ page }),
           );
           allStatements.push(...workspaceStatements);
@@ -173,8 +182,7 @@ export function useAnalyticsData({
                   [];
                 return Array.isArray(raw) ? raw : [];
               },
-              (data, fetched) =>
-                Number((data as { total?: unknown }).total ?? fetched),
+              (data, fetched) => Number((data as { total?: unknown }).total ?? fetched),
               page => ({ page }),
             );
             allTransactions.push(...workspaceTransactions);
@@ -191,14 +199,15 @@ export function useAnalyticsData({
               const receipts = (data as { receipts?: unknown }).receipts;
               return Array.isArray(receipts) ? receipts : [];
             },
-            (data, fetched) =>
-              Number((data as { total?: unknown }).total ?? fetched),
+            (data, fetched) => Number((data as { total?: unknown }).total ?? fetched),
             (_, offset) => ({ offset }),
           );
           allReceipts.push(...workspaceReceipts);
         }
 
-        if (!isMounted) return;
+        if (!isMounted) {
+          return;
+        }
         setStatements(allStatements);
         setTransactions(allTransactions);
         setGmailReceipts(allReceipts);
@@ -211,7 +220,9 @@ export function useAnalyticsData({
           setGmailReceipts([]);
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 

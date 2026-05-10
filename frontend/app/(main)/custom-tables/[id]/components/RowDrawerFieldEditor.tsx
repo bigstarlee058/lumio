@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { Checkbox } from '@/app/components/ui/checkbox';
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import { Checkbox } from '@/app/components/ui/checkbox';
 import { Box, Typography } from '@mui/material';
-import type { CustomTableColumn, CustomTableRowPatch } from '../utils/stylingUtils';
 import { formatValue } from '../helpers/rowDrawerHelpers';
+import type { CustomTableColumn, CustomTableRowPatch } from '../utils/stylingUtils';
 
 const INPUT_SX: React.CSSProperties = {
   width: '100%',
@@ -25,29 +25,37 @@ interface FieldEditorProps {
   onDraftChange: (updater: (prev: CustomTableRowPatch) => CustomTableRowPatch) => void;
 }
 
-function BooleanEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
+function BooleanEditor({
+  col,
+  value,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
   return (
     <Box sx={{ mt: 1.5, display: 'inline-flex', alignItems: 'center', gap: 1 }}>
       <Checkbox
         checked={Boolean(value)}
-        onCheckedChange={(checked) =>
-          onDraftChange((prev) => ({ ...prev, [col.key]: checked }))
-        }
+        onCheckedChange={checked => onDraftChange(prev => ({ ...prev, [col.key]: checked }))}
         className="h-5 w-5"
       />
-      <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{value ? 'Yes' : 'No'}</Typography>
+      <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>
+        {value ? 'Yes' : 'No'}
+      </Typography>
     </Box>
   );
 }
 
-function NumberEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
+function NumberEditor({
+  col,
+  value,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
   return (
     <input
       type="number"
       step="any"
       value={value === null || value === undefined ? '' : String(value)}
-      onChange={(e) =>
-        onDraftChange((prev) => ({
+      onChange={e =>
+        onDraftChange(prev => ({
           ...prev,
           [col.key]: e.target.value.trim() === '' ? null : Number(e.target.value),
         }))
@@ -57,26 +65,33 @@ function NumberEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'opt
   );
 }
 
-function DateEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
+function DateEditor({
+  col,
+  value,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
   return (
     <CustomDatePicker
       value={value ? String(value) : null}
-      onChange={(date) => onDraftChange((prev) => ({ ...prev, [col.key]: date || null }))}
+      onChange={date => onDraftChange(prev => ({ ...prev, [col.key]: date || null }))}
     />
   );
 }
 
-function SelectEditor({ col, value, options, onDraftChange }: Omit<FieldEditorProps, 'mode'>): React.JSX.Element {
+function SelectEditor({
+  col,
+  value,
+  options,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'mode'>): React.JSX.Element {
   return (
     <select
       value={String(value ?? '')}
-      onChange={(e) =>
-        onDraftChange((prev) => ({ ...prev, [col.key]: e.target.value }))
-      }
+      onChange={e => onDraftChange(prev => ({ ...prev, [col.key]: e.target.value }))}
       style={INPUT_SX}
     >
       <option value="">—</option>
-      {options.map((opt) => (
+      {options.map(opt => (
         <option key={opt} value={opt}>
           {opt}
         </option>
@@ -92,18 +107,23 @@ interface MultiSelectOptionProps {
   onDraftChange: (updater: (prev: CustomTableRowPatch) => CustomTableRowPatch) => void;
 }
 
-function MultiSelectOption({ opt, value, colKey, onDraftChange }: MultiSelectOptionProps): React.JSX.Element {
+function MultiSelectOption({
+  opt,
+  value,
+  colKey,
+  onDraftChange,
+}: MultiSelectOptionProps): React.JSX.Element {
   const selected = Array.isArray(value) && value.includes(opt);
   return (
     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
       <Checkbox
         checked={selected}
-        onCheckedChange={(checked) => {
+        onCheckedChange={checked => {
           const next = Array.isArray(value) ? [...value] : [];
           const updated = checked
             ? Array.from(new Set([...next, opt]))
-            : next.filter((v) => v !== opt);
-          onDraftChange((prev) => ({ ...prev, [colKey]: updated }));
+            : next.filter(v => v !== opt);
+          onDraftChange(prev => ({ ...prev, [colKey]: updated }));
         }}
         className="h-5 w-5"
       />
@@ -112,10 +132,15 @@ function MultiSelectOption({ opt, value, colKey, onDraftChange }: MultiSelectOpt
   );
 }
 
-function MultiSelectEditor({ col, value, options, onDraftChange }: Omit<FieldEditorProps, 'mode'>): React.JSX.Element {
+function MultiSelectEditor({
+  col,
+  value,
+  options,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'mode'>): React.JSX.Element {
   return (
     <Box sx={{ mt: 1.5, display: 'grid', gridTemplateColumns: '1fr', gap: 1 }}>
-      {options.map((opt) => (
+      {options.map(opt => (
         <MultiSelectOption
           key={opt}
           opt={opt}
@@ -128,14 +153,16 @@ function MultiSelectEditor({ col, value, options, onDraftChange }: Omit<FieldEdi
   );
 }
 
-function TextEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
+function TextEditor({
+  col,
+  value,
+  onDraftChange,
+}: Omit<FieldEditorProps, 'options' | 'mode'>): React.JSX.Element {
   return (
     <input
       type="text"
       value={value === null || value === undefined ? '' : String(value)}
-      onChange={(e) =>
-        onDraftChange((prev) => ({ ...prev, [col.key]: e.target.value }))
-      }
+      onChange={e => onDraftChange(prev => ({ ...prev, [col.key]: e.target.value }))}
       style={INPUT_SX}
     />
   );
@@ -144,20 +171,40 @@ function TextEditor({ col, value, onDraftChange }: Omit<FieldEditorProps, 'optio
 type EditorProps = Omit<FieldEditorProps, 'mode'>;
 
 const SIMPLE_EDITORS: Partial<Record<string, (props: EditorProps) => React.JSX.Element>> = {
-  boolean: ({ col, value, onDraftChange }) => <BooleanEditor col={col} value={value} onDraftChange={onDraftChange} />,
-  number: ({ col, value, onDraftChange }) => <NumberEditor col={col} value={value} onDraftChange={onDraftChange} />,
-  date: ({ col, value, onDraftChange }) => <DateEditor col={col} value={value} onDraftChange={onDraftChange} />,
+  boolean: ({ col, value, onDraftChange }) => (
+    <BooleanEditor col={col} value={value} onDraftChange={onDraftChange} />
+  ),
+  number: ({ col, value, onDraftChange }) => (
+    <NumberEditor col={col} value={value} onDraftChange={onDraftChange} />
+  ),
+  date: ({ col, value, onDraftChange }) => (
+    <DateEditor col={col} value={value} onDraftChange={onDraftChange} />
+  ),
 };
 
 function FieldInput({ col, value, options, onDraftChange }: EditorProps): React.JSX.Element {
   const simple = SIMPLE_EDITORS[col.type];
-  if (simple) return simple({ col, value, options, onDraftChange });
-  if (col.type === 'select' && options.length) return <SelectEditor col={col} value={value} options={options} onDraftChange={onDraftChange} />;
-  if (col.type === 'multi_select' && options.length) return <MultiSelectEditor col={col} value={value} options={options} onDraftChange={onDraftChange} />;
+  if (simple) {
+    return simple({ col, value, options, onDraftChange });
+  }
+  if (col.type === 'select' && options.length) {
+    return <SelectEditor col={col} value={value} options={options} onDraftChange={onDraftChange} />;
+  }
+  if (col.type === 'multi_select' && options.length) {
+    return (
+      <MultiSelectEditor col={col} value={value} options={options} onDraftChange={onDraftChange} />
+    );
+  }
   return <TextEditor col={col} value={value} onDraftChange={onDraftChange} />;
 }
 
-export function RowDrawerFieldEditor({ col, value, options, mode, onDraftChange }: FieldEditorProps): React.JSX.Element {
+export function RowDrawerFieldEditor({
+  col,
+  value,
+  options,
+  mode,
+  onDraftChange,
+}: FieldEditorProps): React.JSX.Element {
   return (
     <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
       <Typography
@@ -173,7 +220,9 @@ export function RowDrawerFieldEditor({ col, value, options, mode, onDraftChange 
       </Typography>
 
       {mode === 'view' ? (
-        <Typography style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+        <Typography
+          style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}
+        >
           {formatValue(col.type, value)}
         </Typography>
       ) : (

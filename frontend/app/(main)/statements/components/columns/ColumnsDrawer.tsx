@@ -1,7 +1,7 @@
 'use client';
 
+import { ChevronLeft, GripVertical } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
-import MuiButton from '@mui/material/Button';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import {
   DndContext,
@@ -19,7 +19,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ChevronLeft, GripVertical } from '@/app/components/icons';
+import MuiButton from '@mui/material/Button';
 import type { StatementColumn, StatementColumnId } from './statement-columns';
 
 type ColumnsDrawerLabels = {
@@ -73,7 +73,9 @@ function SortableColumnItem({ column, onToggle }: SortableColumnItemProps) {
         >
           <GripVertical size={20} />
         </button>
-        <span className={`lumio-col-drawer__col-label${column.visible ? '' : ' lumio-col-drawer__col-label--hidden'}`}>
+        <span
+          className={`lumio-col-drawer__col-label${column.visible ? '' : ' lumio-col-drawer__col-label--hidden'}`}
+        >
           {column.label}
         </span>
       </div>
@@ -106,7 +108,9 @@ export function ColumnsDrawer({
   );
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      return;
+    }
     onReorder(active.id as StatementColumnId, over.id as StatementColumnId);
   };
 
@@ -128,7 +132,9 @@ export function ColumnsDrawer({
           >
             <ChevronLeft size={20} />
           </button>
-          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground, #0f172a)' }}>{labels.title}</span>
+          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground, #0f172a)' }}>
+            {labels.title}
+          </span>
         </div>
       }
     >

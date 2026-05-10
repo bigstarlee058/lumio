@@ -2,10 +2,8 @@ import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import {
   DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
   createReceiptAmountHelpers,
-  extractAmountWithCurrency as extractSharedAmountWithCurrency,
-  extractBestNumberPart as selectBestNumberPart,
   extractCurrency as detectCurrency,
-  parseAmountFragment as parseSharedAmountFragment,
+  extractAmountWithCurrency as extractSharedAmountWithCurrency,
 } from '../../../common/utils/receipt-amount.util';
 import {
   buildCurrencyTokenPattern,
@@ -15,8 +13,6 @@ import {
   isDateRangeLike as isSharedDateRangeLike,
   isLikelySentence as isSharedLikelySentence,
   isYearLikeAmount as isSharedYearLikeAmount,
-  scoreAmountCandidate as scoreSharedAmountCandidate,
-  shouldSkipLineItem,
 } from '../../../common/utils/receipt-extraction.util';
 import {
   AiDocumentExtractor,
@@ -83,7 +79,7 @@ export class UniversalExtractorService {
   ) {}
 
   async extractFromText(text: string, context: ExtractorContext = {}): Promise<ParsedDocument> {
-    if (!text || !text.trim()) {
+    if (!text?.trim()) {
       return this.emptyResult();
     }
 
@@ -130,9 +126,10 @@ export class UniversalExtractorService {
 
   async extractFromPdf(pdfBuffer: Buffer, context: ExtractorContext = {}): Promise<ParsedDocument> {
     try {
-      const pdfParse = await import('pdf-parse');
-      const data = await pdfParse.default(pdfBuffer);
-      const text = (data.text || '').trim();
+      const pdfParseModule = await import('pdf-parse');
+      const pdfParse = pdfParseModule.default ?? pdfParseModule;
+      const data = await (pdfParse as (buf: Buffer) => Promise<{ text: string }>)(pdfBuffer);
+      const text = (data.text || '').replace(/\0/g, '').trim();
 
       if (text.length > 50) {
         return this.extractFromText(text, context);
@@ -170,7 +167,7 @@ export class UniversalExtractorService {
     const amount = await this.extractAmountWithCurrency(lines, text);
     const currency = amount?.currency || this.extractCurrency(text) || 'KZT';
     const date = this.extractDate(text);
-    const vendor = this.extractVendor(lines, context.sender);
+    const vendor = this.extractVendor(lines, context.sender, text);
     const tax = this.extractNumberByPatterns(text, TAX_PATTERNS);
     const subtotal = this.extractNumberByPatterns(text, SUBTOTAL_PATTERNS);
     const lineItems = await this.extractLineItems(lines);
@@ -265,7 +262,36 @@ export class UniversalExtractorService {
     return undefined;
   }
 
-  private extractVendor(lines: string[], sender?: string): string | undefined {
+  private static readonly BANK_PATTERNS: { regex: RegExp; name: string }[] = [
+    { regex: /\b(kaspi\s+bank|kaspi\.kz|каспи\s+банк|каспи)\b/i, name: 'Kaspi Bank' },
+    { regex: /\b(bereke\s+bank|bereke\s+business|береке\s+банк|береке)\b/i, name: 'Bereke Bank' },
+    { regex: /\b(halyk\s+bank|халык\s+банк|халык)\b/i, name: 'Halyk Bank' },
+    { regex: /\b(forte\s+bank|форте\s+банк|форте)\b/i, name: 'Forte Bank' },
+    { regex: /\b(jusan\s+bank|жусан\s+банк|жусан)\b/i, name: 'Jusan Bank' },
+    { regex: /\bcaspkzka\b/i, name: 'Kaspi Bank' },
+    { regex: /\bbrkekzka\b/i, name: 'Bereke Bank' },
+  ];
+
+  private static readonly BANKING_LABEL_PATTERN =
+    /\b(лицевой\s+счет|номер\s+счета|расчетный\s+счет|текущий\s+счет|банковский\s+счет|выписка|statement\s+of\s+account|account\s+number|account\s+statement)\b/i;
+
+  private detectBankName(text: string): string | undefined {
+    for (const { regex, name } of UniversalExtractorService.BANK_PATTERNS) {
+      if (regex.test(text)) {
+        return name;
+      }
+    }
+    return undefined;
+  }
+
+  private extractVendor(lines: string[], sender?: string, fullText?: string): string | undefined {
+    // When a known bank is detected in the document, use it directly.
+    // Bank statements rarely have a meaningful "vendor" beyond the bank itself.
+    const detectedBank = fullText ? this.detectBankName(fullText) : undefined;
+    if (detectedBank) {
+      return detectedBank;
+    }
+
     for (const line of lines.slice(0, 8)) {
       if (line.length <= 2 || line.length > 50) {
         continue;
@@ -276,6 +302,10 @@ export class UniversalExtractorService {
       }
 
       if (/\b(total|итого|tax|vat|ндс|date|дата|amount)\b/i.test(line)) {
+        continue;
+      }
+
+      if (UniversalExtractorService.BANKING_LABEL_PATTERN.test(line)) {
         continue;
       }
 

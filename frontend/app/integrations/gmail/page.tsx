@@ -1,21 +1,21 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { CheckCircle2 } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { CheckCircle2 } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useTheme } from 'next-themes';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
-import { tokens } from '@/lib/theme-tokens';
 
 type GmailSettings = {
   labelId?: string | null;
@@ -155,15 +155,20 @@ function GmailSettingsPanel({
       <Stack spacing={2}>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
           <Stack spacing={0.5}>
-            <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.labelName.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink500 }}>
+              {t.settings.labelName.value}
+            </Typography>
             <Typography style={{ fontWeight: 500, color: c.ink900 }}>
               {status.settings?.labelName || 'Lumio/Receipts'}
             </Typography>
           </Stack>
           <Stack spacing={0.5}>
-            <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.lastSync.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink500 }}>
+              {t.settings.lastSync.value}
+            </Typography>
             <Typography style={{ fontWeight: 500, color: c.ink900 }}>
-              {formatDateTime(status.settings?.lastSyncAt, userLocale) || t.common.unknownDate.value}
+              {formatDateTime(status.settings?.lastSyncAt, userLocale) ||
+                t.common.unknownDate.value}
             </Typography>
           </Stack>
         </Box>
@@ -172,15 +177,21 @@ function GmailSettingsPanel({
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
             <Checkbox
               checked={status.settings?.filterEnabled ?? true}
-              onCheckedChange={checked => void onUpdateSettings({ filterEnabled: checked as boolean })}
+              onCheckedChange={checked =>
+                void onUpdateSettings({ filterEnabled: checked as boolean })
+              }
               disabled={isSaving}
             />
-            <Typography style={{ fontSize: 14, color: c.ink800 }}>{t.settings.filterEnabled.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink800 }}>
+              {t.settings.filterEnabled.value}
+            </Typography>
           </Box>
         </Stack>
 
         <Stack spacing={0.5}>
-          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.watchStatus.value}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
+            {t.settings.watchStatus.value}
+          </Typography>
           <Typography style={{ fontWeight: 500, color: c.ink900 }}>
             {status.settings?.watchEnabled ? (
               <span style={{ color: c.success }}>{t.status.active.value}</span>
@@ -190,7 +201,8 @@ function GmailSettingsPanel({
           </Typography>
           {status.settings?.watchExpiration && (
             <Typography style={{ fontSize: 12, color: c.ink500 }}>
-              {t.settings.expires.value}: {formatDateTime(status.settings.watchExpiration, userLocale)}
+              {t.settings.expires.value}:{' '}
+              {formatDateTime(status.settings.watchExpiration, userLocale)}
             </Typography>
           )}
         </Stack>
@@ -213,9 +225,18 @@ function GmailSettingsPanel({
             }
             disabled={isSaving}
             placeholder={t.settings.keywordsPlaceholder.value}
-            style={{ width: '100%', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: c.ink900 }}
+            style={{
+              width: '100%',
+              border: `1px solid ${c.ink150}`,
+              borderRadius: tokens.radius.md,
+              padding: '8px 12px',
+              fontSize: 14,
+              color: c.ink900,
+            }}
           />
-          <Typography style={{ fontSize: 12, color: c.ink500 }}>{t.settings.keywordsHelp.value}</Typography>
+          <Typography style={{ fontSize: 12, color: c.ink500 }}>
+            {t.settings.keywordsHelp.value}
+          </Typography>
         </Stack>
 
         <Stack spacing={1}>
@@ -224,12 +245,17 @@ function GmailSettingsPanel({
               checked={status.settings?.filterConfig?.hasAttachment ?? true}
               onCheckedChange={checked =>
                 void onUpdateSettings({
-                  filterConfig: { ...status.settings?.filterConfig, hasAttachment: checked as boolean },
+                  filterConfig: {
+                    ...status.settings?.filterConfig,
+                    hasAttachment: checked as boolean,
+                  },
                 })
               }
               disabled={isSaving}
             />
-            <Typography style={{ fontSize: 14, color: c.ink800 }}>{t.settings.hasAttachment.value}</Typography>
+            <Typography style={{ fontSize: 14, color: c.ink800 }}>
+              {t.settings.hasAttachment.value}
+            </Typography>
           </Box>
         </Stack>
       </Stack>
@@ -273,8 +299,14 @@ export default function GmailIntegrationPage(): React.JSX.Element {
     [t, handleCallbackError],
   );
 
-  const { status: baseStatus, loading, saving, loadStatus, handleConnect, handleDisconnect } =
-    useIntegrationStatus({ apiPath: 'gmail', user, messages });
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+  } = useIntegrationStatus({ apiPath: 'gmail', user, messages });
 
   const status = baseStatus as GmailStatus | null;
 
@@ -330,19 +362,39 @@ export default function GmailIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', overflow: 'hidden', display: 'flex' }}>
-          <Image src="/icons/gmail.png" alt="Gmail" width={24} height={24} style={{ height: 24, width: 24, objectFit: 'contain' }} />
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: tokens.radius.full,
+            bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
+            overflow: 'hidden',
+            display: 'flex',
+          }}
+        >
+          <Image
+            src="/icons/gmail.png"
+            alt="Gmail"
+            width={24}
+            height={24}
+            style={{ height: 24, width: 24, objectFit: 'contain' }}
+          />
         </Box>
         <Box>
-          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>{t.header.title.value}</Typography>
-          <Typography style={{ color: c.ink700, marginTop: 4 }}>{t.header.subtitle.value}</Typography>
+          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>
+            {t.header.title.value}
+          </Typography>
+          <Typography style={{ color: c.ink700, marginTop: 4 }}>
+            {t.header.subtitle.value}
+          </Typography>
         </Box>
       </Box>
 
       {loading && (
         <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
           <CircularProgress size={16} />
-          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.common.loading.value}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
+            {t.common.loading.value}
+          </Typography>
         </Box>
       )}
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowDown, File } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { AppPagination } from '@/app/components/ui/pagination';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -9,7 +10,9 @@ import {
   getStatementMerchantLabel,
   isManualExpenseStatement,
 } from '@/app/lib/statement-status';
-import { ArrowDown, File } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import { StatementsGmailSync } from './StatementsGmailSync';
+import { StatementsListItem } from './StatementsListItem';
 import {
   formatPaginationLabel,
   formatStatementAmount,
@@ -19,15 +22,12 @@ import {
   isReceiptProcessing,
   isStatementParsingInProgress,
 } from './StatementsListView.utils';
-import { StatementsGmailSync } from './StatementsGmailSync';
-import { StatementsListItem } from './StatementsListItem';
 import {
   DEFAULT_STATEMENT_COLUMNS,
   type StatementColumn,
   type StatementColumnId,
 } from './columns/statement-columns';
 import type { DuplicateMeta } from './hooks/useStatementSelection';
-import { tokens } from '@/lib/theme-tokens';
 
 interface StatementForTable {
   id: string;
@@ -51,7 +51,12 @@ interface StatementForTable {
     categoryId?: string;
     lineItems?: Array<{ description: string; amount?: number }>;
   };
-  category?: { id?: string | null; name?: string | null; color?: string | null; icon?: string | null } | null;
+  category?: {
+    id?: string | null;
+    name?: string | null;
+    color?: string | null;
+    icon?: string | null;
+  } | null;
   tags?: Array<{ id?: string; name?: string; color?: string | null }>;
   googleSheet?: { id?: string; sheetName?: string | null; worksheetName?: string | null } | null;
   transactionSummary?: {
@@ -60,8 +65,20 @@ interface StatementForTable {
     exchangeRateMixed?: boolean;
     cardLabel?: string | null;
   } | null;
-  user?: { id: string; name?: string | null; email?: string | null; avatarUrl?: string | null } | null;
-  parsingDetails?: { importPreview?: { attachments?: number; description?: string; merchant?: string; categoryId?: string } };
+  user?: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    avatarUrl?: string | null;
+  } | null;
+  parsingDetails?: {
+    importPreview?: {
+      attachments?: number;
+      description?: string;
+      merchant?: string;
+      categoryId?: string;
+    };
+  };
 }
 
 interface TableLabels {
@@ -137,26 +154,49 @@ const columnHeaderStyle = (columnId: StatementColumnId): React.CSSProperties => 
     textAlign: NUMERIC_COLUMN_IDS.has(columnId) ? 'right' : 'left',
   };
 
-  if (columnId === 'receipt') return { ...common, width: 48, flex: '0 0 48px', textAlign: 'center' };
-  if (columnId === 'merchant') return { ...common, minWidth: 220, flex: '1 1 260px' };
-  if (columnId === 'description') return { ...common, minWidth: 180, flex: '1 1 220px' };
-  if (columnId === 'action') return { ...common, width: 128, flex: '0 0 128px', textAlign: 'right' };
-  if (columnId === 'amount') return { ...common, width: 148, flex: '0 0 148px', textAlign: 'right' };
-  if (columnId === 'date') return { ...common, width: 124, flex: '0 0 124px' };
-  if (columnId === 'exchangeRate') return { ...common, width: 156, flex: '0 0 156px', textAlign: 'right' };
-  if (NUMERIC_COLUMN_IDS.has(columnId)) return { ...common, width: 116, flex: '0 0 116px', textAlign: 'right' };
-  if (BOOLEAN_COLUMN_IDS.has(columnId)) return { ...common, width: 96, flex: '0 0 96px' };
+  if (columnId === 'receipt') {
+    return { ...common, width: 48, flex: '0 0 48px', textAlign: 'center' };
+  }
+  if (columnId === 'merchant') {
+    return { ...common, minWidth: 220, flex: '1 1 260px' };
+  }
+  if (columnId === 'description') {
+    return { ...common, minWidth: 180, flex: '1 1 220px' };
+  }
+  if (columnId === 'action') {
+    return { ...common, width: 128, flex: '0 0 128px', textAlign: 'right' };
+  }
+  if (columnId === 'amount') {
+    return { ...common, width: 148, flex: '0 0 148px', textAlign: 'right' };
+  }
+  if (columnId === 'date') {
+    return { ...common, width: 124, flex: '0 0 124px' };
+  }
+  if (columnId === 'exchangeRate') {
+    return { ...common, width: 156, flex: '0 0 156px', textAlign: 'right' };
+  }
+  if (NUMERIC_COLUMN_IDS.has(columnId)) {
+    return { ...common, width: 116, flex: '0 0 116px', textAlign: 'right' };
+  }
+  if (BOOLEAN_COLUMN_IDS.has(columnId)) {
+    return { ...common, width: 96, flex: '0 0 96px' };
+  }
   return { ...common, width: 136, flex: '0 0 136px' };
 };
 
-const getRenderedColumns = (columns: StatementColumn[] = DEFAULT_STATEMENT_COLUMNS): StatementColumn[] => {
+const getRenderedColumns = (
+  columns: StatementColumn[] = DEFAULT_STATEMENT_COLUMNS,
+): StatementColumn[] => {
   const visibleColumns = columns.filter(column => column.visible);
   return visibleColumns.length > 0 ? visibleColumns : columns.slice(0, 1);
 };
 
 const calculateTableMinWidth = (columns: StatementColumn[] = DEFAULT_STATEMENT_COLUMNS): number => {
   const renderedColumns = getRenderedColumns(columns);
-  const columnsWidth = renderedColumns.reduce((sum, column) => sum + COLUMN_MIN_WIDTHS[column.id], 0);
+  const columnsWidth = renderedColumns.reduce(
+    (sum, column) => sum + COLUMN_MIN_WIDTHS[column.id],
+    0,
+  );
   const gapWidth = Math.max(0, renderedColumns.length - 1) * 24;
   return 32 + columnsWidth + gapWidth + 64;
 };
@@ -172,7 +212,10 @@ interface StatementRowData {
   dateLabel: string;
 }
 
-function resolveStatementRowData(statement: StatementForTable, scanningLabel: string): StatementRowData {
+function resolveStatementRowData(
+  statement: StatementForTable,
+  scanningLabel: string,
+): StatementRowData {
   const isReceipt = statement.source === 'gmail' || statement.source === 'scan';
   const resolvedName = isReceipt
     ? resolveGmailMerchantLabel({
@@ -186,14 +229,11 @@ function resolveStatementRowData(statement: StatementForTable, scanningLabel: st
     ? resolvedName
     : getStatementMerchantLabel(statement.status, resolvedName, scanningLabel);
   const isManualExpense = !isReceipt && isManualExpenseStatement(statement);
-  const manualAttachmentCount = Number(
-    statement.parsingDetails?.importPreview?.attachments ?? 0,
-  );
+  const manualAttachmentCount = Number(statement.parsingDetails?.importPreview?.attachments ?? 0);
   const allowAttachFallback =
     isManualExpense &&
     !isReceipt &&
-    (manualAttachmentCount === 0 ||
-      statement.fileName.toLowerCase().startsWith('manual-expense-'));
+    (manualAttachmentCount === 0 || statement.fileName.toLowerCase().startsWith('manual-expense-'));
   return {
     isReceipt,
     merchantLabel,
@@ -227,7 +267,16 @@ function TableDesktopHeader({
 
   return (
     <div className="lumio-stmt-list-view__desktop-header">
-      <div style={{ width: 16, display: 'flex', justifyContent: 'center', opacity: 0.7, flexShrink: 0, marginRight: 16 }}>
+      <div
+        style={{
+          width: 16,
+          display: 'flex',
+          justifyContent: 'center',
+          opacity: 0.7,
+          flexShrink: 0,
+          marginRight: 16,
+        }}
+      >
         <Checkbox
           checked={allVisibleSelected}
           indeterminate={selectedCount > 0 && !allVisibleSelected}
@@ -330,7 +379,9 @@ export function StatementsListTable({
         >
           <File size={32} />
         </div>
-        <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>{labels.emptyTitle}</h3>
+        <h3 style={{ fontSize: 18, fontWeight: 500, color: 'var(--foreground)' }}>
+          {labels.emptyTitle}
+        </h3>
         <p style={{ marginTop: 4, color: 'var(--muted-foreground)' }}>{labels.emptyDescription}</p>
       </div>
     );
@@ -349,7 +400,9 @@ export function StatementsListTable({
               onCheckedChange={onToggleSelectAll}
               aria-label="Select all statements"
             />
-            <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>Select all</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)' }}>
+              Select all
+            </span>
           </div>
           <TableDesktopHeader
             allVisibleSelected={allVisibleSelected}
@@ -400,10 +453,21 @@ export function StatementsListTable({
       </div>
       <div className="lumio-stmt-list-view__pagination" style={{ marginTop: 24 }}>
         <div style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
-          {formatPaginationLabel(labels.paginationShown, { from: rangeStart, to: rangeEnd, count: total })}
+          {formatPaginationLabel(labels.paginationShown, {
+            from: rangeStart,
+            to: rangeEnd,
+            count: total,
+          })}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}>
+          <span
+            style={{
+              fontSize: 14,
+              color: 'var(--text-secondary)',
+              minWidth: 120,
+              textAlign: 'center',
+            }}
+          >
             {formatPaginationLabel(labels.paginationPageOf, { page, count: totalPagesCount })}
           </span>
           <AppPagination page={page} total={totalPagesCount} onChange={onPageChange} />

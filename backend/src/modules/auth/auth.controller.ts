@@ -11,10 +11,10 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { Throttle } from '@nestjs/throttler';
-import type { AuthenticatedRequest } from '../../common/interfaces/authenticated-request.interface';
+import type { Request } from 'express';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../../common/interfaces/authenticated-request.interface';
 import type { User } from '../../entities/user.entity';
 import { AuthService, type SessionContext } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';

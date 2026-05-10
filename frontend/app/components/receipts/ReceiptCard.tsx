@@ -1,9 +1,9 @@
 'use client';
 
-import type { ReceiptRecord } from '@/app/lib/api';
-import { Box, Chip, Paper, Typography } from '@mui/material';
 import { Camera, FileImage, FileText, Mail, UploadCloud } from '@/app/components/icons';
+import type { ReceiptRecord } from '@/app/lib/api';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, Chip, Paper, Typography } from '@mui/material';
 
 const statusColorMap: Record<string, { bgcolor: string; color: string }> = {
   approved: { bgcolor: '#dcfce7', color: '#166534' },
@@ -80,10 +80,21 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
         }}
       >
         <Box sx={{ p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: 1.5,
+            }}
+          >
             <Box sx={{ display: 'flex', minWidth: 0, alignItems: 'center', gap: 1.5 }}>
               <Box sx={{ bgcolor: 'var(--muted)', p: 1.5, color: 'var(--text-secondary)' }}>
-                {isPdf ? <FileText style={{ width: 20, height: 20 }} /> : <FileImage style={{ width: 20, height: 20 }} />}
+                {isPdf ? (
+                  <FileText style={{ width: 20, height: 20 }} />
+                ) : (
+                  <FileImage style={{ width: 20, height: 20 }} />
+                )}
               </Box>
               <Box sx={{ minWidth: 0 }}>
                 <Typography
@@ -123,15 +134,37 @@ export function ReceiptCard({ receipt, onOpen }: ReceiptCardProps) {
             />
           </Box>
 
-          <Box sx={{ mt: 2.5, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: 'var(--muted-foreground)' }}>
+          <Box
+            sx={{
+              mt: 2.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: 14,
+              color: 'var(--muted-foreground)',
+            }}
+          >
             <span>{new Date(receipt.receivedAt).toLocaleDateString()}</span>
-            <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, bgcolor: 'var(--muted)', px: 1.25, py: 0.5, color: 'var(--text-secondary)' }}>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.75,
+                bgcolor: 'var(--muted)',
+                px: 1.25,
+                py: 0.5,
+                color: 'var(--text-secondary)',
+              }}
+            >
               {getSourceIcon(receipt.source)}
               {receipt.source}
             </Box>
           </Box>
 
-          <Typography style={{ marginTop: 16, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+          <Typography
+            style={{ marginTop: 16, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}
+          >
             {formatAmount(receipt.parsedData?.amount, receipt.parsedData?.currency)}
           </Typography>
         </Box>

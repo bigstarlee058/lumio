@@ -293,7 +293,7 @@ export class AuthService {
     const email = payload?.email?.trim().toLowerCase();
     const googleId = payload?.sub;
 
-    if (!email || !googleId) {
+    if (!(email && googleId)) {
       throw new UnauthorizedException('Google account data is incomplete');
     }
 
@@ -488,10 +488,10 @@ export class AuthService {
         expiresIn: toJwtExpiresIn(process.env.JWT_EXPIRES_IN, DEFAULT_AUTH_SESSION_EXPIRES_IN),
       };
 
-      const access_token = this.jwtService.sign(accessTokenPayload, accessTokenOptions);
+      const accessToken = this.jwtService.sign(accessTokenPayload, accessTokenOptions);
 
-      return { access_token };
-    } catch (error) {
+      return { access_token: accessToken };
+    } catch (_error) {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
@@ -601,15 +601,15 @@ export class AuthService {
       expiresIn: toJwtExpiresIn(process.env.JWT_REFRESH_EXPIRES_IN, '30d'),
     };
 
-    const access_token = this.jwtService.sign(payload, accessTokenOptions);
-    const refresh_token = this.jwtService.sign(refreshPayload, refreshTokenOptions);
+    const accessToken = this.jwtService.sign(payload, accessTokenOptions);
+    const refreshToken = this.jwtService.sign(refreshPayload, refreshTokenOptions);
 
     const parsedDevice = this.parseUserAgent(sessionContext?.userAgent);
     await this.authSessionRepository.save(
       this.authSessionRepository.create({
         id: sessionId,
         userId: user.id,
-        refreshTokenHash: this.hashRefreshToken(refresh_token),
+        refreshTokenHash: this.hashRefreshToken(refreshToken),
         userAgent: sessionContext?.userAgent || null,
         ipAddress: this.resolveIpAddress(sessionContext?.ipAddress),
         device: parsedDevice.device,
@@ -632,8 +632,8 @@ export class AuthService {
         avatarUrl: user.avatarUrl ?? null,
         onboardingCompletedAt: user.onboardingCompletedAt?.toISOString() ?? null,
       },
-      access_token,
-      refresh_token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 
@@ -695,20 +695,40 @@ export class AuthService {
   }
 
   private detectBrowser(userAgent: string): string {
-    if (/Edg\//i.test(userAgent)) return 'Edge';
-    if (/OPR\//i.test(userAgent)) return 'Opera';
-    if (/Firefox\//i.test(userAgent)) return 'Firefox';
-    if (/Chrome\//i.test(userAgent)) return 'Chrome';
-    if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent)) return 'Safari';
+    if (/Edg\//i.test(userAgent)) {
+      return 'Edge';
+    }
+    if (/OPR\//i.test(userAgent)) {
+      return 'Opera';
+    }
+    if (/Firefox\//i.test(userAgent)) {
+      return 'Firefox';
+    }
+    if (/Chrome\//i.test(userAgent)) {
+      return 'Chrome';
+    }
+    if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent)) {
+      return 'Safari';
+    }
     return 'Unknown browser';
   }
 
   private detectOs(userAgent: string): string {
-    if (/Windows NT/i.test(userAgent)) return 'Windows';
-    if (/Mac OS X/i.test(userAgent) && !/(iphone|ipad|ipod)/i.test(userAgent)) return 'macOS';
-    if (/(iphone|ipad|ipod)/i.test(userAgent)) return 'iOS';
-    if (/Android/i.test(userAgent)) return 'Android';
-    if (/Linux/i.test(userAgent)) return 'Linux';
+    if (/Windows NT/i.test(userAgent)) {
+      return 'Windows';
+    }
+    if (/Mac OS X/i.test(userAgent) && !/(iphone|ipad|ipod)/i.test(userAgent)) {
+      return 'macOS';
+    }
+    if (/(iphone|ipad|ipod)/i.test(userAgent)) {
+      return 'iOS';
+    }
+    if (/Android/i.test(userAgent)) {
+      return 'Android';
+    }
+    if (/Linux/i.test(userAgent)) {
+      return 'Linux';
+    }
     return 'Unknown OS';
   }
 }

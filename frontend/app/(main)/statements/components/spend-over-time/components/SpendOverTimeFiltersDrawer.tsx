@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 import { FiltersDrawer } from '@/app/(main)/statements/components/filters/FiltersDrawer';
 import type { useSpendOverTimeViewModel } from '@/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeViewModel';
@@ -9,8 +8,12 @@ type Props = { vm: ReturnType<typeof useSpendOverTimeViewModel> };
 
 export function SpendOverTimeFiltersDrawer({ vm }: Props): React.JSX.Element {
   const { labels, filterOptions, filterOptionLabels } = vm;
-  const { typeOptions, statusOptions, datePresets, dateModes, groupByOptions, hasOptions } = filterOptions;
-  const onClose = (): void => { vm.setFiltersDrawerOpen(false); vm.setFiltersDrawerScreen('root'); };
+  const { typeOptions, statusOptions, datePresets, dateModes, groupByOptions, hasOptions } =
+    filterOptions;
+  const onClose = (): void => {
+    vm.setFiltersDrawerOpen(false);
+    vm.setFiltersDrawerScreen('root');
+  };
   const drawerLabels = buildFiltersDrawerLabels(labels, filterOptionLabels);
   return (
     <FiltersDrawer
@@ -22,7 +25,10 @@ export function SpendOverTimeFiltersDrawer({ vm }: Props): React.JSX.Element {
       onSelect={vm.setFiltersDrawerScreen}
       onUpdateFilters={vm.updateFilter}
       onResetAll={vm.resetAllFilters}
-      onViewResults={() => { vm.applyFilterChanges(); onClose(); }}
+      onViewResults={() => {
+        vm.applyFilterChanges();
+        onClose();
+      }}
       typeOptions={typeOptions}
       statusOptions={statusOptions}
       datePresets={datePresets}

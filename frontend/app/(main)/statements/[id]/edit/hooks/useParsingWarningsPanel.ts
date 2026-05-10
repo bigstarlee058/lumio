@@ -2,7 +2,12 @@ import { buildCurrencySearchIndex } from '@/app/lib/statement-expense-drawer';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
 import { useEffect, useMemo, useState } from 'react';
 import type { ConvertDroppedSamplePayload, ResolveWarningPayload } from '../ParsingWarningsPanel';
-import { canConvertDraft, normalizeCurrencyCode, toDraft, type DroppedSampleDraft } from '../helpers/warning-formatters';
+import {
+  type DroppedSampleDraft,
+  canConvertDraft,
+  normalizeCurrencyCode,
+  toDraft,
+} from '../helpers/warning-formatters';
 import { buildWarningHandlers } from '../helpers/warning-handlers';
 
 export interface EditableWarningEntry {
@@ -93,7 +98,9 @@ function useEntryState(editableEntries: EditableWarningEntry[]): {
   useEffect(() => {
     setDraftsByKey(current => {
       const next: Record<string, DroppedSampleDraft> = {};
-      editableEntries.forEach(entry => { next[entry.key] = current[entry.key] ?? toDraft(entry.sample); });
+      editableEntries.forEach(entry => {
+        next[entry.key] = current[entry.key] ?? toDraft(entry.sample);
+      });
       return next;
     });
   }, [editableEntries]);
@@ -117,9 +124,16 @@ interface CurrencyStateReturn {
   allCurrencyItems: CurrencySearchItem[];
 }
 
-const computeSelectedMatchesSearch = (selectedCurrencyItem: CurrencySearchItem | null, currencyQuery: string): boolean => {
-  if (!selectedCurrencyItem) return false;
-  if (!currencyQuery) return true;
+const computeSelectedMatchesSearch = (
+  selectedCurrencyItem: CurrencySearchItem | null,
+  currencyQuery: string,
+): boolean => {
+  if (!selectedCurrencyItem) {
+    return false;
+  }
+  if (!currencyQuery) {
+    return true;
+  }
   return selectedCurrencyItem.searchText.includes(currencyQuery);
 };
 
@@ -129,20 +143,41 @@ function useCurrencyState({
   recentCurrencies,
 }: CurrencyStateParams): CurrencyStateReturn {
   const currencyItems = useMemo(() => buildCurrencySearchIndex(), []);
-  const currencyByCode = useMemo(() => new Map(currencyItems.map(item => [item.code, item] as const)), [currencyItems]);
+  const currencyByCode = useMemo(
+    () => new Map(currencyItems.map(item => [item.code, item] as const)),
+    [currencyItems],
+  );
   const selectedCurrencyCode = normalizeCurrencyCode(selectedDraft?.currency ?? '');
-  const selectedCurrencyItem = selectedCurrencyCode ? currencyByCode.get(selectedCurrencyCode) ?? null : null;
+  const selectedCurrencyItem = selectedCurrencyCode
+    ? (currencyByCode.get(selectedCurrencyCode) ?? null)
+    : null;
   const currencyQuery = currencySearch.trim().toLowerCase();
   const selectedMatchesSearch = computeSelectedMatchesSearch(selectedCurrencyItem, currencyQuery);
   const recentCurrencyItems = useMemo(
-    () => recentCurrencies.map(code => currencyByCode.get(code)).filter(isCurrencySearchItem).filter(item => item.code !== selectedCurrencyCode),
+    () =>
+      recentCurrencies
+        .map(code => currencyByCode.get(code))
+        .filter(isCurrencySearchItem)
+        .filter(item => item.code !== selectedCurrencyCode),
     [currencyByCode, recentCurrencies, selectedCurrencyCode],
   );
   const allCurrencyItems = useMemo(() => {
-    const source = currencyQuery.length > 0 ? currencyItems.filter(item => item.searchText.includes(currencyQuery)) : currencyItems;
+    const source =
+      currencyQuery.length > 0
+        ? currencyItems.filter(item => item.searchText.includes(currencyQuery))
+        : currencyItems;
     return source.filter(item => item.code !== selectedCurrencyCode);
   }, [currencyItems, currencyQuery, selectedCurrencyCode]);
-  return { currencyItems, currencyByCode, selectedCurrencyCode, selectedCurrencyItem, currencyQuery, selectedMatchesSearch, recentCurrencyItems, allCurrencyItems };
+  return {
+    currencyItems,
+    currencyByCode,
+    selectedCurrencyCode,
+    selectedCurrencyItem,
+    currencyQuery,
+    selectedMatchesSearch,
+    recentCurrencyItems,
+    allCurrencyItems,
+  };
 }
 
 interface SelectionDerivedState {
@@ -153,13 +188,23 @@ interface SelectionDerivedState {
   isDialogOpen: boolean;
 }
 
-const resolveSelectedEntry = (selectedWarning: SelectedWarning | null, byKey: Map<string, EditableWarningEntry>): EditableWarningEntry | null => {
-  if (!selectedWarning) return null;
+const resolveSelectedEntry = (
+  selectedWarning: SelectedWarning | null,
+  byKey: Map<string, EditableWarningEntry>,
+): EditableWarningEntry | null => {
+  if (!selectedWarning) {
+    return null;
+  }
   return byKey.get(selectedWarning.entryKey) ?? null;
 };
 
-const resolveSelectedDraft = (selectedEntry: EditableWarningEntry | null, draftsByKey: Record<string, DroppedSampleDraft>): DroppedSampleDraft | null => {
-  if (!selectedEntry) return null;
+const resolveSelectedDraft = (
+  selectedEntry: EditableWarningEntry | null,
+  draftsByKey: Record<string, DroppedSampleDraft>,
+): DroppedSampleDraft | null => {
+  if (!selectedEntry) {
+    return null;
+  }
   return draftsByKey[selectedEntry.key] ?? toDraft(selectedEntry.sample);
 };
 
@@ -201,16 +246,30 @@ function useWarningSelection({
   const [currencySearch, setCurrencySearch] = useState('');
 
   useEffect(() => {
-    if (!selectedWarning) return;
+    if (!selectedWarning) {
+      return;
+    }
     const entry = editableEntryByKey.get(selectedWarning.entryKey);
-    if (!entry || !warnings.includes(selectedWarning.warning)) setSelectedWarning(null);
+    if (!(entry && warnings.includes(selectedWarning.warning))) {
+      setSelectedWarning(null);
+    }
   }, [editableEntryByKey, selectedWarning, warnings]);
 
   useEffect(() => {
-    if (!selectedWarning) { setCurrencyPickerOpen(false); setCurrencySearch(''); }
+    if (!selectedWarning) {
+      setCurrencyPickerOpen(false);
+      setCurrencySearch('');
+    }
   }, [selectedWarning]);
 
-  return { selectedWarning, setSelectedWarning, currencyPickerOpen, setCurrencyPickerOpen, currencySearch, setCurrencySearch };
+  return {
+    selectedWarning,
+    setSelectedWarning,
+    currencyPickerOpen,
+    setCurrencyPickerOpen,
+    currencySearch,
+    setCurrencySearch,
+  };
 }
 
 export function useParsingWarningsPanel({
@@ -220,26 +279,66 @@ export function useParsingWarningsPanel({
   onResolveWarning,
 }: UseParsingWarningsPanelParams): UseParsingWarningsPanelReturn {
   const [convertingKey, setConvertingKey] = useState<string | null>(null);
-  const [recentCurrencies, setRecentCurrencies] = useState<string[]>([...DEFAULT_RECENT_CURRENCIES]);
+  const [recentCurrencies, setRecentCurrencies] = useState<string[]>([
+    ...DEFAULT_RECENT_CURRENCIES,
+  ]);
 
   const { draftsByKey, setDraftsByKey, entryMaps } = useEntryState(editableEntries);
-  const { byKey: editableEntryByKey, byReason: editableEntryByReason, byTxKey: editableEntryByTxKey } = entryMaps;
+  const {
+    byKey: editableEntryByKey,
+    byReason: editableEntryByReason,
+    byTxKey: editableEntryByTxKey,
+  } = entryMaps;
 
-  const { selectedWarning, setSelectedWarning, currencyPickerOpen, setCurrencyPickerOpen, currencySearch, setCurrencySearch } =
-    useWarningSelection({ warnings, editableEntryByKey });
+  const {
+    selectedWarning,
+    setSelectedWarning,
+    currencyPickerOpen,
+    setCurrencyPickerOpen,
+    currencySearch,
+    setCurrencySearch,
+  } = useWarningSelection({ warnings, editableEntryByKey });
 
   const { selectedEntry, selectedDraft, selectedCanConvert, selectedIsConverting, isDialogOpen } =
     deriveSelectionState({ selectedWarning, editableEntryByKey, draftsByKey, convertingKey });
 
   const currencyState = useCurrencyState({ currencySearch, selectedDraft, recentCurrencies });
 
-  const handlers = buildWarningHandlers({ selectedWarning, editableEntryByKey, draftsByKey, setDraftsByKey, setConvertingKey, setSelectedWarning, setRecentCurrencies, setCurrencyPickerOpen, setCurrencySearch, onConvertDroppedSample, onResolveWarning });
+  const handlers = buildWarningHandlers({
+    selectedWarning,
+    editableEntryByKey,
+    draftsByKey,
+    setDraftsByKey,
+    setConvertingKey,
+    setSelectedWarning,
+    setRecentCurrencies,
+    setCurrencyPickerOpen,
+    setCurrencySearch,
+    onConvertDroppedSample,
+    onResolveWarning,
+  });
 
   return {
-    draftsByKey, setDraftsByKey, convertingKey, currencyPickerOpen, setCurrencyPickerOpen,
-    currencySearch, setCurrencySearch, recentCurrencies, setRecentCurrencies,
-    selectedWarning, setSelectedWarning, editableEntryByKey, editableEntryByReason, editableEntryByTxKey,
-    selectedEntry, selectedDraft, selectedCanConvert, selectedIsConverting,
-    ...currencyState, isDialogOpen, ...handlers,
+    draftsByKey,
+    setDraftsByKey,
+    convertingKey,
+    currencyPickerOpen,
+    setCurrencyPickerOpen,
+    currencySearch,
+    setCurrencySearch,
+    recentCurrencies,
+    setRecentCurrencies,
+    selectedWarning,
+    setSelectedWarning,
+    editableEntryByKey,
+    editableEntryByReason,
+    editableEntryByTxKey,
+    selectedEntry,
+    selectedDraft,
+    selectedCanConvert,
+    selectedIsConverting,
+    ...currencyState,
+    isDialogOpen,
+    ...handlers,
   };
 }

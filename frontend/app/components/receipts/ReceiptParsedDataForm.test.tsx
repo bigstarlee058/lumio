@@ -1,5 +1,5 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ReceiptParsedDataForm } from './ReceiptParsedDataForm';
 import type { EditableReceiptParsedData } from './receipt-types';
@@ -15,11 +15,7 @@ vi.mock('@/app/components/CustomDatePicker', () => ({
   default: ({ value, onChange, label, containerTestId }: CustomDatePickerMockProps) => (
     <div data-testid={containerTestId ?? 'mock-custom-date-picker'}>
       <span>{label}</span>
-      <button
-        type="button"
-        aria-label="HeroUI Date"
-        onClick={() => onChange?.('2024-07-29')}
-      >
+      <button type="button" aria-label="HeroUI Date" onClick={() => onChange?.('2024-07-29')}>
         {value || 'Pick date'}
       </button>
     </div>
@@ -40,9 +36,7 @@ const baseValue: EditableReceiptParsedData = {
 
 describe('ReceiptParsedDataForm', () => {
   it('uses the HeroUI date picker instead of a native date input', () => {
-    render(
-      <ReceiptParsedDataForm value={baseValue} categories={[]} onChange={vi.fn()} />,
-    );
+    render(<ReceiptParsedDataForm value={baseValue} categories={[]} onChange={vi.fn()} />);
 
     expect(screen.queryByLabelText('Date')).toBeFalsy();
     expect(screen.queryByDisplayValue('2014-07-29')).toBeFalsy();
@@ -75,8 +69,8 @@ describe('ReceiptParsedDataForm', () => {
       />,
     );
 
-    const lineItemsShell = Array.from(document.querySelectorAll('div')).find(node =>
-      node.className.includes('rounded-2xl') && node.className.includes('border-slate-200'),
+    const lineItemsShell = Array.from(document.querySelectorAll('div')).find(
+      node => node.className.includes('rounded-2xl') && node.className.includes('border-slate-200'),
     );
 
     expect(lineItemsShell?.className).toContain('dark:border-slate-700/60');

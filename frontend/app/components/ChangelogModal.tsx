@@ -1,12 +1,12 @@
 'use client';
 
+import { X } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { X } from '@/app/components/icons';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { ModalShell } from './ui/modal-shell';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface ChangelogEntry {
   id: string;
@@ -84,7 +84,14 @@ const markdownComponents: Components = {
   code: ({ children }) => (
     <Box
       component="code"
-      sx={{ bgcolor: 'var(--muted)', px: 0.75, py: 0.25, fontSize: 13, color: 'text.primary', borderRadius: tokens.radius.xs }}
+      sx={{
+        bgcolor: 'var(--muted)',
+        px: 0.75,
+        py: 0.25,
+        fontSize: 13,
+        color: 'text.primary',
+        borderRadius: tokens.radius.xs,
+      }}
     >
       {children}
     </Box>
@@ -110,10 +117,26 @@ export function ChangelogModal({
       onClose={onClose}
       size="full"
       showCloseButton={false}
-      paperSx={{ height: 'calc(100vh - 32px)', width: 'calc(100vw - 32px)', maxWidth: 'none', overflow: 'hidden', borderRadius: tokens.radius.xl, border: '1px solid #d4e3d6', boxShadow: '0 24px 80px rgba(16,24,40,0.16)' }}
+      paperSx={{
+        height: 'calc(100vh - 32px)',
+        width: 'calc(100vw - 32px)',
+        maxWidth: 'none',
+        overflow: 'hidden',
+        borderRadius: tokens.radius.xl,
+        border: '1px solid #d4e3d6',
+        boxShadow: '0 24px 80px rgba(16,24,40,0.16)',
+      }}
       contentSx={{ height: '100%', p: 0 }}
     >
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, bgcolor: 'background.paper' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          minHeight: 0,
+          bgcolor: 'background.paper',
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -129,11 +152,20 @@ export function ChangelogModal({
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Typography
               variant="caption"
-              sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.16em', color: 'text.secondary' }}
+              sx={{
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.16em',
+                color: 'text.secondary',
+              }}
             >
               {releaseLabel}
             </Typography>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{ fontWeight: 600, lineHeight: 1.25, color: 'text.primary' }}
+            >
               {entry.title}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -144,13 +176,18 @@ export function ChangelogModal({
           <IconButton
             onClick={onClose}
             aria-label={closeLabel}
-            sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'action.hover', color: 'text.primary' } }}
+            sx={{
+              color: 'text.secondary',
+              '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+            }}
           >
             <X size={30} strokeWidth={2.4} />
           </IconButton>
         </Box>
 
-        <Box sx={{ minHeight: 0, flex: 1, overflowY: 'auto', bgcolor: 'grey.100', px: 2.5, py: 3.5 }}>
+        <Box
+          sx={{ minHeight: 0, flex: 1, overflowY: 'auto', bgcolor: 'grey.100', px: 2.5, py: 3.5 }}
+        >
           <Box
             component="article"
             sx={{

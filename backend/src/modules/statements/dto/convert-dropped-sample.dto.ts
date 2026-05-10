@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-  ValidateNested,
-} from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 
 export class ConvertDroppedSampleTransactionDto {
   @IsDateString()

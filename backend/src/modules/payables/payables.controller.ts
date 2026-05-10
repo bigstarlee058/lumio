@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
-import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
 import { buildContentDisposition } from '../../common/utils/http-file.util';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { EntityType } from '../../entities/audit-event.entity';
 import type { User } from '../../entities/user.entity';
 import { Audit } from '../audit/decorators/audit.decorator';
@@ -114,13 +114,18 @@ export class PayablesController {
     @WorkspaceId() workspaceId: string,
     @Res() res: Response,
   ) {
-    const { filePath, fileName, contentType } = await this.payablesService.exportData(workspaceId, body);
+    const { filePath, fileName, contentType } = await this.payablesService.exportData(
+      workspaceId,
+      body,
+    );
     res.setHeader('Content-Type', contentType);
     res.setHeader('Content-Disposition', buildContentDisposition('attachment', fileName));
     const fileStream = fs.createReadStream(filePath);
     let cleanedUp = false;
     const cleanup = () => {
-      if (cleanedUp) return;
+      if (cleanedUp) {
+        return;
+      }
       cleanedUp = true;
       try {
         fs.unlinkSync(filePath);

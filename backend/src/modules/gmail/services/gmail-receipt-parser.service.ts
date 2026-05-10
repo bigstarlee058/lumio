@@ -1,25 +1,19 @@
 import * as fs from 'fs';
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import * as pdfParse from 'pdf-parse';
+import { stripHtmlForAi } from '../../../common/utils/ai-response.util';
 import {
   DEFAULT_RECEIPT_SYMBOL_TO_CURRENCY,
   createReceiptAmountHelpers,
-  extractBestNumberPart as selectBestNumberPart,
   extractCurrency as detectCurrency,
-  parseAmountFragment as parseSharedAmountFragment,
   selectTopAmountCandidate,
 } from '../../../common/utils/receipt-amount.util';
-import { stripHtmlForAi } from '../../../common/utils/ai-response.util';
 import {
   buildCurrencyTokenPattern,
   extractLineItemsFromLines,
   extractAmountFragments as extractSharedAmountFragments,
-  isAddressLike as isSharedAddressLike,
-  isDateRangeLike as isSharedDateRangeLike,
   isLikelySentence as isSharedLikelySentence,
-  isYearLikeAmount as isSharedYearLikeAmount,
   scoreAmountCandidate as scoreSharedAmountCandidate,
-  shouldSkipLineItem,
 } from '../../../common/utils/receipt-extraction.util';
 import { extractBrandFromSender } from '../../../common/utils/sender-brand.util';
 import type { Receipt } from '../../../entities';
@@ -453,11 +447,21 @@ export class GmailReceiptParserService {
   }): number {
     let confidence = 0;
 
-    if (data.amount !== undefined) confidence += 30;
-    if (data.date) confidence += 20;
-    if (data.vendor) confidence += 20;
-    if (data.tax) confidence += 15;
-    if (data.lineItems && data.lineItems.length > 0) confidence += 15;
+    if (data.amount !== undefined) {
+      confidence += 30;
+    }
+    if (data.date) {
+      confidence += 20;
+    }
+    if (data.vendor) {
+      confidence += 20;
+    }
+    if (data.tax) {
+      confidence += 15;
+    }
+    if (data.lineItems && data.lineItems.length > 0) {
+      confidence += 15;
+    }
 
     return confidence / 100;
   }

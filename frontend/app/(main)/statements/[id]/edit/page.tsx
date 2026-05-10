@@ -1,10 +1,6 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { Checkbox } from '@/app/components/ui/checkbox';
-import { DetailActionButton } from '@/app/components/ui/detail-action-button';
-import { useAuth } from '@/app/hooks/useAuth';
-import { flattenStatementCategories, getCategoryDisplayName } from '@/app/lib/statement-categories';
 import {
   ArrowLeft,
   Check,
@@ -19,6 +15,10 @@ import {
   TriangleAlert,
   XCircle,
 } from '@/app/components/icons';
+import { Checkbox } from '@/app/components/ui/checkbox';
+import { DetailActionButton } from '@/app/components/ui/detail-action-button';
+import { useAuth } from '@/app/hooks/useAuth';
+import { flattenStatementCategories, getCategoryDisplayName } from '@/app/lib/statement-categories';
 import {
   Accordion,
   AccordionDetails,
@@ -57,6 +57,7 @@ import {
   getStatementStageActions,
   isStageActionBlocked,
 } from '@/app/lib/statement-workflow';
+import { tokens } from '@/lib/theme-tokens';
 import { ParsingWarningsPanel } from './ParsingWarningsPanel';
 import StatementCategoryDrawer from './StatementCategoryDrawer';
 import {
@@ -68,7 +69,6 @@ import {
   resolveLocale,
 } from './editHelpers';
 import { useStatementEditForm } from './hooks/useStatementEditForm';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function, complexity
 export default function EditStatementPage(): React.JSX.Element {
@@ -83,9 +83,9 @@ export default function EditStatementPage(): React.JSX.Element {
 
   const {
     statement,
-    setStatement: _setStatement,
+    setStatement: SetStatement,
     transactions,
-    setTransactions: _setTransactions,
+    setTransactions: SetTransactions,
     loading,
     saving,
     exportingToTable,
@@ -95,7 +95,7 @@ export default function EditStatementPage(): React.JSX.Element {
     success,
     setSuccess,
     selectedRows,
-    setSelectedRows: _setSelectedRows,
+    setSelectedRows: SetSelectedRows,
     editingRow,
     editedData,
     categories,
@@ -111,14 +111,14 @@ export default function EditStatementPage(): React.JSX.Element {
     bulkCategoryId,
     setBulkCategoryId,
     metadataForm,
-    setMetadataForm: _setMetadataForm,
+    setMetadataForm: SetMetadataForm,
     exportConfirmOpen,
     setExportConfirmOpen,
     parsingDetailsExpanded,
     setParsingDetailsExpanded,
     balanceStartInputRef,
     balanceEndInputRef,
-    loadData: _loadData,
+    loadData: LoadData,
     handleExportToCustomTable,
     handleRowSelect,
     handleSelectAll,
@@ -136,21 +136,26 @@ export default function EditStatementPage(): React.JSX.Element {
     handleApplyBulkCategory,
     handleStageAction,
     handleStatementCategorySelect,
-  } = useStatementEditForm({ statementId, user, router, messages: {
-    loadDataError: t.errors.loadData.value,
-    saveTransactionError: t.errors.saveTransaction.value,
-    deleteTransactionError: t.errors.deleteTransaction.value,
-    updateTransactionsError: t.errors.updateTransactions.value,
-    deleteTransactionsError: t.errors.deleteTransactions.value,
-    assignCategoryError: t.errors.assignCategory.value,
-    exportLoading: t.labels.exportLoading.value,
-    exportSuccess: t.labels.exportSuccess.value,
-    exportFailure: t.labels.exportFailure.value,
-    exportDescription: t.labels.exportDescription.value,
-    statementNamePrefix: t.labels.statementNamePrefix.value,
-    categoryUpdated: labels.categoryUpdated?.value || 'Category updated',
-    categoryUpdateFailed: labels.categoryUpdateFailed?.value || 'Failed to update category',
-  } });
+  } = useStatementEditForm({
+    statementId,
+    user,
+    router,
+    messages: {
+      loadDataError: t.errors.loadData.value,
+      saveTransactionError: t.errors.saveTransaction.value,
+      deleteTransactionError: t.errors.deleteTransaction.value,
+      updateTransactionsError: t.errors.updateTransactions.value,
+      deleteTransactionsError: t.errors.deleteTransactions.value,
+      assignCategoryError: t.errors.assignCategory.value,
+      exportLoading: t.labels.exportLoading.value,
+      exportSuccess: t.labels.exportSuccess.value,
+      exportFailure: t.labels.exportFailure.value,
+      exportDescription: t.labels.exportDescription.value,
+      statementNamePrefix: t.labels.statementNamePrefix.value,
+      categoryUpdated: labels.categoryUpdated?.value || 'Category updated',
+      categoryUpdateFailed: labels.categoryUpdateFailed?.value || 'Failed to update category',
+    },
+  });
 
   const formatNumber = (num?: number | null): string => formatNumberHelper(num, locale);
 
@@ -231,7 +236,10 @@ export default function EditStatementPage(): React.JSX.Element {
   };
 
   // eslint-disable-next-line max-params, complexity
-  const renderDisplayCell = (transaction: Transaction, field: keyof Transaction): React.ReactNode => {
+  const renderDisplayCell = (
+    transaction: Transaction,
+    field: keyof Transaction,
+  ): React.ReactNode => {
     if (field === 'transactionDate') {
       return new Date(transaction.transactionDate).toLocaleDateString(resolveLocale(locale));
     }
@@ -289,9 +297,14 @@ export default function EditStatementPage(): React.JSX.Element {
       <Container
         maxWidth="xl"
         data-testid="statement-edit-loading"
-        style={{ display: 'flex', minHeight: '60vh', alignItems: 'center', justifyContent: 'center' }}
+        style={{
+          display: 'flex',
+          minHeight: '60vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <Spinner style={{ width: 40, height: 40, color: "var(--primary)" }} />
+        <Spinner style={{ width: 40, height: 40, color: 'var(--primary)' }} />
       </Container>
     );
   }
@@ -327,8 +340,9 @@ export default function EditStatementPage(): React.JSX.Element {
     flattenedStatementCategories.find(category => category.id === statement?.categoryId)?.name ||
     labels.categoryButton?.value ||
     'Category';
-  const hasStatementCategory =
-    !isIdEmpty(statement?.categoryId) || !isIdEmpty(statement?.category?.id || undefined);
+  const hasStatementCategory = !(
+    isIdEmpty(statement?.categoryId) && isIdEmpty(statement?.category?.id || undefined)
+  );
   const hasDisabledStatementCategory = statement?.category?.isEnabled === false;
   const parsingErrorCount = statement?.parsingDetails?.errors?.length || 0;
   const parsingWarningCount = statement?.parsingDetails?.warnings?.length || 0;
@@ -452,7 +466,11 @@ export default function EditStatementPage(): React.JSX.Element {
                 label={`${statement?.totalTransactions} ${t.labels.transactionsCount.value || 'transactions'}`}
                 size="small"
                 data-testid="statement-transactions-chip"
-                style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--muted)', color: 'var(--muted-foreground)' }}
+                style={{
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--muted)',
+                  color: 'var(--muted-foreground)',
+                }}
                 sx={{
                   fontWeight: 500,
                   '& .MuiChip-icon': { color: 'text.secondary' },
@@ -488,9 +506,7 @@ export default function EditStatementPage(): React.JSX.Element {
             (isIdEmpty(statement?.categoryId) && isIdEmpty(statement?.category?.id)) ? (
               <Button
                 variant="outlined"
-                startIcon={
-                  statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />
-                }
+                startIcon={statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />}
                 onClick={() => setStatementCategoryDrawerOpen(true)}
                 disabled={statementCategorySaving || optionsLoading}
                 title={selectedStatementCategoryName}
@@ -531,10 +547,18 @@ export default function EditStatementPage(): React.JSX.Element {
                 onClick={() => setStatementCategoryDrawerOpen(true)}
                 disabled={statementCategorySaving || optionsLoading}
                 title={selectedStatementCategoryName}
-                style={{ minWidth: 0, maxWidth: '100%', justifyContent: 'flex-start', padding: '8px 16px', fontWeight: 700 }}
+                style={{
+                  minWidth: 0,
+                  maxWidth: '100%',
+                  justifyContent: 'flex-start',
+                  padding: '8px 16px',
+                  fontWeight: 700,
+                }}
               >
                 {statementCategorySaving ? <Spinner size={18} /> : <Layers size={18} />}
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                >
                   {selectedStatementCategoryName}
                 </span>
               </DetailActionButton>
@@ -543,11 +567,7 @@ export default function EditStatementPage(): React.JSX.Element {
               onClick={() => setExportConfirmOpen(true)}
               disabled={exportingToTable || !transactions.length}
             >
-              {exportingToTable ? (
-                <Spinner size={18} />
-              ) : (
-                <Table2 size={18} />
-              )}
+              {exportingToTable ? <Spinner size={18} /> : <Table2 size={18} />}
               {t.labels.exportButton.value}
             </DetailActionButton>
             {/* eslint-disable-next-line max-lines-per-function, complexity */}
@@ -672,10 +692,7 @@ export default function EditStatementPage(): React.JSX.Element {
           gap: 2,
         }}
       >
-        <Paper
-          elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
-        >
+        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}>
           <Typography variant="caption" color="text.secondary">
             {labels.period?.value || 'Period'}
           </Typography>
@@ -685,10 +702,7 @@ export default function EditStatementPage(): React.JSX.Element {
               : labels.notSpecified?.value || 'Not specified'}
           </Typography>
         </Paper>
-        <Paper
-          elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
-        >
+        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}>
           <Typography variant="caption" color="text.secondary">
             {labels.balanceStart?.value || 'Opening balance'}
           </Typography>
@@ -700,10 +714,7 @@ export default function EditStatementPage(): React.JSX.Element {
               : labels.notSpecified?.value || 'Not specified'}
           </Typography>
         </Paper>
-        <Paper
-          elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
-        >
+        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}>
           <Typography variant="caption" color="text.secondary">
             {labels.expenses?.value || 'Expenses'}
           </Typography>
@@ -711,10 +722,7 @@ export default function EditStatementPage(): React.JSX.Element {
             {!Number.isNaN(totalExpense) && totalExpense >= 0 ? formatNumber(totalExpense) : '0.00'}
           </Typography>
         </Paper>
-        <Paper
-          elevation={0}
-          sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}
-        >
+        <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'grey.200', p: 2 }}>
           <Typography variant="caption" color="text.secondary">
             {labels.income?.value || 'Income'}
           </Typography>
@@ -740,7 +748,6 @@ export default function EditStatementPage(): React.JSX.Element {
       >
         <AccordionSummary
           expandIcon={<ChevronDown size={20} />}
-          
           sx={{
             bgcolor: theme => (theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50]),
           }}
@@ -970,7 +977,16 @@ export default function EditStatementPage(): React.JSX.Element {
           <button
             type="button"
             onClick={() => setExportConfirmOpen(false)}
-            style={{ borderRadius: tokens.radius.md, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer' }}
+            style={{
+              borderRadius: tokens.radius.md,
+              border: '1px solid var(--border-color)',
+              background: 'var(--card-bg)',
+              padding: '10px 24px',
+              fontSize: 16,
+              fontWeight: 500,
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+            }}
           >
             {t.labels.cancel.value}
           </button>
@@ -981,7 +997,19 @@ export default function EditStatementPage(): React.JSX.Element {
               void handleExportToCustomTable();
             }}
             disabled={exportingToTable || !transactions.length}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, borderRadius: tokens.radius.md, background: 'var(--primary)', padding: '10px 24px', fontSize: 16, fontWeight: 500, color: '#fff', cursor: 'pointer', border: 'none' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              borderRadius: tokens.radius.md,
+              background: 'var(--primary)',
+              padding: '10px 24px',
+              fontSize: 16,
+              fontWeight: 500,
+              color: '#fff',
+              cursor: 'pointer',
+              border: 'none',
+            }}
           >
             {exportingToTable ? <Spinner style={{ height: 16, width: 16, color: '#fff' }} /> : null}
             {t.labels.exportConfirmConfirm.value}
@@ -995,7 +1023,9 @@ export default function EditStatementPage(): React.JSX.Element {
         categories={enabledStatementCategories}
         selectedCategoryId={statement?.categoryId || ''}
         selecting={statementCategorySaving}
-        onSelect={categoryId => handleStatementCategorySelect(categoryId, flattenedStatementCategories)}
+        onSelect={categoryId =>
+          handleStatementCategorySelect(categoryId, flattenedStatementCategories)
+        }
         labels={{
           title: labels.categoryDrawerTitle?.value || 'Category',
           searchPlaceholder: labels.categorySearchPlaceholder?.value || 'Search',
@@ -1105,7 +1135,6 @@ export default function EditStatementPage(): React.JSX.Element {
         <Table size="small">
           <TableHead>
             <TableRow
-              
               sx={{
                 bgcolor: theme =>
                   theme.palette.mode === 'dark' ? '#18222d' : theme.palette.grey[50],
@@ -1391,7 +1420,11 @@ export default function EditStatementPage(): React.JSX.Element {
                         <IconButton
                           size="small"
                           onClick={() => {
-                            if (window.confirm(labels.confirmDeleteOne?.value || 'Delete transaction?')) {
+                            if (
+                              window.confirm(
+                                labels.confirmDeleteOne?.value || 'Delete transaction?',
+                              )
+                            ) {
                               void handleDelete(transaction.id);
                             }
                           }}

@@ -89,13 +89,23 @@ export const createStatementColumns = ({
   ];
 
   if (includeDocumentNumber) {
-    columns.push({ name: 'documentNumber', type: 'string', required: false, index: columns.length });
+    columns.push({
+      name: 'documentNumber',
+      type: 'string',
+      required: false,
+      index: columns.length,
+    });
   }
 
   columns.push({ name: 'counterpartyName', type: 'string', required: true, index: columns.length });
 
   if (includeCounterpartyBin) {
-    columns.push({ name: 'counterpartyBin', type: 'string', required: false, index: columns.length });
+    columns.push({
+      name: 'counterpartyBin',
+      type: 'string',
+      required: false,
+      index: columns.length,
+    });
   }
 
   columns.push(

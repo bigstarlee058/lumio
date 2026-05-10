@@ -3,7 +3,9 @@ import { type MigrationInterface, type QueryRunner, Table, TableIndex } from 'ty
 export class AddDataEntryCustomFields1734700000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const exists = await queryRunner.hasTable('data_entry_custom_fields');
-    if (exists) return;
+    if (exists) {
+      return;
+    }
 
     await queryRunner.createTable(
       new Table({

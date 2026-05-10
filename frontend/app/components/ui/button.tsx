@@ -7,8 +7,7 @@ import * as React from 'react';
 export type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'soft';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
-export interface ButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
@@ -43,7 +42,17 @@ const mapSize = (s: ButtonSize): MuiButtonProps['size'] => {
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { variant = 'default', size = 'default', type, children, onClick, disabled, className, style, ...props },
+    {
+      variant = 'default',
+      size = 'default',
+      type,
+      children,
+      onClick,
+      disabled,
+      className,
+      style,
+      ...props
+    },
     ref,
   ) => {
     const muiVariant = mapVariant(variant);

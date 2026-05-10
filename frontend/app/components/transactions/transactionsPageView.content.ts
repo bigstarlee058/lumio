@@ -123,7 +123,7 @@ const content = {
       en: 'Export feature coming soon',
       kk: 'Экспорт мүмкіндігі жақын арада',
       de: 'Exportfunktion demnächst verfügbar',
-      fr: 'Fonctionnalité d\'export bientôt disponible',
+      fr: "Fonctionnalité d'export bientôt disponible",
       es: 'Función de exportación próximamente',
       pt: 'Função de exportação em breve',
       tr: 'Dışa aktarma özelliği yakında',

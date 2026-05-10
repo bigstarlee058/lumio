@@ -46,21 +46,36 @@ async function fetchTrends(days = 30): Promise<TrendsResponse> {
 function formatCategories(categories: DashboardTopCategory[], currency: string): string {
   return categories
     .slice(0, 10)
-    .map((c, i) => `${i + 1}. ${c.name}: ${c.amount.toLocaleString()} ${currency} (${c.count} transactions)`)
+    .map(
+      (c, i) =>
+        `${i + 1}. ${c.name}: ${c.amount.toLocaleString()} ${currency} (${c.count} transactions)`,
+    )
     .join('\n');
 }
 
-function formatCounterparties(counterparties: Array<{ name: string; amount: number; count: number }>, currency: string): string {
+function formatCounterparties(
+  counterparties: Array<{ name: string; amount: number; count: number }>,
+  currency: string,
+): string {
   return counterparties
     .slice(0, 10)
-    .map((c, i) => `${i + 1}. ${c.name}: ${c.amount.toLocaleString()} ${currency} (${c.count} transactions)`)
+    .map(
+      (c, i) =>
+        `${i + 1}. ${c.name}: ${c.amount.toLocaleString()} ${currency} (${c.count} transactions)`,
+    )
     .join('\n');
 }
 
-function formatDailyTrend(daily: Array<{ date: string; income: number; expense: number }>, currency: string): string {
+function formatDailyTrend(
+  daily: Array<{ date: string; income: number; expense: number }>,
+  currency: string,
+): string {
   return daily
     .slice(-14)
-    .map(d => `${d.date}: income ${d.income.toLocaleString()} ${currency}, expense ${d.expense.toLocaleString()} ${currency}`)
+    .map(
+      d =>
+        `${d.date}: income ${d.income.toLocaleString()} ${currency}, expense ${d.expense.toLocaleString()} ${currency}`,
+    )
     .join('\n');
 }
 
@@ -98,7 +113,10 @@ Please:
       const { snapshot, cashFlow } = data;
       const daily = cashFlow
         .slice(-14)
-        .map(d => `${d.date}: income ${d.income.toLocaleString()}, expense ${d.expense.toLocaleString()}`)
+        .map(
+          d =>
+            `${d.date}: income ${d.income.toLocaleString()}, expense ${d.expense.toLocaleString()}`,
+        )
         .join('\n');
       return `You are a financial analyst. Here is my daily cash flow for the last 30 days (showing last 14 days):
 
@@ -162,7 +180,10 @@ Note: This is for informational purposes only. Always consult a qualified tax pr
     async buildPrompt() {
       const [dashboard, trends] = await Promise.all([fetchDashboard('30d'), fetchTrends(30)]);
       const daily = formatDailyTrend(trends.dailyTrend, dashboard.snapshot.currency);
-      const cats = formatCategories(trends.categories.map(c => ({ ...c, count: c.count })), dashboard.snapshot.currency);
+      const cats = formatCategories(
+        trends.categories.map(c => ({ ...c, count: c.count })),
+        dashboard.snapshot.currency,
+      );
       return `You are a financial fraud and anomaly detection specialist. Here is my daily transaction data for the last 30 days (showing last 14 days):
 
 ${daily}

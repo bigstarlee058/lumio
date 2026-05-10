@@ -15,7 +15,9 @@ export const getNestedValue = (value: unknown, path: string[]): unknown => {
   let current: unknown = value;
   for (const segment of path) {
     const record = getRecord(current);
-    if (!record) return undefined;
+    if (!record) {
+      return undefined;
+    }
     current = record[segment];
   }
   return current;
@@ -23,7 +25,9 @@ export const getNestedValue = (value: unknown, path: string[]): unknown => {
 
 export const getTranslationValue = (root: unknown, path: string[], fallback = ''): string => {
   const candidate = getNestedValue(root, path);
-  if (typeof candidate === 'string') return candidate;
+  if (typeof candidate === 'string') {
+    return candidate;
+  }
   const record = getRecord(candidate);
   return typeof record?.value === 'string' ? record.value : fallback;
 };
@@ -37,7 +41,9 @@ export const isContentEditableTarget = (value: unknown): value is { isContentEdi
 
 export const getCreatedRowResponse = (value: unknown): CustomTableGridRow | null => {
   const record = getRecord(value);
-  if (!record) return null;
+  if (!record) {
+    return null;
+  }
 
   const idCandidate = record.id ?? record.rowId ?? record.row_id;
   const rowNumberCandidate = record.rowNumber ?? record.row_number;
@@ -55,7 +61,9 @@ export const getCreatedRowResponse = (value: unknown): CustomTableGridRow | null
 };
 
 export const getResponseItems = (value: unknown): CustomTableGridRow[] => {
-  if (!Array.isArray(value)) return [];
+  if (!Array.isArray(value)) {
+    return [];
+  }
   return value.filter(isRecord).map(item => ({
     id: typeof item.id === 'string' ? item.id : String(item.rowNumber ?? ''),
     rowNumber: typeof item.rowNumber === 'number' ? item.rowNumber : 0,
@@ -75,14 +83,18 @@ export const getClassificationResults = (value: unknown): Map<string, boolean | 
 
   for (const item of items) {
     const record = getRecord(item);
-    if (!record) continue;
+    if (!record) {
+      continue;
+    }
     const id =
       typeof record.rowId === 'string'
         ? record.rowId
         : typeof record.id === 'string'
           ? record.id
           : null;
-    if (!id) continue;
+    if (!id) {
+      continue;
+    }
     result.set(id, typeof record.paid === 'boolean' ? record.paid : null);
   }
 

@@ -4,8 +4,8 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const apiGet = vi.hoisted(() => vi.fn());
-const createObjectURL = vi.hoisted(() => vi.fn(() => 'blob:report'));
-const revokeObjectURL = vi.hoisted(() => vi.fn());
+const createObjectUrl = vi.hoisted(() => vi.fn(() => 'blob:report'));
+const revokeObjectUrl = vi.hoisted(() => vi.fn());
 const clickSpy = vi.hoisted(() => vi.fn());
 
 vi.mock('@/app/lib/api', () => ({
@@ -45,14 +45,14 @@ describe('ReportHistory', () => {
   beforeEach(() => {
     apiGet.mockReset();
     clickSpy.mockReset();
-    createObjectURL.mockReset();
-    createObjectURL.mockReturnValue('blob:report');
-    revokeObjectURL.mockReset();
+    createObjectUrl.mockReset();
+    createObjectUrl.mockReturnValue('blob:report');
+    revokeObjectUrl.mockReset();
 
     Object.defineProperty(window, 'URL', {
       value: {
-        createObjectURL,
-        revokeObjectURL,
+        createObjectURL: createObjectUrl,
+        revokeObjectURL: revokeObjectUrl,
       },
       writable: true,
     });

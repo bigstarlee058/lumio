@@ -1,12 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { randomUUID } from 'node:crypto';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, QueryFailedError, type Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
+import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import {
   ActorType,
   AuditAction,
@@ -30,7 +26,6 @@ import { Transaction, TransactionType } from '../../entities/transaction.entity'
 import { User } from '../../entities/user.entity';
 import { WorkspaceMember } from '../../entities/workspace-member.entity';
 import { AuditService } from '../audit/audit.service';
-import { ensureCanEdit } from '../../common/utils/ensure-can-edit.util';
 import type { BatchCreateCustomTableRowsDto } from './dto/batch-create-custom-table-rows.dto';
 import type { ClassifyPaidStatusDto } from './dto/classify-paid-status.dto';
 import type { CreateCustomTableColumnDto } from './dto/create-custom-table-column.dto';
@@ -117,7 +112,9 @@ export class CustomTablesService {
     return data[key];
   }
 
-  private getColumnSourceConfig(config: CustomTableColumn['config'] | null | undefined): ColumnSourceConfig | null {
+  private getColumnSourceConfig(
+    config: CustomTableColumn['config'] | null | undefined,
+  ): ColumnSourceConfig | null {
     if (!config || typeof config !== 'object') {
       return null;
     }
@@ -192,7 +189,13 @@ export class CustomTablesService {
   }
 
   private async ensureCanEditCustomTables(userId: string, workspaceId: string): Promise<void> {
-    await ensureCanEdit(this.workspaceMemberRepository, workspaceId, userId, 'canEditCustomTables', 'Недостаточно прав для редактирования таблиц');
+    await ensureCanEdit(
+      this.workspaceMemberRepository,
+      workspaceId,
+      userId,
+      'canEditCustomTables',
+      'Недостаточно прав для редактирования таблиц',
+    );
   }
 
   private async resolveCategoryId(workspaceId: string, categoryId: string): Promise<string> {
@@ -317,23 +320,37 @@ export class CustomTablesService {
   }
 
   private collectRowText(data: Record<string, unknown>, keys: string[]): string {
-    if (!data || typeof data !== 'object') return '';
+    if (!data || typeof data !== 'object') {
+      return '';
+    }
     const parts: string[] = [];
     for (const key of keys) {
       const value = this.getRowDataValue(data, key);
-      if (value === null || value === undefined) continue;
+      if (value === null || value === undefined) {
+        continue;
+      }
       if (Array.isArray(value)) {
         for (const item of value) {
-          if (item === null || item === undefined) continue;
-          if (typeof item === 'object') continue;
+          if (item === null || item === undefined) {
+            continue;
+          }
+          if (typeof item === 'object') {
+            continue;
+          }
           const str = String(item).trim();
-          if (str) parts.push(str);
+          if (str) {
+            parts.push(str);
+          }
         }
         continue;
       }
-      if (typeof value === 'object') continue;
+      if (typeof value === 'object') {
+        continue;
+      }
       const str = String(value).trim();
-      if (str) parts.push(str);
+      if (str) {
+        parts.push(str);
+      }
     }
     return parts.join(' ').trim();
   }
@@ -445,7 +462,9 @@ export class CustomTablesService {
     rows: CustomTableRow[];
     meta?: JsonObject;
   }) {
-    if (!params.rows.length) return;
+    if (!params.rows.length) {
+      return;
+    }
     try {
       await this.auditService.createBatchEvents(
         params.rows.map(row => ({
@@ -543,7 +562,7 @@ export class CustomTablesService {
       });
       const byKey = new Map(styles.map(s => [s.columnKey, s.style]));
       table.columns = this.attachColumnStyles(table.columns, byKey);
-    } catch (error) {
+    } catch (_error) {
       this.logger.warn(`Failed to load column styles for tableId=${tableId}`);
     }
 
@@ -559,8 +578,12 @@ export class CustomTablesService {
     await this.ensureCanEditCustomTables(userId, workspaceId);
     const table = await this.requireTable(workspaceId, tableId);
     const before = { ...table };
-    if (dto.name !== undefined) table.name = dto.name;
-    if (dto.description !== undefined) table.description = dto.description ?? null;
+    if (dto.name !== undefined) {
+      table.name = dto.name;
+    }
+    if (dto.description !== undefined) {
+      table.description = dto.description ?? null;
+    }
     if (dto.categoryId !== undefined) {
       table.categoryId =
         dto.categoryId === null ? null : await this.resolveCategoryId(workspaceId, dto.categoryId);
@@ -628,7 +651,9 @@ export class CustomTablesService {
     const customFieldMetaByName = new Map<string, { icon: string | null }>();
     for (const entry of entries) {
       const name = entry.customFieldName?.trim();
-      if (!name) continue;
+      if (!name) {
+        continue;
+      }
       const icon = entry.customFieldIcon?.trim() || null;
       const existing = customFieldMetaByName.get(name);
       if (!existing) {
@@ -782,7 +807,7 @@ export class CustomTablesService {
     const currencyKey = keyByDefId.get('currency');
     const noteKey = keyByDefId.get('note');
 
-    if (!dateKey || !amountKey || !currencyKey || !noteKey) {
+    if (!(dateKey && amountKey && currencyKey && noteKey)) {
       throw new BadRequestException('Не удалось сформировать колонки таблицы');
     }
 
@@ -1010,7 +1035,7 @@ export class CustomTablesService {
     const currencyKey = keyByDefId.get('currency');
     const noteKey = keyByDefId.get('note');
 
-    if (!dateKey || !amountKey || !currencyKey || !noteKey) {
+    if (!(dateKey && amountKey && currencyKey && noteKey)) {
       throw new BadRequestException('Не удалось сформировать колонки таблицы');
     }
 
@@ -1080,7 +1105,7 @@ export class CustomTablesService {
     }
 
     const isCustomTab = Boolean(table.dataEntryCustomTabId);
-    if (!isCustomTab && !table.dataEntryScope) {
+    if (!(isCustomTab || table.dataEntryScope)) {
       throw new BadRequestException('Таблица не связана с вводом данных');
     }
 
@@ -1145,10 +1170,18 @@ export class CustomTablesService {
       const noteKey = fieldKeyByName.note;
       const typeKey = fieldKeyByName.type;
 
-      if (dateKey) data[dateKey] = entry.date;
-      if (amountKey) data[amountKey] = entry.amount;
-      if (currencyKey) data[currencyKey] = entry.currency || 'KZT';
-      if (noteKey) data[noteKey] = entry.note || null;
+      if (dateKey) {
+        data[dateKey] = entry.date;
+      }
+      if (amountKey) {
+        data[amountKey] = entry.amount;
+      }
+      if (currencyKey) {
+        data[currencyKey] = entry.currency || 'KZT';
+      }
+      if (noteKey) {
+        data[noteKey] = entry.note || null;
+      }
 
       if (!isCustomTab && table.dataEntryScope === DataEntryToCustomTableScope.ALL && typeKey) {
         data[typeKey] = typeLabels[entry.type] || entry.type;
@@ -1334,7 +1367,9 @@ export class CustomTablesService {
     for (let i = 0; i < createdColumns.length; i += 1) {
       const def = columnDefs[i];
       const col = createdColumns[i];
-      if (def && col) keyByDefId.set(def.id, col.key);
+      if (def && col) {
+        keyByDefId.set(def.id, col.key);
+      }
     }
 
     const statementKey = keyByDefId.get('statement');
@@ -1347,13 +1382,7 @@ export class CustomTablesService {
     const typeKey = keyByDefId.get('type');
 
     if (
-      !dateKey ||
-      !counterpartyKey ||
-      !purposeKey ||
-      !debitKey ||
-      !creditKey ||
-      !currencyKey ||
-      !typeKey
+      !(dateKey && counterpartyKey && purposeKey && debitKey && creditKey && currencyKey && typeKey)
     ) {
       throw new BadRequestException('Не удалось сформировать колонки таблицы');
     }
@@ -1384,7 +1413,9 @@ export class CustomTablesService {
       data[purposeKey] = tx.paymentPurpose || '';
 
       const asNumberOrNull = (value: unknown) => {
-        if (value === null || value === undefined || value === '') return null;
+        if (value === null || value === undefined || value === '') {
+          return null;
+        }
         const n = typeof value === 'number' ? value : Number(value);
         return Number.isFinite(n) ? n : null;
       };
@@ -1516,12 +1547,24 @@ export class CustomTablesService {
     }
 
     const before = { ...column };
-    if (dto.title !== undefined) column.title = dto.title;
-    if (dto.type !== undefined) column.type = dto.type;
-    if (dto.isRequired !== undefined) column.isRequired = dto.isRequired;
-    if (dto.isUnique !== undefined) column.isUnique = dto.isUnique;
-    if (dto.position !== undefined) column.position = dto.position;
-    if (dto.config !== undefined) column.config = dto.config ?? null;
+    if (dto.title !== undefined) {
+      column.title = dto.title;
+    }
+    if (dto.type !== undefined) {
+      column.type = dto.type;
+    }
+    if (dto.isRequired !== undefined) {
+      column.isRequired = dto.isRequired;
+    }
+    if (dto.isUnique !== undefined) {
+      column.isUnique = dto.isUnique;
+    }
+    if (dto.position !== undefined) {
+      column.position = dto.position;
+    }
+    if (dto.config !== undefined) {
+      column.config = dto.config ?? null;
+    }
 
     let saved: CustomTableColumn;
     try {
@@ -1682,7 +1725,9 @@ export class CustomTablesService {
             typeof filter.value === 'string'
               ? filter.value.trim()
               : String(filter.value ?? '').trim();
-          if (!rawValue) return;
+          if (!rawValue) {
+            return;
+          }
           const valueParam = `f_val_${index}`;
           query.andWhere(`r.data::text ILIKE :${valueParam}`, {
             [valueParam]: `%${rawValue}%`,
@@ -1755,7 +1800,9 @@ export class CustomTablesService {
               typeof filter.value === 'string'
                 ? filter.value.trim()
                 : String(filter.value ?? '').trim();
-            if (!value) return;
+            if (!value) {
+              return;
+            }
             apply(
               `${textCoalescedExpr} ILIKE :${valueParam}`,
               withCol({ [valueParam]: `%${value}%` }),
@@ -1767,7 +1814,9 @@ export class CustomTablesService {
               typeof filter.value === 'string'
                 ? filter.value.trim()
                 : String(filter.value ?? '').trim();
-            if (!value) return;
+            if (!value) {
+              return;
+            }
             apply(
               `${textCoalescedExpr} ILIKE :${valueParam}`,
               withCol({ [valueParam]: `${value}%` }),
@@ -1779,7 +1828,9 @@ export class CustomTablesService {
             const isNeq = op === 'neq';
             if (columnType === CustomTableColumnType.NUMBER) {
               const value = Number(filter.value);
-              if (!Number.isFinite(value)) return;
+              if (!Number.isFinite(value)) {
+                return;
+              }
               apply(
                 `${numericExpr} ${isNeq ? 'IS DISTINCT FROM' : '='} :${valueParam}`,
                 withCol({ [valueParam]: value }),
@@ -1791,7 +1842,9 @@ export class CustomTablesService {
                 typeof filter.value === 'string'
                   ? filter.value.trim()
                   : String(filter.value ?? '').trim();
-              if (!value) return;
+              if (!value) {
+                return;
+              }
               apply(
                 `${dateExpr} ${isNeq ? 'IS DISTINCT FROM' : '='} :${valueParam}`,
                 withCol({ [valueParam]: value }),
@@ -1803,7 +1856,9 @@ export class CustomTablesService {
                 typeof filter.value === 'boolean'
                   ? filter.value
                   : String(filter.value ?? '').trim();
-              if (raw === '') return;
+              if (raw === '') {
+                return;
+              }
               const value =
                 typeof raw === 'boolean'
                   ? raw
@@ -1819,7 +1874,9 @@ export class CustomTablesService {
                 typeof filter.value === 'string'
                   ? filter.value.trim()
                   : String(filter.value ?? '').trim();
-              if (!value) return;
+              if (!value) {
+                return;
+              }
               apply(
                 `(CASE WHEN jsonb_typeof(r.data -> :${colParam}) = 'array'
                   THEN ${isNeq ? 'NOT ' : ''}EXISTS (
@@ -1836,7 +1893,9 @@ export class CustomTablesService {
                 typeof filter.value === 'string'
                   ? filter.value.trim()
                   : String(filter.value ?? '').trim();
-              if (!value && value !== '') return;
+              if (!value && value !== '') {
+                return;
+              }
               apply(
                 `${textExpr} ${isNeq ? 'IS DISTINCT FROM' : '='} :${valueParam}`,
                 withCol({ [valueParam]: value }),
@@ -1851,7 +1910,9 @@ export class CustomTablesService {
             const cmp = op === 'gt' ? '>' : op === 'gte' ? '>=' : op === 'lt' ? '<' : '<=';
             if (columnType === CustomTableColumnType.NUMBER) {
               const value = Number(filter.value);
-              if (!Number.isFinite(value)) return;
+              if (!Number.isFinite(value)) {
+                return;
+              }
               apply(`${numericExpr} ${cmp} :${valueParam}`, withCol({ [valueParam]: value }));
               break;
             }
@@ -1860,7 +1921,9 @@ export class CustomTablesService {
                 typeof filter.value === 'string'
                   ? filter.value.trim()
                   : String(filter.value ?? '').trim();
-              if (!value) return;
+              if (!value) {
+                return;
+              }
               apply(`${dateExpr} ${cmp} :${valueParam}`, withCol({ [valueParam]: value }));
               break;
             }
@@ -1871,12 +1934,16 @@ export class CustomTablesService {
           case 'between': {
             const value = filter.value;
             const arr = Array.isArray(value) ? value : undefined;
-            if (!arr || arr.length < 2) return;
+            if (!arr || arr.length < 2) {
+              return;
+            }
             const [rawMin, rawMax] = arr;
             if (columnType === CustomTableColumnType.NUMBER) {
               const min = Number(rawMin);
               const max = Number(rawMax);
-              if (!Number.isFinite(min) || !Number.isFinite(max)) return;
+              if (!(Number.isFinite(min) && Number.isFinite(max))) {
+                return;
+              }
               apply(
                 `${numericExpr} BETWEEN :${valueParam} AND :${valueParam2}`,
                 withCol({ [valueParam]: min, [valueParam2]: max }),
@@ -1886,7 +1953,9 @@ export class CustomTablesService {
             if (columnType === CustomTableColumnType.DATE) {
               const min = typeof rawMin === 'string' ? rawMin.trim() : String(rawMin ?? '').trim();
               const max = typeof rawMax === 'string' ? rawMax.trim() : String(rawMax ?? '').trim();
-              if (!min || !max) return;
+              if (!(min && max)) {
+                return;
+              }
               apply(
                 `${dateExpr} BETWEEN :${valueParam} AND :${valueParam2}`,
                 withCol({ [valueParam]: min, [valueParam2]: max }),
@@ -1905,7 +1974,9 @@ export class CustomTablesService {
                 ? value.split(',')
                 : [];
             const values = arr.map(v => String(v).trim()).filter(Boolean);
-            if (!values.length) return;
+            if (!values.length) {
+              return;
+            }
 
             if (columnType === CustomTableColumnType.MULTI_SELECT) {
               apply(
@@ -1922,7 +1993,9 @@ export class CustomTablesService {
 
             if (columnType === CustomTableColumnType.NUMBER) {
               const nums = values.map(v => Number(v)).filter(v => Number.isFinite(v));
-              if (!nums.length) return;
+              if (!nums.length) {
+                return;
+              }
               apply(`${numericExpr} IN (:...${valuesParam})`, withCol({ [valuesParam]: nums }));
               break;
             }
@@ -1944,7 +2017,9 @@ export class CustomTablesService {
 
     try {
       const rows = await query.getMany();
-      if (!rows.length) return { items: [], total };
+      if (!rows.length) {
+        return { items: [], total };
+      }
 
       try {
         const rowIds = rows.map(r => r.id);
@@ -1953,7 +2028,7 @@ export class CustomTablesService {
           select: ['rowId', 'columnKey', 'style'],
         });
         this.mergeRowStyles(rows, styles);
-      } catch (error) {
+      } catch (_error) {
         this.logger.warn(`Failed to load cell styles for tableId=${tableId}`);
       }
 
@@ -1971,7 +2046,9 @@ export class CustomTablesService {
     await this.requireTable(workspaceId, tableId);
     const rowIds = Array.isArray(dto.rowIds) ? dto.rowIds.filter(Boolean) : [];
     const uniqueRowIds = Array.from(new Set(rowIds));
-    if (!uniqueRowIds.length) return { items: [] };
+    if (!uniqueRowIds.length) {
+      return { items: [] };
+    }
     const validRowIds = uniqueRowIds.filter(rowId => this.isUuid(rowId));
     if (!validRowIds.length) {
       return {
@@ -1999,7 +2076,7 @@ export class CustomTablesService {
       const data = row.data || {};
       let comment = this.collectRowText(data, commentKeys);
       const counterparty = this.collectRowText(data, counterpartyKeys);
-      if (!comment && !counterparty) {
+      if (!(comment || counterparty)) {
         const fallbackKeys = Object.keys(data);
         comment = this.collectRowText(data, fallbackKeys);
       }
@@ -2246,9 +2323,7 @@ export class CustomTablesService {
       throw new BadRequestException('Колонка не найдена');
     }
 
-    const viewSettings = (
-      this.getViewSettingsObject(table)
-    ) as JsonObject;
+    const viewSettings = this.getViewSettingsObject(table) as JsonObject;
     const columns = this.getViewSettingsColumns(viewSettings);
     const existing =
       columns[columnKey] && typeof columns[columnKey] === 'object' ? columns[columnKey] : {};

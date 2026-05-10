@@ -47,12 +47,30 @@ export class ExchangeRatesService {
 
     // 2. Database
     const dbRate = await this.exchangeRateRepository.findOne({
-      where: { baseCurrency: normalizedFrom, targetCurrency: normalizedTo, rateDate: new Date(rateDate) },
+      where: {
+        baseCurrency: normalizedFrom,
+        targetCurrency: normalizedTo,
+        rateDate: new Date(rateDate),
+      },
     });
     if (dbRate) {
       const ttl = this.isToday(rateDate) ? 4 * 3600 : 0; // 4h for today, permanent for historical
       await this.cacheManager.set(cacheKey, Number(dbRate.rate), ttl);
       return Number(dbRate.rate);
+    }
+
+    const reverseDbRate = await this.exchangeRateRepository.findOne({
+      where: {
+        baseCurrency: normalizedTo,
+        targetCurrency: normalizedFrom,
+        rateDate: new Date(rateDate),
+      },
+    });
+    const reverseRate = Number(reverseDbRate?.rate);
+    if (Number.isFinite(reverseRate) && reverseRate > 0) {
+      const invertedRate = 1 / reverseRate;
+      await this.cacheManager.set(cacheKey, invertedRate, this.isToday(rateDate) ? 4 * 3600 : 0);
+      return invertedRate;
     }
 
     // 3. Try to compute via USD base (e.g., EUR→KZT = (1/USD→EUR) * USD→KZT)
@@ -94,16 +112,23 @@ export class ExchangeRatesService {
       return Number(latestRate.rate);
     }
 
+    const latestReverseRate = await this.exchangeRateRepository.findOne({
+      where: { baseCurrency: normalizedTo, targetCurrency: normalizedFrom },
+      order: { rateDate: 'DESC' },
+    });
+    const latestReverseRateValue = Number(latestReverseRate?.rate);
+    if (Number.isFinite(latestReverseRateValue) && latestReverseRateValue > 0) {
+      this.logger.warn(
+        `Using stale inverse rate ${normalizedTo}→${normalizedFrom} from ${latestReverseRate?.rateDate}`,
+      );
+      return 1 / latestReverseRateValue;
+    }
+
     this.logger.warn(`No rate found for ${normalizedFrom}→${normalizedTo}, returning 1`);
     return 1;
   }
 
-  async convert(
-    amount: number,
-    from: string,
-    to: string,
-    date?: Date,
-  ): Promise<ConvertResult> {
+  async convert(amount: number, from: string, to: string, date?: Date): Promise<ConvertResult> {
     const rate = await this.getRate(from, to, date);
     return { converted: amount * rate, rate, source: 'exchange-rates-service' };
   }
@@ -156,25 +181,27 @@ export class ExchangeRatesService {
     }
   }
 
-  private async getRateFromApi(
-    from: string,
-    to: string,
-    rateDate: string,
-  ): Promise<number | null> {
-    if (!this.apiKey) return null;
+  private async getRateFromApi(from: string, to: string, rateDate: string): Promise<number | null> {
+    if (!this.apiKey) {
+      return null;
+    }
 
     try {
       // Use latest rates endpoint (historical endpoint requires higher tier)
       const url = `${this.apiBaseUrl}/${this.apiKey}/latest/${from}`;
       const response = await fetch(url);
-      if (!response.ok) return null;
+      if (!response.ok) {
+        return null;
+      }
 
       const data = (await response.json()) as {
         result: string;
         conversion_rates: Record<string, number>;
       };
 
-      if (data.result !== 'success' || !data.conversion_rates[to]) return null;
+      if (data.result !== 'success' || !data.conversion_rates[to]) {
+        return null;
+      }
 
       const rate = data.conversion_rates[to];
       // Cache all rates from this response to avoid repeated API calls

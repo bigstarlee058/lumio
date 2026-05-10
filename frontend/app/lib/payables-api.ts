@@ -50,8 +50,10 @@ export interface PayablesSummary {
   overdue: number;
   dueThisWeek: number;
   paidThisMonth: number;
+  paidTotal: number;
   toPayCount: number;
   overdueCount: number;
+  paidTotalCount: number;
 }
 
 export interface CreatePayableInput {

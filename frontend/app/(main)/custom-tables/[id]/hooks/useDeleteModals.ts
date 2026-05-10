@@ -45,7 +45,9 @@ export function useDeleteModals(): UseDeleteModalsReturn {
   };
 
   const openBulkDeleteModal = (selectedRowIds: string[]) => {
-    if (!selectedRowIds.length) return;
+    if (!selectedRowIds.length) {
+      return;
+    }
     setBulkDeleteRowIds(selectedRowIds);
     setBulkDeleteModalOpen(true);
   };

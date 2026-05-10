@@ -66,7 +66,16 @@ export function CashFlowChart({ data, emptyLabel }: CashFlowChartProps) {
 
   if (!option) {
     return (
-      <div style={{ display: 'flex', height: 256, alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'var(--muted-foreground)' }}>
+      <div
+        style={{
+          display: 'flex',
+          height: 256,
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+        }}
+      >
         {emptyLabel}
       </div>
     );

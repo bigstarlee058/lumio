@@ -1,6 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { randomUUID } from 'node:crypto';
 import {
   GetObjectCommand,
   HeadBucketCommand,
@@ -16,17 +16,17 @@ import type { Repository } from 'typeorm';
 import type { FileStat, WebDAVClient } from 'webdav';
 import { FileStorageService } from '../../common/services/file-storage.service';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
-import { buildContentDisposition } from '../../common/utils/http-file.util';
-import { normalizeFilename } from '../../common/utils/filename.util';
 import { validateFile } from '../../common/utils/file-validator.util';
+import { normalizeFilename } from '../../common/utils/filename.util';
+import { buildContentDisposition } from '../../common/utils/http-file.util';
 import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   ActorType,
   AuditAction,
   EntityType,
+  Integration,
   IntegrationProvider,
   IntegrationStatus,
-  Integration,
   OpenProtocolSettings,
   Receipt,
   ReceiptSource,
@@ -140,7 +140,9 @@ export class OpenProtocolIntegrationsService {
       user,
       IntegrationProvider.S3_COMPATIBLE,
     );
-    const config = settings ? this.getS3ConfigFromSettings(settings) : this.getS3ConfigFromEnv(false);
+    const config = settings
+      ? this.getS3ConfigFromSettings(settings)
+      : this.getS3ConfigFromEnv(false);
 
     return this.buildStatus(Boolean(config?.endpoint && config.bucket), {
       endpoint: config?.endpoint ?? null,
@@ -209,8 +211,13 @@ export class OpenProtocolIntegrationsService {
   }
 
   async imapStatus(user: User): Promise<ProtocolStatusResponse> {
-    const { integration, settings } = await this.findProtocolIntegration(user, IntegrationProvider.IMAP);
-    const config = settings ? this.getImapConfigFromSettings(settings) : this.getImapConfigFromEnv(false);
+    const { integration, settings } = await this.findProtocolIntegration(
+      user,
+      IntegrationProvider.IMAP,
+    );
+    const config = settings
+      ? this.getImapConfigFromSettings(settings)
+      : this.getImapConfigFromEnv(false);
 
     return this.buildStatus(Boolean(config?.host && config.user), {
       host: config?.host ?? null,
@@ -276,13 +283,18 @@ export class OpenProtocolIntegrationsService {
     return { files };
   }
 
-  async importS3Files(user: User, fileIds: string[]): Promise<{ ok: true; results: ImportResult[] }> {
+  async importS3Files(
+    user: User,
+    fileIds: string[],
+  ): Promise<{ ok: true; results: ImportResult[] }> {
     const { client, config } = await this.createS3Client(user);
     const results: ImportResult[] = [];
 
     for (const key of fileIds) {
       try {
-        const response = await client.send(new GetObjectCommand({ Bucket: config.bucket, Key: key }));
+        const response = await client.send(
+          new GetObjectCommand({ Bucket: config.bucket, Key: key }),
+        );
         const buffer = await this.bodyToBuffer(response.Body);
         await this.importStatementFile(user, {
           id: key,
@@ -320,7 +332,9 @@ export class OpenProtocolIntegrationsService {
         );
         uploaded += 1;
       } catch (error) {
-        this.logger.warn(`S3 sync skipped statement ${statement.id}: ${this.getErrorMessage(error)}`);
+        this.logger.warn(
+          `S3 sync skipped statement ${statement.id}: ${this.getErrorMessage(error)}`,
+        );
       }
     }
 
@@ -387,7 +401,9 @@ export class OpenProtocolIntegrationsService {
         });
         uploaded += 1;
       } catch (error) {
-        this.logger.warn(`WebDAV sync skipped statement ${statement.id}: ${this.getErrorMessage(error)}`);
+        this.logger.warn(
+          `WebDAV sync skipped statement ${statement.id}: ${this.getErrorMessage(error)}`,
+        );
       }
     }
 
@@ -420,7 +436,11 @@ export class OpenProtocolIntegrationsService {
 
       for (const uid of limitedUids) {
         scanned += 1;
-        const message = await client.fetchOne(uid, { source: true, envelope: true, flags: true }, { uid: true });
+        const message = await client.fetchOne(
+          uid,
+          { source: true, envelope: true, flags: true },
+          { uid: true },
+        );
         if (!message) {
           continue;
         }
@@ -452,7 +472,9 @@ export class OpenProtocolIntegrationsService {
     const workspaceId = this.getWorkspaceId(user);
     const messageId = parsed.messageId || `uid-${uid}`;
     const syntheticId = `imap:${config.host}:${config.mailbox}:${messageId}`;
-    const existing = await this.receiptRepository.findOne({ where: { gmailMessageId: syntheticId } });
+    const existing = await this.receiptRepository.findOne({
+      where: { gmailMessageId: syntheticId },
+    });
     if (existing) {
       return null;
     }
@@ -631,7 +653,10 @@ export class OpenProtocolIntegrationsService {
   }
 
   private async getS3Config(user: User): Promise<S3Config> {
-    const { settings } = await this.findProtocolIntegration(user, IntegrationProvider.S3_COMPATIBLE);
+    const { settings } = await this.findProtocolIntegration(
+      user,
+      IntegrationProvider.S3_COMPATIBLE,
+    );
     if (settings) {
       return this.getS3ConfigFromSettings(settings);
     }
@@ -647,7 +672,7 @@ export class OpenProtocolIntegrationsService {
   private getS3ConfigFromEnv(required: boolean): S3Config | null {
     const endpoint = process.env.S3_ENDPOINT;
     const bucket = process.env.S3_BUCKET;
-    if (!endpoint || !bucket) {
+    if (!(endpoint && bucket)) {
       if (required) {
         throw new BadRequestException('S3-compatible storage is not configured');
       }
@@ -669,7 +694,7 @@ export class OpenProtocolIntegrationsService {
     const secrets = settings.encryptedSecrets || {};
     const endpoint = this.stringValue(config.endpoint);
     const bucket = this.stringValue(config.bucket);
-    if (!endpoint || !bucket) {
+    if (!(endpoint && bucket)) {
       throw new BadRequestException('S3-compatible storage is not configured');
     }
     return {
@@ -753,7 +778,7 @@ export class OpenProtocolIntegrationsService {
     const host = process.env.IMAP_HOST;
     const user = process.env.IMAP_USER;
     const pass = process.env.IMAP_PASS;
-    if (!host || !user || !pass) {
+    if (!(host && user && pass)) {
       if (required) {
         throw new BadRequestException('IMAP inbox is not configured');
       }
@@ -775,7 +800,7 @@ export class OpenProtocolIntegrationsService {
     const host = this.stringValue(config.host);
     const user = secrets.user ? decryptText(secrets.user) : '';
     const pass = secrets.pass ? decryptText(secrets.pass) : '';
-    if (!host || !user || !pass) {
+    if (!(host && user && pass)) {
       throw new BadRequestException('IMAP inbox is not configured');
     }
     return {
@@ -845,10 +870,12 @@ export class OpenProtocolIntegrationsService {
   }
 
   private mergeS3Config(settings: OpenProtocolSettings | null, input: S3SettingsInput): S3Config {
-    const current = settings ? this.getS3ConfigFromSettings(settings) : this.getS3ConfigFromEnv(false);
+    const current = settings
+      ? this.getS3ConfigFromSettings(settings)
+      : this.getS3ConfigFromEnv(false);
     const endpoint = input.endpoint?.trim() || current?.endpoint;
     const bucket = input.bucket?.trim() || current?.bucket;
-    if (!endpoint || !bucket) {
+    if (!(endpoint && bucket)) {
       throw new BadRequestException('S3 endpoint and bucket are required');
     }
     return {
@@ -891,12 +918,17 @@ export class OpenProtocolIntegrationsService {
     };
   }
 
-  private mergeImapConfig(settings: OpenProtocolSettings | null, input: ImapSettingsInput): ImapConfig {
-    const current = settings ? this.getImapConfigFromSettings(settings) : this.getImapConfigFromEnv(false);
+  private mergeImapConfig(
+    settings: OpenProtocolSettings | null,
+    input: ImapSettingsInput,
+  ): ImapConfig {
+    const current = settings
+      ? this.getImapConfigFromSettings(settings)
+      : this.getImapConfigFromEnv(false);
     const host = input.host?.trim() || current?.host;
     const user = input.user?.trim() || current?.user;
     const pass = input.pass || current?.pass;
-    if (!host || !user || !pass) {
+    if (!(host && user && pass)) {
       throw new BadRequestException('IMAP host, user, and password are required');
     }
     return {
@@ -926,7 +958,9 @@ export class OpenProtocolIntegrationsService {
     try {
       await client.send(new HeadBucketCommand({ Bucket: config.bucket }));
     } catch (error) {
-      throw new BadRequestException(`Failed to connect S3-compatible storage: ${this.getErrorMessage(error)}`);
+      throw new BadRequestException(
+        `Failed to connect S3-compatible storage: ${this.getErrorMessage(error)}`,
+      );
     }
   }
 
@@ -935,7 +969,9 @@ export class OpenProtocolIntegrationsService {
       const { client } = await this.createWebdavClientFromConfig(config);
       await client.getDirectoryContents(config.rootPath);
     } catch (error) {
-      throw new BadRequestException(`Failed to connect WebDAV storage: ${this.getErrorMessage(error)}`);
+      throw new BadRequestException(
+        `Failed to connect WebDAV storage: ${this.getErrorMessage(error)}`,
+      );
     }
   }
 

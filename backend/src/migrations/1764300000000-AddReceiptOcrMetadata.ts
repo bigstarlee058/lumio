@@ -17,9 +17,7 @@ export class AddReceiptOcrMetadata1764300000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "receipts" DROP COLUMN IF EXISTS "confidence"');
-    await queryRunner.query(
-      'ALTER TABLE "receipts" DROP COLUMN IF EXISTS "extraction_method"',
-    );
+    await queryRunner.query('ALTER TABLE "receipts" DROP COLUMN IF EXISTS "extraction_method"');
     await queryRunner.query('ALTER TABLE "receipts" DROP COLUMN IF EXISTS "language"');
   }
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import Box from '@mui/material/Box';
 import { Check } from '@/app/components/icons';
-import Image from 'next/image';
-import React, { memo } from 'react';
 import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Image from 'next/image';
+import { memo } from 'react';
 
 interface BackgroundSelectorProps {
   selectedBackground: string | null;

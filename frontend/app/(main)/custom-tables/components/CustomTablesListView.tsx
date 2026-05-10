@@ -1,18 +1,7 @@
 'use client';
 
-import { Checkbox } from '@/app/components/ui/checkbox';
-import { AppPagination } from '@/app/components/ui/pagination';
-import { Spinner } from '@/app/components/ui/spinner';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/app/components/ui/dropdown-menu';
-import { Box, Typography } from '@mui/material';
 import {
   ChevronRight,
-  Download,
   Ellipsis,
   FileSpreadsheet,
   RefreshCcw,
@@ -20,6 +9,16 @@ import {
   Trash2,
 } from '@/app/components/icons';
 import { Tag as CategoryIcon } from '@/app/components/icons';
+import { Checkbox } from '@/app/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/app/components/ui/dropdown-menu';
+import { AppPagination } from '@/app/components/ui/pagination';
+import { Spinner } from '@/app/components/ui/spinner';
+import { Box, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { formatUpdatedDate } from '../customTablesHelpers';
 
@@ -116,9 +115,7 @@ export function CustomTablesListView({
 
   if (loading) {
     return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}>
         <Spinner className="h-20 w-20 text-primary" />
       </Box>
     );
@@ -191,7 +188,12 @@ export function CustomTablesListView({
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Typography
-            style={{ fontSize: 14, color: 'var(--text-secondary)', minWidth: 120, textAlign: 'center' }}
+            style={{
+              fontSize: 14,
+              color: 'var(--text-secondary)',
+              minWidth: 120,
+              textAlign: 'center',
+            }}
           >
             {formatPaginationLabel(labels.paginationLabels.pageOf, {
               page,
@@ -238,10 +240,19 @@ function EmptyState({
       >
         <TableIcon className="h-8 w-8" />
       </Box>
-      <Typography style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+      <Typography
+        style={{ textAlign: 'center', fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}
+      >
         {labels.title}
       </Typography>
-      <Typography style={{ marginTop: 8, textAlign: 'center', fontSize: 14, color: 'var(--muted-foreground)' }}>
+      <Typography
+        style={{
+          marginTop: 8,
+          textAlign: 'center',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+        }}
+      >
         {labels.description}
       </Typography>
       <Box
@@ -366,7 +377,9 @@ function TableListRow({
       }}
       onClick={() => onNavigate(table.id)}
       onKeyDown={event => {
-        if (event.target !== event.currentTarget) return;
+        if (event.target !== event.currentTarget) {
+          return;
+        }
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           onNavigate(table.id);

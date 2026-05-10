@@ -1,11 +1,11 @@
 'use client';
 
+import { tokens } from '@/lib/theme-tokens';
 import { motion } from 'framer-motion';
 import { Block } from './Block';
 import { WindowGrid } from './WindowGrid';
 import { stableWindowNoise } from './shared';
 import type { BuildingProps } from './shared';
-import { tokens } from '@/lib/theme-tokens';
 
 const WINDOW_COUNT = 6;
 const WINDOW_NOISE_OFFSET = 1000;
@@ -29,7 +29,9 @@ const GothicSpire = (): React.JSX.Element => (
 );
 
 const GothicRoseWindow = (): React.JSX.Element => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: -10 }}>
+  <div
+    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: -10 }}
+  >
     <div
       style={{
         width: 0,
@@ -53,7 +55,14 @@ const GothicRoseWindow = (): React.JSX.Element => (
           justifyContent: 'center',
         }}
       >
-        <div style={{ width: 14, height: 14, borderRadius: tokens.radius.full, border: '1px solid rgba(255,255,255,0.4)' }} />
+        <div
+          style={{
+            width: 14,
+            height: 14,
+            borderRadius: tokens.radius.full,
+            border: '1px solid rgba(255,255,255,0.4)',
+          }}
+        />
       </div>
     </Block>
   </div>
@@ -77,7 +86,10 @@ const GothicArchWindows = ({ h }: { h: number }): React.JSX.Element => (
             key={windowKey}
             style={{
               height: 40,
-              background: stableWindowNoise(WINDOW_NOISE_OFFSET + i) < WINDOW_NOISE_THRESHOLD ? 'white' : 'transparent',
+              background:
+                stableWindowNoise(WINDOW_NOISE_OFFSET + i) < WINDOW_NOISE_THRESHOLD
+                  ? 'white'
+                  : 'transparent',
               borderTopLeftRadius: '20px',
               borderTopRightRadius: '20px',
             }}
@@ -89,7 +101,13 @@ const GothicArchWindows = ({ h }: { h: number }): React.JSX.Element => (
   </Block>
 );
 
-export const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: BuildingProps): React.JSX.Element => (
+export const GothicBuilding = ({
+  delay,
+  duration,
+  w = 160,
+  h = 320,
+  ...pos
+}: BuildingProps): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
@@ -103,7 +121,9 @@ export const GothicBuilding = ({ delay, duration, w = 160, h = 320, ...pos }: Bu
       alignItems: 'center',
     }}
   >
-    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', width: w }}>
+    <div
+      style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', width: w }}
+    >
       <GothicSpire />
       <GothicRoseWindow />
       <GothicSpire />

@@ -1,6 +1,10 @@
 export function resolveLocale(locale: string): string {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
   return 'en-US';
 }
 
@@ -22,10 +26,14 @@ export const statusHeadingFallback: Record<string, string> = {
 };
 
 export function text(value: unknown): string {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {
+    return value;
+  }
   if (value && typeof value === 'object' && 'value' in value) {
     const tokenValue = (value as { value?: string }).value;
-    if (typeof tokenValue === 'string') return tokenValue;
+    if (typeof tokenValue === 'string') {
+      return tokenValue;
+    }
   }
   return '';
 }
@@ -44,9 +52,15 @@ export function resolveGreetingState(params: {
   isStaleImport: boolean;
 }): GreetingState {
   const { isEmptyWorkspace, pendingReviewCount, isStaleImport } = params;
-  if (isEmptyWorkspace) return 'empty';
-  if (pendingReviewCount > 0) return 'pendingReview';
-  if (isStaleImport) return 'stale';
+  if (isEmptyWorkspace) {
+    return 'empty';
+  }
+  if (pendingReviewCount > 0) {
+    return 'pendingReview';
+  }
+  if (isStaleImport) {
+    return 'stale';
+  }
   return 'upToDate';
 }
 
@@ -60,5 +74,8 @@ export function resolveDashboardGreetingData(params: {
     ? Math.floor((Date.now() - new Date(lastUploadDate).getTime()) / (1000 * 60 * 60 * 24))
     : null;
   const isStaleImport = !isEmptyWorkspace && daysSinceUpload !== null && daysSinceUpload >= 14;
-  return { isEmptyWorkspace, isStaleImport, pendingReviewCount } as { isEmptyWorkspace: boolean; isStaleImport: boolean };
+  return { isEmptyWorkspace, isStaleImport, pendingReviewCount } as {
+    isEmptyWorkspace: boolean;
+    isStaleImport: boolean;
+  };
 }

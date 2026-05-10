@@ -1,8 +1,8 @@
 'use client';
 
+import { tokens } from '@/lib/theme-tokens';
 import { motion } from 'framer-motion';
 import React, { memo } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line max-lines-per-function
 const Coin = ({
@@ -58,7 +58,12 @@ const Coin = ({
 );
 
 // eslint-disable-next-line max-lines-per-function
-const Bill = ({ delay, x, y, rotate }: { delay: number; x: string; y: string; rotate: number }): React.JSX.Element => (
+const Bill = ({
+  delay,
+  x,
+  y,
+  rotate,
+}: { delay: number; x: string; y: string; rotate: number }): React.JSX.Element => (
   <motion.div
     initial={{ y: 100, opacity: 0, rotate: rotate - 10 }}
     animate={{

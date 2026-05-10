@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import * as XLSX from 'xlsx';
+import * as xlsx from 'xlsx';
 import { resolveUploadsDir } from '../../../common/utils/uploads.util';
 import { Category, Receipt } from '../../../entities';
 import { GmailOAuthService } from './gmail-oauth.service';
@@ -82,11 +82,11 @@ export class GmailReceiptExportService {
       const finalSpreadsheetId = spreadsheetId || `receipts-${Date.now()}`;
       const exportsDir = path.join(resolveUploadsDir(), 'exports');
       await fs.promises.mkdir(exportsDir, { recursive: true });
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.aoa_to_sheet(rows);
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Receipts');
+      const workbook = xlsx.utils.book_new();
+      const worksheet = xlsx.utils.aoa_to_sheet(rows);
+      xlsx.utils.book_append_sheet(workbook, worksheet, 'Receipts');
       const filePath = path.join(exportsDir, `${finalSpreadsheetId}.xlsx`);
-      XLSX.writeFile(workbook, filePath);
+      xlsx.writeFile(workbook, filePath);
       const sheetUrl = `/uploads/exports/${path.basename(filePath)}`;
 
       this.logger.log(`Exported ${receipts.length} receipts to spreadsheet ${finalSpreadsheetId}`);
@@ -136,9 +136,13 @@ export class GmailReceiptExportService {
     // Check for compose scope specifically for draft creation
     const scopes = Array.isArray(integration.scopes)
       ? integration.scopes
-      : String(integration.scopes || '').split(' ').filter(Boolean);
+      : String(integration.scopes || '')
+          .split(' ')
+          .filter(Boolean);
     if (!scopes.includes('https://www.googleapis.com/auth/gmail.compose')) {
-      throw new Error('Gmail integration requires re-authentication to create drafts. Please reconnect Gmail.');
+      throw new Error(
+        'Gmail integration requires re-authentication to create drafts. Please reconnect Gmail.',
+      );
     }
     const parsedData = this.getParsedData(receipt);
     const vendor = parsedData.vendor || receipt.sender || 'Unknown';

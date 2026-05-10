@@ -36,7 +36,9 @@ const SECTION_RENDERERS: Record<string, React.ComponentType<{ section: any }>> =
   custom: CustomSectionRenderer,
 };
 
-export function SectionRenderer({ section }: { section: SidePanelSection }): React.JSX.Element | null {
+export function SectionRenderer({
+  section,
+}: { section: SidePanelSection }): React.JSX.Element | null {
   const Renderer = SECTION_RENDERERS[section.type];
   if (!Renderer) return null;
   return <Renderer section={section} />;

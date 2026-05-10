@@ -9,8 +9,12 @@ const getEncryptionKey = () => {
 };
 
 export const encryptText = (value: string): string => {
-  if (!value) return value;
-  if (value.startsWith(ENCRYPTION_PREFIX)) return value;
+  if (!value) {
+    return value;
+  }
+  if (value.startsWith(ENCRYPTION_PREFIX)) {
+    return value;
+  }
 
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv(ALGORITHM, getEncryptionKey(), iv);
@@ -21,8 +25,12 @@ export const encryptText = (value: string): string => {
 };
 
 export const decryptText = (value: string): string => {
-  if (!value) return value;
-  if (!value.startsWith(ENCRYPTION_PREFIX)) return value;
+  if (!value) {
+    return value;
+  }
+  if (!value.startsWith(ENCRYPTION_PREFIX)) {
+    return value;
+  }
 
   try {
     const payload = value.slice(ENCRYPTION_PREFIX.length);

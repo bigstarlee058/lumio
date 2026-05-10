@@ -4,7 +4,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
-import { parseISO, isValid as isValidDate, format as formatDate } from 'date-fns';
+import { format as formatDate, isValid as isValidDate, parseISO } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -45,10 +45,16 @@ type StatementApiItem = {
 };
 
 const normalizeToDateString = (value?: string | null): string | null => {
-  if (!value) return null;
-  if (DATE_VALUE_REGEX.test(value)) return value;
+  if (!value) {
+    return null;
+  }
+  if (DATE_VALUE_REGEX.test(value)) {
+    return value;
+  }
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
   const year = parsed.getFullYear();
   const month = `${parsed.getMonth() + 1}`.padStart(2, '0');
   const day = `${parsed.getDate()}`.padStart(2, '0');
@@ -57,7 +63,9 @@ const normalizeToDateString = (value?: string | null): string | null => {
 
 export const toCalendarDate = (value?: string | null): Date | null => {
   const normalized = normalizeToDateString(value);
-  if (!normalized) return null;
+  if (!normalized) {
+    return null;
+  }
   try {
     const parsed = parseISO(normalized);
     return isValidDate(parsed) ? parsed : null;
@@ -71,18 +79,26 @@ export const toFilterDateValue = (date: Date | null): string =>
 
 // eslint-disable-next-line complexity
 const extractErrorMessage = (error: unknown): string | null => {
-  if (!error || typeof error !== 'object') return null;
+  if (!error || typeof error !== 'object') {
+    return null;
+  }
   const payload = error as {
     response?: { data?: { message?: string | string[]; error?: string } };
     message?: string;
   };
   const dataMessage = payload.response?.data?.message;
-  if (Array.isArray(dataMessage)) return dataMessage.filter(Boolean).join(', ');
-  if (typeof dataMessage === 'string' && dataMessage.trim()) return dataMessage;
+  if (Array.isArray(dataMessage)) {
+    return dataMessage.filter(Boolean).join(', ');
+  }
+  if (typeof dataMessage === 'string' && dataMessage.trim()) {
+    return dataMessage;
+  }
   if (typeof payload.response?.data?.error === 'string' && payload.response.data.error.trim()) {
     return payload.response.data.error;
   }
-  if (typeof payload.message === 'string' && payload.message.trim()) return payload.message;
+  if (typeof payload.message === 'string' && payload.message.trim()) {
+    return payload.message;
+  }
   return null;
 };
 
@@ -102,7 +118,9 @@ const fetchAllTransactions = async (): Promise<UnapprovedQueueTransaction[]> => 
         : [];
     all.push(...payload);
     total = Number(response.data?.total ?? all.length);
-    if (payload.length < pageSize) break;
+    if (payload.length < pageSize) {
+      break;
+    }
     page += 1;
   }
   return all;
@@ -124,7 +142,9 @@ const fetchAllStatements = async (): Promise<StatementApiItem[]> => {
         : [];
     all.push(...payload);
     total = Number(response.data?.total ?? all.length);
-    if (payload.length < pageSize) break;
+    if (payload.length < pageSize) {
+      break;
+    }
     page += 1;
   }
   return all;
@@ -180,8 +200,8 @@ export interface UnapprovedCashViewModel {
   allVisibleSelected: boolean;
   reasonCounts: Record<UnapprovedReasonId, number>;
   workspaceCurrency: string;
-  setFilters: (updater: ((prev: UnapprovedQueueFilters) => UnapprovedQueueFilters)) => void;
-  setSelectedIds: (updater: ((prev: string[]) => string[])) => void;
+  setFilters: (updater: (prev: UnapprovedQueueFilters) => UnapprovedQueueFilters) => void;
+  setSelectedIds: (updater: (prev: string[]) => string[]) => void;
   resetFilters: () => void;
   toggleSelect: (id: string) => void;
   toggleSelectAllVisible: () => void;
@@ -194,7 +214,10 @@ export interface UnapprovedCashViewModel {
 }
 
 // eslint-disable-next-line max-lines-per-function
-const buildLabels = ({ t: _t, tx }: { t: ReturnType<typeof useIntlayer>; tx: (path: string[], fallback: string) => string }): {
+const buildLabels = ({
+  t: T,
+  tx,
+}: { t: ReturnType<typeof useIntlayer>; tx: (path: string[], fallback: string) => string }): {
   title: string;
   subtitle: string;
   searchPlaceholder: string;
@@ -208,8 +231,14 @@ const buildLabels = ({ t: _t, tx }: { t: ReturnType<typeof useIntlayer>; tx: (pa
   toasts: Record<string, string>;
 } => ({
   title: tx(['unapprovedCash', 'title'], 'Unapproved cash'),
-  subtitle: tx(['unapprovedCash', 'subtitle'], 'Review uploaded statements before they appear in reports and exports.'),
-  searchPlaceholder: tx(['unapprovedCash', 'searchPlaceholder'], 'Search file, bank, or transaction'),
+  subtitle: tx(
+    ['unapprovedCash', 'subtitle'],
+    'Review uploaded statements before they appear in reports and exports.',
+  ),
+  searchPlaceholder: tx(
+    ['unapprovedCash', 'searchPlaceholder'],
+    'Search file, bank, or transaction',
+  ),
   filters: {
     reason: tx(['unapprovedCash', 'filters', 'reason'], 'Reason'),
     source: tx(['unapprovedCash', 'filters', 'source'], 'Source'),
@@ -228,7 +257,10 @@ const buildLabels = ({ t: _t, tx }: { t: ReturnType<typeof useIntlayer>; tx: (pa
     missingType: tx(['unapprovedCash', 'reasons', 'missingType'], 'Missing type'),
     missingCurrency: tx(['unapprovedCash', 'reasons', 'missingCurrency'], 'Missing currency'),
     ocrIssues: tx(['unapprovedCash', 'reasons', 'ocrIssues'], 'OCR issues'),
-    requiresConfirmation: tx(['unapprovedCash', 'reasons', 'requiresConfirmation'], 'Requires confirmation'),
+    requiresConfirmation: tx(
+      ['unapprovedCash', 'reasons', 'requiresConfirmation'],
+      'Requires confirmation',
+    ),
   },
   sources: {
     gmail: tx(['unapprovedCash', 'sources', 'gmail'], 'Gmail'),
@@ -266,12 +298,24 @@ const buildLabels = ({ t: _t, tx }: { t: ReturnType<typeof useIntlayer>; tx: (pa
   },
   empty: {
     title: tx(['unapprovedCash', 'empty', 'title'], 'All clear'),
-    description: tx(['unapprovedCash', 'empty', 'description'], 'No statement files need manual review for the selected filters.'),
+    description: tx(
+      ['unapprovedCash', 'empty', 'description'],
+      'No statement files need manual review for the selected filters.',
+    ),
   },
   toasts: {
-    loadFailed: tx(['unapprovedCash', 'toasts', 'loadFailed'], 'Failed to load unapproved cash queue'),
-    ignoreSuccess: tx(['unapprovedCash', 'toasts', 'ignoreSuccess'], 'Ignored {count} transaction(s)'),
-    reviewUnavailable: tx(['unapprovedCash', 'toasts', 'reviewUnavailable'], 'Review is unavailable for this transaction'),
+    loadFailed: tx(
+      ['unapprovedCash', 'toasts', 'loadFailed'],
+      'Failed to load unapproved cash queue',
+    ),
+    ignoreSuccess: tx(
+      ['unapprovedCash', 'toasts', 'ignoreSuccess'],
+      'Ignored {count} transaction(s)',
+    ),
+    reviewUnavailable: tx(
+      ['unapprovedCash', 'toasts', 'reviewUnavailable'],
+      'Review is unavailable for this transaction',
+    ),
   },
 });
 
@@ -284,8 +328,7 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
   const workspaceCurrency = (currentWorkspace?.currency || 'KZT').toUpperCase();
 
   const tx = useCallback(
-    (path: string[], fallback: string): string =>
-      resolveLabel(getNestedValue(t, path), fallback),
+    (path: string[], fallback: string): string => resolveLabel(getNestedValue(t, path), fallback),
     [t],
   );
 
@@ -299,7 +342,10 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
       { id: 'missing-type' as UnapprovedReasonId, label: labels.reasons.missingType },
       { id: 'missing-currency' as UnapprovedReasonId, label: labels.reasons.missingCurrency },
       { id: 'ocr-issues' as UnapprovedReasonId, label: labels.reasons.ocrIssues },
-      { id: 'requires-confirmation' as UnapprovedReasonId, label: labels.reasons.requiresConfirmation },
+      {
+        id: 'requires-confirmation' as UnapprovedReasonId,
+        label: labels.reasons.requiresConfirmation,
+      },
     ],
     [labels.reasons],
   );
@@ -347,10 +393,14 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     try {
       const raw = localStorage.getItem(IGNORED_STORAGE_KEY);
-      if (!raw) return;
+      if (!raw) {
+        return;
+      }
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
         setIgnoredIds(parsed.filter((v): v is string => typeof v === 'string'));
@@ -361,7 +411,9 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
   }, []);
 
   const persistIgnoredIds = useCallback((ids: string[]): void => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      return;
+    }
     localStorage.setItem(IGNORED_STORAGE_KEY, JSON.stringify(ids));
   }, []);
 
@@ -459,13 +511,17 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
 
   const toggleSelectAllVisible = (): void => {
     setSelectedIds(prev => {
-      if (allVisibleSelected) return prev.filter(id => !visibleIds.includes(id));
+      if (allVisibleSelected) {
+        return prev.filter(id => !visibleIds.includes(id));
+      }
       return Array.from(new Set([...prev, ...visibleIds]));
     });
   };
 
   const handleIgnoreSelected = (): void => {
-    if (selectedIds.length === 0) return;
+    if (selectedIds.length === 0) {
+      return;
+    }
     const nextIgnoredIds = Array.from(new Set([...ignoredIds, ...selectedIds]));
     setIgnoredIds(nextIgnoredIds);
     persistIgnoredIds(nextIgnoredIds);
@@ -483,7 +539,9 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
   };
 
   const formatItemAmount = (item: UnapprovedStatementQueueItem): string => {
-    if (item.amount === null) return '—';
+    if (item.amount === null) {
+      return '—';
+    }
     const currency = (item.statement.currency || workspaceCurrency).toUpperCase();
     const value = new Intl.NumberFormat('ru', {
       minimumFractionDigits: 2,
@@ -493,7 +551,9 @@ export const useUnapprovedCashViewModel = (): UnapprovedCashViewModel => {
   };
 
   const formatItemDate = (item: UnapprovedStatementQueueItem): string => {
-    if (!item.date) return '—';
+    if (!item.date) {
+      return '—';
+    }
     return item.date.toLocaleDateString();
   };
 

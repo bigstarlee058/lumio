@@ -1,5 +1,5 @@
-import type { TopAnalyticsStateReturn } from '@/app/(main)/statements/hooks/useTopAnalyticsState';
 import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
+import type { TopAnalyticsStateReturn } from '@/app/(main)/statements/hooks/useTopAnalyticsState';
 import { getRecordDate } from '@/app/lib/analytics-common';
 import { useMemo } from 'react';
 
@@ -54,18 +54,22 @@ export type TopAnalyticsDataConfig<
   state: TopAnalyticsStateReturn<TFlow, TSort>;
   includeTransactions: boolean;
   drillDownKeyExtractor: (item: TRecord | TAggregateRow) => string;
-  useRecords: (raw: AnalyticsRawData, config: RecordsConfig<TFlow>) => RecordsResult<TRecord, TFromOption>;
+  useRecords: (
+    raw: AnalyticsRawData,
+    config: RecordsConfig<TFlow>,
+  ) => RecordsResult<TRecord, TFromOption>;
   useAggregation: (params: AggregationParams<TRecord, TFlow, TSort>) => TAggregation;
 };
 
-export type TopAnalyticsDataReturn<TRecord, TAggregateRow, TFromOption, TAggregation> = TAggregation & {
-  loading: boolean;
-  flowFilteredRecords: TRecord[];
-  fromOptions: TFromOption[];
-  currencyOptions: string[];
-  selectedRow: TAggregateRow | null;
-  drillDownRecords: TRecord[];
-};
+export type TopAnalyticsDataReturn<TRecord, TAggregateRow, TFromOption, TAggregation> =
+  TAggregation & {
+    loading: boolean;
+    flowFilteredRecords: TRecord[];
+    fromOptions: TFromOption[];
+    currencyOptions: string[];
+    selectedRow: TAggregateRow | null;
+    drillDownRecords: TRecord[];
+  };
 
 export function useTopAnalyticsData<
   TRecord extends BaseRecord,
@@ -74,7 +78,9 @@ export function useTopAnalyticsData<
   TFlow extends string,
   TSort extends string,
   TAggregation extends { sortedAggregatedRows: TAggregateRow[] },
->(config: TopAnalyticsDataConfig<TRecord, TAggregateRow, TFromOption, TFlow, TSort, TAggregation>): TopAnalyticsDataReturn<TRecord, TAggregateRow, TFromOption, TAggregation> {
+>(
+  config: TopAnalyticsDataConfig<TRecord, TAggregateRow, TFromOption, TFlow, TSort, TAggregation>,
+): TopAnalyticsDataReturn<TRecord, TAggregateRow, TFromOption, TAggregation> {
   const { statements, transactions, gmailReceipts, loading } = useAnalyticsData({
     user: config.user,
     currentWorkspace: config.currentWorkspace,
@@ -85,15 +91,16 @@ export function useTopAnalyticsData<
     errorToastMessage: config.labels.loadError,
   });
 
-  const { flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions } = config.useRecords(
-    { statements, transactions, gmailReceipts },
-    {
-      workspaceCurrency: config.workspaceCurrency,
-      appliedFilters: config.state.filterState.appliedFilters,
-      searchInput: config.state.searchInput,
-      activeFlowType: config.state.activeFlowType,
-    },
-  );
+  const { flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions } =
+    config.useRecords(
+      { statements, transactions, gmailReceipts },
+      {
+        workspaceCurrency: config.workspaceCurrency,
+        appliedFilters: config.state.filterState.appliedFilters,
+        searchInput: config.state.searchInput,
+        activeFlowType: config.state.activeFlowType,
+      },
+    );
 
   const aggregation = config.useAggregation({
     flowFilteredRecords,
@@ -115,12 +122,27 @@ export function useTopAnalyticsData<
 
   const { drillDownKeyExtractor } = config;
   const drillDownRecords = useMemo(() => {
-    if (!selectedRow) return [];
+    if (!selectedRow) {
+      return [];
+    }
     const key = drillDownKeyExtractor(selectedRow);
     return flowFilteredRecords
-      .filter(r => r.flowType === selectedRow.flowType && r.sourceChannel === selectedRow.sourceChannel && drillDownKeyExtractor(r) === key)
+      .filter(
+        r =>
+          r.flowType === selectedRow.flowType &&
+          r.sourceChannel === selectedRow.sourceChannel &&
+          drillDownKeyExtractor(r) === key,
+      )
       .sort((a, b) => (getRecordDate(b)?.getTime() ?? 0) - (getRecordDate(a)?.getTime() ?? 0));
   }, [selectedRow, flowFilteredRecords, drillDownKeyExtractor]);
 
-  return { loading, flowFilteredRecords, fromOptions, currencyOptions, selectedRow, drillDownRecords, ...aggregation };
+  return {
+    loading,
+    flowFilteredRecords,
+    fromOptions,
+    currencyOptions,
+    selectedRow,
+    drillDownRecords,
+    ...aggregation,
+  };
 }

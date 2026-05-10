@@ -1,22 +1,33 @@
+import type { EditableReceiptParsedData } from '@/app/components/receipts/receipt-types';
 import apiClient from '@/app/lib/api';
 import type { ReceiptRecord } from '@/app/lib/api';
-import type { EditableReceiptParsedData } from '@/app/components/receipts/receipt-types';
-import toast from 'react-hot-toast';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import toast from 'react-hot-toast';
 import { buildParsedDataPayload } from '../hooks/useReceiptData';
 
 type ExportColumn = { title: string; type: 'text' | 'number' | 'date' };
 type ExportRow = Record<string, string | number | undefined>;
 export type ExportData = { columns: ExportColumn[]; rows: ExportRow[] };
 
-interface ColumnBuildState { columns: ExportColumn[]; baseRow: ExportRow; }
-interface FieldSpec { title: string; type: ExportColumn['type']; value: string | number | undefined; }
+interface ColumnBuildState {
+  columns: ExportColumn[];
+  baseRow: ExportRow;
+}
+interface FieldSpec {
+  title: string;
+  type: ExportColumn['type'];
+  value: string | number | undefined;
+}
 
 function addFieldToExport(state: ColumnBuildState, spec: FieldSpec): void {
   const { value } = spec;
-  if (value === undefined || value === null || value === '') return;
+  if (value === undefined || value === null || value === '') {
+    return;
+  }
   const trimmed = typeof value === 'string' ? value.trim() : value;
-  if (trimmed === '') return;
+  if (trimmed === '') {
+    return;
+  }
   state.columns.push({ title: spec.title, type: spec.type });
   state.baseRow[spec.title] = trimmed;
 }
@@ -27,7 +38,11 @@ interface BaseColumnsArgs {
   hasLineItems: boolean;
 }
 
-function buildBaseColumns({ parsedData, receipt, hasLineItems }: BaseColumnsArgs): ColumnBuildState {
+function buildBaseColumns({
+  parsedData,
+  receipt,
+  hasLineItems,
+}: BaseColumnsArgs): ColumnBuildState {
   const state: ColumnBuildState = { columns: [], baseRow: {} };
   const vendor = parsedData.vendor as string | undefined;
   const date = parsedData.date as string | undefined;
@@ -49,39 +64,65 @@ function buildBaseColumns({ parsedData, receipt, hasLineItems }: BaseColumnsArgs
   return state;
 }
 
-export function buildExportData({ receipt, formValue }: { receipt: ReceiptRecord; formValue: EditableReceiptParsedData }): ExportData {
+export function buildExportData({
+  receipt,
+  formValue,
+}: { receipt: ReceiptRecord; formValue: EditableReceiptParsedData }): ExportData {
   const parsedData = buildParsedDataPayload(formValue);
   const lineItems = parsedData.lineItems as Array<{ description: string; amount: number }>;
   const hasLineItems = lineItems.length > 0;
   const { columns, baseRow } = buildBaseColumns({ parsedData, receipt, hasLineItems });
-  if (!hasLineItems) return { columns, rows: [baseRow] };
+  if (!hasLineItems) {
+    return { columns, rows: [baseRow] };
+  }
   return {
     columns,
-    rows: lineItems.map(item => ({ Item: item.description, Date: baseRow.Date, Amount: item.amount, Currency: baseRow.Currency, Source: baseRow.Source, Status: baseRow.Status })),
+    rows: lineItems.map(item => ({
+      Item: item.description,
+      Date: baseRow.Date,
+      Amount: item.amount,
+      Currency: baseRow.Currency,
+      Source: baseRow.Source,
+      Status: baseRow.Status,
+    })),
   };
 }
 
-function buildColumnKeyMap(columns: ExportColumn[], createdColumns: Array<{ data?: unknown }>): Record<string, string> {
+function buildColumnKeyMap(
+  columns: ExportColumn[],
+  createdColumns: Array<{ data?: unknown }>,
+): Record<string, string> {
   const result: Record<string, string> = {};
   for (let i = 0; i < columns.length; i++) {
     const payload = (createdColumns[i] as Record<string, unknown>)?.data;
     const dataPayload = (payload as Record<string, unknown>)?.data || payload;
     const key = (dataPayload as Record<string, unknown>)?.key as string | undefined;
-    if (key) result[columns[i].title] = key;
+    if (key) {
+      result[columns[i].title] = key;
+    }
   }
   return result;
 }
 
-function buildRowData(row: ExportRow, columnKeyByTitle: Record<string, string>): Record<string, string | number> {
+function buildRowData(
+  row: ExportRow,
+  columnKeyByTitle: Record<string, string>,
+): Record<string, string | number> {
   const data: Record<string, string | number> = {};
   for (const [title, value] of Object.entries(row)) {
     const key = columnKeyByTitle[title];
-    if (key && value !== undefined && value !== '') data[key] = value as string | number;
+    if (key && value !== undefined && value !== '') {
+      data[key] = value as string | number;
+    }
   }
   return data;
 }
 
-export async function createExportTable({ receipt, exportData, router }: { receipt: ReceiptRecord; exportData: ExportData; router: AppRouterInstance }): Promise<void> {
+export async function createExportTable({
+  receipt,
+  exportData,
+  router,
+}: { receipt: ReceiptRecord; exportData: ExportData; router: AppRouterInstance }): Promise<void> {
   const createRes = await apiClient.post('/custom-tables', {
     name: `Receipt ${receipt.subject}`.slice(0, 120),
     description: `Exported from scanned receipt on ${new Date(receipt.receivedAt).toLocaleDateString()}`,
@@ -94,7 +135,9 @@ export async function createExportTable({ receipt, exportData, router }: { recei
     return;
   }
   const createdColumns = await Promise.all(
-    exportData.columns.map(col => apiClient.post(`/custom-tables/${tableId}/columns`, { title: col.title, type: col.type })),
+    exportData.columns.map(col =>
+      apiClient.post(`/custom-tables/${tableId}/columns`, { title: col.title, type: col.type }),
+    ),
   );
   const columnKeyByTitle = buildColumnKeyMap(exportData.columns, createdColumns);
   const rows = exportData.rows.map(row => ({ data: buildRowData(row, columnKeyByTitle) }));

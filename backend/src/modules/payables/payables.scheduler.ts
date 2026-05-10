@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { EntityType } from '../../entities/audit-event.entity';
 import {
   NotificationCategory,
   NotificationSeverity,
   NotificationType,
 } from '../../entities/notification.entity';
-import { EntityType } from '../../entities/audit-event.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PayablesService } from './payables.service';
 
@@ -66,7 +66,10 @@ export class PayablesScheduler {
         }
       }
     } catch (error) {
-      this.logger.error('Failed to process payables scheduler', error instanceof Error ? error.stack : undefined);
+      this.logger.error(
+        'Failed to process payables scheduler',
+        error instanceof Error ? error.stack : undefined,
+      );
     }
   }
 }

@@ -23,8 +23,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
 import { Response } from 'express';
 import { Repository } from 'typeorm';
-import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import {
   Category,
   GmailSettings,
@@ -39,12 +39,12 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { BulkApproveDto } from './dto/bulk-approve.dto';
 import { ExportSheetsDto } from './dto/export-sheets.dto';
-import type { GmailApi } from './gmail-api.types';
 import { MarkDuplicateDto } from './dto/mark-duplicate.dto';
 import { ReparseMerchantsDto } from './dto/reparse-merchants.dto';
 import { UpdateGmailSettingsDto } from './dto/update-gmail-settings.dto';
 import { UpdateParsedDataDto } from './dto/update-parsed-data.dto';
 import { ApproveReceiptDto, UpdateReceiptDto } from './dto/update-receipt.dto';
+import type { GmailApi } from './gmail-api.types';
 import { GmailMerchantReparseService } from './services/gmail-merchant-reparse.service';
 import { GmailOAuthService } from './services/gmail-oauth.service';
 import { GmailReceiptCategoryService } from './services/gmail-receipt-category.service';
@@ -123,16 +123,17 @@ export class GmailController {
   ) {}
 
   private resolveAttachmentPath(storedPath: string): string {
-    if (path.isAbsolute(storedPath)) return storedPath;
+    if (path.isAbsolute(storedPath)) {
+      return storedPath;
+    }
     return path.join(resolveUploadsDir(), storedPath);
   }
 
-  private async ensureAttachmentOnDisk(
-    receipt: Receipt,
-    userId: string,
-  ): Promise<string | null> {
+  private async ensureAttachmentOnDisk(receipt: Receipt, userId: string): Promise<string | null> {
     const storedPath = (receipt.attachmentPaths || []).find(Boolean);
-    if (!storedPath) return null;
+    if (!storedPath) {
+      return null;
+    }
 
     const resolvedPath = this.resolveAttachmentPath(storedPath);
 
@@ -371,7 +372,7 @@ export class GmailController {
 
       if (categoryId === 'uncategorized') {
         queryBuilder.andWhere(
-          "COALESCE(NULLIF(receipt.parsed_data ->> 'categoryId', ''), transaction.category_id) IS NULL",
+          "COALESCE(NULLIF(receipt.parsed_data ->> 'categoryId', ''), transaction.category_id::text) IS NULL",
         );
       } else {
         queryBuilder.andWhere(
@@ -610,7 +611,7 @@ export class GmailController {
           continue;
         }
 
-        if (!receipt.parsedData?.amount || !receipt.parsedData?.date) {
+        if (!(receipt.parsedData?.amount && receipt.parsedData?.date)) {
           results.failed++;
           results.errors.push({ receiptId, error: 'Missing required data' });
           continue;

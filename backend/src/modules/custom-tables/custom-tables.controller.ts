@@ -68,7 +68,7 @@ export class CustomTablesController {
 
   @Get()
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
-  async listTables(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async listTables(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     const cacheKey = await this.customTablesCache.listKey(workspaceId);
     return this.customTablesCache.getOrSet(cacheKey, async () => {
       const items = await this.customTablesService.listTables(workspaceId);
@@ -79,7 +79,7 @@ export class CustomTablesController {
   @Post('import/google-sheets/preview')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async previewGoogleSheets(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Body() dto: GoogleSheetsImportPreviewDto,
   ) {
@@ -93,17 +93,17 @@ export class CustomTablesController {
     @WorkspaceId() workspaceId: string,
     @Body() dto: GoogleSheetsImportCommitDto,
   ) {
-    const job = await this.importJobsService.createGoogleSheetsJob(
-      workspaceId,
-      { ...dto, importUserId: user.id } as GoogleSheetsCommitJobPayload,
-    );
+    const job = await this.importJobsService.createGoogleSheetsJob(workspaceId, {
+      ...dto,
+      importUserId: user.id,
+    } as GoogleSheetsCommitJobPayload);
     return { jobId: job.id };
   }
 
   @Get('import/jobs/:jobId')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async getImportJob(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Param('jobId', new ParseUUIDPipe()) jobId: string,
   ) {
@@ -181,7 +181,7 @@ export class CustomTablesController {
   @Get(':id')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async getTable(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Param('id', new ParseUUIDPipe()) id: string,
   ) {
@@ -285,7 +285,7 @@ export class CustomTablesController {
   @Get(':id/rows')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async listRows(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Param('id', new ParseUUIDPipe()) tableId: string,
     @Query('cursor') cursor?: string,
@@ -303,7 +303,9 @@ export class CustomTablesController {
         }
         filters = parsed as CustomTableRowFilterDto[];
       } catch (error) {
-        if (error instanceof BadRequestException) throw error;
+        if (error instanceof BadRequestException) {
+          throw error;
+        }
         throw new BadRequestException('Некорректный JSON в filters');
       }
     }
@@ -325,7 +327,7 @@ export class CustomTablesController {
   @Post(':id/rows/paid-classify')
   @UseGuards(JwtAuthGuard, WorkspaceContextGuard)
   async classifyPaidStatus(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Param('id', new ParseUUIDPipe()) tableId: string,
     @Body() dto: ClassifyPaidStatusDto,

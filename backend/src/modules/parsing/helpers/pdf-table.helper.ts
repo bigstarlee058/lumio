@@ -173,7 +173,7 @@ function findHeaderIndex(rows: string[][]): number {
   return bestIndex;
 }
 
-function buildColumnMap(header: string[]): Partial<Record<TableColumnKey, number>> {
+function buildColumnMap(_header: string[]): Partial<Record<TableColumnKey, number>> {
   const map: Partial<Record<TableColumnKey, number>> = {};
   return map;
 }
@@ -500,7 +500,7 @@ function collectPurpose(row: string[], columnMap: Partial<Record<TableColumnKey,
 
   const parts = row
     .map((cell, idx) => ({ cell, idx }))
-    .filter(({ idx, cell }) => !used.has(idx) && !isAmount(cell) && !DATE_REGEX.test(cell))
+    .filter(({ idx, cell }) => !(used.has(idx) || isAmount(cell) || DATE_REGEX.test(cell)))
     .map(({ cell }) => cell);
 
   return parts.join(' ').trim();
@@ -519,7 +519,9 @@ function collectName(
   ]);
 
   for (let i = 0; i < row.length; i++) {
-    if (excludedIndexes.has(i)) continue;
+    if (excludedIndexes.has(i)) {
+      continue;
+    }
     const cell = row[i];
     if (!cell || isAmount(cell) || DATE_REGEX.test(cell)) {
       continue;

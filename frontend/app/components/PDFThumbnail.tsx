@@ -1,12 +1,12 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
 import { AlertCircle, FileText } from '@/app/components/icons';
-import { useEffect, useState } from 'react';
+import { Spinner } from '@/app/components/ui/spinner';
 import { apiBaseUrl } from '@/app/lib/api';
+import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
+import { useEffect, useState } from 'react';
 
-interface PDFThumbnailProps {
+interface PdfThumbnailProps {
   fileId: string;
   fileName?: string;
   source?: 'statement' | 'gmail' | 'receipt';
@@ -32,12 +32,17 @@ const SOURCE_THUMBNAIL_URLS: Record<string, (fileId: string, w: number) => strin
 
 function buildThumbnailUrl(source: string, fileId: string, requestedWidth: number): string {
   const builder = SOURCE_THUMBNAIL_URLS[source];
-  if (builder) return builder(fileId, requestedWidth);
+  if (builder) {
+    return builder(fileId, requestedWidth);
+  }
   return `${apiBaseUrl}/statements/${fileId}/thumbnail?width=${requestedWidth}`;
 }
 
 function clampWidth(width: number | undefined): number {
-  return Math.max(MIN_THUMBNAIL_WIDTH, Math.min(MAX_THUMBNAIL_WIDTH, Math.round(width ?? DEFAULT_THUMBNAIL_WIDTH)));
+  return Math.max(
+    MIN_THUMBNAIL_WIDTH,
+    Math.min(MAX_THUMBNAIL_WIDTH, Math.round(width ?? DEFAULT_THUMBNAIL_WIDTH)),
+  );
 }
 
 interface FetchThumbnailParams {
@@ -52,13 +57,25 @@ interface FetchThumbnailParams {
 }
 
 async function fetchThumbnail(params: FetchThumbnailParams): Promise<void> {
-  const { cacheKey, source, fileId, requestedWidth, isMounted, setThumbnailDataUrl, setError, setLoading } = params;
+  const {
+    cacheKey,
+    source,
+    fileId,
+    requestedWidth,
+    isMounted,
+    setThumbnailDataUrl,
+    setError,
+    setLoading,
+  } = params;
 
   if (thumbnailCache.has(cacheKey)) {
     const cached = thumbnailCache.get(cacheKey);
     if (isMounted()) {
-      if (cached) setThumbnailDataUrl(cached);
-      else setError(true);
+      if (cached) {
+        setThumbnailDataUrl(cached);
+      } else {
+        setError(true);
+      }
       setLoading(false);
     }
     return;
@@ -73,10 +90,18 @@ async function fetchThumbnail(params: FetchThumbnailParams): Promise<void> {
     }
 
     const thumbnailUrl = buildThumbnailUrl(source, fileId, requestedWidth);
-    const response = await fetch(thumbnailUrl, { method: 'GET', headers, credentials: 'include', cache: 'default' });
+    const response = await fetch(thumbnailUrl, {
+      method: 'GET',
+      headers,
+      credentials: 'include',
+      cache: 'default',
+    });
 
     if (!response.ok) {
-      if (isMounted()) { setError(true); setLoading(false); }
+      if (isMounted()) {
+        setError(true);
+        setLoading(false);
+      }
       return;
     }
 
@@ -85,11 +110,17 @@ async function fetchThumbnail(params: FetchThumbnailParams): Promise<void> {
     reader.onloadend = (): void => {
       const base64data = reader.result as string;
       thumbnailCache.set(cacheKey, base64data);
-      if (isMounted()) { setThumbnailDataUrl(base64data); setLoading(false); }
+      if (isMounted()) {
+        setThumbnailDataUrl(base64data);
+        setLoading(false);
+      }
     };
     reader.readAsDataURL(blob);
   } catch {
-    if (isMounted()) { setError(true); setLoading(false); }
+    if (isMounted()) {
+      setError(true);
+      setLoading(false);
+    }
   }
 }
 
@@ -99,19 +130,27 @@ function useImageAspectRatio(
   setImageAspectRatio: (v: number | null) => void,
 ): void {
   useEffect(() => {
-    if (!thumbnailDataUrl || !preservePageAspect) {
+    if (!(thumbnailDataUrl && preservePageAspect)) {
       setImageAspectRatio(null);
       return;
     }
     let cancelled = false;
     const image = new Image();
     image.onload = (): void => {
-      if (cancelled || image.naturalWidth <= 0 || image.naturalHeight <= 0) return;
+      if (cancelled || image.naturalWidth <= 0 || image.naturalHeight <= 0) {
+        return;
+      }
       setImageAspectRatio(image.naturalWidth / image.naturalHeight);
     };
-    image.onerror = (): void => { if (!cancelled) setImageAspectRatio(null); };
+    image.onerror = (): void => {
+      if (!cancelled) {
+        setImageAspectRatio(null);
+      }
+    };
     image.src = thumbnailDataUrl;
-    return (): void => { cancelled = true; };
+    return (): void => {
+      cancelled = true;
+    };
   }, [thumbnailDataUrl, preservePageAspect, setImageAspectRatio]);
 }
 
@@ -127,43 +166,92 @@ function useThumbnailFetch(
     let mounted = true;
     const cacheKey = `${source}:${fileId}:${requestedWidth}`;
     void fetchThumbnail({
-      cacheKey, source, fileId, requestedWidth,
+      cacheKey,
+      source,
+      fileId,
+      requestedWidth,
       isMounted: () => mounted,
-      setThumbnailDataUrl, setError, setLoading,
+      setThumbnailDataUrl,
+      setError,
+      setLoading,
     });
-    return (): void => { mounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return (): void => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fileId, source, requestedWidth]);
 }
 
-interface PDFErrorViewProps {
+interface PdfErrorViewProps {
   frameWidth: number;
   frameHeight: number;
   fallbackIconSize: number;
   errorMessage?: string;
 }
 
-function PDFErrorView(props: PDFErrorViewProps): React.ReactElement {
+function PdfErrorView(props: PdfErrorViewProps): React.ReactElement {
   const { frameWidth, frameHeight, fallbackIconSize, errorMessage } = props;
 
   if (errorMessage) {
     return (
-      <div style={{ width: frameWidth, height: frameHeight, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, border: '1px solid var(--border-color)', borderRadius: 0, backgroundColor: 'var(--card-bg)', padding: 16, textAlign: 'center' }}>
-        <AlertCircle data-testid="pdf-thumbnail-error-icon" size={24} style={{ color: 'var(--muted-foreground)' }} />
+      <div
+        style={{
+          width: frameWidth,
+          height: frameHeight,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12,
+          border: '1px solid var(--border-color)',
+          borderRadius: 0,
+          backgroundColor: 'var(--card-bg)',
+          padding: 16,
+          textAlign: 'center',
+        }}
+      >
+        <AlertCircle
+          data-testid="pdf-thumbnail-error-icon"
+          size={24}
+          style={{ color: 'var(--muted-foreground)' }}
+        />
         <p style={{ fontSize: 14, color: 'var(--muted-foreground)', margin: 0 }}>{errorMessage}</p>
       </div>
     );
   }
 
   return (
-    <div style={{ width: frameWidth, height: frameHeight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <FileText data-testid="pdf-thumbnail-fallback-icon" size={fallbackIconSize} style={{ color: 'var(--muted-foreground)' }} />
+    <div
+      style={{
+        width: frameWidth,
+        height: frameHeight,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <FileText
+        data-testid="pdf-thumbnail-fallback-icon"
+        size={fallbackIconSize}
+        style={{ color: 'var(--muted-foreground)' }}
+      />
     </div>
   );
 }
 
-export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
-  const { fileId, fileName, source = 'statement', size = 40, width, thumbnailWidth, height, className = '', errorMessage, preservePageAspect = false } = props;
+export function PDFThumbnail(props: PdfThumbnailProps): React.ReactElement {
+  const {
+    fileId,
+    fileName,
+    source = 'statement',
+    size = 40,
+    width,
+    thumbnailWidth,
+    height,
+    className = '',
+    errorMessage,
+    preservePageAspect = false,
+  } = props;
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [thumbnailDataUrl, setThumbnailDataUrl] = useState<string | null>(null);
@@ -182,7 +270,7 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
 
   if (error) {
     return (
-      <PDFErrorView
+      <PdfErrorView
         frameWidth={frameWidth}
         frameHeight={maxFrameHeight}
         fallbackIconSize={Math.max(14, Math.round(size * 0.8))}
@@ -192,9 +280,27 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
   }
 
   return (
-    <div data-testid="pdf-thumbnail-frame" style={{ position: 'relative', boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', borderRadius: 0, overflow: 'hidden', width: frameWidth, height: resolvedFrameHeight }}>
+    <div
+      data-testid="pdf-thumbnail-frame"
+      style={{
+        position: 'relative',
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+        borderRadius: 0,
+        overflow: 'hidden',
+        width: frameWidth,
+        height: resolvedFrameHeight,
+      }}
+    >
       {loading && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Spinner size={16} sx={{ color: 'var(--text-secondary)' }} />
         </div>
       )}
@@ -203,7 +309,13 @@ export function PDFThumbnail(props: PDFThumbnailProps): React.ReactElement {
           src={thumbnailDataUrl}
           alt={fileName || 'PDF thumbnail'}
           className={className}
-          style={{ width: '100%', height: '100%', objectFit: 'contain', imageRendering: 'auto', transition: 'opacity 0.2s' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            imageRendering: 'auto',
+            transition: 'opacity 0.2s',
+          }}
         />
       )}
     </div>

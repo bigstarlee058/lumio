@@ -27,7 +27,11 @@ export function formatDate(dateString: string | null | undefined, locale: string
   }
 }
 
-export function computeTransactionSummary(transactions: Transaction[]): { totalIncome: number; totalExpense: number; netChange: number } {
+export function computeTransactionSummary(transactions: Transaction[]): {
+  totalIncome: number;
+  totalExpense: number;
+  netChange: number;
+} {
   const totalIncome = transactions.reduce((sum, t) => sum + (t.credit || 0), 0);
   const totalExpense = transactions.reduce((sum, t) => sum + (t.debit || 0), 0);
   const netChange = totalIncome - totalExpense;

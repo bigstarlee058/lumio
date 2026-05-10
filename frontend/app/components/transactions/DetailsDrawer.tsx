@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
 import { useIntlayer } from '@/app/i18n';

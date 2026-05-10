@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { Edit3, MoreHorizontal } from '@/app/components/icons';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import {
@@ -12,15 +12,15 @@ import {
 import { AppPagination } from '@/app/components/ui/pagination';
 import { useIsMobile } from '@/app/hooks/useIsMobile';
 import type { Payable } from '@/app/lib/payables-api';
-import { Edit3, MoreHorizontal } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import { useTheme } from 'next-themes';
+import React from 'react';
 import {
   formatMoney,
   formatPayableDate,
   getPayableStatusVariant,
   isPayableOverdue,
 } from './payables-utils';
-import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
 
 interface PayablesListProps {
   items: Payable[];
@@ -144,7 +144,9 @@ function PayablesList({
               <div key={payable.id} className="lumio-payable-list__mobile-row">
                 <div className="lumio-payable-list__mobile-row-top">
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 600, color: c.ink900 }}>{payable.vendor}</div>
+                    <div style={{ fontSize: 16, fontWeight: 600, color: c.ink900 }}>
+                      {payable.vendor}
+                    </div>
                     <div style={{ marginTop: 4, fontSize: 14, color: c.ink500 }}>
                       {labels.dueDate}: {formatPayableDate(payable.dueDate, locale)}
                     </div>
@@ -179,8 +181,12 @@ function PayablesList({
                 <th className="lumio-payable-list__th">{labels.dueDate}</th>
                 <th className="lumio-payable-list__th">{labels.source}</th>
                 <th className="lumio-payable-list__th">{labels.status}</th>
-                <th className="lumio-payable-list__th lumio-payable-list__th--right">{labels.amount}</th>
-                <th className="lumio-payable-list__th lumio-payable-list__th--right">{labels.actions}</th>
+                <th className="lumio-payable-list__th lumio-payable-list__th--right">
+                  {labels.amount}
+                </th>
+                <th className="lumio-payable-list__th lumio-payable-list__th--right">
+                  {labels.actions}
+                </th>
               </tr>
             </thead>
             <tbody className="lumio-payable-list__tbody">
@@ -189,7 +195,12 @@ function PayablesList({
 
                 return (
                   <tr key={payable.id}>
-                    <td className="lumio-payable-list__td" style={{ fontWeight: 500, color: c.ink900 }}>{payable.vendor}</td>
+                    <td
+                      className="lumio-payable-list__td"
+                      style={{ fontWeight: 500, color: c.ink900 }}
+                    >
+                      {payable.vendor}
+                    </td>
                     <td className="lumio-payable-list__td" style={{ color: c.ink700 }}>
                       {formatPayableDate(payable.dueDate, locale)}
                     </td>
@@ -202,7 +213,10 @@ function PayablesList({
                           payable.status}
                       </Badge>
                     </td>
-                    <td className="lumio-payable-list__td" style={{ textAlign: 'right', fontWeight: 600, color: c.ink900 }}>
+                    <td
+                      className="lumio-payable-list__td"
+                      style={{ textAlign: 'right', fontWeight: 600, color: c.ink900 }}
+                    >
                       {formatMoney(payable.amount, payable.currency, locale)}
                     </td>
                     <td className="lumio-payable-list__td">{renderActions(payable)}</td>

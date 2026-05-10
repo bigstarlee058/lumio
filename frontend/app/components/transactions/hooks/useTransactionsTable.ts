@@ -12,13 +12,19 @@ interface Options {
 }
 
 export interface TransactionsTableState {
-  page: number; setPage: (p: number) => void;
-  rowsPerPage: number; setRowsPerPage: (r: number) => void;
+  page: number;
+  setPage: (p: number) => void;
+  rowsPerPage: number;
+  setRowsPerPage: (r: number) => void;
   totalPages: number;
-  sort: SortState; toggleSort: (by: SortState['by']) => void;
-  showFilters: boolean; setShowFilters: (v: boolean) => void;
-  clearFilters: () => void; hasActiveFilters: boolean;
-  allSelected: boolean; someSelected: boolean;
+  sort: SortState;
+  toggleSort: (by: SortState['by']) => void;
+  showFilters: boolean;
+  setShowFilters: (v: boolean) => void;
+  clearFilters: () => void;
+  hasActiveFilters: boolean;
+  allSelected: boolean;
+  someSelected: boolean;
   handleSelectAll: (checked: boolean) => void;
   handleSelectRow: (txId: string) => (checked: boolean) => void;
   expandedIds: Set<string>;
@@ -35,32 +41,61 @@ export function useTransactionsTable(options: Options): TransactionsTableState {
   const [showFilters, setShowFilters] = useState(false);
   const { expandedIds, toggleExpansion } = useTransactionExpansion();
 
-  const filteredAndSortedTransactions = useMemo(() => buildFilteredAndSorted(transactions, filters, sort), [transactions, filters, sort]);
-  const paginatedTransactions = useMemo(() => filteredAndSortedTransactions.slice(page * rowsPerPage, (page + 1) * rowsPerPage), [filteredAndSortedTransactions, page, rowsPerPage]);
+  const filteredAndSortedTransactions = useMemo(
+    () => buildFilteredAndSorted(transactions, filters, sort),
+    [transactions, filters, sort],
+  );
+  const paginatedTransactions = useMemo(
+    () => filteredAndSortedTransactions.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [filteredAndSortedTransactions, page, rowsPerPage],
+  );
 
-  const handleSelectAll = useCallback((checked: boolean): void => {
-    onSelectRows(checked ? filteredAndSortedTransactions.map(tx => tx.id) : []);
-  }, [filteredAndSortedTransactions, onSelectRows]);
-  const handleSelectRow = useCallback(
-    (txId: string) => (checked: boolean): void => {
-      onSelectRows(checked ? [...selectedIds, txId] : selectedIds.filter(id => id !== txId));
+  const handleSelectAll = useCallback(
+    (checked: boolean): void => {
+      onSelectRows(checked ? filteredAndSortedTransactions.map(tx => tx.id) : []);
     },
+    [filteredAndSortedTransactions, onSelectRows],
+  );
+  const handleSelectRow = useCallback(
+    (txId: string) =>
+      (checked: boolean): void => {
+        onSelectRows(checked ? [...selectedIds, txId] : selectedIds.filter(id => id !== txId));
+      },
     [selectedIds, onSelectRows],
   );
   const toggleSort = useCallback((by: SortState['by']): void => {
     setSort(prev => ({ by, order: prev.by === by && prev.order === 'desc' ? 'asc' : 'desc' }));
   }, []);
-  const clearFilters = useCallback((): void => { onFilterChange({ search: '', status: 'all', category: null }); }, [onFilterChange]);
+  const clearFilters = useCallback((): void => {
+    onFilterChange({ search: '', status: 'all', category: null });
+  }, [onFilterChange]);
 
   const totalPages = Math.max(1, Math.ceil(filteredAndSortedTransactions.length / rowsPerPage));
   const hasActiveFilters = Boolean(filters.search || filters.status !== 'all' || filters.category);
-  const allSelected = paginatedTransactions.length > 0 && paginatedTransactions.every(tx => selectedIds.includes(tx.id));
+  const allSelected =
+    paginatedTransactions.length > 0 &&
+    paginatedTransactions.every(tx => selectedIds.includes(tx.id));
   const someSelected = paginatedTransactions.some(tx => selectedIds.includes(tx.id));
 
   return {
-    page, setPage, rowsPerPage, setRowsPerPage, totalPages, sort, toggleSort,
-    showFilters, setShowFilters, clearFilters, hasActiveFilters,
-    allSelected, someSelected, handleSelectAll, handleSelectRow,
-    expandedIds, toggleExpansion, filteredAndSortedTransactions, paginatedTransactions,
+    page,
+    setPage,
+    rowsPerPage,
+    setRowsPerPage,
+    totalPages,
+    sort,
+    toggleSort,
+    showFilters,
+    setShowFilters,
+    clearFilters,
+    hasActiveFilters,
+    allSelected,
+    someSelected,
+    handleSelectAll,
+    handleSelectRow,
+    expandedIds,
+    toggleExpansion,
+    filteredAndSortedTransactions,
+    paginatedTransactions,
   };
 }

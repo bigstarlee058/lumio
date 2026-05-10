@@ -5,15 +5,11 @@ import { useIntlayer, useLocale } from '@/app/i18n';
 import { normalizeLocale } from '@/app/lib/locale';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import { resolveOnboardingFlow } from '../lib/onboarding-flow';
+import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import { useOnboardingWizard } from '../useOnboardingWizard';
-import {
-  buildIntegrationCards,
-  completeOnboarding,
-  detectTimeZone,
-} from './useOnboardingActions';
 import { useIntegrationConnect } from './useIntegrationConnect';
+import { buildIntegrationCards, completeOnboarding, detectTimeZone } from './useOnboardingActions';
 import { useOnboardingInit } from './useOnboardingInit';
 import { useStepAnimation } from './useStepAnimation';
 
@@ -42,7 +38,14 @@ export type OnboardingPageState = {
   canExitOnBack: boolean;
   integrationCards: ReturnType<typeof buildIntegrationCards>;
   connectedIntegrationItems: ReturnType<typeof buildIntegrationCards>;
-  navLabels: { back: string; next: string; finish: string; skip: string; skipAll: string; saving: string };
+  navLabels: {
+    back: string;
+    next: string;
+    finish: string;
+    skip: string;
+    skipAll: string;
+    saving: string;
+  };
   updateData: ReturnType<typeof useOnboardingWizard>['updateData'];
   setLocale: (locale: string) => void;
   handleCurrencyPickerOpenChange: (open: boolean) => void;
@@ -100,8 +103,13 @@ export function useOnboardingPage(): OnboardingPageState {
   });
 
   useEffect((): void => {
-    if (authLoading) return;
-    if (!user) { router.replace('/login'); return; }
+    if (authLoading) {
+      return;
+    }
+    if (!user) {
+      router.replace('/login');
+      return;
+    }
     if (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser) {
       router.replace('/dashboard');
     }
@@ -109,10 +117,16 @@ export function useOnboardingPage(): OnboardingPageState {
 
   useEffect((): (() => void) => {
     const integrationsIdx = flow.stepKeys.indexOf('integrations');
-    if (currentStep !== integrationsIdx) return (): void => {};
+    if (currentStep !== integrationsIdx) {
+      return (): void => {};
+    }
     void refreshIntegrationStatuses();
-    const timer = window.setInterval((): void => { void refreshIntegrationStatuses(); }, 10000);
-    return (): void => { window.clearInterval(timer); };
+    const timer = window.setInterval((): void => {
+      void refreshIntegrationStatuses();
+    }, 10000);
+    return (): void => {
+      window.clearInterval(timer);
+    };
   }, [currentStep, flow.stepKeys, refreshIntegrationStatuses]);
 
   const stepLabels = useMemo((): string[] => {
@@ -158,12 +172,18 @@ export function useOnboardingPage(): OnboardingPageState {
   const canExitOnBack = isCreateWorkspaceFlow && currentStep === 0;
 
   const handleNext = useCallback((): void => {
-    if (isLastStep) { void handleCompleteOnboarding(); return; }
+    if (isLastStep) {
+      void handleCompleteOnboarding();
+      return;
+    }
     goNext();
   }, [isLastStep, handleCompleteOnboarding, goNext]);
 
   const handleBack = useCallback((): void => {
-    if (canExitOnBack) { router.back(); return; }
+    if (canExitOnBack) {
+      router.back();
+      return;
+    }
     goBack();
   }, [canExitOnBack, router, goBack]);
 

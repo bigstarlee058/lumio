@@ -59,7 +59,9 @@ export class FixCustomTableCellStylesRowId1734900000002 implements MigrationInte
     }
 
     const table = await queryRunner.getTable('custom_table_cell_styles');
-    if (!table) return;
+    if (!table) {
+      return;
+    }
 
     const hasRowId = await queryRunner.hasColumn('custom_table_cell_styles', 'row_id');
     if (!hasRowId) {
@@ -84,12 +86,12 @@ export class FixCustomTableCellStylesRowId1734900000002 implements MigrationInte
     }
 
     const nullCountRaw = await queryRunner.query(
-      `SELECT COUNT(*)::int AS cnt FROM custom_table_cell_styles WHERE row_id IS NULL`,
+      'SELECT COUNT(*)::int AS cnt FROM custom_table_cell_styles WHERE row_id IS NULL',
     );
     const nullCount = Array.isArray(nullCountRaw) ? Number(nullCountRaw[0]?.cnt ?? 0) : 0;
     if (nullCount === 0) {
       await queryRunner.query(
-        `ALTER TABLE custom_table_cell_styles ALTER COLUMN row_id SET NOT NULL`,
+        'ALTER TABLE custom_table_cell_styles ALTER COLUMN row_id SET NOT NULL',
       );
     }
 
@@ -133,7 +135,9 @@ export class FixCustomTableCellStylesRowId1734900000002 implements MigrationInte
     }
 
     const refreshed = await queryRunner.getTable('custom_table_cell_styles');
-    if (!refreshed) return;
+    if (!refreshed) {
+      return;
+    }
     const hasFk = refreshed.foreignKeys.some(
       fk =>
         fk.columnNames.length === 1 &&
@@ -155,10 +159,14 @@ export class FixCustomTableCellStylesRowId1734900000002 implements MigrationInte
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const hasTable = await queryRunner.hasTable('custom_table_cell_styles');
-    if (!hasTable) return;
+    if (!hasTable) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_table_cell_styles');
-    if (!table) return;
+    if (!table) {
+      return;
+    }
 
     const idxToDrop = table.indices.filter(i =>
       [

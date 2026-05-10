@@ -1,7 +1,12 @@
 'use client';
 
+import { ChevronDown, ChevronRight, Cpu, Plug, User } from '@/app/components/icons';
 import { AppPagination } from '@/app/components/ui/pagination';
 import type { AuditEvent } from '@/lib/api/audit';
+import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
 import {
   type ColumnDef,
   type SortingState,
@@ -10,14 +15,9 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
-import { ChevronDown, ChevronRight, Cpu, Plug, User } from '@/app/components/icons';
-import React, { useMemo, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { useMemo, useState } from 'react';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
-import { tokens } from '@/lib/theme-tokens';
 
 interface AuditEventTableProps {
   events: AuditEvent[];
@@ -122,8 +122,11 @@ export function AuditEventTable({
   const toggleBatch = (batchId: string) => {
     setExpandedBatches(prev => {
       const next = new Set(prev);
-      if (next.has(batchId)) next.delete(batchId);
-      else next.add(batchId);
+      if (next.has(batchId)) {
+        next.delete(batchId);
+      } else {
+        next.add(batchId);
+      }
       return next;
     });
   };
@@ -140,7 +143,17 @@ export function AuditEventTable({
               <button
                 type="button"
                 onClick={() => toggleBatch(data.batchId)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: c.ink800, background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: c.ink800,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
               >
                 {expandedBatches.has(data.batchId) ? (
                   <ChevronDown size={16} />
@@ -175,10 +188,18 @@ export function AuditEventTable({
         cell: ({ row }) => {
           const data = row.original;
           if (data.type === 'group') {
-            return <Typography variant="body2" style={{ color: c.ink500 }}>{data.count} events</Typography>;
+            return (
+              <Typography variant="body2" style={{ color: c.ink500 }}>
+                {data.count} events
+              </Typography>
+            );
           }
           const formatted = formatAuditEvent(data.event);
-          return <Typography variant="body2" style={{ color: c.ink800 }}>{formatted.objectLabel}</Typography>;
+          return (
+            <Typography variant="body2" style={{ color: c.ink800 }}>
+              {formatted.objectLabel}
+            </Typography>
+          );
         },
       },
       {
@@ -186,9 +207,19 @@ export function AuditEventTable({
         header: 'Description',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
+          if (data.type === 'group') {
+            return (
+              <Typography variant="body2" style={{ color: c.ink500 }}>
+                —
+              </Typography>
+            );
+          }
           const formatted = formatAuditEvent(data.event);
-          return <Typography variant="body2" style={{ color: c.ink800 }}>{formatted.description}</Typography>;
+          return (
+            <Typography variant="body2" style={{ color: c.ink800 }}>
+              {formatted.description}
+            </Typography>
+          );
         },
       },
       {
@@ -196,7 +227,13 @@ export function AuditEventTable({
         header: 'User',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
+          if (data.type === 'group') {
+            return (
+              <Typography variant="body2" style={{ color: c.ink500 }}>
+                —
+              </Typography>
+            );
+          }
           const Icon =
             data.event.actorType === 'integration'
               ? Plug
@@ -204,7 +241,15 @@ export function AuditEventTable({
                 ? Cpu
                 : User;
           return (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, color: c.ink800 }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 14,
+                color: c.ink800,
+              }}
+            >
               <Icon size={16} style={{ color: c.ink500 }} />
               {data.event.actorLabel}
             </span>
@@ -228,7 +273,13 @@ export function AuditEventTable({
         header: 'Severity',
         cell: ({ row }) => {
           const data = row.original;
-          if (data.type === 'group') return <Typography variant="body2" style={{ color: c.ink500 }}>—</Typography>;
+          if (data.type === 'group') {
+            return (
+              <Typography variant="body2" style={{ color: c.ink500 }}>
+                —
+              </Typography>
+            );
+          }
           const colors = severityColors[data.event.severity] || { bg: c.ink50, color: c.ink800 };
           return (
             <Chip
@@ -271,7 +322,14 @@ export function AuditEventTable({
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    style={{ padding: '12px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: c.ink500, borderBottom: `1px solid ${c.border}` }}
+                    style={{
+                      padding: '12px 16px',
+                      textAlign: 'left',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: c.ink500,
+                      borderBottom: `1px solid ${c.border}`,
+                    }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -295,10 +353,14 @@ export function AuditEventTable({
                   role={data.type === 'event' ? 'button' : undefined}
                   tabIndex={data.type === 'event' ? 0 : undefined}
                   onClick={() => {
-                    if (data.type === 'event') onSelect(data.event);
+                    if (data.type === 'event') {
+                      onSelect(data.event);
+                    }
                   }}
                   onKeyDown={event => {
-                    if (data.type !== 'event') return;
+                    if (data.type !== 'event') {
+                      return;
+                    }
                     if (event.key === 'Enter' || event.key === ' ') {
                       event.preventDefault();
                       onSelect(data.event);
@@ -317,7 +379,12 @@ export function AuditEventTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  style={{ padding: '24px 16px', textAlign: 'center', fontSize: 14, color: c.ink500 }}
+                  style={{
+                    padding: '24px 16px',
+                    textAlign: 'center',
+                    fontSize: 14,
+                    color: c.ink500,
+                  }}
                 >
                   No events found.
                 </td>
@@ -327,7 +394,15 @@ export function AuditEventTable({
         </table>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 14, color: c.ink700 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          fontSize: 14,
+          color: c.ink700,
+        }}
+      >
         <div>
           Page {page} of {totalPages}
         </div>

@@ -71,7 +71,9 @@ type BuildAnalyticsFilterOptionsResult = {
 
 /** Builds the filter option arrays used by FiltersDrawer and filter dropdowns. */
 // eslint-disable-next-line max-lines-per-function
-export function buildAnalyticsFilterOptions(labels: AnalyticsFilterOptionLabels): BuildAnalyticsFilterOptionsResult {
+export function buildAnalyticsFilterOptions(
+  labels: AnalyticsFilterOptionLabels,
+): BuildAnalyticsFilterOptionsResult {
   const typeOptions = [
     { value: 'expense', label: labels.typeExpense },
     { value: 'expense_report', label: labels.typeReport },

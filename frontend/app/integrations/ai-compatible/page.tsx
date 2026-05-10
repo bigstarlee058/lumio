@@ -1,5 +1,5 @@
-import type React from 'react';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import type React from 'react';
 import { ProtocolIntegrationPage } from '../open-protocol-page';
 
 export default function AiCompatibleIntegrationPage(): React.JSX.Element {

@@ -4,11 +4,11 @@ import { BackgroundSelector } from '@/app/(main)/workspaces/components/Backgroun
 import { CurrencySelector } from '@/app/(main)/workspaces/components/CurrencySelector';
 import { AVAILABLE_BACKGROUNDS } from '@/app/(main)/workspaces/constants';
 import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
-import { tokens } from '@/lib/theme-tokens';
 
 interface WorkspaceStepProps {
   locale: SupportedLocale;
@@ -175,7 +175,12 @@ export function WorkspaceStep({
 
         <Stack spacing={1}>
           <Typography
-            style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.14em' }}
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+            }}
             sx={{ color: 'text.secondary' }}
           >
             {text(['workspace', 'backgroundLabel'], 'Workspace background')}

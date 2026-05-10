@@ -1,6 +1,14 @@
 'use client';
 
 import CustomDatePicker from '@/app/components/CustomDatePicker';
+import {
+  CheckCircle2,
+  Layers,
+  Pencil,
+  Trash2,
+  TriangleAlert,
+  XCircle,
+} from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import {
@@ -8,6 +16,7 @@ import {
   Button,
   Chip,
   IconButton,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -18,16 +27,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-  MenuItem,
 } from '@mui/material';
-import {
-  CheckCircle2,
-  Layers,
-  Pencil,
-  Trash2,
-  TriangleAlert,
-  XCircle,
-} from '@/app/components/icons';
 import { useState } from 'react';
 import type {
   EditableLineItem,
@@ -36,7 +36,9 @@ import type {
 } from '../hooks/useGmailReceiptData';
 
 const formatCurrencyAmount = (amount: number, currency: string): string => {
-  if (!Number.isFinite(amount)) return `0 ${currency}`;
+  if (!Number.isFinite(amount)) {
+    return `0 ${currency}`;
+  }
   return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 };
 
@@ -91,7 +93,7 @@ function LineItemRow({
   setEditedData,
 }: LineItemRowProps): React.ReactElement {
   const edited = editedRowData[item.id] || item;
-  const missingCategory = !hasCategory && !editedData.categoryId;
+  const missingCategory = !(hasCategory || editedData.categoryId);
 
   const rowSx = {
     bgcolor: missingCategory ? 'error.50' : undefined,
@@ -145,7 +147,10 @@ function LineItemRow({
           />
         ) : (
           <Tooltip title={item.description}>
-            <Typography variant="body2" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Typography
+              variant="body2"
+              sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            >
               {item.description || '—'}
             </Typography>
           </Tooltip>
@@ -154,14 +159,20 @@ function LineItemRow({
 
       <TableCell
         align="right"
-        sx={{ color: transactionType === 'income' ? 'success.600' : 'error.600', fontWeight: 600, fontSize: '0.9375rem' }}
+        sx={{
+          color: transactionType === 'income' ? 'success.600' : 'error.600',
+          fontWeight: 600,
+          fontSize: '0.9375rem',
+        }}
       >
         {isEditing ? (
           <TextField
             size="small"
             type="number"
             value={edited.amount !== undefined ? edited.amount : item.amount}
-            onChange={e => onRowFieldChange(item.id, 'amount', Number.parseFloat(e.target.value || '0'))}
+            onChange={e =>
+              onRowFieldChange(item.id, 'amount', Number.parseFloat(e.target.value || '0'))
+            }
             inputProps={{ style: { textAlign: 'right' } }}
           />
         ) : (
@@ -183,23 +194,42 @@ function LineItemRow({
           >
             <MenuItem value="">Select</MenuItem>
             {enabledCategories.map(cat => (
-              <MenuItem key={cat.id} value={cat.id}>{cat.name}</MenuItem>
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.name}
+              </MenuItem>
             ))}
           </TextField>
         ) : (
           <Box>
             {hasCategory ? (
               <Chip
-                label={editedData.categoryId ? (enabledCategories.find(c => c.id === selectedCategoryId)?.name || 'Category') : 'Category'}
+                label={
+                  editedData.categoryId
+                    ? enabledCategories.find(c => c.id === selectedCategoryId)?.name || 'Category'
+                    : 'Category'
+                }
                 size="small"
-                sx={{ bgcolor: 'primary.50', color: 'primary.700', fontWeight: 500, fontSize: '0.8125rem' }}
+                sx={{
+                  bgcolor: 'primary.50',
+                  color: 'primary.700',
+                  fontWeight: 500,
+                  fontSize: '0.8125rem',
+                }}
               />
             ) : (
               <Chip
                 label="No category"
                 size="small"
                 icon={<TriangleAlert size={16} />}
-                sx={{ bgcolor: 'error.50', color: 'error.700', border: '1px solid', borderColor: 'error.100', fontWeight: 600, fontSize: '0.8125rem', '& .MuiChip-icon': { color: 'error.600' } }}
+                sx={{
+                  bgcolor: 'error.50',
+                  color: 'error.700',
+                  border: '1px solid',
+                  borderColor: 'error.100',
+                  fontWeight: 600,
+                  fontSize: '0.8125rem',
+                  '& .MuiChip-icon': { color: 'error.600' },
+                }}
               />
             )}
           </Box>
@@ -207,31 +237,65 @@ function LineItemRow({
       </TableCell>
 
       <TableCell>
-        {index === 0 && (
-          isLowConfidence ? (
-            <Chip label="Low confidence" size="small" sx={{ bgcolor: 'warning.50', color: 'warning.800', fontWeight: 600, fontSize: '0.75rem' }} />
+        {index === 0 &&
+          (isLowConfidence ? (
+            <Chip
+              label="Low confidence"
+              size="small"
+              sx={{
+                bgcolor: 'warning.50',
+                color: 'warning.800',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+              }}
+            />
           ) : (
-            <Chip label="Parsed" size="small" sx={{ bgcolor: 'success.50', color: 'success.800', fontWeight: 600, fontSize: '0.75rem' }} />
-          )
-        )}
+            <Chip
+              label="Parsed"
+              size="small"
+              sx={{
+                bgcolor: 'success.50',
+                color: 'success.800',
+                fontWeight: 600,
+                fontSize: '0.75rem',
+              }}
+            />
+          ))}
       </TableCell>
 
       <TableCell>
         {isEditing ? (
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton size="small" onClick={() => onSaveRow(item.id)} sx={{ color: 'success.600', '&:hover': { bgcolor: 'success.50' } }}>
+            <IconButton
+              size="small"
+              onClick={() => onSaveRow(item.id)}
+              sx={{ color: 'success.600', '&:hover': { bgcolor: 'success.50' } }}
+            >
               <CheckCircle2 size={16} />
             </IconButton>
-            <IconButton size="small" onClick={onCancelRow} sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}>
+            <IconButton
+              size="small"
+              onClick={onCancelRow}
+              sx={{ color: 'text.secondary', '&:hover': { bgcolor: 'grey.100' } }}
+            >
               <XCircle size={16} />
             </IconButton>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton size="small" onClick={() => onEdit(item)} sx={{ color: 'primary.600', '&:hover': { bgcolor: 'primary.50' } }}>
+            <IconButton
+              size="small"
+              onClick={() => onEdit(item)}
+              sx={{ color: 'primary.600', '&:hover': { bgcolor: 'primary.50' } }}
+            >
               <Pencil size={16} />
             </IconButton>
-            <IconButton size="small" onClick={() => onDeleteRow(item.id)} disabled={lineItemsCount <= 1} sx={{ color: 'error.600', '&:hover': { bgcolor: 'error.50' } }}>
+            <IconButton
+              size="small"
+              onClick={() => onDeleteRow(item.id)}
+              disabled={lineItemsCount <= 1}
+              sx={{ color: 'error.600', '&:hover': { bgcolor: 'error.50' } }}
+            >
               <Trash2 size={16} />
             </IconButton>
           </Box>
@@ -276,14 +340,20 @@ export function GmailReceiptLineItems({
 
   const handleRowSelect = (id: string): void => {
     const next = new Set(selectedRows);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
     setSelectedRows(next);
   };
 
   const handleSelectAll = (): void => {
-    if (selectedRows.size === lineItems.length) setSelectedRows(new Set());
-    else setSelectedRows(new Set(lineItems.map(item => item.id)));
+    if (selectedRows.size === lineItems.length) {
+      setSelectedRows(new Set());
+    } else {
+      setSelectedRows(new Set(lineItems.map(item => item.id)));
+    }
   };
 
   const handleEditRow = (item: EditableLineItem): void => {
@@ -291,13 +361,19 @@ export function GmailReceiptLineItems({
     setEditedRowData({ [item.id]: { ...item } });
   };
 
-  const handleRowFieldChange = (id: string, field: keyof EditableLineItem, value: string | number): void => {
+  const handleRowFieldChange = (
+    id: string,
+    field: keyof EditableLineItem,
+    value: string | number,
+  ): void => {
     setEditedRowData(prev => ({ ...prev, [id]: { ...prev[id], [field]: value } }));
   };
 
   const handleSaveRow = (itemId: string): void => {
     const updates = editedRowData[itemId];
-    if (!updates) return;
+    if (!updates) {
+      return;
+    }
     setEditedData(prev => ({
       ...prev,
       lineItems: prev.lineItems.map(item => (item.id === itemId ? { ...item, ...updates } : item)),
@@ -312,9 +388,16 @@ export function GmailReceiptLineItems({
   };
 
   const handleDeleteRow = (itemId: string): void => {
-    if (lineItems.length <= 1) return;
-    if (!window.confirm('Delete this line item?')) return;
-    setEditedData(prev => ({ ...prev, lineItems: prev.lineItems.filter(item => item.id !== itemId) }));
+    if (lineItems.length <= 1) {
+      return;
+    }
+    if (!window.confirm('Delete this line item?')) {
+      return;
+    }
+    setEditedData(prev => ({
+      ...prev,
+      lineItems: prev.lineItems.filter(item => item.id !== itemId),
+    }));
     setSelectedRows(prev => {
       const next = new Set(prev);
       next.delete(itemId);
@@ -323,9 +406,16 @@ export function GmailReceiptLineItems({
   };
 
   const handleBulkDelete = (): void => {
-    if (selectedRows.size === 0) return;
-    if (!window.confirm(`Delete ${selectedRows.size} line item(s)?`)) return;
-    setEditedData(prev => ({ ...prev, lineItems: prev.lineItems.filter(item => !selectedRows.has(item.id)) }));
+    if (selectedRows.size === 0) {
+      return;
+    }
+    if (!window.confirm(`Delete ${selectedRows.size} line item(s)?`)) {
+      return;
+    }
+    setEditedData(prev => ({
+      ...prev,
+      lineItems: prev.lineItems.filter(item => !selectedRows.has(item.id)),
+    }));
     setSelectedRows(new Set());
   };
 
@@ -339,16 +429,47 @@ export function GmailReceiptLineItems({
   return (
     <>
       {selectedRows.size > 0 && (
-        <Paper elevation={0} sx={{ mb: 3, p: 3, bgcolor: 'primary.50', border: '1px solid', borderColor: 'primary.200' }}>
+        <Paper
+          elevation={0}
+          sx={{
+            mb: 3,
+            p: 3,
+            bgcolor: 'primary.50',
+            border: '1px solid',
+            borderColor: 'primary.200',
+          }}
+        >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body1" sx={{ fontWeight: 600, color: 'primary.700', fontSize: '0.9375rem' }}>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: 600, color: 'primary.700', fontSize: '0.9375rem' }}
+            >
               Selected: {selectedRows.size} item(s)
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5 }}>
-              <Button variant="outlined" startIcon={<Layers size={18} />} onClick={onOpenBulkCategory} size="small" sx={{ textTransform: 'none', fontWeight: 500, borderColor: 'primary.300', color: 'primary.700', '&:hover': { borderColor: 'primary.400', bgcolor: 'primary.100' } }}>
+              <Button
+                variant="outlined"
+                startIcon={<Layers size={18} />}
+                onClick={onOpenBulkCategory}
+                size="small"
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  borderColor: 'primary.300',
+                  color: 'primary.700',
+                  '&:hover': { borderColor: 'primary.400', bgcolor: 'primary.100' },
+                }}
+              >
                 Assign category
               </Button>
-              <Button variant="outlined" color="error" startIcon={<Trash2 size={18} />} onClick={handleBulkDelete} size="small" sx={{ textTransform: 'none', fontWeight: 500 }}>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<Trash2 size={18} />}
+                onClick={handleBulkDelete}
+                size="small"
+                sx={{ textTransform: 'none', fontWeight: 500 }}
+              >
                 Delete
               </Button>
             </Box>
@@ -356,11 +477,40 @@ export function GmailReceiptLineItems({
         </Paper>
       )}
 
-      <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, borderBottom: '1px solid', borderBottomColor: 'divider', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Document lines</Typography>
+      <TableContainer
+        component={Paper}
+        elevation={0}
+        sx={{ border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            px: 2,
+            py: 1.5,
+            borderBottom: '1px solid',
+            borderBottomColor: 'divider',
+            bgcolor: theme =>
+              theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50',
+          }}
+        >
+          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            Document lines
+          </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button size="small" variant="outlined" onClick={addLineItem} sx={{ textTransform: 'none', fontWeight: 600, borderColor: 'grey.300', color: 'text.secondary', '&:hover': { borderColor: 'primary.main', color: 'primary.main' } }}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={addLineItem}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                borderColor: 'grey.300',
+                color: 'text.secondary',
+                '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+              }}
+            >
               + Add line
             </Button>
             <Button
@@ -369,7 +519,12 @@ export function GmailReceiptLineItems({
               onClick={onSaveChanges}
               disabled={saving}
               startIcon={saving ? <Spinner className="h-4 w-4" /> : undefined}
-              sx={{ textTransform: 'none', fontWeight: 600, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
+              sx={{
+                textTransform: 'none',
+                fontWeight: 600,
+                boxShadow: 'none',
+                '&:hover': { boxShadow: 'none' },
+              }}
             >
               Save changes
             </Button>
@@ -378,7 +533,14 @@ export function GmailReceiptLineItems({
 
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50', borderBottom: '1px solid', borderBottomColor: 'divider' }}>
+            <TableRow
+              sx={{
+                bgcolor: theme =>
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'grey.50',
+                borderBottom: '1px solid',
+                borderBottomColor: 'divider',
+              }}
+            >
               <TableCell padding="checkbox">
                 <Checkbox
                   checked={selectedRows.size === lineItems.length && lineItems.length > 0}
@@ -390,7 +552,13 @@ export function GmailReceiptLineItems({
                 <TableCell
                   key={label}
                   align={label === 'Amount' ? 'right' : 'left'}
-                  sx={{ fontWeight: 600, fontSize: '0.75rem', color: 'text.secondary', textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    color: 'text.secondary',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                  }}
                 >
                   {label}
                 </TableCell>

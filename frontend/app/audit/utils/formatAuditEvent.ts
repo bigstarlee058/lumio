@@ -66,7 +66,7 @@ const SEVERITY_TONES: Record<Severity, ActionTone> = {
   critical: 'critical',
 };
 
-const _formatValue = (value: unknown): string => {
+const FormatValue = (value: unknown): string => {
   if (value === null || value === undefined) return '—';
   if (typeof value === 'string') return value;
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
@@ -124,7 +124,14 @@ const extractDescription = (
 
 export const formatAuditEvent = (
   event: AuditEvent,
-): { actionLabel: string; actionVerb: string; objectLabel: string; description: string; severity: string; actionTone: ActionTone } => {
+): {
+  actionLabel: string;
+  actionVerb: string;
+  objectLabel: string;
+  description: string;
+  severity: string;
+  actionTone: ActionTone;
+} => {
   const actionLabel = ACTION_LABELS[event.action] ?? event.action;
   const actionVerb = ACTION_VERBS[event.action] ?? event.action;
   const objectLabel = ENTITY_LABELS[event.entityType] ?? event.entityType;

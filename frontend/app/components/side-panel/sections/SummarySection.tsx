@@ -1,11 +1,11 @@
 'use client';
 
 import { ArrowDown, ArrowUp, Minus } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import React, { useMemo } from 'react';
 import type { SummaryItem, SummarySection } from '../types';
 import { RenderIcon } from './components/RenderIcon';
 import { SectionWrapper } from './components/SectionWrapper';
-import { tokens } from '@/lib/theme-tokens';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function, complexity
 export function SummaryItemComponent({ item }: { item: SummaryItem }) {
@@ -37,7 +37,14 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
 
   return (
     <div style={{ padding: 12, backgroundColor: 'var(--muted)', borderRadius: tokens.radius.lg }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 8,
+        }}
+      >
         <div style={{ flex: 1, minWidth: 0 }}>
           <p
             style={{
@@ -51,14 +58,28 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
           >
             {item.label}
           </p>
-          <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)', marginTop: 4, marginBottom: 0 }}>
+          <p
+            style={{
+              fontSize: 18,
+              fontWeight: 600,
+              color: 'var(--foreground)',
+              marginTop: 4,
+              marginBottom: 0,
+            }}
+          >
             {formattedValue}
           </p>
           {item.change && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-              {item.change.type === 'increase' && <ArrowUp size={12} style={{ color: '#10b981' }} />}
-              {item.change.type === 'decrease' && <ArrowDown size={12} style={{ color: 'var(--destructive)' }} />}
-              {item.change.type === 'neutral' && <Minus size={12} style={{ color: 'var(--muted-foreground)' }} />}
+              {item.change.type === 'increase' && (
+                <ArrowUp size={12} style={{ color: '#10b981' }} />
+              )}
+              {item.change.type === 'decrease' && (
+                <ArrowDown size={12} style={{ color: 'var(--destructive)' }} />
+              )}
+              {item.change.type === 'neutral' && (
+                <Minus size={12} style={{ color: 'var(--muted-foreground)' }} />
+              )}
               <span
                 style={{
                   fontSize: 12,
@@ -75,13 +96,21 @@ export function SummaryItemComponent({ item }: { item: SummaryItem }) {
                 {item.change.value}%
               </span>
               {item.change.period && (
-                <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{item.change.period}</span>
+                <span style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+                  {item.change.period}
+                </span>
               )}
             </div>
           )}
         </div>
         {item.icon && (
-          <div style={{ padding: 8, borderRadius: tokens.radius.sm, backgroundColor: 'rgba(var(--primary-rgb),0.1)' }}>
+          <div
+            style={{
+              padding: 8,
+              borderRadius: tokens.radius.sm,
+              backgroundColor: 'rgba(var(--primary-rgb),0.1)',
+            }}
+          >
             <RenderIcon icon={item.icon} size={16} />
           </div>
         )}

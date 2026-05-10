@@ -1,29 +1,81 @@
-/* eslint-disable max-lines */
-import React from 'react';
+import { Check } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
-import { Check } from '@/app/components/icons';
-import type { UnapprovedReasonId, UnapprovedSource, UnapprovedStatementQueueItem } from '../../unapproved-cash-utils';
 import { tokens } from '@/lib/theme-tokens';
+/* eslint-disable max-lines */
+import React from 'react';
+import type {
+  UnapprovedReasonId,
+  UnapprovedSource,
+  UnapprovedStatementQueueItem,
+} from '../../unapproved-cash-utils';
 
 type BadgeStyle = { borderColor: string; background: string; color: string };
 
 const REASON_BADGE_STYLE: Record<UnapprovedReasonId, BadgeStyle> = {
-  'missing-category': { borderColor: 'var(--color-warning-soft-border)', background: 'var(--color-warning-soft-bg)', color: 'var(--color-warning-soft-text)' },
-  'duplicate-detected': { borderColor: 'var(--color-error-soft-border)', background: 'var(--color-error-soft-bg)', color: 'var(--destructive)' },
-  'unknown-merchant': { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--text-secondary)' },
-  'missing-type': { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
-  'missing-currency': { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
-  'ocr-issues': { borderColor: 'var(--color-error-soft-border)', background: 'var(--color-error-soft-bg)', color: '#be123c' },
-  'requires-confirmation': { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
+  'missing-category': {
+    borderColor: 'var(--color-warning-soft-border)',
+    background: 'var(--color-warning-soft-bg)',
+    color: 'var(--color-warning-soft-text)',
+  },
+  'duplicate-detected': {
+    borderColor: 'var(--color-error-soft-border)',
+    background: 'var(--color-error-soft-bg)',
+    color: 'var(--destructive)',
+  },
+  'unknown-merchant': {
+    borderColor: 'var(--border-color)',
+    background: 'var(--muted)',
+    color: 'var(--text-secondary)',
+  },
+  'missing-type': {
+    borderColor: 'var(--color-info-soft-border)',
+    background: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+  },
+  'missing-currency': {
+    borderColor: 'var(--color-info-soft-border)',
+    background: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+  },
+  'ocr-issues': {
+    borderColor: 'var(--color-error-soft-border)',
+    background: 'var(--color-error-soft-bg)',
+    color: '#be123c',
+  },
+  'requires-confirmation': {
+    borderColor: 'var(--border-color)',
+    background: 'var(--muted)',
+    color: 'var(--foreground)',
+  },
 };
 
 const SOURCE_BADGE_STYLE: Record<UnapprovedSource, BadgeStyle> = {
-  gmail: { borderColor: 'var(--color-warning-soft-border)', background: 'var(--color-warning-soft-bg)', color: 'var(--color-warning-soft-text)' },
-  pdf: { borderColor: 'var(--color-info-soft-border)', background: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' },
-  bank: { borderColor: 'var(--color-success-soft-border)', background: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' },
-  manual: { borderColor: 'var(--color-success-soft-border)', background: 'var(--color-success-soft-bg)', color: '#036704' },
-  unknown: { borderColor: 'var(--border-color)', background: 'var(--muted)', color: 'var(--foreground)' },
+  gmail: {
+    borderColor: 'var(--color-warning-soft-border)',
+    background: 'var(--color-warning-soft-bg)',
+    color: 'var(--color-warning-soft-text)',
+  },
+  pdf: {
+    borderColor: 'var(--color-info-soft-border)',
+    background: 'var(--color-info-soft-bg)',
+    color: 'var(--color-info-soft-text)',
+  },
+  bank: {
+    borderColor: 'var(--color-success-soft-border)',
+    background: 'var(--color-success-soft-bg)',
+    color: 'var(--color-success-soft-text)',
+  },
+  manual: {
+    borderColor: 'var(--color-success-soft-border)',
+    background: 'var(--color-success-soft-bg)',
+    color: '#036704',
+  },
+  unknown: {
+    borderColor: 'var(--border-color)',
+    background: 'var(--muted)',
+    color: 'var(--foreground)',
+  },
 };
 
 interface UnapprovedCashContentProps {
@@ -90,13 +142,22 @@ export function UnapprovedCashContent({
           textAlign: 'center',
         }}
       >
-        <div style={{ borderRadius: tokens.radius.full, background: 'var(--color-success-soft-bg)', padding: 8, color: 'var(--color-success-soft-text)' }}>
+        <div
+          style={{
+            borderRadius: tokens.radius.full,
+            background: 'var(--color-success-soft-bg)',
+            padding: 8,
+            color: 'var(--color-success-soft-text)',
+          }}
+        >
           <Check style={{ width: 20, height: 20 }} />
         </div>
         <h2 style={{ marginTop: 12, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
           {labels.empty.title}
         </h2>
-        <p style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>{labels.empty.description}</p>
+        <p style={{ marginTop: 4, fontSize: 14, color: 'var(--muted-foreground)' }}>
+          {labels.empty.description}
+        </p>
       </div>
     );
   }
@@ -206,7 +267,10 @@ function DesktopTable({
             return (
               <tr key={statementId} style={{ borderBottom: '1px solid var(--muted)' }}>
                 <td style={{ padding: '12px 16px', verticalAlign: 'top' }}>
-                  <Checkbox checked={selected} onCheckedChange={() => onToggleSelect(statementId)} />
+                  <Checkbox
+                    checked={selected}
+                    onCheckedChange={() => onToggleSelect(statementId)}
+                  />
                 </td>
                 <td style={{ padding: '12px 8px', verticalAlign: 'top' }}>
                   <p style={{ fontWeight: 500, color: 'var(--foreground)' }}>
@@ -216,11 +280,18 @@ function DesktopTable({
                     {item.statement.bankName?.trim() || `#${statementId.slice(0, 8)}`}
                   </p>
                 </td>
-                <td style={{ padding: '12px 8px', verticalAlign: 'top', color: 'var(--foreground)' }}>
+                <td
+                  style={{ padding: '12px 8px', verticalAlign: 'top', color: 'var(--foreground)' }}
+                >
                   {formatDate(item)}
                 </td>
                 <td
-                  style={{ padding: '12px 8px', verticalAlign: 'top', fontWeight: 500, color: 'var(--foreground)' }}
+                  style={{
+                    padding: '12px 8px',
+                    verticalAlign: 'top',
+                    fontWeight: 500,
+                    color: 'var(--foreground)',
+                  }}
                 >
                   {formatAmount(item)}
                 </td>
@@ -317,7 +388,14 @@ function MobileCards({
         const selected = selectedIds.includes(statementId);
 
         return (
-          <article key={statementId} style={{ border: '1px solid var(--border-color)', padding: 12, borderRadius: tokens.radius.lg }}>
+          <article
+            key={statementId}
+            style={{
+              border: '1px solid var(--border-color)',
+              padding: 12,
+              borderRadius: tokens.radius.lg,
+            }}
+          >
             <div
               style={{
                 display: 'flex',
@@ -327,10 +405,7 @@ function MobileCards({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                <Checkbox
-                  checked={selected}
-                  onCheckedChange={() => onToggleSelect(statementId)}
-                />
+                <Checkbox checked={selected} onCheckedChange={() => onToggleSelect(statementId)} />
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                     {item.statement.fileName?.trim() || item.statement.bankName?.trim() || '—'}
@@ -340,7 +415,9 @@ function MobileCards({
                   </p>
                 </div>
               </div>
-              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{formatAmount(item)}</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+                {formatAmount(item)}
+              </p>
             </div>
 
             <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 4 }}>

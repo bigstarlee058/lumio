@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { WorkspaceAuth } from '../../common/decorators/workspace-auth.decorator';
-import { deletedResponse } from '../../common/utils/responses.util';
 import { WorkspaceId } from '../../common/decorators/workspace.decorator';
 import { Permission } from '../../common/enums/permissions.enum';
+import { deletedResponse } from '../../common/utils/responses.util';
 import { EntityType } from '../../entities/audit-event.entity';
 import type { CategoryType } from '../../entities/category.entity';
 import type { User } from '../../entities/user.entity';
@@ -30,7 +30,7 @@ export class CategoriesController {
   @Get()
   @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async findAll(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('type') type?: CategoryType,
   ) {
@@ -53,7 +53,7 @@ export class CategoriesController {
   @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.categoriesService.findOne(id, workspaceId);

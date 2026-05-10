@@ -67,13 +67,31 @@ vi.mock('@mui/material/Button', () => ({
 }));
 
 vi.mock('@mui/material/TextField', () => ({
-  default: ({ label, value, onChange, placeholder, multiline }: FieldMockProps & { multiline?: boolean }) => (
+  default: ({
+    label,
+    value,
+    onChange,
+    placeholder,
+    multiline,
+  }: FieldMockProps & { multiline?: boolean }) => (
     <label>
       <span>{label}</span>
       {multiline ? (
-        <textarea aria-label={label ?? ''} value={value} placeholder={placeholder} onChange={e => onChange?.({ target: { value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)} />
+        <textarea
+          aria-label={label ?? ''}
+          value={value}
+          placeholder={placeholder}
+          onChange={e =>
+            onChange?.({ target: { value: e.target.value } } as React.ChangeEvent<HTMLInputElement>)
+          }
+        />
       ) : (
-        <input aria-label={label ?? ''} value={value} placeholder={placeholder} onChange={onChange} />
+        <input
+          aria-label={label ?? ''}
+          value={value}
+          placeholder={placeholder}
+          onChange={onChange}
+        />
       )}
     </label>
   ),

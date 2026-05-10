@@ -1,13 +1,13 @@
 'use client';
 
 import { AuditEventDrawer } from '@/app/audit/components/AuditEventDrawer';
-import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { EntityHistoryTimeline } from '@/app/audit/components/EntityHistoryTimeline';
+import CustomDatePicker from '@/app/components/CustomDatePicker';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { AuditEvent } from '@/lib/api/audit';
 import { fetchEntityHistory } from '@/lib/api/audit';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import type {
   ColumnType,
@@ -36,11 +36,16 @@ const getColumnOptions = (column: CustomTableColumn): string[] => {
     : [];
 };
 
-const isNullish = (v: unknown): v is null | undefined | '' => v === null || v === undefined || v === '';
+const isNullish = (v: unknown): v is null | undefined | '' =>
+  v === null || v === undefined || v === '';
 
 function shallowEqual(a: unknown, b: unknown): boolean {
-  if (a === b) { return true; }
-  if (!Array.isArray(a) || !Array.isArray(b)) { return false; }
+  if (a === b) {
+    return true;
+  }
+  if (!(Array.isArray(a) && Array.isArray(b))) {
+    return false;
+  }
   return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
@@ -48,7 +53,9 @@ const normalizers: Record<ColumnType, (v: unknown) => unknown> = {
   boolean: v => Boolean(v),
   number: v => (isNullish(v) ? null : Number(v)),
   multi_select: v => {
-    if (Array.isArray(v)) { return v.map(item => String(item)); }
+    if (Array.isArray(v)) {
+      return v.map(item => String(item));
+    }
     return isNullish(v) ? [] : [String(v)];
   },
   date: v => (isNullish(v) ? null : String(v)),
@@ -59,12 +66,16 @@ const normalizers: Record<ColumnType, (v: unknown) => unknown> = {
 
 const normalizeValue = (type: ColumnType, value: unknown): unknown => {
   const fn = normalizers[type];
-  return fn ? fn(value) : (value === null || value === undefined ? '' : String(value));
+  return fn ? fn(value) : value === null || value === undefined ? '' : String(value);
 };
 
 const formatValue = (type: ColumnType, value: unknown) => {
-  if (value === null || value === undefined) return '—';
-  if (type === 'boolean') return value ? 'Yes' : 'No';
+  if (value === null || value === undefined) {
+    return '—';
+  }
+  if (type === 'boolean') {
+    return value ? 'Yes' : 'No';
+  }
   if (type === 'multi_select') {
     const arr = Array.isArray(value) ? value : [value];
     const text = arr
@@ -77,8 +88,15 @@ const formatValue = (type: ColumnType, value: unknown) => {
   return text.trim() ? text : '—';
 };
 
-function MultiSelectEditor({ value, options, colKey, setDraft }: {
-  value: unknown; options: string[]; colKey: string;
+function MultiSelectEditor({
+  value,
+  options,
+  colKey,
+  setDraft,
+}: {
+  value: unknown;
+  options: string[];
+  colKey: string;
   setDraft: React.Dispatch<React.SetStateAction<CustomTableRowPatch>>;
 }) {
   return (
@@ -91,7 +109,9 @@ function MultiSelectEditor({ value, options, colKey, setDraft }: {
               checked={selected}
               onCheckedChange={checked => {
                 const next = Array.isArray(value) ? [...value] : [];
-                const updated = checked ? Array.from(new Set([...next, opt])) : next.filter(v => v !== opt);
+                const updated = checked
+                  ? Array.from(new Set([...next, opt]))
+                  : next.filter(v => v !== opt);
                 setDraft(prev => ({ ...prev, [colKey]: updated }));
               }}
               className="h-5 w-5"
@@ -104,8 +124,16 @@ function MultiSelectEditor({ value, options, colKey, setDraft }: {
   );
 }
 
-function ColumnFieldEditor({ col, value, options, inputSx, setDraft }: {
-  col: CustomTableColumn; value: unknown; options: string[];
+function ColumnFieldEditor({
+  col,
+  value,
+  options,
+  inputSx,
+  setDraft,
+}: {
+  col: CustomTableColumn;
+  value: unknown;
+  options: string[];
   inputSx: React.CSSProperties;
   setDraft: React.Dispatch<React.SetStateAction<CustomTableRowPatch>>;
 }) {
@@ -114,16 +142,27 @@ function ColumnFieldEditor({ col, value, options, inputSx, setDraft }: {
   if (col.type === 'boolean') {
     return (
       <Box sx={{ mt: 1.5, display: 'inline-flex', alignItems: 'center', gap: 1 }}>
-        <Checkbox checked={Boolean(value)} onCheckedChange={checked => updateField(checked)} className="h-5 w-5" />
-        <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{value ? 'Yes' : 'No'}</Typography>
+        <Checkbox
+          checked={Boolean(value)}
+          onCheckedChange={checked => updateField(checked)}
+          className="h-5 w-5"
+        />
+        <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>
+          {value ? 'Yes' : 'No'}
+        </Typography>
       </Box>
     );
   }
 
   if (col.type === 'number') {
     return (
-      <input type="number" step="any" value={isNullish(value) ? '' : String(value)}
-        onChange={e => updateField(e.target.value.trim() === '' ? null : Number(e.target.value))} style={inputSx} />
+      <input
+        type="number"
+        step="any"
+        value={isNullish(value) ? '' : String(value)}
+        onChange={e => updateField(e.target.value.trim() === '' ? null : Number(e.target.value))}
+        style={inputSx}
+      />
     );
   }
 
@@ -138,31 +177,53 @@ function ColumnFieldEditor({ col, value, options, inputSx, setDraft }: {
 
   if (col.type === 'select' && options.length) {
     return (
-      <select value={String(value ?? '')} onChange={e => updateField(e.target.value)} style={inputSx}>
+      <select
+        value={String(value ?? '')}
+        onChange={e => updateField(e.target.value)}
+        style={inputSx}
+      >
         <option value="">—</option>
-        {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        {options.map(opt => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
       </select>
     );
   }
 
   if (col.type === 'multi_select' && options.length) {
-    return <MultiSelectEditor value={value} options={options} colKey={col.key} setDraft={setDraft} />;
+    return (
+      <MultiSelectEditor value={value} options={options} colKey={col.key} setDraft={setDraft} />
+    );
   }
 
   return (
-    <input type="text" value={isNullish(value) ? '' : String(value)}
-      onChange={e => updateField(e.target.value)} style={inputSx} />
+    <input
+      type="text"
+      value={isNullish(value) ? '' : String(value)}
+      onChange={e => updateField(e.target.value)}
+      style={inputSx}
+    />
   );
 }
 
-function HistoryTab({ loading, events, onSelectEvent }: {
-  loading: boolean; events: AuditEvent[]; onSelectEvent: (e: AuditEvent) => void;
+function HistoryTab({
+  loading,
+  events,
+  onSelectEvent,
+}: {
+  loading: boolean;
+  events: AuditEvent[];
+  onSelectEvent: (e: AuditEvent) => void;
 }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {loading ? (
         <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
-          <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>Loading history...</Typography>
+          <Typography style={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+            Loading history...
+          </Typography>
         </Box>
       ) : (
         <EntityHistoryTimeline events={events} onSelect={onSelectEvent} />
@@ -210,7 +271,9 @@ export function RowDrawer({
   }, [row?.id, orderedColumns]);
 
   useEffect(() => {
-    if (!open || !row) return;
+    if (!(open && row)) {
+      return;
+    }
     setHistoryLoading(true);
     Promise.all([fetchEntityHistory('table_row', row.id), fetchEntityHistory('table_cell', row.id)])
       .then(([rowEvents, cellEvents]) => {
@@ -244,19 +307,32 @@ export function RowDrawer({
   const title = row ? `Row #${row.rowNumber}` : 'Row';
 
   const handleNonDirtySave = (intent: string) => {
-    if (intent === 'close') { onClose(); }
-    if (intent === 'next') { void onSaveAndNext?.(row!.id, {}); }
+    if (intent === 'close') {
+      onClose();
+    }
+    if (intent === 'next') {
+      void onSaveAndNext?.(row?.id, {});
+    }
   };
 
   const getSaveHandler = (intent: string): (() => Promise<void>) | null => {
-    if (intent === 'close' && onSaveAndClose) { return () => onSaveAndClose(row!.id, patch); }
-    if (intent === 'next' && onSaveAndNext) { return () => onSaveAndNext(row!.id, patch); }
+    if (intent === 'close' && onSaveAndClose) {
+      return () => onSaveAndClose(row?.id, patch);
+    }
+    if (intent === 'next' && onSaveAndNext) {
+      return () => onSaveAndNext(row?.id, patch);
+    }
     return null;
   };
 
   const applySave = async (intent: 'save' | 'close' | 'next') => {
-    if (!row) { return; }
-    if (!isDirty) { handleNonDirtySave(intent); return; }
+    if (!row) {
+      return;
+    }
+    if (!isDirty) {
+      handleNonDirtySave(intent);
+      return;
+    }
 
     setSaving(true);
     try {
@@ -274,7 +350,9 @@ export function RowDrawer({
     }
   };
 
-  if (!row) return null;
+  if (!row) {
+    return null;
+  }
 
   const inputSx = {
     width: '100%',
@@ -288,12 +366,29 @@ export function RowDrawer({
   return (
     <DrawerShell isOpen={open} onClose={onClose} title={title} position="right" width="lg">
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, borderBottom: '1px solid var(--border-color)', pb: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            borderBottom: '1px solid var(--border-color)',
+            pb: 1,
+          }}
+        >
           <Box
             component="button"
             type="button"
             onClick={() => setActiveTab('details')}
-            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'details' ? 'var(--foreground)' : 'transparent', color: activeTab === 'details' ? 'var(--background)' : 'var(--text-secondary)' }}
+            sx={{
+              px: 1.5,
+              py: 0.5,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: 'none',
+              bgcolor: activeTab === 'details' ? 'var(--foreground)' : 'transparent',
+              color: activeTab === 'details' ? 'var(--background)' : 'var(--text-secondary)',
+            }}
           >
             Details
           </Box>
@@ -301,7 +396,16 @@ export function RowDrawer({
             component="button"
             type="button"
             onClick={() => setActiveTab('history')}
-            sx={{ px: 1.5, py: 0.5, fontSize: 14, fontWeight: 600, cursor: 'pointer', border: 'none', bgcolor: activeTab === 'history' ? 'var(--foreground)' : 'transparent', color: activeTab === 'history' ? 'var(--background)' : 'var(--text-secondary)' }}
+            sx={{
+              px: 1.5,
+              py: 0.5,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              border: 'none',
+              bgcolor: activeTab === 'history' ? 'var(--foreground)' : 'transparent',
+              color: activeTab === 'history' ? 'var(--background)' : 'var(--text-secondary)',
+            }}
           >
             History
           </Box>
@@ -310,20 +414,61 @@ export function RowDrawer({
         {activeTab === 'details' && (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'var(--muted)', p: 2 }}>
-              <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>Meta</Typography>
+              <Typography
+                style={{
+                  fontSize: 12,
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'var(--muted-foreground)',
+                }}
+              >
+                Meta
+              </Typography>
               <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-                  <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Row number</Typography>
-                  <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{row.rowNumber}</Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 2,
+                  }}
+                >
+                  <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                    Row number
+                  </Typography>
+                  <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+                    {row.rowNumber}
+                  </Typography>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-                  <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Row id</Typography>
-                  <Typography style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--foreground)' }}>{row.id}</Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 2,
+                  }}
+                >
+                  <Typography style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
+                    Row id
+                  </Typography>
+                  <Typography
+                    style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--foreground)' }}
+                  >
+                    {row.id}
+                  </Typography>
                 </Box>
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 1.5,
+              }}
+            >
               <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
                 {mode === 'edit' ? 'Edit fields' : 'Fields'}
               </Typography>
@@ -332,7 +477,17 @@ export function RowDrawer({
                   component="button"
                   type="button"
                   onClick={() => onModeChange?.('edit')}
-                  sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                  sx={{
+                    border: '1px solid var(--border-color)',
+                    bgcolor: 'background.paper',
+                    px: 1.5,
+                    py: 0.75,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--foreground)',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
                 >
                   Edit
                 </Box>
@@ -344,7 +499,17 @@ export function RowDrawer({
                     setDraft(baseData);
                     onModeChange?.('view');
                   }}
-                  sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 1.5, py: 0.75, fontSize: 12, fontWeight: 600, color: 'var(--foreground)', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                  sx={{
+                    border: '1px solid var(--border-color)',
+                    bgcolor: 'background.paper',
+                    px: 1.5,
+                    py: 0.75,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'var(--foreground)',
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
                 >
                   Cancel
                 </Box>
@@ -357,17 +522,45 @@ export function RowDrawer({
                 const options = getColumnOptions(col);
 
                 return (
-                  <Box key={col.key} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
-                    <Typography style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
+                  <Box
+                    key={col.key}
+                    sx={{
+                      border: '1px solid var(--border-color)',
+                      bgcolor: 'background.paper',
+                      p: 2,
+                    }}
+                  >
+                    <Typography
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: 'var(--muted-foreground)',
+                      }}
+                    >
                       {col.title || col.key}
                     </Typography>
 
                     {mode === 'view' ? (
-                      <Typography style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+                      <Typography
+                        style={{
+                          marginTop: 8,
+                          fontSize: 14,
+                          fontWeight: 600,
+                          color: 'var(--foreground)',
+                        }}
+                      >
                         {formatValue(col.type, value)}
                       </Typography>
                     ) : (
-                      <ColumnFieldEditor col={col} value={value} options={options} inputSx={inputSx} setDraft={setDraft} />
+                      <ColumnFieldEditor
+                        col={col}
+                        value={value}
+                        options={options}
+                        inputSx={inputSx}
+                        setDraft={setDraft}
+                      />
                     )}
                   </Box>
                 );
@@ -375,14 +568,44 @@ export function RowDrawer({
             </Box>
 
             {mode === 'edit' && (
-              <Box sx={{ position: 'sticky', bottom: 0, mx: -3, mb: -3, borderTop: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 3, py: 2 }}>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+              <Box
+                sx={{
+                  position: 'sticky',
+                  bottom: 0,
+                  mx: -3,
+                  mb: -3,
+                  borderTop: '1px solid var(--border-color)',
+                  bgcolor: 'background.paper',
+                  px: 3,
+                  py: 2,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    gap: 1,
+                  }}
+                >
                   <Box
                     component="button"
                     type="button"
                     onClick={() => applySave('save')}
                     disabled={saving || !isDirty}
-                    sx={{ bgcolor: 'primary.main', color: '#fff', px: 2, py: 1, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', '&:hover': { bgcolor: 'primary.dark' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                    sx={{
+                      bgcolor: 'primary.main',
+                      color: '#fff',
+                      px: 2,
+                      py: 1,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      border: 'none',
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'primary.dark' },
+                      '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                    }}
                   >
                     {saving ? 'Saving…' : 'Save'}
                   </Box>
@@ -391,7 +614,18 @@ export function RowDrawer({
                     type="button"
                     onClick={() => applySave('close')}
                     disabled={saving}
-                    sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', color: 'var(--foreground)', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                    sx={{
+                      border: '1px solid var(--border-color)',
+                      bgcolor: 'background.paper',
+                      color: 'var(--foreground)',
+                      px: 2,
+                      py: 1,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' },
+                      '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                    }}
                   >
                     Save & close
                   </Box>
@@ -400,7 +634,18 @@ export function RowDrawer({
                     type="button"
                     onClick={() => applySave('next')}
                     disabled={saving}
-                    sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', color: 'var(--foreground)', px: 2, py: 1, fontSize: 14, fontWeight: 600, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' }, '&:disabled': { opacity: 0.5, cursor: 'not-allowed' } }}
+                    sx={{
+                      border: '1px solid var(--border-color)',
+                      bgcolor: 'background.paper',
+                      color: 'var(--foreground)',
+                      px: 2,
+                      py: 1,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' },
+                      '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                    }}
                   >
                     Apply & next
                   </Box>
@@ -414,7 +659,10 @@ export function RowDrawer({
           <HistoryTab
             loading={historyLoading}
             events={historyEvents}
-            onSelectEvent={event => { setSelectedHistoryEvent(event); setHistoryDrawerOpen(true); }}
+            onSelectEvent={event => {
+              setSelectedHistoryEvent(event);
+              setHistoryDrawerOpen(true);
+            }}
           />
         )}
       </Box>

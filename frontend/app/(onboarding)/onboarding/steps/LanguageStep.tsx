@@ -2,14 +2,14 @@
 
 import { Select } from '@/app/components/ui/select';
 import { useIntlayer } from '@/app/i18n';
+import { SUPPORTED_LOCALES } from '@/app/lib/locale';
+import { tokens } from '@/lib/theme-tokens';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { useMemo } from 'react';
 import { useTheme } from 'next-themes';
-import { tokens } from '@/lib/theme-tokens';
+import { useMemo } from 'react';
 import { getNestedOnboardingValue, resolveOnboardingText } from '../lib/resolveOnboardingText';
 import type { SupportedLocale } from '../useOnboardingWizard';
-import { SUPPORTED_LOCALES } from '@/app/lib/locale';
 
 const COMMON_TIMEZONES = [
   'UTC',
@@ -78,15 +78,19 @@ function useLanguageStepData(props: LanguageStepProps): LanguageStepData {
   );
 
   const selectedTimeZoneOption = useMemo<TimeZoneOption | null>(() => {
-    if (!timeZone) return null;
+    if (!timeZone) {
+      return null;
+    }
     const match = timezoneSelectOptions.find(option => option.value === timeZone);
     return match ?? { value: timeZone, label: timeZone };
   }, [timeZone, timezoneSelectOptions]);
 
-  const languageOptions: Array<{ value: SupportedLocale; label: string }> = SUPPORTED_LOCALES.map(code => ({
-    value: code,
-    label: text(['language', 'localeOptions', code], code),
-  }));
+  const languageOptions: Array<{ value: SupportedLocale; label: string }> = SUPPORTED_LOCALES.map(
+    code => ({
+      value: code,
+      label: text(['language', 'localeOptions', code], code),
+    }),
+  );
 
   return { text, timezoneSelectOptions, selectedTimeZoneOption, languageOptions };
 }
@@ -101,7 +105,8 @@ const makeLabelStyle = (color: string) => ({
 
 function LanguageHeader({ text }: { text: TextFn }): React.ReactElement {
   const { resolvedTheme } = useTheme();
-  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
+  const textSecondary =
+    resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
 
   return (
     <div>
@@ -128,7 +133,8 @@ interface LocaleSelectorProps {
 function LocaleSelector(props: LocaleSelectorProps): React.ReactElement {
   const { locale, onLocaleChange, languageOptions, label } = props;
   const { resolvedTheme } = useTheme();
-  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
+  const textSecondary =
+    resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>): void => {
     onLocaleChange(event.target.value as SupportedLocale);
@@ -136,7 +142,9 @@ function LocaleSelector(props: LocaleSelectorProps): React.ReactElement {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-locale">{label}</label>
+      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-locale">
+        {label}
+      </label>
       <Select id="onboarding-locale" value={locale} onChange={handleChange}>
         {languageOptions.map(option => (
           <option key={option.value} value={option.value}>
@@ -173,9 +181,18 @@ function buildRenderInput(placeholder: string): (params: object) => React.ReactE
 }
 
 function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
-  const { selectedTimeZoneOption, timezoneSelectOptions, onTimeZoneChange, label, noOptionsText, placeholder, hint } = props;
+  const {
+    selectedTimeZoneOption,
+    timezoneSelectOptions,
+    onTimeZoneChange,
+    label,
+    noOptionsText,
+    placeholder,
+    hint,
+  } = props;
   const { resolvedTheme } = useTheme();
-  const textSecondary = resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
+  const textSecondary =
+    resolvedTheme === 'dark' ? tokens.dark.color.textSecondary : tokens.color.textSecondary;
 
   // eslint-disable-next-line max-params
   const handleChange = (_event: React.SyntheticEvent, option: TimeZoneOption | null): void => {
@@ -184,11 +201,14 @@ function TimeZoneSelector(props: TimeZoneSelectorProps): React.ReactElement {
 
   const getOptionLabel = (option: TimeZoneOption): string => option.label;
   // eslint-disable-next-line max-params
-  const isOptionEqualToValue = (a: TimeZoneOption, b: TimeZoneOption): boolean => a.value === b.value;
+  const isOptionEqualToValue = (a: TimeZoneOption, b: TimeZoneOption): boolean =>
+    a.value === b.value;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-timezone-select">{label}</label>
+      <label style={makeLabelStyle(textSecondary)} htmlFor="onboarding-timezone-select">
+        {label}
+      </label>
       <Autocomplete<TimeZoneOption, false>
         options={timezoneSelectOptions}
         value={selectedTimeZoneOption}
@@ -224,7 +244,10 @@ export function LanguageStep(props: LanguageStepProps): React.ReactElement {
         label={text(['language', 'timeZoneLabel'], 'Timezone')}
         noOptionsText={text(['language', 'timeZoneNoOptions'], 'No matching timezones found')}
         placeholder={text(['language', 'timeZonePlaceholder'], 'Select timezone')}
-        hint={text(['language', 'timeZoneHint'], 'You can always change this later in profile settings.')}
+        hint={text(
+          ['language', 'timeZoneHint'],
+          'You can always change this later in profile settings.',
+        )}
       />
     </section>
   );

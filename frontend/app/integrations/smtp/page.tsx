@@ -1,5 +1,5 @@
-import type React from 'react';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
+import type React from 'react';
 import { ProtocolIntegrationPage } from '../open-protocol-page';
 
 export default function SmtpIntegrationPage(): React.JSX.Element {

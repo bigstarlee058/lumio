@@ -1,7 +1,16 @@
-import { useTopMerchantsAggregation, type TopMerchantsAggregationReturn } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsAggregation';
-import { useTopMerchantsRecords, type FromOption } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsRecords';
+import {
+  type TopMerchantsAggregationReturn,
+  useTopMerchantsAggregation,
+} from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsAggregation';
+import {
+  type FromOption,
+  useTopMerchantsRecords,
+} from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsRecords';
 import type { useTopMerchantsState } from '@/app/(main)/statements/components/top-merchants/hooks/useTopMerchantsState';
-import type { TopMerchantAggregateRow, TopMerchantRecord } from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
+import type {
+  TopMerchantAggregateRow,
+  TopMerchantRecord,
+} from '@/app/(main)/statements/components/top-merchants/top-merchants.types';
 import { useAnalyticsData } from '@/app/(main)/statements/hooks/useAnalyticsData';
 import { getRecordDate } from '@/app/lib/analytics-common';
 import { useMemo } from 'react';
@@ -27,14 +36,35 @@ export type TopMerchantsDataReturn = TopMerchantsAggregationReturn & {
   drillDownRecords: TopMerchantRecord[];
 };
 
-const filterDrillDownRecords = (selectedRow: TopMerchantAggregateRow, records: TopMerchantRecord[]): TopMerchantRecord[] => {
+const filterDrillDownRecords = (
+  selectedRow: TopMerchantAggregateRow,
+  records: TopMerchantRecord[],
+): TopMerchantRecord[] => {
   const merchant = selectedRow.merchant.trim().toLowerCase();
-  const matches = (r: TopMerchantRecord): boolean => r.flowType === selectedRow.flowType && r.sourceChannel === selectedRow.sourceChannel && r.merchant.trim().toLowerCase() === merchant;
-  return records.filter(matches).sort((a, b) => (getRecordDate(b)?.getTime() ?? 0) - (getRecordDate(a)?.getTime() ?? 0));
+  const matches = (r: TopMerchantRecord): boolean =>
+    r.flowType === selectedRow.flowType &&
+    r.sourceChannel === selectedRow.sourceChannel &&
+    r.merchant.trim().toLowerCase() === merchant;
+  return records
+    .filter(matches)
+    .sort((a, b) => (getRecordDate(b)?.getTime() ?? 0) - (getRecordDate(a)?.getTime() ?? 0));
 };
 
-export const useTopMerchantsData = ({ user, currentWorkspace, workspaces, workspaceCurrency, resolvedTheme, labels, state }: Params): TopMerchantsDataReturn => {
-  const { statements: rawStatements, transactions: rawTransactions, gmailReceipts, loading } = useAnalyticsData({
+export const useTopMerchantsData = ({
+  user,
+  currentWorkspace,
+  workspaces,
+  workspaceCurrency,
+  resolvedTheme,
+  labels,
+  state,
+}: Params): TopMerchantsDataReturn => {
+  const {
+    statements: rawStatements,
+    transactions: rawTransactions,
+    gmailReceipts,
+    loading,
+  } = useAnalyticsData({
     user,
     currentWorkspace,
     workspaces,
@@ -45,28 +75,49 @@ export const useTopMerchantsData = ({ user, currentWorkspace, workspaces, worksp
   });
   const statements = rawStatements as unknown[];
   const transactions = rawTransactions as unknown[];
-  const { flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions } = useTopMerchantsRecords({
-    statements: statements as Parameters<typeof useTopMerchantsRecords>[0]['statements'],
-    transactions: transactions as Parameters<typeof useTopMerchantsRecords>[0]['transactions'],
-    gmailReceipts,
-    workspaceCurrency,
-    appliedFilters: state.filterState.appliedFilters,
-    searchInput: state.searchInput,
-    activeFlowType: state.activeFlowType,
-  });
-  const { sortedAggregatedRows, totals, comparison, topMerchantsChart, sourceChart, trendChart } = useTopMerchantsAggregation({
+  const { flowFilteredRecords, flowRecordsWithoutDateFilter, fromOptions, currencyOptions } =
+    useTopMerchantsRecords({
+      statements: statements as Parameters<typeof useTopMerchantsRecords>[0]['statements'],
+      transactions: transactions as Parameters<typeof useTopMerchantsRecords>[0]['transactions'],
+      gmailReceipts,
+      workspaceCurrency,
+      appliedFilters: state.filterState.appliedFilters,
+      searchInput: state.searchInput,
+      activeFlowType: state.activeFlowType,
+    });
+  const { sortedAggregatedRows, totals, comparison, topMerchantsChart, sourceChart, trendChart } =
+    useTopMerchantsAggregation({
+      flowFilteredRecords,
+      flowRecordsWithoutDateFilter,
+      activeFlowType: state.activeFlowType,
+      sortKey: state.sortKey,
+      workspaceCurrency,
+      resolvedTheme,
+      sourceStatementLabel: labels.sourceStatement,
+      sourceGmailLabel: labels.sourceGmail,
+      totalIncomeLabel: labels.totalIncome,
+      totalSpendLabel: labels.totalSpend,
+    });
+  const selectedRow = useMemo(
+    () => sortedAggregatedRows.find(r => r.id === state.selectedRowId) ?? null,
+    [sortedAggregatedRows, state.selectedRowId],
+  );
+  const drillDownRecords = useMemo(
+    () => (selectedRow ? filterDrillDownRecords(selectedRow, flowFilteredRecords) : []),
+    [selectedRow, flowFilteredRecords],
+  );
+  return {
+    loading,
     flowFilteredRecords,
-    flowRecordsWithoutDateFilter,
-    activeFlowType: state.activeFlowType,
-    sortKey: state.sortKey,
-    workspaceCurrency,
-    resolvedTheme,
-    sourceStatementLabel: labels.sourceStatement,
-    sourceGmailLabel: labels.sourceGmail,
-    totalIncomeLabel: labels.totalIncome,
-    totalSpendLabel: labels.totalSpend,
-  });
-  const selectedRow = useMemo(() => sortedAggregatedRows.find(r => r.id === state.selectedRowId) ?? null, [sortedAggregatedRows, state.selectedRowId]);
-  const drillDownRecords = useMemo(() => selectedRow ? filterDrillDownRecords(selectedRow, flowFilteredRecords) : [], [selectedRow, flowFilteredRecords]);
-  return { loading, flowFilteredRecords, fromOptions, currencyOptions, sortedAggregatedRows, totals, comparison, topMerchantsChart, sourceChart, trendChart, selectedRow, drillDownRecords };
+    fromOptions,
+    currencyOptions,
+    sortedAggregatedRows,
+    totals,
+    comparison,
+    topMerchantsChart,
+    sourceChart,
+    trendChart,
+    selectedRow,
+    drillDownRecords,
+  };
 };

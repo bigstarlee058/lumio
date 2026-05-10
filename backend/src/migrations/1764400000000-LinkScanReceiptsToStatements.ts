@@ -15,9 +15,7 @@ export class LinkScanReceiptsToStatements1764400000000 implements MigrationInter
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX "public"."IDX_receipts_statement_id"`);
-    await queryRunner.query(
-      `ALTER TABLE "receipts" DROP CONSTRAINT "FK_receipts_statement_id"`,
-    );
+    await queryRunner.query(`ALTER TABLE "receipts" DROP CONSTRAINT "FK_receipts_statement_id"`);
     await queryRunner.query(`ALTER TABLE "receipts" DROP COLUMN "statement_id"`);
   }
 }

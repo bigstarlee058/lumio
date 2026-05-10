@@ -2,15 +2,23 @@
 
 import { BankLogoAvatar } from '@/app/components/BankLogoAvatar';
 import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
+import {
+  Download,
+  Eye,
+  Folder,
+  GripVertical,
+  RotateCcw,
+  Share2,
+  Trash2,
+} from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
+import { tokens } from '@/lib/theme-tokens';
 import { useDraggable } from '@dnd-kit/core';
 import { Box, Chip, IconButton, Tooltip, Typography } from '@mui/material';
-import { Download, Eye, Folder, GripVertical, RotateCcw, Share2, Trash2 } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import React from 'react';
 import type { CSSProperties } from 'react';
 import type { CategoryOption, FileAvailability, StorageFile, TagOption } from '../storageHelpers';
-import { tokens } from '@/lib/theme-tokens';
-import { useTheme } from 'next-themes';
 
 interface DraggableFileRowProps {
   dataTourId?: string;
@@ -108,11 +116,7 @@ export const DraggableFileRow = React.memo(
     };
 
     return (
-      <tr
-        ref={setNodeRef}
-        data-tour-id={dataTourId}
-        style={style}
-      >
+      <tr ref={setNodeRef} data-tour-id={dataTourId} style={style}>
         {isTrashView && (
           <td style={{ padding: '20px 24px' }}>
             <Checkbox
@@ -191,16 +195,36 @@ export const DraggableFileRow = React.memo(
               >
                 {truncateFileNameForDisplay(file.fileName)}
               </Box>
-              <Box sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Box
+                sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}
+              >
                 {file.folder?.name && (
-                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: c.ink500 }}>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      fontSize: 12,
+                      color: c.ink500,
+                    }}
+                  >
                     <Folder style={{ width: 14, height: 14 }} />
                     {file.folder.name}
                   </Box>
                 )}
                 {isTrashView && renderTrashExpiryBadge(file.deletedAt)}
                 {file.sharedLinksCount > 0 && (
-                  <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, fontSize: 12, color: '#2563eb' }}>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      fontSize: 12,
+                      color: '#2563eb',
+                    }}
+                  >
                     <Share2 size={12} />
                     {file.sharedLinksCount} {sharedLinksShortLabel}
                   </Box>
@@ -230,7 +254,10 @@ export const DraggableFileRow = React.memo(
         </td>
 
         <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
-          <Typography component="span" style={{ fontSize: 14, fontFamily: 'monospace', color: c.ink700 }}>
+          <Typography
+            component="span"
+            style={{ fontSize: 14, fontFamily: 'monospace', color: c.ink700 }}
+          >
             {file.metadata?.accountNumber ? `••••${file.metadata.accountNumber.slice(-4)}` : '—'}
           </Typography>
         </td>
@@ -303,15 +330,29 @@ export const DraggableFileRow = React.memo(
           </Box>
         </td>
 
-        <td style={{ padding: '20px 24px', whiteSpace: 'nowrap', textAlign: 'right', fontSize: 14 }}>
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+        <td
+          style={{ padding: '20px 24px', whiteSpace: 'nowrap', textAlign: 'right', fontSize: 14 }}
+        >
+          <Box
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 0.5,
+            }}
+          >
             {isTrashView ? (
               <>
                 <Tooltip title={trashRestoreActionLabel}>
                   <IconButton
                     size="small"
                     onClick={() => handleRestoreFromTrash(file)}
-                    sx={{ color: c.success, bgcolor: c.successSoft, borderRadius: tokens.radius.sm, '&:hover': { bgcolor: c.successSoft } }}
+                    sx={{
+                      color: c.success,
+                      bgcolor: c.successSoft,
+                      borderRadius: tokens.radius.sm,
+                      '&:hover': { bgcolor: c.successSoft },
+                    }}
                   >
                     <RotateCcw size={18} />
                   </IconButton>
@@ -320,7 +361,11 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => confirmPermanentDelete(file)}
-                    sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.danger, bgcolor: c.dangerSoft } }}
+                    sx={{
+                      color: c.ink500,
+                      borderRadius: tokens.radius.sm,
+                      '&:hover': { color: c.danger, bgcolor: c.dangerSoft },
+                    }}
                   >
                     <Trash2 size={18} />
                   </IconButton>
@@ -332,7 +377,12 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleView(file.id)}
-                    sx={{ color: '#2563eb', bgcolor: 'var(--color-info-soft-bg)', borderRadius: tokens.radius.sm, '&:hover': { bgcolor: 'var(--color-info-soft-border)' } }}
+                    sx={{
+                      color: '#2563eb',
+                      bgcolor: 'var(--color-info-soft-bg)',
+                      borderRadius: tokens.radius.sm,
+                      '&:hover': { bgcolor: 'var(--color-info-soft-border)' },
+                    }}
                   >
                     <Eye size={18} />
                   </IconButton>
@@ -341,7 +391,11 @@ export const DraggableFileRow = React.memo(
                   <IconButton
                     size="small"
                     onClick={() => handleDownload(file.id, file.fileName)}
-                    sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.ink800, bgcolor: c.ink50 } }}
+                    sx={{
+                      color: c.ink500,
+                      borderRadius: tokens.radius.sm,
+                      '&:hover': { color: c.ink800, bgcolor: c.ink50 },
+                    }}
                   >
                     <Download size={18} />
                   </IconButton>
@@ -351,7 +405,11 @@ export const DraggableFileRow = React.memo(
                     <IconButton
                       size="small"
                       onClick={() => confirmDelete(file)}
-                      sx={{ color: c.ink500, borderRadius: tokens.radius.sm, '&:hover': { color: c.danger, bgcolor: c.dangerSoft } }}
+                      sx={{
+                        color: c.ink500,
+                        borderRadius: tokens.radius.sm,
+                        '&:hover': { color: c.danger, bgcolor: c.dangerSoft },
+                      }}
                     >
                       <Trash2 size={18} />
                     </IconButton>

@@ -1,6 +1,19 @@
 /* eslint-disable max-lines */
 'use client';
 
+import {
+  Bell,
+  Check,
+  Clock,
+  Cloud,
+  Lock,
+  Mail,
+  Palette,
+  Pencil,
+  Search,
+  Shield,
+  UserCircle,
+} from '@/app/components/icons';
 import { Alert } from '@/app/components/ui/alert';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import { Select as UiSelect } from '@/app/components/ui/select';
@@ -35,14 +48,13 @@ import {
   resolveTimeZoneOptions,
   sections,
 } from '@/app/settings/profile/profileHelpers';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Bell, Check, Clock, Cloud, Lock, Mail, Palette, Pencil, Search, Shield, UserCircle } from '@/app/components/icons';
-import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
+import React, { type ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line max-lines-per-function, complexity, @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 export default function ProfileSettingsPage() {
@@ -224,8 +236,14 @@ export default function ProfileSettingsPage() {
   const { changelogEntries, changelogLoading, changelogSelectedEntry, setChangelogSelectedEntry } =
     useChangelog(isAuthenticated, activeSection, workspaceReady);
 
-  const { bankStats, totalCount, statsLoading, downloading, errorMessage: syncError, handleExportZip } =
-    useSync();
+  const {
+    bankStats,
+    totalCount,
+    statsLoading,
+    downloading,
+    errorMessage: syncError,
+    handleExportZip,
+  } = useSync();
 
   useEffect(() => {
     setActiveSection(normalizeSection(window.location.hash?.replace('#', '')));
@@ -237,7 +255,10 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <Box className="container-shared" sx={{ display: 'flex', justifyContent: 'center', px: 2, py: 8 }}>
+      <Box
+        className="container-shared"
+        sx={{ display: 'flex', justifyContent: 'center', px: 2, py: 8 }}
+      >
         <Spinner size={32} />
       </Box>
     );
@@ -408,7 +429,15 @@ export default function ProfileSettingsPage() {
           <Box sx={{ position: 'sticky', top: 96 }}>
             <Card variant="outlined">
               <Box sx={{ px: 2, pt: 2, pb: 1 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, pb: 1.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1,
+                    pb: 1.5,
+                  }}
+                >
                   <Box sx={{ position: 'relative' }}>
                     <Box
                       component="button"
@@ -588,7 +617,12 @@ export default function ProfileSettingsPage() {
                     </Box>
                   </Box>
                 </Box>
-                <Typography component="label" htmlFor="profile-section" variant="body2" fontWeight={600}>
+                <Typography
+                  component="label"
+                  htmlFor="profile-section"
+                  variant="body2"
+                  fontWeight={600}
+                >
                   {t.navigation.sectionLabel.value}
                 </Typography>
                 <UiSelect
@@ -636,7 +670,10 @@ export default function ProfileSettingsPage() {
                 <ActiveIcon size={20} />
               </Box>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontSize: 18, fontWeight: 600, color: 'text.primary' }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ fontSize: 18, fontWeight: 600, color: 'text.primary' }}
+                >
                   {activeMeta.title}
                 </Typography>
                 {activeMeta.description && (
@@ -663,7 +700,9 @@ export default function ProfileSettingsPage() {
         showCloseButton={false}
       >
         <Box sx={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
+          <Box
+            sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}
+          >
             <Box sx={{ position: 'relative' }}>
               <Search
                 style={{
@@ -682,7 +721,9 @@ export default function ProfileSettingsPage() {
                 id="profile-timezone"
                 type="text"
                 value={timeZoneSearch}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setTimeZoneSearch(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setTimeZoneSearch(event.target.value)
+                }
                 placeholder={t.profileCard.timeZones.auto.value}
                 sx={{
                   width: '100%',
@@ -740,7 +781,12 @@ export default function ProfileSettingsPage() {
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  sx={{ borderRadius: tokens.radius.md, bgcolor: 'background.paper', px: 1.5, py: 1.5 }}
+                  sx={{
+                    borderRadius: tokens.radius.md,
+                    bgcolor: 'background.paper',
+                    px: 1.5,
+                    py: 1.5,
+                  }}
                 >
                   No time zones found
                 </Typography>

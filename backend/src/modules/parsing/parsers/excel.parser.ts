@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import * as xlsx from 'xlsx';
 import { type BankName, FileType } from '../../../entities/statement.entity';
 import type { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import { BaseTabularParser } from './base-tabular.parser';
@@ -8,19 +8,19 @@ type ExcelRow = ExcelCellValue[];
 
 export class ExcelParser extends BaseTabularParser {
   async canParse(
-    bankName: BankName,
+    _bankName: BankName,
     fileType: FileType,
-    filePath: string,
-    cachedText?: string,
+    _filePath: string,
+    _cachedText?: string,
   ): Promise<boolean> {
     return fileType === FileType.XLSX || fileType === FileType.CSV;
   }
 
-  async parse(filePath: string, cachedText?: string): Promise<ParsedStatement> {
-    const workbook = XLSX.readFile(filePath);
+  async parse(filePath: string, _cachedText?: string): Promise<ParsedStatement> {
+    const workbook = xlsx.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json<ExcelCellValue[]>(worksheet, { header: 1, defval: '' });
+    const data = xlsx.utils.sheet_to_json<ExcelCellValue[]>(worksheet, { header: 1, defval: '' });
 
     if (data.length < 2) {
       throw new Error('Excel file is empty or has no data rows');
@@ -51,7 +51,13 @@ export class ExcelParser extends BaseTabularParser {
         continue;
       }
 
-      const transaction = this.parseRow(row, columnMapping, index => row[index], 'Excel', detectedCurrency);
+      const transaction = this.parseRow(
+        row,
+        columnMapping,
+        index => row[index],
+        'Excel',
+        detectedCurrency,
+      );
       if (transaction) {
         transactions.push(transaction);
       }
@@ -63,7 +69,7 @@ export class ExcelParser extends BaseTabularParser {
     };
   }
   private extractMetadata(
-    filePath: string,
+    _filePath: string,
     data: ExcelRow[],
     detectedCurrency = 'KZT',
   ): ParsedStatement['metadata'] {

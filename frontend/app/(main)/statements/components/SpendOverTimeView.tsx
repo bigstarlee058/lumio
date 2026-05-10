@@ -1,15 +1,13 @@
 'use client';
 
-import type { JSX } from 'react';
-
 import { SpendOverTimeContent } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimeContent';
 import { SpendOverTimeDrillDown } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimeDrillDown';
 import { SpendOverTimeEmptyState } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimeEmptyState';
 import { SpendOverTimeFiltersDrawer } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimeFiltersDrawer';
 import { SpendOverTimePageHeader } from '@/app/(main)/statements/components/spend-over-time/components/SpendOverTimePageHeader';
 import {
-  useSpendOverTimeViewModel,
   type SpendOverTimeViewModelReturn,
+  useSpendOverTimeViewModel,
 } from '@/app/(main)/statements/components/spend-over-time/hooks/useSpendOverTimeViewModel';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useRouter } from 'next/navigation';
@@ -66,8 +64,12 @@ function SpendOverTimeEmptyWrapper({ vm }: VmProps): React.JSX.Element {
 }
 
 function SpendOverTimeBody({ vm }: VmProps): React.JSX.Element {
-  if (vm.loading) return <SpendOverTimeLoading />;
-  if (vm.flowFilteredRecords.length === 0) return <SpendOverTimeEmptyWrapper vm={vm} />;
+  if (vm.loading) {
+    return <SpendOverTimeLoading />;
+  }
+  if (vm.flowFilteredRecords.length === 0) {
+    return <SpendOverTimeEmptyWrapper vm={vm} />;
+  }
   return <SpendOverTimeContent vm={vm} />;
 }
 

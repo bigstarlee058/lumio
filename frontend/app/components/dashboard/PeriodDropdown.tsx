@@ -1,8 +1,8 @@
 'use client';
 
-import Box from '@mui/material/Box';
 import type { DashboardRange } from '@/app/hooks/useDashboard';
-import React, { useEffect, useRef, useState } from 'react';
+import Box from '@mui/material/Box';
+import { useEffect, useRef, useState } from 'react';
 
 interface PeriodDropdownProps {
   value: DashboardRange;
@@ -34,7 +34,18 @@ export function PeriodDropdown({ value, onChange }: PeriodDropdownProps) {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        style={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        style={{
+          fontSize: 12,
+          color: 'var(--muted-foreground)',
+          fontWeight: 500,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: 0,
+        }}
       >
         {LABELS[value]} <span style={{ fontSize: 10 }}>▼</span>
       </button>

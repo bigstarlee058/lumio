@@ -1,15 +1,17 @@
 'use client';
 
-import StarBorderIcon from '@mui/icons-material/StarBorder';
+import { tokens } from '@/lib/theme-tokens';
 import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { tokens } from '@/lib/theme-tokens';
 
 const getApiMessage = (error: unknown, fallback: string) => {
-  if (!error || typeof error !== 'object') return fallback;
+  if (!error || typeof error !== 'object') {
+    return fallback;
+  }
   const response = (error as { response?: { data?: { message?: string } } }).response;
   return response?.data?.message || fallback;
 };
@@ -28,11 +30,11 @@ interface WorkspaceCardProps {
 }
 
 export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: WorkspaceCardProps) {
-  const [isFavorite, setIsFavorite] = useState(workspace.isFavorite || false);
+  const [isFavorite, setIsFavorite] = useState(workspace.isFavorite);
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    setIsFavorite(workspace.isFavorite || false);
+    setIsFavorite(workspace.isFavorite);
   }, [workspace.isFavorite]);
 
   const handleFavoriteClick = async (e: React.MouseEvent) => {
@@ -76,7 +78,17 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
       <button
         type="button"
         onClick={onClick}
-        style={{ position: 'relative', height: '100%', width: '100%', cursor: 'pointer', border: 'none', padding: 0, background: 'none', display: 'block', borderRadius: tokens.radius.xl }}
+        style={{
+          position: 'relative',
+          height: '100%',
+          width: '100%',
+          cursor: 'pointer',
+          border: 'none',
+          padding: 0,
+          background: 'none',
+          display: 'block',
+          borderRadius: tokens.radius.xl,
+        }}
       >
         {/* Background Image */}
         <Box
@@ -150,7 +162,17 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
               opacity: isHovered ? 1 : 0,
             }}
           >
-            <p style={{ color: '#fff', fontSize: 14, fontWeight: 500, lineHeight: 1.6, fontStyle: 'italic', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.7)' }}>
+            <p
+              style={{
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 500,
+                lineHeight: 1.6,
+                fontStyle: 'italic',
+                margin: 0,
+                textShadow: '0 2px 4px rgba(0,0,0,0.7)',
+              }}
+            >
               {workspace.description || 'No description provided'}
             </p>
           </Box>
@@ -180,7 +202,9 @@ export function WorkspaceCard({ workspace, onClick, onFavoriteToggle }: Workspac
         {isFavorite ? (
           <StarIcon sx={{ fontSize: 18, filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
         ) : (
-          <StarBorderIcon sx={{ fontSize: 18, filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }} />
+          <StarBorderIcon
+            sx={{ fontSize: 18, filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.45))' }}
+          />
         )}
       </IconButton>
     </Box>

@@ -1,5 +1,4 @@
 import apiClient, { gmailReceiptsApi } from '@/app/lib/api';
-import { resolveLabel } from '@/app/lib/side-panel-utils';
 import { hasProcessingStatements } from '@/app/lib/statement-status';
 import {
   type GmailSyncSkeletonMeta,
@@ -26,6 +25,7 @@ interface StatementRecord {
 
 interface UseStatementsListDataParams {
   appliedFilters: StatementFilters;
+  categoryId?: string | null;
   search: string;
   stage: string;
   user: unknown;
@@ -62,6 +62,7 @@ export interface UseStatementsListDataResult<T extends StatementRecord = Stateme
 
 export function useStatementsListData<T extends StatementRecord = StatementRecord>({
   appliedFilters,
+  categoryId,
   search,
   stage,
   user,
@@ -103,12 +104,14 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
     showErrorToast?: boolean;
   }): Promise<boolean> => {
     const { silent, notifyOnCompletion, search: searchOverride, showErrorToast } = opts || {};
-    if (!silent) setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
 
     let didLoad = true;
     try {
       const response = await apiClient.get('/statements', {
-        params: buildStatementRequestParams({ appliedFilters, search: searchOverride }),
+        params: buildStatementRequestParams({ appliedFilters, categoryId, search: searchOverride }),
       });
 
       const rawData = response.data?.data || response.data || [];
@@ -132,7 +135,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
         toast.error(loadListErrorLabel);
       }
     } finally {
-      if (!silent) setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
 
     return didLoad;
@@ -143,23 +148,29 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
     showErrorToast?: boolean;
   }): Promise<void> => {
     const { silent, showErrorToast } = opts || {};
-    if (!silent) setGmailLoading(true);
+    if (!silent) {
+      setGmailLoading(true);
+    }
 
     try {
       const response = await gmailReceiptsApi.listReceipts({
         limit: pageSize,
         offset: Math.max(0, (page - 1) * pageSize),
         includeInvalid: false,
+        ...(categoryId ? { categoryId } : {}),
       });
       const receipts = Array.isArray(response.data?.receipts) ? response.data.receipts : [];
-      setGmailReceipts(receipts.filter(hasGmailReceiptAmount));
+      const filtered = receipts.filter(hasGmailReceiptAmount);
+      setGmailReceipts(filtered);
     } catch (error) {
       console.error('Failed to load Gmail receipts:', error);
       if (showErrorToast !== false) {
         toast.error(loadListErrorLabel);
       }
     } finally {
-      if (!silent) setGmailLoading(false);
+      if (!silent) {
+        setGmailLoading(false);
+      }
     }
   };
 
@@ -177,19 +188,25 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Initial load when user/search/filters/stage change
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     void loadStatements({ search });
     if (stage === 'submit') {
       void loadGmailReceipts({ silent: true, showErrorToast: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, search, appliedFilters, stage]);
+  }, [user, search, appliedFilters, categoryId, stage]);
 
   // Read gmail sync skeleton count from sessionStorage on mount/stage change
   useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
+    if (typeof window === 'undefined' || stage !== 'submit') {
+      return;
+    }
     const raw = sessionStorage.getItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      return;
+    }
     try {
       const parsed = JSON.parse(raw) as GmailSyncSkeletonMeta | null;
       if (parsed && parsed.count > 0) {
@@ -202,11 +219,15 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Listen for live gmail sync events to show skeleton placeholders
   useEffect(() => {
-    if (typeof window === 'undefined' || stage !== 'submit') return;
+    if (typeof window === 'undefined' || stage !== 'submit') {
+      return;
+    }
 
     const handleGmailSyncEvent = (event: Event) => {
       const detail = (event as CustomEvent<GmailSyncSkeletonMeta>).detail;
-      if (!detail || detail.count <= 0) return;
+      if (!detail || detail.count <= 0) {
+        return;
+      }
       setGmailSyncSkeletonKeys(buildGmailSyncSkeletonKeys(Math.min(detail.count, pageSize)));
     };
 
@@ -218,7 +239,9 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
   // Poll statements when any are processing
   useEffect(() => {
-    if (!user || !shouldPollStatements) return;
+    if (!(user && shouldPollStatements)) {
+      return;
+    }
 
     const intervalId = window.setInterval(() => {
       void loadStatements({ silent: true, search, showErrorToast: false }).catch(err => {
@@ -228,11 +251,13 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
     return () => window.clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, shouldPollStatements, search, appliedFilters]);
+  }, [user, shouldPollStatements, search, appliedFilters, categoryId]);
 
   // Poll gmail receipts when on submit stage
   useEffect(() => {
-    if (!user || stage !== 'submit') return;
+    if (!user || stage !== 'submit') {
+      return;
+    }
 
     const intervalId = window.setInterval(() => {
       void loadGmailReceipts({ silent: true, showErrorToast: false }).catch(err => {
@@ -242,7 +267,7 @@ export function useStatementsListData<T extends StatementRecord = StatementRecor
 
     return () => window.clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, stage]);
+  }, [user, stage, categoryId]);
 
   return {
     statements,

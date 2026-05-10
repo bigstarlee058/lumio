@@ -127,9 +127,13 @@ export const resetSingleStatementFilter = <K extends keyof StatementFilters>(
 export const STATEMENT_FILTERS_STORAGE_KEY = 'lumio-statement-filters';
 
 export const loadStatementFilters = (): StatementFilters => {
-  if (typeof window === 'undefined') return DEFAULT_STATEMENT_FILTERS;
+  if (typeof window === 'undefined') {
+    return DEFAULT_STATEMENT_FILTERS;
+  }
   const raw = localStorage.getItem(STATEMENT_FILTERS_STORAGE_KEY);
-  if (!raw) return DEFAULT_STATEMENT_FILTERS;
+  if (!raw) {
+    return DEFAULT_STATEMENT_FILTERS;
+  }
   try {
     const parsed = JSON.parse(raw) as Partial<StatementFilters>;
     return { ...DEFAULT_STATEMENT_FILTERS, ...parsed };
@@ -139,7 +143,9 @@ export const loadStatementFilters = (): StatementFilters => {
 };
 
 export const saveStatementFilters = (filters: StatementFilters): void => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
   localStorage.setItem(STATEMENT_FILTERS_STORAGE_KEY, JSON.stringify(filters));
 };
 
@@ -150,12 +156,16 @@ const applyBasicFilters = <T extends StatementFilterItem>(
   now: Date,
 ): T[] => {
   let items = result;
-  if (filters.type) items = applyTypeFilter(items, filters.type);
+  if (filters.type) {
+    items = applyTypeFilter(items, filters.type);
+  }
   if (filters.statuses.length > 0) {
     const norm = filters.statuses.map(v => v.toLowerCase());
     items = items.filter(s => norm.includes((s.status || '').toLowerCase()));
   }
-  if (filters.approved !== null) items = applyApprovedFilter(items, filters.approved);
+  if (filters.approved !== null) {
+    items = applyApprovedFilter(items, filters.approved);
+  }
   if (filters.billable !== null) {
     items = items.filter(s => {
       const amount = resolveStatementAmount(s);

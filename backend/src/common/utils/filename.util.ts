@@ -12,7 +12,9 @@ function scoreCyrillic(value: string): number {
  */
 export function normalizeFilename(input: string): string {
   const name = (input || '').trim();
-  if (!name) return name;
+  if (!name) {
+    return name;
+  }
 
   // If it already contains Cyrillic, keep as-is.
   if (CYRILLIC_RE.test(name)) {

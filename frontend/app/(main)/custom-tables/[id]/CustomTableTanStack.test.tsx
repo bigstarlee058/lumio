@@ -9,7 +9,9 @@ const createI18nProxy = () =>
     {},
     {
       get: (_target, prop) => {
-        if (prop === 'value') return '';
+        if (prop === 'value') {
+          return '';
+        }
         return createI18nProxy();
       },
     },

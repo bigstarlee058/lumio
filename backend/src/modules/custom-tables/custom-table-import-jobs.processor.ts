@@ -1,8 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
 import {
   CustomTableImportJob,
   CustomTableImportJobStatus,
@@ -42,11 +42,15 @@ export class CustomTableImportJobsProcessor {
 
   @Interval(2000)
   async tick() {
-    if (this.running) return;
+    if (this.running) {
+      return;
+    }
     this.running = true;
     try {
       const job = await this.claimNextJob();
-      if (!job) return;
+      if (!job) {
+        return;
+      }
       await this.processJob(job);
     } catch (error) {
       this.logger.warn(
@@ -67,12 +71,18 @@ export class CustomTableImportJobsProcessor {
     while (stack.length && steps < 200) {
       steps += 1;
       const current = stack.pop();
-      if (current === null || current === undefined) continue;
-      if (seen.has(current)) continue;
+      if (current === null || current === undefined) {
+        continue;
+      }
+      if (seen.has(current)) {
+        continue;
+      }
       seen.add(current);
 
       if (typeof current === 'string') {
-        if (uuidRe.test(current)) return current;
+        if (uuidRe.test(current)) {
+          return current;
+        }
         continue;
       }
 
@@ -90,10 +100,14 @@ export class CustomTableImportJobsProcessor {
         }
 
         const directId = obj.id;
-        if (typeof directId === 'string' && uuidRe.test(directId)) return directId;
+        if (typeof directId === 'string' && uuidRe.test(directId)) {
+          return directId;
+        }
 
         const maybeRows = obj.rows;
-        if (Array.isArray(maybeRows)) stack.push(maybeRows);
+        if (Array.isArray(maybeRows)) {
+          stack.push(maybeRows);
+        }
 
         for (const value of Object.values(obj)) {
           stack.push(value);

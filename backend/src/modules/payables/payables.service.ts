@@ -1,17 +1,19 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { normalizePagination } from '../../common/utils/pagination.util';
+import { EntityType } from '../../entities/audit-event.entity';
 import {
   NotificationCategory,
   NotificationSeverity,
   NotificationType,
 } from '../../entities/notification.entity';
-import { EntityType } from '../../entities/audit-event.entity';
 import { Payable, PayableSource, PayableStatus } from '../../entities/payable.entity';
 import { Statement } from '../../entities/statement.entity';
 import { Transaction } from '../../entities/transaction.entity';
+import { Workspace } from '../../entities/workspace.entity';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { normalizePagination } from '../../common/utils/pagination.util';
 import { CreatePayableDto } from './dto/create-payable.dto';
 import { ExportFormat, FilterPayablesDto, PayablesSortOption } from './dto/filter-payables.dto';
 import { UpdatePayableDto } from './dto/update-payable.dto';
@@ -28,6 +30,9 @@ export class PayablesService {
     private readonly transactionRepository: Repository<Transaction>,
     @InjectRepository(Statement)
     private readonly statementRepository: Repository<Statement>,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly exchangeRatesService: ExchangeRatesService,
     private readonly notificationsService: NotificationsService,
     private readonly payablesExportService: PayablesExportService,
   ) {}
@@ -162,8 +167,10 @@ export class PayablesService {
     overdue: number;
     dueThisWeek: number;
     paidThisMonth: number;
+    paidTotal: number;
     toPayCount: number;
     overdueCount: number;
+    paidTotalCount: number;
   }> {
     const rows = await this.payableRepository.find({
       where: { workspaceId, deletedAt: IsNull() },
@@ -172,27 +179,43 @@ export class PayablesService {
         status: true,
         dueDate: true,
         amount: true,
+        currency: true,
         paidAt: true,
         updatedAt: true,
       },
     });
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: ['currency'],
+    });
+    const targetCurrency = this.normalizeCurrency(workspace?.currency);
+    const rateCache = new Map<string, number>();
 
     const now = new Date();
     const startOfToday = this.startOfDay(now);
     const endOfWeek = new Date(startOfToday);
     endOfWeek.setUTCDate(endOfWeek.getUTCDate() + 6);
     const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-    const endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999));
+    const endOfMonth = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999),
+    );
 
     let toPay = 0;
     let overdue = 0;
     let dueThisWeek = 0;
     let paidThisMonth = 0;
+    let paidTotal = 0;
     let toPayCount = 0;
     let overdueCount = 0;
+    let paidTotalCount = 0;
 
     for (const row of rows) {
-      const amount = Number(row.amount || 0);
+      const amount = await this.convertSummaryAmount(
+        Number(row.amount || 0),
+        row.currency,
+        targetCurrency,
+        rateCache,
+      );
       const dueDate = this.parseDate(row.dueDate);
       const paidAt = this.parseDate(row.paidAt ?? row.updatedAt);
       const effectiveOverdue =
@@ -211,8 +234,18 @@ export class PayablesService {
         }
       }
 
-      if (row.status === PayableStatus.PAID && paidAt && paidAt >= startOfMonth && paidAt <= endOfMonth) {
+      if (
+        row.status === PayableStatus.PAID &&
+        paidAt &&
+        paidAt >= startOfMonth &&
+        paidAt <= endOfMonth
+      ) {
         paidThisMonth += amount;
+      }
+
+      if (row.status === PayableStatus.PAID) {
+        paidTotal += amount;
+        paidTotalCount += 1;
       }
     }
 
@@ -221,8 +254,10 @@ export class PayablesService {
       overdue,
       dueThisWeek,
       paidThisMonth,
+      paidTotal,
       toPayCount,
       overdueCount,
+      paidTotalCount,
     };
   }
 
@@ -241,7 +276,6 @@ export class PayablesService {
         return queryBuilder.orderBy('payable.amount', 'DESC');
       case PayablesSortOption.VENDOR_ASC:
         return queryBuilder.orderBy('payable.vendor', 'ASC');
-      case PayablesSortOption.DUE_DATE_ASC:
       default:
         return queryBuilder.orderBy('payable.dueDate', 'ASC', 'NULLS LAST');
     }
@@ -316,7 +350,10 @@ export class PayablesService {
   }
 
   async markDueSoonNotified(id: string): Promise<void> {
-    const payable = await this.payableRepository.findOne({ where: { id }, select: ['id', 'dueSoonNotifiedAt'] });
+    const payable = await this.payableRepository.findOne({
+      where: { id },
+      select: ['id', 'dueSoonNotifiedAt'],
+    });
     if (!payable) {
       throw new NotFoundException('Payable not found');
     }
@@ -347,9 +384,9 @@ export class PayablesService {
 
     if (filters.search) {
       queryBuilder.andWhere(
-        '(LOWER(payable.vendor) LIKE :search OR LOWER(COALESCE(payable.comment, \'\')) LIKE :search)',
+        "(LOWER(payable.vendor) LIKE :search OR LOWER(COALESCE(payable.comment, '')) LIKE :search)",
         {
-        search: `%${filters.search.toLowerCase()}%`,
+          search: `%${filters.search.toLowerCase()}%`,
         },
       );
     }
@@ -385,7 +422,8 @@ export class PayablesService {
     return {
       ...dto,
       dueDate: dto.dueDate !== undefined ? this.parseDate(dto.dueDate) : undefined,
-      linkedTransactionId: dto.linkedTransactionId === undefined ? undefined : dto.linkedTransactionId,
+      linkedTransactionId:
+        dto.linkedTransactionId === undefined ? undefined : dto.linkedTransactionId,
       comment: dto.comment === undefined ? undefined : dto.comment,
       statementId: dto.statementId === undefined ? undefined : dto.statementId,
       paidAt: willBePaid ? current.paidAt || new Date() : null,
@@ -424,7 +462,10 @@ export class PayablesService {
     }
   }
 
-  private async assertStatementInWorkspace(workspaceId: string, statementId: string | null): Promise<void> {
+  private async assertStatementInWorkspace(
+    workspaceId: string,
+    statementId: string | null,
+  ): Promise<void> {
     if (!statementId) {
       return;
     }
@@ -457,5 +498,37 @@ export class PayablesService {
     const copy = new Date(date);
     copy.setUTCHours(0, 0, 0, 0);
     return copy;
+  }
+
+  private normalizeCurrency(currency: string | null | undefined): string {
+    const normalized = String(currency || '')
+      .trim()
+      .toUpperCase();
+    return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
+  }
+
+  private async convertSummaryAmount(
+    amount: number,
+    sourceCurrency: string | null | undefined,
+    targetCurrency: string,
+    rateCache: Map<string, number>,
+  ): Promise<number> {
+    if (!Number.isFinite(amount) || amount === 0) {
+      return 0;
+    }
+
+    const source = this.normalizeCurrency(sourceCurrency);
+    if (source === targetCurrency) {
+      return amount;
+    }
+
+    const cacheKey = `${source}:${targetCurrency}`;
+    let rate = rateCache.get(cacheKey);
+    if (rate === undefined) {
+      rate = await this.exchangeRatesService.getRate(source, targetCurrency);
+      rateCache.set(cacheKey, rate);
+    }
+
+    return amount * rate;
   }
 }

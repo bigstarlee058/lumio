@@ -16,7 +16,9 @@ export function resolveLocaleCode(locale: LocaleCode): string {
 
 export function formatDate(dateString: string, locale: LocaleCode): string {
   const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return dateString;
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
   return date.toLocaleDateString(resolveLocaleCode(locale), {
     year: 'numeric',
     month: 'long',
@@ -62,7 +64,10 @@ export interface PermissionLabels {
   access: string;
 }
 
-export function getPermissionLabel(permission: string | null | undefined, labels: PermissionLabels): string {
+export function getPermissionLabel(
+  permission: string | null | undefined,
+  labels: PermissionLabels,
+): string {
   const normalized = (permission ?? '').toLowerCase();
   const key = PERMISSION_LABEL_MAP[normalized];
   return key ? labels[key] : labels.access;
@@ -75,7 +80,10 @@ export interface AvailabilityLabels {
   missing: string;
 }
 
-export function getAvailabilityLabel(status: FileAvailabilityStatus, labels: AvailabilityLabels): string {
+export function getAvailabilityLabel(
+  status: FileAvailabilityStatus,
+  labels: AvailabilityLabels,
+): string {
   const labelMap: Record<string, string> = {
     both: labels.both,
     disk: labels.disk,
@@ -92,7 +100,10 @@ export interface AvailabilityTooltips {
   missing: string;
 }
 
-export function getAvailabilityTooltip(status: FileAvailabilityStatus, tooltips: AvailabilityTooltips): string {
+export function getAvailabilityTooltip(
+  status: FileAvailabilityStatus,
+  tooltips: AvailabilityTooltips,
+): string {
   const tooltipMap: Record<string, string> = {
     both: tooltips.both,
     disk: tooltips.disk,

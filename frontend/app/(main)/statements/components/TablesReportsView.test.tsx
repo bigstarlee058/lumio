@@ -1,6 +1,4 @@
 import { cleanup, fireEvent, screen } from '@testing-library/react';
-// @vitest-environment jsdom
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -300,9 +298,9 @@ describe('TablesReportsView', () => {
       await Promise.resolve();
     });
 
-    expect(screen.getByPlaceholderText('Search counterparties, categories, tables...').className).toContain(
-      'dark:bg-slate-900/60',
-    );
+    expect(
+      screen.getByPlaceholderText('Search counterparties, categories, tables...').className,
+    ).toContain('dark:bg-slate-900/60');
     expect(screen.getByRole('button', { name: /^Tables$/i }).className).toContain(
       'dark:border-slate-700',
     );

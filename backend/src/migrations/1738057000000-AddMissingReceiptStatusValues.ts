@@ -10,7 +10,7 @@ export class AddMissingReceiptStatusValues1738057000000 implements MigrationInte
     await queryRunner.query(`ALTER TYPE "receipts_status_enum" ADD VALUE IF NOT EXISTS 'rejected'`);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(_queryRunner: QueryRunner): Promise<void> {
     // PostgreSQL does not support removing enum values; no-op
   }
 }

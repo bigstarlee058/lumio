@@ -1,10 +1,6 @@
 /* eslint-disable max-lines */
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
-import { useIntlayer, useLocale } from '@/app/i18n';
-import { getApiErrorMessage, getApiErrorStatus } from '@/app/lib/api-error';
-import { resolveBankLogo } from '@bank-logos';
 import {
   ArrowLeft,
   Download,
@@ -14,6 +10,12 @@ import {
   Shield,
   ShieldCheck,
 } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
+import { useIntlayer, useLocale } from '@/app/i18n';
+import { getApiErrorMessage, getApiErrorStatus } from '@/app/lib/api-error';
+import { tokens } from '@/lib/theme-tokens';
+import { resolveBankLogo } from '@bank-logos';
+import { Box, Chip, Typography } from '@mui/material';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import PermissionsPanel from '../../components/PermissionsPanel';
@@ -22,8 +24,6 @@ import TransactionsView, {
   type Transaction as StatementTransaction,
 } from '../../components/TransactionsView';
 import api from '../../lib/api';
-import { Box, Chip, Typography } from '@mui/material';
-import { tokens } from '@/lib/theme-tokens';
 
 type FileAvailabilityStatus = 'both' | 'disk' | 'db' | 'missing';
 
@@ -94,7 +94,9 @@ interface FilePermission {
 
 const getBankDisplayName = (bankName: string): string => {
   const resolved = resolveBankLogo(bankName);
-  if (!resolved) return bankName;
+  if (!resolved) {
+    return bankName;
+  }
   return resolved.key !== 'other' ? resolved.displayName : bankName;
 };
 
@@ -139,7 +141,9 @@ export default function FileDetailsPage() {
     // eslint-disable-next-line complexity
     const run = async (): Promise<void> => {
       const loadedDetails = await loadFileDetails();
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
 
       if (loadedDetails?.fileAvailability?.status === 'missing') {
         setPreviewError(t.preview.unavailable.value);
@@ -182,7 +186,9 @@ export default function FileDetailsPage() {
   };
 
   // eslint-disable-next-line max-lines-per-function, complexity
-  const loadPreview = async (availabilityStatusOverride?: FileAvailabilityStatus): Promise<void> => {
+  const loadPreview = async (
+    availabilityStatusOverride?: FileAvailabilityStatus,
+  ): Promise<void> => {
     const availabilityStatus = availabilityStatusOverride ?? details?.fileAvailability?.status;
     if (availabilityStatus === 'missing') {
       setPreviewError(t.preview.unavailable.value);
@@ -219,7 +225,9 @@ export default function FileDetailsPage() {
   };
 
   const handleDownload = async (): Promise<void> => {
-    if (!details) return;
+    if (!details) {
+      return;
+    }
 
     try {
       const response = await api.get(`/storage/files/${fileId}/download`, {
@@ -251,8 +259,12 @@ export default function FileDetailsPage() {
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024) {
+      return `${bytes} B`;
+    }
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
@@ -317,14 +329,28 @@ export default function FileDetailsPage() {
   };
 
   const renderAvailabilityBadge = (availability?: FileAvailability): React.JSX.Element | null => {
-    if (!availability) return null;
+    if (!availability) {
+      return null;
+    }
     const status = availability.status;
     const chipSx =
       status === 'missing'
-        ? { bgcolor: 'var(--color-error-soft-bg)', color: 'var(--destructive)', border: '1px solid #fecaca' }
+        ? {
+            bgcolor: 'var(--color-error-soft-bg)',
+            color: 'var(--destructive)',
+            border: '1px solid #fecaca',
+          }
         : status === 'both'
-          ? { bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)' }
-          : { bgcolor: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)', border: '1px solid var(--color-info-soft-border)' };
+          ? {
+              bgcolor: 'var(--color-success-soft-bg)',
+              color: 'var(--color-success-soft-text)',
+              border: '1px solid var(--color-success-soft-border)',
+            }
+          : {
+              bgcolor: 'var(--color-info-soft-bg)',
+              color: 'var(--color-info-soft-text)',
+              border: '1px solid var(--color-info-soft-border)',
+            };
 
     return (
       <Chip
@@ -339,7 +365,15 @@ export default function FileDetailsPage() {
   if (loading) {
     return (
       <Box className="container-shared" sx={{ px: 2, py: 8 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5, color: 'var(--text-secondary)' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 1.5,
+            color: 'var(--text-secondary)',
+          }}
+        >
           <Spinner className="h-20 w-20 text-primary" />
           <Typography style={{ fontSize: 14 }}>{t.loading}</Typography>
         </Box>
@@ -351,7 +385,9 @@ export default function FileDetailsPage() {
     return (
       <Box className="container-shared" sx={{ px: 2, py: 6 }}>
         <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 3 }}>
-          <Typography style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}>
+          <Typography
+            style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)', marginBottom: 8 }}
+          >
             {t.notFound}
           </Typography>
           <Box
@@ -408,7 +444,10 @@ export default function FileDetailsPage() {
   ];
 
   return (
-    <Box className="container-shared" sx={{ px: 2, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box
+      className="container-shared"
+      sx={{ px: 2, py: 4, display: 'flex', flexDirection: 'column', gap: 3 }}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -440,7 +479,12 @@ export default function FileDetailsPage() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               <Typography
                 component="h1"
-                style={{ fontSize: 20, fontWeight: 700, color: 'var(--foreground)', wordBreak: 'break-all' }}
+                style={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  color: 'var(--foreground)',
+                  wordBreak: 'break-all',
+                }}
               >
                 {statement.fileName}
               </Typography>
@@ -449,19 +493,46 @@ export default function FileDetailsPage() {
               <Chip
                 label={getBankDisplayName(statement.bankName)}
                 size="small"
-                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'rgba(22,129,24,0.1)', color: 'primary.main', border: '1px solid rgba(22,129,24,0.2)' }}
+                sx={{
+                  borderRadius: tokens.radius.sm,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  bgcolor: 'rgba(22,129,24,0.1)',
+                  color: 'primary.main',
+                  border: '1px solid rgba(22,129,24,0.2)',
+                }}
               />
               <Chip
                 label={getStatusLabel(statement.status)}
                 size="small"
-                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)', border: '1px solid var(--color-success-soft-border)' }}
+                sx={{
+                  borderRadius: tokens.radius.sm,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  bgcolor: 'var(--color-success-soft-bg)',
+                  color: 'var(--color-success-soft-text)',
+                  border: '1px solid var(--color-success-soft-border)',
+                }}
               />
               {renderAvailabilityBadge(fileAvailability)}
               <Chip
-                icon={isOwner ? <ShieldCheck style={{ width: 16, height: 16 }} /> : <Shield style={{ width: 16, height: 16 }} />}
+                icon={
+                  isOwner ? (
+                    <ShieldCheck style={{ width: 16, height: 16 }} />
+                  ) : (
+                    <Shield style={{ width: 16, height: 16 }} />
+                  )
+                }
                 label={isOwner ? t.permission.owner.value : getPermissionLabel(userPermission)}
                 size="small"
-                sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--muted)', color: 'var(--foreground)', border: '1px solid var(--border-color)' }}
+                sx={{
+                  borderRadius: tokens.radius.sm,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  bgcolor: 'var(--muted)',
+                  color: 'var(--foreground)',
+                  border: '1px solid var(--border-color)',
+                }}
               />
             </Box>
           </Box>
@@ -523,19 +594,40 @@ export default function FileDetailsPage() {
       </Box>
 
       <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', lg: '1.05fr 1.4fr' } }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 1.5,
+          }}
+        >
           {[
             { label: t.cards.size, value: formatFileSize(statement.fileSize) },
             { label: t.cards.transactions, value: transactions.length },
             { label: t.cards.uploadedAt, value: formatDate(statement.createdAt) },
-            { label: t.cards.account, value: statement.metadata?.accountNumber || t.cards.dash.value },
+            {
+              label: t.cards.account,
+              value: statement.metadata?.accountNumber || t.cards.dash.value,
+            },
             // eslint-disable-next-line max-params
           ].map((card, idx) => (
-            <Box key={idx} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
-              <Typography style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted-foreground)' }}>
+            <Box
+              key={idx}
+              sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}
+            >
+              <Typography
+                style={{
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'var(--muted-foreground)',
+                }}
+              >
                 {card.label}
               </Typography>
-              <Typography style={{ marginTop: 4, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+              <Typography
+                style={{ marginTop: 4, fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}
+              >
                 {card.value}
               </Typography>
             </Box>
@@ -543,10 +635,30 @@ export default function FileDetailsPage() {
         </Box>
 
         <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', p: 2 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, color: 'var(--foreground)' }}>
-              <RefreshCcw style={{ width: 16, height: 16, color: 'var(--color-primary, #168118)' }} />
-              <Typography style={{ fontWeight: 600, color: 'var(--foreground)' }}>{t.preview.title}</Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                fontWeight: 600,
+                color: 'var(--foreground)',
+              }}
+            >
+              <RefreshCcw
+                style={{ width: 16, height: 16, color: 'var(--color-primary, #168118)' }}
+              />
+              <Typography style={{ fontWeight: 600, color: 'var(--foreground)' }}>
+                {t.preview.title}
+              </Typography>
             </Box>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
               <Box
@@ -570,7 +682,11 @@ export default function FileDetailsPage() {
                   '&:disabled': { opacity: 0.5 },
                 }}
               >
-                {previewLoading ? <Spinner className="h-4 w-4" /> : <RefreshCcw style={{ width: 16, height: 16 }} />}
+                {previewLoading ? (
+                  <Spinner className="h-4 w-4" />
+                ) : (
+                  <RefreshCcw style={{ width: 16, height: 16 }} />
+                )}
                 {t.preview.refresh}
               </Box>
               {previewUrl && (
@@ -600,16 +716,54 @@ export default function FileDetailsPage() {
             </Box>
           </Box>
 
-          <Box sx={{ mt: 1.5, overflow: 'hidden', border: '1px dashed var(--border-color)', bgcolor: 'rgba(249,250,251,0.6)' }}>
+          <Box
+            sx={{
+              mt: 1.5,
+              overflow: 'hidden',
+              border: '1px dashed var(--border-color)',
+              bgcolor: 'rgba(249,250,251,0.6)',
+            }}
+          >
             {previewLoading && (
-              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  minHeight: 360,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--muted-foreground)',
+                }}
+              >
                 <Spinner className="h-6 w-6" />
               </Box>
             )}
 
             {!previewLoading && previewError && (
-              <Box sx={{ display: 'flex', minHeight: 360, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5, bgcolor: 'background.paper', px: 2, textAlign: 'center' }}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: 'var(--color-error-soft-bg)', px: 1.5, py: 0.5, fontSize: 14, color: 'var(--destructive)' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  minHeight: 360,
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 1.5,
+                  bgcolor: 'background.paper',
+                  px: 2,
+                  textAlign: 'center',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    bgcolor: 'var(--color-error-soft-bg)',
+                    px: 1.5,
+                    py: 0.5,
+                    fontSize: 14,
+                    color: 'var(--destructive)',
+                  }}
+                >
                   {previewError}
                 </Box>
                 <Box
@@ -637,16 +791,34 @@ export default function FileDetailsPage() {
               </Box>
             )}
 
-            {!previewLoading && !previewError && previewUrl && (
+            {!(previewLoading || previewError) && previewUrl && (
               <iframe
                 src={previewUrl}
                 title={t.preview.iframeTitle.value}
-                style={{ height: 420, width: '100%', border: 'none', background: 'var(--card-bg)', display: 'block' }}
+                style={{
+                  height: 420,
+                  width: '100%',
+                  border: 'none',
+                  background: 'var(--card-bg)',
+                  display: 'block',
+                }}
               />
             )}
 
-            {!previewLoading && !previewError && !previewUrl && (
-              <Box sx={{ display: 'flex', minHeight: 360, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.paper', px: 2, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
+            {!(previewLoading || previewError || previewUrl) && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  minHeight: 360,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'background.paper',
+                  px: 2,
+                  textAlign: 'center',
+                  fontSize: 14,
+                  color: 'var(--text-secondary)',
+                }}
+              >
                 {t.preview.empty}
               </Box>
             )}
@@ -655,7 +827,17 @@ export default function FileDetailsPage() {
       </Box>
 
       <Box sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper' }}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, borderBottom: '1px solid var(--muted)', px: 2, py: 1.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: 1,
+            borderBottom: '1px solid var(--muted)',
+            px: 2,
+            py: 1.5,
+          }}
+        >
           {tabs.map(tab => {
             const isActive = tab.key === currentTab;
             return (
@@ -694,8 +876,17 @@ export default function FileDetailsPage() {
 
           {currentTab === 'links' && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
-                <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>{t.tabs.links.value}</Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 1,
+                }}
+              >
+                <Typography style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+                  {t.tabs.links.value}
+                </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Box
                     component="button"
@@ -723,36 +914,107 @@ export default function FileDetailsPage() {
               </Box>
 
               {sharedLinks.length === 0 ? (
-                <Box sx={{ border: '1px dashed var(--border-color)', bgcolor: 'var(--muted)', px: 2, py: 3, textAlign: 'center', fontSize: 14, color: 'var(--text-secondary)' }}>
+                <Box
+                  sx={{
+                    border: '1px dashed var(--border-color)',
+                    bgcolor: 'var(--muted)',
+                    px: 2,
+                    py: 3,
+                    textAlign: 'center',
+                    fontSize: 14,
+                    color: 'var(--text-secondary)',
+                  }}
+                >
                   {t.tabs.links.value} — {t.preview.empty}
                 </Box>
               ) : (
                 <Box sx={{ display: 'grid', gap: 1.5 }}>
                   {/* eslint-disable-next-line max-lines-per-function */}
                   {sharedLinks.map(link => (
-                    <Box key={link.id} sx={{ border: '1px solid var(--border-color)', bgcolor: 'background.paper', px: 2, py: 1.5 }}>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
+                    <Box
+                      key={link.id}
+                      sx={{
+                        border: '1px solid var(--border-color)',
+                        bgcolor: 'background.paper',
+                        px: 2,
+                        py: 1.5,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 1.5,
+                        }}
+                      >
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
-                            <Chip label={link.permission} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--color-info-soft-bg)', color: 'var(--color-info-soft-text)' }} />
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              alignItems: 'center',
+                              gap: 1,
+                              fontSize: 14,
+                              fontWeight: 600,
+                              color: 'var(--foreground)',
+                            }}
+                          >
+                            <Chip
+                              label={link.permission}
+                              size="small"
+                              sx={{
+                                borderRadius: tokens.radius.sm,
+                                fontSize: 12,
+                                fontWeight: 600,
+                                bgcolor: 'var(--color-info-soft-bg)',
+                                color: 'var(--color-info-soft-text)',
+                              }}
+                            />
                             <Chip
                               label={link.status}
                               size="small"
-                              sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, ...(link.status === 'active' ? { bgcolor: 'var(--color-success-soft-bg)', color: 'var(--color-success-soft-text)' } : { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' }) }}
+                              sx={{
+                                borderRadius: tokens.radius.sm,
+                                fontSize: 12,
+                                fontWeight: 600,
+                                ...(link.status === 'active'
+                                  ? {
+                                      bgcolor: 'var(--color-success-soft-bg)',
+                                      color: 'var(--color-success-soft-text)',
+                                    }
+                                  : { bgcolor: 'var(--muted)', color: 'var(--text-secondary)' }),
+                              }}
                             />
                             {link.expiresAt && (
-                              <Chip label={formatDate(link.expiresAt)} size="small" sx={{ borderRadius: tokens.radius.sm, fontSize: 12, fontWeight: 600, bgcolor: 'var(--muted)', color: 'var(--foreground)' }} />
+                              <Chip
+                                label={formatDate(link.expiresAt)}
+                                size="small"
+                                sx={{
+                                  borderRadius: tokens.radius.sm,
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  bgcolor: 'var(--muted)',
+                                  color: 'var(--foreground)',
+                                }}
+                              />
                             )}
                           </Box>
                           {link.description && (
-                            <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>{link.description}</Typography>
+                            <Typography style={{ fontSize: 14, color: 'var(--foreground)' }}>
+                              {link.description}
+                            </Typography>
                           )}
                           <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
-                            {t.cards.uploadedAt}: {formatDate(link.createdAt)} · {t.cards.transactions}: {link.accessCount}
+                            {t.cards.uploadedAt}: {formatDate(link.createdAt)} ·{' '}
+                            {t.cards.transactions}: {link.accessCount}
                           </Typography>
                         </Box>
 
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}
+                        >
                           <Box
                             component="button"
                             type="button"

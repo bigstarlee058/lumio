@@ -8,6 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import type { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import type { AuthenticatedRequest } from '../../../common/interfaces/authenticated-request.interface';
 import {
   ActorType,
   AuditAction,
@@ -15,7 +16,6 @@ import {
   type EntityType,
   Severity,
 } from '../../../entities/audit-event.entity';
-import type { AuthenticatedRequest } from '../../../common/interfaces/authenticated-request.interface';
 import { AuditService } from '../audit.service';
 import { AUDIT_METADATA_KEY, type AuditOptions } from '../decorators/audit.decorator';
 
@@ -58,9 +58,13 @@ export class AuditInterceptor implements NestInterceptor<unknown, unknown> {
               ? response.data
               : undefined;
 
-          if (!action) return;
+          if (!action) {
+            return;
+          }
           const entityId =
-            entityIdFromParams || this.extractEntityId(response) || this.extractEntityId(responseData);
+            entityIdFromParams ||
+            this.extractEntityId(response) ||
+            this.extractEntityId(responseData);
 
           if (!entityId) {
             this.logger.debug('Audit event skipped: entityId not resolved');
@@ -114,8 +118,12 @@ export class AuditInterceptor implements NestInterceptor<unknown, unknown> {
   }
 
   private extractEntityId(payload: unknown): string | null {
-    if (!payload || typeof payload !== 'object') return null;
-    if ('id' in payload && typeof payload.id === 'string') return payload.id;
+    if (!payload || typeof payload !== 'object') {
+      return null;
+    }
+    if ('id' in payload && typeof payload.id === 'string') {
+      return payload.id;
+    }
     return null;
   }
 }

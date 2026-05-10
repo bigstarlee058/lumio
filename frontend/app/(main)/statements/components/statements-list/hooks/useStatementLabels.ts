@@ -7,7 +7,9 @@ type I18nNode = Record<string, unknown>;
 
 function getNestedT(t: I18nNode, path: string[]): unknown {
   return path.reduce((acc: I18nNode | unknown, key) => {
-    if (acc !== null && typeof acc === 'object') return (acc as I18nNode)[key];
+    if (acc !== null && typeof acc === 'object') {
+      return (acc as I18nNode)[key];
+    }
     return undefined;
   }, t as unknown);
 }
@@ -217,10 +219,7 @@ export function useStatementLabels(): StatementLabels {
       uploadedProcessing: resolveLabel(uploadModal?.uploadedProcessing, 'Files uploaded'),
       uploadFailed: resolveLabel(uploadModal?.uploadFailed, 'Failed to upload files'),
     },
-    loadListErrorLabel: resolveLabel(
-      getNestedT(t, ['loadListError']),
-      'Failed to load statements',
-    ),
+    loadListErrorLabel: resolveLabel(getNestedT(t, ['loadListError']), 'Failed to load statements'),
     refreshFailedLabel: resolveLabel(
       getNestedT(t, ['refreshFailed']),
       'Failed to refresh statements',

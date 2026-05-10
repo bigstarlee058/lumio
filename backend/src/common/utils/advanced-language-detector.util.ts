@@ -11,7 +11,6 @@
 
 type FrancFn = typeof import('franc').franc;
 import { detectLocaleFromText as legacyDetectLocale } from './language-detector.util';
-import { DetectedLocale } from './language-detector.util';
 
 export interface AdvancedDetectionResult {
   locale: string;
@@ -47,7 +46,7 @@ class LanguageDetectionCache {
     for (let i = 0; i < text.length; i++) {
       const char = text.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash &= hash; // Convert to 32-bit integer
     }
     return hash.toString(36);
   }
@@ -56,7 +55,9 @@ class LanguageDetectionCache {
     const key = this.generateKey(text, context);
     const entry = this.cache[key];
 
-    if (!entry) return null;
+    if (!entry) {
+      return null;
+    }
 
     if (Date.now() - entry.timestamp > this.TTL) {
       delete this.cache[key];
@@ -357,7 +358,7 @@ class AdvancedLanguageDetector {
     text: string,
     context?: { bankName?: string; domain?: string },
   ): Promise<AdvancedDetectionResult> {
-    if (!text || !text.trim()) {
+    if (!text?.trim()) {
       return {
         locale: 'unknown',
         confidence: 0,

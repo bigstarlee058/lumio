@@ -1,9 +1,9 @@
 'use client';
 
+import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { useIntlayer } from '@/app/i18n';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import DetailsDrawer from './DetailsDrawer';
 import ExportModal from './ExportModal';
@@ -128,7 +128,9 @@ export default function TransactionsPageView({
       }
 
       if (results.successful > 0 && results.failed === 0 && results.notFound === 0) {
-        toast.success(t.categorizeSuccess.value.replace('{{count}}', String(results.successful)), { id: toastId });
+        toast.success(t.categorizeSuccess.value.replace('{{count}}', String(results.successful)), {
+          id: toastId,
+        });
       } else if (results.successful > 0 && (results.failed > 0 || results.notFound > 0)) {
         toast(
           t.categorizePartial.value
@@ -170,7 +172,9 @@ export default function TransactionsPageView({
         <div className="lumio-tx-bulk">
           <div className="lumio-tx-bulk__count">
             <span className="lumio-tx-bulk__badge">{selectedIds.length}</span>
-            <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{t.selected.value}</Typography>
+            <Typography sx={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+              {t.selected.value}
+            </Typography>
           </div>
 
           <div className="lumio-tx-bulk__controls">
@@ -183,7 +187,9 @@ export default function TransactionsPageView({
               {categories
                 .filter(cat => cat.isEnabled !== false)
                 .map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
             </select>
 

@@ -97,6 +97,8 @@ describe('createReportsTour', () => {
     expect(pageSource).toContain('data-tour-id="reports-templates-grid"');
     expect(generatorSource).toContain('data-tour-id="reports-generator"');
     expect(generatorSource).toContain('data-tour-id="reports-format"');
-    expect(templateCardSource).toContain('data-tour-id={template.id === \'pnl\' ? \'reports-template-pnl\' : undefined}');
+    expect(templateCardSource).toContain(
+      "data-tour-id={template.id === 'pnl' ? 'reports-template-pnl' : undefined}",
+    );
   });
 });

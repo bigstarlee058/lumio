@@ -130,7 +130,13 @@ export class Transaction {
   @Column({ name: 'tax_detected', default: false })
   taxDetected: boolean;
 
-  @Column({ name: 'enrichment_confidence', type: 'decimal', precision: 3, scale: 2, nullable: true })
+  @Column({
+    name: 'enrichment_confidence',
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    nullable: true,
+  })
   enrichmentConfidence: number | null;
 
   @Column({

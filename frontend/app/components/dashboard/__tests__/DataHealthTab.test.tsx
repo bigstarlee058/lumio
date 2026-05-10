@@ -10,18 +10,20 @@ describe('DataHealthTab', () => {
   it('uses dark-safe metric card surfaces instead of translucent white panels', () => {
     render(
       <DataHealthTab
-        data={{
-          dataHealth: {
-            uncategorizedTransactions: 2,
-            statementsWithErrors: 1,
-            statementsPendingReview: 3,
-            statementsPendingSubmit: 2,
-            receiptsPendingReview: 4,
-            unapprovedCash: 0,
-            lastUploadDate: '2025-05-31T00:00:00.000Z',
-            parsingWarnings: 1,
-          },
-        } as DataHealthTabData}
+        data={
+          {
+            dataHealth: {
+              uncategorizedTransactions: 2,
+              statementsWithErrors: 1,
+              statementsPendingReview: 3,
+              statementsPendingSubmit: 2,
+              receiptsPendingReview: 4,
+              unapprovedCash: 0,
+              lastUploadDate: '2025-05-31T00:00:00.000Z',
+              parsingWarnings: 1,
+            },
+          } as DataHealthTabData
+        }
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}
@@ -41,18 +43,20 @@ describe('DataHealthTab', () => {
   it('renders receipts pending metric and action link', () => {
     render(
       <DataHealthTab
-        data={{
-          dataHealth: {
-            uncategorizedTransactions: 0,
-            statementsWithErrors: 0,
-            statementsPendingReview: 0,
-            statementsPendingSubmit: 0,
-            receiptsPendingReview: 2,
-            unapprovedCash: 0,
-            lastUploadDate: '2025-05-31T00:00:00.000Z',
-            parsingWarnings: 0,
-          },
-        } as DataHealthTabData}
+        data={
+          {
+            dataHealth: {
+              uncategorizedTransactions: 0,
+              statementsWithErrors: 0,
+              statementsPendingReview: 0,
+              statementsPendingSubmit: 0,
+              receiptsPendingReview: 2,
+              unapprovedCash: 0,
+              lastUploadDate: '2025-05-31T00:00:00.000Z',
+              parsingWarnings: 0,
+            },
+          } as DataHealthTabData
+        }
         formatAmount={value => String(value)}
         range="30d"
         isLoading={false}

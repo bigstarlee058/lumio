@@ -3,10 +3,10 @@
  */
 import apiClient from '@/app/lib/api';
 import {
+  type CloudImportProvider,
   type GmailSyncSkeletonMeta,
   STATEMENTS_GMAIL_SYNC_EVENT,
   STATEMENTS_GMAIL_SYNC_STORAGE_KEY,
-  type CloudImportProvider,
 } from '@/app/lib/statement-upload-actions';
 import toast from 'react-hot-toast';
 
@@ -17,7 +17,10 @@ const CLOUD_IMPORT_ENDPOINTS: Record<string, string> = {
 
 const CLOUD_IMPORT_LABELS: Record<string, { success: string; error: string }> = {
   dropbox: { success: 'Dropbox import started', error: 'Failed to import from Dropbox' },
-  'google-drive': { success: 'Google Drive import started', error: 'Failed to import from Google Drive' },
+  'google-drive': {
+    success: 'Google Drive import started',
+    error: 'Failed to import from Google Drive',
+  },
 };
 
 export const executeCloudImport = async (
@@ -25,7 +28,10 @@ export const executeCloudImport = async (
   navigateToSubmit: () => void,
 ): Promise<void> => {
   const endpoint = CLOUD_IMPORT_ENDPOINTS[provider] ?? '';
-  const labels = CLOUD_IMPORT_LABELS[provider] ?? { success: 'Import started', error: 'Import failed' };
+  const labels = CLOUD_IMPORT_LABELS[provider] ?? {
+    success: 'Import started',
+    error: 'Import failed',
+  };
   try {
     await apiClient.post(endpoint);
     toast.success(labels.success);
@@ -59,7 +65,9 @@ const extractGmailCounts = (data: GmailSyncResponse['data']): GmailSyncCounts =>
 };
 
 const handleGmailJobsCreated = (jobsCreated: number, navigateToSubmit: () => void): void => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
   const payload: GmailSyncSkeletonMeta = { count: jobsCreated, timestamp: Date.now() };
   sessionStorage.setItem(STATEMENTS_GMAIL_SYNC_STORAGE_KEY, JSON.stringify(payload));
   window.dispatchEvent(new CustomEvent(STATEMENTS_GMAIL_SYNC_EVENT, { detail: payload }));
@@ -67,7 +75,10 @@ const handleGmailJobsCreated = (jobsCreated: number, navigateToSubmit: () => voi
   navigateToSubmit();
 };
 
-export const handleGmailSyncResponse = (response: GmailSyncResponse, navigateToSubmit: () => void): void => {
+export const handleGmailSyncResponse = (
+  response: GmailSyncResponse,
+  navigateToSubmit: () => void,
+): void => {
   const scanned = Number(response.data?.scanned ?? 0);
   const imported = Number(response.data?.imported ?? 0);
   if (imported > 0) {
@@ -86,9 +97,18 @@ export const handleGmailSyncResponse = (response: GmailSyncResponse, navigateToS
   }
 
   const { messagesFound, jobsCreated, skipped } = extractGmailCounts(response.data);
-  if (jobsCreated > 0) { handleGmailJobsCreated(jobsCreated, navigateToSubmit); return; }
-  if (messagesFound === 0) { toast.error('No unread emails found in IMAP inbox'); return; }
-  if (skipped >= messagesFound) { toast.error('All receipts available in this inbox are already synced'); return; }
+  if (jobsCreated > 0) {
+    handleGmailJobsCreated(jobsCreated, navigateToSubmit);
+    return;
+  }
+  if (messagesFound === 0) {
+    toast.error('No unread emails found in IMAP inbox');
+    return;
+  }
+  if (skipped >= messagesFound) {
+    toast.error('All receipts available in this inbox are already synced');
+    return;
+  }
   toast.error('Inbox sync finished with no new receipts');
   navigateToSubmit();
 };

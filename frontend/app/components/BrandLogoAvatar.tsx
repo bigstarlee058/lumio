@@ -1,7 +1,5 @@
 'use client';
 
-import React from 'react';
-
 import { getReceiptLogoUrl } from '../lib/brand-logo';
 import { LogoAvatar } from './LogoAvatar';
 

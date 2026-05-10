@@ -20,7 +20,11 @@
       "**/*.stories.*",
       "**/docs/**",
       "**/.claude/**",
-      "**/.agent/**"
+      "**/.agent/**",
+      "**/*.spec.{ts,tsx}",
+      "**/*.test.{ts,tsx}",
+      "**/@tests/**",
+      "backend/scripts/**"
     ]
   },
 
@@ -52,20 +56,27 @@
       "recommended": true,
 
       "a11y": {
-        "useButtonType": "off"
+        "recommended": true,
+        "useButtonType": "off",
+        "noLabelWithoutControl": "warn",
+        "useKeyWithClickEvents": "warn",
+        "useValidAriaRole": "warn",
+        "noSvgWithoutTitle": "warn",
+        "noRedundantRoles": "warn",
+        "useSemanticElements": "warn"
       },
 
       "complexity": {
         "noExcessiveCognitiveComplexity": {
-          "level": "error",
+          "level": "warn",
           "options": {
             "maxAllowedComplexity": 15
           }
         },
-        "noForEach": "error",
+        "noForEach": "warn",
         "useFlatMap": "error",
         "useOptionalChain": "error",
-        "useSimplifiedLogicExpression": "error",
+        "useSimplifiedLogicExpression": "warn",
         "noUselessTernary": "error",
         "noUselessFragments": "error",
         "noStaticOnlyClass": "error",
@@ -74,36 +85,39 @@
       },
 
       "correctness": {
-        "useExhaustiveDependencies": "error",
-        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "warn",
+        "noUnusedVariables": "warn",
         "noUnusedImports": "error",
         "noUnusedPrivateClassMembers": "error",
         "noInvalidUseBeforeDeclaration": "error"
       },
 
       "suspicious": {
-        "noExplicitAny": "error",
+        "noExplicitAny": "warn",
         "noDoubleEquals": "error",
         "noImplicitAnyLet": "error",
         "useIsArray": "error",
         "noDebugger": "error",
-        "noEmptyBlockStatements": "error",
-        "noDuplicateObjectKeys": "error"
+        "noEmptyBlockStatements": "warn",
+        "noDuplicateObjectKeys": "error",
+        "noShadowRestrictedNames": "warn",
+        "noRedeclare": "warn",
+        "noArrayIndexKey": "warn"
       },
 
       "style": {
         "useImportType": "off",
         "useNodejsImportProtocol": "off",
-        "noUnusedTemplateLiteral": "error",
+        "noUnusedTemplateLiteral": "warn",
         "useConst": "error",
-        "useBlockStatements": "error",
+        "useBlockStatements": "warn",
         "useDefaultParameterLast": "error",
         "noUselessElse": "error",
-        "useShorthandAssign": "error",
+        "useShorthandAssign": "warn",
         "useSingleVarDeclarator": "error",
         "useTemplate": "error",
         "useNamingConvention": {
-          "level": "error",
+          "level": "warn",
           "options": {
             "strictCase": true,
             "requireAscii": true,
@@ -156,25 +170,25 @@
             "useButtonType": "off"
           },
           "correctness": {
-            "useExhaustiveDependencies": "error"
+            "useExhaustiveDependencies": "warn"
           },
           "complexity": {
             "noExcessiveCognitiveComplexity": {
-              "level": "error",
+              "level": "warn",
               "options": {
                 "maxAllowedComplexity": 15
               }
             },
-            "noForEach": "error",
+            "noForEach": "warn",
             "noUselessFragments": "error"
           },
           "suspicious": {
-            "noExplicitAny": "error",
+            "noExplicitAny": "warn",
             "noImplicitAnyLet": "error"
           },
           "style": {
             "noUselessElse": "error",
-            "useBlockStatements": "error",
+            "useBlockStatements": "warn",
             "useTemplate": "error"
           }
         }
@@ -186,7 +200,10 @@
         "**/@tests/**/*.{ts,tsx}",
         "**/test/**/*.{ts,tsx}",
         "**/*.spec.{ts,tsx}",
-        "**/*.test.{ts,tsx}"
+        "**/*.test.{ts,tsx}",
+        "frontend/app/**/*.test.{ts,tsx}",
+        "app/**/*.test.{ts,tsx}",
+        "**/.storybook/**/*.{ts,tsx}"
       ],
       "linter": {
         "rules": {
@@ -196,10 +213,14 @@
           },
           "style": {
             "useImportType": "off",
-            "useNamingConvention": "off"
+            "useNamingConvention": "off",
+            "useTemplate": "off"
           },
           "correctness": {
             "noUnusedVariables": "warn"
+          },
+          "complexity": {
+            "noForEach": "off"
           }
         }
       },

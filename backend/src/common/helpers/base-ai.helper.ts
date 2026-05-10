@@ -1,4 +1,3 @@
-import { TimeoutError, retry, withTimeout } from '../utils/async.util';
 import {
   isAiCircuitOpen,
   isAiEnabled,
@@ -6,6 +5,7 @@ import {
   recordAiSuccess,
   withAiConcurrency,
 } from '../../modules/parsing/helpers/ai-runtime.util';
+import { TimeoutError, retry, withTimeout } from '../utils/async.util';
 
 type GenerateJsonOptions = {
   timeoutMs: number;
@@ -33,10 +33,7 @@ type AiContent = {
 
 type OpenAiMessageContent =
   | string
-  | Array<
-      | { type: 'text'; text: string }
-      | { type: 'image_url'; image_url: { url: string } }
-    >;
+  | Array<{ type: 'text'; text: string } | { type: 'image_url'; image_url: { url: string } }>;
 
 type OpenAiChatMessage = {
   role: 'user' | 'assistant';
@@ -94,7 +91,7 @@ export abstract class BaseAiHelper {
     contents: AiContent[],
     options: GenerateJsonOptions,
   ): Promise<string | null> {
-    if (!this.aiBaseUrl || !this.aiModel || !this.isAvailable()) {
+    if (!(this.aiBaseUrl && this.aiModel && this.isAvailable())) {
       return null;
     }
 

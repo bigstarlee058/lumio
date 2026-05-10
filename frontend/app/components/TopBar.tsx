@@ -12,13 +12,13 @@ import { canAccessWorkspaceActivity } from '@/app/lib/workspace-activity-access'
 import { AiAssistantTopBarButton } from '@/app/plugins/ai-assistant/AiAssistantTopBarButton';
 import { McpServerTopBarButton } from '@/app/plugins/mcp-server/McpServerTopBarButton';
 import { TourMenu } from '@/app/tours/components/TourMenu';
+import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
-import { tokens } from '@/lib/theme-tokens';
-import Image from 'next/image';
 import GlobalBreadcrumbs from './GlobalBreadcrumbs';
 import { LanguageDrawer } from './navigation/LanguageDrawer';
 import { UserMenuTriggerAndDropdown } from './navigation/UserMenu';

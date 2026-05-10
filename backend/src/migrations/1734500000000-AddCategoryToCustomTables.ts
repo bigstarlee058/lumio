@@ -3,7 +3,9 @@ import { type MigrationInterface, type QueryRunner, TableColumn, TableIndex } fr
 export class AddCategoryToCustomTables1734500000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasCustomTables = await queryRunner.hasTable('custom_tables');
-    if (!hasCustomTables) return;
+    if (!hasCustomTables) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_tables');
     const hasCategoryId = table?.columns?.some(c => c.name === 'category_id');
@@ -39,11 +41,15 @@ export class AddCategoryToCustomTables1734500000000 implements MigrationInterfac
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const hasCustomTables = await queryRunner.hasTable('custom_tables');
-    if (!hasCustomTables) return;
+    if (!hasCustomTables) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_tables');
     const hasCategoryId = table?.columns?.some(c => c.name === 'category_id');
-    if (!hasCategoryId) return;
+    if (!hasCategoryId) {
+      return;
+    }
 
     await queryRunner.query(
       `ALTER TABLE "custom_tables" DROP CONSTRAINT IF EXISTS "FK_custom_tables_category_id"`,

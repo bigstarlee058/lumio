@@ -17,12 +17,36 @@ type DashboardTabContentProps = {
   effectivePeriod: string | null;
 };
 
-export function DashboardTabContent({ activeTab, data, formatAmount, range, isLoading, effectivePeriod }: DashboardTabContentProps): React.JSX.Element {
+export function DashboardTabContent({
+  activeTab,
+  data,
+  formatAmount,
+  range,
+  isLoading,
+  effectivePeriod,
+}: DashboardTabContentProps): React.JSX.Element {
   return (
     <Box sx={{ width: '100%', px: { xs: 2, md: 4 }, py: 4, flex: 1, pb: 6 }}>
-      {activeTab === 'overview' && <OverviewTab data={data} formatAmount={formatAmount} range={range} isLoading={isLoading} effectivePeriod={effectivePeriod} />}
-      {activeTab === 'trends' && <TrendsTab data={data} formatAmount={formatAmount} range={range} isLoading={isLoading} />}
-      {activeTab === 'data-health' && <DataHealthTab data={data} formatAmount={formatAmount} range={range} isLoading={isLoading} />}
+      {activeTab === 'overview' && (
+        <OverviewTab
+          data={data}
+          formatAmount={formatAmount}
+          range={range}
+          isLoading={isLoading}
+          effectivePeriod={effectivePeriod}
+        />
+      )}
+      {activeTab === 'trends' && (
+        <TrendsTab data={data} formatAmount={formatAmount} range={range} isLoading={isLoading} />
+      )}
+      {activeTab === 'data-health' && (
+        <DataHealthTab
+          data={data}
+          formatAmount={formatAmount}
+          range={range}
+          isLoading={isLoading}
+        />
+      )}
     </Box>
   );
 }

@@ -7,7 +7,7 @@ export function getIssueRowsWithSchema<
   TTransaction,
   TSchema extends { name: string },
   TIssue extends { field: string; rowIndices: number[] },
->( 
+>(
   transactions: TTransaction[],
   issue: TIssue,
   schema: TSchema[],

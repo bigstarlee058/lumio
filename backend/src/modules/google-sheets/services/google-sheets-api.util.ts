@@ -31,7 +31,9 @@ export function mapTransactionsToValues<
   });
 }
 
-export function isRetryableCredentialError(error: { code?: number; message?: string } | null | undefined): boolean {
+export function isRetryableCredentialError(
+  error: { code?: number; message?: string } | null | undefined,
+): boolean {
   return error?.code === 401 || error?.message?.includes('Invalid Credentials') === true;
 }
 

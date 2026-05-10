@@ -1,9 +1,6 @@
 import type { ReceiptRecord } from '@/app/lib/api';
 import { normalizeReceiptLineItems } from '@/app/lib/financial-document';
-import type {
-  EditableReceiptLineItem,
-  EditableReceiptParsedData,
-} from '../receipt-types';
+import type { EditableReceiptLineItem, EditableReceiptParsedData } from '../receipt-types';
 
 export function buildLineItems(receipt: ReceiptRecord | null): EditableReceiptLineItem[] {
   return normalizeReceiptLineItems(receipt?.parsedData).map((item, index) => ({

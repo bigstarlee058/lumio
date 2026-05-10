@@ -210,7 +210,7 @@ function countMatches(tokens: string[], needles: string[]): number {
 }
 
 export function detectLocaleFromText(text: string): DetectedLocale {
-  if (!text || !text.trim()) {
+  if (!text?.trim()) {
     return { locale: 'unknown', confidence: 0, reason: 'empty-text' };
   }
 

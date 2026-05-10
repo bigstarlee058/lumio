@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
-import { decryptText, encryptText } from '../../../common/utils/encryption.util';
 import {
   OAuthIntegrationBaseService,
   type OAuthIntegrationSettingsRelationName,
 } from '../../../common/services/oauth-integration-base.service';
+import { decryptText, encryptText } from '../../../common/utils/encryption.util';
 import {
   GmailSettings,
   Integration,
@@ -87,7 +87,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     const clientId = this.getClientId();
     const clientSecret = this.getClientSecret();
     const redirectUri = this.getRedirectUri();
-    if (!clientId || !clientSecret || !redirectUri) {
+    if (!(clientId && clientSecret && redirectUri)) {
       throw new BadRequestException('Gmail OAuth is not configured');
     }
     return { clientId, clientSecret, redirectUri };
@@ -151,14 +151,14 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       };
     }
 
-    if (!params.code || !params.state) {
+    if (!(params.code && params.state)) {
       return { redirectUrl: `${redirectBase}?status=error&reason=missing_code` };
     }
 
     let state: Record<string, unknown>;
     try {
       state = this.parseState(params.state);
-    } catch (error) {
+    } catch (_error) {
       return { redirectUrl: `${redirectBase}?status=error&reason=bad_state` };
     }
 
@@ -183,7 +183,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     const accessToken = tokens.access_token || '';
     const refreshToken = tokens.refresh_token || '';
 
-    if (!accessToken && !refreshToken) {
+    if (!(accessToken || refreshToken)) {
       return { redirectUrl: `${redirectBase}?status=error&reason=missing_tokens` };
     }
 
@@ -280,7 +280,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
       where: { integrationId: integration.id },
     });
 
-    if (!tokenRecord?.encryptedRefreshToken && !tokenRecord?.refreshToken) {
+    if (!(tokenRecord?.encryptedRefreshToken || tokenRecord?.refreshToken)) {
       throw new BadRequestException('No refresh token available');
     }
 
@@ -349,7 +349,7 @@ export class GmailOAuthService extends OAuthIntegrationBaseService {
     });
 
     // Fallback to plain accessToken if encrypted version doesn't exist
-    if (!tokenRecord?.encryptedAccessToken && !tokenRecord?.accessToken) {
+    if (!(tokenRecord?.encryptedAccessToken || tokenRecord?.accessToken)) {
       throw new BadRequestException('No access token available');
     }
 

@@ -1,5 +1,4 @@
 'use client';
-import type { JSX } from 'react';
 
 import { AnalyticsChartCard } from '@/app/(main)/statements/components/analytics/AnalyticsChartCard';
 import dynamic from 'next/dynamic';
@@ -29,14 +28,32 @@ export function TopSpendersCharts({
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
         <AnalyticsChartCard title={trendTitle} spanColumns={2}>
-          <ReactECharts style={{ height: 300 }} option={trendChart} notMerge lazyUpdate theme={chartTheme} />
+          <ReactECharts
+            style={{ height: 300 }}
+            option={trendChart}
+            notMerge
+            lazyUpdate
+            theme={chartTheme}
+          />
         </AnalyticsChartCard>
         <AnalyticsChartCard title={sourceSplitTitle}>
-          <ReactECharts style={{ height: 300 }} option={sourceChart} notMerge lazyUpdate theme={chartTheme} />
+          <ReactECharts
+            style={{ height: 300 }}
+            option={sourceChart}
+            notMerge
+            lazyUpdate
+            theme={chartTheme}
+          />
         </AnalyticsChartCard>
       </div>
       <AnalyticsChartCard title={companiesTitle}>
-        <ReactECharts style={{ height: 320 }} option={topCompaniesChart} notMerge lazyUpdate theme={chartTheme} />
+        <ReactECharts
+          style={{ height: 320 }}
+          option={topCompaniesChart}
+          notMerge
+          lazyUpdate
+          theme={chartTheme}
+        />
       </AnalyticsChartCard>
     </div>
   );

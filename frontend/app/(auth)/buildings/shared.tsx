@@ -26,21 +26,26 @@ export const glassStyle: React.CSSProperties = {
 
 type WindowGridProps = { cols?: number; rows?: number; density?: number };
 
-export function WindowGrid({ cols = 3, rows = 5, density = 0.4 }: WindowGridProps): React.JSX.Element {
+export function WindowGrid({
+  cols = 3,
+  rows = 5,
+  density = 0.4,
+}: WindowGridProps): React.JSX.Element {
   const GRID_STYLE: React.CSSProperties = {
-    width: '100%', height: '100%', display: 'grid',
+    width: '100%',
+    height: '100%',
+    display: 'grid',
     gridTemplateColumns: `repeat(${cols}, 1fr)`,
     gridTemplateRows: `repeat(${rows}, 1fr)`,
-    gap: '8px', padding: '12px', opacity: 0.3,
+    gap: '8px',
+    padding: '12px',
+    opacity: 0.3,
   };
   return (
     <div style={GRID_STYLE}>
       {[...Array(cols * rows).keys()].map(i => {
         const isLit = stableWindowNoise((cols + 11) * (rows + 7) * (i + 1)) < density;
-        return (
-          // biome-ignore lint/suspicious/noArrayIndexKey: pure visual decoration
-          <div key={i} style={{ background: isLit ? 'white' : 'transparent' }} />
-        );
+        return <div key={i} style={{ background: isLit ? 'white' : 'transparent' }} />;
       })}
     </div>
   );

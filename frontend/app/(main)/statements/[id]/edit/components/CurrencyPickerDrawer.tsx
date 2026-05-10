@@ -1,23 +1,50 @@
+import { Check, ChevronLeft, Search } from '@/app/components/icons';
 import { DrawerShell } from '@/app/components/ui/drawer-shell';
 import type { CurrencySearchItem } from '@/app/lib/statement-expense-drawer';
-import { Check, ChevronLeft, Search } from '@/app/components/icons';
 import { tokens } from '@/lib/theme-tokens';
 
 const CURRENCY_BTN_STYLE: React.CSSProperties = {
-  display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
-  borderRadius: tokens.radius.md, padding: '12px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
+  display: 'flex',
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  borderRadius: tokens.radius.md,
+  padding: '12px',
+  textAlign: 'left',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
 };
 
 type CurrencyListProps = { items: CurrencySearchItem[]; onSelect: (code: string) => void };
 function CurrencyList({ items, onSelect }: CurrencyListProps): React.ReactElement {
   if (items.length === 0) {
-    return <p style={{ borderRadius: tokens.radius.sm, background: 'var(--card-bg)', padding: '12px', fontSize: 14, color: 'var(--muted-foreground)' }}>No currencies found</p>;
+    return (
+      <p
+        style={{
+          borderRadius: tokens.radius.sm,
+          background: 'var(--card-bg)',
+          padding: '12px',
+          fontSize: 14,
+          color: 'var(--muted-foreground)',
+        }}
+      >
+        No currencies found
+      </p>
+    );
   }
   return (
     <>
       {items.map(item => (
-        <button key={item.code} type="button" onClick={() => onSelect(item.code)} style={CURRENCY_BTN_STYLE}>
-          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{item.label}</span>
+        <button
+          key={item.code}
+          type="button"
+          onClick={() => onSelect(item.code)}
+          style={CURRENCY_BTN_STYLE}
+        >
+          <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
+            {item.label}
+          </span>
         </button>
       ))}
     </>
@@ -25,10 +52,31 @@ function CurrencyList({ items, onSelect }: CurrencyListProps): React.ReactElemen
 }
 
 type SelectedCurrencyButtonProps = { item: CurrencySearchItem; onSelect: (code: string) => void };
-function SelectedCurrencyButton({ item, onSelect }: SelectedCurrencyButtonProps): React.ReactElement {
+function SelectedCurrencyButton({
+  item,
+  onSelect,
+}: SelectedCurrencyButtonProps): React.ReactElement {
   return (
-    <button type="button" onClick={() => onSelect(item.code)} style={{ marginTop: 20, display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', borderRadius: tokens.radius.md, background: '#ebe8e2', padding: '16px', textAlign: 'left', border: 'none', cursor: 'pointer' }}>
-      <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{item.label}</span>
+    <button
+      type="button"
+      onClick={() => onSelect(item.code)}
+      style={{
+        marginTop: 20,
+        display: 'flex',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderRadius: tokens.radius.md,
+        background: '#ebe8e2',
+        padding: '16px',
+        textAlign: 'left',
+        border: 'none',
+        cursor: 'pointer',
+      }}
+    >
+      <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>
+        {item.label}
+      </span>
       <Check size={20} color="var(--primary)" />
     </button>
   );
@@ -70,14 +118,39 @@ export interface CurrencyPickerDrawerProps {
   onSelect: (code: string) => void;
 }
 
-export function CurrencyPickerDrawer({ isOpen, currencySearch, selectedCurrencyItem, selectedMatchesSearch, recentCurrencyItems, allCurrencyItems, onSearchChange, onClose, onSelect }: CurrencyPickerDrawerProps): React.ReactElement {
+export function CurrencyPickerDrawer({
+  isOpen,
+  currencySearch,
+  selectedCurrencyItem,
+  selectedMatchesSearch,
+  recentCurrencyItems,
+  allCurrencyItems,
+  onSearchChange,
+  onClose,
+  onSelect,
+}: CurrencyPickerDrawerProps): React.ReactElement {
   const currencyQuery = currencySearch.trim().toLowerCase();
   return (
-    <DrawerShell isOpen={isOpen} onClose={onClose} position="right" width="sm" showCloseButton={false} zIndex={1400}
+    <DrawerShell
+      isOpen={isOpen}
+      onClose={onClose}
+      position="right"
+      width="sm"
+      showCloseButton={false}
+      zIndex={1400}
       title={
         <div className="lumio-payable-drawer__title-wrap">
-          <button type="button" onClick={onClose} className="lumio-col-drawer__back-btn" aria-label="Select a currency"><ChevronLeft size={20} /></button>
-          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>Select a currency</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="lumio-col-drawer__back-btn"
+            aria-label="Select a currency"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <span style={{ fontSize: 18, fontWeight: 600, color: 'var(--foreground)' }}>
+            Select a currency
+          </span>
         </div>
       }
     >
@@ -85,12 +158,22 @@ export function CurrencyPickerDrawer({ isOpen, currencySearch, selectedCurrencyI
         <div className="lumio-cat-drawer__search">
           <label className="lumio-cat-drawer__search-label">
             <Search size={20} className="lumio-cat-drawer__search-icon" />
-            <input type="text" value={currencySearch} onChange={event => onSearchChange(event.target.value)} placeholder="Search" className="lumio-cat-drawer__search-input" />
+            <input
+              type="text"
+              value={currencySearch}
+              onChange={event => onSearchChange(event.target.value)}
+              placeholder="Search"
+              className="lumio-cat-drawer__search-input"
+            />
           </label>
         </div>
         <div className="lumio-cat-drawer__list">
-          {selectedCurrencyItem && selectedMatchesSearch && <SelectedCurrencyButton item={selectedCurrencyItem} onSelect={onSelect} />}
-          {!currencyQuery && recentCurrencyItems.length > 0 && <RecentCurrencySection items={recentCurrencyItems} onSelect={onSelect} />}
+          {selectedCurrencyItem && selectedMatchesSearch && (
+            <SelectedCurrencyButton item={selectedCurrencyItem} onSelect={onSelect} />
+          )}
+          {!currencyQuery && recentCurrencyItems.length > 0 && (
+            <RecentCurrencySection items={recentCurrencyItems} onSelect={onSelect} />
+          )}
           <AllCurrencySection items={allCurrencyItems} onSelect={onSelect} />
         </div>
       </div>

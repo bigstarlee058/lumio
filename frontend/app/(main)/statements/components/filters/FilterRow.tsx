@@ -32,8 +32,12 @@ export function FilterRow({ label, value, onClick, style }: FilterRowProps) {
       }}
     >
       <div>
-        <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--muted-foreground)' }}>{label}</div>
-        {value ? <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{value}</div> : null}
+        <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--muted-foreground)' }}>
+          {label}
+        </div>
+        {value ? (
+          <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--foreground)' }}>{value}</div>
+        ) : null}
       </div>
       <ChevronRight size={20} color="var(--muted-foreground)" />
     </button>

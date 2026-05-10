@@ -24,7 +24,7 @@ export interface UseEditableCellOptions<T extends CustomTableCellValue> {
   toInputString?: (value: T) => string;
 }
 
-export interface UseEditableCellResult<T extends CustomTableCellValue> {
+export interface UseEditableCellResult<_T extends CustomTableCellValue> {
   isEditing: boolean;
   setIsEditing: (editing: boolean) => void;
   /** The current string value shown inside the input. */

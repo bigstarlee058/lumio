@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { Download, Plus, RefreshCcw } from '@/app/components/icons';
 import { Button } from '@/app/components/ui/button';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
@@ -14,10 +15,10 @@ import {
   type UpdatePayableInput,
   payablesApi,
 } from '@/app/lib/payables-api';
-import { getNestedValue, getRecord as _getRecord, resolveLabel } from '@/app/lib/side-panel-utils';
-import { Download, Plus, RefreshCcw } from '@/app/components/icons';
-import React from 'react';
+import { getNestedValue, resolveLabel } from '@/app/lib/side-panel-utils';
+import { tokens } from '@/lib/theme-tokens';
 import { useSearchParams } from 'next/navigation';
+import React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CreatePayableDrawer } from './CreatePayableDrawer';
@@ -29,22 +30,25 @@ import {
   type PayablesFiltersState,
   buildPayablesListParams,
 } from './payables-utils';
-import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_SUMMARY: PayablesSummary = {
   toPay: 0,
   overdue: 0,
   dueThisWeek: 0,
   paidThisMonth: 0,
+  paidTotal: 0,
   toPayCount: 0,
   overdueCount: 0,
+  paidTotalCount: 0,
 };
 
 const PAGE_SIZE = 20;
 
 // eslint-disable-next-line max-lines-per-function, complexity
 const getErrorMessage = (error: unknown, fallback: string): string => {
-  if (!error || typeof error !== 'object') return fallback;
+  if (!error || typeof error !== 'object') {
+    return fallback;
+  }
 
   const candidate = error as {
     response?: { data?: { message?: string | string[]; error?: { message?: string } | string } };
@@ -52,8 +56,12 @@ const getErrorMessage = (error: unknown, fallback: string): string => {
   };
 
   const message = candidate.response?.data?.message;
-  if (Array.isArray(message)) return message.join(', ');
-  if (typeof message === 'string' && message.trim()) return message;
+  if (Array.isArray(message)) {
+    return message.join(', ');
+  }
+  if (typeof message === 'string' && message.trim()) {
+    return message;
+  }
   if (typeof candidate.response?.data?.error === 'string' && candidate.response.data.error.trim()) {
     return candidate.response.data.error;
   }
@@ -64,7 +72,9 @@ const getErrorMessage = (error: unknown, fallback: string): string => {
   ) {
     return candidate.response.data.error.message;
   }
-  if (typeof candidate.message === 'string' && candidate.message.trim()) return candidate.message;
+  if (typeof candidate.message === 'string' && candidate.message.trim()) {
+    return candidate.message;
+  }
   return fallback;
 };
 
@@ -158,12 +168,11 @@ export function PayablesView(): React.JSX.Element {
       export: tx(['payables', 'export'], 'Export'),
       exportCsv: tx(['payables', 'exportCsv'], 'Export CSV'),
       exportXlsx: tx(['payables', 'exportXlsx'], 'Export XLSX'),
-      searchPlaceholder: tx(['payables', 'searchPlaceholder'], 'Search vendor or comment'),
       summary: {
         toPay: tx(['payables', 'summary', 'toPay'], 'To Pay'),
         overdue: tx(['payables', 'summary', 'overdue'], 'Overdue'),
         dueThisWeek: tx(['payables', 'summary', 'dueThisWeek'], 'Due This Week'),
-        paidThisMonth: tx(['payables', 'summary', 'paidThisMonth'], 'Paid This Month'),
+        paidTotal: tx(['payables', 'summary', 'paidThisMonth'], 'Paid'),
         itemsSuffix: tx(['payables', 'summary', 'itemsSuffix'], 'items'),
       },
       filters: {
@@ -284,7 +293,7 @@ export function PayablesView(): React.JSX.Element {
 
   const loadData = useCallback(
     async (options?: { silent?: boolean }) => {
-      if (!user || !currentWorkspace) {
+      if (!(user && currentWorkspace)) {
         setLoading(false);
         return;
       }
@@ -336,7 +345,9 @@ export function PayablesView(): React.JSX.Element {
   );
 
   useEffect(() => {
-    if (authLoading || workspaceLoading) return;
+    if (authLoading || workspaceLoading) {
+      return;
+    }
     void loadData();
   }, [authLoading, workspaceLoading, loadData]);
 
@@ -421,7 +432,9 @@ export function PayablesView(): React.JSX.Element {
 
   const handleDelete = async (payable: Payable): Promise<void> => {
     const confirmMessage = labels.toasts.deleteConfirm.replace('{vendor}', payable.vendor);
-    if (!window.confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
 
     setDeletingId(payable.id);
     try {
@@ -456,7 +469,10 @@ export function PayablesView(): React.JSX.Element {
 
   if (authLoading || workspaceLoading || loading) {
     return (
-      <div className="container-shared lumio-stmt-list" style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        className="container-shared lumio-stmt-list"
+        style={{ alignItems: 'center', justifyContent: 'center' }}
+      >
         <Spinner style={{ height: 80, width: 80, color: 'var(--primary)' }} />
       </div>
     );
@@ -465,7 +481,16 @@ export function PayablesView(): React.JSX.Element {
   if (!user) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: 'var(--text-secondary)' }}>
+        <div
+          style={{
+            borderRadius: tokens.radius.lg,
+            border: '1px solid var(--border-color)',
+            background: 'var(--card-bg)',
+            padding: 24,
+            fontSize: 14,
+            color: 'var(--text-secondary)',
+          }}
+        >
           {labels.loginRequired}
         </div>
       </div>
@@ -475,7 +500,16 @@ export function PayablesView(): React.JSX.Element {
   if (!currentWorkspace) {
     return (
       <div className="container-shared" style={{ padding: '40px 16px' }}>
-        <div style={{ borderRadius: tokens.radius.lg, border: '1px solid var(--border-color)', background: 'var(--card-bg)', padding: 24, fontSize: 14, color: 'var(--text-secondary)' }}>
+        <div
+          style={{
+            borderRadius: tokens.radius.lg,
+            border: '1px solid var(--border-color)',
+            background: 'var(--card-bg)',
+            padding: 24,
+            fontSize: 14,
+            color: 'var(--text-secondary)',
+          }}
+        >
           {labels.noWorkspace}
         </div>
       </div>
@@ -485,11 +519,38 @@ export function PayablesView(): React.JSX.Element {
   return (
     <>
       <div className="container-shared lumio-stmt-list">
-        <div style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div
+          style={{
+            marginBottom: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 16,
+            flexShrink: 0,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 16,
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+            }}
+          >
             <div>
-              <h1 style={{ fontSize: 24, fontWeight: 600, color: 'var(--foreground)' }}>{labels.title}</h1>
-              <p style={{ marginTop: 8, maxWidth: 768, fontSize: 14, color: 'var(--text-secondary)' }}>{labels.subtitle}</p>
+              <h1 style={{ fontSize: 24, fontWeight: 600, color: 'var(--foreground)' }}>
+                {labels.title}
+              </h1>
+              <p
+                style={{
+                  marginTop: 8,
+                  maxWidth: 768,
+                  fontSize: 14,
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                {labels.subtitle}
+              </p>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
               <Button
@@ -524,7 +585,17 @@ export function PayablesView(): React.JSX.Element {
           </div>
         </div>
 
-        <div style={{ display: 'flex', minHeight: 0, flex: 1, flexDirection: 'column', gap: 16, overflowY: 'auto', paddingBottom: 8 }}>
+        <div
+          style={{
+            display: 'flex',
+            minHeight: 0,
+            flex: 1,
+            flexDirection: 'column',
+            gap: 16,
+            overflowY: 'auto',
+            paddingBottom: 8,
+          }}
+        >
           <PayableSummaryCards
             summary={summary}
             locale={locale}
@@ -536,10 +607,7 @@ export function PayablesView(): React.JSX.Element {
             value={filters}
             onChange={handleFiltersChange}
             onReset={() => handleFiltersChange(DEFAULT_PAYABLES_FILTERS)}
-            labels={{
-              searchPlaceholder: labels.searchPlaceholder,
-              ...labels.filters,
-            }}
+            labels={labels.filters}
           />
 
           <PayablesList

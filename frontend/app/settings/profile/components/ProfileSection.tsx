@@ -3,13 +3,13 @@
 import { Alert } from '@/app/components/ui/alert';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { TimeZoneOption } from '@/app/settings/profile/profileHelpers';
-import type { FormEvent } from 'react';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { tokens } from '@/lib/theme-tokens';
+import type { FormEvent } from 'react';
 
 type Props = {
   t: {
@@ -54,7 +54,11 @@ export function ProfileSection({
   selectedTimeZoneOption,
 }: Props) {
   return (
-    <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }} onSubmit={handleProfileSubmit}>
+    <Box
+      component="form"
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+      onSubmit={handleProfileSubmit}
+    >
       {profileMessage && <Alert variant="success">{profileMessage}</Alert>}
       {profileError && <Alert variant="error">{profileError}</Alert>}
 
@@ -77,7 +81,12 @@ export function ProfileSection({
       </Stack>
 
       <Stack spacing={0.5}>
-        <Typography component="label" htmlFor="profile-timezone-trigger" variant="body2" fontWeight={600}>
+        <Typography
+          component="label"
+          htmlFor="profile-timezone-trigger"
+          variant="body2"
+          fontWeight={600}
+        >
           {t.profileCard.timeZoneLabel.value}
         </Typography>
         <Box
@@ -111,7 +120,9 @@ export function ProfileSection({
           }}
         >
           <span>{selectedTimeZoneOption.label}</span>
-          <Typography component="span" color="text.secondary" sx={{ fontSize: 12 }}>v</Typography>
+          <Typography component="span" color="text.secondary" sx={{ fontSize: 12 }}>
+            v
+          </Typography>
         </Box>
         <Typography variant="caption" color="text.secondary">
           {t.profileCard.timeZoneHelp.value}

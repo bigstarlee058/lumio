@@ -25,8 +25,12 @@ const capitalize = (value: string): string => value.charAt(0).toUpperCase() + va
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const resolveBreadcrumbHref = (slug: string) => {
-  if (slug === 'settings') return '/settings/profile';
-  if (slug === 'custom-tables/import') return '/custom-tables?import=1';
+  if (slug === 'settings') {
+    return '/settings/profile';
+  }
+  if (slug === 'custom-tables/import') {
+    return '/custom-tables?import=1';
+  }
   return `/${slug}`;
 };
 
@@ -38,10 +42,18 @@ export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcru
   };
 
   const items = useMemo(() => {
-    if (pathname.startsWith('/onboarding')) return [];
-    if (HIDDEN_PATHS.has(pathname)) return [];
-    if (pathname === '/') return [];
-    if (pathname.startsWith('/dashboard')) return [];
+    if (pathname.startsWith('/onboarding')) {
+      return [];
+    }
+    if (HIDDEN_PATHS.has(pathname)) {
+      return [];
+    }
+    if (pathname === '/') {
+      return [];
+    }
+    if (pathname.startsWith('/dashboard')) {
+      return [];
+    }
 
     const segments = pathname.split('/').filter(Boolean);
     // eslint-disable-next-line max-params
@@ -56,7 +68,9 @@ export default function GlobalBreadcrumbs({ variant = 'topbar' }: GlobalBreadcru
     return [{ label: resolveLabel(labels?.[''], 'Home'), href: DEFAULT_APP_ROUTE }, ...crumbs];
   }, [labels, pathname]);
 
-  if (!items.length) return null;
+  if (!items.length) {
+    return null;
+  }
 
   if (variant === 'sidepanel') {
     return <Breadcrumbs items={items} />;

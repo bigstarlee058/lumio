@@ -3,8 +3,8 @@
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import type { CustomTableAction } from '@/app/lib/custom-table-actions';
-import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import type { ExportColumn } from '../customTablesHelpers';
 import { getExportColumn, sanitizeFileName, toCsv } from '../customTablesHelpers';
@@ -22,9 +22,13 @@ async function fetchAllTableRows(
     const items = response.data?.items || response.data?.data?.items || [];
     const chunk = Array.isArray(items) ? items : [];
     rows.push(...chunk);
-    if (chunk.length < 500) { break; }
+    if (chunk.length < 500) {
+      break;
+    }
     const nextCursor = chunk[chunk.length - 1]?.rowNumber;
-    if (typeof nextCursor !== 'number' || Number.isNaN(nextCursor)) { break; }
+    if (typeof nextCursor !== 'number' || Number.isNaN(nextCursor)) {
+      break;
+    }
     cursor = nextCursor;
   }
   return rows;
@@ -95,7 +99,9 @@ export function useCustomTablesActions({
   }, []);
 
   const handleDelete = useCallback(async (): Promise<void> => {
-    if (!deleteTarget) return;
+    if (!deleteTarget) {
+      return;
+    }
     const toastId = toast.loading(messages.deletingLabel);
     try {
       await apiClient.delete(`/custom-tables/${deleteTarget.id}`);
@@ -124,7 +130,9 @@ export function useCustomTablesActions({
               .sort((a: ExportColumn, b: ExportColumn) => (a.position || 0) - (b.position || 0))
           : [];
 
-        if (columns.length === 0) { throw new Error('No exportable columns found'); }
+        if (columns.length === 0) {
+          throw new Error('No exportable columns found');
+        }
 
         const rows = await fetchAllTableRows(table.id);
         const headers = columns.map((col: ExportColumn) => col.title || col.key);
@@ -140,7 +148,10 @@ export function useCustomTablesActions({
 
         if (format === 'csv') {
           const csv = toCsv(headers, normalizedRows);
-          triggerBlobDownload(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), `${fileBase}.csv`);
+          triggerBlobDownload(
+            new Blob([csv], { type: 'text/csv;charset=utf-8;' }),
+            `${fileBase}.csv`,
+          );
         } else {
           const xlsx = await import('xlsx');
           const sheet = xlsx.utils.json_to_sheet(normalizedRows);
@@ -148,7 +159,9 @@ export function useCustomTablesActions({
           xlsx.utils.book_append_sheet(workbook, sheet, 'Export');
           const output = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
           triggerBlobDownload(
-            new Blob([output], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+            new Blob([output], {
+              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            }),
             `${fileBase}.xlsx`,
           );
         }

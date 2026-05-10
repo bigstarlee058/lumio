@@ -3,15 +3,16 @@
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { parseISO, isValid, format } from 'date-fns';
 import { ChevronRight } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { format, isValid, parseISO } from 'date-fns';
+import { ActiveRouteFilter } from './ActiveRouteFilter';
 import type {
   StatementFilterDate,
   StatementFilterDateMode,
   StatementFilterDatePreset,
 } from './statement-filters';
-import { tokens } from '@/lib/theme-tokens';
 
 type DatePresetOption = {
   value: StatementFilterDatePreset;
@@ -35,6 +36,8 @@ type DateFilterDropdownProps = {
   trigger: React.ReactNode;
   applyLabel: string;
   resetLabel: string;
+  routeFilterLabel?: string | null;
+  onResetRouteFilter?: () => void;
 };
 
 const ensureDate = (value?: StatementFilterDate | null): StatementFilterDate => ({
@@ -47,7 +50,9 @@ const ensureDate = (value?: StatementFilterDate | null): StatementFilterDate => 
 const resolveFallbackDate = () => new Date().toISOString().slice(0, 10);
 
 const toDateObj = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const parsed = parseISO(value);
   return isValid(parsed) ? parsed : null;
 };
@@ -67,6 +72,8 @@ export function DateFilterDropdown({
   trigger,
   applyLabel,
   resetLabel,
+  routeFilterLabel,
+  onResetRouteFilter,
 }: DateFilterDropdownProps) {
   const current = ensureDate(value);
 
@@ -75,6 +82,15 @@ export function DateFilterDropdown({
 
   return (
     <FilterDropdown open={open} onOpenChange={onOpenChange} trigger={trigger}>
+      {routeFilterLabel && onResetRouteFilter ? (
+        <div style={{ marginBottom: 12 }}>
+          <ActiveRouteFilter
+            label={routeFilterLabel}
+            resetLabel={resetLabel}
+            onReset={onResetRouteFilter}
+          />
+        </div>
+      ) : null}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {presets.map(option => (
@@ -126,8 +142,12 @@ export function DateFilterDropdown({
                     cursor: 'pointer',
                     transition: 'background 0.15s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'none'; }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'var(--muted)';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'none';
+                  }}
                 >
                   <span>{option.label}</span>
                   <ChevronRight size={20} style={{ color: 'var(--muted-foreground)' }} />
@@ -160,10 +180,7 @@ export function DateFilterDropdown({
                     onChange({
                       mode: current.mode,
                       date: dateStr,
-                      dateTo:
-                        current.mode === 'on'
-                          ? toIsoDate(endValue)
-                          : current.dateTo,
+                      dateTo: current.mode === 'on' ? toIsoDate(endValue) : current.dateTo,
                     });
                   }
                 }}

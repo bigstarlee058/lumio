@@ -3,10 +3,10 @@
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
 import { FilterOptionRow } from '@/app/(main)/statements/components/filters/FilterOptionRow';
+import { DollarSign } from '@/app/components/icons';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import { useIntlayer } from '@/app/i18n';
 import Box from '@mui/material/Box';
-import { DollarSign } from '@/app/components/icons';
 import { useEffect, useState } from 'react';
 
 interface CurrencyFilterDropdownProps {
@@ -22,7 +22,11 @@ interface CurrencyFilterDropdownProps {
  * Currencies list is derived from the loaded dataset, not hardcoded.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types, max-lines-per-function
-export function CurrencyFilterDropdown({ currencies, value, onChange }: CurrencyFilterDropdownProps) {
+export function CurrencyFilterDropdown({
+  currencies,
+  value,
+  onChange,
+}: CurrencyFilterDropdownProps) {
   const t = useIntlayer('currencyDisplayToggle');
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<string | null>(value);
@@ -55,7 +59,16 @@ export function CurrencyFilterDropdown({ currencies, value, onChange }: Currency
 
   return (
     <FilterDropdown open={open} onOpenChange={setOpen} trigger={trigger}>
-      <Box sx={{ maxHeight: 280, overflowY: 'auto', paddingRight: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      <Box
+        sx={{
+          maxHeight: 280,
+          overflowY: 'auto',
+          paddingRight: '4px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
         {currencies.map(code => (
           <FilterOptionRow
             key={code}

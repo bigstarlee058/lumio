@@ -52,7 +52,7 @@ export class ProfileConfigService {
     path?: string;
     profile?: BankProfile;
   } {
-    if (!profile.id || !profile.name) {
+    if (!(profile.id && profile.name)) {
       return { success: false, message: 'Profile must have id and name' };
     }
 
@@ -162,10 +162,18 @@ export class ProfileConfigService {
 
   private validateProfile(profile: BankProfile): ProfileValidationError[] {
     const errors: ProfileValidationError[] = [];
-    if (!profile.id) errors.push({ field: 'id', message: 'id is required' });
-    if (!profile.name) errors.push({ field: 'name', message: 'name is required' });
-    if (!profile.country) errors.push({ field: 'country', message: 'country is required' });
-    if (!profile.currency) errors.push({ field: 'currency', message: 'currency is required' });
+    if (!profile.id) {
+      errors.push({ field: 'id', message: 'id is required' });
+    }
+    if (!profile.name) {
+      errors.push({ field: 'name', message: 'name is required' });
+    }
+    if (!profile.country) {
+      errors.push({ field: 'country', message: 'country is required' });
+    }
+    if (!profile.currency) {
+      errors.push({ field: 'currency', message: 'currency is required' });
+    }
     return errors;
   }
 }

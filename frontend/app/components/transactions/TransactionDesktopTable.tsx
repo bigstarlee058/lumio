@@ -23,24 +23,46 @@ type ColumnTranslations = {
   columnCategory: { value: string };
 };
 
-function TableHeader({ sort, allSelected, someSelected, onSelectAll, onToggleSort, t }: TableHeaderProps): React.ReactElement {
+function TableHeader({
+  sort,
+  allSelected,
+  someSelected,
+  onSelectAll,
+  onToggleSort,
+  t,
+}: TableHeaderProps): React.ReactElement {
   return (
     <thead className="lumio-tx-table__thead">
       <tr>
         <th className="lumio-tx-table__th--expand" />
         <th className="lumio-tx-table__th--checkbox">
-          <Checkbox checked={allSelected} indeterminate={someSelected && !allSelected} onCheckedChange={onSelectAll} style={{ height: 20, width: 20 }} />
+          <Checkbox
+            checked={allSelected}
+            indeterminate={someSelected && !allSelected}
+            onCheckedChange={onSelectAll}
+            style={{ height: 20, width: 20 }}
+          />
         </th>
         <th className="lumio-tx-table__th">
-          <button type="button" onClick={() => onToggleSort('date')} className="lumio-tx-table__sort-btn">
-            {t.columnDate.value}<SortIcon sort={sort} field="date" />
+          <button
+            type="button"
+            onClick={() => onToggleSort('date')}
+            className="lumio-tx-table__sort-btn"
+          >
+            {t.columnDate.value}
+            <SortIcon sort={sort} field="date" />
           </button>
         </th>
         <th className="lumio-tx-table__th">{t.columnCounterparty.value}</th>
         <th className="lumio-tx-table__th">{t.columnPurpose.value}</th>
         <th className="lumio-tx-table__th--right">
-          <button type="button" onClick={() => onToggleSort('amount')} className="lumio-tx-table__sort-btn">
-            {t.columnDebit.value}<SortIcon sort={sort} field="amount" />
+          <button
+            type="button"
+            onClick={() => onToggleSort('amount')}
+            className="lumio-tx-table__sort-btn"
+          >
+            {t.columnDebit.value}
+            <SortIcon sort={sort} field="amount" />
           </button>
         </th>
         <th className="lumio-tx-table__th--right">{t.columnCredit.value}</th>
@@ -71,22 +93,58 @@ interface TransactionDesktopTableProps {
 }
 
 export function TransactionDesktopTable({
-  transactions, categories, selectedIds, expandedIds, sort,
-  allSelected, someSelected, handlers, formatters,
-  onSelectAll, onToggleSort,
-  noResultsLabel, categoryLabel, uncategorizedLabel, columnBinLabel, columnDateLabel, t,
+  transactions,
+  categories,
+  selectedIds,
+  expandedIds,
+  sort,
+  allSelected,
+  someSelected,
+  handlers,
+  formatters,
+  onSelectAll,
+  onToggleSort,
+  noResultsLabel,
+  categoryLabel,
+  uncategorizedLabel,
+  columnBinLabel,
+  columnDateLabel,
+  t,
 }: TransactionDesktopTableProps): React.ReactElement {
   return (
     <div className="lumio-tx-table">
       <div className="lumio-tx-table__scroll">
         <table className="lumio-tx-table__table">
-          <TableHeader sort={sort} allSelected={allSelected} someSelected={someSelected} onSelectAll={onSelectAll} onToggleSort={onToggleSort} t={t} />
+          <TableHeader
+            sort={sort}
+            allSelected={allSelected}
+            someSelected={someSelected}
+            onSelectAll={onSelectAll}
+            onToggleSort={onToggleSort}
+            t={t}
+          />
           <tbody>
             {transactions.length === 0 ? (
-              <tr><td colSpan={9} className="lumio-tx-table__no-results">{noResultsLabel}</td></tr>
+              <tr>
+                <td colSpan={9} className="lumio-tx-table__no-results">
+                  {noResultsLabel}
+                </td>
+              </tr>
             ) : (
               transactions.map(tx => (
-                <TransactionRow key={tx.id} tx={tx} isExpanded={expandedIds.has(tx.id)} isSelected={selectedIds.includes(tx.id)} categories={categories} handlers={handlers} formatters={formatters} categoryLabel={categoryLabel} uncategorizedLabel={uncategorizedLabel} columnBinLabel={columnBinLabel} columnDateLabel={columnDateLabel} />
+                <TransactionRow
+                  key={tx.id}
+                  tx={tx}
+                  isExpanded={expandedIds.has(tx.id)}
+                  isSelected={selectedIds.includes(tx.id)}
+                  categories={categories}
+                  handlers={handlers}
+                  formatters={formatters}
+                  categoryLabel={categoryLabel}
+                  uncategorizedLabel={uncategorizedLabel}
+                  columnBinLabel={columnBinLabel}
+                  columnDateLabel={columnDateLabel}
+                />
               ))
             )}
           </tbody>

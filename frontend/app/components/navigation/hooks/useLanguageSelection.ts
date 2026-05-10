@@ -1,9 +1,9 @@
 'use client';
 
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/app/lib/locale';
 import { useCallback, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import type { AppLanguage } from '../helpers/navigation-config';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from '@/app/lib/locale';
 
 interface Language {
   code: AppLanguage;
@@ -32,24 +32,23 @@ export function useLanguageSelection({
   const [languageModalOpen, setLanguageModalOpen] = useState(false);
   const [languageSearch, setLanguageSearch] = useState('');
 
-  const languages = useMemo(
-    (): Language[] => {
-      const available = availableLocales.map(String);
-      return SUPPORTED_LOCALES
-        .filter(code => available.includes(code))
-        .map(code => ({
-          code,
-          label: languageNames[code]?.value ?? code,
-          ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
-        }));
-    },
-    [availableLocales, languageModal.defaultLanguageNote, languageNames],
-  );
+  const languages = useMemo((): Language[] => {
+    const available = availableLocales.map(String);
+    return SUPPORTED_LOCALES.filter(code => available.includes(code)).map(code => ({
+      code,
+      label: languageNames[code]?.value ?? code,
+      ...(code === DEFAULT_LOCALE ? { note: languageModal.defaultLanguageNote.value } : {}),
+    }));
+  }, [availableLocales, languageModal.defaultLanguageNote, languageNames]);
 
   const normalizedLocale = (locale as AppLanguage) || 'ru';
 
   const languageLabel = useMemo(() => {
-    return languages.find(l => l.code === normalizedLocale)?.label ?? (languageNames[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+    return (
+      languages.find(l => l.code === normalizedLocale)?.label ??
+      languageNames[DEFAULT_LOCALE]?.value ??
+      DEFAULT_LOCALE
+    );
   }, [languages, languageNames, normalizedLocale]);
 
   const filteredLanguages = useMemo(() => {
@@ -63,7 +62,10 @@ export function useLanguageSelection({
       setLocale(code);
       setLanguageModalOpen(false);
       setLanguageSearch('');
-      const selectedLabel = languages.find(l => l.code === code)?.label ?? (languageNames[DEFAULT_LOCALE]?.value ?? DEFAULT_LOCALE);
+      const selectedLabel =
+        languages.find(l => l.code === code)?.label ??
+        languageNames[DEFAULT_LOCALE]?.value ??
+        DEFAULT_LOCALE;
       toast.success(`${languageModal.savedToastPrefix.value}: ${selectedLabel}`);
       setTimeout(() => {
         window.location.reload();

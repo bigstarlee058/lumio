@@ -57,14 +57,18 @@ export function useRowActions({
   messages,
 }: UseRowActionsParams): UseRowActionsReturn {
   const createRow = useCallback(async (): Promise<CustomTableGridRow | null> => {
-    if (!tableId) return null;
+    if (!tableId) {
+      return null;
+    }
     const toastId = toast.loading(messages.addRowLoading);
     try {
       const response = await apiClient.post(`/custom-tables/${tableId}/rows`, { data: {} });
       const payload = response.data?.data ?? response.data?.item ?? response.data;
       const createdRaw = Array.isArray(payload) ? payload[0] : payload;
       const created = getCreatedRowResponse(createdRaw);
-      if (!created) throw new Error('Invalid create row response');
+      if (!created) {
+        throw new Error('Invalid create row response');
+      }
       created.rowNumber = created.rowNumber || rows.length + 1;
       setRows(prev => [...prev, created]);
       toast.success(messages.addRowSuccess, { id: toastId });
@@ -79,14 +83,18 @@ export function useRowActions({
 
   const updateCellFromGrid = useCallback(
     async (rowId: string, columnKey: string, value: CustomTableCellValue) => {
-      if (!tableId) return;
+      if (!tableId) {
+        return;
+      }
       if (rowId.startsWith('temp-')) {
         setRows(prev =>
           prev.map(r =>
             r.id === rowId ? { ...r, data: { ...(r.data || {}), [columnKey]: value } } : r,
           ),
         );
-        if (columnKey === paidColKey) refreshStats();
+        if (columnKey === paidColKey) {
+          refreshStats();
+        }
         return;
       }
       try {
@@ -98,7 +106,9 @@ export function useRowActions({
             r.id === rowId ? { ...r, data: { ...(r.data || {}), [columnKey]: value } } : r,
           ),
         );
-        if (columnKey === paidColKey) refreshStats();
+        if (columnKey === paidColKey) {
+          refreshStats();
+        }
       } catch (error) {
         console.error('Failed to update cell:', error);
         toast.error(messages.saveValueFailed);
@@ -109,8 +119,12 @@ export function useRowActions({
 
   const updateRowFromDrawer = useCallback(
     async (rowId: string, patchData: CustomTableRowPatch) => {
-      if (!tableId) return;
-      if (!Object.keys(patchData).length) return;
+      if (!tableId) {
+        return;
+      }
+      if (!Object.keys(patchData).length) {
+        return;
+      }
       if (rowId.startsWith('temp-')) {
         setRows(prev =>
           prev.map(r => (r.id === rowId ? { ...r, data: { ...(r.data || {}), ...patchData } } : r)),
@@ -133,7 +147,9 @@ export function useRowActions({
 
   const updateRowStyle = useCallback(
     async (rowId: string, styles: CustomTableRowStyles) => {
-      if (!tableId) return;
+      if (!tableId) {
+        return;
+      }
       try {
         const row = rows.find(r => r.id === rowId);
         const mergedStyles = { ...(row?.styles || {}), ...styles };

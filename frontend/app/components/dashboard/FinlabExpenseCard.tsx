@@ -1,9 +1,9 @@
 'use client';
 
+import { Info } from '@/app/components/icons';
+import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
-import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
@@ -95,13 +95,29 @@ export function FinlabExpenseCard({
     >
       <div>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--text-secondary)', fontWeight: 500, fontSize: 14 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.75,
+              color: 'var(--text-secondary)',
+              fontWeight: 500,
+              fontSize: 14,
+            }}
+          >
             Expense Analysis
             <Info size={14} color="var(--muted-foreground)" />
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
-          <Typography sx={{ fontSize: 32, fontWeight: 700, color: 'var(--foreground)', letterSpacing: '-0.02em' }}>
+          <Typography
+            sx={{
+              fontSize: 32,
+              fontWeight: 700,
+              color: 'var(--foreground)',
+              letterSpacing: '-0.02em',
+            }}
+          >
             {formatAmount(totalExpense)}
           </Typography>
           <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -120,7 +136,9 @@ export function FinlabExpenseCard({
               ⬊ {pct > 0 ? '+' : ''}
               {pct.toFixed(1)}%
             </span>
-            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500 }}>VS This Month</Typography>
+            <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)', fontWeight: 500 }}>
+              VS This Month
+            </Typography>
           </Box>
         </Box>
       </div>
@@ -134,7 +152,9 @@ export function FinlabExpenseCard({
             <ReactECharts option={option} style={{ height: '100px', width: '100%' }} />
           </Box>
         ) : (
-          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Box
+            sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          >
             <Typography sx={{ fontSize: 12, color: 'var(--muted-foreground)' }}>No data</Typography>
           </Box>
         )}

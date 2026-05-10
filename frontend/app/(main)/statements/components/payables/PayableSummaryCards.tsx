@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import { Banknote, CalendarClock, CheckCircle2, Clock3 } from '@/app/components/icons';
 import { Card } from '@/app/components/ui/card';
 import type { PayablesSummary } from '@/app/lib/payables-api';
-import { Banknote, CalendarClock, CheckCircle2, Clock3 } from '@/app/components/icons';
+import React from 'react';
 import { formatMoney, getSummaryCardItems } from './payables-utils';
 
 interface PayableSummaryCardsProps {
@@ -14,7 +14,7 @@ interface PayableSummaryCardsProps {
     toPay: string;
     overdue: string;
     dueThisWeek: string;
-    paidThisMonth: string;
+    paidTotal: string;
     itemsSuffix: string;
   };
 }
@@ -23,7 +23,7 @@ const cardIcons = {
   toPay: Banknote,
   overdue: Clock3,
   dueThisWeek: CalendarClock,
-  paidThisMonth: CheckCircle2,
+  paidTotal: CheckCircle2,
 } as const;
 
 // eslint-disable-next-line max-lines-per-function
@@ -46,7 +46,10 @@ function PayableSummaryCards({
         const count = 'count' in item ? item.count : undefined;
 
         return (
-          <Card key={item.key} style={{ border: '1px solid var(--border-color)', boxShadow: 'none' }}>
+          <Card
+            key={item.key}
+            style={{ border: '1px solid var(--border-color)', boxShadow: 'none' }}
+          >
             <div className="lumio-payable-summary__card-content">
               <div className="lumio-payable-summary__card-header">
                 <span>{item.label}</span>
@@ -55,7 +58,14 @@ function PayableSummaryCards({
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--foreground)' }}>
+                <div
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 700,
+                    letterSpacing: '-0.025em',
+                    color: 'var(--foreground)',
+                  }}
+                >
                   {formatMoney(item.value, currency, locale)}
                 </div>
                 {typeof count === 'number' ? (

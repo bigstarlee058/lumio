@@ -37,7 +37,9 @@ interface UseFilterOptionsResult {
 }
 
 function buildUserOption(s: StatementForOptions): FromOption | null {
-  if (!s.user?.id) return null;
+  if (!s.user?.id) {
+    return null;
+  }
   return {
     id: `user:${s.user.id}`,
     label: s.user.name || s.user.email || 'User',
@@ -47,13 +49,19 @@ function buildUserOption(s: StatementForOptions): FromOption | null {
 }
 
 function buildBankLabel(s: StatementForOptions): string {
-  if (isGmailStatement(s as Parameters<typeof isGmailStatement>[0])) return 'Gmail';
-  if (isStoreReceiptStatement(s as Parameters<typeof isStoreReceiptStatement>[0])) return 'Receipt';
+  if (isGmailStatement(s as Parameters<typeof isGmailStatement>[0])) {
+    return 'Gmail';
+  }
+  if (isStoreReceiptStatement(s as Parameters<typeof isStoreReceiptStatement>[0])) {
+    return 'Receipt';
+  }
   return getBankDisplayName(s.bankName);
 }
 
 function buildBankOption(s: StatementForOptions): FromOption | null {
-  if (!s.bankName) return null;
+  if (!s.bankName) {
+    return null;
+  }
   return {
     id: `bank:${s.bankName}`,
     label: buildBankLabel(s),
@@ -75,10 +83,14 @@ export function useFilterOptions({
 
     for (const s of stagedStatements) {
       const userOpt = buildUserOption(s);
-      if (userOpt && !seen.has(userOpt.id)) seen.set(userOpt.id, userOpt);
+      if (userOpt && !seen.has(userOpt.id)) {
+        seen.set(userOpt.id, userOpt);
+      }
 
       const bankOpt = buildBankOption(s);
-      if (bankOpt && !seen.has(bankOpt.id)) seen.set(bankOpt.id, bankOpt);
+      if (bankOpt && !seen.has(bankOpt.id)) {
+        seen.set(bankOpt.id, bankOpt);
+      }
     }
 
     return Array.from(seen.values());
@@ -88,7 +100,9 @@ export function useFilterOptions({
     const unique = new Set<string>();
     for (const s of stagedStatements) {
       const cur = resolveStatementCurrency(s as Parameters<typeof resolveStatementCurrency>[0]);
-      if (cur) unique.add(cur);
+      if (cur) {
+        unique.add(cur);
+      }
     }
     return Array.from(unique.values());
   }, [stagedStatements]);

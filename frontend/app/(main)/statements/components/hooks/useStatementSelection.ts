@@ -13,7 +13,6 @@ import {
   DUPLICATE_GROUP_TONES,
   type DuplicateGroupTone,
   type StatementLike,
-  getBulkActionErrorOptions,
   getDeleteEndpoint,
   getExportEndpoint,
   isGmailStatement,
@@ -70,7 +69,9 @@ function classifyDuplicatesForMerge(
 
   for (const statement of statements) {
     const meta = duplicateMetaById.get(statement.id);
-    if (!meta || statement.id === meta.primaryId) continue;
+    if (!meta || statement.id === meta.primaryId) {
+      continue;
+    }
 
     if (isGmailStatement(statement)) {
       const primary = statementById.get(meta.primaryId);
@@ -96,10 +97,18 @@ function tabulateDeleteResults(
   let failed = 0;
   results.forEach((result, index) => {
     const id = ids[index];
-    if (!id) return;
-    if (result.status === 'fulfilled') { succeeded.push(id); return; }
+    if (!id) {
+      return;
+    }
+    if (result.status === 'fulfilled') {
+      succeeded.push(id);
+      return;
+    }
     const status = getApiErrorStatus(result.reason);
-    if (status === 404 || status === 410) { succeeded.push(id); return; }
+    if (status === 404 || status === 410) {
+      succeeded.push(id);
+      return;
+    }
     failed += 1;
   });
   return { succeeded, failed };
@@ -113,8 +122,13 @@ function tabulateMarkResults(
   let failed = 0;
   results.forEach((result, index) => {
     const receiptId = entries[index]?.[0];
-    if (!receiptId) return;
-    if (result.status === 'fulfilled') { succeeded.push(receiptId); return; }
+    if (!receiptId) {
+      return;
+    }
+    if (result.status === 'fulfilled') {
+      succeeded.push(receiptId);
+      return;
+    }
     failed += 1;
   });
   return { succeeded, failed };
@@ -201,10 +215,14 @@ export function useStatementSelection({
 
   // Close bulk-action menu on outside click
   useEffect(() => {
-    if (!selectedActionsOpen) return;
+    if (!selectedActionsOpen) {
+      return;
+    }
 
     const handleOutsideClick = (event: MouseEvent): void => {
-      if (!selectedActionsRef.current) return;
+      if (!selectedActionsRef.current) {
+        return;
+      }
       if (!selectedActionsRef.current.contains(event.target as Node)) {
         setSelectedActionsOpen(false);
       }
@@ -247,22 +265,16 @@ export function useStatementSelection({
 
   // eslint-disable-next-line complexity
   const handleExportSelected = async (): Promise<void> => {
-    if (selectedStatementIds.length === 0) return;
+    if (selectedStatementIds.length === 0) {
+      return;
+    }
 
     try {
-      const selectedStatements = displayStatements.filter(statement =>
+      const exportableStatements = displayStatements.filter(statement =>
         selectedStatementIds.includes(statement.id),
-      );
-      const exportableStatements = selectedStatements.filter(
-        statement => !isGmailStatement(statement),
       );
 
       if (exportableStatements.length === 0) {
-        setSelectedActionsOpen(false);
-        toast.error(
-          'Selected receipts cannot be exported from this menu',
-          getBulkActionErrorOptions('statements-bulk-export-unsupported'),
-        );
         return;
       }
 
@@ -290,28 +302,24 @@ export function useStatementSelection({
   };
 
   const handleDeleteSelected = async () => {
-    if (selectedStatementIds.length === 0) return;
+    if (selectedStatementIds.length === 0) {
+      return;
+    }
 
-    const selectedStatements = displayStatements.filter(statement =>
+    const deletableStatements = displayStatements.filter(statement =>
       selectedStatementIds.includes(statement.id),
-    );
-    const deletableStatements = selectedStatements.filter(
-      statement => !isGmailStatement(statement),
     );
 
     if (deletableStatements.length === 0) {
-      setSelectedActionsOpen(false);
-      toast.error(
-        'Selected receipts cannot be deleted from this menu',
-        getBulkActionErrorOptions('statements-bulk-delete-unsupported'),
-      );
       return;
     }
 
     const confirmed = window.confirm(
-      `Move ${deletableStatements.length} selected statement(s) to trash?`,
+      `Move ${deletableStatements.length} selected item(s) to trash?`,
     );
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     try {
       const results = await Promise.allSettled(
@@ -322,7 +330,9 @@ export function useStatementSelection({
 
       results.forEach((result, index) => {
         const statementId = deletableStatements[index]?.id;
-        if (!statementId) return;
+        if (!statementId) {
+          return;
+        }
         if (result.status === 'fulfilled') {
           deletedIds.push(statementId);
           return;
@@ -356,7 +366,9 @@ export function useStatementSelection({
   };
 
   const handleMarkSelectedAsDuplicate = () => {
-    if (selectedStatementIds.length === 0) return;
+    if (selectedStatementIds.length === 0) {
+      return;
+    }
 
     setDuplicateOverrides(prev => {
       const next = { ...prev };
@@ -388,7 +400,9 @@ export function useStatementSelection({
   };
 
   const handleDismissSelectedDuplicates = () => {
-    if (selectedStatementIds.length === 0) return;
+    if (selectedStatementIds.length === 0) {
+      return;
+    }
 
     setDuplicateOverrides(prev => {
       const next = { ...prev };
@@ -431,7 +445,9 @@ export function useStatementSelection({
     }
 
     const { statementsToDelete, gmailToMark, skippedGmailCount } = classifyDuplicatesForMerge(
-      selectedDuplicateStatements, displayStatements, duplicateMetaById,
+      selectedDuplicateStatements,
+      displayStatements,
+      duplicateMetaById,
     );
 
     if (statementsToDelete.size === 0 && gmailToMark.size === 0) {
@@ -440,7 +456,9 @@ export function useStatementSelection({
     }
 
     const confirmMessage = `Merge selected duplicates? Keep primary records, merge ${gmailToMark.size} receipt(s) and move ${statementsToDelete.size} statement(s) to trash.`;
-    if (!window.confirm(confirmMessage)) return;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
 
     try {
       const statementIdsToDelete = Array.from(statementsToDelete);

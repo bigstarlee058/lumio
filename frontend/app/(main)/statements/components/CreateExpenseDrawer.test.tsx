@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { fireEvent, screen } from '@testing-library/react';
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -160,7 +159,9 @@ describe('CreateExpenseDrawer mobile uploads', () => {
     expect(screen.queryByText('Upload receipts')).not.toBeInTheDocument();
     expect(screen.queryByText('Choose files')).not.toBeInTheDocument();
 
-    const fileInputs = Array.from(document.querySelectorAll('input[type="file"]')) as HTMLInputElement[];
+    const fileInputs = Array.from(
+      document.querySelectorAll('input[type="file"]'),
+    ) as HTMLInputElement[];
     expect(fileInputs).toHaveLength(2);
     expect(fileInputs[0]?.getAttribute('capture')).toBe('environment');
     expect(fileInputs[0]?.getAttribute('accept')).toBe('image/*');

@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import { resolveOnboardingBootstrapLocale } from '../lib/locale-bootstrap';
 import type { OnboardingData } from '../useOnboardingWizard';
 import {
-  detectTimeZone,
   EMPTY_INTEGRATION_STATE,
+  type OnboardingIntegrationKey,
+  detectTimeZone,
   fetchWorkspaceInitialData,
   refreshAllIntegrationStatuses,
-  type OnboardingIntegrationKey,
 } from './useOnboardingActions';
 
 const DEFAULT_CURRENCY = 'USD';
@@ -59,7 +59,9 @@ export function useOnboardingInit({
   const isCreateWorkspaceFlow = flow.mode === 'create-workspace';
 
   useEffect((): void => {
-    if (!user?.workspaceId) return;
+    if (!user?.workspaceId) {
+      return;
+    }
     const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
     if (!currentWorkspaceId) {
       localStorage.setItem('currentWorkspaceId', user.workspaceId);
@@ -70,15 +72,21 @@ export function useOnboardingInit({
   txFnRef.current = txFn;
 
   useEffect((): (() => void) => {
-    if (authLoading || !user || bootstrapComplete) return (): void => {};
-    if (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser) return (): void => {};
+    if (authLoading || !user || bootstrapComplete) {
+      return (): void => {};
+    }
+    if (user.onboardingCompletedAt && flow.shouldRedirectCompletedUser) {
+      return (): void => {};
+    }
 
     let cancelled = false;
 
     const resolvedLocale = resolveOnboardingBootstrapLocale(appLocale);
 
     const initCreate = async (): Promise<void> => {
-      if (cancelled) return;
+      if (cancelled) {
+        return;
+      }
       const initialData: Partial<OnboardingData> = {
         locale: resolvedLocale,
         timeZone: user.timeZone || detectTimeZone(),
@@ -113,7 +121,12 @@ export function useOnboardingInit({
         }
       } catch {
         if (!cancelled) {
-          setError(txFnRef.current(['errors', 'workspaceLoadFailed'], 'Failed to load workspace settings.'));
+          setError(
+            txFnRef.current(
+              ['errors', 'workspaceLoadFailed'],
+              'Failed to load workspace settings.',
+            ),
+          );
           setIsInitializing(false);
         }
       }
@@ -131,7 +144,16 @@ export function useOnboardingInit({
     return (): void => {
       cancelled = true;
     };
-  }, [authLoading, bootstrapComplete, flow.shouldRedirectCompletedUser, isCreateWorkspaceFlow, appLocale, setLocale, updateData, user]);
+  }, [
+    authLoading,
+    bootstrapComplete,
+    flow.shouldRedirectCompletedUser,
+    isCreateWorkspaceFlow,
+    appLocale,
+    setLocale,
+    updateData,
+    user,
+  ]);
 
   return {
     isInitializing,

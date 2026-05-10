@@ -3,7 +3,6 @@ import { IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { BaseReportQueryDto } from './base-report-query.dto';
 
 export class TopCategoriesQueryDto extends BaseReportQueryDto {
-
   @IsOptional()
   @Transform(({ value }) => (value === undefined ? undefined : Number(value)))
   @IsInt()

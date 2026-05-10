@@ -1,6 +1,10 @@
 'use client';
 
 import {
+  deriveVisibleFilterScreens,
+  reconcileFiltersWithColumns,
+} from '@/app/(main)/statements/components/StatementsListView.utils';
+import {
   DEFAULT_STATEMENT_COLUMNS,
   type StatementColumn,
   type StatementColumnId,
@@ -15,10 +19,6 @@ import {
   resetSingleStatementFilter,
   saveStatementFilters,
 } from '@/app/(main)/statements/components/filters/statement-filters';
-import {
-  deriveVisibleFilterScreens,
-  reconcileFiltersWithColumns,
-} from '@/app/(main)/statements/components/StatementsListView.utils';
 import { useEffect, useMemo, useState } from 'react';
 
 export interface UseStatementsFilterStateResult {
@@ -63,37 +63,68 @@ interface UseStatementsFilterStateParams {
 // Each block = max 4 lines of `if (f.x) n += 1` to stay below complexity 6
 function countFiltersA(f: StatementFilters): number {
   let n = 0;
-  if (f.type) n += 1;
-  if (f.statuses.length > 0) n += 1;
-  if (f.from.length > 0) n += 1;
-  if (f.to.length > 0) n += 1;
+  if (f.type) {
+    n += 1;
+  }
+  if (f.statuses.length > 0) {
+    n += 1;
+  }
+  if (f.from.length > 0) {
+    n += 1;
+  }
+  if (f.to.length > 0) {
+    n += 1;
+  }
   return n;
 }
 
 function countFiltersB(f: StatementFilters): number {
   let n = 0;
-  if (f.date?.preset) n += 1;
-  else if (f.date?.mode) n += 1;
-  if (f.keywords.trim()) n += 1;
-  if (f.amountMin !== null || f.amountMax !== null) n += 1;
+  if (f.date?.preset) {
+    n += 1;
+  } else if (f.date?.mode) {
+    n += 1;
+  }
+  if (f.keywords.trim()) {
+    n += 1;
+  }
+  if (f.amountMin !== null || f.amountMax !== null) {
+    n += 1;
+  }
   return n;
 }
 
 function countFiltersC(f: StatementFilters): number {
   let n = 0;
-  if (f.approved !== null) n += 1;
-  if (f.billable !== null) n += 1;
-  if (f.groupBy) n += 1;
-  if (f.has.length > 0) n += 1;
+  if (f.approved !== null) {
+    n += 1;
+  }
+  if (f.billable !== null) {
+    n += 1;
+  }
+  if (f.groupBy) {
+    n += 1;
+  }
+  if (f.has.length > 0) {
+    n += 1;
+  }
   return n;
 }
 
 function countFiltersD(f: StatementFilters): number {
   let n = 0;
-  if (f.currencies.length > 0) n += 1;
-  if (f.exported !== null) n += 1;
-  if (f.paid !== null) n += 1;
-  if (f.limit !== null) n += 1;
+  if (f.currencies.length > 0) {
+    n += 1;
+  }
+  if (f.exported !== null) {
+    n += 1;
+  }
+  if (f.paid !== null) {
+    n += 1;
+  }
+  if (f.limit !== null) {
+    n += 1;
+  }
   return n;
 }
 
@@ -187,17 +218,37 @@ export function useStatementsFilterState({
   };
 
   return {
-    draftFilters, appliedFilters, setDraftFilters, setAppliedFilters,
-    filtersDrawerScreen, setFiltersDrawerScreen,
-    typeDropdownOpen, setTypeDropdownOpen,
-    statusDropdownOpen, setStatusDropdownOpen,
-    dateDropdownOpen, setDateDropdownOpen,
-    fromDropdownOpen, setFromDropdownOpen,
-    filtersDrawerOpen, setFiltersDrawerOpen,
-    columnsDrawerOpen, setColumnsDrawerOpen,
-    columns, draftColumns, setDraftColumns,
-    activeFilterCount, visibleFilterScreens,
-    updateFilter, applyFilterChanges, applyAndClose, resetAndClose, resetAllFilters,
-    updateColumnsToggle, handleReorderColumns, handleSaveColumns, handleColumnsOpen,
+    draftFilters,
+    appliedFilters,
+    setDraftFilters,
+    setAppliedFilters,
+    filtersDrawerScreen,
+    setFiltersDrawerScreen,
+    typeDropdownOpen,
+    setTypeDropdownOpen,
+    statusDropdownOpen,
+    setStatusDropdownOpen,
+    dateDropdownOpen,
+    setDateDropdownOpen,
+    fromDropdownOpen,
+    setFromDropdownOpen,
+    filtersDrawerOpen,
+    setFiltersDrawerOpen,
+    columnsDrawerOpen,
+    setColumnsDrawerOpen,
+    columns,
+    draftColumns,
+    setDraftColumns,
+    activeFilterCount,
+    visibleFilterScreens,
+    updateFilter,
+    applyFilterChanges,
+    applyAndClose,
+    resetAndClose,
+    resetAllFilters,
+    updateColumnsToggle,
+    handleReorderColumns,
+    handleSaveColumns,
+    handleColumnsOpen,
   };
 }

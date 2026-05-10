@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client';
 
+import { AlertCircle } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -8,15 +9,14 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { formatDateTime } from '@/app/lib/format-datetime';
 import { getPickerDocName, pickDriveFolder } from '@/app/lib/googleDrivePicker';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { AlertCircle } from '@/app/components/icons';
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { useTheme } from 'next-themes';
 import { IntegrationStatusCard } from '../components/IntegrationStatusCard';
 import { useIntegrationStatus } from '../hooks/useIntegrationStatus';
-import { tokens } from '@/lib/theme-tokens';
 
 type DriveSettings = {
   folderId?: string | null;
@@ -39,7 +39,15 @@ function DriveLoadingView(): React.JSX.Element {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
-    <Box sx={{ display: 'flex', minHeight: '60vh', alignItems: 'center', justifyContent: 'center', color: c.ink500 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        minHeight: '60vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: c.ink500,
+      }}
+    >
       <Spinner size={24} />
     </Box>
   );
@@ -50,8 +58,19 @@ function DriveNotLoggedInView({ t }: { t: DrivePageT }): React.JSX.Element {
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
     <Box sx={{ maxWidth: 768, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-      <Box sx={{ borderRadius: tokens.radius.lg, border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', textAlign: 'center' }}>
-        <Typography style={{ color: c.ink800, fontWeight: 600, marginBottom: 8 }}>{t.status.disconnected.value}</Typography>
+      <Box
+        sx={{
+          borderRadius: tokens.radius.lg,
+          border: `1px solid ${c.ink150}`,
+          bgcolor: 'background.paper',
+          p: 3,
+          boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+          textAlign: 'center',
+        }}
+      >
+        <Typography style={{ color: c.ink800, fontWeight: 600, marginBottom: 8 }}>
+          {t.status.disconnected.value}
+        </Typography>
         <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.header.subtitle}</Typography>
       </Box>
     </Box>
@@ -68,18 +87,47 @@ type DriveSettingsPanelProps = {
 };
 
 // eslint-disable-next-line max-lines-per-function
-function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpdateSettings }: DriveSettingsPanelProps): React.JSX.Element {
+function DriveSettingsPanel({
+  status,
+  t,
+  saving,
+  userLocale,
+  onPickFolder,
+  onUpdateSettings,
+}: DriveSettingsPanelProps): React.JSX.Element {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
-    <Box sx={{ borderRadius: tokens.radius.lg, border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)' }}>
+    <Box
+      sx={{
+        borderRadius: tokens.radius.lg,
+        border: `1px solid ${c.ink150}`,
+        bgcolor: 'background.paper',
+        p: 3,
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+      }}
+    >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>{t.settings.title}</Typography>
+        <Typography style={{ fontSize: 18, fontWeight: 600, color: c.ink900 }}>
+          {t.settings.title}
+        </Typography>
         <button
           type="button"
           onClick={onPickFolder}
           disabled={!status?.connected || saving}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1px solid var(--color-primary)', borderRadius: tokens.radius.md, padding: '6px 16px', fontSize: 14, fontWeight: 600, color: 'var(--color-primary)', background: 'transparent', cursor: 'pointer' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            border: '1px solid var(--color-primary)',
+            borderRadius: tokens.radius.md,
+            padding: '6px 16px',
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--color-primary)',
+            background: 'transparent',
+            cursor: 'pointer',
+          }}
         >
           {t.actions.pickFolder}
         </button>
@@ -88,7 +136,9 @@ function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpd
         <Stack spacing={0.5}>
           <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.folder}</Typography>
           <Typography style={{ fontWeight: 500, color: c.ink900 }}>
-            {status?.settings?.folderName || status?.settings?.folderId || t.settings.folderPlaceholder}
+            {status?.settings?.folderName ||
+              status?.settings?.folderId ||
+              t.settings.folderPlaceholder}
           </Typography>
         </Stack>
         <Stack spacing={0.5}>
@@ -98,11 +148,15 @@ function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpd
           </Typography>
         </Stack>
         <Stack spacing={1}>
-          <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.syncEnabled}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500 }}>
+            {t.settings.syncEnabled}
+          </Typography>
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
             <Checkbox
               checked={status?.settings?.syncEnabled ?? true}
-              onCheckedChange={checked => void onUpdateSettings({ syncEnabled: checked as boolean })}
+              onCheckedChange={checked =>
+                void onUpdateSettings({ syncEnabled: checked as boolean })
+              }
               disabled={!status?.connected || saving}
             />
             <Typography style={{ fontSize: 14, color: c.ink800 }}>
@@ -117,12 +171,21 @@ function DriveSettingsPanel({ status, t, saving, userLocale, onPickFolder, onUpd
             value={status?.settings?.syncTime || '03:00'}
             onChange={e => void onUpdateSettings({ syncTime: e.target.value })}
             disabled={!status?.connected || saving}
-            style={{ width: '100%', border: `1px solid ${c.ink150}`, borderRadius: tokens.radius.md, padding: '8px 12px', fontSize: 14, color: c.ink900 }}
+            style={{
+              width: '100%',
+              border: `1px solid ${c.ink150}`,
+              borderRadius: tokens.radius.md,
+              padding: '8px 12px',
+              fontSize: 14,
+              color: c.ink900,
+            }}
           />
         </Stack>
         <Stack spacing={0.5}>
           <Typography style={{ fontSize: 14, color: c.ink500 }}>{t.settings.timeZone}</Typography>
-          <Typography style={{ fontWeight: 500, color: c.ink900 }}>{status?.settings?.timeZone || 'UTC'}</Typography>
+          <Typography style={{ fontWeight: 500, color: c.ink900 }}>
+            {status?.settings?.timeZone || 'UTC'}
+          </Typography>
         </Stack>
       </Box>
     </Box>
@@ -133,12 +196,27 @@ function DriveInfoPanel({ t }: { t: DrivePageT }): React.JSX.Element {
   const { resolvedTheme } = useTheme();
   const c = resolvedTheme === 'dark' ? tokens.dark.color : tokens.color;
   return (
-    <Box sx={{ borderRadius: tokens.radius.lg, border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)', height: 'fit-content' }}>
+    <Box
+      sx={{
+        borderRadius: tokens.radius.lg,
+        border: `1px solid ${c.ink150}`,
+        bgcolor: 'background.paper',
+        p: 3,
+        boxShadow: '0 1px 2px 0 rgba(0,0,0,0.05)',
+        height: 'fit-content',
+      }}
+    >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-        <AlertCircle style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }} />
+        <AlertCircle
+          style={{ height: 20, width: 20, color: 'var(--color-primary)', marginTop: 4 }}
+        />
         <Stack spacing={1}>
-          <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.settings.syncEnabled}</Typography>
-          <Typography style={{ fontSize: 14, color: c.ink700 }}>{t.settings.folderPlaceholder}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink700 }}>
+            {t.settings.syncEnabled}
+          </Typography>
+          <Typography style={{ fontSize: 14, color: c.ink700 }}>
+            {t.settings.folderPlaceholder}
+          </Typography>
         </Stack>
       </Box>
     </Box>
@@ -171,8 +249,16 @@ export default function GoogleDriveIntegrationPage(): React.JSX.Element {
     [t],
   );
 
-  const { status: baseStatus, loading, saving, syncing, loadStatus, handleConnect, handleDisconnect, handleSync } =
-    useIntegrationStatus({ apiPath: 'google-drive', user, messages });
+  const {
+    status: baseStatus,
+    loading,
+    saving,
+    syncing,
+    loadStatus,
+    handleConnect,
+    handleDisconnect,
+    handleSync,
+  } = useIntegrationStatus({ apiPath: 'google-drive', user, messages });
 
   const status = baseStatus as DriveStatus | null;
 
@@ -219,11 +305,20 @@ export default function GoogleDriveIntegrationPage(): React.JSX.Element {
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}>
-        <Box sx={{ p: 1, borderRadius: tokens.radius.full, bgcolor: 'rgba(var(--color-primary-rgb), 0.1)', display: 'flex' }}>
+        <Box
+          sx={{
+            p: 1,
+            borderRadius: tokens.radius.full,
+            bgcolor: 'rgba(var(--color-primary-rgb), 0.1)',
+            display: 'flex',
+          }}
+        >
           <Image src="/icons/google-drive-icon.png" alt="Google Drive" width={24} height={24} />
         </Box>
         <Box>
-          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>{t.header.title}</Typography>
+          <Typography variant="h4" style={{ fontWeight: 700, color: c.ink900 }}>
+            {t.header.title}
+          </Typography>
           <Typography style={{ color: c.ink500, marginTop: 4 }}>{t.header.subtitle}</Typography>
         </Box>
       </Box>

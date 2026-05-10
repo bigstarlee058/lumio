@@ -1,12 +1,12 @@
 'use client';
 
-import { Box, IconButton, Popover, TextField, Typography } from '@mui/material';
 import { Check, PencilLine, Plus, Trash2, X } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
+import { Box, IconButton, Popover, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
 import type { TagOption } from '../storageHelpers';
 import { colorPickerPopoverSlotProps } from '../storageHelpers';
-import { tokens } from '@/lib/theme-tokens';
 
 export interface StorageTagsPanelProps {
   tags: TagOption[];
@@ -80,33 +80,46 @@ export function StorageTagsPanel({
   return (
     <Box sx={{ border: '1px solid var(--border-color)', p: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>{tagsTitleLabel}</Typography>
-        <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{tags.length}</Typography>
+        <Typography style={{ fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+          {tagsTitleLabel}
+        </Typography>
+        <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+          {tags.length}
+        </Typography>
       </Box>
       <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
         <TextField
           size="small"
           value={newTagName}
-          onChange={(event) => onSetNewTagName(event.target.value)}
+          onChange={event => onSetNewTagName(event.target.value)}
           placeholder={tagsCreatePlaceholder}
           sx={{ flex: 1, minWidth: 160 }}
         />
         <Box sx={{ position: 'relative' }}>
           <IconButton
             size="small"
-            onClick={(event) => {
+            onClick={event => {
               onSetNewTagAnchorEl(event.currentTarget);
-              onSetNewTagPickerOpen((prev) => !prev);
+              onSetNewTagPickerOpen(prev => !prev);
             }}
             aria-label={tagColorLabel}
-            sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, p: 0.5 }}
+            sx={{
+              border: '1px solid var(--border-color)',
+              borderRadius: tokens.radius.full,
+              p: 0.5,
+            }}
           >
-            <Box sx={{ width: 24, height: 24, borderRadius: tokens.radius.full, bgcolor: newTagColor }} />
+            <Box
+              sx={{ width: 24, height: 24, borderRadius: tokens.radius.full, bgcolor: newTagColor }}
+            />
           </IconButton>
           <Popover
             open={newTagPickerOpen}
             anchorEl={newTagAnchorEl}
-            onClose={() => { onSetNewTagPickerOpen(false); onSetNewTagAnchorEl(null); }}
+            onClose={() => {
+              onSetNewTagPickerOpen(false);
+              onSetNewTagAnchorEl(null);
+            }}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             slotProps={colorPickerPopoverSlotProps}
@@ -117,16 +130,34 @@ export function StorageTagsPanel({
         <IconButton
           onClick={onCreateTag}
           title={tagsCreateTooltip}
-          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' } }}
+          sx={{
+            bgcolor: 'primary.main',
+            color: '#fff',
+            borderRadius: tokens.radius.full,
+            '&:hover': { bgcolor: 'primary.dark' },
+          }}
         >
           <Plus size={18} />
         </IconButton>
       </Box>
-      <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1, maxHeight: '30vh', overflowY: 'auto', minHeight: 200, pb: 13 }}>
+      <Box
+        sx={{
+          mt: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          maxHeight: '30vh',
+          overflowY: 'auto',
+          minHeight: 200,
+          pb: 13,
+        }}
+      >
         {tags.length === 0 ? (
-          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>{tagsEmpty}</Typography>
+          <Typography style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>
+            {tagsEmpty}
+          </Typography>
         ) : (
-          tags.map((tag) => (
+          tags.map(tag => (
             <TagItem
               key={tag.id}
               tag={tag}
@@ -202,7 +233,17 @@ function TagItem({
   const isEditing = editingTagId === tag.id;
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, border: '1px solid var(--muted)', px: 1.5, py: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 1,
+        border: '1px solid var(--muted)',
+        px: 1.5,
+        py: 1,
+      }}
+    >
       {isEditing ? (
         <TagEditRow
           tag={tag}
@@ -268,25 +309,39 @@ function TagEditRow({
         <TextField
           size="small"
           value={editingTagName}
-          onChange={(event) => onSetEditingTagName(event.target.value)}
+          onChange={event => onSetEditingTagName(event.target.value)}
           sx={{ flex: 1 }}
         />
         <Box sx={{ position: 'relative' }}>
           <IconButton
             size="small"
-            onClick={(event) => {
+            onClick={event => {
               onSetEditingTagAnchorEl(event.currentTarget);
-              onSetEditingTagPickerId((prev) => (prev === tag.id ? null : tag.id));
+              onSetEditingTagPickerId(prev => (prev === tag.id ? null : tag.id));
             }}
             aria-label={tagColorLabel}
-            sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, p: 0.5 }}
+            sx={{
+              border: '1px solid var(--border-color)',
+              borderRadius: tokens.radius.full,
+              p: 0.5,
+            }}
           >
-            <Box sx={{ width: 16, height: 16, borderRadius: tokens.radius.full, bgcolor: editingTagColor ?? '#168118' }} />
+            <Box
+              sx={{
+                width: 16,
+                height: 16,
+                borderRadius: tokens.radius.full,
+                bgcolor: editingTagColor ?? '#168118',
+              }}
+            />
           </IconButton>
           <Popover
             open={editingTagPickerId === tag.id}
             anchorEl={editingTagAnchorEl}
-            onClose={() => { onSetEditingTagPickerId(null); onSetEditingTagAnchorEl(null); }}
+            onClose={() => {
+              onSetEditingTagPickerId(null);
+              onSetEditingTagAnchorEl(null);
+            }}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             slotProps={colorPickerPopoverSlotProps}
@@ -297,14 +352,24 @@ function TagEditRow({
         <IconButton
           size="small"
           onClick={() => onRenameTag(tag.id)}
-          sx={{ bgcolor: 'primary.main', color: '#fff', borderRadius: tokens.radius.full, '&:hover': { bgcolor: 'primary.dark' } }}
+          sx={{
+            bgcolor: 'primary.main',
+            color: '#fff',
+            borderRadius: tokens.radius.full,
+            '&:hover': { bgcolor: 'primary.dark' },
+          }}
         >
           <Check size={16} />
         </IconButton>
         <IconButton
           size="small"
           onClick={onCancelEditTag}
-          sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { bgcolor: 'var(--muted)' } }}
+          sx={{
+            border: '1px solid var(--border-color)',
+            borderRadius: tokens.radius.full,
+            color: 'var(--muted-foreground)',
+            '&:hover': { bgcolor: 'var(--muted)' },
+          }}
         >
           <X size={16} />
         </IconButton>
@@ -335,8 +400,25 @@ function TagViewRow({
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-        <Box sx={{ width: 10, height: 10, borderRadius: tokens.radius.full, bgcolor: tag.color ?? 'var(--muted-foreground)', flexShrink: 0 }} />
-        <Typography style={{ fontSize: 14, fontWeight: 500, color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <Box
+          sx={{
+            width: 10,
+            height: 10,
+            borderRadius: tokens.radius.full,
+            bgcolor: tag.color ?? 'var(--muted-foreground)',
+            flexShrink: 0,
+          }}
+        />
+        <Typography
+          style={{
+            fontSize: 14,
+            fontWeight: 500,
+            color: 'var(--foreground)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
           {tag.name}
         </Typography>
       </Box>
@@ -348,7 +430,12 @@ function TagViewRow({
               size="small"
               onClick={() => onStartEditTag(tag)}
               title={tagsRenameTooltip}
-              sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { bgcolor: 'var(--muted)' } }}
+              sx={{
+                border: '1px solid var(--border-color)',
+                borderRadius: tokens.radius.full,
+                color: 'var(--muted-foreground)',
+                '&:hover': { bgcolor: 'var(--muted)' },
+              }}
             >
               <PencilLine size={16} />
             </IconButton>
@@ -356,7 +443,12 @@ function TagViewRow({
               size="small"
               onClick={() => onConfirmDeleteTag(tag)}
               title={tagsDeleteTooltip}
-              sx={{ border: '1px solid var(--border-color)', borderRadius: tokens.radius.full, color: 'var(--muted-foreground)', '&:hover': { color: 'var(--destructive)', bgcolor: 'var(--color-error-soft-bg)' } }}
+              sx={{
+                border: '1px solid var(--border-color)',
+                borderRadius: tokens.radius.full,
+                color: 'var(--muted-foreground)',
+                '&:hover': { color: 'var(--destructive)', bgcolor: 'var(--color-error-soft-bg)' },
+              }}
             >
               <Trash2 size={16} />
             </IconButton>

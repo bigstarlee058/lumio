@@ -168,7 +168,7 @@ export class StorageController {
   @UseGuards(WorkspaceContextGuard)
   async createTag(
     @Body() dto: CreateTagDto,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return await this.storageService.createTag(dto, workspaceId);
@@ -180,7 +180,7 @@ export class StorageController {
    */
   @Get('tags')
   @UseGuards(WorkspaceContextGuard)
-  async listTags(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async listTags(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     return await this.storageService.listTags(workspaceId);
   }
 
@@ -193,7 +193,7 @@ export class StorageController {
   async updateTag(
     @Param('id') tagId: string,
     @Body() dto: UpdateTagDto,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return await this.storageService.updateTag(tagId, dto, workspaceId);
@@ -207,7 +207,7 @@ export class StorageController {
   @UseGuards(WorkspaceContextGuard)
   async deleteTag(
     @Param('id') tagId: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     await this.storageService.deleteTag(tagId, workspaceId);
@@ -288,7 +288,7 @@ export class StorageController {
   @UseGuards(WorkspaceContextGuard)
   async createView(
     @Body() dto: StorageViewDto,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return await this.storageService.createView(dto, workspaceId);
@@ -300,7 +300,7 @@ export class StorageController {
    */
   @Get('views')
   @UseGuards(WorkspaceContextGuard)
-  async listViews(@CurrentUser() user: User, @WorkspaceId() workspaceId: string) {
+  async listViews(@CurrentUser() _user: User, @WorkspaceId() workspaceId: string) {
     return await this.storageService.listViews(workspaceId);
   }
 
@@ -312,7 +312,7 @@ export class StorageController {
   @UseGuards(WorkspaceContextGuard)
   async deleteView(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return await this.storageService.deleteView(id, workspaceId);
@@ -323,7 +323,11 @@ export class StorageController {
    * GET /api/v1/storage/files/:id/view
    */
   @Get('files/:id/view')
-  async viewFile(@Param('id') statementId: string, @CurrentUser() user: User, @Res() res: Response) {
+  async viewFile(
+    @Param('id') statementId: string,
+    @CurrentUser() user: User,
+    @Res() res: Response,
+  ) {
     const { stream, fileName, mimeType } = await this.storageService.getFilePreview(
       statementId,
       user.id,

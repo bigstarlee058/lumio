@@ -72,10 +72,16 @@ interface ExecuteSaveParams {
   setBaseData: (updater: (prev: CustomTableRowPatch) => CustomTableRowPatch) => void;
 }
 
-async function executeCleanIntent(params: Pick<ExecuteSaveParams, 'intent' | 'rowId' | 'handlers'>): Promise<void> {
+async function executeCleanIntent(
+  params: Pick<ExecuteSaveParams, 'intent' | 'rowId' | 'handlers'>,
+): Promise<void> {
   const { intent, rowId, handlers } = params;
-  if (intent === 'close') handlers.onClose();
-  if (intent === 'next') await handlers.onSaveAndNext?.(rowId, {});
+  if (intent === 'close') {
+    handlers.onClose();
+  }
+  if (intent === 'next') {
+    await handlers.onSaveAndNext?.(rowId, {});
+  }
 }
 
 async function executeDirtyIntent(params: ExecuteSaveParams): Promise<void> {
@@ -89,7 +95,7 @@ async function executeDirtyIntent(params: ExecuteSaveParams): Promise<void> {
     return;
   }
   await handlers.onSave(rowId, patch);
-  setBaseData((prev) => ({ ...(prev ?? {}), ...patch }));
+  setBaseData(prev => ({ ...(prev ?? {}), ...patch }));
 }
 
 async function executeSaveIntent(params: ExecuteSaveParams): Promise<void> {
@@ -115,7 +121,11 @@ function useDataState({ row, orderedColumns }: UseDataStateParams): {
   const [draft, setDraft] = useState<CustomTableRowPatch>({});
 
   useEffect(() => {
-    if (!row) { setBaseData({}); setDraft({}); return; }
+    if (!row) {
+      setBaseData({});
+      setDraft({});
+      return;
+    }
     const initial: CustomTableRowPatch = {};
     for (const col of orderedColumns) {
       initial[col.key] = normalizeValue(col.type, row.data?.[col.key]) as CustomTableCellValue;
@@ -146,7 +156,9 @@ function useHistoryState({ open, row }: UseHistoryStateParams): {
   const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false);
 
   useEffect(() => {
-    if (!open || !row) return;
+    if (!(open && row)) {
+      return;
+    }
     setHistoryLoading(true);
     void loadRowHistory(row.id)
       .then(setHistoryEvents)
@@ -157,11 +169,21 @@ function useHistoryState({ open, row }: UseHistoryStateParams): {
       .finally(() => setHistoryLoading(false));
   }, [open, row]);
 
-  return { historyEvents, historyLoading, selectedHistoryEvent, historyDrawerOpen, setSelectedHistoryEvent, setHistoryDrawerOpen };
+  return {
+    historyEvents,
+    historyLoading,
+    selectedHistoryEvent,
+    historyDrawerOpen,
+    setSelectedHistoryEvent,
+    setHistoryDrawerOpen,
+  };
 }
 
 export function useRowDrawerState({
-  open, row, columns, handlers,
+  open,
+  row,
+  columns,
+  handlers,
 }: UseRowDrawerStateParams): UseRowDrawerStateReturn {
   const orderedColumns = useMemo(() => [...columns].sort(byPosition), [columns]);
   const [saving, setSaving] = useState(false);
@@ -175,15 +197,29 @@ export function useRowDrawerState({
   const isDirty = Object.keys(patch).length > 0;
 
   function applySave(intent: SaveIntent): void {
-    if (!row) return;
+    if (!row) {
+      return;
+    }
     setSaving(true);
     void executeSaveIntent({ intent, rowId: row.id, patch, isDirty, handlers, setBaseData })
-      .catch((error: unknown) => { console.error('Failed to save row:', error); })
+      .catch((error: unknown) => {
+        console.error('Failed to save row:', error);
+      })
       .finally(() => setSaving(false));
   }
 
   return {
-    orderedColumns, baseData, draft, saving, activeTab, patch, isDirty,
-    setDraft, setActiveTab, setBaseData, applySave, ...historyState,
+    orderedColumns,
+    baseData,
+    draft,
+    saving,
+    activeTab,
+    patch,
+    isDirty,
+    setDraft,
+    setActiveTab,
+    setBaseData,
+    applySave,
+    ...historyState,
   };
 }

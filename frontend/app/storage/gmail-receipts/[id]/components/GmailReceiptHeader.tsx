@@ -1,6 +1,5 @@
 'use client';
 
-import { Spinner } from '@/app/components/ui/spinner';
 import {
   ArrowLeft,
   ChevronDown,
@@ -13,6 +12,7 @@ import {
   Table,
   TriangleAlert,
 } from '@/app/components/icons';
+import { Spinner } from '@/app/components/ui/spinner';
 import {
   Box,
   Button,
@@ -76,7 +76,10 @@ function CategoryButton({
     bgcolor: 'var(--color-error-soft-bg) !important',
     borderWidth: '2px !important',
     '& .MuiButton-startIcon': { color: 'var(--destructive) !important' },
-    '&:hover': { bgcolor: 'var(--color-error-soft-bg) !important', borderColor: 'var(--destructive) !important' },
+    '&:hover': {
+      bgcolor: 'var(--color-error-soft-bg) !important',
+      borderColor: 'var(--destructive) !important',
+    },
   };
 
   const normalSx = {
@@ -100,7 +103,10 @@ function CategoryButton({
         ...(hasCategoryIssues ? issueSx : normalSx),
       }}
     >
-      <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <Box
+        component="span"
+        sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+      >
         {label}
       </Box>
     </Button>
@@ -145,14 +151,32 @@ export function GmailReceiptHeader({
         <Button
           startIcon={<ArrowLeft size={18} />}
           onClick={() => router.push('/statements')}
-          sx={{ mb: 3, color: 'text.secondary', textTransform: 'none', fontWeight: 500, '&:hover': { bgcolor: 'action.hover' } }}
+          sx={{
+            mb: 3,
+            color: 'text.secondary',
+            textTransform: 'none',
+            fontWeight: 500,
+            '&:hover': { bgcolor: 'action.hover' },
+          }}
         >
           Back
         </Button>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 2,
+            flexWrap: 'wrap',
+          }}
+        >
           <Box sx={{ minWidth: 240 }}>
-            <Typography variant="h4" component="h1" sx={{ fontWeight: 600, mb: 1, color: 'text.primary', letterSpacing: '-0.02em' }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{ fontWeight: 600, mb: 1, color: 'text.primary', letterSpacing: '-0.02em' }}
+            >
               {receipt.subject}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -160,19 +184,39 @@ export function GmailReceiptHeader({
                 icon={<Receipt size={16} />}
                 label={`${Math.max(1, lineItemsCount)} line items`}
                 size="small"
-                sx={theme => ({ bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50', color: 'text.secondary', border: '1px solid', borderColor: 'divider', fontWeight: 500, '& .MuiChip-icon': { color: 'text.secondary' } })}
+                sx={theme => ({
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'grey.50',
+                  color: 'text.secondary',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  fontWeight: 500,
+                  '& .MuiChip-icon': { color: 'text.secondary' },
+                })}
               />
               <Chip
                 label={statusLabel}
                 size="small"
-                sx={{ bgcolor: 'primary.50', color: 'primary.700', border: '1px solid', borderColor: 'primary.200', fontWeight: 600 }}
+                sx={{
+                  bgcolor: 'primary.50',
+                  color: 'primary.700',
+                  border: '1px solid',
+                  borderColor: 'primary.200',
+                  fontWeight: 600,
+                }}
               />
               {hasCategoryIssues && (
                 <Chip
                   icon={<TriangleAlert size={16} />}
                   label="Category required"
                   size="small"
-                  sx={{ bgcolor: 'error.50', color: 'error.800', border: '1px solid', borderColor: 'error.200', fontWeight: 600, '& .MuiChip-icon': { color: 'error.700' } }}
+                  sx={{
+                    bgcolor: 'error.50',
+                    color: 'error.800',
+                    border: '1px solid',
+                    borderColor: 'error.200',
+                    fontWeight: 600,
+                    '& .MuiChip-icon': { color: 'error.700' },
+                  }}
                 />
               )}
             </Box>
@@ -191,7 +235,9 @@ export function GmailReceiptHeader({
               <span style={{ display: 'inline-flex' }}>
                 <Button
                   variant="outlined"
-                  startIcon={submitting ? <Spinner className="h-[18px] w-[18px]" /> : <Send size={18} />}
+                  startIcon={
+                    submitting ? <Spinner className="h-[18px] w-[18px]" /> : <Send size={18} />
+                  }
                   onClick={onSubmit}
                   disabled={!canSubmit || submitting}
                   sx={sharedOutlinedSx}
@@ -201,13 +247,24 @@ export function GmailReceiptHeader({
               </span>
             </Tooltip>
 
-            <Button variant="outlined" startIcon={<CreditCard size={18} />} onClick={onOpenPayable} sx={sharedOutlinedSx}>
+            <Button
+              variant="outlined"
+              startIcon={<CreditCard size={18} />}
+              onClick={onOpenPayable}
+              sx={sharedOutlinedSx}
+            >
               Pay
             </Button>
 
-            <ButtonGroup variant="outlined" ref={exportAnchorRef} sx={{ ...sharedOutlinedSx, border: 'none' }}>
+            <ButtonGroup
+              variant="outlined"
+              ref={exportAnchorRef}
+              sx={{ ...sharedOutlinedSx, border: 'none' }}
+            >
               <Button
-                startIcon={exporting ? <Spinner className="h-[18px] w-[18px]" /> : <Share2 size={18} />}
+                startIcon={
+                  exporting ? <Spinner className="h-[18px] w-[18px]" /> : <Share2 size={18} />
+                }
                 onClick={onExportToGmailDraft}
                 disabled={exporting}
                 sx={sharedOutlinedSx}
@@ -230,12 +287,26 @@ export function GmailReceiptHeader({
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-              <MenuItem onClick={() => { setExportMenuOpen(false); onExportToGmailDraft(); }}>
-                <ListItemIcon><Mail size={16} /></ListItemIcon>
+              <MenuItem
+                onClick={() => {
+                  setExportMenuOpen(false);
+                  onExportToGmailDraft();
+                }}
+              >
+                <ListItemIcon>
+                  <Mail size={16} />
+                </ListItemIcon>
                 <ListItemText>Export to Gmail Draft</ListItemText>
               </MenuItem>
-              <MenuItem onClick={() => { setExportMenuOpen(false); onExportToSheets(); }}>
-                <ListItemIcon><Table size={16} /></ListItemIcon>
+              <MenuItem
+                onClick={() => {
+                  setExportMenuOpen(false);
+                  onExportToSheets();
+                }}
+              >
+                <ListItemIcon>
+                  <Table size={16} />
+                </ListItemIcon>
                 <ListItemText>Export to Sheets</ListItemText>
               </MenuItem>
             </Menu>
@@ -248,7 +319,10 @@ export function GmailReceiptHeader({
               target="_blank"
               rel="noopener noreferrer"
               disabled={!gmailMessageLink}
-              sx={{ ...sharedOutlinedSx, color: gmailMessageLink ? 'text.secondary' : 'text.disabled' }}
+              sx={{
+                ...sharedOutlinedSx,
+                color: gmailMessageLink ? 'text.secondary' : 'text.disabled',
+              }}
             >
               Watch in Gmail
             </Button>
@@ -256,15 +330,35 @@ export function GmailReceiptHeader({
         </Box>
       </Box>
 
-      <Box sx={{ mb: 3, width: { xs: 'calc(100% + 32px)', sm: 'calc(100% + 48px)' }, ml: { xs: -2, sm: -3 } }}>
+      <Box
+        sx={{
+          mb: 3,
+          width: { xs: 'calc(100% + 32px)', sm: 'calc(100% + 48px)' },
+          ml: { xs: -2, sm: -3 },
+        }}
+      >
         <Alert
           variant="filled"
           severity={readinessSeverity}
-          sx={{ px: { xs: 2.5, sm: 4 }, py: 0.75, minHeight: 42, alignItems: 'center', '& .MuiAlert-message': { width: '100%', py: 0, overflow: 'hidden' }, '& .MuiAlert-icon': { py: 0, mr: 1.25, alignItems: 'center' } }}
+          sx={{
+            px: { xs: 2.5, sm: 4 },
+            py: 0.75,
+            minHeight: 42,
+            alignItems: 'center',
+            '& .MuiAlert-message': { width: '100%', py: 0, overflow: 'hidden' },
+            '& .MuiAlert-icon': { py: 0, mr: 1.25, alignItems: 'center' },
+          }}
         >
           <Typography
             variant="body2"
-            sx={{ width: '100%', fontWeight: 600, lineHeight: 1.35, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            sx={{
+              width: '100%',
+              fontWeight: 600,
+              lineHeight: 1.35,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
             title={readinessInlineText}
           >
             {readinessInlineText}

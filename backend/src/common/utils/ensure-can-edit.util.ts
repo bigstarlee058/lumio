@@ -1,6 +1,9 @@
 import { ForbiddenException } from '@nestjs/common';
 import type { Repository } from 'typeorm';
-import type { WorkspaceMember, WorkspaceMemberPermissions } from '../../entities/workspace-member.entity';
+import type {
+  WorkspaceMember,
+  WorkspaceMemberPermissions,
+} from '../../entities/workspace-member.entity';
 import { WorkspaceRole } from '../../entities/workspace-member.entity';
 
 /**
@@ -14,15 +17,21 @@ export async function ensureCanEdit(
   permissionKey: keyof WorkspaceMemberPermissions,
   errorMessage: string,
 ): Promise<void> {
-  if (!workspaceId) return;
+  if (!workspaceId) {
+    return;
+  }
 
   const membership = await workspaceMemberRepository.findOne({
     where: { workspaceId, userId },
     select: ['role', 'permissions'],
   });
 
-  if (!membership) return;
-  if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) return;
+  if (!membership) {
+    return;
+  }
+  if ([WorkspaceRole.ADMIN, WorkspaceRole.OWNER].includes(membership.role)) {
+    return;
+  }
   if (membership.permissions?.[permissionKey] === false) {
     throw new ForbiddenException(errorMessage);
   }

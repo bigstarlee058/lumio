@@ -30,8 +30,12 @@ const mapHorizontalAlignment = (value: unknown): CSSProperties['textAlign'] | un
 
 const buildDecorationParts = (underline: boolean, strikethrough: boolean): string => {
   const parts: string[] = [];
-  if (underline) parts.push('underline');
-  if (strikethrough) parts.push('line-through');
+  if (underline) {
+    parts.push('underline');
+  }
+  if (strikethrough) {
+    parts.push('line-through');
+  }
   return parts.join(' ');
 };
 
@@ -40,9 +44,14 @@ const resolveTextDecoration = (
   strikethrough: boolean | undefined,
 ): CSSProperties['textDecorationLine'] | undefined => {
   if (underline === true || strikethrough === true) {
-    return buildDecorationParts(underline === true, strikethrough === true) as CSSProperties['textDecorationLine'];
+    return buildDecorationParts(
+      underline === true,
+      strikethrough === true,
+    ) as CSSProperties['textDecorationLine'];
   }
-  if (underline === false || strikethrough === false) return 'none';
+  if (underline === false || strikethrough === false) {
+    return 'none';
+  }
   return undefined;
 };
 
@@ -58,13 +67,19 @@ const extractColorAndWeight = (tf: SheetTextFormat): Partial<CSSProperties> => (
 const extractSizeAndFamily = (tf: SheetTextFormat): Partial<CSSProperties> => ({
   fontSize:
     typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
-      ? tf.fontSize : undefined,
+      ? tf.fontSize
+      : undefined,
   fontFamily: typeof tf.fontFamily === 'string' && tf.fontFamily.trim() ? tf.fontFamily : undefined,
 });
 
 const extractTextFormatStyles = (tf: SheetTextFormat | null): Partial<CSSProperties> => {
-  if (!tf) return {};
-  const textDecorationLine = resolveTextDecoration(boolField(tf, 'underline'), boolField(tf, 'strikethrough'));
+  if (!tf) {
+    return {};
+  }
+  const textDecorationLine = resolveTextDecoration(
+    boolField(tf, 'underline'),
+    boolField(tf, 'strikethrough'),
+  );
   return {
     ...extractColorAndWeight(tf),
     ...extractSizeAndFamily(tf),

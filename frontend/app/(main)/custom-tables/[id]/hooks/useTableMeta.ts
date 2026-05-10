@@ -52,7 +52,9 @@ export function useTableMeta({
 
   // Keep draft in sync with table data whenever it changes (outside edit mode)
   useEffect(() => {
-    if (!table || editingMeta) return;
+    if (!table || editingMeta) {
+      return;
+    }
     setMetaDraft({
       name: table.name || '',
       description: table.description || '',
@@ -86,10 +88,14 @@ export function useTableMeta({
   };
 
   const saveMeta = async () => {
-    if (!tableId) { return; }
+    if (!tableId) {
+      return;
+    }
     const scope: EditingScope = editingScope ?? 'both';
     const payload = buildMetaPayload(scope);
-    if (payload === null) { return; }
+    if (payload === null) {
+      return;
+    }
     if (!Object.keys(payload).length) {
       setEditingMeta(false);
       setEditingScope(null);

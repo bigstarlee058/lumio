@@ -46,7 +46,12 @@ function getHrefByEntityType(
   return null;
 }
 
-export function getNotificationHref({ type, entityType, entityId, meta }: NotificationRef): string | null {
+export function getNotificationHref({
+  type,
+  entityType,
+  entityId,
+  meta,
+}: NotificationRef): string | null {
   return getHrefByType(type, entityId) ?? getHrefByEntityType(entityType, entityId, meta);
 }
 

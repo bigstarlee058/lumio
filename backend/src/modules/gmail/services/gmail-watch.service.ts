@@ -5,7 +5,6 @@ import {
   GmailSettings,
   GmailWatchSubscription,
   Integration,
-  ReceiptJobStatus,
   ReceiptProcessingJob,
   WatchSubscriptionStatus,
 } from '../../../entities';

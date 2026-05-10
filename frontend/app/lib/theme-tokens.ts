@@ -6,11 +6,11 @@
 
 export const tokens = {
   radius: {
-    xs: '4px',
-    sm: '6px',
-    md: '8px',
-    lg: '12px',
-    xl: '20px',
+    xs: '3px',
+    sm: '3px',
+    md: '3px',
+    lg: '3px',
+    xl: '3px',
     full: '999px',
   },
 
@@ -28,7 +28,8 @@ export const tokens = {
   },
 
   font: {
-    family: '"Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+    family:
+      '"Geist", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
     familyMono: '"Geist Mono", ui-monospace, "SF Mono", Menlo, monospace',
   },
 

@@ -55,9 +55,13 @@ type ResolveSpendOverTimeFlowInput = {
 };
 
 const toDateOnly = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return null;
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
   return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
 };
 
@@ -77,7 +81,10 @@ const monthFormatter = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
-const buildPeriodMeta = (date: Date, groupBy: SpendOverTimeGroupBy): { period: string; label: string } => {
+const buildPeriodMeta = (
+  date: Date,
+  groupBy: SpendOverTimeGroupBy,
+): { period: string; label: string } => {
   if (groupBy === 'day') {
     const period = formatDateISO(date);
     return { period, label: period };
@@ -119,7 +126,11 @@ const spendOverTimePeriodBuilders: Record<SpendOverTimeGroupBy, (date: Date) => 
   year: date => `${date.getFullYear()}`,
 };
 
-export const matchesSpendOverTimePeriod = (date: Date, period: string, groupBy: SpendOverTimeGroupBy): boolean => {
+export const matchesSpendOverTimePeriod = (
+  date: Date,
+  period: string,
+  groupBy: SpendOverTimeGroupBy,
+): boolean => {
   return spendOverTimePeriodBuilders[groupBy](date) === period;
 };
 
@@ -129,7 +140,11 @@ const getSpendOverTimeRecordDate = (record: SpendOverTimeRecord): Date | null =>
 const getSpendOverTimeRecordTime = (record: SpendOverTimeRecord): number =>
   getSpendOverTimeRecordDate(record)?.getTime() ?? 0;
 
-export const filterSpendOverTimeDrillDownRecords = (period: string, groupBy: SpendOverTimeGroupBy, records: SpendOverTimeRecord[]): SpendOverTimeRecord[] =>
+export const filterSpendOverTimeDrillDownRecords = (
+  period: string,
+  groupBy: SpendOverTimeGroupBy,
+  records: SpendOverTimeRecord[],
+): SpendOverTimeRecord[] =>
   records
     .filter(record => {
       const date = getSpendOverTimeRecordDate(record);
@@ -137,17 +152,40 @@ export const filterSpendOverTimeDrillDownRecords = (period: string, groupBy: Spe
     })
     .sort((a, b) => getSpendOverTimeRecordTime(b) - getSpendOverTimeRecordTime(a));
 
-export const buildSpendOverTimeSelectedPoint = (period: string | null, records: SpendOverTimeRecord[]): SpendOverTimePoint | null => {
-  if (!period || records.length === 0) return null;
-  const point = records.reduce<SpendOverTimePoint>((result, record) => {
-    if (record.flowType === 'income') result.income += record.amount;
-    else result.expense += record.amount;
-    if (record.sourceType === 'gmail') result.gmailAmount += record.amount;
-    else result.statementAmount += record.amount;
-    result.count += 1;
-    result.net = result.income - result.expense;
-    return result;
-  }, { period, label: period, income: 0, expense: 0, net: 0, count: 0, statementAmount: 0, gmailAmount: 0 });
+export const buildSpendOverTimeSelectedPoint = (
+  period: string | null,
+  records: SpendOverTimeRecord[],
+): SpendOverTimePoint | null => {
+  if (!period || records.length === 0) {
+    return null;
+  }
+  const point = records.reduce<SpendOverTimePoint>(
+    (result, record) => {
+      if (record.flowType === 'income') {
+        result.income += record.amount;
+      } else {
+        result.expense += record.amount;
+      }
+      if (record.sourceType === 'gmail') {
+        result.gmailAmount += record.amount;
+      } else {
+        result.statementAmount += record.amount;
+      }
+      result.count += 1;
+      result.net = result.income - result.expense;
+      return result;
+    },
+    {
+      period,
+      label: period,
+      income: 0,
+      expense: 0,
+      net: 0,
+      count: 0,
+      statementAmount: 0,
+      gmailAmount: 0,
+    },
+  );
   return {
     ...point,
     income: Number(point.income.toFixed(2)),
@@ -158,7 +196,9 @@ export const buildSpendOverTimeSelectedPoint = (period: string | null, records: 
   };
 };
 
-export const resolveSpendOverTimeFlow = (input: ResolveSpendOverTimeFlowInput): { flowType: 'income' | 'expense'; amount: number } => {
+export const resolveSpendOverTimeFlow = (
+  input: ResolveSpendOverTimeFlowInput,
+): { flowType: 'income' | 'expense'; amount: number } => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.debit,
@@ -174,7 +214,9 @@ export const dedupeSpendOverTimeReceiptRecords = (
   existingTransactionIds: Set<string>,
 ): SpendOverTimeRecord[] => {
   return receipts.filter(receipt => {
-    if (!receipt.transactionId) return true;
+    if (!receipt.transactionId) {
+      return true;
+    }
     return !existingTransactionIds.has(receipt.transactionId);
   });
 };
@@ -189,7 +231,9 @@ export const buildSpendOverTimeReport = (
   // eslint-disable-next-line complexity
   records.forEach(record => {
     const date = toDateOnly(record.dateValue || record.createdAt || null);
-    if (!date || record.amount <= 0) return;
+    if (!date || record.amount <= 0) {
+      return;
+    }
 
     const meta = buildPeriodMeta(date, groupBy);
     const existing = pointsMap.get(meta.period) || {

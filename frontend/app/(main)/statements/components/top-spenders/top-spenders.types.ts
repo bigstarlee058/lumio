@@ -50,7 +50,9 @@ type ResolveSourceChannelInput = {
   fileType?: string | null;
 };
 
-export const resolveSpenderFlow = (input: ResolveSpenderFlowInput): ReturnType<typeof resolveAmountFlow> => {
+export const resolveSpenderFlow = (
+  input: ResolveSpenderFlowInput,
+): ReturnType<typeof resolveAmountFlow> => {
   return resolveAmountFlow({
     sourceType: input.sourceType,
     debit: input.totalDebit,

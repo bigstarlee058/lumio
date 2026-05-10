@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import nodemailer from 'nodemailer';
 import type { Repository } from 'typeorm';
 import { decryptText, encryptText } from '../../common/utils/encryption.util';
-import {
-  User,
-  WorkspaceServiceSettings,
-  WorkspaceServiceSettingsKey,
-} from '../../entities';
+import { User, WorkspaceServiceSettings, WorkspaceServiceSettingsKey } from '../../entities';
 
 export type AiRuntimeSettings = {
   enabled: boolean;
@@ -361,7 +357,7 @@ export class ApplicationSettingsService {
   }
 
   private async assertAiConnection(settings: AiRuntimeSettings) {
-    if (!settings.baseUrl || !settings.model) {
+    if (!(settings.baseUrl && settings.model)) {
       throw new BadRequestException('AI baseUrl and model are required');
     }
     const controller = new AbortController();
@@ -385,7 +381,9 @@ export class ApplicationSettingsService {
         throw new BadRequestException(`AI endpoint returned ${response.status}`);
       }
     } catch (error) {
-      if (error instanceof BadRequestException) throw error;
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new BadRequestException('Unable to connect to AI endpoint');
     } finally {
       clearTimeout(timeout);
@@ -393,7 +391,7 @@ export class ApplicationSettingsService {
   }
 
   private async assertSmtpConnection(settings: SmtpRuntimeSettings) {
-    if (!settings.host || !settings.from) {
+    if (!(settings.host && settings.from)) {
       throw new BadRequestException('SMTP host and from are required');
     }
     const transporter = nodemailer.createTransport({
@@ -429,11 +427,13 @@ export class ApplicationSettingsService {
         signal: controller.signal,
       });
       const payload = (await response.json()) as { ok?: boolean; description?: string };
-      if (!response.ok || !payload.ok) {
+      if (!(response.ok && payload.ok)) {
         throw new BadRequestException(payload.description || 'Telegram bot token is invalid');
       }
     } catch (error) {
-      if (error instanceof BadRequestException) throw error;
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new BadRequestException('Unable to connect to Telegram');
     } finally {
       clearTimeout(timeout);
@@ -476,7 +476,9 @@ export class ApplicationSettingsService {
 
   private normalizeOrigin(value: string): string {
     const trimmed = value.trim();
-    if (!trimmed) return '';
+    if (!trimmed) {
+      return '';
+    }
     try {
       const hasScheme = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed);
       return new URL(hasScheme ? trimmed : `https://${trimmed}`).origin;

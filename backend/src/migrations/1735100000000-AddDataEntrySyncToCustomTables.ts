@@ -3,7 +3,9 @@ import { type MigrationInterface, type QueryRunner, TableColumn, TableIndex } fr
 export class AddDataEntrySyncToCustomTables1735100000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasTable = await queryRunner.hasTable('custom_tables');
-    if (!hasTable) return;
+    if (!hasTable) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_tables');
     const hasColumn = (name: string) => Boolean(table?.columns.find(col => col.name === name));
@@ -70,7 +72,9 @@ export class AddDataEntrySyncToCustomTables1735100000000 implements MigrationInt
     }
 
     const hasAuditLogs = await queryRunner.hasTable('audit_logs');
-    if (!hasAuditLogs) return;
+    if (!hasAuditLogs) {
+      return;
+    }
 
     await queryRunner.query(`
       UPDATE custom_tables t
@@ -97,7 +101,9 @@ export class AddDataEntrySyncToCustomTables1735100000000 implements MigrationInt
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const hasTable = await queryRunner.hasTable('custom_tables');
-    if (!hasTable) return;
+    if (!hasTable) {
+      return;
+    }
 
     const table = await queryRunner.getTable('custom_tables');
     const hasIndex = (name: string) => Boolean(table?.indices.find(idx => idx.name === name));

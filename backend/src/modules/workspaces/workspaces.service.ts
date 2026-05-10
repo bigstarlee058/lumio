@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import {
   BadRequestException,
   ConflictException,
@@ -9,10 +10,9 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 import { render } from '@react-email/render';
-import * as React from 'react';
 import nodemailer from 'nodemailer';
+import * as React from 'react';
 import type { Repository } from 'typeorm';
-import { randomUUID } from 'node:crypto';
 import { TimeoutError, retry, withTimeout } from '../../common/utils/async.util';
 import {
   User,
@@ -23,10 +23,10 @@ import {
   type WorkspaceMemberPermissions,
   WorkspaceRole,
 } from '../../entities';
-import { Integration, IntegrationToken } from '../../entities';
+import { Integration } from '../../entities';
 import { ActorType, AuditAction, EntityType } from '../../entities/audit-event.entity';
-import { AuditService } from '../audit/audit.service';
 import { ApplicationSettingsService } from '../application-settings/application-settings.service';
+import { AuditService } from '../audit/audit.service';
 import { BalanceService } from '../balance/balance.service';
 import { CategoriesService } from '../categories/categories.service';
 import type {
@@ -517,16 +517,18 @@ export class WorkspacesService {
         ? settingsOrigin
         : envOrigin && !this.isLocalhostOrigin(envOrigin)
           ? envOrigin
-        : requestOrigin && !this.isLocalhostOrigin(requestOrigin)
-          ? requestOrigin
-          : settingsOrigin || envOrigin || requestOrigin) || 'http://localhost:3000';
+          : requestOrigin && !this.isLocalhostOrigin(requestOrigin)
+            ? requestOrigin
+            : settingsOrigin || envOrigin || requestOrigin) || 'http://localhost:3000';
 
     return `${baseOrigin.replace(/\/$/, '')}/invite/${token}`;
   }
 
   private normalizeToOrigin(value?: string | null): string | null {
     const trimmed = value?.trim();
-    if (!trimmed) return null;
+    if (!trimmed) {
+      return null;
+    }
 
     try {
       const hasScheme = /^[a-zA-Z][a-zA-Z\d+.-]*:/.test(trimmed);
@@ -1010,7 +1012,7 @@ export class WorkspacesService {
     const smtpPort = smtp?.port || Number.parseInt(process.env.SMTP_PORT || '587', 10);
     const smtpFrom = smtp?.from || process.env.SMTP_FROM;
 
-    if (!smtpHost || !smtpFrom) {
+    if (!(smtpHost && smtpFrom)) {
       console.warn(
         `[Workspaces] SMTP не настроен (нужны SMTP_HOST и SMTP_FROM), ссылка приглашения для ${params.email}: ${params.invitationLink}`,
       );
@@ -1049,7 +1051,8 @@ export class WorkspacesService {
 
     try {
       const html = await render(emailReact);
-      const timeoutMs = smtp?.timeoutMs || Number.parseInt(process.env.SMTP_TIMEOUT_MS || '10000', 10);
+      const timeoutMs =
+        smtp?.timeoutMs || Number.parseInt(process.env.SMTP_TIMEOUT_MS || '10000', 10);
 
       await retry(
         () =>

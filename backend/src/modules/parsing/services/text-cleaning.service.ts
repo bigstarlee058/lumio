@@ -399,7 +399,7 @@ export class TextCleaningService {
     };
   }
 
-  private isMeaningfulText(text: string, locale?: string): boolean {
+  private isMeaningfulText(text: string, _locale?: string): boolean {
     // Check minimum length
     if (text.length < 2) {
       return false;

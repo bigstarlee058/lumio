@@ -1,12 +1,12 @@
 'use client';
 
+import { Download, MoreVertical, X } from '@/app/components/icons';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useIntlayer } from '@/app/i18n';
+import { apiBaseUrl } from '@/app/lib/api';
 import { getWorkspaceHeaders } from '@/app/lib/workspace-headers';
-import { Download, MoreVertical, X } from '@/app/components/icons';
 import { type ChangeEvent, type ComponentType, useEffect, useRef, useState } from 'react';
 import { ModalShell } from './ui/modal-shell';
-import { apiBaseUrl } from '@/app/lib/api';
 
 type ReactPdfComponentProps = Record<string, unknown>;
 
@@ -21,7 +21,7 @@ type ReactPdfModule = {
   };
 };
 
-interface PDFPreviewModalProps {
+interface PdfPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileId: string;
@@ -55,7 +55,7 @@ export function PDFPreviewModal({
   allowAttachFile = false,
   onFileAttached,
   onParsingStarted,
-}: PDFPreviewModalProps) {
+}: PdfPreviewModalProps) {
   const t = useIntlayer('pdfPreviewModal');
 
   const [loading, setLoading] = useState(false);
@@ -150,7 +150,9 @@ export function PDFPreviewModal({
   }, [isOpen, fileId, source, reloadToken]);
 
   useEffect(() => {
-    if (!isOpen || pdfModule || isJsdomEnvironment) return;
+    if (!isOpen || pdfModule || isJsdomEnvironment) {
+      return;
+    }
 
     let active = true;
 
@@ -177,7 +179,7 @@ export function PDFPreviewModal({
   }, [isOpen, pdfModule]);
 
   useEffect(() => {
-    if (!isOpen || !viewportRef.current) {
+    if (!(isOpen && viewportRef.current)) {
       return;
     }
 
@@ -199,10 +201,14 @@ export function PDFPreviewModal({
   }, [isOpen]);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!menuOpen) {
+      return;
+    }
 
     const handleOutsideClick = (event: MouseEvent) => {
-      if (!menuRef.current) return;
+      if (!menuRef.current) {
+        return;
+      }
       if (!menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
@@ -339,9 +345,7 @@ export function PDFPreviewModal({
     >
       <div className="lumio-pdf-preview-modal__body">
         <div className="lumio-pdf-preview-modal__header" ref={menuRef}>
-          <h2 className="lumio-pdf-preview-modal__title">
-            Receipt
-          </h2>
+          <h2 className="lumio-pdf-preview-modal__title">Receipt</h2>
 
           <div className="lumio-pdf-preview-modal__header-actions">
             <button
@@ -369,13 +373,8 @@ export function PDFPreviewModal({
                 onClick={handleDownloadFromMenu}
                 className="lumio-pdf-preview-modal__dropdown-item"
               >
-                <Download
-                  className="lumio-pdf-preview-modal__dropdown-icon"
-                  strokeWidth={2.3}
-                />
-                <span className="lumio-pdf-preview-modal__dropdown-label">
-                  Download
-                </span>
+                <Download className="lumio-pdf-preview-modal__dropdown-icon" strokeWidth={2.3} />
+                <span className="lumio-pdf-preview-modal__dropdown-label">Download</span>
               </button>
             </div>
           )}
@@ -386,9 +385,7 @@ export function PDFPreviewModal({
             <div className="lumio-pdf-preview-modal__loading-overlay">
               <div className="lumio-pdf-preview-modal__loading-body">
                 <Spinner size={40} sx={{ display: 'block', mx: 'auto', mb: 2 }} />
-                <p className="lumio-pdf-preview-modal__loading-text">
-                  {t.loading.value}
-                </p>
+                <p className="lumio-pdf-preview-modal__loading-text">{t.loading.value}</p>
               </div>
             </div>
           )}
@@ -504,7 +501,10 @@ export function PDFPreviewModal({
                   style={{ width: '100%' }}
                 >
                   {Array.from({ length: numPages }, (_, index) => (
-                    <div key={`page_${index + 1}`} className="lumio-pdf-preview-modal__pdf-page-wrap">
+                    <div
+                      key={`page_${index + 1}`}
+                      className="lumio-pdf-preview-modal__pdf-page-wrap"
+                    >
                       <PageComponent
                         pageNumber={index + 1}
                         width={pageWidth}

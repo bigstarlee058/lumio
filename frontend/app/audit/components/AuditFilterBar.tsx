@@ -2,10 +2,10 @@
 
 import { FilterActions } from '@/app/(main)/statements/components/filters/FilterActions';
 import { FilterDropdown } from '@/app/(main)/statements/components/filters/FilterDropdown';
+import { Search } from '@/app/components/icons';
 import { FilterChipButton } from '@/app/components/ui/filter-chip-button';
 import type { ActorType, AuditAction, AuditEventFilter } from '@/lib/api/audit';
-import { Search } from '@/app/components/icons';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type ActorTypeOption = { value: ActorType | ''; label: string };
 type ActionOption = { value: AuditAction | ''; label: string };
@@ -40,26 +40,34 @@ const DATE_PRESETS: { value: DatePreset; label: string }[] = [
   { value: 'all', label: 'All time' },
 ];
 
-function daysAgoISO(n: number): string {
+function daysAgoIso(n: number): string {
   const d = new Date();
   d.setDate(d.getDate() - n);
   return d.toISOString().slice(0, 10);
 }
 
 function presetToDates(preset: DatePreset): { dateFrom?: string; dateTo?: string } {
-  if (preset === 'all') return {};
+  if (preset === 'all') {
+    return {};
+  }
   const days = preset === '7d' ? 7 : preset === '30d' ? 30 : 90;
-  return { dateFrom: daysAgoISO(days), dateTo: undefined };
+  return { dateFrom: daysAgoIso(days), dateTo: undefined };
 }
 
 function currentPreset(filters: AuditEventFilter): DatePreset {
-  if (!filters.dateFrom) return '7d';
-  const diff = Math.round(
-    (Date.now() - new Date(filters.dateFrom).getTime()) / 86_400_000,
-  );
-  if (diff <= 7) return '7d';
-  if (diff <= 30) return '30d';
-  if (diff <= 90) return '90d';
+  if (!filters.dateFrom) {
+    return '7d';
+  }
+  const diff = Math.round((Date.now() - new Date(filters.dateFrom).getTime()) / 86_400_000);
+  if (diff <= 7) {
+    return '7d';
+  }
+  if (diff <= 30) {
+    return '30d';
+  }
+  if (diff <= 90) {
+    return '90d';
+  }
   return 'all';
 }
 
@@ -90,7 +98,9 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
   const handleSearch = useCallback(
     (val: string) => {
       setSearchVal(val);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
       debounceRef.current = setTimeout(() => {
         onFiltersChange({ actorLabel: val || undefined });
       }, 300);
@@ -98,7 +108,14 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
     [onFiltersChange],
   );
 
-  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    },
+    [],
+  );
 
   const applyUsers = () => {
     onFiltersChange({ actorType: pendingActorType || undefined });
@@ -135,11 +152,11 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
   const dateActive = currentPreset(filters) !== '7d';
 
   const usersLabel = filters.actorType
-    ? ACTOR_OPTIONS.find(o => o.value === filters.actorType)?.label ?? 'All users'
+    ? (ACTOR_OPTIONS.find(o => o.value === filters.actorType)?.label ?? 'All users')
     : 'All users';
 
   const actionsLabel = filters.action
-    ? ACTION_OPTIONS.find(o => o.value === filters.action)?.label ?? 'All actions'
+    ? (ACTION_OPTIONS.find(o => o.value === filters.action)?.label ?? 'All actions')
     : 'All actions';
 
   return (
@@ -160,17 +177,24 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
         open={usersOpen}
         onOpenChange={open => {
           setUsersOpen(open);
-          if (open) setPendingActorType(filters.actorType ?? '');
+          if (open) {
+            setPendingActorType(filters.actorType ?? '');
+          }
         }}
-        trigger={
-          <FilterChipButton active={usersActive}>{usersLabel}</FilterChipButton>
-        }
+        trigger={<FilterChipButton active={usersActive}>{usersLabel}</FilterChipButton>}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {ACTOR_OPTIONS.map(opt => (
             <label
               key={opt.value}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', padding: '4px 0' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 13,
+                cursor: 'pointer',
+                padding: '4px 0',
+              }}
             >
               <input
                 type="radio"
@@ -196,17 +220,24 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
         open={actionsOpen}
         onOpenChange={open => {
           setActionsOpen(open);
-          if (open) setPendingAction(filters.action ?? '');
+          if (open) {
+            setPendingAction(filters.action ?? '');
+          }
         }}
-        trigger={
-          <FilterChipButton active={actionsActive}>{actionsLabel}</FilterChipButton>
-        }
+        trigger={<FilterChipButton active={actionsActive}>{actionsLabel}</FilterChipButton>}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {ACTION_OPTIONS.map(opt => (
             <label
               key={opt.value}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', padding: '4px 0' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 13,
+                cursor: 'pointer',
+                padding: '4px 0',
+              }}
             >
               <input
                 type="radio"
@@ -232,17 +263,24 @@ export function AuditFilterBar({ filters, onFiltersChange }: AuditFilterBarProps
         open={dateOpen}
         onOpenChange={open => {
           setDateOpen(open);
-          if (open) setPendingDatePreset(currentPreset(filters));
+          if (open) {
+            setPendingDatePreset(currentPreset(filters));
+          }
         }}
-        trigger={
-          <FilterChipButton active={dateActive}>{dateChipLabel(filters)}</FilterChipButton>
-        }
+        trigger={<FilterChipButton active={dateActive}>{dateChipLabel(filters)}</FilterChipButton>}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {DATE_PRESETS.map(opt => (
             <label
               key={opt.value}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer', padding: '4px 0' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 13,
+                cursor: 'pointer',
+                padding: '4px 0',
+              }}
             >
               <input
                 type="radio"

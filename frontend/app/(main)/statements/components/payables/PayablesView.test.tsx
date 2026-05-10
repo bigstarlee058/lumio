@@ -57,7 +57,7 @@ vi.mock('@/app/i18n', () => ({
         toPay: { value: 'To Pay' },
         overdue: { value: 'Overdue' },
         dueThisWeek: { value: 'Due This Week' },
-        paidThisMonth: { value: 'Paid This Month' },
+        paidThisMonth: { value: 'Paid' },
         itemsSuffix: { value: 'items' },
       },
       filters: {
@@ -184,7 +184,9 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!ReactModule.isValidElement(children)) return <>{children}</>;
+      if (!ReactModule.isValidElement(children)) {
+        return <>{children}</>;
+      }
 
       const child = children as React.ReactElement<{ onClick?: (event: React.MouseEvent) => void }>;
 
@@ -197,7 +199,9 @@ vi.mock('@/app/components/ui/dropdown-menu', () => {
     },
     DropdownMenuContent: ({ children }: { children: React.ReactNode }) => {
       const context = ReactModule.useContext(DropdownContext);
-      if (!context?.open) return null;
+      if (!context?.open) {
+        return null;
+      }
       return <div>{children}</div>;
     },
     DropdownMenuItem: ({
@@ -232,8 +236,10 @@ describe('PayablesView', () => {
       overdue: 300,
       dueThisWeek: 450,
       paidThisMonth: 800,
+      paidTotal: 1800,
       toPayCount: 2,
       overdueCount: 1,
+      paidTotalCount: 2,
     });
     apiMocks.list.mockResolvedValue({
       data: [
@@ -274,14 +280,14 @@ describe('PayablesView', () => {
   });
 
   it('loads summary and list data', async () => {
-    const createObjectURL = vi.fn(() => 'blob:payables');
-    const revokeObjectURL = vi.fn();
+    const createObjectUrl = vi.fn(() => 'blob:payables');
+    const revokeObjectUrl = vi.fn();
     Object.defineProperty(window.URL, 'createObjectURL', {
-      value: createObjectURL,
+      value: createObjectUrl,
       writable: true,
     });
     Object.defineProperty(window.URL, 'revokeObjectURL', {
-      value: revokeObjectURL,
+      value: revokeObjectUrl,
       writable: true,
     });
 
@@ -290,6 +296,8 @@ describe('PayablesView', () => {
 
     expect(await screen.findByText('Payables')).toBeInTheDocument();
     expect(await screen.findByText('ACME LLC')).toBeInTheDocument();
+    expect(screen.getAllByText('Paid').length).toBeGreaterThan(0);
+    expect(screen.getByText('KZT 1,800.00')).toBeInTheDocument();
     expect(screen.queryByText('Sort')).not.toBeInTheDocument();
     expect(apiMocks.getSummary).toHaveBeenCalledTimes(1);
     expect(apiMocks.list).toHaveBeenCalledTimes(1);
@@ -308,15 +316,33 @@ describe('PayablesView', () => {
     expect(toastMock.success).toHaveBeenCalledWith('Marked as paid');
   });
 
+  it('opens currency drawer from the payable form currency field', async () => {
+    const { PayablesView } = await import('./PayablesView');
+    render(<PayablesView />);
+
+    await screen.findByText('ACME LLC');
+    fireEvent.click(screen.getByRole('button', { name: 'Add payable' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Currency' }));
+
+    expect(await screen.findByText('Select a currency')).toBeInTheDocument();
+    const usdOption = screen.getAllByText(/^USD -/)[0].closest('button');
+    expect(usdOption).not.toBeNull();
+    fireEvent.click(usdOption as HTMLButtonElement);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Currency' })).toHaveTextContent('USD');
+    });
+  });
+
   it('exports all filtered rows without page params and keeps the default sort', async () => {
-    const createObjectURL = vi.fn(() => 'blob:payables');
-    const revokeObjectURL = vi.fn();
+    const createObjectUrl = vi.fn(() => 'blob:payables');
+    const revokeObjectUrl = vi.fn();
     Object.defineProperty(window.URL, 'createObjectURL', {
-      value: createObjectURL,
+      value: createObjectUrl,
       writable: true,
     });
     Object.defineProperty(window.URL, 'revokeObjectURL', {
-      value: revokeObjectURL,
+      value: revokeObjectUrl,
       writable: true,
     });
 

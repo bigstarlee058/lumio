@@ -1,10 +1,12 @@
-import type { NextFunction, Request, Response } from 'express';
 import { randomUUID } from 'node:crypto';
+import type { NextFunction, Request, Response } from 'express';
 import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 import { RequestContext } from './request-context';
 
 const extractTraceIdFromTraceParent = (traceParent: string | undefined): string | null => {
-  if (!traceParent) return null;
+  if (!traceParent) {
+    return null;
+  }
   // W3C traceparent: "00-<trace-id>-<parent-id>-<flags>"
   const parts = traceParent.split('-');
   const traceId = parts.length >= 2 ? parts[1] : null;

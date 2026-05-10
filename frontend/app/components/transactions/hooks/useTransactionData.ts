@@ -5,10 +5,7 @@ import toast from 'react-hot-toast';
 
 import api from '@/app/lib/api';
 
-import {
-  type TransactionApiRecord,
-  mapApiRecordToTransaction,
-} from '../helpers/transactionMapper';
+import { type TransactionApiRecord, mapApiRecordToTransaction } from '../helpers/transactionMapper';
 import type { Category, Transaction } from '../types';
 
 export interface UseTransactionDataOptions {

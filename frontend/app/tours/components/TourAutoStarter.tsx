@@ -13,9 +13,13 @@ const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 function isOnCooldown(tourId: string): boolean {
   try {
     const raw = localStorage.getItem(`lumio_tour_last_shown:${tourId}`);
-    if (!raw) return false;
+    if (!raw) {
+      return false;
+    }
     const timestamp = Number(raw);
-    if (Number.isNaN(timestamp)) return false;
+    if (Number.isNaN(timestamp)) {
+      return false;
+    }
     return Date.now() - timestamp < COOLDOWN_MS;
   } catch {
     return false;
@@ -48,7 +52,9 @@ function scheduleTourStart(ctx: TourStartContext): void {
   const tourManager = getTourManager();
   triggered.add(pathname);
   window.requestAnimationFrame(() => {
-    if (cancelled() || tourManager.isActive()) return;
+    if (cancelled() || tourManager.isActive()) {
+      return;
+    }
     markShown(tourId);
     void tourManager.startTour(tourId);
   });
@@ -73,16 +79,25 @@ function resolveAndStartTour(params: TryStartParams): void {
   }
 
   const tour = allTours.find(t => t.page && pathname.startsWith(t.page));
-  if (!tour) { triggered.add(pathname); return; }
+  if (!tour) {
+    triggered.add(pathname);
+    return;
+  }
 
-  const blocked = tourManager.isTourCompleted(tour.id) || isOnCooldown(tour.id) || tourManager.isActive();
-  if (blocked) { triggered.add(pathname); return; }
+  const blocked =
+    tourManager.isTourCompleted(tour.id) || isOnCooldown(tour.id) || tourManager.isActive();
+  if (blocked) {
+    triggered.add(pathname);
+    return;
+  }
 
   scheduleTourStart({ params, tourId: tour.id });
 }
 
 function tryStartTour(params: TryStartParams): void {
-  if (params.cancelled() || params.triggered.has(params.pathname)) return;
+  if (params.cancelled() || params.triggered.has(params.pathname)) {
+    return;
+  }
   resolveAndStartTour(params);
 }
 
@@ -91,7 +106,9 @@ export function TourAutoStarter(): null {
   const hasTriggeredRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    if (hasTriggeredRef.current.has(pathname)) return;
+    if (hasTriggeredRef.current.has(pathname)) {
+      return;
+    }
 
     let isCancelled = false;
     const cancelled = (): boolean => isCancelled;

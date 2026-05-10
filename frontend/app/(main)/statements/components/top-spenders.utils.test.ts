@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  buildTopSpendersStatementsParams,
-  resolveSpenderFlow,
-} from './top-spenders.utils';
+import { buildTopSpendersStatementsParams, resolveSpenderFlow } from './top-spenders.utils';
 
 describe('top spenders helpers', () => {
   it('resolves spender flow from debit and credit values', () => {

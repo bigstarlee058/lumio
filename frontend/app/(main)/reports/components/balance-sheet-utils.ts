@@ -14,8 +14,12 @@ export type BalanceSheetResponse = {
 export type BalanceExportFormat = 'excel' | 'pdf';
 
 export const resolveLocale = (locale: string): string => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
   return 'en-US';
 };
 
@@ -30,20 +34,30 @@ export const buildEditableValues = (sections: BalanceAccountNode[]): Record<stri
   const result: Record<string, string> = {};
   const collect = (accounts: BalanceAccountNode[]): void => {
     for (const account of accounts) {
-      if (account.isEditable) result[account.id] = account.amount.toFixed(2);
-      if (account.children.length > 0) collect(account.children);
+      if (account.isEditable) {
+        result[account.id] = account.amount.toFixed(2);
+      }
+      if (account.children.length > 0) {
+        collect(account.children);
+      }
     }
   };
   collect(sections);
   return result;
 };
 
-export const buildExpandableDefaults = (sections: BalanceAccountNode[]): Record<string, boolean> => {
+export const buildExpandableDefaults = (
+  sections: BalanceAccountNode[],
+): Record<string, boolean> => {
   const result: Record<string, boolean> = {};
   const collect = (accounts: BalanceAccountNode[]): void => {
     for (const account of accounts) {
-      if (account.isExpandable || account.children.length > 0) result[account.id] = true;
-      if (account.children.length > 0) collect(account.children);
+      if (account.isExpandable || account.children.length > 0) {
+        result[account.id] = true;
+      }
+      if (account.children.length > 0) {
+        collect(account.children);
+      }
     }
   };
   collect(sections);
@@ -51,14 +65,19 @@ export const buildExpandableDefaults = (sections: BalanceAccountNode[]): Record<
 };
 
 export const parseContentDispositionFileName = (contentDisposition?: string): string | null => {
-  if (!contentDisposition) return null;
+  if (!contentDisposition) {
+    return null;
+  }
   const utfMatch = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
-  if (utfMatch?.[1]) return decodeURIComponent(utfMatch[1]);
+  if (utfMatch?.[1]) {
+    return decodeURIComponent(utfMatch[1]);
+  }
   const asciiMatch = /filename="?([^";]+)"?/i.exec(contentDisposition);
   return asciiMatch?.[1] ?? null;
 };
 
-export const getLabel = (labels: BalanceLabels) =>
+export const getLabel =
+  (labels: BalanceLabels) =>
   (key: string, fallback: string): string =>
     labels[key]?.value ?? fallback;
 

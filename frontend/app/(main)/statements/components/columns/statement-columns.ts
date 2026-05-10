@@ -84,9 +84,13 @@ const ALWAYS_AVAILABLE_FILTER_KEYS: Array<keyof StatementFilters> = [
 const sortColumns = (columns: StatementColumn[]) => [...columns].sort((a, b) => a.order - b.order);
 
 export const loadStatementColumns = (): StatementColumn[] => {
-  if (typeof window === 'undefined') return DEFAULT_STATEMENT_COLUMNS;
+  if (typeof window === 'undefined') {
+    return DEFAULT_STATEMENT_COLUMNS;
+  }
   const raw = localStorage.getItem(STATEMENT_COLUMNS_STORAGE_KEY);
-  if (!raw) return DEFAULT_STATEMENT_COLUMNS;
+  if (!raw) {
+    return DEFAULT_STATEMENT_COLUMNS;
+  }
   try {
     const parsed = JSON.parse(raw) as Array<Partial<StatementColumn>>;
     const merged = DEFAULT_STATEMENT_COLUMNS.map(column => {
@@ -104,7 +108,9 @@ export const loadStatementColumns = (): StatementColumn[] => {
 };
 
 export const saveStatementColumns = (columns: StatementColumn[]) => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    return;
+  }
   localStorage.setItem(STATEMENT_COLUMNS_STORAGE_KEY, JSON.stringify(columns));
 };
 
@@ -113,10 +119,14 @@ export const reorderStatementColumns = (
   activeId: StatementColumnId,
   overId: StatementColumnId,
 ) => {
-  if (activeId === overId) return columns;
+  if (activeId === overId) {
+    return columns;
+  }
   const activeIndex = columns.findIndex(column => column.id === activeId);
   const overIndex = columns.findIndex(column => column.id === overId);
-  if (activeIndex === -1 || overIndex === -1) return columns;
+  if (activeIndex === -1 || overIndex === -1) {
+    return columns;
+  }
 
   const next = [...columns];
   const [moved] = next.splice(activeIndex, 1);

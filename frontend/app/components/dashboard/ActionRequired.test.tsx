@@ -32,8 +32,8 @@ describe('ActionRequired', () => {
     );
 
     expect(screen.getByText('Transactions uncategorized')).toBeInTheDocument();
-    const marker = Array.from(document.querySelectorAll('span')).find(node =>
-      typeof node.className === 'string' && node.className.includes('bg-[#0584C7]'),
+    const marker = Array.from(document.querySelectorAll('span')).find(
+      node => typeof node.className === 'string' && node.className.includes('bg-[#0584C7]'),
     );
 
     expect(marker).toBeTruthy();

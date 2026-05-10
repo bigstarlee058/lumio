@@ -3,16 +3,24 @@
 import { format } from 'date-fns';
 import type { Locale } from 'date-fns';
 import { useMemo, useState } from 'react';
-import type { ColumnFilterState, RowFilterOp } from './useColumnConfig';
 import type { RowFilter } from '../utils/stylingUtils';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
+import type { ColumnFilterState, RowFilterOp } from './useColumnConfig';
 
-function buildRangeFilter(colKey: string, lower: number | undefined, upper: number | undefined): RowFilter | null {
+function buildRangeFilter(
+  colKey: string,
+  lower: number | undefined,
+  upper: number | undefined,
+): RowFilter | null {
   if (lower !== undefined && upper !== undefined) {
     return { col: colKey, op: 'between', value: [lower, upper] };
   }
-  if (lower !== undefined) { return { col: colKey, op: 'gte', value: lower }; }
-  if (upper !== undefined) { return { col: colKey, op: 'lte', value: upper }; }
+  if (lower !== undefined) {
+    return { col: colKey, op: 'gte', value: lower };
+  }
+  if (upper !== undefined) {
+    return { col: colKey, op: 'lte', value: upper };
+  }
   return null;
 }
 
@@ -24,7 +32,11 @@ function buildNumberFilter(colKey: string, state: ColumnFilterState): RowFilter 
   return buildRangeFilter(colKey, validMin, validMax);
 }
 
-function buildDateFilter(colKey: string, state: ColumnFilterState, dateFnsLocale: Locale): RowFilter | null {
+function buildDateFilter(
+  colKey: string,
+  state: ColumnFilterState,
+  dateFnsLocale: Locale,
+): RowFilter | null {
   const from = state.from ? new Date(`${state.from}T00:00:00`) : undefined;
   const to = state.to ? new Date(`${state.to}T00:00:00`) : undefined;
   const toIso = (d: Date) => format(d, 'yyyy-MM-dd', { locale: dateFnsLocale });
@@ -42,9 +54,17 @@ function buildTextFilter(colKey: string, state: ColumnFilterState): RowFilter | 
   return value ? { col: colKey, op, value } : null;
 }
 
-function buildColumnFilter(col: CustomTablePageColumn, state: ColumnFilterState, dateFnsLocale: Locale): RowFilter | null {
-  if (col.type === 'number') { return buildNumberFilter(col.key, state); }
-  if (col.type === 'date') { return buildDateFilter(col.key, state, dateFnsLocale); }
+function buildColumnFilter(
+  col: CustomTablePageColumn,
+  state: ColumnFilterState,
+  dateFnsLocale: Locale,
+): RowFilter | null {
+  if (col.type === 'number') {
+    return buildNumberFilter(col.key, state);
+  }
+  if (col.type === 'date') {
+    return buildDateFilter(col.key, state, dateFnsLocale);
+  }
   return buildTextFilter(col.key, state);
 }
 
@@ -66,14 +86,18 @@ export interface UseTableFiltersReturn {
 }
 
 function parseDateValue(value: unknown): Date | null {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const raw = typeof value === 'string' ? value : String(value);
   const parsed = new Date(raw);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 function parseFiltersParam(raw: string | undefined): RowFilter[] {
-  if (!raw) return [];
+  if (!raw) {
+    return [];
+  }
   try {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? (parsed as RowFilter[]) : [];
@@ -97,7 +121,9 @@ export function useTableFilters({
     return orderedColumns
       .map(col => {
         const state = columnFilters[col.key];
-        if (!state) { return null; }
+        if (!state) {
+          return null;
+        }
         return buildColumnFilter(col, state, dateFnsLocale);
       })
       .filter((f): f is RowFilter => f !== null);
@@ -109,19 +135,27 @@ export function useTableFilters({
   }, [orderedColumns]);
 
   const dateFilters = useMemo<RowFilter[]>(() => {
-    if (!dateFilterColKey) { return []; }
+    if (!dateFilterColKey) {
+      return [];
+    }
     const toIso = (d: Date) => format(d, 'yyyy-MM-dd', { locale: dateFnsLocale });
     const from = parseDateValue(dateFrom);
     const to = parseDateValue(dateTo);
     const validFrom = from && !Number.isNaN(from.getTime()) ? toIso(from) : undefined;
     const validTo = to && !Number.isNaN(to.getTime()) ? toIso(to) : undefined;
-    const filter = buildRangeFilter(dateFilterColKey, validFrom as unknown as number, validTo as unknown as number);
+    const filter = buildRangeFilter(
+      dateFilterColKey,
+      validFrom as unknown as number,
+      validTo as unknown as number,
+    );
     return filter ? [filter] : [];
   }, [dateFilterColKey, dateFrom, dateTo, dateFnsLocale]);
 
   const searchFilter = useMemo<RowFilter | null>(() => {
     const value = searchQuery.trim();
-    if (!value) return null;
+    if (!value) {
+      return null;
+    }
     return { col: '__search__', op: 'search', value };
   }, [searchQuery]);
 

@@ -174,4 +174,31 @@ describe('FiltersDrawer', () => {
     expect(container.textContent).toContain('Gmail');
     expect(container.textContent).toContain('PDF');
   });
+
+  it('shows active route filter inside nested filter screens', async () => {
+    const onResetRouteFilter = vi.fn();
+
+    await act(async () => {
+      root.render(
+        <FiltersDrawer
+          {...baseProps}
+          screen="status"
+          routeFilterLabel="Missing category"
+          onResetRouteFilter={onResetRouteFilter}
+        />,
+      );
+    });
+
+    expect(container.textContent).toContain('Missing category');
+
+    const resetButton = container.querySelector(
+      'button[aria-label="Reset filters: Missing category"]',
+    );
+
+    await act(async () => {
+      resetButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(onResetRouteFilter).toHaveBeenCalledTimes(1);
+  });
 });

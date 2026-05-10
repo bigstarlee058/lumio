@@ -1,7 +1,6 @@
 'use client';
 
 import type React from 'react';
-import type { JSX } from 'react';
 
 import { UnapprovedCashBulkActions } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashBulkActions';
 import { UnapprovedCashContent } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashContent';
@@ -9,8 +8,8 @@ import { UnapprovedCashFilterBar } from '@/app/(main)/statements/components/unap
 import { UnapprovedCashPageHeader } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashPageHeader';
 import { UnapprovedCashStatCards } from '@/app/(main)/statements/components/unapproved-cash/components/UnapprovedCashStatCards';
 import {
-  useUnapprovedCashViewModel,
   type UnapprovedCashViewModel,
+  useUnapprovedCashViewModel,
 } from '@/app/(main)/statements/components/unapproved-cash/hooks/useUnapprovedCashViewModel';
 import { tokens } from '@/lib/theme-tokens';
 
@@ -28,11 +27,43 @@ type VmProps = { vm: UnapprovedCashViewModel };
 function UnapprovedCashControls({ vm }: VmProps): React.JSX.Element {
   const { labels, reasonOptions, sourceOptions } = vm;
   return (
-    <div style={{ marginBottom: 16, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <UnapprovedCashPageHeader title={labels.title} subtitle={labels.subtitle} refreshLabel={labels.actions.refresh} loading={vm.loading} refreshing={vm.refreshing} onRefresh={() => void vm.loadQueueData(true)} />
-      <UnapprovedCashStatCards totalCount={vm.queueWithoutIgnored.length} reasonCounts={vm.reasonCounts} labels={{ total: labels.summary.total, missingCategory: labels.summary.missingCategory, duplicates: labels.summary.duplicates, confirmation: labels.summary.confirmation }} />
-      <UnapprovedCashFilterBar filters={vm.filters} reasonOptions={reasonOptions} sourceOptions={sourceOptions} labels={{ searchPlaceholder: labels.searchPlaceholder, filters: labels.filters }} setFilters={vm.setFilters} resetFilters={vm.resetFilters} />
-      <UnapprovedCashBulkActions selectedCount={vm.selectedCount} labels={{ actions: labels.actions }} formatTemplate={vm.formatTemplate} onToggleSelectAllVisible={vm.toggleSelectAllVisible} onIgnoreSelected={vm.handleIgnoreSelected} onClearSelection={() => vm.setSelectedIds(() => [])} />
+    <div
+      style={{ marginBottom: 16, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}
+    >
+      <UnapprovedCashPageHeader
+        title={labels.title}
+        subtitle={labels.subtitle}
+        refreshLabel={labels.actions.refresh}
+        loading={vm.loading}
+        refreshing={vm.refreshing}
+        onRefresh={() => void vm.loadQueueData(true)}
+      />
+      <UnapprovedCashStatCards
+        totalCount={vm.queueWithoutIgnored.length}
+        reasonCounts={vm.reasonCounts}
+        labels={{
+          total: labels.summary.total,
+          missingCategory: labels.summary.missingCategory,
+          duplicates: labels.summary.duplicates,
+          confirmation: labels.summary.confirmation,
+        }}
+      />
+      <UnapprovedCashFilterBar
+        filters={vm.filters}
+        reasonOptions={reasonOptions}
+        sourceOptions={sourceOptions}
+        labels={{ searchPlaceholder: labels.searchPlaceholder, filters: labels.filters }}
+        setFilters={vm.setFilters}
+        resetFilters={vm.resetFilters}
+      />
+      <UnapprovedCashBulkActions
+        selectedCount={vm.selectedCount}
+        labels={{ actions: labels.actions }}
+        formatTemplate={vm.formatTemplate}
+        onToggleSelectAllVisible={vm.toggleSelectAllVisible}
+        onIgnoreSelected={vm.handleIgnoreSelected}
+        onClearSelection={() => vm.setSelectedIds(() => [])}
+      />
     </div>
   );
 }
@@ -42,7 +73,16 @@ export default function UnapprovedCashView(): React.JSX.Element {
   return (
     <div className="container-shared" style={CONTAINER_STYLE}>
       <UnapprovedCashControls vm={vm} />
-      <div style={{ minHeight: 0, flex: 1, overflowY: 'auto', border: '1px solid var(--border-color)', background: 'var(--card-bg)', borderRadius: tokens.radius.lg }}>
+      <div
+        style={{
+          minHeight: 0,
+          flex: 1,
+          overflowY: 'auto',
+          border: '1px solid var(--border-color)',
+          background: 'var(--card-bg)',
+          borderRadius: tokens.radius.lg,
+        }}
+      >
         <UnapprovedCashContent
           loading={vm.loading}
           filteredQueue={vm.filteredQueue}
@@ -50,7 +90,11 @@ export default function UnapprovedCashView(): React.JSX.Element {
           allVisibleSelected={vm.allVisibleSelected}
           reasonLabelById={vm.reasonLabelById}
           sourceLabelById={vm.sourceLabelById}
-          labels={{ empty: { title: vm.labels.empty.title, description: vm.labels.empty.description }, table: vm.labels.table, actions: { reviewFix: vm.labels.actions.reviewFix } }}
+          labels={{
+            empty: { title: vm.labels.empty.title, description: vm.labels.empty.description },
+            table: vm.labels.table,
+            actions: { reviewFix: vm.labels.actions.reviewFix },
+          }}
           onToggleSelectAllVisible={vm.toggleSelectAllVisible}
           onToggleSelect={vm.toggleSelect}
           onReview={vm.handleReview}

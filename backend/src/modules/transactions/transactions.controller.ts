@@ -38,7 +38,7 @@ export class TransactionsController {
   @Get()
   @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async findAll(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     // Accept both snake_case and camelCase for backward compatibility
     @Query('statement_id') statementIdSnake?: string,
@@ -84,7 +84,7 @@ export class TransactionsController {
   @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     return this.transactionsService.findOne(id, workspaceId);
@@ -140,7 +140,7 @@ export class TransactionsController {
   @Get('duplicates/detect')
   @WorkspaceAuth(Permission.TRANSACTION_VIEW)
   async detectDuplicates(
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
     @Query('statement_id') statementId?: string,
     @Query('threshold') threshold?: string,
@@ -183,7 +183,7 @@ export class TransactionsController {
   @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async markDuplicates(
     @Body() body: { groups: Array<{ masterId: string; duplicateIds: string[] }> },
-    @CurrentUser() user: User,
+    @CurrentUser() _user: User,
     @WorkspaceId() workspaceId: string,
   ) {
     const duplicateGroups = await this.deduplicationService.findDuplicates(workspaceId);
@@ -206,8 +206,8 @@ export class TransactionsController {
   @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async mergeDuplicates(
     @Body() body: { transactionIds: string[] },
-    @CurrentUser() user: User,
-    @WorkspaceId() workspaceId: string,
+    @CurrentUser() _user: User,
+    @WorkspaceId() _workspaceId: string,
   ) {
     const master = await this.deduplicationService.mergeDuplicates(body.transactionIds);
 
@@ -227,8 +227,8 @@ export class TransactionsController {
   @WorkspaceAuth(Permission.TRANSACTION_EDIT)
   async unmarkDuplicate(
     @Param('id') id: string,
-    @CurrentUser() user: User,
-    @WorkspaceId() workspaceId: string,
+    @CurrentUser() _user: User,
+    @WorkspaceId() _workspaceId: string,
   ) {
     const transaction = await this.deduplicationService.unmarkDuplicate(id);
 

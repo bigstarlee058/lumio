@@ -1,40 +1,57 @@
 import apiClient from '@/app/lib/api';
 import { getApiErrorStatus } from '@/app/lib/api-error';
 import toast from 'react-hot-toast';
-import { getClassificationResults } from '../utils/tableHelpers';
 import type { CustomTableGridRow } from '../utils/stylingUtils';
+import { getClassificationResults } from '../utils/tableHelpers';
 import type { CustomTablePageColumn } from '../utils/tableTypes';
 
 type SetRows = React.Dispatch<React.SetStateAction<CustomTableGridRow[]>>;
 type SetIds = React.Dispatch<React.SetStateAction<string[]>>;
-type SetTable = React.Dispatch<React.SetStateAction<import('../utils/tableTypes').CustomTable | null>>;
+type SetTable = React.Dispatch<
+  React.SetStateAction<import('../utils/tableTypes').CustomTable | null>
+>;
 
 export type DeleteRowMessages = {
-  deleteRowLoading: string; deleteRowSuccess: string; deleteRowFailed: string;
+  deleteRowLoading: string;
+  deleteRowSuccess: string;
+  deleteRowFailed: string;
 };
 
 export type BulkDeleteMessages = {
-  bulkDeleteLoading: string; bulkDeleteSuccess: string; bulkDeleteFailed: string;
+  bulkDeleteLoading: string;
+  bulkDeleteSuccess: string;
+  bulkDeleteFailed: string;
 };
 
 export type PaidColumnMessages = {
-  creatingPaidColumn: string; paidColumnCreated: string; paidColumnCreateFailed: string;
+  creatingPaidColumn: string;
+  paidColumnCreated: string;
+  paidColumnCreateFailed: string;
   paidColumnTitle: string;
 };
 
 export type MarkPaidMessages = {
-  markingPaid: string; markingUnpaid: string; markedPaid: string; markedUnpaid: string;
-  updateSomeRowsFailed: string; updateRowsFailed: string;
+  markingPaid: string;
+  markingUnpaid: string;
+  markedPaid: string;
+  markedUnpaid: string;
+  updateSomeRowsFailed: string;
+  updateRowsFailed: string;
 };
 
 type DeleteRowArgs = {
-  tableId: string; deleteRowTarget: { id: string };
-  setRows: SetRows; setIds: SetIds;
-  closeModal: () => void; refresh: () => Promise<void>;
+  tableId: string;
+  deleteRowTarget: { id: string };
+  setRows: SetRows;
+  setIds: SetIds;
+  closeModal: () => void;
+  refresh: () => Promise<void>;
   messages: DeleteRowMessages;
 };
 
-function applyDeleteSuccess(args: Pick<DeleteRowArgs, 'deleteRowTarget' | 'setRows' | 'setIds' | 'closeModal' | 'refresh'>): void {
+function applyDeleteSuccess(
+  args: Pick<DeleteRowArgs, 'deleteRowTarget' | 'setRows' | 'setIds' | 'closeModal' | 'refresh'>,
+): void {
   const { deleteRowTarget, setRows, setIds, closeModal, refresh } = args;
   setRows(prev => prev.filter(r => r.id !== deleteRowTarget.id));
   setIds(prev => prev.filter(id => id !== deleteRowTarget.id));
@@ -67,9 +84,12 @@ export async function performDeleteRow(args: DeleteRowArgs): Promise<void> {
 }
 
 type BulkDeleteArgs = {
-  tableId: string; ids: string[];
-  setRows: SetRows; setIds: SetIds;
-  closeModal: () => void; refresh: () => Promise<void>;
+  tableId: string;
+  ids: string[];
+  setRows: SetRows;
+  setIds: SetIds;
+  closeModal: () => void;
+  refresh: () => Promise<void>;
   messages: BulkDeleteMessages;
 };
 
@@ -78,7 +98,9 @@ export async function performBulkDelete(args: BulkDeleteArgs): Promise<void> {
   const toastId = toast.loading(messages.bulkDeleteLoading);
   try {
     const tempIds = ids.filter(id => id.startsWith('temp-'));
-    if (tempIds.length) setRows(prev => prev.filter(row => !tempIds.includes(row.id)));
+    if (tempIds.length) {
+      setRows(prev => prev.filter(row => !tempIds.includes(row.id)));
+    }
     const realIds = ids.filter(id => !id.startsWith('temp-'));
     const results = await Promise.allSettled(
       realIds.map(rowId => apiClient.delete(`/custom-tables/${tableId}/rows/${rowId}`)),
@@ -87,9 +109,15 @@ export async function performBulkDelete(args: BulkDeleteArgs): Promise<void> {
     const failedIds: string[] = [];
     results.forEach((result, index) => {
       const rowId = realIds[index];
-      if (result.status === 'fulfilled') { succeededIds.push(rowId); return; }
+      if (result.status === 'fulfilled') {
+        succeededIds.push(rowId);
+        return;
+      }
       const s = getApiErrorStatus((result as PromiseRejectedResult).reason);
-      if (s === 404 || s === 410) { succeededIds.push(rowId); return; }
+      if (s === 404 || s === 410) {
+        succeededIds.push(rowId);
+        return;
+      }
       failedIds.push(rowId);
     });
     if (succeededIds.length) {
@@ -97,8 +125,11 @@ export async function performBulkDelete(args: BulkDeleteArgs): Promise<void> {
       setRows(prev => prev.filter(row => !done.has(row.id)));
     }
     setIds(failedIds.filter(id => !id.startsWith('temp-')));
-    if (failedIds.length) toast.error(messages.bulkDeleteFailed, { id: toastId });
-    else toast.success(messages.bulkDeleteSuccess, { id: toastId });
+    if (failedIds.length) {
+      toast.error(messages.bulkDeleteFailed, { id: toastId });
+    } else {
+      toast.success(messages.bulkDeleteSuccess, { id: toastId });
+    }
     void refresh();
   } catch (error) {
     console.error('Failed to bulk delete rows:', error);
@@ -109,8 +140,10 @@ export async function performBulkDelete(args: BulkDeleteArgs): Promise<void> {
 }
 
 type EnsurePaidArgs = {
-  paidColKey: string | null; tableId: string;
-  setTable: SetTable; messages: PaidColumnMessages;
+  paidColKey: string | null;
+  tableId: string;
+  setTable: SetTable;
+  messages: PaidColumnMessages;
 };
 
 function makeColumnInserter(created: CustomTablePageColumn) {
@@ -126,11 +159,15 @@ function assertValidColumn(val: unknown): asserts val is CustomTablePageColumn {
 
 export async function ensurePaidColumn(args: EnsurePaidArgs): Promise<string> {
   const { paidColKey, tableId, setTable, messages } = args;
-  if (paidColKey) return paidColKey;
+  if (paidColKey) {
+    return paidColKey;
+  }
   const toastId = toast.loading(messages.creatingPaidColumn);
   try {
     const response = await apiClient.post(`/custom-tables/${tableId}/columns`, {
-      title: messages.paidColumnTitle, type: 'boolean', config: { icon: 'mdi:check-circle-outline' },
+      title: messages.paidColumnTitle,
+      type: 'boolean',
+      config: { icon: 'mdi:check-circle-outline' },
     });
     const created: unknown = response.data?.data ?? response.data;
     assertValidColumn(created);
@@ -144,10 +181,17 @@ export async function ensurePaidColumn(args: EnsurePaidArgs): Promise<string> {
   }
 }
 
-export async function classifyPaidStatus(tableId: string, rowIds: string[]): Promise<Map<string, boolean | null>> {
-  if (!tableId || !rowIds.length) return new Map();
+export async function classifyPaidStatus(
+  tableId: string,
+  rowIds: string[],
+): Promise<Map<string, boolean | null>> {
+  if (!(tableId && rowIds.length)) {
+    return new Map();
+  }
   try {
-    const response = await apiClient.post(`/custom-tables/${tableId}/rows/paid-classify`, { rowIds });
+    const response = await apiClient.post(`/custom-tables/${tableId}/rows/paid-classify`, {
+      rowIds,
+    });
     return getClassificationResults(response.data);
   } catch (error) {
     console.error('Failed to classify paid status:', error);
@@ -156,10 +200,13 @@ export async function classifyPaidStatus(tableId: string, rowIds: string[]): Pro
 }
 
 type MarkPaidArgs = {
-  tableId: string; ids: string[]; paid: boolean;
+  tableId: string;
+  ids: string[];
+  paid: boolean;
   resolvedKey: string;
   predictions: Map<string, boolean | null>;
-  setRows: SetRows; setIds: SetIds;
+  setRows: SetRows;
+  setIds: SetIds;
   refresh: () => Promise<void>;
   messages: MarkPaidMessages;
 };
@@ -170,24 +217,41 @@ export async function performMarkPaid(args: MarkPaidArgs): Promise<void> {
   const updates = ids.map(rowId => ({ rowId, value: predictions.get(rowId) ?? paid }));
   try {
     const results = await Promise.allSettled(
-      updates.map(u => apiClient.patch(`/custom-tables/${tableId}/rows/${u.rowId}`, { data: { [resolvedKey]: u.value } })),
+      updates.map(u =>
+        apiClient.patch(`/custom-tables/${tableId}/rows/${u.rowId}`, {
+          data: { [resolvedKey]: u.value },
+        }),
+      ),
     );
     const failedIds: string[] = [];
     const succeededMap = new Map<string, boolean>();
     results.forEach((result, index) => {
       const u = updates[index];
-      if (result.status === 'fulfilled') succeededMap.set(u.rowId, u.value);
-      else failedIds.push(u.rowId);
+      if (result.status === 'fulfilled') {
+        succeededMap.set(u.rowId, u.value);
+      } else {
+        failedIds.push(u.rowId);
+      }
     });
     if (succeededMap.size) {
-      setRows(prev => prev.map(row => {
-        if (!succeededMap.has(row.id)) return row;
-        return { ...row, data: { ...(row.data || {}), [resolvedKey]: succeededMap.get(row.id) as boolean } };
-      }));
+      setRows(prev =>
+        prev.map(row => {
+          if (!succeededMap.has(row.id)) {
+            return row;
+          }
+          return {
+            ...row,
+            data: { ...(row.data || {}), [resolvedKey]: succeededMap.get(row.id) as boolean },
+          };
+        }),
+      );
     }
     setIds(failedIds);
-    if (failedIds.length) toast.error(messages.updateSomeRowsFailed, { id: toastId });
-    else toast.success(paid ? messages.markedPaid : messages.markedUnpaid, { id: toastId });
+    if (failedIds.length) {
+      toast.error(messages.updateSomeRowsFailed, { id: toastId });
+    } else {
+      toast.success(paid ? messages.markedPaid : messages.markedUnpaid, { id: toastId });
+    }
     void refresh();
   } catch (error) {
     console.error('Failed to mark rows as paid:', error);

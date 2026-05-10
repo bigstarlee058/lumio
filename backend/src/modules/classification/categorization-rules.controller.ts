@@ -154,12 +154,24 @@ export class CategorizationRulesController {
     }
 
     const before = this.toAuditSnapshot(rule);
-    if (dto.name !== undefined) rule.name = dto.name;
-    if (dto.description !== undefined) rule.description = dto.description;
-    if (dto.conditions !== undefined) rule.conditions = dto.conditions;
-    if (dto.result !== undefined) rule.result = dto.result;
-    if (dto.priority !== undefined) rule.priority = dto.priority;
-    if (dto.isActive !== undefined) rule.isActive = dto.isActive;
+    if (dto.name !== undefined) {
+      rule.name = dto.name;
+    }
+    if (dto.description !== undefined) {
+      rule.description = dto.description;
+    }
+    if (dto.conditions !== undefined) {
+      rule.conditions = dto.conditions;
+    }
+    if (dto.result !== undefined) {
+      rule.result = dto.result;
+    }
+    if (dto.priority !== undefined) {
+      rule.priority = dto.priority;
+    }
+    if (dto.isActive !== undefined) {
+      rule.isActive = dto.isActive;
+    }
 
     await this.categorizationRuleRepository.save(rule);
 
@@ -218,8 +230,8 @@ export class CategorizationRulesController {
   @WorkspaceAuth(Permission.CATEGORY_VIEW)
   async testRule(
     @Body() dto: TestCategorizationRuleDto,
-    @CurrentUser() user: User,
-    @WorkspaceId() workspaceId: string,
+    @CurrentUser() _user: User,
+    @WorkspaceId() _workspaceId: string,
   ) {
     const transactions = await this.transactionRepository.findByIds(dto.transactionIds);
 
@@ -246,7 +258,9 @@ export class CategorizationRulesController {
 
     for (const condition of conditions) {
       const fieldValue = this.getFieldValue(transaction, condition.field);
-      if (!fieldValue) continue;
+      if (!fieldValue) {
+        continue;
+      }
 
       let matches = false;
       const value = String(fieldValue).toLowerCase();

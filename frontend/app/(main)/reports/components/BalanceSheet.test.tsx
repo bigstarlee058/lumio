@@ -1,6 +1,5 @@
 // @vitest-environment jsdom
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const apiGet = vi.hoisted(() => vi.fn());
@@ -60,10 +59,10 @@ describe('BalanceSheet', () => {
         },
       });
 
-    const createObjectURL = vi.fn(() => 'blob:balance');
-    const revokeObjectURL = vi.fn();
+    const createObjectUrl = vi.fn(() => 'blob:balance');
+    const revokeObjectUrl = vi.fn();
     Object.defineProperty(window, 'URL', {
-      value: { createObjectURL, revokeObjectURL },
+      value: { createObjectURL: createObjectUrl, revokeObjectURL: revokeObjectUrl },
       writable: true,
     });
 

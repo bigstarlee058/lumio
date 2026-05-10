@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Paper, Typography } from '@mui/material';
-import type { GmailReceipt, EditableReceiptData } from '../hooks/useGmailReceiptData';
+import type { EditableReceiptData, GmailReceipt } from '../hooks/useGmailReceiptData';
 
 interface MetricCardProps {
   label: string;
@@ -23,7 +23,9 @@ function MetricCard({ label, value, color }: MetricCardProps): React.ReactElemen
 }
 
 const formatCurrencyAmount = (amount: number, currency: string): string => {
-  if (!Number.isFinite(amount)) return `0 ${currency}`;
+  if (!Number.isFinite(amount)) {
+    return `0 ${currency}`;
+  }
   return `${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 };
 
@@ -60,8 +62,16 @@ export function SummaryMetrics({
       }}
     >
       <MetricCard label="Date" value={dateValue} />
-      <MetricCard label="Income" value={formatCurrencyAmount(income, currency)} color="success.main" />
-      <MetricCard label="Expense" value={formatCurrencyAmount(expense, currency)} color="error.main" />
+      <MetricCard
+        label="Income"
+        value={formatCurrencyAmount(income, currency)}
+        color="success.main"
+      />
+      <MetricCard
+        label="Expense"
+        value={formatCurrencyAmount(expense, currency)}
+        color="error.main"
+      />
       <MetricCard
         label="Confidence"
         value={confidencePercent === null ? 'N/A' : `${confidencePercent}%`}

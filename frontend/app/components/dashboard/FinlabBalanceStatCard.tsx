@@ -1,9 +1,9 @@
 'use client';
 
+import { Info } from '@/app/components/icons';
+import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { DashboardCashFlowPoint, DashboardRange } from '@/app/hooks/useDashboard';
-import { Info } from '@/app/components/icons';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { PeriodDropdown } from './PeriodDropdown';
@@ -109,7 +109,16 @@ export function FinlabBalanceStatCard({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: 'var(--foreground)', fontWeight: 700, fontSize: 16 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.75,
+            color: 'var(--foreground)',
+            fontWeight: 700,
+            fontSize: 16,
+          }}
+        >
           Balance Statistics
           <Info size={16} color="var(--muted-foreground)" />
         </Box>
@@ -120,8 +129,12 @@ export function FinlabBalanceStatCard({
         {option ? (
           <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
         ) : (
-          <Box sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
-            <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>No data available</Typography>
+          <Box
+            sx={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Typography sx={{ fontSize: 14, color: 'var(--muted-foreground)' }}>
+              No data available
+            </Typography>
           </Box>
         )}
       </Box>

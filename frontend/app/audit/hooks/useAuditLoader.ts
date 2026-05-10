@@ -42,7 +42,21 @@ export function useAuditLoader(): AuditLoaderResult {
     }
   }, [params]);
 
-  useEffect(() => { void loadEvents(); }, [loadEvents]);
+  useEffect(() => {
+    void loadEvents();
+  }, [loadEvents]);
 
-  return { events, total, page, limit, loading, error, filters, setPage, setLimit, setFilters, reload: loadEvents };
+  return {
+    events,
+    total,
+    page,
+    limit,
+    loading,
+    error,
+    filters,
+    setPage,
+    setLimit,
+    setFilters,
+    reload: loadEvents,
+  };
 }

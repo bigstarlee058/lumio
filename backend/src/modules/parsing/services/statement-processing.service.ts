@@ -11,6 +11,8 @@ import { ImportSessionMode } from '../../../entities/import-session.entity';
 import { BankName, FileType, Statement, StatementStatus } from '../../../entities/statement.entity';
 import { Transaction, TransactionType } from '../../../entities/transaction.entity';
 import { User } from '../../../entities/user.entity';
+import { extractTaxFromPurpose } from '../../classification/helpers/tax-extractor.util';
+import type { TransactionEnrichment } from '../../classification/interfaces/transaction-enrichment.interface';
 import { ClassificationService } from '../../classification/services/classification.service';
 import { GoogleSheetsService } from '../../google-sheets/google-sheets.service';
 import { ImportSessionService } from '../../import/services/import-session.service';
@@ -22,8 +24,6 @@ import type {
 import { MetricsService } from '../../observability/metrics.service';
 import { CrossStatementDeduplicationService } from '../../transactions/services/cross-statement-deduplication.service';
 import { TransactionFingerprintService } from '../../transactions/services/transaction-fingerprint.service';
-import { extractTaxFromPurpose } from '../../classification/helpers/tax-extractor.util';
-import type { TransactionEnrichment } from '../../classification/interfaces/transaction-enrichment.interface';
 import { AiParseValidator } from '../helpers/ai-parse-validator.helper';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
 import type { ParsedStatement } from '../interfaces/parsed-statement.interface';
@@ -38,7 +38,9 @@ interface StatementImportPreview {
 }
 
 function parsePositiveInt(value: string | undefined, fallback: number) {
-  if (!value) return fallback;
+  if (!value) {
+    return fallback;
+  }
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
@@ -318,7 +320,9 @@ export class StatementProcessingService {
     kind: 'extract' | 'validate',
     result: 'success' | 'empty' | 'error' | 'skipped',
   ) {
-    if (!this.metricsService) return;
+    if (!this.metricsService) {
+      return;
+    }
     this.metricsService.aiParsingCallsTotal.inc({ kind, result });
   }
 
@@ -497,12 +501,12 @@ export class StatementProcessingService {
           const ocrService = new OcrService();
           const ocrResult = await ocrService.extractTextFromImage(imageBuffer);
           cachedText = ocrResult.text;
-          addLog('info', `OCR extracted ${ocrResult.text.length} chars (confidence: ${ocrResult.confidence.toFixed(2)})`);
-        } catch (error) {
           addLog(
-            'warn',
-            `Image OCR failed before detection: ${this.getErrorMessage(error)}`,
+            'info',
+            `OCR extracted ${ocrResult.text.length} chars (confidence: ${ocrResult.confidence.toFixed(2)})`,
           );
+        } catch (error) {
+          addLog('warn', `Image OCR failed before detection: ${this.getErrorMessage(error)}`);
         }
       }
       const { bankName, formatVersion, detectedBy, detectedEvidence, otherBankMentions } =
@@ -866,7 +870,7 @@ export class StatementProcessingService {
     statement: Statement,
     parsedTransactions: ParsedTransaction[],
     userId: string,
-    defaultCategoryId: string | undefined,
+    _defaultCategoryId: string | undefined,
     manualCategorySelectionRequired: boolean,
     addLog?: (level: string, message: string) => void,
   ): Promise<{ transactions: Transaction[]; duplicatesSkipped: number }> {
@@ -902,7 +906,10 @@ export class StatementProcessingService {
       `Processing ${deduped.length}/${parsedTransactions.length} parsed transactions after dedup (statement currency: ${statement.currency || 'N/A'})`,
     );
 
-    let aiBatchResults = new Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>();
+    let aiBatchResults = new Map<
+      number,
+      { categoryId: string; enrichment?: TransactionEnrichment }
+    >();
     if (!manualCategorySelectionRequired && statement.workspaceId && deduped.length > 0) {
       try {
         aiBatchResults = await this.classificationService.classifyTransactionsBatch(
@@ -982,11 +989,7 @@ export class StatementProcessingService {
         }
 
         const aiBatchResult = aiBatchResults.get(i);
-        if (
-          !manualCategorySelectionRequired &&
-          !classification.categoryId &&
-          aiBatchResult
-        ) {
+        if (!(manualCategorySelectionRequired || classification.categoryId) && aiBatchResult) {
           classification.categoryId = aiBatchResult.categoryId;
         }
 

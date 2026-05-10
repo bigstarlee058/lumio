@@ -10,10 +10,14 @@ const normalizeType = (fileType?: string, fileName?: string): string => {
   const type = (fileType || '').trim().toLowerCase();
   const name = (fileName || '').trim().toLowerCase();
 
-  if (type) return type;
+  if (type) {
+    return type;
+  }
 
   const dot = name.lastIndexOf('.');
-  if (dot === -1) return '';
+  if (dot === -1) {
+    return '';
+  }
   return name.slice(dot + 1);
 };
 

@@ -24,18 +24,33 @@ interface UseReceiptActionsReturn {
 const patchReceipt = (id: string, data: Record<string, unknown>): Promise<unknown> =>
   apiClient.patch(`/receipts/${id}`, data);
 
-const withSaving = async (setSaving: (v: boolean) => void, fn: () => Promise<void>): Promise<void> => {
+const withSaving = async (
+  setSaving: (v: boolean) => void,
+  fn: () => Promise<void>,
+): Promise<void> => {
   setSaving(true);
-  try { await fn(); } finally { setSaving(false); }
+  try {
+    await fn();
+  } finally {
+    setSaving(false);
+  }
 };
 
-export function useReceiptActions({ receipt, payload, setSaving, onClose, onUpdated }: UseReceiptActionsParams): UseReceiptActionsReturn {
+export function useReceiptActions({
+  receipt,
+  payload,
+  setSaving,
+  onClose,
+  onUpdated,
+}: UseReceiptActionsParams): UseReceiptActionsReturn {
   const handleCurrencyChange = async (nextValue: EditableReceiptParsedData): Promise<void> => {
     if (!receipt) return;
     try {
       await patchReceipt(receipt.id, { parsedData: buildParsedDataPayload(nextValue) });
       onUpdated?.();
-    } catch { toast.error('Failed to save receipt currency.'); }
+    } catch {
+      toast.error('Failed to save receipt currency.');
+    }
   };
 
   const handleSaveDraft = async (): Promise<void> => {

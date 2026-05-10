@@ -19,7 +19,9 @@ export function useRowDrawer(rows: CustomTableGridRow[]): UseRowDrawerReturn {
   const [rowDrawerRowId, setRowDrawerRowId] = useState<string | null>(null);
 
   const drawerRow = useMemo(() => {
-    if (!rowDrawerRowId) return null;
+    if (!rowDrawerRowId) {
+      return null;
+    }
     return rows.find(r => r.id === rowDrawerRowId) || null;
   }, [rows, rowDrawerRowId]);
 
@@ -37,9 +39,13 @@ export function useRowDrawer(rows: CustomTableGridRow[]): UseRowDrawerReturn {
 
   // Auto-close if the row was deleted from underneath the drawer
   useEffect(() => {
-    if (!rowDrawerOpen || !rowDrawerRowId) return;
+    if (!(rowDrawerOpen && rowDrawerRowId)) {
+      return;
+    }
     const exists = rows.some(r => r.id === rowDrawerRowId);
-    if (!exists) closeRowDrawer();
+    if (!exists) {
+      closeRowDrawer();
+    }
   }, [rowDrawerOpen, rowDrawerRowId, rows]);
 
   return {

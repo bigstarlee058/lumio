@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ParsedStatement, ParsedTransaction } from '../interfaces/parsed-statement.interface';
+import { ParsedStatement } from '../interfaces/parsed-statement.interface';
 import { ChecksumValidationResult } from './checksum-validation.service';
 import { NormalizationResult } from './statement-normalization.service';
 
@@ -363,7 +363,8 @@ export class QualityLoggingService {
       checksumQualityScore: undefined,
       overallQualityScore: averageQualityScore,
       processingTime: totalProcessingTime,
-      completeness: totalTransactions > 0 ? (totalTransactions - failedProcessing) / totalTransactions : 0,
+      completeness:
+        totalTransactions > 0 ? (totalTransactions - failedProcessing) / totalTransactions : 0,
       totalProcessingTime,
       averageQualityScore,
       errorRate,

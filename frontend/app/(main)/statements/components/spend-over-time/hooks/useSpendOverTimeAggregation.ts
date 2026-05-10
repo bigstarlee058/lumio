@@ -1,11 +1,13 @@
 import {
+  buildPreviousPeriodRange,
+  getComparisonDelta,
+} from '@/app/(main)/statements/components/shared-analytics.utils';
+import {
   buildSpendOverTimePeriodsChart,
   buildSpendOverTimeSourceChart,
   buildSpendOverTimeTrendChart,
 } from '@/app/(main)/statements/components/spend-over-time.chart';
-import {
-  buildSpendOverTimeReport,
-} from '@/app/(main)/statements/components/spend-over-time.utils';
+import { buildSpendOverTimeReport } from '@/app/(main)/statements/components/spend-over-time.utils';
 import type {
   SpendOverTimeFlowType,
   SpendOverTimeGroupBy,
@@ -13,10 +15,6 @@ import type {
   SpendOverTimeRecord,
   SpendOverTimeTotals,
 } from '@/app/(main)/statements/components/spend-over-time.utils';
-import {
-  buildPreviousPeriodRange,
-  getComparisonDelta,
-} from '@/app/(main)/statements/components/shared-analytics.utils';
 import { getRecordDate } from '@/app/lib/analytics-common';
 import { useMemo } from 'react';
 
@@ -63,25 +61,47 @@ const sortRows = (rows: SpendOverTimePoint[], sortKey: SortKey): SpendOverTimePo
       const bAvg = b.count > 0 ? (b.income + b.expense) / b.count : 0;
       return bAvg - aAvg;
     }
-    if (sortKey === 'operations') return b.count - a.count;
+    if (sortKey === 'operations') {
+      return b.count - a.count;
+    }
     return b.income + b.expense - (a.income + a.expense);
   });
 
 const computePeriodRange = (records: SpendOverTimeRecord[]): PeriodRange => {
-  const points = records.map(r => getRecordDate(r)).filter((d): d is Date => Boolean(d)).sort((a, b) => a.getTime() - b.getTime());
-  if (points.length === 0) return null;
+  const points = records
+    .map(r => getRecordDate(r))
+    .filter((d): d is Date => Boolean(d))
+    .sort((a, b) => a.getTime() - b.getTime());
+  if (points.length === 0) {
+    return null;
+  }
   return { start: points[0], end: points[points.length - 1] };
 };
 
-const computePreviousTotals = (range: PeriodRange, records: SpendOverTimeRecord[], groupBy: SpendOverTimeGroupBy): SpendOverTimeTotals | null => {
-  if (!range) return null;
+const computePreviousTotals = (
+  range: PeriodRange,
+  records: SpendOverTimeRecord[],
+  groupBy: SpendOverTimeGroupBy,
+): SpendOverTimeTotals | null => {
+  if (!range) {
+    return null;
+  }
   const prev = buildPreviousPeriodRange(range.start, range.end);
-  if (!prev) return null;
-  const prevRecords = records.filter(r => { const d = getRecordDate(r); return d && d >= prev.start && d <= prev.end; });
+  if (!prev) {
+    return null;
+  }
+  const prevRecords = records.filter(r => {
+    const d = getRecordDate(r);
+    return d && d >= prev.start && d <= prev.end;
+  });
   return buildSpendOverTimeReport(prevRecords, groupBy).totals;
 };
 
-const buildComparison = (totals: SpendOverTimeTotals, prevTotals: SpendOverTimeTotals, activeFlowType: SpendOverTimeFlowType): Comparison => ({
+const buildComparison = (
+  totals: SpendOverTimeTotals,
+  prevTotals: SpendOverTimeTotals,
+  activeFlowType: SpendOverTimeFlowType,
+): Comparison => ({
   total: getComparisonDelta(
     activeFlowType === 'income' ? totals.income : totals.expense,
     activeFlowType === 'income' ? prevTotals.income : prevTotals.expense,
@@ -105,14 +125,56 @@ export const useSpendOverTimeAggregation = ({
   statementsAmountLabel,
   receiptsAmountLabel,
 }: Params): SpendOverTimeAggregationReturn => {
-  const report = useMemo(() => buildSpendOverTimeReport(flowFilteredRecords, groupBy), [flowFilteredRecords, groupBy]);
+  const report = useMemo(
+    () => buildSpendOverTimeReport(flowFilteredRecords, groupBy),
+    [flowFilteredRecords, groupBy],
+  );
   const rows = useMemo(() => sortRows(report.points, sortKey), [report.points, sortKey]);
-  const currentPeriodRange = useMemo(() => computePeriodRange(flowFilteredRecords), [flowFilteredRecords]);
-  const previousPeriodTotals = useMemo(() => computePreviousTotals(currentPeriodRange, flowRecordsWithoutDateFilter, groupBy), [currentPeriodRange, flowRecordsWithoutDateFilter, groupBy]);
-  const comparison = useMemo(() => previousPeriodTotals ? buildComparison(report.totals, previousPeriodTotals, activeFlowType) : null, [report.totals, previousPeriodTotals, activeFlowType]);
+  const currentPeriodRange = useMemo(
+    () => computePeriodRange(flowFilteredRecords),
+    [flowFilteredRecords],
+  );
+  const previousPeriodTotals = useMemo(
+    () => computePreviousTotals(currentPeriodRange, flowRecordsWithoutDateFilter, groupBy),
+    [currentPeriodRange, flowRecordsWithoutDateFilter, groupBy],
+  );
+  const comparison = useMemo(
+    () =>
+      previousPeriodTotals
+        ? buildComparison(report.totals, previousPeriodTotals, activeFlowType)
+        : null,
+    [report.totals, previousPeriodTotals, activeFlowType],
+  );
   const trendChartView = viewType === 'calendar' ? 'line' : viewType;
-  const trendChart = useMemo(() => buildSpendOverTimeTrendChart(report.points, trendChartView, activeFlowType, { totalIncome: totalIncomeLabel, totalSpend: totalSpendLabel }, resolvedTheme), [report.points, trendChartView, activeFlowType, totalIncomeLabel, totalSpendLabel, resolvedTheme]);
-  const sourceChart = useMemo(() => buildSpendOverTimeSourceChart(report.totals, { statementsAmount: statementsAmountLabel, receiptsAmount: receiptsAmountLabel }), [report.totals, statementsAmountLabel, receiptsAmountLabel]);
-  const periodsChart = useMemo(() => buildSpendOverTimePeriodsChart(rows, activeFlowType, resolvedTheme), [rows, activeFlowType, resolvedTheme]);
+  const trendChart = useMemo(
+    () =>
+      buildSpendOverTimeTrendChart(
+        report.points,
+        trendChartView,
+        activeFlowType,
+        { totalIncome: totalIncomeLabel, totalSpend: totalSpendLabel },
+        resolvedTheme,
+      ),
+    [
+      report.points,
+      trendChartView,
+      activeFlowType,
+      totalIncomeLabel,
+      totalSpendLabel,
+      resolvedTheme,
+    ],
+  );
+  const sourceChart = useMemo(
+    () =>
+      buildSpendOverTimeSourceChart(report.totals, {
+        statementsAmount: statementsAmountLabel,
+        receiptsAmount: receiptsAmountLabel,
+      }),
+    [report.totals, statementsAmountLabel, receiptsAmountLabel],
+  );
+  const periodsChart = useMemo(
+    () => buildSpendOverTimePeriodsChart(rows, activeFlowType, resolvedTheme),
+    [rows, activeFlowType, resolvedTheme],
+  );
   return { report, rows, comparison, trendChart, sourceChart, periodsChart };
 };

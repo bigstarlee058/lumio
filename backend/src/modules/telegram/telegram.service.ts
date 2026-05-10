@@ -8,9 +8,9 @@ import { TimeoutError, retry } from '../../common/utils/async.util';
 import { formatMoney } from '../../common/utils/format-money.util';
 import { ReportStatus, ReportType, TelegramReport } from '../../entities/telegram-report.entity';
 import { User } from '../../entities/user.entity';
+import { ApplicationSettingsService } from '../application-settings/application-settings.service';
 import type { DailyReport } from '../reports/interfaces/daily-report.interface';
 import type { MonthlyReport } from '../reports/interfaces/monthly-report.interface';
-import { ApplicationSettingsService } from '../application-settings/application-settings.service';
 import { ReportsService } from '../reports/reports.service';
 import { StatementsService } from '../statements/statements.service';
 import type { ConnectTelegramDto } from './dto/connect-telegram.dto';
@@ -264,7 +264,8 @@ export class TelegramService {
       throw new BadRequestException('Telegram bot is not configured');
     }
 
-    const timeoutMsRaw = settings?.timeoutMs || Number.parseInt(process.env.TELEGRAM_TIMEOUT_MS || '10000', 10);
+    const timeoutMsRaw =
+      settings?.timeoutMs || Number.parseInt(process.env.TELEGRAM_TIMEOUT_MS || '10000', 10);
     const timeoutMs = Number.isFinite(timeoutMsRaw) && timeoutMsRaw > 0 ? timeoutMsRaw : 10000;
 
     const sendOnce = async () => {
@@ -514,7 +515,7 @@ export class TelegramService {
     fileName: string,
     mimeType: string,
   ): Promise<Express.Multer.File> {
-    if (!this.apiBase || !this.fileApiBase) {
+    if (!(this.apiBase && this.fileApiBase)) {
       throw new BadRequestException('Telegram bot is not configured');
     }
 

@@ -1,16 +1,16 @@
 /* eslint-disable max-lines */
 'use client';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { DashboardData, DashboardRange } from '@/app/hooks/useDashboard';
 import { useDashboardTrends } from '@/app/hooks/useDashboard';
 import { resolveDashboardEffectivePeriod } from '@/app/lib/dashboard-effective-window';
+import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useTheme } from 'next-themes';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
-import { tokens } from '@/lib/theme-tokens';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -41,6 +41,107 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
   const dailyTrendOption = useMemo(() => {
     if (!trendsData?.dailyTrend?.length) return null;
     const isDark = resolvedTheme === 'dark';
+
+    const actual = trendsData.dailyTrend;
+    const forecast = trendsData.forecast ?? [];
+    const hasForecast = forecast.length > 0;
+    const lastActual = actual[actual.length - 1];
+
+    const allDates = [...actual.map(p => p.date), ...forecast.map(p => p.date)];
+
+    const incomeActual = [...actual.map(p => p.income), ...forecast.map(() => null)];
+    const expenseActual = [...actual.map(p => p.expense), ...forecast.map(() => null)];
+
+    const incomeForecast = hasForecast
+      ? [...actual.slice(0, -1).map(() => null), lastActual.income, ...forecast.map(p => p.income)]
+      : [];
+    const expenseForecast = hasForecast
+      ? [
+          ...actual.slice(0, -1).map(() => null),
+          lastActual.expense,
+          ...forecast.map(p => p.expense),
+        ]
+      : [];
+
+    const incomeColor = isDark ? '#34D399' : '#1a1a1a';
+    const expenseColor = '#D13D56';
+    const showPointSymbols = actual.length <= 2;
+
+    const series: object[] = [
+      {
+        name: 'Income',
+        type: 'line',
+        smooth: true,
+        symbol: showPointSymbols ? 'circle' : 'none',
+        symbolSize: showPointSymbols ? 7 : 0,
+        showSymbol: showPointSymbols,
+        data: incomeActual,
+        areaStyle: { color: isDark ? 'rgba(52,211,153,0.1)' : 'rgba(26,26,26,0.05)' },
+        lineStyle: { color: incomeColor, width: 2 },
+        itemStyle: { color: incomeColor },
+        ...(hasForecast
+          ? {
+              markLine: {
+                data: [{ xAxis: lastActual.date }],
+                lineStyle: {
+                  color: isDark ? '#4A5568' : '#A0AEC0',
+                  type: 'dashed' as const,
+                  width: 1,
+                },
+                label: {
+                  show: true,
+                  formatter: 'Forecast →',
+                  fontSize: 10,
+                  color: isDark ? '#8899AA' : '#718096',
+                  fontFamily: 'var(--font-dashboard-sans)',
+                },
+                symbol: 'none',
+                silent: true,
+              },
+            }
+          : {}),
+      },
+      {
+        name: 'Expense',
+        type: 'line',
+        smooth: true,
+        symbol: showPointSymbols ? 'circle' : 'none',
+        symbolSize: showPointSymbols ? 7 : 0,
+        showSymbol: showPointSymbols,
+        data: expenseActual,
+        areaStyle: { color: 'rgba(209,61,86,0.08)' },
+        lineStyle: { color: expenseColor, width: 2 },
+        itemStyle: { color: expenseColor },
+      },
+    ];
+
+    if (hasForecast) {
+      series.push(
+        {
+          name: 'Income (forecast)',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          data: incomeForecast,
+          areaStyle: { color: isDark ? 'rgba(52,211,153,0.05)' : 'rgba(26,26,26,0.02)' },
+          lineStyle: { color: incomeColor, width: 2, type: 'dashed' as const },
+          itemStyle: { color: incomeColor },
+          legendHoverLink: false,
+        },
+        {
+          name: 'Expense (forecast)',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          data: expenseForecast,
+          areaStyle: { color: 'rgba(209,61,86,0.04)' },
+          lineStyle: { color: expenseColor, width: 2, type: 'dashed' as const },
+          itemStyle: { color: expenseColor },
+          legendHoverLink: false,
+        },
+      );
+    }
+
     return {
       backgroundColor: 'transparent',
       tooltip: {
@@ -53,7 +154,11 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
         data: ['Income', 'Expense'],
         top: 0,
         right: 0,
-        textStyle: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
+        textStyle: {
+          color: isDark ? '#8899AA' : 'var(--muted-foreground)',
+          fontSize: 11,
+          fontFamily: 'var(--font-dashboard-sans)',
+        },
         icon: 'rect',
         itemWidth: 12,
         itemHeight: 6,
@@ -61,37 +166,24 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       grid: { left: 40, right: 0, top: 40, bottom: 24 },
       xAxis: {
         type: 'category',
-        data: trendsData.dailyTrend.map(p => p.date),
-        axisLabel: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
+        data: allDates,
+        axisLabel: {
+          color: isDark ? '#8899AA' : 'var(--muted-foreground)',
+          fontSize: 10,
+          fontFamily: 'var(--font-dashboard-sans)',
+        },
         axisLine: { lineStyle: { color: isDark ? '#2A3442' : '#D1CCC4' } },
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 10, fontFamily: 'var(--font-dashboard-sans)' },
+        axisLabel: {
+          color: isDark ? '#8899AA' : 'var(--muted-foreground)',
+          fontSize: 10,
+          fontFamily: 'var(--font-dashboard-sans)',
+        },
         splitLine: { lineStyle: { color: isDark ? '#2A3442' : '#D1CCC4' } },
       },
-      series: [
-        {
-          name: 'Income',
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          data: trendsData.dailyTrend.map(p => p.income),
-          areaStyle: { color: isDark ? 'rgba(52,211,153,0.1)' : 'rgba(26,26,26,0.05)' },
-          lineStyle: { color: isDark ? '#34D399' : '#1a1a1a', width: 2 },
-          itemStyle: { color: isDark ? '#34D399' : '#1a1a1a' },
-        },
-        {
-          name: 'Expense',
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          data: trendsData.dailyTrend.map(p => p.expense),
-          areaStyle: { color: 'rgba(209,61,86,0.08)' },
-          lineStyle: { color: '#D13D56', width: 2 },
-          itemStyle: { color: '#D13D56' },
-        },
-      ],
+      series,
     };
   }, [resolvedTheme, trendsData]);
 
@@ -110,7 +202,11 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       },
       legend: {
         bottom: 0,
-        textStyle: { color: isDark ? '#8899AA' : 'var(--muted-foreground)', fontSize: 11, fontFamily: 'var(--font-dashboard-sans)' },
+        textStyle: {
+          color: isDark ? '#8899AA' : 'var(--muted-foreground)',
+          fontSize: 11,
+          fontFamily: 'var(--font-dashboard-sans)',
+        },
         itemWidth: 10,
         itemHeight: 10,
       },
@@ -132,7 +228,17 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, width: '100%', pb: '40px' }}>
       {effectivePeriod ? (
         <Box
-          sx={{ border: '1px solid var(--border)', borderRadius: tokens.radius.sm, bgcolor: 'var(--muted)', px: 2, py: 1.5, fontSize: 12, color: 'text.secondary', backdropFilter: 'blur(12px)', fontFamily: 'var(--font-dashboard-sans)' }}
+          sx={{
+            border: '1px solid var(--border)',
+            borderRadius: tokens.radius.sm,
+            bgcolor: 'var(--muted)',
+            px: 2,
+            py: 1.5,
+            fontSize: 12,
+            color: 'text.secondary',
+            backdropFilter: 'blur(12px)',
+            fontFamily: 'var(--font-dashboard-sans)',
+          }}
         >
           Showing latest available period: {effectivePeriod}
         </Box>
@@ -141,7 +247,12 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography
           component="h1"
-          sx={{ fontSize: 30, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
+          sx={{
+            fontSize: 30,
+            fontWeight: 700,
+            color: 'text.primary',
+            fontFamily: 'var(--font-dashboard-mono)',
+          }}
         >
           TRENDS DASHBOARD
         </Typography>
@@ -200,10 +311,20 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
 
       {!loading && !error && trendsData && (
         <>
-          <Box component="section" sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}>
+          <Box
+            component="section"
+            sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 2 }}
+          >
             <Typography
               component="h2"
-              sx={{ fontSize: 12, fontWeight: 700, letterSpacing: '1px', color: 'text.secondary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: '1px',
+                color: 'text.secondary',
+                textTransform: 'uppercase',
+                fontFamily: 'var(--font-dashboard-mono)',
+              }}
             >
               DATA SOURCES
             </Typography>
@@ -229,20 +350,57 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               >
                 <Typography
                   component="h3"
-                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
+                  sx={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: 'text.primary',
+                    fontFamily: 'var(--font-dashboard-mono)',
+                  }}
                 >
                   STATEMENTS
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Income</Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
+                      Income
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
                       {formatAmount(trendsData.sources.statements.income)}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Expense</Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
+                      Expense
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
                       {formatAmount(trendsData.sources.statements.expense)}
                     </Typography>
                   </Box>
@@ -250,7 +408,14 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 <Box sx={{ mt: 'auto', pt: 1 }}>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 11, fontWeight: 600, color: '#34d399', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: '#34d399',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      fontFamily: 'var(--font-dashboard-mono)',
+                    }}
                   >
                     SYNCED
                   </Typography>
@@ -272,14 +437,35 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               >
                 <Typography
                   component="h3"
-                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
+                  sx={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: 'text.primary',
+                    fontFamily: 'var(--font-dashboard-mono)',
+                  }}
                 >
                   NET FLOW
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Net</Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
+                      Net
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
                       {formatAmount(
                         Math.abs(
                           trendsData.sources.statements.income -
@@ -288,9 +474,25 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                       )}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Categories</Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
+                      Categories
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
                       {trendsData.categories.length}
                     </Typography>
                   </Box>
@@ -298,7 +500,14 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 <Box sx={{ mt: 'auto', pt: 1 }}>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 11, fontWeight: 600, color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: 'var(--primary)',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      fontFamily: 'var(--font-dashboard-mono)',
+                    }}
                   >
                     ACTIVE
                   </Typography>
@@ -320,14 +529,35 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
               >
                 <Typography
                   component="h3"
-                  sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', fontFamily: 'var(--font-dashboard-mono)' }}
+                  sx={{
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: 'text.primary',
+                    fontFamily: 'var(--font-dashboard-mono)',
+                  }}
                 >
                   COUNTERPARTIES
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>Total Found</Typography>
-                    <Typography sx={{ fontSize: 14, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
+                      Total Found
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: 14,
+                        color: 'text.secondary',
+                        fontFamily: 'var(--font-dashboard-sans)',
+                      }}
+                    >
                       {trendsData.counterparties.length}
                     </Typography>
                   </Box>
@@ -335,7 +565,14 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 <Box sx={{ mt: 'auto', pt: 1 }}>
                   <Typography
                     component="span"
-                    sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: 'text.secondary',
+                      letterSpacing: '1px',
+                      textTransform: 'uppercase',
+                      fontFamily: 'var(--font-dashboard-mono)',
+                    }}
                   >
                     READY
                   </Typography>
@@ -370,7 +607,13 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
             >
               <Typography
                 component="h3"
-                sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+                sx={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'text.primary',
+                  textTransform: 'uppercase',
+                  fontFamily: 'var(--font-dashboard-mono)',
+                }}
               >
                 SPEND TREND
               </Typography>
@@ -385,10 +628,19 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 </Box>
               ) : (
                 <Box
-                  sx={{ display: 'flex', height: 280, alignItems: 'center', justifyContent: 'center' }}
+                  sx={{
+                    display: 'flex',
+                    height: 280,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
                   <Typography
-                    sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
+                    sx={{
+                      fontSize: 13,
+                      color: 'text.secondary',
+                      fontFamily: 'var(--font-dashboard-sans)',
+                    }}
                   >
                     No trend data available for selected range
                   </Typography>
@@ -412,7 +664,13 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
             >
               <Typography
                 component="h3"
-                sx={{ fontSize: 18, fontWeight: 700, color: 'text.primary', textTransform: 'uppercase', fontFamily: 'var(--font-dashboard-mono)' }}
+                sx={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'text.primary',
+                  textTransform: 'uppercase',
+                  fontFamily: 'var(--font-dashboard-mono)',
+                }}
               >
                 CATEGORY BREAKDOWN
               </Typography>
@@ -427,10 +685,19 @@ export function TrendsTab({ formatAmount }: TrendsTabProps) {
                 </Box>
               ) : (
                 <Box
-                  sx={{ display: 'flex', height: 280, alignItems: 'center', justifyContent: 'center' }}
+                  sx={{
+                    display: 'flex',
+                    height: 280,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
                   <Typography
-                    sx={{ fontSize: 13, color: 'text.secondary', fontFamily: 'var(--font-dashboard-sans)' }}
+                    sx={{
+                      fontSize: 13,
+                      color: 'text.secondary',
+                      fontFamily: 'var(--font-dashboard-sans)',
+                    }}
                   >
                     No categorized transactions to visualize
                   </Typography>

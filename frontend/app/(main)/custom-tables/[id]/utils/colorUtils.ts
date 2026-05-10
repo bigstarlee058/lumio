@@ -6,11 +6,15 @@ interface RgbaColor {
 }
 
 export function parseHexFromColor(value: string | null | undefined): string | null {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
   const trimmed = value.trim();
   if (trimmed.startsWith('#')) {
     const hex = trimmed.replace('#', '');
-    if (hex.length === 3 || hex.length === 6) return `#${hex}`;
+    if (hex.length === 3 || hex.length === 6) {
+      return `#${hex}`;
+    }
   }
   const match = trimmed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
   if (match) {
@@ -25,7 +29,13 @@ export function parseHexFromColor(value: string | null | undefined): string | nu
 
 export function hexToRgba(hex: string, alpha: number): string {
   const clean = hex.replace('#', '');
-  const full = clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean;
+  const full =
+    clean.length === 3
+      ? clean
+          .split('')
+          .map(c => c + c)
+          .join('')
+      : clean;
   const r = Number.parseInt(full.slice(0, 2), 16);
   const g = Number.parseInt(full.slice(2, 4), 16);
   const b = Number.parseInt(full.slice(4, 6), 16);
@@ -35,15 +45,26 @@ export function hexToRgba(hex: string, alpha: number): string {
 
 function parseRgbaColor(trimmed: string): RgbaColor | null {
   const match = trimmed.match(/rgba?\(([^)]+)\)/i);
-  if (!match) return null;
+  if (!match) {
+    return null;
+  }
   const parts = match[1].split(',').map(part => part.trim());
-  if (parts.length < 3) return null;
+  if (parts.length < 3) {
+    return null;
+  }
   const r = Number(parts[0]);
   const g = Number(parts[1]);
   const b = Number(parts[2]);
   const a = parts.length >= 4 ? Number(parts[3]) : 1;
-  if (![r, g, b, a].every(n => Number.isFinite(n))) return null;
-  return { r: Math.max(0, Math.min(255, r)), g: Math.max(0, Math.min(255, g)), b: Math.max(0, Math.min(255, b)), a: Math.max(0, Math.min(1, a)) };
+  if (![r, g, b, a].every(n => Number.isFinite(n))) {
+    return null;
+  }
+  return {
+    r: Math.max(0, Math.min(255, r)),
+    g: Math.max(0, Math.min(255, g)),
+    b: Math.max(0, Math.min(255, b)),
+    a: Math.max(0, Math.min(1, a)),
+  };
 }
 
 function expandHexSegment(hex: string, start: number, repeat: boolean): number {
@@ -69,25 +90,41 @@ function parseLongHex(hex: string): RgbaColor {
 
 function parseHexColor(trimmed: string): RgbaColor | null {
   const hex = trimmed.replace('#', '');
-  if (hex.length === 3 || hex.length === 4) return parseShortHex(hex);
-  if (hex.length === 6 || hex.length === 8) return parseLongHex(hex);
+  if (hex.length === 3 || hex.length === 4) {
+    return parseShortHex(hex);
+  }
+  if (hex.length === 6 || hex.length === 8) {
+    return parseLongHex(hex);
+  }
   return null;
 }
 
 export function parseColor(value: string): RgbaColor | null {
   const trimmed = value.trim();
-  if (!trimmed) return null;
-  if (trimmed.startsWith('rgb')) return parseRgbaColor(trimmed);
-  if (trimmed.startsWith('#')) return parseHexColor(trimmed);
+  if (!trimmed) {
+    return null;
+  }
+  if (trimmed.startsWith('rgb')) {
+    return parseRgbaColor(trimmed);
+  }
+  if (trimmed.startsWith('#')) {
+    return parseHexColor(trimmed);
+  }
   return null;
 }
 
 export function solidifyBackground({ value, isDark }: { value: string; isDark: boolean }): string {
   const fg = parseColor(value);
-  if (!fg) return value;
-  if (fg.a >= 0.999) return value;
+  if (!fg) {
+    return value;
+  }
+  if (fg.a >= 0.999) {
+    return value;
+  }
   const base = parseColor(isDark ? '#111827' : '#ffffff');
-  if (!base) return value;
+  if (!base) {
+    return value;
+  }
   const blend = (c: number, b: number): number => Math.round(fg.a * c + (1 - fg.a) * b);
   const r = blend(fg.r, base.r);
   const g = blend(fg.g, base.g);

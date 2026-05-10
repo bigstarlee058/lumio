@@ -26,15 +26,21 @@ export const DEFAULT_PAYABLES_FILTERS: PayablesFiltersState = {
 };
 
 export const resolveLocale = (locale?: string): string => {
-  if (locale === 'ru') return 'ru-RU';
-  if (locale === 'kk') return 'kk-KZ';
+  if (locale === 'ru') {
+    return 'ru-RU';
+  }
+  if (locale === 'kk') {
+    return 'kk-KZ';
+  }
   return 'en-US';
 };
 
 const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export const parsePayableDate = (value?: string | null): Date | null => {
-  if (!value) return null;
+  if (!value) {
+    return null;
+  }
 
   if (DATE_ONLY_PATTERN.test(value)) {
     const [year, month, day] = value.split('-').map(Number);
@@ -47,7 +53,9 @@ export const parsePayableDate = (value?: string | null): Date | null => {
 };
 
 export const toNumber = (value: number | string | null | undefined): number => {
-  if (value === null || value === undefined || value === '') return 0;
+  if (value === null || value === undefined || value === '') {
+    return 0;
+  }
   const parsed = typeof value === 'string' ? Number(value) : value;
   return Number.isFinite(parsed) ? parsed : 0;
 };
@@ -66,16 +74,24 @@ export const formatMoney = (
 
 export const formatPayableDate = (value?: string | null, locale = 'en'): string => {
   const date = parsePayableDate(value);
-  if (!date) return '—';
+  if (!date) {
+    return '—';
+  }
   return date.toLocaleDateString(resolveLocale(locale));
 };
 
 export const isPayableOverdue = (payable: Pick<Payable, 'status' | 'dueDate'>): boolean => {
-  if (!payable.dueDate) return false;
-  if (payable.status === 'paid' || payable.status === 'archived') return false;
+  if (!payable.dueDate) {
+    return false;
+  }
+  if (payable.status === 'paid' || payable.status === 'archived') {
+    return false;
+  }
 
   const dueDate = parsePayableDate(payable.dueDate);
-  if (!dueDate) return false;
+  if (!dueDate) {
+    return false;
+  }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -83,11 +99,22 @@ export const isPayableOverdue = (payable: Pick<Payable, 'status' | 'dueDate'>): 
   return dueDate < today;
 };
 
-export const getPayableStatusVariant = (status: PayableStatus, overdue: boolean): 'destructive' | 'success' | 'info' | 'outline' | 'warning' => {
-  if (overdue || status === 'overdue') return 'destructive' as const;
-  if (status === 'paid') return 'success' as const;
-  if (status === 'scheduled') return 'info' as const;
-  if (status === 'archived') return 'outline' as const;
+export const getPayableStatusVariant = (
+  status: PayableStatus,
+  overdue: boolean,
+): 'destructive' | 'success' | 'info' | 'outline' | 'warning' => {
+  if (overdue || status === 'overdue') {
+    return 'destructive' as const;
+  }
+  if (status === 'paid') {
+    return 'success' as const;
+  }
+  if (status === 'scheduled') {
+    return 'info' as const;
+  }
+  if (status === 'archived') {
+    return 'outline' as const;
+  }
   return 'warning' as const;
 };
 
@@ -135,8 +162,12 @@ export const sortPayables = (payables: Payable[], sort: PayablesSortOption): Pay
   const copy = [...payables];
 
   copy.sort((left, right) => {
-    if (sort === 'amountDesc') return compareByAmount(left, right);
-    if (sort === 'vendorAsc') return compareByVendor(left, right);
+    if (sort === 'amountDesc') {
+      return compareByAmount(left, right);
+    }
+    if (sort === 'vendorAsc') {
+      return compareByVendor(left, right);
+    }
     return compareByDueDate(left, right, sort === 'dueDateDesc');
   });
 
@@ -150,5 +181,5 @@ export const getSummaryCardItems = (summary: PayablesSummary): readonly SummaryC
     { key: 'toPay', value: summary.toPay, count: summary.toPayCount },
     { key: 'overdue', value: summary.overdue, count: summary.overdueCount },
     { key: 'dueThisWeek', value: summary.dueThisWeek },
-    { key: 'paidThisMonth', value: summary.paidThisMonth },
+    { key: 'paidTotal', value: summary.paidTotal, count: summary.paidTotalCount },
   ] as readonly SummaryCardItem[];

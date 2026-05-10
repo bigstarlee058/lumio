@@ -1,9 +1,8 @@
 'use client';
-import type { JSX } from 'react';
 
 import type { SourceChannel } from '@/app/(main)/statements/components/shared-analytics.utils';
-import { getSourceLabel } from '@/app/lib/analytics-common';
 import { Landmark, Mail, Receipt } from '@/app/components/icons';
+import { getSourceLabel } from '@/app/lib/analytics-common';
 
 type Props = {
   sourceChannel: SourceChannel;

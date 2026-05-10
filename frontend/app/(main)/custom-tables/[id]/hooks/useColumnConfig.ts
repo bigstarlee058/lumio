@@ -67,7 +67,9 @@ const isFiniteNum = (v: unknown): v is number => typeof v === 'number' && Number
 function loadLocalColumnWidths(tableId: string): Record<string, number> {
   try {
     const raw = localStorage.getItem(`custom-table:${tableId}:column-widths`);
-    if (!raw) { return {}; }
+    if (!raw) {
+      return {};
+    }
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === 'object' ? (parsed as Record<string, number>) : {};
   } catch {
@@ -81,10 +83,18 @@ function resolveColWidth(
   colWidth: unknown,
   hasServerWidths: boolean,
 ): number {
-  if (hasServerWidths && isFiniteNum(serverWidth)) { return serverWidth; }
-  if (isFiniteNum(localWidth) && localWidth > 0) { return localWidth; }
-  if (!hasServerWidths && isFiniteNum(serverWidth)) { return serverWidth; }
-  if (isFiniteNum(colWidth)) { return colWidth; }
+  if (hasServerWidths && isFiniteNum(serverWidth)) {
+    return serverWidth;
+  }
+  if (isFiniteNum(localWidth) && localWidth > 0) {
+    return localWidth;
+  }
+  if (!hasServerWidths && isFiniteNum(serverWidth)) {
+    return serverWidth;
+  }
+  if (isFiniteNum(colWidth)) {
+    return colWidth;
+  }
   return DEFAULT_COLUMN_WIDTH;
 }
 
@@ -97,7 +107,12 @@ function resolveColumnWidths(
   const hasServerWidths = Object.values(cols).some(e => isFiniteNum(e?.width));
   const result: Record<string, number> = {};
   for (const col of columns) {
-    result[col.key] = resolveColWidth(cols[col.key]?.width, localWidths[col.key], col.width, hasServerWidths);
+    result[col.key] = resolveColWidth(
+      cols[col.key]?.width,
+      localWidths[col.key],
+      col.width,
+      hasServerWidths,
+    );
   }
   return result;
 }
@@ -117,14 +132,22 @@ export function useColumnConfig({
 
   // Load column order + visibility from localStorage on mount
   useEffect(() => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     const storageKey = `custom-table:${tableId}:columns`;
     try {
       const raw = localStorage.getItem(storageKey);
-      if (!raw) return;
+      if (!raw) {
+        return;
+      }
       const parsed = JSON.parse(raw) as { order?: string[]; hidden?: string[] };
-      if (Array.isArray(parsed.order)) setColumnOrder(parsed.order);
-      if (Array.isArray(parsed.hidden)) setHiddenColumnKeys(parsed.hidden);
+      if (Array.isArray(parsed.order)) {
+        setColumnOrder(parsed.order);
+      }
+      if (Array.isArray(parsed.hidden)) {
+        setHiddenColumnKeys(parsed.hidden);
+      }
     } catch (error) {
       console.warn('Failed to load column settings:', error);
     }
@@ -132,7 +155,9 @@ export function useColumnConfig({
 
   // Persist column order + visibility to localStorage
   useEffect(() => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     const storageKey = `custom-table:${tableId}:columns`;
     try {
       localStorage.setItem(
@@ -148,10 +173,14 @@ export function useColumnConfig({
   useEffect(() => {
     const keys = orderedColumns.map(c => c.key);
     setColumnOrder(prev => {
-      if (!prev.length) return keys;
+      if (!prev.length) {
+        return keys;
+      }
       const next = prev.filter(k => keys.includes(k));
       keys.forEach(k => {
-        if (!next.includes(k)) next.push(k);
+        if (!next.includes(k)) {
+          next.push(k);
+        }
       });
       return next;
     });
@@ -160,7 +189,9 @@ export function useColumnConfig({
 
   // Initialize column widths from localStorage + server view settings
   useEffect(() => {
-    if (!tableId || !orderedColumns.length) { return; }
+    if (!(tableId && orderedColumns.length)) {
+      return;
+    }
     const localWidths = loadLocalColumnWidths(tableId);
     const newWidths = resolveColumnWidths(orderedColumns, localWidths, viewSettings?.columns);
     setColumnWidths(newWidths);
@@ -179,15 +210,21 @@ export function useColumnConfig({
 
   const getColumnWidth = (colKey: string): number => {
     const width = columnWidths[colKey];
-    if (typeof width === 'number' && Number.isFinite(width)) return width;
+    if (typeof width === 'number' && Number.isFinite(width)) {
+      return width;
+    }
     return DEFAULT_COLUMN_WIDTH;
   };
 
   const persistColumnWidth = async (colKey: string, width: number): Promise<void> => {
-    if (!tableId) return;
+    if (!tableId) {
+      return;
+    }
     const prevWidth = getColumnWidth(colKey);
     const finalWidth = clampWidth(width);
-    if (Math.abs(finalWidth - prevWidth) < 1) return;
+    if (Math.abs(finalWidth - prevWidth) < 1) {
+      return;
+    }
 
     const storageKey = `custom-table:${tableId}:column-widths`;
     setColumnWidths(prev => {
@@ -200,10 +237,14 @@ export function useColumnConfig({
       return next;
     });
 
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      return;
+    }
 
     const existing = columnWidthTimersRef.current[colKey];
-    if (existing) window.clearTimeout(existing);
+    if (existing) {
+      window.clearTimeout(existing);
+    }
     columnWidthTimersRef.current[colKey] = window.setTimeout(async () => {
       try {
         await apiClient.patch(`/custom-tables/${tableId}/view-settings/columns`, {
@@ -214,6 +255,7 @@ export function useColumnConfig({
         console.error('Failed to persist column width:', error);
         toast.error(columnWidthSaveFailedMessage);
       } finally {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete columnWidthTimersRef.current[colKey];
       }
     }, 800);
@@ -229,9 +271,13 @@ export function useColumnConfig({
     setColumnOrder(prev => {
       const order = prev.length ? [...prev] : orderedColumns.map(c => c.key);
       const index = order.indexOf(key);
-      if (index === -1) return order;
+      if (index === -1) {
+        return order;
+      }
       const nextIndex = direction === 'up' ? index - 1 : index + 1;
-      if (nextIndex < 0 || nextIndex >= order.length) return order;
+      if (nextIndex < 0 || nextIndex >= order.length) {
+        return order;
+      }
       const next = [...order];
       const [moved] = next.splice(index, 1);
       next.splice(nextIndex, 0, moved);

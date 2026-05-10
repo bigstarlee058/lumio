@@ -17,7 +17,7 @@ const content = {
         zh: '无法加载对账单数据',
         ar: 'فشل تحميل بيانات الكشف',
         pl: 'Nie udało się załadować danych wyciągu',
-        it: 'Impossibile caricare i dati dell\'estratto conto',
+        it: "Impossibile caricare i dati dell'estratto conto",
         sk: 'Nie udało się załadować danych wyciągu',
         ja: '明細書データの読み込みに失敗しました',
         ko: '명세서 데이터를 불러오지 못했습니다',

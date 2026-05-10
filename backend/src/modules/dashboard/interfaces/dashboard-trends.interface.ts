@@ -1,6 +1,8 @@
 export interface DashboardTrendsResponse {
   // Combined daily income/expense from all sources
   dailyTrend: Array<{ date: string; income: number; expense: number }>;
+  // Forecasted future income/expense based on historical patterns (WMA + day-of-week seasonality)
+  forecast: Array<{ date: string; income: number; expense: number }>;
   // Top expense categories across all sources
   categories: Array<{ name: string; amount: number; count: number }>;
   // Top income counterparties across all sources

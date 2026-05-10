@@ -165,12 +165,10 @@
     },
     "backend": {
       "entry": [
-        "src/main.ts",
         "src/data-source.ts",
         "scripts/**/*.{ts,js}",
         "@tests/**/*.ts",
-        "jest*.{js,ts}",
-        "babel.config.js"
+        "jest*.{js,ts}"
       ],
       "project": [
         "src/**/*.{ts,tsx}",
@@ -188,18 +186,12 @@
         "app/**/*.css",
         ".storybook/**/*.{js,ts,tsx}",
         "next.config.*",
-        "middleware.ts",
         "types/**/*.d.ts"
       ],
       "project": [
         "app/**/*.{ts,tsx}",
         "components/**/*.{ts,tsx}",
-        "hooks/**/*.{ts,tsx}",
         "lib/**/*.{ts,tsx}",
-        "shared/**/*.{ts,tsx}",
-        "contexts/**/*.{ts,tsx}",
-        "providers/**/*.{ts,tsx}",
-        "services/**/*.{ts,tsx}",
         "types/**/*.{ts,tsx,d.ts}",
         "app/**/*.css",
         ".storybook/**/*.{js,ts,tsx}",

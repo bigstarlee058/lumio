@@ -135,7 +135,10 @@ export const gmailReceiptsApi = {
   getReceipt: (id: string): Promise<AxiosResponse> =>
     apiClient.get(`/integrations/gmail/receipts/${id}`),
 
-  updateReceiptParsedData: (id: string, data: GmailReceiptParsedDataUpdate): Promise<AxiosResponse> =>
+  updateReceiptParsedData: (
+    id: string,
+    data: GmailReceiptParsedDataUpdate,
+  ): Promise<AxiosResponse> =>
     apiClient.patch(`/integrations/gmail/receipts/${id}/parsed-data`, data),
 
   markDuplicate: (id: string, originalId: string): Promise<AxiosResponse> =>
@@ -239,7 +242,9 @@ export const receiptsApi = {
     return response.data as ReceiptRecord;
   },
 
-  approveReceipt: async (id: string): Promise<{ receipt: ReceiptRecord; transaction: { id: string } }> => {
+  approveReceipt: async (
+    id: string,
+  ): Promise<{ receipt: ReceiptRecord; transaction: { id: string } }> => {
     const response = await apiClient.post(`/receipts/${id}/approve`);
     return response.data as { receipt: ReceiptRecord; transaction: { id: string } };
   },

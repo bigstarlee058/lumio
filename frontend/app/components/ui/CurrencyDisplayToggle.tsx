@@ -17,7 +17,11 @@ export function CurrencyDisplayToggle() {
     : `${t.showInCurrency.value} ${workspaceCurrency}`;
 
   return (
-    <FilterChipButton active={showConverted} onClick={toggleShowConverted} aria-pressed={showConverted}>
+    <FilterChipButton
+      active={showConverted}
+      onClick={toggleShowConverted}
+      aria-pressed={showConverted}
+    >
       {label}
     </FilterChipButton>
   );

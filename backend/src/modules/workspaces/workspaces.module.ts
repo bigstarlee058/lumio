@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Integration, User, Workspace, WorkspaceInvitation, WorkspaceMember } from '../../entities';
-import { AuditModule } from '../audit/audit.module';
 import { ApplicationSettingsModule } from '../application-settings/application-settings.module';
+import { AuditModule } from '../audit/audit.module';
 import { BalanceModule } from '../balance/balance.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { TaxRatesModule } from '../tax-rates/tax-rates.module';

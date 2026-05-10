@@ -1,0 +1,21 @@
+{
+  "threshold": 5,
+  "reporters": ["console"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "**/*.content.ts",
+    "**/*.stories.*",
+    "**/*.spec.*",
+    "**/*.test.*"
+  ],
+  "absolute": true,
+  "gitignore": true,
+  "minLines": 10,
+  "minTokens": 50,
+  "format": ["typescript", "javascript"]
+}

@@ -1,11 +1,11 @@
 'use client';
 
+import { ChevronDown, ChevronRight, Layers } from '@/app/components/icons';
 import { AppPagination } from '@/app/components/ui/pagination';
 import type { AuditEvent } from '@/lib/api/audit';
-import { ChevronDown, ChevronRight, Layers } from '@/app/components/icons';
-import React, { useMemo, useState } from 'react';
-import { buildGroupedData } from '../utils/audit-table-utils';
+import { useMemo, useState } from 'react';
 import { ACTION_ICON_MAP } from '../utils/actionIconMap';
+import { buildGroupedData } from '../utils/audit-table-utils';
 import { getAvatarColor, getInitials } from '../utils/avatarUtils';
 import { formatAuditEvent } from '../utils/formatAuditEvent';
 import { relativeTime } from '../utils/relativeTime';
@@ -49,13 +49,12 @@ function AuditTimelineItem({
   const Icon = ACTION_ICON_MAP[event.action];
   const entityLabel = ENTITY_TYPE_LABELS[event.entityType] ?? event.entityType;
   const initials = getInitials(event.actorLabel);
-  const avatarColor = event.actorType === 'system' ? 'var(--muted-foreground)' : getAvatarColor(event.actorLabel);
+  const avatarColor =
+    event.actorType === 'system' ? 'var(--muted-foreground)' : getAvatarColor(event.actorLabel);
 
   return (
     <li className="audit-item">
-      <div className="audit-dot">
-        {Icon && <Icon size={13} />}
-      </div>
+      <div className="audit-dot">{Icon && <Icon size={13} />}</div>
 
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: timeline items are supplemented by drawer */}
       <div
@@ -143,16 +142,16 @@ export function AuditTimeline({
 }: AuditTimelineProps) {
   const [expandedBatches, setExpandedBatches] = useState<Set<string>>(new Set());
 
-  const rows = useMemo(
-    () => buildGroupedData(events, expandedBatches),
-    [events, expandedBatches],
-  );
+  const rows = useMemo(() => buildGroupedData(events, expandedBatches), [events, expandedBatches]);
 
   const toggleBatch = (batchId: string) => {
     setExpandedBatches(prev => {
       const next = new Set(prev);
-      if (next.has(batchId)) next.delete(batchId);
-      else next.add(batchId);
+      if (next.has(batchId)) {
+        next.delete(batchId);
+      } else {
+        next.add(batchId);
+      }
       return next;
     });
   };
@@ -191,7 +190,9 @@ export function AuditTimeline({
       </ol>
 
       <div className="audit-pagination">
-        <span>Page {page} of {totalPages}</span>
+        <span>
+          Page {page} of {totalPages}
+        </span>
         <AppPagination page={page} total={totalPages} onChange={onPageChange} />
       </div>
     </>

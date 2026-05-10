@@ -1,9 +1,10 @@
 'use client';
 
+import { Cloud, Download, Folder } from '@/app/components/icons';
 import { Alert } from '@/app/components/ui/alert';
 import { Spinner } from '@/app/components/ui/spinner';
-import { Cloud, Download, Folder } from '@/app/components/icons';
 import type { BankStat } from '@/app/settings/profile/hooks/useSync';
+import { tokens } from '@/lib/theme-tokens';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -11,7 +12,6 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { tokens } from '@/lib/theme-tokens';
 import { useTheme } from 'next-themes';
 
 const BANK_LABELS: Record<string, string> = {
@@ -113,7 +113,9 @@ export function SyncSection({
               disabled={downloading || totalCount === 0}
               startIcon={downloading ? <Spinner size={16} /> : <Download size={16} />}
             >
-              {downloading ? 'Exporting…' : `Export ZIP${totalCount > 0 ? ` (${totalCount} files)` : ''}`}
+              {downloading
+                ? 'Exporting…'
+                : `Export ZIP${totalCount > 0 ? ` (${totalCount} files)` : ''}`}
             </Button>
             {totalCount === 0 && !statsLoading && (
               <Typography variant="body2" color="text.disabled">

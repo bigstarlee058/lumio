@@ -1,13 +1,13 @@
 'use client';
 
+import type { LucideIcon } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box } from '@mui/material';
 import React from 'react';
+import type { OnboardingData } from '../useOnboardingWizard';
 import { OnboardingNavigation } from './OnboardingNavigation';
 import { OnboardingProgress } from './OnboardingProgress';
 import { OnboardingStepContent } from './OnboardingStepContent';
-import type { OnboardingData } from '../useOnboardingWizard';
-import type { LucideIcon } from '@/app/components/icons';
-import { tokens } from '@/lib/theme-tokens';
 
 type IntegrationCard = {
   key: string;

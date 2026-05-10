@@ -24,7 +24,10 @@ function tabSx(active: boolean): object {
   };
 }
 
-export function RowDrawerTabBar({ activeTab, onTabChange }: RowDrawerTabBarProps): React.JSX.Element {
+export function RowDrawerTabBar({
+  activeTab,
+  onTabChange,
+}: RowDrawerTabBarProps): React.JSX.Element {
   return (
     <Box
       sx={{

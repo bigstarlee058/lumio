@@ -4,7 +4,9 @@ export async function extractLineItems(
     numberPattern: string;
     currencyTokenPattern: string;
     shouldSkipLine: (description: string, amount: number, hasExplicitCurrency: boolean) => boolean;
-    parseAmountFragment: (fragment: string) => Promise<{ amount: number; currency?: string } | null>;
+    parseAmountFragment: (
+      fragment: string,
+    ) => Promise<{ amount: number; currency?: string } | null>;
     hasExplicitCurrency: (value: string) => boolean;
   },
 ): Promise<Array<{ description: string; amount: number }>> {

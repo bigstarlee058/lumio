@@ -1,8 +1,7 @@
 'use client';
 
-import { resolveBankLogo } from '@bank-logos';
 import { Landmark } from '@/app/components/icons';
-import React from 'react';
+import { resolveBankLogo } from '@bank-logos';
 
 import { LogoAvatar } from './LogoAvatar';
 
@@ -27,7 +26,13 @@ export function BankLogoAvatar({ bankName, size = 32, className, rounded = true 
       imgClassName={className}
       imgStyle={{ borderRadius, backgroundColor: 'var(--muted)', objectFit: 'contain' }}
       className={className}
-      fallbackStyle={{ borderRadius, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}
+      fallbackStyle={{
+        borderRadius,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'var(--muted-foreground)',
+      }}
       fallback={
         <Landmark
           data-testid="bank-logo-fallback-icon"

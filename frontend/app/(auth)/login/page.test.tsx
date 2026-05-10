@@ -1,6 +1,3 @@
-// @vitest-environment jsdom
-
-import React from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -104,7 +101,9 @@ describe('LoginPage locale persistence', () => {
     });
 
     const emailInput = container.querySelector('input[name="email"]') as HTMLInputElement | null;
-    const passwordInput = container.querySelector('input[name="password"]') as HTMLInputElement | null;
+    const passwordInput = container.querySelector(
+      'input[name="password"]',
+    ) as HTMLInputElement | null;
     const submitButton = Array.from(container.querySelectorAll('button')).find(button =>
       button.textContent?.includes('Log in'),
     ) as HTMLButtonElement | undefined;
@@ -113,7 +112,7 @@ describe('LoginPage locale persistence', () => {
     expect(passwordInput).toBeTruthy();
     expect(submitButton).toBeTruthy();
 
-    if (!emailInput || !passwordInput || !submitButton) {
+    if (!(emailInput && passwordInput && submitButton)) {
       throw new Error('Login form controls were not rendered');
     }
 
@@ -168,7 +167,9 @@ describe('LoginPage locale persistence', () => {
     });
 
     const emailInput = container.querySelector('input[name="email"]') as HTMLInputElement | null;
-    const passwordInput = container.querySelector('input[name="password"]') as HTMLInputElement | null;
+    const passwordInput = container.querySelector(
+      'input[name="password"]',
+    ) as HTMLInputElement | null;
     const submitButton = Array.from(container.querySelectorAll('button')).find(button =>
       button.textContent?.includes('Log in'),
     ) as HTMLButtonElement | undefined;
@@ -177,7 +178,7 @@ describe('LoginPage locale persistence', () => {
     expect(passwordInput).toBeTruthy();
     expect(submitButton).toBeTruthy();
 
-    if (!emailInput || !passwordInput || !submitButton) {
+    if (!(emailInput && passwordInput && submitButton)) {
       throw new Error('Login form controls were not rendered');
     }
 

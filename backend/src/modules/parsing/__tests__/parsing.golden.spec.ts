@@ -13,16 +13,24 @@ type ExpectedTransactionInput = Record<string, unknown> & {
 
 function guessFileType(filePath: string): FileType {
   const ext = path.extname(filePath).toLowerCase();
-  if (ext === '.pdf') return FileType.PDF;
-  if (ext === '.xlsx' || ext === '.xls') return FileType.XLSX;
-  if (ext === '.csv') return FileType.CSV;
+  if (ext === '.pdf') {
+    return FileType.PDF;
+  }
+  if (ext === '.xlsx' || ext === '.xls') {
+    return FileType.XLSX;
+  }
+  if (ext === '.csv') {
+    return FileType.CSV;
+  }
   return FileType.PDF;
 }
 
 function loadExpected(filePath: string): ParsedStatement {
   const raw = fs.readFileSync(filePath, 'utf8');
   const parsed = JSON.parse(raw);
-  const tx = Array.isArray(parsed.transactions) ? (parsed.transactions as ExpectedTransactionInput[]) : [];
+  const tx = Array.isArray(parsed.transactions)
+    ? (parsed.transactions as ExpectedTransactionInput[])
+    : [];
   const metadata = parsed.metadata || {};
   return {
     metadata: {

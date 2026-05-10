@@ -1,9 +1,6 @@
 import { BankName } from '../../../entities/statement.entity';
 import type { ParsedTransaction } from '../interfaces/parsed-statement.interface';
-import {
-  BerekeBaseParser,
-  type BerekeCellMap,
-} from './bereke-base.parser';
+import { BerekeBaseParser, type BerekeCellMap } from './bereke-base.parser';
 
 type ColumnKey =
   | 'date'
@@ -37,7 +34,10 @@ export class BerekeOldParser extends BerekeBaseParser<ColumnKey> {
   }
 
   protected matchesBankText(text: string): boolean {
-    return text.includes('kz17722s000023921191') || (text.includes('bereke') && !text.includes('kz47914042204kz039ly'));
+    return (
+      text.includes('kz17722s000023921191') ||
+      (text.includes('bereke') && !text.includes('kz47914042204kz039ly'))
+    );
   }
 
   protected getBalanceStartLabels(): string[] {
@@ -66,20 +66,48 @@ export class BerekeOldParser extends BerekeBaseParser<ColumnKey> {
 
   protected detectColumnKey(label: string): ColumnKey | null {
     const lower = label.toLowerCase();
-    if (lower.includes('дата')) return 'date';
-    if (lower.includes('номер')) return 'document';
-    if (lower.includes('контрагент')) return 'counterparty';
-    if (lower.includes('бин')) return 'bin';
-    if (lower.includes('сч')) return 'account';
-    if (lower.includes('банк')) return 'bank';
-    if (lower.includes('дебет')) return 'debit';
-    if (lower.includes('кредит')) return 'credit';
-    if (lower.includes('назнач') || lower.includes('основан')) return 'purpose';
+    if (lower.includes('дата')) {
+      return 'date';
+    }
+    if (lower.includes('номер')) {
+      return 'document';
+    }
+    if (lower.includes('контрагент')) {
+      return 'counterparty';
+    }
+    if (lower.includes('бин')) {
+      return 'bin';
+    }
+    if (lower.includes('сч')) {
+      return 'account';
+    }
+    if (lower.includes('банк')) {
+      return 'bank';
+    }
+    if (lower.includes('дебет')) {
+      return 'debit';
+    }
+    if (lower.includes('кредит')) {
+      return 'credit';
+    }
+    if (lower.includes('назнач') || lower.includes('основан')) {
+      return 'purpose';
+    }
     return null;
   }
 
   protected getExpectedColumnOrder(): ColumnKey[] {
-    return ['date', 'document', 'counterparty', 'bin', 'account', 'bank', 'debit', 'credit', 'purpose'];
+    return [
+      'date',
+      'document',
+      'counterparty',
+      'bin',
+      'account',
+      'bank',
+      'debit',
+      'credit',
+      'purpose',
+    ];
   }
 
   protected createEmptyCells(): BerekeCellMap<ColumnKey> {
@@ -98,25 +126,32 @@ export class BerekeOldParser extends BerekeBaseParser<ColumnKey> {
 
   protected isEndOfTable(text: string): boolean {
     const lower = text.toLowerCase();
-    return lower.includes('итого') || (lower.includes('остаток') && !/\d{2}\.\d{2}\.\d{4}/.test(text));
+    return (
+      lower.includes('итого') || (lower.includes('остаток') && !/\d{2}\.\d{2}\.\d{4}/.test(text))
+    );
   }
 
   protected resolveCounterpartyBlock(
     cells: BerekeCellMap<ColumnKey>,
     combinedText: string,
   ): string {
-    return cells.counterparty || cells.bin || cells.account || this.extractCounterpartyBlockFromText(combinedText);
+    return (
+      cells.counterparty ||
+      cells.bin ||
+      cells.account ||
+      this.extractCounterpartyBlockFromText(combinedText)
+    );
   }
 
-  protected resolveBankBlock(
-    cells: BerekeCellMap<ColumnKey>,
-    combinedText: string,
-  ): string {
+  protected resolveBankBlock(cells: BerekeCellMap<ColumnKey>, combinedText: string): string {
     return cells.bank || this.extractBic(combinedText) || '';
   }
 
   protected sanitizePurpose(purpose: string): string {
-    return purpose.replace(/[A-Z]{6}[A-Z0-9]{2,5}/g, '').replace(/\s+/g, ' ').trim();
+    return purpose
+      .replace(/[A-Z]{6}[A-Z0-9]{2,5}/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   protected resolveCounterpartyNameForGroup({

@@ -2,7 +2,10 @@
 
 import type { Transaction } from '../TransactionsView';
 
-export const getTransactionValue = ({ transaction, key }: { transaction: Transaction; key: string }): unknown => {
+export const getTransactionValue = ({
+  transaction,
+  key,
+}: { transaction: Transaction; key: string }): unknown => {
   const record = transaction as unknown as Record<string, unknown>;
   return record[key];
 };
@@ -18,7 +21,13 @@ export const resolveLocale = (locale: string): string => {
   return 'en-US';
 };
 
-const TX_SEARCH_FIELDS: ReadonlyArray<keyof Transaction> = ['counterpartyName', 'paymentPurpose', 'documentNumber', 'counterpartyBin', 'article'];
+const TX_SEARCH_FIELDS: ReadonlyArray<keyof Transaction> = [
+  'counterpartyName',
+  'paymentPurpose',
+  'documentNumber',
+  'counterpartyBin',
+  'article',
+];
 
 const txMatchesField = (tx: Transaction, field: keyof Transaction, q: string): boolean => {
   const value = tx[field];

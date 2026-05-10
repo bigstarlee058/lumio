@@ -1,10 +1,10 @@
 'use client';
 
-import { useIntlayer } from '@/app/i18n';
 import { AlertTriangle } from '@/app/components/icons';
+import { useIntlayer } from '@/app/i18n';
+import { tokens } from '@/lib/theme-tokens';
 import React from 'react';
 import { ModalFooter, ModalShell } from './ui/modal-shell';
-import { tokens } from '@/lib/theme-tokens';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -43,7 +43,7 @@ export default function ConfirmModal({
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleConfirm = () => {
     onConfirm();
-    if (!isLoading && !manualClose) {
+    if (!(isLoading || manualClose)) {
       onClose();
     }
   };
@@ -59,7 +59,14 @@ export default function ConfirmModal({
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
-            style={{ padding: 8, borderRadius: tokens.radius.full, background: isDestructive ? 'var(--color-error-soft-bg)' : 'var(--color-info-soft-bg)', color: isDestructive ? '#dc2626' : '#2563eb' }}
+            style={{
+              padding: 8,
+              borderRadius: tokens.radius.full,
+              background: isDestructive
+                ? 'var(--color-error-soft-bg)'
+                : 'var(--color-info-soft-bg)',
+              color: isDestructive ? '#dc2626' : '#2563eb',
+            }}
           >
             {icon ?? <AlertTriangle size={20} />}
           </div>

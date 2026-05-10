@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Stack, Typography } from '@mui/material';
 import { tokens } from '@/lib/theme-tokens';
+import { Box, Stack, Typography } from '@mui/material';
 
 interface OnboardingProgressProps {
   currentStep: number;
@@ -56,16 +56,8 @@ export function OnboardingProgress({ currentStep, stepLabels }: OnboardingProgre
                 fontSize: { xs: 12, sm: 14 },
                 fontWeight: 600,
                 transition: 'colors 0.2s',
-                borderColor: isActive
-                  ? 'primary.main'
-                  : isPassed
-                    ? 'primary.light'
-                    : 'divider',
-                bgcolor: isActive
-                  ? 'primary.50'
-                  : isPassed
-                    ? 'primary.50'
-                    : 'background.paper',
+                borderColor: isActive ? 'primary.main' : isPassed ? 'primary.light' : 'divider',
+                bgcolor: isActive ? 'primary.50' : isPassed ? 'primary.50' : 'background.paper',
                 color: isActive || isPassed ? 'primary.main' : 'text.secondary',
               }}
             >

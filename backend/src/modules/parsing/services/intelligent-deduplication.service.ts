@@ -193,7 +193,9 @@ export class IntelligentDeduplicationService {
     return (transaction as unknown as Record<string, unknown>)[field];
   }
 
-  private toDuplicateGroupMatchType(matchType: FuzzyMatch['matchType']): DuplicateGroup['matchType'] {
+  private toDuplicateGroupMatchType(
+    matchType: FuzzyMatch['matchType'],
+  ): DuplicateGroup['matchType'] {
     switch (matchType) {
       case 'exact':
       case 'fuzzy':
@@ -470,22 +472,42 @@ export class IntelligentDeduplicationService {
   }
 
   private categorizeAmount(amount: number): string {
-    if (amount === 0) return 'zero';
-    if (amount < 10) return 'micro';
-    if (amount < 100) return 'small';
-    if (amount < 1000) return 'medium';
-    if (amount < 10000) return 'large';
+    if (amount === 0) {
+      return 'zero';
+    }
+    if (amount < 10) {
+      return 'micro';
+    }
+    if (amount < 100) {
+      return 'small';
+    }
+    if (amount < 1000) {
+      return 'medium';
+    }
+    if (amount < 10000) {
+      return 'large';
+    }
     return 'xlarge';
   }
 
   private classifyCounterparty(counterpartyName: string): string {
     const name = counterpartyName.toLowerCase();
 
-    if (/(\d{12}|\d{10})/.test(name)) return 'individual';
-    if (/(ооо|too|llc|ltd|корп|паблик|public)/i.test(name)) return 'corporate';
-    if (/(банк|bank|кассы|cash)/i.test(name)) return 'financial';
-    if (/(государство|government|министерство|ministry)/i.test(name)) return 'government';
-    if (/(\d{3,})/.test(name)) return 'atm_terminal';
+    if (/(\d{12}|\d{10})/.test(name)) {
+      return 'individual';
+    }
+    if (/(ооо|too|llc|ltd|корп|паблик|public)/i.test(name)) {
+      return 'corporate';
+    }
+    if (/(банк|bank|кассы|cash)/i.test(name)) {
+      return 'financial';
+    }
+    if (/(государство|government|министерство|ministry)/i.test(name)) {
+      return 'government';
+    }
+    if (/(\d{3,})/.test(name)) {
+      return 'atm_terminal';
+    }
 
     return 'other';
   }
@@ -493,13 +515,15 @@ export class IntelligentDeduplicationService {
   private async findDuplicateGroups(
     preprocessedTransactions: PreprocessedTransaction[],
     rules: DeduplicationRule[],
-    threshold: number,
+    _threshold: number,
   ): Promise<DuplicateGroup[]> {
     const duplicateGroups: DuplicateGroup[] = [];
     const processed = new Set<number>();
 
     for (let i = 0; i < preprocessedTransactions.length; i++) {
-      if (processed.has(i)) continue;
+      if (processed.has(i)) {
+        continue;
+      }
 
       const current = preprocessedTransactions[i];
       const potentialDuplicates: Array<{
@@ -511,7 +535,9 @@ export class IntelligentDeduplicationService {
 
       // Compare with other transactions
       for (let j = i + 1; j < preprocessedTransactions.length; j++) {
-        if (processed.has(j)) continue;
+        if (processed.has(j)) {
+          continue;
+        }
 
         const other = preprocessedTransactions[j];
 
@@ -635,11 +661,10 @@ export class IntelligentDeduplicationService {
 
       if (value1 && value2) {
         if (field === 'transactionDate') {
-          if (!(value1 instanceof Date) || !(value2 instanceof Date)) {
+          if (!(value1 instanceof Date && value2 instanceof Date)) {
             continue;
           }
-          const daysDiff =
-            Math.abs(value1.getTime() - value2.getTime()) / (1000 * 60 * 60 * 24);
+          const daysDiff = Math.abs(value1.getTime() - value2.getTime()) / (1000 * 60 * 60 * 24);
           if (daysDiff <= (rule.options?.dateToleranceDays || 1)) {
             fieldMatches++;
             fields.push(field);
@@ -681,7 +706,7 @@ export class IntelligentDeduplicationService {
   private semanticMatch(
     tx1: PreprocessedTransaction,
     tx2: PreprocessedTransaction,
-    rule: DeduplicationRule,
+    _rule: DeduplicationRule,
   ): FuzzyMatch {
     // Simplified semantic matching (in production, use ML/NLP libraries)
     const features1 = tx1.features;
@@ -796,8 +821,12 @@ export class IntelligentDeduplicationService {
     const longer = str1.length > str2.length ? str1 : str2;
     const shorter = str1.length > str2.length ? str2 : str1;
 
-    if (longer.length === 0) return 1;
-    if (shorter.length === 0) return 0;
+    if (longer.length === 0) {
+      return 1;
+    }
+    if (shorter.length === 0) {
+      return 0;
+    }
 
     const distance = this.levenshteinDistance(longer, shorter);
     return (longer.length - distance) / longer.length;
@@ -873,7 +902,7 @@ export class IntelligentDeduplicationService {
   private calculateFieldScores(
     master: PreprocessedTransaction,
     duplicates: PreprocessedTransaction[],
-    rules: DeduplicationRule[],
+    _rules: DeduplicationRule[],
   ): FieldScores {
     const scores: FieldScores = {
       date: 0,
@@ -901,12 +930,11 @@ export class IntelligentDeduplicationService {
         if (masterValue && duplicateValue) {
           count++;
           if (field === 'transactionDate') {
-            if (!(masterValue instanceof Date) || !(duplicateValue instanceof Date)) {
+            if (!(masterValue instanceof Date && duplicateValue instanceof Date)) {
               continue;
             }
             const daysDiff =
-              Math.abs(masterValue.getTime() - duplicateValue.getTime()) /
-              (1000 * 60 * 60 * 24);
+              Math.abs(masterValue.getTime() - duplicateValue.getTime()) / (1000 * 60 * 60 * 24);
             fieldScore += Math.max(0, 1 - daysDiff); // Decay with time difference
           } else if (field === 'debit' || field === 'credit') {
             if (typeof masterValue !== 'number' || typeof duplicateValue !== 'number') {
@@ -929,10 +957,15 @@ export class IntelligentDeduplicationService {
       const avgScore = count > 0 ? fieldScore / count : 0;
 
       // Map to our field categories
-      if (field === 'transactionDate') scores.date = avgScore;
-      else if (field === 'debit' || field === 'credit') scores.amount = avgScore;
-      else if (field === 'counterpartyName') scores.counterparty = avgScore;
-      else if (field === 'paymentPurpose') scores.purpose = avgScore;
+      if (field === 'transactionDate') {
+        scores.date = avgScore;
+      } else if (field === 'debit' || field === 'credit') {
+        scores.amount = avgScore;
+      } else if (field === 'counterpartyName') {
+        scores.counterparty = avgScore;
+      } else if (field === 'paymentPurpose') {
+        scores.purpose = avgScore;
+      }
     }
 
     // Calculate overall score
@@ -944,10 +977,18 @@ export class IntelligentDeduplicationService {
   private determineMatchType(
     duplicates: Array<{ matchType: DuplicateGroup['matchType'] }>,
   ): 'exact' | 'fuzzy' | 'partial' | 'semantic' | 'hybrid' {
-    if (duplicates.some(dup => dup.matchType === 'exact')) return 'exact';
-    if (duplicates.some(dup => dup.matchType === 'hybrid')) return 'hybrid';
-    if (duplicates.some(dup => dup.matchType === 'semantic')) return 'semantic';
-    if (duplicates.some(dup => dup.matchType === 'fuzzy')) return 'fuzzy';
+    if (duplicates.some(dup => dup.matchType === 'exact')) {
+      return 'exact';
+    }
+    if (duplicates.some(dup => dup.matchType === 'hybrid')) {
+      return 'hybrid';
+    }
+    if (duplicates.some(dup => dup.matchType === 'semantic')) {
+      return 'semantic';
+    }
+    if (duplicates.some(dup => dup.matchType === 'fuzzy')) {
+      return 'fuzzy';
+    }
     return 'partial';
   }
 
@@ -996,18 +1037,30 @@ export class IntelligentDeduplicationService {
     }
 
     // Prefer records with complete counterparty information
-    if (record.counterpartyBin) score += 0.2;
-    if (record.counterpartyAccount) score += 0.1;
-    if (record.counterpartyBank) score += 0.1;
+    if (record.counterpartyBin) {
+      score += 0.2;
+    }
+    if (record.counterpartyAccount) {
+      score += 0.1;
+    }
+    if (record.counterpartyBank) {
+      score += 0.1;
+    }
 
     // Prefer records with exchange rate information
-    if (record.exchangeRate && record.exchangeRate !== 1) score += 0.1;
+    if (record.exchangeRate && record.exchangeRate !== 1) {
+      score += 0.1;
+    }
 
     // Prefer records with foreign currency amount
-    if (record.amountForeign && record.amountForeign > 0) score += 0.1;
+    if (record.amountForeign && record.amountForeign > 0) {
+      score += 0.1;
+    }
 
     // Prefer longer, more detailed payment purposes
-    if (record.paymentPurpose.length > 20) score += 0.1;
+    if (record.paymentPurpose.length > 20) {
+      score += 0.1;
+    }
 
     return score;
   }

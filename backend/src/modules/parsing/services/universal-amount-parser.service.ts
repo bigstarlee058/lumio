@@ -557,7 +557,9 @@ export class UniversalAmountParser {
 
     if (match) {
       const amount = Number(match[1]);
-      if (!Number.isFinite(amount)) return null;
+      if (!Number.isFinite(amount)) {
+        return null;
+      }
 
       return {
         amount,
@@ -713,7 +715,9 @@ export class UniversalAmountParser {
   }
 
   isValidAmount(amount: number): boolean {
-    if (!Number.isFinite(amount)) return false;
+    if (!Number.isFinite(amount)) {
+      return false;
+    }
     const absAmount = Math.abs(amount);
     return absAmount >= 0 && absAmount < 1e15;
   }

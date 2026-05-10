@@ -47,8 +47,10 @@ describe('payablesApi', () => {
         overdue: 300,
         dueThisWeek: 400,
         paidThisMonth: 800,
+        paidTotal: 1800,
         toPayCount: 3,
         overdueCount: 1,
+        paidTotalCount: 2,
       },
     };
     apiClientMock.get.mockResolvedValue(response);

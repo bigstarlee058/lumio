@@ -132,7 +132,8 @@ export function useStorageTags(
         ),
       );
       const updatedName = (response.data?.name as string | undefined) || name;
-      const updatedColor = (response.data?.color as string | null | undefined) ?? editingTagColor ?? null;
+      const updatedColor =
+        (response.data?.color as string | null | undefined) ?? editingTagColor ?? null;
       setFiles(prev =>
         prev.map(file => ({
           ...file,
@@ -164,7 +165,9 @@ export function useStorageTags(
   };
 
   const handleDeleteTag = async (): Promise<void> => {
-    if (!tagToDelete) return;
+    if (!tagToDelete) {
+      return;
+    }
     const toastId = toast.loading(messages.tagDeleteLoading);
     try {
       await api.delete(`/storage/tags/${tagToDelete.id}`);

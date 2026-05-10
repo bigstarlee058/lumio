@@ -10,8 +10,8 @@ import { CategoryLearning } from '../../../entities/category-learning.entity';
 import { Category, CategorySource, CategoryType } from '../../../entities/category.entity';
 import { type Transaction, TransactionType } from '../../../entities/transaction.entity';
 import { Wallet } from '../../../entities/wallet.entity';
-import { AuditService } from '../../audit/audit.service';
 import { ApplicationSettingsService } from '../../application-settings/application-settings.service';
+import { AuditService } from '../../audit/audit.service';
 import { CategoriesService } from '../../categories/categories.service';
 import {
   AiCategoryClassifier,
@@ -19,7 +19,6 @@ import {
 } from '../helpers/ai-category-classifier.helper';
 import {
   type ClassificationCondition,
-  ClassificationResult,
   type ClassificationRule,
 } from '../interfaces/classification-rule.interface';
 import type { TransactionEnrichment } from '../interfaces/transaction-enrichment.interface';
@@ -574,7 +573,9 @@ export class ClassificationService {
         undefined,
         workspaceId,
       );
-      if (!categoryId) continue;
+      if (!categoryId) {
+        continue;
+      }
 
       rules.push({
         name: template.name,
@@ -643,7 +644,7 @@ export class ClassificationService {
     return undefined;
   }
 
-  async classifyBulk(transactionIds: string[], userId: string): Promise<void> {
+  async classifyBulk(_transactionIds: string[], _userId: string): Promise<void> {
     // TODO: Implement bulk classification
     // This would process multiple transactions at once
   }
@@ -653,13 +654,17 @@ export class ClassificationService {
     workspaceId: string,
     userId: string,
   ): Promise<Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>> {
-    const resultByIndex = new Map<number, { categoryId: string; enrichment?: TransactionEnrichment }>();
+    const resultByIndex = new Map<
+      number,
+      { categoryId: string; enrichment?: TransactionEnrichment }
+    >();
 
-    if (!transactions.length || !workspaceId) {
+    if (!(transactions.length && workspaceId)) {
       return resultByIndex;
     }
 
-    const aiSettings = await this.applicationSettingsService?.getAiSettingsForWorkspaceId(workspaceId);
+    const aiSettings =
+      await this.applicationSettingsService?.getAiSettingsForWorkspaceId(workspaceId);
     if (aiSettings) {
       this.aiCategoryClassifier.configureAiClient(aiSettings);
     }
@@ -711,7 +716,7 @@ export class ClassificationService {
     transactions: BatchTransactionClassificationInput[],
     categories: Array<{ id: string; name: string }>,
   ): Promise<AiCategoryMatch[]> {
-    if (!transactions.length || !categories.length) {
+    if (!(transactions.length && categories.length)) {
       return [];
     }
 
@@ -907,7 +912,9 @@ export class ClassificationService {
     const freq = new Map<string, number>();
     words.forEach(w => freq.set(w, (freq.get(w) || 0) + 1));
     const top = Array.from(freq.entries()).sort((a, b) => b[1] - a[1])[0];
-    if (!top) return '';
+    if (!top) {
+      return '';
+    }
     return top[0].charAt(0).toUpperCase() + top[0].slice(1);
   }
 
@@ -989,7 +996,7 @@ export class ClassificationService {
   private async matchByLearnedPatterns(
     transaction: Transaction,
     userId: string,
-    transactionType: TransactionType,
+    _transactionType: TransactionType,
     workspaceId: string | null = null,
   ): Promise<string | undefined> {
     const cacheKey = this.getLearnedPatternsCacheKey(userId, workspaceId);
@@ -1009,7 +1016,9 @@ export class ClassificationService {
       await this.cacheManager.set(cacheKey, learnedPatterns, 600000); // 10 minutes in ms
     }
 
-    if (!learnedPatterns || learnedPatterns.length === 0) return undefined;
+    if (!learnedPatterns || learnedPatterns.length === 0) {
+      return undefined;
+    }
 
     // Calculate similarity scores
     const searchText =
@@ -1099,7 +1108,9 @@ export class ClassificationService {
     const words1 = new Set(text1.split(/\s+/).filter(w => w.length > 2));
     const words2 = new Set(text2.split(/\s+/).filter(w => w.length > 2));
 
-    if (words1.size === 0 || words2.size === 0) return 0;
+    if (words1.size === 0 || words2.size === 0) {
+      return 0;
+    }
 
     const intersection = new Set([...words1].filter(x => words2.has(x)));
     const union = new Set([...words1, ...words2]);

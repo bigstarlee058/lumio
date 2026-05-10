@@ -1,10 +1,6 @@
 'use client';
 
-import React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { Card, CardContent } from '@/app/components/ui/card';
-import type { DashboardRecentActivity } from '@/app/hooks/useDashboard';
+import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -15,11 +11,13 @@ import {
   ShieldOff,
   Tag,
 } from '@/app/components/icons';
-import Link from 'next/link';
-import { DocumentTypeIcon } from '@/app/components/DocumentTypeIcon';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { subtleBadge } from './common';
+import { Card, CardContent } from '@/app/components/ui/card';
+import type { DashboardRecentActivity } from '@/app/hooks/useDashboard';
 import { tokens } from '@/lib/theme-tokens';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Link from 'next/link';
+import React from 'react';
 
 interface RecentActivityProps {
   activities: DashboardRecentActivity[];
@@ -74,7 +72,9 @@ function formatContext(activity: DashboardRecentActivity): string {
   return activity.type.replace(/_/g, ' ');
 }
 
-function groupActivities(activities: DashboardRecentActivity[]): Array<{ bucket: ActivityBucket; list: DashboardRecentActivity[] }> {
+function groupActivities(
+  activities: DashboardRecentActivity[],
+): Array<{ bucket: ActivityBucket; list: DashboardRecentActivity[] }> {
   const buckets: Record<ActivityBucket, DashboardRecentActivity[]> = {
     Today: [],
     Yesterday: [],
@@ -96,22 +96,70 @@ type ActivityAmountProps = { amount: number; formatAmount: (value: number) => st
 function ActivityAmount({ amount, formatAmount }: ActivityAmountProps): React.JSX.Element {
   const isPositive = amount >= 0;
   return (
-    <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: 14, fontWeight: 600, flexShrink: 0, fontFamily: 'var(--font-ibm-plex-sans)', letterSpacing: '-0.01em' }}>
-      {isPositive ? <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} /> : <ArrowDownRight size={16} color="var(--muted-foreground)" strokeWidth={2.5} />}
-      <span style={{ color: isPositive ? '#16a34a' : 'var(--text-secondary)' }}>{formatAmount(Math.abs(amount))}</span>
+    <Box
+      component="span"
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.75,
+        fontSize: 14,
+        fontWeight: 600,
+        flexShrink: 0,
+        fontFamily: 'var(--font-ibm-plex-sans)',
+        letterSpacing: '-0.01em',
+      }}
+    >
+      {isPositive ? (
+        <ArrowUpRight size={16} color="#22c55e" strokeWidth={2.5} />
+      ) : (
+        <ArrowDownRight size={16} color="var(--muted-foreground)" strokeWidth={2.5} />
+      )}
+      <span style={{ color: isPositive ? '#16a34a' : 'var(--text-secondary)' }}>
+        {formatAmount(Math.abs(amount))}
+      </span>
     </Box>
   );
 }
 
-type ActivityItemProps = { activity: DashboardRecentActivity; formatAmount: (value: number) => string };
+type ActivityItemProps = {
+  activity: DashboardRecentActivity;
+  formatAmount: (value: number) => string;
+};
 
 function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.Element {
   const config = typeConfig[activity.type] ?? typeConfig.transaction;
   const Icon = config.icon;
   const isStatementUpload = activity.type === 'statement_upload' && activity.entityId;
   return (
-    <Link href={activity.href} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '4px 8px', transition: 'all 150ms', textDecoration: 'none', backgroundColor: 'transparent', border: '1px solid transparent' }}>
-      <Box component="span" sx={{ display: 'flex', height: 40, width: 40, flexShrink: 0, alignItems: 'center', justifyContent: 'center', bgcolor: isStatementUpload ? 'transparent' : 'var(--muted)', color: 'var(--text-secondary)', border: isStatementUpload ? 'none' : '1px solid var(--border-color)', transition: 'background-color 150ms, color 150ms', overflow: 'hidden' }}>
+    <Link
+      href={activity.href}
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 16,
+        padding: '4px 8px',
+        transition: 'all 150ms',
+        textDecoration: 'none',
+        backgroundColor: 'transparent',
+        border: '1px solid transparent',
+      }}
+    >
+      <Box
+        component="span"
+        sx={{
+          display: 'flex',
+          height: 40,
+          width: 40,
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: isStatementUpload ? 'transparent' : 'var(--muted)',
+          color: 'var(--text-secondary)',
+          border: isStatementUpload ? 'none' : '1px solid var(--border-color)',
+          transition: 'background-color 150ms, color 150ms',
+          overflow: 'hidden',
+        }}
+      >
         {isStatementUpload ? (
           <DocumentTypeIcon
             fileId={activity.entityId}
@@ -123,26 +171,87 @@ function ActivityItem({ activity, formatAmount }: ActivityItemProps): React.JSX.
           <Icon size={16} />
         )}
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1, justifyContent: 'center' }}>
-        <Typography component="span" sx={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 14, fontWeight: 600, color: 'var(--foreground)' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          flex: 1,
+          justifyContent: 'center',
+        }}
+      >
+        <Typography
+          component="span"
+          sx={{
+            display: 'block',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            fontSize: 14,
+            fontWeight: 600,
+            color: 'var(--foreground)',
+          }}
+        >
           {normalizeTitle(activity)}
         </Typography>
-        <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, mt: 0.5, color: 'var(--muted-foreground)', fontWeight: 400 }}>
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formatContext(activity)}</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: tokens.radius.sm, backgroundColor: 'var(--muted)', padding: '2px 8px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--muted-foreground)' }}>
+        <Box
+          component="span"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            fontSize: 12,
+            mt: 0.5,
+            color: 'var(--muted-foreground)',
+            fontWeight: 400,
+          }}
+        >
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {formatContext(activity)}
+          </span>
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              borderRadius: tokens.radius.sm,
+              backgroundColor: 'var(--muted)',
+              padding: '2px 8px',
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: 'var(--muted-foreground)',
+            }}
+          >
             {new Date(activity.timestamp).toLocaleDateString()}
           </span>
         </Box>
       </Box>
-      {activity.amount != null ? <ActivityAmount amount={activity.amount} formatAmount={formatAmount} /> : null}
+      {activity.amount != null ? (
+        <ActivityAmount amount={activity.amount} formatAmount={formatAmount} />
+      ) : null}
     </Link>
   );
 }
 
-function ActivityGroup({ group, formatAmount }: { group: { bucket: ActivityBucket; list: DashboardRecentActivity[] }; formatAmount: (value: number) => string }): React.JSX.Element {
+function ActivityGroup({
+  group,
+  formatAmount,
+}: {
+  group: { bucket: ActivityBucket; list: DashboardRecentActivity[] };
+  formatAmount: (value: number) => string;
+}): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-      <Typography sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--muted-foreground)' }}>
+      <Typography
+        sx={{
+          fontSize: 11,
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '0.18em',
+          color: 'var(--muted-foreground)',
+        }}
+      >
         {group.bucket}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
@@ -157,20 +266,54 @@ function ActivityGroup({ group, formatAmount }: { group: { bucket: ActivityBucke
 export function RecentActivity({
   activities,
   formatAmount,
-  title: _title,
+  title: Title,
   emptyLabel,
 }: RecentActivityProps): React.JSX.Element {
   const groups = groupActivities(activities);
 
   return (
-    <Card style={{ border: 'none', boxShadow: 'none', borderRadius: tokens.radius.lg, backgroundColor: 'var(--card-bg)', height: '100%', position: 'relative', overflow: 'hidden', textAlign: 'left', transition: 'all 300ms' }}>
-      <CardContent style={{ height: '100%', padding: '32px', overflow: 'hidden', position: 'relative', zIndex: 10 }}>
+    <Card
+      style={{
+        border: 'none',
+        boxShadow: 'none',
+        borderRadius: tokens.radius.lg,
+        backgroundColor: 'var(--card-bg)',
+        height: '100%',
+        position: 'relative',
+        overflow: 'hidden',
+        textAlign: 'left',
+        transition: 'all 300ms',
+      }}
+    >
+      <CardContent
+        style={{
+          height: '100%',
+          padding: '32px',
+          overflow: 'hidden',
+          position: 'relative',
+          zIndex: 10,
+        }}
+      >
         {activities.length === 0 ? (
-          <Box sx={{ display: 'flex', height: 128, alignItems: 'center', justifyContent: 'center' }}>
-            <Typography sx={{ fontSize: 14, color: 'var(--ff-dash-muted)' }}>{emptyLabel}</Typography>
+          <Box
+            sx={{ display: 'flex', height: 128, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Typography sx={{ fontSize: 14, color: 'var(--ff-dash-muted)' }}>
+              {emptyLabel}
+            </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, height: '100%', overflowY: 'auto', pr: 3, textAlign: 'left' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 3,
+              height: '100%',
+              overflowY: 'auto',
+              pr: 3,
+              textAlign: 'left',
+            }}
+          >
             {groups.map(group => (
               <ActivityGroup key={group.bucket} group={group} formatAmount={formatAmount} />
             ))}
