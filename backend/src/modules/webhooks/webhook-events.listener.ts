@@ -1,12 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { WebhookEvent } from '../../entities/webhook-subscription.entity';
-import type {
-  ImportCommittedEvent,
-  ReceiptApprovedEvent,
-  TransactionCreatedEvent,
-} from '../notifications/events/notification-events';
 import { WebhookDispatcherService } from './services/webhook-dispatcher.service';
+import { WebhookEvent } from '../../entities/webhook-subscription.entity';
+import type { ImportCommittedEvent, ReceiptApprovedEvent, TransactionCreatedEvent } from '../notifications/events/notification-events';
 
 @Injectable()
 export class WebhookEventsListener {

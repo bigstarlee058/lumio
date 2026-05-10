@@ -2,16 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Repository } from 'typeorm';
 import {
-  NotificationCategory,
-  NotificationSeverity,
-  NotificationType,
-} from '../../entities/notification.entity';
-import {
   Subscription,
   SubscriptionFrequency,
   SubscriptionStatus,
 } from '../../entities/subscription.entity';
 import { Transaction, TransactionType } from '../../entities/transaction.entity';
+import {
+  NotificationCategory,
+  NotificationSeverity,
+  NotificationType,
+} from '../../entities/notification.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
@@ -51,9 +51,7 @@ export class SubscriptionDetectionService {
     const groups = new Map<string, Transaction[]>();
     for (const tx of transactions) {
       const key = (tx.vendorNormalized ?? tx.counterpartyName).toLowerCase().trim();
-      if (!key) {
-        continue;
-      }
+      if (!key) continue;
       const group = groups.get(key) ?? [];
       group.push(tx);
       groups.set(key, group);
@@ -61,14 +59,10 @@ export class SubscriptionDetectionService {
 
     const detected: Subscription[] = [];
     for (const [, txs] of groups) {
-      if (txs.length < 2) {
-        continue;
-      }
+      if (txs.length < 2) continue;
 
       const result = this.analyzeGroup(txs);
-      if (!result) {
-        continue;
-      }
+      if (!result) continue;
 
       const existing = await this.subscriptionRepository.findOne({
         where: {
@@ -107,19 +101,17 @@ export class SubscriptionDetectionService {
     }
 
     if (detected.length > 0) {
-      this.logger.log(
-        `Detected ${detected.length} new subscription(s) for workspace ${workspaceId}`,
-      );
+      this.logger.log(`Detected ${detected.length} new subscription(s) for workspace ${workspaceId}`);
       await this.notificationsService.createForWorkspaceMembers({
         workspaceId,
         type: NotificationType.SUBSCRIPTION_DETECTED,
         category: NotificationCategory.WORKSPACE_ACTIVITY,
         severity: NotificationSeverity.INFO,
         messageKey: 'subscription.detected',
-        messageParams: { vendors: detected.map(s => s.vendorName).join(', ') },
+        messageParams: { vendors: detected.map((s) => s.vendorName).join(', ') },
         entityType: 'subscription',
         entityId: detected[0].id,
-        meta: { count: detected.length, vendors: detected.map(s => s.vendorName) },
+        meta: { count: detected.length, vendors: detected.map((s) => s.vendorName) },
       });
     }
 
@@ -127,36 +119,26 @@ export class SubscriptionDetectionService {
   }
 
   private analyzeGroup(txs: Transaction[]): Partial<Subscription> | null {
-    const amounts = txs.map(t => Math.abs(Number(t.amount)));
+    const amounts = txs.map((t) => Math.abs(Number(t.amount)));
     const avgAmount = amounts.reduce((a, b) => a + b, 0) / amounts.length;
-    if (avgAmount === 0) {
-      return null;
-    }
+    if (avgAmount === 0) return null;
 
-    const maxVariance = Math.max(...amounts.map(a => Math.abs(a - avgAmount))) / avgAmount;
-    if (maxVariance > 0.15) {
-      return null;
-    }
+    const maxVariance = Math.max(...amounts.map((a) => Math.abs(a - avgAmount))) / avgAmount;
+    if (maxVariance > 0.15) return null;
 
-    const dates = txs.map(t => new Date(t.transactionDate).getTime());
+    const dates = txs.map((t) => new Date(t.transactionDate).getTime());
     const intervals: number[] = [];
     for (let i = 1; i < dates.length; i++) {
       intervals.push((dates[i] - dates[i - 1]) / (1000 * 60 * 60 * 24));
     }
-    if (intervals.length === 0) {
-      return null;
-    }
+    if (intervals.length === 0) return null;
 
     const medianInterval = this.median(intervals);
     const frequency = this.detectFrequency(medianInterval);
-    if (!frequency) {
-      return null;
-    }
+    if (!frequency) return null;
 
     const intervalStddev = this.stddev(intervals);
-    if (medianInterval > 0 && intervalStddev / medianInterval > 0.3) {
-      return null;
-    }
+    if (medianInterval > 0 && intervalStddev / medianInterval > 0.3) return null;
 
     const confidence = this.computeConfidence(
       txs.length,
@@ -182,24 +164,16 @@ export class SubscriptionDetectionService {
         occurrenceCount: txs.length,
         amountVariance: Math.round(maxVariance * 100) / 100,
         medianIntervalDays: Math.round(medianInterval),
-        transactionIds: txs.map(t => t.id).slice(-5),
+        transactionIds: txs.map((t) => t.id).slice(-5),
       },
     };
   }
 
   private detectFrequency(medianDays: number): SubscriptionFrequency | null {
-    if (medianDays >= 5 && medianDays <= 9) {
-      return SubscriptionFrequency.WEEKLY;
-    }
-    if (medianDays >= 25 && medianDays <= 35) {
-      return SubscriptionFrequency.MONTHLY;
-    }
-    if (medianDays >= 80 && medianDays <= 100) {
-      return SubscriptionFrequency.QUARTERLY;
-    }
-    if (medianDays >= 350 && medianDays <= 380) {
-      return SubscriptionFrequency.ANNUAL;
-    }
+    if (medianDays >= 5 && medianDays <= 9) return SubscriptionFrequency.WEEKLY;
+    if (medianDays >= 25 && medianDays <= 35) return SubscriptionFrequency.MONTHLY;
+    if (medianDays >= 80 && medianDays <= 100) return SubscriptionFrequency.QUARTERLY;
+    if (medianDays >= 350 && medianDays <= 380) return SubscriptionFrequency.ANNUAL;
     return null;
   }
 
@@ -210,21 +184,11 @@ export class SubscriptionDetectionService {
     hasNormalized: boolean,
   ): number {
     let c = 0.5;
-    if (count >= 3) {
-      c += 0.1;
-    }
-    if (count >= 5) {
-      c += 0.1;
-    }
-    if (amtVar < 0.05) {
-      c += 0.1;
-    }
-    if (intVar < 0.15) {
-      c += 0.1;
-    }
-    if (hasNormalized) {
-      c += 0.1;
-    }
+    if (count >= 3) c += 0.1;
+    if (count >= 5) c += 0.1;
+    if (amtVar < 0.05) c += 0.1;
+    if (intVar < 0.15) c += 0.1;
+    if (hasNormalized) c += 0.1;
     return Math.min(c, 1.0);
   }
 

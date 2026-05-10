@@ -1,7 +1,10 @@
-import { randomBytes } from 'node:crypto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { randomBytes } from 'node:crypto';
 import { WebhookEndpoint } from '../../../entities/webhook-endpoint.entity';
 import type { CreateWebhookEndpointDto } from '../dto/create-webhook-endpoint.dto';
 import type { UpdateWebhookEndpointDto } from '../dto/update-webhook-endpoint.dto';
@@ -26,17 +29,11 @@ export class WebhookEndpointsService {
 
   async findOne(id: string, workspaceId: string): Promise<WebhookEndpoint> {
     const endpoint = await this.repo.findOne({ where: { id, workspaceId } });
-    if (!endpoint) {
-      throw new NotFoundException('Webhook endpoint not found');
-    }
+    if (!endpoint) throw new NotFoundException(`Webhook endpoint not found`);
     return endpoint;
   }
 
-  async update(
-    id: string,
-    workspaceId: string,
-    dto: UpdateWebhookEndpointDto,
-  ): Promise<WebhookEndpoint> {
+  async update(id: string, workspaceId: string, dto: UpdateWebhookEndpointDto): Promise<WebhookEndpoint> {
     const endpoint = await this.findOne(id, workspaceId);
     Object.assign(endpoint, dto);
     return this.repo.save(endpoint);

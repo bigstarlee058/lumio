@@ -1,22 +1,20 @@
 'use client';
 
-import { Check, ChevronDown, Plus } from '@/app/components/icons';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { usePermissions } from '@/app/hooks/usePermissions';
 import { useIntlayer } from '@/app/i18n';
-import { tokens } from '@/lib/theme-tokens';
+import { Check, ChevronDown, Plus } from '@/app/components/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { buildNavItems, isNavItemActive } from './navigation/helpers/navigation-config';
+import { tokens } from '@/lib/theme-tokens';
 
 function WorkspaceSwitcher() {
   const { currentWorkspace, workspaces, switchWorkspace } = useWorkspace();
   const [open, setOpen] = useState(false);
 
-  if (!currentWorkspace) {
-    return null;
-  }
+  if (!currentWorkspace) return null;
 
   const initials = (currentWorkspace.name ?? '?').slice(0, 1).toUpperCase();
   const color = currentWorkspace.color ?? '#168118';
@@ -28,11 +26,7 @@ function WorkspaceSwitcher() {
       onClick={() => setOpen(prev => !prev)}
       role="button"
       tabIndex={0}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          setOpen(prev => !prev);
-        }
-      }}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setOpen(prev => !prev); }}
       aria-expanded={open}
     >
       <div className="lumio-sidebar__ws-chip" style={{ background: color }}>
@@ -48,20 +42,24 @@ function WorkspaceSwitcher() {
       />
 
       {open && (
-        <div className="lumio-sidebar__ws-dropdown" onClick={e => e.stopPropagation()} role="menu">
+        <div
+          className="lumio-sidebar__ws-dropdown"
+          onClick={e => e.stopPropagation()}
+          role="menu"
+        >
           <div className="lumio-sidebar__ws-dropdown-label">Switch workspace</div>
           {workspaces.map(ws => (
             <button
               key={ws.id}
               type="button"
               className={`lumio-sidebar__ws-item${ws.id === currentWorkspace.id ? ' lumio-sidebar__ws-item--active' : ''}`}
-              onClick={() => {
-                void switchWorkspace(ws.id);
-                setOpen(false);
-              }}
+              onClick={() => { void switchWorkspace(ws.id); setOpen(false); }}
               role="menuitem"
             >
-              <div className="lumio-sidebar__ws-chip" style={{ background: ws.color ?? '#168118' }}>
+              <div
+                className="lumio-sidebar__ws-chip"
+                style={{ background: ws.color ?? '#168118' }}
+              >
                 {(ws.name ?? '?').slice(0, 1).toUpperCase()}
               </div>
               <span className="lumio-sidebar__ws-item-name">{ws.name}</span>
@@ -98,7 +96,7 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
 
       {/* CTA */}
       <Link
-        href="/statements/submit?openExpenseDrawer=scan"
+        href="/statements?upload=1"
         className="lumio-sidebar__cta"
         onClick={onNavClick}
       >
@@ -140,8 +138,7 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
             width: '100%',
             padding: '10px 14px',
             borderRadius: tokens.radius.md,
-            background:
-              'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)',
+            background: 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)',
             border: '1px solid rgba(5,150,105,0.25)',
             color: 'var(--primary)',
             fontSize: 13,
@@ -151,13 +148,11 @@ export function SidebarContent({ onNavClick }: SidebarProps) {
             transition: 'background 0.2s, border-color 0.2s',
           }}
           onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background =
-              'linear-gradient(135deg, rgba(5,150,105,0.22) 0%, rgba(8,145,178,0.22) 100%)';
+            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.22) 0%, rgba(8,145,178,0.22) 100%)';
             (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.45)';
           }}
           onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background =
-              'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)';
+            (e.currentTarget as HTMLAnchorElement).style.background = 'linear-gradient(135deg, rgba(5,150,105,0.12) 0%, rgba(8,145,178,0.12) 100%)';
             (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(5,150,105,0.25)';
           }}
         >

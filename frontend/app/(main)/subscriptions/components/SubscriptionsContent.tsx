@@ -1,7 +1,6 @@
 'use client';
 
 import { Plus } from '@/app/components/icons';
-import { sharedMuiTabsSx } from '@/app/components/ui/mui-tabs';
 import {
   Box,
   Button,
@@ -12,8 +11,6 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import type React from 'react';
-import type { ReactNode } from 'react';
 import type {
   SubscriptionFormData,
   SubscriptionItem,
@@ -41,37 +38,6 @@ interface SubscriptionsContentProps {
   handleDelete: (id: string) => void;
   handleConfirm: (id: string) => void;
   handleDismiss: (id: string) => void;
-  handleRestore: (id: string) => void;
-}
-
-interface SummaryCardProps {
-  label: string;
-  value: ReactNode;
-}
-
-function SummaryCard({ label, value }: SummaryCardProps): React.JSX.Element {
-  return (
-    <Card variant="outlined">
-      <CardContent
-        sx={{
-          py: { xs: 2, sm: 2 },
-          px: { xs: 2, sm: 2 },
-          '&:last-child': { pb: { xs: 2, sm: 2 } },
-        }}
-      >
-        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: 16, sm: 14 } }}>
-          {label}
-        </Typography>
-        <Typography
-          variant="h6"
-          fontWeight={600}
-          sx={{ fontSize: { xs: 20, sm: 18 }, lineHeight: 1.2, mt: 0.5 }}
-        >
-          {value}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
 }
 
 export function SubscriptionsContent(props: SubscriptionsContentProps) {
@@ -93,54 +59,20 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
     handleDelete,
     handleConfirm,
     handleDismiss,
-    handleRestore,
   } = props;
 
   const formatAmount = (amount: number, currency: string) =>
     `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(amount)} ${currency}`;
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        maxWidth: '100%',
-        p: { xs: 2, md: 3 },
-        pb: { xs: 10, md: 3 },
-        flex: 1,
-        minWidth: 0,
-        overflowX: 'hidden',
-      }}
-    >
+    <Box sx={{ p: 3, flex: 1 }}>
       {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 2,
-          mb: { xs: 2.5, sm: 3 },
-        }}
-      >
-        <Typography variant="h5" fontWeight={600} sx={{ fontSize: { xs: 28, sm: 24 } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" fontWeight={600}>
           Subscriptions
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Plus size={18} />}
-          onClick={openCreate}
-          aria-label="Add subscription"
-          sx={{
-            flexShrink: 0,
-            minWidth: { xs: 56, md: 'auto' },
-            width: { xs: 56, md: 'auto' },
-            height: { xs: 56, md: 36 },
-            px: { xs: 0, md: 2 },
-            '& .MuiButton-startIcon': { m: { xs: 0, md: '0 8px 0 -4px' } },
-          }}
-        >
-          <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-            Add subscription
-          </Box>
+        <Button variant="contained" startIcon={<Plus size={18} />} onClick={openCreate}>
+          Add subscription
         </Button>
       </Box>
 
@@ -148,32 +80,45 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
       <Box
         sx={{
           display: 'grid',
-          width: '100%',
-          minWidth: 0,
-          gridTemplateColumns: {
-            xs: 'minmax(0, 1fr)',
-            md: 'repeat(3, minmax(0, 1fr))',
-          },
-          gap: { xs: 1.5, md: 2 },
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 2,
           mb: 3,
         }}
       >
-        <SummaryCard
-          label="Monthly cost"
-          value={formatAmount(summary.totalMonthlyCost, summary.currency)}
-        />
-        <SummaryCard label="Active" value={summary.activeCount} />
-        <SummaryCard label="Upcoming (7 days)" value={summary.upcomingCount} />
+        <Card variant="outlined">
+          <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+            <Typography variant="body2" color="text.secondary">
+              Monthly cost
+            </Typography>
+            <Typography variant="h6" fontWeight={600}>
+              {formatAmount(summary.totalMonthlyCost, 'KZT')}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card variant="outlined">
+          <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+            <Typography variant="body2" color="text.secondary">
+              Active
+            </Typography>
+            <Typography variant="h6" fontWeight={600}>
+              {summary.activeCount}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Card variant="outlined">
+          <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
+            <Typography variant="body2" color="text.secondary">
+              Upcoming (7 days)
+            </Typography>
+            <Typography variant="h6" fontWeight={600}>
+              {summary.upcomingCount}
+            </Typography>
+          </CardContent>
+        </Card>
       </Box>
 
       {/* Tabs */}
-      <Tabs
-        value={statusFilter}
-        onChange={(_, v) => setStatusFilter(v)}
-        variant="scrollable"
-        scrollButtons={false}
-        sx={sharedMuiTabsSx}
-      >
+      <Tabs value={statusFilter} onChange={(_, v) => setStatusFilter(v)} sx={{ mb: 2 }}>
         <Tab value="all" label="All" />
         <Tab value="detected" label="Detected" />
         <Tab value="active" label="Active" />
@@ -203,13 +148,8 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: {
-              xs: 'minmax(0, 1fr)',
-              md: 'repeat(auto-fill, minmax(320px, 1fr))',
-            },
-            gap: { xs: 1.5, md: 2 },
-            width: '100%',
-            minWidth: 0,
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: 2,
           }}
         >
           {subscriptions.map(sub => (
@@ -220,7 +160,6 @@ export function SubscriptionsContent(props: SubscriptionsContentProps) {
               onDelete={() => handleDelete(sub.id)}
               onConfirm={() => handleConfirm(sub.id)}
               onDismiss={() => handleDismiss(sub.id)}
-              onRestore={() => handleRestore(sub.id)}
             />
           ))}
         </Box>

@@ -1,8 +1,8 @@
 import { type ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import type { ApiKeysService } from '../../modules/api-keys/api-keys.service';
 import { IS_PUBLIC_KEY } from '../../modules/auth/decorators/public.decorator';
+import type { ApiKeysService } from '../../modules/api-keys/api-keys.service';
 import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 
 @Injectable()

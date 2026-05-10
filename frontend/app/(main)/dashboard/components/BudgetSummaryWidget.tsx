@@ -20,12 +20,8 @@ interface BudgetSummary {
 }
 
 function getColor(percent: number): 'success' | 'warning' | 'error' {
-  if (percent >= 100) {
-    return 'error';
-  }
-  if (percent >= 80) {
-    return 'warning';
-  }
+  if (percent >= 100) return 'error';
+  if (percent >= 80) return 'warning';
   return 'success';
 }
 
@@ -45,26 +41,14 @@ export function BudgetSummaryWidget() {
       .finally(() => setLoaded(true));
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
 
   if (budgets.length === 0) {
     return (
-      <Box
-        sx={{
-          p: 2.5,
-          borderRadius: '3px',
-          border: '1px solid',
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
-        }}
-      >
+      <Box sx={{ p: 2.5, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
           <PiggyBank size={18} />
-          <Typography variant="subtitle2" fontWeight={600}>
-            Budgets
-          </Typography>
+          <Typography variant="subtitle2" fontWeight={600}>Budgets</Typography>
         </Box>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
           Set up budgets to track spending by category.
@@ -77,21 +61,11 @@ export function BudgetSummaryWidget() {
   }
 
   return (
-    <Box
-      sx={{
-        p: 2.5,
-        borderRadius: '3px',
-        border: '1px solid',
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-      }}
-    >
+    <Box sx={{ p: 2.5, borderRadius: 2, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <PiggyBank size={18} />
-          <Typography variant="subtitle2" fontWeight={600}>
-            Budgets
-          </Typography>
+          <Typography variant="subtitle2" fontWeight={600}>Budgets</Typography>
         </Box>
         <Button component={Link} href="/budgets" size="small" variant="text">
           View all
@@ -104,11 +78,7 @@ export function BudgetSummaryWidget() {
               <Typography variant="caption" color="text.secondary" noWrap sx={{ maxWidth: '60%' }}>
                 {b.category?.name ?? b.name}
               </Typography>
-              <Typography
-                variant="caption"
-                fontWeight={600}
-                color={`${getColor(b.percentUsed)}.main`}
-              >
+              <Typography variant="caption" fontWeight={600} color={`${getColor(b.percentUsed)}.main`}>
                 {Math.round(b.percentUsed)}%
               </Typography>
             </Box>
@@ -116,7 +86,7 @@ export function BudgetSummaryWidget() {
               variant="determinate"
               value={Math.min(b.percentUsed, 100)}
               color={getColor(b.percentUsed)}
-              sx={{ height: 6, borderRadius: '3px' }}
+              sx={{ height: 6, borderRadius: 3 }}
             />
           </Box>
         ))}

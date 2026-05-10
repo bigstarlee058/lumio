@@ -1,17 +1,17 @@
-import { randomUUID } from 'node:crypto';
-import { writeFile } from 'node:fs/promises';
-import { extname, join } from 'node:path';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { resolveUploadsDir } from '../../common/utils/uploads.util';
-import { User } from '../../entities/user.entity';
+import { randomUUID } from 'node:crypto';
+import { extname, join } from 'node:path';
+import { writeFile } from 'node:fs/promises';
 import type { WebhookEndpoint } from '../../entities/webhook-endpoint.entity';
 import { WorkspaceMember, WorkspaceRole } from '../../entities/workspace-member.entity';
-import { ReceiptsService } from '../receipts/receipts.service';
+import { User } from '../../entities/user.entity';
 import { StatementsService } from '../statements/statements.service';
-import type { WebhookReceiptUploadDto } from './dto/webhook-receipt-upload.dto';
+import { ReceiptsService } from '../receipts/receipts.service';
+import { resolveUploadsDir } from '../../common/utils/uploads.util';
 import type { WebhookStatementUploadDto } from './dto/webhook-statement-upload.dto';
+import type { WebhookReceiptUploadDto } from './dto/webhook-receipt-upload.dto';
 
 const MAX_BASE64_BYTES = 50 * 1024 * 1024; // 50MB
 
@@ -29,9 +29,7 @@ export class WebhookInboundService {
       where: { workspaceId, role: WorkspaceRole.OWNER },
       relations: ['user'],
     });
-    if (!member?.user) {
-      throw new NotFoundException('Workspace owner not found');
-    }
+    if (!member?.user) throw new NotFoundException('Workspace owner not found');
     return member.user;
   }
 
@@ -79,13 +77,8 @@ export class WebhookInboundService {
   ) {
     const user = await this.resolveWorkspaceOwner(endpoint.workspaceId);
     const resolvedFile =
-      file ??
-      (dto.fileBase64
-        ? await this.base64ToFile(dto.fileBase64, dto.fileName ?? 'statement.pdf')
-        : null);
-    if (!resolvedFile) {
-      throw new BadRequestException('No file provided');
-    }
+      file ?? (dto.fileBase64 ? await this.base64ToFile(dto.fileBase64, dto.fileName ?? 'statement.pdf') : null);
+    if (!resolvedFile) throw new BadRequestException('No file provided');
     const isTemp = !file && !!dto.fileBase64;
     try {
       const walletId = dto.walletId ?? endpoint.defaultWalletId ?? undefined;
@@ -101,9 +94,7 @@ export class WebhookInboundService {
       );
     } finally {
       if (isTemp) {
-        await import('node:fs/promises').then(fs =>
-          fs.unlink(resolvedFile.path).catch(() => undefined),
-        );
+        await import('node:fs/promises').then(fs => fs.unlink(resolvedFile.path).catch(() => undefined));
       }
     }
   }
@@ -115,13 +106,8 @@ export class WebhookInboundService {
   ) {
     const user = await this.resolveWorkspaceOwner(endpoint.workspaceId);
     const resolvedFile =
-      file ??
-      (dto.fileBase64
-        ? await this.base64ToFile(dto.fileBase64, dto.fileName ?? 'receipt.jpg')
-        : null);
-    if (!resolvedFile) {
-      throw new BadRequestException('No file provided');
-    }
+      file ?? (dto.fileBase64 ? await this.base64ToFile(dto.fileBase64, dto.fileName ?? 'receipt.jpg') : null);
+    if (!resolvedFile) throw new BadRequestException('No file provided');
     const isTemp = !file && !!dto.fileBase64;
     try {
       return await this.receiptsService.createFromUpload({
@@ -132,9 +118,7 @@ export class WebhookInboundService {
       });
     } finally {
       if (isTemp) {
-        await import('node:fs/promises').then(fs =>
-          fs.unlink(resolvedFile.path).catch(() => undefined),
-        );
+        await import('node:fs/promises').then(fs => fs.unlink(resolvedFile.path).catch(() => undefined));
       }
     }
   }

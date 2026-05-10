@@ -1,26 +1,26 @@
 'use client';
 
 import { DEFAULT_BACKGROUND } from '@/app/(main)/workspaces/constants';
+import { Spinner } from '@/app/components/ui/spinner';
 import { useWorkspace } from '@/app/contexts/WorkspaceContext';
 import { useAuth } from '@/app/hooks/useAuth';
 import { useIntlayer, useLocale } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { DEFAULT_APP_ROUTE } from '@/app/lib/default-app-route';
 import { normalizeLocale, syncLocaleFromUser } from '@/app/lib/locale';
-import { tokens } from '@/lib/theme-tokens';
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { OnboardingIntegrationConnection } from './components/OnboardingIntegrationConnection';
 import { OnboardingNavigation } from './components/OnboardingNavigation';
+import { OnboardingIntegrationConnection } from './components/OnboardingIntegrationConnection';
 import { OnboardingProgress } from './components/OnboardingProgress';
 import {
   EMPTY_INTEGRATION_STATE,
   INTEGRATION_DESCRIPTION_FALLBACK,
   INTEGRATION_TITLE_FALLBACK,
   ONBOARDING_INTEGRATIONS,
-  type OnboardingIntegrationKey,
   parseIntegrationConnectedStatus,
+  type OnboardingIntegrationKey,
 } from './hooks/useOnboardingActions';
 import { resolveOnboardingBootstrapLocale } from './lib/locale-bootstrap';
 import { resolveOnboardingFlow } from './lib/onboarding-flow';
@@ -30,7 +30,12 @@ import { IntegrationsStep } from './steps/IntegrationsStep';
 import { LanguageStep } from './steps/LanguageStep';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { WorkspaceStep } from './steps/WorkspaceStep';
-import { type OnboardingData, useOnboardingWizard } from './useOnboardingWizard';
+import {
+  type OnboardingData,
+  type SupportedLocale,
+  useOnboardingWizard,
+} from './useOnboardingWizard';
+import { tokens } from '@/lib/theme-tokens';
 
 const DEFAULT_CURRENCY = 'USD';
 
@@ -74,13 +79,14 @@ export default function OnboardingPage() {
   const [isStepTransitioning, setIsStepTransitioning] = useState(false);
   const stepBlockRef = useRef<HTMLDivElement | null>(null);
   const hasStepMountedRef = useRef(false);
-  const [integrationStatuses, setIntegrationStatuses] =
-    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
-  const [integrationLoading, setIntegrationLoading] =
-    useState<Record<OnboardingIntegrationKey, boolean>>(EMPTY_INTEGRATION_STATE);
-  const [activeIntegrationKey, setActiveIntegrationKey] = useState<OnboardingIntegrationKey | null>(
-    null,
-  );
+  const [integrationStatuses, setIntegrationStatuses] = useState<
+    Record<OnboardingIntegrationKey, boolean>
+  >(EMPTY_INTEGRATION_STATE);
+  const [integrationLoading, setIntegrationLoading] = useState<
+    Record<OnboardingIntegrationKey, boolean>
+  >(EMPTY_INTEGRATION_STATE);
+  const [activeIntegrationKey, setActiveIntegrationKey] =
+    useState<OnboardingIntegrationKey | null>(null);
   const tx = useCallback(
     (path: string[], fallback = '', localeOverride?: string) =>
       resolveOnboardingText(
@@ -91,13 +97,12 @@ export default function OnboardingPage() {
     [data.locale, t],
   );
 
-  const checkIntegrationConnected = useCallback(
-    async (integration: (typeof ONBOARDING_INTEGRATIONS)[number]): Promise<boolean> => {
-      const response = await apiClient.get(integration.statusPath);
-      return parseIntegrationConnectedStatus(response.data);
-    },
-    [],
-  );
+  const checkIntegrationConnected = useCallback(async (
+    integration: (typeof ONBOARDING_INTEGRATIONS)[number],
+  ): Promise<boolean> => {
+    const response = await apiClient.get(integration.statusPath);
+    return parseIntegrationConnectedStatus(response.data);
+  }, []);
 
   const refreshIntegrationStatuses = useCallback(async () => {
     const nextStatuses: Record<OnboardingIntegrationKey, boolean> = {
@@ -376,9 +381,12 @@ export default function OnboardingPage() {
     setIntegrationLoading(prev => ({ ...prev, [integration.key]: false }));
   };
 
-  const handleIntegrationConnectionStatusChange = useCallback(async () => {
-    await refreshIntegrationStatuses();
-  }, [refreshIntegrationStatuses]);
+  const handleIntegrationConnectionStatusChange = useCallback(
+    async () => {
+      await refreshIntegrationStatuses();
+    },
+    [refreshIntegrationStatuses],
+  );
 
   const completeOnboarding = async () => {
     setError('');
@@ -559,12 +567,7 @@ export default function OnboardingPage() {
           }}
         >
           <Typography
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
-            }}
+            style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.18em' }}
             sx={{ color: 'primary.main' }}
           >
             LUMIO
@@ -590,7 +593,10 @@ export default function OnboardingPage() {
           <OnboardingProgress currentStep={currentStep} stepLabels={stepLabels} />
 
           {error ? (
-            <Alert severity="error" sx={{ mt: 2 }}>
+            <Alert
+              severity="error"
+              sx={{ mt: 2 }}
+            >
               {error}
             </Alert>
           ) : null}

@@ -1,6 +1,6 @@
-import apiClient from '@/app/lib/api';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import apiClient from '@/app/lib/api';
 
 export interface SubscriptionItem {
   id: string;
@@ -21,7 +21,6 @@ export interface SubscriptionItem {
 
 export interface SubscriptionSummary {
   totalMonthlyCost: number;
-  currency: string;
   activeCount: number;
   upcomingCount: number;
 }
@@ -46,12 +45,7 @@ const EMPTY_FORM: SubscriptionFormData = {
 
 export function useSubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
-  const [summary, setSummary] = useState<SubscriptionSummary>({
-    totalMonthlyCost: 0,
-    currency: 'KZT',
-    activeCount: 0,
-    upcomingCount: 0,
-  });
+  const [summary, setSummary] = useState<SubscriptionSummary>({ totalMonthlyCost: 0, activeCount: 0, upcomingCount: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -70,15 +64,7 @@ export function useSubscriptionsPage() {
         apiClient.get('/subscriptions/summary'),
       ]);
       setSubscriptions(subsRes.data?.data ?? subsRes.data ?? []);
-      setSummary(
-        summaryRes.data?.data ??
-          summaryRes.data ?? {
-            totalMonthlyCost: 0,
-            currency: 'KZT',
-            activeCount: 0,
-            upcomingCount: 0,
-          },
-      );
+      setSummary(summaryRes.data?.data ?? summaryRes.data ?? { totalMonthlyCost: 0, activeCount: 0, upcomingCount: 0 });
     } catch {
       setError('Failed to load subscriptions');
     } finally {
@@ -115,9 +101,7 @@ export function useSubscriptionsPage() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!(formData.vendorName && formData.amount)) {
-      return;
-    }
+    if (!formData.vendorName || !formData.amount) return;
     setSaving(true);
     try {
       const payload = {
@@ -144,57 +128,35 @@ export function useSubscriptionsPage() {
     }
   }, [formData, editingSubscription, closeDialog, load]);
 
-  const handleDelete = useCallback(
-    async (id: string) => {
-      try {
-        await apiClient.delete(`/subscriptions/${id}`);
-        toast.success('Subscription cancelled');
-        await load();
-      } catch {
-        toast.error('Failed to delete subscription');
-      }
-    },
-    [load],
-  );
+  const handleDelete = useCallback(async (id: string) => {
+    try {
+      await apiClient.delete(`/subscriptions/${id}`);
+      toast.success('Subscription cancelled');
+      await load();
+    } catch {
+      toast.error('Failed to delete subscription');
+    }
+  }, [load]);
 
-  const handleConfirm = useCallback(
-    async (id: string) => {
-      try {
-        await apiClient.post(`/subscriptions/${id}/confirm`);
-        toast.success('Subscription confirmed');
-        await load();
-      } catch {
-        toast.error('Failed to confirm subscription');
-      }
-    },
-    [load],
-  );
+  const handleConfirm = useCallback(async (id: string) => {
+    try {
+      await apiClient.post(`/subscriptions/${id}/confirm`);
+      toast.success('Subscription confirmed');
+      await load();
+    } catch {
+      toast.error('Failed to confirm subscription');
+    }
+  }, [load]);
 
-  const handleDismiss = useCallback(
-    async (id: string) => {
-      try {
-        await apiClient.post(`/subscriptions/${id}/dismiss`);
-        toast.success('Subscription dismissed');
-        await load();
-      } catch {
-        toast.error('Failed to dismiss subscription');
-      }
-    },
-    [load],
-  );
-
-  const handleRestore = useCallback(
-    async (id: string) => {
-      try {
-        await apiClient.put(`/subscriptions/${id}`, { status: 'active' });
-        toast.success('Subscription restored');
-        await load();
-      } catch {
-        toast.error('Failed to restore subscription');
-      }
-    },
-    [load],
-  );
+  const handleDismiss = useCallback(async (id: string) => {
+    try {
+      await apiClient.post(`/subscriptions/${id}/dismiss`);
+      toast.success('Subscription dismissed');
+      await load();
+    } catch {
+      toast.error('Failed to dismiss subscription');
+    }
+  }, [load]);
 
   return {
     subscriptions,
@@ -215,6 +177,5 @@ export function useSubscriptionsPage() {
     handleDelete,
     handleConfirm,
     handleDismiss,
-    handleRestore,
   };
 }

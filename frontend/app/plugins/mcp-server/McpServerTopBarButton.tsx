@@ -1,10 +1,10 @@
 'use client';
 
-import { Cpu } from '@/app/components/icons';
 import { useCallback, useState } from 'react';
+import { Cpu } from '@/app/components/icons';
 import { usePluginState } from '../hooks/usePluginState';
-import { McpServerDrawer } from './McpServerDrawer';
 import { useApiKeys } from './useApiKeys';
+import { McpServerDrawer } from './McpServerDrawer';
 
 export function McpServerTopBarButton() {
   const { isEnabled } = usePluginState();

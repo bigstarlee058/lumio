@@ -1,19 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
-import {
-  NotificationCategory,
-  NotificationSeverity,
-  NotificationType,
-} from '../../entities/notification.entity';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import {
   Subscription,
   SubscriptionFrequency,
   SubscriptionStatus,
 } from '../../entities/subscription.entity';
-import { Workspace } from '../../entities/workspace.entity';
-import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
+import {
+  NotificationCategory,
+  NotificationSeverity,
+  NotificationType,
+} from '../../entities/notification.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import type { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import type { UpdateSubscriptionDto } from './dto/update-subscription.dto';
@@ -25,17 +23,10 @@ export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription)
     private readonly subscriptionRepository: Repository<Subscription>,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly notificationsService: NotificationsService,
-    private readonly exchangeRatesService: ExchangeRatesService,
   ) {}
 
-  async create(
-    workspaceId: string,
-    userId: string,
-    dto: CreateSubscriptionDto,
-  ): Promise<Subscription> {
+  async create(workspaceId: string, userId: string, dto: CreateSubscriptionDto): Promise<Subscription> {
     const subscription = this.subscriptionRepository.create({
       workspaceId,
       createdById: userId,
@@ -52,9 +43,7 @@ export class SubscriptionsService {
 
   async findAll(workspaceId: string, status?: SubscriptionStatus): Promise<Subscription[]> {
     const where: Record<string, unknown> = { workspaceId };
-    if (status) {
-      where.status = status;
-    }
+    if (status) where.status = status;
     return this.subscriptionRepository.find({
       where,
       relations: ['category'],
@@ -67,35 +56,19 @@ export class SubscriptionsService {
       where: { id, workspaceId },
       relations: ['category'],
     });
-    if (!subscription) {
-      throw new NotFoundException('Subscription not found');
-    }
+    if (!subscription) throw new NotFoundException('Subscription not found');
     return subscription;
   }
 
   async update(id: string, workspaceId: string, dto: UpdateSubscriptionDto): Promise<Subscription> {
     const subscription = await this.findOne(id, workspaceId);
-    if (dto.vendorName !== undefined) {
-      subscription.vendorName = dto.vendorName;
-    }
-    if (dto.amount !== undefined) {
-      subscription.amount = dto.amount;
-    }
-    if (dto.frequency !== undefined) {
-      subscription.frequency = dto.frequency;
-    }
-    if (dto.status !== undefined) {
-      subscription.status = dto.status;
-    }
-    if (dto.currency !== undefined) {
-      subscription.currency = dto.currency;
-    }
-    if (dto.categoryId !== undefined) {
-      subscription.categoryId = dto.categoryId;
-    }
-    if (dto.nextChargeDate !== undefined) {
-      subscription.nextChargeDate = new Date(dto.nextChargeDate);
-    }
+    if (dto.vendorName !== undefined) subscription.vendorName = dto.vendorName;
+    if (dto.amount !== undefined) subscription.amount = dto.amount;
+    if (dto.frequency !== undefined) subscription.frequency = dto.frequency;
+    if (dto.status !== undefined) subscription.status = dto.status;
+    if (dto.currency !== undefined) subscription.currency = dto.currency;
+    if (dto.categoryId !== undefined) subscription.categoryId = dto.categoryId;
+    if (dto.nextChargeDate !== undefined) subscription.nextChargeDate = new Date(dto.nextChargeDate);
     return this.subscriptionRepository.save(subscription);
   }
 
@@ -118,24 +91,16 @@ export class SubscriptionsService {
 
   async getSummary(workspaceId: string): Promise<{
     totalMonthlyCost: number;
-    currency: string;
     activeCount: number;
     upcomingCount: number;
   }> {
-    const currency = await this.getWorkspaceCurrency(workspaceId);
     const active = await this.subscriptionRepository.find({
       where: { workspaceId, status: SubscriptionStatus.ACTIVE },
     });
 
-    let totalMonthlyCost = 0;
-    for (const sub of active) {
-      const convertedAmount = await this.convertToWorkspaceCurrency(
-        Number(sub.amount),
-        sub.currency,
-        currency,
-      );
-      totalMonthlyCost += this.normalizeToMonthly(convertedAmount, sub.frequency);
-    }
+    const totalMonthlyCost = active.reduce((sum, sub) => {
+      return sum + this.normalizeToMonthly(Number(sub.amount), sub.frequency);
+    }, 0);
 
     const now = new Date();
     const weekAhead = new Date(now);
@@ -151,7 +116,6 @@ export class SubscriptionsService {
 
     return {
       totalMonthlyCost: Math.round(totalMonthlyCost * 100) / 100,
-      currency,
       activeCount: active.length,
       upcomingCount,
     };
@@ -189,9 +153,7 @@ export class SubscriptionsService {
 
     const byWorkspace = new Map<string, Subscription[]>();
     for (const sub of upcoming) {
-      if (!sub.nextChargeDate || new Date(sub.nextChargeDate) < today) {
-        continue;
-      }
+      if (!sub.nextChargeDate || new Date(sub.nextChargeDate) < today) continue;
       const list = byWorkspace.get(sub.workspaceId) ?? [];
       list.push(sub);
       byWorkspace.set(sub.workspaceId, list);
@@ -204,20 +166,14 @@ export class SubscriptionsService {
         category: NotificationCategory.WORKSPACE_ACTIVITY,
         severity: NotificationSeverity.INFO,
         messageKey: 'subscription.upcoming',
-        messageParams: {
-          details: subs.map(s => `${s.vendorName} (${s.amount} ${s.currency})`).join(', '),
-        },
+        messageParams: { details: subs.map((s) => `${s.vendorName} (${s.amount} ${s.currency})`).join(', ') },
         entityType: 'subscription',
         entityId: subs[0].id,
-        meta: {
-          subscriptions: subs.map(s => ({ id: s.id, vendor: s.vendorName, amount: s.amount })),
-        },
+        meta: { subscriptions: subs.map((s) => ({ id: s.id, vendor: s.vendorName, amount: s.amount })) },
       });
     }
 
-    this.logger.log(
-      `Checked upcoming charges: ${upcoming.length} subscription(s) due within 3 days`,
-    );
+    this.logger.log(`Checked upcoming charges: ${upcoming.length} subscription(s) due within 3 days`);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_6AM)
@@ -234,8 +190,7 @@ export class SubscriptionsService {
 
     for (const sub of pastDue) {
       sub.lastChargeDate = sub.nextChargeDate;
-      const chargeDate = sub.nextChargeDate ?? new Date();
-      sub.nextChargeDate = this.addInterval(new Date(chargeDate), sub.frequency);
+      sub.nextChargeDate = this.addInterval(new Date(sub.nextChargeDate!), sub.frequency);
       await this.subscriptionRepository.save(sub);
     }
 
@@ -255,37 +210,6 @@ export class SubscriptionsService {
       case SubscriptionFrequency.ANNUAL:
         return amount / 12;
     }
-  }
-
-  private async getWorkspaceCurrency(workspaceId: string): Promise<string> {
-    const workspace = await this.workspaceRepository.findOne({
-      where: { id: workspaceId },
-      select: ['currency'],
-    });
-    return this.normalizeCurrency(workspace?.currency);
-  }
-
-  private async convertToWorkspaceCurrency(
-    amount: number,
-    sourceCurrency: string | null | undefined,
-    targetCurrency: string,
-  ): Promise<number> {
-    if (!Number.isFinite(amount) || amount === 0) {
-      return 0;
-    }
-    const source = this.normalizeCurrency(sourceCurrency);
-    if (source === targetCurrency) {
-      return amount;
-    }
-    const rate = await this.exchangeRatesService.getRate(source, targetCurrency);
-    return amount * rate;
-  }
-
-  private normalizeCurrency(currency: string | null | undefined): string {
-    const normalized = String(currency || '')
-      .trim()
-      .toUpperCase();
-    return /^[A-Z]{3}$/.test(normalized) ? normalized : 'KZT';
   }
 
   private addInterval(date: Date, frequency: SubscriptionFrequency): Date {

@@ -44,9 +44,7 @@ export class ApiKeysService {
   }
 
   async validate(rawKey: string): Promise<ApiKey | null> {
-    if (!rawKey.startsWith('lum_')) {
-      return null;
-    }
+    if (!rawKey.startsWith('lum_')) return null;
 
     const keyHash = createHash('sha256').update(rawKey).digest('hex');
 
@@ -55,13 +53,9 @@ export class ApiKeysService {
       relations: ['user', 'workspace'],
     });
 
-    if (!apiKey) {
-      return null;
-    }
+    if (!apiKey) return null;
 
-    if (apiKey.expiresAt && apiKey.expiresAt < new Date()) {
-      return null;
-    }
+    if (apiKey.expiresAt && apiKey.expiresAt < new Date()) return null;
 
     // Update lastUsedAt without blocking the request
     void this.apiKeyRepository.update(apiKey.id, { lastUsedAt: new Date() });

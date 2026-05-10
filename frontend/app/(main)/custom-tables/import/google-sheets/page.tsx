@@ -1,6 +1,5 @@
 'use client';
 
-import { Tag as CategoryIconFallback, Sparkles } from '@/app/components/icons';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Spinner } from '@/app/components/ui/spinner';
 import { useAuth } from '@/app/hooks/useAuth';
@@ -8,14 +7,15 @@ import { useIntlayer } from '@/app/i18n';
 import apiClient from '@/app/lib/api';
 import { getApiErrorMessage } from '@/app/lib/api-error';
 import { type WorksheetOption, getDefaultWorksheetName } from '@/app/lib/googleSheetsSelection';
-import { tokens } from '@/lib/theme-tokens';
 import { Box, Typography } from '@mui/material';
-import { useTheme } from 'next-themes';
+import { Sparkles, Tag as CategoryIconFallback } from '@/app/components/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { type CSSProperties, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTheme } from 'next-themes';
+import { tokens } from '@/lib/theme-tokens';
 
 type ColumnType = 'text' | 'number' | 'date' | 'boolean' | 'select' | 'multi_select';
 type LayoutType = 'auto' | 'flat' | 'matrix';
@@ -140,9 +140,7 @@ export default function GoogleSheetsImportPage() {
   );
   const hasSourceUrl = Boolean(sourceUrl.trim());
 
-  const canPreview = Boolean(
-    hasSourceUrl || (googleSheetId && selectedConnection?.oauthConnected !== false),
-  );
+  const canPreview = Boolean(hasSourceUrl || (googleSheetId && selectedConnection?.oauthConnected !== false));
   const canCommit = Boolean(preview && tableName.trim() && columns.some(c => c.include));
 
   const loadConnections = async () => {
@@ -176,9 +174,7 @@ export default function GoogleSheetsImportPage() {
   }, [authLoading, user]);
 
   useEffect(() => {
-    if (!selectedConnection) {
-      return;
-    }
+    if (!selectedConnection) return;
     const nextWorksheet = selectedConnection.worksheetName || '';
     setWorksheetName(prev => prev || nextWorksheet);
     setTableName(prev => prev || selectedConnection.sheetName || t.defaults.tableName.value);
@@ -230,10 +226,8 @@ export default function GoogleSheetsImportPage() {
       setPreview(data);
       setColumns(data.columns || []);
       setHeaderRowIndex(data.headerRowIndex ?? headerRowIndex);
-      const fallbackName = hasSourceUrl
-        ? t.defaults.tableName.value
-        : selectedConnection?.sheetName || t.defaults.tableName.value;
-      setTableName(prev => (prev.trim() ? prev : fallbackName));
+      const fallbackName = hasSourceUrl ? t.defaults.tableName.value : selectedConnection?.sheetName || t.defaults.tableName.value;
+      setTableName(prev => prev.trim() ? prev : fallbackName);
       toast.success(t.toasts.previewReady.value);
     } catch (error: unknown) {
       console.error('Preview failed:', error);
@@ -244,9 +238,7 @@ export default function GoogleSheetsImportPage() {
   };
 
   const handleCommit = async () => {
-    if (!(preview && canCommit)) {
-      return;
-    }
+    if (!preview || !canCommit) return;
     setCommitting(true);
     try {
       const response = await apiClient.post('/custom-tables/import/google-sheets/commit', {
@@ -289,9 +281,7 @@ export default function GoogleSheetsImportPage() {
   };
 
   useEffect(() => {
-    if (!jobId) {
-      return;
-    }
+    if (!jobId) return;
     let cancelled = false;
     let timer: number | null = null;
 
@@ -325,9 +315,7 @@ export default function GoogleSheetsImportPage() {
     poll();
     return () => {
       cancelled = true;
-      if (timer) {
-        window.clearTimeout(timer);
-      }
+      if (timer) window.clearTimeout(timer);
     };
   }, [jobId, router]);
 
@@ -343,15 +331,7 @@ export default function GoogleSheetsImportPage() {
 
   if (authLoading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          minHeight: '60vh',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: c.ink500,
-        }}
-      >
+      <Box sx={{ display: 'flex', minHeight: '60vh', alignItems: 'center', justifyContent: 'center', color: c.ink500 }}>
         <Spinner className="h-6 w-6" />
       </Box>
     );
@@ -360,15 +340,7 @@ export default function GoogleSheetsImportPage() {
   if (!user) {
     return (
       <Box sx={{ maxWidth: 900, mx: 'auto', px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-        <Box
-          sx={{
-            border: `1px solid ${c.ink150}`,
-            bgcolor: 'background.paper',
-            p: 3,
-            fontSize: 14,
-            color: c.ink700,
-          }}
-        >
+        <Box sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 3, fontSize: 14, color: c.ink700 }}>
           {t.auth.loginRequired}
         </Box>
       </Box>
@@ -377,20 +349,8 @@ export default function GoogleSheetsImportPage() {
 
   return (
     <Box sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 5 }}>
-      <Box
-        sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }}
-        data-tour-id="gs-import-header"
-      >
-        <Box
-          sx={{
-            p: 1,
-            bgcolor: 'primary.50',
-            color: 'primary.main',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 3 }} data-tour-id="gs-import-header">
+        <Box sx={{ p: 1, bgcolor: 'primary.50', color: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Image
             src="/icons/icons8-google-sheets-48.png"
             alt="Google Sheets"
@@ -400,12 +360,8 @@ export default function GoogleSheetsImportPage() {
           />
         </Box>
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography style={{ fontSize: 22, fontWeight: 700, color: c.ink900 }}>
-            {t.header.title}
-          </Typography>
-          <Typography style={{ fontSize: 14, color: c.ink500, marginTop: 4 }}>
-            {t.header.subtitle}
-          </Typography>
+          <Typography style={{ fontSize: 22, fontWeight: 700, color: c.ink900 }}>{t.header.title}</Typography>
+          <Typography style={{ fontSize: 14, color: c.ink500, marginTop: 4 }}>{t.header.subtitle}</Typography>
         </Box>
         <Link
           href="/custom-tables"
@@ -422,15 +378,9 @@ export default function GoogleSheetsImportPage() {
             sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-source-card"
           >
-            <Typography
-              style={{ fontSize: 14, fontWeight: 600, color: c.ink900, marginBottom: 12 }}
-            >
-              {t.source.title}
-            </Typography>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900, marginBottom: 12 }}>{t.source.title}</Typography>
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                Google Sheets link
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>Google Sheets link</span>
               <input
                 value={sourceUrl}
                 onChange={e => {
@@ -443,16 +393,13 @@ export default function GoogleSheetsImportPage() {
                 placeholder="https://docs.google.com/spreadsheets/d/..."
               />
               <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>
-                Paste a shared or published Google Sheets link. Lumio imports a snapshot through the
-                public export URL, without OAuth or Google SDK.
+                Paste a shared or published Google Sheets link. Lumio imports a snapshot through the public export URL, without OAuth or Google SDK.
               </span>
             </label>
 
             {connections.length || loadingConnections ? (
               <label style={{ display: 'block', marginBottom: 12 }}>
-                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                  Legacy saved connection
-                </span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>Legacy saved connection</span>
                 <select
                   value={googleSheetId}
                   onChange={e => {
@@ -478,9 +425,7 @@ export default function GoogleSheetsImportPage() {
             ) : null}
 
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                {t.source.worksheetLabel}
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.source.worksheetLabel}</span>
               {hasSourceUrl ? (
                 <input
                   value={worksheetName}
@@ -494,10 +439,7 @@ export default function GoogleSheetsImportPage() {
                   value={worksheetName}
                   onChange={e => setWorksheetName(e.target.value)}
                   data-tour-id="gs-import-worksheet"
-                  style={{
-                    ...inputStyle,
-                    opacity: !selectedConnection || loadingWorksheets ? 0.6 : 1,
-                  }}
+                  style={{ ...inputStyle, opacity: (!selectedConnection || loadingWorksheets) ? 0.6 : 1 }}
                   disabled={!selectedConnection || loadingWorksheets}
                 >
                   <option value="">
@@ -510,15 +452,11 @@ export default function GoogleSheetsImportPage() {
                   ))}
                 </select>
               )}
-              <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>
-                {t.source.worksheetHelp}
-              </span>
+              <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>{t.source.worksheetHelp}</span>
             </label>
 
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                {t.source.rangeLabel}
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.source.rangeLabel}</span>
               <input
                 value={range}
                 onChange={e => setRange(e.target.value)}
@@ -541,15 +479,11 @@ export default function GoogleSheetsImportPage() {
                   data-tour-id="gs-import-header-offset"
                   style={inputStyle}
                 />
-                <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>
-                  {t.source.headerOffsetHelp}
-                </span>
+                <span style={{ display: 'block', marginTop: 4, fontSize: 12, color: c.ink500 }}>{t.source.headerOffsetHelp}</span>
               </label>
 
               <label style={{ display: 'block' }}>
-                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                  {t.source.layoutLabel}
-                </span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.source.layoutLabel}</span>
                 <select
                   value={layoutType}
                   onChange={e => setLayoutType(e.target.value as LayoutType)}
@@ -590,9 +524,7 @@ export default function GoogleSheetsImportPage() {
               {loadingConnections ? t.source.previewButtonLoading : t.source.previewButton}
             </Box>
             {loadingConnections && (
-              <Typography style={{ marginTop: 8, fontSize: 12, color: c.ink500 }}>
-                {t.source.loadingConnections}
-              </Typography>
+              <Typography style={{ marginTop: 8, fontSize: 12, color: c.ink500 }}>{t.source.loadingConnections}</Typography>
             )}
           </Box>
 
@@ -600,15 +532,9 @@ export default function GoogleSheetsImportPage() {
             sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-result-card"
           >
-            <Typography
-              style={{ fontSize: 14, fontWeight: 600, color: c.ink900, marginBottom: 12 }}
-            >
-              {t.result.title}
-            </Typography>
+            <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900, marginBottom: 12 }}>{t.result.title}</Typography>
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                {t.result.tableNameLabel}
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.result.tableNameLabel}</span>
               <input
                 value={tableName}
                 onChange={e => setTableName(e.target.value)}
@@ -618,9 +544,7 @@ export default function GoogleSheetsImportPage() {
               />
             </label>
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                {t.result.descriptionLabel}
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.result.descriptionLabel}</span>
               <input
                 value={tableDescription}
                 onChange={e => setTableDescription(e.target.value)}
@@ -629,9 +553,7 @@ export default function GoogleSheetsImportPage() {
             </label>
 
             <label style={{ display: 'block', marginBottom: 12 }}>
-              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>
-                {t.result.categoryLabel}
-              </span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: c.ink800 }}>{t.result.categoryLabel}</span>
               <select
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value)}
@@ -646,26 +568,9 @@ export default function GoogleSheetsImportPage() {
                 ))}
               </select>
               {categoryId && (
-                <Box
-                  sx={{
-                    mt: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    fontSize: 12,
-                    color: c.ink700,
-                  }}
-                >
+                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, fontSize: 12, color: c.ink700 }}>
                   <Box
-                    sx={{
-                      display: 'inline-flex',
-                      width: 24,
-                      height: 24,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: `1px solid ${c.ink150}`,
-                      bgcolor: categories.find(cat => cat.id === categoryId)?.color || c.ink50,
-                    }}
+                    sx={{ display: 'inline-flex', width: 24, height: 24, alignItems: 'center', justifyContent: 'center', border: `1px solid ${c.ink150}`, bgcolor: categories.find(cat => cat.id === categoryId)?.color || c.ink50 }}
                   >
                     {(() => {
                       const selected = categories.find(cat => cat.id === categoryId);
@@ -688,14 +593,7 @@ export default function GoogleSheetsImportPage() {
             </label>
 
             <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontSize: 14,
-                color: c.ink800,
-                mb: 2,
-              }}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 14, color: c.ink800, mb: 2 }}
               data-tour-id="gs-import-import-data"
             >
               <Checkbox checked={importData} onCheckedChange={setImportData} className="h-5 w-5" />
@@ -729,22 +627,8 @@ export default function GoogleSheetsImportPage() {
               {jobId ? t.result.importRunning : t.result.importButton}
             </Box>
             {jobId ? (
-              <Box
-                sx={{
-                  mt: 1.5,
-                  border: `1px solid ${c.ink150}`,
-                  bgcolor: 'background.paper',
-                  p: 1.5,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 1,
-                  }}
-                >
+              <Box sx={{ mt: 1.5, border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                   <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
                     {t.result.progressTitle}
                   </Typography>
@@ -752,21 +636,9 @@ export default function GoogleSheetsImportPage() {
                     {Math.round(jobProgress)}%
                   </Typography>
                 </Box>
-                <Box
-                  sx={{
-                    mt: 1,
-                    height: 8,
-                    width: '100%',
-                    bgcolor: 'action.hover',
-                    overflow: 'hidden',
-                  }}
-                >
+                <Box sx={{ mt: 1, height: 8, width: '100%', bgcolor: 'action.hover', overflow: 'hidden' }}>
                   <Box
-                    sx={{
-                      height: '100%',
-                      bgcolor: 'primary.main',
-                      width: `${Math.max(0, Math.min(100, jobProgress))}%`,
-                    }}
+                    sx={{ height: '100%', bgcolor: 'primary.main', width: `${Math.max(0, Math.min(100, jobProgress))}%` }}
                   />
                 </Box>
                 <Typography style={{ marginTop: 8, fontSize: 12, color: c.ink700 }}>
@@ -775,23 +647,12 @@ export default function GoogleSheetsImportPage() {
                   {jobStage ? <span style={{ color: c.ink500 }}>({jobStage})</span> : null}
                 </Typography>
                 {jobError ? (
-                  <Typography
-                    style={{
-                      marginTop: 8,
-                      fontSize: 12,
-                      color: c.danger,
-                      overflowWrap: 'break-word',
-                    }}
-                  >
-                    {jobError}
-                  </Typography>
+                  <Typography style={{ marginTop: 8, fontSize: 12, color: c.danger, overflowWrap: 'break-word' }}>{jobError}</Typography>
                 ) : null}
               </Box>
             ) : null}
             {!preview && (
-              <Typography style={{ marginTop: 8, fontSize: 12, color: c.ink500 }}>
-                {t.result.needPreviewHint}
-              </Typography>
+              <Typography style={{ marginTop: 8, fontSize: 12, color: c.ink500 }}>{t.result.needPreviewHint}</Typography>
             )}
           </Box>
         </Box>
@@ -801,21 +662,10 @@ export default function GoogleSheetsImportPage() {
             sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-preview-panel"
           >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 1.5,
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
               <Box>
-                <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
-                  {t.preview.title}
-                </Typography>
-                <Typography style={{ fontSize: 12, color: c.ink500, marginTop: 4 }}>
-                  {t.preview.subtitle}
-                </Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>{t.preview.title}</Typography>
+                <Typography style={{ fontSize: 12, color: c.ink500, marginTop: 4 }}>{t.preview.subtitle}</Typography>
               </Box>
               {preview && (
                 <Box style={{ fontSize: 12, color: c.ink500, textAlign: 'right' }}>
@@ -829,16 +679,7 @@ export default function GoogleSheetsImportPage() {
             </Box>
 
             {!preview ? (
-              <Box
-                sx={{
-                  mt: 2,
-                  border: `1px dashed ${c.ink150}`,
-                  bgcolor: c.ink50,
-                  p: 3,
-                  fontSize: 14,
-                  color: c.ink700,
-                }}
-              >
+              <Box sx={{ mt: 2, border: `1px dashed ${c.ink150}`, bgcolor: c.ink50, p: 3, fontSize: 14, color: c.ink700 }}>
                 {t.preview.hint}
               </Box>
             ) : (
@@ -846,40 +687,19 @@ export default function GoogleSheetsImportPage() {
                 <table style={{ minWidth: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: `1px solid ${c.ink150}` }}>
-                      <th
-                        style={{
-                          padding: '8px',
-                          textAlign: 'left',
-                          fontWeight: 600,
-                          color: c.ink800,
-                        }}
-                      >
+                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: c.ink800 }}>
                         {t.preview.rowHeader}
                       </th>
                       {preview.columns.slice(0, 12).map(col => (
                         <th
                           key={col.index}
-                          style={{
-                            padding: '8px',
-                            textAlign: 'left',
-                            fontWeight: 600,
-                            color: c.ink800,
-                          }}
+                          style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: c.ink800 }}
                         >
                           {col.title}
                         </th>
                       ))}
                       {preview.columns.length > 12 && (
-                        <th
-                          style={{
-                            padding: '8px',
-                            textAlign: 'left',
-                            fontWeight: 600,
-                            color: c.ink500,
-                          }}
-                        >
-                          …
-                        </th>
+                        <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: c.ink500 }}>…</th>
                       )}
                     </tr>
                   </thead>
@@ -891,13 +711,12 @@ export default function GoogleSheetsImportPage() {
                           const style = r.styles?.[idx] || null;
                           const css = sheetStyleToCss(style || {});
                           const { color: cssColor, ...cssRest } = css;
-                          const tdStyle: CSSProperties = {
-                            padding: '4px 8px',
-                            color: cssColor ?? c.ink800,
-                            ...cssRest,
-                          };
+                          const tdStyle: CSSProperties = { padding: '4px 8px', color: cssColor ?? c.ink800, ...cssRest };
                           return (
-                            <td key={`${r.rowNumber}-${idx}`} style={tdStyle}>
+                            <td
+                              key={`${r.rowNumber}-${idx}`}
+                              style={tdStyle}
+                            >
                               {v ?? '—'}
                             </td>
                           );
@@ -917,35 +736,17 @@ export default function GoogleSheetsImportPage() {
             sx={{ border: `1px solid ${c.ink150}`, bgcolor: 'background.paper', p: 2 }}
             data-tour-id="gs-import-columns-panel"
           >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 1.5,
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1.5 }}>
               <Box>
-                <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>
-                  {t.columns.title}
-                </Typography>
-                <Typography style={{ fontSize: 12, color: c.ink500, marginTop: 4 }}>
-                  {t.columns.subtitle}
-                </Typography>
+                <Typography style={{ fontSize: 14, fontWeight: 600, color: c.ink900 }}>{t.columns.title}</Typography>
+                <Typography style={{ fontSize: 12, color: c.ink500, marginTop: 4 }}>{t.columns.subtitle}</Typography>
               </Box>
               {preview && (
                 <Box
                   component="button"
                   onClick={() => setColumns(prev => prev.map(col => ({ ...col, include: true })))}
                   data-tour-id="gs-import-enable-all"
-                  sx={{
-                    fontSize: 12,
-                    color: 'primary.main',
-                    border: 'none',
-                    bgcolor: 'transparent',
-                    cursor: 'pointer',
-                    '&:hover': { color: 'primary.dark' },
-                  }}
+                  sx={{ fontSize: 12, color: 'primary.main', border: 'none', bgcolor: 'transparent', cursor: 'pointer', '&:hover': { color: 'primary.dark' } }}
                 >
                   {t.columns.enableAll}
                 </Box>
@@ -953,16 +754,7 @@ export default function GoogleSheetsImportPage() {
             </Box>
 
             {!preview ? (
-              <Box
-                sx={{
-                  mt: 2,
-                  border: `1px dashed ${c.ink150}`,
-                  bgcolor: c.ink50,
-                  p: 3,
-                  fontSize: 14,
-                  color: c.ink700,
-                }}
-              >
+              <Box sx={{ mt: 2, border: `1px dashed ${c.ink150}`, bgcolor: c.ink50, p: 3, fontSize: 14, color: c.ink700 }}>
                 {t.columns.appearAfterPreview}
               </Box>
             ) : (
@@ -970,59 +762,21 @@ export default function GoogleSheetsImportPage() {
                 <table style={{ minWidth: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
                   <thead style={{ background: c.ink50, borderBottom: `1px solid ${c.ink150}` }}>
                     <tr>
-                      <th
-                        style={{
-                          padding: '8px 12px',
-                          textAlign: 'left',
-                          fontWeight: 600,
-                          color: c.ink800,
-                          width: 84,
-                        }}
-                      >
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: c.ink800, width: 84 }}>
                         {t.columns.tableHeaders.enabled}
                       </th>
-                      <th
-                        style={{
-                          padding: '8px 12px',
-                          textAlign: 'left',
-                          fontWeight: 600,
-                          color: c.ink800,
-                          width: 80,
-                        }}
-                      >
-                        A1
-                      </th>
-                      <th
-                        style={{
-                          padding: '8px 12px',
-                          textAlign: 'left',
-                          fontWeight: 600,
-                          color: c.ink800,
-                        }}
-                      >
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: c.ink800, width: 80 }}>A1</th>
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: c.ink800 }}>
                         {t.columns.tableHeaders.name}
                       </th>
-                      <th
-                        style={{
-                          padding: '8px 12px',
-                          textAlign: 'left',
-                          fontWeight: 600,
-                          color: c.ink800,
-                          width: 180,
-                        }}
-                      >
+                      <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 600, color: c.ink800, width: 180 }}>
                         {t.columns.tableHeaders.type}
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {columns.map((col, idx) => (
-                      <tr
-                        key={col.index}
-                        style={{
-                          borderBottom: idx < columns.length - 1 ? `1px solid ${c.ink50}` : 'none',
-                        }}
-                      >
+                      <tr key={col.index} style={{ borderBottom: idx < columns.length - 1 ? `1px solid ${c.ink50}` : 'none' }}>
                         <td style={{ padding: '8px 12px' }}>
                           <Checkbox
                             checked={col.include}
@@ -1047,14 +801,7 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            style={{
-                              width: '100%',
-                              border: `1px solid ${c.ink150}`,
-                              background: 'var(--card-bg)',
-                              padding: '8px 12px',
-                              fontSize: 14,
-                              boxSizing: 'border-box',
-                            }}
+                            style={{ width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14, boxSizing: 'border-box' }}
                           />
                         </td>
                         <td style={{ padding: '8px 12px' }}>
@@ -1072,13 +819,7 @@ export default function GoogleSheetsImportPage() {
                                 ),
                               )
                             }
-                            style={{
-                              width: '100%',
-                              border: `1px solid ${c.ink150}`,
-                              background: 'var(--card-bg)',
-                              padding: '8px 12px',
-                              fontSize: 14,
-                            }}
+                            style={{ width: '100%', border: `1px solid ${c.ink150}`, background: 'var(--card-bg)', padding: '8px 12px', fontSize: 14 }}
                           >
                             <option value="text">{t.columns.types.text}</option>
                             <option value="number">{t.columns.types.number}</option>
@@ -1103,21 +844,11 @@ export default function GoogleSheetsImportPage() {
 // Minimal style -> CSS mapper for preview
 const mapHorizontalAlignment = (value: unknown): CSSProperties['textAlign'] | undefined => {
   const raw = typeof value === 'string' ? value.trim().toUpperCase() : '';
-  if (!raw) {
-    return undefined;
-  }
-  if (raw === 'LEFT') {
-    return 'left';
-  }
-  if (raw === 'CENTER') {
-    return 'center';
-  }
-  if (raw === 'RIGHT') {
-    return 'right';
-  }
-  if (raw === 'JUSTIFY') {
-    return 'justify';
-  }
+  if (!raw) return undefined;
+  if (raw === 'LEFT') return 'left';
+  if (raw === 'CENTER') return 'center';
+  if (raw === 'RIGHT') return 'right';
+  if (raw === 'JUSTIFY') return 'justify';
   return undefined;
 };
 
@@ -1132,14 +863,11 @@ const getTextFormatCss = (tf: SheetTextFormat | null) => {
     typeof tf.fontSize === 'number' && Number.isFinite(tf.fontSize) && tf.fontSize > 0
       ? tf.fontSize
       : undefined;
-  const fontFamily =
-    typeof tf.fontFamily === 'string' && tf.fontFamily.trim() ? tf.fontFamily : undefined;
+  const fontFamily = typeof tf.fontFamily === 'string' && tf.fontFamily.trim() ? tf.fontFamily : undefined;
   return { color, fontWeight, fontStyle, fontSize, fontFamily };
 };
 
-const getTextDecorationLine = (
-  tf: SheetTextFormat | null,
-): CSSProperties['textDecorationLine'] | undefined => {
+const getTextDecorationLine = (tf: SheetTextFormat | null): CSSProperties['textDecorationLine'] | undefined => {
   if (!tf) {
     return undefined;
   }
@@ -1147,12 +875,8 @@ const getTextDecorationLine = (
   const strikethrough = typeof tf.strikethrough === 'boolean' ? tf.strikethrough : undefined;
   if (underline === true || strikethrough === true) {
     const parts: string[] = [];
-    if (underline === true) {
-      parts.push('underline');
-    }
-    if (strikethrough === true) {
-      parts.push('line-through');
-    }
+    if (underline === true) parts.push('underline');
+    if (strikethrough === true) parts.push('line-through');
     return parts.join(' ') as CSSProperties['textDecorationLine'];
   }
   if (underline === false || strikethrough === false) {

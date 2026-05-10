@@ -2,16 +2,6 @@
 
 import { useAuth } from './useAuth';
 
-type AuthUser = ReturnType<typeof useAuth>['user'];
-
-interface PermissionsHookResult {
-  permissions: string[];
-  hasPermission: (permission: string) => boolean;
-  hasAnyPermission: (permissions: string[]) => boolean;
-  hasAllPermissions: (permissions: string[]) => boolean;
-  isAdmin: boolean;
-}
-
 const ROLE_PERMISSIONS: Record<string, string[]> = {
   admin: [
     // Admin has all permissions
@@ -48,10 +38,6 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
     'telegram.view',
     'telegram.connect',
     'telegram.send',
-    'budget.view',
-    'budget.create',
-    'budget.edit',
-    'budget.delete',
     'subscription.view',
     'subscription.create',
     'subscription.edit',
@@ -88,35 +74,31 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
   ],
 };
 
-function withAuditAliases(permissions: string[]): string[] {
-  const merged = [...permissions];
-  if (merged.includes('audit_log.view') && !merged.includes('audit_view')) {
-    merged.push('audit_view');
-  }
-  if (merged.includes('audit_view') && !merged.includes('audit_log.view')) {
-    merged.push('audit_log.view');
-  }
-  return merged;
-}
-
-function resolveUserPermissions(user: AuthUser): string[] {
-  if (!user) {
-    return [];
-  }
-
-  if (user.role === 'admin') {
-    return ROLE_PERMISSIONS.admin;
-  }
-
-  const rolePermissions = ROLE_PERMISSIONS[user.role] || [];
-  const customPermissions = user.permissions || [];
-  return withAuditAliases([...new Set([...rolePermissions, ...customPermissions])]);
-}
-
-export function usePermissions(): PermissionsHookResult {
+export function usePermissions() {
   const { user } = useAuth();
 
-  const getUserPermissions = (): string[] => resolveUserPermissions(user);
+  const getUserPermissions = (): string[] => {
+    if (!user) return [];
+
+    // Admin has all permissions
+    if (user.role === 'admin') {
+      return ROLE_PERMISSIONS.admin;
+    }
+
+    // If user has custom permissions, merge with role-based
+    const rolePermissions = ROLE_PERMISSIONS[user.role] || [];
+    const customPermissions = user.permissions || [];
+
+    // Merge and deduplicate
+    const merged = [...new Set([...rolePermissions, ...customPermissions])];
+    if (merged.includes('audit_log.view') && !merged.includes('audit_view')) {
+      merged.push('audit_view');
+    }
+    if (merged.includes('audit_view') && !merged.includes('audit_log.view')) {
+      merged.push('audit_log.view');
+    }
+    return merged;
+  };
 
   const hasPermission = (permission: string): boolean => {
     const permissions = getUserPermissions();

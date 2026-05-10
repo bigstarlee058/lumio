@@ -1,9 +1,5 @@
 'use client';
 
-import {
-  ProtocolIntegrationPage,
-  type ProtocolIntegrationPageProps,
-} from '@/app/integrations/open-protocol-page';
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined';
 import CloudQueueOutlinedIcon from '@mui/icons-material/CloudQueueOutlined';
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined';
@@ -11,6 +7,10 @@ import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import MarkEmailUnreadOutlinedIcon from '@mui/icons-material/MarkEmailUnreadOutlined';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import TelegramIcon from '@mui/icons-material/Telegram';
+import {
+  ProtocolIntegrationPage,
+  type ProtocolIntegrationPageProps,
+} from '@/app/integrations/open-protocol-page';
 import type React from 'react';
 import type { OnboardingIntegrationKey } from '../hooks/useOnboardingActions';
 
@@ -48,8 +48,7 @@ const INTEGRATION_CONNECTION_CONFIGS: Record<
   },
   webdav: {
     title: 'WebDAV storage',
-    description:
-      'Use a Nextcloud or WebDAV-compatible directory for statement and receipt file exchange.',
+    description: 'Use a Nextcloud or WebDAV-compatible directory for statement and receipt file exchange.',
     statusPath: '/integrations/webdav/status',
     settingsPath: '/integrations/webdav/settings',
     disconnectPath: '/integrations/webdav',
@@ -127,12 +126,7 @@ const INTEGRATION_CONNECTION_CONFIGS: Record<
       { name: 'enabled', label: 'Enabled', type: 'checkbox' },
       { name: 'baseUrl', label: 'Base URL', placeholder: 'http://localhost:11434', required: true },
       { name: 'model', label: 'Model', placeholder: 'llama3.1', required: true },
-      {
-        name: 'apiKey',
-        label: 'API key',
-        type: 'password',
-        placeholder: 'Optional for local backends',
-      },
+      { name: 'apiKey', label: 'API key', type: 'password', placeholder: 'Optional for local backends' },
       { name: 'timeoutMs', label: 'Timeout, ms', type: 'number', placeholder: '20000' },
     ],
   },

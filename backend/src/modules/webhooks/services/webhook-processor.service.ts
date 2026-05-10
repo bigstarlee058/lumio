@@ -1,13 +1,13 @@
-import { createHmac, randomUUID } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { createHmac, randomUUID } from 'node:crypto';
 import { WebhookDelivery, WebhookDeliveryStatus } from '../../../entities/webhook-delivery.entity';
 import { WebhookSubscription } from '../../../entities/webhook-subscription.entity';
 
 const LOCK_ID = `processor-${process.env.RAILWAY_SERVICE_INSTANCE_ID ?? process.env.HOSTNAME ?? randomUUID()}`;
-const HTTP_TIMEOUT_MS = Number.parseInt(process.env.WEBHOOK_HTTP_TIMEOUT_MS ?? '10000', 10);
+const HTTP_TIMEOUT_MS = parseInt(process.env.WEBHOOK_HTTP_TIMEOUT_MS ?? '10000', 10);
 
 @Injectable()
 export class WebhookProcessorService {
@@ -23,27 +23,20 @@ export class WebhookProcessorService {
 
   @Interval(5000)
   async tick(): Promise<void> {
-    if (this.running) {
-      return;
-    }
+    if (this.running) return;
     this.running = true;
     try {
       const delivery = await this.claimNextDelivery();
-      if (delivery) {
-        await this.processDelivery(delivery);
-      }
+      if (delivery) await this.processDelivery(delivery);
     } catch (err) {
-      this.logger.warn(
-        `Webhook processor tick failed: ${err instanceof Error ? err.message : String(err)}`,
-      );
+      this.logger.warn(`Webhook processor tick failed: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       this.running = false;
     }
   }
 
   private async claimNextDelivery(): Promise<WebhookDelivery | null> {
-    const result = await this.deliveryRepo.query(
-      `
+    const result = await this.deliveryRepo.query(`
       UPDATE webhook_deliveries
       SET status = 'processing', locked_at = now(), locked_by = $1
       WHERE id = (
@@ -62,15 +55,13 @@ export class WebhookProcessorService {
         FOR UPDATE SKIP LOCKED
       )
       RETURNING *
-    `,
-      [LOCK_ID],
-    );
+    `, [LOCK_ID]);
     return result[0]?.[0] ?? null;
   }
 
   private async processDelivery(delivery: WebhookDelivery): Promise<void> {
     const sub = await this.subRepo.findOne({ where: { id: delivery.subscriptionId } });
-    if (!sub?.isActive) {
+    if (!sub || !sub.isActive) {
       await this.deliveryRepo.save({
         ...delivery,
         status: WebhookDeliveryStatus.EXHAUSTED,
@@ -147,10 +138,10 @@ export class WebhookProcessorService {
   }
 
   private buildSignature(secret: string, payload: string): string {
-    return `sha256=${createHmac('sha256', secret).update(payload).digest('hex')}`;
+    return 'sha256=' + createHmac('sha256', secret).update(payload).digest('hex');
   }
 
   private backoffMs(attemptCount: number): number {
-    return 30_000 * 10 ** (attemptCount - 1);
+    return 30_000 * Math.pow(10, attemptCount - 1);
   }
 }

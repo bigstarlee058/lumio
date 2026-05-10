@@ -1,13 +1,13 @@
 'use client';
 
-import apiClient from '@/app/lib/api';
-import { tokens } from '@/lib/theme-tokens';
+import type React from 'react';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ExtensionOutlinedIcon from '@mui/icons-material/ExtensionOutlined';
+import apiClient from '@/app/lib/api';
+import { tokens } from '@/lib/theme-tokens';
 import { Box, Stack, Typography } from '@mui/material';
-import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import type React from 'react';
+import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 type ProtocolStatus = {
@@ -176,14 +176,7 @@ export function ProtocolIntegrationPage({
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 960,
-        mx: 'auto',
-        px: embedded ? 0 : { xs: 2, md: 4 },
-        py: embedded ? 0 : { xs: 3, md: 5 },
-      }}
-    >
+    <Box sx={{ maxWidth: 960, mx: 'auto', px: embedded ? 0 : { xs: 2, md: 4 }, py: embedded ? 0 : { xs: 3, md: 5 } }}>
       <Stack spacing={3}>
         {!embedded ? (
           <Link
@@ -210,7 +203,7 @@ export function ProtocolIntegrationPage({
             {connected ? (
               <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 24 }} aria-hidden="true" />
             ) : (
-              (icon ?? <ExtensionOutlinedIcon sx={{ fontSize: 24 }} aria-hidden="true" />)
+              icon ?? <ExtensionOutlinedIcon sx={{ fontSize: 24 }} aria-hidden="true" />
             )}
           </Box>
           <Stack spacing={0.75}>
@@ -233,9 +226,7 @@ export function ProtocolIntegrationPage({
         >
           <Stack spacing={2}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Typography sx={{ color: c.ink900, fontSize: 18, fontWeight: 650 }}>
-                Status
-              </Typography>
+              <Typography sx={{ color: c.ink900, fontSize: 18, fontWeight: 650 }}>Status</Typography>
               <Typography
                 sx={{
                   color: connected ? c.success : c.ink600,
@@ -296,9 +287,7 @@ export function ProtocolIntegrationPage({
               </Box>
             </Box>
 
-            <Box
-              sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1.5 }}
-            >
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 1.5 }}>
               {fields.map(field => (
                 <label key={field.name} style={{ display: 'grid', gap: 6 }}>
                   <Typography sx={{ color: c.ink700, fontSize: 13, fontWeight: 600 }}>
@@ -324,9 +313,7 @@ export function ProtocolIntegrationPage({
                         setForm(prev => ({
                           ...prev,
                           [field.name]:
-                            field.type === 'number'
-                              ? Number(event.target.value)
-                              : event.target.value,
+                            field.type === 'number' ? Number(event.target.value) : event.target.value,
                         }))
                       }
                       style={inputStyle(c)}
@@ -427,6 +414,7 @@ export function ProtocolIntegrationPage({
             </Stack>
           </Box>
         )}
+
       </Stack>
     </Box>
   );

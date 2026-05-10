@@ -1,21 +1,12 @@
 'use client';
 
-import { Copy, Lock, Plus, Trash2 } from '@/app/components/icons';
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { tokens } from '@/lib/theme-tokens';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Typography,
-} from '@mui/material';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { Copy, Plus, Trash2, Lock } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import { useApiKeys } from './useApiKeys';
+import toast from 'react-hot-toast';
 
 interface McpServerDrawerProps {
   isOpen: boolean;
@@ -115,37 +106,35 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
 
   return (
     <>
-      <DrawerShell isOpen={isOpen} onClose={onClose} title="MCP Server" width="md">
+      <DrawerShell
+        isOpen={isOpen}
+        onClose={onClose}
+        title="MCP Server"
+        width="md"
+      >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, overflowY: 'auto', flex: 1 }}>
+
           {/* ── Status ── */}
           <Box>
             <Typography sx={sectionLabelStyle}>Status</Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                p: 1.5,
-                borderRadius: tokens.radius.md,
-                background: isActive ? 'rgba(5,150,105,0.08)' : 'rgba(220,38,38,0.07)',
-                border: `1px solid ${isActive ? 'rgba(5,150,105,0.2)' : 'rgba(220,38,38,0.2)'}`,
-              }}
-            >
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: isActive ? '#059669' : '#dc2626',
-                  flexShrink: 0,
-                }}
-              />
-              <Typography
-                sx={{ fontSize: 13, fontWeight: 600, color: isActive ? '#059669' : '#dc2626' }}
-              >
-                {isActive
-                  ? `Connected — ${keys.length} active key${keys.length !== 1 ? 's' : ''}`
-                  : 'Not configured — create an API key to get started'}
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              p: 1.5,
+              borderRadius: tokens.radius.md,
+              background: isActive ? 'rgba(5,150,105,0.08)' : 'rgba(220,38,38,0.07)',
+              border: `1px solid ${isActive ? 'rgba(5,150,105,0.2)' : 'rgba(220,38,38,0.2)'}`,
+            }}>
+              <Box sx={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: isActive ? '#059669' : '#dc2626',
+                flexShrink: 0,
+              }} />
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: isActive ? '#059669' : '#dc2626' }}>
+                {isActive ? `Connected — ${keys.length} active key${keys.length !== 1 ? 's' : ''}` : 'Not configured — create an API key to get started'}
               </Typography>
             </Box>
           </Box>
@@ -154,6 +143,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
           <Box>
             <Typography sx={sectionLabelStyle}>Setup</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+
               <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
                 1. Build the MCP server
               </Typography>
@@ -163,11 +153,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
               </Box>
 
               <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 600 }}>
-                2. Add to{' '}
-                <code style={{ background: 'var(--muted)', borderRadius: 3, padding: '1px 4px' }}>
-                  .mcp.json
-                </code>{' '}
-                in your project root
+                2. Add to <code style={{ background: 'var(--muted)', borderRadius: 3, padding: '1px 4px' }}>.mcp.json</code> in your project root
               </Typography>
               <Box sx={codeBlockStyle}>
                 {MCP_JSON}
@@ -182,14 +168,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
 
           {/* ── API Keys ── */}
           <Box>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mb: 1.5,
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
               <Typography sx={sectionLabelStyle}>API Keys</Typography>
               {!showCreateForm && (
                 <button
@@ -223,9 +202,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
                   placeholder="Key name (e.g. Claude Code)"
                   value={keyName}
                   onChange={e => setKeyName(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') void handleCreate();
-                  }}
+                  onKeyDown={e => { if (e.key === 'Enter') void handleCreate(); }}
                   autoFocus
                   fullWidth
                   sx={{ fontSize: 13 }}
@@ -251,10 +228,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setKeyName('');
-                  }}
+                  onClick={() => { setShowCreateForm(false); setKeyName(''); }}
                   style={{
                     padding: '6px 10px',
                     borderRadius: tokens.radius.sm,
@@ -272,9 +246,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
 
             {/* Keys list */}
             {loading ? (
-              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                Loading...
-              </Typography>
+              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>Loading...</Typography>
             ) : keys.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 3, color: 'var(--text-secondary)' }}>
                 <Lock size={24} style={{ opacity: 0.3, marginBottom: 6 }} />
@@ -296,13 +268,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
                   >
                     <Box>
                       <Typography sx={{ fontSize: 13, fontWeight: 600 }}>{key.name}</Typography>
-                      <Typography
-                        sx={{
-                          fontSize: 11,
-                          color: 'var(--text-secondary)',
-                          fontFamily: 'monospace',
-                        }}
-                      >
+                      <Typography sx={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
                         lum_{key.prefix}•••• · {timeAgo(key.lastUsedAt)}
                       </Typography>
                     </Box>
@@ -359,12 +325,7 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
       </Dialog>
 
       {/* Revoke confirmation */}
-      <Dialog
-        open={Boolean(confirmRevokeId)}
-        onClose={() => setConfirmRevokeId(null)}
-        maxWidth="xs"
-        fullWidth
-      >
+      <Dialog open={Boolean(confirmRevokeId)} onClose={() => setConfirmRevokeId(null)} maxWidth="xs" fullWidth>
         <DialogTitle sx={{ fontWeight: 700 }}>Revoke API key?</DialogTitle>
         <DialogContent>
           <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
@@ -375,7 +336,11 @@ export function McpServerDrawer({ isOpen, onClose }: McpServerDrawerProps) {
           <Button onClick={() => setConfirmRevokeId(null)} sx={{ color: 'var(--text-secondary)' }}>
             Cancel
           </Button>
-          <Button variant="contained" color="error" onClick={() => void handleRevoke()}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => void handleRevoke()}
+          >
             Revoke
           </Button>
         </DialogActions>

@@ -1,23 +1,14 @@
-import {
-  Body,
-  Controller,
-  Logger,
-  Post,
-  Req,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Logger, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request } from 'express';
-import { multerConfig } from '../../config/multer.config';
-import type { WebhookEndpoint } from '../../entities/webhook-endpoint.entity';
 import { Public } from '../auth/decorators/public.decorator';
-import { WebhookReceiptUploadDto } from './dto/webhook-receipt-upload.dto';
-import { WebhookStatementUploadDto } from './dto/webhook-statement-upload.dto';
+import { multerConfig } from '../../config/multer.config';
 import { WebhookTokenGuard } from './guards/webhook-token.guard';
 import { WebhookInboundService } from './webhook-inbound.service';
+import { WebhookStatementUploadDto } from './dto/webhook-statement-upload.dto';
+import { WebhookReceiptUploadDto } from './dto/webhook-receipt-upload.dto';
+import type { WebhookEndpoint } from '../../entities/webhook-endpoint.entity';
 
 @ApiTags('Webhook Inbound')
 @Controller('webhooks/:token')
@@ -36,11 +27,7 @@ export class WebhookInboundController {
     @UploadedFile() file: Express.Multer.File | undefined,
     @Body() dto: WebhookStatementUploadDto,
   ) {
-    const result = await this.inboundService.uploadStatement(
-      req.webhookEndpoint,
-      file ?? null,
-      dto,
-    );
+    const result = await this.inboundService.uploadStatement(req.webhookEndpoint, file ?? null, dto);
     return { success: true, statementId: result.id, status: result.status };
   }
 

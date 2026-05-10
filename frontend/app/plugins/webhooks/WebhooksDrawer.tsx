@@ -1,12 +1,12 @@
 'use client';
 
-import { Copy, Plus, Trash2 } from '@/app/components/icons';
-import { DrawerShell } from '@/app/components/ui/drawer-shell';
-import { tokens } from '@/lib/theme-tokens';
-import { Box, Checkbox, FormControlLabel, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { Box, Typography, TextField, FormControlLabel, Checkbox } from '@mui/material';
+import { DrawerShell } from '@/app/components/ui/drawer-shell';
+import { Copy, Trash2, Plus } from '@/app/components/icons';
+import { tokens } from '@/lib/theme-tokens';
 import { useWebhookEndpoints, useWebhookSubscriptions } from './useWebhooks';
+import toast from 'react-hot-toast';
 
 const EVENTS = [
   { value: 'transaction.created', label: 'Transaction Created' },
@@ -34,15 +34,9 @@ const tabBtnStyle = (active: boolean) => ({
 const actionBtnStyle = (variant: 'danger' | 'default' | 'primary') => ({
   padding: '5px 12px',
   borderRadius: tokens.radius.sm,
-  border:
-    variant === 'danger'
-      ? '1px solid #dc2626'
-      : variant === 'primary'
-        ? 'none'
-        : '1px solid var(--border-color, #e5e7eb)',
+  border: variant === 'danger' ? '1px solid #dc2626' : variant === 'primary' ? 'none' : '1px solid var(--border-color, #e5e7eb)',
   background: variant === 'primary' ? 'var(--primary, #059669)' : 'transparent',
-  color:
-    variant === 'danger' ? '#dc2626' : variant === 'primary' ? '#fff' : 'var(--text-secondary)',
+  color: variant === 'danger' ? '#dc2626' : variant === 'primary' ? '#fff' : 'var(--text-secondary)',
   fontSize: 12,
   fontWeight: 600,
   cursor: 'pointer',
@@ -88,14 +82,8 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
   };
 
   const handleCreateSubscription = async () => {
-    if (!subName.trim() || !subUrl.trim() || subSecret.length < 16 || subEvents.length === 0)
-      return;
-    await createSubscription({
-      name: subName.trim(),
-      url: subUrl.trim(),
-      secret: subSecret,
-      events: subEvents,
-    });
+    if (!subName.trim() || !subUrl.trim() || subSecret.length < 16 || subEvents.length === 0) return;
+    await createSubscription({ name: subName.trim(), url: subUrl.trim(), secret: subSecret, events: subEvents });
     setSubName('');
     setSubUrl('');
     setSubSecret('');
@@ -108,35 +96,26 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
   };
 
   const toggleEvent = (value: string) => {
-    setSubEvents(prev => (prev.includes(value) ? prev.filter(e => e !== value) : [...prev, value]));
+    setSubEvents(prev =>
+      prev.includes(value) ? prev.filter(e => e !== value) : [...prev, value],
+    );
   };
 
   return (
-    <DrawerShell isOpen={isOpen} onClose={onClose} title="Webhooks" position="right" width="lg">
+    <DrawerShell
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Webhooks"
+      position="right"
+      width="lg"
+    >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}>
         {/* Tab switcher */}
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 0.5,
-            p: 0.5,
-            borderRadius: tokens.radius.md,
-            border: '1px solid var(--border-color, #e5e7eb)',
-            alignSelf: 'flex-start',
-          }}
-        >
-          <button
-            type="button"
-            style={tabBtnStyle(activeTab === 'inbound')}
-            onClick={() => setActiveTab('inbound')}
-          >
+        <Box sx={{ display: 'flex', gap: 0.5, p: 0.5, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, #e5e7eb)', alignSelf: 'flex-start' }}>
+          <button type="button" style={tabBtnStyle(activeTab === 'inbound')} onClick={() => setActiveTab('inbound')}>
             Inbound
           </button>
-          <button
-            type="button"
-            style={tabBtnStyle(activeTab === 'outbound')}
-            onClick={() => setActiveTab('outbound')}
-          >
+          <button type="button" style={tabBtnStyle(activeTab === 'outbound')} onClick={() => setActiveTab('outbound')}>
             Outbound
           </button>
         </Box>
@@ -150,41 +129,23 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
 
             {/* New token banner */}
             {newToken && (
-              <Box
-                sx={{
-                  p: 2,
-                  borderRadius: tokens.radius.md,
-                  border: '1px solid rgba(5,150,105,0.4)',
-                  background: 'rgba(5,150,105,0.06)',
-                }}
-              >
+              <Box sx={{
+                p: 2,
+                borderRadius: tokens.radius.md,
+                border: '1px solid rgba(5,150,105,0.4)',
+                background: 'rgba(5,150,105,0.06)',
+              }}>
                 <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#059669', mb: 1 }}>
                   Copy this token — it won&apos;t be shown again
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography
-                    sx={{
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                      color: 'var(--text-primary)',
-                      wordBreak: 'break-all',
-                      flex: 1,
-                    }}
-                  >
+                  <Typography sx={{ fontFamily: 'monospace', fontSize: 12, color: 'var(--text-primary)', wordBreak: 'break-all', flex: 1 }}>
                     {newToken}
                   </Typography>
-                  <button
-                    type="button"
-                    style={actionBtnStyle('primary')}
-                    onClick={() => handleCopyToken(newToken)}
-                  >
+                  <button type="button" style={actionBtnStyle('primary')} onClick={() => handleCopyToken(newToken)}>
                     <Copy size={14} />
                   </button>
-                  <button
-                    type="button"
-                    style={actionBtnStyle('default')}
-                    onClick={() => setNewToken(null)}
-                  >
+                  <button type="button" style={actionBtnStyle('default')} onClick={() => setNewToken(null)}>
                     Dismiss
                   </button>
                 </Box>
@@ -193,64 +154,42 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
 
             {/* Endpoint list */}
             {endpointsLoading ? (
-              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                Loading...
-              </Typography>
+              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>Loading...</Typography>
             ) : endpoints.length === 0 && !showEndpointForm ? (
-              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                No endpoints yet.
-              </Typography>
+              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>No endpoints yet.</Typography>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {endpoints.map(ep => (
-                  <Box
-                    key={ep.id}
-                    sx={{
-                      p: 1.5,
-                      borderRadius: tokens.radius.md,
-                      border: '1px solid var(--border-color, #e5e7eb)',
-                      background: 'var(--card-bg, #fff)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1.5,
-                    }}
-                  >
+                  <Box key={ep.id} sx={{
+                    p: 1.5,
+                    borderRadius: tokens.radius.md,
+                    border: '1px solid var(--border-color, #e5e7eb)',
+                    background: 'var(--card-bg, #fff)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                  }}>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography
-                        sx={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}
-                      >
+                      <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                         {ep.name}
                       </Typography>
-                      <Typography
-                        sx={{
-                          fontSize: 11,
-                          color: 'var(--text-secondary)',
-                          fontFamily: 'monospace',
-                        }}
-                      >
+                      <Typography sx={{ fontSize: 11, color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
                         {ep.tokenPreview}
                       </Typography>
                     </Box>
-                    <Box
-                      sx={{
-                        px: 1,
-                        py: 0.25,
-                        borderRadius: tokens.radius.sm,
-                        background: ep.isActive ? 'rgba(5,150,105,0.1)' : 'rgba(0,0,0,0.06)',
-                        color: ep.isActive ? '#059669' : 'var(--text-secondary)',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => void toggleEndpoint(ep.id, ep.isActive)}
-                    >
+                    <Box sx={{
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: tokens.radius.sm,
+                      background: ep.isActive ? 'rgba(5,150,105,0.1)' : 'rgba(0,0,0,0.06)',
+                      color: ep.isActive ? '#059669' : 'var(--text-secondary)',
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }} onClick={() => void toggleEndpoint(ep.id, ep.isActive)}>
                       {ep.isActive ? 'Active' : 'Paused'}
                     </Box>
-                    <button
-                      type="button"
-                      style={actionBtnStyle('danger')}
-                      onClick={() => void removeEndpoint(ep.id)}
-                    >
+                    <button type="button" style={actionBtnStyle('danger')} onClick={() => void removeEndpoint(ep.id)}>
                       <Trash2 size={14} />
                     </button>
                   </Box>
@@ -260,58 +199,26 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
 
             {/* Inline create form */}
             {showEndpointForm ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1.5,
-                  p: 1.5,
-                  borderRadius: tokens.radius.md,
-                  border: '1px solid var(--border-color, #e5e7eb)',
-                }}
-              >
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, p: 1.5, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, #e5e7eb)' }}>
                 <TextField
                   size="small"
                   label="Endpoint name"
                   value={endpointName}
                   onChange={e => setEndpointName(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') void handleCreateEndpoint();
-                  }}
+                  onKeyDown={e => { if (e.key === 'Enter') void handleCreateEndpoint(); }}
                   autoFocus
                 />
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <button
-                    type="button"
-                    style={actionBtnStyle('primary')}
-                    onClick={() => void handleCreateEndpoint()}
-                  >
+                  <button type="button" style={actionBtnStyle('primary')} onClick={() => void handleCreateEndpoint()}>
                     Create
                   </button>
-                  <button
-                    type="button"
-                    style={actionBtnStyle('default')}
-                    onClick={() => {
-                      setShowEndpointForm(false);
-                      setEndpointName('');
-                    }}
-                  >
+                  <button type="button" style={actionBtnStyle('default')} onClick={() => { setShowEndpointForm(false); setEndpointName(''); }}>
                     Cancel
                   </button>
                 </Box>
               </Box>
             ) : (
-              <button
-                type="button"
-                style={{
-                  ...actionBtnStyle('default'),
-                  alignSelf: 'flex-start',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
-                onClick={() => setShowEndpointForm(true)}
-              >
+              <button type="button" style={{ ...actionBtnStyle('default'), alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 4 }} onClick={() => setShowEndpointForm(true)}>
                 <Plus size={14} /> New Endpoint
               </button>
             )}
@@ -327,76 +234,48 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
 
             {/* Subscription list */}
             {subsLoading ? (
-              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                Loading...
-              </Typography>
+              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>Loading...</Typography>
             ) : subscriptions.length === 0 && !showSubForm ? (
-              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                No subscriptions yet.
-              </Typography>
+              <Typography sx={{ fontSize: 13, color: 'var(--text-secondary)' }}>No subscriptions yet.</Typography>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 {subscriptions.map(sub => (
-                  <Box
-                    key={sub.id}
-                    sx={{
-                      p: 1.5,
-                      borderRadius: tokens.radius.md,
-                      border: '1px solid var(--border-color, #e5e7eb)',
-                      background: 'var(--card-bg, #fff)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                    }}
-                  >
+                  <Box key={sub.id} sx={{
+                    p: 1.5,
+                    borderRadius: tokens.radius.md,
+                    border: '1px solid var(--border-color, #e5e7eb)',
+                    background: 'var(--card-bg, #fff)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                  }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography
-                          sx={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}
-                        >
+                        <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                           {sub.name}
                         </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: 11,
-                            color: 'var(--text-secondary)',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
+                        <Typography sx={{ fontSize: 11, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {sub.url}
                         </Typography>
                       </Box>
-                      <button
-                        type="button"
-                        style={actionBtnStyle('default')}
-                        onClick={() => void testPing(sub.id)}
-                      >
+                      <button type="button" style={actionBtnStyle('default')} onClick={() => void testPing(sub.id)}>
                         Test
                       </button>
-                      <button
-                        type="button"
-                        style={actionBtnStyle('danger')}
-                        onClick={() => void removeSubscription(sub.id)}
-                      >
+                      <button type="button" style={actionBtnStyle('danger')} onClick={() => void removeSubscription(sub.id)}>
                         <Trash2 size={14} />
                       </button>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                       {sub.events.map(evt => (
-                        <Box
-                          key={evt}
-                          sx={{
-                            px: 1,
-                            py: 0.25,
-                            borderRadius: tokens.radius.sm,
-                            background: 'rgba(99,102,241,0.08)',
-                            color: '#6366f1',
-                            fontSize: 11,
-                            fontWeight: 600,
-                          }}
-                        >
+                        <Box key={evt} sx={{
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: tokens.radius.sm,
+                          background: 'rgba(99,102,241,0.08)',
+                          color: '#6366f1',
+                          fontSize: 11,
+                          fontWeight: 600,
+                        }}>
                           {evt}
                         </Box>
                       ))}
@@ -408,47 +287,19 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
 
             {/* Inline create form */}
             {showSubForm ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 1.5,
-                  p: 1.5,
-                  borderRadius: tokens.radius.md,
-                  border: '1px solid var(--border-color, #e5e7eb)',
-                }}
-              >
-                <TextField
-                  size="small"
-                  label="Name"
-                  value={subName}
-                  onChange={e => setSubName(e.target.value)}
-                />
-                <TextField
-                  size="small"
-                  label="URL"
-                  value={subUrl}
-                  onChange={e => setSubUrl(e.target.value)}
-                  placeholder="https://example.com/hook"
-                />
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, p: 1.5, borderRadius: tokens.radius.md, border: '1px solid var(--border-color, #e5e7eb)' }}>
+                <TextField size="small" label="Name" value={subName} onChange={e => setSubName(e.target.value)} />
+                <TextField size="small" label="URL" value={subUrl} onChange={e => setSubUrl(e.target.value)} placeholder="https://example.com/hook" />
                 <TextField
                   size="small"
                   label="Secret (min 16 chars)"
                   value={subSecret}
                   onChange={e => setSubSecret(e.target.value)}
                   error={subSecret.length > 0 && subSecret.length < 16}
-                  helperText={
-                    subSecret.length > 0 && subSecret.length < 16
-                      ? 'Secret must be at least 16 characters'
-                      : ''
-                  }
+                  helperText={subSecret.length > 0 && subSecret.length < 16 ? 'Secret must be at least 16 characters' : ''}
                 />
                 <Box>
-                  <Typography
-                    sx={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', mb: 0.5 }}
-                  >
-                    Events
-                  </Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', mb: 0.5 }}>Events</Typography>
                   {EVENTS.map(evt => (
                     <FormControlLabel
                       key={evt.value}
@@ -468,42 +319,17 @@ export function WebhooksDrawer({ isOpen, onClose }: WebhooksDrawerProps) {
                     type="button"
                     style={actionBtnStyle('primary')}
                     onClick={() => void handleCreateSubscription()}
-                    disabled={
-                      !subName.trim() ||
-                      !subUrl.trim() ||
-                      subSecret.length < 16 ||
-                      subEvents.length === 0
-                    }
+                    disabled={!subName.trim() || !subUrl.trim() || subSecret.length < 16 || subEvents.length === 0}
                   >
                     Create
                   </button>
-                  <button
-                    type="button"
-                    style={actionBtnStyle('default')}
-                    onClick={() => {
-                      setShowSubForm(false);
-                      setSubName('');
-                      setSubUrl('');
-                      setSubSecret('');
-                      setSubEvents([]);
-                    }}
-                  >
+                  <button type="button" style={actionBtnStyle('default')} onClick={() => { setShowSubForm(false); setSubName(''); setSubUrl(''); setSubSecret(''); setSubEvents([]); }}>
                     Cancel
                   </button>
                 </Box>
               </Box>
             ) : (
-              <button
-                type="button"
-                style={{
-                  ...actionBtnStyle('default'),
-                  alignSelf: 'flex-start',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
-                onClick={() => setShowSubForm(true)}
-              >
+              <button type="button" style={{ ...actionBtnStyle('default'), alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 4 }} onClick={() => setShowSubForm(true)}>
                 <Plus size={14} /> New Subscription
               </button>
             )}

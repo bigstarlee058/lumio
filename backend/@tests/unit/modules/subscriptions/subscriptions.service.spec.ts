@@ -11,12 +11,8 @@ const createRepoMock = () => ({
 
 describe('SubscriptionsService', () => {
   const subscriptionRepository = createRepoMock();
-  const workspaceRepository = createRepoMock();
   const notificationsService = {
     createForWorkspaceMembers: jest.fn(),
-  };
-  const exchangeRatesService = {
-    getRate: jest.fn(),
   };
 
   let service: SubscriptionsService;
@@ -25,15 +21,12 @@ describe('SubscriptionsService', () => {
     jest.resetAllMocks();
     service = new SubscriptionsService(
       subscriptionRepository as any,
-      workspaceRepository as any,
       notificationsService as any,
-      exchangeRatesService as any,
     );
   });
 
   describe('getSummary', () => {
-    it('converts active subscription costs to workspace currency before summing monthly cost', async () => {
-      workspaceRepository.findOne.mockResolvedValue({ currency: 'KZT' });
+    it('normalizes active subscription costs to monthly and sums them', async () => {
       subscriptionRepository.find.mockResolvedValue([
         {
           amount: 100,
@@ -43,21 +36,17 @@ describe('SubscriptionsService', () => {
         },
       ]);
       subscriptionRepository.count.mockResolvedValue(0);
-      exchangeRatesService.getRate.mockResolvedValue(500);
 
       const result = await service.getSummary('workspace-1');
 
       expect(result).toEqual({
-        totalMonthlyCost: 50000,
-        currency: 'KZT',
+        totalMonthlyCost: 100,
         activeCount: 1,
         upcomingCount: 0,
       });
-      expect(exchangeRatesService.getRate).toHaveBeenCalledWith('USD', 'KZT');
     });
 
-    it('falls back to KZT when workspace currency is not configured', async () => {
-      workspaceRepository.findOne.mockResolvedValue({ currency: null });
+    it('normalizes annual subscriptions to monthly cost', async () => {
       subscriptionRepository.find.mockResolvedValue([
         {
           amount: 1200,
@@ -71,8 +60,6 @@ describe('SubscriptionsService', () => {
       const result = await service.getSummary('workspace-1');
 
       expect(result.totalMonthlyCost).toBe(100);
-      expect(result.currency).toBe('KZT');
-      expect(exchangeRatesService.getRate).not.toHaveBeenCalled();
     });
   });
 });

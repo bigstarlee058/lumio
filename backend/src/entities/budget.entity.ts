@@ -47,9 +47,6 @@ export class Budget {
   @Column({ name: 'limit_amount', type: 'decimal', precision: 15, scale: 2 })
   limitAmount: number;
 
-  @Column({ name: 'manual_spent_amount', type: 'decimal', precision: 15, scale: 2, default: 0 })
-  manualSpentAmount: number;
-
   @Column({ default: 'KZT' })
   currency: string;
 
