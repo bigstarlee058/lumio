@@ -1,14 +1,97 @@
 {
   "meta": {
     "lastProcessedCommitByBranch": {
-      "main": "4ab8f60d6919c904ae67a889ec595c072748f143"
+      "main": "7c664cab75f7ae7f9f5c2a5b5d0ff65b42d15b3a"
     },
     "initializedAt": "2026-03-05T22:23:31.634Z",
-    "lastGeneratedAt": "2026-05-10T13:02:57.895Z",
+    "lastGeneratedAt": "2026-05-24T13:09:33.019Z",
     "minCommits": 5,
     "lastRecoveryAt": "2026-05-07T18:30:33.797Z"
   },
   "entries": [
+    {
+      "id": "changelog-2026-05-24-7c664ca",
+      "version": "main-7c664ca",
+      "branch": "main",
+      "date": "2026-05-24T13:09:33.019Z",
+      "title": "Release update - May 24, 2026",
+      "summary": "This release includes 1 feature and 2 fixes.",
+      "markdown": "## Features\n- **imap**: Browse mailbox folders, fix sync for pre-read emails, add S3 auto-backup\n\n## Fixes\n- **receipts**: Show needs_review receipts without parsed amount on submit page\n- **subscriptions**: Use workspace currency instead of hardcoded KZT",
+      "commits": [
+        {
+          "sha": "097db3fd9d41cf6aced1766b29f473559d8df15d",
+          "shortSha": "097db3fd",
+          "subject": "chore(changelog): update generated changelog [skip ci]",
+          "author": "github-actions[bot]",
+          "date": "2026-05-10T13:02:58Z",
+          "files": [
+            "frontend/public/changelog.json"
+          ]
+        },
+        {
+          "sha": "e8c4a35064055968296e8d8b48a854a81d9adb8a",
+          "shortSha": "e8c4a350",
+          "subject": "feat(imap): browse mailbox folders, fix sync for pre-read emails, add S3 auto-backup",
+          "author": "Symon",
+          "date": "2026-05-24T13:50:27+03:00",
+          "files": [
+            "backend/@tests/unit/modules/open-protocol-integrations/imap-list-folders.spec.ts",
+            "backend/@tests/unit/modules/open-protocol-integrations/imap-sync-already-seen.spec.ts",
+            "backend/@tests/unit/modules/open-protocol-integrations/s3-auto-backup.spec.ts",
+            "backend/@tests/unit/modules/open-protocol-integrations/s3-backup.listener.spec.ts",
+            "backend/src/common/observability/app-logger.service.ts",
+            "backend/src/modules/open-protocol-integrations/open-protocol-integrations.controller.ts",
+            "backend/src/modules/open-protocol-integrations/open-protocol-integrations.module.ts",
+            "backend/src/modules/open-protocol-integrations/open-protocol-integrations.service.ts",
+            "backend/src/modules/open-protocol-integrations/s3-backup.listener.ts",
+            "frontend/app/components/dashboard/OverviewTab.tsx",
+            "frontend/app/integrations/imap/page.tsx",
+            "frontend/app/integrations/open-protocol-page.tsx",
+            "frontend/app/integrations/s3-compatible/page.tsx",
+            "frontend/package-lock.json"
+          ]
+        },
+        {
+          "sha": "8973657595fbe9433f0584a23ff0a2025c8095a1",
+          "shortSha": "89736575",
+          "subject": "fix(receipts): show needs_review receipts without parsed amount on submit page",
+          "author": "Symon",
+          "date": "2026-05-24T14:41:28+03:00",
+          "files": [
+            "backend/src/modules/dashboard/dashboard.service.ts",
+            "backend/src/modules/gmail/gmail.controller.ts",
+            "frontend/app/(main)/statements/components/hooks/useStatementsListData.ts",
+            "frontend/app/(main)/statements/components/hooks/useStatementsView.ts",
+            "frontend/app/components/dashboard/DataHealthTab.tsx"
+          ]
+        },
+        {
+          "sha": "66cbf731678daa423ae1ae0599b8d3de8125e5f4",
+          "shortSha": "66cbf731",
+          "subject": "test(dashboard): update receipts_pending_review href expectation",
+          "author": "Symon",
+          "date": "2026-05-24T14:42:49+03:00",
+          "files": [
+            "backend/@tests/unit/modules/dashboard/dashboard.service.spec.ts"
+          ]
+        },
+        {
+          "sha": "7c664cab75f7ae7f9f5c2a5b5d0ff65b42d15b3a",
+          "shortSha": "7c664cab",
+          "subject": "fix(subscriptions): use workspace currency instead of hardcoded KZT",
+          "author": "Symon",
+          "date": "2026-05-24T16:08:34+03:00",
+          "files": [
+            "backend/src/entities/subscription.entity.ts",
+            "backend/src/modules/subscriptions/subscription-detection.service.ts",
+            "backend/src/modules/subscriptions/subscriptions.service.ts",
+            "frontend/app/(main)/subscriptions/components/SubscriptionFormDrawer.tsx",
+            "frontend/app/(main)/subscriptions/components/SubscriptionsContent.tsx",
+            "frontend/app/(main)/subscriptions/hooks/useSubscriptionsPage.ts"
+          ]
+        }
+      ]
+    },
     {
       "id": "changelog-2026-05-10-4ab8f60",
       "version": "main-4ab8f60",
